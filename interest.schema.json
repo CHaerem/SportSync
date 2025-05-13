@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Interest",
+  "type": "object",
+  "properties": {
+    "sports": { "type": "array", "items": { "type": "string" } },
+    "teams": { "type": "array", "items": { "type": "string" } },
+    "athletes": { "type": "array", "items": { "type": "string" } },
+    "leagues": { "type": "array", "items": { "type": "string" } },
+    "country_priority": { "type": "string", "default": "Norway" }
+  },
+  "required": ["sports"]
+}

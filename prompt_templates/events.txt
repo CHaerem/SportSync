@@ -1,0 +1,13 @@
+# Prompt for fetching events
+# Used by fetchEvents.js
+
+Given the following filters, list all relevant sports events for the next 7 days. Prioritize Norwegian events and TV times. Output as JSON with a weekly_events_table and today_breakdown.
+
+Filters:
+{{filters}}
+
+Output format:
+{
+  "weekly_events_table": [...],
+  "today_breakdown": { "Football": "...", "Golf": "..." }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SportSync — Personalized Sports Calendar</title>
+		<style>
+			body {
+				font-family: system-ui, sans-serif;
+				margin: 2em;
+				background: #f8f9fa;
+			}
+			h1 {
+				color: #1a237e;
+			}
+			#calendar {
+				background: #fff;
+				padding: 1em;
+				border-radius: 8px;
+				box-shadow: 0 2px 8px #0001;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>SportSync — Personalized Sports Calendar</h1>
+		<div id="calendar">Loading events...</div>
+		<script>
+			fetch("output/events.json")
+				.then((r) => r.json())
+				.then((data) => {
+					document.getElementById("calendar").innerHTML =
+						"<h2>This Week</h2>" +
+						"<pre>" +
+						JSON.stringify(data.weekly_events_table, null, 2) +
+						"</pre>" +
+						"<h2>Today</h2>" +
+						"<pre>" +
+						JSON.stringify(data.today_breakdown, null, 2) +
+						"</pre>";
+				})
+				.catch(() => {
+					document.getElementById("calendar").textContent = "No events found.";
+				});
+		</script>
+	</body>
+</html>
