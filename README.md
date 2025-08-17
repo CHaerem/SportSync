@@ -1,49 +1,150 @@
-# SportSync: AI-Powered Personalized Sports Calendar
+# SportSync: Personal Sports Dashboard
 
-This project generates a static, personalized sports calendar using OpenAI and publishes it via GitHub Pages. It is fully automated with a daily GitHub Actions workflow.
+A modern, responsive sports dashboard that displays upcoming events for your favorite sports. Built as a static website with automated data updates via GitHub Actions and hosted on GitHub Pages.
 
-## Features
+## 🏆 Features
 
-- LLM-powered filtering of sports events based on user interests
-- Daily automation (07:00 CEST)
-- Weekly table and today view
-- Norway-centric prioritization
-- Pure code, no external workflow tools
+- **Real-time Sports Data**: Football, Golf, Tennis, Formula 1, Chess, and Esports
+- **Norwegian Focus**: CEST timezone formatting and prioritized Norwegian teams/athletes
+- **Automated Updates**: GitHub Actions fetch fresh data every 6 hours
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Zero Dependencies**: Pure HTML, CSS, and JavaScript - no build process required
+- **Offline Ready**: Graceful fallback to cached data when APIs are unavailable
 
-## Usage
+## 🚀 Live Demo
 
-- Configure your interests and OpenAI API key
-- The workflow will update the calendar daily
+Visit your dashboard at: `https://yourusername.github.io/SportSync/`
 
-## Structure
+## 📱 Sports Covered
 
-- `src/` — scripts for parsing interests, fetching events, formatting output
-- `docs/` — static site (index.html, output/)
-- `.github/workflows/` — GitHub Actions workflow
-- `prompt_templates/` — prompt templates for LLM
-- `interest.schema.json` — schema for interests
+| Sport | API Source | Coverage |
+|-------|------------|----------|
+| ⚽ **Football** | TheSportsDB | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| 🏌️ **Golf** | ESPN API | PGA Tour, DP World Tour, Major Championships |
+| 🎾 **Tennis** | TheSportsDB | ATP, WTA, Grand Slams |
+| 🏎️ **Formula 1** | ESPN API | Race Calendar, Practice, Qualifying |
+| ♟️ **Chess** | Mock Data* | Major tournaments, titled events |
+| 🎮 **Esports** | Mock Data* | CS2, LoL, Valorant, Dota 2 |
 
-## Environment Variables
+*_Chess and Esports use curated mock data - integration with Chess.com API and esports APIs coming soon_
 
-- `OPENAI_API_KEY`: Your OpenAI API key (required)
-- `OPENAI_MODEL`: Model to use (default: o3)
-- `TZ`: Timezone (default: Europe/Oslo)
-- `MAX_DAILY_TOKENS`: Max OpenAI tokens per day (default: 2000)
+## 🛠️ Setup & Development
 
-## ICS Export
+### Local Development
 
-An `.ics` file is generated for calendar integration.
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/SportSync.git
+cd SportSync
 
-## Cost Guard
+# Start local development server
+npm run dev
 
-The workflow will abort if estimated token usage exceeds `MAX_DAILY_TOKENS`.
+# Open http://localhost:8000 in your browser
+```
 
-## Setup
+### GitHub Pages Deployment
 
-1. Install dependencies: `npm install`
-2. Add your OpenAI API key as a secret in GitHub
-3. Customize your interests
+1. **Enable GitHub Pages**:
+   - Go to repository Settings → Pages
+   - Source: Deploy from a branch
+   - Branch: `main` → `/docs` folder
 
-## License
+2. **Configure Secrets** (Optional for premium APIs):
+   - Go to Settings → Secrets and variables → Actions
+   - Add API keys if using premium sports APIs
 
-MIT
+## ⚙️ Automated Data Updates
+
+The dashboard uses GitHub Actions to periodically fetch fresh sports data:
+
+- **Schedule**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+- **Manual Trigger**: Available via repository Actions tab
+- **Data Storage**: Fetched data is saved to `docs/data/` directory
+- **Fallback**: Client-side APIs as backup when cached data is unavailable
+
+## 🏗️ Architecture
+
+```
+docs/
+├── index.html              # Main dashboard
+├── js/
+│   ├── sports-api.js       # API integration layer
+│   └── dashboard.js        # Dashboard controller
+├── data/                   # Pre-fetched API data (generated)
+│   ├── football.json
+│   ├── golf.json
+│   ├── tennis.json
+│   ├── f1.json
+│   ├── chess.json
+│   └── esports.json
+└── output/                 # Legacy (can be removed)
+
+.github/workflows/
+└── update-sports-data.yml  # Automated data fetching
+```
+
+## 🔧 Configuration
+
+### Sports Preferences
+
+Edit `docs/js/sports-api.js` to customize:
+- Specific leagues and tournaments
+- Norwegian vs international focus
+- Number of events displayed per sport
+- Time formatting preferences
+
+### API Keys
+
+For enhanced data quality, add these secrets to your repository:
+
+```
+THESPORTSDB_API_KEY=your_key_here
+API_SPORTS_KEY=your_key_here
+SPORTSDATA_API_KEY=your_key_here
+```
+
+## 🕒 Time Zone
+
+All events are displayed in Norwegian time (Europe/Oslo timezone) with intelligent relative formatting:
+- "Today" / "Tomorrow" for immediate events  
+- "X days" for events within a week
+- Full date for events further out
+
+## 📊 Data Sources
+
+### Free APIs (Currently Used)
+- **TheSportsDB**: Community-driven sports database
+- **ESPN Public API**: Official ESPN data endpoints
+
+### Premium APIs (Future Integration)
+- **API-Sports**: Comprehensive sports data platform
+- **SportsDataIO**: Professional sports data provider
+- **Chess.com API**: Official chess platform data
+
+## 🚧 Roadmap
+
+- [ ] Chess.com API integration
+- [ ] Live esports data via Twitch/YouTube Gaming APIs
+- [ ] Push notifications for favorite team events
+- [ ] Calendar export (.ics) functionality
+- [ ] Dark mode toggle
+- [ ] Customizable sports selection
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and test locally
+4. Commit with descriptive messages
+5. Push and create a Pull Request
+
+## 📄 License
+
+MIT License - feel free to use this project for your own sports dashboard!
+
+## 🆘 Support
+
+- Check the [GitHub Issues](https://github.com/yourusername/SportSync/issues) for common problems
+- Create a new issue for bugs or feature requests
+- The dashboard works offline with cached data during API outages

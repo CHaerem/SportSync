@@ -1,17 +1,43 @@
 {
   "name": "sportsync",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Personal Sports Dashboard - A static website displaying upcoming events for your favorite sports",
+  "main": "docs/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "python3 -m http.server 8000 --directory docs",
+    "build": "echo 'Static site - no build required'",
+    "test": "echo 'No tests specified yet'",
+    "deploy": "echo 'Deployed via GitHub Pages automatically'"
   },
-  "keywords": [],
+  "keywords": [
+    "sports",
+    "dashboard",
+    "static-site",
+    "github-pages",
+    "api",
+    "football",
+    "golf", 
+    "tennis",
+    "formula-1",
+    "chess",
+    "esports"
+  ],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "dotenv": "^16.5.0",
-    "openai": "^4.98.0"
-  }
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/SportSync.git"
+  },
+  "homepage": "https://yourusername.github.io/SportSync/",
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

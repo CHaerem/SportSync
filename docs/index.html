@@ -1,46 +1,832 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>SportSync — Personalized Sports Calendar</title>
-		<style>
-			body {
-				font-family: system-ui, sans-serif;
-				margin: 2em;
-				background: #f8f9fa;
-			}
-			h1 {
-				color: #1a237e;
-			}
-			#calendar {
-				background: #fff;
-				padding: 1em;
-				border-radius: 8px;
-				box-shadow: 0 2px 8px #0001;
-			}
-		</style>
-	</head>
-	<body>
-		<h1>SportSync — Personalized Sports Calendar</h1>
-		<div id="calendar">Loading events...</div>
-		<script>
-			fetch("output/events.json")
-				.then((r) => r.json())
-				.then((data) => {
-					document.getElementById("calendar").innerHTML =
-						"<h2>This Week</h2>" +
-						"<pre>" +
-						JSON.stringify(data.weekly_events_table, null, 2) +
-						"</pre>" +
-						"<h2>Today</h2>" +
-						"<pre>" +
-						JSON.stringify(data.today_breakdown, null, 2) +
-						"</pre>";
-				})
-				.catch(() => {
-					document.getElementById("calendar").textContent = "No events found.";
-				});
-		</script>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportSync — Your Personal Sports Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .last-updated {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .filter-dropdown {
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            color: #2d3748;
+            cursor: pointer;
+            min-width: 100px;
+        }
+
+        .settings-btn {
+            background: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .settings-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .settings-content {
+            padding: 20px;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #f7fafc;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+        }
+
+        .checkbox-item label {
+            font-size: 0.95rem;
+            color: #4a5568;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .settings-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sports Cards View */
+        .sports-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .sports-view.hidden {
+            display: none;
+        }
+
+        .sport-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .sport-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .sport-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .sport-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .football { background: linear-gradient(45deg, #00c851, #007e33); }
+        .golf { background: linear-gradient(45deg, #ff6b35, #f7931e); }
+        .tennis { background: linear-gradient(45deg, #ffbb33, #e65100); }
+        .formula1 { background: linear-gradient(45deg, #dc2626, #991b1b); }
+        .chess { background: linear-gradient(45deg, #374151, #1f2937); }
+        .esports { background: linear-gradient(45deg, #8b5cf6, #6366f1); }
+
+        .sport-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .tournament-section {
+            margin-bottom: 20px;
+        }
+
+        .tournament-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .tournament-header {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .event-list {
+            list-style: none;
+        }
+
+        .event-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 2px;
+            font-size: 0.95rem;
+        }
+
+        .event-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .event-time {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .event-streaming {
+            margin-top: 4px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .streaming-platform {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .streaming-platform:hover {
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .streaming-platform.tv2 { background: #e60012; }
+        .streaming-platform.viaplay { background: #00b4d8; }
+        .streaming-platform.discovery { background: #0077be; }
+        .streaming-platform.nrk { background: #1e3a8a; }
+        .streaming-platform.espn { background: #cc0000; }
+        .streaming-platform.sky { background: #0072ce; }
+        .streaming-platform.bbc { background: #000; }
+
+        .hidden-by-filter {
+            display: none !important;
+        }
+
+        /* Calendar View */
+        .calendar-view {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .calendar-view.hidden {
+            display: none;
+        }
+
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .calendar-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .week-range {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+        }
+
+        .day-column {
+            min-height: 300px;
+        }
+
+        .day-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .day-header.today {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .day-events {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .calendar-event {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 8px;
+            border-left: 4px solid #667eea;
+            font-size: 0.85rem;
+            transition: transform 0.2s ease;
+        }
+
+        .calendar-event:hover {
+            transform: translateX(2px);
+            background: #edf2f7;
+        }
+
+        .calendar-event.football { border-left-color: #00c851; }
+        .calendar-event.golf { border-left-color: #ff6b35; }
+        .calendar-event.tennis { border-left-color: #ffbb33; }
+        .calendar-event.formula1 { border-left-color: #dc2626; }
+        .calendar-event.chess { border-left-color: #374151; }
+        .calendar-event.esports { border-left-color: #8b5cf6; }
+
+        .calendar-event-time {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .calendar-event-title {
+            color: #4a5568;
+            line-height: 1.3;
+        }
+
+        .calendar-event-meta {
+            color: #718096;
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .day-column {
+                min-height: auto;
+            }
+            
+            .day-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .day-events {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .calendar-event {
+                flex: 1;
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .sports-view {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .event-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .event-time {
+                margin-left: 0;
+                margin-top: 4px;
+            }
+            
+            .view-toggle {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .toggle-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SportSync</h1>
+            <p class="subtitle">Your Personal Sports Dashboard</p>
+        </header>
+
+        <div class="status-bar">
+            <div class="last-updated">Last updated: <span id="lastUpdate">Loading...</span></div>
+        </div>
+
+        <div class="controls-bar">
+            <div class="view-toggle">
+                <button class="toggle-btn active" id="sportsViewBtn">Sports Overview</button>
+                <button class="toggle-btn" id="calendarViewBtn">Weekly Calendar</button>
+            </div>
+            
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label>Time:</label>
+                    <select class="filter-dropdown" id="timeFilter">
+                        <option value="all">All Events</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="week">This Week</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Focus:</label>
+                    <select class="filter-dropdown" id="focusFilter">
+                        <option value="all">International</option>
+                        <option value="norway">Norway Priority</option>
+                        <option value="streaming">Available to Stream</option>
+                    </select>
+                </div>
+                
+                <button class="settings-btn" id="settingsBtn" title="Customize Dashboard">
+                    ⚙️
+                </button>
+            </div>
+        </div>
+
+        <!-- Sports Cards View -->
+        <div class="sports-view" id="sportsView">
+            <!-- Football Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon football">⚽</div>
+                    <h2 class="sport-title">Football</h2>
+                </div>
+                <div id="football-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading football matches...
+                </div>
+            </div>
+
+            <!-- Golf Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon golf">🏌️</div>
+                    <h2 class="sport-title">Golf</h2>
+                </div>
+                <div id="golf-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading tournaments...
+                </div>
+            </div>
+
+            <!-- Tennis Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon tennis">🎾</div>
+                    <h2 class="sport-title">Tennis</h2>
+                </div>
+                <div id="tennis-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading matches...
+                </div>
+            </div>
+
+            <!-- Formula 1 Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon formula1">🏎️</div>
+                    <h2 class="sport-title">Formula 1</h2>
+                </div>
+                <div id="f1-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading race calendar...
+                </div>
+            </div>
+
+            <!-- Chess Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon chess">♟️</div>
+                    <h2 class="sport-title">Chess</h2>
+                </div>
+                <div id="chess-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading tournaments...
+                </div>
+            </div>
+
+            <!-- Esports Card -->
+            <div class="sport-card">
+                <div class="sport-header">
+                    <div class="sport-icon esports">🎮</div>
+                    <h2 class="sport-title">Esports</h2>
+                </div>
+                <div id="esports-content" class="loading">
+                    <div class="spinner"></div>
+                    Loading competitions...
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div class="calendar-view hidden" id="calendarView">
+            <div class="calendar-header">
+                <h2 class="calendar-title">This Week's Events</h2>
+                <div class="week-range" id="weekRange">Loading...</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Days will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2 class="settings-title">Dashboard Settings</h2>
+            <button class="close-btn" id="closeSettings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3>Sports</h3>
+                <div class="checkbox-group" id="sportsToggles">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-football" checked>
+                        <label for="toggle-football">⚽ Football</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-golf" checked>
+                        <label for="toggle-golf">🏌️ Golf</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-tennis" checked>
+                        <label for="toggle-tennis">🎾 Tennis</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-f1" checked>
+                        <label for="toggle-f1">🏎️ Formula 1</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-chess" checked>
+                        <label for="toggle-chess">♟️ Chess</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-esports" checked>
+                        <label for="toggle-esports">🎮 Esports</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Football Leagues</h3>
+                <div class="checkbox-group" id="footballToggles">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-premier-league" checked>
+                        <label for="toggle-premier-league">Premier League</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-eliteserien" checked>
+                        <label for="toggle-eliteserien">Eliteserien</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-la-liga" checked>
+                        <label for="toggle-la-liga">La Liga</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-serie-a" checked>
+                        <label for="toggle-serie-a">Serie A</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-bundesliga" checked>
+                        <label for="toggle-bundesliga">Bundesliga</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-ligue-1" checked>
+                        <label for="toggle-ligue-1">Ligue 1</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Golf Tours</h3>
+                <div class="checkbox-group" id="golfToggles">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-pga-tour" checked>
+                        <label for="toggle-pga-tour">PGA Tour</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-dp-world-tour" checked>
+                        <label for="toggle-dp-world-tour">DP World Tour</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Tennis Tours</h3>
+                <div class="checkbox-group" id="tennisToggles">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-atp-tour" checked>
+                        <label for="toggle-atp-tour">ATP Tour</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="toggle-wta-tour" checked>
+                        <label for="toggle-wta-tour">WTA Tour</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Streaming Preferences</h3>
+                <div class="checkbox-group" id="streamingToggles">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show-streaming-only">
+                        <label for="show-streaming-only">Only show events with streaming info</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="norway-priority" checked>
+                        <label for="norway-priority">Prioritize Norwegian platforms</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sports-api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
 </html>

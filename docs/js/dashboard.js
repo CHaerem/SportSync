@@ -1,0 +1,575 @@
+// Dashboard controller for SportSync with tournament support and calendar view
+class SportsDashboard {
+    constructor() {
+        this.api = new SportsAPI();
+        this.lastUpdate = new Date();
+        this.currentView = 'sports'; // 'sports' or 'calendar'
+        this.filters = {
+            time: 'all',
+            focus: 'all',
+            sports: new Set(['football', 'golf', 'tennis', 'f1', 'chess', 'esports']),
+            tournaments: new Set([
+                'Premier League', 'Eliteserien', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1',
+                'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour'
+            ]),
+            streamingOnly: false,
+            norwayPriority: true
+        };
+        this.allSportsData = null;
+        this.init();
+    }
+
+    async init() {
+        this.setupViewToggle();
+        this.setupFilters();
+        this.setupSettings();
+        await this.updateLastUpdatedTime();
+        await this.loadSportsView();
+        
+        // Refresh data every 30 minutes
+        setInterval(() => {
+            this.refreshCurrentView();
+            this.updateLastUpdatedTime();
+        }, 30 * 60 * 1000);
+    }
+
+    setupViewToggle() {
+        const sportsBtn = document.getElementById('sportsViewBtn');
+        const calendarBtn = document.getElementById('calendarViewBtn');
+        const sportsView = document.getElementById('sportsView');
+        const calendarView = document.getElementById('calendarView');
+
+        sportsBtn.addEventListener('click', () => {
+            if (this.currentView !== 'sports') {
+                this.currentView = 'sports';
+                sportsBtn.classList.add('active');
+                calendarBtn.classList.remove('active');
+                sportsView.classList.remove('hidden');
+                calendarView.classList.add('hidden');
+                this.loadSportsView();
+            }
+        });
+
+        calendarBtn.addEventListener('click', () => {
+            if (this.currentView !== 'calendar') {
+                this.currentView = 'calendar';
+                calendarBtn.classList.add('active');
+                sportsBtn.classList.remove('active');
+                calendarView.classList.remove('hidden');
+                sportsView.classList.add('hidden');
+                this.loadCalendarView();
+            }
+        });
+    }
+
+    setupFilters() {
+        // Time filter
+        const timeFilter = document.getElementById('timeFilter');
+        timeFilter.addEventListener('change', (e) => {
+            this.filters.time = e.target.value;
+            this.applyFilters();
+        });
+
+        // Focus filter
+        const focusFilter = document.getElementById('focusFilter');
+        focusFilter.addEventListener('change', (e) => {
+            this.filters.focus = e.target.value;
+            this.applyFilters();
+        });
+    }
+
+    setupSettings() {
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        const closeSettings = document.getElementById('closeSettings');
+
+        // Open settings
+        settingsBtn.addEventListener('click', () => {
+            settingsPanel.classList.add('open');
+            settingsOverlay.classList.add('open');
+        });
+
+        // Close settings
+        const closeSettingsPanel = () => {
+            settingsPanel.classList.remove('open');
+            settingsOverlay.classList.remove('open');
+        };
+
+        closeSettings.addEventListener('click', closeSettingsPanel);
+        settingsOverlay.addEventListener('click', closeSettingsPanel);
+
+        // Setup sports toggles
+        ['football', 'golf', 'tennis', 'f1', 'chess', 'esports'].forEach(sport => {
+            const checkbox = document.getElementById(`toggle-${sport}`);
+            checkbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    this.filters.sports.add(sport);
+                } else {
+                    this.filters.sports.delete(sport);
+                }
+                this.applyFilters();
+            });
+        });
+
+        // Setup tournament toggles
+        const tournaments = [
+            'premier-league', 'eliteserien', 'la-liga', 'serie-a', 'bundesliga', 'ligue-1',
+            'pga-tour', 'dp-world-tour', 'atp-tour', 'wta-tour'
+        ];
+        
+        const tournamentNames = {
+            'premier-league': 'Premier League',
+            'eliteserien': 'Eliteserien',
+            'la-liga': 'La Liga',
+            'serie-a': 'Serie A',
+            'bundesliga': 'Bundesliga',
+            'ligue-1': 'Ligue 1',
+            'pga-tour': 'PGA Tour',
+            'dp-world-tour': 'DP World Tour',
+            'atp-tour': 'ATP Tour',
+            'wta-tour': 'WTA Tour'
+        };
+
+        tournaments.forEach(tournament => {
+            const checkbox = document.getElementById(`toggle-${tournament}`);
+            if (checkbox) {
+                checkbox.addEventListener('change', (e) => {
+                    const tournamentName = tournamentNames[tournament];
+                    if (e.target.checked) {
+                        this.filters.tournaments.add(tournamentName);
+                    } else {
+                        this.filters.tournaments.delete(tournamentName);
+                    }
+                    this.applyFilters();
+                });
+            }
+        });
+
+        // Setup streaming preferences
+        const streamingOnly = document.getElementById('show-streaming-only');
+        streamingOnly.addEventListener('change', (e) => {
+            this.filters.streamingOnly = e.target.checked;
+            this.applyFilters();
+        });
+
+        const norwayPriority = document.getElementById('norway-priority');
+        norwayPriority.addEventListener('change', (e) => {
+            this.filters.norwayPriority = e.target.checked;
+            this.applyFilters();
+        });
+    }
+
+    applyFilters() {
+        if (!this.allSportsData) return;
+
+        if (this.currentView === 'sports') {
+            this.renderFilteredSportsView();
+        } else if (this.currentView === 'calendar') {
+            this.loadCalendarView();
+        }
+    }
+
+    async updateLastUpdatedTime() {
+        try {
+            // Try to get the last update time from GitHub Actions
+            const metaResponse = await fetch('data/meta.json');
+            if (metaResponse.ok) {
+                const meta = await metaResponse.json();
+                const lastUpdate = new Date(meta.lastUpdate);
+                const timeString = lastUpdate.toLocaleTimeString('en-NO', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'Europe/Oslo'
+                });
+                const dateString = lastUpdate.toLocaleDateString('en-NO', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    timeZone: 'Europe/Oslo'
+                });
+                
+                document.getElementById('lastUpdate').textContent = `${dateString} at ${timeString} (CEST) via GitHub Actions`;
+                return;
+            }
+        } catch (error) {
+            console.log('No metadata available, using current time');
+        }
+        
+        // Fallback to current time
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-NO', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Oslo'
+        });
+        const dateString = now.toLocaleDateString('en-NO', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'Europe/Oslo'
+        });
+        
+        document.getElementById('lastUpdate').textContent = `${dateString} at ${timeString} (CEST)`;
+        this.lastUpdate = now;
+    }
+
+    async loadSportsView() {
+        const sports = [
+            { id: 'football', method: 'fetchFootballEvents', name: 'Football' },
+            { id: 'golf', method: 'fetchGolfEvents', name: 'Golf' },
+            { id: 'tennis', method: 'fetchTennisEvents', name: 'Tennis' },
+            { id: 'f1', method: 'fetchF1Events', name: 'Formula 1' },
+            { id: 'chess', method: 'fetchChessEvents', name: 'Chess' },
+            { id: 'esports', method: 'fetchEsportsEvents', name: 'Esports' }
+        ];
+
+        // Load all sports data and store for filtering
+        const promises = sports.map(async sport => {
+            try {
+                const tournaments = await this.api[sport.method]();
+                return { ...sport, tournaments };
+            } catch (error) {
+                console.error(`Error loading ${sport.name}:`, error);
+                return { ...sport, tournaments: [] };
+            }
+        });
+
+        this.allSportsData = await Promise.all(promises);
+        this.renderFilteredSportsView();
+    }
+
+    renderFilteredSportsView() {
+        if (!this.allSportsData) return;
+
+        this.allSportsData.forEach(sport => {
+            const container = document.getElementById(`${sport.id}-content`);
+            if (!this.filters.sports.has(sport.id)) {
+                // Hide the entire sport card
+                container.closest('.sport-card').style.display = 'none';
+                return;
+            } else {
+                container.closest('.sport-card').style.display = 'block';
+            }
+
+            const filteredTournaments = this.filterTournaments(sport.tournaments);
+            this.renderTournaments(container, filteredTournaments, sport.name);
+        });
+    }
+
+    filterTournaments(tournaments) {
+        return tournaments.filter(tournament => {
+            // Tournament filter
+            if (!this.filters.tournaments.has(tournament.tournament)) {
+                return false;
+            }
+
+            // Filter events within tournament
+            tournament.events = tournament.events.filter(event => {
+                // Time filter
+                if (!this.passesTimeFilter(event)) return false;
+                
+                // Focus filter
+                if (!this.passesFocusFilter(event)) return false;
+                
+                // Streaming only filter
+                if (this.filters.streamingOnly && (!event.streaming || event.streaming.length === 0)) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            return tournament.events.length > 0;
+        });
+    }
+
+    passesTimeFilter(event) {
+        if (this.filters.time === 'all') return true;
+        
+        const eventDate = new Date(event.time);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const weekEnd = new Date(today);
+        weekEnd.setDate(weekEnd.getDate() + 7);
+
+        switch (this.filters.time) {
+            case 'today':
+                return eventDate >= today && eventDate < tomorrow;
+            case 'tomorrow':
+                const dayAfterTomorrow = new Date(tomorrow);
+                dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+                return eventDate >= tomorrow && eventDate < dayAfterTomorrow;
+            case 'week':
+                return eventDate >= today && eventDate < weekEnd;
+            default:
+                return true;
+        }
+    }
+
+    passesFocusFilter(event) {
+        switch (this.filters.focus) {
+            case 'all':
+                return true;
+            case 'norway':
+                return event.norwegian === true;
+            case 'streaming':
+                return event.streaming && event.streaming.length > 0;
+            default:
+                return true;
+        }
+    }
+
+    async loadCalendarView() {
+        const calendarGrid = document.getElementById('calendarGrid');
+        const weekRange = document.getElementById('weekRange');
+        
+        // Show loading state
+        calendarGrid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading weekly calendar...</div>';
+        
+        try {
+            const weeklyEvents = await this.api.getAllEventsForWeek();
+            this.renderCalendarGrid(weeklyEvents);
+            this.updateWeekRange();
+        } catch (error) {
+            console.error('Error loading calendar view:', error);
+            calendarGrid.innerHTML = '<div style="text-align: center; padding: 40px; color: #e53e3e;">Error loading calendar data</div>';
+        }
+    }
+
+    renderCalendarGrid(weeklyEvents) {
+        const calendarGrid = document.getElementById('calendarGrid');
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const today = new Date();
+        
+        // Get dates for the week starting from today
+        const weekDates = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            weekDates.push(date);
+        }
+
+        const dayColumns = weekDates.map((date, index) => {
+            const dateKey = date.toISOString().split('T')[0];
+            const dayName = date.toLocaleDateString('en-NO', { weekday: 'long' });
+            const dayNumber = date.getDate();
+            const monthName = date.toLocaleDateString('en-NO', { month: 'short' });
+            const isToday = dateKey === today.toISOString().split('T')[0];
+            
+            const dayEvents = weeklyEvents[dateKey]?.events || [];
+            
+            const eventsHtml = dayEvents.map(event => `
+                <div class="calendar-event ${event.sport}">
+                    <div class="calendar-event-time">${event.timeFormatted || 'TBD'}</div>
+                    <div class="calendar-event-title">${this.escapeHtml(event.title)}</div>
+                    <div class="calendar-event-meta">${this.escapeHtml(event.tournament || event.meta)}</div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="day-column">
+                    <div class="day-header ${isToday ? 'today' : ''}">
+                        <div>${dayName}</div>
+                        <div>${monthName} ${dayNumber}</div>
+                    </div>
+                    <div class="day-events">
+                        ${eventsHtml || '<div style="text-align: center; color: #a0aec0; font-size: 0.8rem; padding: 20px;">No events</div>'}
+                    </div>
+                </div>
+            `;
+        });
+
+        calendarGrid.innerHTML = dayColumns.join('');
+    }
+
+    updateWeekRange() {
+        const weekRange = document.getElementById('weekRange');
+        const today = new Date();
+        const weekEnd = new Date(today);
+        weekEnd.setDate(today.getDate() + 6);
+        
+        const startString = today.toLocaleDateString('en-NO', {
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'Europe/Oslo'
+        });
+        
+        const endString = weekEnd.toLocaleDateString('en-NO', {
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'Europe/Oslo'
+        });
+        
+        weekRange.textContent = `${startString} - ${endString}`;
+    }
+
+    // Legacy method - now handled by loadSportsView and filtering
+    async loadSportTournaments(sportId, methodName, sportName) {
+        // This method is now handled by the filtering system
+        return;
+    }
+
+    renderTournaments(container, tournaments, sportName) {
+        if (!tournaments || tournaments.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #718096;">
+                    No upcoming ${sportName.toLowerCase()} events found
+                </div>
+            `;
+            return;
+        }
+
+        const tournamentsHtml = tournaments.map(tournament => {
+            const eventsHtml = tournament.events.map(event => {
+                const streamingHtml = this.renderStreamingInfo(event.streaming);
+                
+                return `
+                    <div class="event-item">
+                        <div class="event-details">
+                            <div class="event-title">${this.escapeHtml(event.title)}</div>
+                            <div class="event-meta">
+                                ${event.venue ? `📍 ${this.escapeHtml(event.venue)} • ` : ''}
+                                ${this.escapeHtml(event.meta)}
+                                ${event.norwegian ? ' • 🇳🇴' : ''}
+                            </div>
+                            ${streamingHtml}
+                        </div>
+                        <div class="event-time">${this.escapeHtml(event.time)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="tournament-section">
+                    <div class="tournament-header">${this.escapeHtml(tournament.tournament)}</div>
+                    <div class="event-list">${eventsHtml}</div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = tournamentsHtml;
+    }
+
+    renderStreamingInfo(streaming) {
+        if (!streaming || streaming.length === 0) {
+            return '';
+        }
+
+        // Sort streaming platforms with Norwegian platforms first if priority is enabled
+        let sortedStreaming = [...streaming];
+        if (this.filters.norwayPriority) {
+            const norwegianPlatforms = ['tv2', 'viaplay', 'discovery', 'nrk'];
+            sortedStreaming.sort((a, b) => {
+                const aIsNorwegian = norwegianPlatforms.includes(a.type);
+                const bIsNorwegian = norwegianPlatforms.includes(b.type);
+                if (aIsNorwegian && !bIsNorwegian) return -1;
+                if (!aIsNorwegian && bIsNorwegian) return 1;
+                return 0;
+            });
+        }
+
+        const streamingBadges = sortedStreaming.map(stream => {
+            const url = stream.url ? `href="${stream.url}" target="_blank"` : '';
+            const tag = url ? 'a' : 'span';
+            
+            return `<${tag} class="streaming-platform ${stream.type}" ${url}>
+                ${this.escapeHtml(stream.platform)}
+            </${tag}>`;
+        }).join('');
+
+        return `<div class="event-streaming">${streamingBadges}</div>`;
+    }
+
+    renderError(container, message) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #e53e3e;">
+                ⚠️ ${this.escapeHtml(message)}
+                <br><small style="color: #718096; margin-top: 8px; display: block;">
+                    Showing cached data if available
+                </small>
+            </div>
+        `;
+    }
+
+    escapeHtml(unsafe) {
+        if (typeof unsafe !== 'string') return '';
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Method to manually refresh current view
+    async refreshCurrentView() {
+        if (this.currentView === 'sports') {
+            // Show loading state for sports cards
+            const sportIds = ['football', 'golf', 'tennis', 'f1', 'chess', 'esports'];
+            sportIds.forEach(id => {
+                const container = document.getElementById(`${id}-content`);
+                if (container && this.filters.sports.has(id)) {
+                    container.innerHTML = `
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Refreshing...
+                        </div>
+                    `;
+                }
+            });
+            
+            await this.loadSportsView();
+        } else if (this.currentView === 'calendar') {
+            await this.loadCalendarView();
+        }
+    }
+
+    // Method to manually refresh data
+    async refresh() {
+        await this.refreshCurrentView();
+        await this.updateLastUpdatedTime();
+    }
+
+    // Method to get Norwegian time for events
+    formatTimeForNorway(utcTime) {
+        if (!utcTime) return 'TBD';
+        
+        const date = new Date(utcTime);
+        return date.toLocaleString('en-NO', {
+            timeZone: 'Europe/Oslo',
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+}
+
+// Initialize dashboard when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.sportsDashboard = new SportsDashboard();
+});
+
+// Add keyboard shortcut for manual refresh (Ctrl+R or Cmd+R)
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        e.preventDefault();
+        if (window.sportsDashboard) {
+            window.sportsDashboard.refresh();
+        }
+    }
+});
+
+// Add service worker registration for offline support (future enhancement)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // Register service worker when available
+        // navigator.serviceWorker.register('/sw.js');
+    });
+}
