@@ -172,8 +172,16 @@ class SportsDashboard {
 
     async updateLastUpdatedTime() {
         try {
-            // Try to get the last update time from GitHub Actions
-            const metaResponse = await fetch('data/meta.json');
+            // Try to get the last update time from GitHub Actions with cache busting
+            const cacheBuster = new Date().getTime();
+            const metaResponse = await fetch(`data/meta.json?v=${cacheBuster}`, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
             if (metaResponse.ok) {
                 const meta = await metaResponse.json();
                 const lastUpdate = new Date(meta.lastUpdate);

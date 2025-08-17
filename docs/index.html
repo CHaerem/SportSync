@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>SportSync — Your Personal Sports Dashboard</title>
     <style>
         * {
@@ -828,5 +831,30 @@
 
     <script src="js/sports-api.js"></script>
     <script src="js/dashboard.js"></script>
+    
+    <script>
+        // Register service worker for better cache control
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/SportSync/sw.js');
+                    console.log('SportSync: Service Worker registered successfully:', registration.scope);
+                    
+                    // Listen for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('SportSync: New service worker available');
+                                // Optionally notify user of update
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.log('SportSync: Service Worker registration failed:', error);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
