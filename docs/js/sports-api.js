@@ -220,7 +220,11 @@ class SportsAPI {
                 meta: event.meta,
                 time: this.formatDateTime(event.time),
                 venue: event.venue,
-                sport: event.sport || 'unknown'
+                sport: event.sport || 'unknown',
+                streaming: event.streaming || [],
+                norwegian: event.norwegian || false,
+                homeTeam: event.homeTeam,
+                awayTeam: event.awayTeam
             }))
         }));
     }
