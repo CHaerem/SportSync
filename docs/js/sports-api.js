@@ -218,7 +218,8 @@ class SportsAPI {
             events: tournament.events.map(event => ({
                 title: event.title,
                 meta: event.meta,
-                time: this.formatDateTime(event.time),
+                time: event.time, // Keep original timestamp for calendar view
+                timeFormatted: this.formatDateTime(event.time), // Add formatted version for display
                 venue: event.venue,
                 sport: event.sport || 'unknown',
                 streaming: event.streaming || [],
@@ -234,6 +235,7 @@ class SportsAPI {
             title: `${event.strHomeTeam} vs ${event.strAwayTeam}`,
             meta: event.strLeague || 'Football',
             time: event.dateEvent,
+            timeFormatted: this.formatDateTime(event.dateEvent),
             venue: event.strVenue,
             homeTeam: event.strHomeTeam,
             awayTeam: event.strAwayTeam,
@@ -247,6 +249,7 @@ class SportsAPI {
             title: event.name || 'Golf Tournament',
             meta: event.shortName || 'Golf',
             time: event.date,
+            timeFormatted: this.formatDateTime(event.date),
             venue: event.competitions?.[0]?.venue?.fullName || 'TBD',
             sport: 'golf'
         }));
@@ -257,6 +260,7 @@ class SportsAPI {
             title: `${event.strPlayer || 'Player'} vs ${event.strPlayer2 || 'Player'}`,
             meta: event.strLeague || 'Tennis',
             time: event.dateEvent,
+            timeFormatted: this.formatDateTime(event.dateEvent),
             venue: event.strVenue,
             sport: 'tennis'
         }));
@@ -267,6 +271,7 @@ class SportsAPI {
             title: event.name || 'F1 Race',
             meta: event.shortName || 'Formula 1',
             time: event.date,
+            timeFormatted: this.formatDateTime(event.date),
             venue: event.competitions?.[0]?.venue?.fullName || 'TBD',
             sport: 'formula1'
         }));

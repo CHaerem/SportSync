@@ -439,7 +439,7 @@ class SportsDashboard {
                             </div>
                             ${streamingHtml}
                         </div>
-                        <div class="event-time">${this.escapeHtml(event.time)}</div>
+                        <div class="event-time">${this.escapeHtml(event.timeFormatted || event.time)}</div>
                     </div>
                 `;
             }).join('');
