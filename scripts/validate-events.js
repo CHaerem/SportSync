@@ -23,7 +23,7 @@ if (!Array.isArray(events)) {
 }
 
 let errors = 0;
-const now = Date.now() - 2 * 60 * 1000; // allow tiny grace window
+const now = Date.now() - GRACE_WINDOW_MS; // allow tiny grace window
 const seenKeys = new Set();
 for (const ev of events) {
 	const key = ev.sport + ev.tournament + ev.title + ev.time;
