@@ -629,7 +629,8 @@ class SportsDashboard {
                     lastUpdated: footballMeta.lastUpdated,
                     status: 'active',
                     description: 'Premier League, La Liga, and international football matches',
-                    dataFile: '/SportSync/data/football.json'
+                    dataFile: '/SportSync/data/football.json',
+                    rawData: footballMeta
                 },
                 {
                     name: 'Golf Tournaments',
@@ -639,7 +640,8 @@ class SportsDashboard {
                     lastUpdated: golfMeta.lastUpdated,
                     status: 'active',
                     description: 'PGA Tour and DP World Tour events',
-                    dataFile: '/SportSync/data/golf.json'
+                    dataFile: '/SportSync/data/golf.json',
+                    rawData: golfMeta
                 },
                 {
                     name: 'Tennis Events',
@@ -649,7 +651,8 @@ class SportsDashboard {
                     lastUpdated: tennisMeta.lastUpdated,
                     status: 'active',
                     description: 'ATP and WTA tournaments with Casper Ruud focus',
-                    dataFile: '/SportSync/data/tennis.json'
+                    dataFile: '/SportSync/data/tennis.json',
+                    rawData: tennisMeta
                 },
                 {
                     name: 'Formula 1',
@@ -659,7 +662,8 @@ class SportsDashboard {
                     lastUpdated: f1Meta.lastUpdated,
                     status: 'active',
                     description: 'F1 race calendar and upcoming Grand Prix',
-                    dataFile: '/SportSync/data/f1.json'
+                    dataFile: '/SportSync/data/f1.json',
+                    rawData: f1Meta
                 },
                 {
                     name: 'Chess Tournaments',
@@ -669,7 +673,8 @@ class SportsDashboard {
                     lastUpdated: chessMeta.lastUpdated,
                     status: 'active',
                     description: 'Major chess tournaments with Magnus Carlsen',
-                    dataFile: '/SportSync/data/chess.json'
+                    dataFile: '/SportSync/data/chess.json',
+                    rawData: chessMeta
                 },
                 {
                     name: 'CS2 Esports',
@@ -679,14 +684,18 @@ class SportsDashboard {
                     lastUpdated: esportsMeta.lastUpdated,
                     status: 'active',
                     description: 'Counter-Strike 2 matches featuring FaZe Clan and rain',
-                    dataFile: '/SportSync/data/esports.json'
+                    dataFile: '/SportSync/data/esports.json',
+                    rawData: esportsMeta
                 }
             ];
 
-            const html = apiSources.map(source => {
+            const html = apiSources.map((source, index) => {
                 const lastUpdateTime = source.lastUpdated ? 
                     new Date(source.lastUpdated).toLocaleString('en-NO', { timeZone: 'Europe/Oslo' }) : 
                     'Unknown';
+
+                // Get the raw data for debugging
+                const rawData = source.rawData ? this.formatJsonForDisplay(JSON.stringify(source.rawData, null, 2)) : 'No raw data available';
 
                 return `
                     <div class="api-source-card">
@@ -719,6 +728,15 @@ class SportsDashboard {
                             <div class="api-detail-label">Data File</div>
                             <div class="api-endpoint"><a href="${source.dataFile}" target="_blank" style="color: #4a5568; text-decoration: none;">${source.dataFile}</a></div>
                         </div>
+                        <div class="raw-data-section">
+                            <button class="raw-data-toggle" onclick="window.sportsDashboard.toggleRawData(${index})">
+                                <span class="toggle-icon" id="toggle-icon-${index}">▶</span>
+                                Raw JSON Data (Debug)
+                            </button>
+                            <div class="raw-data-content" id="raw-data-${index}">
+                                <pre class="json-data">${rawData}</pre>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -733,6 +751,42 @@ class SportsDashboard {
                 </div>
             `;
         }
+    }
+
+    toggleRawData(index) {
+        const content = document.getElementById(`raw-data-${index}`);
+        const toggle = document.querySelector(`button[onclick="window.sportsDashboard.toggleRawData(${index})"]`);
+        const icon = document.getElementById(`toggle-icon-${index}`);
+        
+        if (content.classList.contains('expanded')) {
+            content.classList.remove('expanded');
+            toggle.classList.remove('expanded');
+            icon.textContent = '▶';
+        } else {
+            content.classList.add('expanded');
+            toggle.classList.add('expanded');
+            icon.textContent = '▼';
+        }
+    }
+
+    formatJsonForDisplay(jsonString) {
+        // Simple JSON syntax highlighting
+        return jsonString
+            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
     }
 }
 

@@ -524,6 +524,82 @@
             word-break: break-all;
         }
 
+        .raw-data-section {
+            margin-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+        }
+
+        .raw-data-toggle {
+            background: none;
+            border: 1px solid #cbd5e0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .raw-data-toggle:hover {
+            background: #f7fafc;
+            border-color: #a0aec0;
+        }
+
+        .raw-data-toggle.expanded {
+            background: #edf2f7;
+            border-color: #718096;
+        }
+
+        .raw-data-content {
+            display: none;
+            margin-top: 12px;
+            background: #1a202c;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .raw-data-content.expanded {
+            display: block;
+        }
+
+        .json-data {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .json-key {
+            color: #90cdf4;
+        }
+
+        .json-string {
+            color: #68d391;
+        }
+
+        .json-number {
+            color: #fbb6ce;
+        }
+
+        .json-boolean {
+            color: #f6ad55;
+        }
+
+        .json-null {
+            color: #a0aec0;
+        }
+
         .calendar-header {
             text-align: center;
             margin-bottom: 24px;
