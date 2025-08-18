@@ -39,7 +39,7 @@ SportSync follows the **CALM principle** - designed to be:
 
 ## 🚀 Live Demo
 
-Visit your dashboard at: `https://yourusername.github.io/SportSync/`
+Visit your dashboard at: `https://CHaerem.github.io/SportSync/`
 
 ## 📱 Sports Covered
 
