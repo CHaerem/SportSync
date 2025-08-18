@@ -68,155 +68,101 @@ class SportsAPI {
     // Golf events - multiple tours support
     async fetchGolfEvents() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/golf.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached golf data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching golf data from /SportSync/data/golf.json');
+            const response = await fetch('/SportSync/data/golf.json');
+            console.log('Golf response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Golf data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached golf data, trying live API...');
-        }
-        
-        try {
-            // Fetch PGA Tour and DP World Tour data
-            const tours = [
-                { url: 'http://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard', name: 'PGA Tour' },
-                { url: 'http://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard', name: 'DP World Tour' }
-            ];
-
-            const promises = tours.map(async tour => {
-                try {
-                    const response = await fetch(tour.url);
-                    const data = await response.json();
-                    
-                    return {
-                        tournament: tour.name,
-                        events: this.formatGolfEvents(data.events || [])
-                    };
-                } catch (error) {
-                    console.warn(`Error fetching ${tour.name}:`, error);
-                    return { tournament: tour.name, events: [] };
-                }
-            });
-
-            const results = await Promise.all(promises);
-            return results.filter(tour => tour.events.length > 0);
-        } catch (error) {
-            console.error('Error fetching golf events:', error);
-            return this.getMockGolfTournaments();
+            console.error('Error loading golf data:', error);
+            return []; // Return empty array
         }
     }
 
     // Tennis events - multiple tour support
     async fetchTennisEvents() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/tennis.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached tennis data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching tennis data from /SportSync/data/tennis.json');
+            const response = await fetch('/SportSync/data/tennis.json');
+            console.log('Tennis response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Tennis data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached tennis data, trying live API...');
-        }
-        
-        try {
-            // ATP and WTA events
-            const tours = [
-                { id: '4424', name: 'ATP Tour' },
-                { id: '4425', name: 'WTA Tour' }
-            ];
-
-            const promises = tours.map(async tour => {
-                try {
-                    const response = await fetch(
-                        `https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${tour.id}`
-                    );
-                    const data = await response.json();
-                    
-                    return {
-                        tournament: tour.name,
-                        events: this.formatTennisEvents(data.events || [])
-                    };
-                } catch (error) {
-                    console.warn(`Error fetching ${tour.name}:`, error);
-                    return { tournament: tour.name, events: [] };
-                }
-            });
-
-            const results = await Promise.all(promises);
-            return results.filter(tour => tour.events.length > 0);
-        } catch (error) {
-            console.error('Error fetching tennis events:', error);
-            return this.getMockTennisTournaments();
+            console.error('Error loading tennis data:', error);
+            return []; // Return empty array
         }
     }
 
     // Formula 1 events - sessions breakdown
     async fetchF1Events() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/f1.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached F1 data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching F1 data from /SportSync/data/f1.json');
+            const response = await fetch('/SportSync/data/f1.json');
+            console.log('F1 response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('F1 data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached F1 data, trying live API...');
-        }
-        
-        try {
-            const response = await fetch(
-                'http://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard'
-            );
-            const data = await response.json();
-            
-            return [{
-                tournament: 'Formula 1 2025',
-                events: this.formatF1Events(data.events || [])
-            }];
-        } catch (error) {
-            console.error('Error fetching F1 events:', error);
-            return this.getMockF1Tournaments();
+            console.error('Error loading F1 data:', error);
+            return []; // Return empty array
         }
     }
 
     // Chess events - tournament categories
     async fetchChessEvents() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/chess.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached chess data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching chess data from /SportSync/data/chess.json');
+            const response = await fetch('/SportSync/data/chess.json');
+            console.log('Chess response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Chess data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached chess data, using fallback...');
+            console.error('Error loading chess data:', error);
+            return []; // Return empty array
         }
-        
-        return this.getMockChessTournaments();
     }
 
     // Esports events - game categories
     async fetchEsportsEvents() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/esports.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached esports data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching esports data from /SportSync/data/esports.json');
+            const response = await fetch('/SportSync/data/esports.json');
+            console.log('Esports response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Esports data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached esports data, using fallback...');
+            console.error('Error loading esports data:', error);
+            return []; // Return empty array
         }
-        
-        return this.getMockEsportsTournaments();
     }
 
     // Format helpers
