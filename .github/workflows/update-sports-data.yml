@@ -432,22 +432,40 @@ jobs:
                 const data = await response.json();
                 
                 if (data.events && data.events.length > 0) {
-                  const events = data.events.slice(0, 4).map(event => ({
-                    title: event.name || 'Golf Tournament',
-                    meta: tour.name,
-                    time: event.date || new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
-                    venue: event.competitions?.[0]?.venue?.fullName || event.competitions?.[0]?.venue?.address?.city || 'TBD',
-                    sport: 'golf',
-                    streaming: getGolfStreamingInfo(tour.name),
-                    norwegian: false
-                  }));
+                  // Filter for upcoming tournaments only (not completed ones)
+                  const now = new Date();
+                  const cutoffTime = new Date(now.getTime() - 4 * 60 * 60 * 1000); // 4 hours ago for golf tournaments
                   
-                  tournaments.push({
-                    name: tour.name,
-                    events: events
+                  const upcomingEvents = data.events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    const isUpcoming = eventDate > cutoffTime;
+                    const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
+                    console.log(\`Golf event \${event.name}: \${event.date}, status: \${event.status?.type?.name}, \${isUpcoming && isNotFinal ? 'INCLUDED' : 'FILTERED OUT'}\`);
+                    return isUpcoming && isNotFinal;
                   });
                   
-                  console.log(\`Found \${events.length} \${tour.name} events\`);
+                  console.log(\`\${tour.name}: Filtered \${data.events.length} events to \${upcomingEvents.length} upcoming events\`);
+                  
+                  if (upcomingEvents.length > 0) {
+                    const events = upcomingEvents.slice(0, 4).map(event => ({
+                      title: event.name || 'Golf Tournament',
+                      meta: tour.name,
+                      time: event.date || new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
+                      venue: event.competitions?.[0]?.venue?.fullName || event.competitions?.[0]?.venue?.address?.city || 'TBD',
+                      sport: 'golf',
+                      streaming: getGolfStreamingInfo(tour.name),
+                      norwegian: false
+                    }));
+                  
+                    tournaments.push({
+                      name: tour.name,
+                      events: events
+                    });
+                    
+                    console.log(\`Found \${events.length} \${tour.name} events\`);
+                  } else {
+                    console.log(\`No upcoming events found for \${tour.name} after filtering\`);
+                  }
                 } else {
                   console.log(\`No events found for \${tour.name}\`);
                 }
@@ -540,10 +558,13 @@ jobs:
                 const now = new Date();
                 const cutoffTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago for tennis
                 
-                // Filter for upcoming events
+                // Filter for upcoming events (not completed ones)
                 const upcomingEvents = data.events.filter(event => {
                   const eventDate = new Date(event.date);
-                  return eventDate > cutoffTime;
+                  const isUpcoming = eventDate > cutoffTime;
+                  const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
+                  console.log(\`Tennis event \${event.competitions?.[0]?.competitors?.[0]?.athlete?.displayName || 'Unknown'} vs \${event.competitions?.[0]?.competitors?.[1]?.athlete?.displayName || 'Unknown'}: \${event.date}, status: \${event.status?.type?.name}, \${isUpcoming && isNotFinal ? 'INCLUDED' : 'FILTERED OUT'}\`);
+                  return isUpcoming && isNotFinal;
                 });
                 
                 console.log(\`Filtered \${data.events.length} total tennis events to \${upcomingEvents.length} upcoming events\`);
