@@ -490,25 +490,8 @@ jobs:
             console.error('Error fetching golf data:', error);
             const fallback = {
               lastUpdated: new Date().toISOString(),
-              source: 'fallback',
-              tournaments: [
-                {
-                  name: 'PGA Tour',
-                  events: [
-                    {
-                      title: 'The Players Championship',
-                      meta: 'PGA Tour',
-                      time: new Date(Date.now() + 172800000).toISOString(),
-                      venue: 'TPC Sawgrass',
-                      sport: 'golf',
-                      streaming: [
-                        { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
-                      ],
-                      norwegian: false
-                    }
-                  ]
-                }
-              ]
+              source: 'ESPN Golf API - no current tournaments',
+              tournaments: []
             };
             require('fs').writeFileSync('docs/data/golf.json', JSON.stringify(fallback, null, 2));
           }
@@ -621,32 +604,8 @@ jobs:
               console.error('Error fetching ATP data:', error.message);
             }
             
-            // Add WTA tournament data
-            tournaments.push({
-              name: 'WTA 1000',
-              events: [
-                {
-                  title: 'Iga Swiatek vs Aryna Sabalenka',
-                  meta: 'WTA 1000 - Cincinnati',
-                  time: new Date(Date.now() + 345600000).toISOString(), // +4 days
-                  venue: 'Lindner Family Tennis Center, Cincinnati',
-                  sport: 'tennis',
-                  streaming: getTennisStreamingInfo('WTA Tour'),
-                  norwegian: false
-                },
-                {
-                  title: 'Coco Gauff vs Jessica Pegula',
-                  meta: 'US Open - Quarterfinals',
-                  time: new Date(Date.now() + 604800000).toISOString(), // +7 days
-                  venue: 'USTA Billie Jean King National Tennis Center',
-                  sport: 'tennis',
-                  streaming: getTennisStreamingInfo('WTA Tour'),
-                  norwegian: false
-                }
-              ]
-            });
-            
-            console.log('Created WTA tournament events');
+            // Note: WTA data would be fetched from real API when available
+            console.log('WTA data: Using ATP data only - no WTA API integration yet');
             
             const result = {
               lastUpdated: new Date().toISOString(),
@@ -663,25 +622,8 @@ jobs:
             console.error('Error fetching tennis data:', error);
             const fallback = {
               lastUpdated: new Date().toISOString(),
-              source: 'fallback',
-              tournaments: [
-                {
-                  name: 'ATP Tour',
-                  events: [
-                    {
-                      title: 'Casper Ruud vs Novak Djokovic',
-                      meta: 'ATP Masters 1000',
-                      time: new Date(Date.now() + 86400000).toISOString(),
-                      venue: 'Indian Wells',
-                      sport: 'tennis',
-                      streaming: [
-                        { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
-                      ],
-                      norwegian: true
-                    }
-                  ]
-                }
-              ]
+              source: 'ESPN Tennis API - no current tournaments',
+              tournaments: []
             };
             require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(fallback, null, 2));
           }
@@ -836,45 +778,8 @@ jobs:
               const futureDate = new Date(currentDate);
               futureDate.setMonth(futureDate.getMonth() + 3);
               
-              // Create realistic upcoming chess events
-              tournaments.push({
-                name: 'World Chess Championship',
-                events: [
-                  {
-                    title: 'Magnus Carlsen vs Ding Liren',
-                    meta: 'World Championship - Game 3',
-                    time: new Date(Date.now() + 259200000).toISOString(), // +3 days
-                    venue: 'Singapore',
-                    sport: 'chess',
-                    streaming: getChessStreamingInfo('FIDE Grand Prix'),
-                    norwegian: true
-                  },
-                  {
-                    title: 'Magnus Carlsen vs Ding Liren',
-                    meta: 'World Championship - Game 4',
-                    time: new Date(Date.now() + 345600000).toISOString(), // +4 days
-                    venue: 'Singapore', 
-                    sport: 'chess',
-                    streaming: getChessStreamingInfo('FIDE Grand Prix'),
-                    norwegian: true
-                  }
-                ]
-              });
-              
-              tournaments.push({
-                name: 'Norway Chess 2025',
-                events: [
-                  {
-                    title: 'Norway Chess 2025 - Magnus Carlsen vs Fabiano Caruana',
-                    meta: 'Norway Chess - Round 1',
-                    time: new Date(Date.now() + 15552000000).toISOString(), // +6 months
-                    venue: 'Stavanger, Norway',
-                    sport: 'chess',
-                    streaming: getChessStreamingInfo('Norway Chess'),
-                    norwegian: true
-                  }
-                ]
-              });
+              // Note: No chess API available - would need manual tournament schedule updates
+              console.log('Chess tournaments: No real-time API available');
               
               console.log(\`Created \${tournaments.length} chess tournaments\`);
             } catch (error) {
@@ -890,23 +795,8 @@ jobs:
             console.error('Error in fetchChessData:', error);
             return {
               lastUpdated: new Date().toISOString(),
-              source: 'fallback',
-              tournaments: [
-                {
-                  name: 'Chess Events',
-                  events: [
-                    {
-                      title: 'Magnus Carlsen - Next Tournament',
-                      meta: 'Chess Tournament',
-                      time: new Date(Date.now() + 604800000).toISOString(),
-                      venue: 'Chess Venue',
-                      sport: 'chess',
-                      streaming: getChessStreamingInfo('Chess Events'),
-                      norwegian: true
-                    }
-                  ]
-                }
-              ]
+              source: 'No chess API available',
+              tournaments: []
             };
           }
         }
