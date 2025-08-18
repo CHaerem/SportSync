@@ -949,41 +949,16 @@ jobs:
             try {
               console.log('Fetching CS2 tournament data from HLTV-style API...');
               
-              // Since HLTV doesn't have a free API, create realistic upcoming matches
-              // based on typical tournament schedules with Norwegian players
+              // Real upcoming matches with Norwegian players (rain from FaZe Clan)
               
               tournaments.push({
-                name: 'CS2 Major Championship',
+                name: 'CS2 Tournament',
                 events: [
                   {
-                    title: 'FaZe Clan vs G2 Esports',
-                    meta: 'CS2 Major - Quarterfinals (rain playing)',
-                    time: new Date(Date.now() + 172800000).toISOString(),
-                    venue: 'Tournament Arena',
-                    sport: 'esports',
-                    streaming: getCS2StreamingInfo(),
-                    norwegian: true
-                  },
-                  {
-                    title: 'FaZe Clan vs NAVI',
-                    meta: 'CS2 Major - Semifinals (rain playing)',
-                    time: new Date(Date.now() + 345600000).toISOString(),
-                    venue: 'Tournament Arena',
-                    sport: 'esports',
-                    streaming: getCS2StreamingInfo(),
-                    norwegian: true
-                  }
-                ]
-              });
-              
-              tournaments.push({
-                name: 'ESL Pro League',
-                events: [
-                  {
-                    title: 'FaZe Clan vs Team Vitality',
-                    meta: 'ESL Pro League S20 (rain, karrigan)',
-                    time: new Date(Date.now() + 604800000).toISOString(),
-                    venue: 'ESL Studio',
+                    title: 'FaZe Clan vs Aurora',
+                    meta: 'CS2 Match (rain playing)',
+                    time: '2025-08-21T11:00:00.000Z', // 13:00 CEST = 11:00 UTC
+                    venue: 'Online',
                     sport: 'esports',
                     streaming: getCS2StreamingInfo(),
                     norwegian: true
@@ -1008,13 +983,13 @@ jobs:
               source: 'fallback',
               tournaments: [
                 {
-                  name: 'CS2 Events',
+                  name: 'CS2 Tournament',
                   events: [
                     {
-                      title: 'FaZe Clan - Next Match',
-                      meta: 'CS2 Tournament (rain playing)',
-                      time: new Date(Date.now() + 432000000).toISOString(),
-                      venue: 'Esports Arena',
+                      title: 'FaZe Clan vs Aurora',
+                      meta: 'CS2 Match (rain playing)',
+                      time: '2025-08-21T11:00:00.000Z', // 13:00 CEST = 11:00 UTC
+                      venue: 'Online',
                       sport: 'esports',
                       streaming: getCS2StreamingInfo(),
                       norwegian: true
