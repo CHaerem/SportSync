@@ -891,14 +891,18 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    try {
-        window.sportsDashboard = new SportsDashboard();
-    } catch (error) {
-        console.error('Error initializing dashboard:', error);
-        document.querySelectorAll('.loading').forEach(el => {
-            el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error initializing dashboard. Please refresh the page.</div>';
-        });
-    }
+    // Add small delay to ensure all elements are properly initialized
+    setTimeout(() => {
+        try {
+            console.log('Initializing SportsDashboard...');
+            window.sportsDashboard = new SportsDashboard();
+        } catch (error) {
+            console.error('Error initializing dashboard:', error);
+            document.querySelectorAll('.loading').forEach(el => {
+                el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error initializing dashboard. Please refresh the page.</div>';
+            });
+        }
+    }, 100);
 });
 
 // Add keyboard shortcut for manual refresh (Ctrl+R or Cmd+R)
