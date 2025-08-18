@@ -281,6 +281,17 @@ class SportsDashboard {
 
         try {
             this.allSportsData = await Promise.all(promises);
+            
+            // Debug: Always show at least something
+            if (!this.allSportsData || this.allSportsData.length === 0) {
+                console.error('No sports data loaded');
+                document.querySelectorAll('.loading').forEach(el => {
+                    el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">No sports data available</div>';
+                });
+                return;
+            }
+            
+            console.log('Successfully loaded', this.allSportsData.length, 'sports');
             this.renderFilteredSportsView();
             this.loadTodayHighlights();
             await this.loadWeeklyCalendar();
@@ -288,7 +299,7 @@ class SportsDashboard {
             console.error('Error in loadDashboardView:', error);
             // Show error state in UI
             document.querySelectorAll('.loading').forEach(el => {
-                el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error loading data. Please refresh the page.</div>';
+                el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error loading data: ' + error.message + '</div>';
             });
         }
     }
@@ -298,6 +309,8 @@ class SportsDashboard {
             console.error('renderFilteredSportsView: No sports data available');
             return;
         }
+        
+        console.log('Rendering sports view with', this.allSportsData.length, 'sports');
 
         this.allSportsData.forEach(sport => {
             const container = document.getElementById(`${sport.id}-content`);
