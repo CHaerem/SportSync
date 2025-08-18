@@ -391,7 +391,9 @@ jobs:
           }
         }
         
-        await fetchFootball();
+        (async () => {
+          await fetchFootball();
+        })().catch(console.error);
         "
     
     - name: Fetch Golf Data
@@ -512,7 +514,9 @@ jobs:
           }
         }
         
-        await fetchGolf();
+        (async () => {
+          await fetchGolf();
+        })().catch(console.error);
         "
     
     - name: Fetch Tennis Data
@@ -683,7 +687,9 @@ jobs:
           }
         }
         
-        await fetchTennis();
+        (async () => {
+          await fetchTennis();
+        })().catch(console.error);
         "
     
     - name: Fetch F1 Data
@@ -791,7 +797,9 @@ jobs:
           }
         }
         
-        await fetchF1();
+        (async () => {
+          await fetchF1();
+        })().catch(console.error);
         "
     
     - name: Create Chess Data
@@ -903,9 +911,10 @@ jobs:
           }
         }
         
-        const chessEvents = await fetchChessData();
-        
-        require('fs').writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
+        (async () => {
+          const chessEvents = await fetchChessData();
+          require('fs').writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
+        })().catch(console.error);
         console.log('Created chess tournament data');
         "
     
@@ -1017,9 +1026,10 @@ jobs:
           }
         }
         
-        const esportsEvents = await fetchEsportsData();
-        
-        require('fs').writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
+        (async () => {
+          const esportsEvents = await fetchEsportsData();
+          require('fs').writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
+        })().catch(console.error);
         console.log('Created esports tournament data');
         "
     
