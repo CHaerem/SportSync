@@ -77,6 +77,12 @@ class SportsDashboard {
     }
 
     setupSettings() {
+        // Settings panel removed in simplified design
+        console.log('Settings setup completed - using simplified design without settings panel');
+        return;
+        
+        // OLD CODE BELOW (keeping for reference but not executing)
+        /*
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsPanel = document.getElementById('settingsPanel');
         const settingsOverlay = document.getElementById('settingsOverlay');
@@ -156,6 +162,7 @@ class SportsDashboard {
             this.filters.norwayPriority = e.target.checked;
             this.applyFilters();
         });
+        */
     }
 
     async applyFilters() {
