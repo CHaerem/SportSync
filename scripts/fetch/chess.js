@@ -28,7 +28,29 @@ async function fetchLichessBroadcasts() {
 	try {
 		// Attempt broadcast endpoint (may not be stable JSON; failures are ignored gracefully)
 		return await fetchJson("https://lichess.org/api/broadcast");
-	} catch {
+// Validate the structure of the Lichess broadcast response
+function isValidBroadcastResponse(resp) {
+	// The expected structure is an object with a "tours" property that is an array
+	return (
+		resp &&
+		typeof resp === "object" &&
+		Array.isArray(resp.tours)
+	);
+}
+
+async function fetchLichessBroadcasts() {
+	try {
+		// Attempt broadcast endpoint (may not be stable JSON; failures are ignored gracefully)
+		const resp = await fetchJson("https://lichess.org/api/broadcast");
+		if (!isValidBroadcastResponse(resp)) {
+			console.warn(
+				"Lichess broadcast response did not match expected format. Using empty fallback."
+			);
+			return {};
+		}
+		return resp;
+	} catch (err) {
+		console.warn("Failed to fetch Lichess broadcast endpoint:", err);
 		return null;
 	}
 }
