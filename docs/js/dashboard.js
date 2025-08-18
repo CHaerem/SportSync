@@ -5,16 +5,13 @@ class SportsDashboard {
         this.lastUpdate = new Date();
         this.currentView = 'sports'; // 'sports', 'calendar', or 'api-sources'
         this.filters = {
-            time: 'all',
-            focus: 'all',
+            mode: 'all', // 'all', 'today', 'norway', 'streaming'
             sports: new Set(['football', 'golf', 'tennis', 'f1', 'chess', 'esports']),
             tournaments: new Set([
                 'Premier League', 'Eliteserien', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1',
                 'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour',
                 'Formula 1 2025', 'FIDE Grand Prix', 'Norway Chess', 'CS2 Major', 'IEM Pro League'
-            ]),
-            streamingOnly: false,
-            norwayPriority: true
+            ])
         };
         this.allSportsData = null;
         this.init();
@@ -89,18 +86,29 @@ class SportsDashboard {
     }
 
     setupFilters() {
-        // Time filter
-        const timeFilter = document.getElementById('timeFilter');
-        timeFilter.addEventListener('change', (e) => {
-            this.filters.time = e.target.value;
-            this.applyFilters();
-        });
+        // Setup filter chips
+        const chips = {
+            'allEventsChip': 'all',
+            'todayChip': 'today', 
+            'norwayChip': 'norway',
+            'streamingChip': 'streaming'
+        };
 
-        // Focus filter
-        const focusFilter = document.getElementById('focusFilter');
-        focusFilter.addEventListener('change', (e) => {
-            this.filters.focus = e.target.value;
-            this.applyFilters();
+        Object.entries(chips).forEach(([chipId, mode]) => {
+            const chip = document.getElementById(chipId);
+            chip.addEventListener('click', () => {
+                // Remove active from all chips
+                Object.keys(chips).forEach(id => {
+                    document.getElementById(id).classList.remove('active');
+                });
+                
+                // Add active to clicked chip
+                chip.classList.add('active');
+                
+                // Update filter and apply
+                this.filters.mode = mode;
+                this.applyFilters();
+            });
         });
     }
 
@@ -300,20 +308,9 @@ class SportsDashboard {
                 return false;
             }
 
-            // Filter events within tournament
+            // Filter events within tournament based on current mode
             let filteredEvents = tournament.events.filter(event => {
-                // Time filter
-                if (!this.passesTimeFilter(event)) return false;
-                
-                // Focus filter
-                if (!this.passesFocusFilter(event)) return false;
-                
-                // Streaming only filter
-                if (this.filters.streamingOnly && (!event.streaming || event.streaming.length === 0)) {
-                    return false;
-                }
-
-                return true;
+                return this.passesFilterMode(event);
             });
 
             // For ALL sports: if no events pass filters, show next upcoming event
@@ -325,12 +322,8 @@ class SportsDashboard {
                 }).sort((a, b) => new Date(a.time) - new Date(b.time));
                 
                 if (futureEvents.length > 0) {
-                    // Apply non-time filters to the next event
-                    const nextEvent = futureEvents[0];
-                    if (this.passesFocusFilter(nextEvent) && 
-                        (!this.filters.streamingOnly || (nextEvent.streaming && nextEvent.streaming.length > 0))) {
-                        filteredEvents = [nextEvent];
-                    }
+                    // For fallback, show next event regardless of other filters
+                    filteredEvents = [futureEvents[0]];
                 }
             }
 
@@ -339,35 +332,18 @@ class SportsDashboard {
         });
     }
 
-    passesTimeFilter(event) {
-        if (this.filters.time === 'all') return true;
-        
-        const eventDate = new Date(event.time);
+    passesFilterMode(event) {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const weekEnd = new Date(today);
-        weekEnd.setDate(weekEnd.getDate() + 7);
+        const eventDate = new Date(event.time);
 
-        switch (this.filters.time) {
-            case 'today':
-                return eventDate >= today && eventDate < tomorrow;
-            case 'tomorrow':
-                const dayAfterTomorrow = new Date(tomorrow);
-                dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
-                return eventDate >= tomorrow && eventDate < dayAfterTomorrow;
-            case 'week':
-                return eventDate >= today && eventDate < weekEnd;
-            default:
-                return true;
-        }
-    }
-
-    passesFocusFilter(event) {
-        switch (this.filters.focus) {
+        switch (this.filters.mode) {
             case 'all':
                 return true;
+            case 'today':
+                return eventDate >= today && eventDate < tomorrow;
             case 'norway':
                 return event.norwegian === true;
             case 'streaming':
@@ -483,16 +459,13 @@ class SportsDashboard {
                 
                 return `
                     <div class="event-item">
-                        <div class="event-details">
-                            <div class="event-title">${this.escapeHtml(event.title)}</div>
-                            <div class="event-meta">
-                                ${event.venue ? `📍 ${this.escapeHtml(event.venue)} • ` : ''}
-                                ${this.escapeHtml(event.meta)}
-                                ${event.norwegian ? ' • 🇳🇴' : ''}
-                            </div>
-                            ${streamingHtml}
+                        <div class="event-title">${this.escapeHtml(event.title)}</div>
+                        <div class="event-meta">
+                            <span class="event-time">${this.escapeHtml(event.timeFormatted || event.time)}</span>
+                            ${event.venue ? `<span>📍 ${this.escapeHtml(event.venue)}</span>` : ''}
+                            ${event.norwegian ? '<span>🇳🇴</span>' : ''}
                         </div>
-                        <div class="event-time">${this.escapeHtml(event.timeFormatted || event.time)}</div>
+                        ${streamingHtml}
                     </div>
                 `;
             }).join('');
