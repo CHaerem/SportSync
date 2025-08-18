@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportSync API Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #555;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: #f0f0f0;
+            border-color: #bbb;
+        }
+
+        .api-section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .api-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .api-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .sport-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .sport-badge.football { background: #22c55e; }
+        .sport-badge.tennis { background: #3b82f6; }
+        .sport-badge.golf { background: #f59e0b; }
+        .sport-badge.formula1 { background: #ef4444; }
+        .sport-badge.chess { background: #6b7280; }
+        .sport-badge.esports { background: #8b5cf6; }
+
+        .api-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .api-description {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .api-content {
+            padding: 24px;
+        }
+
+        .api-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .detail-group {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            color: #333;
+            font-family: 'SF Mono', Monaco, monospace;
+            word-break: break-all;
+        }
+
+        .endpoint-list {
+            list-style: none;
+        }
+
+        .endpoint-list li {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            word-break: break-all;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status.working { background: #dcfce7; color: #166534; }
+        .status.limited { background: #fef3c7; color: #92400e; }
+        .status.mock { background: #e0e7ff; color: #3730a3; }
+
+        .status-icon {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status.working .status-icon { background: #22c55e; }
+        .status.limited .status-icon { background: #f59e0b; }
+        .status.mock .status-icon { background: #6366f1; }
+
+        .coverage-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .coverage-item {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .interests-section {
+            background: #f0f7ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .interests-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 16px;
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .interest-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e0e7ff;
+        }
+
+        .interest-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .interest-details {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .api-details {
+                grid-template-columns: 1fr;
+            }
+
+            .interests-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Dashboard</a>
+        
+        <header>
+            <h1>SportSync API Information</h1>
+            <p class="subtitle">Data sources and how they relate to your interests</p>
+        </header>
+
+        <div class="interests-section">
+            <h2 class="interests-title">🎯 Your Sports Interests Covered</h2>
+            <div class="interests-grid">
+                <div class="interest-item">
+                    <div class="interest-name">⚽ Football</div>
+                    <div class="interest-details">Premier League, European leagues, Norwegian Eliteserien</div>
+                </div>
+                <div class="interest-item">
+                    <div class="interest-name">🎾 Tennis</div>
+                    <div class="interest-details">ATP/WTA tours, Grand Slams, Casper Ruud focus</div>
+                </div>
+                <div class="interest-item">
+                    <div class="interest-name">🏌️ Golf</div>
+                    <div class="interest-details">PGA Tour, DP World Tour, Major Championships</div>
+                </div>
+                <div class="interest-item">
+                    <div class="interest-name">🏎️ Formula 1</div>
+                    <div class="interest-details">Race calendar, practice sessions, qualifying</div>
+                </div>
+                <div class="interest-item">
+                    <div class="interest-name">♟️ Chess</div>
+                    <div class="interest-details">Major tournaments, Magnus Carlsen, Norway Chess</div>
+                </div>
+                <div class="interest-item">
+                    <div class="interest-name">🎮 Esports</div>
+                    <div class="interest-details">CS2, FaZe Clan, rain, Norwegian players</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Football API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge football">Football</div>
+                    <span class="api-name">ESPN Soccer API</span>
+                    <div class="status working">
+                        <div class="status-icon"></div>
+                        Working
+                    </div>
+                </div>
+                <div class="api-description">Live football data from ESPN's comprehensive soccer coverage</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Primary Endpoint</div>
+                        <div class="detail-value">site.api.espn.com/apis/site/v2/sports/soccer</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Update Frequency</div>
+                        <div class="detail-value">Every 6 hours via GitHub Actions</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Norwegian Focus</div>
+                        <div class="detail-value">Eliteserien + European leagues</div>
+                    </div>
+                </div>
+                <div class="detail-label">Specific Endpoints</div>
+                <ul class="endpoint-list">
+                    <li>https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard (Premier League)</li>
+                    <li>https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard (La Liga)</li>
+                    <li>https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard (Bundesliga)</li>
+                    <li>https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard (Serie A)</li>
+                </ul>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">Premier League</div>
+                    <div class="coverage-item">La Liga</div>
+                    <div class="coverage-item">Bundesliga</div>
+                    <div class="coverage-item">Serie A</div>
+                    <div class="coverage-item">Ligue 1</div>
+                    <div class="coverage-item">Eliteserien</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tennis API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge tennis">Tennis</div>
+                    <span class="api-name">ESPN Tennis API</span>
+                    <div class="status limited">
+                        <div class="status-icon"></div>
+                        Limited Data
+                    </div>
+                </div>
+                <div class="api-description">Tennis tournament data with focus on Norwegian players</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Primary Endpoint</div>
+                        <div class="detail-value">site.api.espn.com/apis/site/v2/sports/tennis</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Norwegian Focus</div>
+                        <div class="detail-value">Casper Ruud matches & results</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Tournaments</div>
+                        <div class="detail-value">ATP/WTA tours, Grand Slams</div>
+                    </div>
+                </div>
+                <div class="detail-label">Specific Endpoints</div>
+                <ul class="endpoint-list">
+                    <li>https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard</li>
+                    <li>https://site.api.espn.com/apis/site/v2/sports/tennis/wta/scoreboard</li>
+                </ul>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">ATP Tour</div>
+                    <div class="coverage-item">WTA Tour</div>
+                    <div class="coverage-item">Grand Slams</div>
+                    <div class="coverage-item">Masters 1000</div>
+                    <div class="coverage-item">Casper Ruud Focus</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Golf API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge golf">Golf</div>
+                    <span class="api-name">ESPN Golf API</span>
+                    <div class="status limited">
+                        <div class="status-icon"></div>
+                        Seasonal Data
+                    </div>
+                </div>
+                <div class="api-description">Professional golf tournament schedules and leaderboards</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Primary Endpoint</div>
+                        <div class="detail-value">site.api.espn.com/apis/site/v2/sports/golf</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Tours Covered</div>
+                        <div class="detail-value">PGA Tour, DP World Tour</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Norwegian Interest</div>
+                        <div class="detail-value">Major championships & tour events</div>
+                    </div>
+                </div>
+                <div class="detail-label">Specific Endpoints</div>
+                <ul class="endpoint-list">
+                    <li>https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard</li>
+                    <li>https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard</li>
+                </ul>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">PGA Tour</div>
+                    <div class="coverage-item">DP World Tour</div>
+                    <div class="coverage-item">Major Championships</div>
+                    <div class="coverage-item">Tournament Leaderboards</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formula 1 API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge formula1">Formula 1</div>
+                    <span class="api-name">ESPN F1 Racing API</span>
+                    <div class="status working">
+                        <div class="status-icon"></div>
+                        Working
+                    </div>
+                </div>
+                <div class="api-description">Complete Formula 1 race calendar and session times</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Primary Endpoint</div>
+                        <div class="detail-value">site.api.espn.com/apis/site/v2/sports/racing/f1</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Session Types</div>
+                        <div class="detail-value">Practice, Qualifying, Race</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Schedule</div>
+                        <div class="detail-value">Full 2025 calendar</div>
+                    </div>
+                </div>
+                <div class="detail-label">Specific Endpoints</div>
+                <ul class="endpoint-list">
+                    <li>https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard</li>
+                </ul>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">Race Calendar</div>
+                    <div class="coverage-item">Practice Sessions</div>
+                    <div class="coverage-item">Qualifying</div>
+                    <div class="coverage-item">Race Times</div>
+                    <div class="coverage-item">Circuit Information</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chess API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge chess">Chess</div>
+                    <span class="api-name">Chess Tournament Calendar</span>
+                    <div class="status mock">
+                        <div class="status-icon"></div>
+                        Curated Data
+                    </div>
+                </div>
+                <div class="api-description">Major chess tournaments with Norwegian focus</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Data Source</div>
+                        <div class="detail-value">Manually curated tournament schedule</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Norwegian Focus</div>
+                        <div class="detail-value">Magnus Carlsen, Norway Chess</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Future Integration</div>
+                        <div class="detail-value">Chess.com API, Lichess API</div>
+                    </div>
+                </div>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">World Championship</div>
+                    <div class="coverage-item">Candidates Tournament</div>
+                    <div class="coverage-item">Norway Chess</div>
+                    <div class="coverage-item">FIDE Grand Prix</div>
+                    <div class="coverage-item">Magnus Carlsen Events</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Esports API -->
+        <div class="api-section">
+            <div class="api-header">
+                <div class="api-title">
+                    <div class="sport-badge esports">Esports</div>
+                    <span class="api-name">Esports Tournament Schedule</span>
+                    <div class="status mock">
+                        <div class="status-icon"></div>
+                        Curated Data
+                    </div>
+                </div>
+                <div class="api-description">Major esports events with Norwegian player focus</div>
+            </div>
+            <div class="api-content">
+                <div class="api-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Data Source</div>
+                        <div class="detail-value">Manually curated tournament schedule</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Norwegian Focus</div>
+                        <div class="detail-value">FaZe Clan (rain), Norwegian players</div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-label">Future Integration</div>
+                        <div class="detail-value">Twitch Gaming API, HLTV API</div>
+                    </div>
+                </div>
+                <div class="detail-label">Coverage</div>
+                <div class="coverage-list">
+                    <div class="coverage-item">CS2 Majors</div>
+                    <div class="coverage-item">FaZe Clan Matches</div>
+                    <div class="coverage-item">ESL Pro League</div>
+                    <div class="coverage-item">BLAST Events</div>
+                    <div class="coverage-item">Norwegian Players</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid #e0e0e0; color: #666; font-size: 0.9rem;">
+            <p>All data is fetched automatically every 6 hours and cached for offline access.</p>
+            <p style="margin-top: 8px;">
+                <a href="index.html" style="color: #555; text-decoration: none;">← Return to SportSync Dashboard</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
