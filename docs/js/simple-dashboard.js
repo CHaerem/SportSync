@@ -157,23 +157,25 @@ class SimpleSportsDashboard {
 
         const eventsHTML = filteredEvents.map(event => {
             const streamingHTML = this.renderStreamingInfo(event.streaming);
+            const dayDisplay = this.formatEventDay(event.time);
             
             return `
                 <div class="event-card">
-                    <div class="event-main">
-                        <h3 class="event-title">${this.escapeHtml(event.title)}</h3>
-                        <div class="event-time">${this.escapeHtml(event.timeFormatted)}</div>
-                    </div>
-                    <div class="event-details">
-                        <div class="event-sport">
-                            <div class="sport-dot ${event.sport}"></div>
+                    <div class="event-header">
+                        <div class="event-day">${this.escapeHtml(dayDisplay)}</div>
+                        <div class="event-sport-badge ${event.sport}">
                             ${this.escapeHtml(event.sportName)}
                         </div>
-                        <div>${this.escapeHtml(event.tournament)}</div>
-                        ${event.venue ? `<div>📍 ${this.escapeHtml(event.venue)}</div>` : ''}
-                        ${event.norwegian ? '<div>🇳🇴</div>' : ''}
                     </div>
-                    ${streamingHTML}
+                    <div class="event-content">
+                        <h3 class="event-title">${this.escapeHtml(event.title)}</h3>
+                        <div class="event-details">
+                            <div>${this.escapeHtml(event.tournament)}</div>
+                            ${event.venue ? `<div>📍 ${this.escapeHtml(event.venue)}</div>` : ''}
+                            ${event.norwegian ? '<div>🇳🇴 Norway</div>' : ''}
+                        </div>
+                        ${streamingHTML}
+                    </div>
                 </div>
             `;
         }).join('');
@@ -197,8 +199,6 @@ class SimpleSportsDashboard {
                 return eventDate >= today && eventDate < tomorrow;
             case 'week':
                 return eventDate >= today && eventDate < weekEnd;
-            case 'norway':
-                return event.norwegian === true;
             default:
                 return true;
         }
@@ -224,6 +224,34 @@ class SimpleSportsDashboard {
         if (daysDiff > 0 && daysDiff <= 7) return `${daysDiff} days`;
         
         return date.toLocaleDateString('en-NO', {
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    formatEventDay(timeString) {
+        if (!timeString) return 'TBD';
+        
+        const date = new Date(timeString);
+        const now = new Date();
+        
+        const eventDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        if (eventDay.getTime() === today.getTime()) return 'Today';
+        if (eventDay.getTime() === tomorrow.getTime()) return 'Tomorrow';
+        
+        const timeDiff = eventDay - today;
+        const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff > 0 && daysDiff <= 7) {
+            return date.toLocaleDateString('en-NO', { weekday: 'long' });
+        }
+        
+        return date.toLocaleDateString('en-NO', {
+            weekday: 'short',
             month: 'short',
             day: 'numeric'
         });

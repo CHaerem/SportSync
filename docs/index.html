@@ -92,66 +92,74 @@
         .event-card {
             background: white;
             border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            padding: 0;
             transition: all 0.15s ease;
+            overflow: hidden;
         }
 
         .event-card:hover {
             border-color: #ccc;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
         }
 
-        .event-main {
+        .event-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fbfbfb;
+        }
+
+        .event-day {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .event-sport-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .event-sport-badge.football { background: #22c55e; }
+        .event-sport-badge.tennis { background: #3b82f6; }
+        .event-sport-badge.golf { background: #f59e0b; }
+        .event-sport-badge.formula1 { background: #ef4444; }
+        .event-sport-badge.chess { background: #6b7280; }
+        .event-sport-badge.esports { background: #8b5cf6; }
+
+        .event-content {
+            padding: 20px;
         }
 
         .event-title {
             font-size: 1.1rem;
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
-            margin: 0;
+            margin: 0 0 8px 0;
             line-height: 1.3;
-        }
-
-        .event-time {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 400;
-            text-align: right;
-            white-space: nowrap;
-            margin-left: 15px;
         }
 
         .event-details {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 12px;
             font-size: 0.85rem;
-            color: #777;
+            color: #666;
         }
-
-        .event-sport {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .sport-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-        }
-
-        .sport-dot.football { background: #22c55e; }
-        .sport-dot.tennis { background: #3b82f6; }
-        .sport-dot.golf { background: #f59e0b; }
-        .sport-dot.formula1 { background: #ef4444; }
-        .sport-dot.chess { background: #6b7280; }
-        .sport-dot.esports { background: #8b5cf6; }
 
 
         .loading {
@@ -190,19 +198,24 @@
                 font-size: 0.8rem;
             }
 
-            .event-card {
+            .event-header {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .event-sport-badge {
+                align-self: flex-end;
+            }
+
+            .event-content {
                 padding: 15px;
             }
 
-            .event-main {
+            .event-details {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-
-            .event-time {
-                text-align: left;
-                margin-left: 0;
+                gap: 6px;
             }
         }
     </style>
@@ -220,7 +233,6 @@
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="today">Today</button>
             <button class="filter-btn" data-filter="week">This Week</button>
-            <button class="filter-btn" data-filter="norway">🇳🇴 Norway</button>
         </div>
 
         <div class="events-list" id="eventsContainer">
@@ -233,8 +245,8 @@
     </div>
 
 
-    <script src="js/sports-api.js?v=2025081806"></script>
-    <script src="js/simple-dashboard.js?v=2025081806"></script>
+    <script src="js/sports-api.js?v=2025081807"></script>
+    <script src="js/simple-dashboard.js?v=2025081807"></script>
     
     <script>
         // Register service worker for better cache control
