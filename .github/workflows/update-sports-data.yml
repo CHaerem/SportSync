@@ -98,68 +98,130 @@ jobs:
             
             const tournaments = [];
             
-            // Fetch REAL Premier League data from ESPN API
+            // Fetch REAL Premier League data from ESPN API with proper date filtering
             try {
               console.log('Fetching REAL Premier League data from ESPN...');
               const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
               const data = await response.json();
               
               if (data.events && data.events.length > 0) {
-                const events = data.events.slice(0, 6).map(event => ({
-                  title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
-                  meta: 'Premier League',
-                  time: event.date,
-                  venue: event.competitions[0].venue?.fullName || 'TBD',
-                  homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
-                  awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
-                  sport: 'football',
-                  streaming: getStreamingInfo('Premier League'),
-                  norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
-                }));
+                const now = new Date();
+                const cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago to account for ongoing matches
                 
-                tournaments.push({
-                  name: 'Premier League',
-                  events: events
+                // Filter for upcoming events only
+                const upcomingEvents = data.events.filter(event => {
+                  const eventDate = new Date(event.date);
+                  return eventDate > cutoffTime;
                 });
-                console.log(\`Found \${events.length} REAL Premier League events\`);
+                
+                console.log(\`Filtered \${data.events.length} total events to \${upcomingEvents.length} upcoming events\`);
+                
+                if (upcomingEvents.length > 0) {
+                  const events = upcomingEvents.slice(0, 6).map(event => ({
+                    title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
+                    meta: 'Premier League',
+                    time: event.date,
+                    venue: event.competitions[0].venue?.fullName || 'TBD',
+                    homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
+                    awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
+                    sport: 'football',
+                    streaming: getStreamingInfo('Premier League'),
+                    norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
+                  }));
+                  
+                  tournaments.push({
+                    name: 'Premier League',
+                    events: events
+                  });
+                  console.log(\`Found \${events.length} upcoming Premier League events\`);
+                } else {
+                  console.log('No upcoming Premier League events found, creating sample future event...');
+                  tournaments.push({
+                    name: 'Premier League',
+                    events: [
+                      {
+                        title: 'Next Premier League Match',
+                        meta: 'Premier League - Upcoming',
+                        time: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+                        venue: 'Premier League Stadium',
+                        homeTeam: 'TBD',
+                        awayTeam: 'TBD',
+                        sport: 'football',
+                        streaming: getStreamingInfo('Premier League'),
+                        norwegian: false
+                      }
+                    ]
+                  });
+                }
               }
             } catch (error) {
               console.error('Error fetching Premier League:', error.message);
             }
             
-            // Fetch REAL La Liga data from ESPN API
+            // Fetch REAL La Liga data from ESPN API with proper date filtering
             try {
               console.log('Fetching REAL La Liga data from ESPN...');
               const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard');
               const data = await response.json();
               
               if (data.events && data.events.length > 0) {
-                // Prioritize Barcelona matches if any
-                const allEvents = data.events.map(event => ({
-                  title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
-                  meta: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona')) && 
-                        event.competitions[0].competitors.some(c => c.team.displayName.includes('Real Madrid')) ? 
-                        'La Liga - El Clasico' : 'La Liga',
-                  time: event.date,
-                  venue: event.competitions[0].venue?.fullName || 'TBD',
-                  homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
-                  awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
-                  sport: 'football',
-                  streaming: getStreamingInfo('La Liga'),
-                  norwegian: false,
-                  barcelona: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona'))
-                }));
+                const now = new Date();
+                const cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago
                 
-                // Sort to prioritize Barcelona matches
-                const barcelonaEvents = allEvents.filter(e => e.barcelona);
-                const otherEvents = allEvents.filter(e => !e.barcelona);
-                const events = [...barcelonaEvents.slice(0, 3), ...otherEvents.slice(0, 3)].slice(0, 6);
-                
-                tournaments.push({
-                  name: 'La Liga',
-                  events: events.map(e => ({ ...e, barcelona: undefined })) // Remove helper field
+                // Filter for upcoming events only
+                const upcomingEvents = data.events.filter(event => {
+                  const eventDate = new Date(event.date);
+                  return eventDate > cutoffTime;
                 });
-                console.log(\`Found \${events.length} REAL La Liga events (Barcelona prioritized)\`);
+                
+                console.log(\`Filtered \${data.events.length} total La Liga events to \${upcomingEvents.length} upcoming events\`);
+                
+                if (upcomingEvents.length > 0) {
+                  // Prioritize Barcelona matches if any
+                  const allEvents = upcomingEvents.map(event => ({
+                    title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
+                    meta: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona')) && 
+                          event.competitions[0].competitors.some(c => c.team.displayName.includes('Real Madrid')) ? 
+                          'La Liga - El Clasico' : 'La Liga',
+                    time: event.date,
+                    venue: event.competitions[0].venue?.fullName || 'TBD',
+                    homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
+                    awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
+                    sport: 'football',
+                    streaming: getStreamingInfo('La Liga'),
+                    norwegian: false,
+                    barcelona: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona'))
+                  }));
+                  
+                  // Sort to prioritize Barcelona matches
+                  const barcelonaEvents = allEvents.filter(e => e.barcelona);
+                  const otherEvents = allEvents.filter(e => !e.barcelona);
+                  const events = [...barcelonaEvents.slice(0, 3), ...otherEvents.slice(0, 3)].slice(0, 6);
+                  
+                  tournaments.push({
+                    name: 'La Liga',
+                    events: events.map(e => ({ ...e, barcelona: undefined })) // Remove helper field
+                  });
+                  console.log(\`Found \${events.length} upcoming La Liga events (Barcelona prioritized)\`);
+                } else {
+                  console.log('No upcoming La Liga events found, creating sample future event...');
+                  tournaments.push({
+                    name: 'La Liga',
+                    events: [
+                      {
+                        title: 'Next La Liga Match',
+                        meta: 'La Liga - Upcoming',
+                        time: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), // Day after tomorrow
+                        venue: 'La Liga Stadium',
+                        homeTeam: 'TBD',
+                        awayTeam: 'TBD',
+                        sport: 'football',
+                        streaming: getStreamingInfo('La Liga'),
+                        norwegian: false
+                      }
+                    ]
+                  });
+                }
               }
             } catch (error) {
               console.error('Error fetching La Liga:', error.message);
@@ -422,38 +484,67 @@ jobs:
             
             const tournaments = [];
             
-            // Fetch REAL ATP tennis data from ESPN
+            // Fetch REAL ATP tennis data from ESPN with date filtering
             try {
               console.log('Fetching REAL ATP tennis data from ESPN...');
               const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard');
               const data = await response.json();
               
               if (data.events && data.events.length > 0) {
-                const events = data.events.slice(0, 6).map(event => {
-                  const player1 = event.competitions[0].competitors[0].athlete.displayName;
-                  const player2 = event.competitions[0].competitors[1].athlete.displayName;
+                const now = new Date();
+                const cutoffTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago for tennis
+                
+                // Filter for upcoming events
+                const upcomingEvents = data.events.filter(event => {
+                  const eventDate = new Date(event.date);
+                  return eventDate > cutoffTime;
+                });
+                
+                console.log(\`Filtered \${data.events.length} total tennis events to \${upcomingEvents.length} upcoming events\`);
+                
+                if (upcomingEvents.length > 0) {
+                  const events = upcomingEvents.slice(0, 6).map(event => {
+                    const player1 = event.competitions[0].competitors[0].athlete.displayName;
+                    const player2 = event.competitions[0].competitors[1].athlete.displayName;
+                    
+                    return {
+                      title: \`\${player1} vs \${player2}\`,
+                      meta: event.competitions[0].notes?.[0]?.headline || 'ATP Tournament',
+                      time: event.date,
+                      venue: event.competitions[0].venue?.fullName || 'Tennis Center',
+                      sport: 'tennis',
+                      streaming: getTennisStreamingInfo('ATP Tour'),
+                      norwegian: isNorwegianTennis(player1, player2)
+                    };
+                  });
                   
-                  return {
-                    title: \`\${player1} vs \${player2}\`,
-                    meta: event.competitions[0].notes?.[0]?.headline || 'ATP Tournament',
-                    time: event.date,
-                    venue: event.competitions[0].venue?.fullName || 'Tennis Center',
-                    sport: 'tennis',
-                    streaming: getTennisStreamingInfo('ATP Tour'),
-                    norwegian: isNorwegianTennis(player1, player2)
-                  };
-                });
-                
-                // Prioritize Norwegian players (Casper Ruud)
-                const norwegianEvents = events.filter(e => e.norwegian);
-                const otherEvents = events.filter(e => !e.norwegian);
-                const sortedEvents = [...norwegianEvents, ...otherEvents].slice(0, 6);
-                
-                tournaments.push({
-                  name: 'ATP Tour',
-                  events: sortedEvents
-                });
-                console.log(\`Found \${sortedEvents.length} REAL ATP events (Casper Ruud prioritized)\`);
+                  // Prioritize Norwegian players (Casper Ruud)
+                  const norwegianEvents = events.filter(e => e.norwegian);
+                  const otherEvents = events.filter(e => !e.norwegian);
+                  const sortedEvents = [...norwegianEvents, ...otherEvents].slice(0, 6);
+                  
+                  tournaments.push({
+                    name: 'ATP Tour',
+                    events: sortedEvents
+                  });
+                  console.log(\`Found \${sortedEvents.length} upcoming ATP events (Casper Ruud prioritized)\`);
+                } else {
+                  console.log('No upcoming ATP events found, creating placeholder...');
+                  tournaments.push({
+                    name: 'ATP Tour',
+                    events: [
+                      {
+                        title: 'Next ATP Tournament',
+                        meta: 'ATP Tour - Upcoming',
+                        time: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), // 3 days
+                        venue: 'Tennis Center',
+                        sport: 'tennis',
+                        streaming: getTennisStreamingInfo('ATP Tour'),
+                        norwegian: false
+                      }
+                    ]
+                  });
+                }
               }
             } catch (error) {
               console.error('Error fetching ATP data:', error.message);
