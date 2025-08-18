@@ -113,12 +113,25 @@
             background: #fbfbfb;
         }
 
+        .event-day-time {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .event-day {
             font-size: 0.9rem;
             font-weight: 600;
             color: #333;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .event-time {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #555;
+            font-variant-numeric: tabular-nums;
         }
 
         .event-sport-badge {
@@ -200,13 +213,18 @@
 
             .event-header {
                 padding: 10px 15px;
-                flex-direction: column;
-                gap: 8px;
-                align-items: flex-start;
             }
 
-            .event-sport-badge {
-                align-self: flex-end;
+            .event-day-time {
+                gap: 1px;
+            }
+
+            .event-day {
+                font-size: 0.8rem;
+            }
+
+            .event-time {
+                font-size: 1rem;
             }
 
             .event-content {
@@ -245,8 +263,8 @@
     </div>
 
 
-    <script src="js/sports-api.js?v=2025081807"></script>
-    <script src="js/simple-dashboard.js?v=2025081807"></script>
+    <script src="js/sports-api.js?v=2025081808"></script>
+    <script src="js/simple-dashboard.js?v=2025081808"></script>
     
     <script>
         // Register service worker for better cache control

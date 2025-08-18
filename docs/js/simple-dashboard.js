@@ -158,11 +158,15 @@ class SimpleSportsDashboard {
         const eventsHTML = filteredEvents.map(event => {
             const streamingHTML = this.renderStreamingInfo(event.streaming);
             const dayDisplay = this.formatEventDay(event.time);
+            const timeDisplay = this.formatEventTime(event.time);
             
             return `
                 <div class="event-card">
                     <div class="event-header">
-                        <div class="event-day">${this.escapeHtml(dayDisplay)}</div>
+                        <div class="event-day-time">
+                            <div class="event-day">${this.escapeHtml(dayDisplay)}</div>
+                            <div class="event-time">${this.escapeHtml(timeDisplay)}</div>
+                        </div>
                         <div class="event-sport-badge ${event.sport}">
                             ${this.escapeHtml(event.sportName)}
                         </div>
@@ -208,24 +212,12 @@ class SimpleSportsDashboard {
         if (!timeString) return 'TBD';
         
         const date = new Date(timeString);
-        const now = new Date();
         
-        const eventDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        
-        if (eventDay.getTime() === today.getTime()) return 'Today';
-        if (eventDay.getTime() === tomorrow.getTime()) return 'Tomorrow';
-        
-        const timeDiff = eventDay - today;
-        const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24));
-        
-        if (daysDiff > 0 && daysDiff <= 7) return `${daysDiff} days`;
-        
-        return date.toLocaleDateString('en-NO', {
-            month: 'short',
-            day: 'numeric'
+        // Return actual time of day
+        return date.toLocaleTimeString('en-NO', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Oslo'
         });
     }
 
