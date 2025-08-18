@@ -1,320 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="last-modified" content="2025-08-18T12:30:00Z">
-    <title>SportSync — Your Personal Sports Dashboard</title>
-    <style>
-        :root {
-            --bg: #fafafa;
-            --card-bg: #ffffff;
-            --text: #333;
-            --muted: #666;
-            --border: #e0e0e0;
-        }
-        .dark {
-            --bg: #121212;
-            --card-bg: #1e1e1e;
-            --text: #f5f5f5;
-            --muted: #bbb;
-            --border: #2a2a2a;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate"
+		/>
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<meta name="last-modified" content="2025-08-18T12:30:00Z" />
+		<title>SportSync — Your Personal Sports Dashboard</title>
+		<style>
+			:root {
+				--bg: #fafafa;
+				--card-bg: #ffffff;
+				--text: #333;
+				--muted: #666;
+				--border: #e0e0e0;
+			}
+			.dark {
+				--bg: #121212;
+				--card-bg: #1e1e1e;
+				--text: #f5f5f5;
+				--muted: #bbb;
+				--border: #2a2a2a;
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            color: var(--text);
-            line-height: 1.5;
-            font-size: 16px;
-        }
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+					sans-serif;
+				background: var(--bg);
+				min-height: 100vh;
+				color: var(--text);
+				line-height: 1.5;
+				font-size: 16px;
+			}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
+			.container {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 30px 20px;
+			}
 
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+			header {
+				text-align: center;
+				margin-bottom: 50px;
+			}
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 400;
-            margin-bottom: 5px;
-            color: #222;
-            letter-spacing: 0;
-        }
+			h1 {
+				font-size: 2rem;
+				font-weight: 400;
+				margin-bottom: 5px;
+				color: #222;
+				letter-spacing: 0;
+			}
 
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--muted);
-            font-weight: 300;
-        }
+			.subtitle {
+				font-size: 0.9rem;
+				color: var(--muted);
+				font-weight: 300;
+			}
 
-        .last-updated {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
+			.last-updated {
+				text-align: center;
+				margin-bottom: 40px;
+				font-size: 0.8rem;
+				color: var(--muted);
+			}
 
-        .simple-filters {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+			.simple-filters {
+				text-align: center;
+				margin-bottom: 40px;
+			}
 
-        .filter-btn {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            padding: 8px 16px;
-            margin: 0 4px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: var(--muted);
-            transition: all 0.2s ease;
-        }
+			.filter-btn {
+				background: var(--card-bg);
+				border: 2px solid var(--border);
+				padding: 8px 16px;
+				margin: 0 4px;
+				border-radius: 20px;
+				cursor: pointer;
+				font-size: 0.85rem;
+				color: var(--muted);
+				transition: all 0.2s ease;
+			}
 
-        .filter-btn:hover {
-            border-color: #bbb;
-        }
+			.filter-btn:hover {
+				border-color: #bbb;
+			}
 
-        .filter-btn.active {
-            background: #333;
-            border-color: #333;
-            color: white;
-        }
+			.filter-btn.active {
+				background: #333;
+				border-color: #333;
+				color: white;
+			}
 
+			/* Main Dashboard View */
+			.events-list {
+				max-width: 100%;
+			}
 
-        /* Main Dashboard View */
-        .events-list {
-            max-width: 100%;
-        }
+			.event-card {
+				background: var(--card-bg);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				margin-bottom: 16px;
+				padding: 0;
+				transition: all 0.15s ease;
+				overflow: hidden;
+			}
 
-        .event-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 16px;
-            padding: 0;
-            transition: all 0.15s ease;
-            overflow: hidden;
-        }
+			.event-card:hover {
+				border-color: #999;
+				box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+			}
 
-        .event-card:hover {
-            border-color: #999;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.25);
-        }
+			.event-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 12px 20px;
+				border-bottom: 1px solid var(--border);
+				background: var(--bg);
+			}
 
-        .event-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg);
-        }
+			.event-day-time {
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+			}
 
-        .event-day-time {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+			.event-day {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: var(--text);
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
 
-        .event-day {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+			.event-time {
+				font-size: 1.1rem;
+				font-weight: 700;
+				color: var(--muted);
+				font-variant-numeric: tabular-nums;
+			}
 
-        .event-time {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--muted);
-            font-variant-numeric: tabular-nums;
-        }
+			.event-sport-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				padding: 6px 12px;
+				border-radius: 20px;
+				font-size: 0.8rem;
+				font-weight: 600;
+				color: white;
+				text-transform: uppercase;
+				letter-spacing: 0.3px;
+			}
 
-        .event-sport-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
+			.event-sport-badge.football {
+				background: #22c55e;
+			}
+			.event-sport-badge.tennis {
+				background: #3b82f6;
+			}
+			.event-sport-badge.golf {
+				background: #f59e0b;
+			}
+			.event-sport-badge.formula1 {
+				background: #ef4444;
+			}
+			.event-sport-badge.chess {
+				background: #6b7280;
+			}
+			.event-sport-badge.esports {
+				background: #8b5cf6;
+			}
 
-        .event-sport-badge.football { background: #22c55e; }
-        .event-sport-badge.tennis { background: #3b82f6; }
-        .event-sport-badge.golf { background: #f59e0b; }
-        .event-sport-badge.formula1 { background: #ef4444; }
-        .event-sport-badge.chess { background: #6b7280; }
-        .event-sport-badge.esports { background: #8b5cf6; }
+			.event-content {
+				padding: 20px;
+			}
 
-        .event-content {
-            padding: 20px;
-        }
+			.event-title {
+				font-size: 1.1rem;
+				font-weight: 600;
+				color: var(--text);
+				margin: 0 0 8px 0;
+				line-height: 1.3;
+			}
 
-        .event-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text);
-            margin: 0 0 8px 0;
-            line-height: 1.3;
-        }
+			.event-details {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
 
-        .event-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
+			.loading {
+				text-align: center;
+				padding: 40px;
+				color: #718096;
+			}
 
+			.spinner {
+				border: 3px solid #f3f3f3;
+				border-top: 3px solid #667eea;
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				animation: spin 1s linear infinite;
+				margin: 0 auto 16px;
+			}
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #718096;
-        }
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
 
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
+			@media (max-width: 768px) {
+				.container {
+					padding: 20px 15px;
+				}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+				h1 {
+					font-size: 1.8rem;
+				}
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .filter-btn {
-                margin: 2px 2px;
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
+				.filter-btn {
+					margin: 2px 2px;
+					padding: 6px 12px;
+					font-size: 0.8rem;
+				}
 
-            .event-header {
-                padding: 10px 15px;
-            }
+				.event-header {
+					padding: 10px 15px;
+				}
 
-            .event-day-time {
-                gap: 1px;
-            }
+				.event-day-time {
+					gap: 1px;
+				}
 
-            .event-day {
-                font-size: 0.8rem;
-            }
+				.event-day {
+					font-size: 0.8rem;
+				}
 
-            .event-time {
-                font-size: 1rem;
-            }
+				.event-time {
+					font-size: 1rem;
+				}
 
-            .event-content {
-                padding: 15px;
-            }
+				.event-content {
+					padding: 15px;
+				}
 
-            .event-details {
-                flex-direction: column;
-                gap: 6px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SportSync <button id="toggleTheme" style="margin-left:10px;background:var(--card-bg);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:0.7rem;cursor:pointer;">🌙</button></h1>
-            <p class="subtitle">Your Personal Sports Dashboard</p>
-        </header>
+				.event-details {
+					flex-direction: column;
+					gap: 6px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>
+					SportSync
+					<button
+						id="toggleTheme"
+						style="
+							margin-left: 10px;
+							background: var(--card-bg);
+							border: 1px solid var(--border);
+							padding: 4px 10px;
+							border-radius: 6px;
+							font-size: 0.7rem;
+							cursor: pointer;
+						"
+					>
+						🌙
+					</button>
+				</h1>
+				<p class="subtitle">Your Personal Sports Dashboard</p>
+			</header>
 
-        <div class="last-updated">
-            Last updated: <span id="lastUpdate">Loading...</span>
-            <br><a href="api-info.html" style="color: #777; text-decoration: none; font-size: 0.8rem; margin-top: 4px; display: inline-block;">📊 API Information</a>
-            <br><a href="data/events.ics" style="color: #777; text-decoration: none; font-size: 0.8rem; margin-top: 4px; display: inline-block;">📅 Download Calendar (.ics)</a>
-        </div>
+			<div class="last-updated">
+				Last updated: <span id="lastUpdate">Loading...</span> <br /><a
+					href="api-info.html"
+					style="
+						color: #777;
+						text-decoration: none;
+						font-size: 0.8rem;
+						margin-top: 4px;
+						display: inline-block;
+					"
+					>📊 API Information</a
+				>
+				<br /><a
+					href="data/events.ics"
+					style="
+						color: #777;
+						text-decoration: none;
+						font-size: 0.8rem;
+						margin-top: 4px;
+						display: inline-block;
+					"
+					>📅 Download Calendar (.ics)</a
+				>
+			</div>
 
-        <div class="simple-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="today">Today</button>
-            <button class="filter-btn" data-filter="week">This Week</button>
-        </div>
+			<div class="simple-filters">
+				<button class="filter-btn active" data-filter="all">All</button>
+				<button class="filter-btn" data-filter="today">Today</button>
+				<button class="filter-btn" data-filter="week">This Week</button>
+			</div>
 
-        <div class="events-list" id="eventsContainer">
-            <div class="loading">
-                <div class="spinner"></div>
-                Loading events...
-            </div>
-        </div>
+			<div class="events-list" id="eventsContainer">
+				<div class="loading">
+					<div class="spinner"></div>
+					Loading events...
+				</div>
+			</div>
+		</div>
 
-    </div>
+		<script src="js/sports-api.js?v=2025081810"></script>
+		<script src="js/simple-dashboard.js?v=2025081810"></script>
 
+		<script>
+			// Dark mode toggle
+			const btn = document.getElementById("toggleTheme");
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)"
+			).matches;
+			if (prefersDark) document.documentElement.classList.add("dark");
+			btn.addEventListener("click", () => {
+				document.documentElement.classList.toggle("dark");
+				btn.textContent = document.documentElement.classList.contains("dark")
+					? "☀️"
+					: "🌙";
+			});
+			// Register service worker for better cache control
+			if ("serviceWorker" in navigator) {
+				window.addEventListener("load", async () => {
+					try {
+						const swPath = 'sw.js';
+						const registration = await navigator.serviceWorker.register(swPath);
+						console.log(
+							"SportSync: Service Worker registered successfully:",
+							registration.scope
+						);
 
-    <script src="js/sports-api.js?v=2025081810"></script>
-    <script src="js/simple-dashboard.js?v=2025081810"></script>
-    
-    <script>
-        // Dark mode toggle
-        const btn = document.getElementById('toggleTheme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (prefersDark) document.documentElement.classList.add('dark');
-        btn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            btn.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
-        });
-        // Register service worker for better cache control
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', async () => {
-                try {
-                    const registration = await navigator.serviceWorker.register('/SportSync/sw.js');
-                    console.log('SportSync: Service Worker registered successfully:', registration.scope);
-                    
-                    // Listen for updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('SportSync: New service worker available');
-                                // Optionally notify user of update
-                            }
-                        });
-                    });
-                } catch (error) {
-                    console.log('SportSync: Service Worker registration failed:', error);
-                }
-            });
-        }
-    </script>
-</body>
+						// Listen for updates
+						registration.addEventListener("updatefound", () => {
+							const newWorker = registration.installing;
+							newWorker.addEventListener("statechange", () => {
+								if (
+									newWorker.state === "installed" &&
+									navigator.serviceWorker.controller
+								) {
+									console.log("SportSync: New service worker available");
+									// Optionally notify user of update
+								}
+							});
+						});
+					} catch (error) {
+						console.log(
+							"SportSync: Service Worker registration failed:",
+							error
+						);
+					}
+				});
+			}
+		</script>
+	</body>
 </html>

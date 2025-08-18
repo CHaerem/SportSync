@@ -37,7 +37,7 @@ class SimpleSportsDashboard {
 	async updateLastUpdatedTime() {
 		try {
 			const metaResponse = await fetch(
-				"/SportSync/data/meta.json?t=" + Date.now()
+				"data/meta.json?t=" + Date.now()
 			);
 			if (metaResponse.ok) {
 				const meta = await metaResponse.json();
@@ -75,8 +75,8 @@ class SimpleSportsDashboard {
 		const container = document.getElementById("eventsContainer");
 
 		try {
-			// Single aggregated file load
-			const resp = await fetch("/SportSync/data/events.json?t=" + Date.now());
+			// Single aggregated file load (relative path for local or GitHub Pages subpath)
+			const resp = await fetch("data/events.json?t=" + Date.now());
 			if (!resp.ok) throw new Error("Failed to load aggregated events");
 			const data = await resp.json();
 			// Map aggregated events into internal format
