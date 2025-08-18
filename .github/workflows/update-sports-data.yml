@@ -43,7 +43,7 @@ jobs:
     
     - name: Fetch Football Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         const fetch = require('node-fetch');
         
         // Norwegian streaming platform mappings
@@ -396,7 +396,7 @@ jobs:
     
     - name: Fetch Golf Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         const fetch = require('node-fetch');
         
         function getGolfStreamingInfo(tour) {
@@ -517,7 +517,7 @@ jobs:
     
     - name: Fetch Tennis Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         const fetch = require('node-fetch');
         
         function getTennisStreamingInfo(tour) {
@@ -688,7 +688,7 @@ jobs:
     
     - name: Fetch F1 Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         const fetch = require('node-fetch');
         
         function getF1StreamingInfo() {
@@ -796,7 +796,7 @@ jobs:
     
     - name: Create Chess Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         function getChessStreamingInfo(tournament) {
           const streamingMap = {
             'Norway Chess': [
@@ -911,7 +911,7 @@ jobs:
     
     - name: Create Esports Data
       run: |
-        node -e "
+        node --input-type=commonjs -e "
         function getCS2StreamingInfo() {
           return [
             { platform: 'Twitch', url: 'https://twitch.tv/esl_csgo', type: 'twitch' },
