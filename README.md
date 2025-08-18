@@ -1,15 +1,41 @@
 # SportSync: Personal Sports Dashboard
 
-A modern, responsive sports dashboard that displays upcoming events for your favorite sports. Built as a static website with automated data updates via GitHub Actions and hosted on GitHub Pages.
+A beautifully simple sports dashboard following the CALM principle - instantly understandable at a glance, yet elegant and informative. Built as a static website with automated data updates via GitHub Actions and hosted on GitHub Pages.
 
-## 🏆 Features
+## 🎯 Design Philosophy
 
-- **Real-time Sports Data**: Football, Golf, Tennis, Formula 1, Chess, and Esports
-- **Norwegian Focus**: CEST timezone formatting and prioritized Norwegian teams/athletes
-- **Automated Updates**: GitHub Actions fetch fresh data every 6 hours
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Zero Dependencies**: Pure HTML, CSS, and JavaScript - no build process required
-- **Offline Ready**: Graceful fallback to cached data when APIs are unavailable
+SportSync follows the **CALM principle** - designed to be:
+- **Non-intrusive** and helpful with a simple glance
+- **Obviously functional** that even your grandparents would understand
+- **Elegant yet informative** for tech-savvy users too
+- **Instantly scannable** for quick daily sports updates
+
+## ✨ Key Features
+
+### 🕒 **Crystal Clear Time Display**
+- **24-hour format** (e.g., "14:30", "19:45") - no AM/PM confusion
+- **Day indicators** (TODAY, TOMORROW, MONDAY, etc.) 
+- **Norwegian timezone** (Europe/Oslo) for accurate local times
+
+### 🏆 **Sport Type Indicators**
+- **Color-coded sport badges** for instant recognition:
+  - 🟢 **Football** (Green)
+  - 🔵 **Tennis** (Blue)
+  - 🟡 **Golf** (Amber) 
+  - 🔴 **Formula 1** (Red)
+  - ⚫ **Chess** (Gray)
+  - 🟣 **Esports** (Purple)
+
+### 📱 **Extremely Simple Interface**
+- **Single chronological list** of all upcoming events
+- **Just 3 filters**: All, Today, This Week
+- **Clean event cards** with essential info only
+- **Perfect mobile responsiveness**
+
+### 🔄 **Automated Updates**
+- **Fresh data every 6 hours** via GitHub Actions
+- **Offline graceful fallback** to cached data
+- **Zero maintenance** once set up
 
 ## 🚀 Live Demo
 
@@ -17,134 +43,142 @@ Visit your dashboard at: `https://yourusername.github.io/SportSync/`
 
 ## 📱 Sports Covered
 
-| Sport | API Source | Coverage |
-|-------|------------|----------|
-| ⚽ **Football** | TheSportsDB | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| Sport | Data Source | Coverage |
+|-------|-------------|----------|
+| ⚽ **Football** | ESPN API | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| 🎾 **Tennis** | ESPN API | ATP, WTA, Grand Slams, with Norwegian focus |
 | 🏌️ **Golf** | ESPN API | PGA Tour, DP World Tour, Major Championships |
-| 🎾 **Tennis** | TheSportsDB | ATP, WTA, Grand Slams |
-| 🏎️ **Formula 1** | ESPN API | Race Calendar, Practice, Qualifying |
-| ♟️ **Chess** | Mock Data* | Major tournaments, titled events |
-| 🎮 **Esports** | Mock Data* | CS2, LoL, Valorant, Dota 2 |
+| 🏎️ **Formula 1** | ESPN Racing API | Race Calendar, Practice, Qualifying |
+| ♟️ **Chess** | Curated Data | Major tournaments, Norwegian focus |
+| 🎮 **Esports** | Curated Data | CS2, LoL, Valorant with team focus |
 
-*_Chess and Esports use curated mock data - integration with Chess.com API and esports APIs coming soon_
+## 🛠️ Quick Setup
 
-## 🛠️ Setup & Development
+### Deploy to GitHub Pages
+
+1. **Fork this repository**
+2. **Enable GitHub Pages**:
+   - Go to Settings → Pages
+   - Source: Deploy from a branch
+   - Branch: `main` → `/docs` folder
+3. **Visit `https://yourusername.github.io/SportSync/`**
+4. **Done!** Data updates automatically every 6 hours
 
 ### Local Development
 
 ```bash
-# Clone the repository
+# Clone and serve locally
 git clone https://github.com/yourusername/SportSync.git
-cd SportSync
+cd SportSync/docs
+python -m http.server 8000
 
-# Start local development server
-npm run dev
-
-# Open http://localhost:8000 in your browser
+# Open http://localhost:8000
 ```
 
-### GitHub Pages Deployment
+## ⚙️ How It Works
 
-1. **Enable GitHub Pages**:
-   - Go to repository Settings → Pages
-   - Source: Deploy from a branch
-   - Branch: `main` → `/docs` folder
+### 🤖 Automated Data Pipeline
+```
+GitHub Actions (every 6 hours)
+    ↓
+Fetch fresh sports data from ESPN APIs
+    ↓ 
+Save to docs/data/*.json files
+    ↓
+Commit & push to repository
+    ↓
+GitHub Pages automatically updates
+```
 
-2. **Configure Secrets** (Optional for premium APIs):
-   - Go to Settings → Secrets and variables → Actions
-   - Add API keys if using premium sports APIs
-
-## ⚙️ Automated Data Updates
-
-The dashboard uses GitHub Actions to periodically fetch fresh sports data:
-
-- **Schedule**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
-- **Manual Trigger**: Available via repository Actions tab
-- **Data Storage**: Fetched data is saved to `docs/data/` directory
-- **Fallback**: Client-side APIs as backup when cached data is unavailable
-
-## 🏗️ Architecture
-
+### 🏗️ Simple Architecture
 ```
 docs/
-├── index.html              # Main dashboard
+├── index.html                 # Clean, minimal dashboard
 ├── js/
-│   ├── sports-api.js       # API integration layer
-│   └── dashboard.js        # Dashboard controller
-├── data/                   # Pre-fetched API data (generated)
+│   ├── sports-api.js          # Data fetching & formatting
+│   └── simple-dashboard.js    # CALM principle UI logic
+├── data/                      # Auto-generated API data
 │   ├── football.json
-│   ├── golf.json
 │   ├── tennis.json
+│   ├── golf.json
 │   ├── f1.json
 │   ├── chess.json
 │   └── esports.json
-└── output/                 # Legacy (can be removed)
-
-.github/workflows/
-└── update-sports-data.yml  # Automated data fetching
+└── sw.js                      # Service worker for caching
 ```
 
-## 🔧 Configuration
+## 🎨 Design Highlights
 
-### Sports Preferences
-
-Edit `docs/js/sports-api.js` to customize:
-- Specific leagues and tournaments
-- Norwegian vs international focus
-- Number of events displayed per sport
-- Time formatting preferences
-
-### API Keys
-
-For enhanced data quality, add these secrets to your repository:
-
+### Event Card Structure
 ```
-THESPORTSDB_API_KEY=your_key_here
-API_SPORTS_KEY=your_key_here
-SPORTSDATA_API_KEY=your_key_here
+┌─────────────────────────────────────┐
+│ TODAY              🟢 FOOTBALL      │  ← Header: Day + Sport Badge
+├─────────────────────────────────────┤
+│ 14:30                               │  ← Large, clear time
+│                                     │
+│ Arsenal vs Manchester City          │  ← Event title
+│ Premier League • Emirates Stadium   │  ← Details
+│ [Discovery+] [Sky Sports]          │  ← Streaming (if available)
+└─────────────────────────────────────┘
 ```
 
-## 🕒 Time Zone
+### Perfect for Everyone
+- **Grandparents**: Large text, obvious controls, no confusing elements
+- **Tech users**: Efficient scanning, clean design, comprehensive info
+- **Mobile users**: Touch-friendly, readable on small screens
+- **Quick checks**: Essential info visible at a glance
 
-All events are displayed in Norwegian time (Europe/Oslo timezone) with intelligent relative formatting:
-- "Today" / "Tomorrow" for immediate events  
-- "X days" for events within a week
-- Full date for events further out
+## 🔧 Customization
 
-## 📊 Data Sources
+### Change Sports Focus
+Edit `docs/js/simple-dashboard.js` to modify:
+- Which sports to include
+- Number of events per sport
+- Regional preferences
+- Time formatting
 
-### Free APIs (Currently Used)
-- **TheSportsDB**: Community-driven sports database
-- **ESPN Public API**: Official ESPN data endpoints
+### Styling Tweaks  
+All styles are in `docs/index.html` for easy customization:
+- Colors and spacing
+- Typography choices
+- Mobile breakpoints
+- Sport badge colors
 
-### Premium APIs (Future Integration)
-- **API-Sports**: Comprehensive sports data platform
-- **SportsDataIO**: Professional sports data provider
-- **Chess.com API**: Official chess platform data
+## 🕒 Time Display
 
-## 🚧 Roadmap
+All events show in Norwegian time (Europe/Oslo) using 24-hour format:
+- **Today's events**: "TODAY 14:30"
+- **Tomorrow's events**: "TOMORROW 19:45"  
+- **This week**: "MONDAY 16:00"
+- **Future events**: "SUN, DEC 15 12:30"
 
-- [ ] Chess.com API integration
-- [ ] Live esports data via Twitch/YouTube Gaming APIs
-- [ ] Push notifications for favorite team events
-- [ ] Calendar export (.ics) functionality
-- [ ] Dark mode toggle
-- [ ] Customizable sports selection
+## 🚧 Future Enhancements
+
+- [ ] Live chess tournament integration via Chess.com API
+- [ ] Real-time esports data from Twitch Gaming
+- [ ] Calendar export (.ics) functionality  
+- [ ] Push notifications for favorite events
+- [ ] Dark mode option
+- [ ] Favorite teams/players tracking
 
 ## 🤝 Contributing
 
+This project welcomes contributions that maintain the CALM principle:
+
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and test locally
-4. Commit with descriptive messages
-5. Push and create a Pull Request
+2. Keep changes simple and user-focused
+3. Test on both mobile and desktop
+4. Ensure accessibility and readability
+5. Create a Pull Request with clear description
 
 ## 📄 License
 
-MIT License - feel free to use this project for your own sports dashboard!
+MIT License - feel free to create your own sports dashboard!
 
-## 🆘 Support
+## 💡 Why SportSync?
 
-- Check the [GitHub Issues](https://github.com/yourusername/SportSync/issues) for common problems
-- Create a new issue for bugs or feature requests
-- The dashboard works offline with cached data during API outages
+In a world of cluttered sports apps and overwhelming dashboards, SportSync returns to simplicity. It answers one question perfectly: **"What sports are happening when?"**
+
+No notifications, no social features, no premium subscriptions. Just clean, reliable sports information that respects your time and attention.
+
+Perfect for checking your daily sports schedule over morning coffee or planning your weekend viewing. ☕️🏆

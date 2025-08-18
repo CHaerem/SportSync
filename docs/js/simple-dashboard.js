@@ -213,10 +213,11 @@ class SimpleSportsDashboard {
         
         const date = new Date(timeString);
         
-        // Return actual time of day
+        // Return actual time of day in 24-hour format
         return date.toLocaleTimeString('en-NO', {
             hour: '2-digit',
             minute: '2-digit',
+            hour12: false,
             timeZone: 'Europe/Oslo'
         });
     }
