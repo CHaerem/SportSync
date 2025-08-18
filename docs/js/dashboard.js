@@ -11,7 +11,7 @@ class SportsDashboard {
             tournaments: new Set([
                 'Premier League', 'Eliteserien', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1',
                 'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour',
-                'Formula 1 2025', 'FIDE Grand Prix', 'Norway Chess', 'CS2 Major', 'LoL Worlds', 'Valorant Champions'
+                'Formula 1 2025', 'FIDE Grand Prix', 'Norway Chess', 'CS2 Major', 'IEM Pro League'
             ]),
             streamingOnly: false,
             norwayPriority: true
