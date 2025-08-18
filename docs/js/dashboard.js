@@ -32,57 +32,17 @@ class SportsDashboard {
     }
 
     setupViewToggle() {
-        const sportsBtn = document.getElementById('sportsViewBtn');
-        const calendarBtn = document.getElementById('calendarViewBtn');
-        const apiSourcesBtn = document.getElementById('apiSourcesBtn');
-        const sportsView = document.getElementById('sportsView');
-        const calendarView = document.getElementById('calendarView');
-        const apiSourcesView = document.getElementById('apiSourcesView');
-
-        const hideAllViews = () => {
-            sportsView.classList.add('hidden');
-            calendarView.classList.add('hidden');
-            apiSourcesView.classList.add('hidden');
-        };
-
-        const removeAllActive = () => {
-            sportsBtn.classList.remove('active');
-            calendarBtn.classList.remove('active');
-            apiSourcesBtn.classList.remove('active');
-        };
-
-        sportsBtn.addEventListener('click', () => {
-            if (this.currentView !== 'sports') {
-                this.currentView = 'sports';
-                removeAllActive();
-                hideAllViews();
-                sportsBtn.classList.add('active');
-                sportsView.classList.remove('hidden');
-                this.loadSportsView();
-            }
-        });
-
-        calendarBtn.addEventListener('click', () => {
-            if (this.currentView !== 'calendar') {
-                this.currentView = 'calendar';
-                removeAllActive();
-                hideAllViews();
-                calendarBtn.classList.add('active');
-                calendarView.classList.remove('hidden');
-                this.loadCalendarView();
-            }
-        });
-
-        apiSourcesBtn.addEventListener('click', () => {
-            if (this.currentView !== 'api-sources') {
-                this.currentView = 'api-sources';
-                removeAllActive();
-                hideAllViews();
-                apiSourcesBtn.classList.add('active');
-                apiSourcesView.classList.remove('hidden');
-                this.loadApiSourcesView();
-            }
-        });
+        // In the new simplified design, we only have one unified dashboard view
+        // No need for complex view switching - just set the current view
+        this.currentView = 'dashboard';
+        
+        // The Dashboard button should stay active (it's the only view)
+        const dashboardBtn = document.getElementById('sportsViewBtn');
+        if (dashboardBtn) {
+            dashboardBtn.classList.add('active');
+        }
+        
+        console.log('View toggle setup completed - using unified dashboard');
     }
 
     setupFilters() {
@@ -96,6 +56,10 @@ class SportsDashboard {
 
         Object.entries(chips).forEach(([chipId, mode]) => {
             const chip = document.getElementById(chipId);
+            if (!chip) {
+                console.warn(`Filter chip not found: ${chipId}`);
+                return;
+            }
             chip.addEventListener('click', () => {
                 // Remove active from all chips
                 Object.keys(chips).forEach(id => {
