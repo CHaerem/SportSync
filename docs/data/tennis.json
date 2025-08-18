@@ -1,17 +1,42 @@
 {
-  "lastUpdated": "2025-08-18T06:37:28.216Z",
+  "lastUpdated": "2025-08-18T06:45:54.523Z",
   "source": "ESPN Tennis API",
   "apiEndpoints": [
     "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard"
   ],
   "tournaments": [
     {
+      "name": "ATP Tour",
+      "events": [
+        {
+          "title": "Next ATP Tournament",
+          "meta": "ATP Tour - Upcoming",
+          "time": "2025-08-21T06:45:54.523Z",
+          "venue": "Tennis Center",
+          "sport": "tennis",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://discoveryplus.no",
+              "type": "discovery"
+            },
+            {
+              "platform": "Tennis Channel",
+              "url": null,
+              "type": "tennis"
+            }
+          ],
+          "norwegian": false
+        }
+      ]
+    },
+    {
       "name": "WTA 1000",
       "events": [
         {
           "title": "Iga Swiatek vs Aryna Sabalenka",
           "meta": "WTA 1000 - Cincinnati",
-          "time": "2025-08-22T06:37:28.216Z",
+          "time": "2025-08-22T06:45:54.523Z",
           "venue": "Lindner Family Tennis Center, Cincinnati",
           "sport": "tennis",
           "streaming": [
@@ -31,7 +56,7 @@
         {
           "title": "Coco Gauff vs Jessica Pegula",
           "meta": "US Open - Quarterfinals",
-          "time": "2025-08-25T06:37:28.216Z",
+          "time": "2025-08-25T06:45:54.523Z",
           "venue": "USTA Billie Jean King National Tennis Center",
           "sport": "tennis",
           "streaming": [
