@@ -186,20 +186,49 @@ jobs:
             // Fetch REAL La Liga data from ESPN API with proper date filtering
             try {
               console.log('Fetching REAL La Liga data from ESPN...');
-              const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard');
-              const data = await response.json();
               
-              if (data.events && data.events.length > 0) {
+              const now = new Date();
+              const today = now.toISOString().split('T')[0].replace(/-/g, '');
+              const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+              const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+              
+              console.log(\`Checking La Liga dates: \${today}, \${tomorrow}, \${dayAfter}\`);
+              
+              let allEvents = [];
+              
+              // Fetch multiple days to ensure we get upcoming matches (same as Premier League)
+              const dateQueries = [
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${today}\`,
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${tomorrow}\`,
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${dayAfter}\`
+              ];
+              
+              for (const url of dateQueries) {
+                try {
+                  const response = await fetch(url);
+                  const data = await response.json();
+                  if (data.events && data.events.length > 0) {
+                    allEvents.push(...data.events);
+                  }
+                } catch (err) {
+                  console.error(\`Error fetching from \${url}:\`, err.message);
+                }
+                await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
+              }
+              
+              console.log(\`Found \${allEvents.length} total La Liga events across multiple days\`);
+              
+              if (allEvents.length > 0) {
                 const now = new Date();
                 const cutoffTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago to include recent/ongoing matches
                 
                 // Filter for upcoming events only
-                const upcomingEvents = data.events.filter(event => {
+                const upcomingEvents = allEvents.filter(event => {
                   const eventDate = new Date(event.date);
                   return eventDate > cutoffTime;
                 });
                 
-                console.log(\`Filtered \${data.events.length} total La Liga events to \${upcomingEvents.length} upcoming events\`);
+                console.log(\`Filtered \${allEvents.length} total La Liga events to \${upcomingEvents.length} upcoming events\`);
                 
                 if (upcomingEvents.length > 0) {
                   // Prioritize Barcelona matches if any
