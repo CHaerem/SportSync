@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-08-18T18:52:59.146Z",
+  "lastUpdated": "2025-08-18T19:03:32.540Z",
   "source": "ESPN API",
   "apiEndpoints": [
     "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
@@ -8,51 +8,11 @@
   "tournaments": [
     {
       "name": "Premier League",
-      "events": [
-        {
-          "title": "Leeds United vs Everton",
-          "meta": "Premier League",
-          "time": "2025-08-18T19:00Z",
-          "venue": "Elland Road",
-          "homeTeam": "Leeds United",
-          "awayTeam": "Everton",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
-              "type": "viaplay"
-            },
-            {
-              "platform": "Sky Sports",
-              "url": null,
-              "type": "sky"
-            }
-          ],
-          "norwegian": false
-        }
-      ]
+      "events": []
     },
     {
       "name": "La Liga",
       "events": [
-        {
-          "title": "Elche vs Real Betis",
-          "meta": "La Liga",
-          "time": "2025-08-18T19:00Z",
-          "venue": "Martínez Valero",
-          "homeTeam": "Elche",
-          "awayTeam": "Real Betis",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
-              "type": "viaplay"
-            }
-          ],
-          "norwegian": false
-        },
         {
           "title": "Real Madrid vs Osasuna",
           "meta": "La Liga",
@@ -69,126 +29,6 @@
             }
           ],
           "norwegian": false
-        }
-      ]
-    },
-    {
-      "name": "Obos-ligaen",
-      "events": [
-        {
-          "title": "FK Lyn Oslo vs KFUM Oslo",
-          "meta": "Obos-ligaen",
-          "time": "2025-08-21T18:52:59.146Z",
-          "venue": "Lyn Arena",
-          "homeTeam": "FK Lyn Oslo",
-          "awayTeam": "KFUM Oslo",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "TV2 Play",
-              "url": "https://play.tv2.no",
-              "type": "tv2"
-            },
-            {
-              "platform": "Discovery+",
-              "url": "https://discoveryplus.no",
-              "type": "discovery"
-            }
-          ],
-          "norwegian": true
-        },
-        {
-          "title": "Bryne FK vs FK Lyn Oslo",
-          "meta": "Obos-ligaen",
-          "time": "2025-08-23T18:52:59.146Z",
-          "venue": "Bryne Stadion",
-          "homeTeam": "Bryne FK",
-          "awayTeam": "FK Lyn Oslo",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "TV2 Play",
-              "url": "https://play.tv2.no",
-              "type": "tv2"
-            },
-            {
-              "platform": "Discovery+",
-              "url": "https://discoveryplus.no",
-              "type": "discovery"
-            }
-          ],
-          "norwegian": true
-        },
-        {
-          "title": "FK Lyn Oslo vs Kongsvinger IL",
-          "meta": "Obos-ligaen",
-          "time": "2025-08-25T18:52:59.146Z",
-          "venue": "Lyn Arena",
-          "homeTeam": "FK Lyn Oslo",
-          "awayTeam": "Kongsvinger IL",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "TV2 Play",
-              "url": "https://play.tv2.no",
-              "type": "tv2"
-            },
-            {
-              "platform": "Discovery+",
-              "url": "https://discoveryplus.no",
-              "type": "discovery"
-            }
-          ],
-          "norwegian": true
-        }
-      ]
-    },
-    {
-      "name": "International",
-      "events": [
-        {
-          "title": "Norway vs Spain",
-          "meta": "UEFA Nations League",
-          "time": "2025-08-27T18:52:59.146Z",
-          "venue": "Ullevaal Stadion, Oslo",
-          "homeTeam": "Norway",
-          "awayTeam": "Spain",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "NRK",
-              "url": "https://nrk.no",
-              "type": "nrk"
-            },
-            {
-              "platform": "TV2",
-              "url": "https://tv2.no",
-              "type": "tv2"
-            }
-          ],
-          "norwegian": true
-        },
-        {
-          "title": "Germany vs Norway",
-          "meta": "UEFA Nations League",
-          "time": "2025-09-01T18:52:59.146Z",
-          "venue": "Allianz Arena, Munich",
-          "homeTeam": "Germany",
-          "awayTeam": "Norway",
-          "sport": "football",
-          "streaming": [
-            {
-              "platform": "NRK",
-              "url": "https://nrk.no",
-              "type": "nrk"
-            },
-            {
-              "platform": "TV2",
-              "url": "https://tv2.no",
-              "type": "tv2"
-            }
-          ],
-          "norwegian": true
         }
       ]
     }
