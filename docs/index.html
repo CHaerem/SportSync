@@ -352,7 +352,7 @@
 			if ("serviceWorker" in navigator) {
 				window.addEventListener("load", async () => {
 					try {
-						const swPath = 'sw.js';
+						const swPath = '/SportSync/sw.js';
 						const registration = await navigator.serviceWorker.register(swPath);
 						console.log(
 							"SportSync: Service Worker registered successfully:",
