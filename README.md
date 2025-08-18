@@ -48,14 +48,14 @@ Visit your dashboard at: [https://CHaerem.github.io/SportSync/](https://CHaerem.
 
 ## 📱 Sports Covered
 
-| Sport            | Data Source     | Coverage                                                  |
-| ---------------- | --------------- | --------------------------------------------------------- |
-| ⚽ **Football**  | ESPN API        | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
-| 🎾 **Tennis**    | ESPN API        | ATP, WTA, Grand Slams, with Norwegian focus               |
-| 🏌️ **Golf**      | ESPN API        | PGA Tour, DP World Tour, Major Championships              |
-| 🏎️ **Formula 1** | ESPN Racing API | Race Calendar, Practice, Qualifying                       |
+| Sport            | Data Source                  | Coverage                                                  |
+| ---------------- | ---------------------------- | --------------------------------------------------------- |
+| ⚽ **Football**  | ESPN API                     | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| 🎾 **Tennis**    | ESPN API                     | ATP, WTA, Grand Slams, with Norwegian focus               |
+| 🏌️ **Golf**      | ESPN API                     | PGA Tour, DP World Tour, Major Championships              |
+| 🏎️ **Formula 1** | ESPN Racing API              | Race Calendar, Practice, Qualifying                       |
 | ♟️ **Chess**     | Curated Data + Lichess probe | Major tournaments, Norwegian focus                        |
-| 🎮 **Esports**   | HLTV community API | CS2 focus (FaZe / rain)                                    |
+| 🎮 **Esports**   | HLTV community API           | CS2 focus (FaZe / rain)                                   |
 
 ## 🛠️ Quick Setup
 
