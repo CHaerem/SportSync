@@ -12,16 +12,8 @@ class SportsAPI {
     // Football API - multiple leagues support
     async fetchFootballEvents() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/football.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/football.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached football data from:', cachedData.lastUpdated);
@@ -70,16 +62,8 @@ class SportsAPI {
     // Golf events - multiple tours support
     async fetchGolfEvents() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/golf.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/golf.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached golf data from:', cachedData.lastUpdated);
@@ -122,16 +106,8 @@ class SportsAPI {
     // Tennis events - multiple tour support
     async fetchTennisEvents() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/tennis.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/tennis.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached tennis data from:', cachedData.lastUpdated);
@@ -176,16 +152,8 @@ class SportsAPI {
     // Formula 1 events - sessions breakdown
     async fetchF1Events() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/f1.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/f1.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached F1 data from:', cachedData.lastUpdated);
@@ -214,16 +182,8 @@ class SportsAPI {
     // Chess events - tournament categories
     async fetchChessEvents() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/chess.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/chess.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached chess data from:', cachedData.lastUpdated);
@@ -239,16 +199,8 @@ class SportsAPI {
     // Esports events - game categories
     async fetchEsportsEvents() {
         try {
-            // Try pre-fetched data first with cache busting
-            const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`/SportSync/data/esports.json?v=${cacheBuster}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // Try pre-fetched data first
+            const cachedResponse = await fetch('/SportSync/data/esports.json');
             if (cachedResponse.ok) {
                 const cachedData = await cachedResponse.json();
                 console.log('Using cached esports data from:', cachedData.lastUpdated);

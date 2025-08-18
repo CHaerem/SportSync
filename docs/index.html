@@ -864,9 +864,6 @@
                     <button class="filter-chip" id="streamingChip">📺 Streaming</button>
                 </div>
                 
-                <button class="settings-btn" id="settingsBtn" title="Customize Dashboard">
-                    ⚙️
-                </button>
             </div>
         </div>
 
@@ -984,129 +981,8 @@
             </div>
         </div>
 
-        <!-- API Sources View -->
-        <div class="api-sources-view hidden" id="apiSourcesView">
-            <div class="api-sources-header">
-                <h2 class="api-sources-title">Data Sources & APIs</h2>
-                <div class="api-sources-subtitle">Live sports data sources and API endpoints</div>
-            </div>
-            <div id="apiSourcesContent">
-                <!-- API source cards will be populated by JavaScript -->
-            </div>
-        </div>
     </div>
 
-    <!-- Settings Panel -->
-    <div class="settings-overlay" id="settingsOverlay"></div>
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-header">
-            <h2 class="settings-title">Dashboard Settings</h2>
-            <button class="close-btn" id="closeSettings">&times;</button>
-        </div>
-        <div class="settings-content">
-            <div class="settings-section">
-                <h3>Sports</h3>
-                <div class="checkbox-group" id="sportsToggles">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-football" checked>
-                        <label for="toggle-football">⚽ Football</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-golf" checked>
-                        <label for="toggle-golf">🏌️ Golf</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-tennis" checked>
-                        <label for="toggle-tennis">🎾 Tennis</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-f1" checked>
-                        <label for="toggle-f1">🏎️ Formula 1</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-chess" checked>
-                        <label for="toggle-chess">♟️ Chess</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-esports" checked>
-                        <label for="toggle-esports">🎮 CS2 Esports</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Football Leagues</h3>
-                <div class="checkbox-group" id="footballToggles">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-premier-league" checked>
-                        <label for="toggle-premier-league">Premier League</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-eliteserien" checked>
-                        <label for="toggle-eliteserien">Eliteserien</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-la-liga" checked>
-                        <label for="toggle-la-liga">La Liga</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-serie-a" checked>
-                        <label for="toggle-serie-a">Serie A</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-bundesliga" checked>
-                        <label for="toggle-bundesliga">Bundesliga</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-ligue-1" checked>
-                        <label for="toggle-ligue-1">Ligue 1</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Golf Tours</h3>
-                <div class="checkbox-group" id="golfToggles">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-pga-tour" checked>
-                        <label for="toggle-pga-tour">PGA Tour</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-dp-world-tour" checked>
-                        <label for="toggle-dp-world-tour">DP World Tour</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Tennis Tours</h3>
-                <div class="checkbox-group" id="tennisToggles">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-atp-tour" checked>
-                        <label for="toggle-atp-tour">ATP Tour</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="toggle-wta-tour" checked>
-                        <label for="toggle-wta-tour">WTA Tour</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Streaming Preferences</h3>
-                <div class="checkbox-group" id="streamingToggles">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="show-streaming-only">
-                        <label for="show-streaming-only">Only show events with streaming info</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="norway-priority" checked>
-                        <label for="norway-priority">Prioritize Norwegian platforms</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="js/sports-api.js"></script>
     <script src="js/dashboard.js"></script>
