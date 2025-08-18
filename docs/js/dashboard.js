@@ -5,13 +5,14 @@ class SportsDashboard {
         this.lastUpdate = new Date();
         this.currentView = 'sports'; // 'sports', 'calendar', or 'api-sources'
         this.filters = {
-            mode: 'all', // 'all', 'today', 'norway', 'streaming'
+            mode: 'all', // 'all', 'today', 'week', 'norway'
             sports: new Set(['football', 'golf', 'tennis', 'f1', 'chess', 'esports']),
             tournaments: new Set([
                 'Premier League', 'Eliteserien', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1',
                 'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour',
                 'Formula 1 2025', 'FIDE Grand Prix', 'Norway Chess', 'CS2 Major', 'IEM Pro League'
-            ])
+            ]),
+            searchTerm: ''
         };
         this.allSportsData = null;
         this.init();
@@ -46,34 +47,39 @@ class SportsDashboard {
     }
 
     setupFilters() {
-        // Setup filter chips
-        const chips = {
-            'allEventsChip': 'all',
-            'todayChip': 'today', 
-            'norwayChip': 'norway',
-            'streamingChip': 'streaming'
-        };
-
-        Object.entries(chips).forEach(([chipId, mode]) => {
-            const chip = document.getElementById(chipId);
-            if (!chip) {
-                console.warn(`Filter chip not found: ${chipId}`);
-                return;
-            }
-            chip.addEventListener('click', () => {
-                // Remove active from all chips
-                Object.keys(chips).forEach(id => {
-                    document.getElementById(id).classList.remove('active');
-                });
-                
-                // Add active to clicked chip
-                chip.classList.add('active');
-                
-                // Update filter and apply
-                this.filters.mode = mode;
+        // Setup sport filter dropdown
+        const sportFilter = document.getElementById('sportFilter');
+        if (sportFilter) {
+            sportFilter.addEventListener('change', (e) => {
+                const selectedSport = e.target.value;
+                if (selectedSport === 'all') {
+                    this.filters.sports = new Set(['football', 'golf', 'tennis', 'f1', 'chess', 'esports']);
+                } else {
+                    this.filters.sports = new Set([selectedSport]);
+                }
                 this.applyFilters();
             });
-        });
+        }
+
+        // Setup time filter dropdown
+        const timeFilter = document.getElementById('timeFilter');
+        if (timeFilter) {
+            timeFilter.addEventListener('change', (e) => {
+                this.filters.mode = e.target.value;
+                this.applyFilters();
+            });
+        }
+
+        // Setup search input
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.filters.searchTerm = e.target.value.toLowerCase();
+                this.applyFilters();
+            });
+        }
+
+        console.log('New filter system setup completed');
     }
 
     setupSettings() {
@@ -301,9 +307,9 @@ class SportsDashboard {
                 return false;
             }
 
-            // Filter events within tournament based on current mode
+            // Filter events within tournament based on current mode and search
             let filteredEvents = tournament.events.filter(event => {
-                return this.passesFilterMode(event);
+                return this.passesFilterMode(event) && this.passesSearchFilter(event);
             });
 
             // For ALL sports: if no events pass filters, show next upcoming event
@@ -330,6 +336,8 @@ class SportsDashboard {
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
+        const weekEnd = new Date(today);
+        weekEnd.setDate(today.getDate() + 7);
         const eventDate = new Date(event.time);
 
         switch (this.filters.mode) {
@@ -337,13 +345,29 @@ class SportsDashboard {
                 return true;
             case 'today':
                 return eventDate >= today && eventDate < tomorrow;
+            case 'week':
+                return eventDate >= today && eventDate < weekEnd;
             case 'norway':
                 return event.norwegian === true;
-            case 'streaming':
-                return event.streaming && event.streaming.length > 0;
             default:
                 return true;
         }
+    }
+
+    passesSearchFilter(event) {
+        if (!this.filters.searchTerm || this.filters.searchTerm === '') {
+            return true;
+        }
+
+        const searchTerm = this.filters.searchTerm;
+        const searchableText = [
+            event.title,
+            event.meta,
+            event.venue,
+            event.tournament
+        ].filter(text => text).join(' ').toLowerCase();
+
+        return searchableText.includes(searchTerm);
     }
 
     async loadCalendarView() {
