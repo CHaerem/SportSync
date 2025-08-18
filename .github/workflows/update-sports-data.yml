@@ -44,7 +44,7 @@ jobs:
     - name: Fetch Football Data
       run: |
         node -e "
-        import fetch from 'node-fetch';
+        const fetch = require('node-fetch');
         
         // Norwegian streaming platform mappings
         function getStreamingInfo(league, teams) {
@@ -332,9 +332,7 @@ jobs:
             };
             
             console.log(\`Total tournaments with events: \${tournaments.length}\`);
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/football.json', JSON.stringify(result, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/football.json', JSON.stringify(result, null, 2));
           } catch (error) {
             console.error('Error fetching football data:', error);
             // Create fallback data
@@ -360,9 +358,7 @@ jobs:
                 }
               ]
             };
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/football.json', JSON.stringify(fallback, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/football.json', JSON.stringify(fallback, null, 2));
           }
         }
         
@@ -372,7 +368,7 @@ jobs:
     - name: Fetch Golf Data
       run: |
         node -e "
-        import fetch from 'node-fetch';
+        const fetch = require('node-fetch');
         
         function getGolfStreamingInfo(tour) {
           const streamingMap = {
@@ -440,9 +436,7 @@ jobs:
             };
             
             console.log(\`Total golf tournaments: \${tournaments.length}\`);
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/golf.json', JSON.stringify(result, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/golf.json', JSON.stringify(result, null, 2));
           } catch (error) {
             console.error('Error fetching golf data:', error);
             const fallback = {
@@ -467,9 +461,7 @@ jobs:
                 }
               ]
             };
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/golf.json', JSON.stringify(fallback, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/golf.json', JSON.stringify(fallback, null, 2));
           }
         }
         
@@ -479,7 +471,7 @@ jobs:
     - name: Fetch Tennis Data
       run: |
         node -e "
-        import fetch from 'node-fetch';
+        const fetch = require('node-fetch');
         
         function getTennisStreamingInfo(tour) {
           const streamingMap = {
@@ -612,9 +604,7 @@ jobs:
             };
             
             console.log(\`Total tennis tournaments: \${tournaments.length}\`);
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/tennis.json', JSON.stringify(result, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(result, null, 2));
           } catch (error) {
             console.error('Error fetching tennis data:', error);
             const fallback = {
@@ -639,9 +629,7 @@ jobs:
                 }
               ]
             };
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/tennis.json', JSON.stringify(fallback, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(fallback, null, 2));
           }
         }
         
@@ -651,7 +639,7 @@ jobs:
     - name: Fetch F1 Data
       run: |
         node -e "
-        import fetch from 'node-fetch';
+        const fetch = require('node-fetch');
         
         function getF1StreamingInfo() {
           return [
@@ -726,9 +714,7 @@ jobs:
             };
             
             console.log(\`Created \${events.length} F1 race events\`);
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/f1.json', JSON.stringify(result, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(result, null, 2));
           } catch (error) {
             console.error('Error creating F1 data:', error);
             const fallback = {
@@ -751,9 +737,7 @@ jobs:
                 }
               ]
             };
-            await import('fs').then(fs => {
-              fs.writeFileSync('docs/data/f1.json', JSON.stringify(fallback, null, 2));
-            });
+            require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(fallback, null, 2));
           }
         }
         
@@ -871,9 +855,7 @@ jobs:
         
         const chessEvents = await fetchChessData();
         
-        await import('fs').then(fs => {
-          fs.writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
-        });
+        require('fs').writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
         console.log('Created chess tournament data');
         "
     
@@ -987,9 +969,7 @@ jobs:
         
         const esportsEvents = await fetchEsportsData();
         
-        await import('fs').then(fs => {
-          fs.writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
-        });
+        require('fs').writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
         console.log('Created esports tournament data');
         "
     
