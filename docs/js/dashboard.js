@@ -10,7 +10,8 @@ class SportsDashboard {
             sports: new Set(['football', 'golf', 'tennis', 'f1', 'chess', 'esports']),
             tournaments: new Set([
                 'Premier League', 'Eliteserien', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1',
-                'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour'
+                'PGA Tour', 'DP World Tour', 'ATP Tour', 'WTA Tour',
+                'Formula 1 2025', 'FIDE Grand Prix', 'Norway Chess', 'CS2 Major', 'LoL Worlds', 'Valorant Champions'
             ]),
             streamingOnly: false,
             norwayPriority: true
@@ -275,7 +276,7 @@ class SportsDashboard {
             }
 
             // Filter events within tournament
-            tournament.events = tournament.events.filter(event => {
+            let filteredEvents = tournament.events.filter(event => {
                 // Time filter
                 if (!this.passesTimeFilter(event)) return false;
                 
@@ -290,6 +291,25 @@ class SportsDashboard {
                 return true;
             });
 
+            // For ALL sports: if no events pass filters, show next upcoming event
+            if (filteredEvents.length === 0 && tournament.events.length > 0) {
+                // Find the next upcoming event (closest future date)
+                const futureEvents = tournament.events.filter(event => {
+                    const eventDate = new Date(event.time);
+                    return eventDate > new Date();
+                }).sort((a, b) => new Date(a.time) - new Date(b.time));
+                
+                if (futureEvents.length > 0) {
+                    // Apply non-time filters to the next event
+                    const nextEvent = futureEvents[0];
+                    if (this.passesFocusFilter(nextEvent) && 
+                        (!this.filters.streamingOnly || (nextEvent.streaming && nextEvent.streaming.length > 0))) {
+                        filteredEvents = [nextEvent];
+                    }
+                }
+            }
+
+            tournament.events = filteredEvents;
             return tournament.events.length > 0;
         });
     }
