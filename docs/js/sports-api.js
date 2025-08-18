@@ -332,11 +332,21 @@ class SportsAPI {
         
         const eventDate = new Date(date);
         const now = new Date();
-        const timeDiff = eventDate - now;
-        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
         
-        if (daysDiff === 0) return 'Today';
-        if (daysDiff === 1) return 'Tomorrow';
+        // Get the calendar dates (ignoring time) for comparison
+        const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        // Compare calendar dates, not time differences
+        if (eventDay.getTime() === today.getTime()) return 'Today';
+        if (eventDay.getTime() === tomorrow.getTime()) return 'Tomorrow';
+        
+        // For events more than tomorrow, calculate days difference
+        const timeDiff = eventDay - today;
+        const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24));
+        
         if (daysDiff > 0 && daysDiff <= 7) return `${daysDiff} days`;
         
         return eventDate.toLocaleDateString('en-NO', {
