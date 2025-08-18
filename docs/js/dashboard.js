@@ -199,7 +199,7 @@ class SportsDashboard {
 
         if (this.currentView === 'dashboard') {
             this.renderFilteredSportsView();
-            await this.loadTodayHighlights();
+            this.loadTodayHighlights();
             await this.loadWeeklyCalendar();
         }
     }
@@ -281,7 +281,7 @@ class SportsDashboard {
 
         this.allSportsData = await Promise.all(promises);
         this.renderFilteredSportsView();
-        await this.loadTodayHighlights();
+        this.loadTodayHighlights();
         await this.loadWeeklyCalendar();
     }
 
@@ -762,21 +762,17 @@ class SportsDashboard {
             });
     }
 
-    async loadTodayHighlights() {
+    loadTodayHighlights() {
         const container = document.getElementById('today-highlights');
-        if (!container) return;
-        
-        container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading today\'s events...</div>';
+        if (!container || !this.allSportsData) return;
         
         try {
-            if (!this.allSportsData) return;
-            
             const today = new Date();
             const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const todayEnd = new Date(todayStart);
             todayEnd.setDate(todayEnd.getDate() + 1);
             
-            // Collect today's events from all sports
+            // Collect today's events from already loaded sports data
             const todayEvents = [];
             
             this.allSportsData.forEach(sport => {
@@ -788,7 +784,8 @@ class SportsDashboard {
                                 ...event,
                                 sport: sport.id,
                                 tournament: tournament.tournament,
-                                sportName: sport.name
+                                sportName: sport.name,
+                                timeFormatted: this.api.formatDateTime(event.time)
                             });
                         }
                     });
@@ -815,7 +812,7 @@ class SportsDashboard {
                     <div class="highlight-event">
                         <div class="event-title" style="font-weight: 600; margin-bottom: 4px;">${this.escapeHtml(event.title)}</div>
                         <div class="event-meta" style="font-size: 0.85rem; color: #718096; margin-bottom: 8px;">
-                            <span style="font-weight: 600; color: #667eea;">${this.escapeHtml(event.timeFormatted || event.time)}</span>
+                            <span style="font-weight: 600; color: #667eea;">${this.escapeHtml(event.timeFormatted)}</span>
                             <span style="margin: 0 8px;">•</span>
                             <span>${this.escapeHtml(event.tournament)}</span>
                             ${event.venue ? `<span style="margin: 0 8px;">•</span><span>📍 ${this.escapeHtml(event.venue)}</span>` : ''}
