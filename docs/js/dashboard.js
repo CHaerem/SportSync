@@ -22,7 +22,7 @@ class SportsDashboard {
         this.setupFilters();
         this.setupSettings();
         await this.updateLastUpdatedTime();
-        await this.loadSportsView();
+        await this.loadDashboardView();
         
         // Refresh data every 30 minutes
         setInterval(() => {
@@ -197,10 +197,10 @@ class SportsDashboard {
     applyFilters() {
         if (!this.allSportsData) return;
 
-        if (this.currentView === 'sports') {
+        if (this.currentView === 'dashboard') {
             this.renderFilteredSportsView();
-        } else if (this.currentView === 'calendar') {
-            this.loadCalendarView();
+            await this.loadTodayHighlights();
+            await this.loadWeeklyCalendar();
         }
     }
 
@@ -258,7 +258,7 @@ class SportsDashboard {
         this.lastUpdate = now;
     }
 
-    async loadSportsView() {
+    async loadDashboardView() {
         const sports = [
             { id: 'football', method: 'fetchFootballEvents', name: 'Football' },
             { id: 'golf', method: 'fetchGolfEvents', name: 'Golf' },
@@ -281,6 +281,8 @@ class SportsDashboard {
 
         this.allSportsData = await Promise.all(promises);
         this.renderFilteredSportsView();
+        await this.loadTodayHighlights();
+        await this.loadWeeklyCalendar();
     }
 
     renderFilteredSportsView() {
@@ -534,7 +536,7 @@ class SportsDashboard {
 
     // Method to manually refresh current view
     async refreshCurrentView() {
-        if (this.currentView === 'sports') {
+        if (this.currentView === 'dashboard') {
             // Show loading state for sports cards
             const sportIds = ['football', 'golf', 'tennis', 'f1', 'chess', 'esports'];
             sportIds.forEach(id => {
@@ -549,10 +551,8 @@ class SportsDashboard {
                 }
             });
             
-            await this.loadSportsView();
-        } else if (this.currentView === 'calendar') {
-            await this.loadCalendarView();
-        } else if (this.currentView === 'api-sources') {
+            await this.loadDashboardView();
+        } else if (this.currentView === 'debug') {
             await this.loadApiSourcesView();
         }
     }
@@ -760,6 +760,96 @@ class SportsDashboard {
                 }
                 return '<span class="' + cls + '">' + match + '</span>';
             });
+    }
+
+    async loadTodayHighlights() {
+        const container = document.getElementById('today-highlights');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading today\'s events...</div>';
+        
+        try {
+            if (!this.allSportsData) return;
+            
+            const today = new Date();
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const todayEnd = new Date(todayStart);
+            todayEnd.setDate(todayEnd.getDate() + 1);
+            
+            // Collect today's events from all sports
+            const todayEvents = [];
+            
+            this.allSportsData.forEach(sport => {
+                sport.tournaments.forEach(tournament => {
+                    tournament.events.forEach(event => {
+                        const eventDate = new Date(event.time);
+                        if (eventDate >= todayStart && eventDate < todayEnd) {
+                            todayEvents.push({
+                                ...event,
+                                sport: sport.id,
+                                tournament: tournament.tournament,
+                                sportName: sport.name
+                            });
+                        }
+                    });
+                });
+            });
+            
+            // Sort by time
+            todayEvents.sort((a, b) => new Date(a.time) - new Date(b.time));
+            
+            if (todayEvents.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #718096;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📅</div>
+                        <div>No events scheduled for today</div>
+                        <div style="font-size: 0.9rem; margin-top: 8px; color: #a0aec0;">Check back tomorrow or view the weekly calendar below</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const highlightsHtml = todayEvents.slice(0, 6).map(event => {
+                const streamingHtml = this.renderStreamingInfo(event.streaming);
+                return `
+                    <div class="highlight-event">
+                        <div class="event-title" style="font-weight: 600; margin-bottom: 4px;">${this.escapeHtml(event.title)}</div>
+                        <div class="event-meta" style="font-size: 0.85rem; color: #718096; margin-bottom: 8px;">
+                            <span style="font-weight: 600; color: #667eea;">${this.escapeHtml(event.timeFormatted || event.time)}</span>
+                            <span style="margin: 0 8px;">•</span>
+                            <span>${this.escapeHtml(event.tournament)}</span>
+                            ${event.venue ? `<span style="margin: 0 8px;">•</span><span>📍 ${this.escapeHtml(event.venue)}</span>` : ''}
+                            ${event.norwegian ? ' <span>🇳🇴</span>' : ''}
+                        </div>
+                        ${streamingHtml}
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `<div class="highlight-events">${highlightsHtml}</div>`;
+            
+        } catch (error) {
+            console.error('Error loading today\'s highlights:', error);
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error loading today\'s highlights</div>';
+        }
+    }
+    
+    async loadWeeklyCalendar() {
+        const calendarGrid = document.getElementById('calendarGrid');
+        const weekRange = document.getElementById('weekRange');
+        if (!calendarGrid) return;
+        
+        // Show loading state
+        calendarGrid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading weekly calendar...</div>';
+        
+        try {
+            const weeklyEvents = await this.api.getAllEventsForWeek();
+            this.renderCalendarGrid(weeklyEvents);
+            this.updateWeekRange();
+        } catch (error) {
+            console.error('Error loading weekly calendar:', error);
+            calendarGrid.innerHTML = '<div style="text-align: center; padding: 40px; color: #e53e3e;">Error loading calendar data</div>';
+        }
     }
 }
 
