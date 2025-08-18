@@ -368,6 +368,18 @@ jobs:
                         echo '  "openSources": true' >> docs/data/meta.json
                         echo '}' >> docs/data/meta.json
 
+                    - name: Aggregate unified events
+                      run: |
+                        npm run build:events
+
+                    - name: Validate unified events (future-only)
+                      run: |
+                        npm run validate:data
+
+                    - name: Build ICS calendar
+                      run: |
+                        npm run build:calendar
+
                     - name: Commit & push
                       run: |
                         git config user.email "action@github.com"
@@ -393,6 +405,8 @@ jobs:
                         done
                         if [ -f docs/data/events.json ]; then
                           TOTAL=$(jq -r 'length' docs/data/events.json); echo "- Aggregated events: $TOTAL" >> $GITHUB_STEP_SUMMARY; fi
+                        if [ -f docs/data/events.ics ]; then
+                          SIZE=$(wc -c < docs/data/events.ics | tr -d ' '); echo "- ICS calendar size: ${SIZE} bytes" >> $GITHUB_STEP_SUMMARY; fi
                         echo "" >> $GITHUB_STEP_SUMMARY
                         echo "Open source merged: $(jq -r '.openSources' docs/data/meta.json 2>/dev/null || echo false)" >> $GITHUB_STEP_SUMMARY
                         echo "Done." >> $GITHUB_STEP_SUMMARY
