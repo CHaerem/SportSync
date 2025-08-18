@@ -280,6 +280,7 @@ class SportsDashboard {
         });
 
         this.allSportsData = await Promise.all(promises);
+        console.log('Loaded sports data:', this.allSportsData);
         this.renderFilteredSportsView();
         this.loadTodayHighlights();
         await this.loadWeeklyCalendar();
@@ -764,7 +765,10 @@ class SportsDashboard {
 
     loadTodayHighlights() {
         const container = document.getElementById('today-highlights');
-        if (!container || !this.allSportsData) return;
+        if (!container || !this.allSportsData) {
+            console.log('Today highlights: missing container or data', { container: !!container, data: !!this.allSportsData });
+            return;
+        }
         
         try {
             const today = new Date();
@@ -774,6 +778,7 @@ class SportsDashboard {
             
             // Collect today's events from already loaded sports data
             const todayEvents = [];
+            console.log('Processing sports data for today\'s events:', this.allSportsData);
             
             this.allSportsData.forEach(sport => {
                 sport.tournaments.forEach(tournament => {
