@@ -194,7 +194,7 @@ class SportsDashboard {
         });
     }
 
-    applyFilters() {
+    async applyFilters() {
         if (!this.allSportsData) return;
 
         if (this.currentView === 'dashboard') {
