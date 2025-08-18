@@ -44,7 +44,7 @@ for (const p of pairs) {
 // Update meta with merged flag
 const metaPath = path.join(dataDir, "meta.json");
 const meta = readJsonIfExists(metaPath) || { lastUpdate: iso() };
-meta.merged = true;
+meta.merged = changes.length > 0;
 writeJsonPretty(metaPath, meta);
 
 console.log("Merged data sets:", changes);
