@@ -98,61 +98,86 @@ jobs:
             
             const tournaments = [];
             
-            // Fetch REAL Premier League data from ESPN API with proper date filtering
+            // Fetch REAL Premier League data from ESPN API with proper date range
             try {
               console.log('Fetching REAL Premier League data from ESPN...');
-              const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
-              const data = await response.json();
+              const now = new Date();
+              const today = now.toISOString().split('T')[0].replace(/-/g, '');
+              const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+              const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
               
-              if (data.events && data.events.length > 0) {
+              console.log(\`Checking dates: \${today}, \${tomorrow}, \${dayAfter}\`);
+              
+              let allEvents = [];
+              
+              // Fetch multiple days to ensure we get upcoming matches
+              const dateQueries = [
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${today}\`,
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${tomorrow}\`,
+                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${dayAfter}\`
+              ];
+              
+              for (const url of dateQueries) {
+                try {
+                  const response = await fetch(url);
+                  const data = await response.json();
+                  if (data.events && data.events.length > 0) {
+                    allEvents.push(...data.events);
+                  }
+                } catch (err) {
+                  console.error(\`Error fetching from \${url}:\`, err.message);
+                }
+                await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
+              }
+              
+              console.log(\`Found \${allEvents.length} total Premier League events across multiple days\`);
+              
+              if (allEvents.length > 0) {
+                // Filter for upcoming events (include today's future matches)
                 const now = new Date();
-                const cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago to account for ongoing matches
-                
-                // Filter for upcoming events only
-                const upcomingEvents = data.events.filter(event => {
+                const cutoffTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago to include recent/ongoing matches
+                const upcomingEvents = allEvents.filter(event => {
                   const eventDate = new Date(event.date);
                   return eventDate > cutoffTime;
+                }).slice(0, 6);
+                
+                console.log(\`Filtered to \${upcomingEvents.length} upcoming Premier League events\`);
+                
+                const events = upcomingEvents.map(event => ({
+                  title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
+                  meta: 'Premier League',
+                  time: event.date,
+                  venue: event.competitions[0].venue?.fullName || 'TBD',
+                  homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
+                  awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
+                  sport: 'football',
+                  streaming: getStreamingInfo('Premier League'),
+                  norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
+                }));
+                
+                tournaments.push({
+                  name: 'Premier League',
+                  events: events
                 });
-                
-                console.log(\`Filtered \${data.events.length} total events to \${upcomingEvents.length} upcoming events\`);
-                
-                if (upcomingEvents.length > 0) {
-                  const events = upcomingEvents.slice(0, 6).map(event => ({
-                    title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
-                    meta: 'Premier League',
-                    time: event.date,
-                    venue: event.competitions[0].venue?.fullName || 'TBD',
-                    homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
-                    awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
-                    sport: 'football',
-                    streaming: getStreamingInfo('Premier League'),
-                    norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
-                  }));
-                  
-                  tournaments.push({
-                    name: 'Premier League',
-                    events: events
-                  });
-                  console.log(\`Found \${events.length} upcoming Premier League events\`);
-                } else {
-                  console.log('No upcoming Premier League events found, creating sample future event...');
-                  tournaments.push({
-                    name: 'Premier League',
-                    events: [
-                      {
-                        title: 'Next Premier League Match',
-                        meta: 'Premier League - Upcoming',
-                        time: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-                        venue: 'Premier League Stadium',
-                        homeTeam: 'TBD',
-                        awayTeam: 'TBD',
-                        sport: 'football',
-                        streaming: getStreamingInfo('Premier League'),
-                        norwegian: false
-                      }
-                    ]
-                  });
-                }
+                console.log(\`Added \${events.length} Premier League events to dashboard\`);
+              } else {
+                console.log('No upcoming Premier League events found, creating placeholder...');
+                tournaments.push({
+                  name: 'Premier League',
+                  events: [
+                    {
+                      title: 'Next Premier League Match',
+                      meta: 'Premier League - Upcoming',
+                      time: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+                      venue: 'Premier League Stadium',
+                      homeTeam: 'TBD',
+                      awayTeam: 'TBD',
+                      sport: 'football',
+                      streaming: getStreamingInfo('Premier League'),
+                      norwegian: false
+                    }
+                  ]
+                });
               }
             } catch (error) {
               console.error('Error fetching Premier League:', error.message);
@@ -166,7 +191,7 @@ jobs:
               
               if (data.events && data.events.length > 0) {
                 const now = new Date();
-                const cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago
+                const cutoffTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago to include recent/ongoing matches
                 
                 // Filter for upcoming events only
                 const upcomingEvents = data.events.filter(event => {
