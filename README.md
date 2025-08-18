@@ -5,6 +5,7 @@ A beautifully simple sports dashboard following the CALM principle - instantly u
 ## 🎯 Design Philosophy
 
 SportSync follows the **CALM principle** - designed to be:
+
 - **Non-intrusive** and helpful with a simple glance
 - **Obviously functional** that even your grandparents would understand
 - **Elegant yet informative** for tech-savvy users too
@@ -13,44 +14,48 @@ SportSync follows the **CALM principle** - designed to be:
 ## ✨ Key Features
 
 ### 🕒 **Crystal Clear Time Display**
+
 - **24-hour format** (e.g., "14:30", "19:45") - no AM/PM confusion
-- **Day indicators** (TODAY, TOMORROW, MONDAY, etc.) 
+- **Day indicators** (TODAY, TOMORROW, MONDAY, etc.)
 - **Norwegian timezone** (Europe/Oslo) for accurate local times
 
 ### 🏆 **Sport Type Indicators**
+
 - **Color-coded sport badges** for instant recognition:
   - 🟢 **Football** (Green)
   - 🔵 **Tennis** (Blue)
-  - 🟡 **Golf** (Amber) 
+  - 🟡 **Golf** (Amber)
   - 🔴 **Formula 1** (Red)
   - ⚫ **Chess** (Gray)
   - 🟣 **Esports** (Purple)
 
 ### 📱 **Extremely Simple Interface**
+
 - **Single chronological list** of all upcoming events
 - **Just 3 filters**: All, Today, This Week
 - **Clean event cards** with essential info only
 - **Perfect mobile responsiveness**
 
 ### 🔄 **Automated Updates**
+
 - **Fresh data every 6 hours** via GitHub Actions
 - **Offline graceful fallback** to cached data
 - **Zero maintenance** once set up
 
 ## 🚀 Live Demo
 
-Visit your dashboard at: `https://CHaerem.github.io/SportSync/`
+Visit your dashboard at: [https://CHaerem.github.io/SportSync/](https://CHaerem.github.io/SportSync/)
 
 ## 📱 Sports Covered
 
-| Sport | Data Source | Coverage |
-|-------|-------------|----------|
-| ⚽ **Football** | ESPN API | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
-| 🎾 **Tennis** | ESPN API | ATP, WTA, Grand Slams, with Norwegian focus |
-| 🏌️ **Golf** | ESPN API | PGA Tour, DP World Tour, Major Championships |
-| 🏎️ **Formula 1** | ESPN Racing API | Race Calendar, Practice, Qualifying |
-| ♟️ **Chess** | Curated Data | Major tournaments, Norwegian focus |
-| 🎮 **Esports** | Curated Data | CS2, LoL, Valorant with team focus |
+| Sport            | Data Source     | Coverage                                                  |
+| ---------------- | --------------- | --------------------------------------------------------- |
+| ⚽ **Football**  | ESPN API        | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| 🎾 **Tennis**    | ESPN API        | ATP, WTA, Grand Slams, with Norwegian focus               |
+| 🏌️ **Golf**      | ESPN API        | PGA Tour, DP World Tour, Major Championships              |
+| 🏎️ **Formula 1** | ESPN Racing API | Race Calendar, Practice, Qualifying                       |
+| ♟️ **Chess**     | Curated Data    | Major tournaments, Norwegian focus                        |
+| 🎮 **Esports**   | Curated Data    | CS2, LoL, Valorant with team focus                        |
 
 ## 🛠️ Quick Setup
 
@@ -78,11 +83,12 @@ python -m http.server 8000
 ## ⚙️ How It Works
 
 ### 🤖 Automated Data Pipeline
+
 ```
 GitHub Actions (every 6 hours)
     ↓
 Fetch fresh sports data from ESPN APIs
-    ↓ 
+    ↓
 Save to docs/data/*.json files
     ↓
 Commit & push to repository
@@ -91,6 +97,7 @@ GitHub Pages automatically updates
 ```
 
 ### 🏗️ Simple Architecture
+
 ```
 docs/
 ├── index.html                 # Clean, minimal dashboard
@@ -110,6 +117,7 @@ docs/
 ## 🎨 Design Highlights
 
 ### Event Card Structure
+
 ```
 ┌─────────────────────────────────────┐
 │ TODAY              🟢 FOOTBALL      │  ← Header: Day + Sport Badge
@@ -123,6 +131,7 @@ docs/
 ```
 
 ### Perfect for Everyone
+
 - **Grandparents**: Large text, obvious controls, no confusing elements
 - **Tech users**: Efficient scanning, clean design, comprehensive info
 - **Mobile users**: Touch-friendly, readable on small screens
@@ -131,14 +140,18 @@ docs/
 ## 🔧 Customization
 
 ### Change Sports Focus
+
 Edit `docs/js/simple-dashboard.js` to modify:
+
 - Which sports to include
 - Number of events per sport
 - Regional preferences
 - Time formatting
 
-### Styling Tweaks  
+### Styling Tweaks
+
 All styles are in `docs/index.html` for easy customization:
+
 - Colors and spacing
 - Typography choices
 - Mobile breakpoints
@@ -147,8 +160,9 @@ All styles are in `docs/index.html` for easy customization:
 ## 🕒 Time Display
 
 All events show in Norwegian time (Europe/Oslo) using 24-hour format:
+
 - **Today's events**: "TODAY 14:30"
-- **Tomorrow's events**: "TOMORROW 19:45"  
+- **Tomorrow's events**: "TOMORROW 19:45"
 - **This week**: "MONDAY 16:00"
 - **Future events**: "SUN, DEC 15 12:30"
 
@@ -156,7 +170,7 @@ All events show in Norwegian time (Europe/Oslo) using 24-hour format:
 
 - [ ] Live chess tournament integration via Chess.com API
 - [ ] Real-time esports data from Twitch Gaming
-- [ ] Calendar export (.ics) functionality  
+- [ ] Calendar export (.ics) functionality
 - [ ] Push notifications for favorite events
 - [ ] Dark mode option
 - [ ] Favorite teams/players tracking
