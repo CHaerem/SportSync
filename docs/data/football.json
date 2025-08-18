@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-08-18T06:53:28.239Z",
+  "lastUpdated": "2025-08-18T07:17:19.045Z",
   "source": "ESPN API",
   "apiEndpoints": [
     "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
@@ -37,12 +37,29 @@
       "name": "La Liga",
       "events": [
         {
-          "title": "Next La Liga Match",
-          "meta": "La Liga - Upcoming",
-          "time": "2025-08-20T06:53:28.239Z",
-          "venue": "La Liga Stadium",
-          "homeTeam": "TBD",
-          "awayTeam": "TBD",
+          "title": "Elche vs Real Betis",
+          "meta": "La Liga",
+          "time": "2025-08-18T19:00Z",
+          "venue": "Martínez Valero",
+          "homeTeam": "Elche",
+          "awayTeam": "Real Betis",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "viaplay"
+            }
+          ],
+          "norwegian": false
+        },
+        {
+          "title": "Real Madrid vs Osasuna",
+          "meta": "La Liga",
+          "time": "2025-08-19T19:00Z",
+          "venue": "Santiago Bernabéu",
+          "homeTeam": "Real Madrid",
+          "awayTeam": "Osasuna",
           "sport": "football",
           "streaming": [
             {
@@ -61,7 +78,7 @@
         {
           "title": "FK Lyn Oslo vs KFUM Oslo",
           "meta": "Obos-ligaen",
-          "time": "2025-08-21T06:53:28.239Z",
+          "time": "2025-08-21T07:17:19.045Z",
           "venue": "Lyn Arena",
           "homeTeam": "FK Lyn Oslo",
           "awayTeam": "KFUM Oslo",
@@ -83,7 +100,7 @@
         {
           "title": "Bryne FK vs FK Lyn Oslo",
           "meta": "Obos-ligaen",
-          "time": "2025-08-23T06:53:28.239Z",
+          "time": "2025-08-23T07:17:19.045Z",
           "venue": "Bryne Stadion",
           "homeTeam": "Bryne FK",
           "awayTeam": "FK Lyn Oslo",
@@ -105,7 +122,7 @@
         {
           "title": "FK Lyn Oslo vs Kongsvinger IL",
           "meta": "Obos-ligaen",
-          "time": "2025-08-25T06:53:28.239Z",
+          "time": "2025-08-25T07:17:19.045Z",
           "venue": "Lyn Arena",
           "homeTeam": "FK Lyn Oslo",
           "awayTeam": "Kongsvinger IL",
@@ -132,7 +149,7 @@
         {
           "title": "Norway vs Spain",
           "meta": "UEFA Nations League",
-          "time": "2025-08-27T06:53:28.239Z",
+          "time": "2025-08-27T07:17:19.045Z",
           "venue": "Ullevaal Stadion, Oslo",
           "homeTeam": "Norway",
           "awayTeam": "Spain",
@@ -154,7 +171,7 @@
         {
           "title": "Germany vs Norway",
           "meta": "UEFA Nations League",
-          "time": "2025-09-01T06:53:28.239Z",
+          "time": "2025-09-01T07:17:19.045Z",
           "venue": "Allianz Arena, Munich",
           "homeTeam": "Germany",
           "awayTeam": "Norway",
