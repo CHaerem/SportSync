@@ -409,6 +409,121 @@
             display: none;
         }
 
+        /* API Sources View */
+        .api-sources-view {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .api-sources-view.hidden {
+            display: none;
+        }
+
+        .api-sources-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .api-sources-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .api-sources-subtitle {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .api-source-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .api-source-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .api-source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .api-source-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .api-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .api-status.active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .api-status.error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .api-source-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .api-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .api-detail-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+        }
+
+        .api-detail-value {
+            font-size: 0.9rem;
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .api-endpoint {
+            background: #edf2f7;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            color: #4a5568;
+            word-break: break-all;
+        }
+
         .calendar-header {
             text-align: center;
             margin-bottom: 24px;
@@ -602,6 +717,7 @@
             <div class="view-toggle">
                 <button class="toggle-btn active" id="sportsViewBtn">Sports Overview</button>
                 <button class="toggle-btn" id="calendarViewBtn">Weekly Calendar</button>
+                <button class="toggle-btn" id="apiSourcesBtn">API Sources</button>
             </div>
             
             <div class="filter-controls">
@@ -713,6 +829,17 @@
             </div>
             <div class="calendar-grid" id="calendarGrid">
                 <!-- Days will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- API Sources View -->
+        <div class="api-sources-view hidden" id="apiSourcesView">
+            <div class="api-sources-header">
+                <h2 class="api-sources-title">Data Sources & APIs</h2>
+                <div class="api-sources-subtitle">Live sports data sources and API endpoints</div>
+            </div>
+            <div id="apiSourcesContent">
+                <!-- API source cards will be populated by JavaScript -->
             </div>
         </div>
     </div>

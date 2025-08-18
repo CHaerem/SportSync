@@ -3,7 +3,7 @@ class SportsDashboard {
     constructor() {
         this.api = new SportsAPI();
         this.lastUpdate = new Date();
-        this.currentView = 'sports'; // 'sports' or 'calendar'
+        this.currentView = 'sports'; // 'sports', 'calendar', or 'api-sources'
         this.filters = {
             time: 'all',
             focus: 'all',
@@ -37,16 +37,30 @@ class SportsDashboard {
     setupViewToggle() {
         const sportsBtn = document.getElementById('sportsViewBtn');
         const calendarBtn = document.getElementById('calendarViewBtn');
+        const apiSourcesBtn = document.getElementById('apiSourcesBtn');
         const sportsView = document.getElementById('sportsView');
         const calendarView = document.getElementById('calendarView');
+        const apiSourcesView = document.getElementById('apiSourcesView');
+
+        const hideAllViews = () => {
+            sportsView.classList.add('hidden');
+            calendarView.classList.add('hidden');
+            apiSourcesView.classList.add('hidden');
+        };
+
+        const removeAllActive = () => {
+            sportsBtn.classList.remove('active');
+            calendarBtn.classList.remove('active');
+            apiSourcesBtn.classList.remove('active');
+        };
 
         sportsBtn.addEventListener('click', () => {
             if (this.currentView !== 'sports') {
                 this.currentView = 'sports';
+                removeAllActive();
+                hideAllViews();
                 sportsBtn.classList.add('active');
-                calendarBtn.classList.remove('active');
                 sportsView.classList.remove('hidden');
-                calendarView.classList.add('hidden');
                 this.loadSportsView();
             }
         });
@@ -54,11 +68,22 @@ class SportsDashboard {
         calendarBtn.addEventListener('click', () => {
             if (this.currentView !== 'calendar') {
                 this.currentView = 'calendar';
+                removeAllActive();
+                hideAllViews();
                 calendarBtn.classList.add('active');
-                sportsBtn.classList.remove('active');
                 calendarView.classList.remove('hidden');
-                sportsView.classList.add('hidden');
                 this.loadCalendarView();
+            }
+        });
+
+        apiSourcesBtn.addEventListener('click', () => {
+            if (this.currentView !== 'api-sources') {
+                this.currentView = 'api-sources';
+                removeAllActive();
+                hideAllViews();
+                apiSourcesBtn.classList.add('active');
+                apiSourcesView.classList.remove('hidden');
+                this.loadApiSourcesView();
             }
         });
     }
@@ -554,6 +579,8 @@ class SportsDashboard {
             await this.loadSportsView();
         } else if (this.currentView === 'calendar') {
             await this.loadCalendarView();
+        } else if (this.currentView === 'api-sources') {
+            await this.loadApiSourcesView();
         }
     }
 
@@ -576,6 +603,136 @@ class SportsDashboard {
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    async loadApiSourcesView() {
+        const content = document.getElementById('apiSourcesContent');
+        content.innerHTML = '<div class="loading"><div class="spinner"></div>Loading API sources...</div>';
+
+        try {
+            // Load metadata from all sports data files
+            const [footballMeta, golfMeta, tennisMeta, f1Meta, chessMeta, esportsMeta] = await Promise.all([
+                this.api.fetchFootballEvents(),
+                this.api.fetchGolfEvents(),
+                this.api.fetchTennisEvents(),
+                this.api.fetchF1Events(),
+                this.api.fetchChessEvents(),
+                this.api.fetchEsportsEvents()
+            ]);
+
+            const apiSources = [
+                {
+                    name: 'Football Data',
+                    icon: '⚽',
+                    endpoint: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
+                    source: footballMeta.source || 'ESPN API',
+                    lastUpdated: footballMeta.lastUpdated,
+                    status: 'active',
+                    description: 'Premier League, La Liga, and international football matches',
+                    dataFile: '/SportSync/data/football.json'
+                },
+                {
+                    name: 'Golf Tournaments',
+                    icon: '🏌️',
+                    endpoint: 'https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard',
+                    source: golfMeta.source || 'ESPN API',
+                    lastUpdated: golfMeta.lastUpdated,
+                    status: 'active',
+                    description: 'PGA Tour and DP World Tour events',
+                    dataFile: '/SportSync/data/golf.json'
+                },
+                {
+                    name: 'Tennis Events',
+                    icon: '🎾',
+                    endpoint: 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard',
+                    source: tennisMeta.source || 'ESPN API',
+                    lastUpdated: tennisMeta.lastUpdated,
+                    status: 'active',
+                    description: 'ATP and WTA tournaments with Casper Ruud focus',
+                    dataFile: '/SportSync/data/tennis.json'
+                },
+                {
+                    name: 'Formula 1',
+                    icon: '🏎️',
+                    endpoint: 'https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard',
+                    source: f1Meta.source || 'ESPN Racing API',
+                    lastUpdated: f1Meta.lastUpdated,
+                    status: 'active',
+                    description: 'F1 race calendar and upcoming Grand Prix',
+                    dataFile: '/SportSync/data/f1.json'
+                },
+                {
+                    name: 'Chess Tournaments',
+                    icon: '♟️',
+                    endpoint: 'Curated Tournament Schedule',
+                    source: chessMeta.source || 'Chess Tournament Calendar',
+                    lastUpdated: chessMeta.lastUpdated,
+                    status: 'active',
+                    description: 'Major chess tournaments with Magnus Carlsen',
+                    dataFile: '/SportSync/data/chess.json'
+                },
+                {
+                    name: 'CS2 Esports',
+                    icon: '🎮',
+                    endpoint: 'Tournament Schedule with Norwegian Focus',
+                    source: esportsMeta.source || 'CS2 Tournament Calendar',
+                    lastUpdated: esportsMeta.lastUpdated,
+                    status: 'active',
+                    description: 'Counter-Strike 2 matches featuring FaZe Clan and rain',
+                    dataFile: '/SportSync/data/esports.json'
+                }
+            ];
+
+            const html = apiSources.map(source => {
+                const lastUpdateTime = source.lastUpdated ? 
+                    new Date(source.lastUpdated).toLocaleString('en-NO', { timeZone: 'Europe/Oslo' }) : 
+                    'Unknown';
+
+                return `
+                    <div class="api-source-card">
+                        <div class="api-source-header">
+                            <div class="api-source-name">
+                                <span>${source.icon}</span>
+                                ${source.name}
+                            </div>
+                            <div class="api-status ${source.status}">${source.status}</div>
+                        </div>
+                        <div class="api-source-details">
+                            <div class="api-detail-item">
+                                <div class="api-detail-label">Source</div>
+                                <div class="api-detail-value">${source.source}</div>
+                            </div>
+                            <div class="api-detail-item">
+                                <div class="api-detail-label">Last Updated</div>
+                                <div class="api-detail-value">${lastUpdateTime}</div>
+                            </div>
+                        </div>
+                        <div class="api-detail-item">
+                            <div class="api-detail-label">Description</div>
+                            <div class="api-detail-value" style="font-family: inherit;">${source.description}</div>
+                        </div>
+                        <div class="api-detail-item">
+                            <div class="api-detail-label">API Endpoint</div>
+                            <div class="api-endpoint">${source.endpoint}</div>
+                        </div>
+                        <div class="api-detail-item">
+                            <div class="api-detail-label">Data File</div>
+                            <div class="api-endpoint"><a href="${source.dataFile}" target="_blank" style="color: #4a5568; text-decoration: none;">${source.dataFile}</a></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            content.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading API sources:', error);
+            content.innerHTML = `
+                <div class="error-message">
+                    <h3>Error Loading API Sources</h3>
+                    <p>Unable to load API source information. Please try again later.</p>
+                </div>
+            `;
+        }
     }
 }
 

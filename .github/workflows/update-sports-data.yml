@@ -236,7 +236,11 @@ jobs:
             
             const result = {
               lastUpdated: new Date().toISOString(),
-              source: 'TheSportsDB API',
+              source: 'ESPN API',
+              apiEndpoints: [
+                'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
+                'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard'
+              ],
               tournaments: tournaments
             };
             
@@ -484,7 +488,10 @@ jobs:
             
             const result = {
               lastUpdated: new Date().toISOString(),
-              source: 'TheSportsDB API',
+              source: 'ESPN Tennis API',
+              apiEndpoints: [
+                'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard'
+              ],
               tournaments: tournaments
             };
             
@@ -590,7 +597,10 @@ jobs:
             
             const result = {
               lastUpdated: new Date().toISOString(),
-              source: 'F1 Official Calendar',
+              source: 'ESPN F1 Racing API',
+              apiEndpoints: [
+                'https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard'
+              ],
               tournaments: [
                 {
                   name: 'Formula 1 2025',
