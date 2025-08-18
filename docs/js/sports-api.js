@@ -13,7 +13,7 @@ class SportsAPI {
     async fetchFootballEvents() {
         try {
             console.log('Fetching football data from /SportSync/data/football.json');
-            const response = await fetch('/SportSync/data/football.json');
+            const response = await fetch('/SportSync/data/football.json?t=' + Date.now());
             console.log('Football response:', response.status, response.ok);
             
             if (response.ok) {
@@ -69,7 +69,7 @@ class SportsAPI {
     async fetchGolfEvents() {
         try {
             console.log('Fetching golf data from /SportSync/data/golf.json');
-            const response = await fetch('/SportSync/data/golf.json');
+            const response = await fetch('/SportSync/data/golf.json?t=' + Date.now());
             console.log('Golf response:', response.status, response.ok);
             
             if (response.ok) {
@@ -89,7 +89,7 @@ class SportsAPI {
     async fetchTennisEvents() {
         try {
             console.log('Fetching tennis data from /SportSync/data/tennis.json');
-            const response = await fetch('/SportSync/data/tennis.json');
+            const response = await fetch('/SportSync/data/tennis.json?t=' + Date.now());
             console.log('Tennis response:', response.status, response.ok);
             
             if (response.ok) {
@@ -109,7 +109,7 @@ class SportsAPI {
     async fetchF1Events() {
         try {
             console.log('Fetching F1 data from /SportSync/data/f1.json');
-            const response = await fetch('/SportSync/data/f1.json');
+            const response = await fetch('/SportSync/data/f1.json?t=' + Date.now());
             console.log('F1 response:', response.status, response.ok);
             
             if (response.ok) {
@@ -129,7 +129,7 @@ class SportsAPI {
     async fetchChessEvents() {
         try {
             console.log('Fetching chess data from /SportSync/data/chess.json');
-            const response = await fetch('/SportSync/data/chess.json');
+            const response = await fetch('/SportSync/data/chess.json?t=' + Date.now());
             console.log('Chess response:', response.status, response.ok);
             
             if (response.ok) {
@@ -149,7 +149,7 @@ class SportsAPI {
     async fetchEsportsEvents() {
         try {
             console.log('Fetching esports data from /SportSync/data/esports.json');
-            const response = await fetch('/SportSync/data/esports.json');
+            const response = await fetch('/SportSync/data/esports.json?t=' + Date.now());
             console.log('Esports response:', response.status, response.ok);
             
             if (response.ok) {
