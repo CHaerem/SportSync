@@ -14,7 +14,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/football.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/football.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -72,7 +72,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/golf.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/golf.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -124,7 +124,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/tennis.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/tennis.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -178,7 +178,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/f1.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/f1.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -216,7 +216,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/chess.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/chess.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -241,7 +241,7 @@ class SportsAPI {
         try {
             // Try pre-fetched data first with cache busting
             const cacheBuster = new Date().getTime();
-            const cachedResponse = await fetch(`data/esports.json?v=${cacheBuster}`, {
+            const cachedResponse = await fetch(`/SportSync/data/esports.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',

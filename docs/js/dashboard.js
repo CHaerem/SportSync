@@ -208,7 +208,7 @@ class SportsDashboard {
         try {
             // Try to get the last update time from GitHub Actions with cache busting
             const cacheBuster = new Date().getTime();
-            const metaResponse = await fetch(`data/meta.json?v=${cacheBuster}`, {
+            const metaResponse = await fetch(`/SportSync/data/meta.json?v=${cacheBuster}`, {
                 cache: 'no-cache',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
