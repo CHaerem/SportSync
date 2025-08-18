@@ -1,5 +1,5 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v3';
+const CACHE_NAME = 'sportsync-v4';
 const DATA_FILES = [
     '/SportSync/data/football.json',
     '/SportSync/data/golf.json', 

@@ -17,762 +17,142 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
+            background: #fafafa;
             min-height: 100vh;
-            color: #1f2937;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: left;
-            margin-bottom: 40px;
-            padding: 40px 0 20px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #111827;
-            letter-spacing: -0.025em;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: #6b7280;
-            font-weight: 400;
-        }
-
-        .status-bar {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-
-        .last-updated {
-            color: #718096;
-            font-size: 0.9rem;
-        }
-
-        .controls-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 8px;
-        }
-
-        .toggle-btn {
-            background: #f9fafb;
-            border: 1px solid #d1d5db;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            color: #374151;
-        }
-
-        .toggle-btn:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
-
-        .toggle-btn.active {
-            background: #111827;
-            border-color: #111827;
-            color: white;
-        }
-
-        .filter-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-            color: #374151;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-
-        .filter-select:hover {
-            border-color: #9ca3af;
-        }
-
-        .filter-select:focus {
-            border-color: #111827;
-            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
-        }
-
-        .search-input {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-            color: #374151;
-            font-size: 0.875rem;
-            outline: none;
-            width: 200px;
-            transition: all 0.2s ease;
-        }
-
-        .search-input:focus {
-            border-color: #111827;
-            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: #9ca3af;
-        }
-
-        .settings-btn {
-            background: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            font-size: 1.2rem;
-            transition: all 0.2s ease;
-        }
-
-        .settings-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        /* Settings Panel */
-        .settings-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100vh;
-            background: white;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-            transition: right 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .settings-panel.open {
-            right: 0;
-        }
-
-        .settings-header {
-            padding: 20px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .settings-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1a202c;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #718096;
-        }
-
-        .settings-content {
-            padding: 20px;
-        }
-
-        .settings-section {
-            margin-bottom: 30px;
-        }
-
-        .settings-section h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 8px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-        }
-
-        .checkbox-item:hover {
-            background: #f7fafc;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: #667eea;
-        }
-
-        .checkbox-item label {
-            font-size: 0.95rem;
-            color: #4a5568;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .settings-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 999;
-        }
-
-        .settings-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Main Dashboard View */
-        .sports-view {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 32px;
-            margin-bottom: 40px;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .dashboard-section {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .section-header {
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #111827;
-            margin: 0;
-        }
-
-        .sports-view.hidden {
-            display: none;
-        }
-
-        .sport-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        .sport-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.2s ease;
-        }
-
-        .sport-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            border-color: #cbd5e0;
-        }
-
-        .sport-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .sport-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #333;
+            line-height: 1.5;
             font-size: 16px;
         }
 
-        .football { background: linear-gradient(45deg, #00c851, #007e33); }
-        .golf { background: linear-gradient(45deg, #ff6b35, #f7931e); }
-        .tennis { background: linear-gradient(45deg, #ffbb33, #e65100); }
-        .formula1 { background: linear-gradient(45deg, #dc2626, #991b1b); }
-        .chess { background: linear-gradient(45deg, #374151, #1f2937); }
-        .esports { background: linear-gradient(45deg, #8b5cf6, #6366f1); }
-
-        .sport-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a202c;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
         }
 
-        .tournament-section {
-            margin-bottom: 20px;
+        header {
+            text-align: center;
+            margin-bottom: 50px;
         }
 
-        .tournament-section:last-child {
-            margin-bottom: 0;
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+            color: #222;
+            letter-spacing: 0;
         }
 
-        .tournament-header {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            padding: 8px 12px;
-            background: #f7fafc;
-            border-radius: 6px;
-            border-left: 4px solid #667eea;
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 300;
         }
 
-        .event-list {
-            list-style: none;
+        .last-updated {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 0.8rem;
+            color: #888;
         }
 
-        .event-item {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background: #f8fafc;
-            border-left: 4px solid #667eea;
+        .simple-filters {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #555;
             transition: all 0.2s ease;
         }
 
-        .event-item:hover {
-            background: #edf2f7;
-            transform: translateX(2px);
+        .filter-btn:hover {
+            border-color: #bbb;
         }
 
-        .event-item:last-child {
-            margin-bottom: 0;
+        .filter-btn.active {
+            background: #333;
+            border-color: #333;
+            color: white;
         }
 
-        .event-details {
-            flex: 1;
+
+        /* Main Dashboard View */
+        .events-list {
+            max-width: 100%;
+        }
+
+        .event-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            padding: 20px;
+            transition: all 0.15s ease;
+        }
+
+        .event-card:hover {
+            border-color: #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .event-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
         .event-title {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 4px;
-            font-size: 1rem;
-        }
-
-        .event-meta {
-            font-size: 0.85rem;
-            color: #718096;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            margin: 0;
+            line-height: 1.3;
         }
 
         .event-time {
             font-size: 0.9rem;
-            color: #667eea;
-            font-weight: 600;
-            background: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .event-streaming {
-            margin-top: 4px;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .streaming-platform {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-
-        .streaming-platform:hover {
-            transform: translateY(-1px);
-            color: white;
-        }
-
-        .streaming-platform.tv2 { background: #e60012; }
-        .streaming-platform.viaplay { background: #00b4d8; }
-        .streaming-platform.discovery { background: #0077be; }
-        .streaming-platform.nrk { background: #1e3a8a; }
-        .streaming-platform.espn { background: #cc0000; }
-        .streaming-platform.sky { background: #0072ce; }
-        .streaming-platform.bbc { background: #000; }
-
-        .hidden-by-filter {
-            display: none !important;
-        }
-
-        /* Today's Events */
-        .highlight-events {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .highlight-event {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 16px;
-            transition: all 0.2s ease;
-        }
-        
-        .highlight-event:hover {
-            background: #f3f4f6;
-            border-color: #d1d5db;
-        }
-
-        /* API Sources View */
-        .api-sources-view {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        .api-sources-view.hidden {
-            display: none;
-        }
-
-        .api-sources-header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .api-sources-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #1a202c;
-            margin-bottom: 8px;
-        }
-
-        .api-sources-subtitle {
-            color: #718096;
-            font-size: 1rem;
-        }
-
-        .api-source-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 16px;
-            transition: all 0.2s ease;
-        }
-
-        .api-source-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        .api-source-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .api-source-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a202c;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .api-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .api-status.active {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .api-status.error {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .api-source-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-
-        .api-detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .api-detail-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #718096;
-            text-transform: uppercase;
-        }
-
-        .api-detail-value {
-            font-size: 0.9rem;
-            color: #2d3748;
-            font-family: 'SF Mono', Monaco, monospace;
-        }
-
-        .api-endpoint {
-            background: #edf2f7;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-family: 'SF Mono', Monaco, monospace;
-            color: #4a5568;
-            word-break: break-all;
-        }
-
-        .raw-data-section {
-            margin-top: 16px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 16px;
-        }
-
-        .raw-data-toggle {
-            background: none;
-            border: 1px solid #cbd5e0;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: #4a5568;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .raw-data-toggle:hover {
-            background: #f7fafc;
-            border-color: #a0aec0;
-        }
-
-        .raw-data-toggle.expanded {
-            background: #edf2f7;
-            border-color: #718096;
-        }
-
-        .raw-data-content {
-            display: none;
-            margin-top: 12px;
-            background: #1a202c;
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .raw-data-content.expanded {
-            display: block;
-        }
-
-        .json-data {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
-            font-size: 0.8rem;
-            color: #e2e8f0;
-            white-space: pre-wrap;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        .json-key {
-            color: #90cdf4;
-        }
-
-        .json-string {
-            color: #68d391;
-        }
-
-        .json-number {
-            color: #fbb6ce;
-        }
-
-        .json-boolean {
-            color: #f6ad55;
-        }
-
-        .json-null {
-            color: #a0aec0;
-        }
-
-
-        .week-range {
-            color: #6b7280;
-            font-size: 0.875rem;
+            color: #666;
             font-weight: 400;
+            text-align: right;
+            white-space: nowrap;
+            margin-left: 15px;
         }
 
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1px;
-            background: #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .day-column {
-            background: white;
-            min-height: 120px;
+        .event-details {
             display: flex;
-            flex-direction: column;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #777;
         }
 
-        .day-header {
-            background: #f9fafb;
-            color: #374151;
-            padding: 8px;
-            text-align: center;
-            font-weight: 500;
-            font-size: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
+        .event-sport {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .day-header.today {
-            background: #111827;
-            color: white;
+        .sport-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
+        .sport-dot.football { background: #22c55e; }
+        .sport-dot.tennis { background: #3b82f6; }
+        .sport-dot.golf { background: #f59e0b; }
+        .sport-dot.formula1 { background: #ef4444; }
+        .sport-dot.chess { background: #6b7280; }
+        .sport-dot.esports { background: #8b5cf6; }
 
-        .day-events {
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-        }
-
-        .calendar-event {
-            background: #f3f4f6;
-            border-radius: 4px;
-            padding: 6px 8px;
-            font-size: 0.75rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border-left: 3px solid #d1d5db;
-        }
-
-        .calendar-event:hover {
-            background: #e5e7eb;
-        }
-
-        .calendar-event.football { border-left-color: #10b981; }
-        .calendar-event.golf { border-left-color: #f59e0b; }
-        .calendar-event.tennis { border-left-color: #3b82f6; }
-        .calendar-event.formula1 { border-left-color: #ef4444; }
-        .calendar-event.chess { border-left-color: #6b7280; }
-        .calendar-event.esports { border-left-color: #8b5cf6; }
-
-        .calendar-event-time {
-            font-weight: 500;
-            color: #111827;
-            margin-bottom: 2px;
-            font-size: 0.7rem;
-        }
-
-        .calendar-event-title {
-            color: #374151;
-            line-height: 1.2;
-            font-weight: 400;
-        }
-
-        .calendar-event-meta {
-            color: #6b7280;
-            font-size: 0.65rem;
-            margin-top: 2px;
-        }
 
         .loading {
             text-align: center;
@@ -795,69 +175,34 @@
             100% { transform: rotate(360deg); }
         }
 
-        @media (max-width: 1200px) {
-            .sports-view {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            
-            .calendar-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-        }
-
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
-            }
-            
-            header {
-                padding: 30px 0 20px 0;
-                margin-bottom: 30px;
+                padding: 20px 15px;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
-            .controls-bar {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-            
-            .filter-controls {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .search-input {
-                width: 100%;
-            }
-            
-            .sport-cards-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-            
-            .calendar-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            
-            .day-events {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            
-            .calendar-event {
-                flex: 1;
-                min-width: 140px;
+            .filter-btn {
+                margin: 2px 2px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
             }
 
-            .dashboard-section {
-                padding: 20px;
+            .event-card {
+                padding: 15px;
+            }
+
+            .event-main {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .event-time {
+                text-align: left;
+                margin-left: 0;
             }
         }
     </style>
@@ -869,151 +214,27 @@
             <p class="subtitle">Your Personal Sports Dashboard</p>
         </header>
 
-        <div class="status-bar">
-            <div class="last-updated">Last updated: <span id="lastUpdate">Loading...</span></div>
+        <div class="last-updated">Last updated: <span id="lastUpdate">Loading...</span></div>
+
+        <div class="simple-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="today">Today</button>
+            <button class="filter-btn" data-filter="week">This Week</button>
+            <button class="filter-btn" data-filter="norway">🇳🇴 Norway</button>
         </div>
 
-        <div class="controls-bar">
-            <div class="view-toggle">
-                <button class="toggle-btn active" id="sportsViewBtn">Dashboard</button>
-            </div>
-            
-            <div class="filter-controls">
-                <select class="filter-select" id="sportFilter">
-                    <option value="all">All Sports</option>
-                    <option value="football">Football</option>
-                    <option value="tennis">Tennis</option>
-                    <option value="golf">Golf</option>
-                    <option value="f1">Formula 1</option>
-                    <option value="chess">Chess</option>
-                    <option value="esports">Esports</option>
-                </select>
-                
-                <select class="filter-select" id="timeFilter">
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="norway">🇳🇴 Norway</option>
-                </select>
-                
-                <input type="text" class="search-input" id="searchInput" placeholder="Search events...">
-            </div>
-        </div>
-
-        <!-- Main Dashboard View -->
-        <div class="sports-view" id="sportsView">
-            <div class="main-content">
-                <!-- Today's Events Section -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Today's Events</h2>
-                    </div>
-                    <div id="today-highlights" class="loading">
-                        <div class="spinner"></div>
-                        Loading today's events...
-                    </div>
-                </div>
-
-                <!-- All Sports Section -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2 class="section-title">All Events</h2>
-                    </div>
-                    <div class="sport-cards-grid">
-                        <!-- Football Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon football">⚽</div>
-                                <h3 class="sport-title">Football</h3>
-                            </div>
-                            <div id="football-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading matches...
-                            </div>
-                        </div>
-
-                        <!-- Golf Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon golf">🏌️</div>
-                                <h3 class="sport-title">Golf</h3>
-                            </div>
-                            <div id="golf-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading tournaments...
-                            </div>
-                        </div>
-
-                        <!-- Tennis Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon tennis">🎾</div>
-                                <h3 class="sport-title">Tennis</h3>
-                            </div>
-                            <div id="tennis-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading matches...
-                            </div>
-                        </div>
-
-                        <!-- Formula 1 Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon formula1">🏎️</div>
-                                <h3 class="sport-title">Formula 1</h3>
-                            </div>
-                            <div id="f1-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading races...
-                            </div>
-                        </div>
-
-                        <!-- Chess Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon chess">♟️</div>
-                                <h3 class="sport-title">Chess</h3>
-                            </div>
-                            <div id="chess-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading tournaments...
-                            </div>
-                        </div>
-
-                        <!-- Esports Card -->
-                        <div class="sport-card">
-                            <div class="sport-header">
-                                <div class="sport-icon esports">🎮</div>
-                                <h3 class="sport-title">CS2 Esports</h3>
-                            </div>
-                            <div id="esports-content" class="loading">
-                                <div class="spinner"></div>
-                                Loading matches...
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar">
-                <!-- Weekly Calendar Section -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2 class="section-title">This Week</h2>
-                        <div class="week-range" id="weekRange">Loading...</div>
-                    </div>
-                    <div class="calendar-grid" id="calendarGrid">
-                        <!-- Days will be populated by JavaScript -->
-                    </div>
-                </div>
+        <div class="events-list" id="eventsContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading events...
             </div>
         </div>
 
     </div>
 
 
-    <script src="js/sports-api.js?v=2025081805"></script>
-    <script src="js/dashboard.js?v=2025081805"></script>
+    <script src="js/sports-api.js?v=2025081806"></script>
+    <script src="js/simple-dashboard.js?v=2025081806"></script>
     
     <script>
         // Register service worker for better cache control
