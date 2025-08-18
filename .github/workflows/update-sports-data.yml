@@ -57,6 +57,14 @@ jobs:
               { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
               { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
             ],
+            'Obos-ligaen': [
+              { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+            ],
+            'International': [
+              { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
+              { platform: 'TV2', url: 'https://tv2.no', type: 'tv2' }
+            ],
             'La Liga': [
               { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
             ],
@@ -75,8 +83,8 @@ jobs:
         }
         
         function isNorwegianEvent(league, homeTeam, awayTeam) {
-          const norwegianLeagues = ['Eliteserien'];
-          const norwegianTeams = ['Brann', 'Rosenborg', 'Molde', 'Bodø/Glimt', 'Viking', 'Strømsgodset'];
+          const norwegianLeagues = ['Eliteserien', 'Obos-ligaen'];
+          const norwegianTeams = ['Brann', 'Rosenborg', 'Molde', 'Bodø/Glimt', 'Viking', 'Strømsgodset', 'FK Lyn Oslo', 'Norway'];
           
           if (norwegianLeagues.includes(league)) return true;
           if (norwegianTeams.some(team => homeTeam?.includes(team) || awayTeam?.includes(team))) return true;
@@ -128,28 +136,48 @@ jobs:
                 ]
               },
               {
-                name: 'Eliteserien',
+                name: 'Obos-ligaen',
                 events: [
                   {
-                    title: 'Brann vs Rosenborg',
-                    meta: 'Eliteserien',
-                    time: new Date(Date.now() + 345600000).toISOString(),
-                    venue: 'Brann Stadion',
-                    homeTeam: 'Brann',
-                    awayTeam: 'Rosenborg',
+                    title: 'FK Lyn Oslo vs KFUM Oslo',
+                    meta: 'Obos-ligaen',
+                    time: new Date(Date.now() + 259200000).toISOString(),
+                    venue: 'Lyn Arena',
+                    homeTeam: 'FK Lyn Oslo',
+                    awayTeam: 'KFUM Oslo',
                     sport: 'football',
-                    streaming: getStreamingInfo('Eliteserien'),
+                    streaming: [
+                      { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+                      { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+                    ],
                     norwegian: true
                   },
                   {
-                    title: 'Molde vs Bodø/Glimt',
-                    meta: 'Eliteserien',
+                    title: 'Bryne FK vs FK Lyn Oslo',
+                    meta: 'Obos-ligaen',
                     time: new Date(Date.now() + 432000000).toISOString(),
-                    venue: 'Aker Stadion',
-                    homeTeam: 'Molde',
-                    awayTeam: 'Bodø/Glimt',
+                    venue: 'Bryne Stadion',
+                    homeTeam: 'Bryne FK',
+                    awayTeam: 'FK Lyn Oslo',
                     sport: 'football',
-                    streaming: getStreamingInfo('Eliteserien'),
+                    streaming: [
+                      { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+                      { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+                    ],
+                    norwegian: true
+                  },
+                  {
+                    title: 'FK Lyn Oslo vs Kongsvinger IL',
+                    meta: 'Obos-ligaen',
+                    time: new Date(Date.now() + 604800000).toISOString(),
+                    venue: 'Lyn Arena',
+                    homeTeam: 'FK Lyn Oslo',
+                    awayTeam: 'Kongsvinger IL',
+                    sport: 'football',
+                    streaming: [
+                      { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+                      { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+                    ],
                     norwegian: true
                   }
                 ]
@@ -158,26 +186,70 @@ jobs:
                 name: 'La Liga',
                 events: [
                   {
-                    title: 'Real Madrid vs Barcelona',
-                    meta: 'La Liga',
-                    time: new Date(Date.now() + 518400000).toISOString(),
-                    venue: 'Santiago Bernabéu',
-                    homeTeam: 'Real Madrid',
-                    awayTeam: 'Barcelona',
+                    title: 'FC Barcelona vs Real Madrid',
+                    meta: 'La Liga - El Clasico',
+                    time: new Date(Date.now() + 345600000).toISOString(),
+                    venue: 'Camp Nou',
+                    homeTeam: 'FC Barcelona',
+                    awayTeam: 'Real Madrid',
                     sport: 'football',
                     streaming: getStreamingInfo('La Liga'),
                     norwegian: false
                   },
                   {
-                    title: 'Atletico Madrid vs Sevilla',
+                    title: 'FC Barcelona vs Atletico Madrid',
                     meta: 'La Liga',
-                    time: new Date(Date.now() + 604800000).toISOString(),
-                    venue: 'Wanda Metropolitano',
-                    homeTeam: 'Atletico Madrid',
-                    awayTeam: 'Sevilla',
+                    time: new Date(Date.now() + 518400000).toISOString(),
+                    venue: 'Camp Nou',
+                    homeTeam: 'FC Barcelona',
+                    awayTeam: 'Atletico Madrid',
                     sport: 'football',
                     streaming: getStreamingInfo('La Liga'),
                     norwegian: false
+                  },
+                  {
+                    title: 'Valencia vs FC Barcelona',
+                    meta: 'La Liga',
+                    time: new Date(Date.now() + 691200000).toISOString(),
+                    venue: 'Mestalla Stadium',
+                    homeTeam: 'Valencia',
+                    awayTeam: 'FC Barcelona',
+                    sport: 'football',
+                    streaming: getStreamingInfo('La Liga'),
+                    norwegian: false
+                  }
+                ]
+              },
+              {
+                name: 'International',
+                events: [
+                  {
+                    title: 'Norway vs Spain',
+                    meta: 'UEFA Nations League',
+                    time: new Date(Date.now() + 777600000).toISOString(),
+                    venue: 'Ullevaal Stadion, Oslo',
+                    homeTeam: 'Norway',
+                    awayTeam: 'Spain',
+                    sport: 'football',
+                    streaming: [
+                      { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
+                      { platform: 'TV2', url: 'https://tv2.no', type: 'tv2' }
+                    ],
+                    norwegian: true
+                  },
+                  {
+                    title: 'Germany vs Norway',
+                    meta: 'UEFA Nations League',
+                    time: new Date(Date.now() + 1209600000).toISOString(),
+                    venue: 'Allianz Arena, Munich',
+                    homeTeam: 'Germany',
+                    awayTeam: 'Norway',
+                    sport: 'football',
+                    streaming: [
+                      { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
+                      { platform: 'TV2', url: 'https://tv2.no', type: 'tv2' }
+                    ],
+                    norwegian: true
                   }
                 ]
               }
