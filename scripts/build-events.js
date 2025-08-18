@@ -26,9 +26,12 @@ for (const sport of sports) {
 		});
 	});
 }
-all.sort((a, b) => new Date(a.time) - new Date(b.time));
+// Keep only future events (allow 2 minute grace window)
+const now = Date.now() - 2 * 60 * 1000;
+const future = all.filter((e) => e.time && Date.parse(e.time) >= now);
+future.sort((a, b) => new Date(a.time) - new Date(b.time));
 fs.writeFileSync(
 	path.join(dataDir, "events.json"),
-	JSON.stringify(all, null, 2)
+	JSON.stringify(future, null, 2)
 );
-console.log(`Aggregated ${all.length} events into events.json`);
+console.log(`Aggregated ${future.length} future events (filtered ${all.length - future.length} past) into events.json`);

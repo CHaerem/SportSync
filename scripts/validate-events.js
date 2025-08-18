@@ -23,7 +23,7 @@ if (!Array.isArray(events)) {
 }
 
 let errors = 0;
-const now = Date.now() - 1000 * 60 * 60 * 24; // allow 1 day past events
+const now = Date.now() - 2 * 60 * 1000; // allow tiny grace window
 const seenKeys = new Set();
 for (const ev of events) {
 	const key = ev.sport + ev.tournament + ev.title + ev.time;
@@ -42,7 +42,8 @@ for (const ev of events) {
 		errors++;
 	}
 	if (ts < now) {
-		console.warn("Event seems in the far past:", key, ev.time);
+		console.warn("Past event found (will fail):", key, ev.time);
+		errors++;
 	}
 	if (!ev.title) {
 		console.warn("Missing title for", key);
