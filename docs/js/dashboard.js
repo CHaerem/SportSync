@@ -279,23 +279,32 @@ class SportsDashboard {
             }
         });
 
-        this.allSportsData = await Promise.all(promises);
-        console.log('Loaded sports data:', this.allSportsData);
-        this.renderFilteredSportsView();
-        this.loadTodayHighlights();
-        await this.loadWeeklyCalendar();
+        try {
+            this.allSportsData = await Promise.all(promises);
+            this.renderFilteredSportsView();
+            this.loadTodayHighlights();
+            await this.loadWeeklyCalendar();
+        } catch (error) {
+            console.error('Error in loadDashboardView:', error);
+            // Show error state in UI
+            document.querySelectorAll('.loading').forEach(el => {
+                el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error loading data. Please refresh the page.</div>';
+            });
+        }
     }
 
     renderFilteredSportsView() {
         if (!this.allSportsData) {
-            console.log('renderFilteredSportsView: No sports data available');
+            console.error('renderFilteredSportsView: No sports data available');
             return;
         }
-        console.log('renderFilteredSportsView: Processing', this.allSportsData.length, 'sports');
 
         this.allSportsData.forEach(sport => {
             const container = document.getElementById(`${sport.id}-content`);
-            console.log(`Processing sport: ${sport.id}, container found:`, !!container, 'tournaments:', sport.tournaments?.length);
+            if (!container) {
+                console.error(`Container not found for sport: ${sport.id}`);
+                return;
+            }
             if (!this.filters.sports.has(sport.id)) {
                 // Hide the entire sport card
                 container.closest('.sport-card').style.display = 'none';
@@ -305,7 +314,6 @@ class SportsDashboard {
             }
 
             const filteredTournaments = this.filterTournaments(sport.tournaments);
-            console.log(`Filtered tournaments for ${sport.id}:`, filteredTournaments?.length);
             this.renderTournaments(container, filteredTournaments, sport.name);
         });
     }
@@ -453,7 +461,6 @@ class SportsDashboard {
     }
 
     renderTournaments(container, tournaments, sportName) {
-        console.log(`renderTournaments called for ${sportName}:`, tournaments?.length, 'tournaments');
         if (!tournaments || tournaments.length === 0) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 20px; color: #718096;">
@@ -773,7 +780,6 @@ class SportsDashboard {
     loadTodayHighlights() {
         const container = document.getElementById('today-highlights');
         if (!container || !this.allSportsData) {
-            console.log('Today highlights: missing container or data', { container: !!container, data: !!this.allSportsData });
             return;
         }
         
@@ -785,7 +791,6 @@ class SportsDashboard {
             
             // Collect today's events from already loaded sports data
             const todayEvents = [];
-            console.log('Processing sports data for today\'s events:', this.allSportsData);
             
             this.allSportsData.forEach(sport => {
                 sport.tournaments.forEach(tournament => {
@@ -862,9 +867,25 @@ class SportsDashboard {
     }
 }
 
+// Global error handler
+window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+});
+
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.sportsDashboard = new SportsDashboard();
+    try {
+        window.sportsDashboard = new SportsDashboard();
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        document.querySelectorAll('.loading').forEach(el => {
+            el.innerHTML = '<div style="text-align: center; padding: 20px; color: #e53e3e;">Error initializing dashboard. Please refresh the page.</div>';
+        });
+    }
 });
 
 // Add keyboard shortcut for manual refresh (Ctrl+R or Cmd+R)
