@@ -1,5 +1,81 @@
 {
-  "lastUpdated": "2025-08-18T18:11:18.834Z",
+  "lastUpdated": "2025-08-18T18:53:01.053Z",
   "source": "Chess Tournament Calendar",
-  "tournaments": []
+  "tournaments": [
+    {
+      "name": "World Chess Championship",
+      "events": [
+        {
+          "title": "World Chess Championship 2024 - Gukesh vs Ding",
+          "meta": "FIDE World Championship",
+          "time": "2025-08-19T18:53:01.052Z",
+          "venue": "Singapore",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Chess.com",
+              "url": "https://chess.com/tv",
+              "type": "chess"
+            },
+            {
+              "platform": "Twitch",
+              "url": "https://twitch.tv/chess",
+              "type": "twitch"
+            }
+          ],
+          "norwegian": false
+        }
+      ]
+    },
+    {
+      "name": "Norway Chess",
+      "events": [
+        {
+          "title": "Norway Chess 2025 - Magnus Carlsen participating",
+          "meta": "Super Tournament",
+          "time": "2026-01-15T18:53:01.052Z",
+          "venue": "Stavanger, Norway",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "NRK",
+              "url": "https://nrk.no",
+              "type": "nrk"
+            },
+            {
+              "platform": "Chess24",
+              "url": "https://chess24.com",
+              "type": "chess24"
+            }
+          ],
+          "norwegian": true
+        }
+      ]
+    },
+    {
+      "name": "Candidates Tournament",
+      "events": [
+        {
+          "title": "FIDE Candidates Tournament 2025",
+          "meta": "Qualifying for World Championship",
+          "time": "2025-11-16T18:53:01.052Z",
+          "venue": "Toronto, Canada",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Chess.com",
+              "url": "https://chess.com/tv",
+              "type": "chess"
+            },
+            {
+              "platform": "Twitch",
+              "url": "https://twitch.tv/chess",
+              "type": "twitch"
+            }
+          ],
+          "norwegian": false
+        }
+      ]
+    }
+  ]
 }
