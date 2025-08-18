@@ -12,15 +12,20 @@ class SportsAPI {
     // Football API - multiple leagues support
     async fetchFootballEvents() {
         try {
-            // Try pre-fetched data first
-            const cachedResponse = await fetch('/SportSync/data/football.json');
-            if (cachedResponse.ok) {
-                const cachedData = await cachedResponse.json();
-                console.log('Using cached football data from:', cachedData.lastUpdated);
-                return this.formatTournamentData(cachedData.tournaments || []);
+            console.log('Fetching football data from /SportSync/data/football.json');
+            const response = await fetch('/SportSync/data/football.json');
+            console.log('Football response:', response.status, response.ok);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Football data loaded:', data.tournaments?.length, 'tournaments');
+                return this.formatTournamentData(data.tournaments || []);
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.log('No cached football data, trying live API...');
+            console.error('Error loading football data:', error);
+            return []; // Return empty array instead of trying live API
         }
         
         try {
@@ -55,7 +60,8 @@ class SportsAPI {
             return results.filter(league => league.events.length > 0);
         } catch (error) {
             console.error('Error fetching football events:', error);
-            return this.getMockFootballTournaments();
+            // Removed fallback to live API - return empty array
+        return [];
         }
     }
 
