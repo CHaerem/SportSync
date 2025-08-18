@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-08-18T06:10:00.249Z",
+  "lastUpdated": "2025-08-18T06:13:17.036Z",
   "source": "TheSportsDB API",
   "tournaments": [
     {
@@ -8,7 +8,7 @@
         {
           "title": "Arsenal vs Manchester City",
           "meta": "Premier League",
-          "time": "2025-08-19T06:10:00.249Z",
+          "time": "2025-08-19T06:13:17.036Z",
           "venue": "Emirates Stadium",
           "homeTeam": "Arsenal",
           "awayTeam": "Manchester City",
@@ -30,7 +30,7 @@
         {
           "title": "Liverpool vs Chelsea",
           "meta": "Premier League",
-          "time": "2025-08-20T06:10:00.249Z",
+          "time": "2025-08-20T06:13:17.036Z",
           "venue": "Anfield",
           "homeTeam": "Liverpool",
           "awayTeam": "Chelsea",
@@ -52,7 +52,7 @@
         {
           "title": "Manchester United vs Tottenham",
           "meta": "Premier League",
-          "time": "2025-08-21T06:10:00.249Z",
+          "time": "2025-08-21T06:13:17.036Z",
           "venue": "Old Trafford",
           "homeTeam": "Manchester United",
           "awayTeam": "Tottenham",
@@ -74,15 +74,15 @@
       ]
     },
     {
-      "name": "Eliteserien",
+      "name": "Obos-ligaen",
       "events": [
         {
-          "title": "Brann vs Rosenborg",
-          "meta": "Eliteserien",
-          "time": "2025-08-22T06:10:00.249Z",
-          "venue": "Brann Stadion",
-          "homeTeam": "Brann",
-          "awayTeam": "Rosenborg",
+          "title": "FK Lyn Oslo vs KFUM Oslo",
+          "meta": "Obos-ligaen",
+          "time": "2025-08-21T06:13:17.036Z",
+          "venue": "Lyn Arena",
+          "homeTeam": "FK Lyn Oslo",
+          "awayTeam": "KFUM Oslo",
           "sport": "football",
           "streaming": [
             {
@@ -99,12 +99,34 @@
           "norwegian": true
         },
         {
-          "title": "Molde vs Bodø/Glimt",
-          "meta": "Eliteserien",
-          "time": "2025-08-23T06:10:00.249Z",
-          "venue": "Aker Stadion",
-          "homeTeam": "Molde",
-          "awayTeam": "Bodø/Glimt",
+          "title": "Bryne FK vs FK Lyn Oslo",
+          "meta": "Obos-ligaen",
+          "time": "2025-08-23T06:13:17.036Z",
+          "venue": "Bryne Stadion",
+          "homeTeam": "Bryne FK",
+          "awayTeam": "FK Lyn Oslo",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "TV2 Play",
+              "url": "https://play.tv2.no",
+              "type": "tv2"
+            },
+            {
+              "platform": "Discovery+",
+              "url": "https://discoveryplus.no",
+              "type": "discovery"
+            }
+          ],
+          "norwegian": true
+        },
+        {
+          "title": "FK Lyn Oslo vs Kongsvinger IL",
+          "meta": "Obos-ligaen",
+          "time": "2025-08-25T06:13:17.036Z",
+          "venue": "Lyn Arena",
+          "homeTeam": "FK Lyn Oslo",
+          "awayTeam": "Kongsvinger IL",
           "sport": "football",
           "streaming": [
             {
@@ -126,12 +148,12 @@
       "name": "La Liga",
       "events": [
         {
-          "title": "Real Madrid vs Barcelona",
-          "meta": "La Liga",
-          "time": "2025-08-24T06:10:00.249Z",
-          "venue": "Santiago Bernabéu",
-          "homeTeam": "Real Madrid",
-          "awayTeam": "Barcelona",
+          "title": "FC Barcelona vs Real Madrid",
+          "meta": "La Liga - El Clasico",
+          "time": "2025-08-22T06:13:17.036Z",
+          "venue": "Camp Nou",
+          "homeTeam": "FC Barcelona",
+          "awayTeam": "Real Madrid",
           "sport": "football",
           "streaming": [
             {
@@ -143,12 +165,12 @@
           "norwegian": false
         },
         {
-          "title": "Atletico Madrid vs Sevilla",
+          "title": "FC Barcelona vs Atletico Madrid",
           "meta": "La Liga",
-          "time": "2025-08-25T06:10:00.249Z",
-          "venue": "Wanda Metropolitano",
-          "homeTeam": "Atletico Madrid",
-          "awayTeam": "Sevilla",
+          "time": "2025-08-24T06:13:17.036Z",
+          "venue": "Camp Nou",
+          "homeTeam": "FC Barcelona",
+          "awayTeam": "Atletico Madrid",
           "sport": "football",
           "streaming": [
             {
@@ -158,6 +180,72 @@
             }
           ],
           "norwegian": false
+        },
+        {
+          "title": "Valencia vs FC Barcelona",
+          "meta": "La Liga",
+          "time": "2025-08-26T06:13:17.036Z",
+          "venue": "Mestalla Stadium",
+          "homeTeam": "Valencia",
+          "awayTeam": "FC Barcelona",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "viaplay"
+            }
+          ],
+          "norwegian": false
+        }
+      ]
+    },
+    {
+      "name": "International",
+      "events": [
+        {
+          "title": "Norway vs Spain",
+          "meta": "UEFA Nations League",
+          "time": "2025-08-27T06:13:17.036Z",
+          "venue": "Ullevaal Stadion, Oslo",
+          "homeTeam": "Norway",
+          "awayTeam": "Spain",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "NRK",
+              "url": "https://nrk.no",
+              "type": "nrk"
+            },
+            {
+              "platform": "TV2",
+              "url": "https://tv2.no",
+              "type": "tv2"
+            }
+          ],
+          "norwegian": true
+        },
+        {
+          "title": "Germany vs Norway",
+          "meta": "UEFA Nations League",
+          "time": "2025-09-01T06:13:17.036Z",
+          "venue": "Allianz Arena, Munich",
+          "homeTeam": "Germany",
+          "awayTeam": "Norway",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "NRK",
+              "url": "https://nrk.no",
+              "type": "nrk"
+            },
+            {
+              "platform": "TV2",
+              "url": "https://tv2.no",
+              "type": "tv2"
+            }
+          ],
+          "norwegian": true
         }
       ]
     }
