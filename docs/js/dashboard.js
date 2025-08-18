@@ -287,10 +287,15 @@ class SportsDashboard {
     }
 
     renderFilteredSportsView() {
-        if (!this.allSportsData) return;
+        if (!this.allSportsData) {
+            console.log('renderFilteredSportsView: No sports data available');
+            return;
+        }
+        console.log('renderFilteredSportsView: Processing', this.allSportsData.length, 'sports');
 
         this.allSportsData.forEach(sport => {
             const container = document.getElementById(`${sport.id}-content`);
+            console.log(`Processing sport: ${sport.id}, container found:`, !!container, 'tournaments:', sport.tournaments?.length);
             if (!this.filters.sports.has(sport.id)) {
                 // Hide the entire sport card
                 container.closest('.sport-card').style.display = 'none';
@@ -300,6 +305,7 @@ class SportsDashboard {
             }
 
             const filteredTournaments = this.filterTournaments(sport.tournaments);
+            console.log(`Filtered tournaments for ${sport.id}:`, filteredTournaments?.length);
             this.renderTournaments(container, filteredTournaments, sport.name);
         });
     }
@@ -447,6 +453,7 @@ class SportsDashboard {
     }
 
     renderTournaments(container, tournaments, sportName) {
+        console.log(`renderTournaments called for ${sportName}:`, tournaments?.length, 'tournaments');
         if (!tournaments || tournaments.length === 0) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 20px; color: #718096;">
