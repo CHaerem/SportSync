@@ -76,9 +76,9 @@ export async function fetchEsports() {
 		const knownMatches = [
 			{
 				team1: { name: "FaZe Clan" },
-				team2: { name: "TBD" }, // Opponent to be determined
-				date: "2025-08-21T16:00:00Z", // August 21st, 4 PM UTC
-				event: { name: "Esports World Cup 2025" }
+				team2: { name: "Aurora Gaming" },
+				date: "2025-08-21T11:00:00Z", // August 21st, 14:00 AST = 11:00 UTC (AST is UTC+3)
+				event: { name: "Esports World Cup 2025 - Round 1" }
 			}
 		];
 		
@@ -106,8 +106,13 @@ export async function fetchEsports() {
 			streaming: [
 				{
 					platform: "Twitch",
-					url: "https://twitch.tv/esl_csgo",
+					url: "https://twitch.tv/esworldcup",
 					type: "twitch",
+				},
+				{
+					platform: "YouTube",
+					url: "https://youtube.com/@EsportsWorldCup",
+					type: "youtube",
 				},
 			],
 			norwegian:
