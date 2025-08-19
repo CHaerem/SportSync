@@ -29,28 +29,7 @@ export async function fetchJson(
 							);
 						} catch (e) {
 							reject(e);
-		function retryFetchJson() {
-			setTimeout(async () => {
-				try {
-					resolve(
-						await fetchJson(url, {
-							headers,
-							retries: retries - 1,
-							retryDelay: retryDelay * 2,
-						})
-					);
-				} catch (e) {
-					reject(e);
-				}
-			}, retryDelay);
-		}
-		https
-			.get(url, { headers }, (res) => {
-				let body = "";
-				res.on("data", (c) => (body += c));
-				res.on("end", async () => {
-					if (res.statusCode && res.statusCode >= 500 && retries > 0) {
-						retryFetchJson();
+						}
 						return;
 					}
 					try {

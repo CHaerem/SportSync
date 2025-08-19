@@ -24,10 +24,6 @@ function loadJson(file, fallback = []) {
 	}
 }
 
-async function fetchLichessBroadcasts() {
-	try {
-		// Attempt broadcast endpoint (may not be stable JSON; failures are ignored gracefully)
-		return await fetchJson("https://lichess.org/api/broadcast");
 // Validate the structure of the Lichess broadcast response
 function isValidBroadcastResponse(resp) {
 	// The expected structure is an object with a "tours" property that is an array
@@ -53,6 +49,22 @@ async function fetchLichessBroadcasts() {
 		console.warn("Failed to fetch Lichess broadcast endpoint:", err);
 		return null;
 	}
+}
+
+// Filter events to current week only
+function filterCurrentWeek(events) {
+	const now = new Date();
+	const startOfWeek = new Date(now);
+	startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+	startOfWeek.setHours(0, 0, 0, 0);
+	
+	const endOfWeek = new Date(startOfWeek);
+	endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week
+	
+	return events.filter(event => {
+		const eventDate = new Date(event.time);
+		return eventDate >= startOfWeek && eventDate < endOfWeek;
+	});
 }
 
 function consolidateRounds(tournaments, players, broadcasts) {
@@ -101,10 +113,11 @@ export async function fetchChessOpen() {
 	const players = loadJson(PLAYERS_FILE);
 	const tournaments = loadJson(TOURNAMENT_FILE);
 	const broadcasts = await fetchLichessBroadcasts();
-	const events = consolidateRounds(tournaments, players, broadcasts);
+	const allEvents = consolidateRounds(tournaments, players, broadcasts);
+	const events = filterCurrentWeek(allEvents);
 	return {
 		lastUpdated: iso(),
-		source: "Curated + Lichess Broadcast probe",
-		tournaments: [{ name: "Norwegian Chess Highlights", events }],
+		source: "Curated + Lichess Broadcast probe (current week only)",
+		tournaments: events.length ? [{ name: "Norwegian Chess Highlights", events }] : [],
 	};
 }
