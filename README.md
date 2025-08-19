@@ -48,14 +48,14 @@ Visit your dashboard at: [https://CHaerem.github.io/SportSync/](https://CHaerem.
 
 ## 📱 Sports Covered
 
-| Sport            | Data Source     | Coverage                                                  |
-| ---------------- | --------------- | --------------------------------------------------------- |
-| ⚽ **Football**  | ESPN API        | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
-| 🎾 **Tennis**    | ESPN API        | ATP, WTA, Grand Slams, with Norwegian focus               |
-| 🏌️ **Golf**      | ESPN API        | PGA Tour, DP World Tour, Major Championships              |
-| 🏎️ **Formula 1** | ESPN Racing API | Race Calendar, Practice, Qualifying                       |
-| ♟️ **Chess**     | Curated Data    | Major tournaments, Norwegian focus                        |
-| 🎮 **Esports**   | Curated Data    | CS2, LoL, Valorant with team focus                        |
+| Sport            | Data Source                  | Coverage                                                  |
+| ---------------- | ---------------------------- | --------------------------------------------------------- |
+| ⚽ **Football**  | ESPN API                     | Premier League, La Liga, Bundesliga, Serie A, Eliteserien |
+| 🎾 **Tennis**    | ESPN API                     | ATP, WTA, Grand Slams, with Norwegian focus               |
+| 🏌️ **Golf**      | ESPN API                     | PGA Tour, DP World Tour, Major Championships              |
+| 🏎️ **Formula 1** | ESPN Racing API              | Race Calendar, Practice, Qualifying                       |
+| ♟️ **Chess**     | Curated Data + Lichess probe | Major tournaments, Norwegian focus                        |
+| 🎮 **Esports**   | HLTV community API           | CS2 focus (FaZe / rain)                                   |
 
 ## 🛠️ Quick Setup
 
@@ -100,19 +100,28 @@ GitHub Pages automatically updates
 
 ```
 docs/
-├── index.html                 # Clean, minimal dashboard
+├── index.html                  # Clean, minimal dashboard
 ├── js/
-│   ├── sports-api.js          # Data fetching & formatting
-│   └── simple-dashboard.js    # CALM principle UI logic
-├── data/                      # Auto-generated API data
-│   ├── football.json
+│   ├── sports-api.js           # Legacy per-sport fetch helpers (kept for reference)
+│   └── simple-dashboard.js     # UI (now consumes aggregated events.json)
+├── data/                       # Auto-generated data (GitHub Action)
+│   ├── events.json             # Unified sorted list consumed by UI
+│   ├── football.json           # Per-sport source files
 │   ├── tennis.json
 │   ├── golf.json
 │   ├── f1.json
-│   ├── chess.json
+│   ├── chess.json              # Includes chess rounds with participants[]
 │   └── esports.json
-└── sw.js                      # Service worker for caching
+└── sw.js                       # Service worker for caching
+
+scripts/
+├── fetch/                      # Modular fetchers (football, f1, chess, etc.)
+├── config/                     # Curated configs (chess tournaments, players)
+├── build-events.js             # Produces aggregated events.json
+└── validate-events.js          # Lightweight integrity checks
 ```
+
+The dashboard loads only `events.json`, reducing network round-trips and simplifying logic. Chess rounds contain a `participants` array which is displayed when present.
 
 ## 🎨 Design Highlights
 
@@ -139,14 +148,22 @@ docs/
 
 ## 🔧 Customization
 
-### Change Sports Focus
+### Change Sports Focus / Add Curated Events / Calendar
 
-Edit `docs/js/simple-dashboard.js` to modify:
+To adjust curated chess tournaments or Norwegian focus:
 
-- Which sports to include
-- Number of events per sport
-- Regional preferences
-- Time formatting
+1. Edit `scripts/config/chess-tournaments.json` (add rounds / participantsHint / venue)
+2. Run locally:
+
+```bash
+node scripts/fetch/index.js
+node scripts/build-events.js
+node scripts/validate-events.js
+```
+
+3. Commit changes (GitHub Action normally handles scheduled runs).
+
+Edit `scripts/fetch/*.js` to add logic for new sports or enrich existing ones. The validation script warns about malformed or past events without failing the pipeline unless structural errors occur. Download or subscribe to the calendar feed via `docs/data/events.ics` (UI link provided).
 
 ### Styling Tweaks
 
@@ -168,11 +185,14 @@ All events show in Norwegian time (Europe/Oslo) using 24-hour format:
 
 ## 🚧 Future Enhancements
 
-- [ ] Live chess tournament integration via Chess.com API
-- [ ] Real-time esports data from Twitch Gaming
-- [ ] Calendar export (.ics) functionality
+- [x] Unified aggregated events.json feed
+- [x] Chess round participants display
+- [x] Real esports feed (HLTV community API)
+- [x] Dark mode toggle
+- [x] Calendar export (.ics) including participants
+- [ ] Live chess round times from broadcast APIs
+- [ ] Liquipedia integration for broader esports
 - [ ] Push notifications for favorite events
-- [ ] Dark mode option
 - [ ] Favorite teams/players tracking
 
 ## 🤝 Contributing

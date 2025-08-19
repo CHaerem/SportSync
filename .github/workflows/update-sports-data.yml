@@ -4,744 +4,743 @@ name: Update Sports Data
 on:
   # Run every 6 hours
   schedule:
-    - cron: '0 */6 * * *'
-  
+    - cron: "0 */6 * * *"
+
   # Allow manual trigger
   workflow_dispatch:
-  
+
   # Run on pushes to main branch (for testing)
   push:
-    branches: [ main ]
-    paths: 
-      - '.github/workflows/update-sports-data.yml'
-      - 'scripts/**'
+    branches: [main]
+    paths:
+      - ".github/workflows/update-sports-data.yml"
+      - "scripts/**"
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    
-    - name: Install dependencies
-      run: |
-        npm install node-fetch@2.7.0
-    
-    - name: Create data directory
-      run: |
-        mkdir -p docs/data
-    
-    - name: Fetch Football Data
-      run: |
-        node --input-type=commonjs -e "
-        const fetch = require('node-fetch');
-        
-        // Norwegian streaming platform mappings
-        function getStreamingInfo(league, teams) {
-          const streamingMap = {
-            'Premier League': [
-              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' },
-              { platform: 'Sky Sports', url: null, type: 'sky' }
-            ],
-            'Eliteserien': [
-              { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
-            ],
-            'Obos-ligaen': [
-              { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
-            ],
-            'International': [
-              { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
-              { platform: 'TV2', url: 'https://tv2.no', type: 'tv2' }
-            ],
-            'La Liga': [
-              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
-            ],
-            'Serie A': [
-              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
-            ],
-            'Bundesliga': [
-              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
-            ],
-            'Ligue 1': [
-              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
-            ]
-          };
-          
-          return streamingMap[league] || [];
-        }
-        
-        function isNorwegianEvent(league, homeTeam, awayTeam) {
-          const norwegianLeagues = ['Eliteserien', 'Obos-ligaen'];
-          const norwegianTeams = ['Brann', 'Rosenborg', 'Molde', 'Bodø/Glimt', 'Viking', 'Strømsgodset', 'FK Lyn Oslo', 'Norway'];
-          
-          if (norwegianLeagues.includes(league)) return true;
-          if (norwegianTeams.some(team => homeTeam?.includes(team) || awayTeam?.includes(team))) return true;
-          
-          return false;
-        }
-        
-        async function fetchFootball() {
-          try {
-            console.log('Fetching real football data from APIs...');
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2.7.0
+          npm install
+
+      - name: Fetch Open Source Data (fallbacks)
+        run: |
+          npm run update:data || echo "Open source data fetch failed, continuing with primary sources"
+
+      - name: Create data directory
+        run: |
+          mkdir -p docs/data
+
+      - name: Fetch Football Data
+        run: |
+          node --input-type=commonjs -e "
+          const fetch = require('node-fetch');
+
+          // Norwegian streaming platform mappings
+          function getStreamingInfo(league, teams) {
+            const streamingMap = {
+              'Premier League': [
+                { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' },
+                { platform: 'Sky Sports', url: null, type: 'sky' }
+              ],
+              'Eliteserien': [
+                { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+                { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+              ],
+              'Obos-ligaen': [
+                { platform: 'TV2 Play', url: 'https://play.tv2.no', type: 'tv2' },
+                { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' }
+              ],
+              'International': [
+                { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
+                { platform: 'TV2', url: 'https://tv2.no', type: 'tv2' }
+              ],
+              'La Liga': [
+                { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
+              ],
+              'Serie A': [
+                { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
+              ],
+              'Bundesliga': [
+                { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
+              ],
+              'Ligue 1': [
+                { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' }
+              ]
+            };
             
-            const tournaments = [];
+            return streamingMap[league] || [];
+          }
+
+          function isNorwegianEvent(league, homeTeam, awayTeam) {
+            const norwegianLeagues = ['Eliteserien', 'Obos-ligaen'];
+            const norwegianTeams = ['Brann', 'Rosenborg', 'Molde', 'Bodø/Glimt', 'Viking', 'Strømsgodset', 'FK Lyn Oslo', 'Norway'];
             
-            // Fetch REAL Premier League data from ESPN API with proper date range
+            if (norwegianLeagues.includes(league)) return true;
+            if (norwegianTeams.some(team => homeTeam?.includes(team) || awayTeam?.includes(team))) return true;
+            
+            return false;
+          }
+
+          async function fetchFootball() {
             try {
-              console.log('Fetching REAL Premier League data from ESPN...');
-              const now = new Date();
-              const today = now.toISOString().split('T')[0].replace(/-/g, '');
-              const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
-              const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+              console.log('Fetching real football data from APIs...');
               
-              console.log(\`Checking dates: \${today}, \${tomorrow}, \${dayAfter}\`);
+              const tournaments = [];
               
-              let allEvents = [];
-              
-              // Fetch multiple days to ensure we get upcoming matches
-              const dateQueries = [
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${today}\`,
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${tomorrow}\`,
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${dayAfter}\`
-              ];
-              
-              for (const url of dateQueries) {
-                try {
-                  const response = await fetch(url);
-                  const data = await response.json();
-                  if (data.events && data.events.length > 0) {
-                    allEvents.push(...data.events);
-                  }
-                } catch (err) {
-                  console.error(\`Error fetching from \${url}:\`, err.message);
-                }
-                await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
-              }
-              
-              console.log(\`Found \${allEvents.length} total Premier League events across multiple days\`);
-              
-              if (allEvents.length > 0) {
-                // Filter for FUTURE events only (no past or current matches)
+              // Fetch REAL Premier League data from ESPN API with proper date range
+              try {
+                console.log('Fetching REAL Premier League data from ESPN...');
                 const now = new Date();
-                const upcomingEvents = allEvents.filter(event => {
-                  const eventDate = new Date(event.date);
-                  const isRealFuture = eventDate > now;
-                  console.log(\`Premier League event: \${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName} at \${event.date} - \${isRealFuture ? 'FUTURE' : 'PAST/NOW'}\`);
-                  return isRealFuture;
-                }).slice(0, 4);
+                const today = now.toISOString().split('T')[0].replace(/-/g, '');
+                const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+                const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
                 
-                console.log(\`Filtered to \${upcomingEvents.length} upcoming Premier League events\`);
+                console.log(\`Checking dates: \${today}, \${tomorrow}, \${dayAfter}\`);
                 
-                const events = upcomingEvents.map(event => ({
-                  title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
-                  meta: 'Premier League',
-                  time: event.date,
-                  venue: event.competitions[0].venue?.fullName || 'TBD',
-                  homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
-                  awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
-                  sport: 'football',
-                  streaming: getStreamingInfo('Premier League'),
-                  norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
-                }));
+                let allEvents = [];
                 
-                tournaments.push({
-                  name: 'Premier League',
-                  events: events
-                });
-                console.log(\`Added \${events.length} Premier League events to dashboard\`);
-              } else {
-                console.log('No upcoming Premier League events found - not showing any fake data');
-                // DO NOT add placeholder data
-              }
-            } catch (error) {
-              console.error('Error fetching Premier League:', error.message);
-            }
-            
-            // Fetch REAL La Liga data from ESPN API with proper date filtering
-            try {
-              console.log('Fetching REAL La Liga data from ESPN...');
-              
-              const now = new Date();
-              const today = now.toISOString().split('T')[0].replace(/-/g, '');
-              const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
-              const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
-              
-              console.log(\`Checking La Liga dates: \${today}, \${tomorrow}, \${dayAfter}\`);
-              
-              let allEvents = [];
-              
-              // Fetch multiple days to ensure we get upcoming matches (same as Premier League)
-              const dateQueries = [
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${today}\`,
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${tomorrow}\`,
-                \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${dayAfter}\`
-              ];
-              
-              for (const url of dateQueries) {
-                try {
-                  const response = await fetch(url);
-                  const data = await response.json();
-                  if (data.events && data.events.length > 0) {
-                    allEvents.push(...data.events);
+                // Fetch multiple days to ensure we get upcoming matches
+                const dateQueries = [
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${today}\`,
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${tomorrow}\`,
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=\${dayAfter}\`
+                ];
+                
+                for (const url of dateQueries) {
+                  try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data.events && data.events.length > 0) {
+                      allEvents.push(...data.events);
+                    }
+                  } catch (err) {
+                    console.error(\`Error fetching from \${url}:\`, err.message);
                   }
-                } catch (err) {
-                  console.error(\`Error fetching from \${url}:\`, err.message);
+                  await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
                 }
-                await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
-              }
-              
-              console.log(\`Found \${allEvents.length} total La Liga events across multiple days\`);
-              
-              if (allEvents.length > 0) {
-                const now = new Date();
                 
-                // Filter for FUTURE events only (no past or current matches)
-                const upcomingEvents = allEvents.filter(event => {
-                  const eventDate = new Date(event.date);
-                  const isRealFuture = eventDate > now;
-                  console.log(\`La Liga event: \${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName} at \${event.date} - \${isRealFuture ? 'FUTURE' : 'PAST/NOW'}\`);
-                  return isRealFuture;
-                });
+                console.log(\`Found \${allEvents.length} total Premier League events across multiple days\`);
                 
-                console.log(\`Filtered \${allEvents.length} total La Liga events to \${upcomingEvents.length} future events\`);
-                
-                if (upcomingEvents.length > 0) {
-                  // Prioritize Barcelona matches if any
-                  const allEvents = upcomingEvents.map(event => ({
+                if (allEvents.length > 0) {
+                  // Filter for FUTURE events only (no past or current matches)
+                  const now = new Date();
+                  const upcomingEvents = allEvents.filter(event => {
+                    const eventDate = new Date(event.date);
+                    const isRealFuture = eventDate > now;
+                    console.log(\`Premier League event: \${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName} at \${event.date} - \${isRealFuture ? 'FUTURE' : 'PAST/NOW'}\`);
+                    return isRealFuture;
+                  }).slice(0, 4);
+                  
+                  console.log(\`Filtered to \${upcomingEvents.length} upcoming Premier League events\`);
+                  
+                  const events = upcomingEvents.map(event => ({
                     title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
-                    meta: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona')) && 
-                          event.competitions[0].competitors.some(c => c.team.displayName.includes('Real Madrid')) ? 
-                          'La Liga - El Clasico' : 'La Liga',
+                    meta: 'Premier League',
                     time: event.date,
                     venue: event.competitions[0].venue?.fullName || 'TBD',
                     homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
                     awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
                     sport: 'football',
-                    streaming: getStreamingInfo('La Liga'),
-                    norwegian: false,
-                    barcelona: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona'))
+                    streaming: getStreamingInfo('Premier League'),
+                    norwegian: isNorwegianEvent('Premier League', event.competitions[0].competitors[0].team.displayName, event.competitions[0].competitors[1].team.displayName)
                   }));
                   
-                  // Sort to prioritize Barcelona matches
-                  const barcelonaEvents = allEvents.filter(e => e.barcelona);
-                  const otherEvents = allEvents.filter(e => !e.barcelona);
-                  const events = [...barcelonaEvents.slice(0, 3), ...otherEvents.slice(0, 3)].slice(0, 6);
-                  
                   tournaments.push({
-                    name: 'La Liga',
-                    events: events.map(e => ({ ...e, barcelona: undefined })) // Remove helper field
+                    name: 'Premier League',
+                    events: events
                   });
-                  console.log(\`Found \${events.length} upcoming La Liga events (Barcelona prioritized)\`);
+                  console.log(\`Added \${events.length} Premier League events to dashboard\`);
                 } else {
-                  console.log('No upcoming La Liga events found - not showing any fake data');
+                  console.log('No upcoming Premier League events found - not showing any fake data');
                   // DO NOT add placeholder data
                 }
+              } catch (error) {
+                console.error('Error fetching Premier League:', error.message);
               }
-            } catch (error) {
-              console.error('Error fetching La Liga:', error.message);
-            }
-            
-            // REMOVED ALL SAMPLE DATA - Only showing real API results
-            console.log('Skipping sample data - only showing verified real matches from APIs');
-            
-            const result = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN API',
-              apiEndpoints: [
-                'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
-                'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard'
-              ],
-              tournaments: tournaments
-            };
-            
-            console.log(\`Total tournaments with events: \${tournaments.length}\`);
-            require('fs').writeFileSync('docs/data/football.json', JSON.stringify(result, null, 2));
-          } catch (error) {
-            console.error('Error fetching football data:', error);
-            // NO fallback data - only real events
-            const fallback = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN API - no current matches',
-              tournaments: []
-            };
-            require('fs').writeFileSync('docs/data/football.json', JSON.stringify(fallback, null, 2));
-          }
-        }
-        
-        (async () => {
-          await fetchFootball();
-        })().catch(console.error);
-        "
-    
-    - name: Fetch Golf Data
-      run: |
-        node --input-type=commonjs -e "
-        const fetch = require('node-fetch');
-        
-        function getGolfStreamingInfo(tour) {
-          const streamingMap = {
-            'PGA Tour': [
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
-              { platform: 'Golf Channel', url: null, type: 'golf' }
-            ],
-            'DP World Tour': [
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
-              { platform: 'Sky Sports', url: null, type: 'sky' }
-            ]
-          };
-          
-          return streamingMap[tour] || [];
-        }
-        
-        async function fetchGolf() {
-          try {
-            console.log('Fetching golf tournament data...');
-            
-            const tours = [
-              { url: 'http://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard', name: 'PGA Tour' },
-              { url: 'http://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard', name: 'DP World Tour' }
-            ];
-            
-            const tournaments = [];
-            
-            for (const tour of tours) {
+              
+              // Fetch REAL La Liga data from ESPN API with proper date filtering
               try {
-                console.log(\`Fetching \${tour.name} events...\`);
-                const response = await fetch(tour.url);
+                console.log('Fetching REAL La Liga data from ESPN...');
+                
+                const now = new Date();
+                const today = now.toISOString().split('T')[0].replace(/-/g, '');
+                const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+                const dayAfter = new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0].replace(/-/g, '');
+                
+                console.log(\`Checking La Liga dates: \${today}, \${tomorrow}, \${dayAfter}\`);
+                
+                let allEvents = [];
+                
+                // Fetch multiple days to ensure we get upcoming matches (same as Premier League)
+                const dateQueries = [
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${today}\`,
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${tomorrow}\`,
+                  \`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=\${dayAfter}\`
+                ];
+                
+                for (const url of dateQueries) {
+                  try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data.events && data.events.length > 0) {
+                      allEvents.push(...data.events);
+                    }
+                  } catch (err) {
+                    console.error(\`Error fetching from \${url}:\`, err.message);
+                  }
+                  await new Promise(resolve => setTimeout(resolve, 200)); // Small delay between requests
+                }
+                
+                console.log(\`Found \${allEvents.length} total La Liga events across multiple days\`);
+                
+                if (allEvents.length > 0) {
+                  const now = new Date();
+                  
+                  // Filter for FUTURE events only (no past or current matches)
+                  const upcomingEvents = allEvents.filter(event => {
+                    const eventDate = new Date(event.date);
+                    const isRealFuture = eventDate > now;
+                    console.log(\`La Liga event: \${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName} at \${event.date} - \${isRealFuture ? 'FUTURE' : 'PAST/NOW'}\`);
+                    return isRealFuture;
+                  });
+                  
+                  console.log(\`Filtered \${allEvents.length} total La Liga events to \${upcomingEvents.length} future events\`);
+                  
+                  if (upcomingEvents.length > 0) {
+                    // Prioritize Barcelona matches if any
+                    const allEvents = upcomingEvents.map(event => ({
+                      title: \`\${event.competitions[0].competitors[0].team.displayName} vs \${event.competitions[0].competitors[1].team.displayName}\`,
+                      meta: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona')) && 
+                            event.competitions[0].competitors.some(c => c.team.displayName.includes('Real Madrid')) ? 
+                            'La Liga - El Clasico' : 'La Liga',
+                      time: event.date,
+                      venue: event.competitions[0].venue?.fullName || 'TBD',
+                      homeTeam: event.competitions[0].competitors.find(c => c.homeAway === 'home')?.team.displayName,
+                      awayTeam: event.competitions[0].competitors.find(c => c.homeAway === 'away')?.team.displayName,
+                      sport: 'football',
+                      streaming: getStreamingInfo('La Liga'),
+                      norwegian: false,
+                      barcelona: event.competitions[0].competitors.some(c => c.team.displayName.includes('Barcelona'))
+                    }));
+                    
+                    // Sort to prioritize Barcelona matches
+                    const barcelonaEvents = allEvents.filter(e => e.barcelona);
+                    const otherEvents = allEvents.filter(e => !e.barcelona);
+                    const events = [...barcelonaEvents.slice(0, 3), ...otherEvents.slice(0, 3)].slice(0, 6);
+                    
+                    tournaments.push({
+                      name: 'La Liga',
+                      events: events.map(e => ({ ...e, barcelona: undefined })) // Remove helper field
+                    });
+                    console.log(\`Found \${events.length} upcoming La Liga events (Barcelona prioritized)\`);
+                  } else {
+                    console.log('No upcoming La Liga events found - not showing any fake data');
+                    // DO NOT add placeholder data
+                  }
+                }
+              } catch (error) {
+                console.error('Error fetching La Liga:', error.message);
+              }
+              
+              // REMOVED ALL SAMPLE DATA - Only showing real API results
+              console.log('Skipping sample data - only showing verified real matches from APIs');
+              
+              const result = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN API',
+                apiEndpoints: [
+                  'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
+                  'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard'
+                ],
+                tournaments: tournaments
+              };
+              
+              console.log(\`Total tournaments with events: \${tournaments.length}\`);
+              require('fs').writeFileSync('docs/data/football.json', JSON.stringify(result, null, 2));
+            } catch (error) {
+              console.error('Error fetching football data:', error);
+              // NO fallback data - only real events
+              const fallback = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN API - no current matches',
+                tournaments: []
+              };
+              require('fs').writeFileSync('docs/data/football.json', JSON.stringify(fallback, null, 2));
+            }
+          }
+
+          (async () => {
+            await fetchFootball();
+          })().catch(console.error);
+          "
+
+      - name: Fetch Golf Data
+        run: |
+          node --input-type=commonjs -e "
+          const fetch = require('node-fetch');
+
+          function getGolfStreamingInfo(tour) {
+            const streamingMap = {
+              'PGA Tour': [
+                { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
+                { platform: 'Golf Channel', url: null, type: 'golf' }
+              ],
+              'DP World Tour': [
+                { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
+                { platform: 'Sky Sports', url: null, type: 'sky' }
+              ]
+            };
+            
+            return streamingMap[tour] || [];
+          }
+
+          async function fetchGolf() {
+            try {
+              name: Update Sports Data
+
+              on:
+                schedule:
+                  - cron: '0 */6 * * *'
+                workflow_dispatch:
+                push:
+                  branches: [ main ]
+                  paths:
+                    - '.github/workflows/update-sports-data.yml'
+                    - 'scripts/**'
+
+              jobs:
+                update-data:
+                  runs-on: ubuntu-latest
+                  permissions:
+                    contents: write
+                  steps:
+                    - name: Checkout
+                      uses: actions/checkout@v4
+                      with:
+                        token: ${{ secrets.GITHUB_TOKEN }}
+
+                    - name: Setup Node
+                      uses: actions/setup-node@v4
+                      with:
+                        node-version: 20
+
+                    - name: Install dependencies
+                      run: |
+                        npm ci || npm install
+
+                    - name: Run open-source supplemental fetch (Ergast/Lichess etc.)
+                      run: |
+                        if [ -f scripts/fetch-data.js ]; then node scripts/fetch-data.js || echo "Open fetch script failed"; fi
+
+                    - name: Run primary modular fetch
+                      run: npm run update:data
+
+                    - name: Merge open + primary
+                      run: |
+                        if [ -f scripts/merge-open-data.js ]; then node scripts/merge-open-data.js || echo "Merge failed"; fi
+
+                    - name: Generate aggregated events file
+                      run: |
+                        node scripts/build-events.js || echo "Aggregation failed"
+
+                    - name: Update meta timestamp
+                      run: |
+                        echo '{' > docs/data/meta.json
+                        echo '  "lastUpdate": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",' >> docs/data/meta.json
+                        echo '  "nextUpdate": "'$(date -u -d "+6 hours" +"%Y-%m-%dT%H:%M:%SZ")'",' >> docs/data/meta.json
+                        echo '  "timezone": "Europe/Oslo",' >> docs/data/meta.json
+                        echo '  "openSources": true' >> docs/data/meta.json
+                        echo '}' >> docs/data/meta.json
+
+                    - name: Aggregate unified events
+                      run: |
+                        npm run build:events
+
+                    - name: Validate unified events (future-only)
+                      run: |
+                        npm run validate:data
+
+                    - name: Build ICS calendar
+                      run: |
+                        npm run build:calendar
+
+                    - name: Commit & push
+                      run: |
+                        git config user.email "action@github.com"
+                        git config user.name "GitHub Action"
+                        git add docs/data/
+                        if git diff --cached --quiet; then
+                          echo "No changes"
+                        else
+                          git commit -m "🔄 Data refresh $(date -u +"%Y-%m-%d %H:%M UTC")"
+                          git push
+                        fi
+
+                    - name: Summary
+                      run: |
+                        echo "## 📊 Sports Data Update" >> $GITHUB_STEP_SUMMARY
+                        echo "- Timestamp: $(date -u +"%Y-%m-%d %H:%M UTC")" >> $GITHUB_STEP_SUMMARY
+                        for f in football golf tennis f1 chess esports; do
+                          if [ -f docs/data/$f.json ]; then
+                            COUNT=$(jq -r '[.tournaments[].events|length]|add' docs/data/$f.json 2>/dev/null || echo 0)
+                            TOURS=$(jq -r '.tournaments|length' docs/data/$f.json 2>/dev/null || echo 0)
+                            echo "- $f: $TOURS tournaments ($COUNT events)" >> $GITHUB_STEP_SUMMARY
+                          fi
+                        done
+                        if [ -f docs/data/events.json ]; then
+                          TOTAL=$(jq -r 'length' docs/data/events.json); echo "- Aggregated events: $TOTAL" >> $GITHUB_STEP_SUMMARY; fi
+                        if [ -f docs/data/events.ics ]; then
+                          SIZE=$(wc -c < docs/data/events.ics | tr -d ' '); echo "- ICS calendar size: ${SIZE} bytes" >> $GITHUB_STEP_SUMMARY; fi
+                        echo "" >> $GITHUB_STEP_SUMMARY
+                        echo "Open source merged: $(jq -r '.openSources' docs/data/meta.json 2>/dev/null || echo false)" >> $GITHUB_STEP_SUMMARY
+                        echo "Done." >> $GITHUB_STEP_SUMMARY
+          async function fetchTennis() {
+            try {
+              console.log('Fetching real tennis tournament data...');
+              
+              const tournaments = [];
+              
+              // Fetch REAL ATP tennis data from ESPN with date filtering
+              try {
+                console.log('Fetching REAL ATP tennis data from ESPN...');
+                const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard');
                 const data = await response.json();
                 
                 if (data.events && data.events.length > 0) {
-                  // Filter for FUTURE tournaments only (not completed or ongoing ones)
-                  const now = new Date();
                   
+                  // Filter for FUTURE events only (not completed or ongoing ones)
+                  const now = new Date();
                   const upcomingEvents = data.events.filter(event => {
                     const eventDate = new Date(event.date);
                     const isRealFuture = eventDate > now;
                     const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
                     const isNotInProgress = event.status?.type?.name !== 'STATUS_IN_PROGRESS';
+                    const player1 = event.competitions?.[0]?.competitors?.[0]?.athlete?.displayName || 'Unknown';
+                    const player2 = event.competitions?.[0]?.competitors?.[1]?.athlete?.displayName || 'Unknown';
                     const isValid = isRealFuture && isNotFinal && isNotInProgress;
-                    console.log(\`Golf event \${event.name}: \${event.date}, status: \${event.status?.type?.name} - \${isValid ? 'REAL FUTURE TOURNAMENT' : 'FILTERED OUT'}\`);
+                    console.log(\`Tennis event \${player1} vs \${player2}: \${event.date}, status: \${event.status?.type?.name} - \${isValid ? 'REAL FUTURE EVENT' : 'FILTERED OUT'}\`);
                     return isValid;
                   });
                   
-                  console.log(\`\${tour.name}: Filtered \${data.events.length} events to \${upcomingEvents.length} upcoming events\`);
+                  console.log(\`Filtered \${data.events.length} total tennis events to \${upcomingEvents.length} upcoming events\`);
                   
                   if (upcomingEvents.length > 0) {
-                    const events = upcomingEvents.slice(0, 4).map(event => ({
-                      title: event.name || 'Golf Tournament',
-                      meta: tour.name,
-                      time: event.date || new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
-                      venue: event.competitions?.[0]?.venue?.fullName || event.competitions?.[0]?.venue?.address?.city || 'TBD',
-                      sport: 'golf',
-                      streaming: getGolfStreamingInfo(tour.name),
-                      norwegian: false
-                    }));
-                  
-                    tournaments.push({
-                      name: tour.name,
-                      events: events
+                    const events = upcomingEvents.slice(0, 6).map(event => {
+                      const player1 = event.competitions[0].competitors[0].athlete.displayName;
+                      const player2 = event.competitions[0].competitors[1].athlete.displayName;
+                      
+                      return {
+                        title: \`\${player1} vs \${player2}\`,
+                        meta: event.competitions[0].notes?.[0]?.headline || 'ATP Tournament',
+                        time: event.date,
+                        venue: event.competitions[0].venue?.fullName || 'Tennis Center',
+                        sport: 'tennis',
+                        streaming: getTennisStreamingInfo('ATP Tour'),
+                        norwegian: isNorwegianTennis(player1, player2)
+                      };
                     });
                     
-                    console.log(\`Found \${events.length} \${tour.name} events\`);
-                  } else {
-                    console.log(\`No upcoming events found for \${tour.name} after filtering\`);
-                  }
-                } else {
-                  console.log(\`No events found for \${tour.name}\`);
-                }
-                
-                await new Promise(resolve => setTimeout(resolve, 500));
-              } catch (error) {
-                console.error(\`Error fetching \${tour.name}:\`, error.message);
-              }
-            }
-            
-            const result = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN API',
-              tournaments: tournaments
-            };
-            
-            console.log(\`Total golf tournaments: \${tournaments.length}\`);
-            require('fs').writeFileSync('docs/data/golf.json', JSON.stringify(result, null, 2));
-          } catch (error) {
-            console.error('Error fetching golf data:', error);
-            const fallback = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN Golf API - no current tournaments',
-              tournaments: []
-            };
-            require('fs').writeFileSync('docs/data/golf.json', JSON.stringify(fallback, null, 2));
-          }
-        }
-        
-        (async () => {
-          await fetchGolf();
-        })().catch(console.error);
-        "
-    
-    - name: Fetch Tennis Data
-      run: |
-        node --input-type=commonjs -e "
-        const fetch = require('node-fetch');
-        
-        function getTennisStreamingInfo(tour) {
-          const streamingMap = {
-            'ATP Tour': [
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
-              { platform: 'Tennis Channel', url: null, type: 'tennis' }
-            ],
-            'WTA Tour': [
-              { platform: 'Discovery+', url: 'https://discoveryplus.no', type: 'discovery' },
-              { platform: 'WTA TV', url: null, type: 'wta' }
-            ]
-          };
-          
-          return streamingMap[tour] || [];
-        }
-        
-        function isNorwegianTennis(player1, player2) {
-          const norwegianPlayers = ['Casper Ruud', 'Ruud'];
-          return [player1, player2].some(player => 
-            norwegianPlayers.some(norPlayer => player?.includes(norPlayer))
-          );
-        }
-        
-        async function fetchTennis() {
-          try {
-            console.log('Fetching real tennis tournament data...');
-            
-            const tournaments = [];
-            
-            // Fetch REAL ATP tennis data from ESPN with date filtering
-            try {
-              console.log('Fetching REAL ATP tennis data from ESPN...');
-              const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard');
-              const data = await response.json();
-              
-              if (data.events && data.events.length > 0) {
-                
-                // Filter for FUTURE events only (not completed or ongoing ones)
-                const now = new Date();
-                const upcomingEvents = data.events.filter(event => {
-                  const eventDate = new Date(event.date);
-                  const isRealFuture = eventDate > now;
-                  const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
-                  const isNotInProgress = event.status?.type?.name !== 'STATUS_IN_PROGRESS';
-                  const player1 = event.competitions?.[0]?.competitors?.[0]?.athlete?.displayName || 'Unknown';
-                  const player2 = event.competitions?.[0]?.competitors?.[1]?.athlete?.displayName || 'Unknown';
-                  const isValid = isRealFuture && isNotFinal && isNotInProgress;
-                  console.log(\`Tennis event \${player1} vs \${player2}: \${event.date}, status: \${event.status?.type?.name} - \${isValid ? 'REAL FUTURE EVENT' : 'FILTERED OUT'}\`);
-                  return isValid;
-                });
-                
-                console.log(\`Filtered \${data.events.length} total tennis events to \${upcomingEvents.length} upcoming events\`);
-                
-                if (upcomingEvents.length > 0) {
-                  const events = upcomingEvents.slice(0, 6).map(event => {
-                    const player1 = event.competitions[0].competitors[0].athlete.displayName;
-                    const player2 = event.competitions[0].competitors[1].athlete.displayName;
+                    // Prioritize Norwegian players (Casper Ruud)
+                    const norwegianEvents = events.filter(e => e.norwegian);
+                    const otherEvents = events.filter(e => !e.norwegian);
+                    const sortedEvents = [...norwegianEvents, ...otherEvents].slice(0, 6);
                     
-                    return {
-                      title: \`\${player1} vs \${player2}\`,
-                      meta: event.competitions[0].notes?.[0]?.headline || 'ATP Tournament',
-                      time: event.date,
-                      venue: event.competitions[0].venue?.fullName || 'Tennis Center',
-                      sport: 'tennis',
-                      streaming: getTennisStreamingInfo('ATP Tour'),
-                      norwegian: isNorwegianTennis(player1, player2)
-                    };
-                  });
-                  
-                  // Prioritize Norwegian players (Casper Ruud)
-                  const norwegianEvents = events.filter(e => e.norwegian);
-                  const otherEvents = events.filter(e => !e.norwegian);
-                  const sortedEvents = [...norwegianEvents, ...otherEvents].slice(0, 6);
-                  
-                  tournaments.push({
-                    name: 'ATP Tour',
-                    events: sortedEvents
-                  });
-                  console.log(\`Found \${sortedEvents.length} upcoming ATP events (Casper Ruud prioritized)\`);
-                } else {
-                  console.log('No upcoming ATP events found - not showing any fake data');
-                  // DO NOT add placeholder data
+                    tournaments.push({
+                      name: 'ATP Tour',
+                      events: sortedEvents
+                    });
+                    console.log(\`Found \${sortedEvents.length} upcoming ATP events (Casper Ruud prioritized)\`);
+                  } else {
+                    console.log('No upcoming ATP events found - not showing any fake data');
+                    // DO NOT add placeholder data
+                  }
                 }
+              } catch (error) {
+                console.error('Error fetching ATP data:', error.message);
               }
-            } catch (error) {
-              console.error('Error fetching ATP data:', error.message);
-            }
-            
-            // Note: WTA data would be fetched from real API when available
-            console.log('WTA data: Using ATP data only - no WTA API integration yet');
-            
-            const result = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN Tennis API',
-              apiEndpoints: [
-                'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard'
-              ],
-              tournaments: tournaments
-            };
-            
-            console.log(\`Total tennis tournaments: \${tournaments.length}\`);
-            require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(result, null, 2));
-          } catch (error) {
-            console.error('Error fetching tennis data:', error);
-            const fallback = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN Tennis API - no current tournaments',
-              tournaments: []
-            };
-            require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(fallback, null, 2));
-          }
-        }
-        
-        (async () => {
-          await fetchTennis();
-        })().catch(console.error);
-        "
-    
-    - name: Fetch F1 Data
-      run: |
-        node --input-type=commonjs -e "
-        const fetch = require('node-fetch');
-        
-        function getF1StreamingInfo() {
-          return [
-            { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' },
-            { platform: 'F1 TV', url: 'https://f1tv.formula1.com', type: 'f1tv' }
-          ];
-        }
-        
-        async function fetchF1() {
-          try {
-            console.log('Fetching real F1 race calendar...');
-            
-            let events = [];
-            
-            // Fetch REAL F1 data from ESPN
-            try {
-              console.log('Fetching REAL F1 data from ESPN...');
-              const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard');
-              const data = await response.json();
               
-              if (data.events && data.events.length > 0) {
-                const now = new Date();
-                const upcomingRaces = data.events.filter(event => {
-                  const eventDate = new Date(event.date);
-                  const isRealFuture = eventDate > now;
-                  const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
-                  console.log(\`F1 event \${event.name || event.shortName}: \${event.date}, status: \${event.status?.type?.name} - \${isRealFuture && isNotFinal ? 'REAL FUTURE RACE' : 'FILTERED OUT'}\`);
-                  return isRealFuture && isNotFinal;
-                }).slice(0, 4);
-                
-                events = upcomingRaces.map(event => ({
-                  title: event.name || event.shortName,
-                  meta: 'Formula 1 2025 - Race Weekend',
-                  time: event.date,
-                  venue: event.competitions?.[0]?.venue?.fullName || 'F1 Circuit',
-                  sport: 'formula1',
-                  streaming: getF1StreamingInfo(),
-                  norwegian: false
-                }));
-                
-                console.log(\`Found \${events.length} REAL upcoming F1 races\`);
-              }
+              // Note: WTA data would be fetched from real API when available
+              console.log('WTA data: Using ATP data only - no WTA API integration yet');
+              
+              const result = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN Tennis API',
+                apiEndpoints: [
+                  'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard'
+                ],
+                tournaments: tournaments
+              };
+              
+              console.log(\`Total tennis tournaments: \${tournaments.length}\`);
+              require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(result, null, 2));
             } catch (error) {
-              console.error('Error fetching F1 data:', error.message);
+              console.error('Error fetching tennis data:', error);
+              const fallback = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN Tennis API - no current tournaments',
+                tournaments: []
+              };
+              require('fs').writeFileSync('docs/data/tennis.json', JSON.stringify(fallback, null, 2));
             }
-            
-            // NO fallback data - only show real events
-            if (events.length === 0) {
-              console.log('No upcoming F1 races found - not showing any fake data');
-              // DO NOT add placeholder data
-            }
-            
-            const result = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN F1 Racing API',
-              apiEndpoints: [
-                'https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard'
-              ],
-              tournaments: [
-                {
-                  name: 'Formula 1 2025',
-                  events: events
+          }
+
+          (async () => {
+            await fetchTennis();
+          })().catch(console.error);
+          "
+
+      - name: Fetch F1 Data
+        run: |
+          node --input-type=commonjs -e "
+          const fetch = require('node-fetch');
+
+          function getF1StreamingInfo() {
+            return [
+              { platform: 'Viaplay', url: 'https://viaplay.no', type: 'viaplay' },
+              { platform: 'F1 TV', url: 'https://f1tv.formula1.com', type: 'f1tv' }
+            ];
+          }
+
+          async function fetchF1() {
+            try {
+              console.log('Fetching real F1 race calendar...');
+              
+              let events = [];
+              
+              // Fetch REAL F1 data from ESPN
+              try {
+                console.log('Fetching REAL F1 data from ESPN...');
+                const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard');
+                const data = await response.json();
+                
+                if (data.events && data.events.length > 0) {
+                  const now = new Date();
+                  const upcomingRaces = data.events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    const isRealFuture = eventDate > now;
+                    const isNotFinal = event.status?.type?.name !== 'STATUS_FINAL';
+                    console.log(\`F1 event \${event.name || event.shortName}: \${event.date}, status: \${event.status?.type?.name} - \${isRealFuture && isNotFinal ? 'REAL FUTURE RACE' : 'FILTERED OUT'}\`);
+                    return isRealFuture && isNotFinal;
+                  }).slice(0, 4);
+                  
+                  events = upcomingRaces.map(event => ({
+                    title: event.name || event.shortName,
+                    meta: 'Formula 1 2025 - Race Weekend',
+                    time: event.date,
+                    venue: event.competitions?.[0]?.venue?.fullName || 'F1 Circuit',
+                    sport: 'formula1',
+                    streaming: getF1StreamingInfo(),
+                    norwegian: false
+                  }));
+                  
+                  console.log(\`Found \${events.length} REAL upcoming F1 races\`);
                 }
+              } catch (error) {
+                console.error('Error fetching F1 data:', error.message);
+              }
+              
+              // NO fallback data - only show real events
+              if (events.length === 0) {
+                console.log('No upcoming F1 races found - not showing any fake data');
+                // DO NOT add placeholder data
+              }
+              
+              const result = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN F1 Racing API',
+                apiEndpoints: [
+                  'https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard'
+                ],
+                tournaments: [
+                  {
+                    name: 'Formula 1 2025',
+                    events: events
+                  }
+                ]
+              };
+              
+              console.log(\`Created \${events.length} F1 race events\`);
+              require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(result, null, 2));
+            } catch (error) {
+              console.error('Error creating F1 data:', error);
+              const fallback = {
+                lastUpdated: new Date().toISOString(),
+                source: 'ESPN F1 Racing API - no current races',
+                tournaments: []
+              };
+              require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(fallback, null, 2));
+            }
+          }
+
+          (async () => {
+            await fetchF1();
+          })().catch(console.error);
+          "
+
+      - name: Create Chess Data
+        run: |
+          node --input-type=commonjs -e "
+          function getChessStreamingInfo(tournament) {
+            const streamingMap = {
+              'Norway Chess': [
+                { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
+                { platform: 'Chess24', url: 'https://chess24.com', type: 'chess24' }
+              ],
+              'FIDE Grand Prix': [
+                { platform: 'Chess.com', url: 'https://chess.com/tv', type: 'chess' },
+                { platform: 'Twitch', url: 'https://twitch.tv/chess', type: 'twitch' }
               ]
             };
             
-            console.log(\`Created \${events.length} F1 race events\`);
-            require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(result, null, 2));
-          } catch (error) {
-            console.error('Error creating F1 data:', error);
-            const fallback = {
-              lastUpdated: new Date().toISOString(),
-              source: 'ESPN F1 Racing API - no current races',
-              tournaments: []
-            };
-            require('fs').writeFileSync('docs/data/f1.json', JSON.stringify(fallback, null, 2));
+            return streamingMap[tournament] || [
+              { platform: 'Chess.com', url: 'https://chess.com/tv', type: 'chess' }
+            ];
           }
-        }
-        
-        (async () => {
-          await fetchF1();
-        })().catch(console.error);
-        "
-    
-    - name: Create Chess Data
-      run: |
-        node --input-type=commonjs -e "
-        function getChessStreamingInfo(tournament) {
-          const streamingMap = {
-            'Norway Chess': [
-              { platform: 'NRK', url: 'https://nrk.no', type: 'nrk' },
-              { platform: 'Chess24', url: 'https://chess24.com', type: 'chess24' }
-            ],
-            'FIDE Grand Prix': [
-              { platform: 'Chess.com', url: 'https://chess.com/tv', type: 'chess' },
-              { platform: 'Twitch', url: 'https://twitch.tv/chess', type: 'twitch' }
-            ]
-          };
-          
-          return streamingMap[tournament] || [
-            { platform: 'Chess.com', url: 'https://chess.com/tv', type: 'chess' }
-          ];
-        }
-        
-        async function fetchChessData() {
-          try {
-            console.log('Fetching chess tournament data...');
-            
-            const tournaments = [];
-            
-            // NO sample data for chess - would need real API integration
-            console.log('Chess: No live API available - not showing sample tournament data');
-            // Note: Future integration would use Chess.com API or Lichess API for real tournaments
-            
-            return {
-              lastUpdated: new Date().toISOString(),
-              source: 'Chess Tournament Calendar',
-              tournaments: tournaments
-            };
-          } catch (error) {
-            console.error('Error in fetchChessData:', error);
-            return {
-              lastUpdated: new Date().toISOString(),
-              source: 'No chess API available',
-              tournaments: []
-            };
+
+          async function fetchChessData() {
+            try {
+              console.log('Fetching chess tournament data...');
+              
+              const tournaments = [];
+              
+              // NO sample data for chess - would need real API integration
+              console.log('Chess: No live API available - not showing sample tournament data');
+              // Note: Future integration would use Chess.com API or Lichess API for real tournaments
+              
+              return {
+                lastUpdated: new Date().toISOString(),
+                source: 'Chess Tournament Calendar',
+                tournaments: tournaments
+              };
+            } catch (error) {
+              console.error('Error in fetchChessData:', error);
+              return {
+                lastUpdated: new Date().toISOString(),
+                source: 'No chess API available',
+                tournaments: []
+              };
+            }
           }
-        }
-        
-        (async () => {
-          const chessEvents = await fetchChessData();
-          require('fs').writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
-        })().catch(console.error);
-        console.log('Created chess tournament data');
-        "
-    
-    - name: Create Esports Data
-      run: |
-        node --input-type=commonjs -e "
-        function getCS2StreamingInfo() {
-          return [
-            { platform: 'Twitch', url: 'https://twitch.tv/esl_csgo', type: 'twitch' },
-            { platform: 'YouTube', url: 'https://youtube.com/@ESL', type: 'youtube' },
-            { platform: 'HLTV', url: 'https://hltv.org', type: 'hltv' }
-          ];
-        }
-        
-        function isNorwegianCS2(team1, team2) {
-          const norwegianTeams = ['FaZe', 'FaZe Clan'];
-          const norwegianPlayers = ['rain', 'jkaem', 'RUBINO', 'cromen'];
-          
-          return [team1, team2].some(team => 
-            norwegianTeams.some(norTeam => team?.includes(norTeam)) ||
-            norwegianPlayers.some(player => team?.includes(player))
-          );
-        }
-        
-        async function fetchEsportsData() {
-          try {
-            console.log('Fetching CS2 esports data with Norwegian focus...');
-            
-            const tournaments = [];
-            
-            // NO sample data for esports - would need real API integration
-            console.log('Esports: No live API available - not showing sample tournament data');
-            // Note: Future integration would use HLTV API or Liquipedia API for real match data
-            
-            return {
-              lastUpdated: new Date().toISOString(),
-              source: 'CS2 Tournament Calendar (Norwegian Focus)',
-              tournaments: tournaments
-            };
-          } catch (error) {
-            console.error('Error in fetchEsportsData:', error);
-            return {
-              lastUpdated: new Date().toISOString(),
-              source: 'CS2 Tournament Calendar - no live API',
-              tournaments: []
-            };
+
+          (async () => {
+            const chessEvents = await fetchChessData();
+            require('fs').writeFileSync('docs/data/chess.json', JSON.stringify(chessEvents, null, 2));
+          })().catch(console.error);
+          console.log('Created chess tournament data');
+          "
+
+      - name: Create Esports Data
+        run: |
+          node --input-type=commonjs -e "
+          function getCS2StreamingInfo() {
+            return [
+              { platform: 'Twitch', url: 'https://twitch.tv/esl_csgo', type: 'twitch' },
+              { platform: 'YouTube', url: 'https://youtube.com/@ESL', type: 'youtube' },
+              { platform: 'HLTV', url: 'https://hltv.org', type: 'hltv' }
+            ];
           }
-        }
-        
-        (async () => {
-          const esportsEvents = await fetchEsportsData();
-          require('fs').writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
-        })().catch(console.error);
-        console.log('Created esports tournament data');
-        "
-    
-    - name: Update timestamp
-      run: |
-        echo '{
-          \"lastUpdate\": \"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'\",
-          \"nextUpdate\": \"'$(date -u -d \"+6 hours\" +"%Y-%m-%dT%H:%M:%SZ")'\",
-          \"timezone\": \"Europe/Oslo\"
-        }' > docs/data/meta.json
-    
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add docs/data/
-        
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "🔄 Update sports data with real API sources - $(date -u +"%Y-%m-%d %H:%M UTC")"
-          git push
-        fi
-    
-    - name: Summary
-      run: |
-        echo "## 📊 Sports Data Update Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Timestamp**: $(date -u +"%Y-%m-%d %H:%M UTC")" >> $GITHUB_STEP_SUMMARY
-        echo "- **Football Tournaments**: $(jq -r '.tournaments | length' docs/data/football.json)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Golf Tours**: $(jq -r '.tournaments | length' docs/data/golf.json)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Tennis Tours**: $(jq -r '.tournaments | length' docs/data/tennis.json)" >> $GITHUB_STEP_SUMMARY
-        echo "- **F1 Events**: $(jq -r '.tournaments[0].events | length' docs/data/f1.json)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Chess Tournaments**: $(jq -r '.tournaments | length' docs/data/chess.json)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Esports Tournaments**: $(jq -r '.tournaments | length' docs/data/esports.json)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📺 Streaming Sources Integrated" >> $GITHUB_STEP_SUMMARY
-        echo "- **Norwegian**: TV2 Play, Viaplay, Discovery+, NRK" >> $GITHUB_STEP_SUMMARY
-        echo "- **International**: Sky Sports, ESPN, Golf Channel, Tennis Channel" >> $GITHUB_STEP_SUMMARY
-        echo "- **Digital**: F1 TV, Chess.com, Twitch, YouTube" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ Dashboard updated with real API data and streaming info!" >> $GITHUB_STEP_SUMMARY
+
+          function isNorwegianCS2(team1, team2) {
+            const norwegianTeams = ['FaZe', 'FaZe Clan'];
+            const norwegianPlayers = ['rain', 'jkaem', 'RUBINO', 'cromen'];
+            
+            return [team1, team2].some(team => 
+              norwegianTeams.some(norTeam => team?.includes(norTeam)) ||
+              norwegianPlayers.some(player => team?.includes(player))
+            );
+          }
+
+          async function fetchEsportsData() {
+            try {
+              console.log('Fetching CS2 esports data with Norwegian focus...');
+              
+              const tournaments = [];
+              
+              // NO sample data for esports - would need real API integration
+              console.log('Esports: No live API available - not showing sample tournament data');
+              // Note: Future integration would use HLTV API or Liquipedia API for real match data
+              
+              return {
+                lastUpdated: new Date().toISOString(),
+                source: 'CS2 Tournament Calendar (Norwegian Focus)',
+                tournaments: tournaments
+              };
+            } catch (error) {
+              console.error('Error in fetchEsportsData:', error);
+              return {
+                lastUpdated: new Date().toISOString(),
+                source: 'CS2 Tournament Calendar - no live API',
+                tournaments: []
+              };
+            }
+          }
+
+          (async () => {
+            const esportsEvents = await fetchEsportsData();
+            require('fs').writeFileSync('docs/data/esports.json', JSON.stringify(esportsEvents, null, 2));
+          })().catch(console.error);
+          console.log('Created esports tournament data');
+          "
+
+      - name: Update timestamp
+        run: |
+          echo '{
+            "lastUpdate": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
+            "nextUpdate": "'$(date -u -d "+6 hours" +"%Y-%m-%dT%H:%M:%SZ")'",
+            "timezone": "Europe/Oslo",
+            "openSources": true
+          }' > docs/data/meta.json
+
+      - name: Merge Open + Primary Data
+        run: |
+          node scripts/merge-open-data.js || echo "Merge step failed"
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🔄 Update sports data with real + open sources - $(date -u +"%Y-%m-%d %H:%M UTC")"
+            git push
+          fi
+
+      - name: Summary
+        run: |
+          echo "## 📊 Sports Data Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u +"%Y-%m-%d %H:%M UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "- **Football Tournaments**: $(jq -r '.tournaments | length' docs/data/football.json) (events: $(jq -r '[.tournaments[].events|length]|add' docs/data/football.json 2>/dev/null || echo 0))" >> $GITHUB_STEP_SUMMARY
+          echo "- **Golf Tours**: $(jq -r '.tournaments | length' docs/data/golf.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tennis Tours**: $(jq -r '.tournaments | length' docs/data/tennis.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- **F1 Events**: $(jq -r '.tournaments[0].events | length' docs/data/f1.json 2>/dev/null || echo 0)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Chess Tournaments**: $(jq -r '.tournaments | length' docs/data/chess.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Esports Tournaments**: $(jq -r '.tournaments | length' docs/data/esports.json)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📺 Streaming Sources Integrated" >> $GITHUB_STEP_SUMMARY
+          echo "- **Norwegian**: TV2 Play, Viaplay, Discovery+, NRK" >> $GITHUB_STEP_SUMMARY
+          echo "- **International**: Sky Sports, ESPN, Golf Channel, Tennis Channel" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digital**: F1 TV, Chess.com, Twitch, YouTube" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔁 Merge Info" >> $GITHUB_STEP_SUMMARY
+          echo "- Open sources fetched: football-open.json, f1-open.json, chess-open.json, esports-open.json" >> $GITHUB_STEP_SUMMARY
+          echo "- Merge flag: $(jq -r '.merged // false' docs/data/meta.json 2>/dev/null || echo false)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Dashboard updated with merged real + open source data!" >> $GITHUB_STEP_SUMMARY
