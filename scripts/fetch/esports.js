@@ -77,7 +77,7 @@ export async function fetchEsports() {
 			{
 				team1: { name: "FaZe Clan" },
 				team2: { name: "Aurora Gaming" },
-				date: "2025-08-21T11:00:00Z", // August 21st, 14:00 AST = 11:00 UTC (AST is UTC+3)
+				date: "2025-08-20T17:30:00Z", // August 20th, 20:30 AST = 17:30 UTC (AST is UTC+3)
 				event: { name: "Esports World Cup 2025 - Round 1" }
 			}
 		];
