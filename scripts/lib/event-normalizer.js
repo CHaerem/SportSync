@@ -1,10 +1,18 @@
 import { normalizeToUTC } from "./helpers.js";
+import { applyNorwegianStreaming } from "./norwegian-streaming.js";
 
 export class EventNormalizer {
 	static normalize(event, sport) {
 		if (!event) return null;
 		
 		try {
+			// Apply Norwegian streaming services
+			const eventWithStreaming = applyNorwegianStreaming({
+				...event,
+				sport: sport,
+				league: event.league || event.tournament || event.meta
+			});
+			
 			return {
 				id: this.generateId(event, sport),
 				title: this.sanitizeString(event.title || "Unknown Event"),
@@ -12,7 +20,7 @@ export class EventNormalizer {
 				venue: this.sanitizeString(event.venue || "TBD"),
 				sport: sport,
 				meta: this.sanitizeString(event.meta || event.tournament || ""),
-				streaming: this.normalizeStreaming(event.streaming),
+				streaming: this.normalizeStreaming(eventWithStreaming.streaming),
 				norwegian: Boolean(event.norwegian),
 				homeTeam: this.sanitizeString(event.homeTeam),
 				awayTeam: this.sanitizeString(event.awayTeam),

@@ -159,10 +159,11 @@ async function fetchGolfLiveGolfAPI() {
 						events: [{
 							title: event.name || "Golf Tournament",
 							meta: tourName,
+							tournament: tourName,
 							time: normalizeToUTC(event.startDatetime),
 							venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
 							sport: "golf",
-							streaming: [],
+							streaming: [], // Will be added by Norwegian streaming mapper
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
 							totalPlayers: eventDetail.leaderboard.length,
