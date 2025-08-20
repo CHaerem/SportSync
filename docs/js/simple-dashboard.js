@@ -96,6 +96,7 @@ class SimpleSportsDashboard {
 					totalPlayers: ev.totalPlayers || null,
 					link: ev.link || null,
 					status: ev.status || null,
+					featuredGroups: ev.featuredGroups || [],
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 			this.renderFilteredEvents();
@@ -169,25 +170,46 @@ class SimpleSportsDashboard {
 						? `<div>👥 ${this.escapeHtml(event.participants.join(", "))}</div>`
 						: "";
 				
-				// Special handling for golf events with Norwegian players
+				// Special handling for golf events with Norwegian players - make tee times PROMINENT
 				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
-					? `<div class="norwegian-players">
-						<div>🏌️‍♂️ Norwegian Players:</div>
+					? `<div class="norwegian-players" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 2px solid #f59e0b; border-radius: 8px; padding: 12px; margin-top: 8px;">
+						<div style="font-weight: 600; color: #b45309; margin-bottom: 8px; display: flex; align-items: center;">
+							🇳🇴 Norwegian Players - Tee Times
+						</div>
 						${event.norwegianPlayers.map(player => {
 							const teeTimeDisplay = player.teeTime 
-								? `Tee: ${this.escapeHtml(player.teeTime)}`
-								: 'Tee times typically released 24-48hrs before tournament';
+								? `${this.escapeHtml(player.teeTime)}`
+								: 'TBD - Times usually released 24-48hrs before';
+							
+							const teeTimeStyle = player.teeTime 
+								? 'font-weight: 700; font-size: 1.1em; color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 4px; border: 1px solid #fca5a5;'
+								: 'font-weight: 500; color: #6b7280; font-style: italic;';
+								
+							const featuredGroupLine = player.featuredGroup 
+								? `<div style="background: #fbbf24; color: #92400e; padding: 3px 6px; border-radius: 3px; font-size: 0.75em; font-weight: 600; margin-top: 4px; display: inline-block;">
+									📺 ${this.escapeHtml(player.featuredGroup.groupName)}
+									${player.featuredGroup.coverage ? ` • ${this.escapeHtml(player.featuredGroup.coverage)}` : ''}
+								</div>` : '';
+								
 							return `
-								<div style="margin-left: 16px; font-size: 0.9em;">
-									• ${this.escapeHtml(player.name)}
-									<div style="font-size: 0.8em; color: #666; margin-top: 2px;">
-										${teeTimeDisplay}
+								<div style="margin-bottom: 8px; padding: 8px; background: white; border-radius: 6px; border-left: 4px solid #f59e0b; ${player.featuredGroup ? 'box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);' : ''}">
+									<div style="font-weight: 600; color: #1f2937; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+										<span>🏌️‍♂️ ${this.escapeHtml(player.name)}</span>
+										${player.featuredGroup ? '<span style="font-size: 0.8em; color: #dc2626;">⭐ FEATURED</span>' : ''}
 									</div>
+									<div style="${teeTimeStyle}">
+										⏰ ${teeTimeDisplay}
+									</div>
+									${player.startingTee ? `<div style="font-size: 0.8em; color: #6b7280; margin-top: 4px;">Starting from Tee ${player.startingTee}</div>` : ''}
+									${featuredGroupLine}
+									${player.featuredGroup && player.featuredGroup.players && player.featuredGroup.players.length > 1 ? 
+										`<div style="font-size: 0.75em; color: #6b7280; margin-top: 4px;">Playing with: ${player.featuredGroup.players.filter(p => p !== player.name).map(p => this.escapeHtml(p)).join(', ')}</div>` : ''}
 								</div>
 							`;
 						}).join('')}
-						<div style="font-size: 0.85em; color: #888; margin-top: 4px;">
-							Field: ${event.totalPlayers} players
+						<div style="font-size: 0.85em; color: #6b7280; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+							📊 Field: ${event.totalPlayers} players total
+							${event.link ? `<a href="${this.escapeHtml(event.link)}" target="_blank" style="margin-left: 12px; color: #f59e0b; text-decoration: none;">📖 View Leaderboard</a>` : ''}
 						</div>
 					</div>`
 					: "";

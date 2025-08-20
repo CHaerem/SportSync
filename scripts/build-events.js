@@ -26,6 +26,7 @@ for (const sport of sports) {
 				totalPlayers: ev.totalPlayers || null,
 				link: ev.link || null,
 				status: ev.status || null,
+				featuredGroups: ev.featuredGroups || [],
 			});
 		});
 	});

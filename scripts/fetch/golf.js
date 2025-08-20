@@ -54,6 +54,18 @@ async function fetchGolfLiveGolfAPI() {
 				const detailUrl = `https://use.livegolfapi.com/v1/events/${event.id}?api_key=${API_KEY}`;
 				const eventDetail = await fetchJson(detailUrl);
 				
+				// Try to get featured groups information
+				let featuredGroups = [];
+				try {
+					const groupsUrl = `https://use.livegolfapi.com/v1/events/${event.id}/groups?api_key=${API_KEY}`;
+					const groupsData = await fetchJson(groupsUrl);
+					if (Array.isArray(groupsData)) {
+						featuredGroups = groupsData.filter(group => group.featured || group.tv);
+					}
+				} catch (groupError) {
+					// Featured groups not available - not critical
+				}
+				
 				if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard)) {
 					console.log(`No leaderboard data for ${event.name}, skipping`);
 					continue;
@@ -88,7 +100,25 @@ async function fetchGolfLiveGolfAPI() {
 							});
 						}
 						
-						console.log(`Found Norwegian player: ${competitor.player} - Tee time: ${teeTimeDisplay || 'TBD'}`);
+						// Check if this player is in a featured group
+						let featuredGroupInfo = null;
+						if (featuredGroups.length > 0 && firstRound?.teeTime) {
+							const playerGroup = featuredGroups.find(group => 
+								group.players?.some(p => 
+									p.name?.toLowerCase().includes(competitor.player.toLowerCase()) ||
+									competitor.player.toLowerCase().includes(p.name?.toLowerCase())
+								)
+							);
+							if (playerGroup) {
+								featuredGroupInfo = {
+									groupName: playerGroup.name || 'Featured Group',
+									players: playerGroup.players?.map(p => p.name) || [],
+									coverage: playerGroup.coverage || playerGroup.tv || 'TV Coverage'
+								};
+							}
+						}
+						
+						console.log(`Found Norwegian player: ${competitor.player} - Tee time: ${teeTimeDisplay || 'TBD'}${featuredGroupInfo ? ' (Featured Group)' : ''}`);
 						
 						return {
 							name: competitor.player,
@@ -96,7 +126,8 @@ async function fetchGolfLiveGolfAPI() {
 							teeTimeUTC: firstRound?.teeTime || null,
 							startingTee: firstRound?.startingTee || null,
 							round: firstRound?.round || 1,
-							status: competitor.position ? `T${competitor.position}` : 'Scheduled'
+							status: competitor.position ? `T${competitor.position}` : 'Scheduled',
+							featuredGroup: featuredGroupInfo
 						};
 					});
 					
