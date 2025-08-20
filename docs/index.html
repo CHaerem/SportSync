@@ -48,18 +48,19 @@
 				padding: 30px 20px;
 			}
 
-			header {
-				text-align: center;
-				margin-bottom: 50px;
-			}
+                        header {
+                                text-align: center;
+                                margin-bottom: 50px;
+                                position: relative;
+                        }
 
-			h1 {
-				font-size: 2rem;
-				font-weight: 400;
-				margin-bottom: 5px;
-				color: #222;
-				letter-spacing: 0;
-			}
+                        h1 {
+                                font-size: 2rem;
+                                font-weight: 400;
+                                margin-bottom: 5px;
+                                color: var(--text);
+                                letter-spacing: 0;
+                        }
 
 			.subtitle {
 				font-size: 0.9rem;
@@ -67,12 +68,24 @@
 				font-weight: 300;
 			}
 
-			.last-updated {
-				text-align: center;
-				margin-bottom: 40px;
-				font-size: 0.8rem;
-				color: var(--muted);
-			}
+                        .last-updated {
+                                text-align: center;
+                                margin-bottom: 40px;
+                                font-size: 0.8rem;
+                                color: var(--muted);
+                        }
+
+                        .theme-toggle {
+                                position: absolute;
+                                top: 0;
+                                right: 0;
+                                background: var(--card-bg);
+                                border: 1px solid var(--border);
+                                padding: 4px 10px;
+                                border-radius: 6px;
+                                font-size: 0.7rem;
+                                cursor: pointer;
+                        }
 
 			.simple-filters {
 				text-align: center;
@@ -272,26 +285,13 @@
 	</head>
 	<body>
 		<div class="container">
-			<header>
-				<h1>
-					SportSync
-					<button
-						id="toggleTheme"
-						style="
-							margin-left: 10px;
-							background: var(--card-bg);
-							border: 1px solid var(--border);
-							padding: 4px 10px;
-							border-radius: 6px;
-							font-size: 0.7rem;
-							cursor: pointer;
-						"
-					>
-						🌙
-					</button>
-				</h1>
-				<p class="subtitle">Your Personal Sports Dashboard</p>
-			</header>
+                        <header>
+                                <h1>
+                                        SportSync
+                                </h1>
+                                <button id="toggleTheme" class="theme-toggle">🌙</button>
+                                <p class="subtitle">Your Personal Sports Dashboard</p>
+                        </header>
 
 			<div class="last-updated">
 				Last updated: <span id="lastUpdate">Loading...</span> <br /><a
