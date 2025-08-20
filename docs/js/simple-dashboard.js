@@ -169,11 +169,19 @@ class SimpleSportsDashboard {
 				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
 					? `<div class="norwegian-players">
 						<div>🏌️‍♂️ Norwegian Players:</div>
-						${event.norwegianPlayers.map(player => `
-							<div style="margin-left: 16px; font-size: 0.9em;">
-								• ${this.escapeHtml(player.name)}${player.teeTime ? ` (Tee: ${this.escapeHtml(player.teeTime)})` : ' (Tee: TBD)'}
-							</div>
-						`).join('')}
+						${event.norwegianPlayers.map(player => {
+							const teeTimeDisplay = player.teeTime 
+								? `Tee: ${this.escapeHtml(player.teeTime)}`
+								: 'Tee times typically released 24-48hrs before tournament';
+							return `
+								<div style="margin-left: 16px; font-size: 0.9em;">
+									• ${this.escapeHtml(player.name)}
+									<div style="font-size: 0.8em; color: #666; margin-top: 2px;">
+										${teeTimeDisplay}
+									</div>
+								</div>
+							`;
+						}).join('')}
 						<div style="font-size: 0.85em; color: #888; margin-top: 4px;">
 							Field: ${event.totalPlayers} players
 						</div>

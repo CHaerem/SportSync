@@ -46,6 +46,8 @@ jobs:
           mkdir -p docs/data
 
       - name: Fetch All Sports Data
+        env:
+          LIVEGOLF_API_KEY: ${{ secrets.LIVEGOLF_API_KEY }}
         run: |
           npm run update:data
 

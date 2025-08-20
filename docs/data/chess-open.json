@@ -1,18 +1,18 @@
 {
-  "lastUpdated": "2025-08-18T19:16:56.885Z",
+  "lastUpdated": "2025-08-20T08:52:22.500Z",
   "source": "Lichess API",
   "tournaments": [
     {
       "name": "Lichess Tournaments",
       "events": [
         {
-          "title": "≤2000 Bullet Arena",
+          "title": "≤2000 Blitz Arena",
           "meta": {
             "key": "standard",
             "short": "Std",
             "name": "Standard"
           },
-          "time": "2025-08-18T19:30:00.000Z",
+          "time": "2025-08-20T09:00:00.000Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
@@ -31,7 +31,7 @@
             "short": "Anti",
             "name": "Antichess"
           },
-          "time": "2025-08-18T19:30:10.000Z",
+          "time": "2025-08-20T09:00:02.500Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
@@ -44,13 +44,13 @@
           "norwegian": false
         },
         {
-          "title": "Hourly Bullet Arena",
+          "title": "Hourly SuperBlitz Arena",
           "meta": {
             "key": "standard",
             "short": "Std",
             "name": "Standard"
           },
-          "time": "2025-08-18T19:30:20.000Z",
+          "time": "2025-08-20T09:00:05.000Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
@@ -63,89 +63,32 @@
           "norwegian": false
         },
         {
-          "title": "Hourly UltraBullet Arena",
+          "title": "Hourly Three-check Arena",
+          "meta": {
+            "key": "threeCheck",
+            "short": "3check",
+            "name": "Three-check"
+          },
+          "time": "2025-08-20T09:00:07.500Z",
+          "venue": "Lichess",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Lichess",
+              "url": "https://lichess.org",
+              "type": "lichess"
+            }
+          ],
+          "norwegian": false
+        },
+        {
+          "title": "Hourly HyperBullet Arena",
           "meta": {
             "key": "standard",
             "short": "Std",
             "name": "Standard"
           },
-          "time": "2025-08-18T19:30:40.000Z",
-          "venue": "Lichess",
-          "sport": "chess",
-          "streaming": [
-            {
-              "platform": "Lichess",
-              "url": "https://lichess.org",
-              "type": "lichess"
-            }
-          ],
-          "norwegian": false
-        },
-        {
-          "title": "Daily HyperBullet Arena",
-          "meta": {
-            "key": "standard",
-            "short": "Std",
-            "name": "Standard"
-          },
-          "time": "2025-08-18T20:00:00.000Z",
-          "venue": "Lichess",
-          "sport": "chess",
-          "streaming": [
-            {
-              "platform": "Lichess",
-              "url": "https://lichess.org",
-              "type": "lichess"
-            }
-          ],
-          "norwegian": false
-        },
-        {
-          "title": "Hourly Racing Kings Arena",
-          "meta": {
-            "key": "racingKings",
-            "short": "Racing",
-            "name": "Racing Kings"
-          },
-          "time": "2025-08-18T20:00:02.500Z",
-          "venue": "Lichess",
-          "sport": "chess",
-          "streaming": [
-            {
-              "platform": "Lichess",
-              "url": "https://lichess.org",
-              "type": "lichess"
-            }
-          ],
-          "norwegian": false
-        },
-        {
-          "title": "Hourly Bullet Arena",
-          "meta": {
-            "key": "standard",
-            "short": "Std",
-            "name": "Standard"
-          },
-          "time": "2025-08-18T20:00:05.000Z",
-          "venue": "Lichess",
-          "sport": "chess",
-          "streaming": [
-            {
-              "platform": "Lichess",
-              "url": "https://lichess.org",
-              "type": "lichess"
-            }
-          ],
-          "norwegian": false
-        },
-        {
-          "title": "≤1700 Blitz Arena",
-          "meta": {
-            "key": "standard",
-            "short": "Std",
-            "name": "Standard"
-          },
-          "time": "2025-08-18T20:00:10.000Z",
+          "time": "2025-08-20T09:00:10.000Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
@@ -164,7 +107,7 @@
             "short": "Std",
             "name": "Standard"
           },
-          "time": "2025-08-18T20:00:15.000Z",
+          "time": "2025-08-20T09:00:15.000Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
@@ -177,13 +120,70 @@
           "norwegian": false
         },
         {
-          "title": "≤2000 SuperBlitz Arena",
+          "title": "≤1500 Bullet Arena",
           "meta": {
             "key": "standard",
             "short": "Std",
             "name": "Standard"
           },
-          "time": "2025-08-18T20:00:20.000Z",
+          "time": "2025-08-20T09:00:20.000Z",
+          "venue": "Lichess",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Lichess",
+              "url": "https://lichess.org",
+              "type": "lichess"
+            }
+          ],
+          "norwegian": false
+        },
+        {
+          "title": "≤1300 SuperBlitz Arena",
+          "meta": {
+            "key": "standard",
+            "short": "Std",
+            "name": "Standard"
+          },
+          "time": "2025-08-20T09:00:25.000Z",
+          "venue": "Lichess",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Lichess",
+              "url": "https://lichess.org",
+              "type": "lichess"
+            }
+          ],
+          "norwegian": false
+        },
+        {
+          "title": "Hourly Bullet Arena",
+          "meta": {
+            "key": "standard",
+            "short": "Std",
+            "name": "Standard"
+          },
+          "time": "2025-08-20T09:00:30.000Z",
+          "venue": "Lichess",
+          "sport": "chess",
+          "streaming": [
+            {
+              "platform": "Lichess",
+              "url": "https://lichess.org",
+              "type": "lichess"
+            }
+          ],
+          "norwegian": false
+        },
+        {
+          "title": "Hourly Chess960 Arena",
+          "meta": {
+            "key": "chess960",
+            "short": "960",
+            "name": "Chess960"
+          },
+          "time": "2025-08-20T09:00:35.000Z",
           "venue": "Lichess",
           "sport": "chess",
           "streaming": [
