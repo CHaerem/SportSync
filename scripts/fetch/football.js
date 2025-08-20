@@ -7,9 +7,10 @@ export async function fetchFootballESPN() {
 		{ code: "esp.1", name: "La Liga" },
 		{ code: "nor.1", name: "Eliteserien" }, // Norwegian top division
 		{ code: "nor.2", name: "OBOS-ligaen" }, // Norwegian second division
+		{ code: "fifa.world", name: "International" }, // For Norwegian national team matches
 	];
 	const now = new Date();
-	const days = [0, 1, 2].map((offset) => {
+	const days = [0, 1, 2, 3, 4, 5, 6].map((offset) => {
 		const d = new Date(now.getTime() + offset * 86400000);
 		return d.toISOString().split("T")[0].replace(/-/g, "");
 	});
@@ -44,19 +45,40 @@ export async function fetchFootballESPN() {
 				}
 			}
 		}
-		const upcoming = all.filter((e) => new Date(e.date) > now).slice(0, 6);
-		if (upcoming.length) {
+		const upcoming = all.filter((e) => new Date(e.date) > now);
+		
+		// Filter matches based on league type
+		const filteredUpcoming = upcoming.filter((ev) => {
+			const homeTeam = ev.competitions[0].competitors.find(c => c.homeAway === "home")?.team.displayName || "";
+			const awayTeam = ev.competitions[0].competitors.find(c => c.homeAway === "away")?.team.displayName || "";
+			
+			if (league.code.startsWith("nor.")) {
+				// For Norwegian club leagues, only include FK Lyn Oslo matches
+				const isLynMatch = ["FK Lyn Oslo", "Lyn"].some(team => 
+					homeTeam.includes(team) || awayTeam.includes(team)
+				);
+				return isLynMatch;
+			} else if (league.code === "fifa.world") {
+				// For international matches, only include Norwegian national team
+				const isNorwayMatch = ["Norway", "Norge"].some(team => 
+					homeTeam.includes(team) || awayTeam.includes(team)
+				);
+				return isNorwayMatch;
+			} else {
+				// For other leagues (Premier League, La Liga), include all matches
+				return true;
+			}
+		}).slice(0, 15);
+		
+		if (filteredUpcoming.length) {
 			tournaments.push({
 				name: league.name,
-				events: upcoming.map((ev) => {
+				events: filteredUpcoming.map((ev) => {
 					const homeTeam = ev.competitions[0].competitors.find(c => c.homeAway === "home")?.team.displayName || "";
 					const awayTeam = ev.competitions[0].competitors.find(c => c.homeAway === "away")?.team.displayName || "";
 					
-					// Check if this is a Norwegian match (FK Lyn Oslo or other Norwegian clubs)
-					const norwegianTeams = ["FK Lyn Oslo", "Lyn", "Brann", "Rosenborg", "Molde", "Bodø/Glimt", "Viking", "Strømsgodset"];
-					const isNorwegian = norwegianTeams.some(team => 
-						homeTeam.includes(team) || awayTeam.includes(team)
-					) || league.code.startsWith("nor.");
+					// Check if this is a Norwegian match
+					const isNorwegian = league.code.startsWith("nor.") || league.code === "fifa.world";
 					
 					// Set appropriate streaming based on league
 					const streaming = league.code.startsWith("nor.") ? [
