@@ -117,6 +117,7 @@ export class GolfFetcher extends ESPNAdapter {
 					teeTime: teeTimeDisplay,
 					teeTimeUTC: firstRound?.teeTime || null,
 					startingTee: firstRound?.startingTee || null,
+					round: firstRound?.round || 1,
 					status: player.position ? `T${player.position}` : 'Scheduled'
 				});
 			}
@@ -148,6 +149,36 @@ export class GolfFetcher extends ESPNAdapter {
 		}
 
 		return event;
+	}
+
+	transformToEvents(rawData) {
+		const events = [];
+		
+		for (const item of rawData) {
+			try {
+				// Check if this is already a processed LiveGolf event
+				if (item.norwegianPlayers && Array.isArray(item.norwegianPlayers)) {
+					// This is a LiveGolf event, normalize it directly
+					const normalized = EventNormalizer.normalize(item, this.config.sport);
+					if (normalized && EventNormalizer.validateEvent(normalized)) {
+						events.push(normalized);
+					}
+				} else {
+					// This is an ESPN event, use the standard transformation
+					const event = this.transformESPNEvent(item);
+					if (event) {
+						const normalized = EventNormalizer.normalize(event, this.config.sport);
+						if (normalized && EventNormalizer.validateEvent(normalized)) {
+							events.push(normalized);
+						}
+					}
+				}
+			} catch (error) {
+				console.error(`Error transforming event:`, error.message);
+			}
+		}
+		
+		return EventNormalizer.deduplicate(events);
 	}
 
 	applyCustomFilters(events) {
