@@ -201,9 +201,39 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		const favoriteIndicator = ''; // Remove star indicator for cleaner look
 		const otherClass = isOther ? 'other-event' : '';
 		
-		// Check if event has Norwegian players/teams
+		// Check if event has Norwegian players/teams - use parent class method for golf
 		let norwegianInfo = '';
-		if (event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+		if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+			// For golf, show detailed tee time info
+			norwegianInfo = `<div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-top: 8px; background: var(--card-bg);">
+				<div style="font-weight: 500; color: var(--text); margin-bottom: 8px;">
+					🇳🇴 Norwegian Players
+				</div>
+				${event.norwegianPlayers.map(player => {
+					const teeTimeDisplay = player.teeTime 
+						? `${this.escapeHtml(player.teeTime)}`
+						: 'TBD';
+					
+					return `
+						<div style="margin-bottom: 6px; padding-bottom: 6px; ${event.norwegianPlayers.indexOf(player) < event.norwegianPlayers.length - 1 ? 'border-bottom: 1px solid var(--border);' : ''}">
+							<div style="font-weight: 500; color: var(--text);">
+								${this.escapeHtml(player.name)}
+							</div>
+							<div style="font-weight: 600; margin-top: 2px;">
+								${teeTimeDisplay}
+							</div>
+							${player.startingTee ? `<div style="font-size: 0.85em; color: var(--muted); margin-top: 2px;">Tee ${player.startingTee}</div>` : ''}
+							${player.featuredGroup ? `<div style="font-size: 0.8em; color: var(--muted); margin-top: 2px;">📺 ${this.escapeHtml(player.featuredGroup.groupName)}</div>` : ''}
+						</div>
+					`;
+				}).join('')}
+				<div style="font-size: 0.85em; color: var(--muted); margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--border);">
+					Field: ${event.totalPlayers} players
+					${event.link ? `<a href="${this.escapeHtml(event.link)}" target="_blank" style="margin-left: 12px; color: var(--muted); text-decoration: none;">View leaderboard →</a>` : ''}
+				</div>
+			</div>`;
+		} else if (event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+			// For other sports, just show names
 			const players = event.norwegianPlayers.map(p => p.name).join(', ');
 			norwegianInfo = `<div class="norwegian-info">🇳🇴 ${players}</div>`;
 		}
@@ -301,6 +331,11 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		// Optional: Update UI with filter count if needed
 		// For now, just log it
 		console.log(`Showing ${count} events`);
+	}
+	
+	escapeHtml(unsafe) {
+		// Use parent class method
+		return super.escapeHtml(unsafe);
 	}
 }
 
