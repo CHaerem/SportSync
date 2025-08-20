@@ -15,16 +15,22 @@
 			:root {
 				--bg: #fafafa;
 				--card-bg: #ffffff;
-				--text: #333;
-				--muted: #666;
-				--border: #e0e0e0;
+				--text: #1a1a1a;
+				--text-secondary: #4a4a4a;
+				--muted: #707070;
+				--border: #e8e8e8;
+				--accent: #2563eb;
+				--hover-bg: #f7f7f7;
 			}
 			.dark {
-				--bg: #121212;
-				--card-bg: #1e1e1e;
-				--text: #f5f5f5;
-				--muted: #bbb;
+				--bg: #0a0a0a;
+				--card-bg: #1a1a1a;
+				--text: #ffffff;
+				--text-secondary: #d0d0d0;
+				--muted: #a0a0a0;
 				--border: #2a2a2a;
+				--accent: #4a9eff;
+				--hover-bg: #222222;
 			}
 			* {
 				margin: 0;
@@ -43,9 +49,9 @@
 			}
 
 			.container {
-				max-width: 900px;
+				max-width: 1000px;
 				margin: 0 auto;
-				padding: 30px 20px;
+				padding: 40px 24px;
 			}
 
                         header {
@@ -55,11 +61,11 @@
                         }
 
                         h1 {
-                                font-size: 2rem;
-                                font-weight: 400;
-                                margin-bottom: 5px;
+                                font-size: 2.2rem;
+                                font-weight: 300;
+                                margin-bottom: 8px;
                                 color: var(--text);
-                                letter-spacing: 0;
+                                letter-spacing: -0.02em;
                         }
 
 			.subtitle {
@@ -130,111 +136,352 @@
 				border-color: #2563eb;
 				color: white;
 			}
+			
+			/* View toggle buttons */
+			.view-toggle {
+				display: inline-flex;
+				gap: 4px;
+				margin-left: 20px;
+				background: var(--card-bg);
+				border: 2px solid var(--border);
+				border-radius: 20px;
+				padding: 2px;
+			}
+			
+			.view-btn {
+				padding: 6px 14px;
+				border: none;
+				background: transparent;
+				border-radius: 16px;
+				cursor: pointer;
+				transition: all 0.2s;
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
+			
+			.view-btn:hover {
+				color: var(--text);
+			}
+			
+			.view-btn.active {
+				background: #333;
+				color: white;
+			}
+			
+			/* Timeline grid view */
+			.timeline-grid {
+				display: grid;
+				grid-template-columns: 100px repeat(7, minmax(180px, 1fr));
+				gap: 1px;
+				background: var(--border);
+				border: 1px solid var(--border);
+				border-radius: 16px;
+				overflow-x: auto;
+				overflow-y: hidden;
+				max-width: 100%;
+			}
+			
+			.timeline-header {
+				display: contents;
+			}
+			
+			.timeline-corner {
+				background: var(--hover-bg);
+				padding: 16px 8px;
+				font-weight: 600;
+				font-size: 0.8rem;
+				color: var(--muted);
+				text-align: center;
+			}
+			
+			.timeline-day-header {
+				background: var(--hover-bg);
+				padding: 16px 12px;
+				font-weight: 600;
+				text-align: center;
+				font-size: 0.85rem;
+				color: var(--text);
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			
+			.timeline-row {
+				display: contents;
+			}
+			
+			.timeline-time-label {
+				background: var(--hover-bg);
+				padding: 20px 8px;
+				font-size: 0.75rem;
+				font-weight: 500;
+				text-align: center;
+				white-space: pre-line;
+				line-height: 1.4;
+				color: var(--muted);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 100px;
+			}
+			
+			.timeline-cell {
+				background: var(--card-bg);
+				padding: 12px;
+				min-height: 100px;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			
+			.timeline-event {
+				padding: 8px 10px;
+				border-radius: 8px;
+				background: var(--hover-bg);
+				border-left: 3px solid;
+				font-size: 0.8rem;
+				cursor: pointer;
+				transition: all 0.2s;
+			}
+			
+			.timeline-event:hover {
+				transform: translateX(2px);
+				box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+			}
+			
+			.timeline-event.football { border-left-color: #22c55e; }
+			.timeline-event.golf { border-left-color: #f59e0b; }
+			.timeline-event.tennis { border-left-color: #3b82f6; }
+			.timeline-event.f1, .timeline-event.formula1 { border-left-color: #ef4444; }
+			.timeline-event.chess { border-left-color: #6b7280; }
+			.timeline-event.esports { border-left-color: #8b5cf6; }
+			
+			.timeline-event-time {
+				font-weight: 600;
+				color: var(--text);
+				margin-bottom: 4px;
+				font-size: 0.85rem;
+			}
+			
+			.timeline-event-title {
+				color: var(--text-secondary);
+				line-height: 1.3;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				line-clamp: 2;
+				-webkit-box-orient: vertical;
+				font-size: 0.75rem;
+				word-break: break-word;
+			}
 
 			/* Main Dashboard View */
 			.events-list {
 				max-width: 100%;
 			}
+			
 
 			.event-card {
 				background: var(--card-bg);
 				border: 1px solid var(--border);
-				border-radius: 12px;
-				margin-bottom: 16px;
+				border-radius: 20px;
+				margin-bottom: 20px;
 				padding: 0;
-				transition: all 0.15s ease;
+				transition: all 0.3s ease;
 				overflow: hidden;
+				position: relative;
 			}
 
 			.event-card:hover {
-				border-color: #999;
-				box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+				transform: translateY(-1px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 			}
+			
 
 			.event-header {
 				display: flex;
 				justify-content: space-between;
-				align-items: flex-start;
-				padding: 12px 20px;
-				border-bottom: 1px solid var(--border);
-				background: var(--bg);
+				align-items: center;
+				padding: 32px 40px 28px 40px;
 			}
 
-			.event-day-time {
+			.event-time-info {
 				display: flex;
 				flex-direction: column;
 				gap: 2px;
 				min-width: 100px;
 			}
 
-			.event-day {
+			
+			.event-time-relative {
 				font-size: 0.85rem;
-				font-weight: 600;
-				color: var(--text);
-				text-transform: uppercase;
-				letter-spacing: 0.3px;
-				line-height: 1.2;
+				color: var(--muted);
+				margin-top: 4px;
+				opacity: 0.8;
 			}
 
-			.event-time {
-				font-size: 1.25rem;
-				font-weight: 700;
-				color: var(--text);
-				font-variant-numeric: tabular-nums;
-				line-height: 1;
-			}
-
-			.event-sport-badge {
-				display: inline-flex;
-				align-items: center;
-				gap: 8px;
+			.sport-badge {
+				position: absolute;
+				top: 20px;
+				right: 20px;
 				padding: 6px 12px;
 				border-radius: 20px;
-				font-size: 0.8rem;
+				font-size: 0.7rem;
 				font-weight: 600;
-				color: white;
 				text-transform: uppercase;
-				letter-spacing: 0.3px;
+				letter-spacing: 0.5px;
+				color: white;
+				opacity: 0.9;
 			}
 
-			.event-sport-badge.football {
+			.sport-badge.football {
 				background: #22c55e;
 			}
-			.event-sport-badge.tennis {
+			.sport-badge.tennis {
 				background: #3b82f6;
 			}
-			.event-sport-badge.golf {
+			.sport-badge.golf {
 				background: #f59e0b;
 			}
-			.event-sport-badge.formula1 {
+			.sport-badge.formula1 {
 				background: #ef4444;
 			}
-			.event-sport-badge.chess {
+			.sport-badge.chess {
 				background: #6b7280;
 			}
-			.event-sport-badge.esports {
+			.sport-badge.esports {
+				background: #8b5cf6;
+			}
+			
+			.sport-line {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 3px;
+				border-radius: 20px 20px 0 0;
+				opacity: 0.8;
+			}
+			
+			.sport-line.football {
+				background: #22c55e;
+			}
+			.sport-line.tennis {
+				background: #3b82f6;
+			}
+			.sport-line.golf {
+				background: #f59e0b;
+			}
+			.sport-line.formula1 {
+				background: #ef4444;
+			}
+			.sport-line.chess {
+				background: #6b7280;
+			}
+			.sport-line.esports {
 				background: #8b5cf6;
 			}
 
-			.event-content {
+			/* Team logos for football */
+			.teams-display {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 40px;
+				margin: 28px 0;
 				padding: 20px;
+				background: var(--hover-bg);
+				border-radius: 16px;
+			}
+
+			.team-block {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.team-logo {
+				width: 56px;
+				height: 56px;
+				object-fit: contain;
+				filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+			}
+
+			.team-name {
+				font-weight: 500;
+				color: var(--text);
+				font-size: 0.95rem;
+				text-align: center;
+				margin-top: 8px;
+			}
+
+			.vs-separator {
+				color: var(--muted);
+				font-weight: 300;
+				font-size: 0.9rem;
+				opacity: 0.5;
+			}
+
+			/* Golf tee times - minimal display */
+			.tee-times {
+				margin-top: 24px;
+				padding: 20px 24px;
+				background: var(--hover-bg);
+				border-radius: 16px;
+				border: 1px solid var(--border);
+			}
+			
+			.tee-time-player {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 12px 0;
+				border-bottom: 1px solid var(--border);
+			}
+			
+			.tee-time-player:last-child {
+				border-bottom: none;
+			}
+			
+			.player-name {
+				font-weight: 500;
+				color: var(--text);
+			}
+			
+			.player-time {
+				font-weight: 600;
+				color: var(--accent);
+				font-size: 0.95rem;
+			}
+
+			.event-content {
+				padding: 0 40px 36px 40px;
 			}
 
 			.event-title {
-				font-size: 1.1rem;
-				font-weight: 600;
+				font-size: 1.2rem;
+				font-weight: 500;
 				color: var(--text);
-				margin: 0 0 8px 0;
-				line-height: 1.3;
+				margin: 0 0 20px 0;
+				line-height: 1.4;
+				letter-spacing: -0.01em;
 			}
 
-			.event-details {
+			.event-meta {
 				display: flex;
-				flex-direction: column;
-				gap: 6px;
-				font-size: 0.85rem;
+				align-items: center;
+				gap: 16px;
+				font-size: 0.9rem;
 				color: var(--muted);
-				line-height: 1.4;
+				margin-bottom: 20px;
+			}
+			
+			.event-meta-item {
+				display: flex;
+				align-items: center;
+				gap: 6px;
 			}
 
 			.loading {
@@ -260,6 +507,32 @@
 				100% {
 					transform: rotate(360deg);
 				}
+			}
+
+			/* Timeline container wrapper for better scrolling */
+			.timeline-wrapper {
+				width: 100%;
+				overflow-x: auto;
+				overflow-y: hidden;
+				padding-bottom: 10px;
+			}
+			
+			.timeline-wrapper::-webkit-scrollbar {
+				height: 8px;
+			}
+			
+			.timeline-wrapper::-webkit-scrollbar-track {
+				background: var(--hover-bg);
+				border-radius: 4px;
+			}
+			
+			.timeline-wrapper::-webkit-scrollbar-thumb {
+				background: var(--muted);
+				border-radius: 4px;
+			}
+			
+			.timeline-wrapper::-webkit-scrollbar-thumb:hover {
+				background: var(--text-secondary);
 			}
 
 			@media (max-width: 768px) {
@@ -289,25 +562,12 @@
 					padding: 10px 15px;
 				}
 
-				.event-day-time {
+				.event-time-info {
 					gap: 1px;
-				}
-
-				.event-day {
-					font-size: 0.8rem;
-				}
-
-				.event-time {
-					font-size: 1rem;
 				}
 
 				.event-content {
 					padding: 15px;
-				}
-
-				.event-details {
-					flex-direction: column;
-					gap: 6px;
 				}
 			}
 		</style>
@@ -353,6 +613,10 @@
 					<button class="filter-btn" data-filter="today">Today</button>
 					<button class="filter-btn" data-filter="week">This Week</button>
 					<button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+					<div class="view-toggle">
+						<button class="view-btn active" data-view="list" onclick="window.simpleDashboard?.setViewMode('list')">List</button>
+						<button class="view-btn" data-view="timeline" onclick="window.simpleDashboard?.setViewMode('timeline')">Timeline</button>
+					</div>
 				</div>
 				<div class="filter-group" style="margin-top: 12px;">
 					<button class="filter-btn sport-filter" data-filter="golf">⛳ Golf</button>
@@ -372,12 +636,8 @@
 			</div>
 		</div>
 
-		<script src="js/sports-api.js?v=2025081810"></script>
-		<script src="js/preferences-manager.js?v=2025082010"></script>
-		<script src="js/event-filter.js?v=2025082010"></script>
-		<script src="js/settings-ui.js?v=2025082010"></script>
-		<script src="js/simple-dashboard.js?v=2025081810"></script>
-	<script src="js/personalized-dashboard.js?v=2025082010"></script>
+		<script src="js/sports-api.js?v=2025082023"></script>
+		<script src="js/simple-dashboard.js?v=2025082023"></script>
 
 		<script>
 			// Dark mode toggle

@@ -5,6 +5,7 @@ class SimpleSportsDashboard {
 		this.currentFilter = "all";
 		this.selectedSports = new Set(); // Track multiple selected sports
 		this.allEvents = [];
+		this.viewMode = 'list'; // Default view mode
 		this.init();
 	}
 
@@ -144,18 +145,18 @@ class SimpleSportsDashboard {
 	sportDisplayName(code) {
 		switch (code) {
 			case "football":
-				return "Football";
+				return "⚽ Football";
 			case "golf":
-				return "Golf";
+				return "⛳ Golf";
 			case "tennis":
-				return "Tennis";
+				return "🎾 Tennis";
 			case "f1":
 			case "formula1":
-				return "Formula 1";
+				return "🏎️ F1";
 			case "chess":
-				return "Chess";
+				return "♟️ Chess";
 			case "esports":
-				return "Esports";
+				return "🎮 Esports";
 			default:
 				return code;
 		}
@@ -190,80 +191,82 @@ class SimpleSportsDashboard {
 		}
 
 		const eventsHTML = filteredEvents
-			.map((event) => {
-				const streamingHTML = this.renderStreamingInfo(event.streaming);
-				const dayDisplay = this.formatEventDay(event.time);
+			.map((event, index) => {
 				const timeDisplay = this.formatEventTime(event.time);
-
-				const participantsLine =
-					event.participants && event.participants.length
-						? `<div>👥 ${this.escapeHtml(event.participants.join(", "))}</div>`
-						: "";
+				const relativeTime = this.getRelativeTime(event.time);
 				
-				// Special handling for golf events with Norwegian players - CALM design
-				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
-					? `<div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-top: 8px; background: var(--card-bg);">
-						<div style="font-weight: 500; color: var(--text); margin-bottom: 8px;">
-							🇳🇴 Norwegian Players
+				// Special handling for football teams with logos - CALM DESIGN
+				let teamsDisplay = '';
+				if (event.sport === 'football' && event.homeTeam && event.awayTeam) {
+					const homeLogo = this.getTeamLogo(event.homeTeam);
+					const awayLogo = this.getTeamLogo(event.awayTeam);
+					
+					teamsDisplay = `
+						<div class="teams-display">
+							<div class="team-block">
+								${homeLogo ? `<img src="${homeLogo}" alt="${this.escapeHtml(event.homeTeam)}" class="team-logo">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
+								<span class="team-name">${this.escapeHtml(event.homeTeam)}</span>
+							</div>
+							<span class="vs-separator">vs</span>
+							<div class="team-block">
+								${awayLogo ? `<img src="${awayLogo}" alt="${this.escapeHtml(event.awayTeam)}" class="team-logo">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
+								<span class="team-name">${this.escapeHtml(event.awayTeam)}</span>
+							</div>
 						</div>
+					`;
+				}
+				
+				// Special handling for golf events with Norwegian players - CLEAN DESIGN
+				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
+					? `<div class="tee-times">
+						<div style="font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Tee Times</div>
 						${event.norwegianPlayers.map(player => {
 							const teeTimeDisplay = player.teeTime 
 								? `${this.escapeHtml(player.teeTime)}`
 								: 'TBD';
 							
 							return `
-								<div style="margin-bottom: 6px; padding-bottom: 6px; ${event.norwegianPlayers.indexOf(player) < event.norwegianPlayers.length - 1 ? 'border-bottom: 1px solid var(--border);' : ''}">
-									<div style="font-weight: 500; color: var(--text);">
-										${this.escapeHtml(player.name)}
-									</div>
-									<div style="font-weight: 600; margin-top: 2px;">
-										${teeTimeDisplay}
-									</div>
-									${player.startingTee ? `<div style="font-size: 0.85em; color: var(--muted); margin-top: 2px;">Tee ${player.startingTee}</div>` : ''}
-									${player.featuredGroup ? `<div style="font-size: 0.8em; color: var(--muted); margin-top: 2px;">📺 ${this.escapeHtml(player.featuredGroup.groupName)}</div>` : ''}
+								<div class="tee-time-player">
+									<span class="player-name">${this.escapeHtml(player.name)}</span>
+									<span class="player-time">${teeTimeDisplay}</span>
 								</div>
 							`;
 						}).join('')}
-						<div style="font-size: 0.85em; color: var(--muted); margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--border);">
-							Field: ${event.totalPlayers} players
-							${event.link ? `<a href="${this.escapeHtml(event.link)}" target="_blank" style="margin-left: 12px; color: var(--muted); text-decoration: none;">View leaderboard →</a>` : ''}
-						</div>
 					</div>`
 					: "";
 					
+				// Minimal venue display
+				const venueDisplay = event.venue && event.venue !== 'TBD' 
+					? `<span class="event-meta-item">📍 ${this.escapeHtml(event.venue.split(',')[0])}</span>`
+					: '';
+				
+				// Minimal tournament display (only if not redundant with title)
+				const tournamentDisplay = event.tournament && !event.title.includes(event.tournament)
+					? `<span class="event-meta-item">${this.escapeHtml(event.tournament)}</span>`
+					: '';
+				
 				return `
-                <div class="event-card">
+                <div class="event-card ${event.sport}" data-event-id="${index}">
+                    <div class="sport-line ${event.sport}"></div>
+                    <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}</div>
                     <div class="event-header">
-                        <div class="event-day-time">
-                            <div class="event-day">${this.escapeHtml(
-															dayDisplay
-														)}</div>
-                            <div class="event-time">${this.escapeHtml(
-															timeDisplay
-														)}</div>
-                        </div>
-                        <div class="event-sport-badge ${event.sport}">
-                            ${this.escapeHtml(event.sportName)}
+                        <div class="event-time-info">
+                            <div class="event-time-relative">${this.escapeHtml(relativeTime)}</div>
+                            <div class="event-time-exact">${this.escapeHtml(timeDisplay)}</div>
                         </div>
                     </div>
                     <div class="event-content">
-                        <h3 class="event-title">${this.escapeHtml(
-													event.title
-												)}</h3>
-                        <div class="event-details">
-                            <div>${this.escapeHtml(event.tournament)}</div>
-                            ${
-															event.venue
-																? `<div>📍 ${this.escapeHtml(
-																		event.venue
-																  )}</div>`
-																: ""
-														}
-                            ${event.norwegian ? "<div>🇳🇴 Norway</div>" : ""}
-                            ${participantsLine}
-                            ${norwegianPlayersLine}
-                        </div>
-                        ${streamingHTML}
+                        <h3 class="event-title">${this.escapeHtml(event.title)}</h3>
+                        ${teamsDisplay}
+                        ${
+							(venueDisplay || tournamentDisplay) 
+								? `<div class="event-meta">
+									${tournamentDisplay}
+									${venueDisplay}
+								</div>`
+								: ''
+						}
+                        ${norwegianPlayersLine}
                     </div>
                 </div>
             `;
@@ -351,6 +354,143 @@ class SimpleSportsDashboard {
 		return false;
 	}
 
+	getRelativeTime(timeString) {
+		if (!timeString) return "Soon";
+		
+		const now = new Date();
+		const eventTime = new Date(timeString);
+		const diffMs = eventTime - now;
+		const diffHours = diffMs / (1000 * 60 * 60);
+		const diffDays = diffMs / (1000 * 60 * 60 * 24);
+		
+		if (diffHours < 0) return "Started";
+		if (diffHours < 1) {
+			const mins = Math.round(diffHours * 60);
+			return mins < 5 ? "Starting now" : `In ${mins} min`;
+		}
+		if (diffHours < 24) {
+			const hours = Math.round(diffHours);
+			return hours === 1 ? "In 1 hour" : `In ${hours} hours`;
+		}
+		if (diffDays < 2) return "Tomorrow";
+		if (diffDays < 7) {
+			return eventTime.toLocaleDateString('en-US', { weekday: 'long' });
+		}
+		return `In ${Math.round(diffDays)} days`;
+	}
+	
+	getTeamLogo(teamName) {
+		// Map common team names to logo URLs
+		const logos = {
+			'Barcelona': 'https://media.api-sports.io/football/teams/529.png',
+			'FC Barcelona': 'https://media.api-sports.io/football/teams/529.png',
+			'Real Madrid': 'https://media.api-sports.io/football/teams/541.png',
+			'Manchester United': 'https://media.api-sports.io/football/teams/33.png',
+			'Manchester City': 'https://media.api-sports.io/football/teams/50.png',
+			'Liverpool': 'https://media.api-sports.io/football/teams/40.png',
+			'Chelsea': 'https://media.api-sports.io/football/teams/49.png',
+			'Arsenal': 'https://media.api-sports.io/football/teams/42.png',
+			'Tottenham': 'https://media.api-sports.io/football/teams/47.png',
+			'Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
+			'FK Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
+		};
+		
+		return logos[teamName] || null;
+	}
+	
+	renderTimelineView() {
+		const container = document.getElementById('eventsContainer');
+		
+		if (!this.allEvents || this.allEvents.length === 0) {
+			container.innerHTML = `<div style="text-align: center; padding: 40px; color: #999;"><p>No events found.</p></div>`;
+			return;
+		}
+
+		let filteredEvents = this.allEvents.filter(event => this.passesFilter(event));
+		
+		// Group events by day and time slot
+		const eventsByDayAndTime = {};
+		const days = new Set();
+		const timeSlots = ['Morning\n(6-12)', 'Afternoon\n(12-18)', 'Evening\n(18-24)', 'Night\n(0-6)'];
+		
+		filteredEvents.forEach(event => {
+			const date = new Date(event.time);
+			const dayKey = date.toLocaleDateString('en-NO', { weekday: 'short', month: 'short', day: 'numeric' });
+			const hour = date.getHours();
+			
+			let timeSlot;
+			if (hour >= 6 && hour < 12) timeSlot = 0;
+			else if (hour >= 12 && hour < 18) timeSlot = 1;
+			else if (hour >= 18 && hour < 24) timeSlot = 2;
+			else timeSlot = 3;
+			
+			days.add(dayKey);
+			
+			const key = `${dayKey}-${timeSlot}`;
+			if (!eventsByDayAndTime[key]) eventsByDayAndTime[key] = [];
+			eventsByDayAndTime[key].push(event);
+		});
+		
+		const sortedDays = Array.from(days).slice(0, 7); // Show only next 7 days
+		
+		let timelineHTML = `
+			<div class="timeline-wrapper">
+				<div class="timeline-grid">
+					<div class="timeline-header">
+						<div class="timeline-corner"></div>
+						${sortedDays.map(day => `<div class="timeline-day-header">${day}</div>`).join('')}
+					</div>
+		`;
+		
+		timeSlots.forEach((slot, slotIndex) => {
+			timelineHTML += `
+				<div class="timeline-row">
+					<div class="timeline-time-label">${slot}</div>
+			`;
+			
+			sortedDays.forEach(day => {
+				const key = `${day}-${slotIndex}`;
+				const events = eventsByDayAndTime[key] || [];
+				
+				timelineHTML += `<div class="timeline-cell">`;
+				events.forEach(event => {
+					const time = new Date(event.time).toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false });
+					timelineHTML += `
+						<div class="timeline-event ${event.sport}">
+							<div class="timeline-event-time">${time}</div>
+							<div class="timeline-event-title">${this.escapeHtml(event.title)}</div>
+						</div>
+					`;
+				});
+				timelineHTML += `</div>`;
+			});
+			
+			timelineHTML += `</div>`;
+		});
+		
+		timelineHTML += `</div></div>`; // Close timeline-grid and timeline-wrapper
+		container.innerHTML = timelineHTML;
+	}
+	
+	setViewMode(mode) {
+		this.viewMode = mode;
+		const viewBtns = document.querySelectorAll('.view-btn');
+		
+		viewBtns.forEach(btn => {
+			if (btn.dataset.view === mode) {
+				btn.classList.add('active');
+			} else {
+				btn.classList.remove('active');
+			}
+		});
+		
+		if (mode === 'timeline') {
+			this.renderTimelineView();
+		} else {
+			this.renderFilteredEvents();
+		}
+	}
+
 	formatEventTime(timeString) {
 		if (!timeString) return "TBD";
 
@@ -362,38 +502,6 @@ class SimpleSportsDashboard {
 			minute: "2-digit",
 			hour12: false,
 			timeZone: "Europe/Oslo",
-		});
-	}
-
-	formatEventDay(timeString) {
-		if (!timeString) return "TBD";
-
-		const date = new Date(timeString);
-		const now = new Date();
-
-		const eventDay = new Date(
-			date.getFullYear(),
-			date.getMonth(),
-			date.getDate()
-		);
-		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const tomorrow = new Date(today);
-		tomorrow.setDate(today.getDate() + 1);
-
-		if (eventDay.getTime() === today.getTime()) return "Today";
-		if (eventDay.getTime() === tomorrow.getTime()) return "Tomorrow";
-
-		const timeDiff = eventDay - today;
-		const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24));
-
-		if (daysDiff > 0 && daysDiff <= 7) {
-			return date.toLocaleDateString("en-NO", { weekday: "long" });
-		}
-
-		return date.toLocaleDateString("en-NO", {
-			weekday: "short",
-			month: "short",
-			day: "numeric",
 		});
 	}
 
@@ -437,25 +545,23 @@ class SimpleSportsDashboard {
 	}
 }
 
-// Initialize when DOM is loaded - ONLY if PersonalizedDashboard is not being used
+// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-	// Check if PersonalizedDashboard will be loaded
-	if (typeof PersonalizedDashboard === 'undefined') {
-		setTimeout(() => {
-			try {
-				console.log("Initializing Simple SportsDashboard...");
-				window.simpleDashboard = new SimpleSportsDashboard();
-			} catch (error) {
-				console.error("Error initializing dashboard:", error);
-				const container = document.getElementById("eventsContainer");
-				if (container) {
-					container.innerHTML = `
+	setTimeout(() => {
+		try {
+			// Always initialize SimpleDashboard for now
+			console.log("Initializing Simple SportsDashboard...");
+			window.simpleDashboard = new SimpleSportsDashboard();
+		} catch (error) {
+			console.error("Error initializing dashboard:", error);
+			const container = document.getElementById("eventsContainer");
+			if (container) {
+				container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #999;">
                         <p>Error loading dashboard. Please refresh the page.</p>
                     </div>
                 `;
-				}
 			}
-		}, 100);
-	}
+		}
+	}, 100);
 });
