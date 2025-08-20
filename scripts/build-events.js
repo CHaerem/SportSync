@@ -27,6 +27,8 @@ for (const sport of sports) {
 				link: ev.link || null,
 				status: ev.status || null,
 				featuredGroups: ev.featuredGroups || [],
+				homeTeam: ev.homeTeam || null,
+				awayTeam: ev.awayTeam || null,
 			});
 		});
 	});

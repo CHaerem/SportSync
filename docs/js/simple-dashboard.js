@@ -128,6 +128,8 @@ class SimpleSportsDashboard {
 					link: ev.link || null,
 					status: ev.status || null,
 					featuredGroups: ev.featuredGroups || [],
+					homeTeam: ev.homeTeam || null,
+					awayTeam: ev.awayTeam || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 			this.renderFilteredEvents();
@@ -225,9 +227,17 @@ class SimpleSportsDashboard {
 								? `${this.escapeHtml(player.teeTime)}`
 								: 'TBD';
 							
+							const headshot = this.getGolferHeadshot(player.name);
+							
 							return `
 								<div class="tee-time-player">
-									<span class="player-name">${this.escapeHtml(player.name)}</span>
+									<div class="player-info">
+										${headshot 
+											? `<img src="${headshot}" alt="${this.escapeHtml(player.name)}" class="golfer-headshot">` 
+											: `<div class="golfer-headshot-placeholder">⛳</div>`
+										}
+										<span class="player-name">${this.escapeHtml(player.name)}</span>
+									</div>
 									<span class="player-time">${teeTimeDisplay}</span>
 								</div>
 							`;
@@ -380,23 +390,207 @@ class SimpleSportsDashboard {
 		return `In ${Math.round(diffDays)} days`;
 	}
 	
-	getTeamLogo(teamName) {
-		// Map common team names to logo URLs
-		const logos = {
-			'Barcelona': 'https://media.api-sports.io/football/teams/529.png',
-			'FC Barcelona': 'https://media.api-sports.io/football/teams/529.png',
-			'Real Madrid': 'https://media.api-sports.io/football/teams/541.png',
-			'Manchester United': 'https://media.api-sports.io/football/teams/33.png',
-			'Manchester City': 'https://media.api-sports.io/football/teams/50.png',
-			'Liverpool': 'https://media.api-sports.io/football/teams/40.png',
-			'Chelsea': 'https://media.api-sports.io/football/teams/49.png',
-			'Arsenal': 'https://media.api-sports.io/football/teams/42.png',
-			'Tottenham': 'https://media.api-sports.io/football/teams/47.png',
-			'Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
-			'FK Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
+	getGolferHeadshot(golferName) {
+		if (!golferName) return null;
+		
+		const normalized = golferName.trim();
+		
+		// Map golfer names to PGA Tour headshot URLs
+		const headshots = {
+			// Norwegian golfers
+			'Viktor Hovland': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46717.jpg',
+			'Viktor HOVLAND': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46717.jpg',
+			'Kristoffer Reitan': null, // No official headshot available
+			'Kristoffer REITAN': null, // No official headshot available  
+			'REITAN, Kristoffer': null, // No official headshot available
+			'Andreas Halvorsen': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_40226.jpg',
+			'Andreas HALVORSEN': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_40226.jpg',
+			'HALVORSEN, Andreas': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_40226.jpg',
+			// Top PGA Tour players
+			'Scottie Scheffler': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46046.jpg',
+			'Rory McIlroy': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_28237.jpg',
+			'Patrick Cantlay': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_35450.jpg',
+			'Xander Schauffele': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_48081.jpg',
+			'Collin Morikawa': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_50525.jpg',
+			'Justin Thomas': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_33448.jpg',
+			'Jon Rahm': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46970.jpg',
+			'Jordan Spieth': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_34046.jpg',
+			'Hideki Matsuyama': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_32839.jpg',
+			'Ludvig Åberg': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_52955.jpg',
+			'Ludvig Aberg': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_52955.jpg',
+			'Tommy Fleetwood': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_30911.jpg',
+			'Shane Lowry': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_33204.jpg',
+			'Matt Fitzpatrick': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_40098.jpg',
+			'Cameron Young': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_50633.jpg',
+			'Sungjae Im': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_39971.jpg',
+			'Russell Henley': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_32366.jpg',
+			'Brian Harman': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_27644.jpg',
+			'Sam Burns': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_47504.jpg',
+			'Keegan Bradley': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_33141.jpg',
+			'Corey Conners': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_39997.jpg',
+			'Robert MacIntyre': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_45150.jpg',
+			'Justin Rose': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_22405.jpg',
+			'Sepp Straka': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_36910.jpg',
+			'Akshay Bhatia': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_53165.jpg',
+			'Nick Taylor': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_25632.jpg',
+			'Chris Gotterup': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_55182.jpg',
+			'Jacob Bridgeman': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_55790.jpg',
+			'Harry Hall': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_51766.jpg',
+			'Andrew Novak': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46565.jpg',
+			'Harris English': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_34709.jpg',
+			'Maverick McNealy': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_46442.jpg',
+			'Ben Griffin': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_49924.jpg',
+			'J.J. Spaun': 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_120,q_auto,w_120/headshots_39324.jpg',
+			
+			// European Tour players
+			'Alex Noren': 'https://images.europeantour.com/media/img/players/160x160/27365.jpg',
+			'Rasmus Højgaard': 'https://images.europeantour.com/media/img/players/160x160/55175.jpg',
+			'Rasmus Hojgaard': 'https://images.europeantour.com/media/img/players/160x160/55175.jpg',
+			'Nicolai Højgaard': 'https://images.europeantour.com/media/img/players/160x160/55176.jpg',
+			'Nicolai Hojgaard': 'https://images.europeantour.com/media/img/players/160x160/55176.jpg',
 		};
 		
-		return logos[teamName] || null;
+		return headshots[normalized] || null;
+	}
+	
+	getTeamLogo(teamName) {
+		if (!teamName) return null;
+		
+		// Normalize team name for matching
+		const normalized = teamName.trim();
+		
+		// Map common team names to logo URLs using API-Sports logos
+		const logos = {
+			// Premier League
+			'Arsenal': 'https://media.api-sports.io/football/teams/42.png',
+			'Arsenal FC': 'https://media.api-sports.io/football/teams/42.png',
+			'Aston Villa': 'https://media.api-sports.io/football/teams/66.png',
+			'Bournemouth': 'https://media.api-sports.io/football/teams/35.png',
+			'AFC Bournemouth': 'https://media.api-sports.io/football/teams/35.png',
+			'Brentford': 'https://media.api-sports.io/football/teams/55.png',
+			'Brentford FC': 'https://media.api-sports.io/football/teams/55.png',
+			'Brighton': 'https://media.api-sports.io/football/teams/51.png',
+			'Brighton & Hove Albion': 'https://media.api-sports.io/football/teams/51.png',
+			'Chelsea': 'https://media.api-sports.io/football/teams/49.png',
+			'Chelsea FC': 'https://media.api-sports.io/football/teams/49.png',
+			'Crystal Palace': 'https://media.api-sports.io/football/teams/52.png',
+			'Everton': 'https://media.api-sports.io/football/teams/45.png',
+			'Everton FC': 'https://media.api-sports.io/football/teams/45.png',
+			'Fulham': 'https://media.api-sports.io/football/teams/36.png',
+			'Fulham FC': 'https://media.api-sports.io/football/teams/36.png',
+			'Ipswich': 'https://media.api-sports.io/football/teams/57.png',
+			'Ipswich Town': 'https://media.api-sports.io/football/teams/57.png',
+			'Leicester': 'https://media.api-sports.io/football/teams/46.png',
+			'Leicester City': 'https://media.api-sports.io/football/teams/46.png',
+			'Liverpool': 'https://media.api-sports.io/football/teams/40.png',
+			'Liverpool FC': 'https://media.api-sports.io/football/teams/40.png',
+			'Manchester City': 'https://media.api-sports.io/football/teams/50.png',
+			'Man City': 'https://media.api-sports.io/football/teams/50.png',
+			'Manchester United': 'https://media.api-sports.io/football/teams/33.png',
+			'Man United': 'https://media.api-sports.io/football/teams/33.png',
+			'Newcastle': 'https://media.api-sports.io/football/teams/34.png',
+			'Newcastle United': 'https://media.api-sports.io/football/teams/34.png',
+			'Nottingham Forest': 'https://media.api-sports.io/football/teams/65.png',
+			"Nott'm Forest": 'https://media.api-sports.io/football/teams/65.png',
+			'Southampton': 'https://media.api-sports.io/football/teams/41.png',
+			'Southampton FC': 'https://media.api-sports.io/football/teams/41.png',
+			'Tottenham': 'https://media.api-sports.io/football/teams/47.png',
+			'Tottenham Hotspur': 'https://media.api-sports.io/football/teams/47.png',
+			'Spurs': 'https://media.api-sports.io/football/teams/47.png',
+			'West Ham': 'https://media.api-sports.io/football/teams/48.png',
+			'West Ham United': 'https://media.api-sports.io/football/teams/48.png',
+			'Wolves': 'https://media.api-sports.io/football/teams/39.png',
+			'Wolverhampton': 'https://media.api-sports.io/football/teams/39.png',
+			'Wolverhampton Wanderers': 'https://media.api-sports.io/football/teams/39.png',
+			
+			// Championship teams that might appear
+			'Leeds': 'https://media.api-sports.io/football/teams/63.png',
+			'Leeds United': 'https://media.api-sports.io/football/teams/63.png',
+			'Sunderland': 'https://media.api-sports.io/football/teams/62.png',
+			'Sunderland AFC': 'https://media.api-sports.io/football/teams/62.png',
+			'Burnley': 'https://media.api-sports.io/football/teams/44.png',
+			'Burnley FC': 'https://media.api-sports.io/football/teams/44.png',
+			
+			// La Liga
+			'Barcelona': 'https://media.api-sports.io/football/teams/529.png',
+			'FC Barcelona': 'https://media.api-sports.io/football/teams/529.png',
+			'Barça': 'https://media.api-sports.io/football/teams/529.png',
+			'Real Madrid': 'https://media.api-sports.io/football/teams/541.png',
+			'Atletico Madrid': 'https://media.api-sports.io/football/teams/530.png',
+			'Atlético Madrid': 'https://media.api-sports.io/football/teams/530.png',
+			'Sevilla': 'https://media.api-sports.io/football/teams/536.png',
+			'Sevilla FC': 'https://media.api-sports.io/football/teams/536.png',
+			'Real Betis': 'https://media.api-sports.io/football/teams/543.png',
+			'Betis': 'https://media.api-sports.io/football/teams/543.png',
+			'Real Sociedad': 'https://media.api-sports.io/football/teams/548.png',
+			'Villarreal': 'https://media.api-sports.io/football/teams/533.png',
+			'Villarreal CF': 'https://media.api-sports.io/football/teams/533.png',
+			'Athletic Bilbao': 'https://media.api-sports.io/football/teams/531.png',
+			'Athletic Club': 'https://media.api-sports.io/football/teams/531.png',
+			'Valencia': 'https://media.api-sports.io/football/teams/532.png',
+			'Valencia CF': 'https://media.api-sports.io/football/teams/532.png',
+			'Getafe': 'https://media.api-sports.io/football/teams/546.png',
+			'Getafe CF': 'https://media.api-sports.io/football/teams/546.png',
+			'Girona': 'https://media.api-sports.io/football/teams/547.png',
+			'Girona FC': 'https://media.api-sports.io/football/teams/547.png',
+			'Rayo Vallecano': 'https://media.api-sports.io/football/teams/728.png',
+			'Celta Vigo': 'https://media.api-sports.io/football/teams/538.png',
+			'RC Celta': 'https://media.api-sports.io/football/teams/538.png',
+			'Mallorca': 'https://media.api-sports.io/football/teams/798.png',
+			'RCD Mallorca': 'https://media.api-sports.io/football/teams/798.png',
+			'Alaves': 'https://media.api-sports.io/football/teams/542.png',
+			'Alavés': 'https://media.api-sports.io/football/teams/542.png',
+			'Deportivo Alavés': 'https://media.api-sports.io/football/teams/542.png',
+			'Las Palmas': 'https://media.api-sports.io/football/teams/715.png',
+			'UD Las Palmas': 'https://media.api-sports.io/football/teams/715.png',
+			'Espanyol': 'https://media.api-sports.io/football/teams/540.png',
+			'RCD Espanyol': 'https://media.api-sports.io/football/teams/540.png',
+			'Valladolid': 'https://media.api-sports.io/football/teams/720.png',
+			'Real Valladolid': 'https://media.api-sports.io/football/teams/720.png',
+			'Leganes': 'https://media.api-sports.io/football/teams/539.png',
+			'Leganés': 'https://media.api-sports.io/football/teams/539.png',
+			'CD Leganés': 'https://media.api-sports.io/football/teams/539.png',
+			'Osasuna': 'https://media.api-sports.io/football/teams/727.png',
+			'CA Osasuna': 'https://media.api-sports.io/football/teams/727.png',
+			'Levante': 'https://media.api-sports.io/football/teams/539.png',
+			'Levante UD': 'https://media.api-sports.io/football/teams/539.png',
+			'Elche': 'https://media.api-sports.io/football/teams/797.png',
+			'Elche CF': 'https://media.api-sports.io/football/teams/797.png',
+			
+			// Norwegian teams
+			'Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
+			'FK Lyn': 'https://upload.wikimedia.org/wikipedia/en/1/1c/FK_Lyn_Oslo_logo.svg',
+			'Bodø/Glimt': 'https://media.api-sports.io/football/teams/328.png',
+			'Molde': 'https://media.api-sports.io/football/teams/332.png',
+			'Molde FK': 'https://media.api-sports.io/football/teams/332.png',
+			'Rosenborg': 'https://media.api-sports.io/football/teams/333.png',
+			'Rosenborg BK': 'https://media.api-sports.io/football/teams/333.png',
+			'Viking': 'https://media.api-sports.io/football/teams/338.png',
+			'Viking FK': 'https://media.api-sports.io/football/teams/338.png',
+			'Vålerenga': 'https://media.api-sports.io/football/teams/337.png',
+			'Vålerenga IF': 'https://media.api-sports.io/football/teams/337.png',
+			'Lillestrøm': 'https://media.api-sports.io/football/teams/329.png',
+			'Lillestrøm SK': 'https://media.api-sports.io/football/teams/329.png',
+			'Brann': 'https://media.api-sports.io/football/teams/326.png',
+			'SK Brann': 'https://media.api-sports.io/football/teams/326.png',
+			'Strømsgodset': 'https://media.api-sports.io/football/teams/336.png',
+			'Strømsgodset IF': 'https://media.api-sports.io/football/teams/336.png',
+			'Haugesund': 'https://media.api-sports.io/football/teams/327.png',
+			'FK Haugesund': 'https://media.api-sports.io/football/teams/327.png',
+			'Odd': 'https://media.api-sports.io/football/teams/331.png',
+			'Odds BK': 'https://media.api-sports.io/football/teams/331.png',
+			'Sarpsborg': 'https://media.api-sports.io/football/teams/334.png',
+			'Sarpsborg 08': 'https://media.api-sports.io/football/teams/334.png',
+			'Tromsø': 'https://media.api-sports.io/football/teams/661.png',
+			'Tromsø IL': 'https://media.api-sports.io/football/teams/661.png',
+			'HamKam': 'https://media.api-sports.io/football/teams/3682.png',
+			'Sandefjord': 'https://media.api-sports.io/football/teams/335.png',
+			'KFUM Oslo': 'https://media.api-sports.io/football/teams/10156.png',
+			'Fredrikstad': 'https://media.api-sports.io/football/teams/3688.png',
+			'Fredrikstad FK': 'https://media.api-sports.io/football/teams/3688.png'
+		};
+		
+		return logos[normalized] || null;
 	}
 	
 	renderTimelineView() {
