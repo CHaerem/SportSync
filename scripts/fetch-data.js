@@ -128,23 +128,10 @@ async function fetchF1() {
 }
 
 async function fetchChess() {
-	// Lichess tournaments - upcoming (first page)
-	const url = "https://lichess.org/api/tournament";
+	// Use the proper professional chess tournaments fetcher
 	try {
-		const json = await fetchJson(url); // returns { created:[], started:[], finished:[] }
-		const upcoming = (json.created || []).slice(0, 10).map((t) => ({
-			title: t.fullName || t.name,
-			meta: t.variant,
-			time: iso(t.startsAt || Date.now()),
-			venue: "Lichess",
-			sport: "chess",
-			streaming: [
-				{ platform: "Lichess", url: "https://lichess.org", type: "lichess" },
-			],
-			norwegian: /nor|magnus|carlsen/i.test(t.fullName || ""),
-		}));
-		const tournaments = [{ name: "Lichess Tournaments", events: upcoming }];
-		return { lastUpdated: iso(Date.now()), source: "Lichess API", tournaments };
+		const { fetchChessOpen } = await import("./fetch/chess.js");
+		return await fetchChessOpen();
 	} catch (e) {
 		console.warn("Chess fetch failed", e.message);
 		return null;

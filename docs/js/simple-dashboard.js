@@ -92,6 +92,10 @@ class SimpleSportsDashboard {
 					norwegian: ev.norwegian || false,
 					streaming: ev.streaming || [],
 					participants: ev.participants || [],
+					norwegianPlayers: ev.norwegianPlayers || [],
+					totalPlayers: ev.totalPlayers || null,
+					link: ev.link || null,
+					status: ev.status || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 			this.renderFilteredEvents();
