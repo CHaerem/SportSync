@@ -1,20 +1,58 @@
 {
-  "lastUpdated": "2025-08-19T18:10:51.600Z",
+  "lastUpdated": "2025-08-20T00:33:35.684Z",
   "source": "ESPN API",
   "tournaments": [
+    {
+      "name": "Premier League",
+      "events": [
+        {
+          "title": "West Ham United vs Chelsea",
+          "meta": "Premier League",
+          "time": "2025-08-22T19:00Z",
+          "venue": "London Stadium",
+          "homeTeam": "West Ham United",
+          "awayTeam": "Chelsea",
+          "sport": "football",
+          "streaming": [],
+          "norwegian": false
+        }
+      ]
+    },
     {
       "name": "La Liga",
       "events": [
         {
-          "title": "Real Madrid vs Osasuna",
+          "title": "Real Betis vs Alavés",
           "meta": "La Liga",
-          "time": "2025-08-19T19:00Z",
-          "venue": "Santiago Bernabéu",
-          "homeTeam": "Real Madrid",
-          "awayTeam": "Osasuna",
+          "time": "2025-08-22T19:30Z",
+          "venue": "Estadio La Cartuja de Sevilla",
+          "homeTeam": "Real Betis",
+          "awayTeam": "Alavés",
           "sport": "football",
           "streaming": [],
           "norwegian": false
+        }
+      ]
+    },
+    {
+      "name": "Eliteserien",
+      "events": [
+        {
+          "title": "KFUM Oslo vs Hamarkameratene",
+          "meta": "Eliteserien",
+          "time": "2025-08-22T17:00Z",
+          "venue": "KFUM Arena",
+          "homeTeam": "KFUM Oslo",
+          "awayTeam": "Hamarkameratene",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "TV2 Play",
+              "url": "https://play.tv2.no",
+              "type": "tv2"
+            }
+          ],
+          "norwegian": true
         }
       ]
     }
