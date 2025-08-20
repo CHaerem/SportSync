@@ -5,13 +5,15 @@
   "main": "docs/index.html",
   "scripts": {
     "dev": "python3 -m http.server 8000 --directory docs",
-  "build": "echo 'Static site - no build required'",
-  "test": "echo 'No tests specified yet'",
-  "deploy": "echo 'Deployed via GitHub Pages automatically'",
-  "update:data": "node scripts/fetch/index.js",
-  "build:events": "node scripts/build-events.js",
-  "build:calendar": "node scripts/build-ics.js",
-  "validate:data": "node scripts/validate-events.js"
+    "build": "npm run update:data && npm run build:events && npm run build:calendar",
+    "test": "npm run validate:data",
+    "deploy": "echo 'Deployed via GitHub Pages automatically'",
+    "update:data": "node scripts/fetch/index.js",
+    "build:events": "node scripts/build-events.js",
+    "build:calendar": "node scripts/build-ics.js", 
+    "validate:data": "node scripts/validate-events.js",
+    "clean": "rm -rf docs/data/*.json docs/data/*.ics",
+    "refresh": "npm run clean && npm run build"
   },
   "keywords": [
     "sports",
@@ -36,9 +38,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/SportSync.git"
+    "url": "git+https://github.com/chaerem/SportSync.git"
   },
-  "homepage": "https://yourusername.github.io/SportSync/",
+  "homepage": "https://chaerem.github.io/SportSync/",
   "browserslist": [
     "> 1%",
     "last 2 versions",
