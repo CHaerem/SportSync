@@ -1,6 +1,7 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v8';
+const CACHE_NAME = 'sportsync-v9-teetimes';
 const DATA_FILES = [
+    '/SportSync/data/events.json',
     '/SportSync/data/football.json',
     '/SportSync/data/golf.json', 
     '/SportSync/data/tennis.json',
@@ -19,9 +20,12 @@ self.addEventListener('install', (event) => {
             return cache.addAll([
                 '/SportSync/',
                 '/SportSync/index.html',
-                '/SportSync/api-info.html',
                 '/SportSync/js/sports-api.js',
-                '/SportSync/js/simple-dashboard.js'
+                '/SportSync/js/simple-dashboard.js',
+                '/SportSync/js/personalized-dashboard.js',
+                '/SportSync/js/preferences-manager.js',
+                '/SportSync/js/event-filter.js',
+                '/SportSync/js/settings-ui.js'
             ]);
         })
     );

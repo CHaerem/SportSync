@@ -210,6 +210,7 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 					🇳🇴 Norwegian Players
 				</div>
 				${event.norwegianPlayers.map(player => {
+					console.log('Golf player data:', player); // Debug log
 					const teeTimeDisplay = player.teeTime 
 						? `${this.escapeHtml(player.teeTime)}`
 						: 'TBD';
