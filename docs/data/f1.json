@@ -1,18 +1,31 @@
 {
-  "lastUpdated": "2025-08-20T11:09:19.727Z",
+  "lastUpdated": "2025-08-20T12:09:18.270Z",
   "source": "ESPN F1 Racing API",
   "tournaments": [
     {
-      "name": "Formula 1 2025",
+      "name": "Formula 1 2025 - Race Weekend",
       "events": [
         {
+          "id": "formula1-heineken-dutch-grand-prix-1756463400000",
           "title": "Heineken Dutch Grand Prix",
-          "meta": "Formula 1 2025 - Race Weekend",
           "time": "2025-08-29T10:30:00.000Z",
-          "venue": "F1 Circuit",
+          "venue": "TBD",
           "sport": "formula1",
-          "streaming": [],
-          "norwegian": false
+          "meta": "Formula 1 2025 - Race Weekend",
+          "streaming": [
+            {
+              "platform": "ESPN2",
+              "url": "",
+              "type": "tv"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "",
+          "awayTeam": "",
+          "participants": [],
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
         }
       ]
     }
