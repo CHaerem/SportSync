@@ -98,9 +98,25 @@ export class GolfFetcher extends ESPNAdapter {
 				const rounds = player.rounds || [];
 				const firstRound = rounds.find(r => r.round === 1) || rounds[0];
 				
+				// Format tee time to Norwegian timezone if available
+				let teeTimeDisplay = null;
+				if (firstRound?.teeTime) {
+					const teeTimeUTC = new Date(firstRound.teeTime);
+					teeTimeDisplay = teeTimeUTC.toLocaleString("en-NO", {
+						weekday: "short",
+						month: "short",
+						day: "numeric",
+						hour: "2-digit",
+						minute: "2-digit",
+						timeZone: "Europe/Oslo"
+					});
+				}
+				
 				found.push({
 					name: player.player,
-					teeTime: firstRound?.teeTime || null,
+					teeTime: teeTimeDisplay,
+					teeTimeUTC: firstRound?.teeTime || null,
+					startingTee: firstRound?.startingTee || null,
 					status: player.position ? `T${player.position}` : 'Scheduled'
 				});
 			}

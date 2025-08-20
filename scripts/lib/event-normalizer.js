@@ -17,6 +17,8 @@ export class EventNormalizer {
 				homeTeam: this.sanitizeString(event.homeTeam),
 				awayTeam: this.sanitizeString(event.awayTeam),
 				participants: this.normalizeParticipants(event.participants),
+				norwegianPlayers: event.norwegianPlayers || null,
+				totalPlayers: event.totalPlayers || null,
 				additional: this.extractAdditional(event)
 			};
 		} catch (error) {
@@ -68,7 +70,8 @@ export class EventNormalizer {
 		
 		const knownFields = [
 			"title", "time", "date", "venue", "sport", "meta", "tournament",
-			"streaming", "norwegian", "homeTeam", "awayTeam", "participants"
+			"streaming", "norwegian", "homeTeam", "awayTeam", "participants",
+			"norwegianPlayers", "totalPlayers"
 		];
 		
 		for (const [key, value] of Object.entries(event)) {
