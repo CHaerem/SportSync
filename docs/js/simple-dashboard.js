@@ -437,22 +437,25 @@ class SimpleSportsDashboard {
 	}
 }
 
-// Initialize when DOM is loaded
+// Initialize when DOM is loaded - ONLY if PersonalizedDashboard is not being used
 document.addEventListener("DOMContentLoaded", () => {
-	setTimeout(() => {
-		try {
-			console.log("Initializing Simple SportsDashboard...");
-			window.simpleDashboard = new SimpleSportsDashboard();
-		} catch (error) {
-			console.error("Error initializing dashboard:", error);
-			const container = document.getElementById("eventsContainer");
-			if (container) {
-				container.innerHTML = `
+	// Check if PersonalizedDashboard will be loaded
+	if (typeof PersonalizedDashboard === 'undefined') {
+		setTimeout(() => {
+			try {
+				console.log("Initializing Simple SportsDashboard...");
+				window.simpleDashboard = new SimpleSportsDashboard();
+			} catch (error) {
+				console.error("Error initializing dashboard:", error);
+				const container = document.getElementById("eventsContainer");
+				if (container) {
+					container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #999;">
                         <p>Error loading dashboard. Please refresh the page.</p>
                     </div>
                 `;
+				}
 			}
-		}
-	}, 100);
+		}, 100);
+	}
 });

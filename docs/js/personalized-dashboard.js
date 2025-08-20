@@ -66,10 +66,33 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading events...</div>';
 
 		try {
-			const response = await fetch("/data/events.json");
+			// Use relative path for GitHub Pages
+			const response = await fetch("data/events.json?t=" + Date.now());
 			if (!response.ok) throw new Error("Failed to load events");
 
-			const events = await response.json();
+			const data = await response.json();
+			
+			// Format events like the parent class does
+			const events = data.map((ev) => ({
+				title: ev.title,
+				time: ev.time,
+				timeFormatted: this.formatEventTime(ev.time),
+				sport: ev.sport,
+				sportName: this.sportDisplayName(ev.sport),
+				tournament: ev.tournament,
+				venue: ev.venue,
+				norwegian: ev.norwegian || false,
+				streaming: ev.streaming || [],
+				participants: ev.participants || [],
+				norwegianPlayers: ev.norwegianPlayers || [],
+				totalPlayers: ev.totalPlayers || null,
+				link: ev.link || null,
+				status: ev.status || null,
+				featuredGroups: ev.featuredGroups || [],
+				meta: ev.meta || ev.tournament,
+				homeTeam: ev.homeTeam,
+				awayTeam: ev.awayTeam
+			})).sort((a, b) => new Date(a.time) - new Date(b.time));
 			
 			// Store both original and current events
 			this.originalEvents = events;
@@ -79,8 +102,12 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 			this.applyPreferences();
 		} catch (error) {
 			console.error("Error loading events:", error);
-			// Try loading from individual sport files as fallback
-			await this.loadIndividualSports();
+			container.innerHTML = `
+				<div style="text-align: center; padding: 40px; color: #999;">
+					<p>Unable to load events right now.</p>
+					<p style="font-size: 0.9rem; margin-top: 10px;">Please check your connection and try again.</p>
+				</div>
+			`;
 		}
 	}
 
@@ -118,11 +145,25 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 	renderFilteredEvents() {
 		let eventsToShow = [...this.allEvents];
 		
-		// Apply time-based filter
+		// Apply time-based filter using parent class methods
 		if (this.currentFilter === "today") {
-			eventsToShow = this.filterToday(eventsToShow);
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			const tomorrow = new Date(today);
+			tomorrow.setDate(tomorrow.getDate() + 1);
+			eventsToShow = eventsToShow.filter(event => {
+				const eventDate = new Date(event.time);
+				return eventDate >= today && eventDate < tomorrow;
+			});
 		} else if (this.currentFilter === "week") {
-			eventsToShow = this.filterThisWeek(eventsToShow);
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			const weekEnd = new Date(today);
+			weekEnd.setDate(today.getDate() + 7);
+			eventsToShow = eventsToShow.filter(event => {
+				const eventDate = new Date(event.time);
+				return eventDate >= today && eventDate < weekEnd;
+			});
 		} else if (this.currentFilter === "favorites") {
 			eventsToShow = this.eventFilter.getFavoriteEvents(eventsToShow);
 		}
@@ -187,9 +228,9 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		const eventTime = new Date(event.time);
 		const prefs = this.preferencesManager.get();
 		const timeStr = this.formatEventTime(eventTime, prefs.display.timezone);
-		const dayStr = this.getDayString(eventTime);
+		const dayStr = this.formatEventDay(event.time);
 		
-		const sportBadge = this.getSportBadge(event.sport);
+		const sportBadge = this.sportDisplayName(event.sport);
 		const favoriteIndicator = isFavorite ? '<span class="favorite-indicator">⭐</span>' : '';
 		const otherClass = isOther ? 'other-event' : '';
 		
@@ -211,12 +252,15 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 				<div class="event-title">${event.title}</div>
 				<div class="event-meta">${event.meta || ''} ${event.venue ? `• ${event.venue}` : ''}</div>
 				${norwegianInfo}
-				${this.getStreamingHTML(event.streaming)}
+				${this.renderStreamingInfo(event.streaming)}
 			</div>
 		`;
 	}
 
-	formatEventTime(date, timezone) {
+	formatEventTime(timeString, timezone) {
+		if (!timeString) return "TBD";
+		
+		const date = new Date(timeString);
 		const options = {
 			hour: '2-digit',
 			minute: '2-digit',
@@ -225,9 +269,16 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		
 		if (timezone && timezone !== 'local') {
 			options.timeZone = timezone;
+		} else {
+			options.timeZone = 'Europe/Oslo';
 		}
 		
 		return date.toLocaleTimeString('en-NO', options);
+	}
+	
+	formatEventDay(timeString) {
+		// Use parent class method
+		return super.formatEventDay(timeString);
 	}
 
 	addPersonalizationIndicators() {
@@ -289,6 +340,12 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 				favBtn.innerHTML = `⭐ Favorites (${favorites.length})`;
 			}
 		}
+	}
+	
+	updateFilterCount(count) {
+		// Optional: Update UI with filter count if needed
+		// For now, just log it
+		console.log(`Showing ${count} events`);
 	}
 }
 
