@@ -192,8 +192,44 @@ class SimpleSportsDashboard {
 			return;
 		}
 
+		// Group events by day for adding dividers
+		let lastDateString = null;
+		
 		const eventsHTML = filteredEvents
 			.map((event, index) => {
+				const eventDate = new Date(event.time);
+				const dateString = eventDate.toLocaleDateString('en-US', { 
+					weekday: 'long', 
+					month: 'long', 
+					day: 'numeric'
+				});
+				
+				// Add day divider if this is a new day
+				let dayDivider = '';
+				if (dateString !== lastDateString) {
+					// Get relative day label
+					const today = new Date();
+					today.setHours(0, 0, 0, 0);
+					const tomorrow = new Date(today);
+					tomorrow.setDate(tomorrow.getDate() + 1);
+					const eventDay = new Date(eventDate);
+					eventDay.setHours(0, 0, 0, 0);
+					
+					let dayLabel = dateString;
+					if (eventDay.getTime() === today.getTime()) {
+						dayLabel = `Today, ${dateString}`;
+					} else if (eventDay.getTime() === tomorrow.getTime()) {
+						dayLabel = `Tomorrow, ${dateString}`;
+					}
+					
+					dayDivider = `
+						<div class="day-divider">
+							<span class="day-label">${dayLabel}</span>
+						</div>
+					`;
+					lastDateString = dateString;
+				}
+				
 				const timeDisplay = this.formatEventTime(event.time);
 				const relativeTime = this.getRelativeTime(event.time);
 				
@@ -256,6 +292,7 @@ class SimpleSportsDashboard {
 					: '';
 				
 				return `
+				${dayDivider}
                 <div class="event-card ${event.sport}" data-event-id="${index}">
                     <div class="sport-line ${event.sport}"></div>
                     <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}</div>
