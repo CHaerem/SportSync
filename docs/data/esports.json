@@ -1,14 +1,14 @@
 {
-  "lastUpdated": "2025-08-20T15:22:57.506Z",
-  "source": "HLTV community API",
+  "lastUpdated": "2025-08-20T20:16:16.380Z",
+  "source": "HLTV community API (current week only)",
   "tournaments": [
     {
-      "name": "Esports World Cup 2025 - Round 1",
+      "name": "Esports World Cup 2025",
       "events": [
         {
-          "id": "esports-faze-clan-vs-aurora-gaming-1755711000000",
-          "title": "FaZe Clan vs Aurora Gaming",
-          "time": "2025-08-20T17:30:00.000Z",
+          "id": "esports-team-liquid-vs-cloud9-1755794400000",
+          "title": "Team Liquid vs Cloud9",
+          "time": "2025-08-21T17:30:00.000Z",
           "venue": "Online",
           "sport": "esports",
           "meta": "Esports World Cup 2025 - Round 1",
@@ -24,12 +24,30 @@
               "type": "youtube"
             }
           ],
+          "norwegian": false,
+          "tournament": "Esports World Cup 2025 - Round 1"
+        },
+        {
+          "id": "esports-faze-clan-vs-tbd-1755882000000",
+          "title": "FaZe Clan vs TBD",
+          "time": "2025-08-22T18:00:00.000Z",
+          "venue": "Online",
+          "sport": "esports",
+          "meta": "Esports World Cup 2025 - Quarterfinals",
+          "streaming": [
+            {
+              "platform": "Twitch",
+              "url": "https://twitch.tv/esworldcup",
+              "type": "twitch"
+            },
+            {
+              "platform": "YouTube",
+              "url": "https://youtube.com/@EsportsWorldCup",
+              "type": "youtube"
+            }
+          ],
           "norwegian": true,
-          "homeTeam": "",
-          "awayTeam": "",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null
+          "tournament": "Esports World Cup 2025 - Quarterfinals"
         }
       ]
     }
