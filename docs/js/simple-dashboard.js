@@ -164,6 +164,22 @@ class SimpleSportsDashboard {
 					event.participants && event.participants.length
 						? `<div>👥 ${this.escapeHtml(event.participants.join(", "))}</div>`
 						: "";
+				
+				// Special handling for golf events with Norwegian players
+				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
+					? `<div class="norwegian-players">
+						<div>🏌️‍♂️ Norwegian Players:</div>
+						${event.norwegianPlayers.map(player => `
+							<div style="margin-left: 16px; font-size: 0.9em;">
+								• ${this.escapeHtml(player.name)}${player.teeTime ? ` (Tee: ${this.escapeHtml(player.teeTime)})` : ' (Tee: TBD)'}
+							</div>
+						`).join('')}
+						<div style="font-size: 0.85em; color: #888; margin-top: 4px;">
+							Field: ${event.totalPlayers} players
+						</div>
+					</div>`
+					: "";
+					
 				return `
                 <div class="event-card">
                     <div class="event-header">
@@ -194,6 +210,7 @@ class SimpleSportsDashboard {
 														}
                             ${event.norwegian ? "<div>🇳🇴 Norway</div>" : ""}
                             ${participantsLine}
+                            ${norwegianPlayersLine}
                         </div>
                         ${streamingHTML}
                     </div>
@@ -250,6 +267,11 @@ class SimpleSportsDashboard {
 		if (event.sport === "esports") {
 			const title = event.title.toLowerCase();
 			return title.includes("faze");
+		}
+		
+		// Check for golf tournaments with Norwegian players
+		if (event.sport === "golf") {
+			return event.norwegian === true && event.norwegianPlayers && event.norwegianPlayers.length > 0;
 		}
 		
 		return false;

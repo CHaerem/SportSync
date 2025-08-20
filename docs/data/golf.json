@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2025-08-20T07:00:12.789Z",
-  "source": "ESPN API",
+  "lastUpdated": "2025-08-20T07:32:45.146Z",
+  "source": "ESPN API (Norwegian players only)",
   "tournaments": [
     {
       "name": "PGA Tour",
@@ -12,7 +12,15 @@
           "venue": "TBD",
           "sport": "golf",
           "streaming": [],
-          "norwegian": false
+          "norwegian": true,
+          "norwegianPlayers": [
+            {
+              "name": "Viktor Hovland",
+              "teeTime": null,
+              "status": null
+            }
+          ],
+          "totalPlayers": 30
         }
       ]
     },
@@ -26,7 +34,15 @@
           "venue": "TBD",
           "sport": "golf",
           "streaming": [],
-          "norwegian": false
+          "norwegian": true,
+          "norwegianPlayers": [
+            {
+              "name": "Kristoffer Reitan",
+              "teeTime": null,
+              "status": null
+            }
+          ],
+          "totalPlayers": 156
         }
       ]
     }
