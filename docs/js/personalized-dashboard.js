@@ -34,31 +34,13 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 	}
 
 	checkFirstVisit() {
-		const prefs = this.preferencesManager.get();
-		const isFirstVisit = !localStorage.getItem('sportSync.visited');
-		
-		if (isFirstVisit) {
-			localStorage.setItem('sportSync.visited', 'true');
-			
-			// Try to detect user location and suggest template
-			const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-			
-			if (timezone.includes('Oslo') || timezone.includes('Stockholm')) {
-				this.suggestTemplate('norwegian');
-			} else if (timezone.includes('London') || timezone.includes('Dublin')) {
-				this.suggestTemplate('uk');
-			} else if (timezone.includes('America')) {
-				this.suggestTemplate('us');
-			}
-		}
+		// Disabled - too intrusive for CALM design
+		// Users can discover settings on their own
+		localStorage.setItem('sportSync.visited', 'true');
 	}
 
 	suggestTemplate(template) {
-		const message = `Welcome to SportSync! Would you like to use the ${template} sports template?`;
-		if (confirm(message)) {
-			this.preferencesManager.applyTemplate(template);
-			this.applyPreferences();
-		}
+		// Disabled - let users choose templates manually from settings
 	}
 
 	async loadAllEvents() {
@@ -194,34 +176,19 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		
 		let html = '';
 		
-		// Render favorite events first
-		if (grouped.favorites.length > 0) {
-			html += '<div class="events-section"><h3>⭐ Your Favorites</h3>';
-			html += grouped.favorites.map(event => this.createEventCardHTML(event, true)).join('');
-			html += '</div>';
-		}
+		// Render all events in order, but with subtle styling differences
+		// Favorites first (with subtle highlight), then relevant, then others
+		const allEvents = [
+			...grouped.favorites.map(e => ({...e, isFavorite: true})),
+			...grouped.relevant.map(e => ({...e, isFavorite: false})),
+			...grouped.other.map(e => ({...e, isFavorite: false, isOther: true}))
+		];
 		
-		// Render relevant events
-		if (grouped.relevant.length > 0) {
-			html += '<div class="events-section">';
-			if (grouped.favorites.length > 0) {
-				html += '<h3>Other Events</h3>';
-			}
-			html += grouped.relevant.map(event => this.createEventCardHTML(event, false)).join('');
-			html += '</div>';
-		}
-		
-		// Optionally show other events
-		if (grouped.other.length > 0 && prefs.display.showOtherEvents !== false) {
-			html += '<div class="events-section"><h3>More Events</h3>';
-			html += grouped.other.map(event => this.createEventCardHTML(event, false, true)).join('');
-			html += '</div>';
-		}
+		html = allEvents.map(event => 
+			this.createEventCardHTML(event, event.isFavorite, event.isOther)
+		).join('');
 		
 		container.innerHTML = html || this.getEmptyState();
-		
-		// Add personalization indicators
-		this.addPersonalizationIndicators();
 	}
 
 	createEventCardHTML(event, isFavorite = false, isOther = false) {
@@ -231,7 +198,7 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 		const dayStr = this.formatEventDay(event.time);
 		
 		const sportBadge = this.sportDisplayName(event.sport);
-		const favoriteIndicator = isFavorite ? '<span class="favorite-indicator">⭐</span>' : '';
+		const favoriteIndicator = ''; // Remove star indicator for cleaner look
 		const otherClass = isOther ? 'other-event' : '';
 		
 		// Check if event has Norwegian players/teams
@@ -282,16 +249,7 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 	}
 
 	addPersonalizationIndicators() {
-		// Add subtle indicators for personalized content
-		const favoriteEvents = document.querySelectorAll('.favorite-event');
-		favoriteEvents.forEach(card => {
-			if (!card.querySelector('.personalized-badge')) {
-				const badge = document.createElement('div');
-				badge.className = 'personalized-badge';
-				badge.title = 'This matches your preferences';
-				card.appendChild(badge);
-			}
-		});
+		// Removed - too intrusive for CALM design
 	}
 
 	getEmptyState() {
@@ -303,19 +261,16 @@ class PersonalizedDashboard extends SimpleSportsDashboard {
 			return `
 				<div class="empty-state">
 					<p>No favorite teams or players set.</p>
-					<button onclick="settingsUI.open()" class="action-btn">
-						⚙️ Add Favorites in Settings
-					</button>
+					<p style="font-size: 0.9rem; margin-top: 10px; color: var(--muted);">
+						Use the ⚙️ button to add favorites
+					</p>
 				</div>
 			`;
 		}
 		
 		return `
 			<div class="empty-state">
-				<p>No events found matching your preferences.</p>
-				<button onclick="settingsUI.open()" class="action-btn">
-					⚙️ Adjust Settings
-				</button>
+				<p>No events found.</p>
 			</div>
 		`;
 	}
@@ -355,79 +310,38 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.dashboard = new PersonalizedDashboard();
 });
 
-// Add styles for personalization features
+// Add subtle styles for personalization features
 const personalizedStyles = document.createElement('style');
 personalizedStyles.textContent = `
-	.events-section {
-		margin-bottom: 30px;
-	}
-	
-	.events-section h3 {
-		margin: 20px 0 15px 0;
-		color: var(--text);
-		font-size: 18px;
-		font-weight: 600;
-	}
-	
 	.favorite-event {
-		border: 2px solid #4CAF50;
-		box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-	}
-	
-	.favorite-indicator {
-		color: #FFD700;
-		font-size: 18px;
+		border-left: 3px solid var(--border);
+		border-left-color: #4CAF50;
 	}
 	
 	.other-event {
-		opacity: 0.8;
-	}
-	
-	.norwegian-info {
-		margin-top: 8px;
-		padding: 4px 8px;
-		background: rgba(76, 175, 80, 0.1);
-		border-radius: 4px;
-		font-size: 13px;
-		color: var(--text);
-	}
-	
-	.personalized-badge {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		width: 8px;
-		height: 8px;
-		background: #4CAF50;
-		border-radius: 50%;
-		animation: pulse 2s infinite;
-	}
-	
-	@keyframes pulse {
-		0% { opacity: 1; }
-		50% { opacity: 0.5; }
-		100% { opacity: 1; }
+		opacity: 0.85;
 	}
 	
 	.empty-state {
 		text-align: center;
-		padding: 60px 20px;
+		padding: 40px 20px;
 		color: var(--muted);
 	}
 	
 	.empty-state .action-btn {
 		margin-top: 20px;
-		padding: 10px 20px;
-		background: #4CAF50;
-		color: white;
-		border: none;
-		border-radius: 8px;
+		padding: 8px 16px;
+		background: var(--card-bg);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 6px;
 		cursor: pointer;
-		font-size: 16px;
+		font-size: 14px;
+		transition: opacity 0.2s;
 	}
 	
 	.empty-state .action-btn:hover {
-		background: #45a049;
+		opacity: 0.8;
 	}
 	
 	.compact-mode .event-card {

@@ -18,7 +18,8 @@ class SettingsUI {
 		const button = document.createElement('button');
 		button.id = 'settings-button';
 		button.className = 'settings-btn';
-		button.innerHTML = '⚙️ Settings';
+		button.innerHTML = '⚙️';
+		button.title = 'Personalize';
 		button.setAttribute('aria-label', 'Open settings');
 		
 		// Find header or create one if doesn't exist
@@ -483,22 +484,22 @@ class SettingsUI {
 		const style = document.createElement('style');
 		style.textContent = `
 			.settings-btn {
-				position: fixed;
-				top: 20px;
-				right: 20px;
-				padding: 10px 20px;
-				background: #4CAF50;
-				color: white;
-				border: none;
-				border-radius: 8px;
+				position: absolute;
+				top: 0;
+				right: 60px;
+				padding: 4px 10px;
+				background: var(--card-bg);
+				color: var(--muted);
+				border: 1px solid var(--border);
+				border-radius: 6px;
 				cursor: pointer;
-				font-size: 16px;
-				z-index: 999;
-				box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+				font-size: 0.7rem;
+				transition: opacity 0.2s;
+				opacity: 0.7;
 			}
 			
 			.settings-btn:hover {
-				background: #45a049;
+				opacity: 1;
 			}
 			
 			.settings-panel {
