@@ -3,6 +3,7 @@ class SimpleSportsDashboard {
 	constructor() {
 		this.api = new SportsAPI();
 		this.currentFilter = "all";
+		this.selectedSports = new Set(); // Track multiple selected sports
 		this.allEvents = [];
 		this.init();
 	}
@@ -20,18 +21,39 @@ class SimpleSportsDashboard {
 	}
 
 	setupSimpleFilters() {
-		const filterButtons = document.querySelectorAll(".filter-btn");
-		filterButtons.forEach((btn) => {
+		const sportButtons = document.querySelectorAll(".sport-filter");
+		const timeButtons = document.querySelectorAll(".filter-btn:not(.sport-filter)");
+
+		// Handle time-based filters (All, Today, Week, Favorites)
+		timeButtons.forEach((btn) => {
 			btn.addEventListener("click", (e) => {
-				// Remove active from all buttons
-				filterButtons.forEach((b) => b.classList.remove("active"));
+				// Remove active from time filter buttons
+				timeButtons.forEach((b) => b.classList.remove("active"));
 				// Add active to clicked button
 				e.target.classList.add("active");
 
 				this.currentFilter = e.target.dataset.filter;
 				this.renderFilteredEvents();
+				this.updateFilterCount();
+			});
+		});
 
-				// Update event count display
+		// Handle sport filters (allow multiple selection)
+		sportButtons.forEach((btn) => {
+			btn.addEventListener("click", (e) => {
+				const sport = e.target.dataset.filter;
+				
+				if (this.selectedSports.has(sport)) {
+					// Remove sport from selection
+					this.selectedSports.delete(sport);
+					e.target.classList.remove("active");
+				} else {
+					// Add sport to selection
+					this.selectedSports.add(sport);
+					e.target.classList.add("active");
+				}
+
+				this.renderFilteredEvents();
 				this.updateFilterCount();
 			});
 		});
@@ -39,8 +61,7 @@ class SimpleSportsDashboard {
 
 	updateFilterCount() {
 		// Optional: Could add a subtle event count indicator
-		const filteredCount = this.allEvents.filter(event => this.passesFilter(event)).length;
-		// Could display this count somewhere if desired
+		// Could display filtered count somewhere if desired
 	}
 
 	async updateLastUpdatedTime() {
@@ -261,31 +282,41 @@ class SimpleSportsDashboard {
 		weekEnd.setDate(today.getDate() + 7);
 		const eventDate = new Date(event.time);
 
+		// Apply time-based filter first
+		let passesTimeFilter = false;
 		switch (this.currentFilter) {
 			case "all":
-				return true;
+				passesTimeFilter = true;
+				break;
 			case "today":
-				return eventDate >= today && eventDate < tomorrow;
+				passesTimeFilter = eventDate >= today && eventDate < tomorrow;
+				break;
 			case "week":
-				return eventDate >= today && eventDate < weekEnd;
+				passesTimeFilter = eventDate >= today && eventDate < weekEnd;
+				break;
 			case "favorites":
-				return this.isFavoriteEvent(event);
-			// Sport-specific filters
-			case "golf":
-				return event.sport === "golf";
-			case "football":
-				return event.sport === "football";
-			case "tennis":
-				return event.sport === "tennis";
-			case "formula1":
-				return event.sport === "f1" || event.sport === "formula1";
-			case "chess":
-				return event.sport === "chess";
-			case "esports":
-				return event.sport === "esports";
+				passesTimeFilter = this.isFavoriteEvent(event);
+				break;
 			default:
-				return true;
+				passesTimeFilter = true;
 		}
+
+		// If no time filter passes, event is filtered out
+		if (!passesTimeFilter) return false;
+
+		// Apply sport filter if any sports are selected
+		if (this.selectedSports.size === 0) {
+			// No sport filters selected, show all sports
+			return true;
+		}
+
+		// Check if event's sport matches any selected sports
+		return this.selectedSports.has("golf") && event.sport === "golf" ||
+			   this.selectedSports.has("football") && event.sport === "football" ||
+			   this.selectedSports.has("tennis") && event.sport === "tennis" ||
+			   this.selectedSports.has("formula1") && (event.sport === "f1" || event.sport === "formula1") ||
+			   this.selectedSports.has("chess") && event.sport === "chess" ||
+			   this.selectedSports.has("esports") && event.sport === "esports";
 	}
 
 	isFavoriteEvent(event) {
