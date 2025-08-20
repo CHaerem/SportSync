@@ -249,12 +249,12 @@
 				box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 			}
 			
-			.timeline-event.football { border-left-color: #22c55e; }
-			.timeline-event.golf { border-left-color: #f59e0b; }
-			.timeline-event.tennis { border-left-color: #3b82f6; }
-			.timeline-event.f1, .timeline-event.formula1 { border-left-color: #ef4444; }
-			.timeline-event.chess { border-left-color: #6b7280; }
-			.timeline-event.esports { border-left-color: #8b5cf6; }
+			.timeline-event.football { border-left-color: rgba(34, 197, 94, 0.5); }
+			.timeline-event.golf { border-left-color: rgba(245, 158, 11, 0.5); }
+			.timeline-event.tennis { border-left-color: rgba(59, 130, 246, 0.5); }
+			.timeline-event.f1, .timeline-event.formula1 { border-left-color: rgba(239, 68, 68, 0.5); }
+			.timeline-event.chess { border-left-color: rgba(107, 114, 128, 0.5); }
+			.timeline-event.esports { border-left-color: rgba(139, 92, 246, 0.5); }
 			
 			.timeline-event-time {
 				font-weight: 600;
@@ -325,33 +325,16 @@
 				position: absolute;
 				top: 20px;
 				right: 20px;
-				padding: 6px 12px;
-				border-radius: 20px;
-				font-size: 0.7rem;
-				font-weight: 600;
+				padding: 4px 10px;
+				border-radius: 16px;
+				font-size: 0.65rem;
+				font-weight: 500;
 				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				color: white;
-				opacity: 0.9;
-			}
-
-			.sport-badge.football {
-				background: #22c55e;
-			}
-			.sport-badge.tennis {
-				background: #3b82f6;
-			}
-			.sport-badge.golf {
-				background: #f59e0b;
-			}
-			.sport-badge.formula1 {
-				background: #ef4444;
-			}
-			.sport-badge.chess {
-				background: #6b7280;
-			}
-			.sport-badge.esports {
-				background: #8b5cf6;
+				letter-spacing: 0.3px;
+				background: var(--hover-bg);
+				color: var(--muted);
+				border: 1px solid var(--border);
+				opacity: 0.8;
 			}
 			
 			.sport-line {
@@ -359,9 +342,9 @@
 				top: 0;
 				left: 0;
 				right: 0;
-				height: 3px;
+				height: 2px;
 				border-radius: 20px 20px 0 0;
-				opacity: 0.8;
+				opacity: 0.5;
 			}
 			
 			.sport-line.football {
@@ -373,7 +356,7 @@
 			.sport-line.golf {
 				background: #f59e0b;
 			}
-			.sport-line.formula1 {
+			.sport-line.f1, .sport-line.formula1 {
 				background: #ef4444;
 			}
 			.sport-line.chess {
@@ -452,7 +435,7 @@
 			
 			.player-time {
 				font-weight: 600;
-				color: var(--accent);
+				color: var(--text);
 				font-size: 0.95rem;
 			}
 
@@ -637,7 +620,7 @@
 		</div>
 
 		<script src="js/sports-api.js?v=2025082023"></script>
-		<script src="js/simple-dashboard.js?v=2025082023"></script>
+		<script src="js/simple-dashboard.js?v=2025082025"></script>
 
 		<script>
 			// Dark mode toggle

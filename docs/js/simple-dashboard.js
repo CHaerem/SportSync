@@ -267,6 +267,7 @@ class SimpleSportsDashboard {
 								: ''
 						}
                         ${norwegianPlayersLine}
+                        ${this.renderStreamingInfo(event.streaming, event.sport, event.tournament)}
                     </div>
                 </div>
             `;
@@ -505,33 +506,62 @@ class SimpleSportsDashboard {
 		});
 	}
 
-	renderStreamingInfo(streaming) {
-		if (!streaming || streaming.length === 0) {
+	renderStreamingInfo(streaming, sport, tournament) {
+		// Map Norwegian streaming services based on sport and tournament
+		let services = [];
+		
+		if (sport === 'football') {
+			if (tournament && tournament.toLowerCase().includes('premier league')) {
+				services.push({ platform: 'Viaplay', url: 'https://viaplay.no' });
+			} else if (tournament && (tournament.toLowerCase().includes('obos') || tournament.toLowerCase().includes('eliteserien'))) {
+				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
+			} else if (tournament && tournament.toLowerCase().includes('la liga')) {
+				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
+			}
+		} else if (sport === 'golf') {
+			if (tournament && tournament.toLowerCase().includes('dp world')) {
+				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
+			} else if (tournament && tournament.toLowerCase().includes('pga')) {
+				services.push({ platform: 'Discovery+', url: 'https://www.discoveryplus.no' });
+			}
+		} else if (sport === 'tennis') {
+			services.push({ platform: 'Discovery+', url: 'https://www.discoveryplus.no' });
+		} else if (sport === 'f1' || sport === 'formula1') {
+			services.push({ platform: 'Viaplay', url: 'https://viaplay.no' });
+		}
+		
+		// Use provided streaming data if available, otherwise use our mappings
+		const streamingSources = (streaming && streaming.length > 0) ? streaming : services;
+		
+		if (!streamingSources || streamingSources.length === 0) {
 			return "";
 		}
 
-		const streamingBadges = streaming
+		const streamingBadges = streamingSources
 			.slice(0, 3)
 			.map((stream) => {
 				const url = stream.url ? `href="${stream.url}" target="_blank"` : "";
 				const tag = url ? "a" : "span";
-
+				
 				return `<${tag} ${url} style="
                 display: inline-block;
-                background: #f0f0f0;
-                color: #666;
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 0.7rem;
-                margin-right: 6px;
-                margin-top: 6px;
+                background: transparent;
+                color: var(--muted);
+                padding: 3px 8px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                font-size: 0.65rem;
+                font-weight: 400;
+                margin-right: 5px;
+                margin-top: 12px;
                 text-decoration: none;
-                border: 1px solid #ddd;
-            ">${this.escapeHtml(stream.platform)}</${tag}>`;
+                opacity: 0.7;
+                transition: all 0.2s;
+            " onmouseover="this.style.opacity='1'; this.style.borderColor='var(--text-secondary)'" onmouseout="this.style.opacity='0.7'; this.style.borderColor='var(--border)'">${this.escapeHtml(stream.platform)}</${tag}>`;
 			})
 			.join("");
 
-		return `<div style="margin-top: 8px;">${streamingBadges}</div>`;
+		return `<div class="streaming-badges">${streamingBadges}</div>`;
 	}
 
 	escapeHtml(unsafe) {
