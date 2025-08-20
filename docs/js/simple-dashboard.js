@@ -221,9 +221,38 @@ class SimpleSportsDashboard {
 				return eventDate >= today && eventDate < tomorrow;
 			case "week":
 				return eventDate >= today && eventDate < weekEnd;
+			case "favorites":
+				return this.isFavoriteEvent(event);
 			default:
 				return true;
 		}
+	}
+
+	isFavoriteEvent(event) {
+		// Check for favorite football teams: Lyn and Barcelona
+		if (event.sport === "football") {
+			const title = event.title.toLowerCase();
+			const homeTeam = event.homeTeam?.toLowerCase() || "";
+			const awayTeam = event.awayTeam?.toLowerCase() || "";
+			
+			// Check for Barcelona (various spellings)
+			const isBarca = title.includes("barcelona") || title.includes("barça") || 
+							homeTeam.includes("barcelona") || awayTeam.includes("barcelona");
+			
+			// Check for Lyn (various formats)
+			const isLyn = title.includes("lyn") || 
+						  homeTeam.includes("lyn") || awayTeam.includes("lyn");
+			
+			return isBarca || isLyn;
+		}
+		
+		// Check for favorite esports team: FaZe
+		if (event.sport === "esports") {
+			const title = event.title.toLowerCase();
+			return title.includes("faze");
+		}
+		
+		return false;
 	}
 
 	formatEventTime(timeString) {
