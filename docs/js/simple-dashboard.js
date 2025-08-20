@@ -30,8 +30,17 @@ class SimpleSportsDashboard {
 
 				this.currentFilter = e.target.dataset.filter;
 				this.renderFilteredEvents();
+
+				// Update event count display
+				this.updateFilterCount();
 			});
 		});
+	}
+
+	updateFilterCount() {
+		// Optional: Could add a subtle event count indicator
+		const filteredCount = this.allEvents.filter(event => this.passesFilter(event)).length;
+		// Could display this count somewhere if desired
 	}
 
 	async updateLastUpdatedTime() {
@@ -261,6 +270,19 @@ class SimpleSportsDashboard {
 				return eventDate >= today && eventDate < weekEnd;
 			case "favorites":
 				return this.isFavoriteEvent(event);
+			// Sport-specific filters
+			case "golf":
+				return event.sport === "golf";
+			case "football":
+				return event.sport === "football";
+			case "tennis":
+				return event.sport === "tennis";
+			case "formula1":
+				return event.sport === "f1" || event.sport === "formula1";
+			case "chess":
+				return event.sport === "chess";
+			case "esports":
+				return event.sport === "esports";
 			default:
 				return true;
 		}

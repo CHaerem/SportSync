@@ -92,11 +92,17 @@
 				margin-bottom: 40px;
 			}
 
+			.filter-group {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 8px;
+			}
+
 			.filter-btn {
 				background: var(--card-bg);
 				border: 2px solid var(--border);
 				padding: 8px 16px;
-				margin: 0 4px;
 				border-radius: 20px;
 				cursor: pointer;
 				font-size: 0.85rem;
@@ -112,6 +118,11 @@
 				background: #333;
 				border-color: #333;
 				color: white;
+			}
+
+			.sport-filter {
+				font-size: 0.8rem;
+				padding: 6px 12px;
 			}
 
 			/* Main Dashboard View */
@@ -250,10 +261,18 @@
 					font-size: 1.8rem;
 				}
 
+				.filter-group {
+					gap: 6px;
+				}
+
 				.filter-btn {
-					margin: 2px 2px;
 					padding: 6px 12px;
 					font-size: 0.8rem;
+				}
+
+				.sport-filter {
+					font-size: 0.75rem;
+					padding: 5px 10px;
 				}
 
 				.event-header {
@@ -319,10 +338,20 @@
 			</div>
 
 			<div class="simple-filters">
-				<button class="filter-btn active" data-filter="all">All</button>
-				<button class="filter-btn" data-filter="today">Today</button>
-				<button class="filter-btn" data-filter="week">This Week</button>
-				<button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+				<div class="filter-group">
+					<button class="filter-btn active" data-filter="all">All</button>
+					<button class="filter-btn" data-filter="today">Today</button>
+					<button class="filter-btn" data-filter="week">This Week</button>
+					<button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+				</div>
+				<div class="filter-group" style="margin-top: 12px;">
+					<button class="filter-btn sport-filter" data-filter="golf">⛳ Golf</button>
+					<button class="filter-btn sport-filter" data-filter="football">⚽ Football</button>
+					<button class="filter-btn sport-filter" data-filter="tennis">🎾 Tennis</button>
+					<button class="filter-btn sport-filter" data-filter="formula1">🏎️ F1</button>
+					<button class="filter-btn sport-filter" data-filter="chess">♟️ Chess</button>
+					<button class="filter-btn sport-filter" data-filter="esports">🎮 Esports</button>
+				</div>
 			</div>
 
 			<div class="events-list" id="eventsContainer">
