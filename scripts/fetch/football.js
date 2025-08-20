@@ -1,4 +1,5 @@
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
+import { fetchOBOSLigaenFromFotballNo } from "./fotball-no.js";
 
 export async function fetchFootballESPN() {
 	const tournaments = [];
@@ -104,6 +105,19 @@ export async function fetchFootballESPN() {
 			});
 		}
 	}
-	return { lastUpdated: iso(), source: "ESPN API", tournaments };
+	
+	// Try to get Lyn matches from fotball.no API as fallback
+	console.log("Fetching OBOS-ligaen data from fotball.no...");
+	try {
+		const fotballNoData = await fetchOBOSLigaenFromFotballNo();
+		if (fotballNoData.tournaments.length > 0) {
+			tournaments.push(...fotballNoData.tournaments);
+			console.log(`Added ${fotballNoData.tournaments[0].events.length} Lyn matches from fotball.no`);
+		}
+	} catch (error) {
+		console.warn("Failed to fetch from fotball.no:", error.message);
+	}
+	
+	return { lastUpdated: iso(), source: "ESPN API + fotball.no", tournaments };
 }
 

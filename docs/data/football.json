@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2025-08-20T06:51:34.731Z",
-  "source": "ESPN API",
+  "lastUpdated": "2025-08-20T06:56:29.027Z",
+  "source": "ESPN API + fotball.no",
   "tournaments": [
     {
       "name": "Premier League",
@@ -229,6 +229,45 @@
           "sport": "football",
           "streaming": [],
           "norwegian": false
+        }
+      ]
+    },
+    {
+      "name": "OBOS-ligaen",
+      "events": [
+        {
+          "title": "Lyn 1896 - Egersund Menn Senior A",
+          "meta": "OBOS-ligaen",
+          "time": "2025-08-19T15:00:00.000Z",
+          "venue": "KFUM-Arena",
+          "homeTeam": "Lyn 1896",
+          "awayTeam": "Egersund Menn Senior A",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "TV2 Play",
+              "url": "https://play.tv2.no",
+              "type": "tv2"
+            }
+          ],
+          "norwegian": true
+        },
+        {
+          "title": "Skeid Menn 1 - Lyn 1896",
+          "meta": "OBOS-ligaen",
+          "time": "2025-08-23T12:00:00.000Z",
+          "venue": "Nordre Åsen kunstgressbane",
+          "homeTeam": "Skeid Menn 1",
+          "awayTeam": "Lyn 1896",
+          "sport": "football",
+          "streaming": [
+            {
+              "platform": "TV2 Play",
+              "url": "https://play.tv2.no",
+              "type": "tv2"
+            }
+          ],
+          "norwegian": true
         }
       ]
     }
