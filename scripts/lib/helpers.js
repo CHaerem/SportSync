@@ -6,6 +6,26 @@ export function iso(d = Date.now()) {
 	return new Date(d).toISOString();
 }
 
+export function normalizeToUTC(dateString) {
+	// Handle various date formats from APIs and ensure proper UTC conversion
+	if (!dateString) return new Date().toISOString();
+	
+	try {
+		const date = new Date(dateString);
+		
+		// Check if the date is valid
+		if (isNaN(date.getTime())) {
+			console.warn(`Invalid date string: ${dateString}`);
+			return new Date().toISOString();
+		}
+		
+		return date.toISOString();
+	} catch (error) {
+		console.warn(`Error parsing date ${dateString}:`, error);
+		return new Date().toISOString();
+	}
+}
+
 export async function fetchJson(
 	url,
 	{ headers = {}, retries = 2, retryDelay = 500 } = {}

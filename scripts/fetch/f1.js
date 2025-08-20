@@ -1,4 +1,4 @@
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 export async function fetchF1ESPN() {
 	const url =
@@ -15,7 +15,7 @@ export async function fetchF1ESPN() {
 			.map((ev) => ({
 				title: ev.name || ev.shortName,
 				meta: "Formula 1 2025 - Race Weekend",
-				time: ev.date,
+				time: normalizeToUTC(ev.date),
 				venue: ev.competitions?.[0]?.venue?.fullName || "F1 Circuit",
 				sport: "formula1",
 				streaming: [],

@@ -1,5 +1,5 @@
 // Consolidated chess fetcher: builds one event per round with participants list.
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 import fs from "fs";
 import path from "path";
 
@@ -104,7 +104,7 @@ function consolidateRounds(tournaments, players, broadcasts) {
 			out.push({
 				title: `${roundLabel} – ${t.name}`,
 				meta: t.name,
-				time: r.date,
+				time: normalizeToUTC(r.date),
 				venue: t.venue,
 				sport: "chess",
 				participants,
@@ -145,7 +145,7 @@ function consolidateRounds(tournaments, players, broadcasts) {
 				out.push({
 					title: tour.name,
 					meta: `Professional Chess - ${tour.name}`,
-					time: new Date().toISOString(), // Current broadcast
+					time: normalizeToUTC(new Date()), // Current broadcast
 					venue: "Online/Live",
 					sport: "chess",
 					participants: norwegianParticipants,

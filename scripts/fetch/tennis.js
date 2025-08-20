@@ -1,4 +1,4 @@
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 export async function fetchTennisESPN() {
 	const url =
@@ -22,7 +22,7 @@ export async function fetchTennisESPN() {
 				events: upcoming.map((ev) => ({
 					title: `${ev.competitions[0].competitors[0].athlete.displayName} vs ${ev.competitions[0].competitors[1].athlete.displayName}`,
 					meta: ev.competitions[0].notes?.[0]?.headline || "ATP Tournament",
-					time: ev.date,
+					time: normalizeToUTC(ev.date),
 					venue: ev.competitions[0].venue?.fullName || "Tennis Center",
 					sport: "tennis",
 					streaming: [],

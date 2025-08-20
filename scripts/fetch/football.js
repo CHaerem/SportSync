@@ -1,4 +1,4 @@
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 export async function fetchFootballESPN() {
 	const tournaments = [];
@@ -70,7 +70,7 @@ export async function fetchFootballESPN() {
 					return {
 						title: `${homeTeam} vs ${awayTeam}`,
 						meta: league.name,
-						time: ev.date,
+						time: normalizeToUTC(ev.date),
 						venue: ev.competitions[0].venue?.fullName || "TBD",
 						homeTeam: homeTeam,
 						awayTeam: awayTeam,

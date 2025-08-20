@@ -1,4 +1,4 @@
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 // Minimal real esports integration: attempt to pull HLTV upcoming matches for FaZe (rain) via a working
 // community JSON endpoint (if unavailable, return empty without placeholders).
@@ -100,7 +100,7 @@ export async function fetchEsports() {
 		.map((m) => ({
 			title: `${m.team1?.name || "TBD"} vs ${m.team2?.name || "TBD"}`,
 			meta: m.event?.name || "CS2 Match",
-			time: new Date(m.date).toISOString(),
+			time: normalizeToUTC(m.date),
 			venue: "Online",
 			sport: "esports",
 			streaming: [

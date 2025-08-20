@@ -1,4 +1,4 @@
-import { fetchJson, iso } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 export async function fetchGolfESPN() {
 	const tours = [
@@ -31,7 +31,7 @@ export async function fetchGolfESPN() {
 					events: events.map((ev) => ({
 						title: ev.name || "Golf Tournament",
 						meta: tour.name,
-						time: ev.date,
+						time: normalizeToUTC(ev.date),
 						venue:
 							ev.competitions?.[0]?.venue?.fullName ||
 							ev.competitions?.[0]?.venue?.address?.city ||
