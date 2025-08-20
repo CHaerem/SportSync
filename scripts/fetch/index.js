@@ -1,7 +1,7 @@
 import { rootDataPath, retainLastGood } from "../lib/helpers.js";
 import { fetchFootballESPN } from "./football.js";
 import { fetchGolfESPN } from "./golf.js";
-import { fetchTennisESPN } from "./tennis.js";
+import { fetchTennis } from "./tennis.js";
 import { fetchF1ESPN } from "./f1.js";
 import { fetchChessOpen } from "./chess.js";
 import { fetchEsports } from "./esports.js";
@@ -12,7 +12,7 @@ async function main() {
 	const tasks = await Promise.allSettled([
 		fetchFootballESPN(),
 		fetchGolfESPN(),
-		fetchTennisESPN(),
+		fetchTennis(),
 		fetchF1ESPN(),
 		fetchChessOpen(),
 		fetchEsports(),
