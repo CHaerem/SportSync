@@ -1,10 +1,45 @@
 {
-  "lastUpdated": "2025-08-20T20:47:57.049Z",
+  "lastUpdated": "2025-08-20T20:52:24.574Z",
   "source": "ESPN API / LiveGolf API",
   "tournaments": [
     {
       "name": "PGA Tour",
       "events": [
+        {
+          "id": "golf-tour-championship-1755734400000",
+          "title": "TOUR Championship",
+          "time": "2025-08-21T00:00:00.000Z",
+          "venue": "East Lake Golf Club, Atlanta, Georgia",
+          "sport": "golf",
+          "meta": "PGA Tour",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            },
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "",
+          "awayTeam": "",
+          "participants": [],
+          "norwegianPlayers": [
+            {
+              "name": "Viktor Hovland",
+              "teeTime": "Thu, 21 Aug, 18:00",
+              "teeTimeUTC": "2025-08-21T16:00:00+00:00",
+              "startingTee": 1,
+              "round": 1,
+              "status": "Scheduled"
+            }
+          ],
+          "totalPlayers": 30
+        },
         {
           "id": "golf-tour-championship-1755748800000",
           "title": "TOUR Championship",
@@ -75,6 +110,49 @@
     {
       "name": "DP World Tour",
       "events": [
+        {
+          "id": "golf-betfred-british-masters-hosted-by-sir-nick-faldo-1755734400000",
+          "title": "Betfred British Masters hosted by Sir Nick Faldo",
+          "time": "2025-08-21T00:00:00.000Z",
+          "venue": "The Belfry, Sutton Coldfield, England",
+          "sport": "golf",
+          "meta": "DP World Tour",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            },
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "",
+          "awayTeam": "",
+          "participants": [],
+          "norwegianPlayers": [
+            {
+              "name": "HALVORSEN, Andreas",
+              "teeTime": "Thu, 21 Aug, 15:40",
+              "teeTimeUTC": "2025-08-21T13:40:00+00:00",
+              "startingTee": 10,
+              "round": 1,
+              "status": "Scheduled"
+            },
+            {
+              "name": "REITAN, Kristoffer",
+              "teeTime": "Thu, 21 Aug, 10:00",
+              "teeTimeUTC": "2025-08-21T08:00:00+00:00",
+              "startingTee": 10,
+              "round": 1,
+              "status": "Scheduled"
+            }
+          ],
+          "totalPlayers": 156
+        },
         {
           "id": "golf-betfred-british-masters-hosted-by-sir-nick-faldo-1755748800000",
           "title": "Betfred British Masters hosted by Sir Nick Faldo",
