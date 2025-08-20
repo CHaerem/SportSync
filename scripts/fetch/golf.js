@@ -15,6 +15,8 @@ export async function fetchGolfESPN() {
 
 async function fetchGolfLiveGolfAPI() {
 	const API_KEY = process.env.LIVEGOLF_API_KEY;
+	const isScript = process.argv[1]?.includes('golf.js');
+	const log = isScript ? console.log : () => {};
 	
 	const norwegianPlayers = [
 		"Viktor Hovland",
@@ -31,7 +33,7 @@ async function fetchGolfLiveGolfAPI() {
 	const now = new Date();
 	
 	try {
-		console.log("Fetching golf events from LiveGolf API...");
+		log("Fetching golf events from LiveGolf API...");
 		
 		// Get upcoming events from both PGA Tour and DP World Tour
 		const eventsUrl = `https://use.livegolfapi.com/v1/events?api_key=${API_KEY}`;
@@ -49,7 +51,7 @@ async function fetchGolfLiveGolfAPI() {
 		
 		for (const event of upcomingEvents) {
 			try {
-				console.log(`Processing ${event.name} (${event.tour?.name})...`);
+				log(`Processing ${event.name} (${event.tour?.name})...`);
 				
 				// Get detailed event data with leaderboard (includes tee times)
 				const detailUrl = `https://use.livegolfapi.com/v1/events/${event.id}?api_key=${API_KEY}`;
@@ -68,7 +70,7 @@ async function fetchGolfLiveGolfAPI() {
 				}
 				
 				if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard)) {
-					console.log(`No leaderboard data for ${event.name}, skipping`);
+					log(`No leaderboard data for ${event.name}, skipping`);
 					continue;
 				}
 				
@@ -136,7 +138,7 @@ async function fetchGolfLiveGolfAPI() {
 							}
 						}
 						
-						console.log(`Found Norwegian player: ${competitor.player} - Tee time: ${teeTimeDisplay || 'TBD'}${featuredGroupInfo ? ' (Featured Group)' : ''}`);
+						log(`Found Norwegian player: ${competitor.player} - Tee time: ${teeTimeDisplay || 'TBD'}${featuredGroupInfo ? ' (Featured Group)' : ''}`);
 						
 						return {
 							name: competitor.player,
@@ -169,9 +171,9 @@ async function fetchGolfLiveGolfAPI() {
 						}]
 					});
 					
-					console.log(`✅ Added ${event.name} with ${norwegianCompetitors.length} Norwegian players`);
+					log(`✅ Added ${event.name} with ${norwegianCompetitors.length} Norwegian players`);
 				} else {
-					console.log(`No Norwegian players found in ${event.name}`);
+					log(`No Norwegian players found in ${event.name}`);
 				}
 				
 			} catch (eventError) {
@@ -192,6 +194,9 @@ async function fetchGolfLiveGolfAPI() {
 }
 
 async function fetchGolfESPNFallback() {
+	const isScript = process.argv[1]?.includes('golf.js');
+	const log = isScript ? console.log : () => {};
+	
 	// Norwegian golfers to look for
 	const norwegianPlayers = [
 		"Viktor Hovland",
@@ -254,7 +259,7 @@ async function fetchGolfESPNFallback() {
 						};
 					});
 					
-					console.log(`Found ${norwegianCompetitors.length} Norwegian players in ${ev.name}:`, 
+					log(`Found ${norwegianCompetitors.length} Norwegian players in ${ev.name}:`, 
 						norwegianPlayersList.map(p => p.name).join(', '));
 					
 					tournaments.push({
