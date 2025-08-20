@@ -22,6 +22,10 @@ for (const sport of sports) {
 				norwegian: ev.norwegian || false,
 				streaming: ev.streaming || [],
 				participants: ev.participants || [],
+				norwegianPlayers: ev.norwegianPlayers || [],
+				totalPlayers: ev.totalPlayers || null,
+				link: ev.link || null,
+				status: ev.status || null,
 			});
 		});
 	});
