@@ -23,7 +23,8 @@ async function fetchGolfLiveGolfAPI() {
 		"Espen Kofstad",
 		"Anders Krogstad",
 		"Kristian Krogh Johannessen",
-		"Eivind Henriksen"
+		"Eivind Henriksen",
+		"Andreas Halvorsen"
 	];
 	
 	const tournaments = [];
@@ -74,10 +75,27 @@ async function fetchGolfLiveGolfAPI() {
 				// Find Norwegian players in this tournament
 				const norwegianCompetitors = eventDetail.leaderboard.filter(player => {
 					const playerName = player.player || "";
-					return norwegianPlayers.some(norPlayer => 
-						playerName.toLowerCase().includes(norPlayer.toLowerCase()) ||
-						norPlayer.toLowerCase().includes(playerName.toLowerCase())
-					);
+					return norwegianPlayers.some(norPlayer => {
+						const norPlayerLower = norPlayer.toLowerCase();
+						const playerNameLower = playerName.toLowerCase();
+						
+						// Check for exact matches (Viktor Hovland)
+						if (playerNameLower.includes(norPlayerLower) || norPlayerLower.includes(playerNameLower)) {
+							return true;
+						}
+						
+						// Check for surname, firstname format (HALVORSEN, Andreas -> Andreas Halvorsen)
+						const [firstName, ...lastNames] = norPlayer.split(' ');
+						const lastName = lastNames.join(' ');
+						const reversedName = `${lastName.toLowerCase()}, ${firstName.toLowerCase()}`;
+						if (playerNameLower.includes(reversedName) || playerNameLower === reversedName) {
+							return true;
+						}
+						
+						// Check individual name parts
+						const norPlayerParts = norPlayer.toLowerCase().split(' ');
+						return norPlayerParts.every(part => playerNameLower.includes(part));
+					});
 				});
 				
 				// Only include tournaments with Norwegian players
@@ -182,7 +200,8 @@ async function fetchGolfESPNFallback() {
 		"Espen Kofstad",
 		"Anders Krogstad",
 		"Kristian Krogh Johannessen",
-		"Eivind Henriksen"
+		"Eivind Henriksen",
+		"Andreas Halvorsen"
 	];
 	
 	const tours = [
