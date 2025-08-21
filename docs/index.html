@@ -91,35 +91,53 @@
 			}
 
 			.filter-btn {
-				background: var(--card-bg);
-				border: 2px solid var(--border);
-				padding: 8px 16px;
-				border-radius: 20px;
+				background: transparent;
+				border: 1px solid var(--border);
+				padding: 6px 14px;
+				border-radius: 16px;
 				cursor: pointer;
-				font-size: 0.85rem;
+				font-size: 0.8rem;
 				color: var(--muted);
-				transition: all 0.2s ease;
+				transition: all 0.15s ease;
+				font-weight: 500;
 			}
 
 			.filter-btn:hover {
-				border-color: #bbb;
+				border-color: var(--text-secondary);
+				color: var(--text);
 			}
 
 			.filter-btn.active {
-				background: #333;
-				border-color: #333;
-				color: white;
+				background: var(--text);
+				color: var(--bg);
+				border-color: var(--text);
 			}
 
 			.sport-filter {
-				font-size: 0.8rem;
-				padding: 6px 12px;
+				width: 36px;
+				height: 36px;
+				font-size: 1.1rem;
+				background: transparent;
+				border: 1.5px solid var(--border);
+				color: var(--muted);
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.15s;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.sport-filter:hover {
+				border-color: var(--text-secondary);
+				transform: translateY(-1px);
 			}
 
 			.sport-filter.active {
-				background: #2563eb;
-				border-color: #2563eb;
+				background: var(--accent);
+				border-color: var(--accent);
 				color: white;
+				transform: translateY(-1px);
 			}
 			
 			/* View toggle buttons */
@@ -601,22 +619,22 @@
 			</header>
 
 			<div class="simple-filters" style="margin-bottom: 24px;">
-				<div class="filter-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-					<div style="display: flex; gap: 4px;">
-						<button class="filter-btn active" data-filter="all" style="padding: 6px 12px; font-size: 0.85rem; background: var(--hover-bg); border: 1px solid transparent; color: var(--text); border-radius: 6px; cursor: pointer; transition: all 0.2s;">All</button>
-						<button class="filter-btn" data-filter="today" style="padding: 6px 12px; font-size: 0.85rem; background: transparent; border: 1px solid transparent; color: var(--muted); border-radius: 6px; cursor: pointer; transition: all 0.2s;">Today</button>
-						<button class="filter-btn" data-filter="week" style="padding: 6px 12px; font-size: 0.85rem; background: transparent; border: 1px solid transparent; color: var(--muted); border-radius: 6px; cursor: pointer; transition: all 0.2s;">Week</button>
-						<button class="filter-btn" data-filter="favorites" style="padding: 6px 12px; font-size: 0.85rem; background: transparent; border: 1px solid transparent; color: var(--muted); border-radius: 6px; cursor: pointer; transition: all 0.2s;">★</button>
+				<div class="filter-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+					<div style="display: flex; gap: 6px;">
+						<button class="filter-btn active" data-filter="all">All</button>
+						<button class="filter-btn" data-filter="today">Today</button>
+						<button class="filter-btn" data-filter="week">Week</button>
+						<button class="filter-btn" data-filter="favorites">★</button>
 					</div>
-					<div style="display: flex; gap: 2px;">
-						<button class="sport-filter" data-filter="golf" title="Golf" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">⛳</button>
-						<button class="sport-filter" data-filter="football" title="Football" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">⚽</button>
-						<button class="sport-filter" data-filter="tennis" title="Tennis" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">🎾</button>
-						<button class="sport-filter" data-filter="formula1" title="F1" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">🏎️</button>
-						<button class="sport-filter" data-filter="chess" title="Chess" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">♟️</button>
-						<button class="sport-filter" data-filter="esports" title="Esports" style="width: 28px; height: 28px; font-size: 0.9rem; background: transparent; border: none; color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;">🎮</button>
+					<div style="display: flex; gap: 6px;">
+						<button class="sport-filter" data-filter="golf" title="Golf">⛳</button>
+						<button class="sport-filter" data-filter="football" title="Football">⚽</button>
+						<button class="sport-filter" data-filter="tennis" title="Tennis">🎾</button>
+						<button class="sport-filter" data-filter="formula1" title="F1">🏎️</button>
+						<button class="sport-filter" data-filter="chess" title="Chess">♟️</button>
+						<button class="sport-filter" data-filter="esports" title="Esports">🎮</button>
 					</div>
-			</div>
+				</div>
 			</div>
 			
 			<!-- Hidden info section - can be toggled with a subtle link -->
