@@ -278,6 +278,7 @@ class SimpleSportsDashboard {
 								</div>
 							`;
 						}).join('')}
+						${this.getGolfLeaderboardLink(event)}
 					</div>`
 					: "";
 					
@@ -665,6 +666,64 @@ class SimpleSportsDashboard {
 		};
 		
 		return logos[normalized] || null;
+	}
+	
+	getGolfLeaderboardLink(event) {
+		if (!event || event.sport !== 'golf') return '';
+		
+		// If there's already a link from the API, use it
+		if (event.link) {
+			return `
+				<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+					<a href="${this.escapeHtml(event.link)}" target="_blank" rel="noopener noreferrer" 
+					   style="display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 8px 16px; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s;"
+					   onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
+					   onmouseout="this.style.background='var(--hover-bg)'; this.style.color='var(--accent)';">
+						<span>📊</span>
+						<span>View Leaderboard</span>
+						<span style="font-size: 0.8rem;">↗</span>
+					</a>
+				</div>
+			`;
+		}
+		
+		// Otherwise, generate automatic link based on tour type
+		const tourName = event.tournament || event.meta || '';
+		let leaderboardUrl = null;
+		
+		if (tourName.toLowerCase().includes('pga tour')) {
+			// For PGA Tour events, link to the main leaderboard page
+			leaderboardUrl = 'https://www.pgatour.com/leaderboard';
+		} else if (tourName.toLowerCase().includes('dp world') || tourName.toLowerCase().includes('european')) {
+			// For DP World Tour (formerly European Tour)
+			leaderboardUrl = 'https://www.europeantour.com/dpworld-tour/leaderboard/';
+		} else if (tourName.toLowerCase().includes('liv')) {
+			// For LIV Golf
+			leaderboardUrl = 'https://www.livgolf.com/leaderboard';
+		} else if (tourName.toLowerCase().includes('korn ferry')) {
+			// For Korn Ferry Tour
+			leaderboardUrl = 'https://www.pgatour.com/korn-ferry-tour/leaderboard';
+		} else if (tourName.toLowerCase().includes('champions')) {
+			// For PGA Tour Champions
+			leaderboardUrl = 'https://www.pgatour.com/champions/leaderboard';
+		}
+		
+		if (leaderboardUrl) {
+			return `
+				<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+					<a href="${leaderboardUrl}" target="_blank" rel="noopener noreferrer" 
+					   style="display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 8px 16px; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s;"
+					   onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
+					   onmouseout="this.style.background='var(--hover-bg)'; this.style.color='var(--accent)';">
+						<span>📊</span>
+						<span>View ${this.escapeHtml(tourName)} Leaderboard</span>
+						<span style="font-size: 0.8rem;">↗</span>
+					</a>
+				</div>
+			`;
+		}
+		
+		return '';
 	}
 	
 	renderTimelineView() {
