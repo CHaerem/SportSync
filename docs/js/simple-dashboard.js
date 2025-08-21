@@ -679,6 +679,7 @@ class SimpleSportsDashboard {
 					   style="display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s ease;"
 					   onmouseover="this.style.color='var(--text-secondary)';"
 					   onmouseout="this.style.color='var(--muted)';">
+						<span style="font-size: 0.9rem;">📊</span>
 						<span>Leaderboard</span>
 						<span style="font-size: 0.75rem; opacity: 0.7;">↗</span>
 					</a>
@@ -714,6 +715,7 @@ class SimpleSportsDashboard {
 					   style="display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s ease;"
 					   onmouseover="this.style.color='var(--text-secondary)';"
 					   onmouseout="this.style.color='var(--muted)';">
+						<span style="font-size: 0.9rem;">📊</span>
 						<span>Leaderboard</span>
 						<span style="font-size: 0.75rem; opacity: 0.7;">↗</span>
 					</a>
