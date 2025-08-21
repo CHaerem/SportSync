@@ -1,4 +1,5 @@
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
+import { getNorwegianStreaming } from "../lib/norwegian-streaming.js";
 
 // LiveGolf API - provides actual tee times!
 export async function fetchGolfESPN() {
@@ -190,7 +191,7 @@ async function fetchGolfLiveGolfAPI() {
 							time: eventTime, // Use earliest tee time if available
 							venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
 							sport: "golf",
-							streaming: [], // Will be added by Norwegian streaming mapper
+							streaming: getNorwegianStreaming("golf", tourName),
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
 							totalPlayers: eventDetail.leaderboard.length,
@@ -310,7 +311,7 @@ async function fetchGolfESPNFallback() {
 								   ev.competitions?.[0]?.venue?.address?.city ||
 								   "TBD",
 							sport: "golf",
-							streaming: [],
+							streaming: getNorwegianStreaming("golf", tour.name),
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
 							totalPlayers: competitors.length
