@@ -1,6 +1,7 @@
 import { ESPNAdapter } from "../lib/adapters/espn-adapter.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { fetchOBOSLigaenFromFotballNo } from "./fotball-no.js";
+import { EventNormalizer } from "../lib/event-normalizer.js";
 
 export class FootballFetcher extends ESPNAdapter {
 	constructor() {
@@ -9,7 +10,14 @@ export class FootballFetcher extends ESPNAdapter {
 
 	async fetchFromSource(source) {
 		if (source.api === "fotball.no" && source.enabled) {
-			return await this.fetchFotballNo();
+			const fotballNoEvents = await this.fetchFotballNo();
+			// Return events with proper metadata for grouping
+			return fotballNoEvents.map(event => ({
+				...event,
+				tournament: event.meta || "OBOS-ligaen",
+				leagueName: "OBOS-ligaen",
+				leagueCode: "nor.2"
+			}));
 		}
 		
 		return await super.fetchFromSource(source);
@@ -33,6 +41,38 @@ export class FootballFetcher extends ESPNAdapter {
 		}
 		
 		return [];
+	}
+
+	transformToEvents(rawData) {
+		const events = [];
+		
+		for (const item of rawData) {
+			try {
+				// Check if this is already a formatted event from fotball.no
+				if (item.sport === "football" && item.meta === "OBOS-ligaen") {
+					// It's already in the correct format, just validate and add
+					// Ensure tournament field is set for proper grouping
+					item.tournament = item.tournament || item.meta || "OBOS-ligaen";
+					const normalized = EventNormalizer.normalize(item, this.config.sport);
+					if (normalized && EventNormalizer.validateEvent(normalized)) {
+						events.push(normalized);
+					}
+				} else {
+					// It's an ESPN event, transform it
+					const event = this.transformESPNEvent(item);
+					if (event) {
+						const normalized = EventNormalizer.normalize(event, this.config.sport);
+						if (normalized && EventNormalizer.validateEvent(normalized)) {
+							events.push(normalized);
+						}
+					}
+				}
+			} catch (error) {
+				console.error(`Error transforming event:`, error.message);
+			}
+		}
+		
+		return EventNormalizer.deduplicate(events);
 	}
 
 	applyCustomFilters(events) {

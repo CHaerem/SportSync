@@ -48,12 +48,13 @@ export class BaseFetcher {
 			filtered = this.filterByTimeRange(filtered, this.config.filters.timeRange);
 		}
 
-		if (this.config.filters?.maxEvents) {
-			filtered = filtered.slice(0, this.config.filters.maxEvents);
-		}
-
+		// Apply custom filters BEFORE maxEvents to prioritize important events
 		if (this.config.filters?.custom) {
 			filtered = this.applyCustomFilters(filtered);
+		}
+
+		if (this.config.filters?.maxEvents) {
+			filtered = filtered.slice(0, this.config.filters.maxEvents);
 		}
 
 		return filtered;

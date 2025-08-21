@@ -20,6 +20,7 @@ export class EventNormalizer {
 				venue: this.sanitizeString(event.venue || "TBD"),
 				sport: sport,
 				meta: this.sanitizeString(event.meta || event.tournament || ""),
+				tournament: this.sanitizeString(event.tournament || event.meta || ""),
 				streaming: this.normalizeStreaming(eventWithStreaming.streaming),
 				norwegian: Boolean(event.norwegian),
 				homeTeam: this.sanitizeString(event.homeTeam),
