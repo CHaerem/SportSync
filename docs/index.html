@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 		<meta
 			http-equiv="Cache-Control"
 			content="no-cache, no-store, must-revalidate"
@@ -584,50 +584,258 @@
 				background: var(--text-secondary);
 			}
 
+			/* Mobile optimizations */
 			@media (max-width: 768px) {
 				.container {
-					padding: 20px 15px;
+					padding: 16px 12px;
+					max-width: 100%;
+				}
+
+				header {
+					margin-bottom: 24px;
 				}
 
 				h1 {
-					font-size: 1.8rem;
+					font-size: 1.4rem;
+					font-weight: 600;
+				}
+				
+				#lastUpdate {
+					font-size: 0.65rem !important;
+				}
+
+				.simple-filters {
+					margin-bottom: 20px;
 				}
 
 				.filter-group {
-					gap: 6px;
+					gap: 8px;
+					padding: 0 4px;
 				}
 
 				.filter-btn {
-					padding: 6px 12px;
-					font-size: 0.8rem;
+					padding: 8px 12px;
+					font-size: 0.75rem;
+					min-height: 36px;
 				}
 
 				.sport-filter {
-					font-size: 0.75rem;
-					padding: 5px 10px;
+					width: 40px;
+					height: 40px;
+					font-size: 1.2rem;
+					padding: 0;
+				}
+
+				/* Event cards mobile */
+				.event-card {
+					margin-bottom: 12px;
+					border-radius: 16px;
+				}
+				
+				.event-favorite-btn {
+					top: 8px !important;
+					left: 8px !important;
+					font-size: 20px !important;
+					padding: 4px;
+					min-width: 32px;
+					min-height: 32px;
+				}
+
+				.sport-badge {
+					top: 12px !important;
+					right: 12px !important;
+					font-size: 0.6rem !important;
+					padding: 3px 8px !important;
 				}
 
 				.event-header {
-					padding: 10px 15px;
-				}
-
-				.event-time-info {
-					gap: 1px;
+					padding: 20px 16px 16px 44px !important;
 				}
 
 				.event-content {
-					padding: 15px;
+					padding: 0 16px 20px 16px;
+				}
+
+				.event-title {
+					font-size: 1rem;
+					margin-bottom: 12px;
+				}
+
+				.event-meta {
+					font-size: 0.8rem;
+					margin-bottom: 12px;
+				}
+
+				/* Teams display mobile */
+				.teams-display {
+					gap: 24px;
+					padding: 16px;
+					margin: 16px 0;
+				}
+
+				.team-logo {
+					width: 44px;
+					height: 44px;
+				}
+
+				.team-name {
+					font-size: 0.85rem;
+					max-width: 80px;
+				}
+
+				/* Golf tee times mobile */
+				.tee-times {
+					margin-top: 16px;
+					padding: 12px;
+				}
+
+				.tee-time-player {
+					padding: 10px 0;
+				}
+
+				.golfer-headshot, .golfer-headshot-placeholder {
+					width: 36px;
+					height: 36px;
+				}
+
+				.player-name {
+					font-size: 0.85rem;
+				}
+
+				.player-time {
+					font-size: 0.85rem;
+				}
+
+				/* Quick action buttons mobile */
+				.quick-add-team, .quick-add-player {
+					padding: 6px 10px !important;
+					font-size: 0.75rem !important;
+					min-height: 32px;
+					margin: 4px 2px !important;
+				}
+
+				/* Streaming badges mobile */
+				.streaming-badges a, .streaming-badges span {
+					padding: 4px 10px !important;
+					font-size: 0.7rem !important;
+				}
+
+				/* Day dividers mobile */
+				.day-divider {
+					margin: 20px 0 12px 0;
+				}
+
+				.day-label {
+					font-size: 0.75rem;
+					padding: 0 8px;
+				}
+
+				/* Timeline view mobile - horizontal scroll */
+				.timeline-wrapper {
+					margin: 0 -12px;
+					padding: 0 12px;
+				}
+
+				.timeline-grid {
+					min-width: 600px;
+				}
+
+				.timeline-day-header {
+					font-size: 0.75rem;
+					padding: 12px 8px;
+				}
+
+				.timeline-time-label {
+					font-size: 0.7rem;
+					padding: 16px 4px;
+				}
+
+				.timeline-event {
+					padding: 6px 8px;
+					font-size: 0.75rem;
+				}
+
+				.timeline-event-time {
+					font-size: 0.8rem;
+				}
+
+				.timeline-event-title {
+					font-size: 0.7rem;
+				}
+
+				/* Details/summary mobile */
+				details {
+					margin-bottom: 12px;
+				}
+
+				details > div {
+					padding: 8px !important;
+				}
+
+				details a {
+					font-size: 0.75rem !important;
+				}
+
+				.view-toggle {
+					margin-left: 12px !important;
+				}
+
+				.view-btn {
+					padding: 4px 10px !important;
+					font-size: 0.75rem !important;
+				}
+			}
+
+			/* Extra small devices */
+			@media (max-width: 380px) {
+				h1 {
+					font-size: 1.2rem;
+				}
+
+				.filter-group {
+					flex-direction: column;
+					align-items: stretch;
+				}
+
+				.filter-group > div {
+					width: 100%;
+					justify-content: center;
+				}
+
+				.sport-filter {
+					width: 42px;
+					height: 42px;
+				}
+
+				.teams-display {
+					flex-direction: column;
+					gap: 16px;
+				}
+
+				.vs-separator {
+					display: none;
+				}
+
+				.team-block {
+					flex-direction: row;
+					width: 100%;
+					justify-content: flex-start;
+					gap: 16px;
+				}
+
+				.team-name {
+					max-width: none;
 				}
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
-			<header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-				<h1 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px;">SportSync</h1>
-				<div style="display: flex; align-items: center; gap: 12px;">
-					<span id="lastUpdate" style="font-size: 0.75rem; color: var(--muted);">Loading...</span>
-					<button id="toggleTheme" class="theme-toggle" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px;">🌙</button>
+			<header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
+				<h1 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; margin: 0;">SportSync</h1>
+				<div style="display: flex; align-items: center; gap: 8px;">
+					<span id="lastUpdate" style="font-size: 0.75rem; color: var(--muted); white-space: nowrap;">Loading...</span>
+					<button id="toggleTheme" class="theme-toggle" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px; min-width: 32px; min-height: 32px;">🌙</button>
 				</div>
 			</header>
 

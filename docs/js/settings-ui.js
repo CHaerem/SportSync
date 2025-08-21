@@ -8,6 +8,23 @@ class SettingsUI {
 	init() {
 		this.createSettingsButton();
 		this.createSettingsModal();
+		
+		// Handle window resize
+		let resizeTimeout;
+		window.addEventListener('resize', () => {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(() => {
+				// Recreate modal with proper styles on resize
+				if (this.isOpen) {
+					this.closeSettings();
+				}
+				const modal = document.getElementById('settingsModal');
+				if (modal) {
+					modal.remove();
+				}
+				this.createSettingsModal();
+			}, 250);
+		});
 	}
 
 	createSettingsButton() {
@@ -44,7 +61,28 @@ class SettingsUI {
 	createSettingsModal() {
 		const modal = document.createElement('div');
 		modal.id = 'settingsModal';
-		modal.style.cssText = `
+		
+		// Check if mobile
+		const isMobile = window.innerWidth <= 768;
+		
+		modal.style.cssText = isMobile ? `
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			max-height: 70vh;
+			background: var(--card-bg);
+			border: 2px solid var(--border);
+			border-radius: 20px 20px 0 0;
+			padding: 20px;
+			z-index: 101;
+			display: none;
+			overflow-y: auto;
+			box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+			transform: translateY(100%);
+			transition: transform 0.3s ease;
+		` : `
 			position: fixed;
 			bottom: 80px;
 			right: 20px;
@@ -312,12 +350,50 @@ class SettingsUI {
 	toggleSettings() {
 		this.isOpen = !this.isOpen;
 		const modal = document.getElementById('settingsModal');
-		modal.style.display = this.isOpen ? 'block' : 'none';
+		
+		if (this.isOpen) {
+			// Create backdrop for mobile
+			if (window.innerWidth <= 768) {
+				const backdrop = document.createElement('div');
+				backdrop.id = 'settingsBackdrop';
+				backdrop.style.cssText = `
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					background: rgba(0, 0, 0, 0.5);
+					z-index: 100;
+				`;
+				backdrop.addEventListener('click', () => this.closeSettings());
+				document.body.appendChild(backdrop);
+			}
+			modal.style.display = 'block';
+			// Animate slide up on mobile
+			if (window.innerWidth <= 768) {
+				setTimeout(() => {
+					modal.style.transform = 'translateY(0)';
+				}, 10);
+			}
+		} else {
+			this.closeSettings();
+		}
 	}
 
 	closeSettings() {
 		this.isOpen = false;
-		document.getElementById('settingsModal').style.display = 'none';
+		const modal = document.getElementById('settingsModal');
+		const backdrop = document.getElementById('settingsBackdrop');
+		
+		if (window.innerWidth <= 768) {
+			modal.style.transform = 'translateY(100%)';
+			setTimeout(() => {
+				modal.style.display = 'none';
+				if (backdrop) backdrop.remove();
+			}, 300);
+		} else {
+			modal.style.display = 'none';
+		}
 	}
 }
 
