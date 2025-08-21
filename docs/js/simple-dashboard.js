@@ -674,14 +674,13 @@ class SimpleSportsDashboard {
 		// If there's already a link from the API, use it
 		if (event.link) {
 			return `
-				<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+				<div style="margin-top: 12px;">
 					<a href="${this.escapeHtml(event.link)}" target="_blank" rel="noopener noreferrer" 
-					   style="display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 8px 16px; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s;"
-					   onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
-					   onmouseout="this.style.background='var(--hover-bg)'; this.style.color='var(--accent)';">
-						<span>📊</span>
-						<span>View Leaderboard</span>
-						<span style="font-size: 0.8rem;">↗</span>
+					   style="display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s ease;"
+					   onmouseover="this.style.color='var(--text-secondary)';"
+					   onmouseout="this.style.color='var(--muted)';">
+						<span>Leaderboard</span>
+						<span style="font-size: 0.75rem; opacity: 0.7;">↗</span>
 					</a>
 				</div>
 			`;
@@ -710,14 +709,13 @@ class SimpleSportsDashboard {
 		
 		if (leaderboardUrl) {
 			return `
-				<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+				<div style="margin-top: 12px;">
 					<a href="${leaderboardUrl}" target="_blank" rel="noopener noreferrer" 
-					   style="display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 8px 16px; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s;"
-					   onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
-					   onmouseout="this.style.background='var(--hover-bg)'; this.style.color='var(--accent)';">
-						<span>📊</span>
-						<span>View ${this.escapeHtml(tourName)} Leaderboard</span>
-						<span style="font-size: 0.8rem;">↗</span>
+					   style="display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s ease;"
+					   onmouseover="this.style.color='var(--text-secondary)';"
+					   onmouseout="this.style.color='var(--muted)';">
+						<span>Leaderboard</span>
+						<span style="font-size: 0.75rem; opacity: 0.7;">↗</span>
 					</a>
 				</div>
 			`;
