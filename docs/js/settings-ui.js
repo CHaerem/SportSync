@@ -249,21 +249,21 @@ class SettingsUI {
 
 	createSportToggles() {
 		const sports = [
-			{ id: 'golf', emoji: '⛳', name: 'Golf' },
-			{ id: 'football', emoji: '⚽', name: 'Football' },
-			{ id: 'tennis', emoji: '🎾', name: 'Tennis' },
-			{ id: 'formula1', emoji: '🏎️', name: 'F1' },
-			{ id: 'chess', emoji: '♟️', name: 'Chess' },
-			{ id: 'esports', emoji: '🎮', name: 'Esports' }
+			{ id: 'golf', emoji: '⛳', name: 'Golf', color: '#f59e0b' },
+			{ id: 'football', emoji: '⚽', name: 'Football', color: '#22c55e' },
+			{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#3b82f6' },
+			{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#ef4444' },
+			{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#6b7280' },
+			{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' }
 		];
 
 		return sports.map(sport => {
 			const isActive = this.preferences.isFavoriteSport(sport.id);
 			return `
-				<button class="sport-toggle" data-sport="${sport.id}" style="
+				<button class="sport-toggle" data-sport="${sport.id}" data-color="${sport.color}" style="
 					padding: 8px 12px;
-					background: ${isActive ? 'var(--accent)' : 'transparent'};
-					border: 1px solid ${isActive ? 'var(--accent)' : 'var(--border)'};
+					background: ${isActive ? sport.color : 'transparent'};
+					border: 1px solid ${isActive ? sport.color : `${sport.color}33`};
 					border-radius: 12px;
 					color: ${isActive ? 'white' : 'var(--text)'};
 					font-size: 0.85rem;
@@ -325,11 +325,12 @@ class SettingsUI {
 		document.querySelectorAll('.sport-toggle').forEach(button => {
 			button.addEventListener('click', (e) => {
 				const sport = e.currentTarget.dataset.sport;
+				const color = e.currentTarget.dataset.color;
 				const isActive = this.preferences.toggleFavoriteSport(sport);
 				
-				// Update button style
-				e.currentTarget.style.background = isActive ? 'var(--accent)' : 'transparent';
-				e.currentTarget.style.borderColor = isActive ? 'var(--accent)' : 'var(--border)';
+				// Update button style with sport-specific color
+				e.currentTarget.style.background = isActive ? color : 'transparent';
+				e.currentTarget.style.borderColor = isActive ? color : `${color}33`;
 				e.currentTarget.style.color = isActive ? 'white' : 'var(--text)';
 				
 				// Trigger dashboard refresh

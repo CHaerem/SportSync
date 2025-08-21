@@ -129,15 +129,74 @@
 			}
 			
 			.sport-filter:hover {
-				border-color: var(--text-secondary);
 				transform: translateY(-1px);
+				opacity: 0.9;
 			}
 
 			.sport-filter.active {
-				background: var(--accent);
-				border-color: var(--accent);
 				color: white;
 				transform: translateY(-1px);
+			}
+			
+			/* Sport-specific colors for filter buttons */
+			.sport-filter[data-filter="golf"] {
+				border-color: rgba(245, 158, 11, 0.3);
+			}
+			.sport-filter[data-filter="golf"]:hover,
+			.sport-filter[data-filter="golf"].active {
+				background: #f59e0b;
+				border-color: #f59e0b;
+				color: white;
+			}
+			
+			.sport-filter[data-filter="football"] {
+				border-color: rgba(34, 197, 94, 0.3);
+			}
+			.sport-filter[data-filter="football"]:hover,
+			.sport-filter[data-filter="football"].active {
+				background: #22c55e;
+				border-color: #22c55e;
+				color: white;
+			}
+			
+			.sport-filter[data-filter="tennis"] {
+				border-color: rgba(59, 130, 246, 0.3);
+			}
+			.sport-filter[data-filter="tennis"]:hover,
+			.sport-filter[data-filter="tennis"].active {
+				background: #3b82f6;
+				border-color: #3b82f6;
+				color: white;
+			}
+			
+			.sport-filter[data-filter="formula1"] {
+				border-color: rgba(239, 68, 68, 0.3);
+			}
+			.sport-filter[data-filter="formula1"]:hover,
+			.sport-filter[data-filter="formula1"].active {
+				background: #ef4444;
+				border-color: #ef4444;
+				color: white;
+			}
+			
+			.sport-filter[data-filter="chess"] {
+				border-color: rgba(107, 114, 128, 0.3);
+			}
+			.sport-filter[data-filter="chess"]:hover,
+			.sport-filter[data-filter="chess"].active {
+				background: #6b7280;
+				border-color: #6b7280;
+				color: white;
+			}
+			
+			.sport-filter[data-filter="esports"] {
+				border-color: rgba(139, 92, 246, 0.3);
+			}
+			.sport-filter[data-filter="esports"]:hover,
+			.sport-filter[data-filter="esports"].active {
+				background: #8b5cf6;
+				border-color: #8b5cf6;
+				color: white;
 			}
 			
 			/* View toggle buttons */
