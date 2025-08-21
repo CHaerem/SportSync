@@ -1,74 +1,33 @@
 {
-  "lastUpdated": "2025-08-21T00:33:27.616Z",
-  "source": "ESPN API / LiveGolf API",
+  "lastUpdated": "2025-08-21T06:33:37.520Z",
+  "source": "LiveGolf API (with tee times)",
   "tournaments": [
     {
       "name": "PGA Tour",
       "events": [
         {
-          "id": "golf-tour-championship-1755748800000",
           "title": "TOUR Championship",
-          "time": "2025-08-21T04:00:00.000Z",
-          "venue": "TBD",
-          "sport": "golf",
           "meta": "PGA Tour",
-          "streaming": [
-            {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
-              "type": "streaming"
-            },
-            {
-              "platform": "Discovery+",
-              "url": "https://www.discoveryplus.no",
-              "type": "streaming"
-            }
-          ],
+          "tournament": "PGA Tour",
+          "time": "2025-08-21T16:00:00.000Z",
+          "venue": "East Lake Golf Club, Atlanta, Georgia",
+          "sport": "golf",
+          "streaming": [],
           "norwegian": true,
-          "homeTeam": "",
-          "awayTeam": "",
-          "participants": [
-            "Akshay Bhatia",
-            "Chris Gotterup",
-            "Sungjae Im",
-            "Jacob Bridgeman",
-            "Nick Taylor",
-            "Harry Hall",
-            "Shane Lowry",
-            "Hideki Matsuyama",
-            "Collin Morikawa",
-            "Viktor Hovland",
-            "Patrick Cantlay",
-            "Corey Conners",
-            "Brian Harman",
-            "Sam Burns",
-            "Keegan Bradley",
-            "Andrew Novak",
-            "Ludvig Åberg",
-            "Cameron Young",
-            "Justin Thomas",
-            "Harris English",
-            "Maverick McNealy",
-            "Robert MacIntyre",
-            "Russell Henley",
-            "Sepp Straka",
-            "Tommy Fleetwood",
-            "Ben Griffin",
-            "Justin Rose",
-            "J.J. Spaun",
-            "Rory McIlroy",
-            "Scottie Scheffler"
-          ],
           "norwegianPlayers": [
             {
               "name": "Viktor Hovland",
-              "status": null
+              "teeTime": "Thu, 21 Aug, 18:00",
+              "teeTimeUTC": "2025-08-21T16:00:00+00:00",
+              "startingTee": 1,
+              "round": 1,
+              "status": "Scheduled",
+              "featuredGroup": null
             }
           ],
           "totalPlayers": 30,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
+          "link": "https://www.pgatour.com/tournaments/2025/tour-championship/R2025060",
+          "status": "Scheduled"
         }
       ]
     },
@@ -76,93 +35,37 @@
       "name": "DP World Tour",
       "events": [
         {
-          "id": "golf-betfred-british-masters-hosted-by-sir-nick-faldo-1755748800000",
           "title": "Betfred British Masters hosted by Sir Nick Faldo",
-          "time": "2025-08-21T04:00:00.000Z",
-          "venue": "TBD",
-          "sport": "golf",
           "meta": "DP World Tour",
-          "streaming": [
-            {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
-              "type": "streaming"
-            },
-            {
-              "platform": "Discovery+",
-              "url": "https://www.discoveryplus.no",
-              "type": "streaming"
-            }
-          ],
+          "tournament": "DP World Tour",
+          "time": "2025-08-21T08:00:00.000Z",
+          "venue": "The Belfry, Sutton Coldfield, England",
+          "sport": "golf",
+          "streaming": [],
           "norwegian": true,
-          "homeTeam": "",
-          "awayTeam": "",
-          "participants": [
-            "Matthew Southgate",
-            "Eugenio Chacarra",
-            "Jayden Schaper",
-            "Ryan van Velzen",
-            "Ben Schmidt",
-            "Jacob Skov Olesen",
-            "Björn Åkesson",
-            "Calum Hill",
-            "Ewen Ferguson",
-            "Robin Williams",
-            "Elvis Smylie",
-            "Hamish Brown",
-            "Andrew Wilson",
-            "Romain Langasque",
-            "Daniel Brown",
-            "Matthew Jordan",
-            "Jannik De Bruyn",
-            "Joel Moscatel",
-            "Luke Donald",
-            "Laurie Canter",
-            "Erik Barnes",
-            "Jens Dantorp",
-            "Kristoffer Reitan",
-            "Tadeáš Tetak",
-            "Richard Sterne",
-            "Alex Noren",
-            "Matt Fitzpatrick",
-            "Rasmus Højgaard",
-            "MK Kim",
-            "Gonzalo Fdez-Castaño",
-            "Brandt Snedeker",
-            "Grant Forrest",
-            "Shubhankar Sharma",
-            "Daniel Hillier",
-            "Casey Jarvis",
-            "Kazuma Kobori",
-            "Gavin Green",
-            "Frederic LaCroix",
-            "Jesper Svensson",
-            "Yuto Katsuragawa",
-            "Keita Nakajima",
-            "Pablo Ereno Perez",
-            "Darren Fichardt",
-            "Chris Wood",
-            "Dale Whitnell",
-            "Maximilian Kieffer",
-            "Yannik Paul",
-            "Connor Syme",
-            "Rafa Cabrera Bello",
-            "Alexander Levy"
-          ],
           "norwegianPlayers": [
             {
-              "name": "Kristoffer Reitan",
-              "status": null
+              "name": "HALVORSEN, Andreas",
+              "teeTime": "Thu, 21 Aug, 15:40",
+              "teeTimeUTC": "2025-08-21T13:40:00+00:00",
+              "startingTee": 10,
+              "round": 1,
+              "status": "Scheduled",
+              "featuredGroup": null
             },
             {
-              "name": "Andreas Halvorsen",
-              "status": null
+              "name": "REITAN, Kristoffer",
+              "teeTime": "Thu, 21 Aug, 10:00",
+              "teeTimeUTC": "2025-08-21T08:00:00+00:00",
+              "startingTee": 10,
+              "round": 1,
+              "status": "Scheduled",
+              "featuredGroup": null
             }
           ],
           "totalPlayers": 156,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
+          "link": "https://www.europeantour.com/dpworld-tour/betfred-british-masters-hosted-by-sir-nick-faldo-2025/",
+          "status": "Scheduled"
         }
       ]
     }

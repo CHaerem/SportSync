@@ -268,6 +268,14 @@ class SportsAPI {
 				norwegian: event.norwegian || false,
 				homeTeam: event.homeTeam,
 				awayTeam: event.awayTeam,
+				// Preserve golf-specific fields
+				norwegianPlayers: event.norwegianPlayers || [],
+				totalPlayers: event.totalPlayers || null,
+				link: event.link || null,
+				status: event.status || null,
+				featuredGroups: event.featuredGroups || [],
+				// Preserve other sport-specific fields
+				participants: event.participants || [],
 			})),
 		}));
 	}

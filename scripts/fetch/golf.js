@@ -43,11 +43,26 @@ async function fetchGolfLiveGolfAPI() {
 			throw new Error("Invalid events response format");
 		}
 		
-		// Filter to upcoming tournaments
-		const upcomingEvents = events.filter(event => 
-			event.status === 'Scheduled' && 
-			new Date(event.startDatetime) > now
-		).slice(0, 6); // Limit to next 6 tournaments
+		log(`Total events from API: ${events.length}`);
+		events.slice(0, 10).forEach(e => {
+			log(`  - ${e.name}: status=${e.status}, start=${e.startDatetime}`);
+		});
+		
+		// Filter to upcoming tournaments (include today's events)
+		const todayStart = new Date(now);
+		todayStart.setHours(0, 0, 0, 0);
+		
+		const upcomingEvents = events.filter(event => {
+			const eventDate = new Date(event.startDatetime);
+			const isUpcoming = event.status === 'Scheduled' && 
+				eventDate >= todayStart; // Include today's events
+			if (isUpcoming) {
+				log(`Found upcoming event: ${event.name} starting ${event.startDatetime}`);
+			}
+			return isUpcoming;
+		}).slice(0, 6); // Limit to next 6 tournaments
+		
+		log(`Found ${upcomingEvents.length} upcoming events`)
 		
 		for (const event of upcomingEvents) {
 			try {
@@ -154,13 +169,25 @@ async function fetchGolfLiveGolfAPI() {
 					// Determine tournament source
 					const tourName = event.tour?.name || "Unknown Tour";
 					
+					// Use the earliest Norwegian player's tee time as the event time
+					// This ensures the event shows up properly in the dashboard
+					let eventTime = normalizeToUTC(event.startDatetime);
+					const earliestTeeTime = norwegianPlayersList
+						.filter(p => p.teeTimeUTC)
+						.map(p => new Date(p.teeTimeUTC))
+						.sort((a, b) => a - b)[0];
+					
+					if (earliestTeeTime) {
+						eventTime = earliestTeeTime.toISOString();
+					}
+					
 					tournaments.push({
 						name: tourName,
 						events: [{
 							title: event.name || "Golf Tournament",
 							meta: tourName,
 							tournament: tourName,
-							time: normalizeToUTC(event.startDatetime),
+							time: eventTime, // Use earliest tee time if available
 							venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
 							sport: "golf",
 							streaming: [], // Will be added by Norwegian streaming mapper
@@ -192,6 +219,16 @@ async function fetchGolfLiveGolfAPI() {
 		source: "LiveGolf API (with tee times)", 
 		tournaments 
 	};
+}
+
+// Run if executed directly
+if (process.argv[1]?.includes('golf.js')) {
+	fetchGolfESPN().then(data => {
+		console.log(JSON.stringify(data, null, 2));
+	}).catch(err => {
+		console.error('Error:', err);
+		process.exit(1);
+	});
 }
 
 async function fetchGolfESPNFallback() {
