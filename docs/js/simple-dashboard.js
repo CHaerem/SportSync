@@ -6,6 +6,18 @@ class SimpleSportsDashboard {
 		this.selectedSports = new Set(); // Track multiple selected sports
 		this.allEvents = [];
 		this.viewMode = 'list'; // Default view mode
+		
+		// Initialize preferences if available
+		if (window.PreferencesManager) {
+			this.preferences = new window.PreferencesManager();
+			
+			// Initialize settings UI if available
+			if (window.SettingsUI) {
+				this.settingsUI = new window.SettingsUI(this.preferences);
+				this.settingsUI.init();
+			}
+		}
+		
 		this.init();
 	}
 
@@ -197,6 +209,8 @@ class SimpleSportsDashboard {
 		
 		const eventsHTML = filteredEvents
 			.map((event, index) => {
+				// Generate unique event ID
+				const eventId = `${event.sport}-${event.title}-${event.time}`.replace(/\s+/g, '-').toLowerCase();
 				const eventDate = new Date(event.time);
 				const dateString = eventDate.toLocaleDateString('en-US', { 
 					weekday: 'long', 
@@ -292,11 +306,47 @@ class SimpleSportsDashboard {
 					? `<span class="event-meta-item">${this.escapeHtml(event.tournament)}</span>`
 					: '';
 				
+				const isFavorite = this.preferences ? this.preferences.isEventFavorite(event, eventId) : this.isFavoriteEvent(event);
+				
+				// Create quick action buttons for teams/players
+				let quickActions = '';
+				if (event.sport === 'football' && (event.homeTeam || event.awayTeam)) {
+					const teams = [event.homeTeam, event.awayTeam].filter(t => t);
+					quickActions = teams.map(team => {
+						const isTeamFav = this.preferences && this.preferences.isTeamFavorite('football', team);
+						// Create abbreviated team name
+						const abbreviatedName = this.getAbbreviatedTeamName(team);
+						return `<button class="quick-add-team" data-team="${this.escapeHtml(team)}" data-sport="football" 
+							style="padding: 2px 6px; font-size: 0.7rem; background: transparent; border: 1px solid var(--border); 
+							border-radius: 8px; color: var(--muted); cursor: pointer; margin-right: 4px;"
+							title="${isTeamFav ? 'Remove from favorites' : 'Add to favorites'} - ${this.escapeHtml(team)}">
+							${isTeamFav ? '★' : '☆'} ${this.escapeHtml(abbreviatedName)}
+						</button>`;
+					}).join('');
+				} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+					quickActions = event.norwegianPlayers.slice(0, 2).map(player => {
+						const isPlayerFav = this.preferences && this.preferences.isPlayerFavorite('golf', player.name);
+						return `<button class="quick-add-player" data-player="${this.escapeHtml(player.name)}" data-sport="golf"
+							style="padding: 2px 6px; font-size: 0.7rem; background: transparent; border: 1px solid var(--border);
+							border-radius: 8px; color: var(--muted); cursor: pointer; margin-right: 4px;"
+							title="${isPlayerFav ? 'Remove from favorites' : 'Add to favorites'}">
+							${isPlayerFav ? '★' : '☆'} ${this.escapeHtml(player.name.split(' ').pop())}
+						</button>`;
+					}).join('');
+				}
+				
 				return `
 				${dayDivider}
-                <div class="event-card ${event.sport}" data-event-id="${index}">
+                <div class="event-card ${event.sport}" data-event-id="${eventId}" data-event-index="${index}" ${isFavorite ? 'data-favorite="true"' : ''}>
                     <div class="sport-line ${event.sport}"></div>
                     <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}</div>
+                    <button class="event-favorite-btn" data-event-id="${eventId}" 
+                        style="position: absolute; top: 12px; left: 12px; background: none; border: none; 
+                        font-size: 18px; cursor: pointer; color: var(--accent); opacity: ${isFavorite ? '1' : '0.3'}; 
+                        transition: opacity 0.2s; z-index: 10;"
+                        title="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
+                        ${isFavorite ? '★' : '☆'}
+                    </button>
                     <div class="event-header">
                         <div class="event-time-info">
                             <div class="event-time-relative">${this.escapeHtml(relativeTime)}</div>
@@ -316,6 +366,7 @@ class SimpleSportsDashboard {
 						}
                         ${norwegianPlayersLine}
                         ${this.renderStreamingInfo(event.streaming, event.sport, event.tournament)}
+                        ${quickActions ? `<div style="margin-top: 12px;">${quickActions}</div>` : ''}
                     </div>
                 </div>
             `;
@@ -323,6 +374,81 @@ class SimpleSportsDashboard {
 			.join("");
 
 		container.innerHTML = eventsHTML;
+		
+		// Attach event listeners for favorite buttons
+		this.attachEventListeners();
+	}
+	
+	attachEventListeners() {
+		// Event favorite toggle buttons
+		document.querySelectorAll('.event-favorite-btn').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				const eventId = e.currentTarget.dataset.eventId;
+				
+				if (this.preferences) {
+					const isFavorite = this.preferences.toggleEventFavorite(eventId);
+					e.currentTarget.innerHTML = isFavorite ? '★' : '☆';
+					e.currentTarget.style.opacity = isFavorite ? '1' : '0.3';
+					
+					// Update the event card's favorite status
+					const card = e.currentTarget.closest('.event-card');
+					if (isFavorite) {
+						card.setAttribute('data-favorite', 'true');
+					} else {
+						card.removeAttribute('data-favorite');
+					}
+				}
+			});
+		});
+		
+		// Quick add team buttons
+		document.querySelectorAll('.quick-add-team').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				const team = e.currentTarget.dataset.team;
+				const sport = e.currentTarget.dataset.sport;
+				
+				if (this.preferences) {
+					const isCurrentlyFavorite = this.preferences.isTeamFavorite(sport, team);
+					
+					if (isCurrentlyFavorite) {
+						this.preferences.removeFavoriteTeam(sport, team);
+						e.currentTarget.innerHTML = `☆ ${this.getAbbreviatedTeamName(team)}`;
+					} else {
+						this.preferences.addFavoriteTeam(sport, team);
+						e.currentTarget.innerHTML = `★ ${this.getAbbreviatedTeamName(team)}`;
+					}
+					
+					// Refresh the view to update all related events
+					setTimeout(() => this.renderFilteredEvents(), 100);
+				}
+			});
+		});
+		
+		// Quick add player buttons
+		document.querySelectorAll('.quick-add-player').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				const player = e.currentTarget.dataset.player;
+				const sport = e.currentTarget.dataset.sport;
+				
+				if (this.preferences) {
+					const isCurrentlyFavorite = this.preferences.isPlayerFavorite(sport, player);
+					
+					if (isCurrentlyFavorite) {
+						this.preferences.removeFavoritePlayer(sport, player);
+						e.currentTarget.innerHTML = `☆ ${player.split(' ').pop()}`;
+					} else {
+						this.preferences.addFavoritePlayer(sport, player);
+						e.currentTarget.innerHTML = `★ ${player.split(' ').pop()}`;
+					}
+					
+					// Refresh the view to update all related events
+					setTimeout(() => this.renderFilteredEvents(), 100);
+				}
+			});
+		});
 	}
 
 	passesFilter(event) {
@@ -333,6 +459,9 @@ class SimpleSportsDashboard {
 		const weekEnd = new Date(today);
 		weekEnd.setDate(today.getDate() + 7);
 		const eventDate = new Date(event.time);
+
+		// Generate event ID for checking individual favorites
+		const eventId = `${event.sport}-${event.title}-${event.time}`.replace(/\s+/g, '-').toLowerCase();
 
 		// Apply time-based filter first
 		let passesTimeFilter = false;
@@ -347,7 +476,12 @@ class SimpleSportsDashboard {
 				passesTimeFilter = eventDate >= today && eventDate < weekEnd;
 				break;
 			case "favorites":
-				passesTimeFilter = this.isFavoriteEvent(event);
+				// Check both the old method and new preferences-based method
+				if (this.preferences) {
+					passesTimeFilter = this.preferences.isEventFavorite(event, eventId);
+				} else {
+					passesTimeFilter = this.isFavoriteEvent(event);
+				}
 				break;
 			default:
 				passesTimeFilter = true;
@@ -372,6 +506,12 @@ class SimpleSportsDashboard {
 	}
 
 	isFavoriteEvent(event) {
+		// Use preferences manager if available
+		if (this.preferences) {
+			return this.preferences.isEventFavorite(event);
+		}
+		
+		// Fallback to hardcoded favorites if no preferences manager
 		// Check for favorite football teams: Lyn and Barcelona
 		if (event.sport === "football") {
 			const title = event.title.toLowerCase();
@@ -403,6 +543,43 @@ class SimpleSportsDashboard {
 		return false;
 	}
 
+	getAbbreviatedTeamName(teamName) {
+		if (!teamName) return '';
+		
+		// Remove common suffixes (FC, FK, United, etc.)
+		const cleaned = teamName
+			.replace(/ FC$/i, '')
+			.replace(/ FK$/i, '')
+			.replace(/ IF$/i, '')
+			.replace(/ IL$/i, '')
+			.replace(/ BK$/i, '')
+			.replace(/ SK$/i, '')
+			.replace(/ CF$/i, '')
+			.replace(/ AFC$/i, '')
+			.replace(/ United$/i, ' Utd')
+			.replace(/^FC /i, '')
+			.replace(/^AFC /i, '');
+		
+		// If name is still long, try to shorten intelligently
+		if (cleaned.length > 12) {
+			// For "&" or "and" in names, take the first part
+			if (cleaned.includes(' & ') || cleaned.includes(' and ')) {
+				return cleaned.split(/\s+[&]\s+|\s+and\s+/)[0];
+			}
+			
+			// For multi-word names, take first word if it's meaningful
+			const words = cleaned.split(' ');
+			if (words[0].length >= 4) {
+				return words[0];
+			}
+			
+			// Otherwise take first two words
+			return words.slice(0, 2).join(' ');
+		}
+		
+		return cleaned;
+	}
+	
 	getRelativeTime(timeString) {
 		if (!timeString) return "Soon";
 		

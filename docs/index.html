@@ -323,6 +323,19 @@
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 			}
 			
+			.event-card[data-favorite="true"] {
+				background: linear-gradient(135deg, var(--card-bg) 0%, var(--hover-bg) 100%);
+			}
+			
+			.event-favorite-btn:hover {
+				transform: scale(1.2);
+			}
+			
+			.quick-add-team:hover, .quick-add-player:hover {
+				border-color: var(--accent) !important;
+				color: var(--accent) !important;
+			}
+			
 
 			.event-header {
 				display: flex;
@@ -661,7 +674,9 @@
 		</div>
 
 		<script src="js/sports-api.js?v=2025082023"></script>
-		<script src="js/simple-dashboard.js?v=2025082033"></script>
+		<script src="js/preferences-manager.js?v=2025082100"></script>
+		<script src="js/settings-ui.js?v=2025082100"></script>
+		<script src="js/simple-dashboard.js?v=2025082100"></script>
 
 		<script>
 			// Dark mode toggle
