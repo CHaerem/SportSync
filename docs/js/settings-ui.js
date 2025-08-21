@@ -155,6 +155,76 @@ class SettingsUI {
 					</div>
 				</div>
 
+				<!-- View Mode -->
+				<div style="margin-bottom: 24px;">
+					<h4 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary);">View Mode</h4>
+					<div style="display: flex; gap: 8px;">
+						<button class="view-mode-btn" data-mode="list" style="
+							flex: 1;
+							padding: 8px;
+							background: var(--accent);
+							border: 1px solid var(--accent);
+							border-radius: 8px;
+							color: white;
+							font-size: 0.85rem;
+							cursor: pointer;
+							transition: all 0.2s;
+						">List View</button>
+						<button class="view-mode-btn" data-mode="timeline" style="
+							flex: 1;
+							padding: 8px;
+							background: transparent;
+							border: 1px solid var(--border);
+							border-radius: 8px;
+							color: var(--muted);
+							font-size: 0.85rem;
+							cursor: pointer;
+							transition: all 0.2s;
+						">Timeline View</button>
+					</div>
+				</div>
+
+				<!-- Links -->
+				<div style="margin-bottom: 24px;">
+					<h4 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary);">Resources</h4>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<a href="data/events.ics" download style="
+							display: flex;
+							align-items: center;
+							gap: 8px;
+							padding: 8px 12px;
+							background: transparent;
+							border: 1px solid var(--border);
+							border-radius: 8px;
+							color: var(--text);
+							text-decoration: none;
+							font-size: 0.85rem;
+							transition: all 0.2s;
+						" onmouseover="this.style.borderColor='var(--text-secondary)'; this.style.background='var(--hover-bg)';" 
+						   onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent';">
+							<span>📅</span>
+							<span>Download Calendar (.ics)</span>
+						</a>
+						<a href="api-info.html" target="_blank" style="
+							display: flex;
+							align-items: center;
+							gap: 8px;
+							padding: 8px 12px;
+							background: transparent;
+							border: 1px solid var(--border);
+							border-radius: 8px;
+							color: var(--text);
+							text-decoration: none;
+							font-size: 0.85rem;
+							transition: all 0.2s;
+						" onmouseover="this.style.borderColor='var(--text-secondary)'; this.style.background='var(--hover-bg)';" 
+						   onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent';">
+							<span>ℹ️</span>
+							<span>API Information</span>
+						</a>
+					</div>
+				</div>
+
 				<!-- Reset Button -->
 				<button id="resetPreferences" style="
 					width: 100%;
@@ -296,6 +366,42 @@ class SettingsUI {
 				if (window.simpleDashboard) {
 					window.simpleDashboard.renderFilteredEvents();
 				}
+			}
+		});
+
+		// View mode buttons
+		document.querySelectorAll('.view-mode-btn').forEach(button => {
+			button.addEventListener('click', (e) => {
+				const mode = e.currentTarget.dataset.mode;
+				
+				// Update button styles
+				document.querySelectorAll('.view-mode-btn').forEach(btn => {
+					if (btn.dataset.mode === mode) {
+						btn.style.background = 'var(--accent)';
+						btn.style.borderColor = 'var(--accent)';
+						btn.style.color = 'white';
+					} else {
+						btn.style.background = 'transparent';
+						btn.style.borderColor = 'var(--border)';
+						btn.style.color = 'var(--muted)';
+					}
+				});
+				
+				// Set the view mode
+				if (window.simpleDashboard) {
+					window.simpleDashboard.setViewMode(mode);
+					this.preferences.setDefaultView(mode);
+				}
+			});
+		});
+
+		// Set initial view mode button state
+		const currentView = this.preferences.getDefaultView() || 'list';
+		document.querySelectorAll('.view-mode-btn').forEach(btn => {
+			if (btn.dataset.mode === currentView) {
+				btn.style.background = 'var(--accent)';
+				btn.style.borderColor = 'var(--accent)';
+				btn.style.color = 'white';
 			}
 		});
 

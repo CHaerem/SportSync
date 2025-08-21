@@ -23,6 +23,15 @@ class SimpleSportsDashboard {
 
 	async init() {
 		this.setupSimpleFilters();
+		
+		// Load saved view mode preference
+		if (this.preferences) {
+			const savedView = this.preferences.getDefaultView();
+			if (savedView && savedView !== 'list') {
+				this.viewMode = savedView;
+			}
+		}
+		
 		await this.updateLastUpdatedTime();
 		await this.loadAllEvents();
 
@@ -913,60 +922,136 @@ class SimpleSportsDashboard {
 
 		let filteredEvents = this.allEvents.filter(event => this.passesFilter(event));
 		
+		if (filteredEvents.length === 0) {
+			container.innerHTML = `<div style="text-align: center; padding: 40px; color: #999;"><p>No events found for this filter.</p></div>`;
+			return;
+		}
+		
 		// Group events by day and time slot
 		const eventsByDayAndTime = {};
-		const days = new Set();
-		const timeSlots = ['Morning\n(6-12)', 'Afternoon\n(12-18)', 'Evening\n(18-24)', 'Night\n(0-6)'];
+		const daysMap = new Map();
+		const timeSlots = [
+			{ label: 'Morning', range: '6-12', start: 6, end: 12 },
+			{ label: 'Afternoon', range: '12-18', start: 12, end: 18 },
+			{ label: 'Evening', range: '18-24', start: 18, end: 24 },
+			{ label: 'Night', range: '0-6', start: 0, end: 6 }
+		];
 		
+		// Process events
 		filteredEvents.forEach(event => {
 			const date = new Date(event.time);
-			const dayKey = date.toLocaleDateString('en-NO', { weekday: 'short', month: 'short', day: 'numeric' });
+			const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+			const dayKey = dateOnly.toISOString().split('T')[0];
 			const hour = date.getHours();
 			
-			let timeSlot;
-			if (hour >= 6 && hour < 12) timeSlot = 0;
-			else if (hour >= 12 && hour < 18) timeSlot = 1;
-			else if (hour >= 18 && hour < 24) timeSlot = 2;
-			else timeSlot = 3;
+			// Determine time slot
+			let timeSlotIndex;
+			if (hour >= 6 && hour < 12) timeSlotIndex = 0;
+			else if (hour >= 12 && hour < 18) timeSlotIndex = 1;
+			else if (hour >= 18 && hour < 24) timeSlotIndex = 2;
+			else timeSlotIndex = 3;
 			
-			days.add(dayKey);
+			// Add to days map with proper date object
+			if (!daysMap.has(dayKey)) {
+				daysMap.set(dayKey, {
+					date: dateOnly,
+					display: this.getTimelineDayLabel(dateOnly)
+				});
+			}
 			
-			const key = `${dayKey}-${timeSlot}`;
+			// Store event
+			const key = `${dayKey}-${timeSlotIndex}`;
 			if (!eventsByDayAndTime[key]) eventsByDayAndTime[key] = [];
-			eventsByDayAndTime[key].push(event);
+			
+			// Generate event ID for favorites
+			const eventId = `${event.sport}-${event.title}-${event.time}`.replace(/\s+/g, '-').toLowerCase();
+			const isFavorite = this.preferences ? this.preferences.isEventFavorite(event, eventId) : this.isFavoriteEvent(event);
+			
+			eventsByDayAndTime[key].push({
+				...event,
+				eventId,
+				isFavorite,
+				exactTime: date
+			});
 		});
 		
-		const sortedDays = Array.from(days).slice(0, 7); // Show only next 7 days
+		// Sort days and limit to 7
+		const sortedDays = Array.from(daysMap.entries())
+			.sort((a, b) => a[1].date - b[1].date)
+			.slice(0, 7);
+		
+		if (sortedDays.length === 0) {
+			container.innerHTML = `<div style="text-align: center; padding: 40px; color: #999;"><p>No upcoming events in the next week.</p></div>`;
+			return;
+		}
 		
 		let timelineHTML = `
 			<div class="timeline-wrapper">
-				<div class="timeline-grid">
+				<div class="timeline-grid" style="grid-template-columns: 80px repeat(${sortedDays.length}, minmax(140px, 1fr));">
 					<div class="timeline-header">
-						<div class="timeline-corner"></div>
-						${sortedDays.map(day => `<div class="timeline-day-header">${day}</div>`).join('')}
+						<div class="timeline-corner">
+							<span style="font-size: 0.75rem; opacity: 0.6;">Time</span>
+						</div>
+						${sortedDays.map(([key, info]) => `
+							<div class="timeline-day-header">
+								<div style="font-weight: 600;">${info.display.day}</div>
+								<div style="font-size: 0.7rem; opacity: 0.7;">${info.display.date}</div>
+							</div>
+						`).join('')}
 					</div>
 		`;
 		
+		// Render time slots
 		timeSlots.forEach((slot, slotIndex) => {
 			timelineHTML += `
 				<div class="timeline-row">
-					<div class="timeline-time-label">${slot}</div>
+					<div class="timeline-time-label">
+						<div style="font-weight: 500;">${slot.label}</div>
+						<div style="font-size: 0.65rem; opacity: 0.6;">${slot.range}</div>
+					</div>
 			`;
 			
-			sortedDays.forEach(day => {
-				const key = `${day}-${slotIndex}`;
+			sortedDays.forEach(([dayKey, dayInfo]) => {
+				const key = `${dayKey}-${slotIndex}`;
 				const events = eventsByDayAndTime[key] || [];
 				
+				// Sort events by time within the slot
+				events.sort((a, b) => a.exactTime - b.exactTime);
+				
 				timelineHTML += `<div class="timeline-cell">`;
-				events.forEach(event => {
-					const time = new Date(event.time).toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false });
+				events.slice(0, 3).forEach(event => { // Limit to 3 events per cell
+					const time = event.exactTime.toLocaleTimeString('en-NO', { 
+						hour: '2-digit', 
+						minute: '2-digit', 
+						hour12: false,
+						timeZone: 'Europe/Oslo'
+					});
+					
+					const sportEmoji = this.getSportEmoji(event.sport);
+					
 					timelineHTML += `
-						<div class="timeline-event ${event.sport}">
-							<div class="timeline-event-time">${time}</div>
-							<div class="timeline-event-title">${this.escapeHtml(event.title)}</div>
+						<div class="timeline-event ${event.sport} ${event.isFavorite ? 'favorite' : ''}" 
+							 data-event-id="${event.eventId}"
+							 title="${this.escapeHtml(event.title)}"
+							 style="${event.isFavorite ? 'background: var(--hover-bg); border-left-width: 4px;' : ''}">
+							<div class="timeline-event-header" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+								<span style="font-size: 0.7rem;">${sportEmoji}</span>
+								<span class="timeline-event-time">${time}</span>
+								${event.isFavorite ? '<span style="color: var(--accent); font-size: 0.7rem;">★</span>' : ''}
+							</div>
+							<div class="timeline-event-title">${this.escapeHtml(this.truncateTitle(event.title, 30))}</div>
 						</div>
 					`;
 				});
+				
+				if (events.length > 3) {
+					timelineHTML += `
+						<div style="font-size: 0.65rem; color: var(--muted); text-align: center; margin-top: 4px;">
+							+${events.length - 3} more
+						</div>
+					`;
+				}
+				
 				timelineHTML += `</div>`;
 			});
 			
@@ -975,6 +1060,82 @@ class SimpleSportsDashboard {
 		
 		timelineHTML += `</div></div>`; // Close timeline-grid and timeline-wrapper
 		container.innerHTML = timelineHTML;
+		
+		// Add click handlers for events
+		this.attachTimelineEventListeners();
+	}
+	
+	getTimelineDayLabel(date) {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		
+		const dateCompare = new Date(date);
+		dateCompare.setHours(0, 0, 0, 0);
+		
+		let day = date.toLocaleDateString('en-US', { weekday: 'short' });
+		const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+		
+		if (dateCompare.getTime() === today.getTime()) {
+			day = 'Today';
+		} else if (dateCompare.getTime() === tomorrow.getTime()) {
+			day = 'Tomorrow';
+		}
+		
+		return { day, date: dateStr };
+	}
+	
+	getSportEmoji(sport) {
+		switch(sport) {
+			case 'football': return '⚽';
+			case 'golf': return '⛳';
+			case 'tennis': return '🎾';
+			case 'f1':
+			case 'formula1': return '🏎️';
+			case 'chess': return '♟️';
+			case 'esports': return '🎮';
+			default: return '🏆';
+		}
+	}
+	
+	truncateTitle(title, maxLength) {
+		if (title.length <= maxLength) return title;
+		return title.substring(0, maxLength - 3) + '...';
+	}
+	
+	attachTimelineEventListeners() {
+		document.querySelectorAll('.timeline-event').forEach(element => {
+			element.style.cursor = 'pointer';
+			element.addEventListener('click', (e) => {
+				const eventId = e.currentTarget.dataset.eventId;
+				// Find the event and show details (could open a modal or expand)
+				const title = e.currentTarget.getAttribute('title');
+				
+				// For now, just toggle favorite status
+				if (this.preferences && eventId) {
+					const isFavorite = this.preferences.toggleEventFavorite(eventId);
+					if (isFavorite) {
+						e.currentTarget.classList.add('favorite');
+						e.currentTarget.style.background = 'var(--hover-bg)';
+						e.currentTarget.style.borderLeftWidth = '4px';
+					} else {
+						e.currentTarget.classList.remove('favorite');
+						e.currentTarget.style.background = '';
+						e.currentTarget.style.borderLeftWidth = '';
+					}
+					
+					// Update star indicator
+					const header = e.currentTarget.querySelector('.timeline-event-header');
+					const existingStar = header.querySelector('span[style*="color: var(--accent)"]');
+					if (isFavorite && !existingStar) {
+						header.innerHTML += '<span style="color: var(--accent); font-size: 0.7rem;">★</span>';
+					} else if (!isFavorite && existingStar) {
+						existingStar.remove();
+					}
+				}
+			});
+		});
 	}
 	
 	setViewMode(mode) {
