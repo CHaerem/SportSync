@@ -1,7 +1,38 @@
 {
-  "lastUpdated": "2025-08-30T18:09:17.047Z",
+  "lastUpdated": "2025-08-31T00:37:04.877Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
+    {
+      "name": "OBOS-ligaen",
+      "events": [
+        {
+          "id": "football-lyn-1896---odd-menn-senior-a-1756659600000",
+          "title": "Lyn 1896 - Odd Menn Senior A",
+          "time": "2025-08-31T17:00:00.000Z",
+          "venue": "Bislett stadion",
+          "sport": "football",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "Lyn 1896",
+          "awayTeam": "Odd Menn Senior A",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
+          }
+        }
+      ]
+    },
     {
       "name": "Premier League",
       "events": [
@@ -110,31 +141,6 @@
     {
       "name": "La Liga",
       "events": [
-        {
-          "id": "football-mallorca-at-real-madrid-1756582200000",
-          "title": "Mallorca at Real Madrid",
-          "time": "2025-08-30T19:30:00.000Z",
-          "venue": "Santiago Bernabéu",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Real Madrid",
-          "awayTeam": "Mallorca",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
         {
           "id": "football-villarreal-at-celta-vigo-1756652400000",
           "title": "Villarreal at Celta Vigo",
