@@ -1,35 +1,41 @@
 {
-  "lastUpdated": "2025-09-20T18:09:21.835Z",
+  "lastUpdated": "2025-09-21T00:36:50.245Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
-      "name": "Premier League",
+      "name": "OBOS-ligaen",
       "events": [
         {
-          "id": "football-brentford-at-fulham-1758394800000",
-          "title": "Brentford at Fulham",
-          "time": "2025-09-20T19:00:00.000Z",
-          "venue": "Craven Cottage",
+          "id": "football-lyn-1896---sogndal-menn-senior-a-1758466800000",
+          "title": "Lyn 1896 - Sogndal Menn Senior A",
+          "time": "2025-09-21T15:00:00.000Z",
+          "venue": "Bislett stadion",
           "sport": "football",
-          "meta": "Premier League",
-          "tournament": "Premier League",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
           "streaming": [
             {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
               "type": "streaming"
             }
           ],
-          "norwegian": false,
-          "homeTeam": "Fulham",
-          "awayTeam": "Brentford",
+          "norwegian": true,
+          "homeTeam": "Lyn 1896",
+          "awayTeam": "Sogndal Menn Senior A",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
           "additional": {
-            "status": "STATUS_SCHEDULED"
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "Premier League",
+      "events": [
         {
           "id": "football-newcastle-united-at-afc-bournemouth-1758459600000",
           "title": "Newcastle United at AFC Bournemouth",
@@ -104,30 +110,25 @@
           "additional": {
             "status": "STATUS_SCHEDULED"
           }
-        }
-      ]
-    },
-    {
-      "name": "La Liga",
-      "events": [
+        },
         {
-          "id": "football-athletic-club-at-valencia-1758394800000",
-          "title": "Athletic Club at Valencia",
-          "time": "2025-09-20T19:00:00.000Z",
-          "venue": "Mestalla",
+          "id": "football-manchester-united-at-brentford-1758972600000",
+          "title": "Manchester United at Brentford",
+          "time": "2025-09-27T11:30:00.000Z",
+          "venue": "Gtech Community Stadium",
           "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
+          "meta": "Premier League",
+          "tournament": "Premier League",
           "streaming": [
             {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
               "type": "streaming"
             }
           ],
           "norwegian": false,
-          "homeTeam": "Valencia",
-          "awayTeam": "Athletic Club",
+          "homeTeam": "Brentford",
+          "awayTeam": "Manchester United",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -135,6 +136,161 @@
             "status": "STATUS_SCHEDULED"
           }
         },
+        {
+          "id": "football-brighton-&-hove-albion-at-chelsea-1758981600000",
+          "title": "Brighton & Hove Albion at Chelsea",
+          "time": "2025-09-27T14:00:00.000Z",
+          "venue": "Stamford Bridge",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Chelsea",
+          "awayTeam": "Brighton & Hove Albion",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-liverpool-at-crystal-palace-1758981600000",
+          "title": "Liverpool at Crystal Palace",
+          "time": "2025-09-27T14:00:00.000Z",
+          "venue": "Selhurst Park",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Crystal Palace",
+          "awayTeam": "Liverpool",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-afc-bournemouth-at-leeds-united-1758981600000",
+          "title": "AFC Bournemouth at Leeds United",
+          "time": "2025-09-27T14:00:00.000Z",
+          "venue": "Elland Road",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Leeds United",
+          "awayTeam": "AFC Bournemouth",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-burnley-at-manchester-city-1758981600000",
+          "title": "Burnley at Manchester City",
+          "time": "2025-09-27T14:00:00.000Z",
+          "venue": "Etihad Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Manchester City",
+          "awayTeam": "Burnley",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-sunderland-at-nottingham-forest-1758990600000",
+          "title": "Sunderland at Nottingham Forest",
+          "time": "2025-09-27T16:30:00.000Z",
+          "venue": "The City Ground",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Nottingham Forest",
+          "awayTeam": "Sunderland",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-wolverhampton-wanderers-at-tottenham-hotspur-1758999600000",
+          "title": "Wolverhampton Wanderers at Tottenham Hotspur",
+          "time": "2025-09-27T19:00:00.000Z",
+          "venue": "Tottenham Hotspur Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Tottenham Hotspur",
+          "awayTeam": "Wolverhampton Wanderers",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        }
+      ]
+    },
+    {
+      "name": "La Liga",
+      "events": [
         {
           "id": "football-celta-vigo-at-rayo-vallecano-1758456000000",
           "title": "Celta Vigo at Rayo Vallecano",
@@ -228,156 +384,6 @@
           "norwegian": false,
           "homeTeam": "Barcelona",
           "awayTeam": "Getafe",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-girona-at-athletic-club-1758646800000",
-          "title": "Girona at Athletic Club",
-          "time": "2025-09-23T17:00:00.000Z",
-          "venue": "San Mamés",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Athletic Club",
-          "awayTeam": "Girona",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-valencia-at-espanyol-1758646800000",
-          "title": "Valencia at Espanyol",
-          "time": "2025-09-23T17:00:00.000Z",
-          "venue": "RCDE Stadium",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Espanyol",
-          "awayTeam": "Valencia",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-real-madrid-at-levante-1758655800000",
-          "title": "Real Madrid at Levante",
-          "time": "2025-09-23T19:30:00.000Z",
-          "venue": "Ciutat de Valencia",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Levante",
-          "awayTeam": "Real Madrid",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-villarreal-at-sevilla-1758655800000",
-          "title": "Villarreal at Sevilla",
-          "time": "2025-09-23T19:30:00.000Z",
-          "venue": "Ramón Sánchez-Pizjuán",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Sevilla",
-          "awayTeam": "Villarreal",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-alavés-at-getafe-1758733200000",
-          "title": "Alavés at Getafe",
-          "time": "2025-09-24T17:00:00.000Z",
-          "venue": "Estadio Coliseum",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Getafe",
-          "awayTeam": "Alavés",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-rayo-vallecano-at-atlético-madrid-1758742200000",
-          "title": "Rayo Vallecano at Atlético Madrid",
-          "time": "2025-09-24T19:30:00.000Z",
-          "venue": "Riyadh Air Metropolitano",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Atlético Madrid",
-          "awayTeam": "Rayo Vallecano",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
