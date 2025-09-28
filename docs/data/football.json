@@ -1,35 +1,41 @@
 {
-  "lastUpdated": "2025-09-27T18:09:45.020Z",
+  "lastUpdated": "2025-09-28T00:37:29.610Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
-      "name": "Premier League",
+      "name": "OBOS-ligaen",
       "events": [
         {
-          "id": "football-wolverhampton-wanderers-at-tottenham-hotspur-1758999600000",
-          "title": "Wolverhampton Wanderers at Tottenham Hotspur",
-          "time": "2025-09-27T19:00:00.000Z",
-          "venue": "Tottenham Hotspur Stadium",
+          "id": "football-hødd-menn-senior-a---lyn-1896-1759165200000",
+          "title": "Hødd Menn Senior A - Lyn 1896",
+          "time": "2025-09-29T17:00:00.000Z",
+          "venue": "Høddvoll",
           "sport": "football",
-          "meta": "Premier League",
-          "tournament": "Premier League",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
           "streaming": [
             {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
               "type": "streaming"
             }
           ],
-          "norwegian": false,
-          "homeTeam": "Tottenham Hotspur",
-          "awayTeam": "Wolverhampton Wanderers",
+          "norwegian": true,
+          "homeTeam": "Hødd Menn Senior A",
+          "awayTeam": "Lyn 1896",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
           "additional": {
-            "status": "STATUS_SCHEDULED"
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "Premier League",
+      "events": [
         {
           "id": "football-fulham-at-aston-villa-1759064400000",
           "title": "Fulham at Aston Villa",
@@ -129,30 +135,25 @@
           "additional": {
             "status": "STATUS_SCHEDULED"
           }
-        }
-      ]
-    },
-    {
-      "name": "La Liga",
-      "events": [
+        },
         {
-          "id": "football-athletic-club-at-villarreal-1758999600000",
-          "title": "Athletic Club at Villarreal",
-          "time": "2025-09-27T19:00:00.000Z",
-          "venue": "Estadio de la Cerámica",
+          "id": "football-tottenham-hotspur-at-leeds-united-1759577400000",
+          "title": "Tottenham Hotspur at Leeds United",
+          "time": "2025-10-04T11:30:00.000Z",
+          "venue": "Elland Road",
           "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
+          "meta": "Premier League",
+          "tournament": "Premier League",
           "streaming": [
             {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
               "type": "streaming"
             }
           ],
           "norwegian": false,
-          "homeTeam": "Villarreal",
-          "awayTeam": "Athletic Club",
+          "homeTeam": "Leeds United",
+          "awayTeam": "Tottenham Hotspur",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -160,6 +161,86 @@
             "status": "STATUS_SCHEDULED"
           }
         },
+        {
+          "id": "football-west-ham-united-at-arsenal-1759586400000",
+          "title": "West Ham United at Arsenal",
+          "time": "2025-10-04T14:00:00.000Z",
+          "venue": "Emirates Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Arsenal",
+          "awayTeam": "West Ham United",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-sunderland-at-manchester-united-1759586400000",
+          "title": "Sunderland at Manchester United",
+          "time": "2025-10-04T14:00:00.000Z",
+          "venue": "Old Trafford",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Manchester United",
+          "awayTeam": "Sunderland",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-liverpool-at-chelsea-1759595400000",
+          "title": "Liverpool at Chelsea",
+          "time": "2025-10-04T16:30:00.000Z",
+          "venue": "Stamford Bridge",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Chelsea",
+          "awayTeam": "Liverpool",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        }
+      ]
+    },
+    {
+      "name": "La Liga",
+      "events": [
         {
           "id": "football-sevilla-at-rayo-vallecano-1759060800000",
           "title": "Sevilla at Rayo Vallecano",
