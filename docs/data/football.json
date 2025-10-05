@@ -1,7 +1,38 @@
 {
-  "lastUpdated": "2025-10-04T18:09:27.861Z",
+  "lastUpdated": "2025-10-05T00:37:01.022Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
+    {
+      "name": "OBOS-ligaen",
+      "events": [
+        {
+          "id": "football-lyn-1896---moss-menn-senior-a-1759676400000",
+          "title": "Lyn 1896 - Moss Menn Senior A",
+          "time": "2025-10-05T15:00:00.000Z",
+          "venue": "Bislett stadion",
+          "sport": "football",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "Lyn 1896",
+          "awayTeam": "Moss Menn Senior A",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
+          }
+        }
+      ]
+    },
     {
       "name": "Premier League",
       "events": [
@@ -135,31 +166,6 @@
     {
       "name": "La Liga",
       "events": [
-        {
-          "id": "football-villarreal-at-real-madrid-1759604400000",
-          "title": "Villarreal at Real Madrid",
-          "time": "2025-10-04T19:00:00.000Z",
-          "venue": "Santiago Bernabéu",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Real Madrid",
-          "awayTeam": "Villarreal",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
         {
           "id": "football-elche-at-alavés-1759665600000",
           "title": "Elche at Alavés",
