@@ -1,36 +1,10 @@
 {
-  "lastUpdated": "2025-10-20T18:12:10.983Z",
+  "lastUpdated": "2025-10-21T00:34:54.669Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
       "name": "OBOS-ligaen",
       "events": [
-        {
-          "id": "football-aalesunds-menn-senior-a---lyn-1896-1761148800000",
-          "title": "Aalesunds Menn Senior A - Lyn 1896",
-          "time": "2025-10-22T16:00:00.000Z",
-          "venue": "Color Line Stadion",
-          "sport": "football",
-          "meta": "OBOS-ligaen",
-          "tournament": "OBOS-ligaen",
-          "streaming": [
-            {
-              "platform": "Discovery+",
-              "url": "https://www.discoveryplus.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": true,
-          "homeTeam": "Aalesunds Menn Senior A",
-          "awayTeam": "Lyn 1896",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "leagueName": "OBOS-ligaen",
-            "leagueCode": "nor.2"
-          }
-        },
         {
           "id": "football-lyn-1896---kongsvinger-menn-senior-a-1761400800000",
           "title": "Lyn 1896 - Kongsvinger Menn Senior A",
@@ -56,37 +30,38 @@
             "leagueName": "OBOS-ligaen",
             "leagueCode": "nor.2"
           }
+        },
+        {
+          "id": "football-aalesunds-menn-senior-a---lyn-1896-1761148800000",
+          "title": "Aalesunds Menn Senior A - Lyn 1896",
+          "time": "2025-10-22T16:00:00.000Z",
+          "venue": "Color Line Stadion",
+          "sport": "football",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "Aalesunds Menn Senior A",
+          "awayTeam": "Lyn 1896",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
+          }
         }
       ]
     },
     {
       "name": "Premier League",
       "events": [
-        {
-          "id": "football-brentford-at-west-ham-united-1760986800000",
-          "title": "Brentford at West Ham United",
-          "time": "2025-10-20T19:00:00.000Z",
-          "venue": "London Stadium",
-          "sport": "football",
-          "meta": "Premier League",
-          "tournament": "Premier League",
-          "streaming": [
-            {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "West Ham United",
-          "awayTeam": "Brentford",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
         {
           "id": "football-west-ham-united-at-leeds-united-1761332400000",
           "title": "West Ham United at Leeds United",
@@ -343,31 +318,6 @@
       "name": "La Liga",
       "events": [
         {
-          "id": "football-valencia-at-alavés-1760986800000",
-          "title": "Valencia at Alavés",
-          "time": "2025-10-20T19:00:00.000Z",
-          "venue": "Mendizorroza",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Alavés",
-          "awayTeam": "Valencia",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
           "id": "football-sevilla-at-real-sociedad-1761332400000",
           "title": "Sevilla at Real Sociedad",
           "time": "2025-10-24T19:00:00.000Z",
@@ -385,6 +335,56 @@
           "norwegian": false,
           "homeTeam": "Real Sociedad",
           "awayTeam": "Sevilla",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-real-oviedo-at-girona-1761393600000",
+          "title": "Real Oviedo at Girona",
+          "time": "2025-10-25T12:00:00.000Z",
+          "venue": "Municipal de Montilivi",
+          "sport": "football",
+          "meta": "La Liga",
+          "tournament": "La Liga",
+          "streaming": [
+            {
+              "platform": "TV 2 Play",
+              "url": "https://play.tv2.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Girona",
+          "awayTeam": "Real Oviedo",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-elche-at-espanyol-1761401700000",
+          "title": "Elche at Espanyol",
+          "time": "2025-10-25T14:15:00.000Z",
+          "venue": "RCDE Stadium",
+          "sport": "football",
+          "meta": "La Liga",
+          "tournament": "La Liga",
+          "streaming": [
+            {
+              "platform": "TV 2 Play",
+              "url": "https://play.tv2.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Espanyol",
+          "awayTeam": "Elche",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
