@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-10-26T18:10:12.002Z",
+  "lastUpdated": "2025-10-27T00:38:32.910Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
@@ -179,30 +179,25 @@
           "additional": {
             "status": "STATUS_SCHEDULED"
           }
-        }
-      ]
-    },
-    {
-      "name": "La Liga",
-      "events": [
+        },
         {
-          "id": "football-alavés-at-rayo-vallecano-1761508800000",
-          "title": "Alavés at Rayo Vallecano",
-          "time": "2025-10-26T20:00:00.000Z",
-          "venue": "Estadio de Vallecas",
+          "id": "football-newcastle-united-at-west-ham-united-1762092000000",
+          "title": "Newcastle United at West Ham United",
+          "time": "2025-11-02T14:00:00.000Z",
+          "venue": "London Stadium",
           "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
+          "meta": "Premier League",
+          "tournament": "Premier League",
           "streaming": [
             {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
               "type": "streaming"
             }
           ],
           "norwegian": false,
-          "homeTeam": "Rayo Vallecano",
-          "awayTeam": "Alavés",
+          "homeTeam": "West Ham United",
+          "awayTeam": "Newcastle United",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -210,6 +205,36 @@
             "status": "STATUS_SCHEDULED"
           }
         },
+        {
+          "id": "football-afc-bournemouth-at-manchester-city-1762101000000",
+          "title": "AFC Bournemouth at Manchester City",
+          "time": "2025-11-02T16:30:00.000Z",
+          "venue": "Etihad Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Manchester City",
+          "awayTeam": "AFC Bournemouth",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        }
+      ]
+    },
+    {
+      "name": "La Liga",
+      "events": [
         {
           "id": "football-atlético-madrid-at-real-betis-1761595200000",
           "title": "Atlético Madrid at Real Betis",
