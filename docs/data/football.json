@@ -1,35 +1,67 @@
 {
-  "lastUpdated": "2025-11-01T18:09:50.492Z",
+  "lastUpdated": "2025-11-02T00:37:53.487Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
-      "name": "Premier League",
+      "name": "OBOS-ligaen",
       "events": [
         {
-          "id": "football-aston-villa-at-liverpool-1762027200000",
-          "title": "Aston Villa at Liverpool",
-          "time": "2025-11-01T20:00:00.000Z",
-          "venue": "Anfield",
+          "id": "football-stabæk-menn-senior-a---lyn-1896-1762099200000",
+          "title": "Stabæk Menn Senior A - Lyn 1896",
+          "time": "2025-11-02T16:00:00.000Z",
+          "venue": "Nadderud stadion",
           "sport": "football",
-          "meta": "Premier League",
-          "tournament": "Premier League",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
           "streaming": [
             {
-              "platform": "Viaplay",
-              "url": "https://viaplay.no",
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
               "type": "streaming"
             }
           ],
-          "norwegian": false,
-          "homeTeam": "Liverpool",
-          "awayTeam": "Aston Villa",
+          "norwegian": true,
+          "homeTeam": "Stabæk Menn Senior A",
+          "awayTeam": "Lyn 1896",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
           "additional": {
-            "status": "STATUS_SCHEDULED"
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
           }
         },
+        {
+          "id": "football-lyn-1896---start-menn-senior-a-1762614000000",
+          "title": "Lyn 1896 - Start Menn Senior A",
+          "time": "2025-11-08T15:00:00.000Z",
+          "venue": "TBD",
+          "sport": "football",
+          "meta": "OBOS-ligaen",
+          "tournament": "OBOS-ligaen",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": true,
+          "homeTeam": "Lyn 1896",
+          "awayTeam": "Start Menn Senior A",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "leagueName": "OBOS-ligaen",
+            "leagueCode": "nor.2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Premier League",
+      "events": [
         {
           "id": "football-newcastle-united-at-west-ham-united-1762092000000",
           "title": "Newcastle United at West Ham United",
@@ -104,30 +136,25 @@
           "additional": {
             "status": "STATUS_SCHEDULED"
           }
-        }
-      ]
-    },
-    {
-      "name": "La Liga",
-      "events": [
+        },
         {
-          "id": "football-valencia-at-real-madrid-1762027200000",
-          "title": "Valencia at Real Madrid",
-          "time": "2025-11-01T20:00:00.000Z",
-          "venue": "Santiago Bernabéu",
+          "id": "football-manchester-united-at-tottenham-hotspur-1762605000000",
+          "title": "Manchester United at Tottenham Hotspur",
+          "time": "2025-11-08T12:30:00.000Z",
+          "venue": "Tottenham Hotspur Stadium",
           "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
+          "meta": "Premier League",
+          "tournament": "Premier League",
           "streaming": [
             {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
               "type": "streaming"
             }
           ],
           "norwegian": false,
-          "homeTeam": "Real Madrid",
-          "awayTeam": "Valencia",
+          "homeTeam": "Tottenham Hotspur",
+          "awayTeam": "Manchester United",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -135,6 +162,111 @@
             "status": "STATUS_SCHEDULED"
           }
         },
+        {
+          "id": "football-fulham-at-everton-1762614000000",
+          "title": "Fulham at Everton",
+          "time": "2025-11-08T15:00:00.000Z",
+          "venue": "Hill Dickinson Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Everton",
+          "awayTeam": "Fulham",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-burnley-at-west-ham-united-1762614000000",
+          "title": "Burnley at West Ham United",
+          "time": "2025-11-08T15:00:00.000Z",
+          "venue": "London Stadium",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "West Ham United",
+          "awayTeam": "Burnley",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-arsenal-at-sunderland-1762623000000",
+          "title": "Arsenal at Sunderland",
+          "time": "2025-11-08T17:30:00.000Z",
+          "venue": "Stadium of Light",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Sunderland",
+          "awayTeam": "Arsenal",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        },
+        {
+          "id": "football-wolverhampton-wanderers-at-chelsea-1762632000000",
+          "title": "Wolverhampton Wanderers at Chelsea",
+          "time": "2025-11-08T20:00:00.000Z",
+          "venue": "Stamford Bridge",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Chelsea",
+          "awayTeam": "Wolverhampton Wanderers",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        }
+      ]
+    },
+    {
+      "name": "La Liga",
+      "events": [
         {
           "id": "football-celta-vigo-at-levante-1762088400000",
           "title": "Celta Vigo at Levante",
@@ -253,31 +385,6 @@
           "norwegian": false,
           "homeTeam": "Real Oviedo",
           "awayTeam": "Osasuna",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "additional": {
-            "status": "STATUS_SCHEDULED"
-          }
-        },
-        {
-          "id": "football-real-sociedad-at-elche-1762545600000",
-          "title": "Real Sociedad at Elche",
-          "time": "2025-11-07T20:00:00.000Z",
-          "venue": "Martínez Valero",
-          "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Elche",
-          "awayTeam": "Real Sociedad",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
