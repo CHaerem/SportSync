@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-12-21T18:11:34.946Z",
+  "lastUpdated": "2025-12-22T00:40:18.556Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
@@ -229,30 +229,25 @@
           "additional": {
             "status": "STATUS_SCHEDULED"
           }
-        }
-      ]
-    },
-    {
-      "name": "La Liga",
-      "events": [
+        },
         {
-          "id": "football-getafe-at-real-betis-1766347200000",
-          "title": "Getafe at Real Betis",
-          "time": "2025-12-21T20:00:00.000Z",
-          "venue": "Estadio La Cartuja",
+          "id": "football-leeds-united-at-sunderland-1766930400000",
+          "title": "Leeds United at Sunderland",
+          "time": "2025-12-28T14:00:00.000Z",
+          "venue": "Stadium of Light",
           "sport": "football",
-          "meta": "La Liga",
-          "tournament": "La Liga",
+          "meta": "Premier League",
+          "tournament": "Premier League",
           "streaming": [
             {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
               "type": "streaming"
             }
           ],
           "norwegian": false,
-          "homeTeam": "Real Betis",
-          "awayTeam": "Getafe",
+          "homeTeam": "Sunderland",
+          "awayTeam": "Leeds United",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -260,6 +255,36 @@
             "status": "STATUS_SCHEDULED"
           }
         },
+        {
+          "id": "football-tottenham-hotspur-at-crystal-palace-1766939400000",
+          "title": "Tottenham Hotspur at Crystal Palace",
+          "time": "2025-12-28T16:30:00.000Z",
+          "venue": "Selhurst Park",
+          "sport": "football",
+          "meta": "Premier League",
+          "tournament": "Premier League",
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Crystal Palace",
+          "awayTeam": "Tottenham Hotspur",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
+          }
+        }
+      ]
+    },
+    {
+      "name": "La Liga",
+      "events": [
         {
           "id": "football-espanyol-at-athletic-club-1766433600000",
           "title": "Espanyol at Athletic Club",
