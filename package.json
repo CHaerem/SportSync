@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "python3 -m http.server 8000 --directory docs",
     "build": "npm run update:data && npm run build:events && npm run build:calendar",
-    "test": "npm run validate:data",
+    "test": "vitest run --no-file-parallelism",
+    "test:watch": "vitest",
+    "test:data": "npm run validate:data",
     "deploy": "echo 'Deployed via GitHub Pages automatically'",
     "update:data": "node scripts/fetch/index.js",
     "build:events": "node scripts/build-events.js",
-    "build:calendar": "node scripts/build-ics.js", 
+    "build:calendar": "node scripts/build-ics.js",
     "validate:data": "node scripts/validate-events.js",
+    "enrich": "node scripts/enrich-events.js",
     "clean": "rm -rf docs/data/*.json docs/data/*.ics",
     "refresh": "npm run clean && npm run build"
   },
@@ -22,7 +25,7 @@
     "github-pages",
     "api",
     "football",
-    "golf", 
+    "golf",
     "tennis",
     "formula-1",
     "chess",
@@ -31,8 +34,9 @@
   "author": "",
   "license": "MIT",
   "type": "module",
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

@@ -12,7 +12,7 @@ for (const sport of sports) {
 	if (!json || !Array.isArray(json.tournaments)) continue;
 	json.tournaments.forEach((t) => {
 		(t.events || []).forEach((ev) => {
-			all.push({
+			const event = {
 				sport,
 				tournament: t.name,
 				title: ev.title,
@@ -29,12 +29,21 @@ for (const sport of sports) {
 				featuredGroups: ev.featuredGroups || [],
 				homeTeam: ev.homeTeam || null,
 				awayTeam: ev.awayTeam || null,
-			});
+				isFavorite: ev.isFavorite || false,
+			};
+			// Preserve AI enrichment fields if present
+			if (ev.importance != null) event.importance = ev.importance;
+			if (ev.importanceReason) event.importanceReason = ev.importanceReason;
+			if (ev.summary) event.summary = ev.summary;
+			if (ev.tags && ev.tags.length > 0) event.tags = ev.tags;
+			if (ev.norwegianRelevance != null) event.norwegianRelevance = ev.norwegianRelevance;
+			if (ev.enrichedAt) event.enrichedAt = ev.enrichedAt;
+			all.push(event);
 		});
 	});
 }
-// Keep only future events (allow 2 minute grace window)
-const now = Date.now() - 2 * 60 * 1000;
+// Keep events that started up to 6 hours ago (ongoing matches/rounds)
+const now = Date.now() - 6 * 60 * 60 * 1000;
 const future = all.filter((e) => e.time && Date.parse(e.time) >= now);
 future.sort((a, b) => new Date(a.time) - new Date(b.time));
 fs.writeFileSync(

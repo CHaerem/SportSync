@@ -847,6 +847,259 @@
 				}
 			}
 
+			/* AI Enrichment styles */
+			.importance-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				padding: 2px 8px;
+				border-radius: 10px;
+				font-size: 0.65rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.3px;
+			}
+
+			.importance-badge.must-watch {
+				background: rgba(239, 68, 68, 0.12);
+				color: #ef4444;
+			}
+
+			.importance-badge.notable {
+				background: rgba(245, 158, 11, 0.12);
+				color: #d97706;
+			}
+
+			.dark .importance-badge.must-watch {
+				background: rgba(239, 68, 68, 0.2);
+				color: #f87171;
+			}
+
+			.dark .importance-badge.notable {
+				background: rgba(245, 158, 11, 0.2);
+				color: #fbbf24;
+			}
+
+			.event-summary {
+				font-size: 0.85rem;
+				color: var(--muted);
+				margin: -12px 0 16px 0;
+				line-height: 1.4;
+				font-style: italic;
+			}
+
+			.event-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
+				margin-top: 8px;
+			}
+
+			.event-tag {
+				padding: 2px 8px;
+				border-radius: 8px;
+				font-size: 0.65rem;
+				font-weight: 500;
+				border: 1px solid var(--border);
+				color: var(--muted);
+				background: var(--hover-bg);
+			}
+
+			.event-tag.rivalry, .event-tag.derby {
+				border-color: rgba(239, 68, 68, 0.3);
+				color: #ef4444;
+				background: rgba(239, 68, 68, 0.06);
+			}
+
+			.event-tag.major, .event-tag.grand-slam, .event-tag.final {
+				border-color: rgba(245, 158, 11, 0.3);
+				color: #d97706;
+				background: rgba(245, 158, 11, 0.06);
+			}
+
+			.event-tag.title-race, .event-tag.top-4-battle {
+				border-color: rgba(59, 130, 246, 0.3);
+				color: #3b82f6;
+				background: rgba(59, 130, 246, 0.06);
+			}
+
+			.event-tag.norwegian-player, .event-tag.norwegian-team {
+				border-color: rgba(34, 197, 94, 0.3);
+				color: #22c55e;
+				background: rgba(34, 197, 94, 0.06);
+			}
+
+			.event-tag.must-watch {
+				border-color: rgba(239, 68, 68, 0.3);
+				color: #ef4444;
+				background: rgba(239, 68, 68, 0.06);
+			}
+
+			/* Top Picks section */
+			#top-picks {
+				margin-bottom: 24px;
+			}
+
+			#top-picks:empty {
+				display: none;
+			}
+
+			.top-picks-header {
+				font-size: 0.85rem;
+				font-weight: 600;
+				color: var(--muted);
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				margin-bottom: 12px;
+			}
+
+			.top-picks-list {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+
+			.top-pick-card {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 12px 16px;
+				background: var(--card-bg);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				transition: all 0.15s;
+				cursor: default;
+			}
+
+			.top-pick-card:hover {
+				border-color: var(--text-secondary);
+			}
+
+			.top-pick-sport {
+				font-size: 1.1rem;
+				flex-shrink: 0;
+			}
+
+			.top-pick-info {
+				flex: 1;
+				min-width: 0;
+			}
+
+			.top-pick-title {
+				font-size: 0.85rem;
+				font-weight: 500;
+				color: var(--text);
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.top-pick-reason {
+				font-size: 0.75rem;
+				color: var(--muted);
+				margin-top: 2px;
+			}
+
+			.top-pick-time {
+				font-size: 0.75rem;
+				color: var(--text-secondary);
+				font-weight: 500;
+				flex-shrink: 0;
+			}
+
+			/* Sort toggle */
+			.sort-toggle {
+				background: transparent;
+				border: 1px solid var(--border);
+				padding: 6px 12px;
+				border-radius: 16px;
+				cursor: pointer;
+				font-size: 0.75rem;
+				color: var(--muted);
+				transition: all 0.15s ease;
+			}
+
+			.sort-toggle:hover {
+				border-color: var(--text-secondary);
+				color: var(--text);
+			}
+
+			.sort-toggle.active {
+				background: var(--text);
+				color: var(--bg);
+				border-color: var(--text);
+			}
+
+			/* Mobile styles for AI enrichment elements */
+			@media (max-width: 768px) {
+				.importance-badge {
+					font-size: 0.6rem;
+					padding: 1px 6px;
+				}
+
+				.event-summary {
+					font-size: 0.8rem;
+					margin: -8px 0 12px 0;
+				}
+
+				.event-tags {
+					gap: 3px;
+					margin-top: 6px;
+				}
+
+				.event-tag {
+					font-size: 0.6rem;
+					padding: 1px 6px;
+				}
+
+				#top-picks {
+					margin-bottom: 16px;
+				}
+
+				.top-picks-header {
+					font-size: 0.8rem;
+					margin-bottom: 8px;
+				}
+
+				.top-pick-card {
+					padding: 10px 12px;
+					gap: 8px;
+				}
+
+				.top-pick-title {
+					font-size: 0.8rem;
+				}
+
+				.top-pick-reason {
+					font-size: 0.7rem;
+				}
+
+				.top-pick-time {
+					font-size: 0.7rem;
+				}
+
+				.sort-toggle {
+					padding: 6px 10px;
+					font-size: 0.7rem;
+				}
+
+				/* AI assistant panel - responsive */
+				#ai-assistant-panel {
+					width: calc(100vw - 24px) !important;
+					right: 12px !important;
+					bottom: 72px !important;
+					max-height: 70vh !important;
+				}
+
+				#ai-assistant-btn {
+					width: 42px !important;
+					height: 42px !important;
+					bottom: 16px !important;
+					right: 16px !important;
+					font-size: 0.75rem !important;
+				}
+			}
+
 			/* Extra small devices */
 			@media (max-width: 380px) {
 				h1 {
@@ -907,6 +1160,7 @@
 						<button class="filter-btn" data-filter="today">Today</button>
 						<button class="filter-btn" data-filter="week">Week</button>
 						<button class="filter-btn" data-filter="favorites">★</button>
+						<button class="sort-toggle" id="sortToggle" title="Sort by importance">★ Top</button>
 					</div>
 					<div style="display: flex; gap: 6px;">
 						<button class="sport-filter" data-filter="golf" title="Golf">⛳</button>
@@ -920,6 +1174,7 @@
 			</div>
 			
 
+			<div id="top-picks"></div>
 			<div class="events-list" id="eventsContainer">
 				<div class="loading">
 					<div class="spinner"></div>
@@ -932,6 +1187,7 @@
 		<script src="js/preferences-manager.js?v=2025082100"></script>
 		<script src="js/settings-ui.js?v=2025082100"></script>
 		<script src="js/simple-dashboard.js?v=2025082100"></script>
+		<script src="js/ai-assistant.js?v=2026020700"></script>
 
 		<script>
 			// Dark mode toggle

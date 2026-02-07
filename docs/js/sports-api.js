@@ -755,7 +755,7 @@ class SportsAPI {
 				tournament: "CS2 Major",
 				events: [
 					{
-						title: "FaZe Clan vs G2 Esports",
+						title: "100 Thieves vs G2 Esports",
 						meta: "CS2 Major",
 						time: new Date(Date.now() + 86400000).toISOString(),
 						venue: "Copenhagen Arena",

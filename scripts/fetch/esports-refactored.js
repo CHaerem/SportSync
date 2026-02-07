@@ -10,11 +10,71 @@ export class EsportsFetcher extends BaseFetcher {
 
 	async fetchFromSource(source) {
 		if (source.api === "hltv") {
+			// Try PandaScore first if API key available
+			const pandaEvents = await this.fetchPandaScore();
+			if (pandaEvents.length > 0) return pandaEvents;
+			// Fallback to HLTV community API
 			return await this.fetchHLTV(source);
 		} else if (source.api === "fallback" && source.enabled) {
 			return await this.fetchFallbackMatches();
 		}
 		return [];
+	}
+
+	async fetchPandaScore() {
+		const apiKey = process.env.PANDASCORE_API_KEY;
+		if (!apiKey) return [];
+
+		const matches = [];
+		try {
+			const upcoming = await this.apiClient.fetchJSON(
+				`https://api.pandascore.co/cs2/matches/upcoming?per_page=50&token=${apiKey}`
+			);
+			if (!Array.isArray(upcoming)) return [];
+
+			const focusTeams = this.config.filters?.teams || [];
+			const trackedTournaments = new Set();
+
+			// Find tournaments with tracked teams
+			for (const match of upcoming) {
+				const opponents = match.opponents || [];
+				for (const opp of opponents) {
+					const name = opp.opponent?.name || "";
+					if (focusTeams.some(t => name.toLowerCase().includes(t.toLowerCase()))) {
+						const tournament = match.tournament?.name || match.league?.name || "";
+						if (tournament) trackedTournaments.add(tournament);
+					}
+				}
+			}
+
+			// Get all matches from those tournaments
+			for (const match of upcoming) {
+				const tournament = match.tournament?.name || match.league?.name || "";
+				const opponents = match.opponents || [];
+				const team1 = opponents[0]?.opponent?.name || "TBD";
+				const team2 = opponents[1]?.opponent?.name || "TBD";
+				const isDirect = focusTeams.some(t =>
+					team1.toLowerCase().includes(t.toLowerCase()) ||
+					team2.toLowerCase().includes(t.toLowerCase())
+				);
+
+				if (!trackedTournaments.has(tournament) && !isDirect) continue;
+
+				matches.push({
+					title: `${team1} vs ${team2}`,
+					time: match.begin_at || match.scheduled_at,
+					venue: "Online",
+					tournament: tournament || "CS2 Match",
+					norwegian: isDirect,
+					meta: tournament || "CS2 Competition",
+				});
+			}
+
+			console.log(`PandaScore: ${matches.length} relevant CS2 matches`);
+		} catch (err) {
+			console.warn("PandaScore fetch failed:", err.message);
+		}
+		return matches;
 	}
 
 	async fetchHLTV(source) {
@@ -30,6 +90,18 @@ export class EsportsFetcher extends BaseFetcher {
 			}
 			
 			console.log(`Total HLTV matches found: ${data.length}`);
+
+			// Check data freshness
+			const newest = data.reduce((max, m) => {
+				const t = new Date(m.date || m.time || 0).getTime();
+				return t > max ? t : max;
+			}, 0);
+			const daysSinceNewest = (Date.now() - newest) / (1000 * 60 * 60 * 24);
+			if (daysSinceNewest > 30) {
+				console.warn(`HLTV data is stale (${Math.round(daysSinceNewest)} days old), skipping`);
+				return matches;
+			}
+
 			const focusTeams = this.config.filters?.teams || [];
 			
 			const filteredMatches = data.filter(match => {
@@ -68,17 +140,8 @@ export class EsportsFetcher extends BaseFetcher {
 		const currentWeekEnd = new Date(currentWeekStart);
 		currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
 		
-		// Known tournament matches (manual fallback)
-		const knownMatches = [
-			{
-				title: "FaZe Clan vs Aurora Gaming",
-				time: "2025-08-20T17:30:00Z",
-				venue: "Online",
-				tournament: "Esports World Cup 2025",
-				norwegian: true,
-				meta: "Esports World Cup 2025 - Round 1"
-			}
-		];
+		// No hardcoded matches — rely on API data
+		const knownMatches = [];
 		
 		return knownMatches.filter(match => {
 			const matchDate = new Date(match.time);

@@ -56,64 +56,83 @@ export class ChessFetcher extends BaseFetcher {
 
 	async fetchLichessBroadcasts(source) {
 		const events = [];
-		
+
 		try {
-			const data = await this.apiClient.fetchJSON(source.url);
-			
-			if (!data?.tours || !Array.isArray(data.tours)) {
-				console.warn("Invalid Lichess broadcast response");
+			// Use /api/broadcast/top which returns structured JSON with active/upcoming
+			const data = await this.apiClient.fetchJSON("https://lichess.org/api/broadcast/top");
+
+			if (!data || typeof data !== "object") {
+				console.warn("Invalid Lichess broadcast/top response");
 				return events;
 			}
-			
-			const proTournaments = data.tours.filter(tour => {
-				if (!source.filterProfessional) return true;
-				
-				const name = (tour.name || "").toLowerCase();
-				const desc = (tour.description || "").toLowerCase();
-				
-				const isElite = [
-					'world championship', 'candidates', 'grand prix', 'fide',
-					'norway chess', 'tata steel', 'sinquefield', 'grand slam'
-				].some(keyword => name.includes(keyword) || desc.includes(keyword));
-				
-				const isAmateur = [
-					'bullet', 'blitz arena', 'rapid arena', 'titled tuesday',
-					'hourly', 'daily arena', 'amateur'
-				].some(keyword => name.includes(keyword) || desc.includes(keyword));
-				
-				return isElite && !isAmateur;
-			});
-			
-			for (const tour of proTournaments) {
+
+			const active = Array.isArray(data.active) ? data.active : [];
+			const upcoming = Array.isArray(data.upcoming) ? data.upcoming : [];
+			const allBroadcasts = [...active, ...upcoming];
+			console.log(`Lichess broadcasts: ${active.length} active, ${upcoming.length} upcoming`);
+
+			for (const entry of allBroadcasts) {
+				const tour = entry.tour || {};
+				const rounds = entry.rounds || [];
+				const round = entry.round || {};
+				const info = tour.info || {};
+
 				const norwegianPlayers = this.findNorwegianPlayers(tour);
-				
-				if (norwegianPlayers.length > 0) {
+				const isTopTier = (tour.tier || 0) >= 5;
+
+				if (norwegianPlayers.length === 0 && !isTopTier) continue;
+
+				// Add upcoming/ongoing rounds
+				const allRounds = rounds.length > 0 ? rounds : (round.id ? [round] : []);
+				const upcomingRounds = allRounds.filter(r => !r.finished);
+
+				if (upcomingRounds.length > 0) {
+					for (const r of upcomingRounds) {
+						events.push({
+							title: `${r.name || "Round"} – ${tour.name}`,
+							time: r.startsAt ? new Date(r.startsAt).toISOString() : new Date().toISOString(),
+							venue: info.location || "Online",
+							tournament: tour.name,
+							participants: norwegianPlayers,
+							norwegian: norwegianPlayers.length > 0,
+							meta: tour.name,
+						});
+					}
+				} else {
+					const startDate = tour.dates && tour.dates[0] ? new Date(tour.dates[0]) : new Date();
 					events.push({
 						title: tour.name,
-						time: new Date().toISOString(),
-						venue: "Online/Live",
+						time: startDate.toISOString(),
+						venue: info.location || "Online",
 						tournament: tour.name,
 						participants: norwegianPlayers,
-						norwegian: true,
-						meta: `Professional Chess - ${tour.name}`
+						norwegian: norwegianPlayers.length > 0,
+						meta: `Professional Chess - ${tour.name}`,
 					});
 				}
+
+				console.log(`Chess: ${tour.name} (tier ${tour.tier || "?"}, Norwegian: ${norwegianPlayers.join(", ") || "none"})`);
 			}
 		} catch (error) {
 			console.warn("Failed to fetch Lichess broadcasts:", error.message);
 		}
-		
+
 		return events;
 	}
 
 	findNorwegianPlayers(tour) {
 		const norwegianNames = this.config.norwegian?.players || [];
-		const tourText = JSON.stringify(tour).toLowerCase();
-		
+		// Check name, description, and info.players field
+		const searchText = [
+			tour.name || "",
+			tour.description || "",
+			tour.info?.players || "",
+		].join(" ").toLowerCase();
+
 		return norwegianNames.filter(player => {
 			const playerLower = player.toLowerCase();
-			return tourText.includes(playerLower) || 
-				   playerLower.split(' ').every(part => tourText.includes(part));
+			const lastName = playerLower.split(" ").pop();
+			return searchText.includes(playerLower) || searchText.includes(lastName);
 		});
 	}
 

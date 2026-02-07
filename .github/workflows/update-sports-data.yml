@@ -48,6 +48,7 @@ jobs:
       - name: Fetch All Sports Data
         env:
           LIVEGOLF_API_KEY: ${{ secrets.LIVEGOLF_API_KEY }}
+          PANDASCORE_API_KEY: ${{ secrets.PANDASCORE_API_KEY }}
         run: |
           npm run update:data
 
@@ -58,6 +59,12 @@ jobs:
       - name: Generate aggregated events file
         run: |
           npm run build:events || echo "Aggregation failed"
+
+      - name: Enrich events with AI
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          npm run enrich || echo "AI enrichment failed, using raw data"
 
       - name: Validate unified events (future-only)
         run: |
@@ -102,6 +109,10 @@ jobs:
           if [ -f docs/data/events.json ]; then
             TOTAL=$(jq -r 'length' docs/data/events.json 2>/dev/null || echo 0)
             echo "- **Total Events**: $TOTAL" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f docs/data/events.json ]; then
+            ENRICHED=$(jq -r '[.[] | select(.importance != null)] | length' docs/data/events.json 2>/dev/null || echo 0)
+            echo "- **AI Enriched**: $ENRICHED/$TOTAL events" >> $GITHUB_STEP_SUMMARY
           fi
           if [ -f docs/data/events.ics ]; then
             SIZE=$(wc -c < docs/data/events.ics | tr -d ' ')

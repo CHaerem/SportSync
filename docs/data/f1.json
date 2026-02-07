@@ -1,23 +1,28 @@
 {
-  "lastUpdated": "2025-08-21T12:13:49.830Z",
+  "lastUpdated": "2026-02-07T16:17:52.199Z",
   "source": "ESPN F1 Racing API",
   "tournaments": [
     {
       "name": "Formula 1 2025 - Race Weekend",
       "events": [
         {
-          "id": "formula1-heineken-dutch-grand-prix-1756463400000",
-          "title": "Heineken Dutch Grand Prix",
-          "time": "2025-08-29T10:30:00.000Z",
+          "id": "formula1-qatar-airways-australian-grand-prix-1772760600000",
+          "title": "Qatar Airways Australian Grand Prix",
+          "time": "2026-03-06T01:30:00.000Z",
           "venue": "TBD",
           "sport": "formula1",
           "meta": "Formula 1 2025 - Race Weekend",
           "tournament": "Formula 1 2025 - Race Weekend",
           "streaming": [
             {
-              "platform": "ESPN2",
-              "url": "",
-              "type": "tv"
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            },
+            {
+              "platform": "F1 TV Pro",
+              "url": "https://f1tv.formula1.com",
+              "type": "streaming"
             }
           ],
           "norwegian": false,
@@ -26,6 +31,7 @@
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
+          "isFavorite": false,
           "additional": {
             "status": "STATUS_SCHEDULED"
           }

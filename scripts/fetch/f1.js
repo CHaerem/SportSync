@@ -21,7 +21,9 @@ export async function fetchF1ESPN() {
 				streaming: [],
 				norwegian: false,
 			}));
-	} catch {}
+	} catch (err) {
+		console.error("F1 fetch failed:", err.message);
+	}
 	return {
 		lastUpdated: iso(),
 		source: "ESPN F1 Racing API",

@@ -6,6 +6,7 @@ class SimpleSportsDashboard {
 		this.selectedSports = new Set(); // Track multiple selected sports
 		this.allEvents = [];
 		this.viewMode = 'list'; // Default view mode
+		this.sortByImportance = false; // Sort toggle state
 		
 		// Initialize preferences if available
 		if (window.PreferencesManager) {
@@ -79,6 +80,16 @@ class SimpleSportsDashboard {
 				this.updateFilterCount();
 			});
 		});
+
+		// Sort by importance toggle
+		const sortToggle = document.getElementById('sortToggle');
+		if (sortToggle) {
+			sortToggle.addEventListener('click', () => {
+				this.sortByImportance = !this.sortByImportance;
+				sortToggle.classList.toggle('active', this.sortByImportance);
+				this.renderFilteredEvents();
+			});
+		}
 	}
 
 	updateFilterCount() {
@@ -151,8 +162,17 @@ class SimpleSportsDashboard {
 					featuredGroups: ev.featuredGroups || [],
 					homeTeam: ev.homeTeam || null,
 					awayTeam: ev.awayTeam || null,
+					// AI enrichment fields (optional)
+					importance: ev.importance || null,
+					importanceReason: ev.importanceReason || null,
+					summary: ev.summary || null,
+					tags: ev.tags || [],
+					norwegianRelevance: ev.norwegianRelevance || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
+			// Expose for AI assistant
+			window._sportsSyncEvents = this.allEvents;
+			window._sportsSyncPreferences = this.preferences;
 			this.renderFilteredEvents();
 		} catch (error) {
 			console.error("Error loading events:", error);
@@ -200,6 +220,14 @@ class SimpleSportsDashboard {
 		let filteredEvents = this.allEvents.filter((event) =>
 			this.passesFilter(event)
 		);
+
+		// Render Top Picks (before slicing/sorting)
+		this.renderTopPicks(filteredEvents);
+
+		// Sort by importance if toggle is active
+		if (this.sortByImportance) {
+			filteredEvents.sort((a, b) => (b.importance || 0) - (a.importance || 0));
+		}
 
 		// Limit to next 20 events to keep it simple
 		filteredEvents = filteredEvents.slice(0, 20);
@@ -278,26 +306,28 @@ class SimpleSportsDashboard {
 				}
 				
 				// Special handling for golf events with Norwegian players - CLEAN DESIGN
+				const hasTeeTimeData = event.norwegianPlayers?.some(p => p.teeTime);
+				const golfSectionTitle = hasTeeTimeData ? 'Tee Times' : 'Norwegian Players';
 				const norwegianPlayersLine = event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length
 					? `<div class="tee-times">
-						<div style="font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Tee Times</div>
+						<div style="font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">${golfSectionTitle}</div>
 						${event.norwegianPlayers.map(player => {
-							const teeTimeDisplay = player.teeTime 
+							const teeTimeDisplay = player.teeTime
 								? `${this.escapeHtml(player.teeTime)}`
-								: 'TBD';
-							
+								: '';
+
 							const headshot = this.getGolferHeadshot(player.name);
-							
+
 							return `
 								<div class="tee-time-player">
 									<div class="player-info">
-										${headshot 
-											? `<img src="${headshot}" alt="${this.escapeHtml(player.name)}" class="golfer-headshot">` 
+										${headshot
+											? `<img src="${headshot}" alt="${this.escapeHtml(player.name)}" class="golfer-headshot">`
 											: `<div class="golfer-headshot-placeholder">⛳</div>`
 										}
 										<span class="player-name">${this.escapeHtml(player.name)}</span>
 									</div>
-									<span class="player-time">${teeTimeDisplay}</span>
+									${teeTimeDisplay ? `<span class="player-time">${teeTimeDisplay}</span>` : ''}
 								</div>
 							`;
 						}).join('')}
@@ -344,14 +374,31 @@ class SimpleSportsDashboard {
 					}).join('');
 				}
 				
+				// AI enrichment display
+				const importanceBadge = event.importance >= 4
+					? `<span class="importance-badge must-watch">Must Watch</span>`
+					: event.importance === 3
+					? `<span class="importance-badge notable">Notable</span>`
+					: '';
+
+				const summaryLine = event.summary
+					? `<p class="event-summary">${this.escapeHtml(event.summary)}</p>`
+					: '';
+
+				const tagsHTML = event.tags && event.tags.length > 0
+					? `<div class="event-tags">${event.tags.map(tag =>
+						`<span class="event-tag ${tag}">${this.escapeHtml(tag.replace(/-/g, ' '))}</span>`
+					).join('')}</div>`
+					: '';
+
 				return `
 				${dayDivider}
                 <div class="event-card ${event.sport}" data-event-id="${eventId}" data-event-index="${index}" ${isFavorite ? 'data-favorite="true"' : ''}>
                     <div class="sport-line ${event.sport}"></div>
-                    <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}</div>
-                    <button class="event-favorite-btn" data-event-id="${eventId}" 
-                        style="position: absolute; top: 12px; left: 12px; background: none; border: none; 
-                        font-size: 18px; cursor: pointer; color: var(--accent); opacity: ${isFavorite ? '1' : '0.3'}; 
+                    <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}${importanceBadge ? ` ${importanceBadge}` : ''}</div>
+                    <button class="event-favorite-btn" data-event-id="${eventId}"
+                        style="position: absolute; top: 12px; left: 12px; background: none; border: none;
+                        font-size: 18px; cursor: pointer; color: var(--accent); opacity: ${isFavorite ? '1' : '0.3'};
                         transition: opacity 0.2s; z-index: 10;"
                         title="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
                         ${isFavorite ? '★' : '☆'}
@@ -364,9 +411,10 @@ class SimpleSportsDashboard {
                     </div>
                     <div class="event-content">
                         <h3 class="event-title">${this.escapeHtml(event.title)}</h3>
+                        ${summaryLine}
                         ${teamsDisplay}
                         ${
-							(venueDisplay || tournamentDisplay) 
+							(venueDisplay || tournamentDisplay)
 								? `<div class="event-meta">
 									${tournamentDisplay}
 									${venueDisplay}
@@ -375,6 +423,7 @@ class SimpleSportsDashboard {
 						}
                         ${norwegianPlayersLine}
                         ${this.renderStreamingInfo(event.streaming, event.sport, event.tournament)}
+                        ${tagsHTML}
                         ${quickActions ? `<div style="margin-top: 12px;">${quickActions}</div>` : ''}
                     </div>
                 </div>
@@ -460,6 +509,44 @@ class SimpleSportsDashboard {
 		});
 	}
 
+	renderTopPicks(filteredEvents) {
+		const container = document.getElementById('top-picks');
+		if (!container) return;
+
+		// Only show if we have enrichment data
+		const enrichedEvents = filteredEvents.filter(e => e.importance && e.importance >= 3);
+		if (enrichedEvents.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+
+		// Sort by importance descending, take top 5
+		const topPicks = [...enrichedEvents]
+			.sort((a, b) => (b.importance || 0) - (a.importance || 0))
+			.slice(0, 5);
+
+		const sportEmojiMap = {
+			football: '⚽', golf: '⛳', tennis: '🎾',
+			f1: '🏎️', formula1: '🏎️', chess: '♟️', esports: '🎮'
+		};
+
+		container.innerHTML = `
+			<div class="top-picks-header">Top Picks</div>
+			<div class="top-picks-list">
+				${topPicks.map(event => `
+					<div class="top-pick-card">
+						<span class="top-pick-sport">${sportEmojiMap[event.sport] || '🏅'}</span>
+						<div class="top-pick-info">
+							<div class="top-pick-title">${this.escapeHtml(event.title)}</div>
+							<div class="top-pick-reason">${this.escapeHtml(event.importanceReason || event.summary || '')}</div>
+						</div>
+						<span class="top-pick-time">${this.escapeHtml(this.formatEventTime(event.time))}</span>
+					</div>
+				`).join('')}
+			</div>
+		`;
+	}
+
 	passesFilter(event) {
 		const now = new Date();
 		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -521,27 +608,26 @@ class SimpleSportsDashboard {
 		}
 		
 		// Fallback to hardcoded favorites if no preferences manager
-		// Check for favorite football teams: Lyn and Barcelona
+		// Check for favorite football teams: Barcelona, Liverpool, Lyn
 		if (event.sport === "football") {
 			const title = event.title.toLowerCase();
 			const homeTeam = event.homeTeam?.toLowerCase() || "";
 			const awayTeam = event.awayTeam?.toLowerCase() || "";
-			
-			// Check for Barcelona (various spellings)
-			const isBarca = title.includes("barcelona") || title.includes("barça") || 
+
+			const isBarca = title.includes("barcelona") || title.includes("barça") ||
 							homeTeam.includes("barcelona") || awayTeam.includes("barcelona");
-			
-			// Check for Lyn (various formats)
-			const isLyn = title.includes("lyn") || 
+			const isLiverpool = title.includes("liverpool") ||
+							homeTeam.includes("liverpool") || awayTeam.includes("liverpool");
+			const isLyn = title.includes("lyn") ||
 						  homeTeam.includes("lyn") || awayTeam.includes("lyn");
-			
-			return isBarca || isLyn;
+
+			return isBarca || isLiverpool || isLyn;
 		}
-		
-		// Check for favorite esports team: FaZe
+
+		// Check for favorite esports team: 100 Thieves (rain)
 		if (event.sport === "esports") {
 			const title = event.title.toLowerCase();
-			return title.includes("faze");
+			return title.includes("100 thieves") || title.includes("100t");
 		}
 		
 		// Check for golf tournaments with Norwegian players
@@ -1172,33 +1258,26 @@ class SimpleSportsDashboard {
 	}
 
 	renderStreamingInfo(streaming, sport, tournament) {
-		// Map Norwegian streaming services based on sport and tournament
-		let services = [];
-		
-		if (sport === 'football') {
-			if (tournament && tournament.toLowerCase().includes('premier league')) {
-				services.push({ platform: 'Viaplay', url: 'https://viaplay.no' });
-			} else if (tournament && (tournament.toLowerCase().includes('obos') || tournament.toLowerCase().includes('eliteserien'))) {
-				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
-			} else if (tournament && tournament.toLowerCase().includes('la liga')) {
-				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
-			}
-		} else if (sport === 'golf') {
-			if (tournament && tournament.toLowerCase().includes('dp world')) {
-				services.push({ platform: 'TV2 Play', url: 'https://play.tv2.no' });
-			} else if (tournament && tournament.toLowerCase().includes('pga')) {
-				services.push({ platform: 'Discovery+', url: 'https://www.discoveryplus.no' });
-			}
-		} else if (sport === 'tennis') {
-			services.push({ platform: 'Discovery+', url: 'https://www.discoveryplus.no' });
-		} else if (sport === 'f1' || sport === 'formula1') {
-			services.push({ platform: 'Viaplay', url: 'https://viaplay.no' });
+		// Use streaming data from events.json (assigned by norwegian-streaming.js in pipeline)
+		// Minimal fallback only for cases where pipeline data is missing
+		let streamingSources = (streaming && streaming.length > 0) ? streaming : [];
+
+		if (streamingSources.length === 0) {
+			// Lightweight fallback for edge cases
+			const fallbacks = {
+				football: { platform: 'Viaplay', url: 'https://viaplay.no' },
+				golf: { platform: 'Viaplay', url: 'https://viaplay.no' },
+				tennis: { platform: 'Discovery+', url: 'https://www.discoveryplus.no' },
+				f1: { platform: 'Viaplay', url: 'https://viaplay.no' },
+				formula1: { platform: 'Viaplay', url: 'https://viaplay.no' },
+				chess: { platform: 'chess24', url: 'https://chess24.com' },
+				esports: { platform: 'Twitch', url: 'https://twitch.tv' },
+			};
+			const fb = fallbacks[sport];
+			if (fb) streamingSources = [fb];
 		}
-		
-		// Use provided streaming data if available, otherwise use our mappings
-		const streamingSources = (streaming && streaming.length > 0) ? streaming : services;
-		
-		if (!streamingSources || streamingSources.length === 0) {
+
+		if (streamingSources.length === 0) {
 			return "";
 		}
 

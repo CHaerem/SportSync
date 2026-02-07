@@ -15,18 +15,19 @@ class PreferencesManager {
 			console.error('Error loading preferences:', error);
 		}
 		
-		// Default preferences
+		// Default preferences — seeded from user-context.json values
+		// so frontend and backend start in sync
 		return {
 			favoriteSports: [],
 			favoriteTeams: {
-				football: [],
-				esports: []
+				football: ['Barcelona', 'Liverpool', 'Lyn'],
+				esports: ['100 Thieves']
 			},
 			favoritePlayers: {
-				golf: [],
-				tennis: []
+				golf: ['Viktor Hovland'],
+				tennis: ['Casper Ruud']
 			},
-			favoriteEvents: [], // Store individual event IDs
+			favoriteEvents: [],
 			hidePassedEvents: false,
 			defaultView: 'list',
 			theme: 'auto'
@@ -216,6 +217,31 @@ class PreferencesManager {
 
 	getTheme() {
 		return this.preferences.theme;
+	}
+
+	// Get all preferences (used by AI assistant)
+	getPreferences() {
+		return this.preferences;
+	}
+
+	// Export preferences in backend format (matches user-context.json)
+	// Use this to keep frontend and enrichment pipeline in sync
+	exportForBackend() {
+		const teams = [];
+		for (const [sport, sportTeams] of Object.entries(this.preferences.favoriteTeams || {})) {
+			teams.push(...sportTeams);
+		}
+		const players = [];
+		for (const [sport, sportPlayers] of Object.entries(this.preferences.favoritePlayers || {})) {
+			players.push(...sportPlayers);
+		}
+		return {
+			favoriteTeams: teams,
+			favoritePlayers: players,
+			favoriteEsportsOrgs: this.preferences.favoriteTeams?.esports || [],
+			location: 'Norway',
+			sportPreferences: {}
+		};
 	}
 
 	// Reset preferences

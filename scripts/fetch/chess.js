@@ -24,54 +24,53 @@ function loadJson(file, fallback = []) {
 	}
 }
 
-// Validate the structure of the Lichess broadcast response
-function isValidBroadcastResponse(resp) {
-	// The expected structure is an object with a "tours" property that is an array
-	return (
-		resp &&
-		typeof resp === "object" &&
-		Array.isArray(resp.tours)
-	);
+// Check if any Norwegian player is mentioned in a text field
+function findNorwegianPlayers(text, players) {
+	const lower = (text || "").toLowerCase();
+	return players.filter(p => {
+		const pLower = p.name.toLowerCase();
+		// Check last name (most reliable — "Carlsen" matches "Magnus Carlsen")
+		const lastName = pLower.split(" ").pop();
+		return lower.includes(pLower) || lower.includes(lastName) ||
+			(p.aliases || []).some(alias => lower.includes(alias.toLowerCase()));
+	});
 }
 
 async function fetchLichessBroadcasts() {
 	try {
-		// Fetch professional tournament broadcasts only - these are official FIDE/top-level events
-		const resp = await fetchJson("https://lichess.org/api/broadcast");
-		if (!isValidBroadcastResponse(resp)) {
-			console.warn(
-				"Lichess broadcast response did not match expected format. Using empty fallback."
-			);
-			return {};
+		// /api/broadcast/top returns structured JSON with active, upcoming, past arrays
+		// Much better than /api/broadcast which returns NDJSON
+		const resp = await fetchJson("https://lichess.org/api/broadcast/top");
+
+		if (!resp || typeof resp !== "object") {
+			console.warn("Lichess broadcast/top response was not an object.");
+			return { active: [], upcoming: [] };
 		}
-		
-		// Filter for professional tournaments only - no casual/amateur games
-		const proTournaments = resp.tours ? resp.tours.filter(tour => {
-			const name = (tour.name || "").toLowerCase();
-			const desc = (tour.description || "").toLowerCase();
-			
-			// Only include elite professional tournaments
-			const isEliteTournament = [
-				'world championship', 'candidates', 'grand prix', 'fide', 
-				'norway chess', 'tata steel', 'sinquefield', 'grand slam',
-				'world cup', 'olympiad', 'magnus', 'carlsen', 'super tournament'
-			].some(keyword => name.includes(keyword) || desc.includes(keyword));
-			
-			// Exclude amateur/casual events
-			const isAmateurEvent = [
-				'bullet', 'blitz arena', 'rapid arena', 'titled tuesday',
-				'hourly', 'daily arena', '≤', 'under', 'amateur'
-			].some(keyword => name.includes(keyword) || desc.includes(keyword));
-			
-			console.log(`Chess tournament: "${tour.name}" - ${isEliteTournament && !isAmateurEvent ? 'ELITE/PRO' : 'FILTERED OUT'}`);
-			
-			return isEliteTournament && !isAmateurEvent;
-		}) : [];
-		
-		return { tours: proTournaments };
+
+		const active = Array.isArray(resp.active) ? resp.active : [];
+		const upcoming = Array.isArray(resp.upcoming) ? resp.upcoming : [];
+
+		console.log(`Lichess broadcasts: ${active.length} active, ${upcoming.length} upcoming`);
+
+		return { active, upcoming };
 	} catch (err) {
-		console.warn("Failed to fetch Lichess broadcast endpoint:", err);
-		return null;
+		console.warn("Failed to fetch Lichess broadcast/top:", err.message);
+
+		// Fallback to /api/broadcast (NDJSON format)
+		try {
+			const resp = await fetchJson("https://lichess.org/api/broadcast?nb=20");
+			let broadcasts = [];
+			if (Array.isArray(resp)) {
+				broadcasts = resp;
+			} else if (resp && Array.isArray(resp.tours)) {
+				broadcasts = resp.tours.map(t => ({ tour: t }));
+			}
+			console.log(`Lichess broadcast fallback: ${broadcasts.length} tournaments`);
+			return { active: broadcasts, upcoming: [] };
+		} catch (err2) {
+			console.warn("Lichess broadcast fallback also failed:", err2.message);
+			return { active: [], upcoming: [] };
+		}
 	}
 }
 
@@ -79,22 +78,93 @@ async function fetchLichessBroadcasts() {
 function filterCurrentWeek(events) {
 	const now = new Date();
 	const startOfWeek = new Date(now);
-	startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+	startOfWeek.setDate(now.getDate() - now.getDay());
 	startOfWeek.setHours(0, 0, 0, 0);
-	
+
 	const endOfWeek = new Date(startOfWeek);
-	endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week
-	
+	endOfWeek.setDate(startOfWeek.getDate() + 7);
+
 	return events.filter(event => {
 		const eventDate = new Date(event.time);
 		return eventDate >= startOfWeek && eventDate < endOfWeek;
 	});
 }
 
+function processBroadcasts(broadcastList, players) {
+	const out = [];
+
+	for (const entry of broadcastList) {
+		const tour = entry.tour || {};
+		const rounds = entry.rounds || [];
+		const round = entry.round || {}; // /top returns singular "round" for current
+		const info = tour.info || {};
+
+		// Build a combined text to search for Norwegian players
+		const searchText = [
+			tour.name || "",
+			tour.description || "",
+			info.players || "",
+		].join(" ");
+
+		const norwegianParticipants = findNorwegianPlayers(searchText, players);
+
+		// Include if Norwegian player found OR it's a top-tier event (tier >= 5)
+		const isTopTier = (tour.tier || 0) >= 5;
+		if (norwegianParticipants.length === 0 && !isTopTier) continue;
+
+		const norwegianNames = norwegianParticipants.map(p => p.name);
+		const hasNorwegian = norwegianNames.length > 0;
+
+		// Try to get upcoming/ongoing rounds
+		const allRounds = rounds.length > 0 ? rounds : (round.id ? [round] : []);
+		const upcomingRounds = allRounds.filter(r => !r.finished);
+
+		if (upcomingRounds.length > 0) {
+			for (const r of upcomingRounds) {
+				out.push({
+					title: `${r.name || "Round"} – ${tour.name}`,
+					meta: tour.name,
+					time: normalizeToUTC(r.startsAt ? new Date(r.startsAt) : new Date()),
+					venue: info.location || "Online",
+					sport: "chess",
+					participants: norwegianNames,
+					norwegian: hasNorwegian,
+					streaming: [{
+						platform: "Lichess",
+						url: tour.url || "https://lichess.org",
+						type: "lichess",
+					}],
+				});
+			}
+		} else {
+			// No round details — add the tournament itself
+			const startDate = tour.dates && tour.dates[0] ? new Date(tour.dates[0]) : new Date();
+			out.push({
+				title: tour.name,
+				meta: `Professional Chess - ${tour.name}`,
+				time: normalizeToUTC(startDate),
+				venue: info.location || "Online",
+				sport: "chess",
+				participants: norwegianNames,
+				norwegian: hasNorwegian,
+				streaming: [{
+					platform: "Lichess",
+					url: tour.url || "https://lichess.org",
+					type: "lichess",
+				}],
+			});
+		}
+
+		console.log(`Chess: ${tour.name} (tier ${tour.tier || "?"}, Norwegian: ${norwegianNames.join(", ") || "none"})`);
+	}
+
+	return out;
+}
+
 function consolidateRounds(tournaments, players, broadcasts) {
 	const out = [];
-	
-	// First, add curated tournament rounds (from config)
+
+	// 1. Add curated tournament rounds (from config file)
 	for (const t of tournaments) {
 		const participants = players
 			.filter((p) => t.participantsHint?.includes(p.name))
@@ -109,61 +179,19 @@ function consolidateRounds(tournaments, players, broadcasts) {
 				sport: "chess",
 				participants,
 				norwegian: participants.length > 0,
-				streaming: [
-					{
-						platform: "Chess24",
-						url: "https://chess24.com",
-						type: "chess24",
-					},
-				],
+				streaming: [{
+					platform: "Chess24",
+					url: "https://chess24.com",
+					type: "chess24",
+				}],
 			});
 		}
 	}
-	
-	// Then, add live professional broadcasts from Lichess that feature Norwegian players
-	if (broadcasts && broadcasts.tours) {
-		for (const tour of broadcasts.tours) {
-			// Check if this tournament likely features Norwegian players
-			const name = (tour.name || "").toLowerCase();
-			const desc = (tour.description || "").toLowerCase();
-			const hasNorwegian = players.some(p => 
-				name.includes(p.name.toLowerCase()) || 
-				desc.includes(p.name.toLowerCase()) ||
-				p.aliases?.some(alias => name.includes(alias.toLowerCase()) || desc.includes(alias.toLowerCase()))
-			);
-			
-			// Only include if Norwegian player is likely participating
-			if (hasNorwegian) {
-				const norwegianParticipants = players
-					.filter(p => 
-						name.includes(p.name.toLowerCase()) || 
-						desc.includes(p.name.toLowerCase()) ||
-						p.aliases?.some(alias => name.includes(alias.toLowerCase()) || desc.includes(alias.toLowerCase()))
-					)
-					.map(p => p.name);
-				
-				out.push({
-					title: tour.name,
-					meta: `Professional Chess - ${tour.name}`,
-					time: normalizeToUTC(new Date()), // Current broadcast
-					venue: "Online/Live",
-					sport: "chess",
-					participants: norwegianParticipants,
-					norwegian: true,
-					streaming: [
-						{
-							platform: "Lichess",
-							url: "https://lichess.org",
-							type: "lichess",
-						},
-					],
-				});
-				
-				console.log(`Added professional chess broadcast: ${tour.name} (Norwegian players: ${norwegianParticipants.join(', ')})`);
-			}
-		}
-	}
-	
+
+	// 2. Add live broadcasts from Lichess (active + upcoming)
+	const allBroadcasts = [...(broadcasts.active || []), ...(broadcasts.upcoming || [])];
+	out.push(...processBroadcasts(allBroadcasts, players));
+
 	out.sort((a, b) => new Date(a.time) - new Date(b.time));
 	return out;
 }
@@ -176,7 +204,7 @@ export async function fetchChessOpen() {
 	const events = filterCurrentWeek(allEvents);
 	return {
 		lastUpdated: iso(),
-		source: "Curated + Lichess Broadcast probe (current week only)",
+		source: "Curated + Lichess Broadcast (current week only)",
 		tournaments: events.length ? [{ name: "Norwegian Chess Highlights", events }] : [],
 	};
 }
