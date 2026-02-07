@@ -54,6 +54,24 @@ for (const ev of events) {
 		console.warn("Missing sport for", key);
 		errors++;
 	}
+	// Validate enrichment fields if present
+	if (ev.importance != null) {
+		if (typeof ev.importance !== "number" || ev.importance < 1 || ev.importance > 5) {
+			console.warn("Invalid importance (must be 1-5) for", key, ev.importance);
+			errors++;
+		}
+	}
+	if (ev.norwegianRelevance != null) {
+		if (typeof ev.norwegianRelevance !== "number" || ev.norwegianRelevance < 1 || ev.norwegianRelevance > 5) {
+			console.warn("Invalid norwegianRelevance (must be 1-5) for", key, ev.norwegianRelevance);
+			errors++;
+		}
+	}
+	if (ev.tags != null && !Array.isArray(ev.tags)) {
+		console.warn("Invalid tags (must be array) for", key);
+		errors++;
+	}
 }
-console.log(`Validated ${events.length} events with ${errors} error(s).`);
+let enrichedCount = events.filter(e => e.importance != null).length;
+console.log(`Validated ${events.length} events with ${errors} error(s). ${enrichedCount} enriched.`);
 if (errors) process.exit(1);

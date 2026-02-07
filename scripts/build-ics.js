@@ -70,6 +70,9 @@ for (const ev of events) {
 	if (ev.streaming && ev.streaming.length)
 		parts.push("Streaming: " + ev.streaming.map((s) => s.platform).join("/"));
 	if (ev.norwegian) parts.push("Norwegian focus");
+	if (ev.importance) parts.push(`Importance: ${ev.importance}/5`);
+	if (ev.summary) parts.push(ev.summary);
+	if (ev.tags && ev.tags.length) parts.push("Tags: " + ev.tags.join(", "));
 	const description = esc(parts.join("\n"));
 	lines.push(`SUMMARY:${summary}`);
 	if (description) lines.push(`DESCRIPTION:${description}`);

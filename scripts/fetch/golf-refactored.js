@@ -130,11 +130,17 @@ export class GolfFetcher extends ESPNAdapter {
 		const event = super.transformESPNEvent(espnEvent);
 		if (!event) return null;
 
+		// Golf tournaments span multiple days — use endDate for validation
+		// so ongoing tournaments aren't filtered as "past"
+		if (espnEvent.endDate) {
+			event.time = espnEvent.endDate;
+		}
+
 		// Check for Norwegian players in ESPN data
 		const competitors = espnEvent.competitions?.[0]?.competitors || [];
 		const norwegianCompetitors = competitors.filter(comp => {
 			const playerName = comp.athlete?.displayName || "";
-			return this.config.norwegian?.players?.some(norPlayer => 
+			return this.config.norwegian?.players?.some(norPlayer =>
 				playerName.toLowerCase().includes(norPlayer.toLowerCase().split(' ').pop())
 			);
 		});

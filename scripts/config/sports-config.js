@@ -179,10 +179,10 @@ export const sportsConfig = {
 		filters: {
 			currentWeek: true,
 			maxEvents: 10,
-			teams: ["FaZe", "FaZe Clan", "Team Liquid", "NAVI", "G2", "Astralis"]
+			teams: ["100 Thieves", "100T", "Team Liquid", "NAVI", "G2", "Astralis"]
 		},
 		norwegian: {
-			teams: ["FaZe", "FaZe Clan"],
+			teams: ["100 Thieves", "100T"],
 			players: ["rain"],
 			filterMode: "inclusive"
 		},

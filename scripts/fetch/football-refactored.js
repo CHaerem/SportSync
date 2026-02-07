@@ -2,6 +2,15 @@ import { ESPNAdapter } from "../lib/adapters/espn-adapter.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { fetchOBOSLigaenFromFotballNo } from "./fotball-no.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
+import { readJsonIfExists } from "../lib/helpers.js";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const userContextPath = path.join(__dirname, "..", "config", "user-context.json");
+const userContext = readJsonIfExists(userContextPath) || {};
+const FAVORITE_TEAMS = (userContext.favoriteTeams || ["Barcelona", "Liverpool", "Lyn"])
+	.map(t => t.toLowerCase());
 
 export class FootballFetcher extends ESPNAdapter {
 	constructor() {
@@ -45,7 +54,7 @@ export class FootballFetcher extends ESPNAdapter {
 
 	transformToEvents(rawData) {
 		const events = [];
-		
+
 		for (const item of rawData) {
 			try {
 				// Check if this is already a formatted event from fotball.no
@@ -53,6 +62,7 @@ export class FootballFetcher extends ESPNAdapter {
 					// It's already in the correct format, just validate and add
 					// Ensure tournament field is set for proper grouping
 					item.tournament = item.tournament || item.meta || "OBOS-ligaen";
+					item.isFavorite = this.checkFavorite(item.homeTeam, item.awayTeam);
 					const normalized = EventNormalizer.normalize(item, this.config.sport);
 					if (normalized && EventNormalizer.validateEvent(normalized)) {
 						events.push(normalized);
@@ -61,6 +71,7 @@ export class FootballFetcher extends ESPNAdapter {
 					// It's an ESPN event, transform it
 					const event = this.transformESPNEvent(item);
 					if (event) {
+						event.isFavorite = this.checkFavorite(event.homeTeam, event.awayTeam);
 						const normalized = EventNormalizer.normalize(event, this.config.sport);
 						if (normalized && EventNormalizer.validateEvent(normalized)) {
 							events.push(normalized);
@@ -71,8 +82,14 @@ export class FootballFetcher extends ESPNAdapter {
 				console.error(`Error transforming event:`, error.message);
 			}
 		}
-		
+
 		return EventNormalizer.deduplicate(events);
+	}
+
+	checkFavorite(homeTeam, awayTeam) {
+		const home = (homeTeam || "").toLowerCase();
+		const away = (awayTeam || "").toLowerCase();
+		return FAVORITE_TEAMS.some(fav => home.includes(fav) || away.includes(fav));
 	}
 
 	applyCustomFilters(events) {

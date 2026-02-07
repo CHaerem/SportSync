@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-07T12:16:07.204Z",
+  "lastUpdated": "2026-02-07T16:17:52.199Z",
   "source": "ESPN F1 Racing API",
   "tournaments": [
     {
@@ -13,13 +13,25 @@
           "sport": "formula1",
           "meta": "Formula 1 2025 - Race Weekend",
           "tournament": "Formula 1 2025 - Race Weekend",
-          "streaming": [],
+          "streaming": [
+            {
+              "platform": "Viaplay",
+              "url": "https://viaplay.no",
+              "type": "streaming"
+            },
+            {
+              "platform": "F1 TV Pro",
+              "url": "https://f1tv.formula1.com",
+              "type": "streaming"
+            }
+          ],
           "norwegian": false,
           "homeTeam": "",
           "awayTeam": "",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
+          "isFavorite": false,
           "additional": {
             "status": "STATUS_SCHEDULED"
           }

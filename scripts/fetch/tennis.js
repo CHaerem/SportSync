@@ -1,113 +1,158 @@
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
-// Norwegian players to track
-const norwegianPlayers = [
-	"Casper Ruud",
-	"Ruud, Casper", 
-	"C. Ruud",
-	"Ruud"
-];
+// Norwegian players to track — use lowercase for matching
+const TRACKED_PLAYERS = ["casper ruud"];
 
-function hasNorwegianPlayer(competitors) {
-	return norwegianPlayers.some(player => 
-		competitors.some(c => {
-			const name = c.athlete?.displayName || c.displayName || c.team?.displayName || '';
-			return name.includes(player.split(',')[0].trim());
-		})
-	);
+function isTrackedPlayer(name) {
+	const lower = (name || "").toLowerCase();
+	return TRACKED_PLAYERS.some(p => lower.includes(p) || lower.includes(p.split(" ").pop()));
 }
 
 export async function fetchTennis() {
 	const tournaments = [];
 	const now = new Date();
-	
-	// Try multiple ESPN tennis endpoints for better coverage
-	const endpoints = [
+
+	// The scoreboard endpoint returns active tournaments with full match detail
+	// Structure: events[] → each event is a tournament → groupings[] → competitions[] are matches
+	const scoreboardEndpoints = [
 		{ name: "ATP Tour", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard" },
-		{ name: "ATP Events", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/events" },
 		{ name: "WTA Tour", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/wta/scoreboard" },
-		{ name: "WTA Events", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/wta/events" }
 	];
-	
-	// Try each endpoint
-	for (const endpoint of endpoints) {
+
+	for (const endpoint of scoreboardEndpoints) {
 		try {
 			const data = await fetchJson(endpoint.url);
-			
-			// Handle different response structures
-			let events = [];
-			if (data.events) {
-				events = data.events;
-			} else if (data.matches) {
-				events = data.matches;
-			}
-			
-			if (events.length === 0) continue;
-			
-			// Filter for upcoming matches with Norwegian players
-			const upcomingMatches = events
-				.filter((e) => {
-					const d = new Date(e.date);
-					const status = e.status?.type?.name;
-					return (
-						d > now && !["STATUS_FINAL", "STATUS_IN_PROGRESS"].includes(status)
-					);
-				})
-				.filter(e => {
-					// More flexible player detection - check JSON for Casper/Ruud
-					const eventStr = JSON.stringify(e).toLowerCase();
-					return eventStr.includes('ruud') || eventStr.includes('casper');
-				})
-				.slice(0, 10);
-			
-			if (upcomingMatches.length > 0) {
-				tournaments.push({
-					name: endpoint.name,
-					events: upcomingMatches.map((ev) => {
-						// Extract player names from different possible structures
+			if (!data.events || data.events.length === 0) continue;
+
+			for (const tournament of data.events) {
+				const tournamentName = tournament.name || tournament.shortName || endpoint.name;
+				const groupings = tournament.groupings || [];
+
+				// Look through all matches in this tournament for tracked players
+				let trackedPlayerFound = false;
+				const trackedMatches = [];
+				const allUpcomingMatches = [];
+
+				for (const grouping of groupings) {
+					// Focus on singles (skip doubles unless tracked player is in it)
+					const competitions = grouping.competitions || [];
+
+					for (const match of competitions) {
+						const competitors = match.competitors || [];
+						const status = match.status?.type?.name || "";
+						const matchDate = new Date(match.date);
+
+						// Extract player names
 						let player1 = "TBD", player2 = "TBD";
-						
-						if (ev.competitions?.[0]?.competitors) {
-							// Standard competition format
-							const competitors = ev.competitions[0].competitors;
-							player1 = competitors[0]?.athlete?.displayName || competitors[0]?.team?.displayName || "TBD";
-							player2 = competitors[1]?.athlete?.displayName || competitors[1]?.team?.displayName || "TBD";
-						} else if (ev.competitors) {
-							// Direct competitors on event (Mixed doubles format like I. Swiatek / C. Ruud)
-							const competitors = ev.competitors;
-							player1 = competitors[0]?.displayName || competitors[0]?.team?.displayName || "TBD";
-							player2 = competitors[1]?.displayName || competitors[1]?.team?.displayName || "TBD";
-						} else if (ev.name) {
-							// Try to extract from event name
-							const vs = ev.name.split(' vs ');
-							if (vs.length === 2) {
-								player1 = vs[0];
-								player2 = vs[1];
+						let hasTracked = false;
+
+						for (const c of competitors) {
+							const displayName = c.athlete?.displayName || c.displayName || "";
+							if (isTrackedPlayer(displayName)) {
+								hasTracked = true;
+								trackedPlayerFound = true;
 							}
 						}
-						
-						return {
+
+						if (competitors.length >= 2) {
+							player1 = competitors[0]?.athlete?.displayName || competitors[0]?.displayName || "TBD";
+							player2 = competitors[1]?.athlete?.displayName || competitors[1]?.displayName || "TBD";
+						}
+
+						const matchEvent = {
 							title: `${player1} vs ${player2}`,
-							meta: ev.competitions?.[0]?.notes?.[0]?.headline || ev.shortName || endpoint.name,
-							time: normalizeToUTC(ev.date),
-							venue: ev.competitions?.[0]?.venue?.fullName || ev.venue || "Tennis Center",
+							meta: `${tournamentName} - ${match.round?.displayName || grouping.grouping?.displayName || ""}`,
+							time: normalizeToUTC(match.date),
+							venue: match.venue?.fullName || tournament.venue || "TBD",
 							sport: "tennis",
 							streaming: [],
-							norwegian: true, // All matches are Norwegian since we filtered for Casper Ruud
-							participants: [player1, player2]
+							norwegian: hasTracked,
+							participants: [player1, player2],
 						};
-					})
-				});
+
+						// Collect upcoming matches
+						if (matchDate > now && status !== "STATUS_FINAL") {
+							allUpcomingMatches.push(matchEvent);
+							if (hasTracked) {
+								trackedMatches.push(matchEvent);
+							}
+						}
+					}
+				}
+
+				if (trackedPlayerFound) {
+					// Ruud is in this tournament — include his matches plus the tournament info
+					console.log(`Tennis: Found tracked player in ${tournamentName} (${trackedMatches.length} upcoming matches)`);
+
+					if (trackedMatches.length > 0) {
+						tournaments.push({
+							name: tournamentName,
+							events: trackedMatches,
+						});
+					} else {
+						// Ruud is in the tournament but no upcoming match scheduled yet
+						// Add a tournament-level event so the user knows
+						const tournamentDates = tournament.date ? new Date(tournament.date) : now;
+						tournaments.push({
+							name: tournamentName,
+							events: [{
+								title: `${tournamentName} (Casper Ruud participating)`,
+								meta: tournamentName,
+								time: normalizeToUTC(tournamentDates),
+								venue: tournament.venue || "TBD",
+								sport: "tennis",
+								streaming: [],
+								norwegian: true,
+								participants: ["Casper Ruud"],
+							}],
+						});
+					}
+				}
 			}
-			
 		} catch (error) {
 			console.warn(`${endpoint.name} tennis fetch failed:`, error.message);
 		}
 	}
-	
-	return { 
-		lastUpdated: iso(), 
-		source: "ESPN Tennis API (Multiple Endpoints)", 
-		tournaments 
+
+	// Also check the events endpoint as a fallback for simpler match listings
+	try {
+		const eventsData = await fetchJson("https://site.api.espn.com/apis/site/v2/sports/tennis/atp/events");
+		if (eventsData.events && eventsData.events.length > 0) {
+			const ruudEvents = eventsData.events.filter(e => {
+				const str = JSON.stringify(e).toLowerCase();
+				return str.includes("ruud");
+			});
+
+			if (ruudEvents.length > 0 && tournaments.length === 0) {
+				// Only use events endpoint as fallback if scoreboard gave us nothing
+				tournaments.push({
+					name: "ATP Tour",
+					events: ruudEvents.map(ev => {
+						const competitors = ev.competitors || [];
+						const player1 = competitors[0]?.displayName || "TBD";
+						const player2 = competitors[1]?.displayName || "TBD";
+						return {
+							title: `${player1} vs ${player2}`,
+							meta: ev.shortName || "ATP",
+							time: normalizeToUTC(ev.date),
+							venue: ev.venue || "TBD",
+							sport: "tennis",
+							streaming: [],
+							norwegian: true,
+							participants: [player1, player2],
+						};
+					}),
+				});
+			}
+		}
+	} catch (error) {
+		console.warn("ATP events fallback failed:", error.message);
+	}
+
+	console.log(`Tennis: Found ${tournaments.length} tournaments with tracked players`);
+	return {
+		lastUpdated: iso(),
+		source: "ESPN Tennis API",
+		tournaments,
 	};
 }

@@ -28,6 +28,7 @@ export class EventNormalizer {
 				participants: this.normalizeParticipants(event.participants),
 				norwegianPlayers: event.norwegianPlayers || null,
 				totalPlayers: event.totalPlayers || null,
+				isFavorite: Boolean(event.isFavorite),
 				additional: this.extractAdditional(event)
 			};
 		} catch (error) {
@@ -80,7 +81,7 @@ export class EventNormalizer {
 		const knownFields = [
 			"title", "time", "date", "venue", "sport", "meta", "tournament",
 			"streaming", "norwegian", "homeTeam", "awayTeam", "participants",
-			"norwegianPlayers", "totalPlayers"
+			"norwegianPlayers", "totalPlayers", "isFavorite"
 		];
 		
 		for (const [key, value] of Object.entries(event)) {
@@ -121,17 +122,19 @@ export class EventNormalizer {
 		if (!event) return false;
 		if (!event.title || event.title === "Unknown Event") return false;
 		if (!event.time) return false;
-		
+
 		const eventDate = new Date(event.time);
 		if (isNaN(eventDate.getTime())) return false;
-		
+
 		const now = new Date();
+		// Allow events that started up to 6 hours ago (ongoing matches/rounds)
+		const graceWindow = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 		const oneYearFromNow = new Date(now.getTime() + 365 * 86400000);
-		if (eventDate < now || eventDate > oneYearFromNow) {
+		if (eventDate < graceWindow || eventDate > oneYearFromNow) {
 			console.warn(`Event date out of range: ${event.title} at ${event.time}`);
 			return false;
 		}
-		
+
 		return true;
 	}
 

@@ -117,7 +117,10 @@ export const norwegianStreamingMap = {
  * Get Norwegian streaming services for an event
  */
 export function getNorwegianStreaming(sport, league) {
-	const sportMap = norwegianStreamingMap[sport.toLowerCase()];
+	const sportKey = sport.toLowerCase();
+	// Handle sport name aliases (e.g., "formula1" → "f1")
+	const sportAliases = { formula1: "f1" };
+	const sportMap = norwegianStreamingMap[sportAliases[sportKey] || sportKey];
 	if (!sportMap) return [];
 	
 	// Try to find exact league match
