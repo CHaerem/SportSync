@@ -1,0 +1,216 @@
+name: OpenClaw Autopilot
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Weekly on Mondays at 08:00 UTC
+
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Autopilot mode"
+        required: true
+        default: "DRY_RUN"
+        type: choice
+        options:
+          - DRY_RUN
+          - PR_ONLY
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    outputs:
+      has-candidates: ${{ steps.report.outputs.has-candidates }}
+      report: ${{ steps.report.outputs.report }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        run: |
+          npm test 2>&1 | tee test-output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Check data freshness
+        id: freshness
+        run: |
+          if [ -f docs/data/meta.json ]; then
+            node -e "
+              const meta = JSON.parse(require('fs').readFileSync('docs/data/meta.json', 'utf8'));
+              const age = Date.now() - new Date(meta.lastUpdate).getTime();
+              const hours = Math.round(age / 3600000);
+              console.log('age_hours=' + hours);
+              console.log('stale=' + (hours > 24));
+            " | while read line; do echo "$line" >> "$GITHUB_OUTPUT"; done
+          else
+            echo "age_hours=-1" >> "$GITHUB_OUTPUT"
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for merge conflicts
+        id: conflicts
+        run: |
+          CONFLICTS=$(git grep -l '<<<<<<< ' -- '*.js' '*.html' '*.json' '*.md' 2>/dev/null || echo '')
+          if [ -n "$CONFLICTS" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "files<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$CONFLICTS" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "files=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check open issues
+        id: issues
+        continue-on-error: true
+        run: |
+          gh issue list --limit 10 --state open --json number,title,labels > open-issues.json 2>/dev/null || echo '[]' > open-issues.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compile observation report
+        id: report
+        run: |
+          node -e "
+            const fs = require('fs');
+
+            const testsPass = '${{ steps.tests.outcome }}' === 'success';
+            const ageHours = parseInt('${{ steps.freshness.outputs.age_hours }}') || -1;
+            const stale = '${{ steps.freshness.outputs.stale }}' === 'true';
+            const hasConflicts = '${{ steps.conflicts.outputs.found }}' === 'true';
+            const conflictFiles = '${{ steps.conflicts.outputs.files }}'.split('\n').filter(Boolean);
+
+            let issues = [];
+            try { issues = JSON.parse(fs.readFileSync('open-issues.json', 'utf8')); } catch {}
+
+            const candidates = [];
+
+            if (!testsPass) {
+              candidates.push({
+                id: 'fix-failing-tests',
+                title: 'Fix failing tests',
+                risk: 'LOW',
+                effort: 'small'
+              });
+            }
+
+            if (hasConflicts) {
+              candidates.push({
+                id: 'resolve-merge-conflicts',
+                title: 'Resolve merge conflict markers',
+                files: conflictFiles,
+                risk: 'MEDIUM',
+                effort: 'medium'
+              });
+            }
+
+            const report = {
+              timestamp: new Date().toISOString(),
+              testsPass,
+              dataFreshness: { ageHours, stale },
+              mergeConflicts: conflictFiles,
+              openIssues: issues.length,
+              candidates
+            };
+
+            const json = JSON.stringify(report);
+            console.log(json);
+
+            // Set outputs
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has-candidates=' + (candidates.length > 0) + '\n');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'report=' + json + '\n');
+          "
+
+      - name: Step summary
+        run: |
+          echo "## OpenClaw Observation Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Tests**: ${{ steps.tests.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Data age**: ${{ steps.freshness.outputs.age_hours }}h (stale: ${{ steps.freshness.outputs.stale }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Merge conflicts**: ${{ steps.conflicts.outputs.found }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Candidates found**: ${{ steps.report.outputs.has-candidates }}" >> "$GITHUB_STEP_SUMMARY"
+
+  autopilot:
+    needs: observe
+    if: needs.observe.outputs.has-candidates == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Determine effective mode
+        id: mode
+        run: |
+          # Read policy mode
+          POLICY_MODE=$(node -e "console.log(JSON.parse(require('fs').readFileSync('.openclaw/autopilot-policy.json','utf8')).mode)")
+
+          # Workflow input mode (defaults to DRY_RUN for scheduled runs)
+          INPUT_MODE="${{ github.event.inputs.mode || 'DRY_RUN' }}"
+
+          # Use the more restrictive mode
+          # DRY_RUN < PR_ONLY < SELECTIVE_AUTO
+          if [ "$POLICY_MODE" = "DRY_RUN" ] || [ "$INPUT_MODE" = "DRY_RUN" ]; then
+            EFFECTIVE="DRY_RUN"
+          elif [ "$POLICY_MODE" = "PR_ONLY" ] || [ "$INPUT_MODE" = "PR_ONLY" ]; then
+            EFFECTIVE="PR_ONLY"
+          else
+            EFFECTIVE="SELECTIVE_AUTO"
+          fi
+
+          echo "effective=$EFFECTIVE" >> "$GITHUB_OUTPUT"
+          echo "Effective mode: $EFFECTIVE (policy=$POLICY_MODE, input=$INPUT_MODE)"
+
+      - name: Run autopilot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOPILOT_MODE: ${{ steps.mode.outputs.effective }}
+          OBSERVATION_REPORT: ${{ needs.observe.outputs.report }}
+        run: |
+          echo "## Autopilot Run" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Mode**: $AUTOPILOT_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Observation**: $OBSERVATION_REPORT" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$AUTOPILOT_MODE" = "DRY_RUN" ]; then
+            echo "DRY_RUN mode: would process candidates from observation report." >> "$GITHUB_STEP_SUMMARY"
+            echo "No changes made." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # TODO: Replace with openclaw agent run once CI integration is available
+          # openclaw agent run \
+          #   --skill .openclaw/skills/autopilot/SKILL.md \
+          #   --policy .openclaw/autopilot-policy.json \
+          #   --mode "$AUTOPILOT_MODE" \
+          #   --observation "$OBSERVATION_REPORT"
+
+          echo "Autopilot execution not yet available (waiting for OpenClaw CI runner)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Candidates would be processed in $AUTOPILOT_MODE mode." >> "$GITHUB_STEP_SUMMARY"
