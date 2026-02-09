@@ -51,9 +51,9 @@ jobs:
 
             Run: `gh pr list --label autopilot --state open --json number,title`
 
-            If any open PR with the `autopilot` label exists, STOP immediately.
+            If any open PR with the `autopilot` label exists, a previous run failed
+            to merge. STOP immediately and create a GitHub issue flagging the stale PR.
             Write to the step summary: "Skipped — open autopilot PR exists: #N".
-            Do not create another PR until the existing one is merged or closed.
 
             ## Step 1: Pick a task
 
@@ -80,15 +80,20 @@ jobs:
                describing what went wrong. Do NOT open a PR with failing tests.
             4. Commit with a descriptive message
 
-            ## Step 4: Open a PR and update the roadmap
+            ## Step 4: Open a PR, merge it, and update the roadmap
 
             1. Push the branch and open a PR with:
                - Clear title describing the improvement
                - Body explaining what changed and why
                - Label: `autopilot`
-            2. Update `AUTOPILOT_ROADMAP.md`: change the completed task from `[PENDING]` to
+            2. Immediately merge the PR using: `gh pr merge <number> --merge`
+               Tests already passed in Step 3, so merge without waiting.
+               If the merge fails, leave the PR open for human review.
+            3. After merging, switch back to main and pull the merged changes:
+               `git checkout main && git pull`
+            4. Update `AUTOPILOT_ROADMAP.md`: change the completed task from `[PENDING]` to
                `[DONE]` and add the PR number, e.g. `[DONE] (PR #42) Fix service worker...`
-            3. Commit the roadmap update to the same branch
+            5. Commit and push the roadmap update directly to main.
 
             ## Step 5: Scout for new tasks
 
