@@ -1171,36 +1171,36 @@
 				<h1 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; margin: 0;">SportSync</h1>
 				<div style="display: flex; align-items: center; gap: 8px;">
 					<span id="lastUpdate" style="font-size: 0.75rem; color: var(--muted); white-space: nowrap;">Loading...</span>
-					<button id="toggleTheme" class="theme-toggle" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px; min-width: 32px; min-height: 32px;">🌙</button>
+					<button id="toggleTheme" class="theme-toggle" aria-label="Toggle dark mode" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px; min-width: 32px; min-height: 32px;">🌙</button>
 				</div>
 			</header>
 
 			<div id="staleBanner" class="stale-banner">Data may be outdated — last updated more than 24 hours ago.</div>
 
-			<div class="simple-filters" style="margin-bottom: 24px;">
+			<nav class="simple-filters" role="navigation" aria-label="Event filters" style="margin-bottom: 24px;">
 				<div class="filter-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
 					<div style="display: flex; gap: 6px;">
-						<button class="filter-btn active" data-filter="all">All</button>
-						<button class="filter-btn" data-filter="today">Today</button>
-						<button class="filter-btn" data-filter="week">Week</button>
-						<button class="filter-btn" data-filter="favorites">★</button>
-						<button class="sort-toggle" id="sortToggle" title="Sort by importance">★ Top</button>
+						<button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+						<button class="filter-btn" data-filter="today" aria-pressed="false">Today</button>
+						<button class="filter-btn" data-filter="week" aria-pressed="false">Week</button>
+						<button class="filter-btn" data-filter="favorites" aria-pressed="false" aria-label="Favorites">★</button>
+						<button class="sort-toggle" id="sortToggle" title="Sort by importance" aria-pressed="false" aria-label="Sort by importance">★ Top</button>
 					</div>
 					<div style="display: flex; gap: 6px;">
-						<button class="sport-filter" data-filter="golf" title="Golf">⛳</button>
-						<button class="sport-filter" data-filter="football" title="Football">⚽</button>
-						<button class="sport-filter" data-filter="tennis" title="Tennis">🎾</button>
-						<button class="sport-filter" data-filter="formula1" title="F1">🏎️</button>
-						<button class="sport-filter" data-filter="chess" title="Chess">♟️</button>
-						<button class="sport-filter" data-filter="esports" title="Esports">🎮</button>
+						<button class="sport-filter" data-filter="golf" title="Golf" aria-pressed="false" aria-label="Filter Golf">⛳</button>
+						<button class="sport-filter" data-filter="football" title="Football" aria-pressed="false" aria-label="Filter Football">⚽</button>
+						<button class="sport-filter" data-filter="tennis" title="Tennis" aria-pressed="false" aria-label="Filter Tennis">🎾</button>
+						<button class="sport-filter" data-filter="formula1" title="F1" aria-pressed="false" aria-label="Filter Formula 1">🏎️</button>
+						<button class="sport-filter" data-filter="chess" title="Chess" aria-pressed="false" aria-label="Filter Chess">♟️</button>
+						<button class="sport-filter" data-filter="esports" title="Esports" aria-pressed="false" aria-label="Filter Esports">🎮</button>
 					</div>
 				</div>
-				<div id="filterCount" class="filter-count"></div>
-			</div>
+				<div id="filterCount" class="filter-count" aria-live="polite"></div>
+			</nav>
 
 
 			<div id="top-picks"></div>
-			<div class="events-list" id="eventsContainer">
+			<div class="events-list" id="eventsContainer" role="list" aria-live="polite">
 				<div class="loading">
 					<div class="spinner"></div>
 					Loading events...
