@@ -15,6 +15,7 @@ jobs:
       pull-requests: write
       issues: write
       actions: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,10 +29,11 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          model: claude-opus-4-6
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          max_turns: 15
-          allowed_tools: "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*),Bash(curl:*)"
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 15
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*),Bash(curl:*)"
           prompt: |
             The "Update Sports Data" workflow just failed.
             Read CLAUDE.md for project context and automation rules.

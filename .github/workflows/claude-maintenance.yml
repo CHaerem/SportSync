@@ -18,6 +18,7 @@ jobs:
       pull-requests: read
       issues: write
       actions: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,10 +32,11 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          model: claude-sonnet-4-5-20250929
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          max_turns: 10
-          allowed_tools: "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(gh run:*),Bash(gh workflow:*),Bash(date:*),Bash(jq:*)"
+          claude_args: |
+            --model claude-sonnet-4-5-20250929
+            --max-turns 10
+            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(gh run:*),Bash(gh workflow:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are running a weekly health check on the SportSync repository.
             Read CLAUDE.md first for project context and automation rules.
