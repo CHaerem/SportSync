@@ -51,9 +51,13 @@ class SimpleSportsDashboard {
 		timeButtons.forEach((btn) => {
 			btn.addEventListener("click", (e) => {
 				// Remove active from time filter buttons
-				timeButtons.forEach((b) => b.classList.remove("active"));
+				timeButtons.forEach((b) => {
+					b.classList.remove("active");
+					b.setAttribute("aria-pressed", "false");
+				});
 				// Add active to clicked button
 				e.target.classList.add("active");
+				e.target.setAttribute("aria-pressed", "true");
 
 				this.currentFilter = e.target.dataset.filter;
 				this.renderFilteredEvents();
@@ -70,10 +74,12 @@ class SimpleSportsDashboard {
 					// Remove sport from selection
 					this.selectedSports.delete(sport);
 					e.target.classList.remove("active");
+					e.target.setAttribute("aria-pressed", "false");
 				} else {
 					// Add sport to selection
 					this.selectedSports.add(sport);
 					e.target.classList.add("active");
+					e.target.setAttribute("aria-pressed", "true");
 				}
 
 				this.renderFilteredEvents();
@@ -87,6 +93,7 @@ class SimpleSportsDashboard {
 			sortToggle.addEventListener('click', () => {
 				this.sortByImportance = !this.sortByImportance;
 				sortToggle.classList.toggle('active', this.sortByImportance);
+				sortToggle.setAttribute('aria-pressed', String(this.sortByImportance));
 				this.renderFilteredEvents();
 			});
 		}
@@ -419,7 +426,7 @@ class SimpleSportsDashboard {
 
 				return `
 				${dayDivider}
-                <div class="event-card ${event.sport}" data-event-id="${eventId}" data-event-index="${index}" ${isFavorite ? 'data-favorite="true"' : ''}>
+                <div class="event-card ${event.sport}" role="listitem" data-event-id="${eventId}" data-event-index="${index}" ${isFavorite ? 'data-favorite="true"' : ''}>
                     <div class="sport-line ${event.sport}"></div>
                     <div class="sport-badge ${event.sport}">${this.escapeHtml(event.sportName)}${importanceBadge ? ` ${importanceBadge}` : ''}</div>
                     <button class="event-favorite-btn" data-event-id="${eventId}"
