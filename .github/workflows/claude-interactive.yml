@@ -42,4 +42,4 @@ jobs:
           claude_args: |
             --model claude-opus-4-6
             --max-turns 10
-            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*)"
+            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"

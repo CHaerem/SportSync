@@ -40,7 +40,7 @@ jobs:
           claude_args: |
             --model claude-opus-4-6
             --max-turns 15
-            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are the SportSync autopilot — a proactive agent that improves the codebase
             one task at a time. Read CLAUDE.md first for project context and automation rules.

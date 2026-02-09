@@ -36,7 +36,7 @@ jobs:
           claude_args: |
             --model claude-sonnet-4-5-20250929
             --max-turns 10
-            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(gh run:*),Bash(gh workflow:*),Bash(date:*),Bash(jq:*)"
+            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are running a weekly health check on the SportSync repository.
             Read CLAUDE.md first for project context and automation rules.
