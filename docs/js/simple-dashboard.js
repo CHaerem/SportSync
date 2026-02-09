@@ -93,8 +93,21 @@ class SimpleSportsDashboard {
 	}
 
 	updateFilterCount() {
-		// Optional: Could add a subtle event count indicator
-		// Could display filtered count somewhere if desired
+		const el = document.getElementById('filterCount');
+		if (!el) return;
+
+		const total = this.allEvents ? this.allEvents.length : 0;
+		const filtered = this.allEvents
+			? this.allEvents.filter(event => this.passesFilter(event)).length
+			: 0;
+
+		if (total === 0) {
+			el.textContent = '';
+		} else if (filtered === total) {
+			el.textContent = `${total} events`;
+		} else {
+			el.textContent = `${filtered} of ${total} events`;
+		}
 	}
 
 	async updateLastUpdatedTime() {
@@ -174,6 +187,7 @@ class SimpleSportsDashboard {
 			window._sportsSyncEvents = this.allEvents;
 			window._sportsSyncPreferences = this.preferences;
 			this.renderFilteredEvents();
+			this.updateFilterCount();
 		} catch (error) {
 			console.error("Error loading events:", error);
 			container.innerHTML = `
