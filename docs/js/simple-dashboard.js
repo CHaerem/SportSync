@@ -128,6 +128,7 @@ class SimpleSportsDashboard {
 				});
 
 				document.getElementById("lastUpdate").textContent = timeString;
+				this.showStaleBanner(lastUpdate);
 				return;
 			}
 		} catch (error) {
@@ -145,6 +146,17 @@ class SimpleSportsDashboard {
 		});
 
 		document.getElementById("lastUpdate").textContent = timeString;
+	}
+
+	showStaleBanner(lastUpdate) {
+		const banner = document.getElementById('staleBanner');
+		if (!banner) return;
+		const hoursSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60);
+		if (hoursSinceUpdate > 24) {
+			banner.classList.add('visible');
+		} else {
+			banner.classList.remove('visible');
+		}
 	}
 
 	async loadAllEvents() {

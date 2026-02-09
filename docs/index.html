@@ -1151,6 +1151,18 @@
 					max-width: none;
 				}
 			}
+		.stale-banner {
+			display: none;
+			background: color-mix(in srgb, var(--accent) 10%, transparent);
+			border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+			border-radius: 8px;
+			padding: 8px 14px;
+			margin-bottom: 16px;
+			font-size: 0.8rem;
+			color: var(--text-secondary);
+			line-height: 1.4;
+		}
+		.stale-banner.visible { display: block; }
 		</style>
 	</head>
 	<body>
@@ -1162,6 +1174,8 @@
 					<button id="toggleTheme" class="theme-toggle" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px; min-width: 32px; min-height: 32px;">🌙</button>
 				</div>
 			</header>
+
+			<div id="staleBanner" class="stale-banner">Data may be outdated — last updated more than 24 hours ago.</div>
 
 			<div class="simple-filters" style="margin-bottom: 24px;">
 				<div class="filter-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
