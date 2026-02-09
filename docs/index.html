@@ -199,6 +199,16 @@
 				color: white;
 			}
 			
+			/* Filter count indicator */
+			.filter-count {
+				font-size: 0.75rem;
+				color: var(--muted);
+				text-align: right;
+				margin-top: 8px;
+				min-height: 1.2em;
+				opacity: 0.7;
+			}
+
 			/* View toggle buttons */
 			.view-toggle {
 				display: inline-flex;
@@ -1171,8 +1181,9 @@
 						<button class="sport-filter" data-filter="esports" title="Esports">🎮</button>
 					</div>
 				</div>
+				<div id="filterCount" class="filter-count"></div>
 			</div>
-			
+
 
 			<div id="top-picks"></div>
 			<div class="events-list" id="eventsContainer">
