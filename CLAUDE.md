@@ -153,7 +153,8 @@ The autopilot workflow (`claude-autopilot.yml`) proactively improves the codebas
 - **Roadmap**: `AUTOPILOT_ROADMAP.md` is the prioritized task queue
 - **Cadence**: Runs nightly at 03:00 UTC
 - **PR label**: `autopilot`
-- **One task per run**: The autopilot picks the first `[PENDING]` task, executes it, and opens a PR
-- **One open PR at a time**: If an `autopilot`-labeled PR is already open, the run is skipped
-- **Scouting**: After completing a task, the autopilot may append new `[PENDING]` tasks to the roadmap but will not execute them in the same run
+- **Multi-task loop**: The autopilot works through PENDING tasks continuously until it runs out of turns, tasks, or hits an error
+- **Auto-merge**: Each task is branched, PR'd, and merged immediately after tests pass
+- **Self-curating**: After completing tasks, the autopilot scouts the codebase for new improvement opportunities and appends them to the roadmap
+- **Safe stops**: If tests fail or a merge fails, the loop stops — no broken code gets pushed
 - **Human control**: Reorder tasks in the roadmap to change priority. Mark tasks `[BLOCKED]` to skip them.

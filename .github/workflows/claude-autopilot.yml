@@ -39,103 +39,97 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
-            --max-turns 35
+            --max-turns 50
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
-            You are the SportSync autopilot — a proactive agent that improves the codebase
-            one task at a time. Read CLAUDE.md first for project context and automation rules.
+            You are the SportSync autopilot — a proactive agent that continuously
+            improves the codebase. Read CLAUDE.md first for project context and
+            automation rules.
 
             TASK OVERRIDE: "${{ inputs.task_override }}"
 
-            ## Step 0: Check for open autopilot PRs
+            ## How you work
 
-            Run: `gh pr list --label autopilot --state open --json number,title`
+            You loop through tasks in the roadmap, completing as many as possible
+            in a single run. For each task: branch, fix, test, PR, merge, repeat.
+            Stop when:
+            - No more PENDING tasks remain
+            - A task fails (tests break, merge fails)
+            - You run low on turns (save at least 5 turns for housekeeping)
 
-            If any open PR with the `autopilot` label exists, a previous run failed
-            to merge. STOP immediately and create a GitHub issue flagging the stale PR.
-            Write to the step summary: "Skipped — open autopilot PR exists: #N".
+            ## Step 0: Pre-flight checks
 
-            ## Step 1: Pick a task
+            1. Check for open autopilot PRs:
+               `gh pr list --label autopilot --state open --json number,title`
+               If any exist, a previous run failed to merge. Create a GitHub issue
+               flagging the stale PR and STOP.
 
-            If TASK OVERRIDE is non-empty, use that as your task description.
-            Otherwise, read `AUTOPILOT_ROADMAP.md` and find the FIRST task marked `[PENDING]`.
-            If no PENDING tasks exist, skip to Step 5 (scout only) and then stop.
+            2. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
 
-            ## Step 2: Validate the task
+            ## Step 1: Task loop
 
-            Before starting, verify the task fits automation constraints:
-            - Only modify allowed paths (see CLAUDE.md + autopilot additions: `AUTOPILOT_ROADMAP.md`, `docs/sw.js`, `docs/css/**`)
-            - Maximum 8 files changed
-            - Maximum 300 lines changed
-            - Risk must be LOW or MEDIUM (never HIGH)
+            For each PENDING task in the roadmap (top to bottom):
 
-            If the task violates constraints, mark it `[BLOCKED] exceeds automation limits`
-            in the roadmap, commit that change, and move to the next PENDING task.
+            ### 1a. Pick and validate
+            - If TASK OVERRIDE is non-empty, use that instead (one-shot, no loop)
+            - Verify the task fits constraints: allowed paths only, max 8 files,
+              max 300 lines, LOW or MEDIUM risk
+            - If invalid, mark `[BLOCKED] exceeds automation limits` and continue
 
-            ## Step 3: Execute the task
-
-            1. Create a branch: `claude/improve-<short-slug>`
-            2. Make the changes needed to complete the task
-            3. Run `npm test` — if tests fail, revert ALL changes and create a GitHub issue
-               describing what went wrong. Do NOT open a PR with failing tests.
+            ### 1b. Execute
+            1. Create branch: `claude/improve-<short-slug>`
+            2. Make the changes
+            3. Run `npm test` — if tests fail, revert ALL changes, create a GitHub
+               issue, and STOP the loop (don't attempt more tasks)
             4. Commit with a descriptive message
 
-            ## Step 4: Open a PR, merge it, and update the roadmap
+            ### 1c. Ship
+            1. Push and open a PR with label `autopilot`
+            2. Merge immediately: `gh pr merge <number> --merge`
+               If merge fails, leave PR open for human review and STOP the loop.
+            3. Switch to main and pull: `git checkout main && git pull`
+            4. Mark task `[DONE] (PR #N)` in `AUTOPILOT_ROADMAP.md`
+            5. Commit and push the roadmap update to main
 
-            1. Push the branch and open a PR with:
-               - Clear title describing the improvement
-               - Body explaining what changed and why
-               - Label: `autopilot`
-            2. Immediately merge the PR using: `gh pr merge <number> --merge`
-               Tests already passed in Step 3, so merge without waiting.
-               If the merge fails, leave the PR open for human review.
-            3. After merging, switch back to main and pull the merged changes:
-               `git checkout main && git pull`
-            4. Update `AUTOPILOT_ROADMAP.md`: change the completed task from `[PENDING]` to
-               `[DONE]` and add the PR number, e.g. `[DONE] (PR #42) Fix service worker...`
-            5. Commit and push the roadmap update directly to main.
+            ### 1d. Log the task
+            Append an entry to `docs/data/autopilot-log.json` (see format below).
+            Commit and push to main.
 
-            ## Step 5: Scout for new tasks
+            Then loop back to pick the next PENDING task.
 
-            After completing (or skipping) the main task, briefly scan the codebase for
+            ## Step 2: Scout for new tasks
+
+            After the task loop ends (all done, or stopped), scan the codebase for
             new improvement opportunities:
             - Run `npm test` and note any issues
-            - Scan for new TODO/FIXME comments
-            - Check for obvious code quality issues
+            - Scan for TODO/FIXME comments
+            - Look for dead code, missing tests, accessibility gaps, performance wins
+            - Check for new patterns or issues introduced by the tasks you just completed
 
-            If you discover new tasks, append them to the bottom of the appropriate
-            priority section in `AUTOPILOT_ROADMAP.md` as `[PENDING]`. Commit these
-            additions. Do NOT execute newly discovered tasks in this run.
+            Append any discoveries to `AUTOPILOT_ROADMAP.md` as `[PENDING]` tasks
+            in the appropriate priority section. Be specific — include file paths,
+            line numbers, and concrete descriptions. Commit and push to main.
 
-            ## Step 6: Update the status tracker
+            ## Status log format
 
-            After every run (whether you completed a task, skipped, or hit an error),
-            append an entry to `docs/data/autopilot-log.json`. The file contains a
-            JSON object with a `"runs"` array. Append one object to that array:
-
+            Each task gets an entry in `docs/data/autopilot-log.json`:
             ```json
             {
               "date": "YYYY-MM-DD",
-              "task": "Short description of the task attempted (or 'skipped' / 'no pending tasks')",
+              "task": "Short description",
               "outcome": "completed|skipped|failed|blocked",
               "pr": null or PR number,
-              "details": "Brief explanation of what happened",
+              "details": "What happened",
               "tests_passed": true or false,
-              "files_changed": number of files changed (0 if skipped),
-              "scouted": number of new tasks discovered and appended
+              "files_changed": number,
+              "scouted": number of new tasks discovered
             }
             ```
-
-            Commit this log update to the same branch as other changes. If you skipped
-            (no branch created), commit directly to main.
-
-            Keep only the last 30 entries in the runs array to prevent the file from
-            growing indefinitely. If there are more than 30, remove the oldest entries.
+            Keep only the last 30 entries. Remove oldest if over 30.
 
             ## Safety constraints
 
             - Never modify protected paths listed in CLAUDE.md
             - Always run `npm test` before committing. Revert if tests fail.
-            - One task per run maximum
-            - Never execute tasks you just discovered — only append them
-            - Keep changes focused and minimal
+            - Keep each task focused and minimal
+            - If anything goes wrong, STOP — don't push broken code
