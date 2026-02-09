@@ -57,14 +57,32 @@ jobs:
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
-            ## Step 0: Pre-flight checks
+            ## Step 0: Pre-flight checks and self-repair
 
-            1. Check for open autopilot PRs:
+            1. Run `npm test` to check baseline health.
+
+               If tests FAIL before you've changed anything, the codebase is broken
+               (likely from a previous autopilot run or external commit). This is your
+               top priority — fix it before doing anything else:
+
+               a. Read the test output to diagnose the failure
+               b. Create branch `claude/repair-tests`
+               c. Fix the broken code (not the tests, unless the tests themselves
+                  are wrong). Keep changes minimal and focused on the failure.
+               d. Run `npm test` again to confirm the fix works
+               e. Open a PR with label `autopilot`, merge it, pull main
+               f. Log the repair in `docs/data/autopilot-log.json` with
+                  outcome `"repaired"`
+               g. If you cannot fix it after a reasonable attempt, create a GitHub
+                  issue with label `maintenance` describing the failure and STOP.
+
+            2. Check for open autopilot PRs:
                `gh pr list --label autopilot --state open --json number,title`
-               If any exist, a previous run failed to merge. Create a GitHub issue
-               flagging the stale PR and STOP.
+               If any exist, try to merge them: `gh pr merge <number> --merge`
+               If merge fails (conflicts, etc.), close the PR and continue.
+               This prevents stale PRs from blocking future runs.
 
-            2. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
+            3. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
 
             ## Step 1: Task loop
 
