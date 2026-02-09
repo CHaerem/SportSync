@@ -126,6 +126,7 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 - `docs/sw.js`
 - `docs/css/**`
 - `AUTOPILOT_ROADMAP.md`
+- `docs/data/autopilot-log.json`
 
 ### Change Limits
 - Maximum **8 files** per automated PR

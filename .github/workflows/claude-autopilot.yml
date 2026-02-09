@@ -100,6 +100,31 @@ jobs:
             priority section in `AUTOPILOT_ROADMAP.md` as `[PENDING]`. Commit these
             additions. Do NOT execute newly discovered tasks in this run.
 
+            ## Step 6: Update the status tracker
+
+            After every run (whether you completed a task, skipped, or hit an error),
+            append an entry to `docs/data/autopilot-log.json`. The file contains a
+            JSON object with a `"runs"` array. Append one object to that array:
+
+            ```json
+            {
+              "date": "YYYY-MM-DD",
+              "task": "Short description of the task attempted (or 'skipped' / 'no pending tasks')",
+              "outcome": "completed|skipped|failed|blocked",
+              "pr": null or PR number,
+              "details": "Brief explanation of what happened",
+              "tests_passed": true or false,
+              "files_changed": number of files changed (0 if skipped),
+              "scouted": number of new tasks discovered and appended
+            }
+            ```
+
+            Commit this log update to the same branch as other changes. If you skipped
+            (no branch created), commit directly to main.
+
+            Keep only the last 30 entries in the runs array to prevent the file from
+            growing indefinitely. If there are more than 30, remove the oldest entries.
+
             ## Safety constraints
 
             - Never modify protected paths listed in CLAUDE.md

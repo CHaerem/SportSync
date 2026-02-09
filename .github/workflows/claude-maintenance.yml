@@ -57,6 +57,13 @@ jobs:
                in the summary so the maintainer knows to add new tasks.
             8. Check for open autopilot PRs: `gh pr list --label autopilot --state open`.
                If any have been open for more than 3 days, flag them for review.
+            9. Read `docs/data/autopilot-log.json` and include an autopilot performance
+               summary in your report:
+               - Total runs in the log
+               - Success rate (completed vs failed/blocked)
+               - Last successful run date
+               - Any streak of consecutive failures (3+ failures = flag for attention)
+               - Tasks completed in the last 7 days
 
             Then decide:
 
