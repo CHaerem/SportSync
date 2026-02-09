@@ -12,21 +12,6 @@ class SportsAPI {
 	// Football API - multiple leagues support
 	async fetchFootballEvents() {
 		try {
-			// Try open API aggregated file first
-			try {
-				const openResp = await fetch(
-					"/SportSync/data/football-open.json?t=" + Date.now()
-				);
-				if (openResp.ok) {
-					const openData = await openResp.json();
-					if (openData.tournaments?.length) {
-						console.log("Loaded open football data");
-						return this.formatTournamentData(openData.tournaments);
-					}
-				}
-			} catch (e) {
-				console.warn("No open football data", e.message);
-			}
 			console.log("Fetching football data from /SportSync/data/football.json");
 			const response = await fetch(
 				"/SportSync/data/football.json?t=" + Date.now()
@@ -139,21 +124,6 @@ class SportsAPI {
 	// Formula 1 events - sessions breakdown
 	async fetchF1Events() {
 		try {
-			// Attempt open F1 schedule
-			try {
-				const openResp = await fetch(
-					"/SportSync/data/f1-open.json?t=" + Date.now()
-				);
-				if (openResp.ok) {
-					const openData = await openResp.json();
-					if (openData.tournaments?.length) {
-						console.log("Loaded open F1 data");
-						return this.formatTournamentData(openData.tournaments);
-					}
-				}
-			} catch (e) {
-				console.warn("No open F1 data", e.message);
-			}
 			console.log("Fetching F1 data from /SportSync/data/f1.json");
 			const response = await fetch("/SportSync/data/f1.json?t=" + Date.now());
 			console.log("F1 response:", response.status, response.ok);
@@ -174,21 +144,6 @@ class SportsAPI {
 	// Chess events - tournament categories
 	async fetchChessEvents() {
 		try {
-			// Try open chess first
-			try {
-				const openResp = await fetch(
-					"/SportSync/data/chess-open.json?t=" + Date.now()
-				);
-				if (openResp.ok) {
-					const openData = await openResp.json();
-					if (openData.tournaments?.length) {
-						console.log("Loaded open chess data");
-						return this.formatTournamentData(openData.tournaments);
-					}
-				}
-			} catch (e) {
-				console.warn("No open chess data", e.message);
-			}
 			console.log("Fetching chess data from /SportSync/data/chess.json");
 			const response = await fetch(
 				"/SportSync/data/chess.json?t=" + Date.now()
@@ -215,21 +170,6 @@ class SportsAPI {
 	// Esports events - game categories
 	async fetchEsportsEvents() {
 		try {
-			// Try open esports (placeholder)
-			try {
-				const openResp = await fetch(
-					"/SportSync/data/esports-open.json?t=" + Date.now()
-				);
-				if (openResp.ok) {
-					const openData = await openResp.json();
-					if (openData.tournaments?.length) {
-						console.log("Loaded open esports data");
-						return this.formatTournamentData(openData.tournaments);
-					}
-				}
-			} catch (e) {
-				console.warn("No open esports data", e.message);
-			}
 			console.log("Fetching esports data from /SportSync/data/esports.json");
 			const response = await fetch(
 				"/SportSync/data/esports.json?t=" + Date.now()
