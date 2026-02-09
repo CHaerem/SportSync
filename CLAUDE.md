@@ -105,3 +105,54 @@ To add premium APIs:
 1. Add API keys as GitHub Secrets
 2. Update workflow to use authenticated endpoints
 3. Modify error handling for rate limits
+
+## Automation Rules
+
+These rules govern automated Claude Code operations via GitHub Actions (`claude-code-action`).
+
+### Protected Paths (never modify automatically)
+- `.github/workflows/**`
+- `package.json`, `package-lock.json`
+- `.env*`
+- `.git/**`
+- `node_modules/**`
+
+### Allowed Paths
+- `scripts/**`
+- `tests/**`
+- `docs/js/**`
+- `docs/index.html`
+- `docs/*.md`
+- `docs/sw.js`
+- `docs/css/**`
+- `AUTOPILOT_ROADMAP.md`
+
+### Change Limits
+- Maximum **8 files** per automated PR
+- Maximum **300 lines changed** per automated PR
+- One bounded fix per maintenance run
+
+### Risk Classification
+- **LOW** — typo fixes, comment updates, test additions → auto-PR
+- **MEDIUM** — logic changes, dependency updates, config changes → PR + request review
+- **HIGH** — workflow changes, auth changes, data schema changes → skip (create issue only)
+
+### Testing
+- Always run `npm test` before committing
+- If tests fail, revert changes and report in the PR or issue
+
+### Branch Naming
+- All automated branches must use the prefix `claude/`
+- Autopilot branches use the prefix `claude/improve-`
+
+### Autopilot
+
+The autopilot workflow (`claude-autopilot.yml`) proactively improves the codebase using a roadmap-driven approach:
+
+- **Roadmap**: `AUTOPILOT_ROADMAP.md` is the prioritized task queue
+- **Cadence**: Runs nightly at 03:00 UTC
+- **PR label**: `autopilot`
+- **One task per run**: The autopilot picks the first `[PENDING]` task, executes it, and opens a PR
+- **One open PR at a time**: If an `autopilot`-labeled PR is already open, the run is skipped
+- **Scouting**: After completing a task, the autopilot may append new `[PENDING]` tasks to the roadmap but will not execute them in the same run
+- **Human control**: Reorder tasks in the roadmap to change priority. Mark tasks `[BLOCKED]` to skip them.

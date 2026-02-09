@@ -1,0 +1,71 @@
+name: Claude Maintenance
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Monday 06:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: claude-maintenance
+  cancel-in-progress: true
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          max_turns: 10
+          allowed_tools: "Read,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(gh run:*),Bash(gh workflow:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            You are running a weekly health check on the SportSync repository.
+            Read CLAUDE.md first for project context and automation rules.
+
+            This is a READ-ONLY workflow. You do NOT create branches or PRs.
+            You only create GitHub issues or write step summaries.
+
+            Perform these checks in order:
+
+            1. Run `npm test` and record pass/fail results.
+            2. Check `docs/data/meta.json` — flag if last_updated is more than 24 hours stale.
+               If stale, attempt to re-trigger the data pipeline:
+               `gh workflow run update-sports-data.yml`
+            3. Scan the codebase for merge conflict markers (<<<<<<, >>>>>>, ======).
+            4. Run `npm audit` and note any vulnerabilities.
+            5. Scan for TODO and FIXME comments across the codebase.
+            6. Check open GitHub issues for anything actionable with `gh issue list`.
+            7. Check the autopilot roadmap: read `AUTOPILOT_ROADMAP.md` and verify
+               there are PENDING tasks remaining. If no PENDING tasks remain, flag this
+               in the summary so the maintainer knows to add new tasks.
+            8. Check for open autopilot PRs: `gh pr list --label autopilot --state open`.
+               If any have been open for more than 3 days, flag them for review.
+
+            Then decide:
+
+            - If you find issues that need human attention: create a GitHub issue with
+              label `maintenance` summarizing your findings and recommended actions.
+            - If everything is healthy: write a summary to the GitHub Actions step
+              summary only. Do not create issues for a clean bill of health.
+
+            You must NOT:
+            - Create branches or PRs
+            - Modify any files
+            - Make commits
+            - Use Write or Edit tools

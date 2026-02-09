@@ -1,0 +1,108 @@
+name: Claude Autopilot
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Nightly at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      task_override:
+        description: 'Override: paste a specific task description to execute instead of reading the roadmap'
+        required: false
+        type: string
+
+concurrency:
+  group: claude-autopilot
+  cancel-in-progress: true
+
+jobs:
+  autopilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          max_turns: 15
+          allowed_tools: "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            You are the SportSync autopilot — a proactive agent that improves the codebase
+            one task at a time. Read CLAUDE.md first for project context and automation rules.
+
+            TASK OVERRIDE: "${{ inputs.task_override }}"
+
+            ## Step 0: Check for open autopilot PRs
+
+            Run: `gh pr list --label autopilot --state open --json number,title`
+
+            If any open PR with the `autopilot` label exists, STOP immediately.
+            Write to the step summary: "Skipped — open autopilot PR exists: #N".
+            Do not create another PR until the existing one is merged or closed.
+
+            ## Step 1: Pick a task
+
+            If TASK OVERRIDE is non-empty, use that as your task description.
+            Otherwise, read `AUTOPILOT_ROADMAP.md` and find the FIRST task marked `[PENDING]`.
+            If no PENDING tasks exist, skip to Step 5 (scout only) and then stop.
+
+            ## Step 2: Validate the task
+
+            Before starting, verify the task fits automation constraints:
+            - Only modify allowed paths (see CLAUDE.md + autopilot additions: `AUTOPILOT_ROADMAP.md`, `docs/sw.js`, `docs/css/**`)
+            - Maximum 8 files changed
+            - Maximum 300 lines changed
+            - Risk must be LOW or MEDIUM (never HIGH)
+
+            If the task violates constraints, mark it `[BLOCKED] exceeds automation limits`
+            in the roadmap, commit that change, and move to the next PENDING task.
+
+            ## Step 3: Execute the task
+
+            1. Create a branch: `claude/improve-<short-slug>`
+            2. Make the changes needed to complete the task
+            3. Run `npm test` — if tests fail, revert ALL changes and create a GitHub issue
+               describing what went wrong. Do NOT open a PR with failing tests.
+            4. Commit with a descriptive message
+
+            ## Step 4: Open a PR and update the roadmap
+
+            1. Push the branch and open a PR with:
+               - Clear title describing the improvement
+               - Body explaining what changed and why
+               - Label: `autopilot`
+            2. Update `AUTOPILOT_ROADMAP.md`: change the completed task from `[PENDING]` to
+               `[DONE]` and add the PR number, e.g. `[DONE] (PR #42) Fix service worker...`
+            3. Commit the roadmap update to the same branch
+
+            ## Step 5: Scout for new tasks
+
+            After completing (or skipping) the main task, briefly scan the codebase for
+            new improvement opportunities:
+            - Run `npm test` and note any issues
+            - Scan for new TODO/FIXME comments
+            - Check for obvious code quality issues
+
+            If you discover new tasks, append them to the bottom of the appropriate
+            priority section in `AUTOPILOT_ROADMAP.md` as `[PENDING]`. Commit these
+            additions. Do NOT execute newly discovered tasks in this run.
+
+            ## Safety constraints
+
+            - Never modify protected paths listed in CLAUDE.md
+            - Always run `npm test` before committing. Revert if tests fail.
+            - One task per run maximum
+            - Never execute tasks you just discovered — only append them
+            - Keep changes focused and minimal

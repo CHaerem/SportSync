@@ -1,0 +1,53 @@
+name: Claude CI Fix
+
+on:
+  workflow_run:
+    workflows: ["Update Sports Data"]
+    types: [completed]
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.workflow_run.conclusion == 'failure'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          max_turns: 15
+          allowed_tools: "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh issue:*),Bash(gh pr:*),Bash(date:*),Bash(jq:*),Bash(curl:*)"
+          prompt: |
+            The "Update Sports Data" workflow just failed.
+            Read CLAUDE.md for project context and automation rules.
+
+            Your task:
+            1. Fetch the failed workflow run logs using `gh run view ${{ github.event.workflow_run.id }} --log-failed`.
+            2. Analyze the failure — identify the root cause.
+            3. If the fix is bounded and low-risk (see CLAUDE.md automation rules):
+               - Create a branch with prefix `claude/fix-`,
+               - Apply the fix,
+               - Run `npm test` to verify,
+               - Push and open a PR explaining the failure and fix.
+            4. If the fix is complex or high-risk:
+               - Create a GitHub issue with label `ci-failure` describing the
+                 failure, root cause analysis, and suggested fix.
+
+            Safety constraints:
+            - Never modify protected paths listed in CLAUDE.md.
+            - Always run `npm test` before committing. Revert if tests fail.
+            - Keep changes under 8 files and 300 lines.
