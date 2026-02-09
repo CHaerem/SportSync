@@ -12,7 +12,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ## HIGH Priority
 
-- [PENDING] Fix service worker stale file references — `docs/sw.js` lines 25,27 cache `personalized-dashboard.js` and `event-filter.js` which do not exist. Remove these entries from the cache list to prevent SW installation failures.
+- [DONE] (PR #TBD) Fix service worker stale file references — `docs/sw.js` lines 25,27 cache `personalized-dashboard.js` and `event-filter.js` which do not exist. Remove these entries from the cache list to prevent SW installation failures.
 
 - [PENDING] Implement `updateFilterCount()` stub in `docs/js/simple-dashboard.js` — Called on lines 60 and 80 but the method body (lines 95-98) is empty. Add a visible count indicator showing how many events match the active filter.
 
@@ -39,3 +39,5 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 - [PENDING] Add keyboard navigation for sport filters — Filter buttons are not keyboard-accessible. Add `tabindex`, focus styles, and Enter/Space key handlers so users can navigate filters without a mouse.
 
 - [PENDING] Clarify or remove `scripts/fetch/fotball-no.js` — This file fetches OBOS-ligaen data from fotball.no but its integration status is unclear. Either wire it into the main fetch pipeline or remove it.
+
+- [PENDING] Add `ai-assistant.js` to service worker cache list — `docs/js/ai-assistant.js` is loaded by `index.html` (line 1190) but is not included in the SW install cache in `docs/sw.js`. Add it for offline resilience.
