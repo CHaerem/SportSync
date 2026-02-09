@@ -326,12 +326,12 @@ class SimpleSportsDashboard {
 					teamsDisplay = `
 						<div class="teams-display">
 							<div class="team-block">
-								${homeLogo ? `<img src="${homeLogo}" alt="${this.escapeHtml(event.homeTeam)}" class="team-logo">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
+								${homeLogo ? `<img src="${homeLogo}" alt="${this.escapeHtml(event.homeTeam)}" class="team-logo" loading="lazy">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
 								<span class="team-name">${this.escapeHtml(event.homeTeam)}</span>
 							</div>
 							<span class="vs-separator">vs</span>
 							<div class="team-block">
-								${awayLogo ? `<img src="${awayLogo}" alt="${this.escapeHtml(event.awayTeam)}" class="team-logo">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
+								${awayLogo ? `<img src="${awayLogo}" alt="${this.escapeHtml(event.awayTeam)}" class="team-logo" loading="lazy">` : `<div style="width: 56px; height: 56px; background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚽</div>`}
 								<span class="team-name">${this.escapeHtml(event.awayTeam)}</span>
 							</div>
 						</div>
@@ -355,7 +355,7 @@ class SimpleSportsDashboard {
 								<div class="tee-time-player">
 									<div class="player-info">
 										${headshot
-											? `<img src="${headshot}" alt="${this.escapeHtml(player.name)}" class="golfer-headshot">`
+											? `<img src="${headshot}" alt="${this.escapeHtml(player.name)}" class="golfer-headshot" loading="lazy">`
 											: `<div class="golfer-headshot-placeholder">⛳</div>`
 										}
 										<span class="player-name">${this.escapeHtml(player.name)}</span>
