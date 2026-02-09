@@ -2,7 +2,7 @@ name: Claude Autopilot
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Nightly at 03:00 UTC
+    - cron: '0 */2 * * *' # Every 2 hours (temporary: testing overnight)
   workflow_dispatch:
     inputs:
       task_override:
@@ -17,7 +17,7 @@ concurrency:
 jobs:
   autopilot:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: write
       pull-requests: write
@@ -39,7 +39,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
-            --max-turns 50
+            --max-turns 75
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are the SportSync autopilot — a proactive agent that continuously
