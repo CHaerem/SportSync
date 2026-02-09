@@ -29,6 +29,16 @@
       "tests_passed": true,
       "files_changed": 2,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-09",
+      "task": "Remove dead open-data fallback fetches",
+      "outcome": "completed",
+      "pr": 8,
+      "details": "Removed 4 dead fallback fetch attempts for non-existent -open.json files (football-open.json, f1-open.json, chess-open.json, esports-open.json) from docs/js/sports-api.js. These caused unnecessary 404 network errors on every page load.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }
