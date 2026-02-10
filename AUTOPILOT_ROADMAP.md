@@ -70,6 +70,6 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #23) Add meta description and theme-color tags — Added SEO description and #667eea theme-color for mobile browsers.
 
-- [PENDING] Fix duplicate emoji mappings — `docs/js/simple-dashboard.js` `sportDisplayName()` duplicates the emoji/name mapping also found in `docs/js/dashboard-helpers.js` and `docs/js/settings-ui.js`. Extract into a shared constant to avoid drift. Touches 3 files.
+- [DONE] (PR #24) Fix duplicate emoji mappings — Extracted sport emoji/name mapping into shared `docs/js/sport-config.js` constant, replacing duplicates in `simple-dashboard.js`, `settings-ui.js`, and `dashboard-helpers.js`.
 
 - [PENDING] Add input validation to preferences-manager — `docs/js/preferences-manager.js` `addFavoriteTeam()` and `addFavoritePlayer()` accept empty strings and null values without validation. Add `if (!name?.trim()) return false` guards. ~10 lines.
