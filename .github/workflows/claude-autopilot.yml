@@ -2,7 +2,7 @@ name: Claude Autopilot
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Every 2 hours (temporary: testing overnight)
+    - cron: '0 3 * * *' # Nightly at 03:00 UTC
   workflow_dispatch:
     inputs:
       task_override:
