@@ -13,18 +13,18 @@
 		:root {
 			--bg: #ffffff;
 			--fg: #111111;
-			--muted: #888888;
-			--border: #e8e8e8;
+			--muted: #999999;
+			--border: #eeeeee;
 			--border-strong: #111111;
 			--accent: #667eea;
 			--radius: 8px;
-			--max-w: 540px;
+			--max-w: 480px;
 			--font: system-ui, -apple-system, sans-serif;
 		}
 		.dark {
 			--bg: #000000;
 			--fg: #f0f0f0;
-			--muted: #666666;
+			--muted: #555555;
 			--border: #1a1a1a;
 			--border-strong: #f0f0f0;
 		}
@@ -35,7 +35,7 @@
 			background: var(--bg);
 			color: var(--fg);
 			line-height: 1.5;
-			font-size: 16px;
+			font-size: 15px;
 			font-weight: 300;
 			-webkit-font-smoothing: antialiased;
 		}
@@ -43,7 +43,7 @@
 		.wrap {
 			max-width: var(--max-w);
 			margin: 0 auto;
-			padding: 24px 16px 80px;
+			padding: 32px 20px 80px;
 		}
 
 		/* --- Header --- */
@@ -51,40 +51,41 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			margin-bottom: 32px;
+			margin-bottom: 40px;
 		}
 		header h1 {
-			font-size: 1.25rem;
-			font-weight: 500;
+			font-size: 1.1rem;
+			font-weight: 400;
 			letter-spacing: -0.02em;
+			color: var(--muted);
 		}
 		#themeToggle {
 			background: none;
 			border: none;
-			font-size: 1.1rem;
+			font-size: 1rem;
 			cursor: pointer;
 			padding: 4px;
 			line-height: 1;
+			opacity: 0.4;
 		}
 
 		/* --- The Brief --- */
 		#the-brief {
-			border-top: 2px solid var(--border-strong);
-			border-bottom: 2px solid var(--border-strong);
-			padding: 16px 0;
-			margin-bottom: 40px;
+			border-top: 1.5px solid var(--border-strong);
+			padding: 20px 0 0;
+			margin-bottom: 48px;
 		}
 		.brief-label {
-			font-size: 0.65rem;
+			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.15em;
+			letter-spacing: 0.18em;
 			color: var(--muted);
-			margin-bottom: 8px;
+			margin-bottom: 12px;
 		}
 		.brief-lines {
-			font-size: 0.9rem;
-			line-height: 1.7;
+			font-size: 0.95rem;
+			line-height: 1.9;
 			font-weight: 300;
 		}
 		.brief-line {
@@ -92,33 +93,36 @@
 		}
 
 		/* --- Featured Sections --- */
-		#featured-sections {}
+		#featured-sections { margin-bottom: 16px; }
 		.featured-section {
 			border: 1px solid var(--border);
 			border-radius: var(--radius);
-			padding: 16px;
-			margin-bottom: 32px;
+			padding: 20px;
+			margin-bottom: 48px;
 		}
 		.featured-section.highlight {
 			border-color: var(--border-strong);
 			border-width: 1.5px;
 		}
 		.feat-header {
-			font-size: 0.7rem;
+			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.1em;
-			margin-bottom: 12px;
+			letter-spacing: 0.12em;
+			margin-bottom: 16px;
+			color: var(--muted);
 		}
 		.feat-item {
 			font-size: 0.85rem;
-			padding: 4px 0;
+			padding: 5px 0;
 			color: var(--fg);
 			font-variant-numeric: tabular-nums;
 		}
 		.feat-item.stat {
-			font-weight: 500;
-			font-size: 0.9rem;
+			font-weight: 400;
+			font-size: 0.8rem;
+			color: var(--muted);
+			margin-bottom: 4px;
 		}
 		.feat-item.text {
 			color: var(--muted);
@@ -127,10 +131,11 @@
 			background: none;
 			border: none;
 			color: var(--muted);
-			font-size: 0.8rem;
+			font-size: 0.75rem;
 			cursor: pointer;
-			margin-top: 8px;
+			margin-top: 12px;
 			padding: 0;
+			font-weight: 300;
 		}
 		.feat-expand:hover { color: var(--fg); }
 		.feat-expand-content { display: none; }
@@ -138,72 +143,49 @@
 
 		/* --- Bands --- */
 		.band-label {
-			font-size: 0.65rem;
+			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.15em;
+			letter-spacing: 0.18em;
 			color: var(--muted);
-			margin-top: 40px;
-			margin-bottom: 4px;
-			position: sticky;
-			top: 0;
-			background: var(--bg);
-			padding: 8px 0 4px;
-			z-index: 10;
+			margin-bottom: 12px;
 			display: flex;
 			justify-content: space-between;
 			align-items: baseline;
 		}
-		.band-label:first-child { margin-top: 0; }
 		.band-date {
-			font-size: 0.65rem;
+			font-size: 0.6rem;
 			font-weight: 300;
 			color: var(--muted);
 			text-transform: none;
 			letter-spacing: 0;
 		}
-		.band-divider {
-			height: 1px;
-			background: var(--border);
-			margin-bottom: 8px;
-		}
-
-		/* --- Tournament Header --- */
-		.tournament-header {
-			font-size: 0.8rem;
-			font-weight: 400;
-			color: var(--muted);
-			padding: 8px 0 4px;
-		}
 
 		/* --- Event Row --- */
 		.event-row {
-			padding: 6px 0;
-			border-bottom: 1px solid var(--border);
+			padding: 10px 0;
 			cursor: pointer;
 			transition: background 0.1s;
 		}
-		.event-row:hover { background: color-mix(in srgb, var(--fg) 3%, transparent); }
-		.event-row:last-child { border-bottom: none; }
+		.event-row:hover { background: color-mix(in srgb, var(--fg) 2%, transparent); }
 
 		.row-main {
 			display: flex;
 			align-items: center;
-			gap: 12px;
+			gap: 14px;
 			min-height: 28px;
 		}
 		.row-time {
 			font-size: 0.75rem;
 			font-weight: 400;
 			color: var(--muted);
-			min-width: 42px;
+			min-width: 40px;
 			font-variant-numeric: tabular-nums;
 			flex-shrink: 0;
-			opacity: 0.8;
 		}
 		.row-title {
-			font-size: 0.9rem;
-			font-weight: 400;
+			font-size: 0.85rem;
+			font-weight: 300;
 			flex: 1;
 			min-width: 0;
 			overflow: hidden;
@@ -211,28 +193,29 @@
 			white-space: nowrap;
 		}
 		.row-dot {
-			width: 6px;
-			height: 6px;
+			width: 5px;
+			height: 5px;
 			border-radius: 50%;
 			flex-shrink: 0;
+			opacity: 0.5;
 		}
 
-		/* --- Week Summary --- */
-		.week-summary {
-			font-size: 0.85rem;
-			color: var(--muted);
-			padding: 8px 0;
-			cursor: pointer;
+		/* --- More toggle --- */
+		.more-toggle {
 			background: none;
 			border: none;
+			color: var(--muted);
+			font-size: 0.8rem;
 			font-family: var(--font);
 			font-weight: 300;
-			text-align: left;
+			cursor: pointer;
+			padding: 10px 0;
 			width: 100%;
+			text-align: left;
 		}
-		.week-summary:hover { color: var(--fg); }
-		.week-expanded { display: none; }
-		.week-expanded.open { display: block; }
+		.more-toggle:hover { color: var(--fg); }
+		.more-content { display: none; }
+		.more-content.open { display: block; }
 
 		/* --- Expanded Row --- */
 		.row-expanded {
@@ -322,7 +305,7 @@
 			flex-wrap: wrap;
 		}
 		.exp-stream-badge {
-			font-size: 0.75rem;
+			font-size: 0.7rem;
 			color: var(--muted);
 			border: 1px solid var(--border);
 			border-radius: 12px;
@@ -344,7 +327,7 @@
 			border: 1px solid var(--border);
 			border-radius: 12px;
 			padding: 2px 10px;
-			font-size: 0.75rem;
+			font-size: 0.7rem;
 			color: var(--muted);
 			cursor: pointer;
 		}
@@ -355,62 +338,40 @@
 
 		/* --- On the Radar --- */
 		#on-the-radar {
-			margin-top: 40px;
-			padding-top: 16px;
-		}
-		.radar-label {
-			font-size: 0.65rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.15em;
-			color: var(--muted);
-			margin-bottom: 8px;
+			margin-top: 48px;
+			padding-top: 0;
 		}
 		.radar-text {
-			font-size: 0.85rem;
+			font-size: 0.8rem;
 			color: var(--muted);
-			line-height: 1.7;
+			line-height: 1.8;
 			font-style: italic;
-		}
-
-		/* --- Later toggle --- */
-		.later-toggle {
-			background: none;
-			border: none;
-			color: var(--muted);
-			font-size: 0.85rem;
-			font-family: var(--font);
 			font-weight: 300;
-			cursor: pointer;
-			padding: 8px 0;
-			width: 100%;
-			text-align: left;
 		}
-		.later-toggle:hover { color: var(--fg); }
 
 		/* --- Filters (bottom, de-emphasized) --- */
 		.filters {
 			display: flex;
-			gap: 12px;
-			margin-top: 48px;
+			gap: 14px;
+			margin-top: 56px;
 			justify-content: center;
 			flex-wrap: wrap;
 		}
 		.filter-dot {
-			width: 32px;
-			height: 32px;
+			width: 30px;
+			height: 30px;
 			border-radius: 50%;
-			border: 2px solid var(--border);
+			border: 1.5px solid var(--border);
 			background: transparent;
 			cursor: pointer;
-			font-size: 0.9rem;
+			font-size: 0.85rem;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			transition: border-color 0.15s, opacity 0.15s;
-			opacity: 0.4;
+			opacity: 0.3;
 		}
-		.filter-dot:hover { opacity: 0.7; }
+		.filter-dot:hover { opacity: 0.6; }
 		.filter-dot.active {
 			opacity: 1;
 			border-color: var(--fg);
@@ -421,13 +382,14 @@
 			text-align: center;
 			color: var(--muted);
 			padding: 48px 0;
-			font-size: 0.9rem;
+			font-size: 0.85rem;
 		}
 		.loading {
 			text-align: center;
 			padding: 48px 0;
 			color: var(--muted);
-			font-size: 0.85rem;
+			font-size: 0.8rem;
+			font-weight: 300;
 		}
 
 		/* --- Reduced motion --- */
@@ -440,9 +402,9 @@
 
 		/* --- Mobile tweaks --- */
 		@media (max-width: 380px) {
-			.wrap { padding: 16px 12px 48px; }
-			.row-title { font-size: 0.85rem; }
-			.filter-dot { width: 28px; height: 28px; font-size: 0.8rem; }
+			.wrap { padding: 20px 14px 48px; }
+			.row-title { font-size: 0.8rem; }
+			.filter-dot { width: 26px; height: 26px; font-size: 0.75rem; }
 		}
 	</style>
 </head>
@@ -458,7 +420,7 @@
 		<div id="featured-sections"></div>
 
 		<div id="events">
-			<div class="loading">Loading events...</div>
+			<div class="loading">Loading...</div>
 		</div>
 
 		<div id="on-the-radar" style="display:none;"></div>
@@ -474,11 +436,11 @@
 		</div>
 	</div>
 
-	<script src="js/sport-config.js?v=2026021002"></script>
-	<script src="js/asset-maps.js?v=2026021002"></script>
-	<script src="js/sports-api.js?v=2026021002"></script>
-	<script src="js/preferences-manager.js?v=2026021002"></script>
-	<script src="js/dashboard.js?v=2026021002"></script>
+	<script src="js/sport-config.js?v=2026021003"></script>
+	<script src="js/asset-maps.js?v=2026021003"></script>
+	<script src="js/sports-api.js?v=2026021003"></script>
+	<script src="js/preferences-manager.js?v=2026021003"></script>
+	<script src="js/dashboard.js?v=2026021003"></script>
 
 	<script>
 		if ('serviceWorker' in navigator) {

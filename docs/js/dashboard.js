@@ -6,8 +6,6 @@ class Dashboard {
 		this.selectedSports = new Set();
 		this.expandedId = null;
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
-		this.laterExpanded = false;
-		this.weekExpanded = false;
 		this.init();
 	}
 
@@ -213,40 +211,36 @@ class Dashboard {
 
 		let html = '';
 
-		// TODAY — show max 6, toggle for rest
+		// TODAY — show max 3, rest behind toggle
 		if (bands.today.length > 0) {
 			const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
-			const shown = bands.today.slice(0, 6);
-			const rest = bands.today.slice(6);
+			const shown = bands.today.slice(0, 3);
+			const rest = bands.today.slice(3);
 
 			html += `<div class="band-label"><span>Today</span><span class="band-date">${dateStr}</span></div>`;
-			html += '<div class="band-divider"></div>';
-			html += this.renderBandEvents(shown, false);
+			html += this.renderEventList(shown, false);
 
 			if (rest.length > 0) {
-				html += `<button class="later-toggle" data-band="today-more">${rest.length} more today \u25b8</button>`;
-				html += `<div class="week-expanded" data-expand="today-more">${this.renderBandEvents(rest, false)}</div>`;
+				html += `<button class="more-toggle" data-toggle="today-more">+${rest.length} more \u25b8</button>`;
+				html += `<div class="more-content" data-content="today-more">${this.renderEventList(rest, false)}</div>`;
 			}
 		}
 
-		// TOMORROW
-		if (bands.tomorrow.length > 0) {
-			const tmrw = new Date(now);
-			tmrw.setDate(tmrw.getDate() + 1);
-			const dateStr = tmrw.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
-			html += `<div class="band-label"><span>Tomorrow</span><span class="band-date">${dateStr}</span></div>`;
-			html += '<div class="band-divider"></div>';
-			html += this.renderBandEvents(bands.tomorrow, false);
+		// COMING UP — tomorrow + this week, collapsed
+		const comingUp = [...bands.tomorrow, ...bands.thisWeek];
+		if (comingUp.length > 0) {
+			const count = comingUp.length;
+			html += `<div class="band-label" style="margin-top:40px;"><span>Coming up</span><span class="band-date">${count} events</span></div>`;
+			html += `<button class="more-toggle" data-toggle="coming-up">${this.summarizeSports(comingUp)} \u25b8</button>`;
+			html += `<div class="more-content" data-content="coming-up">${this.renderEventList(comingUp, true)}</div>`;
 		}
 
-		// THIS WEEK — collapsed summary
-		if (bands.thisWeek.length > 0) {
-			html += this.renderWeekSummary(bands.thisWeek);
-		}
-
-		// LATER
+		// LATER — collapsed
 		if (bands.later.length > 0) {
-			html += this.renderLater(bands.later);
+			const count = bands.later.length;
+			html += `<div class="band-label" style="margin-top:40px;"><span>Later</span><span class="band-date">${count} events</span></div>`;
+			html += `<button class="more-toggle" data-toggle="later">${this.summarizeSports(bands.later)} \u25b8</button>`;
+			html += `<div class="more-content" data-content="later">${this.renderEventList(bands.later, true)}</div>`;
 		}
 
 		if (!html) {
@@ -258,50 +252,20 @@ class Dashboard {
 		this.bindExpandToggles();
 	}
 
-	renderBandEvents(events, showDay) {
-		const groups = this.groupByTournament(events);
-		let html = '';
-
-		groups.forEach(group => {
-			if (group.events.length >= 3) {
-				const emoji = getSportEmoji(group.sport);
-				html += `<div class="tournament-header">${emoji} ${this.esc(group.tournament)}</div>`;
-				group.events.forEach(e => { html += this.renderRow(e, showDay, true); });
-			} else {
-				group.events.forEach(e => { html += this.renderRow(e, showDay, false); });
-			}
-		});
-
-		return html;
+	renderEventList(events, showDay) {
+		return events.map(e => this.renderRow(e, showDay)).join('');
 	}
 
-	renderWeekSummary(events) {
+	summarizeSports(events) {
 		const sportCounts = {};
 		events.forEach(e => {
 			const sport = SPORT_CONFIG.find(s => s.id === e.sport || (s.aliases && s.aliases.includes(e.sport)));
 			const name = sport ? sport.name.toLowerCase() : e.sport;
 			sportCounts[name] = (sportCounts[name] || 0) + 1;
 		});
-		const summary = Object.entries(sportCounts)
+		return Object.entries(sportCounts)
 			.map(([name, count]) => `${count} ${name}`)
 			.join(' \u00b7 ');
-
-		return `
-			<div class="band-label"><span>This Week</span></div>
-			<div class="band-divider"></div>
-			<button class="week-summary" data-band="this-week">${summary} \u25b8</button>
-			<div class="week-expanded" data-expand="this-week">${this.renderBandEvents(events, true)}</div>
-		`;
-	}
-
-	renderLater(events) {
-		const count = events.length;
-		return `
-			<div class="band-label"><span>Later</span></div>
-			<div class="band-divider"></div>
-			<button class="later-toggle" id="laterToggle">${count} more event${count > 1 ? 's' : ''} \u25b8</button>
-			<div class="later-events" id="laterEvents" style="display:none;"></div>
-		`;
 	}
 
 	renderRow(event, showDay, underTournament) {
@@ -428,7 +392,7 @@ class Dashboard {
 
 		container.style.display = '';
 		container.innerHTML = `
-			<div class="radar-label">On the Radar</div>
+			<div class="band-label">On the Radar</div>
 			<div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>
 		`;
 	}
@@ -436,7 +400,6 @@ class Dashboard {
 	// --- Event handlers ---
 
 	bindEventRows() {
-		// Row click to expand
 		document.querySelectorAll('.event-row').forEach(row => {
 			row.addEventListener('click', (e) => {
 				if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
@@ -446,7 +409,6 @@ class Dashboard {
 			});
 		});
 
-		// Favorite buttons
 		document.querySelectorAll('.exp-fav-btn').forEach(btn => {
 			btn.addEventListener('click', (e) => {
 				e.stopPropagation();
@@ -471,44 +433,13 @@ class Dashboard {
 				this.render();
 			});
 		});
-
-		// Later toggle
-		const laterToggle = document.getElementById('laterToggle');
-		if (laterToggle) {
-			laterToggle.addEventListener('click', () => {
-				this.laterExpanded = !this.laterExpanded;
-				const laterEl = document.getElementById('laterEvents');
-				if (this.laterExpanded) {
-					const filtered = this.getFilteredEvents();
-					const bands = this.groupByTemporalBand(filtered, new Date());
-					laterEl.innerHTML = this.renderBandEvents(bands.later, true);
-					laterEl.style.display = '';
-					laterToggle.textContent = 'Show less \u25be';
-					// Bind new rows
-					laterEl.querySelectorAll('.event-row').forEach(row => {
-						row.addEventListener('click', (e) => {
-							if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
-							const id = row.dataset.id;
-							this.expandedId = this.expandedId === id ? null : id;
-							this.render();
-						});
-					});
-				} else {
-					laterEl.style.display = 'none';
-					const filtered = this.getFilteredEvents();
-					const bands = this.groupByTemporalBand(filtered, new Date());
-					laterToggle.textContent = `${bands.later.length} more event${bands.later.length > 1 ? 's' : ''} \u25b8`;
-				}
-			});
-		}
 	}
 
 	bindExpandToggles() {
-		// Week summary and today-more toggles
-		document.querySelectorAll('.week-summary, .later-toggle[data-band]').forEach(btn => {
+		document.querySelectorAll('.more-toggle[data-toggle]').forEach(btn => {
 			btn.addEventListener('click', () => {
-				const band = btn.dataset.band;
-				const content = document.querySelector(`.week-expanded[data-expand="${band}"]`);
+				const key = btn.dataset.toggle;
+				const content = document.querySelector(`.more-content[data-content="${key}"]`);
 				if (content) {
 					const isOpen = content.classList.contains('open');
 					content.classList.toggle('open');
@@ -516,7 +447,7 @@ class Dashboard {
 						? btn.textContent.replace('\u25be', '\u25b8')
 						: btn.textContent.replace('\u25b8', '\u25be');
 
-					// Bind event rows in expanded content
+					// Bind event rows inside newly opened content
 					if (!isOpen) {
 						content.querySelectorAll('.event-row').forEach(row => {
 							row.addEventListener('click', (e) => {
