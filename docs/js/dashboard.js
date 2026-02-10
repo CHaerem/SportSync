@@ -78,10 +78,21 @@ class Dashboard {
 	// --- Rendering ---
 
 	render() {
+		this.renderDateLine();
 		this.renderBrief();
 		this.renderSections();
 		this.renderEvents();
 		this.renderOnTheRadar();
+	}
+
+	renderDateLine() {
+		const el = document.getElementById('date-line');
+		if (!el) return;
+		const now = new Date();
+		el.textContent = now.toLocaleDateString('en-US', {
+			weekday: 'long', month: 'long', day: 'numeric',
+			timeZone: 'Europe/Oslo'
+		});
 	}
 
 	// --- The Brief ---
@@ -755,7 +766,7 @@ class Dashboard {
 		}
 
 		container.style.display = '';
-		container.innerHTML = `<div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>`;
+		container.innerHTML = `<div class="radar-label">On the radar</div><div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>`;
 	}
 
 	// --- Event handlers ---

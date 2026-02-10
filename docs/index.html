@@ -77,10 +77,22 @@
 		}
 		#themeToggle:hover { opacity: 0.8; }
 
+		/* --- Date line --- */
+		#date-line {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--muted);
+			margin-bottom: 16px;
+		}
+
 		/* --- The Brief --- */
 		#the-brief {
-			padding: 0 0 24px;
-			margin-bottom: 24px;
+			padding: 0 0 20px;
+			margin-bottom: 20px;
+			border-left: 2.5px solid var(--accent);
+			padding-left: 14px;
 			font-family: var(--font-serif);
 			font-size: 0.95rem;
 			color: var(--fg);
@@ -179,7 +191,9 @@
 			text-transform: uppercase;
 			letter-spacing: 0.12em;
 			color: var(--muted);
-			margin: 28px 0 14px;
+			margin: 32px 0 16px;
+			padding-top: 16px;
+			border-top: 1px solid var(--border);
 		}
 
 		/* --- Live indicator --- */
@@ -284,7 +298,7 @@
 		}
 		.exp-venue {
 			color: var(--muted);
-			margin-bottom: 12px;
+			margin-bottom: 8px;
 			font-size: 0.8rem;
 		}
 		.exp-summary {
@@ -292,12 +306,12 @@
 			font-size: 0.75rem;
 			font-style: italic;
 			line-height: 1.6;
-			margin-bottom: 10px;
+			margin-bottom: 8px;
 		}
 		.exp-tags {
 			display: flex;
 			gap: 6px;
-			margin-bottom: 10px;
+			margin-bottom: 8px;
 			flex-wrap: wrap;
 		}
 		.exp-tag {
@@ -442,6 +456,16 @@
 		/* --- On the Radar --- */
 		#on-the-radar {
 			margin-top: 36px;
+			padding-top: 20px;
+			border-top: 1px solid var(--border);
+		}
+		.radar-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--muted);
+			margin-bottom: 8px;
 		}
 		.radar-text {
 			font-family: var(--font-serif);
@@ -489,6 +513,7 @@
 			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
 		</header>
 
+		<div id="date-line"></div>
 		<div id="the-brief"></div>
 
 		<div id="featured-sections"></div>
