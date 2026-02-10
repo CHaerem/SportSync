@@ -5,12 +5,16 @@
  * - sections: dynamic featured content (Olympics, World Cup, CL, etc.)
  * - radar: 2-3 "on the radar" sentences about potential events
  *
- * Usage: ANTHROPIC_API_KEY=... node scripts/generate-featured.js
- *   or:  OPENAI_API_KEY=... node scripts/generate-featured.js
+ * Auth (checked in order):
+ *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI (Max subscription)
+ *   2. ANTHROPIC_API_KEY — direct Anthropic API
+ *   3. OPENAI_API_KEY — direct OpenAI API
+ *   4. Fallback — template-based brief (no AI)
  */
 
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 
@@ -149,6 +153,21 @@ Remember:
 - Return ONLY valid JSON, no markdown wrapper`;
 }
 
+async function generateWithClaudeCLI(systemPrompt, userPrompt) {
+	const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+	const tmpFile = path.join(rootDataPath(), ".featured-prompt.tmp");
+	fs.writeFileSync(tmpFile, fullPrompt);
+	try {
+		const output = execSync(
+			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text`,
+			{ encoding: "utf-8", timeout: 120000, maxBuffer: 1024 * 1024 }
+		);
+		return output.trim();
+	} finally {
+		try { fs.unlinkSync(tmpFile); } catch {}
+	}
+}
+
 function generateFallbackBrief(events, now) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + 86400000);
@@ -204,10 +223,36 @@ async function main() {
 		console.log(`Loaded ${curatedConfigs.length} curated config(s): ${curatedConfigs.map((c) => c.name).join(", ")}`);
 	}
 
-	const llm = new LLMClient();
+	const systemPrompt = buildSystemPrompt();
+	const userPrompt = buildUserPrompt(events, now, curatedConfigs);
+	let rawContent = null;
 
-	if (!llm.isAvailable()) {
-		console.log("No LLM API key found. Using fallback brief generation.");
+	// 1. Try Claude CLI (OAuth token from Max subscription)
+	if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
+		console.log("Using Claude CLI (OAuth) to generate featured content.");
+		try {
+			rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
+		} catch (err) {
+			console.error("Claude CLI failed:", err.message);
+		}
+	}
+
+	// 2. Try direct API (ANTHROPIC_API_KEY or OPENAI_API_KEY)
+	if (!rawContent) {
+		const llm = new LLMClient();
+		if (llm.isAvailable()) {
+			console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
+			try {
+				rawContent = await llm.complete(systemPrompt, userPrompt);
+			} catch (err) {
+				console.error("LLM API failed:", err.message);
+			}
+		}
+	}
+
+	// 3. Fallback — template-based brief
+	if (!rawContent) {
+		console.log("No AI available. Using fallback brief generation.");
 		writeJsonPretty(featuredPath, {
 			brief: generateFallbackBrief(events, now),
 			sections: [],
@@ -216,12 +261,20 @@ async function main() {
 		return;
 	}
 
-	console.log(`Using ${llm.getProviderName()} to generate featured content.`);
-
+	// Parse JSON from AI response
 	try {
-		const result = await llm.completeJSON(buildSystemPrompt(), buildUserPrompt(events, now, curatedConfigs));
+		let result;
+		try {
+			result = JSON.parse(rawContent);
+		} catch {
+			const match = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+			if (match) {
+				result = JSON.parse(match[1].trim());
+			} else {
+				throw new Error(`Could not parse JSON from response: ${rawContent.substring(0, 200)}`);
+			}
+		}
 
-		// Validate structure
 		const featured = {
 			brief: Array.isArray(result.brief) ? result.brief.slice(0, 3) : [],
 			sections: Array.isArray(result.sections)
@@ -247,7 +300,7 @@ async function main() {
 			`Featured content generated: ${featured.brief.length} brief lines, ${featured.sections.length} sections, ${featured.radar.length} radar items.`
 		);
 	} catch (err) {
-		console.error("LLM featured generation failed:", err.message);
+		console.error("Failed to parse AI response:", err.message);
 		console.log("Falling back to template-based brief.");
 		writeJsonPretty(featuredPath, {
 			brief: generateFallbackBrief(events, now),
