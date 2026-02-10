@@ -13,8 +13,8 @@
 		:root {
 			--bg: #ffffff;
 			--fg: #111111;
-			--muted: #999999;
-			--border: #eeeeee;
+			--muted: #666666;
+			--border: #e8e8e8;
 			--border-strong: #111111;
 			--accent: #667eea;
 			--radius: 8px;
@@ -24,8 +24,8 @@
 		.dark {
 			--bg: #000000;
 			--fg: #f0f0f0;
-			--muted: #555555;
-			--border: #1a1a1a;
+			--muted: #999999;
+			--border: #222222;
 			--border-strong: #f0f0f0;
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
@@ -71,10 +71,10 @@
 
 		/* --- The Brief --- */
 		#the-brief {
-			padding: 0 0 20px;
-			margin-bottom: 32px;
+			padding: 0 0 24px;
+			margin-bottom: 28px;
 			font-size: 0.85rem;
-			color: var(--muted);
+			color: var(--fg);
 			line-height: 1.7;
 			font-weight: 300;
 		}
@@ -144,13 +144,13 @@
 			cursor: pointer;
 			transition: background 0.1s;
 		}
-		.event-row:hover { background: color-mix(in srgb, var(--fg) 2%, transparent); }
+		.event-row:hover { background: color-mix(in srgb, var(--fg) 3%, transparent); }
 
 		.row-main {
 			display: flex;
 			align-items: center;
 			gap: 10px;
-			min-height: 24px;
+			min-height: 28px;
 		}
 		.row-time {
 			font-size: 0.75rem;
@@ -160,6 +160,28 @@
 			font-variant-numeric: tabular-nums;
 			flex-shrink: 0;
 		}
+		.row-icons {
+			display: flex;
+			align-items: center;
+			gap: 3px;
+			flex-shrink: 0;
+		}
+		.row-logo {
+			width: 20px;
+			height: 20px;
+			object-fit: contain;
+		}
+		.row-headshot {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+		.row-emoji {
+			font-size: 0.85rem;
+			width: 20px;
+			text-align: center;
+		}
 		.row-title {
 			font-size: 0.8rem;
 			font-weight: 300;
@@ -168,11 +190,6 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-		}
-		.row-sport {
-			font-size: 0.7rem;
-			flex-shrink: 0;
-			opacity: 0.4;
 		}
 
 		/* --- More toggle --- */

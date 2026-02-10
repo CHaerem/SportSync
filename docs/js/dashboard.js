@@ -249,7 +249,6 @@ class Dashboard {
 
 	renderRow(event, showDay) {
 		const date = new Date(event.time);
-		const emoji = getSportEmoji(event.sport);
 
 		let timeStr;
 		if (showDay) {
@@ -261,11 +260,27 @@ class Dashboard {
 			});
 		}
 
-		let title;
-		if (event.homeTeam && event.awayTeam) {
-			title = `${this.abbrev(event.homeTeam)} v ${this.abbrev(event.awayTeam)}`;
+		let iconHtml = '';
+		let title = event.title;
+
+		if (event.sport === 'football' && event.homeTeam && event.awayTeam) {
+			const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
+			const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
+			if (hLogo && aLogo) {
+				iconHtml = `<img src="${hLogo}" class="row-logo" loading="lazy"><img src="${aLogo}" class="row-logo" loading="lazy">`;
+			} else {
+				iconHtml = `<span class="row-emoji">\u26bd</span>`;
+			}
+			title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
+		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(event.norwegianPlayers[0].name) : null;
+			if (headshot) {
+				iconHtml = `<img src="${headshot}" class="row-headshot" loading="lazy">`;
+			} else {
+				iconHtml = `<span class="row-emoji">${getSportEmoji(event.sport)}</span>`;
+			}
 		} else {
-			title = event.title;
+			iconHtml = `<span class="row-emoji">${getSportEmoji(event.sport)}</span>`;
 		}
 
 		const isExpanded = this.expandedId === event.id;
@@ -274,17 +289,17 @@ class Dashboard {
 			<div class="event-row${isExpanded ? ' expanded' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
+					<span class="row-icons">${iconHtml}</span>
 					<span class="row-title">${this.esc(title)}</span>
-					<span class="row-sport">${emoji}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
 		`;
 	}
 
-	abbrev(name) {
+	shortName(name) {
 		if (!name) return '';
-		return name.replace(/ FC$| AFC$| CF$/i, '').split(' ')[0].slice(0, 3).toUpperCase();
+		return name.replace(/ FC$| AFC$| CF$| FK$/i, '').replace(/^FC |^AFC /i, '').trim();
 	}
 
 	renderExpanded(event) {
