@@ -68,7 +68,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ### LOW Priority
 
-- [PENDING] Add meta description and theme-color tags — `docs/index.html` is missing `<meta name="description">` and `<meta name="theme-color">` tags. Add them for improved SEO and consistent OS-level theming. ~2 lines.
+- [DONE] (PR #23) Add meta description and theme-color tags — Added SEO description and #667eea theme-color for mobile browsers.
 
 - [PENDING] Fix duplicate emoji mappings — `docs/js/simple-dashboard.js` `sportDisplayName()` duplicates the emoji/name mapping also found in `docs/js/dashboard-helpers.js` and `docs/js/settings-ui.js`. Extract into a shared constant to avoid drift. Touches 3 files.
 
