@@ -21,7 +21,8 @@ self.addEventListener('install', (event) => {
                 '/SportSync/js/sports-api.js',
                 '/SportSync/js/simple-dashboard.js',
                 '/SportSync/js/preferences-manager.js',
-                '/SportSync/js/settings-ui.js'
+                '/SportSync/js/settings-ui.js',
+                '/SportSync/js/ai-assistant.js'
             ]);
         })
     );
