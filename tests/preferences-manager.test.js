@@ -103,6 +103,24 @@ describe("PreferencesManager", () => {
 		it("returns empty array for unknown sport", () => {
 			expect(pm.getFavoriteTeams("curling")).toEqual([]);
 		});
+
+		it("rejects empty string, null, and undefined team names", () => {
+			expect(pm.addFavoriteTeam("football", "")).toBe(false);
+			expect(pm.addFavoriteTeam("football", null)).toBe(false);
+			expect(pm.addFavoriteTeam("football", undefined)).toBe(false);
+			expect(pm.addFavoriteTeam("football", "   ")).toBe(false);
+		});
+
+		it("rejects empty string, null, and undefined sport names", () => {
+			expect(pm.addFavoriteTeam("", "Arsenal")).toBe(false);
+			expect(pm.addFavoriteTeam(null, "Arsenal")).toBe(false);
+			expect(pm.addFavoriteTeam(undefined, "Arsenal")).toBe(false);
+		});
+
+		it("returns true when team is added, false when duplicate", () => {
+			expect(pm.addFavoriteTeam("football", "Arsenal")).toBe(true);
+			expect(pm.addFavoriteTeam("football", "Arsenal")).toBe(false);
+		});
 	});
 
 	describe("isTeamFavorite()", () => {
@@ -136,6 +154,23 @@ describe("PreferencesManager", () => {
 			const before = pm.getFavoritePlayers("golf").length;
 			pm.removeFavoritePlayer("golf", "Tiger Woods");
 			expect(pm.getFavoritePlayers("golf")).toHaveLength(before);
+		});
+
+		it("rejects empty string, null, and undefined player names", () => {
+			expect(pm.addFavoritePlayer("golf", "")).toBe(false);
+			expect(pm.addFavoritePlayer("golf", null)).toBe(false);
+			expect(pm.addFavoritePlayer("golf", undefined)).toBe(false);
+			expect(pm.addFavoritePlayer("golf", "   ")).toBe(false);
+		});
+
+		it("rejects empty string, null, and undefined sport names", () => {
+			expect(pm.addFavoritePlayer("", "Tiger Woods")).toBe(false);
+			expect(pm.addFavoritePlayer(null, "Tiger Woods")).toBe(false);
+		});
+
+		it("returns true when player is added, false when duplicate", () => {
+			expect(pm.addFavoritePlayer("golf", "Rory McIlroy")).toBe(true);
+			expect(pm.addFavoritePlayer("golf", "Rory McIlroy")).toBe(false);
 		});
 	});
 
