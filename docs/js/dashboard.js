@@ -190,36 +190,23 @@ class Dashboard {
 
 		let html = '';
 
-		// TODAY — show max 4, rest behind toggle
+		// TODAY — grouped by tournament
 		if (bands.today.length > 0) {
-			const shown = bands.today.slice(0, 4);
-			const rest = bands.today.slice(4);
-
 			html += `<div class="band-label">Today</div>`;
-			html += this.renderEventList(shown, false);
-
-			if (rest.length > 0) {
-				html += `<button class="more-toggle" data-toggle="today-more">+${rest.length} more \u25b8</button>`;
-				html += `<div class="more-content" data-content="today-more">${this.renderEventList(rest, false)}</div>`;
-			}
+			html += this.renderGroupedEvents(bands.today, false);
 		}
 
-		// TOMORROW
+		// TOMORROW — grouped
 		if (bands.tomorrow.length > 0) {
 			html += `<div class="band-label" style="margin-top:28px;">Tomorrow</div>`;
-			html += this.renderEventList(bands.tomorrow.slice(0, 3), false);
-			if (bands.tomorrow.length > 3) {
-				const rest = bands.tomorrow.slice(3);
-				html += `<button class="more-toggle" data-toggle="tomorrow-more">+${rest.length} more \u25b8</button>`;
-				html += `<div class="more-content" data-content="tomorrow-more">${this.renderEventList(rest, false)}</div>`;
-			}
+			html += this.renderGroupedEvents(bands.tomorrow, false);
 		}
 
 		// THIS WEEK + LATER — collapsed summary
 		const later = [...bands.thisWeek, ...bands.later];
 		if (later.length > 0) {
 			html += `<button class="more-toggle" data-toggle="later" style="margin-top:20px;">${this.summarizeSports(later)} later \u25b8</button>`;
-			html += `<div class="more-content" data-content="later">${this.renderEventList(later, true)}</div>`;
+			html += `<div class="more-content" data-content="later">${this.renderGroupedEvents(later, true)}</div>`;
 		}
 
 		if (!html) {
@@ -229,6 +216,23 @@ class Dashboard {
 		container.innerHTML = html;
 		this.bindEventRows();
 		this.bindExpandToggles();
+	}
+
+	renderGroupedEvents(events, showDay) {
+		const groups = this.groupByTournament(events);
+		return groups.map(group => {
+			const sport = SPORT_CONFIG.find(s => s.id === group.sport || (s.aliases && s.aliases.includes(group.sport)));
+			const color = sport ? sport.color : '#888';
+			const rows = group.events.map(e => this.renderRow(e, showDay)).join('');
+			const showLabel = group.events.length >= 2 ||
+				(group.tournament && group.tournament !== group.events[0].title);
+			return `
+				<div class="event-group" style="border-left-color:${color}">
+					${showLabel ? `<div class="group-label">${this.esc(group.tournament)}</div>` : ''}
+					${rows}
+				</div>
+			`;
+		}).join('');
 	}
 
 	renderEventList(events, showDay) {
