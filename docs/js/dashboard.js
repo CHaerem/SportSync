@@ -23,9 +23,40 @@ class Dashboard {
 		});
 	}
 
+	// --- Session cache ---
+
+	_cacheGet(key, maxAgeMs) {
+		try {
+			const raw = sessionStorage.getItem('ss_' + key);
+			if (!raw) return null;
+			const { ts, data } = JSON.parse(raw);
+			if (Date.now() - ts > maxAgeMs) return null;
+			return data;
+		} catch { return null; }
+	}
+
+	_cacheSet(key, data) {
+		try {
+			sessionStorage.setItem('ss_' + key, JSON.stringify({ ts: Date.now(), data }));
+		} catch { /* quota exceeded — ignore */ }
+	}
+
 	// --- Data loading ---
 
 	async loadEvents() {
+		const STATIC_TTL = 5 * 60 * 1000; // 5 minutes — data only changes every 2h
+		const cachedEvents = this._cacheGet('events', STATIC_TTL);
+		const cachedFeatured = this._cacheGet('featured', STATIC_TTL);
+		const cachedStandings = this._cacheGet('standings', STATIC_TTL);
+
+		if (cachedEvents) {
+			this.allEvents = cachedEvents;
+			this.featured = cachedFeatured;
+			this.standings = cachedStandings;
+			this.render();
+			return;
+		}
+
 		try {
 			const [eventsResp, featuredResp, standingsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
@@ -66,6 +97,10 @@ class Dashboard {
 			if (standingsResp && standingsResp.ok) {
 				try { this.standings = await standingsResp.json(); } catch { this.standings = null; }
 			}
+
+			this._cacheSet('events', this.allEvents);
+			this._cacheSet('featured', this.featured);
+			this._cacheSet('standings', this.standings);
 
 			this.render();
 		} catch (err) {
@@ -773,12 +808,16 @@ class Dashboard {
 		);
 		if (!hasLiveFootball) return;
 
+		const LIVE_TTL = 30 * 1000; // 30 seconds
 		const leagues = ['eng.1', 'esp.1'];
-		const fetches = leagues.map(league =>
-			fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`)
+		const fetches = leagues.map(league => {
+			const cached = this._cacheGet('live_football_' + league, LIVE_TTL);
+			if (cached) return Promise.resolve(cached);
+			return fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`)
 				.then(r => r.ok ? r.json() : null)
-				.catch(() => null)
-		);
+				.then(data => { if (data) this._cacheSet('live_football_' + league, data); return data; })
+				.catch(() => null);
+		});
 
 		try {
 			const results = await Promise.all(fetches);
@@ -858,10 +897,19 @@ class Dashboard {
 		);
 		if (!hasLiveGolf) return;
 
+		const LIVE_TTL = 30 * 1000; // 30 seconds
+		const cached = this._cacheGet('live_golf_pga', LIVE_TTL);
+
 		try {
-			const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard');
-			if (!resp.ok) return;
-			const data = await resp.json();
+			let data;
+			if (cached) {
+				data = cached;
+			} else {
+				const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard');
+				if (!resp.ok) return;
+				data = await resp.json();
+				this._cacheSet('live_golf_pga', data);
+			}
 			const ev = data.events?.[0];
 			const comp = ev?.competitions?.[0];
 			const state = ev?.status?.type?.state;
