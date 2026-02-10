@@ -219,23 +219,7 @@ class SimpleSportsDashboard {
 	}
 
 	sportDisplayName(code) {
-		switch (code) {
-			case "football":
-				return "⚽ Football";
-			case "golf":
-				return "⛳ Golf";
-			case "tennis":
-				return "🎾 Tennis";
-			case "f1":
-			case "formula1":
-				return "🏎️ F1";
-			case "chess":
-				return "♟️ Chess";
-			case "esports":
-				return "🎮 Esports";
-			default:
-				return code;
-		}
+		return getSportDisplayName(code);
 	}
 
 	renderFilteredEvents() {
@@ -558,10 +542,9 @@ class SimpleSportsDashboard {
 			.sort((a, b) => (b.importance || 0) - (a.importance || 0))
 			.slice(0, 5);
 
-		const sportEmojiMap = {
-			football: '⚽', golf: '⛳', tennis: '🎾',
-			f1: '🏎️', formula1: '🏎️', chess: '♟️', esports: '🎮'
-		};
+		const sportEmojiMap = Object.fromEntries(
+			SPORT_CONFIG.flatMap(s => [[s.id, s.emoji], ...(s.aliases || []).map(a => [a, s.emoji])])
+		);
 
 		container.innerHTML = `
 			<div class="top-picks-header">Top Picks</div>
@@ -1206,16 +1189,7 @@ class SimpleSportsDashboard {
 	}
 	
 	getSportEmoji(sport) {
-		switch(sport) {
-			case 'football': return '⚽';
-			case 'golf': return '⛳';
-			case 'tennis': return '🎾';
-			case 'f1':
-			case 'formula1': return '🏎️';
-			case 'chess': return '♟️';
-			case 'esports': return '🎮';
-			default: return '🏆';
-		}
+		return getSportEmoji(sport);
 	}
 	
 	truncateTitle(title, maxLength) {
