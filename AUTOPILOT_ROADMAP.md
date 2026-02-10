@@ -58,7 +58,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #18) Add `prefers-reduced-motion` support — Added media query to disable all transitions and animations for users with motion sensitivity preferences.
 
-- [PENDING] Remove unused CSS rules — `docs/index.html`: `.view-toggle` and `.view-btn` styles (lines ~223-251) have no corresponding HTML elements. `@keyframes spin` animation (lines ~640-647) is defined but its loading spinner is immediately replaced. ~30 lines of dead CSS.
+- [DONE] (PR #19) Remove unused CSS rules — Removed `.view-toggle` and `.view-btn` styles (~39 lines) that had no corresponding HTML elements. Kept `@keyframes spin` which is actively used by the loading spinner.
 
 - [PENDING] Add `dashboard-helpers.js` to service worker cache — `docs/js/dashboard-helpers.js` exists and is loaded but is missing from the SW install cache list in `docs/sw.js`. Add it alongside other JS files for offline resilience.
 

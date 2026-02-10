@@ -149,6 +149,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-10",
+      "task": "Remove unused .view-toggle and .view-btn CSS rules",
+      "outcome": "completed",
+      "pr": 19,
+      "details": "Removed .view-toggle and .view-btn CSS rules (main + mobile overrides) with no corresponding HTML elements. ~39 lines of dead CSS removed. Kept @keyframes spin which is actively used.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }
