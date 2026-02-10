@@ -60,7 +60,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #19) Remove unused CSS rules — Removed `.view-toggle` and `.view-btn` styles (~39 lines) that had no corresponding HTML elements. Kept `@keyframes spin` which is actively used by the loading spinner.
 
-- [PENDING] Add `dashboard-helpers.js` to service worker cache — `docs/js/dashboard-helpers.js` exists and is loaded but is missing from the SW install cache list in `docs/sw.js`. Add it alongside other JS files for offline resilience.
+- [DONE] (PR #20) Add `dashboard-helpers.js` to service worker cache — Added to SW install cache list and bumped cache version to v11-helpers.
 
 - [PENDING] Add unit tests for `preferences-manager.js` — `docs/js/preferences-manager.js` has no tests. Key untested logic: `isEventFavorite()` multi-criteria matching, `isTeamFavorite()`/`isPlayerFavorite()` fuzzy matching, localStorage error handling, empty-string guard on add methods. Target: ~20 tests in `tests/preferences-manager.test.js`.
 
