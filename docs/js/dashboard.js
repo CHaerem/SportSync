@@ -82,7 +82,6 @@ class Dashboard {
 		this.renderBrief();
 		this.renderSections();
 		this.renderEvents();
-		this.renderOnTheRadar();
 	}
 
 	renderDateLine() {
@@ -263,81 +262,125 @@ class Dashboard {
 		});
 	}
 
-	// --- Sport-organized Events ---
+	// --- Temporal band event layout ---
 
-	renderEvents() {
-		const container = document.getElementById('events');
+	categorizeEvents() {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		const tomorrowStart = new Date(todayStart);
 		tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+		const dayAfterTomorrow = new Date(tomorrowStart);
+		dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+		const weekEnd = new Date(todayStart);
+		weekEnd.setDate(weekEnd.getDate() + 7);
 
-		// Group events by sport
-		const sportEvents = {};
-		SPORT_CONFIG.forEach(s => { sportEvents[s.id] = []; });
-		this.allEvents.forEach(e => {
-			if (sportEvents[e.sport]) sportEvents[e.sport].push(e);
-		});
+		const bands = { live: [], today: [], results: [], tomorrow: [], week: [], later: [] };
 
-		const active = [];
-		const upcoming = [];
+		for (const e of this.allEvents) {
+			const t = new Date(e.time);
+			const live = this.liveScores[e.id];
 
-		SPORT_CONFIG.forEach(sport => {
-			const all = sportEvents[sport.id];
-			const future = all.filter(e => new Date(e.time) >= todayStart);
-			const today = future.filter(e => new Date(e.time) < tomorrowStart);
-
-			if (today.length > 0) {
-				active.push({ sport, today, future });
-			} else if (future.length > 0) {
-				upcoming.push({ sport, future, next: future[0] });
+			// Has live score data — use state directly
+			if (live && live.state === 'in') {
+				bands.live.push(e);
+			} else if (live && live.state === 'post') {
+				bands.results.push(e);
+			} else if (t >= todayStart && t < tomorrowStart) {
+				// Today, no live data
+				const hoursAgo = (now - t) / (1000 * 60 * 60);
+				if (hoursAgo > 3) {
+					bands.results.push(e); // Likely finished
+				} else {
+					bands.today.push(e);
+				}
+			} else if (t >= tomorrowStart && t < dayAfterTomorrow) {
+				bands.tomorrow.push(e);
+			} else if (t >= dayAfterTomorrow && t < weekEnd) {
+				bands.week.push(e);
+			} else if (t >= weekEnd) {
+				bands.later.push(e);
 			}
-		});
+			// Past events (before today) with no live data are dropped
+		}
 
-		active.sort((a, b) => new Date(a.today[0].time) - new Date(b.today[0].time));
-		upcoming.sort((a, b) => new Date(a.next.time) - new Date(b.next.time));
+		return bands;
+	}
+
+	renderBand(label, events, options = {}) {
+		if (events.length === 0) return '';
+
+		const { cssClass = '', collapsed = false, showDay = false, showDate = false } = options;
+		const bandId = label.toLowerCase().replace(/\s+/g, '-');
 
 		let html = '';
 
-		// Active sports (events today)
-		active.forEach(({ sport, today, future }) => {
-			const later = future.filter(e => new Date(e.time) >= tomorrowStart);
+		if (collapsed) {
+			// Build preview line from first event
+			const first = events[0];
+			const firstSport = SPORT_CONFIG.find(s => s.id === first.sport);
+			const firstEmoji = firstSport ? firstSport.emoji : '';
+			const firstDate = new Date(first.time);
+			const dayStr = firstDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
+			const timeStr = firstDate.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+			const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
+			const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
+
+			html += `<div class="band-label ${cssClass} collapsible" data-band="${bandId}">${this.esc(label)} \u25b8</div>`;
+			html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
+			html += `<div class="band-content collapsed" data-band-content="${bandId}">`;
+		} else {
+			html += `<div class="band-label ${cssClass}">${this.esc(label)}</div>`;
+			html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
+		}
+
+		// Group events within band by sport
+		const sportGroups = new Map();
+		for (const e of events) {
+			if (!sportGroups.has(e.sport)) sportGroups.set(e.sport, []);
+			sportGroups.get(e.sport).push(e);
+		}
+
+		// Render in SPORT_CONFIG order
+		for (const sport of SPORT_CONFIG) {
+			const group = sportGroups.get(sport.id);
+			if (!group || group.length === 0) continue;
+
+			// Single-event sport groups: skip header, use compact, pass inline emoji
+			if (group.length === 1) {
+				html += `<div class="sport-section compact" style="border-left-color:${sport.color}">`;
+				html += this.renderRow(group[0], showDay || showDate, showDate, sport.emoji);
+				html += `</div>`;
+				continue;
+			}
 
 			html += `<div class="sport-section" style="border-left-color:${sport.color}">`;
 			html += `<div class="sport-header">
 				<span class="sport-name">${sport.emoji} ${this.esc(sport.name)}</span>
-				<span class="sport-status">${today.length} today</span>
 			</div>`;
 
-			today.forEach(e => { html += this.renderRow(e, false); });
-
-			if (later.length > 0) {
-				html += `<button class="more-toggle" data-toggle="later-${sport.id}">${later.length} more \u25b8</button>`;
-				html += `<div class="more-content" data-content="later-${sport.id}">`;
-				later.forEach(e => { html += this.renderRow(e, true); });
-				html += `</div>`;
+			for (const e of group) {
+				html += this.renderRow(e, showDay || showDate, showDate);
 			}
 
 			html += `</div>`;
-		});
-
-		// Upcoming sports (no events today)
-		if (upcoming.length > 0) {
-			html += `<div class="section-divider">Coming up</div>`;
-			upcoming.forEach(({ sport, next }) => {
-				const date = new Date(next.time);
-				const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
-				const nextTitle = next.title || next.tournament;
-				const nextMeta = next.tournament && next.tournament !== next.title ? next.tournament : '';
-				html += `<div class="sport-section compact" style="border-left-color:${sport.color}">
-					<div class="sport-header">
-						<span class="sport-name">${sport.emoji} ${this.esc(sport.name)}</span>
-						<span class="sport-status">${dateStr}</span>
-					</div>
-					<div class="sport-next">${this.esc(nextTitle)}${nextMeta ? ` <span style="opacity:0.6">\u00b7 ${this.esc(nextMeta)}</span>` : ''}</div>
-				</div>`;
-			});
 		}
+
+		html += `</div>`;
+		return html;
+	}
+
+	renderEvents() {
+		const container = document.getElementById('events');
+		const bands = this.categorizeEvents();
+
+		let html = '';
+
+		html += this.renderBand('Live now', bands.live, { cssClass: 'live' });
+		html += this.renderBand('Today', bands.today, {});
+		html += this.renderBand('Results', bands.results, { cssClass: 'results' });
+		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
+		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
+		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
@@ -345,14 +388,20 @@ class Dashboard {
 
 		container.innerHTML = html;
 		this.bindEventRows();
-		this.bindExpandToggles();
+		this.bindBandToggles();
 	}
 
-	renderRow(event, showDay) {
+	renderRow(event, showDay, showDate, inlineSportEmoji = null) {
 		const date = new Date(event.time);
+		const now = new Date();
 
 		let timeStr;
-		if (showDay) {
+		let isEnded = false;
+
+		if (showDate) {
+			timeStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' }) + ' ' +
+				date.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+		} else if (showDay) {
 			timeStr = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ' +
 				date.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
 		} else {
@@ -388,19 +437,42 @@ class Dashboard {
 			}
 		}
 
+		// "Ended" indicator: past events >3h old without live data
+		const hoursAgo = (now - date) / (1000 * 60 * 60);
+		const hasLiveScore = this.liveScores[event.id];
+		if (!hasLiveScore && hoursAgo > 3) {
+			timeStr = '<span class="row-ended">Ended</span>';
+			isEnded = true;
+		}
+
+		// Relative time for today's future events (not live, not ended)
+		let relHtml = '';
+		if (!hasLiveScore && !isEnded && date > now) {
+			const rel = this.relativeTime(date);
+			if (rel) relHtml = `<span class="row-rel">${this.esc(rel)}</span>`;
+		}
+
 		const isExpanded = this.expandedId === event.id;
 		const isMustWatch = event.importance >= 4;
 
 		// If title contains live score HTML (<strong>), render raw; otherwise escape
-		const hasLiveScore = this.liveScores[event.id];
 		const titleHtml = hasLiveScore ? title : this.esc(title);
+
+		// Inline sport emoji prefix for single-event sport groups
+		const emojiPrefix = inlineSportEmoji ? `${inlineSportEmoji} ` : '';
+
+		// Tournament subtitle (skip if title already contains tournament name)
+		let subtitleHtml = '';
+		if (event.tournament && !event.title.toLowerCase().includes(event.tournament.toLowerCase())) {
+			subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+		}
 
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
-					<span class="row-time">${timeStr}</span>
+					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}">${titleHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${subtitleHtml}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -451,6 +523,11 @@ class Dashboard {
 				<span>${this.esc(event.awayTeam)}</span>
 			</div>`;
 			content += '</div>';
+		}
+
+		// Football: match details (stats + key events)
+		if (event.sport === 'football') {
+			content += this.renderMatchDetails(event);
 		}
 
 		// Football: mini league table
@@ -521,6 +598,51 @@ class Dashboard {
 
 		content += '</div>';
 		return content;
+	}
+
+	// --- Match details (football) ---
+
+	renderMatchDetails(event) {
+		const live = this.liveScores[event.id];
+		if (!live || (live.state !== 'in' && live.state !== 'post')) return '';
+
+		let html = '';
+
+		// Stats comparison (possession, shots)
+		const possession = live.stats?.home_possessionPct;
+		if (possession) {
+			const homePoss = parseFloat(possession) || 50;
+			const awayPoss = 100 - homePoss;
+			html += '<div class="match-stats">';
+			html += `<div class="stat-bar"><span class="stat-bar-label">Possession</span></div>`;
+			html += `<div class="stat-bar-values"><span>${homePoss}%</span><span>${awayPoss}%</span></div>`;
+			html += `<div class="stat-bar"><div class="stat-bar-track"><div class="stat-bar-fill" style="width:${homePoss}%"></div></div></div>`;
+
+			// Shots
+			const homeShots = live.stats?.home_totalShots || '0';
+			const awayShots = live.stats?.away_totalShots || '0';
+			const homeOnTarget = live.stats?.home_shotsOnTarget || '0';
+			const awayOnTarget = live.stats?.away_shotsOnTarget || '0';
+			html += `<div style="margin-top:6px;font-size:0.65rem;color:var(--muted)">${homeShots} shots (${homeOnTarget} on target) \u2014 ${awayShots} shots (${awayOnTarget} on target)</div>`;
+
+			html += '</div>';
+		}
+
+		// Key events (goals, cards)
+		if (live.keyEvents && live.keyEvents.length > 0) {
+			html += '<div class="match-events">';
+			for (const ke of live.keyEvents) {
+				let icon = '';
+				if (ke.type.includes('Goal') || ke.type.includes('Penalty')) icon = '\u26bd';
+				else if (ke.type === 'Yellow Card') icon = '\ud83d\udfe8';
+				else if (ke.type === 'Red Card') icon = '\ud83d\udfe5';
+				const playerText = ke.player ? `${this.esc(ke.player)} (${this.esc(this.shortName(ke.team))})` : this.esc(this.shortName(ke.team));
+				html += `<div class="match-event-item"><span class="match-event-minute">${this.esc(ke.minute)}</span><span class="match-event-icon">${icon}</span><span class="match-event-text">${playerText}</span></div>`;
+			}
+			html += '</div>';
+		}
+
+		return html;
 	}
 
 	// --- Standings renderers ---
@@ -636,8 +758,8 @@ class Dashboard {
 				this.pollFootballScores(),
 				this.pollGolfScores(),
 			]);
-			this.updateLiveDOM();
-			this.renderBrief();
+			// Full re-render so events move between bands (today → live → results)
+			this.render();
 		} catch (err) {
 			// Silent fail — live scores are a nice-to-have
 		}
@@ -651,38 +773,77 @@ class Dashboard {
 		);
 		if (!hasLiveFootball) return;
 
+		const leagues = ['eng.1', 'esp.1'];
+		const fetches = leagues.map(league =>
+			fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`)
+				.then(r => r.ok ? r.json() : null)
+				.catch(() => null)
+		);
+
 		try {
-			const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
-			if (!resp.ok) return;
-			const data = await resp.json();
+			const results = await Promise.all(fetches);
+			for (const data of results) {
+				if (!data) continue;
+				for (const ev of (data.events || [])) {
+					const comp = ev.competitions?.[0];
+					if (!comp) continue;
+					const state = comp.status?.type?.state; // pre, in, post
+					if (state !== 'in' && state !== 'post') continue;
 
-			for (const ev of (data.events || [])) {
-				const comp = ev.competitions?.[0];
-				if (!comp) continue;
-				const state = comp.status?.type?.state; // pre, in, post
-				if (state !== 'in' && state !== 'post') continue;
+					const home = comp.competitors?.find(c => c.homeAway === 'home');
+					const away = comp.competitors?.find(c => c.homeAway === 'away');
+					if (!home || !away) continue;
 
-				const home = comp.competitors?.find(c => c.homeAway === 'home');
-				const away = comp.competitors?.find(c => c.homeAway === 'away');
-				if (!home || !away) continue;
+					const homeName = home.team?.displayName || '';
+					const awayName = away.team?.displayName || '';
 
-				const homeName = home.team?.displayName || '';
-				const awayName = away.team?.displayName || '';
+					// Match to our events by team names
+					const matched = this.allEvents.find(e =>
+						e.sport === 'football' &&
+						e.homeTeam && e.awayTeam &&
+						this.teamMatch(e.homeTeam, homeName) &&
+						this.teamMatch(e.awayTeam, awayName)
+					);
+					if (!matched) continue;
 
-				// Match to our events by team names
-				const matched = this.allEvents.find(e =>
-					e.sport === 'football' &&
-					e.homeTeam && e.awayTeam &&
-					this.teamMatch(e.homeTeam, homeName) &&
-					this.teamMatch(e.awayTeam, awayName)
-				);
-				if (matched) {
+					// Extract key events (goals, cards)
+					const keyEvents = [];
+					for (const detail of (comp.details || [])) {
+						const type = detail.type?.text || '';
+						const minute = detail.clock?.displayValue || '';
+						const athletes = (detail.athletesInvolved || []).map(a => a.displayName || '').filter(Boolean);
+						const teamId = detail.team?.id;
+						const teamName = teamId === home.team?.id ? homeName : awayName;
+						if (type.includes('Goal') || type.includes('Penalty') || type === 'Yellow Card' || type === 'Red Card') {
+							keyEvents.push({ type, minute, player: athletes[0] || '', team: teamName });
+						}
+					}
+
+					// Extract statistics
+					const stats = {};
+					for (const stat of (home.statistics || [])) {
+						stats['home_' + stat.name] = stat.displayValue || stat.value;
+					}
+					for (const stat of (away.statistics || [])) {
+						stats['away_' + stat.name] = stat.displayValue || stat.value;
+					}
+
+					// Extract team form
+					const homeForm = home.records?.find(r => r.type === 'total')?.summary || '';
+					const awayForm = away.records?.find(r => r.type === 'total')?.summary || '';
+
 					this.liveScores[matched.id] = {
 						home: parseInt(home.score, 10) || 0,
 						away: parseInt(away.score, 10) || 0,
 						clock: comp.status?.displayClock || '',
 						state: state,
 						detail: comp.status?.type?.shortDetail || '',
+						keyEvents,
+						stats,
+						homeForm,
+						awayForm,
+						homeName,
+						awayName,
 					};
 				}
 			}
@@ -756,19 +917,6 @@ class Dashboard {
 		}
 	}
 
-	// --- On the Radar ---
-
-	renderOnTheRadar() {
-		const container = document.getElementById('on-the-radar');
-		if (!this.featured || !Array.isArray(this.featured.radar) || this.featured.radar.length === 0) {
-			container.style.display = 'none';
-			return;
-		}
-
-		container.style.display = '';
-		container.innerHTML = `<div class="radar-label">On the radar</div><div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>`;
-	}
-
 	// --- Event handlers ---
 
 	bindEventRows() {
@@ -807,28 +955,37 @@ class Dashboard {
 		});
 	}
 
-	bindExpandToggles() {
-		document.querySelectorAll('.more-toggle[data-toggle]').forEach(btn => {
-			btn.addEventListener('click', () => {
-				const key = btn.dataset.toggle;
-				const content = document.querySelector(`.more-content[data-content="${key}"]`);
-				if (content) {
-					const isOpen = content.classList.contains('open');
-					content.classList.toggle('open');
-					btn.textContent = isOpen
-						? btn.textContent.replace('\u25be', '\u25b8')
-						: btn.textContent.replace('\u25b8', '\u25be');
+	bindBandToggles() {
+		document.querySelectorAll('.band-label.collapsible[data-band]').forEach(label => {
+			label.addEventListener('click', () => {
+				const bandId = label.dataset.band;
+				const content = document.querySelector(`.band-content[data-band-content="${bandId}"]`);
+				const preview = document.querySelector(`.band-preview[data-band-preview="${bandId}"]`);
+				if (!content) return;
+				const isCollapsed = content.classList.contains('collapsed');
+				content.classList.toggle('collapsed');
 
-					if (!isOpen) {
-						content.querySelectorAll('.event-row').forEach(row => {
-							row.addEventListener('click', (e) => {
-								if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
-								const id = row.dataset.id;
-								this.expandedId = this.expandedId === id ? null : id;
-								this.render();
-							});
+				// Toggle preview visibility
+				if (preview) {
+					preview.style.display = isCollapsed ? 'none' : '';
+				}
+
+				// Update arrow
+				label.innerHTML = label.innerHTML.replace(
+					isCollapsed ? '\u25b8' : '\u25be',
+					isCollapsed ? '\u25be' : '\u25b8'
+				);
+
+				// Bind event rows in newly expanded content
+				if (isCollapsed) {
+					content.querySelectorAll('.event-row').forEach(row => {
+						row.addEventListener('click', (e) => {
+							if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
+							const id = row.dataset.id;
+							this.expandedId = this.expandedId === id ? null : id;
+							this.render();
 						});
-					}
+					});
 				}
 			});
 		});
@@ -852,6 +1009,19 @@ class Dashboard {
 	}
 
 	// --- Helpers ---
+
+	relativeTime(date) {
+		const now = new Date();
+		const diffMs = date - now;
+		if (diffMs < 0) return null;
+		const mins = Math.round(diffMs / 60000);
+		if (mins < 5) return 'now';
+		if (mins < 60) return `in ${mins}m`;
+		const hrs = Math.floor(mins / 60);
+		const remMins = mins % 60;
+		if (remMins === 0 || remMins < 5) return `in ${hrs}h`;
+		return `in ${hrs}h ${remMins}m`;
+	}
 
 	esc(str) {
 		if (typeof str !== 'string') return '';

@@ -151,14 +151,67 @@
 		.feat-expand-content { display: none; }
 		.feat-expand-content.open { display: block; }
 
+		/* --- Temporal Band Labels --- */
+		.band-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--muted);
+			margin: 24px 0 12px;
+			padding-top: 16px;
+			border-top: 1px solid var(--border);
+			cursor: default;
+		}
+		.band-label:first-child {
+			margin-top: 0;
+			padding-top: 0;
+			border-top: none;
+		}
+		.band-label.live {
+			color: #e74c3c;
+		}
+		.band-label.results {
+			opacity: 0.7;
+		}
+		.band-label.collapsible {
+			cursor: pointer;
+			transition: opacity 0.15s;
+		}
+		.band-label.collapsible:hover {
+			opacity: 0.7;
+		}
+		.band-preview {
+			font-size: 0.7rem;
+			color: var(--muted);
+			opacity: 0.55;
+			margin: 2px 0 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.band-content { }
+		.band-content.collapsed { display: none; }
+
+		/* Results band: muted titles, bold times */
+		.band-results .row-title {
+			color: var(--muted);
+		}
+		.band-results .row-time {
+			font-weight: 500;
+		}
+
 		/* --- Sport Sections --- */
 		.sport-section {
-			margin-bottom: 22px;
+			margin-bottom: 14px;
 			padding-left: 14px;
 			border-left: 2.5px solid var(--border);
 		}
 		.sport-section.compact {
-			margin-bottom: 12px;
+			margin-bottom: 8px;
+		}
+		.band-content .sport-section:last-child {
+			margin-bottom: 0;
 		}
 		.sport-header {
 			display: flex;
@@ -172,13 +225,6 @@
 			text-transform: uppercase;
 			letter-spacing: 0.08em;
 			color: var(--fg);
-		}
-		.sport-status {
-			font-size: 0.65rem;
-			color: var(--muted);
-			margin-left: auto;
-			font-weight: 400;
-			font-variant-numeric: tabular-nums;
 		}
 		.sport-next {
 			font-size: 0.8rem;
@@ -242,9 +288,15 @@
 			font-size: 0.75rem;
 			font-weight: 400;
 			color: var(--muted);
-			min-width: 36px;
+			min-width: 42px;
 			font-variant-numeric: tabular-nums;
 			flex-shrink: 0;
+		}
+		.row-rel {
+			display: block;
+			font-size: 0.6rem;
+			opacity: 0.7;
+			line-height: 1.2;
 		}
 		.row-icons {
 			display: flex;
@@ -268,9 +320,29 @@
 			font-weight: 400;
 			flex: 1;
 			min-width: 0;
+		}
+		.row-title-text {
+			display: block;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+		}
+		.row-subtitle {
+			display: block;
+			font-size: 0.65rem;
+			color: var(--muted);
+			opacity: 0.6;
+			line-height: 1.3;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.row-ended {
+			font-size: 0.65rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: var(--muted);
+			opacity: 0.7;
 		}
 
 		/* --- More toggle --- */
@@ -453,27 +525,69 @@
 		.exp-mini-table tr.highlight td { font-weight: 500; color: var(--accent); }
 		.exp-mini-table tr.ellipsis td { color: var(--muted); font-size: 0.65rem; padding: 1px 6px; }
 
-		/* --- On the Radar --- */
-		#on-the-radar {
-			margin-top: 36px;
-			padding-top: 20px;
-			border-top: 1px solid var(--border);
+		/* --- Match Details (football expanded) --- */
+		.match-stats {
+			margin: 10px 0;
+			font-size: 0.72rem;
+			color: var(--fg);
 		}
-		.radar-label {
-			font-size: 0.6rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.12em;
-			color: var(--muted);
-			margin-bottom: 8px;
+		.stat-bar {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 6px;
+			font-variant-numeric: tabular-nums;
 		}
-		.radar-text {
-			font-family: var(--font-serif);
-			font-size: 0.8rem;
+		.stat-bar-label {
+			flex: 0 0 auto;
+			font-size: 0.65rem;
 			color: var(--muted);
-			line-height: 1.8;
-			font-style: italic;
-			font-weight: 400;
+			text-align: right;
+			min-width: 64px;
+		}
+		.stat-bar-track {
+			flex: 1;
+			height: 4px;
+			background: var(--border);
+			border-radius: 2px;
+			overflow: hidden;
+			display: flex;
+		}
+		.stat-bar-fill {
+			height: 100%;
+			background: var(--accent);
+			transition: width 0.3s;
+		}
+		.stat-bar-values {
+			display: flex;
+			justify-content: space-between;
+			font-size: 0.65rem;
+			color: var(--muted);
+			margin-bottom: 4px;
+		}
+		.match-events {
+			margin: 10px 0;
+		}
+		.match-event-item {
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+			padding: 2px 0;
+			font-size: 0.72rem;
+			color: var(--fg);
+		}
+		.match-event-minute {
+			font-size: 0.65rem;
+			color: var(--muted);
+			min-width: 28px;
+			text-align: right;
+			font-variant-numeric: tabular-nums;
+		}
+		.match-event-icon {
+			flex-shrink: 0;
+		}
+		.match-event-text {
+			color: var(--muted);
 		}
 
 		/* --- Empty / Loading --- */
@@ -502,7 +616,7 @@
 		/* --- Mobile tweaks --- */
 		@media (max-width: 380px) {
 			.wrap { padding: 24px 16px 40px; }
-			.row-title { font-size: 0.78rem; }
+			.row-title-text { font-size: 0.78rem; }
 		}
 	</style>
 </head>
@@ -522,7 +636,6 @@
 			<div class="loading">Loading...</div>
 		</div>
 
-		<div id="on-the-radar" style="display:none;"></div>
 	</div>
 
 	<script src="js/sport-config.js?v=2026021006"></script>
