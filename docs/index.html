@@ -113,6 +113,11 @@
 				border-color: var(--text);
 			}
 
+			.filter-btn:focus-visible {
+				outline: 2px solid var(--accent, #3b82f6);
+				outline-offset: 2px;
+			}
+
 			.sport-filter {
 				width: 36px;
 				height: 36px;
@@ -137,7 +142,12 @@
 				color: white;
 				transform: translateY(-1px);
 			}
-			
+
+			.sport-filter:focus-visible {
+				outline: 2px solid var(--accent, #3b82f6);
+				outline-offset: 2px;
+			}
+
 			/* Sport-specific colors for filter buttons */
 			.sport-filter[data-filter="golf"] {
 				border-color: rgba(245, 158, 11, 0.3);
