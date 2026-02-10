@@ -1317,7 +1317,7 @@ class SimpleSportsDashboard {
 		const streamingBadges = streamingSources
 			.slice(0, 3)
 			.map((stream) => {
-				const url = stream.url ? `href="${stream.url}" target="_blank"` : "";
+				const url = stream.url ? `href="${stream.url}" target="_blank" rel="noopener noreferrer"` : "";
 				const tag = url ? "a" : "span";
 				
 				return `<${tag} ${url} style="
