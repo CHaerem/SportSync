@@ -12,19 +12,12 @@ class SportsAPI {
 	// Football API - multiple leagues support
 	async fetchFootballEvents() {
 		try {
-			console.log("Fetching football data from /SportSync/data/football.json");
 			const response = await fetch(
 				"/SportSync/data/football.json?t=" + Date.now()
 			);
-			console.log("Football response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(
-					"Football data loaded:",
-					data.tournaments?.length,
-					"tournaments"
-				);
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -74,17 +67,10 @@ class SportsAPI {
 	// Golf events - multiple tours support
 	async fetchGolfEvents() {
 		try {
-			console.log("Fetching golf data from /SportSync/data/golf.json");
 			const response = await fetch("/SportSync/data/golf.json?t=" + Date.now());
-			console.log("Golf response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(
-					"Golf data loaded:",
-					data.tournaments?.length,
-					"tournaments"
-				);
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -98,19 +84,12 @@ class SportsAPI {
 	// Tennis events - multiple tour support
 	async fetchTennisEvents() {
 		try {
-			console.log("Fetching tennis data from /SportSync/data/tennis.json");
 			const response = await fetch(
 				"/SportSync/data/tennis.json?t=" + Date.now()
 			);
-			console.log("Tennis response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(
-					"Tennis data loaded:",
-					data.tournaments?.length,
-					"tournaments"
-				);
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -124,13 +103,10 @@ class SportsAPI {
 	// Formula 1 events - sessions breakdown
 	async fetchF1Events() {
 		try {
-			console.log("Fetching F1 data from /SportSync/data/f1.json");
 			const response = await fetch("/SportSync/data/f1.json?t=" + Date.now());
-			console.log("F1 response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log("F1 data loaded:", data.tournaments?.length, "tournaments");
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -144,19 +120,12 @@ class SportsAPI {
 	// Chess events - tournament categories
 	async fetchChessEvents() {
 		try {
-			console.log("Fetching chess data from /SportSync/data/chess.json");
 			const response = await fetch(
 				"/SportSync/data/chess.json?t=" + Date.now()
 			);
-			console.log("Chess response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(
-					"Chess data loaded:",
-					data.tournaments?.length,
-					"tournaments"
-				);
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -170,19 +139,12 @@ class SportsAPI {
 	// Esports events - game categories
 	async fetchEsportsEvents() {
 		try {
-			console.log("Fetching esports data from /SportSync/data/esports.json");
 			const response = await fetch(
 				"/SportSync/data/esports.json?t=" + Date.now()
 			);
-			console.log("Esports response:", response.status, response.ok);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(
-					"Esports data loaded:",
-					data.tournaments?.length,
-					"tournaments"
-				);
 				return this.formatTournamentData(data.tournaments || []);
 			} else {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -13,10 +13,8 @@ const DATA_FILES = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-    console.log('SportSync Service Worker: Installing...');
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('SportSync Service Worker: Caching static assets');
             return cache.addAll([
                 '/SportSync/',
                 '/SportSync/index.html',
@@ -32,13 +30,11 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('SportSync Service Worker: Activating...');
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
-                        console.log('SportSync Service Worker: Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
@@ -54,7 +50,6 @@ self.addEventListener('fetch', (event) => {
     
     // Always fetch data files fresh (no cache)
     if (DATA_FILES.some(dataFile => url.pathname.includes(dataFile.replace('/SportSync', '')))) {
-        console.log('SportSync Service Worker: Fetching fresh data for:', url.pathname);
         event.respondWith(
             fetch(event.request, {
                 cache: 'no-cache',
@@ -64,7 +59,6 @@ self.addEventListener('fetch', (event) => {
                     'Expires': '0'
                 }
             }).catch(() => {
-                console.log('SportSync Service Worker: Network failed for data file, no fallback');
                 return new Response('{"error": "Network unavailable"}', {
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -77,11 +71,9 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((response) => {
             if (response) {
-                console.log('SportSync Service Worker: Serving from cache:', url.pathname);
                 return response;
             }
-            
-            console.log('SportSync Service Worker: Fetching from network:', url.pathname);
+
             return fetch(event.request).then((response) => {
                 // Don't cache non-successful responses
                 if (!response || response.status !== 200 || response.type !== 'basic') {
@@ -107,7 +99,6 @@ self.addEventListener('message', (event) => {
     }
     
     if (event.data && event.data.type === 'CLEAR_DATA_CACHE') {
-        console.log('SportSync Service Worker: Clearing data cache on request');
         // Clear any cached data files
         caches.open(CACHE_NAME).then((cache) => {
             DATA_FILES.forEach(dataFile => {
