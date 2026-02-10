@@ -179,6 +179,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-10",
+      "task": "Add unit tests for sports-api.js formatters",
+      "outcome": "completed",
+      "pr": 22,
+      "details": "Added 17 unit tests in tests/sports-api.test.js covering formatTournamentData (structure, defaults, golf fields), formatDateTime (TBD, Today, Tomorrow, N-days), and groupEventsByDay (7-day init, bucketing, TBD/out-of-range filtering).",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }

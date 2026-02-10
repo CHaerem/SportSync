@@ -64,7 +64,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #21) Add unit tests for `preferences-manager.js` — Added 29 tests covering load/save, sport/team/player CRUD, fuzzy matching, multi-criteria event favorite detection, view/theme preferences, exportForBackend, and reset.
 
-- [PENDING] Add unit tests for `sports-api.js` formatters — `docs/js/sports-api.js` `formatTournamentData()` and `getAllEventsForWeek()` have no test coverage. Test data shape transformations, date formatting, and mock data generators. Target: ~15 tests in `tests/sports-api.test.js`.
+- [DONE] (PR #22) Add unit tests for `sports-api.js` formatters — Added 17 tests covering formatTournamentData, formatDateTime, and groupEventsByDay.
 
 ### LOW Priority
 
