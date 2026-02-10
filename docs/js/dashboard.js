@@ -82,7 +82,13 @@ class Dashboard {
 
 	renderBrief(events) {
 		const el = document.getElementById('the-brief');
-		const lines = this.getBriefLines(events);
+		let lines = [];
+
+		if (this.featured && Array.isArray(this.featured.brief) && this.featured.brief.length > 0) {
+			lines = this.featured.brief.slice(0, 2);
+		} else {
+			lines = this.generateBriefLines(events);
+		}
 
 		if (lines.length === 0) {
 			el.style.display = 'none';
@@ -90,21 +96,7 @@ class Dashboard {
 		}
 
 		el.style.display = '';
-		el.innerHTML = `
-			<div class="brief-label">The Brief</div>
-			<div class="brief-lines">
-				${lines.map(line => `<div class="brief-line">${this.esc(line)}</div>`).join('')}
-			</div>
-		`;
-	}
-
-	getBriefLines(events) {
-		// Prefer featured.json brief
-		if (this.featured && Array.isArray(this.featured.brief) && this.featured.brief.length > 0) {
-			return this.featured.brief.slice(0, 3);
-		}
-		// Fallback: generate from events
-		return this.generateBriefLines(events);
+		el.innerHTML = lines.map(line => this.esc(line)).join(' ');
 	}
 
 	generateBriefLines(events) {
@@ -118,12 +110,10 @@ class Dashboard {
 			return t >= todayStart && t < todayEnd;
 		});
 
-		if (todayEvents.length === 0) return ['No events scheduled today.'];
+		if (todayEvents.length === 0) return [];
 
 		const sportCounts = {};
-		todayEvents.forEach(e => {
-			sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1;
-		});
+		todayEvents.forEach(e => { sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1; });
 
 		const sportLabels = {
 			football: 'football', golf: 'golf', tennis: 'tennis',
@@ -134,18 +124,7 @@ class Dashboard {
 			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
 			.join(', ');
 
-		const lines = [`${todayEvents.length} events today: ${parts}.`];
-
-		// Find Norwegian event for second line
-		const norEvent = todayEvents.find(e => e.norwegian);
-		if (norEvent) {
-			const time = new Date(norEvent.time).toLocaleTimeString('en-NO', {
-				hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo'
-			});
-			lines.push(`${norEvent.title} at ${time}.`);
-		}
-
-		return lines;
+		return [`${todayEvents.length} events today \u2014 ${parts}.`];
 	}
 
 	// --- Featured Sections ---
@@ -211,13 +190,12 @@ class Dashboard {
 
 		let html = '';
 
-		// TODAY — show max 3, rest behind toggle
+		// TODAY — show max 4, rest behind toggle
 		if (bands.today.length > 0) {
-			const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
-			const shown = bands.today.slice(0, 3);
-			const rest = bands.today.slice(3);
+			const shown = bands.today.slice(0, 4);
+			const rest = bands.today.slice(4);
 
-			html += `<div class="band-label"><span>Today</span><span class="band-date">${dateStr}</span></div>`;
+			html += `<div class="band-label">Today</div>`;
 			html += this.renderEventList(shown, false);
 
 			if (rest.length > 0) {
@@ -226,21 +204,22 @@ class Dashboard {
 			}
 		}
 
-		// COMING UP — tomorrow + this week, collapsed
-		const comingUp = [...bands.tomorrow, ...bands.thisWeek];
-		if (comingUp.length > 0) {
-			const count = comingUp.length;
-			html += `<div class="band-label" style="margin-top:40px;"><span>Coming up</span><span class="band-date">${count} events</span></div>`;
-			html += `<button class="more-toggle" data-toggle="coming-up">${this.summarizeSports(comingUp)} \u25b8</button>`;
-			html += `<div class="more-content" data-content="coming-up">${this.renderEventList(comingUp, true)}</div>`;
+		// TOMORROW
+		if (bands.tomorrow.length > 0) {
+			html += `<div class="band-label" style="margin-top:28px;">Tomorrow</div>`;
+			html += this.renderEventList(bands.tomorrow.slice(0, 3), false);
+			if (bands.tomorrow.length > 3) {
+				const rest = bands.tomorrow.slice(3);
+				html += `<button class="more-toggle" data-toggle="tomorrow-more">+${rest.length} more \u25b8</button>`;
+				html += `<div class="more-content" data-content="tomorrow-more">${this.renderEventList(rest, false)}</div>`;
+			}
 		}
 
-		// LATER — collapsed
-		if (bands.later.length > 0) {
-			const count = bands.later.length;
-			html += `<div class="band-label" style="margin-top:40px;"><span>Later</span><span class="band-date">${count} events</span></div>`;
-			html += `<button class="more-toggle" data-toggle="later">${this.summarizeSports(bands.later)} \u25b8</button>`;
-			html += `<div class="more-content" data-content="later">${this.renderEventList(bands.later, true)}</div>`;
+		// THIS WEEK + LATER — collapsed summary
+		const later = [...bands.thisWeek, ...bands.later];
+		if (later.length > 0) {
+			html += `<button class="more-toggle" data-toggle="later" style="margin-top:20px;">${this.summarizeSports(later)} later \u25b8</button>`;
+			html += `<div class="more-content" data-content="later">${this.renderEventList(later, true)}</div>`;
 		}
 
 		if (!html) {
@@ -268,10 +247,9 @@ class Dashboard {
 			.join(' \u00b7 ');
 	}
 
-	renderRow(event, showDay, underTournament) {
+	renderRow(event, showDay) {
 		const date = new Date(event.time);
-		const sport = SPORT_CONFIG.find(s => s.id === event.sport || (s.aliases && s.aliases.includes(event.sport)));
-		const sportColor = sport ? sport.color : '#888';
+		const emoji = getSportEmoji(event.sport);
 
 		let timeStr;
 		if (showDay) {
@@ -283,9 +261,12 @@ class Dashboard {
 			});
 		}
 
-		const title = event.homeTeam && event.awayTeam
-			? `${event.homeTeam} vs ${event.awayTeam}`
-			: event.title;
+		let title;
+		if (event.homeTeam && event.awayTeam) {
+			title = `${this.abbrev(event.homeTeam)} v ${this.abbrev(event.awayTeam)}`;
+		} else {
+			title = event.title;
+		}
 
 		const isExpanded = this.expandedId === event.id;
 
@@ -294,11 +275,16 @@ class Dashboard {
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
 					<span class="row-title">${this.esc(title)}</span>
-					<span class="row-dot" style="background:${sportColor}"></span>
+					<span class="row-sport">${emoji}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
 		`;
+	}
+
+	abbrev(name) {
+		if (!name) return '';
+		return name.replace(/ FC$| AFC$| CF$/i, '').split(' ')[0].slice(0, 3).toUpperCase();
 	}
 
 	renderExpanded(event) {
@@ -391,10 +377,7 @@ class Dashboard {
 		}
 
 		container.style.display = '';
-		container.innerHTML = `
-			<div class="band-label">On the Radar</div>
-			<div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>
-		`;
+		container.innerHTML = `<div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>`;
 	}
 
 	// --- Event handlers ---

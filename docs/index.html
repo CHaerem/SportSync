@@ -71,34 +71,21 @@
 
 		/* --- The Brief --- */
 		#the-brief {
-			border-top: 1.5px solid var(--border-strong);
-			padding: 20px 0 0;
-			margin-bottom: 48px;
-		}
-		.brief-label {
-			font-size: 0.6rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.18em;
+			padding: 0 0 20px;
+			margin-bottom: 32px;
+			font-size: 0.85rem;
 			color: var(--muted);
-			margin-bottom: 12px;
-		}
-		.brief-lines {
-			font-size: 0.95rem;
-			line-height: 1.9;
+			line-height: 1.7;
 			font-weight: 300;
-		}
-		.brief-line {
-			margin-bottom: 2px;
 		}
 
 		/* --- Featured Sections --- */
-		#featured-sections { margin-bottom: 16px; }
+		#featured-sections { margin-bottom: 8px; }
 		.featured-section {
 			border: 1px solid var(--border);
 			border-radius: var(--radius);
-			padding: 20px;
-			margin-bottom: 48px;
+			padding: 14px 16px;
+			margin-bottom: 32px;
 		}
 		.featured-section.highlight {
 			border-color: var(--border-strong);
@@ -109,20 +96,20 @@
 			font-weight: 600;
 			text-transform: uppercase;
 			letter-spacing: 0.12em;
-			margin-bottom: 16px;
+			margin-bottom: 10px;
 			color: var(--muted);
 		}
 		.feat-item {
-			font-size: 0.85rem;
-			padding: 5px 0;
+			font-size: 0.8rem;
+			padding: 3px 0;
 			color: var(--fg);
 			font-variant-numeric: tabular-nums;
 		}
 		.feat-item.stat {
 			font-weight: 400;
-			font-size: 0.8rem;
+			font-size: 0.75rem;
 			color: var(--muted);
-			margin-bottom: 4px;
+			margin-bottom: 2px;
 		}
 		.feat-item.text {
 			color: var(--muted);
@@ -131,9 +118,9 @@
 			background: none;
 			border: none;
 			color: var(--muted);
-			font-size: 0.75rem;
+			font-size: 0.7rem;
 			cursor: pointer;
-			margin-top: 12px;
+			margin-top: 8px;
 			padding: 0;
 			font-weight: 300;
 		}
@@ -146,24 +133,14 @@
 			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.18em;
+			letter-spacing: 0.15em;
 			color: var(--muted);
-			margin-bottom: 12px;
-			display: flex;
-			justify-content: space-between;
-			align-items: baseline;
-		}
-		.band-date {
-			font-size: 0.6rem;
-			font-weight: 300;
-			color: var(--muted);
-			text-transform: none;
-			letter-spacing: 0;
+			margin-bottom: 6px;
 		}
 
 		/* --- Event Row --- */
 		.event-row {
-			padding: 10px 0;
+			padding: 8px 0;
 			cursor: pointer;
 			transition: background 0.1s;
 		}
@@ -172,19 +149,19 @@
 		.row-main {
 			display: flex;
 			align-items: center;
-			gap: 14px;
-			min-height: 28px;
+			gap: 10px;
+			min-height: 24px;
 		}
 		.row-time {
 			font-size: 0.75rem;
 			font-weight: 400;
 			color: var(--muted);
-			min-width: 40px;
+			min-width: 36px;
 			font-variant-numeric: tabular-nums;
 			flex-shrink: 0;
 		}
 		.row-title {
-			font-size: 0.85rem;
+			font-size: 0.8rem;
 			font-weight: 300;
 			flex: 1;
 			min-width: 0;
@@ -192,12 +169,10 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
-		.row-dot {
-			width: 5px;
-			height: 5px;
-			border-radius: 50%;
+		.row-sport {
+			font-size: 0.7rem;
 			flex-shrink: 0;
-			opacity: 0.5;
+			opacity: 0.4;
 		}
 
 		/* --- More toggle --- */
@@ -338,13 +313,12 @@
 
 		/* --- On the Radar --- */
 		#on-the-radar {
-			margin-top: 48px;
-			padding-top: 0;
+			margin-top: 40px;
 		}
 		.radar-text {
-			font-size: 0.8rem;
+			font-size: 0.75rem;
 			color: var(--muted);
-			line-height: 1.8;
+			line-height: 1.7;
 			font-style: italic;
 			font-weight: 300;
 		}
@@ -352,30 +326,21 @@
 		/* --- Filters (bottom, de-emphasized) --- */
 		.filters {
 			display: flex;
-			gap: 14px;
-			margin-top: 56px;
+			gap: 16px;
+			margin-top: 48px;
 			justify-content: center;
-			flex-wrap: wrap;
 		}
 		.filter-dot {
-			width: 30px;
-			height: 30px;
-			border-radius: 50%;
-			border: 1.5px solid var(--border);
-			background: transparent;
+			background: none;
+			border: none;
 			cursor: pointer;
-			font-size: 0.85rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: border-color 0.15s, opacity 0.15s;
-			opacity: 0.3;
+			font-size: 0.9rem;
+			padding: 4px;
+			opacity: 0.2;
+			transition: opacity 0.15s;
 		}
-		.filter-dot:hover { opacity: 0.6; }
-		.filter-dot.active {
-			opacity: 1;
-			border-color: var(--fg);
-		}
+		.filter-dot:hover { opacity: 0.5; }
+		.filter-dot.active { opacity: 1; }
 
 		/* --- Empty / Loading --- */
 		.empty {
@@ -436,11 +401,11 @@
 		</div>
 	</div>
 
-	<script src="js/sport-config.js?v=2026021003"></script>
-	<script src="js/asset-maps.js?v=2026021003"></script>
-	<script src="js/sports-api.js?v=2026021003"></script>
-	<script src="js/preferences-manager.js?v=2026021003"></script>
-	<script src="js/dashboard.js?v=2026021003"></script>
+	<script src="js/sport-config.js?v=2026021004"></script>
+	<script src="js/asset-maps.js?v=2026021004"></script>
+	<script src="js/sports-api.js?v=2026021004"></script>
+	<script src="js/preferences-manager.js?v=2026021004"></script>
+	<script src="js/dashboard.js?v=2026021004"></script>
 
 	<script>
 		if ('serviceWorker' in navigator) {
