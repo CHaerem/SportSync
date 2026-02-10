@@ -36,6 +36,8 @@ The autopilot is the main driver of continuous improvement. It reads a prioritiz
 
 **Human control**: Reorder tasks to change what gets done next. The autopilot always picks the first `[PENDING]` task it finds.
 
+**Experience-first lane**: Keep an `EXPERIENCE Lane` section near the top of `AUTOPILOT_ROADMAP.md` with user-facing tasks and KPIs (engagement, recommendation quality, enrichment coverage). This ensures autonomous work improves the product experience, not only internal code quality.
+
 ### Configuration
 
 - **Schedule**: Nightly at 03:00 UTC + manual `workflow_dispatch`

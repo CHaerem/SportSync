@@ -3,6 +3,7 @@ class Dashboard {
 	constructor() {
 		this.allEvents = [];
 		this.featured = null;
+		this.watchPlan = null;
 		this.standings = null;
 		this.expandedId = null;
 		this.liveScores = {};      // { eventId: { home, away, clock, state } }
@@ -27,9 +28,10 @@ class Dashboard {
 
 	async loadEvents() {
 		try {
-			const [eventsResp, featuredResp, standingsResp] = await Promise.all([
+			const [eventsResp, featuredResp, watchPlanResp, standingsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
+				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null)
 			]);
 
@@ -63,6 +65,12 @@ class Dashboard {
 				try { this.featured = await featuredResp.json(); } catch { this.featured = null; }
 			}
 
+			if (watchPlanResp && watchPlanResp.ok) {
+				try { this.watchPlan = await watchPlanResp.json(); } catch { this.watchPlan = null; }
+			} else {
+				this.watchPlan = null;
+			}
+
 			if (standingsResp && standingsResp.ok) {
 				try { this.standings = await standingsResp.json(); } catch { this.standings = null; }
 			}
@@ -79,6 +87,7 @@ class Dashboard {
 
 	render() {
 		this.renderBrief();
+		this.renderWatchPlan();
 		this.renderSections();
 		this.renderEvents();
 		this.renderOnTheRadar();
@@ -196,6 +205,53 @@ class Dashboard {
 		}
 
 		return lines;
+	}
+
+	// --- Watch Plan ---
+
+	renderWatchPlan() {
+		const container = document.getElementById('watch-plan');
+		if (!container) return;
+
+		const picks = this.watchPlan?.picks;
+		if (!Array.isArray(picks) || picks.length === 0) {
+			container.style.display = 'none';
+			container.innerHTML = '';
+			return;
+		}
+
+		const windows = Array.isArray(this.watchPlan.windows) ? this.watchPlan.windows : [];
+		const activeWindows = windows.filter(w => Array.isArray(w.items) && w.items.length > 0).slice(0, 2);
+
+		let html = '<div class="watch-plan-card">';
+		html += `<div class="watch-plan-header">AI Watch Plan</div>`;
+		if (this.watchPlan.headline) {
+			html += `<div class="watch-plan-headline">${this.esc(this.watchPlan.headline)}</div>`;
+		}
+		if (this.watchPlan.summary) {
+			html += `<div class="watch-plan-summary">${this.esc(this.watchPlan.summary)}</div>`;
+		}
+
+		activeWindows.forEach(window => {
+			html += `<div class="watch-window">`;
+			html += `<div class="watch-window-title">${this.esc(window.label || 'Next window')}</div>`;
+			window.items.slice(0, 2).forEach(item => {
+				html += `<div class="watch-item">`;
+				html += `<span class="watch-item-time">${this.esc(item.relativeStart || item.timeLabel || '')}</span>`;
+				html += `<span class="watch-item-title">${this.esc(item.title || '')}</span>`;
+				html += `</div>`;
+			});
+			html += `</div>`;
+		});
+
+		const topPick = picks[0];
+		if (topPick) {
+			html += `<div class="watch-top-pick">Top pick: ${this.esc(topPick.title)}${topPick.relativeStart ? ` · ${this.esc(topPick.relativeStart)}` : ''}</div>`;
+		}
+
+		html += '</div>';
+		container.style.display = '';
+		container.innerHTML = html;
 	}
 
 	// --- Featured Sections ---

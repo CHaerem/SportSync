@@ -4,6 +4,8 @@
  * - brief: 2-3 editorial lines summarizing the day
  * - sections: dynamic featured content (Olympics, World Cup, CL, etc.)
  * - radar: 2-3 "on the radar" sentences about potential events
+ * - watch-plan: ranked "what to watch next" windows for the UI
+ * - ai-quality: quality gate report (structure + freshness checks)
  *
  * Auth (checked in order):
  *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI (Max subscription)
@@ -17,6 +19,10 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
+import { validateFeaturedContent } from "./lib/ai-quality-gates.js";
+import { buildWatchPlan } from "./lib/watch-plan.js";
+
+const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
 const FEATURED_SCHEMA = {
 	brief: ["string — 2-3 crisp editorial lines, max 15 words each"],
@@ -239,6 +245,118 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 	}
 }
 
+function parseResponseJSON(rawContent) {
+	try {
+		return JSON.parse(rawContent);
+	} catch {
+		const match = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+		if (match) return JSON.parse(match[1].trim());
+		throw new Error(`Could not parse JSON from response: ${rawContent.substring(0, 200)}`);
+	}
+}
+
+function toFeaturedShape(result) {
+	return {
+		brief: Array.isArray(result?.brief) ? result.brief.slice(0, 3) : [],
+		sections: Array.isArray(result?.sections)
+			? result.sections.map((s) => ({
+					id: s?.id || "unknown",
+					title: s?.title || "",
+					emoji: s?.emoji || "",
+					style: s?.style || "default",
+					items: Array.isArray(s?.items) ? s.items : [],
+					expandLabel: s?.expandLabel || null,
+					expandItems: Array.isArray(s?.expandItems) ? s.expandItems : [],
+				}))
+			: [],
+		radar: Array.isArray(result?.radar) ? result.radar.slice(0, 3) : [],
+	};
+}
+
+function looksLikeMajorEvent(event) {
+	const haystack = `${event?.context || ""} ${event?.tournament || ""} ${event?.title || ""}`;
+	return /olympics|world cup|champions league|grand slam|masters|major|playoff|final/i.test(haystack);
+}
+
+function buildFallbackSections(events, now) {
+	const upcomingMajor = events
+		.filter((event) => new Date(event.time) >= now)
+		.filter((event) => looksLikeMajorEvent(event))
+		.slice(0, 6);
+
+	if (upcomingMajor.length === 0) return [];
+
+	const sectionKey = upcomingMajor[0].context || upcomingMajor[0].tournament || "featured-now";
+	const sectionTitle = upcomingMajor[0].tournament || upcomingMajor[0].context || "Major Event Focus";
+	const items = upcomingMajor.map((event) => {
+		const t = new Date(event.time);
+		const time = t.toLocaleTimeString("en-NO", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: "Europe/Oslo",
+		});
+		return {
+			text: `${time} — ${event.title}`,
+			type: "event",
+		};
+	});
+
+	return [
+		{
+			id: sectionKey.toLowerCase().replace(/\s+/g, "-"),
+			title: sectionTitle,
+			emoji: "🏅",
+			style: "highlight",
+			items,
+			expandLabel: null,
+			expandItems: [],
+		},
+	];
+}
+
+function buildFallbackRadar(events, now) {
+	const upcoming = events
+		.filter((event) => new Date(event.time) > now)
+		.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+	const norwegianUpcoming = upcoming.filter((event) => event.norwegian).slice(0, 3);
+	const lines = norwegianUpcoming.map((event) => {
+		const t = new Date(event.time);
+		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
+		const time = t.toLocaleTimeString("en-NO", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: "Europe/Oslo",
+		});
+		return `${day} ${time}: ${event.title}.`;
+	});
+
+	if (lines.length < 2) {
+		const mustWatch = upcoming.filter((event) => event.importance >= 4).slice(0, 3);
+		for (const event of mustWatch) {
+			lines.push(`Watchlist: ${event.title}${event.summary ? ` — ${event.summary}` : "."}`);
+			if (lines.length >= 3) break;
+		}
+	}
+
+	if (lines.length < 2 && upcoming.length > 0) {
+		lines.push(`Coming next: ${upcoming[0].title}.`);
+		lines.push(`Keep an eye on ${upcoming[Math.min(1, upcoming.length - 1)].title}.`);
+	}
+
+	return lines.slice(0, 3);
+}
+
+function buildFallbackFeatured(events, now) {
+	return {
+		brief: generateFallbackBrief(events, now),
+		sections: buildFallbackSections(events, now),
+		radar: buildFallbackRadar(events, now),
+	};
+}
+
 function generateFallbackBrief(events, now) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + 86400000);
@@ -276,19 +394,66 @@ function generateFallbackBrief(events, now) {
 	return lines;
 }
 
+async function generateRawFeatured(systemPrompt, userPrompt) {
+	// 1. Try Claude CLI (OAuth token from Max subscription)
+	if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
+		console.log("Using Claude CLI (OAuth) to generate featured content.");
+		try {
+			const rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
+			return { rawContent, provider: "claude-cli" };
+		} catch (err) {
+			console.error("Claude CLI failed:", err.message);
+		}
+	}
+
+	// 2. Try direct API (ANTHROPIC_API_KEY or OPENAI_API_KEY)
+	const llm = new LLMClient();
+	if (llm.isAvailable()) {
+		console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
+		try {
+			const rawContent = await llm.complete(systemPrompt, userPrompt);
+			return { rawContent, provider: llm.getProviderName() };
+		} catch (err) {
+			console.error("LLM API failed:", err.message);
+		}
+	}
+
+	return { rawContent: null, provider: "none" };
+}
+
 async function main() {
 	const dataDir = rootDataPath();
 	const eventsPath = path.join(dataDir, "events.json");
 	const featuredPath = path.join(dataDir, "featured.json");
+	const watchPlanPath = path.join(dataDir, "watch-plan.json");
+	const qualityPath = path.join(dataDir, "ai-quality.json");
 
 	const events = readJsonIfExists(eventsPath);
 	if (!events || !Array.isArray(events) || events.length === 0) {
 		console.log("No events found. Writing minimal featured.json.");
-		writeJsonPretty(featuredPath, { brief: ["No events scheduled."], sections: [], radar: [] });
+		const fallback = { brief: ["No events scheduled."], sections: [], radar: ["No upcoming events yet.", "Check back after the next data sync."] };
+		writeJsonPretty(featuredPath, fallback);
+		writeJsonPretty(watchPlanPath, buildWatchPlan([], { now: new Date() }));
+		const existingQuality = readJsonIfExists(qualityPath) || {};
+		writeJsonPretty(qualityPath, {
+			...existingQuality,
+			generatedAt: new Date().toISOString(),
+			featured: {
+				provider: "fallback",
+				attempts: 0,
+				valid: true,
+				score: 100,
+				issues: [],
+				briefLines: fallback.brief.length,
+				sectionCount: 0,
+				radarLines: fallback.radar.length,
+			},
+		});
 		return;
 	}
 
 	const now = new Date();
+	const userContext = readJsonIfExists(USER_CONTEXT_PATH) || {};
 	const curatedConfigs = loadCuratedConfigs();
 	if (curatedConfigs.length > 0) {
 		console.log(`Loaded ${curatedConfigs.length} curated config(s): ${curatedConfigs.map((c) => c.name).join(", ")}`);
@@ -307,90 +472,93 @@ async function main() {
 	}
 
 	const systemPrompt = buildSystemPrompt();
-	const userPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
-	let rawContent = null;
+	const baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
+	let featured = null;
+	let provider = "none";
+	let attempts = 0;
+	let qualityResult = null;
+	let qualityCorrections = [];
 
-	// 1. Try Claude CLI (OAuth token from Max subscription)
-	if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
-		console.log("Using Claude CLI (OAuth) to generate featured content.");
+	for (let attempt = 1; attempt <= 2; attempt++) {
+		attempts = attempt;
+		let userPrompt = baseUserPrompt;
+		if (qualityCorrections.length > 0) {
+			userPrompt += `\n\nQuality corrections from previous attempt:\n- ${qualityCorrections.join("\n- ")}\nFix all issues and return valid JSON only.`;
+		}
+
+		const generated = await generateRawFeatured(systemPrompt, userPrompt);
+		if (!generated.rawContent) break;
+		provider = generated.provider;
+
 		try {
-			rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
+			const parsed = parseResponseJSON(generated.rawContent);
+			const candidate = toFeaturedShape(parsed);
+			qualityResult = validateFeaturedContent(candidate, { events });
+
+			if (qualityResult.valid) {
+				featured = qualityResult.normalized;
+				break;
+			}
+
+			qualityCorrections = qualityResult.issues.map((issue) => issue.message).slice(0, 5);
+			console.warn(
+				`Featured quality gate failed (attempt ${attempt}): ${qualityCorrections.join("; ")}`
+			);
 		} catch (err) {
-			console.error("Claude CLI failed:", err.message);
+			qualityCorrections = [err.message];
+			console.warn(`Failed to parse featured JSON (attempt ${attempt}): ${err.message}`);
 		}
 	}
 
-	// 2. Try direct API (ANTHROPIC_API_KEY or OPENAI_API_KEY)
-	if (!rawContent) {
-		const llm = new LLMClient();
-		if (llm.isAvailable()) {
-			console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
-			try {
-				rawContent = await llm.complete(systemPrompt, userPrompt);
-			} catch (err) {
-				console.error("LLM API failed:", err.message);
-			}
-		}
+	if (!featured) {
+		console.log("Using deterministic fallback for featured content.");
+		provider = "fallback";
+		featured = buildFallbackFeatured(events, now);
+		qualityResult = validateFeaturedContent(featured, { events });
+		featured = qualityResult.normalized;
 	}
 
-	// 3. Fallback — template-based brief
-	if (!rawContent) {
-		console.log("No AI available. Using fallback brief generation.");
-		writeJsonPretty(featuredPath, {
-			brief: generateFallbackBrief(events, now),
-			sections: [],
-			radar: [],
-		});
-		return;
+	if (featured.brief.length === 0) {
+		featured.brief = generateFallbackBrief(events, now);
+	}
+	if (featured.radar.length < 2) {
+		featured.radar = buildFallbackRadar(events, now);
 	}
 
-	// Parse JSON from AI response
-	try {
-		let result;
-		try {
-			result = JSON.parse(rawContent);
-		} catch {
-			const match = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-			if (match) {
-				result = JSON.parse(match[1].trim());
-			} else {
-				throw new Error(`Could not parse JSON from response: ${rawContent.substring(0, 200)}`);
-			}
-		}
+	const finalQuality = validateFeaturedContent(featured, { events });
+	featured = finalQuality.normalized;
 
-		const featured = {
-			brief: Array.isArray(result.brief) ? result.brief.slice(0, 3) : [],
-			sections: Array.isArray(result.sections)
-				? result.sections.map((s) => ({
-						id: s.id || "unknown",
-						title: s.title || "",
-						emoji: s.emoji || "",
-						style: s.style || "default",
-						items: Array.isArray(s.items) ? s.items : [],
-						expandLabel: s.expandLabel || null,
-						expandItems: Array.isArray(s.expandItems) ? s.expandItems : [],
-					}))
-				: [],
-			radar: Array.isArray(result.radar) ? result.radar.slice(0, 3) : [],
-		};
+	const watchPlan = buildWatchPlan(events, {
+		now,
+		userContext,
+		featured,
+	});
 
-		if (featured.brief.length === 0) {
-			featured.brief = generateFallbackBrief(events, now);
-		}
+	writeJsonPretty(featuredPath, featured);
+	writeJsonPretty(watchPlanPath, watchPlan);
 
-		writeJsonPretty(featuredPath, featured);
-		console.log(
-			`Featured content generated: ${featured.brief.length} brief lines, ${featured.sections.length} sections, ${featured.radar.length} radar items.`
-		);
-	} catch (err) {
-		console.error("Failed to parse AI response:", err.message);
-		console.log("Falling back to template-based brief.");
-		writeJsonPretty(featuredPath, {
-			brief: generateFallbackBrief(events, now),
-			sections: [],
-			radar: [],
-		});
-	}
+	const existingQuality = readJsonIfExists(qualityPath) || {};
+	writeJsonPretty(qualityPath, {
+		...existingQuality,
+		generatedAt: new Date().toISOString(),
+		featured: {
+			provider,
+			attempts,
+			valid: finalQuality.valid,
+			score: finalQuality.score,
+			issues: finalQuality.issues.map((issue) => issue.message),
+			briefLines: featured.brief.length,
+			sectionCount: featured.sections.length,
+			radarLines: featured.radar.length,
+		},
+	});
+
+	console.log(
+		`Featured content generated: ${featured.brief.length} brief lines, ${featured.sections.length} sections, ${featured.radar.length} radar items.`
+	);
+	console.log(
+		`Watch plan generated: ${watchPlan.picks.length} picks across ${watchPlan.windows.filter((w) => w.items.length > 0).length} active windows.`
+	);
 }
 
 main().catch((err) => {

@@ -88,6 +88,74 @@
 			font-weight: 400;
 		}
 
+		/* --- AI Watch Plan --- */
+		#watch-plan {
+			margin-bottom: 24px;
+		}
+		.watch-plan-card {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 14px 16px;
+			box-shadow: var(--shadow);
+			border-left: 3px solid var(--accent);
+		}
+		.watch-plan-header {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 8px;
+		}
+		.watch-plan-headline {
+			font-family: var(--font-serif);
+			font-size: 0.82rem;
+			line-height: 1.6;
+			margin-bottom: 4px;
+		}
+		.watch-plan-summary {
+			font-size: 0.72rem;
+			color: var(--muted);
+			margin-bottom: 8px;
+		}
+		.watch-window {
+			padding-top: 8px;
+			border-top: 1px solid var(--border);
+			margin-top: 8px;
+		}
+		.watch-window-title {
+			font-size: 0.62rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			margin-bottom: 4px;
+		}
+		.watch-item {
+			display: flex;
+			gap: 10px;
+			align-items: baseline;
+			font-size: 0.74rem;
+			padding: 2px 0;
+		}
+		.watch-item-time {
+			color: var(--accent);
+			font-variant-numeric: tabular-nums;
+			min-width: 58px;
+		}
+		.watch-item-title {
+			color: var(--fg);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.watch-top-pick {
+			margin-top: 8px;
+			padding-top: 8px;
+			border-top: 1px solid var(--border);
+			font-size: 0.7rem;
+			color: var(--muted);
+		}
+
 		/* --- Featured Sections --- */
 		#featured-sections { margin-bottom: 24px; }
 		.featured-section {
@@ -483,15 +551,16 @@
 	</style>
 </head>
 <body>
-	<div class="wrap">
-		<header>
-			<h1>SportSync</h1>
-			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
-		</header>
+		<div class="wrap">
+			<header>
+				<h1>SportSync</h1>
+				<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
+			</header>
 
-		<div id="the-brief"></div>
+			<div id="the-brief"></div>
+			<div id="watch-plan" style="display:none;"></div>
 
-		<div id="featured-sections"></div>
+			<div id="featured-sections"></div>
 
 		<div id="events">
 			<div class="loading">Loading...</div>

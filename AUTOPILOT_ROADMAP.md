@@ -10,6 +10,26 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ---
 
+## EXPERIENCE Lane (User Impact)
+
+Keep this section near the top so the autopilot continuously improves user-facing outcomes, not just code hygiene.
+
+### Active KPIs
+
+- `watch_plan_engagement` — % of sessions that expand at least one suggested watch item
+- `enrichment_coverage` — % of events with importance, summary, tags, and Norwegian relevance
+- `featured_quality_score` — quality gate score from `docs/data/ai-quality.json`
+
+### Current Tasks
+
+- [PENDING] Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs.
+
+- [PENDING] Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic.
+
+- [PENDING] Personalize watch-plan ranking with favorites export — Feed `PreferencesManager.exportForBackend()` output into watch-plan scoring so local preferences directly influence top picks and window ordering.
+
+---
+
 ## HIGH Priority
 
 - [DONE] (PR #4) Fix service worker stale file references — `docs/sw.js` lines 25,27 cache `personalized-dashboard.js` and `event-filter.js` which do not exist. Remove these entries from the cache list to prevent SW installation failures.
@@ -86,7 +106,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ### MEDIUM Priority
 
-- [PENDING] Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` lines 255-640 contain 6 unused `getMock*Tournaments()` methods (~385 lines of dead code). Only `getMockWeeklyEvents()` is used. Touches 1 file.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` was removed from the runtime dashboard path.
 
 - [DONE] (obsolete — file deleted in ultra-minimal redesign) Add cleanup for setInterval on page unload — `simple-dashboard.js` was replaced by `dashboard.js`.
 
@@ -177,8 +197,8 @@ The autopilot should **proactively and autonomously** monitor the sports calenda
 
 ### Pending Content Tasks
 
-- [PENDING] Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` contains unused `getMock*Tournaments()` methods (~385 lines of dead code). Only `getMockWeeklyEvents()` is used.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` was removed from the runtime dashboard path.
 
-- [PENDING] Add workflow step for generate-featured.js — Add `node scripts/generate-featured.js` step to `.github/workflows/update-sports-data.yml` after enrichment. Requires `ANTHROPIC_API_KEY` secret. (Protected path — needs manual approval.)
+- [DONE] (already in workflow) Add workflow step for generate-featured.js — Step exists in `.github/workflows/update-sports-data.yml` and now also generates `watch-plan.json` + `ai-quality.json`.
 
-- [PENDING] Increase data update frequency — Change cron in `.github/workflows/update-sports-data.yml` from `0 */6 * * *` to `0 */2 * * *`. (Protected path — needs manual approval.)
+- [DONE] (already in workflow) Increase data update frequency — Cron is already `0 */2 * * *` in `.github/workflows/update-sports-data.yml`.
