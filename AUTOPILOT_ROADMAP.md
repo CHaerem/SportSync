@@ -38,6 +38,6 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #13) Add keyboard navigation for sport filters — Added `:focus-visible` outline styles to `.filter-btn` and `.sport-filter` elements. Buttons are native `<button>` elements so Enter/Space already works natively.
 
-- [PENDING] Clarify or remove `scripts/fetch/fotball-no.js` — This file fetches OBOS-ligaen data from fotball.no but its integration status is unclear. Either wire it into the main fetch pipeline or remove it.
+- [DONE] (clarified) Clarify `scripts/fetch/fotball-no.js` — Already integrated: imported by both `football.js` and `football-refactored.js` to fetch OBOS-ligaen Lyn matches. No changes needed.
 
 - [PENDING] Add `ai-assistant.js` to service worker cache list — `docs/js/ai-assistant.js` is loaded by `index.html` (line 1190) but is not included in the SW install cache in `docs/sw.js`. Add it for offline resilience.
