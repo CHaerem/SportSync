@@ -1,5 +1,5 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v10-cleanup';
+const CACHE_NAME = 'sportsync-v11-helpers';
 const DATA_FILES = [
     '/SportSync/data/events.json',
     '/SportSync/data/football.json',
@@ -22,7 +22,8 @@ self.addEventListener('install', (event) => {
                 '/SportSync/js/simple-dashboard.js',
                 '/SportSync/js/preferences-manager.js',
                 '/SportSync/js/settings-ui.js',
-                '/SportSync/js/ai-assistant.js'
+                '/SportSync/js/ai-assistant.js',
+                '/SportSync/js/dashboard-helpers.js'
             ]);
         })
     );
