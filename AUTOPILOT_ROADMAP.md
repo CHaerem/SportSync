@@ -73,3 +73,27 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 - [DONE] (PR #24) Fix duplicate emoji mappings — Extracted sport emoji/name mapping into shared `docs/js/sport-config.js` constant, replacing duplicates in `simple-dashboard.js`, `settings-ui.js`, and `dashboard-helpers.js`.
 
 - [DONE] (PR #25) Add input validation to preferences-manager — Added null/empty/whitespace guards to `addFavoriteTeam()` and `addFavoritePlayer()`, plus return values and 6 tests.
+
+---
+
+## Scouted Tasks (2026-02-10, run 2)
+
+### HIGH Priority
+
+- [PENDING] Add aria-labels to icon-only buttons — `docs/js/ai-assistant.js` button (line 21) has only "AI" text with no aria-label, and `docs/js/settings-ui.js` settings button (line 33) uses only ⚙️ emoji. Add descriptive `aria-label` attributes. Touches 2 files.
+
+- [PENDING] Add image error handling for team logos and golfer headshots — `docs/js/simple-dashboard.js` lines 313/318 (team logos) and 341-349 (golfer headshots) render `<img>` tags with hardcoded URLs that may break. Add `onerror` fallback to hide broken images. Touches 1 file.
+
+### MEDIUM Priority
+
+- [PENDING] Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` lines 255-640 contain 6 unused `getMock*Tournaments()` methods (~385 lines of dead code). Only `getMockWeeklyEvents()` is used. Touches 1 file.
+
+- [PENDING] Add cleanup for setInterval on page unload — `docs/js/simple-dashboard.js` stores `this.refreshInterval` (line 40) but never clears it on page unload. Add `destroy()` method and wire to `beforeunload`. Touches 1 file, ~10 lines.
+
+- [PENDING] Replace hardcoded colors with CSS variables in loading spinner — `docs/index.html` loading spinner (around line 599) uses hardcoded `#667eea` and `#f3f3f3` instead of `var(--accent)` and `var(--border)`. Touches 1 file, ~3 lines.
+
+### LOW Priority
+
+- [PENDING] Validate streaming URLs before rendering as links — `docs/js/simple-dashboard.js` line 1294 uses `stream.url` directly in `href` without validating it starts with `http`. Add protocol check to prevent potential `javascript:` URLs from compromised data. Touches 1 file, ~5 lines.
+
+- [PENDING] Deduplicate passesFilter() logic between simple-dashboard.js and dashboard-helpers.js — `docs/js/simple-dashboard.js` lines 566-618 duplicate the `passesFilter()` logic already exported from `docs/js/dashboard-helpers.js`. Have the dashboard call the helper version. Touches 1 file.
