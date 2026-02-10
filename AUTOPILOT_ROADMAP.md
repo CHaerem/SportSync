@@ -48,7 +48,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ### HIGH Priority
 
-- [PENDING] Remove dead code in `docs/js/sports-api.js` — Lines 30-64: unreachable second try-catch block in `fetchFootballEvents()` (first block always returns). Lines 185-232: four unused format methods (`formatFootballEvents`, `formatGolfEvents`, `formatTennisEvents`, `formatF1Events`) replaced by `formatTournamentData()`. Lines 4-9: unused `apiKeys` property. ~100 lines of dead code.
+- [DONE] (PR #15) Remove dead code in `docs/js/sports-api.js` — Removed unreachable TheSportsDB fallback block, four unused format methods, and unused apiKeys property. 93 lines removed.
 
 - [PENDING] Fix memory leak in `docs/js/simple-dashboard.js` — Line 40-43: `setInterval()` called without storing the interval ID, making cleanup impossible. Store the interval ID in `this.refreshInterval` for proper lifecycle management.
 

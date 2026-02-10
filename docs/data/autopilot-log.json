@@ -109,6 +109,16 @@
       "tests_passed": true,
       "files_changed": 0,
       "scouted": 11
+    },
+    {
+      "date": "2026-02-10",
+      "task": "Remove dead code from sports-api.js",
+      "outcome": "completed",
+      "pr": 15,
+      "details": "Removed unreachable TheSportsDB fallback block in fetchFootballEvents(), four unused format methods (formatFootballEvents, formatGolfEvents, formatTennisEvents, formatF1Events), and unused apiKeys property. 93 lines deleted.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }
