@@ -36,7 +36,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #12) Add CSS class for `event-time-exact` — Added missing CSS definition for the `event-time-exact` class: smaller font, muted color, reduced opacity, tabular-nums for digit alignment.
 
-- [PENDING] Add keyboard navigation for sport filters — Filter buttons are not keyboard-accessible. Add `tabindex`, focus styles, and Enter/Space key handlers so users can navigate filters without a mouse.
+- [DONE] (PR #13) Add keyboard navigation for sport filters — Added `:focus-visible` outline styles to `.filter-btn` and `.sport-filter` elements. Buttons are native `<button>` elements so Enter/Space already works natively.
 
 - [PENDING] Clarify or remove `scripts/fetch/fotball-no.js` — This file fetches OBOS-ligaen data from fotball.no but its integration status is unclear. Either wire it into the main fetch pipeline or remove it.
 
