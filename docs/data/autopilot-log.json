@@ -199,6 +199,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-10",
+      "task": "Extract duplicate sport emoji mappings into shared config",
+      "outcome": "completed",
+      "pr": 24,
+      "details": "Created docs/js/sport-config.js with shared SPORT_CONFIG constant. Replaced duplicate emoji/name mappings in simple-dashboard.js (3 locations), settings-ui.js, and dashboard-helpers.js. Added to SW cache (v12).",
+      "tests_passed": true,
+      "files_changed": 6,
+      "scouted": 0
     }
   ]
 }
