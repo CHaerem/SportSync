@@ -37,7 +37,7 @@ class SimpleSportsDashboard {
 		await this.loadAllEvents();
 
 		// Refresh data every 30 minutes
-		setInterval(() => {
+		this.refreshInterval = setInterval(() => {
 			this.loadAllEvents();
 			this.updateLastUpdatedTime();
 		}, 30 * 60 * 1000);
