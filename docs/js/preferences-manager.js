@@ -62,13 +62,16 @@ class PreferencesManager {
 
 	// Team preferences
 	addFavoriteTeam(sport, teamName) {
+		if (!sport?.trim() || !teamName?.trim()) return false;
 		if (!this.preferences.favoriteTeams[sport]) {
 			this.preferences.favoriteTeams[sport] = [];
 		}
 		if (!this.preferences.favoriteTeams[sport].includes(teamName)) {
 			this.preferences.favoriteTeams[sport].push(teamName);
 			this.savePreferences();
+			return true;
 		}
+		return false;
 	}
 
 	removeFavoriteTeam(sport, teamName) {
@@ -95,13 +98,16 @@ class PreferencesManager {
 
 	// Player preferences
 	addFavoritePlayer(sport, playerName) {
+		if (!sport?.trim() || !playerName?.trim()) return false;
 		if (!this.preferences.favoritePlayers[sport]) {
 			this.preferences.favoritePlayers[sport] = [];
 		}
 		if (!this.preferences.favoritePlayers[sport].includes(playerName)) {
 			this.preferences.favoritePlayers[sport].push(playerName);
 			this.savePreferences();
+			return true;
 		}
+		return false;
 	}
 
 	removeFavoritePlayer(sport, playerName) {
