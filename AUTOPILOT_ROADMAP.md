@@ -34,7 +34,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #11) Clean up console.log statements — Removed 32 debug-level console.log calls across `docs/sw.js`, `docs/js/sports-api.js`, `docs/js/simple-dashboard.js`, and `docs/index.html`. Retained console.error calls for genuine errors.
 
-- [PENDING] Add CSS class for `event-time-exact` — `simple-dashboard.js` line 409 generates elements with class `event-time-exact` but no CSS definition exists. Add styling to match the dashboard design.
+- [DONE] (PR #12) Add CSS class for `event-time-exact` — Added missing CSS definition for the `event-time-exact` class: smaller font, muted color, reduced opacity, tabular-nums for digit alignment.
 
 - [PENDING] Add keyboard navigation for sport filters — Filter buttons are not keyboard-accessible. Add `tabindex`, focus styles, and Enter/Space key handlers so users can navigate filters without a mouse.
 
