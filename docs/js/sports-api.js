@@ -1,13 +1,6 @@
 // Sports API integration for fetching live data with tournament support
 class SportsAPI {
-	constructor() {
-		this.apiKeys = {
-			// Add your API keys here when available
-			theSportsDB: null,
-			apiSports: null,
-			sportsData: null,
-		};
-	}
+	constructor() {}
 
 	// Football API - multiple leagues support
 	async fetchFootballEvents() {
@@ -24,42 +17,6 @@ class SportsAPI {
 			}
 		} catch (error) {
 			console.error("Error loading football data:", error);
-			return []; // Return empty array instead of trying live API
-		}
-
-		try {
-			// Fetch multiple leagues in parallel
-			const leagues = [
-				{ id: "4328", name: "Premier League" },
-				{ id: "4335", name: "La Liga" },
-				{ id: "4331", name: "Serie A" },
-				{ id: "4332", name: "Bundesliga" },
-				{ id: "4334", name: "Ligue 1" },
-				{ id: "4370", name: "Eliteserien" },
-			];
-
-			const promises = leagues.map(async (league) => {
-				try {
-					const response = await fetch(
-						`https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${league.id}`
-					);
-					const data = await response.json();
-
-					return {
-						tournament: league.name,
-						events: this.formatFootballEvents(data.events || []),
-					};
-				} catch (error) {
-					console.warn(`Error fetching ${league.name}:`, error);
-					return { tournament: league.name, events: [] };
-				}
-			});
-
-			const results = await Promise.all(promises);
-			return results.filter((league) => league.events.length > 0);
-		} catch (error) {
-			console.error("Error fetching football events:", error);
-			// Removed fallback to live API - return empty array
 			return [];
 		}
 	}
@@ -179,55 +136,6 @@ class SportsAPI {
 				// Preserve other sport-specific fields
 				participants: event.participants || [],
 			})),
-		}));
-	}
-
-	formatFootballEvents(events) {
-		return events.slice(0, 5).map((event) => ({
-			title: `${event.strHomeTeam} vs ${event.strAwayTeam}`,
-			meta: event.strLeague || "Football",
-			time: event.dateEvent,
-			timeFormatted: this.formatDateTime(event.dateEvent),
-			venue: event.strVenue,
-			homeTeam: event.strHomeTeam,
-			awayTeam: event.strAwayTeam,
-			league: event.strLeague,
-			sport: "football",
-		}));
-	}
-
-	formatGolfEvents(events) {
-		return events.slice(0, 3).map((event) => ({
-			title: event.name || "Golf Tournament",
-			meta: event.shortName || "Golf",
-			time: event.date,
-			timeFormatted: this.formatDateTime(event.date),
-			venue: event.competitions?.[0]?.venue?.fullName || "TBD",
-			sport: "golf",
-		}));
-	}
-
-	formatTennisEvents(events) {
-		return events.slice(0, 4).map((event) => ({
-			title: `${event.strPlayer || "Player"} vs ${
-				event.strPlayer2 || "Player"
-			}`,
-			meta: event.strLeague || "Tennis",
-			time: event.dateEvent,
-			timeFormatted: this.formatDateTime(event.dateEvent),
-			venue: event.strVenue,
-			sport: "tennis",
-		}));
-	}
-
-	formatF1Events(events) {
-		return events.slice(0, 4).map((event) => ({
-			title: event.name || "F1 Race",
-			meta: event.shortName || "Formula 1",
-			time: event.date,
-			timeFormatted: this.formatDateTime(event.date),
-			venue: event.competitions?.[0]?.venue?.fullName || "TBD",
-			sport: "formula1",
 		}));
 	}
 
