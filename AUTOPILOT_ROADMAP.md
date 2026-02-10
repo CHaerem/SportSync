@@ -56,7 +56,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ### MEDIUM Priority
 
-- [PENDING] Add `prefers-reduced-motion` support — `docs/index.html` CSS uses transitions (0.15s–1s) and a spinner animation without a `@media (prefers-reduced-motion: reduce)` override. Add a media query block to disable transitions and animations for users with vestibular disorders. ~15 lines of CSS.
+- [DONE] (PR #18) Add `prefers-reduced-motion` support — Added media query to disable all transitions and animations for users with motion sensitivity preferences.
 
 - [PENDING] Remove unused CSS rules — `docs/index.html`: `.view-toggle` and `.view-btn` styles (lines ~223-251) have no corresponding HTML elements. `@keyframes spin` animation (lines ~640-647) is defined but its loading spinner is immediately replaced. ~30 lines of dead CSS.
 
