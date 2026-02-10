@@ -33,7 +33,7 @@ const PROVIDERS = {
 	},
 	anthropic: {
 		url: "https://api.anthropic.com/v1/messages",
-		model: "claude-3-5-haiku-latest",
+		model: "claude-opus-4-6",
 		envKey: "ANTHROPIC_API_KEY",
 		buildRequest(apiKey, systemPrompt, userPrompt) {
 			return {

@@ -3,12 +3,15 @@
  * Enriches events.json with LLM-generated metadata:
  * importance scores, summaries, tags, and Norwegian relevance ratings.
  *
- * Usage: OPENAI_API_KEY=... node scripts/enrich-events.js
- *   or:  ANTHROPIC_API_KEY=... node scripts/enrich-events.js
+ * Auth (checked in order):
+ *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI / Opus 4.6 (Max subscription)
+ *   2. ANTHROPIC_API_KEY — direct Anthropic API (Opus 4.6)
+ *   3. OPENAI_API_KEY — direct OpenAI API (gpt-4o-mini)
  */
 
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import {
@@ -18,6 +21,28 @@ import {
 
 const BATCH_SIZE = 10;
 const CONFIG_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
+
+async function completeWithClaudeCLI(systemPrompt, userPrompt) {
+	const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+	const tmpFile = path.join(rootDataPath(), ".enrich-prompt.tmp");
+	fs.writeFileSync(tmpFile, fullPrompt);
+	try {
+		const output = execSync(
+			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text`,
+			{ encoding: "utf-8", timeout: 120000, maxBuffer: 1024 * 1024 }
+		);
+		const text = output.trim();
+		try {
+			return JSON.parse(text);
+		} catch {
+			const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+			if (match) return JSON.parse(match[1].trim());
+			throw new Error(`Could not parse JSON from Claude CLI: ${text.substring(0, 200)}`);
+		}
+	} finally {
+		try { fs.unlinkSync(tmpFile); } catch {}
+	}
+}
 
 async function main() {
 	const dataDir = rootDataPath();
@@ -30,15 +55,17 @@ async function main() {
 		process.exit(0);
 	}
 
-	// 2. Check LLM availability
-	const llm = new LLMClient();
-	if (!llm.isAvailable()) {
+	// 2. Determine LLM provider — prefer Claude CLI (Max subscription / Opus 4.6)
+	const useClaudeCLI = !!process.env.CLAUDE_CODE_OAUTH_TOKEN;
+	const llm = useClaudeCLI ? null : new LLMClient();
+
+	if (!useClaudeCLI && !llm.isAvailable()) {
 		console.log(
-			"No LLM API key found (OPENAI_API_KEY or ANTHROPIC_API_KEY). Skipping enrichment."
+			"No LLM available (CLAUDE_CODE_OAUTH_TOKEN, ANTHROPIC_API_KEY, or OPENAI_API_KEY). Skipping enrichment."
 		);
 		process.exit(0);
 	}
-	console.log(`Using ${llm.getProviderName()} for enrichment.`);
+	console.log(`Using ${useClaudeCLI ? "Claude CLI (Opus 4.6 via Max subscription)" : llm.getProviderName()} for enrichment.`);
 
 	// 3. Read user context
 	const userContext = readJsonIfExists(CONFIG_PATH) || {};
@@ -59,7 +86,9 @@ async function main() {
 
 		try {
 			const userPrompt = buildUserPrompt(batch);
-			const result = await llm.completeJSON(systemPrompt, userPrompt);
+			const result = useClaudeCLI
+				? await completeWithClaudeCLI(systemPrompt, userPrompt)
+				: await llm.completeJSON(systemPrompt, userPrompt);
 
 			const enrichments = result.events;
 			if (!Array.isArray(enrichments) || enrichments.length !== batch.length) {

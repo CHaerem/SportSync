@@ -70,6 +70,7 @@ jobs:
 
       - name: Enrich events with AI
         env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           npm run enrich || echo "AI enrichment failed, using raw data"
