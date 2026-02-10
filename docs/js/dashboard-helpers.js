@@ -44,17 +44,19 @@ export function getRelativeTime(timeString, now = new Date()) {
 	return `In ${Math.round(diffDays)} days`;
 }
 
+// Canonical sport config — shared with sport-config.js at runtime
+export const SPORT_CONFIG = [
+	{ id: 'football', emoji: '⚽', name: 'Football', color: '#22c55e' },
+	{ id: 'golf', emoji: '⛳', name: 'Golf', color: '#f59e0b' },
+	{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#3b82f6' },
+	{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#ef4444', aliases: ['f1'] },
+	{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#6b7280' },
+	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' }
+];
+
 export function sportDisplayName(code) {
-	switch (code) {
-		case "football": return "⚽ Football";
-		case "golf": return "⛳ Golf";
-		case "tennis": return "🎾 Tennis";
-		case "f1":
-		case "formula1": return "🏎️ F1";
-		case "chess": return "♟️ Chess";
-		case "esports": return "🎮 Esports";
-		default: return code;
-	}
+	const sport = SPORT_CONFIG.find(s => s.id === code || (s.aliases && s.aliases.includes(code)));
+	return sport ? `${sport.emoji} ${sport.name}` : code;
 }
 
 export function getAbbreviatedTeamName(teamName) {

@@ -248,14 +248,7 @@ class SettingsUI {
 	}
 
 	createSportToggles() {
-		const sports = [
-			{ id: 'golf', emoji: '⛳', name: 'Golf', color: '#f59e0b' },
-			{ id: 'football', emoji: '⚽', name: 'Football', color: '#22c55e' },
-			{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#3b82f6' },
-			{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#ef4444' },
-			{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#6b7280' },
-			{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' }
-		];
+		const sports = SPORT_CONFIG;
 
 		return sports.map(sport => {
 			const isActive = this.preferences.isFavoriteSport(sport.id);
