@@ -1233,10 +1233,6 @@
 					try {
 						const swPath = '/SportSync/sw.js';
 						const registration = await navigator.serviceWorker.register(swPath);
-						console.log(
-							"SportSync: Service Worker registered successfully:",
-							registration.scope
-						);
 
 						// Listen for updates
 						registration.addEventListener("updatefound", () => {
@@ -1246,16 +1242,12 @@
 									newWorker.state === "installed" &&
 									navigator.serviceWorker.controller
 								) {
-									console.log("SportSync: New service worker available");
-									// Optionally notify user of update
+									// New service worker available
 								}
 							});
 						});
 					} catch (error) {
-						console.log(
-							"SportSync: Service Worker registration failed:",
-							error
-						);
+						console.error("SportSync: Service Worker registration failed:", error);
 					}
 				});
 			}

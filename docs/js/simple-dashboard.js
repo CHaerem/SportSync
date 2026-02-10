@@ -139,7 +139,7 @@ class SimpleSportsDashboard {
 				return;
 			}
 		} catch (error) {
-			console.log("No metadata available, using current time");
+			// Metadata unavailable, fall back to current time
 		}
 
 		const now = new Date();
@@ -1356,8 +1356,6 @@ class SimpleSportsDashboard {
 document.addEventListener("DOMContentLoaded", () => {
 	setTimeout(() => {
 		try {
-			// Always initialize SimpleDashboard for now
-			console.log("Initializing Simple SportsDashboard...");
 			window.simpleDashboard = new SimpleSportsDashboard();
 		} catch (error) {
 			console.error("Error initializing dashboard:", error);
