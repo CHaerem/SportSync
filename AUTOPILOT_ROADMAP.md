@@ -50,7 +50,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #15) Remove dead code in `docs/js/sports-api.js` — Removed unreachable TheSportsDB fallback block, four unused format methods, and unused apiKeys property. 93 lines removed.
 
-- [PENDING] Fix memory leak in `docs/js/simple-dashboard.js` — Line 40-43: `setInterval()` called without storing the interval ID, making cleanup impossible. Store the interval ID in `this.refreshInterval` for proper lifecycle management.
+- [DONE] (PR #16) Fix memory leak in `docs/js/simple-dashboard.js` — Stored setInterval return value in `this.refreshInterval` for proper cleanup.
 
 - [PENDING] Add `rel="noopener noreferrer"` to streaming links — `docs/js/simple-dashboard.js` line ~1320: streaming badge links with `target="_blank"` are missing `rel="noopener noreferrer"`, allowing external sites to access `window.opener`. Security fix.
 
