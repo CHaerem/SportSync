@@ -201,6 +201,14 @@
 			font-variant-numeric: tabular-nums;
 		}
 
+		/* --- Must-watch events --- */
+		.event-row.must-watch {
+			background: rgba(217, 119, 87, 0.04);
+		}
+		.row-title.must-watch-title {
+			font-weight: 500;
+		}
+
 		/* --- Event Row --- */
 		.event-row {
 			padding: 6px 0;
@@ -278,6 +286,28 @@
 			color: var(--muted);
 			margin-bottom: 12px;
 			font-size: 0.8rem;
+		}
+		.exp-summary {
+			color: var(--muted);
+			font-size: 0.75rem;
+			font-style: italic;
+			line-height: 1.6;
+			margin-bottom: 10px;
+		}
+		.exp-tags {
+			display: flex;
+			gap: 6px;
+			margin-bottom: 10px;
+			flex-wrap: wrap;
+		}
+		.exp-tag {
+			font-size: 0.6rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			padding: 1px 6px;
 		}
 		.exp-teams {
 			display: flex;

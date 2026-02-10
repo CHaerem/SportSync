@@ -49,6 +49,8 @@ Rules:
   Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
 - Reference standings positions and form when relevant (e.g. "Arsenal top the table", "Hovland T5")
 - Use breaking news headlines to make the brief timely and relevant
+- Events marked with ★4 or ★5 are must-watch — prioritize these in the brief and radar
+- Use AI-generated summaries and tags for context about stakes and storylines
 - Brief lines must be crisp (max 15 words each), like newspaper headlines
 - Featured sections should highlight major multi-sport or tournament events currently
   happening: Olympics, World Cup, Champions League knockout stages, Grand Slams, etc.
@@ -181,7 +183,14 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 				timeZone: "Europe/Oslo",
 			});
 			const nor = e.norwegian ? " [NOR]" : "";
-			return `${day} ${time} | ${e.sport} | ${e.tournament || ""} | ${e.title}${nor}`;
+			let enrichment = "";
+			if (e.importance >= 4) enrichment += ` [\u2605${e.importance}]`;
+			if (e.summary) enrichment += ` \u2014 ${e.summary}`;
+			if (Array.isArray(e.tags) && e.tags.length > 0) {
+				const top = e.tags.filter((t) => ["must-watch", "rivalry", "derby", "final", "major", "title-race"].includes(t)).slice(0, 2);
+				if (top.length > 0) enrichment += ` [${top.join(", ")}]`;
+			}
+			return `${day} ${time} | ${e.sport} | ${e.tournament || ""} | ${e.title}${nor}${enrichment}`;
 		})
 		.join("\n");
 
@@ -189,10 +198,21 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	const standingsContext = buildStandingsContext(standings);
 	const rssContext = buildRssContext(rssDigest);
 
+	// Enrichment context — highlight must-watch events for Claude
+	let enrichmentContext = "";
+	const mustWatch = weekEvents.filter((e) => e.importance >= 4);
+	if (mustWatch.length > 0) {
+		const items = mustWatch.slice(0, 5).map((e) => {
+			const s = e.summary ? `: ${e.summary}` : "";
+			return `  - ${e.title}${s}`;
+		});
+		enrichmentContext = `\n\nMust-watch events (importance \u22654):\n${items.join("\n")}`;
+	}
+
 	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
 
 Events (next 7 days, max 30 shown):
-${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}
+${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${enrichmentContext}
 
 Generate featured.json matching this schema:
 ${JSON.stringify(FEATURED_SCHEMA, null, 2)}

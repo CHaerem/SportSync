@@ -52,6 +52,10 @@ class Dashboard {
 					awayTeam: ev.awayTeam || null,
 					context: ev.context || null,
 					featuredGroups: ev.featuredGroups || [],
+					importance: typeof ev.importance === 'number' ? ev.importance : null,
+					summary: ev.summary || null,
+					tags: Array.isArray(ev.tags) ? ev.tags : [],
+					norwegianRelevance: typeof ev.norwegianRelevance === 'number' ? ev.norwegianRelevance : null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 
@@ -92,13 +96,24 @@ class Dashboard {
 			lines = this.generateBriefLines();
 		}
 
+		// Append live score lines
+		const liveLines = this.generateLiveBriefLines();
+		if (liveLines.length > 0) {
+			lines = [...lines, ...liveLines];
+		}
+
 		if (lines.length === 0) {
 			el.style.display = 'none';
 			return;
 		}
 
 		el.style.display = '';
-		el.innerHTML = lines.map(line => this.esc(line)).join(' ');
+		el.innerHTML = lines.map(line => {
+			if (line.startsWith('LIVE:') || line.startsWith('\u26f3')) {
+				return `<span style="color:var(--accent)">${this.esc(line)}</span>`;
+			}
+			return this.esc(line);
+		}).join(' ');
 	}
 
 	generateBriefLines() {
@@ -127,6 +142,60 @@ class Dashboard {
 			.join(', ');
 
 		return [`${todayEvents.length} events today \u2014 ${parts}.`];
+	}
+
+	generateLiveBriefLines() {
+		const lines = [];
+
+		// Live football matches
+		const liveMatches = Object.entries(this.liveScores)
+			.map(([eventId, score]) => {
+				if (score.state !== 'in') return null;
+				const event = this.allEvents.find(e => e.id === eventId);
+				if (!event) return null;
+				return { event, score };
+			})
+			.filter(Boolean);
+
+		if (liveMatches.length > 0) {
+			const m = liveMatches[0];
+			lines.push(`LIVE: ${this.shortName(m.event.homeTeam)} ${m.score.home}-${m.score.away} ${this.shortName(m.event.awayTeam)} (${m.score.clock})`);
+		}
+
+		// Recently finished matches
+		if (liveMatches.length === 0) {
+			const finished = Object.entries(this.liveScores)
+				.map(([eventId, score]) => {
+					if (score.state !== 'post') return null;
+					const event = this.allEvents.find(e => e.id === eventId);
+					if (!event) return null;
+					return { event, score };
+				})
+				.filter(Boolean);
+
+			if (finished.length > 0) {
+				const m = finished[0];
+				lines.push(`FT: ${this.shortName(m.event.homeTeam)} ${m.score.home}-${m.score.away} ${this.shortName(m.event.awayTeam)}`);
+			}
+		}
+
+		// Live golf leaderboard
+		if (this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
+			const norPlayer = this.liveLeaderboard.players.slice(0, 15).find(p => {
+				const last = p.player.split(' ').pop().toLowerCase();
+				return ['hovland', 'aberg', 'ventura', 'olesen'].includes(last);
+			});
+
+			const name = this.liveLeaderboard.name || 'PGA Tour';
+			if (norPlayer) {
+				lines.push(`\u26f3 ${name}: ${norPlayer.player} ${norPlayer.position} (${norPlayer.score})`);
+			} else {
+				const leader = this.liveLeaderboard.players[0];
+				lines.push(`\u26f3 ${name}: ${leader.player} leads at ${leader.score}`);
+			}
+		}
+
+		return lines;
 	}
 
 	// --- Featured Sections ---
@@ -309,17 +378,18 @@ class Dashboard {
 		}
 
 		const isExpanded = this.expandedId === event.id;
+		const isMustWatch = event.importance >= 4;
 
 		// If title contains live score HTML (<strong>), render raw; otherwise escape
 		const hasLiveScore = this.liveScores[event.id];
 		const titleHtml = hasLiveScore ? title : this.esc(title);
 
 		return `
-			<div class="event-row${isExpanded ? ' expanded' : ''}" data-id="${this.esc(event.id)}">
+			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title">${titleHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}">${titleHtml}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -337,6 +407,22 @@ class Dashboard {
 		// Venue
 		if (event.venue && event.venue !== 'TBD') {
 			content += `<div class="exp-venue">${this.esc(event.venue)}</div>`;
+		}
+
+		// AI summary
+		if (event.summary) {
+			content += `<div class="exp-summary">${this.esc(event.summary)}</div>`;
+		}
+
+		// Tags
+		if (event.tags && event.tags.length > 0) {
+			const editorial = ['must-watch', 'rivalry', 'derby', 'final', 'major', 'title-race', 'norwegian-player', 'upset-potential'];
+			const shown = event.tags.filter(t => editorial.includes(t)).slice(0, 3);
+			if (shown.length > 0) {
+				content += '<div class="exp-tags">';
+				shown.forEach(tag => { content += `<span class="exp-tag">${this.esc(tag)}</span>`; });
+				content += '</div>';
+			}
 		}
 
 		// Football: team logos
@@ -540,6 +626,7 @@ class Dashboard {
 				this.pollGolfScores(),
 			]);
 			this.updateLiveDOM();
+			this.renderBrief();
 		} catch (err) {
 			// Silent fail — live scores are a nice-to-have
 		}
