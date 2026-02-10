@@ -182,6 +182,25 @@
 			margin: 28px 0 14px;
 		}
 
+		/* --- Live indicator --- */
+		.live-dot {
+			display: inline-block;
+			width: 6px; height: 6px;
+			background: #e74c3c;
+			border-radius: 50%;
+			margin-right: 4px;
+			vertical-align: middle;
+			animation: live-pulse 1.5s ease-in-out infinite;
+		}
+		@keyframes live-pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.3; }
+		}
+		.row-title strong {
+			font-weight: 600;
+			font-variant-numeric: tabular-nums;
+		}
+
 		/* --- Event Row --- */
 		.event-row {
 			padding: 6px 0;

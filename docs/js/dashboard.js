@@ -5,6 +5,10 @@ class Dashboard {
 		this.featured = null;
 		this.standings = null;
 		this.expandedId = null;
+		this.liveScores = {};      // { eventId: { home, away, clock, state } }
+		this.liveLeaderboard = null; // golf live leaderboard
+		this._liveInterval = null;
+		this._liveVisible = true;
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		this.init();
 	}
@@ -13,6 +17,10 @@ class Dashboard {
 		this.bindThemeToggle();
 		await this.loadEvents();
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
+		this.startLivePolling();
+		document.addEventListener('visibilitychange', () => {
+			this._liveVisible = !document.hidden;
+		});
 	}
 
 	// --- Data loading ---
@@ -282,7 +290,17 @@ class Dashboard {
 			if (hLogo && aLogo) {
 				iconHtml = `<img src="${hLogo}" class="row-logo" loading="lazy"><img src="${aLogo}" class="row-logo" loading="lazy">`;
 			}
-			title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
+			const live = this.liveScores[event.id];
+			if (live) {
+				title = `${this.esc(this.shortName(event.homeTeam))} <strong>${live.home} - ${live.away}</strong> ${this.esc(this.shortName(event.awayTeam))}`;
+				if (live.state === 'in') {
+					timeStr = `<span class="live-dot"></span>${this.esc(live.clock)}`;
+				} else if (live.state === 'post') {
+					timeStr = 'FT';
+				}
+			} else {
+				title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
+			}
 		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(event.norwegianPlayers[0].name) : null;
 			if (headshot) {
@@ -292,12 +310,16 @@ class Dashboard {
 
 		const isExpanded = this.expandedId === event.id;
 
+		// If title contains live score HTML (<strong>), render raw; otherwise escape
+		const hasLiveScore = this.liveScores[event.id];
+		const titleHtml = hasLiveScore ? title : this.esc(title);
+
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title">${this.esc(title)}</span>
+					<span class="row-title">${titleHtml}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -489,6 +511,151 @@ class Dashboard {
 
 		html += '</tbody></table></div>';
 		return html;
+	}
+
+	// --- Live score polling ---
+
+	startLivePolling() {
+		if (this._liveInterval) return;
+		this._liveInterval = setInterval(() => this.pollLiveScores(), 60 * 1000);
+		// Initial poll after short delay
+		setTimeout(() => this.pollLiveScores(), 3000);
+	}
+
+	hasLiveEvents() {
+		const now = Date.now();
+		return this.allEvents.some(e => {
+			const start = new Date(e.time).getTime();
+			// Event could be live: started up to 4h ago (covers golf rounds, football + extra time)
+			return start <= now && start > now - 4 * 60 * 60 * 1000 &&
+				(e.sport === 'football' || e.sport === 'golf');
+		});
+	}
+
+	async pollLiveScores() {
+		if (!this._liveVisible || !this.hasLiveEvents()) return;
+		try {
+			await Promise.all([
+				this.pollFootballScores(),
+				this.pollGolfScores(),
+			]);
+			this.updateLiveDOM();
+		} catch (err) {
+			// Silent fail — live scores are a nice-to-have
+		}
+	}
+
+	async pollFootballScores() {
+		const now = Date.now();
+		const hasLiveFootball = this.allEvents.some(e =>
+			e.sport === 'football' && new Date(e.time).getTime() <= now &&
+			new Date(e.time).getTime() > now - 3 * 60 * 60 * 1000
+		);
+		if (!hasLiveFootball) return;
+
+		try {
+			const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
+			if (!resp.ok) return;
+			const data = await resp.json();
+
+			for (const ev of (data.events || [])) {
+				const comp = ev.competitions?.[0];
+				if (!comp) continue;
+				const state = comp.status?.type?.state; // pre, in, post
+				if (state !== 'in' && state !== 'post') continue;
+
+				const home = comp.competitors?.find(c => c.homeAway === 'home');
+				const away = comp.competitors?.find(c => c.homeAway === 'away');
+				if (!home || !away) continue;
+
+				const homeName = home.team?.displayName || '';
+				const awayName = away.team?.displayName || '';
+
+				// Match to our events by team names
+				const matched = this.allEvents.find(e =>
+					e.sport === 'football' &&
+					e.homeTeam && e.awayTeam &&
+					this.teamMatch(e.homeTeam, homeName) &&
+					this.teamMatch(e.awayTeam, awayName)
+				);
+				if (matched) {
+					this.liveScores[matched.id] = {
+						home: parseInt(home.score, 10) || 0,
+						away: parseInt(away.score, 10) || 0,
+						clock: comp.status?.displayClock || '',
+						state: state,
+						detail: comp.status?.type?.shortDetail || '',
+					};
+				}
+			}
+		} catch { /* silent */ }
+	}
+
+	async pollGolfScores() {
+		const now = Date.now();
+		const hasLiveGolf = this.allEvents.some(e =>
+			e.sport === 'golf' && new Date(e.time).getTime() <= now &&
+			new Date(e.time).getTime() > now - 12 * 60 * 60 * 1000
+		);
+		if (!hasLiveGolf) return;
+
+		try {
+			const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard');
+			if (!resp.ok) return;
+			const data = await resp.json();
+			const ev = data.events?.[0];
+			const comp = ev?.competitions?.[0];
+			const state = ev?.status?.type?.state;
+			if (!comp || state === 'pre') return;
+
+			const competitors = comp.competitors || [];
+			this.liveLeaderboard = {
+				name: ev.name || '',
+				state: state,
+				players: competitors.slice(0, 15).map((c, idx) => ({
+					position: c.order || (idx + 1),
+					player: c.athlete?.displayName || c.athlete?.fullName || 'Unknown',
+					score: typeof c.score === 'object' ? (c.score?.displayValue || 'E') : (c.score?.toString() || 'E'),
+					today: c.linescores?.[c.linescores.length - 1]?.displayValue || '-',
+					thru: c.status?.thru?.toString() || '-',
+				})),
+			};
+		} catch { /* silent */ }
+	}
+
+	teamMatch(a, b) {
+		const normalize = s => s.toLowerCase().replace(/ fc$| afc$| cf$| fk$/i, '').replace(/^fc |^afc /i, '').trim();
+		return normalize(a) === normalize(b) || a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
+	}
+
+	updateLiveDOM() {
+		// Update football scores inline
+		for (const [eventId, score] of Object.entries(this.liveScores)) {
+			const row = document.querySelector(`.event-row[data-id="${CSS.escape(eventId)}"]`);
+			if (!row) continue;
+			const titleEl = row.querySelector('.row-title');
+			const timeEl = row.querySelector('.row-time');
+			if (!titleEl) continue;
+
+			const event = this.allEvents.find(e => e.id === eventId);
+			if (!event) continue;
+
+			titleEl.innerHTML = `${this.esc(this.shortName(event.homeTeam))} <strong>${score.home} - ${score.away}</strong> ${this.esc(this.shortName(event.awayTeam))}`;
+
+			if (timeEl && score.state === 'in') {
+				timeEl.innerHTML = `<span class="live-dot"></span>${this.esc(score.clock)}`;
+			} else if (timeEl && score.state === 'post') {
+				timeEl.textContent = 'FT';
+			}
+		}
+
+		// Update golf leaderboard in expanded view if visible
+		if (this.liveLeaderboard && this.liveLeaderboard.state === 'in') {
+			const golfTable = document.querySelector('.exp-standings .exp-standings-header');
+			if (golfTable && golfTable.textContent.includes(this.liveLeaderboard.name)) {
+				// Leaderboard is visible and matches — update will happen on next full render
+			}
+		}
 	}
 
 	// --- On the Radar ---
