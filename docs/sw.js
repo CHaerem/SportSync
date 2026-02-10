@@ -1,5 +1,5 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v12-sport-config';
+const CACHE_NAME = 'sportsync-v13-minimal';
 const DATA_FILES = [
     '/SportSync/data/events.json',
     '/SportSync/data/football.json',
@@ -18,12 +18,11 @@ self.addEventListener('install', (event) => {
             return cache.addAll([
                 '/SportSync/',
                 '/SportSync/index.html',
-                '/SportSync/js/sports-api.js',
-                '/SportSync/js/simple-dashboard.js',
-                '/SportSync/js/preferences-manager.js',
                 '/SportSync/js/sport-config.js',
-                '/SportSync/js/settings-ui.js',
-                '/SportSync/js/ai-assistant.js',
+                '/SportSync/js/asset-maps.js',
+                '/SportSync/js/sports-api.js',
+                '/SportSync/js/preferences-manager.js',
+                '/SportSync/js/dashboard.js',
                 '/SportSync/js/dashboard-helpers.js'
             ]);
         })
@@ -50,7 +49,7 @@ self.addEventListener('activate', (event) => {
 // Fetch event - control caching strategy
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
-    
+
     // Always fetch data files fresh (no cache)
     if (DATA_FILES.some(dataFile => url.pathname.includes(dataFile.replace('/SportSync', '')))) {
         event.respondWith(
@@ -69,7 +68,7 @@ self.addEventListener('fetch', (event) => {
         );
         return;
     }
-    
+
     // For other requests, use cache-first strategy
     event.respondWith(
         caches.match(event.request).then((response) => {
@@ -82,13 +81,13 @@ self.addEventListener('fetch', (event) => {
                 if (!response || response.status !== 200 || response.type !== 'basic') {
                     return response;
                 }
-                
+
                 // Clone response for caching
                 const responseToCache = response.clone();
                 caches.open(CACHE_NAME).then((cache) => {
                     cache.put(event.request, responseToCache);
                 });
-                
+
                 return response;
             });
         })
@@ -100,7 +99,7 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
-    
+
     if (event.data && event.data.type === 'CLEAR_DATA_CACHE') {
         // Clear any cached data files
         caches.open(CACHE_NAME).then((cache) => {

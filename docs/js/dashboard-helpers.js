@@ -164,3 +164,146 @@ export function isFavoriteEvent(event) {
 
 	return false;
 }
+
+// --- New helpers for redesigned dashboard ---
+
+export function getCountdown(isoTime, now = new Date()) {
+	if (!isoTime) return '';
+	const target = new Date(isoTime);
+	const diffMs = target - now;
+	if (diffMs <= 0) return 'Live';
+	const mins = Math.floor(diffMs / 60000);
+	const hours = Math.floor(mins / 60);
+	const days = Math.floor(hours / 24);
+	if (days > 0) return `In ${days}d ${hours % 24}h`;
+	if (hours > 0) return `${hours}h ${mins % 60}m`;
+	return `${mins}m`;
+}
+
+export function generateBrief(events, now = new Date()) {
+	if (!events || events.length === 0) return '';
+
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const todayEnd = new Date(todayStart);
+	todayEnd.setDate(todayEnd.getDate() + 1);
+
+	const todayEvents = events.filter(e => {
+		const t = new Date(e.time);
+		return t >= todayStart && t < todayEnd;
+	});
+
+	if (todayEvents.length === 0) return 'No events scheduled today.';
+
+	// Count by sport
+	const sportCounts = {};
+	const sportEmojiMap = {};
+	SPORT_CONFIG.forEach(s => {
+		sportEmojiMap[s.id] = s.emoji;
+		if (s.aliases) s.aliases.forEach(a => { sportEmojiMap[a] = s.emoji; });
+	});
+
+	todayEvents.forEach(e => {
+		const key = e.sport === 'f1' ? 'formula1' : e.sport;
+		sportCounts[key] = (sportCounts[key] || 0) + 1;
+	});
+
+	const parts = [];
+	const sportNames = { football: 'football', golf: 'golf', tennis: 'tennis', formula1: 'F1', chess: 'chess', esports: 'esports' };
+
+	for (const [sport, count] of Object.entries(sportCounts)) {
+		const name = sportNames[sport] || sport;
+		parts.push(`${count} ${name}${count > 1 ? '' : ''} event${count > 1 ? 's' : ''}`);
+	}
+
+	// Find the soonest upcoming event
+	const upcoming = todayEvents
+		.filter(e => new Date(e.time) > now)
+		.sort((a, b) => new Date(a.time) - new Date(b.time))[0];
+
+	let nextUp = '';
+	if (upcoming) {
+		const time = new Date(upcoming.time).toLocaleTimeString('en-NO', {
+			hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo'
+		});
+		nextUp = ` Next up: ${upcoming.title} at ${time}.`;
+	}
+
+	if (todayEvents.length <= 2) {
+		return `Quiet day \u2014 ${parts.join(' and ')}.${nextUp}`;
+	}
+
+	return `${todayEvents.length} events today: ${parts.join(', ')}.${nextUp}`;
+}
+
+export function groupEventsByTemporalBand(events, now = new Date()) {
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const tomorrowStart = new Date(todayStart);
+	tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+	const tomorrowEnd = new Date(tomorrowStart);
+	tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
+	const weekEnd = new Date(todayStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
+
+	const bands = { today: [], tomorrow: [], thisWeek: [], later: [] };
+
+	events.forEach(event => {
+		const t = new Date(event.time);
+		if (t < todayStart) return; // skip past events (more than a day old)
+		if (t < tomorrowStart) bands.today.push(event);
+		else if (t < tomorrowEnd) bands.tomorrow.push(event);
+		else if (t < weekEnd) bands.thisWeek.push(event);
+		else bands.later.push(event);
+	});
+
+	return bands;
+}
+
+export function groupByTournament(events) {
+	const map = {};
+	events.forEach(event => {
+		const key = event.tournament || event.title;
+		if (!map[key]) {
+			map[key] = { tournament: key, sport: event.sport, events: [] };
+		}
+		map[key].events.push(event);
+	});
+
+	return Object.values(map).sort((a, b) => {
+		const aTime = new Date(a.events[0].time);
+		const bTime = new Date(b.events[0].time);
+		return aTime - bTime;
+	});
+}
+
+export function extractFeaturedContext(events) {
+	if (!events || events.length === 0) return null;
+	const contextEvents = events.filter(e => e.context);
+	if (contextEvents.length === 0) return null;
+
+	// Group by context
+	const contexts = {};
+	contextEvents.forEach(e => {
+		if (!contexts[e.context]) {
+			contexts[e.context] = { name: e.context, events: [] };
+		}
+		contexts[e.context].events.push(e);
+	});
+
+	// Return the context with the most events
+	const best = Object.values(contexts).sort((a, b) => b.events.length - a.events.length)[0];
+
+	// Format the name nicely
+	const nameMap = {
+		'olympics-2028': { name: 'Olympics 2028', emoji: '🇳🇴' },
+		'world-cup-2026': { name: 'World Cup 2026', emoji: '🏆' },
+	};
+
+	const mapped = nameMap[best.name] || { name: best.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), emoji: '🌍' };
+
+	return {
+		id: best.name,
+		name: mapped.name,
+		emoji: mapped.emoji,
+		events: best.events.sort((a, b) => new Date(a.time) - new Date(b.time))
+	};
+}

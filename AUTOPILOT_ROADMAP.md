@@ -80,20 +80,20 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ### HIGH Priority
 
-- [PENDING] Add aria-labels to icon-only buttons — `docs/js/ai-assistant.js` button (line 21) has only "AI" text with no aria-label, and `docs/js/settings-ui.js` settings button (line 33) uses only ⚙️ emoji. Add descriptive `aria-label` attributes. Touches 2 files.
+- [DONE] (obsolete — files deleted in ultra-minimal redesign) Add aria-labels to icon-only buttons — `ai-assistant.js` and `settings-ui.js` were removed.
 
-- [PENDING] Add image error handling for team logos and golfer headshots — `docs/js/simple-dashboard.js` lines 313/318 (team logos) and 341-349 (golfer headshots) render `<img>` tags with hardcoded URLs that may break. Add `onerror` fallback to hide broken images. Touches 1 file.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Add image error handling for team logos and golfer headshots — `simple-dashboard.js` was replaced by `dashboard.js`.
 
 ### MEDIUM Priority
 
 - [PENDING] Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` lines 255-640 contain 6 unused `getMock*Tournaments()` methods (~385 lines of dead code). Only `getMockWeeklyEvents()` is used. Touches 1 file.
 
-- [PENDING] Add cleanup for setInterval on page unload — `docs/js/simple-dashboard.js` stores `this.refreshInterval` (line 40) but never clears it on page unload. Add `destroy()` method and wire to `beforeunload`. Touches 1 file, ~10 lines.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Add cleanup for setInterval on page unload — `simple-dashboard.js` was replaced by `dashboard.js`.
 
-- [PENDING] Replace hardcoded colors with CSS variables in loading spinner — `docs/index.html` loading spinner (around line 599) uses hardcoded `#667eea` and `#f3f3f3` instead of `var(--accent)` and `var(--border)`. Touches 1 file, ~3 lines.
+- [DONE] (resolved in ultra-minimal redesign) Replace hardcoded colors with CSS variables in loading spinner — New `index.html` uses CSS variables throughout.
 
 ### LOW Priority
 
-- [PENDING] Validate streaming URLs before rendering as links — `docs/js/simple-dashboard.js` line 1294 uses `stream.url` directly in `href` without validating it starts with `http`. Add protocol check to prevent potential `javascript:` URLs from compromised data. Touches 1 file, ~5 lines.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Validate streaming URLs before rendering as links — `simple-dashboard.js` was replaced by `dashboard.js`.
 
-- [PENDING] Deduplicate passesFilter() logic between simple-dashboard.js and dashboard-helpers.js — `docs/js/simple-dashboard.js` lines 566-618 duplicate the `passesFilter()` logic already exported from `docs/js/dashboard-helpers.js`. Have the dashboard call the helper version. Touches 1 file.
+- [DONE] (obsolete — file deleted in ultra-minimal redesign) Deduplicate passesFilter() logic — `simple-dashboard.js` was removed entirely.

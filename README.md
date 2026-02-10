@@ -1,19 +1,20 @@
-# SportSync 🏆
+# SportSync
 
-> A beautifully simple sports dashboard following the CALM principle - instantly scannable, elegantly informative, and completely automated.
+> An ultra-minimal sports dashboard — clean lines, sparse information, and one AI-generated sentence tying the day together.
 
 [![Deploy](https://github.com/chaerem/SportSync/workflows/Update%20Sports%20Data/badge.svg)](https://github.com/chaerem/SportSync/actions)
 [![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/SportSync/)
 
-## ✨ What is SportSync?
+## What is SportSync?
 
-SportSync is a **static sports dashboard** that answers one question perfectly: **"What sports are happening when?"**
+A **static sports dashboard** that shows only what matters: time, name, sport.
 
-- 🕒 **Crystal clear time display** with Norwegian timezone (24-hour format)
-- 🎯 **CALM design** - readable by grandparents, loved by tech users
-- 🔄 **Fully automated** - fresh data every 6 hours via GitHub Actions
-- 📱 **Mobile-first** responsive design
-- 🚀 **Zero maintenance** once deployed
+- **Ultra-minimal** — no cards, no badges, no shadows. Just rows with subtle borders
+- **Temporal bands** — events grouped into Today / Tomorrow / This Week / Later
+- **AI daily brief** — one sentence at the top summarizing the day's sports
+- **Click to expand** — tap any row for venue, team logos, streaming, favorites
+- **540px reading column** — phone-width, OLED-ready dark mode
+- **Fully automated** — fresh data every 6 hours via GitHub Actions
 
 ## 🚀 Quick Start
 
@@ -48,37 +49,36 @@ npm run dev
 | ♟️ **Chess**     | Curated Data     | Major tournaments, Norwegian focus        |
 | 🎮 **Esports**   | HLTV API         | CS2 competitions (FaZe/rain focus)        |
 
-## 🎨 Design Philosophy
+## Design
 
-### The CALM Principle
-
-SportSync is designed to be **instantly scannable** without overwhelming users:
+Ultra-minimal: show only what matters. Time, name, sport. Nothing else visible by default.
 
 ```
-┌─────────────────────────────────────┐
-│ TODAY              🟢 FOOTBALL      │  ← Day + Sport Badge
-├─────────────────────────────────────┤
-│ 19:45                               │  ← Large, clear time
-│                                     │
-│ Arsenal vs Manchester City          │  ← Event title
-│ Premier League • Emirates Stadium   │  ← Competition & venue
-└─────────────────────────────────────┘
+SportSync                         🌙
+
+"Three Premier League matches
+ tonight, Hovland tees off at 14:00."
+
+⚽ ⛳ 🎾 🏎️ ♟️ 🎮
+
+TODAY
+─────────────────────────────────
+⚽ Premier League
+   15:30  Chelsea vs Arsenal      ●
+   16:00  Liverpool vs Spurs      ●
+⛳ The Masters — Round 1
+   14:00  Hovland tees off        ●
+
+TOMORROW
+─────────────────────────────────
+   14:00  Ruud vs Djokovic        ●
 ```
 
-**Perfect for everyone:**
-- **Grandparents**: Large text, obvious controls, zero confusion
-- **Tech users**: Efficient scanning, comprehensive data
-- **Mobile users**: Touch-friendly, readable on any screen
-- **Quick checks**: Essential info visible at a glance
-
-### Time Display Strategy
-
-All events show in **Norwegian time** (Europe/Oslo) using **24-hour format**:
-
-- **Today**: "TODAY 19:45"
-- **Tomorrow**: "TOMORROW 14:30" 
-- **This week**: "FRIDAY 16:00"
-- **Future**: "SUN, DEC 15 12:30"
+- **Max-width: 540px** — phone-width reading column
+- **No cards, no shadows, no gradients** — rows with subtle bottom borders
+- **Sport indicated by colored dot** at row end
+- **Day labels**: uppercase, letter-spaced, sticky on scroll
+- **Dark mode**: true black (#000) for OLED
 
 ## 🏗️ Architecture
 
@@ -98,12 +98,16 @@ Users see updated dashboard instantly
 
 ```
 docs/                           # GitHub Pages root
-├── index.html                  # Main dashboard (all-in-one file)
+├── index.html                  # Main dashboard (HTML + embedded CSS)
 ├── js/
-│   ├── simple-dashboard.js     # CALM dashboard controller  
-│   └── sports-api.js           # API integration layer
+│   ├── dashboard.js            # Dashboard controller (temporal bands, expand)
+│   ├── dashboard-helpers.js    # Pure utilities (grouping, brief, countdowns)
+│   ├── asset-maps.js           # Team logos + golfer headshot URLs
+│   ├── sport-config.js         # Sport metadata (emoji, color, aliases)
+│   ├── sports-api.js           # API integration layer
+│   └── preferences-manager.js  # Favorites storage (localStorage)
 ├── data/                       # Auto-generated by GitHub Actions
-│   ├── events.json             # ⭐ Unified events feed (main data source)
+│   ├── events.json             # Unified events feed (main data source)
 │   ├── events.ics              # Calendar export
 │   ├── football.json           # Per-sport source files
 │   ├── tennis.json
@@ -116,15 +120,7 @@ docs/                           # GitHub Pages root
 
 scripts/                        # Data fetching & processing
 ├── fetch/                      # Modular API fetchers
-│   ├── football.js
-│   ├── tennis.js
-│   ├── golf.js
-│   ├── f1.js
-│   ├── chess.js
-│   └── esports.js
 ├── config/                     # Curated configs
-│   ├── chess-tournaments.json
-│   └── norwegian-chess-players.json
 ├── build-events.js             # Creates unified events.json
 ├── build-ics.js                # Generates calendar export
 └── validate-events.js          # Data integrity checks
@@ -180,8 +176,9 @@ npm run validate:data   # Check data integrity
 
 1. **Create fetcher**: Add `scripts/fetch/newsport.js`
 2. **Update pipeline**: Import in `scripts/fetch/index.js`
-3. **Add to dashboard**: Update sport badges in `docs/index.html`
-4. **Test locally**: `npm run refresh`
+3. **Add sport config**: Add entry to `docs/js/sport-config.js`
+4. **Add filter dot**: Add button to `docs/index.html`
+5. **Test locally**: `npm run refresh`
 
 ### Customizing Focus
 
@@ -213,32 +210,13 @@ SportSync generates a **standard .ics calendar file** at `/docs/data/events.ics`
 - **Includes participants** for chess tournaments and team sports
 - **Norwegian timezone** for accurate local times
 
-## 🎯 Why SportSync?
+## Why SportSync?
 
-In a world of **cluttered sports apps** and **overwhelming dashboards**, SportSync returns to simplicity:
+- **No notifications** — just information when you need it
+- **No accounts** — works instantly for everyone
+- **No bloat** — pure HTML/CSS/JS, works on any device
+- **No maintenance** — set it and forget it
 
-- **No notifications** - just information when you need it
-- **No accounts** - works instantly for everyone  
-- **No premium features** - everything is free and open source
-- **No bloat** - pure HTML/CSS/JS, works on any device
-- **No maintenance** - set it and forget it
+## License
 
-Perfect for **checking your daily sports schedule** over morning coffee or **planning your weekend viewing**. ☕️🏆
-
-## 🤝 Contributing
-
-We welcome contributions that maintain the **CALM principle**:
-
-1. Fork the repository
-2. Keep changes **simple and user-focused**
-3. Test on both **mobile and desktop**
-4. Ensure **accessibility and readability**
-5. Create a Pull Request with clear description
-
-## 📄 License
-
-**MIT License** - feel free to create your own sports dashboard!
-
----
-
-**Built with ❤️ for sports fans who value simplicity over complexity.**
+MIT License

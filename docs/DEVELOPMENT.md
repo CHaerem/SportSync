@@ -53,10 +53,14 @@ npm run build:events
 ```
 SportSync/
 ├── docs/                 # GitHub Pages root (frontend)
-│   ├── index.html       # Main dashboard
+│   ├── index.html       # Main dashboard (HTML + embedded CSS)
 │   ├── js/              # Client-side JavaScript
-│   │   ├── simple-dashboard.js  # Dashboard controller
-│   │   └── sports-api.js        # API integration
+│   │   ├── dashboard.js          # Dashboard controller (temporal bands, expand)
+│   │   ├── dashboard-helpers.js  # Pure utilities (grouping, brief, countdowns)
+│   │   ├── asset-maps.js         # Team logos + golfer headshot URLs
+│   │   ├── sport-config.js       # Sport metadata (emoji, color, aliases)
+│   │   ├── sports-api.js         # API integration
+│   │   └── preferences-manager.js # Favorites storage (localStorage)
 │   ├── data/            # Auto-generated JSON data
 │   └── sw.js            # Service worker
 │
@@ -89,10 +93,11 @@ Every 6 hours, GitHub Actions:
 
 When user visits the site:
 
-1. `simple-dashboard.js` loads `data/events.json`
-2. Events are filtered based on user selections
-3. Dashboard renders with Norwegian timezone
-4. Service worker caches for offline access
+1. `dashboard.js` loads `data/events.json`
+2. Events are grouped into temporal bands (Today/Tomorrow/This Week/Later)
+3. Within each band, 3+ same-tournament events get a tournament header
+4. Click-to-expand shows venue, team logos, streaming, and favorite actions
+5. Service worker caches for offline access
 
 ## Adding New Features
 
@@ -164,34 +169,22 @@ const fetchers = [
 
 #### 4. Update Frontend
 
-Add sport badge in `docs/index.html`:
+Add filter dot in `docs/index.html`:
 
 ```html
-<button class="sport-filter" data-filter="basketball">
-  🏀 Basketball
-</button>
+<button class="filter-dot" data-sport="basketball" aria-label="Basketball" title="Basketball">🏀</button>
 ```
 
-### Adding User Preferences (Future)
+### User Preferences
 
-The architecture is prepared for client-side personalization:
+Preferences are managed by `docs/js/preferences-manager.js` and stored in localStorage:
 
-```javascript
-// Future implementation in docs/js/preferences.js
-class PreferencesManager {
-  load() {
-    return JSON.parse(localStorage.getItem('sportSync.prefs')) || {
-      sports: ['football', 'tennis'],
-      teams: ['Arsenal', 'Lakers'],
-      timezone: 'Europe/Oslo'
-    };
-  }
-  
-  save(prefs) {
-    localStorage.setItem('sportSync.prefs', JSON.stringify(prefs));
-  }
-}
-```
+- Favorite teams (by sport)
+- Favorite players (by sport)
+- Individual event favorites
+- Theme preference (dark/light/auto)
+
+Favorites are toggled through the expanded event view (click any event row).
 
 ## API Integration
 
@@ -401,17 +394,18 @@ Follow conventional commits:
 - ✅ Norwegian focus
 - ✅ Clean architecture
 
-### Phase 2 (Next)
-- [ ] User preferences
-- [ ] Favorite teams/players
-- [ ] Custom timezone
-- [ ] Dark mode persistence
+### Phase 2 (Current)
+- [x] User preferences (localStorage)
+- [x] Favorite teams/players
+- [x] Dark mode persistence
+- [x] Ultra-minimal temporal band design
+- [x] AI daily brief (template-based)
 
 ### Phase 3 (Future)
+- [ ] AI daily brief via Claude API call
+- [ ] Featured context sections (Olympics, World Cup)
 - [ ] Push notifications
 - [ ] Live scores
-- [ ] Social sharing
-- [ ] Multiple language support
 
 ## Resources
 

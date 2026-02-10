@@ -1,1245 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-		<meta
-			http-equiv="Cache-Control"
-			content="no-cache, no-store, must-revalidate"
-		/>
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
-		<meta name="last-modified" content="2025-08-18T12:30:00Z" />
-		<meta name="description" content="Personalized sports dashboard with live events for football, golf, tennis, F1, chess, and esports. Norway-centric scheduling with Norwegian timezone formatting." />
-		<meta name="theme-color" content="#667eea" />
-		<title>SportSync — Your Personal Sports Dashboard</title>
-		<style>
-			:root {
-				--bg: #fafafa;
-				--card-bg: #ffffff;
-				--text: #1a1a1a;
-				--text-secondary: #4a4a4a;
-				--muted: #707070;
-				--border: #e8e8e8;
-				--accent: #2563eb;
-				--hover-bg: #f7f7f7;
-			}
-			.dark {
-				--bg: #0a0a0a;
-				--card-bg: #1a1a1a;
-				--text: #ffffff;
-				--text-secondary: #d0d0d0;
-				--muted: #a0a0a0;
-				--border: #2a2a2a;
-				--accent: #4a9eff;
-				--hover-bg: #222222;
-			}
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-
-			body {
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-					sans-serif;
-				background: var(--bg);
-				min-height: 100vh;
-				color: var(--text);
-				line-height: 1.5;
-				font-size: 16px;
-			}
-
-			.container {
-				max-width: 1000px;
-				margin: 0 auto;
-				padding: 40px 24px;
-			}
-
-                        header {
-                                text-align: center;
-                                margin-bottom: 50px;
-                                position: relative;
-                        }
-
-                        h1 {
-                                font-size: 2.2rem;
-                                font-weight: 300;
-                                margin-bottom: 8px;
-                                color: var(--text);
-                                letter-spacing: -0.02em;
-                        }
-
-
-                        .theme-toggle {
-                                background: none;
-                                border: none;
-                                padding: 4px;
-                                font-size: 1.2rem;
-                                cursor: pointer;
-                                transition: all 0.3s;
-                        }
-
-			.simple-filters {
-				text-align: center;
-				margin-bottom: 40px;
-			}
-
-			.filter-group {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-				gap: 8px;
-			}
-
-			.filter-btn {
-				background: transparent;
-				border: 1px solid var(--border);
-				padding: 6px 14px;
-				border-radius: 16px;
-				cursor: pointer;
-				font-size: 0.8rem;
-				color: var(--muted);
-				transition: all 0.15s ease;
-				font-weight: 500;
-			}
-
-			.filter-btn:hover {
-				border-color: var(--text-secondary);
-				color: var(--text);
-			}
-
-			.filter-btn.active {
-				background: var(--text);
-				color: var(--bg);
-				border-color: var(--text);
-			}
-
-			.filter-btn:focus-visible {
-				outline: 2px solid var(--accent, #3b82f6);
-				outline-offset: 2px;
-			}
-
-			.sport-filter {
-				width: 36px;
-				height: 36px;
-				font-size: 1.1rem;
-				background: transparent;
-				border: 1.5px solid var(--border);
-				color: var(--muted);
-				border-radius: 8px;
-				cursor: pointer;
-				transition: all 0.15s;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-			}
-			
-			.sport-filter:hover {
-				transform: translateY(-1px);
-				opacity: 0.9;
-			}
-
-			.sport-filter.active {
-				color: white;
-				transform: translateY(-1px);
-			}
-
-			.sport-filter:focus-visible {
-				outline: 2px solid var(--accent, #3b82f6);
-				outline-offset: 2px;
-			}
-
-			/* Sport-specific colors for filter buttons */
-			.sport-filter[data-filter="golf"] {
-				border-color: rgba(245, 158, 11, 0.3);
-			}
-			.sport-filter[data-filter="golf"]:hover,
-			.sport-filter[data-filter="golf"].active {
-				background: #f59e0b;
-				border-color: #f59e0b;
-				color: white;
-			}
-			
-			.sport-filter[data-filter="football"] {
-				border-color: rgba(34, 197, 94, 0.3);
-			}
-			.sport-filter[data-filter="football"]:hover,
-			.sport-filter[data-filter="football"].active {
-				background: #22c55e;
-				border-color: #22c55e;
-				color: white;
-			}
-			
-			.sport-filter[data-filter="tennis"] {
-				border-color: rgba(59, 130, 246, 0.3);
-			}
-			.sport-filter[data-filter="tennis"]:hover,
-			.sport-filter[data-filter="tennis"].active {
-				background: #3b82f6;
-				border-color: #3b82f6;
-				color: white;
-			}
-			
-			.sport-filter[data-filter="formula1"] {
-				border-color: rgba(239, 68, 68, 0.3);
-			}
-			.sport-filter[data-filter="formula1"]:hover,
-			.sport-filter[data-filter="formula1"].active {
-				background: #ef4444;
-				border-color: #ef4444;
-				color: white;
-			}
-			
-			.sport-filter[data-filter="chess"] {
-				border-color: rgba(107, 114, 128, 0.3);
-			}
-			.sport-filter[data-filter="chess"]:hover,
-			.sport-filter[data-filter="chess"].active {
-				background: #6b7280;
-				border-color: #6b7280;
-				color: white;
-			}
-			
-			.sport-filter[data-filter="esports"] {
-				border-color: rgba(139, 92, 246, 0.3);
-			}
-			.sport-filter[data-filter="esports"]:hover,
-			.sport-filter[data-filter="esports"].active {
-				background: #8b5cf6;
-				border-color: #8b5cf6;
-				color: white;
-			}
-			
-			/* Filter count indicator */
-			.filter-count {
-				font-size: 0.75rem;
-				color: var(--muted);
-				text-align: right;
-				margin-top: 8px;
-				min-height: 1.2em;
-				opacity: 0.7;
-			}
-
-			/* Timeline grid view */
-			.timeline-grid {
-				display: grid;
-				gap: 1px;
-				background: var(--border);
-				border: 1px solid var(--border);
-				border-radius: 16px;
-				overflow: hidden;
-				max-width: 100%;
-			}
-			
-			.timeline-header {
-				display: contents;
-			}
-			
-			.timeline-corner {
-				background: var(--hover-bg);
-				padding: 12px 8px;
-				font-weight: 500;
-				font-size: 0.75rem;
-				color: var(--muted);
-				text-align: center;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-			
-			.timeline-day-header {
-				background: var(--hover-bg);
-				padding: 12px 8px;
-				text-align: center;
-				font-size: 0.8rem;
-				color: var(--text);
-				line-height: 1.3;
-			}
-			
-			.timeline-row {
-				display: contents;
-			}
-			
-			.timeline-time-label {
-				background: var(--hover-bg);
-				padding: 16px 6px;
-				font-size: 0.7rem;
-				text-align: center;
-				color: var(--text-secondary);
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				min-height: 120px;
-				line-height: 1.3;
-			}
-			
-			.timeline-cell {
-				background: var(--card-bg);
-				padding: 8px;
-				min-height: 120px;
-				display: flex;
-				flex-direction: column;
-				gap: 6px;
-			}
-			
-			.timeline-event {
-				padding: 6px 8px;
-				border-radius: 6px;
-				background: var(--hover-bg);
-				border-left: 3px solid;
-				font-size: 0.75rem;
-				cursor: pointer;
-				transition: all 0.2s;
-				position: relative;
-			}
-			
-			.timeline-event:hover {
-				transform: translateY(-1px);
-				box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-			}
-			
-			.timeline-event.football { border-left-color: #22c55e; }
-			.timeline-event.golf { border-left-color: #f59e0b; }
-			.timeline-event.tennis { border-left-color: #3b82f6; }
-			.timeline-event.f1, .timeline-event.formula1 { border-left-color: #ef4444; }
-			.timeline-event.chess { border-left-color: #6b7280; }
-			.timeline-event.esports { border-left-color: #8b5cf6; }
-			
-			.timeline-event.favorite {
-				background: linear-gradient(135deg, var(--hover-bg) 0%, var(--card-bg) 100%);
-			}
-			
-			.timeline-event-header {
-				display: flex;
-				align-items: center;
-				gap: 4px;
-				margin-bottom: 2px;
-			}
-			
-			.timeline-event-time {
-				font-weight: 600;
-				color: var(--text);
-				font-size: 0.75rem;
-			}
-			
-			.timeline-event-title {
-				color: var(--text-secondary);
-				line-height: 1.2;
-				font-size: 0.7rem;
-				word-break: break-word;
-			}
-
-			/* Main Dashboard View */
-			.events-list {
-				max-width: 100%;
-			}
-			
-			.day-divider {
-				margin: 32px 0 16px 0;
-				padding: 8px 0;
-				border-bottom: 1px solid var(--border);
-				position: relative;
-			}
-			
-			.day-divider:first-child {
-				margin-top: 0;
-			}
-			
-			.day-label {
-				background: var(--bg);
-				padding: 0 12px;
-				font-size: 0.85rem;
-				font-weight: 600;
-				color: var(--muted);
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				position: relative;
-				display: inline-block;
-			}
-
-			.event-card {
-				background: var(--card-bg);
-				border: 1px solid var(--border);
-				border-radius: 20px;
-				margin-bottom: 20px;
-				padding: 0;
-				transition: all 0.3s ease;
-				overflow: hidden;
-				position: relative;
-			}
-
-			.event-card:hover {
-				transform: translateY(-1px);
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-			}
-			
-			.event-card[data-favorite="true"] {
-				background: linear-gradient(135deg, var(--card-bg) 0%, var(--hover-bg) 100%);
-			}
-			
-			.event-favorite-btn:hover {
-				transform: scale(1.2);
-			}
-			
-			.quick-add-team:hover, .quick-add-player:hover {
-				border-color: var(--accent) !important;
-				color: var(--accent) !important;
-			}
-			
-
-			.event-header {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding: 32px 40px 28px 40px;
-			}
-
-			.event-time-info {
-				display: flex;
-				flex-direction: column;
-				gap: 2px;
-				min-width: 100px;
-			}
-
-			
-			.event-time-relative {
-				font-size: 0.85rem;
-				color: var(--muted);
-				margin-top: 4px;
-				opacity: 0.8;
-			}
-
-			.event-time-exact {
-				font-size: 0.75rem;
-				color: var(--muted);
-				opacity: 0.6;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.sport-badge {
-				position: absolute;
-				top: 20px;
-				right: 20px;
-				padding: 4px 10px;
-				border-radius: 16px;
-				font-size: 0.65rem;
-				font-weight: 500;
-				text-transform: uppercase;
-				letter-spacing: 0.3px;
-				background: var(--hover-bg);
-				color: var(--muted);
-				border: 1px solid var(--border);
-				opacity: 0.8;
-			}
-			
-			.sport-line {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				height: 2px;
-				border-radius: 20px 20px 0 0;
-				opacity: 0.5;
-			}
-			
-			.sport-line.football {
-				background: #22c55e;
-			}
-			.sport-line.tennis {
-				background: #3b82f6;
-			}
-			.sport-line.golf {
-				background: #f59e0b;
-			}
-			.sport-line.f1, .sport-line.formula1 {
-				background: #ef4444;
-			}
-			.sport-line.chess {
-				background: #6b7280;
-			}
-			.sport-line.esports {
-				background: #8b5cf6;
-			}
-
-			/* Team logos for football */
-			.teams-display {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 40px;
-				margin: 28px 0;
-				padding: 20px;
-				background: var(--hover-bg);
-				border-radius: 16px;
-			}
-
-			.team-block {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 12px;
-			}
-
-			.team-logo {
-				width: 56px;
-				height: 56px;
-				object-fit: contain;
-				filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-			}
-
-			.team-name {
-				font-weight: 500;
-				color: var(--text);
-				font-size: 0.95rem;
-				text-align: center;
-				margin-top: 8px;
-			}
-
-			.vs-separator {
-				color: var(--muted);
-				font-weight: 300;
-				font-size: 0.9rem;
-				opacity: 0.5;
-			}
-
-			/* Golf tee times - minimal display */
-			.tee-times {
-				margin-top: 24px;
-				padding: 20px 24px;
-				background: var(--hover-bg);
-				border-radius: 16px;
-				border: 1px solid var(--border);
-			}
-			
-			.tee-time-player {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding: 12px 0;
-				border-bottom: 1px solid var(--border);
-			}
-			
-			.player-info {
-				display: flex;
-				align-items: center;
-				gap: 12px;
-			}
-			
-			.golfer-headshot {
-				width: 48px;
-				height: 48px;
-				border-radius: 50%;
-				object-fit: cover;
-				border: 2px solid var(--border);
-				background: white;
-			}
-			
-			.golfer-headshot-placeholder {
-				width: 48px;
-				height: 48px;
-				border-radius: 50%;
-				background: var(--hover-bg);
-				border: 2px solid var(--border);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 20px;
-				opacity: 0.5;
-			}
-			
-			.tee-time-player:last-child {
-				border-bottom: none;
-			}
-			
-			.player-name {
-				font-weight: 500;
-				color: var(--text);
-			}
-			
-			.player-time {
-				font-weight: 600;
-				color: var(--text);
-				font-size: 0.95rem;
-			}
-
-			.event-content {
-				padding: 0 40px 36px 40px;
-			}
-
-			.event-title {
-				font-size: 1.2rem;
-				font-weight: 500;
-				color: var(--text);
-				margin: 0 0 20px 0;
-				line-height: 1.4;
-				letter-spacing: -0.01em;
-			}
-
-			.event-meta {
-				display: flex;
-				align-items: center;
-				gap: 16px;
-				font-size: 0.9rem;
-				color: var(--muted);
-				margin-bottom: 20px;
-			}
-			
-			.event-meta-item {
-				display: flex;
-				align-items: center;
-				gap: 6px;
-			}
-
-			.loading {
-				text-align: center;
-				padding: 40px;
-				color: #718096;
-			}
-
-			.spinner {
-				border: 3px solid #f3f3f3;
-				border-top: 3px solid #667eea;
-				border-radius: 50%;
-				width: 30px;
-				height: 30px;
-				animation: spin 1s linear infinite;
-				margin: 0 auto 16px;
-			}
-
-			@keyframes spin {
-				0% {
-					transform: rotate(0deg);
-				}
-				100% {
-					transform: rotate(360deg);
-				}
-			}
-
-			/* Timeline container wrapper for better scrolling */
-			.timeline-wrapper {
-				width: 100%;
-				overflow-x: auto;
-				overflow-y: hidden;
-				padding-bottom: 10px;
-			}
-			
-			.timeline-wrapper::-webkit-scrollbar {
-				height: 8px;
-			}
-			
-			.timeline-wrapper::-webkit-scrollbar-track {
-				background: var(--hover-bg);
-				border-radius: 4px;
-			}
-			
-			.timeline-wrapper::-webkit-scrollbar-thumb {
-				background: var(--muted);
-				border-radius: 4px;
-			}
-			
-			.timeline-wrapper::-webkit-scrollbar-thumb:hover {
-				background: var(--text-secondary);
-			}
-
-			/* Mobile optimizations */
-			@media (max-width: 768px) {
-				.container {
-					padding: 16px 12px;
-					max-width: 100%;
-				}
-
-				header {
-					margin-bottom: 24px;
-				}
-
-				h1 {
-					font-size: 1.4rem;
-					font-weight: 600;
-				}
-				
-				#lastUpdate {
-					font-size: 0.65rem !important;
-				}
-
-				.simple-filters {
-					margin-bottom: 20px;
-				}
-
-				.filter-group {
-					gap: 8px;
-					padding: 0 4px;
-				}
-
-				.filter-btn {
-					padding: 8px 12px;
-					font-size: 0.75rem;
-					min-height: 36px;
-				}
-
-				.sport-filter {
-					width: 40px;
-					height: 40px;
-					font-size: 1.2rem;
-					padding: 0;
-				}
-
-				/* Event cards mobile */
-				.event-card {
-					margin-bottom: 12px;
-					border-radius: 16px;
-				}
-				
-				.event-favorite-btn {
-					top: 8px !important;
-					left: 8px !important;
-					font-size: 20px !important;
-					padding: 4px;
-					min-width: 32px;
-					min-height: 32px;
-				}
-
-				.sport-badge {
-					top: 12px !important;
-					right: 12px !important;
-					font-size: 0.6rem !important;
-					padding: 3px 8px !important;
-				}
-
-				.event-header {
-					padding: 20px 16px 16px 44px !important;
-				}
-
-				.event-content {
-					padding: 0 16px 20px 16px;
-				}
-
-				.event-title {
-					font-size: 1rem;
-					margin-bottom: 12px;
-				}
-
-				.event-meta {
-					font-size: 0.8rem;
-					margin-bottom: 12px;
-				}
-
-				/* Teams display mobile */
-				.teams-display {
-					gap: 24px;
-					padding: 16px;
-					margin: 16px 0;
-				}
-
-				.team-logo {
-					width: 44px;
-					height: 44px;
-				}
-
-				.team-name {
-					font-size: 0.85rem;
-					max-width: 80px;
-				}
-
-				/* Golf tee times mobile */
-				.tee-times {
-					margin-top: 16px;
-					padding: 12px;
-				}
-
-				.tee-time-player {
-					padding: 10px 0;
-				}
-
-				.golfer-headshot, .golfer-headshot-placeholder {
-					width: 36px;
-					height: 36px;
-				}
-
-				.player-name {
-					font-size: 0.85rem;
-				}
-
-				.player-time {
-					font-size: 0.85rem;
-				}
-
-				/* Quick action buttons mobile */
-				.quick-add-team, .quick-add-player {
-					padding: 6px 10px !important;
-					font-size: 0.75rem !important;
-					min-height: 32px;
-					margin: 4px 2px !important;
-				}
-
-				/* Streaming badges mobile */
-				.streaming-badges a, .streaming-badges span {
-					padding: 4px 10px !important;
-					font-size: 0.7rem !important;
-				}
-
-				/* Day dividers mobile */
-				.day-divider {
-					margin: 20px 0 12px 0;
-				}
-
-				.day-label {
-					font-size: 0.75rem;
-					padding: 0 8px;
-				}
-
-				/* Timeline view mobile - horizontal scroll */
-				.timeline-wrapper {
-					margin: 0 -12px;
-					padding: 0 12px;
-				}
-
-				.timeline-grid {
-					min-width: 600px;
-				}
-
-				.timeline-day-header {
-					font-size: 0.75rem;
-					padding: 12px 8px;
-				}
-
-				.timeline-time-label {
-					font-size: 0.7rem;
-					padding: 16px 4px;
-				}
-
-				.timeline-event {
-					padding: 6px 8px;
-					font-size: 0.75rem;
-				}
-
-				.timeline-event-time {
-					font-size: 0.8rem;
-				}
-
-				.timeline-event-title {
-					font-size: 0.7rem;
-				}
-
-				/* Details/summary mobile */
-				details {
-					margin-bottom: 12px;
-				}
-
-				details > div {
-					padding: 8px !important;
-				}
-
-				details a {
-					font-size: 0.75rem !important;
-				}
-
-			}
-
-			/* AI Enrichment styles */
-			.importance-badge {
-				display: inline-flex;
-				align-items: center;
-				gap: 4px;
-				padding: 2px 8px;
-				border-radius: 10px;
-				font-size: 0.65rem;
-				font-weight: 600;
-				text-transform: uppercase;
-				letter-spacing: 0.3px;
-			}
-
-			.importance-badge.must-watch {
-				background: rgba(239, 68, 68, 0.12);
-				color: #ef4444;
-			}
-
-			.importance-badge.notable {
-				background: rgba(245, 158, 11, 0.12);
-				color: #d97706;
-			}
-
-			.dark .importance-badge.must-watch {
-				background: rgba(239, 68, 68, 0.2);
-				color: #f87171;
-			}
-
-			.dark .importance-badge.notable {
-				background: rgba(245, 158, 11, 0.2);
-				color: #fbbf24;
-			}
-
-			.event-summary {
-				font-size: 0.85rem;
-				color: var(--muted);
-				margin: -12px 0 16px 0;
-				line-height: 1.4;
-				font-style: italic;
-			}
-
-			.event-tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 4px;
-				margin-top: 8px;
-			}
-
-			.event-tag {
-				padding: 2px 8px;
-				border-radius: 8px;
-				font-size: 0.65rem;
-				font-weight: 500;
-				border: 1px solid var(--border);
-				color: var(--muted);
-				background: var(--hover-bg);
-			}
-
-			.event-tag.rivalry, .event-tag.derby {
-				border-color: rgba(239, 68, 68, 0.3);
-				color: #ef4444;
-				background: rgba(239, 68, 68, 0.06);
-			}
-
-			.event-tag.major, .event-tag.grand-slam, .event-tag.final {
-				border-color: rgba(245, 158, 11, 0.3);
-				color: #d97706;
-				background: rgba(245, 158, 11, 0.06);
-			}
-
-			.event-tag.title-race, .event-tag.top-4-battle {
-				border-color: rgba(59, 130, 246, 0.3);
-				color: #3b82f6;
-				background: rgba(59, 130, 246, 0.06);
-			}
-
-			.event-tag.norwegian-player, .event-tag.norwegian-team {
-				border-color: rgba(34, 197, 94, 0.3);
-				color: #22c55e;
-				background: rgba(34, 197, 94, 0.06);
-			}
-
-			.event-tag.must-watch {
-				border-color: rgba(239, 68, 68, 0.3);
-				color: #ef4444;
-				background: rgba(239, 68, 68, 0.06);
-			}
-
-			/* Top Picks section */
-			#top-picks {
-				margin-bottom: 24px;
-			}
-
-			#top-picks:empty {
-				display: none;
-			}
-
-			.top-picks-header {
-				font-size: 0.85rem;
-				font-weight: 600;
-				color: var(--muted);
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				margin-bottom: 12px;
-			}
-
-			.top-picks-list {
-				display: flex;
-				flex-direction: column;
-				gap: 8px;
-			}
-
-			.top-pick-card {
-				display: flex;
-				align-items: center;
-				gap: 12px;
-				padding: 12px 16px;
-				background: var(--card-bg);
-				border: 1px solid var(--border);
-				border-radius: 12px;
-				transition: all 0.15s;
-				cursor: default;
-			}
-
-			.top-pick-card:hover {
-				border-color: var(--text-secondary);
-			}
-
-			.top-pick-sport {
-				font-size: 1.1rem;
-				flex-shrink: 0;
-			}
-
-			.top-pick-info {
-				flex: 1;
-				min-width: 0;
-			}
-
-			.top-pick-title {
-				font-size: 0.85rem;
-				font-weight: 500;
-				color: var(--text);
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-
-			.top-pick-reason {
-				font-size: 0.75rem;
-				color: var(--muted);
-				margin-top: 2px;
-			}
-
-			.top-pick-time {
-				font-size: 0.75rem;
-				color: var(--text-secondary);
-				font-weight: 500;
-				flex-shrink: 0;
-			}
-
-			/* Sort toggle */
-			.sort-toggle {
-				background: transparent;
-				border: 1px solid var(--border);
-				padding: 6px 12px;
-				border-radius: 16px;
-				cursor: pointer;
-				font-size: 0.75rem;
-				color: var(--muted);
-				transition: all 0.15s ease;
-			}
-
-			.sort-toggle:hover {
-				border-color: var(--text-secondary);
-				color: var(--text);
-			}
-
-			.sort-toggle.active {
-				background: var(--text);
-				color: var(--bg);
-				border-color: var(--text);
-			}
-
-			/* Mobile styles for AI enrichment elements */
-			@media (max-width: 768px) {
-				.importance-badge {
-					font-size: 0.6rem;
-					padding: 1px 6px;
-				}
-
-				.event-summary {
-					font-size: 0.8rem;
-					margin: -8px 0 12px 0;
-				}
-
-				.event-tags {
-					gap: 3px;
-					margin-top: 6px;
-				}
-
-				.event-tag {
-					font-size: 0.6rem;
-					padding: 1px 6px;
-				}
-
-				#top-picks {
-					margin-bottom: 16px;
-				}
-
-				.top-picks-header {
-					font-size: 0.8rem;
-					margin-bottom: 8px;
-				}
-
-				.top-pick-card {
-					padding: 10px 12px;
-					gap: 8px;
-				}
-
-				.top-pick-title {
-					font-size: 0.8rem;
-				}
-
-				.top-pick-reason {
-					font-size: 0.7rem;
-				}
-
-				.top-pick-time {
-					font-size: 0.7rem;
-				}
-
-				.sort-toggle {
-					padding: 6px 10px;
-					font-size: 0.7rem;
-				}
-
-				/* AI assistant panel - responsive */
-				#ai-assistant-panel {
-					width: calc(100vw - 24px) !important;
-					right: 12px !important;
-					bottom: 72px !important;
-					max-height: 70vh !important;
-				}
-
-				#ai-assistant-btn {
-					width: 42px !important;
-					height: 42px !important;
-					bottom: 16px !important;
-					right: 16px !important;
-					font-size: 0.75rem !important;
-				}
-			}
-
-			/* Extra small devices */
-			@media (max-width: 380px) {
-				h1 {
-					font-size: 1.2rem;
-				}
-
-				.filter-group {
-					flex-direction: column;
-					align-items: stretch;
-				}
-
-				.filter-group > div {
-					width: 100%;
-					justify-content: center;
-				}
-
-				.sport-filter {
-					width: 42px;
-					height: 42px;
-				}
-
-				.teams-display {
-					flex-direction: column;
-					gap: 16px;
-				}
-
-				.vs-separator {
-					display: none;
-				}
-
-				.team-block {
-					flex-direction: row;
-					width: 100%;
-					justify-content: flex-start;
-					gap: 16px;
-				}
-
-				.team-name {
-					max-width: none;
-				}
-			}
-		.stale-banner {
-			display: none;
-			background: color-mix(in srgb, var(--accent) 10%, transparent);
-			border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-			border-radius: 8px;
-			padding: 8px 14px;
-			margin-bottom: 16px;
-			font-size: 0.8rem;
-			color: var(--text-secondary);
-			line-height: 1.4;
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
+	<meta name="description" content="Personalized sports dashboard with live events for football, golf, tennis, F1, chess, and esports.">
+	<meta name="theme-color" content="#667eea">
+	<title>SportSync</title>
+	<style>
+		:root {
+			--bg: #ffffff;
+			--fg: #111111;
+			--muted: #888888;
+			--border: #f0f0f0;
+			--accent: #667eea;
+			--radius: 8px;
+			--max-w: 540px;
+			--font: system-ui, -apple-system, sans-serif;
 		}
-		.stale-banner.visible { display: block; }
+		.dark {
+			--bg: #000000;
+			--fg: #f0f0f0;
+			--muted: #666666;
+			--border: #1a1a1a;
+		}
+		* { margin: 0; padding: 0; box-sizing: border-box; }
 
+		body {
+			font-family: var(--font);
+			background: var(--bg);
+			color: var(--fg);
+			line-height: 1.5;
+			font-size: 16px;
+			font-weight: 300;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.wrap {
+			max-width: var(--max-w);
+			margin: 0 auto;
+			padding: 24px 16px 64px;
+		}
+
+		/* --- Header --- */
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 24px;
+		}
+		header h1 {
+			font-size: 1.25rem;
+			font-weight: 500;
+			letter-spacing: -0.02em;
+		}
+		#themeToggle {
+			background: none;
+			border: none;
+			font-size: 1.1rem;
+			cursor: pointer;
+			padding: 4px;
+			line-height: 1;
+		}
+
+		/* --- Brief --- */
+		#brief {
+			font-size: 0.9rem;
+			color: var(--muted);
+			margin-bottom: 24px;
+			line-height: 1.5;
+			font-style: italic;
+		}
+
+		/* --- Filter dots --- */
+		.filters {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 32px;
+			flex-wrap: wrap;
+		}
+		.filter-dot {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			border: 2px solid var(--border);
+			background: transparent;
+			cursor: pointer;
+			font-size: 0.9rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: border-color 0.15s, opacity 0.15s;
+			opacity: 0.5;
+		}
+		.filter-dot:hover { opacity: 0.8; }
+		.filter-dot.active {
+			opacity: 1;
+			border-color: var(--fg);
+		}
+
+		/* --- Featured Context --- */
+		#featured-context {
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: 16px;
+			margin-bottom: 32px;
+		}
+		#featured-context:empty, #featured-context[style*="display: none"] { margin: 0; }
+		.ctx-header {
+			font-size: 0.8rem;
+			font-weight: 500;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-bottom: 12px;
+		}
+		.ctx-row {
+			font-size: 0.85rem;
+			color: var(--fg);
+			padding: 4px 0;
+			font-variant-numeric: tabular-nums;
+		}
+		.ctx-expand {
+			background: none;
+			border: none;
+			color: var(--muted);
+			font-size: 0.8rem;
+			cursor: pointer;
+			margin-top: 8px;
+			padding: 0;
+		}
+		.ctx-expand:hover { color: var(--fg); }
+
+		/* --- Bands --- */
+		.band-label {
+			font-size: 0.7rem;
+			font-weight: 400;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--muted);
+			margin-top: 32px;
+			margin-bottom: 4px;
+			position: sticky;
+			top: 0;
+			background: var(--bg);
+			padding: 8px 0 4px;
+			z-index: 10;
+		}
+		.band-label:first-child { margin-top: 0; }
+		.band-divider {
+			height: 1px;
+			background: var(--border);
+			margin-bottom: 8px;
+		}
+
+		/* --- Tournament Header --- */
+		.tournament-header {
+			font-size: 0.8rem;
+			font-weight: 400;
+			color: var(--muted);
+			padding: 8px 0 4px;
+		}
+
+		/* --- Event Row --- */
+		.event-row {
+			padding: 8px 0;
+			border-bottom: 1px solid var(--border);
+			cursor: pointer;
+			transition: background 0.1s;
+		}
+		.event-row:hover { background: color-mix(in srgb, var(--fg) 3%, transparent); }
+		.event-row:last-child { border-bottom: none; }
+
+		.row-main {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			min-height: 28px;
+		}
+		.row-time {
+			font-size: 0.8rem;
+			font-weight: 400;
+			color: var(--muted);
+			min-width: 42px;
+			font-variant-numeric: tabular-nums;
+			flex-shrink: 0;
+		}
+		.row-title {
+			font-size: 0.9rem;
+			font-weight: 400;
+			flex: 1;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.row-tournament {
+			font-size: 0.75rem;
+			color: var(--muted);
+			flex-shrink: 0;
+			display: none;
+		}
+		@media (min-width: 400px) {
+			.row-tournament { display: inline; }
+		}
+		.row-dot {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+
+		/* --- Expanded Row --- */
+		.row-expanded {
+			padding: 12px 0 8px 54px;
+			font-size: 0.85rem;
+		}
+		.exp-venue {
+			color: var(--muted);
+			margin-bottom: 12px;
+			font-size: 0.8rem;
+		}
+
+		/* Football teams */
+		.exp-teams {
+			display: flex;
+			align-items: center;
+			gap: 24px;
+			margin-bottom: 12px;
+		}
+		.exp-team {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 0.85rem;
+		}
+		.exp-logo {
+			width: 32px;
+			height: 32px;
+			object-fit: contain;
+		}
+		.exp-logo-placeholder {
+			width: 32px;
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.1rem;
+		}
+		.exp-vs {
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		/* Golf players */
+		.exp-golfers { margin-bottom: 12px; }
+		.exp-golfer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 0;
+			border-bottom: 1px solid var(--border);
+		}
+		.exp-golfer:last-of-type { border-bottom: none; }
+		.exp-golfer-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.exp-headshot {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+		.exp-headshot-placeholder {
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.9rem;
+		}
+		.exp-tee-time {
+			font-size: 0.8rem;
+			font-weight: 400;
+			color: var(--muted);
+			font-variant-numeric: tabular-nums;
+		}
+		.exp-link {
+			display: inline-block;
+			margin-top: 8px;
+			font-size: 0.8rem;
+			color: var(--muted);
+			text-decoration: none;
+		}
+		.exp-link:hover { color: var(--fg); }
+
+		/* Streaming */
+		.exp-streaming {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 12px;
+			flex-wrap: wrap;
+		}
+		.exp-stream-badge {
+			font-size: 0.75rem;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 2px 10px;
+			text-decoration: none;
+			display: inline-block;
+		}
+		.exp-stream-badge:hover {
+			border-color: var(--muted);
+			color: var(--fg);
+		}
+
+		/* Favorite actions */
+		.exp-fav-actions {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+		.exp-fav-btn {
+			background: none;
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 2px 10px;
+			font-size: 0.75rem;
+			color: var(--muted);
+			cursor: pointer;
+		}
+		.exp-fav-btn:hover {
+			border-color: var(--accent);
+			color: var(--accent);
+		}
+
+		/* --- Later toggle --- */
+		.later-toggle {
+			background: none;
+			border: none;
+			color: var(--muted);
+			font-size: 0.85rem;
+			cursor: pointer;
+			padding: 8px 0;
+			width: 100%;
+			text-align: left;
+		}
+		.later-toggle:hover { color: var(--fg); }
+
+		/* --- Empty state --- */
+		.empty {
+			text-align: center;
+			color: var(--muted);
+			padding: 48px 0;
+			font-size: 0.9rem;
+		}
+
+		/* --- Loading --- */
+		.loading {
+			text-align: center;
+			padding: 48px 0;
+			color: var(--muted);
+			font-size: 0.85rem;
+		}
+
+		/* --- Reduced motion --- */
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
 				animation-duration: 0.01ms !important;
-				animation-iteration-count: 1 !important;
 				transition-duration: 0.01ms !important;
 			}
 		}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
-				<h1 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; margin: 0;">SportSync</h1>
-				<div style="display: flex; align-items: center; gap: 8px;">
-					<span id="lastUpdate" style="font-size: 0.75rem; color: var(--muted); white-space: nowrap;">Loading...</span>
-					<button id="toggleTheme" class="theme-toggle" aria-label="Toggle dark mode" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px; min-width: 32px; min-height: 32px;">🌙</button>
-				</div>
-			</header>
 
-			<div id="staleBanner" class="stale-banner">Data may be outdated — last updated more than 24 hours ago.</div>
+		/* --- Mobile tweaks --- */
+		@media (max-width: 380px) {
+			.wrap { padding: 16px 12px 48px; }
+			.row-title { font-size: 0.85rem; }
+			.filter-dot { width: 28px; height: 28px; font-size: 0.8rem; }
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<header>
+			<h1>SportSync</h1>
+			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
+		</header>
 
-			<nav class="simple-filters" role="navigation" aria-label="Event filters" style="margin-bottom: 24px;">
-				<div class="filter-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-					<div style="display: flex; gap: 6px;">
-						<button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
-						<button class="filter-btn" data-filter="today" aria-pressed="false">Today</button>
-						<button class="filter-btn" data-filter="week" aria-pressed="false">Week</button>
-						<button class="filter-btn" data-filter="favorites" aria-pressed="false" aria-label="Favorites">★</button>
-						<button class="sort-toggle" id="sortToggle" title="Sort by importance" aria-pressed="false" aria-label="Sort by importance">★ Top</button>
-					</div>
-					<div style="display: flex; gap: 6px;">
-						<button class="sport-filter" data-filter="golf" title="Golf" aria-pressed="false" aria-label="Filter Golf">⛳</button>
-						<button class="sport-filter" data-filter="football" title="Football" aria-pressed="false" aria-label="Filter Football">⚽</button>
-						<button class="sport-filter" data-filter="tennis" title="Tennis" aria-pressed="false" aria-label="Filter Tennis">🎾</button>
-						<button class="sport-filter" data-filter="formula1" title="F1" aria-pressed="false" aria-label="Filter Formula 1">🏎️</button>
-						<button class="sport-filter" data-filter="chess" title="Chess" aria-pressed="false" aria-label="Filter Chess">♟️</button>
-						<button class="sport-filter" data-filter="esports" title="Esports" aria-pressed="false" aria-label="Filter Esports">🎮</button>
-					</div>
-				</div>
-				<div id="filterCount" class="filter-count" aria-live="polite"></div>
-			</nav>
+		<div id="brief" class="brief"></div>
 
-
-			<div id="top-picks"></div>
-			<div class="events-list" id="eventsContainer" role="list" aria-live="polite">
-				<div class="loading">
-					<div class="spinner"></div>
-					Loading events...
-				</div>
-			</div>
+		<div class="filters" role="navigation" aria-label="Sport filters">
+			<button class="filter-dot" data-sport="football" aria-label="Football" title="Football">&#9917;</button>
+			<button class="filter-dot" data-sport="golf" aria-label="Golf" title="Golf">&#9971;</button>
+			<button class="filter-dot" data-sport="tennis" aria-label="Tennis" title="Tennis">&#127934;</button>
+			<button class="filter-dot" data-sport="formula1" aria-label="Formula 1" title="F1">&#127950;&#65039;</button>
+			<button class="filter-dot" data-sport="chess" aria-label="Chess" title="Chess">&#9823;&#65039;</button>
+			<button class="filter-dot" data-sport="esports" aria-label="Esports" title="Esports">&#127918;</button>
 		</div>
 
-		<script src="js/sports-api.js?v=2025082023"></script>
-		<script src="js/preferences-manager.js?v=2025082100"></script>
-		<script src="js/sport-config.js?v=2026021000"></script>
-		<script src="js/settings-ui.js?v=2025082100"></script>
-		<script src="js/simple-dashboard.js?v=2025082100"></script>
-		<script src="js/ai-assistant.js?v=2026020700"></script>
+		<div id="featured-context" style="display:none;"></div>
 
-		<script>
-			// Dark mode toggle
-			const btn = document.getElementById("toggleTheme");
-			const prefersDark = window.matchMedia(
-				"(prefers-color-scheme: dark)"
-			).matches;
-			if (prefersDark) document.documentElement.classList.add("dark");
-			btn.addEventListener("click", () => {
-				document.documentElement.classList.toggle("dark");
-				btn.textContent = document.documentElement.classList.contains("dark")
-					? "☀️"
-					: "🌙";
+		<div id="events">
+			<div class="loading">Loading events...</div>
+		</div>
+	</div>
+
+	<script src="js/sport-config.js?v=2026021001"></script>
+	<script src="js/asset-maps.js?v=2026021001"></script>
+	<script src="js/sports-api.js?v=2026021001"></script>
+	<script src="js/preferences-manager.js?v=2026021001"></script>
+	<script src="js/dashboard.js?v=2026021001"></script>
+
+	<script>
+		// Register service worker
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', async () => {
+				try {
+					await navigator.serviceWorker.register('/SportSync/sw.js');
+				} catch (e) {
+					console.error('SW registration failed:', e);
+				}
 			});
-			// Register service worker for better cache control
-			if ("serviceWorker" in navigator) {
-				window.addEventListener("load", async () => {
-					try {
-						const swPath = '/SportSync/sw.js';
-						const registration = await navigator.serviceWorker.register(swPath);
-
-						// Listen for updates
-						registration.addEventListener("updatefound", () => {
-							const newWorker = registration.installing;
-							newWorker.addEventListener("statechange", () => {
-								if (
-									newWorker.state === "installed" &&
-									navigator.serviceWorker.controller
-								) {
-									// New service worker available
-								}
-							});
-						});
-					} catch (error) {
-						console.error("SportSync: Service Worker registration failed:", error);
-					}
-				});
-			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
 </html>
