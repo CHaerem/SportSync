@@ -48,6 +48,7 @@ Rules:
 - Prioritize Norwegian athletes: Hovland (golf), Ruud (tennis), Carlsen (chess),
   Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
 - Reference standings positions and form when relevant (e.g. "Arsenal top the table", "Hovland T5")
+- Use breaking news headlines to make the brief timely and relevant
 - Brief lines must be crisp (max 15 words each), like newspaper headlines
 - Featured sections should highlight major multi-sport or tournament events currently
   happening: Olympics, World Cup, Champions League knockout stages, Grand Slams, etc.
@@ -136,7 +137,16 @@ export function buildStandingsContext(standings) {
 	return `\n\nCurrent standings data:\n${parts.join("\n\n")}`;
 }
 
-function buildUserPrompt(events, now, curatedConfigs, standings) {
+export function buildRssContext(rssDigest) {
+	if (!rssDigest?.items?.length) return "";
+	const lines = rssDigest.items.slice(0, 15).map((item) => {
+		const sport = item.sport !== "general" ? `[${item.sport}]` : `[${item.source}]`;
+		return `  ${sport} ${item.title}`;
+	});
+	return `\n\nRecent sports news headlines:\n${lines.join("\n")}`;
+}
+
+function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	const dateStr = now.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
@@ -177,11 +187,12 @@ function buildUserPrompt(events, now, curatedConfigs, standings) {
 
 	const curatedContext = buildCuratedContext(curatedConfigs || [], now);
 	const standingsContext = buildStandingsContext(standings);
+	const rssContext = buildRssContext(rssDigest);
 
 	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
 
 Events (next 7 days, max 30 shown):
-${summary || "(no events)"}${curatedContext}${standingsContext}
+${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}
 
 Generate featured.json matching this schema:
 ${JSON.stringify(FEATURED_SCHEMA, null, 2)}
@@ -269,8 +280,14 @@ async function main() {
 		console.log("Loaded standings.json for editorial context.");
 	}
 
+	const rssPath = path.join(dataDir, "rss-digest.json");
+	const rssDigest = readJsonIfExists(rssPath);
+	if (rssDigest?.items?.length) {
+		console.log(`Loaded rss-digest.json: ${rssDigest.items.length} headlines.`);
+	}
+
 	const systemPrompt = buildSystemPrompt();
-	const userPrompt = buildUserPrompt(events, now, curatedConfigs, standings);
+	const userPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
 	let rawContent = null;
 
 	// 1. Try Claude CLI (OAuth token from Max subscription)
