@@ -52,7 +52,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #16) Fix memory leak in `docs/js/simple-dashboard.js` — Stored setInterval return value in `this.refreshInterval` for proper cleanup.
 
-- [PENDING] Add `rel="noopener noreferrer"` to streaming links — `docs/js/simple-dashboard.js` line ~1320: streaming badge links with `target="_blank"` are missing `rel="noopener noreferrer"`, allowing external sites to access `window.opener`. Security fix.
+- [DONE] (PR #17) Add `rel="noopener noreferrer"` to streaming links — Added missing security attribute to streaming badge links in simple-dashboard.js.
 
 ### MEDIUM Priority
 
