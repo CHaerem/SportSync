@@ -85,8 +85,36 @@ async function fetchGolfLiveGolfAPI() {
 					// Featured groups not available - not critical
 				}
 				
-				if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard)) {
-					log(`No leaderboard data for ${event.name}, skipping`);
+				if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard) || eventDetail.leaderboard.length === 0) {
+					// No field data yet — include if PGA Tour (Hovland plays most)
+					const tourName = event.tour?.name || "Unknown Tour";
+					if (tourName.toLowerCase().includes('pga')) {
+						log(`No leaderboard for ${event.name}, including as PGA Tour regular`);
+						tournaments.push({
+							name: tourName,
+							events: [{
+								title: event.name || "Golf Tournament",
+								meta: tourName,
+								tournament: tourName,
+								time: normalizeToUTC(event.startDatetime),
+								venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
+								sport: "golf",
+								streaming: getNorwegianStreaming("golf", tourName),
+								norwegian: true,
+								norwegianPlayers: [{
+									name: "Viktor Hovland",
+									teeTime: null,
+									teeTimeUTC: null,
+									status: "Expected",
+								}],
+								totalPlayers: 0,
+								link: event.link,
+								status: event.status
+							}]
+						});
+					} else {
+						log(`No leaderboard data for ${event.name}, skipping`);
+					}
 					continue;
 				}
 				
@@ -235,11 +263,11 @@ if (process.argv[1]?.includes('golf.js')) {
 async function fetchGolfESPNFallback() {
 	const isScript = process.argv[1]?.includes('golf.js');
 	const log = isScript ? console.log : () => {};
-	
+
 	// Norwegian golfers to look for
 	const norwegianPlayers = [
 		"Viktor Hovland",
-		"Kristoffer Reitan", 
+		"Kristoffer Reitan",
 		"Kris Ventura",
 		"Espen Kofstad",
 		"Anders Krogstad",
@@ -247,74 +275,141 @@ async function fetchGolfESPNFallback() {
 		"Eivind Henriksen",
 		"Andreas Halvorsen"
 	];
-	
+
 	const tours = [
 		{
 			url: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard",
 			name: "PGA Tour",
+			// Hovland plays most PGA Tour events — include even without confirmed field
+			includeWithoutField: true,
 		},
 		{
-			url: "https://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard", 
+			url: "https://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard",
 			name: "DP World Tour",
+			// Norwegian players regularly compete on DP World Tour too
+			includeWithoutField: true,
 		},
 	];
-	
+
 	const tournaments = [];
 	const now = new Date();
-	
+	const seen = new Set(); // deduplicate across date queries
+
+	// Query multiple date ranges to find upcoming tournaments
+	// ESPN default scoreboard only returns current event, so we probe
+	// future dates. Step of 4 days guarantees hitting any tournament
+	// (golf events are Thu-Sun, 4-day windows).
+	const datesToQuery = [];
+	for (let d = 0; d < 21; d += 4) {
+		const date = new Date(now);
+		date.setDate(date.getDate() + d);
+		datesToQuery.push(date.toISOString().slice(0, 10).replace(/-/g, ''));
+	}
+
 	for (const tour of tours) {
 		try {
-			const data = await fetchJson(tour.url);
-			const events = (data.events || [])
-				.filter(
-					(e) =>
-						new Date(e.date) > now &&
-						!["STATUS_FINAL", "STATUS_IN_PROGRESS"].includes(
-							e.status?.type?.name
-						)
+			const allEvents = [];
+
+			for (const dateStr of datesToQuery) {
+				try {
+					const data = await fetchJson(`${tour.url}?dates=${dateStr}`);
+					for (const ev of (data.events || [])) {
+						if (!seen.has(ev.id || ev.name + ev.date)) {
+							seen.add(ev.id || ev.name + ev.date);
+							allEvents.push(ev);
+						}
+					}
+				} catch {
+					// Individual date query failed, continue
+				}
+			}
+
+			// Also query default endpoint for current/in-progress events
+			try {
+				const data = await fetchJson(tour.url);
+				for (const ev of (data.events || [])) {
+					if (!seen.has(ev.id || ev.name + ev.date)) {
+						seen.add(ev.id || ev.name + ev.date);
+						allEvents.push(ev);
+					}
+				}
+			} catch {
+				// Default query failed, continue
+			}
+
+			const events = allEvents
+				.filter(e =>
+					new Date(e.date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()) &&
+					!["STATUS_FINAL"].includes(e.status?.type?.name)
 				)
+				.sort((a, b) => new Date(a.date) - new Date(b.date))
 				.slice(0, 4);
-				
-			// Process each event to check for Norwegian players
+
+			log(`${tour.name}: found ${events.length} upcoming events`);
+
 			for (const ev of events) {
 				const competitors = ev.competitions?.[0]?.competitors || [];
-				
+
 				// Find Norwegian players in this tournament
 				const norwegianCompetitors = competitors.filter(competitor => {
 					const playerName = competitor.athlete?.displayName || "";
-					return norwegianPlayers.some(norPlayer => 
-						playerName.toLowerCase().includes(norPlayer.toLowerCase().split(' ').pop()) // Match by last name
+					return norwegianPlayers.some(norPlayer =>
+						playerName.toLowerCase().includes(norPlayer.toLowerCase().split(' ').pop())
 					);
 				});
-				
-				// Only include tournaments with Norwegian players
+
+				const venue = ev.competitions?.[0]?.venue?.fullName ||
+					ev.competitions?.[0]?.venue?.address?.city || "TBD";
+
 				if (norwegianCompetitors.length > 0) {
-					const norwegianPlayersList = norwegianCompetitors.map(comp => {
-						return {
-							name: comp.athlete?.displayName || "Unknown",
-							teeTime: null, // ESPN doesn't provide tee times
-							status: comp.status || null,
-							hasSchedule: false
-						};
-					});
-					
-					log(`Found ${norwegianCompetitors.length} Norwegian players in ${ev.name}:`, 
+					// Confirmed Norwegian players in field
+					const norwegianPlayersList = norwegianCompetitors.map(comp => ({
+						name: comp.athlete?.displayName || "Unknown",
+						teeTime: null,
+						status: comp.status || null,
+					}));
+
+					log(`Found ${norwegianCompetitors.length} Norwegian players in ${ev.name}:`,
 						norwegianPlayersList.map(p => p.name).join(', '));
-					
+
 					tournaments.push({
 						name: tour.name,
 						events: [{
 							title: ev.name || "Golf Tournament",
 							meta: tour.name,
+							tournament: tour.name,
 							time: normalizeToUTC(ev.date),
-							venue: ev.competitions?.[0]?.venue?.fullName ||
-								   ev.competitions?.[0]?.venue?.address?.city ||
-								   "TBD",
+							venue,
 							sport: "golf",
 							streaming: getNorwegianStreaming("golf", tour.name),
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
 							totalPlayers: competitors.length
+						}]
+					});
+				} else if (tour.includeWithoutField && competitors.length === 0) {
+					// Scheduled tournament with no field yet — include for tours
+					// where Norwegian players regularly compete
+					log(`Including ${ev.name} (field TBD, ${tour.name} regular)`);
+
+					// Expected Norwegian players depend on the tour
+					const expectedPlayers = tour.name === "PGA Tour"
+						? [{ name: "Viktor Hovland", teeTime: null, status: "Expected" }]
+						: [{ name: "Andreas Halvorsen", teeTime: null, status: "Expected" }];
+
+					tournaments.push({
+						name: tour.name,
+						events: [{
+							title: ev.name || "Golf Tournament",
+							meta: tour.name,
+							tournament: tour.name,
+							time: normalizeToUTC(ev.date),
+							venue,
+							sport: "golf",
+							streaming: getNorwegianStreaming("golf", tour.name),
+							norwegian: true,
+							norwegianPlayers: expectedPlayers,
+							totalPlayers: 0
 						}]
 					});
 				}
@@ -323,10 +418,10 @@ async function fetchGolfESPNFallback() {
 			console.warn(`Failed to fetch ${tour.name}:`, error.message);
 		}
 	}
-	
-	return { 
-		lastUpdated: iso(), 
-		source: "ESPN API (Norwegian players only, no tee times)", 
-		tournaments 
+
+	return {
+		lastUpdated: iso(),
+		source: "ESPN API",
+		tournaments
 	};
 }
