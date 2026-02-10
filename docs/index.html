@@ -7,26 +7,31 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
 	<meta name="description" content="Personalized sports dashboard with live events for football, golf, tennis, F1, chess, esports, and Olympics.">
-	<meta name="theme-color" content="#667eea">
+	<meta name="theme-color" content="#d97757">
 	<title>SportSync</title>
 	<style>
 		:root {
-			--bg: #ffffff;
-			--fg: #111111;
-			--muted: #666666;
-			--border: #e8e8e8;
-			--border-strong: #111111;
-			--accent: #667eea;
-			--radius: 8px;
+			--bg: #faf9f5;
+			--bg-secondary: #f0efe8;
+			--fg: #3d3929;
+			--muted: #8b8580;
+			--border: #e8e5dc;
+			--border-strong: #3d3929;
+			--accent: #d97757;
+			--radius: 12px;
 			--max-w: 480px;
 			--font: system-ui, -apple-system, sans-serif;
+			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 		}
 		.dark {
-			--bg: #000000;
-			--fg: #f0f0f0;
-			--muted: #999999;
-			--border: #222222;
-			--border-strong: #f0f0f0;
+			--bg: #1a1816;
+			--bg-secondary: #242220;
+			--fg: #faf9f5;
+			--muted: #9a958e;
+			--border: #2d2a26;
+			--border-strong: #faf9f5;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -34,16 +39,16 @@
 			font-family: var(--font);
 			background: var(--bg);
 			color: var(--fg);
-			line-height: 1.5;
+			line-height: 1.6;
 			font-size: 15px;
-			font-weight: 300;
+			font-weight: 400;
 			-webkit-font-smoothing: antialiased;
 		}
 
 		.wrap {
 			max-width: var(--max-w);
 			margin: 0 auto;
-			padding: 32px 20px 80px;
+			padding: 40px 24px 60px;
 		}
 
 		/* --- Header --- */
@@ -51,13 +56,14 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			margin-bottom: 40px;
+			margin-bottom: 32px;
 		}
 		header h1 {
-			font-size: 1.1rem;
+			font-family: var(--font-serif);
+			font-size: 1.15rem;
 			font-weight: 400;
-			letter-spacing: -0.02em;
-			color: var(--muted);
+			letter-spacing: -0.01em;
+			color: var(--fg);
 		}
 		#themeToggle {
 			background: none;
@@ -66,47 +72,51 @@
 			cursor: pointer;
 			padding: 4px;
 			line-height: 1;
-			opacity: 0.4;
+			opacity: 0.5;
+			transition: opacity 0.15s;
 		}
+		#themeToggle:hover { opacity: 0.8; }
 
 		/* --- The Brief --- */
 		#the-brief {
 			padding: 0 0 24px;
-			margin-bottom: 28px;
-			font-size: 0.85rem;
+			margin-bottom: 24px;
+			font-family: var(--font-serif);
+			font-size: 0.95rem;
 			color: var(--fg);
-			line-height: 1.7;
-			font-weight: 300;
+			line-height: 1.8;
+			font-weight: 400;
 		}
 
 		/* --- Featured Sections --- */
-		#featured-sections { margin-bottom: 8px; }
+		#featured-sections { margin-bottom: 24px; }
 		.featured-section {
-			border: 1px solid var(--border);
+			background: var(--bg-secondary);
+			border: none;
 			border-radius: var(--radius);
-			padding: 14px 16px;
-			margin-bottom: 32px;
+			padding: 18px 20px;
+			margin-bottom: 24px;
+			box-shadow: var(--shadow);
 		}
 		.featured-section.highlight {
-			border-color: var(--border-strong);
-			border-width: 1.5px;
+			border-left: 3px solid var(--accent);
 		}
 		.feat-header {
 			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.12em;
-			margin-bottom: 10px;
-			color: var(--muted);
+			letter-spacing: 0.1em;
+			margin-bottom: 12px;
+			color: var(--accent);
 		}
 		.feat-item {
 			font-size: 0.8rem;
-			padding: 3px 0;
+			padding: 4px 0;
 			color: var(--fg);
 			font-variant-numeric: tabular-nums;
 		}
 		.feat-item.stat {
-			font-weight: 400;
+			font-weight: 500;
 			font-size: 0.75rem;
 			color: var(--muted);
 			margin-bottom: 2px;
@@ -117,49 +127,69 @@
 		.feat-expand {
 			background: none;
 			border: none;
-			color: var(--muted);
+			color: var(--accent);
 			font-size: 0.7rem;
 			cursor: pointer;
-			margin-top: 8px;
+			margin-top: 10px;
 			padding: 0;
-			font-weight: 300;
+			font-weight: 400;
+			transition: opacity 0.15s;
 		}
-		.feat-expand:hover { color: var(--fg); }
+		.feat-expand:hover { opacity: 0.7; }
 		.feat-expand-content { display: none; }
 		.feat-expand-content.open { display: block; }
 
-		/* --- Bands --- */
-		.band-label {
+		/* --- Sport Sections --- */
+		.sport-section {
+			margin-bottom: 22px;
+			padding-left: 14px;
+			border-left: 2.5px solid var(--border);
+		}
+		.sport-section.compact {
+			margin-bottom: 12px;
+		}
+		.sport-header {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 4px;
+		}
+		.sport-name {
+			font-size: 0.65rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--fg);
+		}
+		.sport-status {
+			font-size: 0.65rem;
+			color: var(--muted);
+			margin-left: auto;
+			font-weight: 400;
+			font-variant-numeric: tabular-nums;
+		}
+		.sport-next {
+			font-size: 0.8rem;
+			color: var(--muted);
+			padding: 2px 0;
+		}
+		.section-divider {
 			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.15em;
+			letter-spacing: 0.12em;
 			color: var(--muted);
-			margin-bottom: 6px;
-		}
-
-		/* --- Event Groups --- */
-		.event-group {
-			border-left: 2.5px solid var(--border);
-			padding-left: 12px;
-			margin-bottom: 16px;
-		}
-		.group-label {
-			font-size: 0.65rem;
-			font-weight: 500;
-			color: var(--muted);
-			letter-spacing: 0.03em;
-			margin-bottom: 2px;
-			padding-top: 2px;
+			margin: 28px 0 14px;
 		}
 
 		/* --- Event Row --- */
 		.event-row {
-			padding: 7px 0;
+			padding: 6px 0;
 			cursor: pointer;
-			transition: background 0.1s;
+			border-radius: 6px;
+			transition: background 0.15s;
 		}
-		.event-row:hover { background: color-mix(in srgb, var(--fg) 3%, transparent); }
+		.event-row:hover { background: var(--bg-secondary); }
 
 		.row-main {
 			display: flex;
@@ -192,14 +222,9 @@
 			border-radius: 50%;
 			object-fit: cover;
 		}
-		.row-emoji {
-			font-size: 0.85rem;
-			width: 20px;
-			text-align: center;
-		}
 		.row-title {
 			font-size: 0.8rem;
-			font-weight: 300;
+			font-weight: 400;
 			flex: 1;
 			min-width: 0;
 			overflow: hidden;
@@ -211,22 +236,23 @@
 		.more-toggle {
 			background: none;
 			border: none;
-			color: var(--muted);
-			font-size: 0.8rem;
+			color: var(--accent);
+			font-size: 0.7rem;
 			font-family: var(--font);
-			font-weight: 300;
+			font-weight: 400;
 			cursor: pointer;
-			padding: 10px 0;
+			padding: 6px 0;
 			width: 100%;
 			text-align: left;
+			transition: opacity 0.15s;
 		}
-		.more-toggle:hover { color: var(--fg); }
+		.more-toggle:hover { opacity: 0.7; }
 		.more-content { display: none; }
 		.more-content.open { display: block; }
 
 		/* --- Expanded Row --- */
 		.row-expanded {
-			padding: 12px 0 8px 54px;
+			padding: 14px 0 10px 46px;
 			font-size: 0.85rem;
 		}
 		.exp-venue {
@@ -301,10 +327,10 @@
 			display: inline-block;
 			margin-top: 8px;
 			font-size: 0.8rem;
-			color: var(--muted);
+			color: var(--accent);
 			text-decoration: none;
 		}
-		.exp-link:hover { color: var(--fg); }
+		.exp-link:hover { opacity: 0.7; }
 		.exp-streaming {
 			display: flex;
 			gap: 8px;
@@ -314,14 +340,16 @@
 		.exp-stream-badge {
 			font-size: 0.7rem;
 			color: var(--muted);
+			background: var(--bg-secondary);
 			border: 1px solid var(--border);
-			border-radius: 12px;
-			padding: 2px 10px;
+			border-radius: 20px;
+			padding: 3px 12px;
 			text-decoration: none;
 			display: inline-block;
+			transition: border-color 0.15s;
 		}
 		.exp-stream-badge:hover {
-			border-color: var(--muted);
+			border-color: var(--accent);
 			color: var(--fg);
 		}
 		.exp-fav-actions {
@@ -332,47 +360,48 @@
 		.exp-fav-btn {
 			background: none;
 			border: 1px solid var(--border);
-			border-radius: 12px;
-			padding: 2px 10px;
+			border-radius: 20px;
+			padding: 3px 12px;
 			font-size: 0.7rem;
 			color: var(--muted);
 			cursor: pointer;
+			transition: all 0.15s;
 		}
 		.exp-fav-btn:hover {
 			border-color: var(--accent);
 			color: var(--accent);
 		}
 
+		/* --- Standings mini-tables --- */
+		.exp-standings { margin: 12px 0; }
+		.exp-standings-header {
+			font-size: 0.6rem; font-weight: 600; text-transform: uppercase;
+			letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px;
+		}
+		.exp-mini-table {
+			width: 100%; border-collapse: collapse;
+			font-size: 0.72rem; font-variant-numeric: tabular-nums;
+		}
+		.exp-mini-table th {
+			text-align: left; font-weight: 400; color: var(--muted);
+			font-size: 0.6rem; padding: 2px 6px 4px; border-bottom: 1px solid var(--border);
+		}
+		.exp-mini-table td { padding: 3px 6px; white-space: nowrap; }
+		.exp-mini-table tr.highlight td { font-weight: 500; color: var(--accent); }
+		.exp-mini-table tr.ellipsis td { color: var(--muted); font-size: 0.65rem; padding: 1px 6px; }
+
 		/* --- On the Radar --- */
 		#on-the-radar {
-			margin-top: 40px;
+			margin-top: 36px;
 		}
 		.radar-text {
-			font-size: 0.75rem;
+			font-family: var(--font-serif);
+			font-size: 0.8rem;
 			color: var(--muted);
-			line-height: 1.7;
+			line-height: 1.8;
 			font-style: italic;
-			font-weight: 300;
+			font-weight: 400;
 		}
-
-		/* --- Filters (bottom, de-emphasized) --- */
-		.filters {
-			display: flex;
-			gap: 16px;
-			margin-top: 48px;
-			justify-content: center;
-		}
-		.filter-dot {
-			background: none;
-			border: none;
-			cursor: pointer;
-			font-size: 0.9rem;
-			padding: 4px;
-			opacity: 0.2;
-			transition: opacity 0.15s;
-		}
-		.filter-dot:hover { opacity: 0.5; }
-		.filter-dot.active { opacity: 1; }
 
 		/* --- Empty / Loading --- */
 		.empty {
@@ -386,7 +415,7 @@
 			padding: 48px 0;
 			color: var(--muted);
 			font-size: 0.8rem;
-			font-weight: 300;
+			font-weight: 400;
 		}
 
 		/* --- Reduced motion --- */
@@ -399,9 +428,8 @@
 
 		/* --- Mobile tweaks --- */
 		@media (max-width: 380px) {
-			.wrap { padding: 20px 14px 48px; }
-			.row-title { font-size: 0.8rem; }
-			.filter-dot { width: 26px; height: 26px; font-size: 0.75rem; }
+			.wrap { padding: 24px 16px 40px; }
+			.row-title { font-size: 0.78rem; }
 		}
 	</style>
 </head>
@@ -421,23 +449,13 @@
 		</div>
 
 		<div id="on-the-radar" style="display:none;"></div>
-
-		<div class="filters" role="navigation" aria-label="Sport filters">
-			<button class="filter-dot" data-sport="football" aria-label="Football" title="Football">&#9917;</button>
-			<button class="filter-dot" data-sport="golf" aria-label="Golf" title="Golf">&#9971;</button>
-			<button class="filter-dot" data-sport="tennis" aria-label="Tennis" title="Tennis">&#127934;</button>
-			<button class="filter-dot" data-sport="formula1" aria-label="Formula 1" title="F1">&#127950;&#65039;</button>
-			<button class="filter-dot" data-sport="chess" aria-label="Chess" title="Chess">&#9823;&#65039;</button>
-			<button class="filter-dot" data-sport="esports" aria-label="Esports" title="Esports">&#127918;</button>
-			<button class="filter-dot" data-sport="olympics" aria-label="Olympics" title="Olympics">&#127941;</button>
-		</div>
 	</div>
 
-	<script src="js/sport-config.js?v=2026021004"></script>
-	<script src="js/asset-maps.js?v=2026021004"></script>
-	<script src="js/sports-api.js?v=2026021004"></script>
-	<script src="js/preferences-manager.js?v=2026021004"></script>
-	<script src="js/dashboard.js?v=2026021004"></script>
+	<script src="js/sport-config.js?v=2026021006"></script>
+	<script src="js/asset-maps.js?v=2026021006"></script>
+	<script src="js/sports-api.js?v=2026021006"></script>
+	<script src="js/preferences-manager.js?v=2026021006"></script>
+	<script src="js/dashboard.js?v=2026021006"></script>
 
 	<script>
 		if ('serviceWorker' in navigator) {

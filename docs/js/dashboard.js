@@ -1,9 +1,9 @@
-// SportSync Dashboard — Editorial Brief + Featured Content
+// SportSync Dashboard — Sport-organized layout
 class Dashboard {
 	constructor() {
 		this.allEvents = [];
 		this.featured = null;
-		this.selectedSports = new Set();
+		this.standings = null;
 		this.expandedId = null;
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		this.init();
@@ -11,12 +11,7 @@ class Dashboard {
 
 	async init() {
 		this.bindThemeToggle();
-		this.bindFilters();
 		await this.loadEvents();
-
-		// Tick countdowns every 60s
-		this.tickInterval = setInterval(() => this.tickCountdowns(), 60000);
-		// Refresh data every 15 min
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 	}
 
@@ -24,9 +19,10 @@ class Dashboard {
 
 	async loadEvents() {
 		try {
-			const [eventsResp, featuredResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
-				fetch('data/featured.json?t=' + Date.now()).catch(() => null)
+				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
+				fetch('data/standings.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -51,13 +47,12 @@ class Dashboard {
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 
-			// Load featured content
 			if (featuredResp && featuredResp.ok) {
-				try {
-					this.featured = await featuredResp.json();
-				} catch {
-					this.featured = null;
-				}
+				try { this.featured = await featuredResp.json(); } catch { this.featured = null; }
+			}
+
+			if (standingsResp && standingsResp.ok) {
+				try { this.standings = await standingsResp.json(); } catch { this.standings = null; }
 			}
 
 			this.render();
@@ -71,23 +66,22 @@ class Dashboard {
 	// --- Rendering ---
 
 	render() {
-		const filtered = this.getFilteredEvents();
-		this.renderBrief(filtered);
+		this.renderBrief();
 		this.renderSections();
-		this.renderBands(filtered);
+		this.renderEvents();
 		this.renderOnTheRadar();
 	}
 
 	// --- The Brief ---
 
-	renderBrief(events) {
+	renderBrief() {
 		const el = document.getElementById('the-brief');
 		let lines = [];
 
 		if (this.featured && Array.isArray(this.featured.brief) && this.featured.brief.length > 0) {
 			lines = this.featured.brief.slice(0, 2);
 		} else {
-			lines = this.generateBriefLines(events);
+			lines = this.generateBriefLines();
 		}
 
 		if (lines.length === 0) {
@@ -99,13 +93,13 @@ class Dashboard {
 		el.innerHTML = lines.map(line => this.esc(line)).join(' ');
 	}
 
-	generateBriefLines(events) {
+	generateBriefLines() {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		const todayEnd = new Date(todayStart);
 		todayEnd.setDate(todayEnd.getDate() + 1);
 
-		const todayEvents = events.filter(e => {
+		const todayEvents = this.allEvents.filter(e => {
 			const t = new Date(e.time);
 			return t >= todayStart && t < todayEnd;
 		});
@@ -146,7 +140,7 @@ class Dashboard {
 
 		const hasExpand = section.expandLabel && section.expandItems && section.expandItems.length > 0;
 		const expandHtml = hasExpand ? `
-			<button class="feat-expand" data-section="${this.esc(section.id)}">${this.esc(section.expandLabel)} \u25b8</button>
+			<button class="feat-expand" data-section="${this.esc(section.id)}">${this.esc(section.expandLabel)}</button>
 			<div class="feat-expand-content" data-expand="${this.esc(section.id)}">
 				${section.expandItems.map(item => this.renderSectionItem(item)).join('')}
 			</div>
@@ -181,32 +175,80 @@ class Dashboard {
 		});
 	}
 
-	// --- Event Bands ---
+	// --- Sport-organized Events ---
 
-	renderBands(events) {
+	renderEvents() {
 		const container = document.getElementById('events');
 		const now = new Date();
-		const bands = this.groupByTemporalBand(events, now);
+		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		const tomorrowStart = new Date(todayStart);
+		tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+		// Group events by sport
+		const sportEvents = {};
+		SPORT_CONFIG.forEach(s => { sportEvents[s.id] = []; });
+		this.allEvents.forEach(e => {
+			if (sportEvents[e.sport]) sportEvents[e.sport].push(e);
+		});
+
+		const active = [];
+		const upcoming = [];
+
+		SPORT_CONFIG.forEach(sport => {
+			const all = sportEvents[sport.id];
+			const future = all.filter(e => new Date(e.time) >= todayStart);
+			const today = future.filter(e => new Date(e.time) < tomorrowStart);
+
+			if (today.length > 0) {
+				active.push({ sport, today, future });
+			} else if (future.length > 0) {
+				upcoming.push({ sport, future, next: future[0] });
+			}
+		});
+
+		active.sort((a, b) => new Date(a.today[0].time) - new Date(b.today[0].time));
+		upcoming.sort((a, b) => new Date(a.next.time) - new Date(b.next.time));
 
 		let html = '';
 
-		// TODAY — grouped by tournament
-		if (bands.today.length > 0) {
-			html += `<div class="band-label">Today</div>`;
-			html += this.renderGroupedEvents(bands.today, false);
-		}
+		// Active sports (events today)
+		active.forEach(({ sport, today, future }) => {
+			const later = future.filter(e => new Date(e.time) >= tomorrowStart);
 
-		// TOMORROW — grouped
-		if (bands.tomorrow.length > 0) {
-			html += `<div class="band-label" style="margin-top:28px;">Tomorrow</div>`;
-			html += this.renderGroupedEvents(bands.tomorrow, false);
-		}
+			html += `<div class="sport-section" style="border-left-color:${sport.color}">`;
+			html += `<div class="sport-header">
+				<span class="sport-name">${sport.emoji} ${this.esc(sport.name)}</span>
+				<span class="sport-status">${today.length} today</span>
+			</div>`;
 
-		// THIS WEEK + LATER — collapsed summary
-		const later = [...bands.thisWeek, ...bands.later];
-		if (later.length > 0) {
-			html += `<button class="more-toggle" data-toggle="later" style="margin-top:20px;">${this.summarizeSports(later)} later \u25b8</button>`;
-			html += `<div class="more-content" data-content="later">${this.renderGroupedEvents(later, true)}</div>`;
+			today.forEach(e => { html += this.renderRow(e, false); });
+
+			if (later.length > 0) {
+				html += `<button class="more-toggle" data-toggle="later-${sport.id}">${later.length} more \u25b8</button>`;
+				html += `<div class="more-content" data-content="later-${sport.id}">`;
+				later.forEach(e => { html += this.renderRow(e, true); });
+				html += `</div>`;
+			}
+
+			html += `</div>`;
+		});
+
+		// Upcoming sports (no events today)
+		if (upcoming.length > 0) {
+			html += `<div class="section-divider">Coming up</div>`;
+			upcoming.forEach(({ sport, next }) => {
+				const date = new Date(next.time);
+				const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+				const nextTitle = next.title || next.tournament;
+				const nextMeta = next.tournament && next.tournament !== next.title ? next.tournament : '';
+				html += `<div class="sport-section compact" style="border-left-color:${sport.color}">
+					<div class="sport-header">
+						<span class="sport-name">${sport.emoji} ${this.esc(sport.name)}</span>
+						<span class="sport-status">${dateStr}</span>
+					</div>
+					<div class="sport-next">${this.esc(nextTitle)}${nextMeta ? ` <span style="opacity:0.6">\u00b7 ${this.esc(nextMeta)}</span>` : ''}</div>
+				</div>`;
+			});
 		}
 
 		if (!html) {
@@ -216,39 +258,6 @@ class Dashboard {
 		container.innerHTML = html;
 		this.bindEventRows();
 		this.bindExpandToggles();
-	}
-
-	renderGroupedEvents(events, showDay) {
-		const groups = this.groupByTournament(events);
-		return groups.map(group => {
-			const sport = SPORT_CONFIG.find(s => s.id === group.sport || (s.aliases && s.aliases.includes(group.sport)));
-			const color = sport ? sport.color : '#888';
-			const rows = group.events.map(e => this.renderRow(e, showDay)).join('');
-			const showLabel = group.events.length >= 2 ||
-				(group.tournament && group.tournament !== group.events[0].title);
-			return `
-				<div class="event-group" style="border-left-color:${color}">
-					${showLabel ? `<div class="group-label">${this.esc(group.tournament)}</div>` : ''}
-					${rows}
-				</div>
-			`;
-		}).join('');
-	}
-
-	renderEventList(events, showDay) {
-		return events.map(e => this.renderRow(e, showDay)).join('');
-	}
-
-	summarizeSports(events) {
-		const sportCounts = {};
-		events.forEach(e => {
-			const sport = SPORT_CONFIG.find(s => s.id === e.sport || (s.aliases && s.aliases.includes(e.sport)));
-			const name = sport ? sport.name.toLowerCase() : e.sport;
-			sportCounts[name] = (sportCounts[name] || 0) + 1;
-		});
-		return Object.entries(sportCounts)
-			.map(([name, count]) => `${count} ${name}`)
-			.join(' \u00b7 ');
 	}
 
 	renderRow(event, showDay) {
@@ -272,19 +281,13 @@ class Dashboard {
 			const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
 			if (hLogo && aLogo) {
 				iconHtml = `<img src="${hLogo}" class="row-logo" loading="lazy"><img src="${aLogo}" class="row-logo" loading="lazy">`;
-			} else {
-				iconHtml = `<span class="row-emoji">\u26bd</span>`;
 			}
 			title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
 		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(event.norwegianPlayers[0].name) : null;
 			if (headshot) {
 				iconHtml = `<img src="${headshot}" class="row-headshot" loading="lazy">`;
-			} else {
-				iconHtml = `<span class="row-emoji">${getSportEmoji(event.sport)}</span>`;
 			}
-		} else {
-			iconHtml = `<span class="row-emoji">${getSportEmoji(event.sport)}</span>`;
 		}
 
 		const isExpanded = this.expandedId === event.id;
@@ -293,7 +296,7 @@ class Dashboard {
 			<div class="event-row${isExpanded ? ' expanded' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
-					<span class="row-icons">${iconHtml}</span>
+					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title">${this.esc(title)}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
@@ -331,6 +334,11 @@ class Dashboard {
 			content += '</div>';
 		}
 
+		// Football: mini league table
+		if (event.sport === 'football' && this.standings?.football?.premierLeague?.length > 0) {
+			content += this.renderFootballStandings(event);
+		}
+
 		// Golf: Norwegian players with headshots
 		if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			content += '<div class="exp-golfers">';
@@ -349,6 +357,16 @@ class Dashboard {
 				content += `<a href="${this.esc(event.link)}" target="_blank" rel="noopener noreferrer" class="exp-link">\ud83d\udcca Leaderboard \u2197</a>`;
 			}
 			content += '</div>';
+		}
+
+		// Golf: tournament leaderboard
+		if (event.sport === 'golf' && this.standings?.golf) {
+			content += this.renderGolfLeaderboard(event);
+		}
+
+		// F1: driver standings
+		if (event.sport === 'formula1' && this.standings?.f1?.drivers?.length > 0) {
+			content += this.renderF1Standings();
 		}
 
 		// Streaming
@@ -384,6 +402,93 @@ class Dashboard {
 
 		content += '</div>';
 		return content;
+	}
+
+	// --- Standings renderers ---
+
+	renderFootballStandings(event) {
+		const table = this.standings.football.premierLeague;
+		const matchTeams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => t.toLowerCase());
+
+		// Collect top 3 + both match teams, deduped, sorted by position
+		const top3 = table.slice(0, 3);
+		const matchRows = table.filter(t => matchTeams.some(mt =>
+			t.team.toLowerCase().includes(mt) || mt.includes(t.team.toLowerCase()) ||
+			t.teamShort.toLowerCase() === mt.replace(/ fc$| afc$/i, '').trim().toLowerCase()
+		));
+
+		const shown = new Map();
+		[...top3, ...matchRows].forEach(t => { if (!shown.has(t.position)) shown.set(t.position, t); });
+		const rows = Array.from(shown.values()).sort((a, b) => a.position - b.position);
+		if (rows.length === 0) return '';
+
+		let html = '<div class="exp-standings"><div class="exp-standings-header">Premier League</div>';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
+
+		let lastPos = 0;
+		for (const row of rows) {
+			if (row.position - lastPos > 1 && lastPos > 0) {
+				html += '<tr class="ellipsis"><td colspan="8">\u2026</td></tr>';
+			}
+			const isHighlight = matchTeams.some(mt =>
+				row.team.toLowerCase().includes(mt) || mt.includes(row.team.toLowerCase()) ||
+				row.teamShort.toLowerCase() === mt.replace(/ fc$| afc$/i, '').trim().toLowerCase()
+			);
+			const cls = isHighlight ? ' class="highlight"' : '';
+			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
+			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.played}</td><td>${row.won}</td><td>${row.drawn}</td><td>${row.lost}</td><td>${gd}</td><td>${row.points}</td></tr>`;
+			lastPos = row.position;
+		}
+
+		html += '</tbody></table></div>';
+		return html;
+	}
+
+	renderGolfLeaderboard(event) {
+		// Try to match tournament to PGA or DP World Tour
+		const tourKey = (event.tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
+		const tour = this.standings.golf[tourKey];
+		if (!tour?.leaderboard?.length) return '';
+
+		let html = `<div class="exp-standings"><div class="exp-standings-header">${this.esc(tour.name || 'Leaderboard')}</div>`;
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Today</th><th>Thru</th></tr></thead><tbody>';
+
+		const top5 = tour.leaderboard.slice(0, 5);
+		for (const p of top5) {
+			html += `<tr><td>${p.position || '-'}</td><td>${this.esc(p.player)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
+		}
+
+		// Check if any Norwegian player is on the leaderboard beyond top 5
+		if (event.norwegianPlayers?.length > 0) {
+			const norNames = event.norwegianPlayers.map(p => p.name.toLowerCase());
+			const norOnBoard = tour.leaderboard.slice(5).filter(p =>
+				norNames.some(n => p.player.toLowerCase().includes(n.split(' ').pop()))
+			);
+			if (norOnBoard.length > 0) {
+				html += '<tr class="ellipsis"><td colspan="5">\u2026</td></tr>';
+				for (const p of norOnBoard) {
+					html += `<tr class="highlight"><td>${p.position || '-'}</td><td>${this.esc(p.player)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
+				}
+			}
+		}
+
+		html += '</tbody></table></div>';
+		return html;
+	}
+
+	renderF1Standings() {
+		const drivers = this.standings.f1.drivers.slice(0, 5);
+		if (drivers.length === 0) return '';
+
+		let html = '<div class="exp-standings"><div class="exp-standings-header">Driver Standings</div>';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Team</th><th>Pts</th></tr></thead><tbody>';
+
+		for (const d of drivers) {
+			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${this.esc(d.team)}</td><td>${d.points}</td></tr>`;
+		}
+
+		html += '</tbody></table></div>';
+		return html;
 	}
 
 	// --- On the Radar ---
@@ -449,7 +554,6 @@ class Dashboard {
 						? btn.textContent.replace('\u25be', '\u25b8')
 						: btn.textContent.replace('\u25b8', '\u25be');
 
-					// Bind event rows inside newly opened content
 					if (!isOpen) {
 						content.querySelectorAll('.event-row').forEach(row => {
 							row.addEventListener('click', (e) => {
@@ -461,22 +565,6 @@ class Dashboard {
 						});
 					}
 				}
-			});
-		});
-	}
-
-	bindFilters() {
-		document.querySelectorAll('.filter-dot').forEach(dot => {
-			dot.addEventListener('click', () => {
-				const sport = dot.dataset.sport;
-				if (this.selectedSports.has(sport)) {
-					this.selectedSports.delete(sport);
-					dot.classList.remove('active');
-				} else {
-					this.selectedSports.add(sport);
-					dot.classList.add('active');
-				}
-				this.render();
 			});
 		});
 	}
@@ -499,49 +587,6 @@ class Dashboard {
 	}
 
 	// --- Helpers ---
-
-	getFilteredEvents() {
-		if (this.selectedSports.size === 0) return this.allEvents;
-		return this.allEvents.filter(e => this.selectedSports.has(e.sport));
-	}
-
-	groupByTemporalBand(events, now) {
-		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const tomorrowStart = new Date(todayStart);
-		tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-		const tomorrowEnd = new Date(tomorrowStart);
-		tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
-		const weekEnd = new Date(todayStart);
-		weekEnd.setDate(weekEnd.getDate() + 7);
-
-		const bands = { today: [], tomorrow: [], thisWeek: [], later: [] };
-		events.forEach(event => {
-			const t = new Date(event.time);
-			if (t < todayStart) return;
-			if (t < tomorrowStart) bands.today.push(event);
-			else if (t < tomorrowEnd) bands.tomorrow.push(event);
-			else if (t < weekEnd) bands.thisWeek.push(event);
-			else bands.later.push(event);
-		});
-		return bands;
-	}
-
-	groupByTournament(events) {
-		const map = {};
-		events.forEach(event => {
-			const key = event.tournament || event.title;
-			if (!map[key]) map[key] = { tournament: key, sport: event.sport, events: [] };
-			map[key].events.push(event);
-		});
-		return Object.values(map).sort((a, b) =>
-			new Date(a.events[0].time) - new Date(b.events[0].time)
-		);
-	}
-
-	tickCountdowns() {
-		const filtered = this.getFilteredEvents();
-		this.renderBrief(filtered);
-	}
 
 	esc(str) {
 		if (typeof str !== 'string') return '';

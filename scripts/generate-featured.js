@@ -47,6 +47,7 @@ Rules:
 - Write in English but with a Norwegian sports fan perspective
 - Prioritize Norwegian athletes: Hovland (golf), Ruud (tennis), Carlsen (chess),
   Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
+- Reference standings positions and form when relevant (e.g. "Arsenal top the table", "Hovland T5")
 - Brief lines must be crisp (max 15 words each), like newspaper headlines
 - Featured sections should highlight major multi-sport or tournament events currently
   happening: Olympics, World Cup, Champions League knockout stages, Grand Slams, etc.
@@ -97,7 +98,45 @@ function buildCuratedContext(configs, now) {
 	return `\n\nCurated major event data:\n${parts.join("\n")}`;
 }
 
-function buildUserPrompt(events, now, curatedConfigs) {
+export function buildStandingsContext(standings) {
+	if (!standings) return "";
+	const parts = [];
+
+	// Premier League top 5
+	const pl = standings.football?.premierLeague;
+	if (Array.isArray(pl) && pl.length > 0) {
+		const rows = pl.slice(0, 5).map(
+			(t) => `  ${t.position}. ${t.team} — ${t.points}pts (W${t.won} D${t.drawn} L${t.lost}, GD ${t.gd > 0 ? "+" : ""}${t.gd})`
+		);
+		parts.push(`Premier League standings (top 5):\n${rows.join("\n")}`);
+	}
+
+	// Golf leaderboards
+	for (const key of ["pga", "dpWorld"]) {
+		const tour = standings.golf?.[key];
+		if (tour?.name && tour.leaderboard?.length > 0) {
+			const label = key === "pga" ? "PGA Tour" : "DP World Tour";
+			const rows = tour.leaderboard.slice(0, 5).map(
+				(p) => `  ${p.position || "-"}. ${p.player} (${p.score})`
+			);
+			parts.push(`${label} — ${tour.name} (${tour.status}):\n${rows.join("\n")}`);
+		}
+	}
+
+	// F1 top 5
+	const f1 = standings.f1?.drivers;
+	if (Array.isArray(f1) && f1.length > 0) {
+		const rows = f1.slice(0, 5).map(
+			(d) => `  ${d.position}. ${d.driver} (${d.team}) — ${d.points}pts, ${d.wins} wins`
+		);
+		parts.push(`F1 Driver Standings (top 5):\n${rows.join("\n")}`);
+	}
+
+	if (parts.length === 0) return "";
+	return `\n\nCurrent standings data:\n${parts.join("\n\n")}`;
+}
+
+function buildUserPrompt(events, now, curatedConfigs, standings) {
 	const dateStr = now.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
@@ -137,11 +176,12 @@ function buildUserPrompt(events, now, curatedConfigs) {
 		.join("\n");
 
 	const curatedContext = buildCuratedContext(curatedConfigs || [], now);
+	const standingsContext = buildStandingsContext(standings);
 
 	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
 
 Events (next 7 days, max 30 shown):
-${summary || "(no events)"}${curatedContext}
+${summary || "(no events)"}${curatedContext}${standingsContext}
 
 Generate featured.json matching this schema:
 ${JSON.stringify(FEATURED_SCHEMA, null, 2)}
@@ -223,8 +263,14 @@ async function main() {
 		console.log(`Loaded ${curatedConfigs.length} curated config(s): ${curatedConfigs.map((c) => c.name).join(", ")}`);
 	}
 
+	const standingsPath = path.join(dataDir, "standings.json");
+	const standings = readJsonIfExists(standingsPath);
+	if (standings) {
+		console.log("Loaded standings.json for editorial context.");
+	}
+
 	const systemPrompt = buildSystemPrompt();
-	const userPrompt = buildUserPrompt(events, now, curatedConfigs);
+	const userPrompt = buildUserPrompt(events, now, curatedConfigs, standings);
 	let rawContent = null;
 
 	// 1. Try Claude CLI (OAuth token from Max subscription)
