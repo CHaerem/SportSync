@@ -209,6 +209,16 @@
       "tests_passed": true,
       "files_changed": 6,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-10",
+      "task": "Add input validation to preferences-manager",
+      "outcome": "completed",
+      "pr": 25,
+      "details": "Added null/empty/whitespace guards to addFavoriteTeam() and addFavoritePlayer(). Methods now return true/false. Added 6 validation tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "scouted": 0
     }
   ]
 }

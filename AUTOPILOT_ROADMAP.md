@@ -72,4 +72,4 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 - [DONE] (PR #24) Fix duplicate emoji mappings — Extracted sport emoji/name mapping into shared `docs/js/sport-config.js` constant, replacing duplicates in `simple-dashboard.js`, `settings-ui.js`, and `dashboard-helpers.js`.
 
-- [PENDING] Add input validation to preferences-manager — `docs/js/preferences-manager.js` `addFavoriteTeam()` and `addFavoritePlayer()` accept empty strings and null values without validation. Add `if (!name?.trim()) return false` guards. ~10 lines.
+- [DONE] (PR #25) Add input validation to preferences-manager — Added null/empty/whitespace guards to `addFavoriteTeam()` and `addFavoritePlayer()`, plus return values and 6 tests.
