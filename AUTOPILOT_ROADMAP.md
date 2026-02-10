@@ -32,7 +32,7 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ## LOW Priority
 
-- [PENDING] Clean up console.log statements — Production code has ~50 console.log calls across `docs/sw.js` (9), `docs/js/sports-api.js` (33), `docs/js/simple-dashboard.js` (4), and `docs/index.html` (3). Replace with a debug-flag-gated logger or remove non-error statements.
+- [DONE] (PR #11) Clean up console.log statements — Removed 32 debug-level console.log calls across `docs/sw.js`, `docs/js/sports-api.js`, `docs/js/simple-dashboard.js`, and `docs/index.html`. Retained console.error calls for genuine errors.
 
 - [PENDING] Add CSS class for `event-time-exact` — `simple-dashboard.js` line 409 generates elements with class `event-time-exact` but no CSS definition exists. Add styling to match the dashboard design.
 
