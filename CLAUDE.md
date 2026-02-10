@@ -4,13 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SportSync is a static website that displays a personalized sports dashboard using live data from various sports APIs. It focuses on upcoming events for football, golf, tennis, Formula 1, chess, and esports, with Norway-centric time formatting and preferences. The site is automatically updated via GitHub Actions and hosted on GitHub Pages.
+SportSync is a static website that displays a personalized sports dashboard using live data from various sports APIs. It focuses on upcoming events for football, golf, tennis, Formula 1, chess, esports, and Olympics, with Norway-centric time formatting and preferences. The site is automatically updated via GitHub Actions and hosted on GitHub Pages. It features an AI-powered editorial content system that generates daily briefs, featured sections, and "on the radar" content using Claude API.
 
 ## Architecture
 
 This is a hybrid static/dynamic application:
 - **Static Frontend**: Pure HTML/CSS/JS hosted on GitHub Pages
-- **Automated Data Fetching**: GitHub Actions fetch fresh API data every 6 hours
+- **Automated Data Fetching**: GitHub Actions fetch fresh API data every 2 hours
+- **AI Featured Content**: Claude API generates editorial briefs and featured sections each build
+- **Curated Event Configs**: `scripts/config/*.json` files auto-discovered by build pipeline
 - **Cached Data Strategy**: Pre-fetched JSON files with live API fallbacks
 - **No Backend**: Serverless architecture using only GitHub infrastructure
 
@@ -28,24 +30,30 @@ This is a hybrid static/dynamic application:
 
 ### Data Flow
 
-1. **GitHub Actions** run every 6 hours to fetch fresh sports data
+1. **GitHub Actions** run every 2 hours to fetch fresh sports data
 2. **API calls** to TheSportsDB, ESPN, and other sources
 3. **JSON files** are generated and committed to `docs/data/`
-4. **Client-side JavaScript** loads cached data first, falls back to live APIs
-5. **Dashboard** displays data with Norwegian timezone formatting
+4. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
+5. **`generate-featured.js`** calls Claude API with events + curated configs → generates `featured.json` (brief, sections, radar)
+6. **Client-side JavaScript** loads `events.json` + `featured.json`, renders editorial dashboard
 
 ## Development Commands
 
 - `npm run dev` - Start local development server (Python HTTP server on port 8000)
-- `npm run build` - No build step required (static site)
+- `npm run build` - Fetch data, build events, build calendar
+- `npm run build:events` - Aggregate sport data + curated configs into events.json
+- `npm run generate:featured` - Generate featured.json with Claude API (needs ANTHROPIC_API_KEY)
+- `npm test` - Run all tests (vitest)
 - `npm run deploy` - Automatic deployment via GitHub Pages
 
 ## GitHub Actions Workflow
 
 The **update-sports-data.yml** workflow:
-- **Trigger**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC) + manual dispatch
+- **Trigger**: Every 2 hours + manual dispatch
 - **Fetches**: Football, Golf, Tennis, F1 data from free APIs
 - **Generates**: Chess and Esports curated data
+- **Builds**: events.json (with auto-discovered curated configs from `scripts/config/`)
+- **Generates**: featured.json via Claude API (ANTHROPIC_API_KEY secret)
 - **Commits**: Updated JSON files to repository
 - **Deploys**: Automatically via GitHub Pages
 
@@ -71,17 +79,18 @@ The **update-sports-data.yml** workflow:
 
 ```
 docs/
-├── index.html              # Main dashboard (HTML + embedded CSS)
+├── index.html              # Main dashboard (HTML + embedded CSS, editorial brief layout)
 ├── sw.js                   # Service worker for caching
 ├── js/
-│   ├── dashboard.js        # Dashboard controller (temporal bands, expand/collapse)
+│   ├── dashboard.js        # Dashboard controller (brief, sections, bands, radar)
 │   ├── dashboard-helpers.js # Pure utilities (grouping, brief, countdowns)
 │   ├── asset-maps.js       # Team logos + golfer headshot URLs
-│   ├── sport-config.js     # Sport metadata (emoji, color, aliases)
+│   ├── sport-config.js     # Sport metadata (7 sports incl. Olympics)
 │   ├── sports-api.js       # API integration with cached data priority
 │   └── preferences-manager.js # Favorites storage (localStorage)
 └── data/                   # Pre-fetched API data (auto-generated)
-    ├── events.json         # Unified events feed (main data source)
+    ├── events.json         # Unified events feed (includes curated configs)
+    ├── featured.json       # AI-generated editorial content (brief, sections, radar)
     ├── football.json       # Football events + metadata
     ├── golf.json           # Golf tournaments + metadata
     ├── tennis.json         # Tennis matches + metadata
@@ -90,8 +99,17 @@ docs/
     ├── esports.json        # Esports competitions + metadata
     └── meta.json           # Update timestamps
 
+scripts/
+├── generate-featured.js    # Claude API → featured.json (brief, sections, radar)
+├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
+├── config/                 # Auto-discovered curated event configs
+│   └── olympics-2026.json  # Example: Winter Olympics 2026 schedule
+└── lib/
+    ├── llm-client.js       # LLM abstraction (Anthropic + OpenAI)
+    └── helpers.js           # Shared utilities
+
 .github/workflows/
-└── update-sports-data.yml  # Automated data fetching workflow
+└── update-sports-data.yml  # Automated data fetching + AI content workflow
 ```
 
 ## Development Notes
@@ -114,10 +132,11 @@ To add a new sport:
 3. Add filter dot to `docs/index.html`
 4. Events will auto-display via temporal band grouping in `dashboard.js`
 
-To add premium APIs:
-1. Add API keys as GitHub Secrets
-2. Update workflow to use authenticated endpoints
-3. Modify error handling for rate limits
+To add a curated major event (Olympics, World Cup, etc.):
+1. Create a JSON config in `scripts/config/{event}-{year}.json` (see `olympics-2026.json` for format)
+2. Events auto-merge into `events.json` during build — no registration needed
+3. `generate-featured.js` auto-detects the config and feeds it to Claude for featured content
+4. The autopilot should create these configs autonomously (see `AUTOPILOT_ROADMAP.md`)
 
 ## Automation Rules
 

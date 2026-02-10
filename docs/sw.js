@@ -1,7 +1,8 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v13-minimal';
+const CACHE_NAME = 'sportsync-v14-editorial';
 const DATA_FILES = [
     '/SportSync/data/events.json',
+    '/SportSync/data/featured.json',
     '/SportSync/data/football.json',
     '/SportSync/data/golf.json',
     '/SportSync/data/tennis.json',

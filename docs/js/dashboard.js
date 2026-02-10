@@ -1,11 +1,13 @@
-// SportSync Dashboard — Ultra-minimal redesign
+// SportSync Dashboard — Editorial Brief + Featured Content
 class Dashboard {
 	constructor() {
 		this.allEvents = [];
+		this.featured = null;
 		this.selectedSports = new Set();
 		this.expandedId = null;
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		this.laterExpanded = false;
+		this.weekExpanded = false;
 		this.init();
 	}
 
@@ -16,17 +18,21 @@ class Dashboard {
 
 		// Tick countdowns every 60s
 		this.tickInterval = setInterval(() => this.tickCountdowns(), 60000);
-		// Refresh data every 30 min
-		setInterval(() => this.loadEvents(), 30 * 60 * 1000);
+		// Refresh data every 15 min
+		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 	}
 
 	// --- Data loading ---
 
 	async loadEvents() {
 		try {
-			const resp = await fetch('data/events.json?t=' + Date.now());
-			if (!resp.ok) throw new Error('Failed to load events');
-			const data = await resp.json();
+			const [eventsResp, featuredResp] = await Promise.all([
+				fetch('data/events.json?t=' + Date.now()),
+				fetch('data/featured.json?t=' + Date.now()).catch(() => null)
+			]);
+
+			if (!eventsResp.ok) throw new Error('Failed to load events');
+			const data = await eventsResp.json();
 			this.allEvents = data
 				.map(ev => ({
 					id: `${ev.sport}-${ev.title}-${ev.time}`.replace(/\s+/g, '-').toLowerCase(),
@@ -46,6 +52,16 @@ class Dashboard {
 					featuredGroups: ev.featuredGroups || [],
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+			// Load featured content
+			if (featuredResp && featuredResp.ok) {
+				try {
+					this.featured = await featuredResp.json();
+				} catch {
+					this.featured = null;
+				}
+			}
+
 			this.render();
 		} catch (err) {
 			console.error('Error loading events:', err);
@@ -59,22 +75,41 @@ class Dashboard {
 	render() {
 		const filtered = this.getFilteredEvents();
 		this.renderBrief(filtered);
-		this.renderFeaturedContext(filtered);
+		this.renderSections();
 		this.renderBands(filtered);
+		this.renderOnTheRadar();
 	}
+
+	// --- The Brief ---
 
 	renderBrief(events) {
-		const el = document.getElementById('brief');
-		const brief = this.generateBrief(events);
-		if (brief) {
-			el.textContent = brief;
-			el.style.display = '';
-		} else {
+		const el = document.getElementById('the-brief');
+		const lines = this.getBriefLines(events);
+
+		if (lines.length === 0) {
 			el.style.display = 'none';
+			return;
 		}
+
+		el.style.display = '';
+		el.innerHTML = `
+			<div class="brief-label">The Brief</div>
+			<div class="brief-lines">
+				${lines.map(line => `<div class="brief-line">${this.esc(line)}</div>`).join('')}
+			</div>
+		`;
 	}
 
-	generateBrief(events) {
+	getBriefLines(events) {
+		// Prefer featured.json brief
+		if (this.featured && Array.isArray(this.featured.brief) && this.featured.brief.length > 0) {
+			return this.featured.brief.slice(0, 3);
+		}
+		// Fallback: generate from events
+		return this.generateBriefLines(events);
+	}
+
+	generateBriefLines(events) {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		const todayEnd = new Date(todayStart);
@@ -85,7 +120,7 @@ class Dashboard {
 			return t >= todayStart && t < todayEnd;
 		});
 
-		if (todayEvents.length === 0) return 'No events scheduled today.';
+		if (todayEvents.length === 0) return ['No events scheduled today.'];
 
 		const sportCounts = {};
 		todayEvents.forEach(e => {
@@ -93,94 +128,83 @@ class Dashboard {
 		});
 
 		const sportLabels = {
-			football: 'Premier League match', golf: 'golf event', tennis: 'tennis match',
-			formula1: 'F1 session', chess: 'chess round', esports: 'esports match'
+			football: 'football', golf: 'golf', tennis: 'tennis',
+			formula1: 'F1', chess: 'chess', esports: 'esports', olympics: 'Olympics'
 		};
 
-		const parts = [];
-		for (const [sport, count] of Object.entries(sportCounts)) {
-			const base = sportLabels[sport] || `${sport} event`;
-			parts.push(`${count} ${base}${count > 1 ? (base.endsWith('ch') ? 'es' : 's') : ''}`);
-		}
+		const parts = Object.entries(sportCounts)
+			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
+			.join(', ');
 
-		const upcoming = todayEvents
-			.filter(e => new Date(e.time) > now)
-			.sort((a, b) => new Date(a.time) - new Date(b.time))[0];
+		const lines = [`${todayEvents.length} events today: ${parts}.`];
 
-		let nextUp = '';
-		if (upcoming) {
-			const time = new Date(upcoming.time).toLocaleTimeString('en-NO', {
+		// Find Norwegian event for second line
+		const norEvent = todayEvents.find(e => e.norwegian);
+		if (norEvent) {
+			const time = new Date(norEvent.time).toLocaleTimeString('en-NO', {
 				hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo'
 			});
-			const shortTitle = upcoming.homeTeam && upcoming.awayTeam
-				? `${upcoming.homeTeam} vs ${upcoming.awayTeam}`
-				: upcoming.title;
-			nextUp = ` Next up: ${shortTitle} at ${time}.`;
+			lines.push(`${norEvent.title} at ${time}.`);
 		}
 
-		if (todayEvents.length <= 2) return `Quiet day \u2014 ${parts.join(' and ')}.${nextUp}`;
-		return `${todayEvents.length} events today: ${parts.join(', ')}.${nextUp}`;
+		return lines;
 	}
 
-	renderFeaturedContext(events) {
-		const container = document.getElementById('featured-context');
-		const contextEvents = events.filter(e => e.context);
-		if (contextEvents.length === 0) {
+	// --- Featured Sections ---
+
+	renderSections() {
+		const container = document.getElementById('featured-sections');
+		if (!this.featured || !Array.isArray(this.featured.sections) || this.featured.sections.length === 0) {
 			container.innerHTML = '';
-			container.style.display = 'none';
 			return;
 		}
 
-		// Group by context, pick largest
-		const contexts = {};
-		contextEvents.forEach(e => {
-			if (!contexts[e.context]) contexts[e.context] = [];
-			contexts[e.context].push(e);
-		});
-		const best = Object.entries(contexts).sort((a, b) => b[1].length - a[1].length)[0];
-		const [contextId, ctxEvents] = best;
+		container.innerHTML = this.featured.sections.map(section => this.renderSection(section)).join('');
+		this.bindSectionExpands();
+	}
 
-		const nameMap = {
-			'olympics-2028': { name: 'Norway at the Olympics', emoji: '\ud83c\uddf3\ud83c\uddf4' },
-			'world-cup-2026': { name: 'World Cup 2026', emoji: '\ud83c\udfc6' },
-		};
-		const mapped = nameMap[contextId] || {
-			name: contextId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-			emoji: '\ud83c\udf0d'
-		};
+	renderSection(section) {
+		const styleClass = section.style === 'highlight' ? ' highlight' : '';
+		const items = (section.items || []).map(item => this.renderSectionItem(item)).join('');
 
-		const sorted = ctxEvents.sort((a, b) => new Date(a.time) - new Date(b.time));
-		const preview = sorted.slice(0, 3);
-		const hasMore = sorted.length > 3;
-
-		container.style.display = '';
-		container.innerHTML = `
-			<div class="ctx-header">${mapped.emoji} ${this.esc(mapped.name)}</div>
-			<div class="ctx-events">
-				${preview.map(e => this.renderContextRow(e)).join('')}
+		const hasExpand = section.expandLabel && section.expandItems && section.expandItems.length > 0;
+		const expandHtml = hasExpand ? `
+			<button class="feat-expand" data-section="${this.esc(section.id)}">${this.esc(section.expandLabel)} \u25b8</button>
+			<div class="feat-expand-content" data-expand="${this.esc(section.id)}">
+				${section.expandItems.map(item => this.renderSectionItem(item)).join('')}
 			</div>
-			${hasMore ? `<button class="ctx-expand" data-context="${this.esc(contextId)}">Explore all ${mapped.name} \u25b8</button>` : ''}
+		` : '';
+
+		return `
+			<div class="featured-section${styleClass}">
+				<div class="feat-header">${section.emoji || ''} ${this.esc(section.title)}</div>
+				${items}
+				${expandHtml}
+			</div>
 		`;
+	}
 
-		const expandBtn = container.querySelector('.ctx-expand');
-		if (expandBtn) {
-			expandBtn.addEventListener('click', () => {
-				const full = container.querySelector('.ctx-events');
-				full.innerHTML = sorted.map(e => this.renderContextRow(e)).join('');
-				expandBtn.remove();
+	renderSectionItem(item) {
+		const typeClass = item.type || 'text';
+		return `<div class="feat-item ${typeClass}">${this.esc(item.text)}</div>`;
+	}
+
+	bindSectionExpands() {
+		document.querySelectorAll('.feat-expand').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const sectionId = btn.dataset.section;
+				const content = document.querySelector(`.feat-expand-content[data-expand="${sectionId}"]`);
+				if (content) {
+					content.classList.toggle('open');
+					btn.textContent = content.classList.contains('open')
+						? btn.textContent.replace('\u25b8', '\u25be')
+						: btn.textContent.replace('\u25be', '\u25b8');
+				}
 			});
-		}
+		});
 	}
 
-	renderContextRow(event) {
-		const date = new Date(event.time);
-		const day = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
-		const time = date.toLocaleTimeString('en-NO', {
-			hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo'
-		});
-		const emoji = getSportEmoji(event.sport);
-		return `<div class="ctx-row">${day} ${time} &nbsp;${emoji} ${this.esc(event.title)}</div>`;
-	}
+	// --- Event Bands ---
 
 	renderBands(events) {
 		const container = document.getElementById('events');
@@ -188,10 +212,42 @@ class Dashboard {
 		const bands = this.groupByTemporalBand(events, now);
 
 		let html = '';
-		if (bands.today.length > 0) html += this.renderBand('TODAY', bands.today, false);
-		if (bands.tomorrow.length > 0) html += this.renderBand('TOMORROW', bands.tomorrow, false);
-		if (bands.thisWeek.length > 0) html += this.renderBand('THIS WEEK', bands.thisWeek, true);
-		if (bands.later.length > 0) html += this.renderLater(bands.later);
+
+		// TODAY — show max 6, toggle for rest
+		if (bands.today.length > 0) {
+			const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+			const shown = bands.today.slice(0, 6);
+			const rest = bands.today.slice(6);
+
+			html += `<div class="band-label"><span>Today</span><span class="band-date">${dateStr}</span></div>`;
+			html += '<div class="band-divider"></div>';
+			html += this.renderBandEvents(shown, false);
+
+			if (rest.length > 0) {
+				html += `<button class="later-toggle" data-band="today-more">${rest.length} more today \u25b8</button>`;
+				html += `<div class="week-expanded" data-expand="today-more">${this.renderBandEvents(rest, false)}</div>`;
+			}
+		}
+
+		// TOMORROW
+		if (bands.tomorrow.length > 0) {
+			const tmrw = new Date(now);
+			tmrw.setDate(tmrw.getDate() + 1);
+			const dateStr = tmrw.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+			html += `<div class="band-label"><span>Tomorrow</span><span class="band-date">${dateStr}</span></div>`;
+			html += '<div class="band-divider"></div>';
+			html += this.renderBandEvents(bands.tomorrow, false);
+		}
+
+		// THIS WEEK — collapsed summary
+		if (bands.thisWeek.length > 0) {
+			html += this.renderWeekSummary(bands.thisWeek);
+		}
+
+		// LATER
+		if (bands.later.length > 0) {
+			html += this.renderLater(bands.later);
+		}
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
@@ -199,35 +255,49 @@ class Dashboard {
 
 		container.innerHTML = html;
 		this.bindEventRows();
+		this.bindExpandToggles();
 	}
 
-	renderBand(label, events, showDay) {
+	renderBandEvents(events, showDay) {
 		const groups = this.groupByTournament(events);
-		let html = `<div class="band-label">${label}</div><div class="band-divider"></div>`;
+		let html = '';
 
 		groups.forEach(group => {
 			if (group.events.length >= 3) {
-				// Tournament header + event rows
 				const emoji = getSportEmoji(group.sport);
 				html += `<div class="tournament-header">${emoji} ${this.esc(group.tournament)}</div>`;
-				group.events.forEach(e => {
-					html += this.renderRow(e, showDay, true);
-				});
+				group.events.forEach(e => { html += this.renderRow(e, showDay, true); });
 			} else {
-				// Inline rows
-				group.events.forEach(e => {
-					html += this.renderRow(e, showDay, false);
-				});
+				group.events.forEach(e => { html += this.renderRow(e, showDay, false); });
 			}
 		});
 
 		return html;
 	}
 
+	renderWeekSummary(events) {
+		const sportCounts = {};
+		events.forEach(e => {
+			const sport = SPORT_CONFIG.find(s => s.id === e.sport || (s.aliases && s.aliases.includes(e.sport)));
+			const name = sport ? sport.name.toLowerCase() : e.sport;
+			sportCounts[name] = (sportCounts[name] || 0) + 1;
+		});
+		const summary = Object.entries(sportCounts)
+			.map(([name, count]) => `${count} ${name}`)
+			.join(' \u00b7 ');
+
+		return `
+			<div class="band-label"><span>This Week</span></div>
+			<div class="band-divider"></div>
+			<button class="week-summary" data-band="this-week">${summary} \u25b8</button>
+			<div class="week-expanded" data-expand="this-week">${this.renderBandEvents(events, true)}</div>
+		`;
+	}
+
 	renderLater(events) {
 		const count = events.length;
 		return `
-			<div class="band-label">LATER</div>
+			<div class="band-label"><span>Later</span></div>
 			<div class="band-divider"></div>
 			<button class="later-toggle" id="laterToggle">${count} more event${count > 1 ? 's' : ''} \u25b8</button>
 			<div class="later-events" id="laterEvents" style="display:none;"></div>
@@ -236,7 +306,6 @@ class Dashboard {
 
 	renderRow(event, showDay, underTournament) {
 		const date = new Date(event.time);
-		const emoji = getSportEmoji(event.sport);
 		const sport = SPORT_CONFIG.find(s => s.id === event.sport || (s.aliases && s.aliases.includes(event.sport)));
 		const sportColor = sport ? sport.color : '#888';
 
@@ -254,9 +323,6 @@ class Dashboard {
 			? `${event.homeTeam} vs ${event.awayTeam}`
 			: event.title;
 
-		const tournamentLabel = !underTournament && event.tournament && !event.title.includes(event.tournament)
-			? `<span class="row-tournament">${this.esc(event.tournament)}</span>` : '';
-
 		const isExpanded = this.expandedId === event.id;
 
 		return `
@@ -264,8 +330,7 @@ class Dashboard {
 				<div class="row-main">
 					<span class="row-time">${timeStr}</span>
 					<span class="row-title">${this.esc(title)}</span>
-					${tournamentLabel}
-					<span class="row-dot" style="background:${sportColor}" title="${emoji}"></span>
+					<span class="row-dot" style="background:${sportColor}"></span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -273,7 +338,6 @@ class Dashboard {
 	}
 
 	renderExpanded(event) {
-		const isFav = this.preferences ? this.preferences.isEventFavorite(event, event.id) : false;
 		let content = '<div class="row-expanded">';
 
 		// Venue
@@ -283,8 +347,8 @@ class Dashboard {
 
 		// Football: team logos
 		if (event.sport === 'football' && event.homeTeam && event.awayTeam) {
-			const homeLogo = getTeamLogo(event.homeTeam);
-			const awayLogo = getTeamLogo(event.awayTeam);
+			const homeLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
+			const awayLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
 			content += '<div class="exp-teams">';
 			content += `<div class="exp-team">
 				${homeLogo ? `<img src="${homeLogo}" alt="${this.esc(event.homeTeam)}" class="exp-logo" loading="lazy">` : '<span class="exp-logo-placeholder">\u26bd</span>'}
@@ -302,7 +366,7 @@ class Dashboard {
 		if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			content += '<div class="exp-golfers">';
 			event.norwegianPlayers.forEach(player => {
-				const headshot = getGolferHeadshot(player.name);
+				const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(player.name) : null;
 				const teeTime = player.teeTime || '';
 				content += `<div class="exp-golfer">
 					<div class="exp-golfer-info">
@@ -331,7 +395,7 @@ class Dashboard {
 			content += '</div>';
 		}
 
-		// Favorite action
+		// Favorite actions
 		if (event.sport === 'football' && (event.homeTeam || event.awayTeam)) {
 			const teams = [event.homeTeam, event.awayTeam].filter(Boolean);
 			content += '<div class="exp-fav-actions">';
@@ -353,6 +417,22 @@ class Dashboard {
 		return content;
 	}
 
+	// --- On the Radar ---
+
+	renderOnTheRadar() {
+		const container = document.getElementById('on-the-radar');
+		if (!this.featured || !Array.isArray(this.featured.radar) || this.featured.radar.length === 0) {
+			container.style.display = 'none';
+			return;
+		}
+
+		container.style.display = '';
+		container.innerHTML = `
+			<div class="radar-label">On the Radar</div>
+			<div class="radar-text">${this.featured.radar.map(line => this.esc(line)).join(' ')}</div>
+		`;
+	}
+
 	// --- Event handlers ---
 
 	bindEventRows() {
@@ -366,7 +446,7 @@ class Dashboard {
 			});
 		});
 
-		// Favorite buttons in expanded view
+		// Favorite buttons
 		document.querySelectorAll('.exp-fav-btn').forEach(btn => {
 			btn.addEventListener('click', (e) => {
 				e.stopPropagation();
@@ -401,18 +481,7 @@ class Dashboard {
 				if (this.laterExpanded) {
 					const filtered = this.getFilteredEvents();
 					const bands = this.groupByTemporalBand(filtered, new Date());
-					let html = '';
-					const groups = this.groupByTournament(bands.later);
-					groups.forEach(group => {
-						if (group.events.length >= 3) {
-							const emoji = getSportEmoji(group.sport);
-							html += `<div class="tournament-header">${emoji} ${this.esc(group.tournament)}</div>`;
-							group.events.forEach(e => { html += this.renderRow(e, true, true); });
-						} else {
-							group.events.forEach(e => { html += this.renderRow(e, true, false); });
-						}
-					});
-					laterEl.innerHTML = html;
+					laterEl.innerHTML = this.renderBandEvents(bands.later, true);
 					laterEl.style.display = '';
 					laterToggle.textContent = 'Show less \u25be';
 					// Bind new rows
@@ -432,6 +501,35 @@ class Dashboard {
 				}
 			});
 		}
+	}
+
+	bindExpandToggles() {
+		// Week summary and today-more toggles
+		document.querySelectorAll('.week-summary, .later-toggle[data-band]').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const band = btn.dataset.band;
+				const content = document.querySelector(`.week-expanded[data-expand="${band}"]`);
+				if (content) {
+					const isOpen = content.classList.contains('open');
+					content.classList.toggle('open');
+					btn.textContent = isOpen
+						? btn.textContent.replace('\u25be', '\u25b8')
+						: btn.textContent.replace('\u25b8', '\u25be');
+
+					// Bind event rows in expanded content
+					if (!isOpen) {
+						content.querySelectorAll('.event-row').forEach(row => {
+							row.addEventListener('click', (e) => {
+								if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
+								const id = row.dataset.id;
+								this.expandedId = this.expandedId === id ? null : id;
+								this.render();
+							});
+						});
+					}
+				}
+			});
+		});
 	}
 
 	bindFilters() {
@@ -508,7 +606,6 @@ class Dashboard {
 	}
 
 	tickCountdowns() {
-		// Re-render brief to update times
 		const filtered = this.getFilteredEvents();
 		this.renderBrief(filtered);
 	}

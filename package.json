@@ -15,6 +15,7 @@
     "build:calendar": "node scripts/build-ics.js",
     "validate:data": "node scripts/validate-events.js",
     "enrich": "node scripts/enrich-events.js",
+    "generate:featured": "node scripts/generate-featured.js",
     "clean": "rm -rf docs/data/*.json docs/data/*.ics",
     "refresh": "npm run clean && npm run build"
   },

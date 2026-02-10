@@ -51,7 +51,8 @@ export const SPORT_CONFIG = [
 	{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#3b82f6' },
 	{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#ef4444', aliases: ['f1'] },
 	{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#6b7280' },
-	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' }
+	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' },
+	{ id: 'olympics', emoji: '🏅', name: 'Olympics', color: '#0081C8' }
 ];
 
 export function sportDisplayName(code) {
@@ -275,6 +276,19 @@ export function groupByTournament(events) {
 	});
 }
 
+export function summarizeWeekEvents(events) {
+	if (!events || events.length === 0) return '';
+	const sportCounts = {};
+	events.forEach(e => {
+		const sport = SPORT_CONFIG.find(s => s.id === e.sport || (s.aliases && s.aliases.includes(e.sport)));
+		const name = sport ? sport.name.toLowerCase() : e.sport;
+		sportCounts[name] = (sportCounts[name] || 0) + 1;
+	});
+	return Object.entries(sportCounts)
+		.map(([name, count]) => `${count} ${name}`)
+		.join(' \u00b7 ');
+}
+
 export function extractFeaturedContext(events) {
 	if (!events || events.length === 0) return null;
 	const contextEvents = events.filter(e => e.context);
@@ -294,6 +308,7 @@ export function extractFeaturedContext(events) {
 
 	// Format the name nicely
 	const nameMap = {
+		'olympics-2026': { name: 'Winter Olympics 2026', emoji: '🇳🇴' },
 		'olympics-2028': { name: 'Olympics 2028', emoji: '🇳🇴' },
 		'world-cup-2026': { name: 'World Cup 2026', emoji: '🏆' },
 	};

@@ -1,9 +1,9 @@
 name: Update Sports Data
 
 on:
-  # Run every 6 hours
+  # Run every 2 hours
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */2 * * *"
 
   # Allow manual trigger
   workflow_dispatch:
@@ -66,6 +66,12 @@ jobs:
         run: |
           npm run enrich || echo "AI enrichment failed, using raw data"
 
+      - name: Generate featured content
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm run generate:featured || echo "Featured generation failed, using fallback"
+
       - name: Validate unified events (future-only)
         run: |
           npm run validate:data
@@ -78,7 +84,7 @@ jobs:
         run: |
           echo '{
             "lastUpdate": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
-            "nextUpdate": "'$(date -u -d "+6 hours" +"%Y-%m-%dT%H:%M:%SZ")'",
+            "nextUpdate": "'$(date -u -d "+2 hours" +"%Y-%m-%dT%H:%M:%SZ")'",
             "timezone": "Europe/Oslo",
             "openSources": true
           }' > docs/data/meta.json

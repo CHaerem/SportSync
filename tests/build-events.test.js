@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
+import os from "os";
 import { execSync } from "child_process";
 
 const DATA_DIR = path.resolve(process.cwd(), "docs", "data");
 const EVENTS_PATH = path.join(DATA_DIR, "events.json");
+// Use empty temp dir so curated configs don't interfere with tests
+const EMPTY_CONFIG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "sportsync-test-config-"));
 
 // Create a temp sport file for testing
 function writeSportFile(sport, data) {
@@ -64,7 +67,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd() });
+		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
 		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
 
 		expect(events).toHaveLength(2);
@@ -91,7 +94,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd() });
+		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
 		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
 
 		expect(events).toHaveLength(1);
@@ -123,7 +126,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd() });
+		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
 		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
 
 		expect(events).toHaveLength(1);
@@ -153,7 +156,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd() });
+		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
 		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
 
 		expect(events[0].title).toBe("Earlier Game");

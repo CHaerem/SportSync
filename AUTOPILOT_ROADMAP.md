@@ -97,3 +97,88 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 - [DONE] (obsolete — file deleted in ultra-minimal redesign) Validate streaming URLs before rendering as links — `simple-dashboard.js` was replaced by `dashboard.js`.
 
 - [DONE] (obsolete — file deleted in ultra-minimal redesign) Deduplicate passesFilter() logic — `simple-dashboard.js` was removed entirely.
+
+---
+
+## Intelligent Content System
+
+The dashboard uses a **featured content system** that works in two layers:
+
+1. **`scripts/generate-featured.js`** — runs during each build, calls Claude API to generate `docs/data/featured.json`
+2. **`scripts/config/*.json`** — curated event configs that the autopilot creates autonomously
+
+### How It Works
+
+```
+Autopilot detects major event → creates scripts/config/{event}.json
+                                        ↓
+Build pipeline auto-discovers config → merges events into events.json
+                                        ↓
+generate-featured.js reads events.json + curated configs → calls Claude API
+                                        ↓
+Claude generates featured.json (brief, sections, radar)
+                                        ↓
+Dashboard renders featured.json flexibly — no frontend changes needed
+```
+
+**`featured.json` schema:**
+- **brief**: 2-3 editorial lines summarizing the day
+- **sections**: dynamic featured content blocks (types: "stat", "event", "text")
+- **radar**: 2-3 "on the radar" sentences about upcoming events
+
+### Autonomous Autopilot Directive
+
+The autopilot should **proactively and autonomously** monitor the sports calendar and create content when major events approach or begin. **No human intervention required.** The autopilot:
+
+1. **Detects** major events by analyzing `docs/data/events.json` for tournament names, context tags, and upcoming schedules
+2. **Creates** curated config files in `scripts/config/` with event schedules, Norwegian athletes, and streaming info
+3. **The pipeline handles the rest** — `build-events.js` auto-discovers configs, `generate-featured.js` feeds them to the LLM
+
+#### Curated Config Format (`scripts/config/*.json`)
+
+```json
+{
+  "name": "Event Name",
+  "location": "City, Country",
+  "startDate": "YYYY-MM-DD",
+  "endDate": "YYYY-MM-DD",
+  "context": "event-id",
+  "norwegianAthletes": ["Athlete Name", ...],
+  "events": [
+    {
+      "title": "Event Title",
+      "time": "ISO 8601 datetime",
+      "venue": "Venue Name",
+      "norwegian": true,
+      "norwegianPlayers": [{"name": "Athlete Name"}],
+      "streaming": [{"platform": "NRK", "type": "tv"}]
+    }
+  ]
+}
+```
+
+#### When to Create Curated Configs
+
+- **Olympics** (Winter or Summer): Norwegian athlete schedules, medal events, daily highlights
+- **FIFA World Cup**: Group matches with Norway interest, knockout stages, match schedules
+- **Champions League knockout stages**: Bracket fixtures, Norwegian club/player involvement
+- **Grand Slams** (tennis): Draw brackets, Ruud/Norwegian player matchups
+- **Major golf tournaments**: Hovland tee times, leaderboard tracking, cut-line info
+- **Any new major event** the autopilot detects approaching in the event data
+
+#### Rules for Autonomous Content
+
+- One curated config per major event (e.g., `olympics-2026.json`, `world-cup-2026.json`)
+- Config file name should be descriptive: `{event}-{year}.json`
+- Always focus on Norwegian athletes and Norwegian interest
+- Include streaming info (NRK, Eurosport, TV2, etc.) when known
+- Delete or archive configs after events end (move to `scripts/config/archive/`)
+- The `context` field must match between config and generated events for proper grouping
+
+### Pending Content Tasks
+
+- [PENDING] Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` contains unused `getMock*Tournaments()` methods (~385 lines of dead code). Only `getMockWeeklyEvents()` is used.
+
+- [PENDING] Add workflow step for generate-featured.js — Add `node scripts/generate-featured.js` step to `.github/workflows/update-sports-data.yml` after enrichment. Requires `ANTHROPIC_API_KEY` secret. (Protected path — needs manual approval.)
+
+- [PENDING] Increase data update frequency — Change cron in `.github/workflows/update-sports-data.yml` from `0 */6 * * *` to `0 */2 * * *`. (Protected path — needs manual approval.)
