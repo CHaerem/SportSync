@@ -72,7 +72,9 @@
 			padding: 38px 34px 52px;
 			position: relative;
 			overflow: hidden;
-			background-color: var(--bg);
+			/* Real paper texture photograph as background */
+			background: url(img/paper-tile.jpg) repeat;
+			background-size: 512px 384px;
 			/* Page depth: newspaper sitting on the desk */
 			box-shadow:
 				0 1px 1px rgba(0,0,0,0.07),
@@ -85,6 +87,7 @@
 				2px 2px 0 #bfb698;
 		}
 		.dark .wrap {
+			background: var(--bg);
 			box-shadow:
 				0 1px 1px rgba(0,0,0,0.15),
 				0 2px 4px rgba(0,0,0,0.15),
@@ -95,24 +98,25 @@
 				2px 2px 0 #16120c;
 		}
 
-		/* === PAPER TEXTURE LAYER (inline SVG with feDiffuseLighting) === */
-		.paper-tex {
+		/* === PAPER GRAIN OVERLAY (real fiber texture with multiply blend) === */
+		.paper-grain {
 			position: absolute;
 			top: 0; left: 0;
 			width: 100%;
 			height: 100%;
+			background: url(img/paper-grain-real.jpg) repeat;
+			background-size: 512px 384px;
 			mix-blend-mode: multiply;
 			pointer-events: none;
 			z-index: 5;
-			opacity: 0.4;
+			opacity: 0.12;
 		}
-		.dark .paper-tex {
-			opacity: 0.15;
-			mix-blend-mode: soft-light;
+		.dark .paper-grain {
+			display: none;
 		}
 
-		/* All content sits above the paper texture */
-		.wrap > *:not(.paper-tex):not(.paper-aging) {
+		/* All content sits above the paper grain */
+		.wrap > *:not(.paper-grain) {
 			position: relative;
 			z-index: 6;
 		}
@@ -746,16 +750,8 @@
 </head>
 <body>
 	<div class="wrap">
-		<!-- Paper fiber texture: feTurbulence + feDiffuseLighting creates bump-mapped surface -->
-		<svg class="paper-tex" aria-hidden="true" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-			<filter id="paper-fibers" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-				<feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" seed="15" stitchTiles="stitch" result="noise"/>
-				<feDiffuseLighting in="noise" lighting-color="#f0e8d0" surfaceScale="2" result="lit">
-					<feDistantLight azimuth="45" elevation="55"/>
-				</feDiffuseLighting>
-			</filter>
-			<rect width="100%" height="100%" filter="url(#paper-fibers)" fill="none"/>
-		</svg>
+		<!-- Paper fiber grain overlay: real texture photo with multiply blend -->
+		<div class="paper-grain" aria-hidden="true"></div>
 
 		<header>
 			<h1>The SportSync Gazette</h1>
