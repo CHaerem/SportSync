@@ -22,11 +22,11 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 ### Current Tasks
 
-- [PENDING] Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs.
+- [BLOCKED] requires watch-plan UI — Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs. Blocked because watch-plan data has no frontend UI rendering yet; adding UI + feedback + persistence exceeds 300-line automation limit.
 
-- [PENDING] Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic.
+- [BLOCKED] requires watch-plan UI — Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic. Blocked because watch-plan items are not rendered in the dashboard.
 
-- [PENDING] Personalize watch-plan ranking with favorites export — Feed `PreferencesManager.exportForBackend()` output into watch-plan scoring so local preferences directly influence top picks and window ordering.
+- [BLOCKED] already implemented server-side — Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`. Client-side integration requires watch-plan UI first.
 
 ---
 
@@ -202,3 +202,29 @@ The autopilot should **proactively and autonomously** monitor the sports calenda
 - [DONE] (already in workflow) Add workflow step for generate-featured.js — Step exists in `.github/workflows/update-sports-data.yml` and now also generates `watch-plan.json` + `ai-quality.json`.
 
 - [DONE] (already in workflow) Increase data update frequency — Cron is already `0 */2 * * *` in `.github/workflows/update-sports-data.yml`.
+
+---
+
+## Scouted Tasks (2026-02-11)
+
+### HIGH Priority
+
+- [DONE] (PR #26) Improve dashboard quality — Added alt attributes to inline row images, aria-expanded to band toggles, event delegation for event rows (fixing listener accumulation), removed dead `updateLiveDOM()` method, added `rss-digest.json` and `ai-quality.json` to SW cache, bumped cache to v18.
+
+### MEDIUM Priority
+
+- [DONE] (PR #27) Add unit tests for `scripts/lib/filters.js` — 44 tests covering all 10 static methods on `EventFilters`: time range, current week, teams, players, leagues, Norwegian, sport, sort, limit, deduplication, merge, and combined filters.
+
+- [DONE] (PR #28) Add unit tests for `scripts/lib/norwegian-streaming.js` — 25 tests covering `getNorwegianStreaming()`, `applyNorwegianStreaming()`, and `norwegianStreamingMap` data structure validation.
+
+- [PENDING] Add unit tests for `scripts/lib/api-client.js` — HTTP client wrapper has zero test coverage. Test constructor options, request method, retry logic, timeout handling, and error formatting.
+
+- [PENDING] Add unit tests for `scripts/lib/base-fetcher.js` — Base fetcher class used by all sport fetchers has no tests. Cover `fetchFromAPIs()` source iteration, empty results, error accumulation, and `fetch()` method normalization.
+
+### LOW Priority
+
+- [PENDING] Add `aria-expanded` to featured section expand buttons — `docs/js/dashboard.js:285-297` `bindSectionExpands()` toggles `.feat-expand` buttons but doesn't set `aria-expanded` attribute. Same pattern as band toggles (fixed in PR #26).
+
+- [PENDING] Add render-once guard for watch-plan UI — Watch-plan data (`docs/data/watch-plan.json`) is generated and cached but never rendered. Add a minimal read-only display in `dashboard.js` showing top 3 picks below the brief section. ~60 lines, 1 file, LOW risk. Prerequisite for the EXPERIENCE Lane tasks.
+
+- [PENDING] Improve sport iteration efficiency in `renderBand()` — `docs/js/dashboard.js:379-401` iterates all SPORT_CONFIG entries even when only 1-2 sports have events. Iterate `sportGroups.entries()` instead and look up sport config by ID. ~10 lines changed, LOW risk.

@@ -219,6 +219,36 @@
       "tests_passed": true,
       "files_changed": 2,
       "scouted": 7
+    },
+    {
+      "date": "2026-02-11",
+      "task": "Improve dashboard quality: a11y, perf, dead code, SW cache",
+      "outcome": "completed",
+      "pr": 26,
+      "details": "Added alt attributes to inline team logo and golfer headshot images. Added role=button, tabindex=0, and aria-expanded to collapsible band toggles. Replaced per-element event listeners with event delegation on #events container. Removed duplicate listener re-binding from bindBandToggles. Removed dead updateLiveDOM() method (29 lines). Added rss-digest.json and ai-quality.json to SW data cache. Bumped SW cache to v18-quality.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-11",
+      "task": "Add unit tests for EventFilters utility",
+      "outcome": "completed",
+      "pr": 27,
+      "details": "Added 44 tests covering all 10 static methods on EventFilters in scripts/lib/filters.js. Tests cover time range, current week, teams, players, leagues, Norwegian, sport, sort, limit, deduplication, merge, and combined filters with edge cases.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-11",
+      "task": "Add unit tests for Norwegian streaming mapper",
+      "outcome": "completed",
+      "pr": 28,
+      "details": "Added 25 tests covering getNorwegianStreaming(), applyNorwegianStreaming(), and norwegianStreamingMap data structure. Tests verify league matching (case-insensitive, partial), sport aliases (formula1→f1), default fallbacks, null/empty inputs, and event mutation.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 6
     }
   ]
 }
