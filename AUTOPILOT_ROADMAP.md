@@ -195,6 +195,35 @@ The autopilot should **proactively and autonomously** monitor the sports calenda
 - Delete or archive configs after events end (move to `scripts/config/archive/`)
 - The `context` field must match between config and generated events for proper grouping
 
+### Coverage Gap Detection
+
+The pipeline generates `docs/data/coverage-gaps.json` every 2 hours via `scripts/detect-coverage-gaps.js`.
+During nightly runs, the autopilot should:
+
+1. Read `docs/data/coverage-gaps.json`
+2. For each gap with `classification: "actionable"` and `confidence: "high"`:
+   - If the suggested config does not exist in `scripts/config/`, create it
+   - Research the event schedule using available data and web search
+   - Follow the curated config format (see above)
+3. For `confidence: "medium"` actionable gaps:
+   - Create a GitHub issue suggesting the coverage gap for human review
+4. For `confidence: "low"` or `classification: "informational"`:
+   - Skip (transient news, not worth acting on)
+5. Log all gap processing in `docs/data/autopilot-log.json`
+
+### Pipeline Health Monitoring
+
+The pipeline generates `docs/data/health-report.json` every 2 hours via `scripts/pipeline-health.js`.
+During nightly runs, the autopilot should:
+
+1. Read `docs/data/health-report.json`
+2. If `status: "critical"`, prioritize repair tasks over roadmap tasks
+3. Common repair actions:
+   - `sport_dropped` → investigate the fetcher for that sport, check API changes
+   - `stale_data` → check if the API endpoint has moved or requires new auth
+   - `rss_low` → verify RSS feed URLs are still valid
+4. If `status: "warning"`, note issues but continue with roadmap tasks
+
 ### Pending Content Tasks
 
 - [DONE] (obsolete — file deleted in ultra-minimal redesign) Remove unused mock tournament methods from sports-api.js — `docs/js/sports-api.js` was removed from the runtime dashboard path.

@@ -10,6 +10,7 @@
 
 import path from "path";
 import { fetchJson, iso, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-validator.js";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/v2/sports";
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
@@ -17,6 +18,10 @@ const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
 export async function fetchFootballStandings() {
 	const url = `${ESPN_BASE}/soccer/eng.1/standings`;
 	const data = await fetchJson(url);
+
+	const validated = validateESPNStandings(data, "football");
+	for (const w of validated.warnings) console.warn(w);
+	if (validated.entries.length === 0) return [];
 
 	const group = data?.children?.[0];
 	if (!group?.standings?.entries) return [];
@@ -50,7 +55,9 @@ export async function fetchGolfLeaderboard() {
 	for (const tour of tours) {
 		try {
 			const data = await fetchJson(tour.url);
-			const event = data?.events?.[0];
+			const vGolf = validateESPNScoreboard(data, `golf-${tour.key}`);
+			for (const w of vGolf.warnings) console.warn(w);
+			const event = vGolf.events[0] || data?.events?.[0];
 			if (!event) {
 				result[tour.key] = { name: null, status: "no_event", leaderboard: [] };
 				continue;

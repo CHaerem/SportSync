@@ -1,5 +1,6 @@
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 import { fetchOBOSLigaenFromFotballNo } from "./fotball-no.js";
+import { validateESPNScoreboard } from "../lib/response-validator.js";
 
 // Teams the user follows — matches involving these get highlighted
 const FAVORITE_TEAMS = ["Barcelona", "Liverpool"];
@@ -25,8 +26,10 @@ export async function fetchFootballESPN() {
 			try {
 				const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${day}`;
 				const data = await fetchJson(url);
-				if (Array.isArray(data.events)) {
-					all.push(...data.events);
+				const validated = validateESPNScoreboard(data, league.name);
+				for (const w of validated.warnings) console.warn(w);
+				if (validated.events.length > 0) {
+					all.push(...validated.events);
 					// Log Norwegian league attempts for debugging
 					if (league.code.startsWith("nor.")) {
 						console.log(`${league.name} (${league.code}): Found ${data.events.length} matches on ${day}`);

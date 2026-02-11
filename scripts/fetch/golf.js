@@ -1,6 +1,7 @@
 import https from "https";
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 import { getNorwegianStreaming } from "../lib/norwegian-streaming.js";
+import { validateESPNScoreboard, validateLiveGolfEvents } from "../lib/response-validator.js";
 
 /**
  * Fetch the current week's PGA Tour field from pgatour.com.
@@ -145,9 +146,12 @@ async function fetchGolfLiveGolfAPI() {
 
 		// Get upcoming events from both PGA Tour and DP World Tour
 		const eventsUrl = `https://use.livegolfapi.com/v1/events?api_key=${API_KEY}`;
-		const events = await fetchJson(eventsUrl);
+		const rawEvents = await fetchJson(eventsUrl);
+		const validated = validateLiveGolfEvents(rawEvents);
+		for (const w of validated.warnings) console.warn(w);
+		const events = validated.events;
 
-		if (!Array.isArray(events)) {
+		if (events.length === 0 && !validated.valid) {
 			throw new Error("Invalid events response format");
 		}
 
@@ -471,7 +475,9 @@ async function fetchGolfESPNFallback() {
 			for (const dateStr of datesToQuery) {
 				try {
 					const data = await fetchJson(`${tour.url}?dates=${dateStr}`);
-					for (const ev of (data.events || [])) {
+					const v = validateESPNScoreboard(data, tour.name);
+					for (const w of v.warnings) console.warn(w);
+					for (const ev of v.events) {
 						if (!seen.has(ev.id || ev.name + ev.date)) {
 							seen.add(ev.id || ev.name + ev.date);
 							allEvents.push(ev);
@@ -485,7 +491,9 @@ async function fetchGolfESPNFallback() {
 			// Also query default endpoint for current/in-progress events
 			try {
 				const data = await fetchJson(tour.url);
-				for (const ev of (data.events || [])) {
+				const v = validateESPNScoreboard(data, tour.name);
+				for (const w of v.warnings) console.warn(w);
+				for (const ev of v.events) {
 					if (!seen.has(ev.id || ev.name + ev.date)) {
 						seen.add(ev.id || ev.name + ev.date);
 						allEvents.push(ev);
