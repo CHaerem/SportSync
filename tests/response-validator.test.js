@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
 	validateESPNScoreboard,
 	validateESPNStandings,
-	validateLiveGolfEvents,
 	validatePandaScoreResponse,
 	validateFetcherOutput,
 } from "../scripts/lib/response-validator.js";
@@ -97,33 +96,6 @@ describe("validateESPNStandings()", () => {
 		expect(result.valid).toBe(true);
 		expect(result.entries).toEqual([]);
 		expect(result.warnings[0]).toContain("empty_entries");
-	});
-});
-
-describe("validateLiveGolfEvents()", () => {
-	it("passes valid LiveGolf events", () => {
-		const data = [
-			{ name: "Genesis", startDatetime: "2026-02-13T07:00:00Z", status: "Scheduled" },
-		];
-		const result = validateLiveGolfEvents(data);
-		expect(result.valid).toBe(true);
-		expect(result.events).toHaveLength(1);
-	});
-
-	it("returns empty + warning for non-array", () => {
-		const result = validateLiveGolfEvents({ events: [] });
-		expect(result.valid).toBe(false);
-		expect(result.events).toEqual([]);
-	});
-
-	it("filters events missing startDatetime", () => {
-		const data = [
-			{ name: "Good", startDatetime: "2026-02-13T07:00:00Z" },
-			{ name: "Bad" },
-		];
-		const result = validateLiveGolfEvents(data);
-		expect(result.events).toHaveLength(1);
-		expect(result.warnings).toHaveLength(1);
 	});
 });
 

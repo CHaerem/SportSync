@@ -7,125 +7,6 @@ export class GolfFetcher extends ESPNAdapter {
 		super(sportsConfig.golf);
 	}
 
-	async fetchFromSource(source) {
-		if (source.api === "livegolf" && source.requiresKey) {
-			return await this.fetchLiveGolfAPI(source);
-		}
-		return await super.fetchFromSource(source);
-	}
-
-	async fetchLiveGolfAPI(source) {
-		const apiKey = process.env[source.envKey];
-		if (!apiKey) {
-			console.log("LiveGolf API key not found, skipping premium data");
-			return [];
-		}
-
-		try {
-			console.log("Fetching golf events from LiveGolf API...");
-			const eventsUrl = `${source.baseUrl}/events?api_key=${apiKey}`;
-			const events = await this.apiClient.fetchJSON(eventsUrl);
-
-			if (!Array.isArray(events)) {
-				throw new Error("Invalid LiveGolf events response");
-			}
-
-			const now = new Date();
-			const upcomingEvents = events.filter(event => 
-				event.status === 'Scheduled' && 
-				new Date(event.startDatetime) > now
-			).slice(0, 6);
-
-			const processedEvents = [];
-			for (const event of upcomingEvents) {
-				try {
-					const detailUrl = `${source.baseUrl}/events/${event.id}?api_key=${apiKey}`;
-					const eventDetail = await this.apiClient.fetchJSON(detailUrl);
-					
-					const norwegianPlayers = this.findNorwegianPlayers(eventDetail);
-					if (norwegianPlayers.length > 0) {
-						processedEvents.push({
-							title: event.name || "Golf Tournament",
-							time: event.startDatetime,
-							venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
-							tournament: event.tour?.name || "Golf Tour",
-							norwegian: true,
-							norwegianPlayers: norwegianPlayers,
-							totalPlayers: eventDetail.leaderboard?.length || 0
-						});
-						console.log(`✅ Added ${event.name} with ${norwegianPlayers.length} Norwegian players`);
-					}
-				} catch (error) {
-					console.warn(`Failed to process LiveGolf event ${event.name}:`, error.message);
-				}
-			}
-
-			return processedEvents;
-		} catch (error) {
-			console.error("LiveGolf API error:", error.message);
-			return [];
-		}
-	}
-
-	findNorwegianPlayers(eventDetail) {
-		if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard)) {
-			return [];
-		}
-
-		const norwegianPlayers = this.config.norwegian?.players || [];
-		const found = [];
-
-		for (const player of eventDetail.leaderboard) {
-			const playerName = player.player || "";
-			const isNorwegian = norwegianPlayers.some(norPlayer => {
-				const norLower = norPlayer.toLowerCase();
-				const playerLower = playerName.toLowerCase();
-				
-				// Check various name formats
-				if (playerLower.includes(norLower)) return true;
-				
-				// Check reversed name format
-				const [first, ...last] = norPlayer.split(' ');
-				const reversed = `${last.join(' ')}, ${first}`.toLowerCase();
-				if (playerLower.includes(reversed)) return true;
-				
-				// Check individual parts
-				const parts = norPlayer.toLowerCase().split(' ');
-				return parts.every(part => playerLower.includes(part));
-			});
-
-			if (isNorwegian) {
-				const rounds = player.rounds || [];
-				const firstRound = rounds.find(r => r.round === 1) || rounds[0];
-				
-				// Format tee time to Norwegian timezone if available
-				let teeTimeDisplay = null;
-				if (firstRound?.teeTime) {
-					const teeTimeUTC = new Date(firstRound.teeTime);
-					teeTimeDisplay = teeTimeUTC.toLocaleString("en-NO", {
-						weekday: "short",
-						month: "short",
-						day: "numeric",
-						hour: "2-digit",
-						minute: "2-digit",
-						timeZone: "Europe/Oslo"
-					});
-				}
-				
-				found.push({
-					name: player.player,
-					teeTime: teeTimeDisplay,
-					teeTimeUTC: firstRound?.teeTime || null,
-					startingTee: firstRound?.startingTee || null,
-					round: firstRound?.round || 1,
-					status: player.position ? `T${player.position}` : 'Scheduled'
-				});
-			}
-		}
-
-		return found;
-	}
-
 	transformESPNEvent(espnEvent) {
 		const event = super.transformESPNEvent(espnEvent);
 		if (!event) return null;
@@ -159,31 +40,21 @@ export class GolfFetcher extends ESPNAdapter {
 
 	transformToEvents(rawData) {
 		const events = [];
-		
+
 		for (const item of rawData) {
 			try {
-				// Check if this is already a processed LiveGolf event
-				if (item.norwegianPlayers && Array.isArray(item.norwegianPlayers)) {
-					// This is a LiveGolf event, normalize it directly
-					const normalized = EventNormalizer.normalize(item, this.config.sport);
+				const event = this.transformESPNEvent(item);
+				if (event) {
+					const normalized = EventNormalizer.normalize(event, this.config.sport);
 					if (normalized && EventNormalizer.validateEvent(normalized)) {
 						events.push(normalized);
-					}
-				} else {
-					// This is an ESPN event, use the standard transformation
-					const event = this.transformESPNEvent(item);
-					if (event) {
-						const normalized = EventNormalizer.normalize(event, this.config.sport);
-						if (normalized && EventNormalizer.validateEvent(normalized)) {
-							events.push(normalized);
-						}
 					}
 				}
 			} catch (error) {
 				console.error(`Error transforming event:`, error.message);
 			}
 		}
-		
+
 		return EventNormalizer.deduplicate(events);
 	}
 

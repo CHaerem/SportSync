@@ -73,14 +73,14 @@ All sports are configured in `config/sports-config.js`:
 |-------|------------|---------|-----------------|
 | Football | ESPN + fotball.no | `football.js` | FK Lyn Oslo, Barcelona, Liverpool |
 | Tennis | ESPN | `tennis.js` | Casper Ruud |
-| Golf | ESPN/LiveGolf | `golf.js` | Viktor Hovland |
+| Golf | ESPN + PGA Tour | `golf.js` | Viktor Hovland |
 | F1 | ESPN | `f1.js` | None |
 | Chess | Curated configs | `chess.js` | Magnus Carlsen |
 | Esports | PandaScore | `esports.js` | CS2 competitions |
 
 ## Data Pipeline
 
-1. **Fetch**: API calls to all sports (ESPN, LiveGolf, PandaScore, fotball.no)
+1. **Fetch**: API calls to all sports (ESPN, PGA Tour, PandaScore, fotball.no)
 2. **Validate**: Response validators filter invalid items, log warnings
 3. **Transform**: Convert to normalized event structure
 4. **Filter**: Apply sport-specific rules (Norwegian focus, date range)
@@ -197,7 +197,6 @@ node scripts/fetch/index.js | grep "Refactored fetchers"
 ```bash
 CLAUDE_CODE_OAUTH_TOKEN=...  # Claude Max subscription for featured generation
 OPENAI_API_KEY=...           # OpenAI for event enrichment
-LIVEGOLF_API_KEY=...         # Premium golf data with tee times
 PANDASCORE_API_KEY=...       # Esports CS2 competitions
 ```
 

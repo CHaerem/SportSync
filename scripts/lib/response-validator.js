@@ -68,29 +68,6 @@ export function validateESPNStandings(data, standingType = "unknown") {
 	return { valid: true, entries: group.standings.entries, warnings };
 }
 
-export function validateLiveGolfEvents(data) {
-	const warnings = [];
-
-	if (!Array.isArray(data)) {
-		warn(warnings, "invalid_response", "LiveGolf: response is not an array");
-		return { valid: false, events: [], warnings };
-	}
-
-	const validEvents = data.filter((event) => {
-		if (!event || typeof event !== "object") {
-			warn(warnings, "invalid_event", "LiveGolf: non-object event filtered out");
-			return false;
-		}
-		if (!event.startDatetime) {
-			warn(warnings, "missing_date", `LiveGolf: event '${event.name || "unknown"}' missing startDatetime`);
-			return false;
-		}
-		return true;
-	});
-
-	return { valid: true, events: validEvents, warnings };
-}
-
 export function validatePandaScoreResponse(data) {
 	const warnings = [];
 

@@ -1118,11 +1118,11 @@ class Dashboard {
 
 	async pollGolfScores() {
 		const now = Date.now();
-		const hasLiveGolf = this.allEvents.some(e =>
+		const hasActiveGolf = this.allEvents.some(e =>
 			e.sport === 'golf' && new Date(e.time).getTime() <= now &&
 			new Date(e.time).getTime() > now - 12 * 60 * 60 * 1000
 		);
-		if (!hasLiveGolf) return;
+		if (!hasActiveGolf) return;
 
 		const LIVE_TTL = 30 * 1000; // 30 seconds
 		const cached = this._cacheGet('live_golf_pga', LIVE_TTL);

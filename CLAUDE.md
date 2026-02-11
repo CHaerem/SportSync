@@ -31,7 +31,7 @@ This is a hybrid static/dynamic application:
 ### Data Flow
 
 1. **GitHub Actions** run every 2 hours to fetch fresh sports data
-2. **API calls** to ESPN, PandaScore, LiveGolf, and fotball.no
+2. **API calls** to ESPN, PandaScore, and fotball.no
 3. **JSON files** are generated and committed to `docs/data/`
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
 5. **`fetch-rss.js`** fetches 11 RSS feeds (NRK, TV2, BBC, ESPN, Autosport, ChessBase, HLTV)
@@ -79,8 +79,8 @@ The **update-sports-data.yml** workflow:
 
 **APIs Used:**
 - **ESPN Public API** - Football (Premier League, La Liga), Tennis, Golf (PGA/DP World), F1, Standings
+- **PGA Tour** - Golf field verification and tee times (scraped from pgatour.com)
 - **fotball.no** - Norwegian OBOS-ligaen matches (Lyn Oslo)
-- **LiveGolf API** - Golf leaderboard data (needs LIVEGOLF_API_KEY)
 - **PandaScore API** - Esports CS2 competitions (needs PANDASCORE_API_KEY)
 - **Curated Data** - Chess tournaments, Olympics schedules
 
@@ -124,7 +124,7 @@ scripts/
 │   ├── helpers.js          # Shared utilities
 │   ├── enrichment-prompts.js # Prompts for AI event enrichment
 │   ├── event-normalizer.js # Event validation and normalization
-│   ├── response-validator.js # API response validation (ESPN, LiveGolf, PandaScore)
+│   ├── response-validator.js # API response validation (ESPN, PandaScore)
 │   ├── ai-quality-gates.js # AI enrichment quality gates and fallbacks
 │   ├── base-fetcher.js     # Base class for sport fetchers
 │   ├── api-client.js       # HTTP client wrapper

@@ -1,12 +1,56 @@
 import https from "https";
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 import { getNorwegianStreaming } from "../lib/norwegian-streaming.js";
-import { validateESPNScoreboard, validateLiveGolfEvents } from "../lib/response-validator.js";
+import { validateESPNScoreboard } from "../lib/response-validator.js";
+
+/**
+ * Parse a tee time string like "8:45 AM" to UTC ISO string,
+ * given the tournament date and timezone.
+ */
+function parseTeeTimeToUTC(teeTimeStr, tournamentDate, timezone) {
+	if (!teeTimeStr || !tournamentDate) return null;
+	try {
+		// Parse "8:45 AM" or "1:30 PM" format
+		const match = teeTimeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+		if (!match) return null;
+		let hours = parseInt(match[1], 10);
+		const minutes = parseInt(match[2], 10);
+		const period = match[3].toUpperCase();
+		if (period === "PM" && hours !== 12) hours += 12;
+		if (period === "AM" && hours === 12) hours = 0;
+
+		// Build a date string in the tournament's local timezone
+		const dateStr = typeof tournamentDate === "string"
+			? tournamentDate.slice(0, 10)
+			: new Date(tournamentDate).toISOString().slice(0, 10);
+		const localStr = `${dateStr}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+
+		// Use Intl to find the UTC offset for this timezone
+		const tz = timezone || "America/New_York";
+		const localDate = new Date(localStr);
+		const utcFormatter = new Intl.DateTimeFormat("en-US", {
+			timeZone: tz,
+			year: "numeric", month: "2-digit", day: "2-digit",
+			hour: "2-digit", minute: "2-digit", second: "2-digit",
+			hour12: false,
+		});
+		// Format localDate as if it were in UTC, then find the offset
+		const utcParts = utcFormatter.formatToParts(localDate);
+		const get = (type) => utcParts.find(p => p.type === type)?.value;
+		const tzDate = new Date(`${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}Z`);
+		const offsetMs = tzDate.getTime() - localDate.getTime();
+		// Actual UTC time = local time + offset
+		const utcTime = new Date(localDate.getTime() + offsetMs);
+		return utcTime.toISOString();
+	} catch {
+		return null;
+	}
+}
 
 /**
  * Fetch the current week's PGA Tour field from pgatour.com.
  * Extracts __NEXT_DATA__ JSON embedded in the leaderboard page.
- * Returns { tournamentName, players: [{ firstName, lastName, displayName }] }
+ * Returns { tournamentName, timezone, players: [{ firstName, lastName, displayName, teeTime, teeTimeUTC, startingHole }] }
  * or null on any failure.
  */
 async function fetchPGATourField() {
@@ -61,20 +105,41 @@ async function fetchPGATourField() {
 			|| nextData?.props?.pageProps?.tournament?.tournamentName
 			|| null;
 
+		const timezone = leaderboard.tournament?.timezone
+			|| leaderboard.timezone
+			|| nextData?.props?.pageProps?.tournament?.timezone
+			|| null;
+
+		const tournamentDate = leaderboard.tournament?.date
+			|| leaderboard.tournament?.startDate
+			|| nextData?.props?.pageProps?.tournament?.date
+			|| null;
+
 		// Extract players from rows/players array
 		const rows = leaderboard.rows || leaderboard.players || [];
 		const players = rows.map(row => {
 			const p = row.player || row;
+			// Probe multiple paths for tee time
+			const rawTeeTime = row.teeTime || row.rounds?.[0]?.teeTime || row.thru || null;
+			// Only treat as tee time if it looks like a time (e.g. "8:45 AM")
+			const teeTimeStr = (typeof rawTeeTime === "string" && /\d{1,2}:\d{2}/.test(rawTeeTime))
+				? rawTeeTime : null;
+			const teeTimeUTC = teeTimeStr
+				? parseTeeTimeToUTC(teeTimeStr, tournamentDate, timezone)
+				: null;
 			return {
 				firstName: p.firstName || "",
 				lastName: p.lastName || "",
 				displayName: p.displayName || `${p.firstName || ""} ${p.lastName || ""}`.trim(),
+				teeTime: teeTimeStr,
+				teeTimeUTC,
+				startingHole: row.startingHole || null,
 			};
 		}).filter(p => p.displayName);
 
 		if (players.length === 0) return null;
 
-		return { tournamentName, players };
+		return { tournamentName, timezone, players };
 	} catch {
 		return null;
 	}
@@ -109,317 +174,7 @@ function filterNorwegiansAgainstField(norwegianPlayers, pgaField) {
 	});
 }
 
-// LiveGolf API - provides actual tee times!
 export async function fetchGolfESPN() {
-	const API_KEY = process.env.LIVEGOLF_API_KEY;
-
-	// If we have the LiveGolf API key, try the better API first
-	if (API_KEY) {
-		try {
-			return await fetchGolfLiveGolfAPI();
-		} catch (err) {
-			console.warn(`LiveGolf API failed (${err.message}), falling back to ESPN`);
-		}
-	}
-
-	// Fallback to ESPN API (no tee times)
-	return await fetchGolfESPNFallback();
-}
-
-async function fetchGolfLiveGolfAPI() {
-	const API_KEY = process.env.LIVEGOLF_API_KEY;
-	const isScript = process.argv[1]?.includes('golf.js');
-	const log = isScript ? console.log : () => {};
-
-	const norwegianPlayers = [
-		"Viktor Hovland",
-		"Kristoffer Reitan",
-		"Kris Ventura",
-		"Espen Kofstad",
-		"Anders Krogstad",
-		"Kristian Krogh Johannessen",
-		"Eivind Henriksen",
-		"Andreas Halvorsen"
-	];
-
-	const tournaments = [];
-	const now = new Date();
-
-	try {
-		log("Fetching golf events from LiveGolf API...");
-
-		// Get upcoming events from both PGA Tour and DP World Tour
-		const eventsUrl = `https://use.livegolfapi.com/v1/events?api_key=${API_KEY}`;
-		const rawEvents = await fetchJson(eventsUrl);
-		const validated = validateLiveGolfEvents(rawEvents);
-		for (const w of validated.warnings) console.warn(w);
-		const events = validated.events;
-
-		if (events.length === 0 && !validated.valid) {
-			throw new Error("Invalid events response format");
-		}
-
-		log(`Total events from API: ${events.length}`);
-		events.slice(0, 10).forEach(e => {
-			log(`  - ${e.name}: status=${e.status}, start=${e.startDatetime}`);
-		});
-
-		// Filter to upcoming tournaments (include today's events)
-		const todayStart = new Date(now);
-		todayStart.setHours(0, 0, 0, 0);
-
-		const upcomingEvents = events.filter(event => {
-			const eventDate = new Date(event.startDatetime);
-			const isUpcoming = event.status === 'Scheduled' &&
-				eventDate >= todayStart; // Include today's events
-			if (isUpcoming) {
-				log(`Found upcoming event: ${event.name} starting ${event.startDatetime}`);
-			}
-			return isUpcoming;
-		}).slice(0, 6); // Limit to next 6 tournaments
-
-		log(`Found ${upcomingEvents.length} upcoming events`)
-
-		// Fetch PGA Tour field once for cross-referencing
-		log("Fetching PGA Tour field for verification...");
-		const pgaField = await fetchPGATourField();
-		if (pgaField) {
-			log(`PGA Tour field: ${pgaField.tournamentName} (${pgaField.players.length} players)`);
-		} else {
-			log("PGA Tour field unavailable, will use unverified 'Expected' status");
-		}
-
-		for (const event of upcomingEvents) {
-			try {
-				log(`Processing ${event.name} (${event.tour?.name})...`);
-
-				// Get detailed event data with leaderboard (includes tee times)
-				const detailUrl = `https://use.livegolfapi.com/v1/events/${event.id}?api_key=${API_KEY}`;
-				const eventDetail = await fetchJson(detailUrl);
-
-				// Try to get featured groups information
-				let featuredGroups = [];
-				try {
-					const groupsUrl = `https://use.livegolfapi.com/v1/events/${event.id}/groups?api_key=${API_KEY}`;
-					const groupsData = await fetchJson(groupsUrl);
-					if (Array.isArray(groupsData)) {
-						featuredGroups = groupsData.filter(group => group.featured || group.tv);
-					}
-				} catch (groupError) {
-					// Featured groups not available - not critical
-				}
-
-				if (!eventDetail.leaderboard || !Array.isArray(eventDetail.leaderboard) || eventDetail.leaderboard.length === 0) {
-					// No field data yet from LiveGolf
-					const tourName = event.tour?.name || "Unknown Tour";
-					const isPGA = tourName.toLowerCase().includes('pga');
-
-					if (isPGA) {
-						// Try to verify against PGA Tour website field
-						if (pgaField && tournamentNameMatches(event.name, pgaField.tournamentName)) {
-							const confirmed = filterNorwegiansAgainstField(norwegianPlayers, pgaField);
-							if (confirmed.length > 0) {
-								log(`Verified ${confirmed.length} Norwegian player(s) in ${event.name} via pgatour.com`);
-								tournaments.push({
-									name: tourName,
-									events: [{
-										title: event.name || "Golf Tournament",
-										meta: tourName,
-										tournament: tourName,
-										time: normalizeToUTC(event.startDatetime),
-										venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
-										sport: "golf",
-										streaming: getNorwegianStreaming("golf", tourName),
-										norwegian: true,
-										norwegianPlayers: confirmed.map(name => ({
-											name,
-											teeTime: null,
-											teeTimeUTC: null,
-											status: "Confirmed",
-										})),
-										totalPlayers: pgaField.players.length,
-										link: event.link,
-										status: event.status
-									}]
-								});
-							} else {
-								log(`No Norwegian players in ${event.name} field (verified via pgatour.com), skipping`);
-							}
-						} else {
-							// PGA Tour field unavailable or different tournament
-							log(`No leaderboard for ${event.name}, including as PGA Tour regular (unverified)`);
-							tournaments.push({
-								name: tourName,
-								events: [{
-									title: event.name || "Golf Tournament",
-									meta: tourName,
-									tournament: tourName,
-									time: normalizeToUTC(event.startDatetime),
-									venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
-									sport: "golf",
-									streaming: getNorwegianStreaming("golf", tourName),
-									norwegian: true,
-									norwegianPlayers: [{
-										name: "Viktor Hovland",
-										teeTime: null,
-										teeTimeUTC: null,
-										status: "Expected",
-									}],
-									totalPlayers: 0,
-									link: event.link,
-									status: event.status
-								}]
-							});
-						}
-					} else {
-						log(`No leaderboard data for ${event.name}, skipping`);
-					}
-					continue;
-				}
-
-				// Find Norwegian players in this tournament
-				const norwegianCompetitors = eventDetail.leaderboard.filter(player => {
-					const playerName = player.player || "";
-					return norwegianPlayers.some(norPlayer => {
-						const norPlayerLower = norPlayer.toLowerCase();
-						const playerNameLower = playerName.toLowerCase();
-
-						// Check for exact matches (Viktor Hovland)
-						if (playerNameLower.includes(norPlayerLower) || norPlayerLower.includes(playerNameLower)) {
-							return true;
-						}
-
-						// Check for surname, firstname format (HALVORSEN, Andreas -> Andreas Halvorsen)
-						const [firstName, ...lastNames] = norPlayer.split(' ');
-						const lastName = lastNames.join(' ');
-						const reversedName = `${lastName.toLowerCase()}, ${firstName.toLowerCase()}`;
-						if (playerNameLower.includes(reversedName) || playerNameLower === reversedName) {
-							return true;
-						}
-
-						// Check individual name parts
-						const norPlayerParts = norPlayer.toLowerCase().split(' ');
-						return norPlayerParts.every(part => playerNameLower.includes(part));
-					});
-				});
-
-				// Only include tournaments with Norwegian players
-				if (norwegianCompetitors.length > 0) {
-					const norwegianPlayersList = norwegianCompetitors.map(competitor => {
-						const rounds = competitor.rounds || [];
-						const firstRound = rounds.find(r => r.round === 1) || rounds[0];
-
-						// Convert tee time to Norwegian timezone display
-						let teeTimeDisplay = null;
-						if (firstRound?.teeTime) {
-							const teeTimeUTC = new Date(firstRound.teeTime);
-							teeTimeDisplay = teeTimeUTC.toLocaleString("en-NO", {
-								weekday: "short",
-								month: "short",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-								timeZone: "Europe/Oslo"
-							});
-						}
-
-						// Check if this player is in a featured group
-						let featuredGroupInfo = null;
-						if (featuredGroups.length > 0 && firstRound?.teeTime) {
-							const playerGroup = featuredGroups.find(group =>
-								group.players?.some(p =>
-									p.name?.toLowerCase().includes(competitor.player.toLowerCase()) ||
-									competitor.player.toLowerCase().includes(p.name?.toLowerCase())
-								)
-							);
-							if (playerGroup) {
-								featuredGroupInfo = {
-									groupName: playerGroup.name || 'Featured Group',
-									players: playerGroup.players?.map(p => p.name) || [],
-									coverage: playerGroup.coverage || playerGroup.tv || 'TV Coverage'
-								};
-							}
-						}
-
-						log(`Found Norwegian player: ${competitor.player} - Tee time: ${teeTimeDisplay || 'TBD'}${featuredGroupInfo ? ' (Featured Group)' : ''}`);
-
-						return {
-							name: competitor.player,
-							teeTime: teeTimeDisplay,
-							teeTimeUTC: firstRound?.teeTime || null,
-							startingTee: firstRound?.startingTee || null,
-							round: firstRound?.round || 1,
-							status: competitor.position ? `T${competitor.position}` : 'Scheduled',
-							featuredGroup: featuredGroupInfo
-						};
-					});
-
-					// Determine tournament source
-					const tourName = event.tour?.name || "Unknown Tour";
-
-					// Use the earliest Norwegian player's tee time as the event time
-					// This ensures the event shows up properly in the dashboard
-					let eventTime = normalizeToUTC(event.startDatetime);
-					const earliestTeeTime = norwegianPlayersList
-						.filter(p => p.teeTimeUTC)
-						.map(p => new Date(p.teeTimeUTC))
-						.sort((a, b) => a - b)[0];
-
-					if (earliestTeeTime) {
-						eventTime = earliestTeeTime.toISOString();
-					}
-
-					tournaments.push({
-						name: tourName,
-						events: [{
-							title: event.name || "Golf Tournament",
-							meta: tourName,
-							tournament: tourName,
-							time: eventTime, // Use earliest tee time if available
-							venue: `${event.course || "TBD"}${event.location ? `, ${event.location}` : ""}`,
-							sport: "golf",
-							streaming: getNorwegianStreaming("golf", tourName),
-							norwegian: true,
-							norwegianPlayers: norwegianPlayersList,
-							totalPlayers: eventDetail.leaderboard.length,
-							link: event.link,
-							status: event.status
-						}]
-					});
-
-					log(`Added ${event.name} with ${norwegianCompetitors.length} Norwegian players`);
-				} else {
-					log(`No Norwegian players found in ${event.name}`);
-				}
-
-			} catch (eventError) {
-				console.warn(`Failed to process event ${event.name}:`, eventError.message);
-			}
-		}
-
-	} catch (error) {
-		console.error("LiveGolf API error:", error.message);
-		throw error;
-	}
-
-	return {
-		lastUpdated: iso(),
-		source: "LiveGolf API (with tee times)",
-		tournaments
-	};
-}
-
-// Run if executed directly
-if (process.argv[1]?.includes('golf.js')) {
-	fetchGolfESPN().then(data => {
-		console.log(JSON.stringify(data, null, 2));
-	}).catch(err => {
-		console.error('Error:', err);
-		process.exit(1);
-	});
-}
-
-async function fetchGolfESPNFallback() {
 	const isScript = process.argv[1]?.includes('golf.js');
 	const log = isScript ? console.log : () => {};
 
@@ -539,11 +294,23 @@ async function fetchGolfESPNFallback() {
 
 				if (norwegianCompetitors.length > 0) {
 					// Confirmed Norwegian players in field from ESPN
-					const norwegianPlayersList = norwegianCompetitors.map(comp => ({
-						name: comp.athlete?.displayName || "Unknown",
-						teeTime: null,
-						status: comp.status || null,
-					}));
+					const isPGATour = tour.name === "PGA Tour";
+					const norwegianPlayersList = norwegianCompetitors.map(comp => {
+						const name = comp.athlete?.displayName || "Unknown";
+						// Look up tee time from PGA Tour field if available
+						let teeTime = null;
+						let teeTimeUTC = null;
+						if (isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName)) {
+							const fieldPlayer = pgaField.players.find(p =>
+								p.displayName.toLowerCase().includes(name.toLowerCase().split(' ').pop())
+							);
+							if (fieldPlayer?.teeTime) {
+								teeTime = fieldPlayer.teeTime;
+								teeTimeUTC = fieldPlayer.teeTimeUTC;
+							}
+						}
+						return { name, teeTime, teeTimeUTC, status: comp.status || null };
+					});
 
 					log(`Found ${norwegianCompetitors.length} Norwegian players in ${ev.name}:`,
 						norwegianPlayersList.map(p => p.name).join(', '));
@@ -583,11 +350,17 @@ async function fetchGolfESPNFallback() {
 									sport: "golf",
 									streaming: getNorwegianStreaming("golf", tour.name),
 									norwegian: true,
-									norwegianPlayers: confirmed.map(name => ({
-										name,
-										teeTime: null,
-										status: "Confirmed",
-									})),
+									norwegianPlayers: confirmed.map(name => {
+										const fieldPlayer = pgaField.players.find(p =>
+											p.displayName.toLowerCase().includes(name.toLowerCase().split(' ').pop())
+										);
+										return {
+											name,
+											teeTime: fieldPlayer?.teeTime || null,
+											teeTimeUTC: fieldPlayer?.teeTimeUTC || null,
+											status: "Confirmed",
+										};
+									}),
 									totalPlayers: pgaField.players.length
 								}]
 							});
@@ -626,7 +399,17 @@ async function fetchGolfESPNFallback() {
 
 	return {
 		lastUpdated: iso(),
-		source: "ESPN API",
+		source: "ESPN + PGA Tour",
 		tournaments
 	};
+}
+
+// Run if executed directly
+if (process.argv[1]?.includes('golf.js')) {
+	fetchGolfESPN().then(data => {
+		console.log(JSON.stringify(data, null, 2));
+	}).catch(err => {
+		console.error('Error:', err);
+		process.exit(1);
+	});
 }

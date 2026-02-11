@@ -69,18 +69,11 @@ export const sportsConfig = {
 	golf: {
 		sport: "golf",
 		enabled: true,
-		source: "ESPN API / LiveGolf API",
+		source: "ESPN API + PGA Tour",
 		sources: [
 			{
-				api: "livegolf",
-				type: "premium",
-				baseUrl: "https://use.livegolfapi.com/v1",
-				requiresKey: true,
-				envKey: "LIVEGOLF_API_KEY"
-			},
-			{
 				api: "espn",
-				type: "fallback",
+				type: "scoreboard",
 				tours: [
 					{ url: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard", name: "PGA Tour" },
 					{ url: "https://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard", name: "DP World Tour" }

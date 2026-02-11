@@ -162,7 +162,6 @@ The autopilot has completed 25+ PRs autonomously — accessibility improvements,
 |--------|---------|---------|
 | `CLAUDE_CODE_OAUTH_TOKEN` | Both workflows | Claude Max subscription for AI generation and autopilot |
 | `OPENAI_API_KEY` | Data pipeline | Event enrichment (importance, tags) |
-| `LIVEGOLF_API_KEY` | Data pipeline | Live golf data |
 | `PANDASCORE_API_KEY` | Data pipeline | Esports data |
 
 ## File Structure

@@ -54,7 +54,7 @@ scripts/
 │   ├── base-fetcher.js         # Abstract base class for all fetchers
 │   ├── api-client.js           # HTTP client with retry & caching
 │   ├── event-normalizer.js     # Ensures consistent event structure
-│   ├── response-validator.js   # API response schema validation (ESPN, LiveGolf, PandaScore)
+│   ├── response-validator.js   # API response schema validation (ESPN, PandaScore)
 │   ├── ai-quality-gates.js     # AI enrichment quality gates and fallbacks
 │   ├── filters.js              # Reusable filtering functions
 │   ├── helpers.js              # Shared utility functions
@@ -174,7 +174,7 @@ class ChessFetcher extends BaseFetcher {
 ### Multiple Layers of Resilience
 
 1. **Response Validation** (`response-validator.js`):
-   - Schema checks for ESPN, LiveGolf, PandaScore responses
+   - Schema checks for ESPN, PandaScore responses
    - Filters invalid items (missing date, competitions) rather than rejecting entire response
    - Logs warnings for each invalid item
 
