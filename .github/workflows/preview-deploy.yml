@@ -37,43 +37,13 @@ jobs:
           mkdir -p _site
           cp -r docs/* _site/
 
-      - name: Checkout and assemble broadsheet preview
+      - name: Checkout and assemble glass preview
         continue-on-error: true
         run: |
-          git fetch origin design/broadsheet --depth=1 || exit 0
-          git checkout origin/design/broadsheet -- docs/ || exit 0
-          mkdir -p _site/preview/broadsheet
-          cp -r docs/* _site/preview/broadsheet/
-          # Use voice-matched featured content if available
-          if [ -f _site/data/featured-broadsheet.json ]; then
-            cp _site/data/featured-broadsheet.json _site/preview/broadsheet/data/featured.json
-          fi
-          git checkout main -- docs/
-
-      - name: Checkout and assemble terminal preview
-        continue-on-error: true
-        run: |
-          git fetch origin design/terminal --depth=1 || exit 0
-          git checkout origin/design/terminal -- docs/ || exit 0
-          mkdir -p _site/preview/terminal
-          cp -r docs/* _site/preview/terminal/
-          # Use voice-matched featured content if available
-          if [ -f _site/data/featured-terminal.json ]; then
-            cp _site/data/featured-terminal.json _site/preview/terminal/data/featured.json
-          fi
-          git checkout main -- docs/
-
-      - name: Checkout and assemble playful preview
-        continue-on-error: true
-        run: |
-          git fetch origin design/playful --depth=1 || exit 0
-          git checkout origin/design/playful -- docs/ || exit 0
-          mkdir -p _site/preview/playful
-          cp -r docs/* _site/preview/playful/
-          # Use voice-matched featured content if available
-          if [ -f _site/data/featured-playful.json ]; then
-            cp _site/data/featured-playful.json _site/preview/playful/data/featured.json
-          fi
+          git fetch origin design/glass --depth=1 || exit 0
+          git checkout origin/design/glass -- docs/ || exit 0
+          mkdir -p _site/preview/glass
+          cp -r docs/* _site/preview/glass/
           git checkout main -- docs/
 
       - name: Setup Pages
