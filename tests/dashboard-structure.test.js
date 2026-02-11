@@ -80,10 +80,15 @@ describe("dashboard.js key classes used in CSS", () => {
 		"must-watch",
 		"featured-section",
 		"band-label",
+		"band-live",
 		"sport-section",
 		"radar-section",
 		"news-item",
 		"watch-pick",
+		"starting-soon",
+		"row-rel-soon",
+		"row-rel-far",
+		"row-ft",
 	];
 
 	for (const cls of keyClasses) {

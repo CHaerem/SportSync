@@ -719,7 +719,7 @@ class Dashboard {
 				if (live.state === 'in') {
 					timeStr = `<span class="live-dot"></span>${this.esc(live.clock)}`;
 				} else if (live.state === 'post') {
-					timeStr = 'FT';
+					timeStr = '<span class="row-ft">FT</span>';
 				}
 			} else {
 				title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
@@ -741,9 +741,14 @@ class Dashboard {
 
 		// Relative time for today's future events (not live, not ended)
 		let relHtml = '';
+		const diffMin = (date - now) / 60000;
+		const isStartingSoon = !hasLiveScore && !isEnded && diffMin > 0 && diffMin <= 30;
 		if (!hasLiveScore && !isEnded && date > now) {
 			const rel = this.relativeTime(date);
-			if (rel) relHtml = `<span class="row-rel">${this.esc(rel)}</span>`;
+			if (rel) {
+				const relCls = isStartingSoon ? ' row-rel-soon' : (diffMin > 120 ? ' row-rel-far' : '');
+				relHtml = `<span class="row-rel${relCls}">${this.esc(rel)}</span>`;
+			}
 		}
 
 		const isExpanded = this.expandedId === event.id;
@@ -762,7 +767,7 @@ class Dashboard {
 		}
 
 		return `
-			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}" data-id="${this.esc(event.id)}">
+			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
