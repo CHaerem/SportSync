@@ -130,10 +130,10 @@ export class GolfFetcher extends ESPNAdapter {
 		const event = super.transformESPNEvent(espnEvent);
 		if (!event) return null;
 
-		// Golf tournaments span multiple days — use endDate for validation
-		// so ongoing tournaments aren't filtered as "past"
+		// Store endDate so ongoing tournaments aren't filtered as "past"
+		// but keep time as start date for correct display
 		if (espnEvent.endDate) {
-			event.time = espnEvent.endDate;
+			event.endDate = espnEvent.endDate;
 		}
 
 		// Check for Norwegian players in ESPN data
@@ -185,6 +185,18 @@ export class GolfFetcher extends ESPNAdapter {
 		}
 		
 		return EventNormalizer.deduplicate(events);
+	}
+
+	filterByTimeRange(events, range) {
+		// Golf tournaments span multiple days — use endDate so ongoing
+		// tournaments aren't excluded just because they started in the past
+		const now = new Date();
+		const future = new Date(now.getTime() + range * 86400000);
+		return events.filter(event => {
+			const startDate = new Date(event.time);
+			const endDate = event.endDate ? new Date(event.endDate) : startDate;
+			return endDate >= now && startDate <= future;
+		});
 	}
 
 	applyCustomFilters(events) {
