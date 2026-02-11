@@ -2,10 +2,11 @@ name: Deploy Pages with Previews
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [preview-deploy]
   push:
     branches:
       - main
-      - 'design/**'
     paths:
       - 'docs/**'
 
