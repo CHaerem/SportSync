@@ -53,6 +53,11 @@ class Dashboard {
 		const cachedWatchPlan = this._cacheGet('watchPlan', STATIC_TTL);
 		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
 
+		// Always fetch meta.json for freshness display (tiny, not cached)
+		fetch('data/meta.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
+			.then(m => { this.meta = m; this.renderDateLine(); })
+			.catch(() => {});
+
 		if (cachedEvents) {
 			this.allEvents = cachedEvents;
 			this.featured = cachedFeatured;
