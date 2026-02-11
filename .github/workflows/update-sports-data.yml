@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
 
     steps:
       - name: Checkout repository
@@ -85,6 +86,18 @@ jobs:
         run: |
           npm run validate:data
 
+      - name: Pipeline health check
+        run: |
+          node scripts/pipeline-health.js || true
+
+      - name: Check quality regression
+        run: |
+          node scripts/check-quality-regression.js || true
+
+      - name: Detect coverage gaps
+        run: |
+          node scripts/detect-coverage-gaps.js || true
+
       - name: Build ICS calendar
         run: |
           npm run build:calendar
@@ -132,5 +145,14 @@ jobs:
           if [ -f docs/data/events.ics ]; then
             SIZE=$(wc -c < docs/data/events.ics | tr -d ' ')
             echo "- **ICS Calendar**: ${SIZE} bytes" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f docs/data/health-report.json ]; then
+            STATUS=$(jq -r '.status' docs/data/health-report.json 2>/dev/null || echo "unknown")
+            ISSUES=$(jq -r '.issues | length' docs/data/health-report.json 2>/dev/null || echo 0)
+            echo "- **Pipeline Health**: $STATUS ($ISSUES issues)" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f docs/data/coverage-gaps.json ]; then
+            GAPS=$(jq -r '.summary.totalGapsDetected' docs/data/coverage-gaps.json 2>/dev/null || echo 0)
+            echo "- **Coverage Gaps**: $GAPS detected" >> $GITHUB_STEP_SUMMARY
           fi
           echo "✅ Dashboard updated with current week real data only!" >> $GITHUB_STEP_SUMMARY
