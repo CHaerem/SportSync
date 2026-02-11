@@ -5,6 +5,9 @@ on:
     branches:
       - 'design/**'
 
+permissions:
+  contents: write
+
 jobs:
   trigger:
     runs-on: ubuntu-latest
