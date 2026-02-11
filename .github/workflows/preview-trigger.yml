@@ -1,0 +1,21 @@
+name: Trigger Preview Deploy
+
+on:
+  push:
+    branches:
+      - 'design/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger preview deployment from main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'preview-deploy'
+            });
+            console.log('Triggered preview-deploy via repository_dispatch');
