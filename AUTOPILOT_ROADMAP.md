@@ -238,6 +238,8 @@ During nightly runs, the autopilot should:
 
 ### HIGH Priority
 
+- [PENDING] Add curated config schedule verification script — Create `scripts/verify-schedules.js` that cross-references `scripts/config/*.json` event dates/times against live API data (ESPN scoreboard for sports with APIs, olympics.com schedule for Olympics). Report mismatches to `docs/data/health-report.json` and auto-correct dates when confidence is high. Integrate into the data pipeline workflow so stale curated configs (wrong dates, wrong event names, wrong venues) are caught and fixed every 2 hours. Key cases: Olympics venue/date drift, golf tee time placeholders vs actual times. ~150 lines, 2 files (`scripts/verify-schedules.js`, `tests/verify-schedules.test.js`), MEDIUM risk.
+
 - [DONE] (PR #26) Improve dashboard quality — Added alt attributes to inline row images, aria-expanded to band toggles, event delegation for event rows (fixing listener accumulation), removed dead `updateLiveDOM()` method, added `rss-digest.json` and `ai-quality.json` to SW cache, bumped cache to v18.
 
 ### MEDIUM Priority
