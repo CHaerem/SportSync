@@ -177,15 +177,14 @@ async function fetchPGATourField() {
 				const dt = new Date(rawTeeTime);
 				if (!isNaN(dt.getTime())) {
 					teeTimeUTC = dt.toISOString();
-					// Format local time string for display (tournament timezone)
+					// Format local time string for display (Norway timezone, 24h)
 					try {
-						const tz = timezone || "America/New_York";
-						teeTime = dt.toLocaleTimeString("en-US", {
-							timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true
+						teeTime = dt.toLocaleTimeString("no-NO", {
+							timeZone: "Europe/Oslo", hour: "2-digit", minute: "2-digit", hour12: false
 						});
 					} catch {
-						teeTime = dt.toLocaleTimeString("en-US", {
-							hour: "numeric", minute: "2-digit", hour12: true
+						teeTime = dt.toLocaleTimeString("no-NO", {
+							hour: "2-digit", minute: "2-digit", hour12: false
 						});
 					}
 				}
