@@ -15,7 +15,7 @@
 	<style>
 		:root {
 			--bg: #ede4c5;
-			--bg-surface: #8b8070;
+			--bg-surface: #5c4a3a;
 			--bg-secondary: #e5dbb8;
 			--fg: #1c1710;
 			--muted: #5a4e3c;
@@ -48,7 +48,7 @@
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
-		/* === SURFACE (desk/table behind the newspaper) === */
+		/* === SURFACE (dark wood desk behind the newspaper) === */
 		html { background: var(--bg-surface); }
 		body {
 			font-family: var(--font);
@@ -58,41 +58,29 @@
 			font-size: 15.5px;
 			font-weight: 400;
 			-webkit-font-smoothing: auto;
-			/* Ink impression: slight bleed + offset for printed look */
+			/* Ink impression: slight bleed simulating letterpress */
 			text-shadow:
-				0 0 0.4px var(--fg),
-				0.15px 0.1px 0.2px rgba(0,0,0,0.12);
+				0 0 0.3px var(--fg),
+				0 0 0.8px rgba(28, 23, 16, 0.06);
 			font-feature-settings: 'onum' 1, 'liga' 1;
 		}
 
 		/* === NEWSPAPER PAGE === */
 		.wrap {
 			max-width: var(--max-w);
-			margin: 16px auto;
+			margin: 24px auto;
 			padding: 38px 34px 52px;
 			position: relative;
 			overflow: hidden;
-			/* Paper color + multi-frequency grain layers */
 			background-color: var(--bg);
-			background-image:
-				/* Fine grain — high frequency paper fiber */
-				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='6' seed='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='0.05'/%3E%3C/svg%3E"),
-				/* Medium grain — paper pulp texture */
-				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23b)' opacity='0.04'/%3E%3C/svg%3E"),
-				/* Coarse grain — large-scale color variation */
-				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.12' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23c)' opacity='0.025'/%3E%3C/svg%3E"),
-				/* Faint print roller lines */
-				repeating-linear-gradient(0deg,
-					transparent, transparent 2px,
-					rgba(90, 75, 50, 0.01) 2px, rgba(90, 75, 50, 0.01) 3px);
-			/* Page depth: lifted off the surface */
+			/* Page depth: newspaper sitting on the desk */
 			box-shadow:
-				0 1px 1px rgba(0,0,0,0.08),
-				0 2px 4px rgba(0,0,0,0.08),
-				0 4px 8px rgba(0,0,0,0.08),
-				0 8px 16px rgba(0,0,0,0.1),
+				0 1px 1px rgba(0,0,0,0.07),
+				0 2px 4px rgba(0,0,0,0.07),
+				0 4px 8px rgba(0,0,0,0.07),
+				0 8px 16px rgba(0,0,0,0.09),
 				0 16px 32px rgba(0,0,0,0.06),
-				/* Subtle page thickness on bottom/right edges */
+				/* Paper thickness edge */
 				1px 1px 0 #cdc4a5,
 				2px 2px 0 #bfb698;
 		}
@@ -107,101 +95,76 @@
 				2px 2px 0 #16120c;
 		}
 
-		/* Edge darkening + corner wear + uneven yellowing */
+		/* === PAPER TEXTURE LAYER (inline SVG with feDiffuseLighting) === */
+		.paper-tex {
+			position: absolute;
+			top: 0; left: 0;
+			width: 100%;
+			height: 100%;
+			mix-blend-mode: multiply;
+			pointer-events: none;
+			z-index: 5;
+			opacity: 0.4;
+		}
+		.dark .paper-tex {
+			opacity: 0.15;
+			mix-blend-mode: soft-light;
+		}
+
+		/* All content sits above the paper texture */
+		.wrap > *:not(.paper-tex):not(.paper-aging) {
+			position: relative;
+			z-index: 6;
+		}
+
+		/* === AGING OVERLAY (vignette + fold crease) === */
 		.wrap::before {
 			content: '';
 			position: absolute;
 			top: 0; left: 0; right: 0; bottom: 0;
 			pointer-events: none;
-			z-index: 10;
+			z-index: 7;
+			/* Edge vignette from handling */
 			box-shadow:
-				/* Deep edge vignette */
-				inset 0 0 60px rgba(70, 50, 20, 0.15),
-				inset 0 0 120px rgba(70, 50, 20, 0.08),
-				inset 0 0 200px rgba(70, 50, 20, 0.04);
+				inset 0 0 80px rgba(70, 50, 20, 0.12),
+				inset 0 0 180px rgba(70, 50, 20, 0.06);
+			/* Corner wear + subtle yellowing zones */
 			background:
-				/* Corner wear — darker at all 4 corners */
-				radial-gradient(ellipse 100px 100px at 0% 0%, rgba(80, 55, 25, 0.1) 0%, transparent 70%),
-				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(80, 55, 25, 0.08) 0%, transparent 70%),
-				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(80, 55, 25, 0.09) 0%, transparent 70%),
-				radial-gradient(ellipse 120px 120px at 100% 100%, rgba(80, 55, 25, 0.11) 0%, transparent 70%),
-				/* Uneven yellowing — warm/cool zones across the page */
-				radial-gradient(ellipse 250px 200px at 30% 25%, rgba(150, 120, 60, 0.04) 0%, transparent 70%),
-				radial-gradient(ellipse 200px 300px at 70% 50%, rgba(120, 100, 65, 0.03) 0%, transparent 70%),
-				radial-gradient(ellipse 300px 200px at 40% 75%, rgba(140, 115, 70, 0.035) 0%, transparent 70%);
+				radial-gradient(ellipse 120px 120px at 0% 0%, rgba(80, 55, 25, 0.08) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(80, 55, 25, 0.06) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(80, 55, 25, 0.07) 0%, transparent 70%),
+				radial-gradient(ellipse 130px 130px at 100% 100%, rgba(80, 55, 25, 0.09) 0%, transparent 70%);
 		}
 		.dark .wrap::before {
 			box-shadow:
-				inset 0 0 60px rgba(0, 0, 0, 0.3),
-				inset 0 0 120px rgba(0, 0, 0, 0.15),
-				inset 0 0 200px rgba(0, 0, 0, 0.08);
+				inset 0 0 80px rgba(0, 0, 0, 0.25),
+				inset 0 0 180px rgba(0, 0, 0, 0.12);
 			background:
-				radial-gradient(ellipse 100px 100px at 0% 0%, rgba(0, 0, 0, 0.15) 0%, transparent 70%),
-				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(0, 0, 0, 0.12) 0%, transparent 70%),
-				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(0, 0, 0, 0.13) 0%, transparent 70%),
-				radial-gradient(ellipse 120px 120px at 100% 100%, rgba(0, 0, 0, 0.16) 0%, transparent 70%);
+				radial-gradient(ellipse 120px 120px at 0% 0%, rgba(0, 0, 0, 0.12) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(0, 0, 0, 0.1) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(0, 0, 0, 0.1) 0%, transparent 70%),
+				radial-gradient(ellipse 130px 130px at 100% 100%, rgba(0, 0, 0, 0.14) 0%, transparent 70%);
 		}
 
-		/* Fold crease + coffee ring + foxing spots + wrinkles */
+		/* Horizontal fold crease */
 		.wrap::after {
 			content: '';
 			position: absolute;
 			top: 0; left: 0; right: 0; bottom: 0;
 			pointer-events: none;
-			z-index: 10;
+			z-index: 7;
 			background:
-				/* ── FOLD CREASE: realistic ridge + valley + shadow ── */
+				/* Fold: light ridge, dark valley, light ridge */
 				linear-gradient(to bottom,
-					transparent calc(50% - 5px),
-					rgba(255,245,220, 0.03) calc(50% - 3px),
-					rgba(0,0,0, 0.02) calc(50% - 1.5px),
-					rgba(0,0,0, 0.06) calc(50% - 0.5px),
-					rgba(0,0,0, 0.08) 50%,
-					rgba(0,0,0, 0.06) calc(50% + 0.5px),
-					rgba(0,0,0, 0.02) calc(50% + 1.5px),
-					rgba(255,245,220, 0.025) calc(50% + 3px),
-					transparent calc(50% + 5px)),
-				/* ── COFFEE STAIN RING ── */
-				radial-gradient(ellipse 42px 44px at calc(100% - 28px) 195px,
-					transparent 50%,
-					rgba(110, 75, 30, 0.045) 53%,
-					rgba(110, 75, 30, 0.07) 58%,
-					rgba(110, 75, 30, 0.055) 63%,
-					rgba(110, 75, 30, 0.03) 68%,
-					transparent 72%),
-				/* Fill inside the coffee ring (faint) */
-				radial-gradient(ellipse 28px 30px at calc(100% - 28px) 195px,
-					rgba(100, 70, 25, 0.02) 0%,
-					transparent 80%),
-				/* ── PAPER WRINKLE LINES (diagonal creases) ── */
-				linear-gradient(172deg, transparent 30%, rgba(0,0,0,0.015) 30.1%, transparent 30.3%),
-				linear-gradient(168deg, transparent 62%, rgba(0,0,0,0.012) 62.1%, transparent 62.3%),
-				linear-gradient(175deg, transparent 78%, rgba(0,0,0,0.01) 78.1%, transparent 78.3%),
-				/* ── FOXING SPOTS (age/mold spots on old paper) ── */
-				radial-gradient(circle 2.5px at 8% 12%, rgba(120, 85, 40, 0.07) 0%, transparent 100%),
-				radial-gradient(circle 1.5px at 92% 8%, rgba(110, 80, 35, 0.05) 0%, transparent 100%),
-				radial-gradient(circle 3px at 15% 28%, rgba(115, 82, 38, 0.06) 0%, transparent 100%),
-				radial-gradient(circle 2px at 85% 22%, rgba(125, 88, 42, 0.055) 0%, transparent 100%),
-				radial-gradient(circle 1.8px at 42% 18%, rgba(118, 84, 40, 0.045) 0%, transparent 100%),
-				radial-gradient(circle 2.5px at 68% 32%, rgba(112, 78, 36, 0.06) 0%, transparent 100%),
-				radial-gradient(circle 3.5px at 22% 45%, rgba(120, 85, 40, 0.055) 0%, transparent 100%),
-				radial-gradient(circle 2px at 78% 48%, rgba(115, 80, 38, 0.05) 0%, transparent 100%),
-				radial-gradient(circle 1.5px at 55% 42%, rgba(108, 76, 34, 0.04) 0%, transparent 100%),
-				radial-gradient(circle 2.8px at 35% 58%, rgba(122, 86, 42, 0.06) 0%, transparent 100%),
-				radial-gradient(circle 2px at 90% 55%, rgba(118, 82, 40, 0.05) 0%, transparent 100%),
-				radial-gradient(circle 1.8px at 12% 68%, rgba(110, 78, 36, 0.045) 0%, transparent 100%),
-				radial-gradient(circle 3px at 65% 72%, rgba(125, 88, 44, 0.055) 0%, transparent 100%),
-				radial-gradient(circle 2.2px at 48% 78%, rgba(115, 82, 38, 0.05) 0%, transparent 100%),
-				radial-gradient(circle 1.5px at 82% 82%, rgba(108, 76, 34, 0.04) 0%, transparent 100%),
-				radial-gradient(circle 2.5px at 28% 88%, rgba(120, 85, 40, 0.06) 0%, transparent 100%),
-				radial-gradient(circle 2px at 72% 92%, rgba(112, 80, 36, 0.05) 0%, transparent 100%),
-				radial-gradient(circle 3px at 5% 95%, rgba(118, 84, 40, 0.055) 0%, transparent 100%),
-				radial-gradient(circle 1.8px at 95% 88%, rgba(122, 86, 42, 0.045) 0%, transparent 100%),
-				radial-gradient(circle 2.5px at 38% 95%, rgba(115, 80, 38, 0.05) 0%, transparent 100%);
+					transparent calc(50% - 4px),
+					rgba(255,245,220, 0.04) calc(50% - 2px),
+					rgba(0,0,0, 0.03) calc(50% - 0.8px),
+					rgba(0,0,0, 0.07) 50%,
+					rgba(0,0,0, 0.03) calc(50% + 0.8px),
+					rgba(255,245,220, 0.04) calc(50% + 2px),
+					transparent calc(50% + 4px));
 		}
-		.dark .wrap::after {
-			opacity: 0.5;
-		}
+		.dark .wrap::after { opacity: 0.4; }
 
 		/* === MASTHEAD === */
 		header {
@@ -211,7 +174,7 @@
 			margin-bottom: 0;
 			position: relative;
 		}
-		/* 5-line ornamental rule (thin-thick-thin-thick-thin) */
+		/* 5-line ornamental rule */
 		header::before {
 			content: '';
 			display: block;
@@ -227,7 +190,7 @@
 				transparent 7px, transparent 8px,
 				var(--rule-color) 8px, var(--rule-color) 9px);
 		}
-		/* Blackletter newspaper title with heavy ink impression */
+		/* Blackletter masthead with heavy ink */
 		header h1 {
 			font-family: var(--font-blackletter);
 			font-size: 2.8rem;
@@ -239,9 +202,9 @@
 			margin-bottom: 2px;
 			text-transform: none;
 			text-shadow:
-				0 0 1.5px var(--fg),
-				0.3px 0.2px 0.5px var(--fg),
-				-0.15px 0.1px 0.3px var(--fg);
+				0 0 1.2px var(--fg),
+				0.2px 0.15px 0.4px var(--fg),
+				-0.1px 0.08px 0.2px var(--fg);
 		}
 		.masthead-subtitle {
 			font-family: var(--font-sc);
@@ -783,6 +746,17 @@
 </head>
 <body>
 	<div class="wrap">
+		<!-- Paper fiber texture: feTurbulence + feDiffuseLighting creates bump-mapped surface -->
+		<svg class="paper-tex" aria-hidden="true" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+			<filter id="paper-fibers" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+				<feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" seed="15" stitchTiles="stitch" result="noise"/>
+				<feDiffuseLighting in="noise" lighting-color="#f0e8d0" surfaceScale="2" result="lit">
+					<feDistantLight azimuth="45" elevation="55"/>
+				</feDiffuseLighting>
+			</filter>
+			<rect width="100%" height="100%" filter="url(#paper-fibers)" fill="none"/>
+		</svg>
+
 		<header>
 			<h1>The SportSync Gazette</h1>
 			<div class="masthead-subtitle">Est. 2026 &middot; Your Trusted Sports Intelligence</div>
