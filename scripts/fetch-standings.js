@@ -15,11 +15,8 @@ import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-va
 const ESPN_BASE = "https://site.api.espn.com/apis/v2/sports";
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
 
-export async function fetchFootballStandings() {
-	const url = `${ESPN_BASE}/soccer/eng.1/standings`;
-	const data = await fetchJson(url);
-
-	const validated = validateESPNStandings(data, "football");
+function parseFootballStandings(data, label) {
+	const validated = validateESPNStandings(data, label);
 	for (const w of validated.warnings) console.warn(w);
 	if (validated.entries.length === 0) return [];
 
@@ -43,6 +40,18 @@ export async function fetchFootballStandings() {
 			points: stats.points || 0,
 		};
 	}).sort((a, b) => a.position - b.position);
+}
+
+export async function fetchFootballStandings() {
+	const url = `${ESPN_BASE}/soccer/eng.1/standings`;
+	const data = await fetchJson(url);
+	return parseFootballStandings(data, "football");
+}
+
+export async function fetchLaLigaStandings() {
+	const url = `${ESPN_BASE}/soccer/esp.1/standings`;
+	const data = await fetchJson(url);
+	return parseFootballStandings(data, "laLiga");
 }
 
 export async function fetchGolfLeaderboard() {
@@ -125,12 +134,15 @@ async function main() {
 
 	// Football
 	try {
-		const pl = await fetchFootballStandings();
-		standings.football = { premierLeague: pl };
-		console.log(`Football: ${pl.length} teams in PL table`);
+		const [pl, laLiga] = await Promise.all([
+			fetchFootballStandings(),
+			fetchLaLigaStandings(),
+		]);
+		standings.football = { premierLeague: pl, laLiga };
+		console.log(`Football: ${pl.length} PL teams, ${laLiga.length} La Liga teams`);
 	} catch (err) {
 		console.warn("Football standings failed:", err.message);
-		standings.football = { premierLeague: [] };
+		standings.football = { premierLeague: [], laLiga: [] };
 	}
 
 	// Golf

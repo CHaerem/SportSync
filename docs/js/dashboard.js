@@ -64,12 +64,13 @@ class Dashboard {
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
 				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
-				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null)
+				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null),
+				fetch('data/meta.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -115,6 +116,10 @@ class Dashboard {
 				try { this.rssDigest = await rssDigestResp.json(); } catch { this.rssDigest = null; }
 			}
 
+			if (metaResp && metaResp.ok) {
+				try { this.meta = await metaResp.json(); } catch { this.meta = null; }
+			}
+
 			this._cacheSet('events', this.allEvents);
 			this._cacheSet('featured', this.featured);
 			this._cacheSet('standings', this.standings);
@@ -145,10 +150,21 @@ class Dashboard {
 		const el = document.getElementById('date-line');
 		if (!el) return;
 		const now = new Date();
-		el.textContent = now.toLocaleDateString('en-US', {
+		let text = now.toLocaleDateString('en-US', {
 			weekday: 'long', month: 'long', day: 'numeric',
 			timeZone: 'Europe/Oslo'
 		});
+		if (this.meta && this.meta.lastUpdate) {
+			const updated = new Date(this.meta.lastUpdate);
+			const diffMin = Math.round((now - updated) / 60000);
+			let ago;
+			if (diffMin < 1) ago = 'just now';
+			else if (diffMin < 60) ago = `${diffMin}m ago`;
+			else if (diffMin < 1440) ago = `${Math.round(diffMin / 60)}h ago`;
+			else ago = `${Math.round(diffMin / 1440)}d ago`;
+			text += `  ·  Updated ${ago}`;
+		}
+		el.textContent = text;
 	}
 
 	// --- The Brief ---
@@ -760,7 +776,7 @@ class Dashboard {
 		}
 
 		// Football: mini league table
-		if (event.sport === 'football' && this.standings?.football?.premierLeague?.length > 0) {
+		if (event.sport === 'football' && this.standings?.football) {
 			content += this.renderFootballStandings(event);
 		}
 
@@ -877,7 +893,12 @@ class Dashboard {
 	// --- Standings renderers ---
 
 	renderFootballStandings(event) {
-		const table = this.standings.football.premierLeague;
+		const tournament = (event.tournament || '').toLowerCase();
+		const isSpanish = tournament.includes('la liga') || tournament.includes('copa del rey');
+		const tableKey = isSpanish ? 'laLiga' : 'premierLeague';
+		const tableName = isSpanish ? 'La Liga' : 'Premier League';
+		const table = this.standings.football[tableKey];
+		if (!table?.length) return '';
 		const matchTeams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => t.toLowerCase());
 
 		// Collect top 3 + both match teams, deduped, sorted by position
@@ -892,7 +913,7 @@ class Dashboard {
 		const rows = Array.from(shown.values()).sort((a, b) => a.position - b.position);
 		if (rows.length === 0) return '';
 
-		let html = '<div class="exp-standings"><div class="exp-standings-header">Premier League</div>';
+		let html = `<div class="exp-standings"><div class="exp-standings-header">${tableName}</div>`;
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
 
 		let lastPos = 0;
