@@ -141,7 +141,12 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "🔄 Update sports data with real API sources - $(date -u +"%Y-%m-%d %H:%M UTC")"
-            git push
+            for i in 1 2 3; do
+              git push && break
+              echo "Push attempt $i failed, rebasing..."
+              git pull --rebase origin main || true
+              sleep 5
+            done
           fi
 
       - name: Summary

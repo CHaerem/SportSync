@@ -113,9 +113,13 @@ function filterNorwegiansAgainstField(norwegianPlayers, pgaField) {
 export async function fetchGolfESPN() {
 	const API_KEY = process.env.LIVEGOLF_API_KEY;
 
-	// If we have the LiveGolf API key, use the better API
+	// If we have the LiveGolf API key, try the better API first
 	if (API_KEY) {
-		return await fetchGolfLiveGolfAPI();
+		try {
+			return await fetchGolfLiveGolfAPI();
+		} catch (err) {
+			console.warn(`LiveGolf API failed (${err.message}), falling back to ESPN`);
+		}
 	}
 
 	// Fallback to ESPN API (no tee times)
