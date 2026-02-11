@@ -446,14 +446,12 @@ async function fetchGolfESPNFallback() {
 
 	const tournaments = [];
 	const now = new Date();
-	const seen = new Set(); // deduplicate across date queries
+	const seen = new Map(); // key -> index in allEvents, keeps earliest date
 
-	// Query multiple date ranges to find upcoming tournaments
-	// ESPN default scoreboard only returns current event, so we probe
-	// future dates. Step of 4 days guarantees hitting any tournament
-	// (golf events are Thu-Sun, 4-day windows).
+	// Query every day for next 14 days so we always catch the Thursday
+	// start of multi-day tournaments (golf events are Thu-Sun).
 	const datesToQuery = [];
-	for (let d = 0; d < 21; d += 4) {
+	for (let d = 0; d < 14; d++) {
 		const date = new Date(now);
 		date.setDate(date.getDate() + d);
 		datesToQuery.push(date.toISOString().slice(0, 10).replace(/-/g, ''));
@@ -478,9 +476,13 @@ async function fetchGolfESPNFallback() {
 					const v = validateESPNScoreboard(data, tour.name);
 					for (const w of v.warnings) console.warn(w);
 					for (const ev of v.events) {
-						if (!seen.has(ev.id || ev.name + ev.date)) {
-							seen.add(ev.id || ev.name + ev.date);
+						const key = ev.id || ev.name;
+						const idx = seen.get(key);
+						if (idx === undefined) {
+							seen.set(key, allEvents.length);
 							allEvents.push(ev);
+						} else if (new Date(ev.date) < new Date(allEvents[idx].date)) {
+							allEvents[idx] = ev; // Keep earliest date
 						}
 					}
 				} catch {
@@ -494,9 +496,13 @@ async function fetchGolfESPNFallback() {
 				const v = validateESPNScoreboard(data, tour.name);
 				for (const w of v.warnings) console.warn(w);
 				for (const ev of v.events) {
-					if (!seen.has(ev.id || ev.name + ev.date)) {
-						seen.add(ev.id || ev.name + ev.date);
+					const key = ev.id || ev.name;
+					const idx = seen.get(key);
+					if (idx === undefined) {
+						seen.set(key, allEvents.length);
 						allEvents.push(ev);
+					} else if (new Date(ev.date) < new Date(allEvents[idx].date)) {
+						allEvents[idx] = ev; // Keep earliest date
 					}
 				}
 			} catch {
