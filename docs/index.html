@@ -605,6 +605,174 @@
 			font-weight: 400;
 		}
 
+		/* --- Watch Plan --- */
+		#watch-plan { margin-bottom: 24px; }
+		.watch-plan-header {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 10px;
+		}
+		.watch-pick {
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+			padding: 8px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.8rem;
+			cursor: pointer;
+			transition: background 0.15s;
+		}
+		.watch-pick:last-child { border-bottom: none; }
+		.watch-pick:hover { background: var(--bg-secondary); }
+		.pick-time {
+			font-size: 0.75rem;
+			color: var(--muted);
+			min-width: 42px;
+			flex-shrink: 0;
+			font-variant-numeric: tabular-nums;
+		}
+		.pick-time .row-rel {
+			display: block;
+			font-size: 0.6rem;
+			opacity: 0.7;
+			line-height: 1.2;
+		}
+		.pick-body { flex: 1; min-width: 0; }
+		.pick-title {
+			font-weight: 400;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.pick-reasons {
+			display: flex;
+			gap: 4px;
+			flex-wrap: wrap;
+			margin-top: 4px;
+		}
+		.pick-reason {
+			font-size: 0.55rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: var(--accent);
+			border: 1px solid var(--accent);
+			border-radius: 10px;
+			padding: 1px 7px;
+			opacity: 0.8;
+		}
+		.pick-stream {
+			font-size: 0.55rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			padding: 1px 7px;
+		}
+		.watch-plan-more {
+			background: none;
+			border: none;
+			color: var(--accent);
+			font-size: 0.7rem;
+			cursor: pointer;
+			margin-top: 8px;
+			padding: 0;
+			font-weight: 400;
+			transition: opacity 0.15s;
+		}
+		.watch-plan-more:hover { opacity: 0.7; }
+
+		/* --- Radar --- */
+		#radar { margin-bottom: 24px; }
+		.radar-section {
+			border-left: 2.5px solid var(--accent);
+			padding-left: 14px;
+			font-size: 0.8rem;
+			font-style: italic;
+			color: var(--muted);
+			line-height: 1.7;
+		}
+		.radar-header {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 8px;
+			font-style: normal;
+		}
+
+		/* --- Importance reason (expanded view) --- */
+		.exp-importance-reason {
+			font-size: 0.7rem;
+			color: var(--muted);
+			margin-bottom: 8px;
+			line-height: 1.5;
+		}
+
+		/* --- News --- */
+		#news { margin-top: 24px; }
+		.news-toggle {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--muted);
+			cursor: pointer;
+			padding: 16px 0 12px;
+			border-top: 1px solid var(--border);
+			background: none;
+			border-left: none;
+			border-right: none;
+			border-bottom: none;
+			width: 100%;
+			text-align: left;
+			transition: opacity 0.15s;
+		}
+		.news-toggle:hover { opacity: 0.7; }
+		.news-content { display: none; }
+		.news-content.open { display: block; }
+		.news-sport-group {
+			margin-bottom: 12px;
+		}
+		.news-sport-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--fg);
+			margin-bottom: 4px;
+		}
+		.news-item {
+			display: flex;
+			align-items: baseline;
+			gap: 8px;
+			padding: 3px 0;
+			font-size: 0.78rem;
+		}
+		.news-source {
+			font-size: 0.55rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			padding: 1px 5px;
+			flex-shrink: 0;
+			white-space: nowrap;
+		}
+		.news-link {
+			color: var(--fg);
+			text-decoration: none;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.news-link:hover { color: var(--accent); }
+
 		/* --- Reduced motion --- */
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
@@ -632,9 +800,14 @@
 
 		<div id="featured-sections"></div>
 
+		<div id="watch-plan"></div>
+		<div id="radar"></div>
+
 		<div id="events">
 			<div class="loading">Loading...</div>
 		</div>
+
+		<div id="news"></div>
 
 	</div>
 

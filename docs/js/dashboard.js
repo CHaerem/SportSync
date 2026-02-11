@@ -4,6 +4,8 @@ class Dashboard {
 		this.allEvents = [];
 		this.featured = null;
 		this.standings = null;
+		this.watchPlan = null;
+		this.rssDigest = null;
 		this.expandedId = null;
 		this.liveScores = {};      // { eventId: { home, away, clock, state } }
 		this.liveLeaderboard = null; // golf live leaderboard
@@ -48,20 +50,26 @@ class Dashboard {
 		const cachedEvents = this._cacheGet('events', STATIC_TTL);
 		const cachedFeatured = this._cacheGet('featured', STATIC_TTL);
 		const cachedStandings = this._cacheGet('standings', STATIC_TTL);
+		const cachedWatchPlan = this._cacheGet('watchPlan', STATIC_TTL);
+		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
 
 		if (cachedEvents) {
 			this.allEvents = cachedEvents;
 			this.featured = cachedFeatured;
 			this.standings = cachedStandings;
+			this.watchPlan = cachedWatchPlan;
+			this.rssDigest = cachedRssDigest;
 			this.render();
 			return;
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
-				fetch('data/standings.json?t=' + Date.now()).catch(() => null)
+				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
+				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
+				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -87,6 +95,7 @@ class Dashboard {
 					summary: ev.summary || null,
 					tags: Array.isArray(ev.tags) ? ev.tags : [],
 					norwegianRelevance: typeof ev.norwegianRelevance === 'number' ? ev.norwegianRelevance : null,
+				importanceReason: ev.importanceReason || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 
@@ -98,9 +107,19 @@ class Dashboard {
 				try { this.standings = await standingsResp.json(); } catch { this.standings = null; }
 			}
 
+			if (watchPlanResp && watchPlanResp.ok) {
+				try { this.watchPlan = await watchPlanResp.json(); } catch { this.watchPlan = null; }
+			}
+
+			if (rssDigestResp && rssDigestResp.ok) {
+				try { this.rssDigest = await rssDigestResp.json(); } catch { this.rssDigest = null; }
+			}
+
 			this._cacheSet('events', this.allEvents);
 			this._cacheSet('featured', this.featured);
 			this._cacheSet('standings', this.standings);
+			this._cacheSet('watchPlan', this.watchPlan);
+			this._cacheSet('rssDigest', this.rssDigest);
 
 			this.render();
 		} catch (err) {
@@ -116,7 +135,10 @@ class Dashboard {
 		this.renderDateLine();
 		this.renderBrief();
 		this.renderSections();
+		this.renderWatchPlan();
+		this.renderRadar();
 		this.renderEvents();
+		this.renderNews();
 	}
 
 	renderDateLine() {
@@ -295,6 +317,173 @@ class Dashboard {
 				}
 			});
 		});
+	}
+
+	// --- Watch Plan ---
+
+	renderWatchPlan() {
+		const container = document.getElementById('watch-plan');
+		if (!container) return;
+
+		if (!this.watchPlan || !Array.isArray(this.watchPlan.picks) || this.watchPlan.picks.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+
+		const picks = this.watchPlan.picks;
+		const initialCount = 2;
+		const hasMore = picks.length > initialCount;
+
+		let html = '<div class="watch-plan-header">What to Watch</div>';
+
+		picks.forEach((pick, i) => {
+			const hidden = i >= initialCount && hasMore ? ' style="display:none"' : '';
+			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === pick.sport) : null;
+			const emoji = sportConfig ? sportConfig.emoji : '';
+
+			const pickTime = pick.time ? new Date(pick.time) : null;
+			let timeLabel = '';
+			let relLabel = '';
+			if (pickTime) {
+				timeLabel = pickTime.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+				relLabel = this.relativeTime(pickTime) || '';
+			}
+
+			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
+			const streaming = pick.streaming || null;
+
+			html += `<div class="watch-pick" data-pick-index="${i}"${hidden}>`;
+			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
+			html += `<div class="pick-body">`;
+			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
+			if (reasons.length > 0 || streaming) {
+				html += '<div class="pick-reasons">';
+				reasons.forEach(r => { html += `<span class="pick-reason">${this.esc(r)}</span>`; });
+				if (streaming) { html += `<span class="pick-stream">${this.esc(streaming)}</span>`; }
+				html += '</div>';
+			}
+			html += `</div></div>`;
+		});
+
+		if (hasMore) {
+			html += `<button class="watch-plan-more" data-expanded="false">Show ${picks.length - initialCount} more \u25b8</button>`;
+		}
+
+		container.innerHTML = html;
+
+		// Bind "show more" toggle
+		const moreBtn = container.querySelector('.watch-plan-more');
+		if (moreBtn) {
+			moreBtn.addEventListener('click', () => {
+				const expanded = moreBtn.dataset.expanded === 'true';
+				container.querySelectorAll('.watch-pick').forEach((el, i) => {
+					if (i >= initialCount) el.style.display = expanded ? 'none' : '';
+				});
+				moreBtn.dataset.expanded = expanded ? 'false' : 'true';
+				moreBtn.textContent = expanded
+					? `Show ${picks.length - initialCount} more \u25b8`
+					: 'Show less \u25be';
+			});
+		}
+
+		// Bind pick clicks to scroll to matching event
+		container.querySelectorAll('.watch-pick').forEach(el => {
+			el.addEventListener('click', () => {
+				const idx = parseInt(el.dataset.pickIndex, 10);
+				const pick = picks[idx];
+				if (!pick) return;
+				const matchedEvent = this.allEvents.find(e =>
+					e.title === pick.title || (pick.eventId && e.id === pick.eventId)
+				);
+				if (matchedEvent) {
+					this.expandedId = matchedEvent.id;
+					this.render();
+					const row = document.querySelector(`.event-row[data-id="${matchedEvent.id}"]`);
+					if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			});
+		});
+	}
+
+	// --- Radar ---
+
+	renderRadar() {
+		const container = document.getElementById('radar');
+		if (!container) return;
+
+		const radar = this.featured?.radar;
+		if (!radar || (Array.isArray(radar) && radar.length === 0) || (!Array.isArray(radar) && !radar)) {
+			container.innerHTML = '';
+			return;
+		}
+
+		const lines = Array.isArray(radar) ? radar : [radar];
+		if (lines.length === 0 || lines.every(l => !l)) {
+			container.innerHTML = '';
+			return;
+		}
+
+		let html = '<div class="radar-section">';
+		html += '<div class="radar-header">On the Radar</div>';
+		html += lines.map(line => this.esc(line)).join(' ');
+		html += '</div>';
+
+		container.innerHTML = html;
+	}
+
+	// --- News ---
+
+	renderNews() {
+		const container = document.getElementById('news');
+		if (!container) return;
+
+		if (!this.rssDigest || !Array.isArray(this.rssDigest.items) || this.rssDigest.items.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+
+		const items = this.rssDigest.items.slice(0, 8);
+
+		// Group by sport
+		const groups = new Map();
+		for (const item of items) {
+			const sport = item.sport || 'general';
+			if (!groups.has(sport)) groups.set(sport, []);
+			groups.get(sport).push(item);
+		}
+
+		let contentHtml = '';
+		for (const [sport, sportItems] of groups) {
+			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === sport) : null;
+			const label = sportConfig ? `${sportConfig.emoji} ${sportConfig.name}` : sport;
+			contentHtml += `<div class="news-sport-group">`;
+			contentHtml += `<div class="news-sport-label">${this.esc(label)}</div>`;
+			for (const item of sportItems) {
+				const source = item.source || '';
+				const title = item.title || '';
+				const link = item.link || '#';
+				contentHtml += `<div class="news-item">`;
+				contentHtml += `<span class="news-source">${this.esc(source)}</span>`;
+				contentHtml += `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-link">${this.esc(title)}</a>`;
+				contentHtml += `</div>`;
+			}
+			contentHtml += `</div>`;
+		}
+
+		let html = `<button class="news-toggle" data-expanded="false">Latest News \u25b8</button>`;
+		html += `<div class="news-content">${contentHtml}</div>`;
+
+		container.innerHTML = html;
+
+		const toggle = container.querySelector('.news-toggle');
+		const content = container.querySelector('.news-content');
+		if (toggle && content) {
+			toggle.addEventListener('click', () => {
+				const isOpen = content.classList.contains('open');
+				content.classList.toggle('open');
+				toggle.textContent = isOpen ? 'Latest News \u25b8' : 'Latest News \u25be';
+			});
+		}
 	}
 
 	// --- Temporal band event layout ---
@@ -530,6 +719,11 @@ class Dashboard {
 		// AI summary
 		if (event.summary) {
 			content += `<div class="exp-summary">${this.esc(event.summary)}</div>`;
+		}
+
+		// Importance reason
+		if (event.importanceReason) {
+			content += `<div class="exp-importance-reason">Why this matters: ${this.esc(event.importanceReason)}</div>`;
 		}
 
 		// Tags
@@ -809,7 +1003,7 @@ class Dashboard {
 		if (!hasLiveFootball) return;
 
 		const LIVE_TTL = 30 * 1000; // 30 seconds
-		const leagues = ['eng.1', 'esp.1'];
+		const leagues = ['eng.1', 'esp.1', 'esp.copa_del_rey'];
 		const fetches = leagues.map(league => {
 			const cached = this._cacheGet('live_football_' + league, LIVE_TTL);
 			if (cached) return Promise.resolve(cached);

@@ -9,6 +9,7 @@ export async function fetchFootballESPN() {
 	const leagues = [
 		{ code: "eng.1", name: "Premier League" },
 		{ code: "esp.1", name: "La Liga" },
+		{ code: "esp.copa_del_rey", name: "Copa del Rey" },
 		{ code: "nor.1", name: "Eliteserien" }, // Norwegian top division
 		{ code: "nor.2", name: "OBOS-ligaen" }, // Norwegian second division
 		{ code: "fifa.world", name: "International" }, // For Norwegian national team matches
