@@ -15,6 +15,10 @@ on:
       - ".github/workflows/update-sports-data.yml"
       - "scripts/**"
 
+concurrency:
+  group: sportsync-commits
+  cancel-in-progress: false
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -53,17 +57,23 @@ jobs:
         run: |
           npm run update:data
 
-      - name: Merge Open + Primary Data
+      - name: Merge data + Fetch standings + Fetch RSS (parallel)
         run: |
-          node scripts/merge-open-data.js || echo "Merge step failed"
+          node scripts/merge-open-data.js &
+          PID_MERGE=$!
+          node scripts/fetch-standings.js &
+          PID_STANDINGS=$!
+          node scripts/fetch-rss.js &
+          PID_RSS=$!
 
-      - name: Fetch standings data
-        run: |
-          node scripts/fetch-standings.js || echo "Standings fetch failed"
+          FAIL=0
+          wait $PID_MERGE || { echo "Merge step failed"; FAIL=1; }
+          wait $PID_STANDINGS || { echo "Standings fetch failed"; FAIL=1; }
+          wait $PID_RSS || { echo "RSS fetch failed"; FAIL=1; }
 
-      - name: Fetch RSS news digest
-        run: |
-          node scripts/fetch-rss.js || echo "RSS fetch failed"
+          if [ $FAIL -ne 0 ]; then
+            echo "One or more parallel steps failed (non-fatal)"
+          fi
 
       - name: Generate aggregated events file
         run: |
@@ -90,32 +100,43 @@ jobs:
         run: |
           node scripts/pipeline-health.js || true
 
-      - name: Check quality regression
+      - name: Quality regression + Coverage gaps + Calendar (parallel)
         run: |
-          node scripts/check-quality-regression.js || true
+          node scripts/check-quality-regression.js &
+          PID_QUALITY=$!
+          node scripts/detect-coverage-gaps.js &
+          PID_GAPS=$!
+          npm run build:calendar &
+          PID_CAL=$!
 
-      - name: Detect coverage gaps
-        run: |
-          node scripts/detect-coverage-gaps.js || true
-
-      - name: Build ICS calendar
-        run: |
-          npm run build:calendar
+          wait $PID_QUALITY || echo "Quality regression check failed"
+          wait $PID_GAPS || echo "Coverage gap detection failed"
+          wait $PID_CAL || echo "Calendar build failed"
 
       - name: Update meta timestamp
         run: |
           echo '{
             "lastUpdate": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
-            "nextUpdate": "'$(date -u -d "+2 hours" +"%Y-%m-%dT%H:%M:%SZ")'",
+            "nextUpdate": "'$(date -u -d "+2 hours 10 minutes" +"%Y-%m-%dT%H:%M:%SZ")'",
             "timezone": "Europe/Oslo",
             "openSources": true
           }' > docs/data/meta.json
+
+      - name: Pre-commit gate
+        id: gate
+        run: |
+          node scripts/pre-commit-gate.js && echo "gate=pass" >> $GITHUB_OUTPUT || echo "gate=fail" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add docs/data/
+          if [ "${{ steps.gate.outputs.gate }}" = "fail" ]; then
+            echo "Gate failed — committing health/monitoring files only"
+            git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true
+          else
+            git add docs/data/
+          fi
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
@@ -154,5 +175,9 @@ jobs:
           if [ -f docs/data/coverage-gaps.json ]; then
             GAPS=$(jq -r '.summary.totalGapsDetected' docs/data/coverage-gaps.json 2>/dev/null || echo 0)
             echo "- **Coverage Gaps**: $GAPS detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          GATE="${{ steps.gate.outputs.gate }}"
+          if [ "$GATE" = "fail" ]; then
+            echo "⚠️ Pre-commit gate FAILED — only monitoring files committed" >> $GITHUB_STEP_SUMMARY
           fi
           echo "✅ Dashboard updated with current week real data only!" >> $GITHUB_STEP_SUMMARY

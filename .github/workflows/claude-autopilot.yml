@@ -2,7 +2,7 @@ name: Claude Autopilot
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Nightly at 03:00 UTC
+    - cron: '0 1 * * *' # Nightly at 01:00 UTC (between data pipeline runs)
   workflow_dispatch:
     inputs:
       task_override:
@@ -11,8 +11,8 @@ on:
         type: string
 
 concurrency:
-  group: claude-autopilot
-  cancel-in-progress: true
+  group: sportsync-commits
+  cancel-in-progress: false
 
 jobs:
   autopilot:
