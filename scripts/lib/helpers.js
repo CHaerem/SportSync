@@ -90,11 +90,18 @@ export function writeJsonPretty(file, data) {
 	fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-export function retainLastGood(targetFile, newData) {
+export function retainLastGood(targetFile, newData, maxAgeDays = 14) {
 	const exists = readJsonIfExists(targetFile);
 	const newHasEvents = hasEvents(newData);
 	if (!newHasEvents && exists && hasEvents(exists)) {
-		return { kept: true, data: exists };
+		// Check if retained data is too old to keep
+		const retainedAge = exists.lastUpdated
+			? (Date.now() - new Date(exists.lastUpdated).getTime()) / (1000 * 60 * 60 * 24)
+			: Infinity;
+		if (retainedAge <= maxAgeDays) {
+			return { kept: true, data: exists };
+		}
+		console.warn(`Retained data expired (${Math.round(retainedAge)} days old) for ${path.basename(targetFile)}`);
 	}
 	writeJsonPretty(targetFile, newData);
 	return { kept: false, data: newData };

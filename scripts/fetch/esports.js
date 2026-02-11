@@ -6,8 +6,18 @@ import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 
 const TRACKED_ALIASES = ["100 thieves", "100t"];
 
+// Top-tier CS2 events to always include for general coverage
+const MAJOR_CS2_PATTERNS = [
+	/major/i, /iem/i, /esl pro/i, /blast/i, /world cup/i,
+	/pgl/i, /dreamhack/i, /champions/i, /pro league/i
+];
+
 function isTrackedTeam(teamName) {
 	return TRACKED_ALIASES.some(alias => (teamName || "").toLowerCase().includes(alias));
+}
+
+function isMajorEvent(tournamentName) {
+	return MAJOR_CS2_PATTERNS.some(p => p.test(tournamentName || ""));
 }
 
 // Filter events to current week only
@@ -68,7 +78,7 @@ async function fetchFromPandaScore() {
 
 		console.log("PandaScore: 100 Thieves tournaments:", Array.from(trackedTournaments));
 
-		// Get all matches from those tournaments (full tournament context)
+		// Get matches from tracked tournaments + major events
 		for (const match of upcoming) {
 			const tournamentName = match.tournament?.name || match.league?.name || "";
 			const opponents = match.opponents || [];
@@ -77,8 +87,9 @@ async function fetchFromPandaScore() {
 
 			const isInTrackedTournament = trackedTournaments.has(tournamentName);
 			const isDirectMatch = isTrackedTeam(team1) || isTrackedTeam(team2);
+			const isMajor = isMajorEvent(tournamentName);
 
-			if (!isInTrackedTournament && !isDirectMatch) continue;
+			if (!isInTrackedTournament && !isDirectMatch && !isMajor) continue;
 
 			events.push({
 				title: `${team1} vs ${team2}`,
@@ -165,23 +176,25 @@ async function fetchFromHLTV() {
 
 		console.log(`HLTV: ${data.length} matches, newest is ${Math.round(daysSinceNewest)} days ago`);
 
-		// Find 100 Thieves tournaments
+		// Find 100 Thieves tournaments + major events
 		const trackedEvents = new Set();
 		for (const m of data) {
 			const teams = m.teams || [];
 			const team1 = teams[0]?.name || "";
 			const team2 = teams[1]?.name || "";
+			const eventName = m.event?.name || "";
 			if (isTrackedTeam(team1) || isTrackedTeam(team2)) {
-				const eventName = m.event?.name || "";
 				if (eventName) trackedEvents.add(eventName);
 			}
 		}
 
-		// Get matches from tracked tournaments
+		// Get matches from tracked tournaments + major events
 		const now = Date.now();
 		for (const m of data) {
 			const eventName = m.event?.name || "";
-			if (!trackedEvents.has(eventName)) continue;
+			const isTracked = trackedEvents.has(eventName);
+			const isMajor = isMajorEvent(eventName);
+			if (!isTracked && !isMajor) continue;
 			const matchTime = new Date(m.time || m.date);
 			if (matchTime.getTime() <= now) continue;
 

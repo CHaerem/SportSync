@@ -3,6 +3,16 @@ import { sportsConfig } from "../config/sports-config.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
 import { EventFilters } from "../lib/filters.js";
 
+// Top-tier CS2 events to always include for general coverage
+const MAJOR_CS2_PATTERNS = [
+	/major/i, /iem/i, /esl pro/i, /blast/i, /world cup/i,
+	/pgl/i, /dreamhack/i, /champions/i, /pro league/i
+];
+
+function isMajorEvent(name) {
+	return MAJOR_CS2_PATTERNS.some(p => p.test(name || ""));
+}
+
 export class EsportsFetcher extends BaseFetcher {
 	constructor() {
 		super(sportsConfig.esports);
@@ -47,7 +57,7 @@ export class EsportsFetcher extends BaseFetcher {
 				}
 			}
 
-			// Get all matches from those tournaments
+			// Get matches from tracked tournaments + major events
 			for (const match of upcoming) {
 				const tournament = match.tournament?.name || match.league?.name || "";
 				const opponents = match.opponents || [];
@@ -58,7 +68,7 @@ export class EsportsFetcher extends BaseFetcher {
 					team2.toLowerCase().includes(t.toLowerCase())
 				);
 
-				if (!trackedTournaments.has(tournament) && !isDirect) continue;
+				if (!trackedTournaments.has(tournament) && !isDirect && !isMajorEvent(tournament)) continue;
 
 				matches.push({
 					title: `${team1} vs ${team2}`,
@@ -107,11 +117,13 @@ export class EsportsFetcher extends BaseFetcher {
 			const filteredMatches = data.filter(match => {
 				const team1 = this.extractTeamName(match, 0);
 				const team2 = this.extractTeamName(match, 1);
-				
-				return focusTeams.some(team => 
+				const eventName = match.event?.name || match.tournament?.name || "";
+
+				const hasFocusTeam = focusTeams.some(team =>
 					team1.toLowerCase().includes(team.toLowerCase()) ||
 					team2.toLowerCase().includes(team.toLowerCase())
 				);
+				return hasFocusTeam || isMajorEvent(eventName);
 			});
 			
 			console.log(`Filtered to ${filteredMatches.length} matches with focus teams`);

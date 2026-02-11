@@ -91,7 +91,6 @@ export async function fetchTennis() {
 						});
 					} else {
 						// Ruud is in the tournament but no upcoming match scheduled yet
-						// Add a tournament-level event so the user knows
 						const tournamentDates = tournament.date ? new Date(tournament.date) : now;
 						tournaments.push({
 							name: tournamentName,
@@ -107,6 +106,12 @@ export async function fetchTennis() {
 							}],
 						});
 					}
+				} else if (allUpcomingMatches.length > 0) {
+					// Include active tournaments for general coverage (capped at 5)
+					tournaments.push({
+						name: tournamentName,
+						events: allUpcomingMatches.slice(0, 5),
+					});
 				}
 			}
 		} catch (error) {
