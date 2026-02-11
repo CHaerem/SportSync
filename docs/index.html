@@ -14,14 +14,14 @@
 	<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Playfair+Display+SC:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 	<style>
 		:root {
-			--bg: #f0e6c8;
-			--bg-surface: #c8b897;
-			--bg-secondary: #e8ddbf;
-			--fg: #1a1510;
+			--bg: #ede4c5;
+			--bg-surface: #8b8070;
+			--bg-secondary: #e5dbb8;
+			--fg: #1c1710;
 			--muted: #5a4e3c;
-			--border: #b8a98a;
-			--border-strong: #1a1510;
-			--accent: #8b1a1a;
+			--border: #b5a78a;
+			--border-strong: #1c1710;
+			--accent: #7a1818;
 			--radius: 0px;
 			--max-w: 520px;
 			--font: 'EB Garamond', Georgia, 'Times New Roman', serif;
@@ -31,77 +31,118 @@
 			--font-mono: 'Courier New', Courier, monospace;
 			--font-serif: 'Playfair Display', Georgia, serif;
 			--shadow: none;
-			--rule-color: #1a1510;
+			--rule-color: #1c1710;
 			--ornament-color: #7a6b52;
-			--ink-bleed: 0 0 0.5px #1a1510;
-			--page-shadow: 3px 4px 14px rgba(0,0,0,0.2), -1px 0 6px rgba(0,0,0,0.08);
-			--stain-opacity: 0.06;
 		}
 		.dark {
-			--bg: #16120c;
-			--bg-surface: #0c0a07;
-			--bg-secondary: #1e1912;
-			--fg: #c8b897;
-			--muted: #8a7b63;
+			--bg: #18130d;
+			--bg-surface: #090806;
+			--bg-secondary: #201a12;
+			--fg: #c5b890;
+			--muted: #877a62;
 			--border: #3a3020;
-			--border-strong: #c8b897;
-			--accent: #c8553a;
-			--rule-color: #c8b897;
+			--border-strong: #c5b890;
+			--accent: #b84a30;
+			--rule-color: #c5b890;
 			--ornament-color: #7a6b52;
-			--ink-bleed: 0 0 0.5px #c8b897;
-			--page-shadow: 3px 4px 20px rgba(0,0,0,0.5);
-			--stain-opacity: 0.04;
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
+		/* === SURFACE (desk/table behind the newspaper) === */
 		html { background: var(--bg-surface); }
-
 		body {
 			font-family: var(--font);
 			background: var(--bg-surface);
 			color: var(--fg);
-			line-height: 1.58;
+			line-height: 1.56;
 			font-size: 15.5px;
 			font-weight: 400;
 			-webkit-font-smoothing: auto;
-			text-shadow: var(--ink-bleed);
+			/* Ink impression: slight bleed + offset for printed look */
+			text-shadow:
+				0 0 0.4px var(--fg),
+				0.15px 0.1px 0.2px rgba(0,0,0,0.12);
 			font-feature-settings: 'onum' 1, 'liga' 1;
 		}
 
-		/* Paper page sitting on a surface */
+		/* === NEWSPAPER PAGE === */
 		.wrap {
 			max-width: var(--max-w);
-			margin: 12px auto;
-			padding: 36px 32px 48px;
-			background-color: var(--bg);
-			background-image:
-				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
-				repeating-linear-gradient(0deg,
-					transparent, transparent 1.5px,
-					rgba(100, 85, 60, 0.012) 1.5px, rgba(100, 85, 60, 0.012) 3px);
-			box-shadow: var(--page-shadow);
+			margin: 16px auto;
+			padding: 38px 34px 52px;
 			position: relative;
 			overflow: hidden;
+			/* Paper color + multi-frequency grain layers */
+			background-color: var(--bg);
+			background-image:
+				/* Fine grain — high frequency paper fiber */
+				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='6' seed='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='0.05'/%3E%3C/svg%3E"),
+				/* Medium grain — paper pulp texture */
+				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23b)' opacity='0.04'/%3E%3C/svg%3E"),
+				/* Coarse grain — large-scale color variation */
+				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.12' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23c)' opacity='0.025'/%3E%3C/svg%3E"),
+				/* Faint print roller lines */
+				repeating-linear-gradient(0deg,
+					transparent, transparent 2px,
+					rgba(90, 75, 50, 0.01) 2px, rgba(90, 75, 50, 0.01) 3px);
+			/* Page depth: lifted off the surface */
+			box-shadow:
+				0 1px 1px rgba(0,0,0,0.08),
+				0 2px 4px rgba(0,0,0,0.08),
+				0 4px 8px rgba(0,0,0,0.08),
+				0 8px 16px rgba(0,0,0,0.1),
+				0 16px 32px rgba(0,0,0,0.06),
+				/* Subtle page thickness on bottom/right edges */
+				1px 1px 0 #cdc4a5,
+				2px 2px 0 #bfb698;
+		}
+		.dark .wrap {
+			box-shadow:
+				0 1px 1px rgba(0,0,0,0.15),
+				0 2px 4px rgba(0,0,0,0.15),
+				0 4px 8px rgba(0,0,0,0.15),
+				0 8px 16px rgba(0,0,0,0.2),
+				0 16px 32px rgba(0,0,0,0.12),
+				1px 1px 0 #1e1912,
+				2px 2px 0 #16120c;
 		}
 
-		/* Edge darkening / vignette */
+		/* Edge darkening + corner wear + uneven yellowing */
 		.wrap::before {
 			content: '';
 			position: absolute;
 			top: 0; left: 0; right: 0; bottom: 0;
-			box-shadow:
-				inset 0 0 80px rgba(80, 60, 30, 0.12),
-				inset 0 0 200px rgba(80, 60, 30, 0.06);
 			pointer-events: none;
 			z-index: 10;
+			box-shadow:
+				/* Deep edge vignette */
+				inset 0 0 60px rgba(70, 50, 20, 0.15),
+				inset 0 0 120px rgba(70, 50, 20, 0.08),
+				inset 0 0 200px rgba(70, 50, 20, 0.04);
+			background:
+				/* Corner wear — darker at all 4 corners */
+				radial-gradient(ellipse 100px 100px at 0% 0%, rgba(80, 55, 25, 0.1) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(80, 55, 25, 0.08) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(80, 55, 25, 0.09) 0%, transparent 70%),
+				radial-gradient(ellipse 120px 120px at 100% 100%, rgba(80, 55, 25, 0.11) 0%, transparent 70%),
+				/* Uneven yellowing — warm/cool zones across the page */
+				radial-gradient(ellipse 250px 200px at 30% 25%, rgba(150, 120, 60, 0.04) 0%, transparent 70%),
+				radial-gradient(ellipse 200px 300px at 70% 50%, rgba(120, 100, 65, 0.03) 0%, transparent 70%),
+				radial-gradient(ellipse 300px 200px at 40% 75%, rgba(140, 115, 70, 0.035) 0%, transparent 70%);
 		}
 		.dark .wrap::before {
 			box-shadow:
-				inset 0 0 80px rgba(0, 0, 0, 0.25),
-				inset 0 0 200px rgba(0, 0, 0, 0.12);
+				inset 0 0 60px rgba(0, 0, 0, 0.3),
+				inset 0 0 120px rgba(0, 0, 0, 0.15),
+				inset 0 0 200px rgba(0, 0, 0, 0.08);
+			background:
+				radial-gradient(ellipse 100px 100px at 0% 0%, rgba(0, 0, 0, 0.15) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 100% 0%, rgba(0, 0, 0, 0.12) 0%, transparent 70%),
+				radial-gradient(ellipse 100px 100px at 0% 100%, rgba(0, 0, 0, 0.13) 0%, transparent 70%),
+				radial-gradient(ellipse 120px 120px at 100% 100%, rgba(0, 0, 0, 0.16) 0%, transparent 70%);
 		}
 
-		/* Coffee stain ring + fold crease + age spots */
+		/* Fold crease + coffee ring + foxing spots + wrinkles */
 		.wrap::after {
 			content: '';
 			position: absolute;
@@ -109,24 +150,60 @@
 			pointer-events: none;
 			z-index: 10;
 			background:
-				radial-gradient(ellipse 38px 40px at calc(100% - 30px) 180px,
-					transparent 54%,
-					rgba(120, 80, 30, var(--stain-opacity)) 56%,
-					rgba(120, 80, 30, calc(var(--stain-opacity) * 1.3)) 62%,
-					rgba(120, 80, 30, var(--stain-opacity)) 68%,
-					transparent 70%),
+				/* ── FOLD CREASE: realistic ridge + valley + shadow ── */
 				linear-gradient(to bottom,
-					transparent calc(50% - 2px),
-					rgba(80, 60, 30, 0.04) calc(50% - 1px),
-					rgba(80, 60, 30, 0.07) 50%,
-					rgba(80, 60, 30, 0.04) calc(50% + 1px),
-					transparent calc(50% + 2px)),
-				radial-gradient(circle 20px at 15% 35%, rgba(100, 75, 40, 0.03) 0%, transparent 70%),
-				radial-gradient(circle 30px at 80% 65%, rgba(100, 75, 40, 0.025) 0%, transparent 70%),
-				radial-gradient(circle 15px at 45% 85%, rgba(100, 75, 40, 0.02) 0%, transparent 70%);
+					transparent calc(50% - 5px),
+					rgba(255,245,220, 0.03) calc(50% - 3px),
+					rgba(0,0,0, 0.02) calc(50% - 1.5px),
+					rgba(0,0,0, 0.06) calc(50% - 0.5px),
+					rgba(0,0,0, 0.08) 50%,
+					rgba(0,0,0, 0.06) calc(50% + 0.5px),
+					rgba(0,0,0, 0.02) calc(50% + 1.5px),
+					rgba(255,245,220, 0.025) calc(50% + 3px),
+					transparent calc(50% + 5px)),
+				/* ── COFFEE STAIN RING ── */
+				radial-gradient(ellipse 42px 44px at calc(100% - 28px) 195px,
+					transparent 50%,
+					rgba(110, 75, 30, 0.045) 53%,
+					rgba(110, 75, 30, 0.07) 58%,
+					rgba(110, 75, 30, 0.055) 63%,
+					rgba(110, 75, 30, 0.03) 68%,
+					transparent 72%),
+				/* Fill inside the coffee ring (faint) */
+				radial-gradient(ellipse 28px 30px at calc(100% - 28px) 195px,
+					rgba(100, 70, 25, 0.02) 0%,
+					transparent 80%),
+				/* ── PAPER WRINKLE LINES (diagonal creases) ── */
+				linear-gradient(172deg, transparent 30%, rgba(0,0,0,0.015) 30.1%, transparent 30.3%),
+				linear-gradient(168deg, transparent 62%, rgba(0,0,0,0.012) 62.1%, transparent 62.3%),
+				linear-gradient(175deg, transparent 78%, rgba(0,0,0,0.01) 78.1%, transparent 78.3%),
+				/* ── FOXING SPOTS (age/mold spots on old paper) ── */
+				radial-gradient(circle 2.5px at 8% 12%, rgba(120, 85, 40, 0.07) 0%, transparent 100%),
+				radial-gradient(circle 1.5px at 92% 8%, rgba(110, 80, 35, 0.05) 0%, transparent 100%),
+				radial-gradient(circle 3px at 15% 28%, rgba(115, 82, 38, 0.06) 0%, transparent 100%),
+				radial-gradient(circle 2px at 85% 22%, rgba(125, 88, 42, 0.055) 0%, transparent 100%),
+				radial-gradient(circle 1.8px at 42% 18%, rgba(118, 84, 40, 0.045) 0%, transparent 100%),
+				radial-gradient(circle 2.5px at 68% 32%, rgba(112, 78, 36, 0.06) 0%, transparent 100%),
+				radial-gradient(circle 3.5px at 22% 45%, rgba(120, 85, 40, 0.055) 0%, transparent 100%),
+				radial-gradient(circle 2px at 78% 48%, rgba(115, 80, 38, 0.05) 0%, transparent 100%),
+				radial-gradient(circle 1.5px at 55% 42%, rgba(108, 76, 34, 0.04) 0%, transparent 100%),
+				radial-gradient(circle 2.8px at 35% 58%, rgba(122, 86, 42, 0.06) 0%, transparent 100%),
+				radial-gradient(circle 2px at 90% 55%, rgba(118, 82, 40, 0.05) 0%, transparent 100%),
+				radial-gradient(circle 1.8px at 12% 68%, rgba(110, 78, 36, 0.045) 0%, transparent 100%),
+				radial-gradient(circle 3px at 65% 72%, rgba(125, 88, 44, 0.055) 0%, transparent 100%),
+				radial-gradient(circle 2.2px at 48% 78%, rgba(115, 82, 38, 0.05) 0%, transparent 100%),
+				radial-gradient(circle 1.5px at 82% 82%, rgba(108, 76, 34, 0.04) 0%, transparent 100%),
+				radial-gradient(circle 2.5px at 28% 88%, rgba(120, 85, 40, 0.06) 0%, transparent 100%),
+				radial-gradient(circle 2px at 72% 92%, rgba(112, 80, 36, 0.05) 0%, transparent 100%),
+				radial-gradient(circle 3px at 5% 95%, rgba(118, 84, 40, 0.055) 0%, transparent 100%),
+				radial-gradient(circle 1.8px at 95% 88%, rgba(122, 86, 42, 0.045) 0%, transparent 100%),
+				radial-gradient(circle 2.5px at 38% 95%, rgba(115, 80, 38, 0.05) 0%, transparent 100%);
+		}
+		.dark .wrap::after {
+			opacity: 0.5;
 		}
 
-		/* --- MASTHEAD --- */
+		/* === MASTHEAD === */
 		header {
 			display: flex;
 			flex-direction: column;
@@ -134,7 +211,7 @@
 			margin-bottom: 0;
 			position: relative;
 		}
-		/* 5-line ornamental rule */
+		/* 5-line ornamental rule (thin-thick-thin-thick-thin) */
 		header::before {
 			content: '';
 			display: block;
@@ -150,6 +227,7 @@
 				transparent 7px, transparent 8px,
 				var(--rule-color) 8px, var(--rule-color) 9px);
 		}
+		/* Blackletter newspaper title with heavy ink impression */
 		header h1 {
 			font-family: var(--font-blackletter);
 			font-size: 2.8rem;
@@ -160,7 +238,10 @@
 			line-height: 1.1;
 			margin-bottom: 2px;
 			text-transform: none;
-			text-shadow: 0 0 1px var(--fg), 0 0 0.5px var(--fg);
+			text-shadow:
+				0 0 1.5px var(--fg),
+				0.3px 0.2px 0.5px var(--fg),
+				-0.15px 0.1px 0.3px var(--fg);
 		}
 		.masthead-subtitle {
 			font-family: var(--font-sc);
@@ -204,7 +285,7 @@
 		}
 		#themeToggle:hover { opacity: 1; }
 
-		/* --- DATE LINE --- */
+		/* === DATE LINE === */
 		#date-line {
 			font-family: var(--font-sc);
 			font-size: 0.58rem;
@@ -218,7 +299,7 @@
 		#date-line::before { content: 'Vol. I \00B7  No. 1 \00B7  '; }
 		#date-line::after { content: ' \00B7  Late Edition \00B7  Price 2 Kr.'; }
 
-		/* --- THE BRIEF / LEAD ARTICLE --- */
+		/* === THE BRIEF / LEAD ARTICLE === */
 		#the-brief {
 			padding: 16px 0 20px;
 			margin-top: 8px;
@@ -231,6 +312,7 @@
 			text-align-last: left;
 			hyphens: auto;
 		}
+		/* Drop cap */
 		#the-brief .editorial-line:first-of-type::first-letter {
 			font-family: var(--font-display);
 			font-size: 3.6em;
@@ -241,7 +323,7 @@
 			font-weight: 800;
 			color: var(--fg);
 			font-style: normal;
-			text-shadow: 0 0 1px var(--fg);
+			text-shadow: 0 0 1.5px var(--fg), 0.2px 0.15px 0.3px var(--fg);
 		}
 		.editorial-header {
 			font-family: var(--font-sc);
@@ -250,7 +332,6 @@
 			letter-spacing: 0.14em;
 			color: var(--ornament-color);
 			margin: 16px 0 4px;
-			font-style: normal;
 			text-transform: uppercase;
 		}
 		.editorial-header:first-child { margin-top: 0; }
@@ -259,17 +340,18 @@
 		.editorial-line.brief-headline { font-weight: 400; }
 		.editorial-line.brief-secondary { font-size: 0.82rem; color: var(--muted); }
 		.editorial-line.brief-live { color: var(--accent); font-weight: 600; }
+		/* Woodcut/halftone image treatment */
 		.brief-logo {
 			width: 14px; height: 14px; object-fit: contain;
 			vertical-align: text-bottom; margin-right: 2px;
-			filter: grayscale(1) sepia(0.6) contrast(1.4) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 		.brief-headshot {
 			border-radius: 50%;
-			filter: grayscale(1) sepia(0.6) contrast(1.4) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 
-		/* --- FEATURED SECTIONS --- */
+		/* === FEATURED SECTIONS === */
 		#featured-sections { margin-bottom: 0; }
 		.featured-section {
 			background: transparent;
@@ -325,7 +407,7 @@
 		.feat-expand-content { display: none; }
 		.feat-expand-content.open { display: block; }
 
-		/* --- SECTION DIVIDER --- */
+		/* === SECTION DIVIDER === */
 		.section-divider {
 			font-family: var(--font-sc); font-size: 0.52rem; font-weight: 700;
 			letter-spacing: 0.16em; color: var(--ornament-color);
@@ -340,7 +422,7 @@
 			position: relative; background: var(--bg); padding: 0 12px;
 		}
 
-		/* --- BAND LABELS --- */
+		/* === BAND LABELS === */
 		.band-label {
 			font-family: var(--font-display); font-size: 0.62rem; font-weight: 700;
 			letter-spacing: 0.12em; color: var(--fg);
@@ -375,7 +457,7 @@
 		.band-results .row-title { color: var(--muted); }
 		.band-results .row-time { font-weight: 500; }
 
-		/* --- SPORT SECTIONS --- */
+		/* === SPORT SECTIONS === */
 		.sport-section { margin-bottom: 10px; padding-left: 12px; border-left: 2px solid var(--border); }
 		.sport-section.compact { margin-bottom: 6px; }
 		.band-content .sport-section:last-child { margin-bottom: 0; }
@@ -386,12 +468,12 @@
 		}
 		.sport-next { font-size: 0.8rem; color: var(--muted); padding: 2px 0; }
 
-		/* --- TEMPORAL STATES --- */
+		/* Temporal states */
 		.event-row.starting-soon { border-left: 2px solid var(--accent); margin-left: -2px; padding-left: 2px; }
 		.row-rel-soon { color: var(--accent); font-weight: 600; opacity: 1; }
 		.row-rel-far { opacity: 0.4; }
 
-		/* --- LIVE --- */
+		/* Live */
 		.live-dot {
 			display: inline-block; width: 5px; height: 5px;
 			background: var(--accent); border-radius: 50%;
@@ -404,17 +486,17 @@
 			font-variant-numeric: tabular-nums; font-size: 0.95em;
 		}
 
-		/* --- MUST-WATCH --- */
+		/* Must-watch */
 		.event-row.must-watch {
-			background: rgba(139, 26, 26, 0.035);
+			background: rgba(122, 24, 24, 0.035);
 			border-left: 2px solid var(--accent);
 			margin-left: -2px; padding-left: 2px;
 		}
-		.dark .event-row.must-watch { background: rgba(200, 85, 58, 0.05); }
+		.dark .event-row.must-watch { background: rgba(184, 74, 48, 0.05); }
 		.event-row.must-watch.starting-soon { border-left-color: var(--accent); }
 		.row-title.must-watch-title { font-weight: 600; }
 
-		/* --- EVENT ROW --- */
+		/* === EVENT ROW === */
 		.event-row {
 			padding: 5px 0; cursor: pointer; border-radius: 0;
 			border-bottom: 1px solid var(--border); transition: background 0.12s;
@@ -431,11 +513,11 @@
 		.row-icons { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
 		.row-logo {
 			width: 18px; height: 18px; object-fit: contain;
-			filter: grayscale(1) sepia(0.5) contrast(1.3) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 		.row-headshot {
 			width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
-			filter: grayscale(1) sepia(0.5) contrast(1.3) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 		.row-title { font-size: 0.78rem; font-weight: 400; flex: 1; min-width: 0; }
 		.row-title-text { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -450,7 +532,7 @@
 		}
 		.row-ft { font-weight: 700; }
 
-		/* --- MORE TOGGLE --- */
+		/* More toggle */
 		.more-toggle {
 			background: none; border: none; color: var(--accent);
 			font-size: 0.62rem; font-family: var(--font); font-style: italic;
@@ -461,7 +543,7 @@
 		.more-content { display: none; }
 		.more-content.open { display: block; }
 
-		/* --- EXPANDED ROW --- */
+		/* === EXPANDED ROW === */
 		.row-expanded { padding: 12px 0 8px 42px; font-size: 0.82rem; }
 		.exp-venue { color: var(--muted); margin-bottom: 6px; font-size: 0.75rem; font-style: italic; }
 		.exp-summary {
@@ -480,7 +562,7 @@
 		.exp-team { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; }
 		.exp-logo {
 			width: 28px; height: 28px; object-fit: contain;
-			filter: grayscale(1) sepia(0.5) contrast(1.3) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 		.exp-logo-placeholder {
 			width: 28px; height: 28px; display: flex;
@@ -496,7 +578,7 @@
 		.exp-golfer-info { display: flex; align-items: center; gap: 6px; }
 		.exp-headshot {
 			width: 24px; height: 24px; border-radius: 50%; object-fit: cover;
-			filter: grayscale(1) sepia(0.5) contrast(1.3) brightness(0.9);
+			filter: grayscale(1) sepia(0.7) contrast(1.5) brightness(0.85);
 		}
 		.exp-headshot-placeholder {
 			width: 24px; height: 24px; display: flex;
@@ -528,7 +610,7 @@
 		}
 		.exp-fav-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-		/* --- STANDINGS --- */
+		/* Standings */
 		.exp-standings { margin: 10px 0; }
 		.exp-standings-header {
 			font-family: var(--font-sc); font-size: 0.5rem; font-weight: 700;
@@ -553,7 +635,7 @@
 		.exp-mini-table tr.highlight td { font-weight: 600; color: var(--accent); }
 		.exp-mini-table tr.ellipsis td { color: var(--muted); font-size: 0.6rem; padding: 1px 4px; border-bottom: none; }
 
-		/* --- MATCH DETAILS --- */
+		/* Match details */
 		.match-stats { margin: 8px 0; font-size: 0.7rem; color: var(--fg); }
 		.stat-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
 		.stat-bar-label { flex: 0 0 auto; font-size: 0.6rem; color: var(--muted); text-align: right; min-width: 56px; font-style: italic; }
@@ -566,11 +648,11 @@
 		.match-event-icon { flex-shrink: 0; }
 		.match-event-text { color: var(--muted); font-style: italic; }
 
-		/* --- EMPTY / LOADING --- */
+		/* Empty / Loading */
 		.empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: 0.82rem; font-style: italic; }
 		.loading { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.8rem; font-style: italic; }
 
-		/* --- WATCH PLAN --- */
+		/* === WATCH PLAN === */
 		#watch-plan { margin-bottom: 0; }
 		.watch-plan-header {
 			font-family: var(--font-display); font-size: 0.62rem; font-weight: 700;
@@ -613,7 +695,7 @@
 		}
 		.watch-plan-more:hover { opacity: 0.7; }
 
-		/* --- RADAR --- */
+		/* Radar */
 		#radar { margin-bottom: 0; }
 		.radar-section {
 			border-left: 2px solid var(--accent); padding-left: 12px;
@@ -626,10 +708,10 @@
 			margin-bottom: 6px; font-style: normal; text-transform: uppercase;
 		}
 
-		/* --- IMPORTANCE REASON --- */
+		/* Importance reason */
 		.exp-importance-reason { font-size: 0.68rem; color: var(--muted); margin-bottom: 6px; line-height: 1.5; font-style: italic; }
 
-		/* --- NEWS --- */
+		/* === NEWS === */
 		#news { margin-top: 0; }
 		.news-toggle {
 			font-family: var(--font-display); font-size: 0.55rem; font-weight: 700;
@@ -661,12 +743,11 @@
 		.news-link { color: var(--fg); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 		.news-link:hover { color: var(--accent); }
 
-		/* Single column on narrow screens */
 		@media (max-width: 420px) {
 			.news-content.open { column-count: 1; }
 		}
 
-		/* --- FOOTER: printer's mark --- */
+		/* Footer: printer's mark */
 		#news::after {
 			content: '\2014\00A0 Printed at the SportSync Press \00A0\2014\A\2014\00A0 1 \00A0\2014';
 			display: block;
@@ -683,8 +764,8 @@
 			text-transform: uppercase;
 		}
 
-		/* --- SELECTION --- */
-		::selection { background: rgba(139, 26, 26, 0.2); color: var(--fg); }
+		/* Selection */
+		::selection { background: rgba(122, 24, 24, 0.2); color: var(--fg); }
 
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
