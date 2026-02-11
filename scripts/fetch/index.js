@@ -29,10 +29,10 @@ async function main() {
 			refactored: fetchFootballRefactored,
 			legacy: fetchFootballLegacy 
 		},
-		{ 
-			name: "golf", 
-			refactored: fetchGolfRefactored,
-			legacy: fetchGolfESPN 
+		{
+			name: "golf",
+			refactored: null,           // golf-refactored.js lacks PGA Tour tee times
+			legacy: fetchGolfESPN
 		},
 		{ 
 			name: "tennis", 

@@ -167,19 +167,41 @@ async function fetchPGATourField() {
 		const rows = leaderboard.rows || leaderboard.players || [];
 		const players = rows.map(row => {
 			const p = row.player || row;
-			const rawTeeTime = row.teeTime || row.rounds?.[0]?.teeTime || row.thru || null;
-			const teeTimeStr = (typeof rawTeeTime === "string" && /\d{1,2}:\d{2}/.test(rawTeeTime))
-				? rawTeeTime : null;
-			const teeTimeUTC = teeTimeStr
-				? parseTeeTimeToUTC(teeTimeStr, tournamentDate, timezone)
-				: null;
+			const sd = row.scoringData || {};
+
+			// Tee time: PGA Tour uses epoch ms in scoringData.teeTime
+			let teeTime = null;
+			let teeTimeUTC = null;
+			const rawTeeTime = sd.teeTime || row.teeTime || null;
+			if (typeof rawTeeTime === "number" && rawTeeTime > 0) {
+				const dt = new Date(rawTeeTime);
+				if (!isNaN(dt.getTime())) {
+					teeTimeUTC = dt.toISOString();
+					// Format local time string for display (tournament timezone)
+					try {
+						const tz = timezone || "America/New_York";
+						teeTime = dt.toLocaleTimeString("en-US", {
+							timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true
+						});
+					} catch {
+						teeTime = dt.toLocaleTimeString("en-US", {
+							hour: "numeric", minute: "2-digit", hour12: true
+						});
+					}
+				}
+			} else if (typeof rawTeeTime === "string" && /\d{1,2}:\d{2}/.test(rawTeeTime)) {
+				// Fallback: string format like "8:45 AM"
+				teeTime = rawTeeTime;
+				teeTimeUTC = parseTeeTimeToUTC(rawTeeTime, tournamentDate, timezone);
+			}
+
 			return {
 				firstName: p.firstName || "",
 				lastName: p.lastName || "",
 				displayName: p.displayName || `${p.firstName || ""} ${p.lastName || ""}`.trim(),
-				teeTime: teeTimeStr,
+				teeTime,
 				teeTimeUTC,
-				startingHole: row.startingHole || null,
+				startingHole: sd.backNine ? 10 : (row.startingHole || null),
 			};
 		}).filter(p => p.displayName);
 

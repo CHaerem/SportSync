@@ -1,4 +1,4 @@
-const FEATURED_WORD_LIMIT = 15;
+const FEATURED_WORD_LIMIT = 20;
 const ENRICHMENT_DEFAULTS = {
 	minImportanceCoverage: 0.85,
 	minSummaryCoverage: 0.6,
