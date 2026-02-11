@@ -50,15 +50,17 @@ function buildSystemPrompt() {
 Your job is to generate curated editorial content in JSON format.
 
 VOICE & PERSPECTIVE:
+- Write like a sports ticker editor at VG or Dagbladet — punchy, opinionated, never bland
 - Write in English with a Norwegian sports fan perspective
 - Prioritize Norwegian athletes: Hovland (golf), Ruud (tennis), Carlsen (chess),
   Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
 - Lead with drama, stakes, and narrative — not just fixture facts
 - Reference standings positions and point gaps when relevant
+- Never write a line that just restates the fixture — every line must add context, stakes, or narrative
 
 STANDINGS INTEGRATION:
 - When a football match involves a top-5 PL team, mention league position or point gap
-  e.g. "leaders Liverpool host Sunderland" not just "Liverpool vs Sunderland"
+  e.g. "leaders Liverpool at Sunderland" not just "Liverpool vs Sunderland"
 - When a golfer is on the leaderboard, mention their position e.g. "Hovland T5, three back"
 - When F1 standings are tight, reference the championship battle
 
@@ -70,22 +72,34 @@ NEWS HOOK:
 LINE FORMAT:
 - Each line starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮
 - 🏅 is reserved for Olympics events ONLY — never use it for other sports
-- "today" lines: include HH:MM time, max 18 words, telegraphic headline style
+- "today" lines: include 24h HH:MM time (e.g. 21:15, never 9:15 PM), max 18 words, telegraphic headline style
 - "thisWeek" lines: include day name (Thu, Fri), max 18 words, telegraphic
 - No full sentences — headline/ticker style only
+
+TEAM NAMES (important for logo rendering):
+- For football lines, always mention BOTH team names explicitly so the UI can render inline logos
+- Use the actual team names as provided in the events data (e.g. "Liverpool" not "the Reds")
+- Good: "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
+- Bad: "⚽ PL leaders visit the Stadium of Light, 21:15" (no team names = no logos)
 
 QUALITY EXAMPLES:
 Excellent today lines:
   "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
+  "⚽ Barcelona host Real Madrid, 21:00 — Clásico with La Liga top spot at stake"
   "⛳ Hovland tees off 14:30 at Pebble Beach, T5 and three back of Scheffler"
   "🎾 Ruud opens Madrid defence vs Rune, 15:00 — all-Nordic quarterfinal"
+  "🏎️ Verstappen and Norris split by 8pts heading into Melbourne qualifying, 07:00"
+  "♟️ Carlsen faces Firouzja in Norway Chess Rd 5, 17:00 — revenge after Wijk loss"
 
 Mediocre today lines (DO NOT write like this):
   "⚽ Liverpool vs Sunderland, 21:15"
   "⛳ Pebble Beach Pro-Am continues"
   "🎾 Madrid Open quarterfinals today"
+  "🏎️ F1 Australian Grand Prix qualifying"
+  "♟️ Norway Chess Round 5 today"
 
 The difference: excellent lines contain stakes, standings context, and narrative tension.
+Every line must make the reader feel something is at stake.
 
 GOLF TEE TIMES:
 - If tee time data is provided, include the golfer's tee time in the line
@@ -399,6 +413,32 @@ function buildFallbackFeatured(events, now) {
 	};
 }
 
+function fallbackLine(e) {
+	const time = new Date(e.time).toLocaleTimeString("en-NO", {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+		timeZone: "Europe/Oslo",
+	});
+	const emoji = sportEmoji(e.sport);
+
+	// Football: use explicit team names for logo rendering
+	if (e.sport === "football" && e.homeTeam && e.awayTeam) {
+		const tourContext = e.tournament ? `, ${e.tournament}` : "";
+		const summaryTail = e.summary ? ` — ${e.summary.split(".")[0]}` : "";
+		return `${emoji} ${e.homeTeam} v ${e.awayTeam}, ${time}${tourContext}${summaryTail}`;
+	}
+
+	// Other sports: add tournament + summary when available
+	const parts = [emoji, e.title + ",", time];
+	if (e.tournament && !e.title.includes(e.tournament)) {
+		parts.push(`— ${e.tournament}`);
+	} else if (e.summary) {
+		parts.push(`— ${e.summary.split(".")[0]}`);
+	}
+	return parts.join(" ");
+}
+
 function generateFallbackToday(events, now) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + 86400000);
@@ -411,43 +451,26 @@ function generateFallbackToday(events, now) {
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 
 	const lines = [];
+	const used = new Set();
+
+	const addEvent = (e) => {
+		const key = `${e.sport}-${e.title}-${e.time}`;
+		if (used.has(key)) return;
+		used.add(key);
+		lines.push(fallbackLine(e));
+	};
 
 	// Norwegian events first
-	const norEvents = todayEvents.filter((e) => e.norwegian).slice(0, 2);
-	for (const e of norEvents) {
-		const time = new Date(e.time).toLocaleTimeString("en-NO", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-			timeZone: "Europe/Oslo",
-		});
-		lines.push(`${sportEmoji(e.sport)} ${e.title}, ${time}`);
-	}
+	todayEvents.filter((e) => e.norwegian).slice(0, 2).forEach(addEvent);
 
 	// Must-watch events
-	const mustWatch = todayEvents.filter((e) => e.importance >= 4 && !e.norwegian).slice(0, 2);
-	for (const e of mustWatch) {
-		const time = new Date(e.time).toLocaleTimeString("en-NO", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-			timeZone: "Europe/Oslo",
-		});
-		lines.push(`${sportEmoji(e.sport)} ${e.title}, ${time}`);
-	}
+	todayEvents.filter((e) => e.importance >= 4 && !e.norwegian).slice(0, 2).forEach(addEvent);
 
 	// Fill remaining with any events
 	if (lines.length < 2) {
 		for (const e of todayEvents) {
 			if (lines.length >= 4) break;
-			const time = new Date(e.time).toLocaleTimeString("en-NO", {
-				hour: "2-digit",
-				minute: "2-digit",
-				hour12: false,
-				timeZone: "Europe/Oslo",
-			});
-			const line = `${sportEmoji(e.sport)} ${e.title}, ${time}`;
-			if (!lines.includes(line)) lines.push(line);
+			addEvent(e);
 		}
 	}
 

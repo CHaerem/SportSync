@@ -216,14 +216,14 @@ class Dashboard {
 			html += todayLines.map(line => {
 				const isLive = line.startsWith('LIVE:') || line.startsWith('\u26f3');
 				const cls = isLive ? ' style="color:var(--accent)"' : '';
-				return `<div class="editorial-line"${cls}>${this.esc(line)}</div>`;
+				return `<div class="editorial-line"${cls}>${this.renderBriefLine(line)}</div>`;
 			}).join('');
 		}
 
 		if (thisWeekLines.length > 0) {
 			html += '<div class="editorial-header">This Week</div>';
 			html += thisWeekLines.map(line =>
-				`<div class="editorial-line">${this.esc(line)}</div>`
+				`<div class="editorial-line">${this.renderBriefLine(line)}</div>`
 			).join('');
 		}
 
@@ -1249,6 +1249,70 @@ class Dashboard {
 			btn.textContent = isDark ? '\u2600\ufe0f' : '\ud83c\udf19';
 			if (this.preferences) this.preferences.setTheme(isDark ? 'dark' : 'light');
 		});
+	}
+
+	// --- Brief line rendering with inline logos ---
+
+	renderBriefLine(line) {
+		// Build a lookup of known team names from loaded events
+		const knownTeams = new Map();
+		for (const e of this.allEvents) {
+			if (e.homeTeam && typeof getTeamLogo === 'function') {
+				const logo = getTeamLogo(e.homeTeam);
+				if (logo) knownTeams.set(e.homeTeam, logo);
+			}
+			if (e.awayTeam && typeof getTeamLogo === 'function') {
+				const logo = getTeamLogo(e.awayTeam);
+				if (logo) knownTeams.set(e.awayTeam, logo);
+			}
+		}
+
+		// Build a lookup of known golfer names from loaded events
+		const knownGolfers = new Map();
+		for (const e of this.allEvents) {
+			if (e.norwegianPlayers && typeof getGolferHeadshot === 'function') {
+				for (const p of e.norwegianPlayers) {
+					const headshot = getGolferHeadshot(p.name);
+					if (headshot) knownGolfers.set(p.name, headshot);
+				}
+			}
+		}
+
+		// Escape the full line first
+		let escaped = this.esc(line);
+
+		// Sort names by length descending to avoid partial matches
+		const teamEntries = Array.from(knownTeams.entries()).sort((a, b) => b[0].length - a[0].length);
+		const golferEntries = Array.from(knownGolfers.entries()).sort((a, b) => b[0].length - a[0].length);
+
+		// Track which positions have been replaced to avoid overlapping
+		const replaced = new Set();
+
+		const insertLogo = (escapedLine, name, imgHtml) => {
+			const escapedName = this.esc(name);
+			const idx = escapedLine.indexOf(escapedName);
+			if (idx === -1) return escapedLine;
+			// Check no overlap with already-replaced regions
+			for (const [start, end] of replaced) {
+				if (idx < end && idx + escapedName.length > start) return escapedLine;
+			}
+			replaced.add([idx, idx + escapedName.length]);
+			return escapedLine.substring(0, idx) + imgHtml + escapedLine.substring(idx);
+		};
+
+		// Inject team logos
+		for (const [name, logo] of teamEntries) {
+			const imgHtml = `<img src="${logo}" alt="" class="brief-logo" loading="lazy">`;
+			escaped = insertLogo(escaped, name, imgHtml);
+		}
+
+		// Inject golfer headshots
+		for (const [name, headshot] of golferEntries) {
+			const imgHtml = `<img src="${headshot}" alt="" class="brief-logo brief-headshot" loading="lazy">`;
+			escaped = insertLogo(escaped, name, imgHtml);
+		}
+
+		return escaped;
 	}
 
 	// --- Helpers ---
