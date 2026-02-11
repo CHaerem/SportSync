@@ -7,31 +7,37 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
 	<meta name="description" content="Personalized sports dashboard with live events for football, golf, tennis, F1, chess, esports, and Olympics.">
-	<meta name="theme-color" content="#d97757">
-	<title>SportSync</title>
+	<meta name="theme-color" content="#e17055">
+	<title>SportSync — Playful</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<style>
 		:root {
-			--bg: #faf9f5;
-			--bg-secondary: #f0efe8;
-			--fg: #3d3929;
-			--muted: #8b8580;
-			--border: #e8e5dc;
-			--border-strong: #3d3929;
-			--accent: #d97757;
-			--radius: 12px;
+			--bg: #fefefe;
+			--bg-secondary: #f4f3ff;
+			--fg: #2d3436;
+			--muted: #7f8c8d;
+			--border: #e8e6f0;
+			--border-strong: #2d3436;
+			--accent: #e17055;
+			--accent-secondary: #6c5ce7;
+			--radius: 16px;
 			--max-w: 480px;
-			--font: system-ui, -apple-system, sans-serif;
-			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+			--font: 'Nunito', system-ui, -apple-system, sans-serif;
+			--font-serif: 'Nunito', sans-serif;
+			--shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 		}
 		.dark {
-			--bg: #1a1816;
-			--bg-secondary: #242220;
-			--fg: #faf9f5;
-			--muted: #9a958e;
-			--border: #2d2a26;
-			--border-strong: #faf9f5;
-			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+			--bg: #1e1e2e;
+			--bg-secondary: #2a2a3e;
+			--fg: #f0f0f8;
+			--muted: #9a95b0;
+			--border: #3a3a50;
+			--border-strong: #f0f0f8;
+			--accent: #e17055;
+			--accent-secondary: #a29bfe;
+			--shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -41,7 +47,7 @@
 			color: var(--fg);
 			line-height: 1.6;
 			font-size: 15px;
-			font-weight: 400;
+			font-weight: 500;
 			-webkit-font-smoothing: antialiased;
 		}
 
@@ -59,11 +65,14 @@
 			margin-bottom: 32px;
 		}
 		header h1 {
-			font-family: var(--font-serif);
-			font-size: 1.15rem;
-			font-weight: 400;
+			font-family: var(--font);
+			font-size: 1.25rem;
+			font-weight: 700;
 			letter-spacing: -0.01em;
-			color: var(--fg);
+			background: linear-gradient(135deg, var(--accent), var(--accent-secondary), #0984e3);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
 		}
 		#themeToggle {
 			background: none;
@@ -82,21 +91,27 @@
 			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.12em;
+			letter-spacing: 0.08em;
 			color: var(--muted);
 			margin-bottom: 16px;
+			background: var(--bg-secondary);
+			display: inline-block;
+			padding: 4px 14px;
+			border-radius: 20px;
 		}
 
 		/* --- The Brief / Editorial --- */
 		#the-brief {
-			padding: 0 0 20px;
+			padding: 16px 18px 20px;
 			margin-bottom: 20px;
-			border-left: 2.5px solid var(--accent);
-			padding-left: 14px;
+			border-left: 3px solid var(--accent);
+			border-radius: 0 var(--radius) var(--radius) 0;
+			background: var(--bg-secondary);
+			box-shadow: var(--shadow);
 			font-size: 0.85rem;
 			color: var(--fg);
-			line-height: 1.5;
-			font-weight: 400;
+			line-height: 1.6;
+			font-weight: 500;
 		}
 		.editorial-header {
 			font-size: 0.55rem;
@@ -139,6 +154,11 @@
 			padding: 18px 20px;
 			margin-bottom: 24px;
 			box-shadow: var(--shadow);
+			transition: transform 0.2s, box-shadow 0.2s;
+		}
+		.featured-section:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 28px rgba(0, 0, 0, 0.1);
 		}
 		.featured-section.highlight {
 			border-left: 3px solid var(--accent);
@@ -306,17 +326,21 @@
 		/* --- Live indicator --- */
 		.live-dot {
 			display: inline-block;
-			width: 7px; height: 7px;
+			width: 8px; height: 8px;
 			background: #e74c3c;
 			border-radius: 50%;
-			margin-right: 4px;
+			margin-right: 5px;
 			vertical-align: middle;
-			animation: live-pulse 1.5s ease-in-out infinite;
-			box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15);
+			animation: live-bounce 1s ease-in-out infinite;
+			box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 		}
 		@keyframes live-pulse {
 			0%, 100% { opacity: 1; }
 			50% { opacity: 0.3; }
+		}
+		@keyframes live-bounce {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.4); }
 		}
 		.row-title strong {
 			font-weight: 600;
@@ -325,12 +349,12 @@
 
 		/* --- Must-watch events --- */
 		.event-row.must-watch {
-			background: rgba(217, 119, 87, 0.06);
-			border-left: 2px solid rgba(217, 119, 87, 0.35);
+			background: linear-gradient(135deg, rgba(225, 112, 85, 0.06), rgba(108, 92, 231, 0.06));
+			border-left: 3px solid var(--accent);
+			border-image: linear-gradient(to bottom, var(--accent), var(--accent-secondary)) 1;
 		}
 		.dark .event-row.must-watch {
-			background: rgba(217, 119, 87, 0.08);
-			border-left-color: rgba(217, 119, 87, 0.4);
+			background: linear-gradient(135deg, rgba(225, 112, 85, 0.1), rgba(108, 92, 231, 0.1));
 		}
 		.event-row.must-watch.starting-soon {
 			border-left-color: var(--accent);
@@ -341,12 +365,15 @@
 
 		/* --- Event Row --- */
 		.event-row {
-			padding: 6px 0;
+			padding: 6px 4px;
 			cursor: pointer;
-			border-radius: 6px;
-			transition: background 0.15s;
+			border-radius: var(--radius);
+			transition: background 0.2s, transform 0.2s;
 		}
-		.event-row:hover { background: var(--bg-secondary); }
+		.event-row:hover {
+			background: var(--bg-secondary);
+			transform: translateX(4px);
+		}
 
 		.row-main {
 			display: flex;
@@ -462,11 +489,13 @@
 		.exp-tag {
 			font-size: 0.6rem;
 			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			color: var(--muted);
-			border: 1px solid var(--border);
-			border-radius: 4px;
-			padding: 1px 6px;
+			letter-spacing: 0.04em;
+			color: var(--accent);
+			background: rgba(225, 112, 85, 0.08);
+			border: none;
+			border-radius: 12px;
+			padding: 2px 10px;
+			font-weight: 600;
 		}
 		.exp-teams {
 			display: flex;
@@ -547,18 +576,20 @@
 		}
 		.exp-stream-badge {
 			font-size: 0.7rem;
-			color: var(--muted);
-			background: var(--bg-secondary);
-			border: 1px solid var(--border);
+			color: white;
+			background: var(--accent);
+			border: none;
 			border-radius: 20px;
-			padding: 3px 12px;
+			padding: 4px 14px;
 			text-decoration: none;
 			display: inline-block;
-			transition: border-color 0.15s;
+			font-weight: 600;
+			transition: transform 0.15s, box-shadow 0.15s;
 		}
 		.exp-stream-badge:hover {
-			border-color: var(--accent);
-			color: var(--fg);
+			transform: translateY(-1px);
+			box-shadow: 0 2px 8px rgba(225, 112, 85, 0.3);
+			color: white;
 		}
 		.exp-fav-actions {
 			display: flex;
@@ -692,14 +723,19 @@
 			display: flex;
 			align-items: flex-start;
 			gap: 10px;
-			padding: 8px 0;
-			border-bottom: 1px solid var(--border);
+			padding: 10px 12px;
+			margin-bottom: 6px;
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
 			font-size: 0.8rem;
 			cursor: pointer;
-			transition: background 0.15s;
+			transition: transform 0.2s, box-shadow 0.2s;
 		}
-		.watch-pick:last-child { border-bottom: none; }
-		.watch-pick:hover { background: var(--bg-secondary); }
+		.watch-pick:last-child { margin-bottom: 0; }
+		.watch-pick:hover {
+			transform: translateX(4px);
+			box-shadow: var(--shadow);
+		}
 		.pick-time {
 			font-size: 0.75rem;
 			color: var(--muted);
@@ -731,10 +767,11 @@
 			text-transform: uppercase;
 			letter-spacing: 0.04em;
 			color: var(--accent);
-			border: 1px solid var(--accent);
+			background: rgba(225, 112, 85, 0.08);
+			border: none;
 			border-radius: 10px;
-			padding: 1px 7px;
-			opacity: 0.8;
+			padding: 2px 8px;
+			font-weight: 600;
 		}
 		.pick-stream {
 			font-size: 0.55rem;
@@ -846,6 +883,17 @@
 		}
 		.news-link:hover { color: var(--accent); }
 
+		/* --- Per-sport tints (based on inline border-color) --- */
+		.sport-section[style*="border-color: #22a15c"] { background: rgba(34, 161, 92, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #3aaa35"] { background: rgba(58, 170, 53, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #c8102e"] { background: rgba(200, 16, 46, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #e8d44d"] { background: rgba(232, 212, 77, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #7b5ea7"] { background: rgba(123, 94, 167, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #e74c3c"] { background: rgba(231, 76, 60, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+		.sport-section[style*="border-color: #f0c040"] { background: rgba(240, 192, 64, 0.04); border-radius: var(--radius); padding: 10px 14px; }
+
+		.dark .sport-section[style*="border-color"] { background: rgba(255, 255, 255, 0.02); }
+
 		/* --- Reduced motion --- */
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
@@ -890,13 +938,10 @@
 	<script src="js/dashboard.js?v=2026021006"></script>
 
 	<script>
+		// Service worker disabled for theme preview
 		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', async () => {
-				try {
-					await navigator.serviceWorker.register('/SportSync/sw.js');
-				} catch (e) {
-					console.error('SW registration failed:', e);
-				}
+			navigator.serviceWorker.getRegistrations().then(regs => {
+				for (const r of regs) r.unregister();
 			});
 		}
 	</script>
