@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-11T10:27:18.957Z",
+  "generatedAt": "2026-02-11T10:16:53.663Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
       "totalEvents": 37,
-      "importanceCoverage": 0.73,
-      "summaryCoverage": 0.73,
-      "relevanceCoverage": 0.73,
-      "tagsCoverage": 0.486
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.811
     },
     "after": {
       "totalEvents": 37,
@@ -19,19 +19,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 59,
-    "aiUpdatedFields": 27,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 7,
+    "aiUpdatedFields": 37,
+    "failedBatches": 0,
     "totalEvents": 37
   },
   "featured": {
     "provider": "fallback",
-    "attempts": 2,
+    "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "briefLines": 2,
+    "todayLines": 4,
     "sectionCount": 1,
-    "radarLines": 3
+    "thisWeekLines": 3
   }
 }

@@ -9,7 +9,7 @@ import {
 describe("validateFeaturedContent()", () => {
 	it("accepts well-formed featured payload", () => {
 		const featured = {
-			brief: ["Hovland tees off in a packed leaderboard race.", "Premier League night brings four key fixtures."],
+			today: ["⚽ Liverpool at Sunderland, 21:15 — title race crunch", "⛳ Hovland tees off, 14:00"],
 			sections: [
 				{
 					id: "olympics-2026",
@@ -19,26 +19,38 @@ describe("validateFeaturedContent()", () => {
 					items: [{ text: "14:30 — Mixed relay biathlon", type: "event" }],
 				},
 			],
-			radar: ["Ruud could meet a seeded rival in the next round.", "Watch for late title-race shifts in England tonight."],
+			thisWeek: ["🎾 Thu — Ruud faces seeded rival in next round", "⚽ Fri — Arsenal title-race test at Everton"],
 		};
 		const events = [{ context: "olympics-2026", title: "Biathlon relay", time: "2026-02-12T14:30:00Z" }];
 		const result = validateFeaturedContent(featured, { events });
 
 		expect(result.valid).toBe(true);
 		expect(result.score).toBeGreaterThan(70);
-		expect(result.normalized.brief).toHaveLength(2);
-		expect(result.normalized.radar).toHaveLength(2);
+		expect(result.normalized.today).toHaveLength(2);
+		expect(result.normalized.thisWeek).toHaveLength(2);
 	});
 
-	it("flags missing radar lines", () => {
+	it("accepts old brief/radar payload via backward compat", () => {
 		const featured = {
-			brief: ["Only one brief line", "Second line"],
+			brief: ["Hovland tees off in a packed leaderboard race.", "Premier League night brings four key fixtures."],
 			sections: [],
-			radar: [],
+			radar: ["Ruud could meet a seeded rival.", "Watch for title-race shifts."],
+		};
+		const result = validateFeaturedContent(featured, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.today).toHaveLength(2);
+		expect(result.normalized.thisWeek).toHaveLength(2);
+	});
+
+	it("flags missing thisWeek lines", () => {
+		const featured = {
+			today: ["Line one", "Line two"],
+			sections: [],
+			thisWeek: [],
 		};
 		const result = validateFeaturedContent(featured, { events: [] });
 		expect(result.valid).toBe(false);
-		expect(result.issues.some((i) => i.code === "radar_too_short")).toBe(true);
+		expect(result.issues.some((i) => i.code === "this_week_too_short")).toBe(true);
 	});
 });
 

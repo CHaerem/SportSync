@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Generates featured.json with AI-curated editorial content:
- * - brief: 2-3 editorial lines summarizing the day
+ * - today: emoji-prefixed telegraphic lines about today's events
  * - sections: dynamic featured content (Olympics, World Cup, CL, etc.)
- * - radar: 2-3 "on the radar" sentences about potential events
+ * - thisWeek: emoji-prefixed lines about upcoming days
  * - watch-plan: ranked "what to watch next" windows for the UI
  * - ai-quality: quality gate report (structure + freshness checks)
  *
@@ -25,7 +25,7 @@ import { buildWatchPlan } from "./lib/watch-plan.js";
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
 const FEATURED_SCHEMA = {
-	brief: ["string — 2-3 crisp editorial lines, max 15 words each"],
+	today: ["string — emoji-prefixed telegraphic line, e.g. '⚽ Liverpool at Sunderland, 21:15 — title race crunch'"],
 	sections: [
 		{
 			id: "string — kebab-case identifier like olympics-2026",
@@ -42,7 +42,7 @@ const FEATURED_SCHEMA = {
 			expandItems: [{ text: "string", type: "stat | event | text" }],
 		},
 	],
-	radar: ["string — 2-3 sentences about potential upcoming events for Norwegian athletes"],
+	thisWeek: ["string — emoji-prefixed with day, e.g. '⛳ Thu — Hovland at Pebble Beach Pro-Am'"],
 };
 
 function buildSystemPrompt() {
@@ -54,13 +54,14 @@ Rules:
 - Prioritize Norwegian athletes: Hovland (golf), Ruud (tennis), Carlsen (chess),
   Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
 - Reference standings positions and form when relevant (e.g. "Arsenal top the table", "Hovland T5")
-- Use breaking news headlines to make the brief timely and relevant
-- Events marked with ★4 or ★5 are must-watch — prioritize these in the brief and radar
-- Use AI-generated summaries and tags for context about stakes and storylines
-- Brief lines must be crisp (max 15 words each), like newspaper headlines
+- Use breaking news headlines to make content timely and relevant
+- Events marked with ★4 or ★5 are must-watch — prioritize these
+- Each line starts with a sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
+- "today" lines: include HH:MM time, max 12 words, telegraphic headline style
+- "thisWeek" lines: include day name (Thu, Fri), max 12 words, telegraphic
+- No full sentences — headline/ticker style only
 - Featured sections should highlight major multi-sport or tournament events currently
   happening: Olympics, World Cup, Champions League knockout stages, Grand Slams, etc.
-- "On the radar" should mention potential upcoming events, entry lists, qualification status
 - If no major featured event is active, return an empty sections array
 - Always return valid JSON matching the provided schema exactly`;
 }
@@ -224,9 +225,9 @@ Generate featured.json matching this schema:
 ${JSON.stringify(FEATURED_SCHEMA, null, 2)}
 
 Remember:
-- brief: exactly 2-3 lines
+- today: 2-4 emoji-prefixed lines about today's events with HH:MM times
 - sections: only if a major event (Olympics, World Cup, CL, etc.) is active — use the curated data above for accurate details
-- radar: 2-3 forward-looking sentences about Norwegian athletes
+- thisWeek: 2-4 emoji-prefixed lines about upcoming days with day names (Thu, Fri)
 - Return ONLY valid JSON, no markdown wrapper`;
 }
 
@@ -256,8 +257,11 @@ function parseResponseJSON(rawContent) {
 }
 
 function toFeaturedShape(result) {
+	// Backward compat: accept brief/radar from old AI responses
+	const todayLines = result?.today || result?.brief || [];
+	const thisWeekLines = result?.thisWeek || result?.radar || [];
 	return {
-		brief: Array.isArray(result?.brief) ? result.brief.slice(0, 3) : [],
+		today: Array.isArray(todayLines) ? todayLines.slice(0, 4) : [],
 		sections: Array.isArray(result?.sections)
 			? result.sections.map((s) => ({
 					id: s?.id || "unknown",
@@ -269,7 +273,7 @@ function toFeaturedShape(result) {
 					expandItems: Array.isArray(s?.expandItems) ? s.expandItems : [],
 				}))
 			: [],
-		radar: Array.isArray(result?.radar) ? result.radar.slice(0, 3) : [],
+		thisWeek: Array.isArray(thisWeekLines) ? thisWeekLines.slice(0, 4) : [],
 	};
 }
 
@@ -315,49 +319,52 @@ function buildFallbackSections(events, now) {
 	];
 }
 
-function buildFallbackRadar(events, now) {
+function sportEmoji(sport) {
+	const map = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎️", f1: "🏎️", chess: "♟️", esports: "🎮", olympics: "🏅" };
+	return map[sport] || "🏆";
+}
+
+function generateFallbackThisWeek(events, now) {
+	const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 	const upcoming = events
-		.filter((event) => new Date(event.time) > now)
+		.filter((event) => new Date(event.time) >= todayEnd)
 		.sort((a, b) => new Date(a.time) - new Date(b.time));
 
 	const norwegianUpcoming = upcoming.filter((event) => event.norwegian).slice(0, 3);
 	const lines = norwegianUpcoming.map((event) => {
 		const t = new Date(event.time);
 		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
-		const time = t.toLocaleTimeString("en-NO", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-			timeZone: "Europe/Oslo",
-		});
-		return `${day} ${time}: ${event.title}.`;
+		return `${sportEmoji(event.sport)} ${day} — ${event.title}`;
 	});
 
 	if (lines.length < 2) {
 		const mustWatch = upcoming.filter((event) => event.importance >= 4).slice(0, 3);
 		for (const event of mustWatch) {
-			lines.push(`Watchlist: ${event.title}${event.summary ? ` — ${event.summary}` : "."}`);
-			if (lines.length >= 3) break;
+			const t = new Date(event.time);
+			const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
+			lines.push(`${sportEmoji(event.sport)} ${day} — ${event.title}`);
+			if (lines.length >= 4) break;
 		}
 	}
 
 	if (lines.length < 2 && upcoming.length > 0) {
-		lines.push(`Coming next: ${upcoming[0].title}.`);
-		lines.push(`Keep an eye on ${upcoming[Math.min(1, upcoming.length - 1)].title}.`);
+		const e = upcoming[0];
+		const day = new Date(e.time).toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
+		lines.push(`${sportEmoji(e.sport)} ${day} — ${e.title}`);
 	}
 
-	return lines.slice(0, 3);
+	return lines.slice(0, 4);
 }
 
 function buildFallbackFeatured(events, now) {
 	return {
-		brief: generateFallbackBrief(events, now),
+		today: generateFallbackToday(events, now),
 		sections: buildFallbackSections(events, now),
-		radar: buildFallbackRadar(events, now),
+		thisWeek: generateFallbackThisWeek(events, now),
 	};
 }
 
-function generateFallbackBrief(events, now) {
+function generateFallbackToday(events, now) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + 86400000);
 
@@ -368,30 +375,48 @@ function generateFallbackBrief(events, now) {
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 
-	const sportCounts = {};
-	todayEvents.forEach((e) => {
-		const sport = e.sport === "f1" ? "F1" : e.sport;
-		sportCounts[sport] = (sportCounts[sport] || 0) + 1;
-	});
+	const lines = [];
 
-	const parts = Object.entries(sportCounts)
-		.map(([sport, count]) => `${count} ${sport}`)
-		.join(", ");
-
-	const lines = [`${todayEvents.length} events today: ${parts}.`];
-
-	const norEvent = todayEvents.find((e) => e.norwegian);
-	if (norEvent) {
-		const time = new Date(norEvent.time).toLocaleTimeString("en-NO", {
+	// Norwegian events first
+	const norEvents = todayEvents.filter((e) => e.norwegian).slice(0, 2);
+	for (const e of norEvents) {
+		const time = new Date(e.time).toLocaleTimeString("en-NO", {
 			hour: "2-digit",
 			minute: "2-digit",
 			hour12: false,
 			timeZone: "Europe/Oslo",
 		});
-		lines.push(`${norEvent.title} at ${time}.`);
+		lines.push(`${sportEmoji(e.sport)} ${e.title}, ${time}`);
 	}
 
-	return lines;
+	// Must-watch events
+	const mustWatch = todayEvents.filter((e) => e.importance >= 4 && !e.norwegian).slice(0, 2);
+	for (const e of mustWatch) {
+		const time = new Date(e.time).toLocaleTimeString("en-NO", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: "Europe/Oslo",
+		});
+		lines.push(`${sportEmoji(e.sport)} ${e.title}, ${time}`);
+	}
+
+	// Fill remaining with any events
+	if (lines.length < 2) {
+		for (const e of todayEvents) {
+			if (lines.length >= 4) break;
+			const time = new Date(e.time).toLocaleTimeString("en-NO", {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: false,
+				timeZone: "Europe/Oslo",
+			});
+			const line = `${sportEmoji(e.sport)} ${e.title}, ${time}`;
+			if (!lines.includes(line)) lines.push(line);
+		}
+	}
+
+	return lines.slice(0, 4);
 }
 
 async function generateRawFeatured(systemPrompt, userPrompt) {
@@ -431,7 +456,7 @@ async function main() {
 	const events = readJsonIfExists(eventsPath);
 	if (!events || !Array.isArray(events) || events.length === 0) {
 		console.log("No events found. Writing minimal featured.json.");
-		const fallback = { brief: ["No events scheduled."], sections: [], radar: ["No upcoming events yet.", "Check back after the next data sync."] };
+		const fallback = { today: ["No events scheduled today."], sections: [], thisWeek: ["Check back after the next data sync."] };
 		writeJsonPretty(featuredPath, fallback);
 		writeJsonPretty(watchPlanPath, buildWatchPlan([], { now: new Date() }));
 		const existingQuality = readJsonIfExists(qualityPath) || {};
@@ -444,9 +469,9 @@ async function main() {
 				valid: true,
 				score: 100,
 				issues: [],
-				briefLines: fallback.brief.length,
+				todayLines: fallback.today.length,
 				sectionCount: 0,
-				radarLines: fallback.radar.length,
+				thisWeekLines: fallback.thisWeek.length,
 			},
 		});
 		return;
@@ -518,11 +543,11 @@ async function main() {
 		featured = qualityResult.normalized;
 	}
 
-	if (featured.brief.length === 0) {
-		featured.brief = generateFallbackBrief(events, now);
+	if (!featured.today || featured.today.length === 0) {
+		featured.today = generateFallbackToday(events, now);
 	}
-	if (featured.radar.length < 2) {
-		featured.radar = buildFallbackRadar(events, now);
+	if (!featured.thisWeek || featured.thisWeek.length < 2) {
+		featured.thisWeek = generateFallbackThisWeek(events, now);
 	}
 
 	const finalQuality = validateFeaturedContent(featured, { events });
@@ -547,14 +572,14 @@ async function main() {
 			valid: finalQuality.valid,
 			score: finalQuality.score,
 			issues: finalQuality.issues.map((issue) => issue.message),
-			briefLines: featured.brief.length,
+			todayLines: featured.today.length,
 			sectionCount: featured.sections.length,
-			radarLines: featured.radar.length,
+			thisWeekLines: featured.thisWeek.length,
 		},
 	});
 
 	console.log(
-		`Featured content generated: ${featured.brief.length} brief lines, ${featured.sections.length} sections, ${featured.radar.length} radar items.`
+		`Featured content generated: ${featured.today.length} today lines, ${featured.sections.length} sections, ${featured.thisWeek.length} this-week items.`
 	);
 	console.log(
 		`Watch plan generated: ${watchPlan.picks.length} picks across ${watchPlan.windows.filter((w) => w.items.length > 0).length} active windows.`

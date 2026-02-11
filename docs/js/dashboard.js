@@ -146,7 +146,6 @@ class Dashboard {
 		this.renderBrief();
 		this.renderSections();
 		this.renderWatchPlan();
-		this.renderRadar();
 		this.renderEvents();
 		this.renderNews();
 	}
@@ -172,36 +171,63 @@ class Dashboard {
 		el.textContent = text;
 	}
 
-	// --- The Brief ---
+	// --- Editorial (Today + This Week) ---
 
 	renderBrief() {
 		const el = document.getElementById('the-brief');
-		let lines = [];
 
-		if (this.featured && Array.isArray(this.featured.brief) && this.featured.brief.length > 0) {
-			lines = this.featured.brief.slice(0, 2);
-		} else {
-			lines = this.generateBriefLines();
+		// Read today lines (backward compat: fall back to brief)
+		let todayLines = [];
+		if (this.featured) {
+			const src = this.featured.today || this.featured.brief;
+			if (Array.isArray(src) && src.length > 0) {
+				todayLines = src.slice(0, 4);
+			}
+		}
+		if (todayLines.length === 0) {
+			todayLines = this.generateBriefLines();
 		}
 
-		// Append live score lines
+		// Append live score lines to today
 		const liveLines = this.generateLiveBriefLines();
 		if (liveLines.length > 0) {
-			lines = [...lines, ...liveLines];
+			todayLines = [...todayLines, ...liveLines];
 		}
 
-		if (lines.length === 0) {
+		// Read this-week lines (backward compat: fall back to radar)
+		let thisWeekLines = [];
+		if (this.featured) {
+			const src = this.featured.thisWeek || this.featured.radar;
+			if (Array.isArray(src) && src.length > 0) {
+				thisWeekLines = src.slice(0, 4);
+			}
+		}
+
+		if (todayLines.length === 0 && thisWeekLines.length === 0) {
 			el.style.display = 'none';
 			return;
 		}
 
 		el.style.display = '';
-		el.innerHTML = lines.map(line => {
-			if (line.startsWith('LIVE:') || line.startsWith('\u26f3')) {
-				return `<span style="color:var(--accent)">${this.esc(line)}</span>`;
-			}
-			return this.esc(line);
-		}).join(' ');
+		let html = '';
+
+		if (todayLines.length > 0) {
+			html += '<div class="editorial-header">Today</div>';
+			html += todayLines.map(line => {
+				const isLive = line.startsWith('LIVE:') || line.startsWith('\u26f3');
+				const cls = isLive ? ' style="color:var(--accent)"' : '';
+				return `<div class="editorial-line"${cls}>${this.esc(line)}</div>`;
+			}).join('');
+		}
+
+		if (thisWeekLines.length > 0) {
+			html += '<div class="editorial-header">This Week</div>';
+			html += thisWeekLines.map(line =>
+				`<div class="editorial-line">${this.esc(line)}</div>`
+			).join('');
+		}
+
+		el.innerHTML = html;
 	}
 
 	generateBriefLines() {
@@ -426,30 +452,11 @@ class Dashboard {
 		});
 	}
 
-	// --- Radar ---
+	// --- Radar (merged into brief/editorial) ---
 
 	renderRadar() {
 		const container = document.getElementById('radar');
-		if (!container) return;
-
-		const radar = this.featured?.radar;
-		if (!radar || (Array.isArray(radar) && radar.length === 0) || (!Array.isArray(radar) && !radar)) {
-			container.innerHTML = '';
-			return;
-		}
-
-		const lines = Array.isArray(radar) ? radar : [radar];
-		if (lines.length === 0 || lines.every(l => !l)) {
-			container.innerHTML = '';
-			return;
-		}
-
-		let html = '<div class="radar-section">';
-		html += '<div class="radar-header">On the Radar</div>';
-		html += lines.map(line => this.esc(line)).join(' ');
-		html += '</div>';
-
-		container.innerHTML = html;
+		if (container) container.innerHTML = '';
 	}
 
 	// --- News ---

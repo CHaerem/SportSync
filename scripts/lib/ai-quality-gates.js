@@ -177,39 +177,43 @@ export function validateFeaturedContent(featured, { events = [] } = {}) {
 	const issues = [];
 	let score = 100;
 
+	// Backward compat: accept brief/radar from old payloads
+	const todaySource = featured?.today || featured?.brief || [];
+	const thisWeekSource = featured?.thisWeek || featured?.radar || [];
+
 	const normalized = {
-		brief: uniqueLines(featured?.brief, 3),
+		today: uniqueLines(todaySource, 4),
 		sections: (Array.isArray(featured?.sections) ? featured.sections : [])
 			.map((section) => sanitizeSection(section))
 			.filter((section) => section.title && section.items.length > 0),
-		radar: uniqueLines(featured?.radar, 3),
+		thisWeek: uniqueLines(thisWeekSource, 4),
 	};
 
-	if (normalized.brief.length < 2) {
+	if (normalized.today.length < 2) {
 		issues.push({
 			severity: "error",
-			code: "brief_too_short",
-			message: "Brief should contain at least 2 lines.",
+			code: "today_too_short",
+			message: "Today should contain at least 2 lines.",
 		});
 		score -= 35;
 	}
 
-	for (const line of normalized.brief) {
+	for (const line of normalized.today) {
 		if (countWords(line) > FEATURED_WORD_LIMIT) {
 			issues.push({
 				severity: "error",
-				code: "brief_too_long",
-				message: `Brief line exceeds ${FEATURED_WORD_LIMIT} words: "${line}"`,
+				code: "today_line_too_long",
+				message: `Today line exceeds ${FEATURED_WORD_LIMIT} words: "${line}"`,
 			});
 			score -= 10;
 		}
 	}
 
-	if (normalized.radar.length < 2) {
+	if (normalized.thisWeek.length < 2) {
 		issues.push({
 			severity: "error",
-			code: "radar_too_short",
-			message: "Radar should contain at least 2 forward-looking lines.",
+			code: "this_week_too_short",
+			message: "This week should contain at least 2 forward-looking lines.",
 		});
 		score -= 25;
 	}
@@ -224,16 +228,16 @@ export function validateFeaturedContent(featured, { events = [] } = {}) {
 	}
 
 	if (
-		normalized.brief.length > 0 &&
-		normalized.radar.length > 0 &&
-		normalized.brief.every((line) =>
-			normalized.radar.some((radarLine) => radarLine.toLowerCase() === line.toLowerCase())
+		normalized.today.length > 0 &&
+		normalized.thisWeek.length > 0 &&
+		normalized.today.every((line) =>
+			normalized.thisWeek.some((weekLine) => weekLine.toLowerCase() === line.toLowerCase())
 		)
 	) {
 		issues.push({
 			severity: "warning",
-			code: "radar_duplicates_brief",
-			message: "Radar content duplicates brief lines.",
+			code: "this_week_duplicates_today",
+			message: "This week content duplicates today lines.",
 		});
 		score -= 10;
 	}
