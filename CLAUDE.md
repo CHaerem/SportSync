@@ -38,8 +38,11 @@ This is a hybrid static/dynamic application:
 6. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
 7. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
 8. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + curated configs → generates `featured.json` (brief, sections, radar)
-9. **Client-side** loads `events.json` + `featured.json` + `standings.json`, renders editorial dashboard
-10. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
+9. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings health → generates `health-report.json`
+10. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
+11. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
+12. **Client-side** loads `events.json` + `featured.json` + `standings.json`, renders editorial dashboard
+13. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
 
@@ -48,7 +51,7 @@ This is a hybrid static/dynamic application:
 - `npm run build:events` - Aggregate sport data + curated configs into events.json
 - `npm run enrich` - AI enrichment of events (needs OPENAI_API_KEY or ANTHROPIC_API_KEY)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
-- `npm test` - Run all tests (vitest, 123 tests across 9 files)
+- `npm test` - Run all tests (vitest, 279 tests across 18 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 
@@ -62,6 +65,7 @@ The **update-sports-data.yml** workflow:
 - **Enriches**: AI adds importance, summaries, tags to events (OpenAI)
 - **Generates**: featured.json via Claude CLI (CLAUDE_CODE_OAUTH_TOKEN)
 - **Validates**: Data integrity checks
+- **Monitors**: Pipeline health report, quality regression gate, coverage gap detection
 - **Commits**: Updated JSON files to repository
 - **Deploys**: Automatically via GitHub Pages
 
@@ -100,6 +104,9 @@ docs/
     ├── featured.json       # AI-generated editorial content (brief, sections, radar)
     ├── standings.json      # ESPN standings (PL table, golf leaderboards, F1 drivers)
     ├── rss-digest.json     # RSS news digest (11 feeds, Norwegian-filtered)
+    ├── ai-quality.json     # AI quality-gate metrics (enrichment + featured)
+    ├── health-report.json  # Pipeline health report (coverage, freshness, anomalies)
+    ├── coverage-gaps.json  # RSS vs events coverage gap detection
     ├── events.ics          # Calendar export
     ├── football.json       # Per-sport source files
     ├── golf.json / tennis.json / f1.json / chess.json / esports.json
@@ -117,6 +124,8 @@ scripts/
 │   ├── helpers.js          # Shared utilities
 │   ├── enrichment-prompts.js # Prompts for AI event enrichment
 │   ├── event-normalizer.js # Event validation and normalization
+│   ├── response-validator.js # API response validation (ESPN, LiveGolf, PandaScore)
+│   ├── ai-quality-gates.js # AI enrichment quality gates and fallbacks
 │   ├── base-fetcher.js     # Base class for sport fetchers
 │   ├── api-client.js       # HTTP client wrapper
 │   ├── norwegian-streaming.js # Norwegian streaming info
@@ -126,6 +135,9 @@ scripts/
 ├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
 ├── enrich-events.js        # LLM enrichment (importance, tags, summaries)
 ├── generate-featured.js    # Claude CLI → featured.json (brief, sections, radar)
+├── pipeline-health.js      # Pipeline health report → health-report.json
+├── check-quality-regression.js # AI quality regression detection
+├── detect-coverage-gaps.js # RSS vs events coverage gap detection
 ├── merge-open-data.js      # Merges open source + primary data
 ├── validate-events.js      # Data integrity checks
 └── build-ics.js            # Calendar export generator
@@ -134,7 +146,7 @@ scripts/
 ├── update-sports-data.yml  # Data pipeline (every 2 hours)
 └── claude-autopilot.yml    # Autonomous improvement agent (nightly)
 
-tests/                      # 123 tests across 9 files (vitest)
+tests/                      # 279 tests across 18 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 

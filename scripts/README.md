@@ -18,16 +18,26 @@ node scripts/build-ics.js
 node scripts/validate-events.js
 ```
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 scripts/
-├── config/          # Configuration files
-├── lib/             # Core libraries and utilities
-├── fetch/           # Sport-specific fetchers
-├── build-events.js  # Aggregates all sports into events.json
-├── build-ics.js     # Generates calendar file
-└── validate-events.js # Data validation
+├── config/                         # Auto-discovered curated event configs
+├── lib/                            # Core libraries and utilities
+│   ├── response-validator.js       # API response schema validation
+│   ├── ai-quality-gates.js         # AI enrichment quality gates
+│   └── ...                         # helpers, LLM client, normalizer, filters
+├── fetch/                          # Sport-specific fetchers
+├── fetch-standings.js              # ESPN standings → standings.json
+├── fetch-rss.js                    # RSS digest → rss-digest.json
+├── build-events.js                 # Aggregates all sports into events.json
+├── enrich-events.js                # AI enrichment (importance, tags, summaries)
+├── generate-featured.js            # Claude CLI → featured.json
+├── pipeline-health.js              # Pipeline health report → health-report.json
+├── check-quality-regression.js     # AI quality regression detection
+├── detect-coverage-gaps.js         # RSS vs events blind spot detection
+├── validate-events.js              # Data integrity checks
+└── build-ics.js                    # Calendar export generator
 ```
 
 ## 🏗️ Architecture
@@ -59,38 +69,55 @@ All sports are configured in `config/sports-config.js`:
 
 | Sport | Primary API | Fetcher | Norwegian Focus |
 |-------|------------|---------|-----------------|
-| ⚽ Football | ESPN | `football-refactored.js` | FK Lyn Oslo |
-| 🎾 Tennis | ESPN | `tennis-refactored.js` | Casper Ruud |
-| 🏌️ Golf | ESPN/LiveGolf | `golf-refactored.js` | Viktor Hovland |
-| 🏎️ F1 | ESPN | `f1-refactored.js` | None |
-| ♟️ Chess | Curated/Lichess | `chess-refactored.js` | Magnus Carlsen |
-| 🎮 Esports | HLTV | `esports-refactored.js` | FaZe (rain) |
+| Sport | Primary API | Fetcher | Norwegian Focus |
+|-------|------------|---------|-----------------|
+| Football | ESPN + fotball.no | `football.js` | FK Lyn Oslo, Barcelona, Liverpool |
+| Tennis | ESPN | `tennis.js` | Casper Ruud |
+| Golf | ESPN/LiveGolf | `golf.js` | Viktor Hovland |
+| F1 | ESPN | `f1.js` | None |
+| Chess | Curated configs | `chess.js` | Magnus Carlsen |
+| Esports | PandaScore | `esports.js` | CS2 competitions |
 
-## 🔄 Data Pipeline
+## Data Pipeline
 
-1. **Fetch**: Parallel API calls to all sports
-2. **Transform**: Convert to normalized event structure
-3. **Filter**: Apply sport-specific rules
-4. **Aggregate**: Combine into unified events.json
-5. **Export**: Generate calendar file (.ics)
+1. **Fetch**: API calls to all sports (ESPN, LiveGolf, PandaScore, fotball.no)
+2. **Validate**: Response validators filter invalid items, log warnings
+3. **Transform**: Convert to normalized event structure
+4. **Filter**: Apply sport-specific rules (Norwegian focus, date range)
+5. **Aggregate**: Combine into unified events.json (with curated configs)
+6. **Enrich**: AI adds importance, summaries, tags (OpenAI/Anthropic)
+7. **Generate**: Claude CLI creates featured.json (brief, sections, radar)
+8. **Monitor**: Pipeline health, quality regression, coverage gap detection
+9. **Export**: Generate calendar file (.ics)
 
-## 🛡️ Error Handling
+## Error Handling & Self-Healing
 
 The system includes multiple layers of resilience:
 
+- **Response validation** — schema checks filter invalid items without rejecting entire responses
 - **API retries** with exponential backoff
-- **Response caching** to reduce API calls
-- **Fallback to legacy** fetchers if refactored fail
 - **Retain last good** data on total failure
+- **Pipeline health monitoring** — detects sport drops, stale data, RSS/standings issues
+- **Quality regression gate** — alerts when AI enrichment or featured scores drop
+- **Coverage gap detection** — finds blind spots by cross-referencing RSS vs events
 
-## 🧪 Testing
+## Testing
 
 ```bash
-# Test refactored fetchers
-node scripts/test-refactored.js
+# Run all tests (279 tests across 18 files)
+npm test
 
 # Validate output structure
 node scripts/validate-events.js
+
+# Run pipeline health check
+node scripts/pipeline-health.js
+
+# Check quality regression
+node scripts/check-quality-regression.js
+
+# Detect coverage gaps
+node scripts/detect-coverage-gaps.js
 ```
 
 ## 🔧 Adding a New Sport
@@ -165,12 +192,13 @@ node scripts/fetch/index.js | grep "Refactored fetchers"
 - **Rate limiting** (150ms between calls)
 - **Data deduplication**
 
-## 📝 Environment Variables
-
-Optional API keys for enhanced data:
+## Environment Variables
 
 ```bash
-LIVEGOLF_API_KEY=your_key_here  # Premium golf data with tee times
+CLAUDE_CODE_OAUTH_TOKEN=...  # Claude Max subscription for featured generation
+OPENAI_API_KEY=...           # OpenAI for event enrichment
+LIVEGOLF_API_KEY=...         # Premium golf data with tee times
+PANDASCORE_API_KEY=...       # Esports CS2 competitions
 ```
 
 ## 🤝 Contributing

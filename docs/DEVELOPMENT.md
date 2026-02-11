@@ -7,9 +7,9 @@ SportSync is a **static sports dashboard** that displays upcoming events from va
 ## System Architecture
 
 ```
-GitHub Actions → Fetch APIs → Generate JSON → GitHub Pages → User Browser
-     ↑                                              ↓
-     └──────── Every 6 hours ───────────────────────┘
+GitHub Actions → Fetch APIs → Validate → Enrich → Health Check → GitHub Pages → User Browser
+     ↑                                                                ↓
+     └──────── Every 2 hours ─────────────────────────────────────────┘
 ```
 
 ## Technology Stack
@@ -19,13 +19,13 @@ GitHub Actions → Fetch APIs → Generate JSON → GitHub Pages → User Browse
 - **Data Pipeline**: Node.js scripts
 - **Hosting**: GitHub Pages
 - **CI/CD**: GitHub Actions
-- **APIs**: ESPN, HLTV, Lichess, fotball.no
+- **APIs**: ESPN, LiveGolf, PandaScore, fotball.no
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 20+
 - Git
 - Python 3 (for local server)
 
@@ -53,26 +53,26 @@ npm run build:events
 ```
 SportSync/
 ├── docs/                 # GitHub Pages root (frontend)
-│   ├── index.html       # Main dashboard (HTML + embedded CSS)
+│   ├── index.html       # Main dashboard (HTML + embedded CSS, 480px max-width)
 │   ├── js/              # Client-side JavaScript
-│   │   ├── dashboard.js          # Dashboard controller (temporal bands, expand)
-│   │   ├── dashboard-helpers.js  # Pure utilities (grouping, brief, countdowns)
+│   │   ├── dashboard.js          # Dashboard controller (~860 lines): brief, events, live polling
 │   │   ├── asset-maps.js         # Team logos + golfer headshot URLs
-│   │   ├── sport-config.js       # Sport metadata (emoji, color, aliases)
-│   │   ├── sports-api.js         # API integration
+│   │   ├── sport-config.js       # Sport metadata (emoji, color, aliases for 7 sports)
 │   │   └── preferences-manager.js # Favorites storage (localStorage)
 │   ├── data/            # Auto-generated JSON data
 │   └── sw.js            # Service worker
 │
-├── scripts/             # Data fetching (backend)
-│   ├── config/          # Configuration files
-│   ├── lib/             # Core libraries
-│   ├── fetch/           # Sport fetchers
+├── scripts/             # Data fetching & monitoring (backend)
+│   ├── config/          # Auto-discovered curated event configs
+│   ├── lib/             # Core libraries (helpers, validators, LLM client)
+│   ├── fetch/           # Sport-specific fetchers
+│   ├── pipeline-health.js        # Pipeline health monitoring
+│   ├── check-quality-regression.js # AI quality regression gate
+│   ├── detect-coverage-gaps.js   # RSS vs events blind spot detection
 │   └── build-*.js       # Build scripts
 │
-├── .github/             # GitHub configuration
-│   └── workflows/       # GitHub Actions
-│
+├── tests/               # 279 tests across 18 files (vitest)
+├── .github/workflows/   # GitHub Actions (data pipeline + autopilot)
 └── package.json         # Project metadata
 ```
 
@@ -80,24 +80,27 @@ SportSync/
 
 ### 1. Automated Fetching (GitHub Actions)
 
-Every 6 hours, GitHub Actions:
+Every 2 hours, GitHub Actions:
 
-1. Runs `scripts/fetch/index.js` to fetch from all APIs
-2. Generates individual sport JSON files
-3. Runs `scripts/build-events.js` to create unified events.json
-4. Runs `scripts/build-ics.js` to generate calendar export
-5. Commits updated files to repository
-6. GitHub Pages automatically deploys
+1. Fetches data from ESPN, LiveGolf, PandaScore, fotball.no (with response validation)
+2. Generates individual sport JSON files + fetches standings and RSS
+3. Runs `scripts/build-events.js` to create unified events.json (auto-discovers curated configs)
+4. AI enrichment adds importance, summaries, tags to events
+5. Claude CLI generates featured.json (brief, sections, radar)
+6. Validates data, runs pipeline health check and quality regression gate
+7. Detects coverage gaps (RSS headlines vs events)
+8. Commits updated files, GitHub Pages automatically deploys
 
 ### 2. Client-Side Loading
 
 When user visits the site:
 
-1. `dashboard.js` loads `data/events.json`
-2. Events are grouped into temporal bands (Today/Tomorrow/This Week/Later)
-3. Within each band, 3+ same-tournament events get a tournament header
-4. Click-to-expand shows venue, team logos, streaming, and favorite actions
-5. Service worker caches for offline access
+1. `dashboard.js` loads `events.json`, `featured.json`, `standings.json`
+2. Renders AI-generated editorial brief and featured sections
+3. Events grouped into temporal bands (Today/Tomorrow/This Week/Later), organized by sport
+4. Click-to-expand shows venue, team logos, standings mini-tables, streaming, favorites
+5. Live polling fetches ESPN football scores + golf leaderboard every 60s
+6. Service worker caches static assets for offline access
 
 ## Adding New Features
 
@@ -199,8 +202,9 @@ Most sports use ESPN's public APIs:
 
 ### Custom Integrations
 
-- **Chess**: Curated JSON + Lichess broadcasts
-- **Esports**: HLTV community API
+- **Chess**: Curated configs in `scripts/config/`
+- **Esports**: PandaScore API (needs `PANDASCORE_API_KEY`)
+- **Golf (enhanced)**: LiveGolf API with tee times (needs `LIVEGOLF_API_KEY`)
 - **Norwegian Football**: fotball.no API
 
 ### Rate Limiting
@@ -211,36 +215,27 @@ Most sports use ESPN's public APIs:
 
 ## Testing
 
-### Manual Testing
-
 ```bash
-# Test data fetching
-node scripts/fetch/index.js
-
-# Test specific sport
-node -e "import('./scripts/fetch/football-refactored.js').then(m => m.fetchFootballESPN().then(console.log))"
+# Run all tests (279 tests across 18 files)
+npm test
 
 # Validate data structure
 node scripts/validate-events.js
+
+# Run pipeline health check locally
+node scripts/pipeline-health.js
+
+# Check quality regression
+node scripts/check-quality-regression.js
+
+# Detect coverage gaps
+node scripts/detect-coverage-gaps.js
 
 # Test frontend locally
 npm run dev
 ```
 
-### Automated Testing (Future)
-
-```javascript
-// scripts/test/football.test.js
-import { FootballFetcher } from '../fetch/football-refactored.js';
-
-describe('FootballFetcher', () => {
-  test('should fetch Premier League matches', async () => {
-    const fetcher = new FootballFetcher();
-    const result = await fetcher.fetch();
-    expect(result.tournaments).toHaveLength(greaterThan(0));
-  });
-});
-```
+Test coverage includes: response validation, pipeline health, quality regression, coverage gaps, dashboard structure, event normalization, enrichment, build-events, fetch-standings, fetch-rss, helpers, filters, preferences, Norwegian streaming, and AI quality gates.
 
 ## Debugging
 
@@ -386,26 +381,19 @@ Follow conventional commits:
 - Verify Node.js version
 - Check API availability
 
-## Future Roadmap
+## Feature Status
 
-### Phase 1 (Current)
-- ✅ Basic dashboard
-- ✅ Automated data fetching
-- ✅ Norwegian focus
-- ✅ Clean architecture
-
-### Phase 2 (Current)
-- [x] User preferences (localStorage)
-- [x] Favorite teams/players
-- [x] Dark mode persistence
-- [x] Ultra-minimal temporal band design
-- [x] AI daily brief (template-based)
-
-### Phase 3 (Future)
-- [ ] AI daily brief via Claude API call
-- [ ] Featured context sections (Olympics, World Cup)
-- [ ] Push notifications
-- [ ] Live scores
+### Completed
+- ✅ Ultra-minimal editorial dashboard (480px, system-ui, newspaper aesthetic)
+- ✅ AI editorial brief, featured sections, and radar via Claude CLI
+- ✅ AI event enrichment (importance 1-5, summaries, tags, Norwegian relevance)
+- ✅ AI watch plan (ranked "what to watch" windows)
+- ✅ Live score polling (ESPN football scores + golf leaderboard every 60s)
+- ✅ Autonomous curated configs (Olympics, chess tournaments)
+- ✅ Self-healing pipeline (response validation, health monitoring, quality regression, coverage gaps)
+- ✅ User preferences, favorites, dark mode (localStorage)
+- ✅ Nightly autopilot for continuous improvement
+- ✅ 279 tests across 18 files
 
 ## Resources
 

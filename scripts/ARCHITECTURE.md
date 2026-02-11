@@ -26,13 +26,18 @@ SportSync uses a **modular, configuration-driven architecture** for fetching spo
 └──────────────────────┬──────────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│                    Utility Libraries                         │
-│   APIClient | EventNormalizer | Filters | Helpers           │
+│                  Validation & Utilities                       │
+│   ResponseValidator | APIClient | EventNormalizer | Filters  │
 └──────────────────────┬──────────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
 │                      Output Layer                            │
 │              Normalized JSON files in docs/data/             │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────────┐
+│                   Monitoring Layer                            │
+│   PipelineHealth | QualityRegression | CoverageGapDetection │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -49,9 +54,11 @@ scripts/
 │   ├── base-fetcher.js         # Abstract base class for all fetchers
 │   ├── api-client.js           # HTTP client with retry & caching
 │   ├── event-normalizer.js     # Ensures consistent event structure
+│   ├── response-validator.js   # API response schema validation (ESPN, LiveGolf, PandaScore)
+│   ├── ai-quality-gates.js     # AI enrichment quality gates and fallbacks
 │   ├── filters.js              # Reusable filtering functions
-│   ├── helpers.js              # Legacy utility functions
-│   └── migration-helper.js     # Gradual migration support
+│   ├── helpers.js              # Shared utility functions
+│   └── llm-client.js           # LLM abstraction (Anthropic + OpenAI)
 │
 ├── lib/adapters/
 │   └── espn-adapter.js         # ESPN API adapter (used by most sports)
@@ -166,20 +173,25 @@ class ChessFetcher extends BaseFetcher {
 
 ### Multiple Layers of Resilience
 
-1. **API Level**:
-   - Retry failed requests (2 retries, exponential backoff)
-   - Cache successful responses (1 minute TTL)
-   - Use stale cache if API fails
+1. **Response Validation** (`response-validator.js`):
+   - Schema checks for ESPN, LiveGolf, PandaScore responses
+   - Filters invalid items (missing date, competitions) rather than rejecting entire response
+   - Logs warnings for each invalid item
 
-2. **Fetcher Level**:
-   - Try refactored fetcher first
-   - Fall back to legacy fetcher if needed
+2. **API Level**:
+   - Retry failed requests (2 retries, exponential backoff)
    - Return empty result set on total failure
 
 3. **Pipeline Level**:
    - Continue even if individual sports fail
    - Retain last good data if new fetch fails
    - Log all errors for debugging
+
+4. **Monitoring** (post-build):
+   - `pipeline-health.js` — detects sport count drops, stale data, RSS/standings issues
+   - `check-quality-regression.js` — alerts on AI enrichment/featured score drops
+   - `detect-coverage-gaps.js` — finds events mentioned in RSS but missing from pipeline
+   - Creates GitHub issues automatically when critical problems are detected
 
 ## Migration Strategy
 
@@ -254,25 +266,13 @@ const personalData = await PersonalFetcher.fetch(userPrefs.apiKeys);
 
 ## Testing
 
-### Unit Testing (Future)
-
-```javascript
-// Test individual components
-describe('BaseFetcher', () => {
-  it('should handle API failures gracefully', ...);
-  it('should apply filters correctly', ...);
-});
-```
-
-### Integration Testing
+279 tests across 18 files (vitest):
 
 ```bash
-# Test refactored system
-node scripts/test-refactored.js
-
-# Compare with legacy
-node scripts/fetch/index.js
+npm test
 ```
+
+Key test areas: response validation, pipeline health, quality regression, coverage gaps, dashboard structure, event normalization, enrichment, build-events, fetch-standings, fetch-rss, helpers, filters, preferences, Norwegian streaming, and AI quality gates.
 
 ## Performance Considerations
 

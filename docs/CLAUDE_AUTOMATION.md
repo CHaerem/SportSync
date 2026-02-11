@@ -100,6 +100,19 @@ Interactive (on mention)       CI Fix (on failure)
 
 The **autopilot** is the proactive engine. The **maintenance** workflow monitors health and keeps the roadmap relevant. **Interactive** and **CI fix** handle reactive needs.
 
+### Self-Healing Pipeline Integration
+
+The data pipeline (every 2 hours) now generates monitoring artifacts that feed into the autopilot:
+
+- **`health-report.json`** — sport coverage counts, data freshness, RSS/standings health, anomaly detection
+- **`coverage-gaps.json`** — RSS headlines cross-referenced against events to find blind spots
+- **`ai-quality.json`** — enrichment and featured content quality scores
+
+The autopilot reads these during nightly runs to:
+1. Prioritize repair tasks when `health-report.json` shows critical issues
+2. Create curated configs for high-confidence actionable coverage gaps
+3. File GitHub issues for medium-confidence gaps needing human review
+
 ## Authentication
 
 Uses a Claude Max subscription via OAuth token:

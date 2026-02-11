@@ -42,24 +42,28 @@ SportSync has two AI-powered automation layers running on GitHub Actions:
 │  Data Pipeline (every 2 hours)                  │
 │                                                 │
 │  1. Fetch sports APIs → per-sport JSON files    │
-│  2. Auto-discover curated configs (scripts/     │
+│  2. Validate API responses (schema checks)      │
+│  3. Auto-discover curated configs (scripts/     │
 │     config/*.json) for major events             │
-│  3. Merge into unified events.json              │
-│  4. Enrich with AI (importance, tags)           │
-│  5. Quality-gate enrichment fallback            │
-│  6. Generate featured + watch-plan via Claude   │
-│  7. Validate → commit → GitHub Pages deploys    │
+│  4. Merge into unified events.json              │
+│  5. Enrich with AI (importance, tags)           │
+│  6. Quality-gate enrichment fallback            │
+│  7. Generate featured + watch-plan via Claude   │
+│  8. Validate → health check → commit → deploy   │
+│  9. Pipeline health report + quality regression  │
+│  10. Coverage gap detection (RSS vs events)      │
 └─────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────┐
 │  Autopilot (nightly at 03:00 UTC)               │
 │                                                 │
 │  1. Reads AUTOPILOT_ROADMAP.md task queue       │
-│  2. Picks first PENDING task                    │
-│  3. Branch → implement → test → PR → merge      │
-│  4. Loops through tasks until done              │
-│  5. Scouts codebase for new improvements        │
-│  6. Appends discoveries to roadmap              │
+│  2. Reads health-report.json + coverage-gaps    │
+│  3. Picks first PENDING task (or repair task)   │
+│  4. Branch → implement → test → PR → merge      │
+│  5. Loops through tasks until done              │
+│  6. Creates curated configs for coverage gaps   │
+│  7. Scouts codebase for new improvements        │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -114,11 +118,15 @@ SportSync uses two GitHub Actions workflows powered by Claude:
 **Runs every 2 hours.** Fetches live sports data, generates AI editorial content, and deploys.
 
 Key steps:
-1. Fetch data from ESPN, PandaScore, and curated sources
+1. Fetch data from ESPN, PandaScore, and curated sources (with response validation)
 2. `build-events.js` — merges sport JSONs + auto-discovers `scripts/config/*.json`
 3. `enrich-events.js` — AI adds importance scores and tags (OpenAI)
 4. `generate-featured.js` — Claude generates editorial brief, featured sections, and radar content
-5. Validate, build calendar, commit, deploy
+5. Validate data integrity
+6. `pipeline-health.js` — checks sport coverage, data freshness, RSS/standings health
+7. `check-quality-regression.js` — detects AI quality score drops vs previous commit
+8. `detect-coverage-gaps.js` — cross-references RSS headlines against events to find blind spots
+9. Build calendar, commit, deploy
 
 The featured generation uses `CLAUDE_CODE_OAUTH_TOKEN` to call Claude via the Claude Code CLI (`npx @anthropic-ai/claude-code -p`). This allows using a Claude Max subscription instead of API keys.
 
@@ -174,6 +182,8 @@ docs/                               # GitHub Pages root
 │   ├── standings.json              # ESPN standings (PL, golf, F1)
 │   ├── rss-digest.json             # RSS news digest (11 feeds)
 │   ├── ai-quality.json             # AI quality-gate metrics (enrichment + featured)
+│   ├── health-report.json          # Pipeline health report (coverage, freshness, anomalies)
+│   ├── coverage-gaps.json          # RSS vs events coverage gap detection
 │   ├── events.ics                  # Calendar export
 │   ├── football.json               # Per-sport source files
 │   ├── golf.json / tennis.json / f1.json / chess.json / esports.json
@@ -190,12 +200,17 @@ scripts/                            # Data fetching & processing
 │   ├── llm-client.js               # OpenAI + Anthropic API client
 │   ├── helpers.js                  # Shared utilities
 │   ├── enrichment-prompts.js       # AI enrichment prompt templates
-│   └── event-normalizer.js         # Event validation
+│   ├── event-normalizer.js         # Event validation
+│   ├── response-validator.js       # API response schema validation
+│   └── ai-quality-gates.js         # AI enrichment quality gates
 ├── fetch-standings.js              # ESPN standings → standings.json
 ├── fetch-rss.js                    # RSS digest → rss-digest.json
 ├── build-events.js                 # Merges sport JSONs + curated configs
 ├── enrich-events.js                # AI enrichment (importance, tags, summaries)
 ├── generate-featured.js            # Claude CLI → featured.json
+├── pipeline-health.js              # Pipeline health report → health-report.json
+├── check-quality-regression.js     # AI quality regression detection
+├── detect-coverage-gaps.js         # RSS vs events blind spot detection
 ├── merge-open-data.js              # Merges open source + primary data
 ├── validate-events.js              # Data integrity checks
 └── build-ics.js                    # Calendar export generator
@@ -222,7 +237,7 @@ npm run dev          # http://localhost:8000
 
 ```bash
 npm run dev              # Local dev server
-npm test                 # Run all tests (123 tests, vitest)
+npm test                 # Run all tests (279 tests, vitest)
 npm run build:events     # Generate events.json from sport files
 npm run generate:featured # Generate featured.json (needs API key or Claude CLI)
 npm run validate:data    # Check data integrity
