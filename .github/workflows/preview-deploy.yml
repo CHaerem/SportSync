@@ -1,0 +1,88 @@
+name: Deploy Pages with Previews
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'design/**'
+    paths:
+      - 'docs/**'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Assemble site root from main
+        run: |
+          mkdir -p _site
+          cp -r docs/* _site/
+
+      - name: Checkout and assemble broadsheet preview
+        continue-on-error: true
+        run: |
+          git fetch origin design/broadsheet --depth=1 || exit 0
+          git checkout origin/design/broadsheet -- docs/ || exit 0
+          mkdir -p _site/preview/broadsheet
+          cp -r docs/* _site/preview/broadsheet/
+          # Use voice-matched featured content if available
+          if [ -f _site/data/featured-broadsheet.json ]; then
+            cp _site/data/featured-broadsheet.json _site/preview/broadsheet/data/featured.json
+          fi
+          git checkout main -- docs/
+
+      - name: Checkout and assemble terminal preview
+        continue-on-error: true
+        run: |
+          git fetch origin design/terminal --depth=1 || exit 0
+          git checkout origin/design/terminal -- docs/ || exit 0
+          mkdir -p _site/preview/terminal
+          cp -r docs/* _site/preview/terminal/
+          # Use voice-matched featured content if available
+          if [ -f _site/data/featured-terminal.json ]; then
+            cp _site/data/featured-terminal.json _site/preview/terminal/data/featured.json
+          fi
+          git checkout main -- docs/
+
+      - name: Checkout and assemble playful preview
+        continue-on-error: true
+        run: |
+          git fetch origin design/playful --depth=1 || exit 0
+          git checkout origin/design/playful -- docs/ || exit 0
+          mkdir -p _site/preview/playful
+          cp -r docs/* _site/preview/playful/
+          # Use voice-matched featured content if available
+          if [ -f _site/data/featured-playful.json ]; then
+            cp _site/data/featured-playful.json _site/preview/playful/data/featured.json
+          fi
+          git checkout main -- docs/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

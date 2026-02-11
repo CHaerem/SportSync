@@ -24,6 +24,21 @@ import { buildWatchPlan } from "./lib/watch-plan.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
+const VOICE = process.env.SPORTSYNC_VOICE || "";
+const FEATURED_SUFFIX = process.env.SPORTSYNC_FEATURED_SUFFIX || "";
+
+function buildVoiceOverride(voice) {
+	const voices = {
+		broadsheet: `VOICE OVERRIDE — BROADSHEET:
+Adopt the voice of a Financial Times sports correspondent. Write formal, measured prose with complete sentences and understated authority. Use proper nouns, dashes for asides, and precise language. No emoji in lines, no exclamation marks. Example style: "Arsenal host Liverpool at the Emirates in what promises to be a pivotal title encounter, with just two points separating the sides."`,
+		terminal: `VOICE OVERRIDE — TERMINAL:
+Adopt a terse, abbreviated terminal/scoreboard voice. ALL CAPS headers. Use pipe separators for data. Drop articles (a, an, the). Use status codes like [LIVE] [SOON] [DONE]. Example style: "ARSvLIV | 20:30 | TITLE DECIDER | 2pt gap". Keep everything compact and data-dense. No prose, no narrative — just raw data lines.`,
+		playful: `VOICE OVERRIDE — PLAYFUL:
+Adopt an energetic, enthusiastic voice. Use exclamation marks freely, casual language, rhetorical questions. Be excited about every event. Example style: "Arsenal vs Liverpool is going to be HUGE tonight! Can the Gunners close the gap? Kick-off at 20:30!" Make it fun and conversational.`,
+	};
+	return voices[voice] || "";
+}
+
 const FEATURED_SCHEMA = {
 	today: [
 		"string — Line 1: editorial headline about the day's main story (the ONE thing that matters most)",
@@ -50,7 +65,8 @@ const FEATURED_SCHEMA = {
 	],
 };
 
-function buildSystemPrompt() {
+function buildSystemPrompt(voice) {
+	const voiceOverride = buildVoiceOverride(voice);
 	return `You are a Norwegian sports editor for SportSync, a minimal sports dashboard.
 Your job is to generate curated editorial content in JSON format.
 
@@ -122,7 +138,7 @@ SECTIONS:
 
 OUTPUT:
 - Always return valid JSON matching the provided schema exactly
-- No markdown wrapper — raw JSON only`;
+- No markdown wrapper — raw JSON only${voiceOverride ? `\n\n${voiceOverride}` : ""}`;
 }
 
 function loadCuratedConfigs() {
@@ -526,9 +542,13 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 async function main() {
 	const dataDir = rootDataPath();
 	const eventsPath = path.join(dataDir, "events.json");
-	const featuredPath = path.join(dataDir, "featured.json");
+	const featuredFile = FEATURED_SUFFIX ? `featured-${FEATURED_SUFFIX}.json` : "featured.json";
+	const featuredPath = path.join(dataDir, featuredFile);
 	const watchPlanPath = path.join(dataDir, "watch-plan.json");
 	const qualityPath = path.join(dataDir, "ai-quality.json");
+
+	if (VOICE) console.log(`Voice override: ${VOICE}`);
+	if (FEATURED_SUFFIX) console.log(`Output file: ${featuredFile}`);
 
 	const events = readJsonIfExists(eventsPath);
 	if (!events || !Array.isArray(events) || events.length === 0) {
@@ -573,7 +593,7 @@ async function main() {
 		console.log(`Loaded rss-digest.json: ${rssDigest.items.length} headlines.`);
 	}
 
-	const systemPrompt = buildSystemPrompt();
+	const systemPrompt = buildSystemPrompt(VOICE);
 	const baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
 	let featured = null;
 	let provider = "none";
@@ -634,37 +654,45 @@ async function main() {
 	const finalQuality = validateFeaturedContent(featured, { events });
 	featured = finalQuality.normalized;
 
-	const watchPlan = buildWatchPlan(events, {
-		now,
-		userContext,
-		featured,
-	});
-
 	writeJsonPretty(featuredPath, featured);
-	writeJsonPretty(watchPlanPath, watchPlan);
 
-	const existingQuality = readJsonIfExists(qualityPath) || {};
-	writeJsonPretty(qualityPath, {
-		...existingQuality,
-		generatedAt: new Date().toISOString(),
-		featured: {
-			provider,
-			attempts,
-			valid: finalQuality.valid,
-			score: finalQuality.score,
-			issues: finalQuality.issues.map((issue) => issue.message),
-			todayLines: featured.today.length,
-			sectionCount: featured.sections.length,
-			thisWeekLines: featured.thisWeek.length,
-		},
-	});
+	// Only write watch-plan and quality for the main featured.json (not voice variants)
+	if (!FEATURED_SUFFIX) {
+		const watchPlan = buildWatchPlan(events, {
+			now,
+			userContext,
+			featured,
+		});
+		writeJsonPretty(watchPlanPath, watchPlan);
+
+		const existingQuality = readJsonIfExists(qualityPath) || {};
+		writeJsonPretty(qualityPath, {
+			...existingQuality,
+			generatedAt: new Date().toISOString(),
+			featured: {
+				provider,
+				attempts,
+				valid: finalQuality.valid,
+				score: finalQuality.score,
+				issues: finalQuality.issues.map((issue) => issue.message),
+				todayLines: featured.today.length,
+				sectionCount: featured.sections.length,
+				thisWeekLines: featured.thisWeek.length,
+			},
+		});
+	}
 
 	console.log(
-		`Featured content generated: ${featured.today.length} today lines, ${featured.sections.length} sections, ${featured.thisWeek.length} this-week items.`
+		`Featured content generated (${featuredFile}): ${featured.today.length} today lines, ${featured.sections.length} sections, ${featured.thisWeek.length} this-week items.`
 	);
-	console.log(
-		`Watch plan generated: ${watchPlan.picks.length} picks across ${watchPlan.windows.filter((w) => w.items.length > 0).length} active windows.`
-	);
+	if (!FEATURED_SUFFIX) {
+		const watchPlanData = readJsonIfExists(watchPlanPath);
+		if (watchPlanData) {
+			console.log(
+				`Watch plan generated: ${watchPlanData.picks?.length || 0} picks across ${(watchPlanData.windows || []).filter((w) => w.items.length > 0).length} active windows.`
+			);
+		}
+	}
 }
 
 main().catch((err) => {
