@@ -25,7 +25,10 @@ import { buildWatchPlan } from "./lib/watch-plan.js";
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
 const FEATURED_SCHEMA = {
-	today: ["string — emoji-prefixed telegraphic line, e.g. '⚽ Liverpool at Sunderland, 21:15 — title race crunch'"],
+	today: [
+		"string — Line 1: editorial headline about the day's main story (the ONE thing that matters most)",
+		"string — Line 2: compact summary of what else is on, e.g. 'Plus 4 PL matches from 20:30 and Copa del Rey semifinal'",
+	],
 	sections: [
 		{
 			id: "string — kebab-case identifier like olympics-2026",
@@ -42,7 +45,9 @@ const FEATURED_SCHEMA = {
 			expandItems: [{ text: "string", type: "stat | event | text" }],
 		},
 	],
-	thisWeek: ["string — emoji-prefixed with day, e.g. '⛳ Thu — Hovland at Pebble Beach Pro-Am'"],
+	thisWeek: [
+		"string — 1-2 lines about upcoming NON-section events, e.g. '⛳ Thu — Hovland at Pebble Beach · ♟️ Sat — Carlsen in Freestyle Chess'",
+	],
 };
 
 function buildSystemPrompt() {
@@ -69,37 +74,42 @@ NEWS HOOK:
 - If a headline relates to a scheduled event, weave it in
 - Events marked ★4 or ★5 are must-watch — always include these
 
+BRIEF STRUCTURE (critical — the brief must NOT restate the event list below it):
+- "today" has exactly 2 lines:
+  Line 1: The editorial headline — the ONE story that defines today. Emoji-prefixed, with HH:MM time.
+  Line 2: A compact "what else" summary — counts and time ranges, NOT individual match listings.
+  Example: "Plus 4 PL matches from 20:30 and Copa del Rey semifinal at 21:00"
+  Example: "Also: Hovland tees off 14:30 at Pebble Beach, Carlsen in Norway Chess 17:00"
+- "thisWeek" has 1-2 lines:
+  Only mention sports NOT already covered by a featured section.
+  If Olympics section exists, do NOT repeat Olympics events in thisWeek.
+  Use middot (·) to combine multiple sports on one line.
+  Example: "⛳ Thu — Hovland at Pebble Beach Pro-Am · ♟️ Sat — Carlsen opens Freestyle Chess"
+
 LINE FORMAT:
-- Each line starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮
-- 🏅 is reserved for Olympics events ONLY — never use it for other sports
-- "today" lines: include 24h HH:MM time (e.g. 21:15, never 9:15 PM), max 18 words, telegraphic headline style
-- "thisWeek" lines: include day name (Thu, Fri), max 18 words, telegraphic
+- Headline line starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
+- 🏅 is reserved for Olympics events ONLY
+- Use 24h HH:MM times (21:15, never 9:15 PM), max 18 words, telegraphic
+- The "what else" line can skip emoji — it's a summary, not a headline
 - No full sentences — headline/ticker style only
 
 TEAM NAMES (important for logo rendering):
-- For football lines, always mention BOTH team names explicitly so the UI can render inline logos
-- Use the actual team names as provided in the events data (e.g. "Liverpool" not "the Reds")
-- Good: "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
-- Bad: "⚽ PL leaders visit the Stadium of Light, 21:15" (no team names = no logos)
+- For football headline lines, mention BOTH team names explicitly so the UI can render inline logos
+- Use actual team names from events data (e.g. "Liverpool" not "the Reds")
 
 QUALITY EXAMPLES:
-Excellent today lines:
-  "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
-  "⚽ Barcelona host Real Madrid, 21:00 — Clásico with La Liga top spot at stake"
-  "⛳ Hovland tees off 14:30 at Pebble Beach, T5 and three back of Scheffler"
-  "🎾 Ruud opens Madrid defence vs Rune, 15:00 — all-Nordic quarterfinal"
-  "🏎️ Verstappen and Norris split by 8pts heading into Melbourne qualifying, 07:00"
-  "♟️ Carlsen faces Firouzja in Norway Chess Rd 5, 17:00 — revenge after Wijk loss"
+Excellent today (2 lines only):
+  Line 1: "🏅 Granerud and Lindvik chase ski jump gold, 16:00 — Norway's first medal shot"
+  Line 2: "Plus 3 PL matches from 20:30 and Basque derby Copa semifinal at 21:00"
 
-Mediocre today lines (DO NOT write like this):
+  Line 1: "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
+  Line 2: "Also: Hovland tees off 14:30 at Pebble Beach, Copa del Rey semifinal at 21:00"
+
+BAD today (DO NOT write like this — these restate the event list):
   "⚽ Liverpool vs Sunderland, 21:15"
-  "⛳ Pebble Beach Pro-Am continues"
-  "🎾 Madrid Open quarterfinals today"
-  "🏎️ F1 Australian Grand Prix qualifying"
-  "♟️ Norway Chess Round 5 today"
-
-The difference: excellent lines contain stakes, standings context, and narrative tension.
-Every line must make the reader feel something is at stake.
+  "⚽ Fulham at Manchester City, 20:30"
+  "⚽ Real Sociedad at Athletic Club, 21:00"
+  (This is just the fixture list rewritten — the events section already shows this)
 
 GOLF TEE TIMES:
 - If tee time data is provided, include the golfer's tee time in the line
@@ -274,9 +284,9 @@ Generate featured.json matching this schema:
 ${JSON.stringify(FEATURED_SCHEMA, null, 2)}
 
 Remember:
-- today: 2-4 emoji-prefixed lines about today's events with HH:MM times — include standings context and narrative stakes
+- today: EXACTLY 2 lines. Line 1 = editorial headline (the ONE story of the day). Line 2 = compact "what else" summary (counts + time ranges, not individual fixtures)
 - sections: only if a major event (Olympics, World Cup, CL, etc.) is active — use the curated data above for accurate details
-- thisWeek: 2-4 emoji-prefixed lines about upcoming days with day names (Thu, Fri) — weave in storylines
+- thisWeek: 1-2 lines about upcoming events NOT covered by sections. Skip any sport that has its own section above.
 - Return ONLY valid JSON, no markdown wrapper`;
 }
 
@@ -310,7 +320,7 @@ function toFeaturedShape(result) {
 	const todayLines = result?.today || result?.brief || [];
 	const thisWeekLines = result?.thisWeek || result?.radar || [];
 	return {
-		today: Array.isArray(todayLines) ? todayLines.slice(0, 4) : [],
+		today: Array.isArray(todayLines) ? todayLines.slice(0, 2) : [],
 		sections: Array.isArray(result?.sections)
 			? result.sections.map((s) => ({
 					id: s?.id || "unknown",
@@ -322,7 +332,7 @@ function toFeaturedShape(result) {
 					expandItems: Array.isArray(s?.expandItems) ? s.expandItems : [],
 				}))
 			: [],
-		thisWeek: Array.isArray(thisWeekLines) ? thisWeekLines.slice(0, 4) : [],
+		thisWeek: Array.isArray(thisWeekLines) ? thisWeekLines.slice(0, 2) : [],
 	};
 }
 
@@ -373,43 +383,50 @@ function sportEmoji(sport) {
 	return map[sport] || "🏆";
 }
 
-function generateFallbackThisWeek(events, now) {
+function generateFallbackThisWeek(events, now, sectionSports = []) {
 	const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 	const upcoming = events
 		.filter((event) => new Date(event.time) >= todayEnd)
+		.filter((event) => !sectionSports.includes(event.sport))
 		.sort((a, b) => new Date(a.time) - new Date(b.time));
 
-	const norwegianUpcoming = upcoming.filter((event) => event.norwegian).slice(0, 3);
-	const lines = norwegianUpcoming.map((event) => {
+	const parts = [];
+	const usedSports = new Set();
+
+	// Pick top events from different sports
+	const candidates = [
+		...upcoming.filter((e) => e.norwegian && e.importance >= 3),
+		...upcoming.filter((e) => e.importance >= 4),
+		...upcoming,
+	];
+
+	for (const event of candidates) {
+		if (usedSports.has(event.sport)) continue;
+		usedSports.add(event.sport);
 		const t = new Date(event.time);
 		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
-		return `${sportEmoji(event.sport)} ${day} — ${event.title}`;
-	});
-
-	if (lines.length < 2) {
-		const mustWatch = upcoming.filter((event) => event.importance >= 4).slice(0, 3);
-		for (const event of mustWatch) {
-			const t = new Date(event.time);
-			const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
-			lines.push(`${sportEmoji(event.sport)} ${day} — ${event.title}`);
-			if (lines.length >= 4) break;
-		}
+		parts.push(`${sportEmoji(event.sport)} ${day} — ${event.title}`);
+		if (parts.length >= 2) break;
 	}
 
-	if (lines.length < 2 && upcoming.length > 0) {
-		const e = upcoming[0];
-		const day = new Date(e.time).toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
-		lines.push(`${sportEmoji(e.sport)} ${day} — ${e.title}`);
+	// If we have 2 short items, combine them with middot on one line
+	if (parts.length === 2 && parts[0].length + parts[1].length < 80) {
+		return [`${parts[0]} · ${parts[1]}`];
 	}
 
-	return lines.slice(0, 4);
+	return parts.slice(0, 2);
 }
 
 function buildFallbackFeatured(events, now) {
+	const sections = buildFallbackSections(events, now);
+	const sectionSports = sections.map((s) => {
+		if (/olympic/i.test(s.id || s.title)) return "olympics";
+		return null;
+	}).filter(Boolean);
 	return {
 		today: generateFallbackToday(events, now),
-		sections: buildFallbackSections(events, now),
-		thisWeek: generateFallbackThisWeek(events, now),
+		sections,
+		thisWeek: generateFallbackThisWeek(events, now, sectionSports),
 	};
 }
 
@@ -450,31 +467,33 @@ function generateFallbackToday(events, now) {
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 
-	const lines = [];
-	const used = new Set();
+	// Line 1: editorial headline — pick the single most important event
+	const headline = todayEvents.filter((e) => e.norwegian).sort((a, b) => (b.importance || 0) - (a.importance || 0))[0]
+		|| todayEvents.filter((e) => e.importance >= 4).sort((a, b) => (b.importance || 0) - (a.importance || 0))[0]
+		|| todayEvents[0];
 
-	const addEvent = (e) => {
-		const key = `${e.sport}-${e.title}-${e.time}`;
-		if (used.has(key)) return;
-		used.add(key);
-		lines.push(fallbackLine(e));
-	};
+	const lines = [fallbackLine(headline)];
 
-	// Norwegian events first
-	todayEvents.filter((e) => e.norwegian).slice(0, 2).forEach(addEvent);
-
-	// Must-watch events
-	todayEvents.filter((e) => e.importance >= 4 && !e.norwegian).slice(0, 2).forEach(addEvent);
-
-	// Fill remaining with any events
-	if (lines.length < 2) {
-		for (const e of todayEvents) {
-			if (lines.length >= 4) break;
-			addEvent(e);
+	// Line 2: compact "what else" summary
+	const rest = todayEvents.filter((e) => e !== headline);
+	if (rest.length > 0) {
+		const sportCounts = {};
+		for (const e of rest) {
+			sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1;
 		}
+		const times = rest.map((e) => new Date(e.time));
+		const earliest = new Date(Math.min(...times));
+		const earliestTime = earliest.toLocaleTimeString("en-NO", {
+			hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Oslo",
+		});
+		const parts = Object.entries(sportCounts).map(([sport, count]) => {
+			const label = { football: "football", golf: "golf", tennis: "tennis", formula1: "F1", chess: "chess", esports: "esports", olympics: "Olympics" }[sport] || sport;
+			return `${count} ${label}`;
+		});
+		lines.push(`Plus ${parts.join(", ")} from ${earliestTime}`);
 	}
 
-	return lines.slice(0, 4);
+	return lines.slice(0, 2);
 }
 
 async function generateRawFeatured(systemPrompt, userPrompt) {
@@ -604,8 +623,12 @@ async function main() {
 	if (!featured.today || featured.today.length === 0) {
 		featured.today = generateFallbackToday(events, now);
 	}
-	if (!featured.thisWeek || featured.thisWeek.length < 2) {
-		featured.thisWeek = generateFallbackThisWeek(events, now);
+	if (!featured.thisWeek || featured.thisWeek.length === 0) {
+		const sectionSports = (featured.sections || []).map((s) => {
+			if (/olympic/i.test(s.id || s.title)) return "olympics";
+			return null;
+		}).filter(Boolean);
+		featured.thisWeek = generateFallbackThisWeek(events, now, sectionSports);
 	}
 
 	const finalQuality = validateFeaturedContent(featured, { events });

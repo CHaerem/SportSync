@@ -176,30 +176,35 @@ class Dashboard {
 	renderBrief() {
 		const el = document.getElementById('the-brief');
 
-		// Read today lines (backward compat: fall back to brief)
+		// Read editorial lines (backward compat: fall back to brief/radar)
 		let todayLines = [];
 		if (this.featured) {
 			const src = this.featured.today || this.featured.brief;
 			if (Array.isArray(src) && src.length > 0) {
-				todayLines = src.slice(0, 4);
+				todayLines = src.slice(0, 2);
 			}
 		}
 		if (todayLines.length === 0) {
 			todayLines = this.generateBriefLines();
 		}
 
-		// Append live score lines to today
-		const liveLines = this.generateLiveBriefLines();
-		if (liveLines.length > 0) {
-			todayLines = [...todayLines, ...liveLines];
+		// Dynamic adjustment: replace static brief with live context
+		const dynamicLine = this.generateDynamicBriefLine();
+		if (dynamicLine) {
+			todayLines = [dynamicLine, ...todayLines.slice(1)];
 		}
 
-		// Read this-week lines (backward compat: fall back to radar)
+		// Append live score lines
+		const liveLines = this.generateLiveBriefLines();
+		if (liveLines.length > 0) {
+			todayLines = [...liveLines, ...todayLines.slice(0, 1)];
+		}
+
 		let thisWeekLines = [];
 		if (this.featured) {
 			const src = this.featured.thisWeek || this.featured.radar;
 			if (Array.isArray(src) && src.length > 0) {
-				thisWeekLines = src.slice(0, 4);
+				thisWeekLines = src.slice(0, 2);
 			}
 		}
 
@@ -213,21 +218,58 @@ class Dashboard {
 
 		if (todayLines.length > 0) {
 			html += '<div class="editorial-header">Today</div>';
-			html += todayLines.map(line => {
+			html += todayLines.map((line, i) => {
 				const isLive = line.startsWith('LIVE:') || line.startsWith('\u26f3');
-				const cls = isLive ? ' style="color:var(--accent)"' : '';
-				return `<div class="editorial-line"${cls}>${this.renderBriefLine(line)}</div>`;
+				const cls = isLive ? ' brief-live' : (i === 0 ? ' brief-headline' : ' brief-secondary');
+				return `<div class="editorial-line${cls}">${this.renderBriefLine(line)}</div>`;
 			}).join('');
 		}
 
 		if (thisWeekLines.length > 0) {
 			html += '<div class="editorial-header">This Week</div>';
 			html += thisWeekLines.map(line =>
-				`<div class="editorial-line">${this.renderBriefLine(line)}</div>`
+				`<div class="editorial-line brief-secondary">${this.renderBriefLine(line)}</div>`
 			).join('');
 		}
 
 		el.innerHTML = html;
+	}
+
+	generateDynamicBriefLine() {
+		const now = new Date();
+		const bands = this.categorizeEvents();
+
+		// If something is live, the dynamic line leads with that
+		if (bands.live.length > 0) return null; // generateLiveBriefLines handles this
+
+		// If something starts within 30 minutes, highlight it
+		const soonEvents = bands.today.filter(e => {
+			const diff = (new Date(e.time) - now) / 60000;
+			return diff > 0 && diff <= 30;
+		});
+		if (soonEvents.length > 0) {
+			const e = soonEvents[0];
+			const mins = Math.round((new Date(e.time) - now) / 60000);
+			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === e.sport) : null;
+			const emoji = sportConfig ? sportConfig.emoji : '';
+			if (e.sport === 'football' && e.homeTeam && e.awayTeam) {
+				return `${emoji} ${this.shortName(e.homeTeam)} v ${this.shortName(e.awayTeam)} kicks off in ${mins}m`;
+			}
+			return `${emoji} ${e.title} starts in ${mins}m`;
+		}
+
+		// If all today events have ended, say so
+		if (bands.today.length === 0 && bands.results.length > 0 && bands.live.length === 0) {
+			const nextUp = bands.tomorrow.length > 0 ? bands.tomorrow[0] : null;
+			if (nextUp) {
+				const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === nextUp.sport) : null;
+				const emoji = sportConfig ? sportConfig.emoji : '';
+				return `Today's events wrapped — next up: ${emoji} ${nextUp.title} tomorrow`;
+			}
+			return "Today's events have wrapped up";
+		}
+
+		return null; // Use the static editorial line
 	}
 
 	generateBriefLines() {

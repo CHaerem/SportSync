@@ -182,18 +182,18 @@ export function validateFeaturedContent(featured, { events = [] } = {}) {
 	const thisWeekSource = featured?.thisWeek || featured?.radar || [];
 
 	const normalized = {
-		today: uniqueLines(todaySource, 4),
+		today: uniqueLines(todaySource, 2),
 		sections: (Array.isArray(featured?.sections) ? featured.sections : [])
 			.map((section) => sanitizeSection(section))
 			.filter((section) => section.title && section.items.length > 0),
-		thisWeek: uniqueLines(thisWeekSource, 4),
+		thisWeek: uniqueLines(thisWeekSource, 2),
 	};
 
-	if (normalized.today.length < 2) {
+	if (normalized.today.length < 1) {
 		issues.push({
 			severity: "error",
 			code: "today_too_short",
-			message: "Today should contain at least 2 lines.",
+			message: "Today should contain at least 1 line.",
 		});
 		score -= 35;
 	}
@@ -209,11 +209,11 @@ export function validateFeaturedContent(featured, { events = [] } = {}) {
 		}
 	}
 
-	if (normalized.thisWeek.length < 2) {
+	if (normalized.thisWeek.length < 1) {
 		issues.push({
 			severity: "error",
 			code: "this_week_too_short",
-			message: "This week should contain at least 2 forward-looking lines.",
+			message: "This week should contain at least 1 forward-looking line.",
 		});
 		score -= 25;
 	}
