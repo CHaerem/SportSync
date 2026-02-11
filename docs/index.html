@@ -7,31 +7,36 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
 	<meta name="description" content="Personalized sports dashboard with live events for football, golf, tennis, F1, chess, esports, and Olympics.">
-	<meta name="theme-color" content="#d97757">
-	<title>SportSync</title>
+	<meta name="theme-color" content="#8b1a1a">
+	<title>SportSync — The Broadsheet</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	<style>
 		:root {
-			--bg: #faf9f5;
-			--bg-secondary: #f0efe8;
-			--fg: #3d3929;
-			--muted: #8b8580;
-			--border: #e8e5dc;
-			--border-strong: #3d3929;
-			--accent: #d97757;
-			--radius: 12px;
+			--bg: #f5f0e8;
+			--bg-secondary: #ece7dd;
+			--fg: #1a1a1a;
+			--muted: #6b6560;
+			--border: #d5cfc4;
+			--border-strong: #1a1a1a;
+			--accent: #8b1a1a;
+			--radius: 0px;
 			--max-w: 480px;
-			--font: system-ui, -apple-system, sans-serif;
-			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+			--font: Georgia, 'Times New Roman', serif;
+			--font-serif: 'Playfair Display', Georgia, serif;
+			--shadow: none;
+			--font-mono: 'Courier New', Courier, monospace;
 		}
 		.dark {
-			--bg: #1a1816;
-			--bg-secondary: #242220;
-			--fg: #faf9f5;
-			--muted: #9a958e;
-			--border: #2d2a26;
-			--border-strong: #faf9f5;
-			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+			--bg: #1c1916;
+			--bg-secondary: #272320;
+			--fg: #ece7dd;
+			--muted: #8a847c;
+			--border: #3a3530;
+			--border-strong: #ece7dd;
+			--accent: #c44040;
+			--shadow: none;
 		}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -57,12 +62,15 @@
 			align-items: center;
 			justify-content: space-between;
 			margin-bottom: 32px;
+			padding-bottom: 12px;
+			border-bottom: 3px double var(--fg);
 		}
 		header h1 {
 			font-family: var(--font-serif);
-			font-size: 1.15rem;
-			font-weight: 400;
-			letter-spacing: -0.01em;
+			font-size: 1.5rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
 			color: var(--fg);
 		}
 		#themeToggle {
@@ -79,45 +87,50 @@
 
 		/* --- Date line --- */
 		#date-line {
-			font-size: 0.6rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.12em;
+			font-size: 0.7rem;
+			font-weight: 400;
+			font-variant: small-caps;
+			letter-spacing: 0.08em;
 			color: var(--muted);
 			margin-bottom: 16px;
+			padding-bottom: 8px;
+			border-bottom: 1px solid var(--border);
 		}
 
 		/* --- The Brief / Editorial --- */
 		#the-brief {
 			padding: 0 0 20px;
 			margin-bottom: 20px;
-			border-left: 2.5px solid var(--accent);
+			border-left: 2px solid var(--accent);
 			padding-left: 14px;
-			font-size: 0.85rem;
+			font-size: 0.88rem;
+			font-style: italic;
 			color: var(--fg);
-			line-height: 1.5;
+			line-height: 1.65;
 			font-weight: 400;
 		}
 		.editorial-header {
-			font-size: 0.55rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.12em;
+			font-size: 0.6rem;
+			font-weight: 400;
+			font-variant: small-caps;
+			letter-spacing: 0.08em;
 			color: var(--muted);
 			margin: 10px 0 4px;
+			font-style: normal;
 		}
 		.editorial-header:first-child { margin-top: 0; }
 		.editorial-line { padding: 2px 0; }
 		.editorial-line.brief-headline {
-			font-weight: 500;
+			font-weight: 400;
+			font-style: italic;
 		}
 		.editorial-line.brief-secondary {
-			font-size: 0.78rem;
+			font-size: 0.8rem;
 			color: var(--muted);
 		}
 		.editorial-line.brief-live {
 			color: var(--accent);
-			font-weight: 500;
+			font-weight: 400;
 		}
 		.brief-logo {
 			width: 16px;
@@ -135,21 +148,24 @@
 		.featured-section {
 			background: var(--bg-secondary);
 			border: none;
-			border-radius: var(--radius);
+			border-radius: 0;
 			padding: 18px 20px;
 			margin-bottom: 24px;
-			box-shadow: var(--shadow);
+			box-shadow: none;
+			border-top: 2px solid var(--fg);
 		}
 		.featured-section.highlight {
-			border-left: 3px solid var(--accent);
+			border-left: none;
+			border-top: 3px solid var(--accent);
 		}
 		.feat-header {
-			font-size: 0.6rem;
+			font-family: var(--font-serif);
+			font-size: 0.7rem;
 			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.1em;
+			font-variant: small-caps;
+			letter-spacing: 0.06em;
 			margin-bottom: 12px;
-			color: var(--accent);
+			color: var(--fg);
 		}
 		.feat-item {
 			font-size: 0.8rem;
@@ -183,14 +199,15 @@
 
 		/* --- Temporal Band Labels --- */
 		.band-label {
-			font-size: 0.6rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.12em;
+			font-family: var(--font-serif);
+			font-size: 0.65rem;
+			font-weight: 400;
+			font-variant: small-caps;
+			letter-spacing: 0.08em;
 			color: var(--muted);
 			margin: 24px 0 12px;
 			padding-top: 16px;
-			border-top: 1px solid var(--border);
+			border-top: 2px solid var(--fg);
 			cursor: default;
 		}
 		.band-label:first-child {
@@ -268,10 +285,11 @@
 			margin-bottom: 4px;
 		}
 		.sport-name {
+			font-family: var(--font-serif);
 			font-size: 0.65rem;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.08em;
+			font-weight: 400;
+			font-variant: small-caps;
+			letter-spacing: 0.06em;
 			color: var(--fg);
 		}
 		.sport-next {
@@ -319,6 +337,7 @@
 			50% { opacity: 0.3; }
 		}
 		.row-title strong {
+			font-family: var(--font-mono);
 			font-weight: 600;
 			font-variant-numeric: tabular-nums;
 		}
@@ -343,7 +362,8 @@
 		.event-row {
 			padding: 6px 0;
 			cursor: pointer;
-			border-radius: 6px;
+			border-radius: 0;
+			border-bottom: 1px solid var(--border);
 			transition: background 0.15s;
 		}
 		.event-row:hover { background: var(--bg-secondary); }
@@ -461,12 +481,13 @@
 		}
 		.exp-tag {
 			font-size: 0.6rem;
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
+			font-variant: small-caps;
+			letter-spacing: 0.04em;
 			color: var(--muted);
-			border: 1px solid var(--border);
-			border-radius: 4px;
-			padding: 1px 6px;
+			border: none;
+			border-bottom: 1px solid var(--muted);
+			border-radius: 0;
+			padding: 1px 2px;
 		}
 		.exp-teams {
 			display: flex;
@@ -550,7 +571,7 @@
 			color: var(--muted);
 			background: var(--bg-secondary);
 			border: 1px solid var(--border);
-			border-radius: 20px;
+			border-radius: 0;
 			padding: 3px 12px;
 			text-decoration: none;
 			display: inline-block;
@@ -568,7 +589,7 @@
 		.exp-fav-btn {
 			background: none;
 			border: 1px solid var(--border);
-			border-radius: 20px;
+			border-radius: 0;
 			padding: 3px 12px;
 			font-size: 0.7rem;
 			color: var(--muted);
@@ -728,21 +749,21 @@
 		}
 		.pick-reason {
 			font-size: 0.55rem;
-			text-transform: uppercase;
+			font-variant: small-caps;
 			letter-spacing: 0.04em;
 			color: var(--accent);
 			border: 1px solid var(--accent);
-			border-radius: 10px;
+			border-radius: 0;
 			padding: 1px 7px;
 			opacity: 0.8;
 		}
 		.pick-stream {
 			font-size: 0.55rem;
-			text-transform: uppercase;
+			font-variant: small-caps;
 			letter-spacing: 0.04em;
 			color: var(--muted);
 			border: 1px solid var(--border);
-			border-radius: 10px;
+			border-radius: 0;
 			padding: 1px 7px;
 		}
 		.watch-plan-more {
@@ -828,11 +849,11 @@
 		}
 		.news-source {
 			font-size: 0.55rem;
-			text-transform: uppercase;
+			font-variant: small-caps;
 			letter-spacing: 0.04em;
 			color: var(--muted);
 			border: 1px solid var(--border);
-			border-radius: 4px;
+			border-radius: 0;
 			padding: 1px 5px;
 			flex-shrink: 0;
 			white-space: nowrap;
@@ -890,13 +911,10 @@
 	<script src="js/dashboard.js?v=2026021006"></script>
 
 	<script>
+		// Service worker disabled for theme preview
 		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', async () => {
-				try {
-					await navigator.serviceWorker.register('/SportSync/sw.js');
-				} catch (e) {
-					console.error('SW registration failed:', e);
-				}
+			navigator.serviceWorker.getRegistrations().then(regs => {
+				for (const r of regs) r.unregister();
 			});
 		}
 	</script>
