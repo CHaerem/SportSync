@@ -25,7 +25,7 @@ export const sportsConfig = {
 		],
 		filters: {
 			timeRange: 7,
-			maxEvents: 15,
+			maxEvents: 20,
 			custom: true
 		},
 		norwegian: {
