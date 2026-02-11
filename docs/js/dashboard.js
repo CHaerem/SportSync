@@ -360,7 +360,7 @@ class Dashboard {
 			const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
 			const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
 
-			html += `<div class="band-label ${cssClass} collapsible" data-band="${bandId}">${this.esc(label)} \u25b8</div>`;
+			html += `<div class="band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false">${this.esc(label)} \u25b8</div>`;
 			html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
 			html += `<div class="band-content collapsed" data-band-content="${bandId}">`;
 		} else {
@@ -452,7 +452,7 @@ class Dashboard {
 			const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
 			const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
 			if (hLogo && aLogo) {
-				iconHtml = `<img src="${hLogo}" class="row-logo" loading="lazy"><img src="${aLogo}" class="row-logo" loading="lazy">`;
+				iconHtml = `<img src="${hLogo}" alt="${this.esc(event.homeTeam)}" class="row-logo" loading="lazy"><img src="${aLogo}" alt="${this.esc(event.awayTeam)}" class="row-logo" loading="lazy">`;
 			}
 			const live = this.liveScores[event.id];
 			if (live) {
@@ -468,7 +468,7 @@ class Dashboard {
 		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(event.norwegianPlayers[0].name) : null;
 			if (headshot) {
-				iconHtml = `<img src="${headshot}" class="row-headshot" loading="lazy">`;
+				iconHtml = `<img src="${headshot}" alt="${this.esc(event.norwegianPlayers[0].name)}" class="row-headshot" loading="lazy">`;
 			}
 		}
 
@@ -935,55 +935,22 @@ class Dashboard {
 		return normalize(a) === normalize(b) || a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
 	}
 
-	updateLiveDOM() {
-		// Update football scores inline
-		for (const [eventId, score] of Object.entries(this.liveScores)) {
-			const row = document.querySelector(`.event-row[data-id="${CSS.escape(eventId)}"]`);
-			if (!row) continue;
-			const titleEl = row.querySelector('.row-title');
-			const timeEl = row.querySelector('.row-time');
-			if (!titleEl) continue;
-
-			const event = this.allEvents.find(e => e.id === eventId);
-			if (!event) continue;
-
-			titleEl.innerHTML = `${this.esc(this.shortName(event.homeTeam))} <strong>${score.home} - ${score.away}</strong> ${this.esc(this.shortName(event.awayTeam))}`;
-
-			if (timeEl && score.state === 'in') {
-				timeEl.innerHTML = `<span class="live-dot"></span>${this.esc(score.clock)}`;
-			} else if (timeEl && score.state === 'post') {
-				timeEl.textContent = 'FT';
-			}
-		}
-
-		// Update golf leaderboard in expanded view if visible
-		if (this.liveLeaderboard && this.liveLeaderboard.state === 'in') {
-			const golfTable = document.querySelector('.exp-standings .exp-standings-header');
-			if (golfTable && golfTable.textContent.includes(this.liveLeaderboard.name)) {
-				// Leaderboard is visible and matches — update will happen on next full render
-			}
-		}
-	}
-
 	// --- Event handlers ---
 
 	bindEventRows() {
-		document.querySelectorAll('.event-row').forEach(row => {
-			row.addEventListener('click', (e) => {
-				if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
-				const id = row.dataset.id;
-				this.expandedId = this.expandedId === id ? null : id;
-				this.render();
-			});
-		});
+		const container = document.getElementById('events');
+		if (!container || container._ssDelegated) return;
+		container._ssDelegated = true;
 
-		document.querySelectorAll('.exp-fav-btn').forEach(btn => {
-			btn.addEventListener('click', (e) => {
+		container.addEventListener('click', (e) => {
+			// Handle favorite buttons
+			const favBtn = e.target.closest('.exp-fav-btn');
+			if (favBtn) {
 				e.stopPropagation();
 				if (!this.preferences) return;
-				const action = btn.dataset.action;
-				const sport = btn.dataset.sport;
-				const name = btn.dataset.name;
+				const action = favBtn.dataset.action;
+				const sport = favBtn.dataset.sport;
+				const name = favBtn.dataset.name;
 
 				if (action === 'team') {
 					if (this.preferences.isTeamFavorite(sport, name)) {
@@ -999,7 +966,19 @@ class Dashboard {
 					}
 				}
 				this.render();
-			});
+				return;
+			}
+
+			// Ignore clicks on interactive elements inside expanded rows
+			if (e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
+
+			// Handle event row expand/collapse
+			const row = e.target.closest('.event-row');
+			if (row) {
+				const id = row.dataset.id;
+				this.expandedId = this.expandedId === id ? null : id;
+				this.render();
+			}
 		});
 	}
 
@@ -1018,23 +997,12 @@ class Dashboard {
 					preview.style.display = isCollapsed ? 'none' : '';
 				}
 
-				// Update arrow
+				// Update arrow and aria-expanded
+				label.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
 				label.innerHTML = label.innerHTML.replace(
 					isCollapsed ? '\u25b8' : '\u25be',
 					isCollapsed ? '\u25be' : '\u25b8'
 				);
-
-				// Bind event rows in newly expanded content
-				if (isCollapsed) {
-					content.querySelectorAll('.event-row').forEach(row => {
-						row.addEventListener('click', (e) => {
-							if (e.target.closest('.exp-fav-btn') || e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
-							const id = row.dataset.id;
-							this.expandedId = this.expandedId === id ? null : id;
-							this.render();
-						});
-					});
-				}
 			});
 		});
 	}
