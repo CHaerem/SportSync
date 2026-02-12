@@ -248,7 +248,7 @@ During nightly runs, the autopilot should:
 
 - [DONE] (PR #28) Add unit tests for `scripts/lib/norwegian-streaming.js` — 25 tests covering `getNorwegianStreaming()`, `applyNorwegianStreaming()`, and `norwegianStreamingMap` data structure validation.
 
-- [PENDING] Add unit tests for `scripts/lib/api-client.js` — HTTP client wrapper has zero test coverage. Test constructor options, request method, retry logic, timeout handling, and error formatting.
+- [DONE] (PR #40) Add unit tests for `scripts/lib/api-client.js` — 22 tests covering constructor, buildURL, cache, retry, timeout, fetchWithDates, and error handling.
 
 - [PENDING] Add unit tests for `scripts/lib/base-fetcher.js` — Base fetcher class used by all sport fetchers has no tests. Cover `fetchFromAPIs()` source iteration, empty results, error accumulation, and `fetch()` method normalization.
 

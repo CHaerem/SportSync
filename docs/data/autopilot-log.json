@@ -259,6 +259,16 @@
       "tests_passed": true,
       "files_changed": 2,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-12",
+      "task": "Add unit tests for api-client.js",
+      "outcome": "completed",
+      "pr": 40,
+      "details": "22 tests covering constructor defaults/custom options, buildURL templating, cache hit/stale fallback, JSON parse errors, HTTP 4xx/5xx handling, retry logic, network error retries, timeout, and fetchWithDates.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }
