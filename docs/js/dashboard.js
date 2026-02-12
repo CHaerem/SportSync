@@ -1258,7 +1258,7 @@ class Dashboard {
 				const expanding = this.expandedId !== id;
 				this.expandedId = expanding ? id : null;
 				if (expanding && this.preferences) {
-					const event = this.events.find(ev => ev.id === id);
+					const event = this.allEvents.find(ev => ev.id === id);
 					if (event?.sport) this.preferences.trackEngagement(event.sport);
 				}
 				this.render();
