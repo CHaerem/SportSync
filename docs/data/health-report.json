@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T14:34:57.491Z",
+  "generatedAt": "2026-02-12T16:29:22.476Z",
   "eventCount": 32,
   "sportCoverage": {
     "olympics": {
@@ -19,8 +19,8 @@
     },
     "cs2": {
       "count": 1,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 1,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -30,27 +30,27 @@
   },
   "dataFreshness": {
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     }
   },
@@ -67,14 +67,26 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [],
-  "status": "healthy",
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
+    }
+  ],
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 7/7 feedback loops closed. Pipeline is healthy with 32 events across 5 sports. Editorial quality score is 90/100.",
+    "text": "Autonomy at 100% with 7/7 feedback loops closed. Pipeline is healthy with 32 events across 5 sports. Editorial quality score is 85/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
   }
 }
