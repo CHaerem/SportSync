@@ -623,10 +623,16 @@ class Dashboard {
 			sportGroups.get(e.sport).push(e);
 		}
 
-		// Render in SPORT_CONFIG order
-		for (const sport of SPORT_CONFIG) {
-			const group = sportGroups.get(sport.id);
-			if (!group || group.length === 0) continue;
+		// Build sport config index for ordered lookup
+		const sportIndex = new Map();
+		for (let i = 0; i < SPORT_CONFIG.length; i++) sportIndex.set(SPORT_CONFIG[i].id, i);
+
+		// Sort sport groups by SPORT_CONFIG order, then render only groups with events
+		const sortedSports = [...sportGroups.keys()].sort((a, b) => (sportIndex.get(a) ?? 999) - (sportIndex.get(b) ?? 999));
+
+		for (const sportId of sortedSports) {
+			const group = sportGroups.get(sportId);
+			const sport = SPORT_CONFIG[sportIndex.get(sportId)] || { emoji: '🏆', name: sportId, color: '#888' };
 
 			// Single-event sport groups: skip header, use compact, pass inline emoji
 			if (group.length === 1) {
