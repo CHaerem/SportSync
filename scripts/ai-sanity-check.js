@@ -194,8 +194,8 @@ function buildDashboardSnapshot(data) {
 	};
 }
 
-async function runLLMCheck(snapshot, deterministicFindings, data) {
-	const llm = new LLMClient();
+async function runLLMCheck(snapshot, deterministicFindings, data, externalLlm) {
+	const llm = externalLlm || new LLMClient();
 	if (!llm.isAvailable()) return null;
 
 	const systemPrompt = `You are a QA tester for SportSync, a sports dashboard. You receive a snapshot of what the user sees. Look for anything that seems wrong, inconsistent, or confusing from a user perspective.
@@ -247,7 +247,8 @@ export async function runSanityCheck() {
 	const snapshot = buildDashboardSnapshot(data);
 
 	// 3. LLM analysis (if available)
-	const llmFindings = await runLLMCheck(snapshot, deterministicFindings, data);
+	const sanityLlm = new LLMClient();
+	const llmFindings = await runLLMCheck(snapshot, deterministicFindings, data, sanityLlm);
 
 	// Merge findings, dedup by message
 	const allFindings = [...deterministicFindings];
@@ -270,6 +271,7 @@ export async function runSanityCheck() {
 			info: allFindings.filter(f => f.severity === "info").length,
 		},
 		pass: !allFindings.some(f => f.severity === "critical"),
+		tokenUsage: sanityLlm.isAvailable() ? sanityLlm.getUsage() : null,
 	};
 
 	return report;

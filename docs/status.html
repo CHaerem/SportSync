@@ -278,6 +278,7 @@
 		<div id="autonomy"><div class="loading">Loading...</div></div>
 		<div id="pipeline"></div>
 		<div id="quality"></div>
+		<div id="tokens"></div>
 		<div id="trend"></div>
 		<div id="sanity"></div>
 		<div id="gaps"></div>
@@ -336,7 +337,8 @@
 
 		function renderSummary(health) {
 			const el = document.getElementById('summary');
-			const text = health?.statusSummary;
+			const raw = health?.statusSummary;
+			const text = typeof raw === 'string' ? raw : raw?.text;
 			if (!text) { el.innerHTML = ''; return; }
 			el.innerHTML = '<div class="summary">' + text + '</div>';
 		}
@@ -423,6 +425,72 @@
 				'<div class="metric-row"><span class="metric-label">Generation time</span><span class="metric-value">' + (ft.generationMs != null ? ft.generationMs + 'ms' : '—') + '</span></div>' +
 				metricsHtml +
 				hintsHtml +
+				'</div>';
+		}
+
+		function fmtTokens(n) {
+			if (n == null || n === 0) return '0';
+			if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+			if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+			return String(n);
+		}
+
+		function renderTokens(quality, history) {
+			const el = document.getElementById('tokens');
+
+			// Gather per-step usage from ai-quality.json
+			const enrichUsage = quality?.enrichment?.tokenUsage || null;
+			const featuredUsage = quality?.featured?.tokenUsage || null;
+
+			if (!enrichUsage && !featuredUsage) { el.innerHTML = ''; return; }
+
+			const steps = [];
+			if (enrichUsage) {
+				const label = enrichUsage.tracked === false ? 'Enrichment (untracked)' : 'Enrichment';
+				steps.push({ label, usage: enrichUsage });
+			}
+			if (featuredUsage) {
+				const label = featuredUsage.tracked === false ? 'Featured (untracked)' : 'Featured';
+				steps.push({ label, usage: featuredUsage });
+			}
+
+			const totalInput = steps.reduce((s, x) => s + (x.usage.input || 0), 0);
+			const totalOutput = steps.reduce((s, x) => s + (x.usage.output || 0), 0);
+			const totalCalls = steps.reduce((s, x) => s + (x.usage.calls || 0), 0);
+			const anyUntracked = steps.some(x => x.usage.tracked === false);
+
+			let stepsHtml = steps.map(s =>
+				'<div class="metric-row"><span class="metric-label">' + s.label + '</span><span class="metric-value">' +
+				(s.usage.tracked === false ? s.usage.calls + ' call(s)' : fmtTokens(s.usage.input + s.usage.output) + ' tokens') +
+				'</span></div>'
+			).join('');
+
+			// Sparkline from quality-history.json tokenUsage.total.total
+			let sparkHtml = '';
+			if (Array.isArray(history) && history.length > 0) {
+				const last20 = history.slice(-20).map(e => e.tokenUsage?.total?.total || 0);
+				const maxVal = Math.max(...last20, 1);
+				if (last20.some(v => v > 0)) {
+					sparkHtml = '<div style="margin-top:10px"><div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px">Token trend (last ' + last20.length + ' runs)</div>' +
+						'<div class="sparkline">' +
+						last20.map(v => '<div class="spark-bar" style="height:' + Math.max(2, (v / maxVal) * 40) + 'px"></div>').join('') +
+						'</div></div>';
+				}
+			}
+
+			const untrackedNote = anyUntracked
+				? '<div style="font-size:0.65rem;color:var(--muted);margin-top:6px;font-style:italic">Claude CLI calls via Max subscription — tokens not tracked</div>'
+				: '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Token Usage</div>' +
+				'<div class="metric-row"><span class="metric-label">Input tokens</span><span class="metric-value">' + fmtTokens(totalInput) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Output tokens</span><span class="metric-value">' + fmtTokens(totalOutput) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Total</span><span class="metric-value">' + fmtTokens(totalInput + totalOutput) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">API calls</span><span class="metric-value">' + totalCalls + '</span></div>' +
+				'<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' + stepsHtml + '</div>' +
+				sparkHtml +
+				untrackedNote +
 				'</div>';
 		}
 
@@ -526,6 +594,7 @@
 			renderAutonomy(autonomy);
 			renderPipeline(health);
 			renderQuality(quality);
+			renderTokens(quality, history);
 			renderTrend(history);
 			renderSanity(sanity);
 			renderGaps(gaps);

@@ -179,8 +179,8 @@ function buildFallbackSummary(report, autonomy, quality) {
 	return parts.join(" ");
 }
 
-export async function generateStatusSummary(report, autonomy, quality) {
-	const llm = new LLMClient();
+export async function generateStatusSummary(report, autonomy, quality, externalLlm) {
+	const llm = externalLlm || new LLMClient();
 	if (!llm.isAvailable()) {
 		return buildFallbackSummary(report, autonomy, quality);
 	}
@@ -229,8 +229,9 @@ async function main() {
 
 	// Generate status summary
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
-	const summary = await generateStatusSummary(report, autonomyReport, quality);
-	report.statusSummary = summary;
+	const summaryLlm = new LLMClient();
+	const summary = await generateStatusSummary(report, autonomyReport, quality, summaryLlm);
+	report.statusSummary = { text: summary, tokenUsage: summaryLlm.isAvailable() ? summaryLlm.getUsage() : null };
 	console.log(`Status summary: ${summary}`);
 
 	const outPath = path.join(dataDir, "health-report.json");

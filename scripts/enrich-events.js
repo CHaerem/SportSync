@@ -188,6 +188,10 @@ async function main() {
 
 	// 6. Write enriched events + quality report
 	writeJsonPretty(eventsPath, events);
+	const tokenUsage = useClaudeCLI
+		? { input: 0, output: 0, calls: enrichedCount > 0 ? Math.ceil(events.length / BATCH_SIZE) - failedBatches : 0, total: 0, tracked: false }
+		: llm.getUsage();
+
 	writeJsonPretty(qualityPath, {
 		...existingQuality,
 		generatedAt: new Date().toISOString(),
@@ -203,6 +207,7 @@ async function main() {
 			failedBatches,
 			totalEvents: events.length,
 			hintsApplied: enrichmentHints,
+			tokenUsage,
 		},
 	});
 

@@ -543,7 +543,7 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 		console.log("Using Claude CLI (OAuth) to generate featured content.");
 		try {
 			const rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
-			return { rawContent, provider: "claude-cli" };
+			return { rawContent, provider: "claude-cli", llm: null };
 		} catch (err) {
 			console.error("Claude CLI failed:", err.message);
 		}
@@ -555,13 +555,13 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 		console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
 		try {
 			const rawContent = await llm.complete(systemPrompt, userPrompt);
-			return { rawContent, provider: llm.getProviderName() };
+			return { rawContent, provider: llm.getProviderName(), llm };
 		} catch (err) {
 			console.error("LLM API failed:", err.message);
 		}
 	}
 
-	return { rawContent: null, provider: "none" };
+	return { rawContent: null, provider: "none", llm: null };
 }
 
 async function main() {
@@ -638,6 +638,7 @@ async function main() {
 	let attempts = 0;
 	let qualityResult = null;
 	let qualityCorrections = [];
+	let featuredLlm = null;
 
 	const generationStart = Date.now();
 	for (let attempt = 1; attempt <= 2; attempt++) {
@@ -650,6 +651,7 @@ async function main() {
 		const generated = await generateRawFeatured(systemPrompt, userPrompt);
 		if (!generated.rawContent) break;
 		provider = generated.provider;
+		if (generated.llm) featuredLlm = generated.llm;
 
 		try {
 			const parsed = parseResponseJSON(generated.rawContent);
@@ -705,6 +707,9 @@ async function main() {
 		const watchPlanResult = evaluateWatchPlanQuality(watchPlan);
 
 		const blockCount = featured.blocks ? featured.blocks.length : 0;
+		const featuredTokenUsage = provider === "claude-cli"
+			? { input: 0, output: 0, calls: attempts, total: 0, tracked: false }
+			: featuredLlm ? featuredLlm.getUsage() : { input: 0, output: 0, calls: 0, total: 0 };
 		const existingQuality = readJsonIfExists(qualityPath) || {};
 		writeJsonPretty(qualityPath, {
 			...existingQuality,
@@ -717,6 +722,7 @@ async function main() {
 				issues: finalQuality.issues.map((issue) => issue.message),
 				blockCount,
 				generationMs,
+				tokenUsage: featuredTokenUsage,
 			},
 			editorial: {
 				score: editorialResult.score,
@@ -731,12 +737,23 @@ async function main() {
 
 		// Append snapshot to quality history
 		const history = readJsonIfExists(historyPath) || qualityHistory;
+		const enrichmentTokens = existingQuality?.enrichment?.tokenUsage || null;
+		const totalInput = (enrichmentTokens?.input || 0) + (featuredTokenUsage.input || 0);
+		const totalOutput = (enrichmentTokens?.output || 0) + (featuredTokenUsage.output || 0);
+		const totalCalls = (enrichmentTokens?.calls || 0) + (featuredTokenUsage.calls || 0);
 		const snapshot = buildQualitySnapshot(
 			editorialResult,
 			existingQuality.enrichment || null,
 			{ blocks: featured.blocks, score: finalQuality.score, provider, valid: finalQuality.valid },
 			watchPlanResult,
-			{ hintsApplied: adaptiveHints }
+			{
+				hintsApplied: adaptiveHints,
+				tokenUsage: {
+					enrichment: enrichmentTokens,
+					featured: featuredTokenUsage,
+					total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput },
+				},
+			}
 		);
 		history.push(snapshot);
 		// Cap at 100 entries

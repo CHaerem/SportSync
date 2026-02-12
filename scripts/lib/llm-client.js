@@ -29,6 +29,11 @@ const PROVIDERS = {
 		extractContent(response) {
 			return response.content?.[0]?.text;
 		},
+		extractUsage(response) {
+			return response.usage
+				? { input: response.usage.input_tokens, output: response.usage.output_tokens }
+				: null;
+		},
 	},
 	openai: {
 		url: "https://api.openai.com/v1/chat/completions",
@@ -55,6 +60,11 @@ const PROVIDERS = {
 		extractContent(response) {
 			return response.choices?.[0]?.message?.content;
 		},
+		extractUsage(response) {
+			return response.usage
+				? { input: response.usage.prompt_tokens, output: response.usage.completion_tokens }
+				: null;
+		},
 	},
 };
 
@@ -62,6 +72,7 @@ export class LLMClient {
 	constructor() {
 		this.provider = null;
 		this.apiKey = null;
+		this.usage = { input: 0, output: 0, calls: 0 };
 
 		for (const [name, config] of Object.entries(PROVIDERS)) {
 			const key = process.env[config.envKey];
@@ -72,6 +83,14 @@ export class LLMClient {
 				break;
 			}
 		}
+	}
+
+	getUsage() {
+		return { ...this.usage, total: this.usage.input + this.usage.output };
+	}
+
+	resetUsage() {
+		this.usage = { input: 0, output: 0, calls: 0 };
 	}
 
 	isAvailable() {
@@ -112,6 +131,13 @@ export class LLMClient {
 				}
 
 				const data = await response.json();
+				const usage = this.config.extractUsage(data);
+				if (usage) {
+					this.usage.input += usage.input;
+					this.usage.output += usage.output;
+					this.usage.calls++;
+				}
+
 				const content = this.config.extractContent(data);
 
 				if (!content) {

@@ -506,7 +506,7 @@ export function evaluateWatchPlanQuality(watchPlan) {
 	return { score, metrics };
 }
 
-export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied } = {}) {
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage } = {}) {
 	return {
 		timestamp: new Date().toISOString(),
 		editorial: editorial
@@ -522,6 +522,7 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 			? { pickCount: watchPlan.metrics?.pickCount ?? watchPlan.pickCount ?? 0, avgScore: watchPlan.metrics?.avgScore ?? watchPlan.avgScore ?? 0, streamingCoverage: watchPlan.metrics?.streamingCoverage ?? 0 }
 			: null,
 		hintsApplied: hintsApplied || [],
+		tokenUsage: tokenUsage || null,
 	};
 }
 
