@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T16:29:23.731Z",
+  "generatedAt": "2026-02-12T16:53:33.603Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 32,
@@ -55,11 +55,11 @@
         "Cross-Country Skiing — Women's 10km Free"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "healthy",
     "editorialScore": 85,
-    "issueCount": 1
+    "issueCount": 0
   },
   "findings": [
     {
@@ -75,12 +75,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"City\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -89,9 +84,9 @@
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 4,
     "critical": 0,
-    "warning": 4,
+    "warning": 3,
     "info": 1
   },
   "pass": true,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T16:29:22.476Z",
+  "generatedAt": "2026-02-12T16:53:33.327Z",
   "eventCount": 32,
   "sportCoverage": {
     "olympics": {
@@ -67,26 +67,14 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [
-    {
-      "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
-    }
-  ],
-  "status": "warning",
+  "issues": [],
+  "status": "healthy",
   "statusSummary": {
-    "text": "Autonomy at 100% with 7/7 feedback loops closed. Pipeline is healthy with 32 events across 5 sports. Editorial quality score is 85/100.",
+    "text": "Autonomy at 92% with 7/8 feedback loops closed. Pipeline is healthy with 32 events across 5 sports. Editorial quality score is 85/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [
-      {
-        "severity": "warning",
-        "code": "failed_batches_increase",
-        "message": "Failed batches increased from 0 to 1"
-      }
-    ],
-    "hasRegression": true
+    "issues": [],
+    "hasRegression": false
   }
 }

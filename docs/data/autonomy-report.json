@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-12T16:29:22.479Z",
-  "overallScore": 1,
+  "generatedAt": "2026-02-12T16:53:33.331Z",
+  "overallScore": 0.92,
   "loopsClosed": 7,
-  "loopsTotal": 7,
+  "loopsTotal": 8,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "39 entries, hints fired 5 times"
+      "details": "50 entries, hints fired 5 times"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -38,7 +38,15 @@
       "score": 1,
       "status": "closed",
       "details": "discovery log exists, sync-configs exists, configs have been researched"
+    },
+    "scheduleVerification": {
+      "score": 0.33,
+      "status": "partial",
+      "details": "no verification history, schedule-verifier exists, no verified configs"
     }
   },
-  "nextActions": []
+  "nextActions": [
+    "Ensure scripts/lib/schedule-verifier.js exists with verification engine",
+    "Run verification to apply verificationSummary to at least one config"
+  ]
 }
