@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T14:04:59.777Z",
+  "generatedAt": "2026-02-12T14:34:15.214Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 31,
-      "importanceCoverage": 0.677,
-      "summaryCoverage": 0.677,
-      "relevanceCoverage": 0.677,
-      "tagsCoverage": 0.516
+      "totalEvents": 32,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.781
     },
     "after": {
-      "totalEvents": 31,
+      "totalEvents": 32,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -19,15 +19,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 55,
-    "aiUpdatedFields": 21,
-    "failedBatches": 1,
-    "totalEvents": 31,
-    "hintsApplied": [],
+    "fallbackFieldsFilled": 7,
+    "aiUpdatedFields": 32,
+    "failedBatches": 0,
+    "totalEvents": 32,
+    "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
+      "calls": 4,
       "total": 0,
       "tracked": false
     }
@@ -38,8 +40,8 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 10536,
+    "blockCount": 8,
+    "generationMs": 12163,
     "tokenUsage": {
       "input": 0,
       "output": 0,
