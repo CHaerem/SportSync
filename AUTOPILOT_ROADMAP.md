@@ -352,7 +352,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### MEDIUM Priority
 
-- [PENDING] Render chess/tennis participants in expanded view — `docs/js/dashboard.js` loads `event.participants` (line 93) but never renders it. For chess and tennis events with participants, show "Players: X, Y" in the expanded event view. Only change `docs/js/dashboard.js`. ~10 lines, LOW risk.
+- [DONE] (PR #54) Render chess/tennis participants in expanded view — Added "Players: X, Y" display in expanded event view for chess/tennis events. Handles both string and object participant formats.
 
 - [PENDING] Add unit tests for `scripts/fetch/golf.js` — Test `buildFeaturedGroups()`, `playerNameMatches()`, `tournamentNameMatches()`, `filterNorwegiansAgainstField()`, and `parseTeeTimeToUTC()` with mocked data. New file `tests/golf-fetcher.test.js`. ~80 lines, LOW risk.
 
