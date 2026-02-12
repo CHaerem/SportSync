@@ -1070,5 +1070,53 @@
         "total": 0
       }
     }
+  },
+  {
+    "timestamp": "2026-02-12T13:33:00.102Z",
+    "editorial": {
+      "score": 87,
+      "mustWatchCoverage": 0.667,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 9,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 110,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 5,
+        "total": 0
+      }
+    }
   }
 ]
