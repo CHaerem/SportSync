@@ -19,7 +19,7 @@ GitHub Actions → Fetch APIs → Validate → Enrich → Health Check → GitHu
 - **Data Pipeline**: Node.js scripts
 - **Hosting**: GitHub Pages
 - **CI/CD**: GitHub Actions
-- **APIs**: ESPN, PGA Tour, PandaScore, fotball.no
+- **APIs**: ESPN, PGA Tour, HLTV, fotball.no
 
 ## Development Setup
 
@@ -82,7 +82,7 @@ SportSync/
 
 Every 2 hours, GitHub Actions:
 
-1. Fetches data from ESPN, PGA Tour, PandaScore, fotball.no (with response validation)
+1. Fetches data from ESPN, PGA Tour, HLTV, fotball.no (with response validation)
 2. Generates individual sport JSON files + fetches standings and RSS
 3. Runs `scripts/build-events.js` to create unified events.json (auto-discovers curated configs)
 4. AI enrichment adds importance, summaries, tags to events
@@ -203,7 +203,7 @@ Most sports use ESPN's public APIs:
 ### Custom Integrations
 
 - **Chess**: Curated configs in `scripts/config/`
-- **Esports**: PandaScore API (needs `PANDASCORE_API_KEY`)
+- **Esports**: HLTV community API + discovery loop (curated configs)
 - **Golf (enhanced)**: PGA Tour tee times (scraped from pgatour.com)
 - **Norwegian Football**: fotball.no API
 

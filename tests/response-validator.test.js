@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
 	validateESPNScoreboard,
 	validateESPNStandings,
-	validatePandaScoreResponse,
 	validateFetcherOutput,
 } from "../scripts/lib/response-validator.js";
 
@@ -96,27 +95,6 @@ describe("validateESPNStandings()", () => {
 		expect(result.valid).toBe(true);
 		expect(result.entries).toEqual([]);
 		expect(result.warnings[0]).toContain("empty_entries");
-	});
-});
-
-describe("validatePandaScoreResponse()", () => {
-	it("passes valid PandaScore array", () => {
-		const data = [{ id: 1, name: "IEM Katowice" }];
-		const result = validatePandaScoreResponse(data);
-		expect(result.valid).toBe(true);
-		expect(result.items).toHaveLength(1);
-	});
-
-	it("returns empty + warning for non-array", () => {
-		const result = validatePandaScoreResponse("not an array");
-		expect(result.valid).toBe(false);
-		expect(result.items).toEqual([]);
-	});
-
-	it("filters null items", () => {
-		const result = validatePandaScoreResponse([{ id: 1 }, null, undefined]);
-		expect(result.items).toHaveLength(1);
-		expect(result.warnings).toHaveLength(2);
 	});
 });
 

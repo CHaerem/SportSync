@@ -20,71 +20,11 @@ export class EsportsFetcher extends BaseFetcher {
 
 	async fetchFromSource(source) {
 		if (source.api === "hltv") {
-			// Try PandaScore first if API key available
-			const pandaEvents = await this.fetchPandaScore();
-			if (pandaEvents.length > 0) return pandaEvents;
-			// Fallback to HLTV community API
 			return await this.fetchHLTV(source);
 		} else if (source.api === "fallback" && source.enabled) {
 			return await this.fetchFallbackMatches();
 		}
 		return [];
-	}
-
-	async fetchPandaScore() {
-		const apiKey = process.env.PANDASCORE_API_KEY;
-		if (!apiKey) return [];
-
-		const matches = [];
-		try {
-			const upcoming = await this.apiClient.fetchJSON(
-				`https://api.pandascore.co/cs2/matches/upcoming?per_page=50&token=${apiKey}`
-			);
-			if (!Array.isArray(upcoming)) return [];
-
-			const focusTeams = this.config.filters?.teams || [];
-			const trackedTournaments = new Set();
-
-			// Find tournaments with tracked teams
-			for (const match of upcoming) {
-				const opponents = match.opponents || [];
-				for (const opp of opponents) {
-					const name = opp.opponent?.name || "";
-					if (focusTeams.some(t => name.toLowerCase().includes(t.toLowerCase()))) {
-						const tournament = match.tournament?.name || match.league?.name || "";
-						if (tournament) trackedTournaments.add(tournament);
-					}
-				}
-			}
-
-			// Get matches from tracked tournaments + major events
-			for (const match of upcoming) {
-				const tournament = match.tournament?.name || match.league?.name || "";
-				const opponents = match.opponents || [];
-				const team1 = opponents[0]?.opponent?.name || "TBD";
-				const team2 = opponents[1]?.opponent?.name || "TBD";
-				const isDirect = focusTeams.some(t =>
-					team1.toLowerCase().includes(t.toLowerCase()) ||
-					team2.toLowerCase().includes(t.toLowerCase())
-				);
-
-				if (!trackedTournaments.has(tournament) && !isDirect && !isMajorEvent(tournament)) continue;
-
-				matches.push({
-					title: `${team1} vs ${team2}`,
-					time: match.begin_at || match.scheduled_at,
-					venue: "Online",
-					tournament: tournament || "CS2 Match",
-					norwegian: isDirect,
-					meta: tournament || "CS2 Competition",
-				});
-			}
-
-			console.log(`PandaScore: ${matches.length} relevant CS2 matches`);
-		} catch (err) {
-			console.warn("PandaScore fetch failed:", err.message);
-		}
-		return matches;
 	}
 
 	async fetchHLTV(source) {

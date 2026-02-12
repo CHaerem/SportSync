@@ -68,25 +68,6 @@ export function validateESPNStandings(data, standingType = "unknown") {
 	return { valid: true, entries: group.standings.entries, warnings };
 }
 
-export function validatePandaScoreResponse(data) {
-	const warnings = [];
-
-	if (!Array.isArray(data)) {
-		warn(warnings, "invalid_response", "PandaScore: response is not an array");
-		return { valid: false, items: [], warnings };
-	}
-
-	const validItems = data.filter((item) => {
-		if (!item || typeof item !== "object") {
-			warn(warnings, "invalid_item", "PandaScore: non-object item filtered out");
-			return false;
-		}
-		return true;
-	});
-
-	return { valid: true, items: validItems, warnings };
-}
-
 export function validateFetcherOutput(data, sportName = "unknown") {
 	const warnings = [];
 

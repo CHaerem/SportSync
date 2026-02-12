@@ -31,7 +31,7 @@ A **static sports dashboard** that runs itself. New major events are auto-detect
 | 🎾 **Tennis** | ESPN API | ATP, WTA, Grand Slams |
 | 🏎️ **Formula 1** | ESPN Racing API | Full race calendar + practice/qualifying |
 | ♟️ **Chess** | Curated Data | Major tournaments, Norwegian focus |
-| 🎮 **Esports** | PandaScore API | CS2 competitions |
+| 🎮 **Esports** | HLTV + Discovery | CS2 competitions (Norwegian focus) |
 | 🏅 **Olympics** | Auto-discovered | Schedules researched via web search when active |
 
 ## Architecture
@@ -42,7 +42,7 @@ SportSync has three automation layers:
 ┌─────────────────────────────────────────────────────┐
 │  Data Pipeline (every 2 hours)                      │
 │                                                     │
-│  1. Fetch sports APIs (ESPN, PGA, PandaScore)       │
+│  1. Fetch sports APIs (ESPN, PGA, HLTV)              │
 │  2. Fetch standings (PL, golf, F1) + RSS (11 feeds) │
 │  3. Sync configs (prune expired, archive old)       │
 │  4. Discover events (Claude CLI + WebSearch)         │
@@ -126,7 +126,7 @@ No human needed at any step.
 |--------|---------|---------|
 | `CLAUDE_CODE_OAUTH_TOKEN` | Both workflows | Claude Max subscription for AI generation, discovery, and autopilot |
 | `OPENAI_API_KEY` | Data pipeline | Event enrichment fallback |
-| `PANDASCORE_API_KEY` | Data pipeline | Esports data |
+
 
 ### Auth Priority
 

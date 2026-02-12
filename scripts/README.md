@@ -7,7 +7,7 @@ Data pipeline, AI enrichment, and autonomous discovery for the SportSync dashboa
 This is the order scripts run in the GitHub Actions workflow (every 2 hours):
 
 ```
-1. fetch/index.js          — Fetch all sports APIs (ESPN, PGA, PandaScore, fotball.no)
+1. fetch/index.js          — Fetch all sports APIs (ESPN, PGA, HLTV, fotball.no)
 2. fetch-standings.js      — ESPN standings (PL table, golf leaderboards, F1 drivers)
 3. fetch-rss.js            — RSS digest (11 feeds: NRK, TV2, BBC, ESPN, etc.)
 4. sync-configs.js         — Prune expired events, archive old configs, flag empty ones
@@ -32,7 +32,7 @@ scripts/
 │   ├── tennis.js                   # ESPN ATP/WTA
 │   ├── f1.js                       # ESPN Racing
 │   ├── chess.js                    # Curated config reader
-│   └── esports.js                  # PandaScore CS2
+│   └── esports.js                  # HLTV CS2
 ├── config/                         # Auto-discovered curated event configs
 │   ├── archive/                    # Expired configs (auto-archived by sync-configs)
 │   ├── olympics-2026.json          # Winter Olympics schedule
@@ -102,7 +102,7 @@ npm test
 | Golf | ESPN + PGA Tour | `golf.js` | Viktor Hovland |
 | F1 | ESPN | `f1.js` | — |
 | Chess | Curated configs | `chess.js` | Magnus Carlsen |
-| Esports | PandaScore | `esports.js` | CS2 competitions |
+| Esports | HLTV + Discovery | `esports.js` | CS2 competitions (Norwegian focus) |
 | Olympics | Auto-discovered | via configs | All Norwegian athletes |
 
 ## Environment Variables
@@ -111,7 +111,6 @@ npm test
 CLAUDE_CODE_OAUTH_TOKEN=...  # Claude Max subscription (featured, discovery, autopilot)
 ANTHROPIC_API_KEY=...        # Direct Anthropic API (enrichment, featured fallback)
 OPENAI_API_KEY=...           # OpenAI (enrichment fallback)
-PANDASCORE_API_KEY=...       # Esports CS2 competitions
 ```
 
 ## Error Handling
