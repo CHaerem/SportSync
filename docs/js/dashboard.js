@@ -373,7 +373,7 @@ class Dashboard {
 
 		const hasExpand = section.expandLabel && section.expandItems && section.expandItems.length > 0;
 		const expandHtml = hasExpand ? `
-			<button class="feat-expand" data-section="${this.esc(section.id)}">${this.esc(section.expandLabel)}</button>
+			<button class="feat-expand" data-section="${this.esc(section.id)}" aria-expanded="false">${this.esc(section.expandLabel)}</button>
 			<div class="feat-expand-content" data-expand="${this.esc(section.id)}">
 				${section.expandItems.map(item => this.renderSectionItem(item)).join('')}
 			</div>
@@ -400,7 +400,9 @@ class Dashboard {
 				const content = document.querySelector(`.feat-expand-content[data-expand="${sectionId}"]`);
 				if (content) {
 					content.classList.toggle('open');
-					btn.textContent = content.classList.contains('open')
+					const isOpen = content.classList.contains('open');
+					btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+					btn.textContent = isOpen
 						? btn.textContent.replace('\u25b8', '\u25be')
 						: btn.textContent.replace('\u25be', '\u25b8');
 				}
