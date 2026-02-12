@@ -440,8 +440,6 @@ class Dashboard {
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
-		const existingFeedback = this.preferences ? this.preferences.getWatchFeedback() : {};
-
 		picks.forEach((pick, i) => {
 			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === pick.sport) : null;
 			const emoji = sportConfig ? sportConfig.emoji : '';
@@ -456,12 +454,8 @@ class Dashboard {
 
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
 			const streams = Array.isArray(pick.streaming) ? pick.streaming : [];
-			const pickId = pick.eventId || `pick-${i}-${(pick.title || '').slice(0, 20)}`;
-			const fb = existingFeedback[pickId];
-			const upActive = fb && fb.value === 'up' ? ' active' : '';
-			const downActive = fb && fb.value === 'down' ? ' active' : '';
 
-			html += `<div class="watch-pick" data-pick-index="${i}" data-pick-id="${this.esc(pickId)}">`;
+			html += `<div class="watch-pick" data-pick-index="${i}">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
 			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
@@ -472,10 +466,6 @@ class Dashboard {
 				html += '</div>';
 			}
 			html += `</div>`;
-			html += `<div class="pick-feedback">`;
-			html += `<button class="pick-fb-btn pick-fb-up${upActive}" data-fb="up" aria-label="Good pick" title="Good pick">\u25b2</button>`;
-			html += `<button class="pick-fb-btn pick-fb-down${downActive}" data-fb="down" aria-label="Not interested" title="Not interested">\u25bc</button>`;
-			html += `</div>`;
 			html += `</div>`;
 		});
 
@@ -483,9 +473,7 @@ class Dashboard {
 
 		// Bind pick clicks to scroll to matching event
 		container.querySelectorAll('.watch-pick').forEach(el => {
-			el.addEventListener('click', (evt) => {
-				// Ignore clicks on feedback buttons
-				if (evt.target.closest('.pick-fb-btn')) return;
+			el.addEventListener('click', () => {
 				const idx = parseInt(el.dataset.pickIndex, 10);
 				const pick = picks[idx];
 				if (!pick) return;
@@ -498,30 +486,6 @@ class Dashboard {
 					const row = document.querySelector(`.event-row[data-id="${matchedEvent.id}"]`);
 					if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
-			});
-		});
-
-		// Bind feedback buttons
-		container.querySelectorAll('.pick-fb-btn').forEach(btn => {
-			btn.addEventListener('click', (evt) => {
-				evt.stopPropagation();
-				const pickEl = btn.closest('.watch-pick');
-				const pickId = pickEl?.dataset.pickId;
-				if (!pickId || !this.preferences) return;
-				const direction = btn.dataset.fb;
-				const current = this.preferences.getWatchFeedback()[pickId];
-				// Toggle: clicking same button again removes feedback
-				if (current && current.value === direction) {
-					this.preferences.setWatchFeedback(pickId, null);
-				} else {
-					this.preferences.setWatchFeedback(pickId, direction);
-				}
-				// Update button states
-				const upBtn = pickEl.querySelector('.pick-fb-up');
-				const downBtn = pickEl.querySelector('.pick-fb-down');
-				const updated = this.preferences.getWatchFeedback()[pickId];
-				upBtn?.classList.toggle('active', updated?.value === 'up');
-				downBtn?.classList.toggle('active', updated?.value === 'down');
 			});
 		});
 	}

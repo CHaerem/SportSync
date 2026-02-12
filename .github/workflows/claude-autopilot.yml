@@ -39,7 +39,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
-            --max-turns 75
+            --max-turns 100
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are the SportSync autopilot — a proactive agent that continuously
@@ -94,12 +94,36 @@ jobs:
               max 300 lines, LOW or MEDIUM risk
             - If invalid, mark `[BLOCKED] exceeds automation limits` and continue
 
+            ### 1a½. Plan before coding
+            Before writing any code, spend a few turns thinking:
+            1. Read ONLY the files mentioned in the task description (don't explore broadly)
+            2. Identify the exact functions/lines that need to change
+            3. Write a brief mental plan: what files to touch, what each diff looks like,
+               what order to make changes in
+            4. If the task is underspecified or harder than it looks, consider whether
+               to decompose it NOW (before wasting turns) rather than after getting stuck
+            5. Only then start coding — with a clear picture of the finish line
+
+            This planning step is critical for efficiency. A task that takes 5 turns
+            with a plan might take 40+ turns without one.
+
             ### 1b. Execute
             1. Create branch: `claude/improve-<short-slug>`
-            2. Make the changes
+            2. Make the changes following your plan from 1a½
             3. Run `npm test` — if tests fail, revert ALL changes, create a GitHub
                issue, and STOP the loop (don't attempt more tasks)
             4. Commit with a descriptive message
+
+            ### 1b½. Decompose if stuck
+            If you've spent significant effort on a task and it's clearly not
+            completable in the remaining turns:
+            1. Push your partial work to the branch (even if incomplete)
+            2. Break the remaining work into 2-3 smaller `[PENDING]` tasks in
+               the roadmap, each independently shippable (own branch, own PR,
+               passes tests on its own)
+            3. Mark the original task `[BLOCKED] decomposed into subtasks`
+            4. Commit the roadmap update to main
+            5. Continue the loop — the subtasks may be small enough to pick up now
 
             ### 1c. Ship
             1. Push and open a PR with label `autopilot`

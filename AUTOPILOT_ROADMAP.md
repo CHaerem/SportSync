@@ -10,6 +10,36 @@ Prioritized task queue for the Claude autopilot workflow. The autopilot picks th
 
 ---
 
+## Scouting Heuristics
+
+When scouting for improvement opportunities, apply these detection patterns in addition to the standard checks (dead code, TODO comments, missing tests):
+
+### A. Dead Field Detection
+
+Scan `scripts/build-events.js` event schema for fields that are always empty or default in `docs/data/events.json`. For each dead field, check if the data source (fetcher in `scripts/fetch/`) already has the data to populate it.
+
+**How to check:** Load `events.json`, iterate events, find fields that are always `[]`, `null`, `""`, or `0` across all entries. Cross-reference with the fetcher output to see if the data exists upstream but isn't being mapped.
+
+**Example:** `featuredGroups` is always `[]` on golf events, but `scripts/fetch/golf.js` already scrapes PGA Tour tee times for all field players — grouping by tee time + starting hole gives us pairings for free.
+
+### B. Data-to-UI Gap Detection
+
+Compare fields loaded in `docs/js/dashboard.js` vs what's actually rendered. Fields that are loaded or destructured but never appear in any `render*()` method are dead UI paths.
+
+**How to check:** Search for field names in dashboard.js data loading (e.g., `featured.json` parse, `events.json` parse) and verify each field has a corresponding render path that produces visible DOM output.
+
+**Example:** `featuredGroups` is loaded but no render code references it — the data flows through the pipeline but is invisible to users.
+
+### C. Fetcher Data Waste Detection
+
+Check if API fetchers extract data that's discarded or only partially used. Fetchers may parse rich API responses but only store a subset of the available fields.
+
+**How to check:** Read each fetcher's API response handling and compare the fields extracted vs the fields written to the output JSON. Flag cases where useful data (names, times, scores, stats) is available but dropped.
+
+**Example:** PGA Tour scraper gets tee times for 150+ players but only stores Norwegian players' times on events — groupmate names are available in the same API response but discarded.
+
+---
+
 ## EXPERIENCE Lane (User Impact)
 
 Keep this section near the top so the autopilot continuously improves user-facing outcomes, not just code hygiene.
@@ -22,9 +52,13 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 ### Current Tasks
 
-- [DONE] (PR #47) Add watch-plan feedback loop — Added thumbs-up/down controls to watch-plan items in dashboard.js, feedback persisted in localStorage via PreferencesManager, with aggregate count API. **Phase 1, Step 2 of vision roadmap.**
+- [PENDING] Populate golf `featuredGroups` in fetcher — In `scripts/fetch/golf.js`, after finding Norwegian players' tee times, group all field players by tee time + starting hole. For each Norwegian player's group, store groupmate names as `featuredGroups: [{name, teeTime}]` on the event object. Only change `scripts/fetch/golf.js`. ~15 lines, LOW risk.
 
-- [PENDING] Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic.
+- [PENDING] Render golf `featuredGroups` in dashboard — In `docs/js/dashboard.js`, when rendering expanded golf event details, check if `event.featuredGroups` has entries and render "Playing with: X, Y" under each Norwegian player. Only change `docs/js/dashboard.js`. ~15 lines, LOW risk.
+
+- [BLOCKED] reverted — user prefers manual user-context.json | Add watch-plan feedback loop — PR #47 was reverted. Thumbs-up/down controls are not wanted at this time.
+
+- [BLOCKED] reverted — depends on feedback UI | Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens.
 
 - [DONE] (already implemented server-side) Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`.
 
@@ -292,9 +326,9 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (already implemented) Add watch-plan rendering to dashboard — `renderWatchPlan()` in `dashboard.js` lines 430-490. Renders picks with time, emoji, reasons, streaming, and click-to-event navigation.
 
-- [DONE] (PR #47) Add thumbs-up/down feedback to watch-plan items — Feedback controls added to watch-plan picks, persisted in localStorage, with aggregate count API via PreferencesManager.
+- [BLOCKED] reverted — user prefers manual user-context.json | Add thumbs-up/down feedback to watch-plan items — PR #47 was reverted.
 
-- [PENDING] Surface engagement signals in pipeline — Read `localStorage` feedback data via a small client-side export mechanism. Feed into `watch-plan.js` scoring to boost/demote events matching user feedback patterns. ~80 lines across 2 files.
+- [BLOCKED] reverted — depends on feedback UI | Surface engagement signals in pipeline — Read `localStorage` feedback data via a small client-side export mechanism. Feed into `watch-plan.js` scoring to boost/demote events matching user feedback patterns. ~80 lines across 2 files.
 
 - [PENDING] Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health. Requires workflow file change (needs human approval).
 
