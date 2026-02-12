@@ -254,7 +254,7 @@ During nightly runs, the autopilot should:
 
 ### LOW Priority
 
-- [PENDING] Add `aria-expanded` to featured section expand buttons — `docs/js/dashboard.js:285-297` `bindSectionExpands()` toggles `.feat-expand` buttons but doesn't set `aria-expanded` attribute. Same pattern as band toggles (fixed in PR #26).
+- [DONE] (PR #42) Add `aria-expanded` to featured section expand buttons — Added `aria-expanded="false"` attribute and toggle in click handler, matching band toggle pattern.
 
 - [PENDING] Add render-once guard for watch-plan UI — Watch-plan data (`docs/data/watch-plan.json`) is generated and cached but never rendered. Add a minimal read-only display in `dashboard.js` showing top 3 picks below the brief section. ~60 lines, 1 file, LOW risk. Prerequisite for the EXPERIENCE Lane tasks.
 

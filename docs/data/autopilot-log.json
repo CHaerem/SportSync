@@ -279,6 +279,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-12",
+      "task": "Add aria-expanded to featured section expand buttons",
+      "outcome": "completed",
+      "pr": 42,
+      "details": "Added aria-expanded=false to .feat-expand buttons in renderSection() and toggle in click handler, matching the band toggle pattern from PR #26.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }
