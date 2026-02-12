@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T10:07:40.775Z",
+  "generatedAt": "2026-02-12T10:25:11.361Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -7,7 +7,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.8
+      "tagsCoverage": 0.771
     },
     "after": {
       "totalEvents": 35,
@@ -19,7 +19,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
+    "fallbackFieldsFilled": 8,
     "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
@@ -40,8 +40,8 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 18386,
+    "blockCount": 10,
+    "generationMs": 14859,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -51,17 +51,17 @@
     }
   },
   "editorial": {
-    "score": 76,
+    "score": 77,
     "metrics": {
-      "mustWatchCoverage": 0.2,
+      "mustWatchCoverage": 0.333,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
     "issues": [
-      "Only 20% of must-watch events covered in blocks"
+      "Only 33% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
