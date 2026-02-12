@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T09:49:51.169Z",
+  "generatedAt": "2026-02-12T10:08:19.262Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -30,15 +30,15 @@
   },
   "dataFreshness": {
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
@@ -46,11 +46,11 @@
       "stale": false
     },
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     }
   },
@@ -69,7 +69,10 @@
   },
   "issues": [],
   "status": "healthy",
-  "statusSummary": "Autonomy at 100% with 6/6 feedback loops closed. Pipeline is healthy with 35 events across 5 sports. Editorial quality score is 76/100.",
+  "statusSummary": {
+    "text": "Autonomy at 100% with 6/6 feedback loops closed. Pipeline is healthy with 35 events across 5 sports. Editorial quality score is 76/100.",
+    "tokenUsage": null
+  },
   "qualityRegression": {
     "issues": [],
     "hasRegression": false

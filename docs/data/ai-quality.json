@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T09:48:52.804Z",
+  "generatedAt": "2026-02-12T10:07:40.775Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -7,7 +7,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.771
+      "tagsCoverage": 0.8
     },
     "after": {
       "totalEvents": 35,
@@ -19,13 +19,20 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 8,
+    "fallbackFieldsFilled": 7,
     "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
     "hintsApplied": [
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ]
+    ],
+    "tokenUsage": {
+      "input": 0,
+      "output": 0,
+      "calls": 4,
+      "total": 0,
+      "tracked": false
+    }
   },
   "featured": {
     "provider": "claude-cli",
@@ -34,7 +41,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 10682
+    "generationMs": 18386,
+    "tokenUsage": {
+      "input": 0,
+      "output": 0,
+      "calls": 1,
+      "total": 0,
+      "tracked": false
+    }
   },
   "editorial": {
     "score": 76,
@@ -54,7 +68,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 121,
+      "avgScore": 123,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
