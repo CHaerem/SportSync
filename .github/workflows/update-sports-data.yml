@@ -122,6 +122,13 @@ jobs:
           wait $PID_GAPS || echo "Coverage gap detection failed"
           wait $PID_CAL || echo "Calendar build failed"
 
+      - name: AI sanity check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          node scripts/ai-sanity-check.js || echo "Sanity check failed (non-fatal)"
+
       - name: Update meta timestamp
         run: |
           echo '{

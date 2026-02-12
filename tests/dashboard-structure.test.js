@@ -99,6 +99,7 @@ describe("status.html structure", () => {
 		"pipeline",
 		"quality",
 		"trend",
+		"sanity",
 		"gaps",
 		"autopilot",
 		"freshness",

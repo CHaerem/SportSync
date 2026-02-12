@@ -279,6 +279,7 @@
 		<div id="pipeline"></div>
 		<div id="quality"></div>
 		<div id="trend"></div>
+		<div id="sanity"></div>
 		<div id="gaps"></div>
 		<div id="autopilot"></div>
 		<div id="freshness"></div>
@@ -442,6 +443,28 @@
 				'</div>';
 		}
 
+		function renderSanity(sanity) {
+			const el = document.getElementById('sanity');
+			if (!sanity) { el.innerHTML = ''; return; }
+			const s = sanity.summary || {};
+			const badgeClass = sanity.pass ? 'healthy' : 'critical';
+			const badgeText = sanity.pass ? 'pass' : 'fail';
+			const findingsHtml = (sanity.findings || []).map(f => {
+				const dotClass = f.severity === 'critical' ? 'critical' : 'warning';
+				return '<div class="issue-item"><span class="issue-dot ' + dotClass + '"></span>' + f.message + '</div>';
+			}).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Sanity Check</div>' +
+				'<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
+				' <span style="font-size:0.65rem;color:var(--muted)">' + (sanity.provider || '') + ' &middot; ' + timeAgo(sanity.generatedAt) + '</span>' +
+				'<div class="metric-row"><span class="metric-label">Findings</span><span class="metric-value">' + (s.total || 0) + '</span></div>' +
+				(s.critical > 0 ? '<div class="metric-row"><span class="metric-label">Critical</span><span class="metric-value" style="color:var(--red)">' + s.critical + '</span></div>' : '') +
+				(s.warning > 0 ? '<div class="metric-row"><span class="metric-label">Warnings</span><span class="metric-value" style="color:var(--amber)">' + s.warning + '</span></div>' : '') +
+				(findingsHtml || '<div class="empty-state">No issues found</div>') +
+				'</div>';
+		}
+
 		function renderGaps(gaps) {
 			const el = document.getElementById('gaps');
 			if (!gaps) { el.innerHTML = ''; return; }
@@ -496,13 +519,15 @@
 			fetchJSON('quality-history.json'),
 			fetchJSON('coverage-gaps.json'),
 			fetchJSON('autopilot-log.json'),
-			fetchJSON('meta.json')
-		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta]) => {
+			fetchJSON('meta.json'),
+			fetchJSON('sanity-report.json')
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity]) => {
 			renderSummary(health);
 			renderAutonomy(autonomy);
 			renderPipeline(health);
 			renderQuality(quality);
 			renderTrend(history);
+			renderSanity(sanity);
 			renderGaps(gaps);
 			renderAutopilot(autopilotLog);
 			renderFreshness(meta);
