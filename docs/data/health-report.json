@@ -1,16 +1,11 @@
 {
-  "generatedAt": "2026-02-12T10:26:01.355Z",
-  "eventCount": 35,
+  "generatedAt": "2026-02-12T11:43:12.888Z",
+  "eventCount": 31,
   "sportCoverage": {
-    "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "olympics": {
-      "count": 18,
+      "count": 15,
       "previousCount": 18,
-      "delta": 0
+      "delta": -3
     },
     "football": {
       "count": 14,
@@ -26,6 +21,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "golf": {
+      "count": 0,
+      "previousCount": 1,
+      "delta": -1
     }
   },
   "dataFreshness": {
@@ -34,7 +34,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -55,7 +55,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.97,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -67,14 +67,31 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [],
-  "status": "healthy",
+  "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "golf: 0 events (was 1)"
+    },
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 2"
+    }
+  ],
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 100% with 6/6 feedback loops closed. Pipeline is healthy with 35 events across 5 sports. Editorial quality score is 77/100.",
+    "text": "Autonomy at 100% with 6/6 feedback loops closed. Pipeline is critical with 1 critical issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 2"
+      }
+    ],
+    "hasRegression": true
   }
 }

@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T10:03:15.947Z",
+  "generatedAt": "2026-02-12T11:42:20.221Z",
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
-      "totalEvents": 35,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "totalEvents": 31,
+      "importanceCoverage": 0.355,
+      "summaryCoverage": 0.355,
+      "relevanceCoverage": 0.355,
+      "tagsCoverage": 0.323
     },
     "after": {
-      "totalEvents": 35,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -19,52 +19,54 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
-    "failedBatches": 0,
-    "totalEvents": 35,
+    "fallbackFieldsFilled": 101,
+    "aiUpdatedFields": 11,
+    "failedBatches": 2,
+    "totalEvents": 31,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 2,
+      "total": 0,
+      "tracked": false
     }
   },
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"⚽ Atlético Madrid v Barcelona, 21:00, Copa del Rey...\""
-    ],
-    "blockCount": 9,
-    "generationMs": 2,
+    "score": 100,
+    "issues": [],
+    "blockCount": 8,
+    "generationMs": 10198,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 1,
+      "total": 0,
+      "tracked": false
     }
   },
   "editorial": {
-    "score": 89,
+    "score": 70,
     "metrics": {
-      "mustWatchCoverage": 0.8,
+      "mustWatchCoverage": 0,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 0.875,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7
+      "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 0% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 123,
+      "avgScore": 89,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
