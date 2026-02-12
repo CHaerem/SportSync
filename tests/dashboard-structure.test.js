@@ -94,6 +94,7 @@ describe("status.html structure", () => {
 	});
 
 	const expectedIds = [
+		"summary",
 		"autonomy",
 		"pipeline",
 		"quality",

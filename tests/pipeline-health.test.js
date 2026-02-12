@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateHealthReport } from "../scripts/pipeline-health.js";
+import { generateHealthReport, generateStatusSummary } from "../scripts/pipeline-health.js";
 
 const makeEvents = (sports) => {
 	const events = [];
@@ -160,5 +160,38 @@ describe("generateHealthReport()", () => {
 		});
 		expect(report.sportCoverage.football.previousCount).toBeNull();
 		expect(report.sportCoverage.football.delta).toBeNull();
+	});
+});
+
+describe("generateStatusSummary()", () => {
+	it("generates a fallback summary without API key", async () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 10, golf: 3 }),
+		});
+		const autonomy = { overallScore: 1, loopsClosed: 6, loopsTotal: 6 };
+		const quality = { editorial: { score: 95 } };
+
+		const summary = await generateStatusSummary(report, autonomy, quality);
+		expect(summary).toContain("100%");
+		expect(summary).toContain("6/6");
+		expect(summary).toContain("95");
+	});
+
+	it("handles null inputs gracefully", async () => {
+		const report = generateHealthReport({ events: [] });
+		const summary = await generateStatusSummary(report, null, null);
+		expect(typeof summary).toBe("string");
+		expect(summary.length).toBeGreaterThan(0);
+	});
+
+	it("includes issue counts for non-healthy pipeline", async () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			previousReport: { sportCoverage: { football: { count: 5 }, chess: { count: 3 } } },
+		});
+		const autonomy = { overallScore: 0.83, loopsClosed: 5, loopsTotal: 6 };
+
+		const summary = await generateStatusSummary(report, autonomy, null);
+		expect(summary).toContain("critical");
 	});
 });

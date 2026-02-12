@@ -238,6 +238,15 @@
 			padding: 4px 0;
 		}
 
+		/* --- Summary --- */
+		.summary {
+			font-size: 0.82rem;
+			color: var(--fg);
+			line-height: 1.6;
+			margin-bottom: 16px;
+			font-style: italic;
+		}
+
 		/* --- Loading --- */
 		.loading {
 			text-align: center;
@@ -265,6 +274,7 @@
 			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
 		</header>
 
+		<div id="summary"></div>
 		<div id="autonomy"><div class="loading">Loading...</div></div>
 		<div id="pipeline"></div>
 		<div id="quality"></div>
@@ -322,6 +332,13 @@
 			watchPlan: 'Watch Plan',
 			codeHealth: 'Code Health'
 		};
+
+		function renderSummary(health) {
+			const el = document.getElementById('summary');
+			const text = health?.statusSummary;
+			if (!text) { el.innerHTML = ''; return; }
+			el.innerHTML = '<div class="summary">' + text + '</div>';
+		}
 
 		function renderAutonomy(report) {
 			const el = document.getElementById('autonomy');
@@ -481,6 +498,7 @@
 			fetchJSON('autopilot-log.json'),
 			fetchJSON('meta.json')
 		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta]) => {
+			renderSummary(health);
 			renderAutonomy(autonomy);
 			renderPipeline(health);
 			renderQuality(quality);

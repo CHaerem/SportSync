@@ -12,6 +12,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 import { evaluateAutonomy } from "./autonomy-scorecard.js";
+import { LLMClient } from "./lib/llm-client.js";
 
 const dataDir = rootDataPath();
 
@@ -158,6 +159,48 @@ export function generateHealthReport(options = {}) {
 	};
 }
 
+function buildFallbackSummary(report, autonomy, quality) {
+	const parts = [];
+	const pct = Math.round((autonomy?.overallScore ?? 0) * 100);
+	parts.push(`Autonomy at ${pct}% with ${autonomy?.loopsClosed ?? 0}/${autonomy?.loopsTotal ?? 0} feedback loops closed.`);
+
+	if (report.status === "healthy") {
+		parts.push(`Pipeline is healthy with ${report.eventCount} events across ${Object.keys(report.sportCoverage).length} sports.`);
+	} else {
+		const critCount = report.issues.filter(i => i.severity === "critical").length;
+		const warnCount = report.issues.filter(i => i.severity === "warning").length;
+		const issueDesc = [critCount && `${critCount} critical`, warnCount && `${warnCount} warning`].filter(Boolean).join(", ");
+		parts.push(`Pipeline is ${report.status} with ${issueDesc} issue(s).`);
+	}
+
+	const edScore = quality?.editorial?.score;
+	if (edScore != null) parts.push(`Editorial quality score is ${edScore}/100.`);
+
+	return parts.join(" ");
+}
+
+export async function generateStatusSummary(report, autonomy, quality) {
+	const llm = new LLMClient();
+	if (!llm.isAvailable()) {
+		return buildFallbackSummary(report, autonomy, quality);
+	}
+
+	const systemPrompt = "You are a concise system status reporter for SportSync, a sports dashboard. Write a 2-3 sentence plain-text summary of the current system health. Be direct, specific, and use numbers. No markdown, no bullet points.";
+	const userPrompt = JSON.stringify({
+		autonomy: { score: autonomy?.overallScore, loopsClosed: autonomy?.loopsClosed, loopsTotal: autonomy?.loopsTotal },
+		pipeline: { status: report.status, eventCount: report.eventCount, sports: Object.keys(report.sportCoverage).length, issueCount: report.issues.length, issues: report.issues.slice(0, 5).map(i => i.message) },
+		quality: { editorial: quality?.editorial?.score, enrichment: quality?.enrichment?.score, featured: quality?.featured?.score, provider: quality?.featured?.provider },
+	});
+
+	try {
+		const summary = await llm.complete(systemPrompt, userPrompt, { maxRetries: 1 });
+		return summary.trim();
+	} catch (err) {
+		console.warn("Status summary LLM failed, using fallback:", err.message);
+		return buildFallbackSummary(report, autonomy, quality);
+	}
+}
+
 async function main() {
 	const eventsData = readJsonIfExists(path.join(dataDir, "events.json")) || [];
 	const standings = readJsonIfExists(path.join(dataDir, "standings.json"));
@@ -178,6 +221,18 @@ async function main() {
 		sportFiles,
 	});
 
+	// Generate autonomy scorecard alongside health report
+	const autonomyReport = evaluateAutonomy();
+	const autonomyPath = path.join(dataDir, "autonomy-report.json");
+	writeJsonPretty(autonomyPath, autonomyReport);
+	console.log(`Autonomy: ${Math.round(autonomyReport.overallScore * 100)}% (${autonomyReport.loopsClosed}/${autonomyReport.loopsTotal} loops closed)`);
+
+	// Generate status summary
+	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
+	const summary = await generateStatusSummary(report, autonomyReport, quality);
+	report.statusSummary = summary;
+	console.log(`Status summary: ${summary}`);
+
 	const outPath = path.join(dataDir, "health-report.json");
 	writeJsonPretty(outPath, report);
 	console.log(`Health report: ${report.status} (${report.issues.length} issue(s), ${report.eventCount} events)`);
@@ -185,12 +240,6 @@ async function main() {
 	for (const issue of report.issues) {
 		console.log(`  [${issue.severity}] ${issue.message}`);
 	}
-
-	// Generate autonomy scorecard alongside health report
-	const autonomyReport = evaluateAutonomy();
-	const autonomyPath = path.join(dataDir, "autonomy-report.json");
-	writeJsonPretty(autonomyPath, autonomyReport);
-	console.log(`Autonomy: ${Math.round(autonomyReport.overallScore * 100)}% (${autonomyReport.loopsClosed}/${autonomyReport.loopsTotal} loops closed)`);
 
 	// Create GitHub issue if critical and running in CI
 	if (report.status === "critical" && process.env.GITHUB_ACTIONS) {
