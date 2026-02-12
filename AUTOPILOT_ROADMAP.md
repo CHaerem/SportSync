@@ -334,10 +334,28 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #48) Add trend tracking to autonomy scorecard — Added `trackTrend()` and `detectRegressions()` to track autonomy score over time in `autonomy-trend.json`. Wired into pipeline-health.js.
 
-- [PENDING] Add client-side engagement tracking — Track which events get expanded/clicked in localStorage via `preferences-manager.js`. Store per-sport click counts and timestamps. ~40 lines in `docs/js/dashboard.js` + `docs/js/preferences-manager.js`. LOW risk. (Step 1 of preference evolution; pipeline consumption requires a data export mechanism.)
+- [DONE] (PR #51) Add client-side engagement tracking — Added `trackEngagement()` to `preferences-manager.js` that records per-sport click counts and timestamps in localStorage. Wired into dashboard expand handler.
 
 - [BLOCKED] depends on engagement tracking + data export | Add preference evolution pipeline script — New script to read engagement data and update `user-context.json` sport weights. Requires a mechanism to get client-side localStorage data back to the pipeline.
 
 - [BLOCKED] protected path — requires autopilot workflow/prompt modification | Add opportunity detection to autopilot scouting — After completing roadmap tasks, analyze RSS trends + coverage gaps + engagement signals to identify new features or data sources worth adding.
 
 - [BLOCKED] protected path — all `|| echo "failed"` handlers are in `.github/workflows/update-sports-data.yml` | Replace silent pipeline failures with structured error reporting — Requires workflow file modification which is a protected path.
+
+---
+
+## Scouted Tasks (2026-02-12, run 2)
+
+### HIGH Priority
+
+- [PENDING] Add keyboard accessibility to event rows — In `docs/js/dashboard.js`, event rows are clickable divs but lack `role="button"`, `tabindex="0"`, and keyboard event handlers (Enter/Space to toggle expand). Add these attributes in `renderEventRow()` (~line 768) and a keydown handler in `bindEventHandlers()`. Only change `docs/js/dashboard.js`. ~10 lines, LOW risk.
+
+### MEDIUM Priority
+
+- [PENDING] Render chess/tennis participants in expanded view — `docs/js/dashboard.js` loads `event.participants` (line 93) but never renders it. For chess and tennis events with participants, show "Players: X, Y" in the expanded event view. Only change `docs/js/dashboard.js`. ~10 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch/golf.js` — Test `buildFeaturedGroups()`, `playerNameMatches()`, `tournamentNameMatches()`, `filterNorwegiansAgainstField()`, and `parseTeeTimeToUTC()` with mocked data. New file `tests/golf-fetcher.test.js`. ~80 lines, LOW risk.
+
+### LOW Priority
+
+- [PENDING] Remove unused `meta` field from dashboard event loading — `docs/js/dashboard.js` line 85 loads `ev.meta` but it's never rendered in any DOM output. Remove the field from the event mapping to reduce unnecessary data. Only change `docs/js/dashboard.js`. ~1 line, LOW risk.
