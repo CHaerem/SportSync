@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T16:52:41.055Z",
+  "generatedAt": "2026-02-12T20:17:38.727Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 32,
+      "totalEvents": 29,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.75
+      "tagsCoverage": 0.724
     },
     "after": {
-      "totalEvents": 32,
+      "totalEvents": 29,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -20,14 +20,16 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 8,
-    "aiUpdatedFields": 32,
+    "aiUpdatedFields": 29,
     "failedBatches": 0,
-    "totalEvents": 32,
-    "hintsApplied": [],
+    "totalEvents": 29,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 4,
+      "calls": 3,
       "total": 0,
       "tracked": false
     }
@@ -38,8 +40,8 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 11432,
+    "blockCount": 6,
+    "generationMs": 9591,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -49,13 +51,13 @@
     }
   },
   "editorial": {
-    "score": 85,
+    "score": 93,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
-      "quietDayCompliance": 1,
+      "quietDayCompliance": 0.3,
       "blockCountTarget": 1
     },
     "issues": []
@@ -64,7 +66,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 122,
+      "avgScore": 109,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }

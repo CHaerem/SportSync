@@ -1,21 +1,18 @@
 {
-  "generatedAt": "2026-02-12T16:53:33.603Z",
+  "generatedAt": "2026-02-12T20:18:21.157Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 32,
+    "totalEvents": 29,
     "sports": [
       "olympics",
-      "football",
       "chess",
+      "football",
       "cs2",
       "f1"
     ],
     "bands": {
       "live": [],
-      "today": [
-        "Arsenal at Brentford",
-        "Barcelona at Atlético Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "Cross-Country Skiing — Men's 10km Free",
         "Round 1 – FIDE Freestyle Chess World Championship 2026 | Round-Robin",
@@ -51,14 +48,12 @@
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": [
-        "Cross-Country Skiing — Women's 10km Free"
-      ]
+      "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "healthy",
-    "editorialScore": 85,
+    "editorialScore": 93,
     "issueCount": 0
   },
   "findings": [
@@ -68,9 +63,29 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 22 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"️ Carlsen begins Freestyle Chess title defense\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "standings_without_events",
       "message": "Golf leaderboard exists but no golf events"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Nothing\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"The Winter Olympics\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -84,10 +99,10 @@
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 8,
     "critical": 0,
-    "warning": 3,
-    "info": 1
+    "warning": 6,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
