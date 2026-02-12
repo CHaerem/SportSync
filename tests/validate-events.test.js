@@ -1,46 +1,50 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
+import os from "os";
 import { execSync } from "child_process";
 
-const DATA_DIR = path.resolve(process.cwd(), "docs", "data");
-const EVENTS_PATH = path.join(DATA_DIR, "events.json");
+let tmpDir;
 
 function futureTime(hoursAhead = 24) {
 	return new Date(Date.now() + hoursAhead * 3600000).toISOString();
 }
 
-describe("validate-events.js", () => {
-	let originalEvents;
+function writeEvents(events) {
+	fs.writeFileSync(path.join(tmpDir, "events.json"), JSON.stringify(events));
+}
 
+function runValidate() {
+	return execSync("node scripts/validate-events.js", {
+		cwd: process.cwd(),
+		env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
+	}).toString();
+}
+
+describe("validate-events.js", () => {
 	beforeEach(() => {
-		if (fs.existsSync(EVENTS_PATH)) {
-			originalEvents = fs.readFileSync(EVENTS_PATH, "utf-8");
-		}
+		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "validate-events-"));
 	});
 
 	afterEach(() => {
-		if (originalEvents) {
-			fs.writeFileSync(EVENTS_PATH, originalEvents);
-		}
+		fs.rmSync(tmpDir, { recursive: true, force: true });
 	});
 
 	it("passes with valid events", () => {
-		const events = [
+		writeEvents([
 			{
 				sport: "football",
 				title: "Test Match",
 				time: futureTime(),
 				tournament: "Test League",
 			},
-		];
-		fs.writeFileSync(EVENTS_PATH, JSON.stringify(events));
-		const output = execSync("node scripts/validate-events.js", { cwd: process.cwd() }).toString();
+		]);
+		const output = runValidate();
 		expect(output).toContain("0 error(s)");
 	});
 
 	it("passes with valid enrichment fields", () => {
-		const events = [
+		writeEvents([
 			{
 				sport: "football",
 				title: "Test Match",
@@ -50,15 +54,14 @@ describe("validate-events.js", () => {
 				norwegianRelevance: 2,
 				tags: ["must-watch"],
 			},
-		];
-		fs.writeFileSync(EVENTS_PATH, JSON.stringify(events));
-		const output = execSync("node scripts/validate-events.js", { cwd: process.cwd() }).toString();
+		]);
+		const output = runValidate();
 		expect(output).toContain("0 error(s)");
 		expect(output).toContain("1 enriched");
 	});
 
 	it("fails on invalid importance", () => {
-		const events = [
+		writeEvents([
 			{
 				sport: "football",
 				title: "Test",
@@ -66,15 +69,12 @@ describe("validate-events.js", () => {
 				tournament: "Test",
 				importance: 10,
 			},
-		];
-		fs.writeFileSync(EVENTS_PATH, JSON.stringify(events));
-		expect(() =>
-			execSync("node scripts/validate-events.js", { cwd: process.cwd() })
-		).toThrow();
+		]);
+		expect(() => runValidate()).toThrow();
 	});
 
 	it("fails on invalid tags type", () => {
-		const events = [
+		writeEvents([
 			{
 				sport: "football",
 				title: "Test",
@@ -82,10 +82,7 @@ describe("validate-events.js", () => {
 				tournament: "Test",
 				tags: "not-an-array",
 			},
-		];
-		fs.writeFileSync(EVENTS_PATH, JSON.stringify(events));
-		expect(() =>
-			execSync("node scripts/validate-events.js", { cwd: process.cwd() })
-		).toThrow();
+		]);
+		expect(() => runValidate()).toThrow();
 	});
 });

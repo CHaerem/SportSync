@@ -4,44 +4,34 @@ import path from "path";
 import os from "os";
 import { execSync } from "child_process";
 
-const DATA_DIR = path.resolve(process.cwd(), "docs", "data");
-const EVENTS_PATH = path.join(DATA_DIR, "events.json");
-// Use empty temp dir so curated configs don't interfere with tests
-const EMPTY_CONFIG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "sportsync-test-config-"));
+let tmpDataDir;
+let tmpConfigDir;
 
-// Create a temp sport file for testing
 function writeSportFile(sport, data) {
-	fs.writeFileSync(path.join(DATA_DIR, `${sport}.json`), JSON.stringify(data));
+	fs.writeFileSync(path.join(tmpDataDir, `${sport}.json`), JSON.stringify(data));
 }
 
-// Generate a future time
 function futureTime(hoursAhead = 24) {
 	return new Date(Date.now() + hoursAhead * 3600000).toISOString();
 }
 
-describe("build-events.js", () => {
-	let originalFiles = {};
+function runBuildEvents() {
+	execSync("node scripts/build-events.js", {
+		cwd: process.cwd(),
+		env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDataDir, SPORTSYNC_CONFIG_DIR: tmpConfigDir },
+	});
+	return JSON.parse(fs.readFileSync(path.join(tmpDataDir, "events.json"), "utf-8"));
+}
 
+describe("build-events.js", () => {
 	beforeEach(() => {
-		// Backup existing data files
-		for (const sport of ["football", "golf", "tennis", "f1", "chess", "esports"]) {
-			const file = path.join(DATA_DIR, `${sport}.json`);
-			if (fs.existsSync(file)) {
-				originalFiles[sport] = fs.readFileSync(file, "utf-8");
-			}
-		}
-		if (fs.existsSync(EVENTS_PATH)) {
-			originalFiles.events = fs.readFileSync(EVENTS_PATH, "utf-8");
-		}
+		tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "build-events-data-"));
+		tmpConfigDir = fs.mkdtempSync(path.join(os.tmpdir(), "build-events-config-"));
 	});
 
 	afterEach(() => {
-		// Restore original files
-		for (const [key, content] of Object.entries(originalFiles)) {
-			const file = key === "events" ? EVENTS_PATH : path.join(DATA_DIR, `${key}.json`);
-			fs.writeFileSync(file, content);
-		}
-		originalFiles = {};
+		fs.rmSync(tmpDataDir, { recursive: true, force: true });
+		fs.rmSync(tmpConfigDir, { recursive: true, force: true });
 	});
 
 	it("aggregates events from multiple sport files", () => {
@@ -62,14 +52,11 @@ describe("build-events.js", () => {
 				},
 			],
 		});
-		// Clear other sports
 		for (const sport of ["tennis", "f1", "chess", "esports"]) {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
-		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
-
+		const events = runBuildEvents();
 		expect(events).toHaveLength(2);
 		expect(events[0].sport).toBeDefined();
 		expect(events.find((e) => e.sport === "football")).toBeTruthy();
@@ -94,9 +81,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
-		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
-
+		const events = runBuildEvents();
 		expect(events).toHaveLength(1);
 		expect(events[0].title).toBe("Future Game");
 	});
@@ -126,9 +111,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
-		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
-
+		const events = runBuildEvents();
 		expect(events).toHaveLength(1);
 		expect(events[0].importance).toBe(4);
 		expect(events[0].importanceReason).toBe("Title decider");
@@ -156,9 +139,7 @@ describe("build-events.js", () => {
 			writeSportFile(sport, { tournaments: [] });
 		}
 
-		execSync("node scripts/build-events.js", { cwd: process.cwd(), env: { ...process.env, SPORTSYNC_CONFIG_DIR: EMPTY_CONFIG_DIR } });
-		const events = JSON.parse(fs.readFileSync(EVENTS_PATH, "utf-8"));
-
+		const events = runBuildEvents();
 		expect(events[0].title).toBe("Earlier Game");
 		expect(events[1].title).toBe("Later Game");
 	});

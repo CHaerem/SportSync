@@ -453,16 +453,16 @@ class Dashboard {
 			}
 
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
-			const streaming = pick.streaming || null;
+			const streams = Array.isArray(pick.streaming) ? pick.streaming : [];
 
 			html += `<div class="watch-pick" data-pick-index="${i}">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
 			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
-			if (reasons.length > 0 || streaming) {
+			if (reasons.length > 0 || streams.length > 0) {
 				html += '<div class="pick-reasons">';
 				reasons.forEach(r => { html += `<span class="pick-reason">${this.esc(r)}</span>`; });
-				if (streaming) { html += `<span class="pick-stream">${this.esc(streaming)}</span>`; }
+				streams.forEach(s => { html += `<span class="pick-stream">${this.esc(s.platform || s)}</span>`; });
 				html += '</div>';
 			}
 			html += `</div></div>`;

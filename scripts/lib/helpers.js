@@ -134,7 +134,7 @@ export function mergePrimaryAndOpen(primary, open) {
 }
 
 export function rootDataPath() {
-	return path.resolve(process.cwd(), "docs", "data");
+	return process.env.SPORTSYNC_DATA_DIR || path.resolve(process.cwd(), "docs", "data");
 }
 
 export function summaryLine(label, value) {
