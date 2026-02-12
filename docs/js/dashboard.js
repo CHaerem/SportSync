@@ -931,10 +931,10 @@ class Dashboard {
 			html += `<div class="stat-bar"><div class="stat-bar-track"><div class="stat-bar-fill" style="width:${homePoss}%"></div></div></div>`;
 
 			// Shots
-			const homeShots = live.stats?.home_totalShots || '0';
-			const awayShots = live.stats?.away_totalShots || '0';
-			const homeOnTarget = live.stats?.home_shotsOnTarget || '0';
-			const awayOnTarget = live.stats?.away_shotsOnTarget || '0';
+			const homeShots = parseInt(live.stats?.home_totalShots, 10) || 0;
+			const awayShots = parseInt(live.stats?.away_totalShots, 10) || 0;
+			const homeOnTarget = parseInt(live.stats?.home_shotsOnTarget, 10) || 0;
+			const awayOnTarget = parseInt(live.stats?.away_shotsOnTarget, 10) || 0;
 			html += `<div style="margin-top:6px;font-size:0.65rem;color:var(--muted)">${homeShots} shots (${homeOnTarget} on target) \u2014 ${awayShots} shots (${awayOnTarget} on target)</div>`;
 
 			html += '</div>';
@@ -1168,7 +1168,7 @@ class Dashboard {
 					};
 				}
 			}
-		} catch { /* silent */ }
+		} catch (e) { console.debug('Football live poll failed:', e.message); }
 	}
 
 	async pollGolfScores() {
@@ -1211,7 +1211,7 @@ class Dashboard {
 					thru: c.status?.thru?.toString() || '-',
 				})),
 			};
-		} catch { /* silent */ }
+		} catch (e) { console.debug('Golf live poll failed:', e.message); }
 	}
 
 	teamMatch(a, b) {
