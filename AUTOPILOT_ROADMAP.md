@@ -348,7 +348,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### HIGH Priority
 
-- [PENDING] Add keyboard accessibility to event rows — In `docs/js/dashboard.js`, event rows are clickable divs but lack `role="button"`, `tabindex="0"`, and keyboard event handlers (Enter/Space to toggle expand). Add these attributes in `renderEventRow()` (~line 768) and a keydown handler in `bindEventHandlers()`. Only change `docs/js/dashboard.js`. ~10 lines, LOW risk.
+- [DONE] (PR #53) Add keyboard accessibility to event rows — Added `role="button"`, `tabindex="0"`, `aria-expanded` to event row divs and delegated keydown handler for Enter/Space expand toggle.
 
 ### MEDIUM Priority
 
