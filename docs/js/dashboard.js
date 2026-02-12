@@ -872,6 +872,11 @@ class Dashboard {
 			content += this.renderF1Standings();
 		}
 
+		// Participants (chess, tennis)
+		if (event.participants && event.participants.length > 0 && (event.sport === 'chess' || event.sport === 'tennis')) {
+			content += `<div class="exp-participants">Players: ${event.participants.map(p => this.esc(typeof p === 'string' ? p : p.name)).join(', ')}</div>`;
+		}
+
 		// Streaming
 		if (event.streaming && event.streaming.length > 0) {
 			content += '<div class="exp-streaming">';
