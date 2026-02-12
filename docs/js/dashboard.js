@@ -849,6 +849,11 @@ class Dashboard {
 						<span>${this.esc(player.name)}</span>
 					</div>
 					${teeTime ? `<span class="exp-tee-time">${this.esc(teeTime)}</span>` : ''}
+				${(() => {
+					const fg = (event.featuredGroups || []).find(g => g.player === player.name);
+					if (!fg?.groupmates?.length) return '';
+					return `<div class="exp-playing-with">Playing with: ${fg.groupmates.map(g => this.esc(g.name)).join(', ')}</div>`;
+				})()}
 				</div>`;
 			});
 			if (event.link) {
