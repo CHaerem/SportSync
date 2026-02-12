@@ -354,7 +354,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #54) Render chess/tennis participants in expanded view — Added "Players: X, Y" display in expanded event view for chess/tennis events. Handles both string and object participant formats.
 
-- [PENDING] Add unit tests for `scripts/fetch/golf.js` — Test `buildFeaturedGroups()`, `playerNameMatches()`, `tournamentNameMatches()`, `filterNorwegiansAgainstField()`, and `parseTeeTimeToUTC()` with mocked data. New file `tests/golf-fetcher.test.js`. ~80 lines, LOW risk.
+- [DONE] (PR #55) Add unit tests for `scripts/fetch/golf.js` — 30 tests covering playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, and buildFeaturedGroups.
 
 ### LOW Priority
 
