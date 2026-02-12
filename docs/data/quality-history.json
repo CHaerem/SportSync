@@ -570,12 +570,12 @@
     "hintsApplied": []
   },
   {
-    "timestamp": "2026-02-12T09:05:37.864Z",
+    "timestamp": "2026-02-12T09:01:32.912Z",
     "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
+      "score": 100,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
-      "blockCount": 8
+      "blockCount": 3
     },
     "enrichment": {
       "score": 100,
@@ -584,14 +584,40 @@
     },
     "featured": {
       "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "blockCount": 3,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 127,
-      "streamingCoverage": 1
+      "pickCount": 1,
+      "avgScore": 44,
+      "streamingCoverage": 0
+    },
+    "hintsApplied": []
+  },
+  {
+    "timestamp": "2026-02-12T09:01:32.953Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 3
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 3,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 44,
+      "streamingCoverage": 0
     },
     "hintsApplied": []
   }

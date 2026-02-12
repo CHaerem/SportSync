@@ -4,6 +4,7 @@ import path from "path";
 
 const docsDir = path.resolve(process.cwd(), "docs");
 const indexHtml = fs.readFileSync(path.join(docsDir, "index.html"), "utf-8");
+const statusHtml = fs.readFileSync(path.join(docsDir, "status.html"), "utf-8");
 const swJs = fs.readFileSync(path.join(docsDir, "sw.js"), "utf-8");
 
 describe("index.html structure", () => {
@@ -66,6 +67,58 @@ describe("sw.js cache paths", () => {
 			const filePath = relativePath === "" ? path.join(docsDir, "index.html") : path.join(docsDir, relativePath);
 			expect(fs.existsSync(filePath), `SW cache references missing file: ${cachePath} → ${filePath}`).toBe(true);
 		}
+	});
+});
+
+describe("index.html links to status page", () => {
+	it("contains a link to status.html", () => {
+		expect(indexHtml).toContain('href="status.html"');
+	});
+});
+
+describe("status.html structure", () => {
+	it("has proper HTML structure", () => {
+		expect(statusHtml).toContain("<!DOCTYPE html>");
+		expect(statusHtml).toContain("<html");
+		expect(statusHtml).toContain("</html>");
+		expect(statusHtml).toContain("<head>");
+		expect(statusHtml).toContain("<body>");
+	});
+
+	it("has meta viewport tag", () => {
+		expect(statusHtml).toContain('name="viewport"');
+	});
+
+	it("has meta description tag", () => {
+		expect(statusHtml).toContain('name="description"');
+	});
+
+	const expectedIds = [
+		"autonomy",
+		"pipeline",
+		"quality",
+		"trend",
+		"gaps",
+		"autopilot",
+		"freshness",
+		"themeToggle",
+	];
+
+	for (const id of expectedIds) {
+		it(`contains element with id="${id}"`, () => {
+			const regex = new RegExp(`id=["']${id}["']`);
+			expect(statusHtml).toMatch(regex);
+		});
+	}
+
+	it("links back to main dashboard", () => {
+		expect(statusHtml).toContain('href="./"');
+	});
+});
+
+describe("sw.js caches status.html", () => {
+	it("includes status.html in static cache", () => {
+		expect(swJs).toContain("status.html");
 	});
 });
 

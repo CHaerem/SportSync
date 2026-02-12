@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+	<meta name="description" content="SportSync system status — autonomy score, pipeline health, AI quality metrics.">
+	<meta name="theme-color" content="#d97757">
+	<title>SportSync — System Status</title>
+	<style>
+		:root {
+			--bg: #faf9f5;
+			--bg-secondary: #f0efe8;
+			--fg: #3d3929;
+			--muted: #8b8580;
+			--border: #e8e5dc;
+			--border-strong: #3d3929;
+			--accent: #d97757;
+			--radius: 12px;
+			--max-w: 480px;
+			--font: system-ui, -apple-system, sans-serif;
+			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+			--green: #2ecc71;
+			--amber: #f39c12;
+			--red: #e74c3c;
+		}
+		.dark {
+			--bg: #1a1816;
+			--bg-secondary: #242220;
+			--fg: #faf9f5;
+			--muted: #9a958e;
+			--border: #2d2a26;
+			--border-strong: #faf9f5;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+		}
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+
+		body {
+			font-family: var(--font);
+			background: var(--bg);
+			color: var(--fg);
+			line-height: 1.6;
+			font-size: 15px;
+			font-weight: 400;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.wrap {
+			max-width: var(--max-w);
+			margin: 0 auto;
+			padding: 40px 24px 60px;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 32px;
+		}
+		header h1 {
+			font-family: var(--font-serif);
+			font-size: 1.15rem;
+			font-weight: 400;
+			letter-spacing: -0.01em;
+			color: var(--fg);
+		}
+		header h1 a {
+			color: var(--fg);
+			text-decoration: none;
+		}
+		header h1 a:hover { color: var(--accent); }
+		.header-sub {
+			color: var(--muted);
+			font-size: 0.9em;
+		}
+		#themeToggle {
+			background: none;
+			border: none;
+			font-size: 1rem;
+			cursor: pointer;
+			padding: 4px;
+			line-height: 1;
+			opacity: 0.5;
+			transition: opacity 0.15s;
+		}
+		#themeToggle:hover { opacity: 0.8; }
+
+		/* --- Cards --- */
+		.card {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 18px 20px;
+			margin-bottom: 16px;
+			box-shadow: var(--shadow);
+		}
+		.card-header {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 12px;
+		}
+
+		/* --- Autonomy score --- */
+		.score-big {
+			font-size: 2.4rem;
+			font-weight: 300;
+			letter-spacing: -0.02em;
+			line-height: 1.1;
+		}
+		.score-label {
+			font-size: 0.7rem;
+			color: var(--muted);
+			margin-bottom: 12px;
+		}
+		.score-bar {
+			height: 4px;
+			border-radius: 2px;
+			background: var(--border);
+			overflow: hidden;
+			margin-bottom: 16px;
+		}
+		.score-bar-fill {
+			height: 100%;
+			border-radius: 2px;
+			transition: width 0.4s;
+		}
+
+		/* --- Loop rows --- */
+		.loop-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 5px 0;
+			font-size: 0.78rem;
+			border-bottom: 1px solid var(--border);
+		}
+		.loop-row:last-child { border-bottom: none; }
+		.loop-icon { flex-shrink: 0; font-size: 0.85rem; }
+		.loop-name { font-weight: 500; min-width: 110px; }
+		.loop-detail { color: var(--muted); font-size: 0.7rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+		/* --- Status badge --- */
+		.status-badge {
+			display: inline-block;
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			padding: 2px 10px;
+			border-radius: 10px;
+			margin-bottom: 10px;
+		}
+		.status-badge.healthy { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+		.status-badge.warning { background: rgba(243, 156, 18, 0.15); color: var(--amber); }
+		.status-badge.critical { background: rgba(231, 76, 60, 0.15); color: var(--red); }
+
+		/* --- Metric rows --- */
+		.metric-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 4px 0;
+			font-size: 0.78rem;
+		}
+		.metric-label { color: var(--muted); }
+		.metric-value { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+		/* --- Issue list --- */
+		.issue-item {
+			font-size: 0.72rem;
+			padding: 3px 0;
+			color: var(--muted);
+		}
+		.issue-dot {
+			display: inline-block;
+			width: 6px; height: 6px;
+			border-radius: 50%;
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+		.issue-dot.critical { background: var(--red); }
+		.issue-dot.warning { background: var(--amber); }
+
+		/* --- Sparkline --- */
+		.sparkline {
+			display: flex;
+			align-items: flex-end;
+			gap: 2px;
+			height: 40px;
+			margin-top: 8px;
+		}
+		.spark-bar {
+			flex: 1;
+			min-width: 3px;
+			max-width: 12px;
+			border-radius: 2px 2px 0 0;
+			background: var(--accent);
+			opacity: 0.7;
+			transition: opacity 0.15s;
+		}
+		.spark-bar:last-child { opacity: 1; }
+		.spark-bar:hover { opacity: 1; }
+
+		/* --- Autopilot log --- */
+		.log-item {
+			padding: 6px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.78rem;
+		}
+		.log-item:last-child { border-bottom: none; }
+		.log-task { font-weight: 400; }
+		.log-meta {
+			font-size: 0.65rem;
+			color: var(--muted);
+			margin-top: 2px;
+		}
+		.log-pr {
+			color: var(--accent);
+			text-decoration: none;
+			font-size: 0.65rem;
+		}
+		.log-pr:hover { opacity: 0.7; }
+
+		/* --- Next actions --- */
+		.action-item {
+			font-size: 0.75rem;
+			padding: 4px 0;
+			color: var(--fg);
+		}
+
+		/* --- Empty state --- */
+		.empty-state {
+			font-size: 0.75rem;
+			color: var(--muted);
+			font-style: italic;
+			padding: 4px 0;
+		}
+
+		/* --- Loading --- */
+		.loading {
+			text-align: center;
+			padding: 48px 0;
+			color: var(--muted);
+			font-size: 0.8rem;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				transition-duration: 0.01ms !important;
+			}
+		}
+
+		@media (max-width: 380px) {
+			.wrap { padding: 24px 16px 40px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<header>
+			<h1><a href="./">SportSync</a> <span class="header-sub">System</span></h1>
+			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
+		</header>
+
+		<div id="autonomy"><div class="loading">Loading...</div></div>
+		<div id="pipeline"></div>
+		<div id="quality"></div>
+		<div id="trend"></div>
+		<div id="gaps"></div>
+		<div id="autopilot"></div>
+		<div id="freshness"></div>
+	</div>
+
+	<script>
+		// Theme toggle
+		(function() {
+			const saved = localStorage.getItem('theme');
+			if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+			document.getElementById('themeToggle').addEventListener('click', () => {
+				const isDark = document.documentElement.classList.toggle('dark');
+				localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			});
+		})();
+
+		const REPO_URL = 'https://github.com/christopherhaerem/SportSync';
+
+		async function fetchJSON(file) {
+			try {
+				const r = await fetch('data/' + file, { cache: 'no-cache' });
+				if (!r.ok) return null;
+				return r.json();
+			} catch { return null; }
+		}
+
+		function timeAgo(iso) {
+			if (!iso) return 'unknown';
+			const diff = Date.now() - new Date(iso).getTime();
+			const mins = Math.floor(diff / 60000);
+			if (mins < 1) return 'just now';
+			if (mins < 60) return mins + 'm ago';
+			const hrs = Math.floor(mins / 60);
+			if (hrs < 24) return hrs + 'h ' + (mins % 60) + 'm ago';
+			return Math.floor(hrs / 24) + 'd ago';
+		}
+
+		function statusColor(score) {
+			if (score >= 0.8) return 'var(--green)';
+			if (score >= 0.5) return 'var(--amber)';
+			return 'var(--red)';
+		}
+
+		const LOOP_LABELS = {
+			featuredQuality: 'Featured Quality',
+			enrichmentQuality: 'Enrichment Quality',
+			coverageGaps: 'Coverage Gaps',
+			pipelineHealth: 'Pipeline Health',
+			watchPlan: 'Watch Plan',
+			codeHealth: 'Code Health'
+		};
+
+		function renderAutonomy(report) {
+			const el = document.getElementById('autonomy');
+			if (!report) { el.innerHTML = '<div class="card"><div class="card-header">Autonomy</div><div class="empty-state">No data available</div></div>'; return; }
+			const pct = Math.round(report.overallScore * 100);
+			const loopRows = Object.entries(report.loops || {}).map(([key, loop]) => {
+				const icon = loop.status === 'closed' ? '&#9679;' : loop.status === 'partial' ? '&#9681;' : '&#9675;';
+				const color = loop.status === 'closed' ? 'var(--green)' : loop.status === 'partial' ? 'var(--amber)' : 'var(--red)';
+				return '<div class="loop-row">' +
+					'<span class="loop-icon" style="color:' + color + '">' + icon + '</span>' +
+					'<span class="loop-name">' + (LOOP_LABELS[key] || key) + '</span>' +
+					'<span class="loop-detail" title="' + (loop.details || '').replace(/"/g, '&quot;') + '">' + (loop.details || '') + '</span>' +
+					'</div>';
+			}).join('');
+
+			let actionsHtml = '';
+			if (report.nextActions && report.nextActions.length > 0) {
+				actionsHtml = '<div style="margin-top:12px"><div class="card-header" style="margin-bottom:6px">Next Actions</div>' +
+					report.nextActions.map(a => '<div class="action-item">' + a + '</div>').join('') + '</div>';
+			}
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Autonomy Score</div>' +
+				'<div class="score-big">' + pct + '%</div>' +
+				'<div class="score-label">' + report.loopsClosed + ' of ' + report.loopsTotal + ' feedback loops closed</div>' +
+				'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:' + statusColor(report.overallScore) + '"></div></div>' +
+				loopRows +
+				actionsHtml +
+				'</div>';
+		}
+
+		function renderPipeline(health) {
+			const el = document.getElementById('pipeline');
+			if (!health) { el.innerHTML = ''; return; }
+			const badgeClass = health.status === 'healthy' ? 'healthy' : health.status === 'warning' ? 'warning' : 'critical';
+			const coverage = Object.entries(health.sportCoverage || {}).map(([sport, data]) => {
+				const delta = data.delta !== 0 ? ' (' + (data.delta > 0 ? '+' : '') + data.delta + ')' : '';
+				return '<div class="metric-row"><span class="metric-label">' + sport + '</span><span class="metric-value">' + data.count + ' events' + delta + '</span></div>';
+			}).join('');
+
+			const issues = (health.issues || []).slice(0, 6).map(i =>
+				'<div class="issue-item"><span class="issue-dot ' + i.severity + '"></span>' + i.message + '</div>'
+			).join('');
+
+			const standingsHtml = health.standingsHealth ? '<div style="margin-top:8px">' +
+				Object.entries(health.standingsHealth).map(([k, v]) =>
+					'<div class="metric-row"><span class="metric-label">' + k + '</span><span class="metric-value" style="color:' + (v ? 'var(--green)' : 'var(--red)') + '">' + (v ? 'OK' : 'Down') + '</span></div>'
+				).join('') + '</div>' : '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Pipeline Health</div>' +
+				'<span class="status-badge ' + badgeClass + '">' + health.status + '</span>' +
+				'<div class="metric-row"><span class="metric-label">Total events</span><span class="metric-value">' + (health.eventCount || 0) + '</span></div>' +
+				coverage +
+				standingsHtml +
+				(issues ? '<div style="margin-top:8px">' + issues + '</div>' : '') +
+				'</div>';
+		}
+
+		function renderQuality(quality) {
+			const el = document.getElementById('quality');
+			if (!quality) { el.innerHTML = ''; return; }
+			const ed = quality.editorial || {};
+			const en = quality.enrichment || {};
+			const ft = quality.featured || {};
+
+			const metricsHtml = Object.entries(ed.metrics || {}).map(([k, v]) => {
+				const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + Math.round(v * 100) + '%</span></div>';
+			}).join('');
+
+			const hintsHtml = en.hintsApplied && en.hintsApplied.length > 0
+				? '<div style="margin-top:6px;font-size:0.7rem;color:var(--muted)">Hints: ' + en.hintsApplied.join(', ') + '</div>' : '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">AI Quality</div>' +
+				'<div class="metric-row"><span class="metric-label">Editorial score</span><span class="metric-value">' + (ed.score || '—') + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Enrichment score</span><span class="metric-value">' + (en.score || '—') + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Featured score</span><span class="metric-value">' + (ft.score || '—') + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Featured provider</span><span class="metric-value">' + (ft.provider || '—') + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Generation time</span><span class="metric-value">' + (ft.generationMs != null ? ft.generationMs + 'ms' : '—') + '</span></div>' +
+				metricsHtml +
+				hintsHtml +
+				'</div>';
+		}
+
+		function renderTrend(history) {
+			const el = document.getElementById('trend');
+			if (!history || !history.length) { el.innerHTML = ''; return; }
+			const last20 = history.slice(-20);
+			const bars = last20.map((entry, i) => {
+				const score = (entry.editorial && entry.editorial.score) || 0;
+				const h = Math.max(2, (score / 100) * 40);
+				const title = new Date(entry.timestamp).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ': ' + score;
+				return '<div class="spark-bar" style="height:' + h + 'px" title="' + title + '"></div>';
+			}).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Quality Trend (last ' + last20.length + ' runs)</div>' +
+				'<div class="sparkline">' + bars + '</div>' +
+				'</div>';
+		}
+
+		function renderGaps(gaps) {
+			const el = document.getElementById('gaps');
+			if (!gaps) { el.innerHTML = ''; return; }
+			const summary = gaps.summary || {};
+			const gapList = (gaps.gaps || []).slice(0, 5).map(g =>
+				'<div class="issue-item">' + (g.headline || g.title || JSON.stringify(g)) + '</div>'
+			).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Coverage Gaps</div>' +
+				'<div class="metric-row"><span class="metric-label">Total gaps</span><span class="metric-value">' + (summary.totalGapsDetected || 0) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Actionable</span><span class="metric-value">' + (summary.actionableGaps || 0) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Informational</span><span class="metric-value">' + (summary.informationalGaps || 0) + '</span></div>' +
+				(gapList || '<div class="empty-state">No coverage gaps detected</div>') +
+				'</div>';
+		}
+
+		function renderAutopilot(log) {
+			const el = document.getElementById('autopilot');
+			if (!log || !log.runs || !log.runs.length) { el.innerHTML = ''; return; }
+			const last5 = log.runs.filter(r => r.outcome === 'completed').slice(-5).reverse();
+			const items = last5.map(run => {
+				const prLink = run.pr ? ' <a class="log-pr" href="' + REPO_URL + '/pull/' + run.pr + '" target="_blank" rel="noopener">#' + run.pr + '</a>' : '';
+				return '<div class="log-item">' +
+					'<div class="log-task">' + run.task + '</div>' +
+					'<div class="log-meta">' + run.date + prLink + (run.files_changed ? ' &middot; ' + run.files_changed + ' files' : '') + '</div>' +
+					'</div>';
+			}).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Recent Autopilot Runs</div>' +
+				items +
+				'</div>';
+		}
+
+		function renderFreshness(meta) {
+			const el = document.getElementById('freshness');
+			if (!meta) { el.innerHTML = ''; return; }
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Data Freshness</div>' +
+				'<div class="metric-row"><span class="metric-label">Last update</span><span class="metric-value">' + timeAgo(meta.lastUpdate) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Next expected</span><span class="metric-value">' + (meta.nextUpdate ? new Date(meta.nextUpdate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: meta.timezone || 'Europe/Oslo' }) : '—') + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">Timezone</span><span class="metric-value">' + (meta.timezone || '—') + '</span></div>' +
+				'</div>';
+		}
+
+		// Fetch all data in parallel and render
+		Promise.all([
+			fetchJSON('autonomy-report.json'),
+			fetchJSON('health-report.json'),
+			fetchJSON('ai-quality.json'),
+			fetchJSON('quality-history.json'),
+			fetchJSON('coverage-gaps.json'),
+			fetchJSON('autopilot-log.json'),
+			fetchJSON('meta.json')
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta]) => {
+			renderAutonomy(autonomy);
+			renderPipeline(health);
+			renderQuality(quality);
+			renderTrend(history);
+			renderGaps(gaps);
+			renderAutopilot(autopilotLog);
+			renderFreshness(meta);
+		});
+	</script>
+</body>
+</html>
