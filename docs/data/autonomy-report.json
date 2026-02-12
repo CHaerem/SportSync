@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-12T08:57:34.583Z",
-  "overallScore": 0.92,
-  "loopsClosed": 5,
+  "generatedAt": "2026-02-12T09:06:28.225Z",
+  "overallScore": 1,
+  "loopsClosed": 6,
   "loopsTotal": 6,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "22 entries, hints wired and ready (quality is good)"
+      "details": "23 entries, hints wired and ready (quality is good)"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -22,12 +22,12 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (1 min old)"
+      "details": "Health report is fresh (0 min old)"
     },
     "watchPlan": {
-      "score": 0.5,
-      "status": "partial",
-      "details": "1 picks but missing reasons data"
+      "score": 1,
+      "status": "closed",
+      "details": "3 picks with reasons (3 with streaming)"
     },
     "codeHealth": {
       "score": 1,
@@ -35,7 +35,5 @@
       "details": "27 completed tasks in autopilot log"
     }
   },
-  "nextActions": [
-    "Ensure watch plan picks include both reasons and streaming arrays"
-  ]
+  "nextActions": []
 }

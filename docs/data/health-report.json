@@ -1,57 +1,62 @@
 {
-  "generatedAt": "2026-02-12T08:56:33.398Z",
-  "eventCount": 1,
+  "generatedAt": "2026-02-12T09:06:28.219Z",
+  "eventCount": 35,
   "sportCoverage": {
-    "football": {
+    "golf": {
       "count": 1,
-      "previousCount": 15,
-      "delta": -14
+      "previousCount": 0,
+      "delta": 1
     },
     "olympics": {
-      "count": 0,
-      "previousCount": 17,
-      "delta": -17
+      "count": 18,
+      "previousCount": 0,
+      "delta": 18
     },
-    "golf": {
-      "count": 0,
+    "football": {
+      "count": 14,
       "previousCount": 1,
-      "delta": -1
+      "delta": 13
+    },
+    "chess": {
+      "count": 1,
+      "previousCount": null,
+      "delta": null
     },
     "f1": {
-      "count": 0,
-      "previousCount": 1,
-      "delta": -1
+      "count": 1,
+      "previousCount": 0,
+      "delta": 1
     }
   },
   "dataFreshness": {
     "football.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "golf.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "tennis.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "f1.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "chess.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "esports.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0,
-    "streamingPercent": 0
+    "venuePercent": 0.94,
+    "streamingPercent": 1
   },
   "rssFeedHealth": {
     "itemCount": 30,
@@ -64,55 +69,20 @@
   },
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "olympics: 0 events (was 17)"
-    },
-    {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "golf: 0 events (was 1)"
-    },
-    {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "f1: 0 events (was 1)"
-    },
-    {
       "severity": "warning",
-      "code": "sport_count_drop",
-      "message": "football: 1 events (was 15, -93%)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "football.json: data is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "golf.json: data is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "tennis.json: data is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "f1.json: data is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "chess.json: data is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "esports.json: data is Infinity minutes old"
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
     }
   ],
-  "status": "critical"
+  "status": "warning",
+  "qualityRegression": {
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
+  }
 }
