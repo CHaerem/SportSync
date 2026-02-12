@@ -162,6 +162,7 @@ jobs:
             git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true
           else
             git add docs/data/
+            git add scripts/config/ 2>/dev/null || true
           fi
           if git diff --staged --quiet; then
             echo "No changes to commit"

@@ -7,6 +7,7 @@ import {
 	buildResearchPrompt,
 	parseDiscoveryResult,
 	applyDiscovery,
+	syncEventPlayers,
 } from "../scripts/discover-events.js";
 
 let tmpDir;
@@ -324,5 +325,69 @@ describe("applyDiscovery()", () => {
 		const result = { events: [{ title: "New", time: "2026-06-15T21:00:00Z" }] };
 		const updated = applyDiscovery(config, result);
 		expect(updated.needsResearch).toBe(false);
+	});
+});
+
+// --- syncEventPlayers ---
+
+describe("syncEventPlayers()", () => {
+	it("removes retired athletes from per-event norwegianPlayers", () => {
+		const config = {
+			norwegianAthletes: ["Klaebo", "Kristoffersen"],
+			events: [
+				{
+					title: "XC Women",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Therese Johaug" }],
+				},
+				{
+					title: "XC Men",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Klaebo" }, { name: "Johaug" }],
+				},
+				{
+					title: "Alpine",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Kristoffersen" }],
+				},
+			],
+		};
+		syncEventPlayers(config);
+		expect(config.events[0].norwegianPlayers).toHaveLength(0);
+		expect(config.events[0].norwegian).toBe(false);
+		expect(config.events[1].norwegianPlayers).toHaveLength(1);
+		expect(config.events[1].norwegianPlayers[0].name).toBe("Klaebo");
+		expect(config.events[1].norwegian).toBe(true);
+		expect(config.events[2].norwegianPlayers).toHaveLength(1);
+	});
+
+	it("is case-insensitive", () => {
+		const config = {
+			norwegianAthletes: ["Johannes Hoesflot Klaebo"],
+			events: [
+				{
+					title: "XC",
+					norwegian: true,
+					norwegianPlayers: [{ name: "johannes hoesflot klaebo" }],
+				},
+			],
+		};
+		syncEventPlayers(config);
+		expect(config.events[0].norwegianPlayers).toHaveLength(1);
+	});
+
+	it("handles config with no events", () => {
+		const config = { norwegianAthletes: ["Klaebo"] };
+		syncEventPlayers(config);
+		// Should not throw
+	});
+
+	it("handles events without norwegianPlayers", () => {
+		const config = {
+			norwegianAthletes: ["Klaebo"],
+			events: [{ title: "Closing Ceremony", norwegian: false }],
+		};
+		syncEventPlayers(config);
+		expect(config.events[0].norwegian).toBe(false);
 	});
 });
