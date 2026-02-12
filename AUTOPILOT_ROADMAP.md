@@ -22,7 +22,7 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 ### Current Tasks
 
-- [PENDING] Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs. **Phase 1, Step 2 of vision roadmap.**
+- [DONE] (PR #47) Add watch-plan feedback loop — Added thumbs-up/down controls to watch-plan items in dashboard.js, feedback persisted in localStorage via PreferencesManager, with aggregate count API. **Phase 1, Step 2 of vision roadmap.**
 
 - [PENDING] Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic.
 
@@ -292,7 +292,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (already implemented) Add watch-plan rendering to dashboard — `renderWatchPlan()` in `dashboard.js` lines 430-490. Renders picks with time, emoji, reasons, streaming, and click-to-event navigation.
 
-- [PENDING] Add thumbs-up/down feedback to watch-plan items — After watch-plan renders in dashboard, add lightweight feedback controls. Persist in `localStorage`, export aggregate counts via `preferences-manager.js`. ~40 lines. Enables the system to learn from user reactions.
+- [DONE] (PR #47) Add thumbs-up/down feedback to watch-plan items — Feedback controls added to watch-plan picks, persisted in localStorage, with aggregate count API via PreferencesManager.
 
 - [PENDING] Surface engagement signals in pipeline — Read `localStorage` feedback data via a small client-side export mechanism. Feed into `watch-plan.js` scoring to boost/demote events matching user feedback patterns. ~80 lines across 2 files.
 
