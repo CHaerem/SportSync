@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T09:38:43.631Z",
+  "generatedAt": "2026-02-12T09:45:52.446Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -24,7 +24,6 @@
     "failedBatches": 0,
     "totalEvents": 35,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ]
   },
@@ -35,7 +34,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 12437
+    "generationMs": 19352
   },
   "editorial": {
     "score": 76,
