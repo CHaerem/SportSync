@@ -269,6 +269,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-12",
+      "task": "Add unit tests for base-fetcher.js",
+      "outcome": "completed",
+      "pr": 41,
+      "details": "33 tests covering constructor, fetch pipeline, fetchFromAPIs source iteration/error accumulation, applyFilters (timeRange, maxEvents), normalizeEvents, formatResponse, groupEventsByTournament, hasNorwegianInterest, and abstract methods.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "scouted": 0
     }
   ]
 }

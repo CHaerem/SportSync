@@ -250,7 +250,7 @@ During nightly runs, the autopilot should:
 
 - [DONE] (PR #40) Add unit tests for `scripts/lib/api-client.js` — 22 tests covering constructor, buildURL, cache, retry, timeout, fetchWithDates, and error handling.
 
-- [PENDING] Add unit tests for `scripts/lib/base-fetcher.js` — Base fetcher class used by all sport fetchers has no tests. Cover `fetchFromAPIs()` source iteration, empty results, error accumulation, and `fetch()` method normalization.
+- [DONE] (PR #41) Add unit tests for `scripts/lib/base-fetcher.js` — 33 tests covering fetch pipeline, source iteration, error accumulation, filters, normalization, tournament grouping, and Norwegian interest detection.
 
 ### LOW Priority
 
