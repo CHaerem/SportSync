@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T09:25:37.002Z",
+  "generatedAt": "2026-02-12T09:39:27.324Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -30,27 +30,27 @@
   },
   "dataFreshness": {
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     }
   },
@@ -67,23 +67,11 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [
-    {
-      "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
-    }
-  ],
-  "status": "warning",
+  "issues": [],
+  "status": "healthy",
   "statusSummary": "Autonomy at 100% with 6/6 feedback loops closed. Pipeline is healthy with 35 events across 5 sports. Editorial quality score is 76/100.",
   "qualityRegression": {
-    "issues": [
-      {
-        "severity": "warning",
-        "code": "failed_batches_increase",
-        "message": "Failed batches increased from 0 to 1"
-      }
-    ],
-    "hasRegression": true
+    "issues": [],
+    "hasRegression": false
   }
 }
