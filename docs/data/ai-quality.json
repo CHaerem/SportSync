@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-12T11:42:20.221Z",
+  "generatedAt": "2026-02-12T12:25:27.317Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
       "totalEvents": 31,
-      "importanceCoverage": 0.355,
-      "summaryCoverage": 0.355,
-      "relevanceCoverage": 0.355,
-      "tagsCoverage": 0.323
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.806
     },
     "after": {
       "totalEvents": 31,
@@ -19,15 +19,18 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 101,
-    "aiUpdatedFields": 11,
-    "failedBatches": 2,
+    "fallbackFieldsFilled": 6,
+    "aiUpdatedFields": 31,
+    "failedBatches": 0,
     "totalEvents": 31,
-    "hintsApplied": [],
+    "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 2,
+      "calls": 4,
       "total": 0,
       "tracked": false
     }
@@ -39,7 +42,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 10198,
+    "generationMs": 22323,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -49,24 +52,22 @@
     }
   },
   "editorial": {
-    "score": 70,
+    "score": 85,
     "metrics": {
-      "mustWatchCoverage": 0,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 0% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 89,
+      "avgScore": 123,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }

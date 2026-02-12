@@ -1,10 +1,9 @@
 {
-  "generatedAt": "2026-02-12T10:26:01.584Z",
+  "generatedAt": "2026-02-12T12:26:28.448Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 35,
+    "totalEvents": 31,
     "sports": [
-      "golf",
       "olympics",
       "football",
       "chess",
@@ -12,11 +11,9 @@
     ],
     "bands": {
       "live": [
-        "Biathlon — Men's 20km Individual",
-        "Alpine Skiing — Men's Giant Slalom"
+        "Cross-Country Skiing — Women's 10km Free"
       ],
       "today": [
-        "Cross-Country Skiing — Women's 10km Free",
         "Arsenal at Brentford",
         "Barcelona at Atlético Madrid"
       ],
@@ -27,9 +24,8 @@
         "Osasuna at Elche"
       ],
       "thisWeek": [
-        "Biathlon — Women's 15km Individual",
-        "Alpine Skiing — Men's Downhill",
-        "Cross-Country Skiing — Women's Relay 4x7.5km",
+        "Alpine Skiing — Men's Giant Slalom",
+        "Cross-Country Skiing — Women's Relay 4x5km",
         "Celta Vigo at Espanyol",
         "Villarreal at Getafe",
         "Alavés at Sevilla",
@@ -40,9 +36,9 @@
         "Atlético Madrid at Rayo Vallecano",
         "Valencia at Levante",
         "Real Betis at Mallorca",
+        "Alpine Skiing — Men's Slalom",
         "Biathlon — Men's Relay 4x7.5km",
         "Barcelona at Girona",
-        "Alpine Skiing — Men's Slalom",
         "Cross-Country Skiing — Team Sprint Free",
         "Villarreal at Levante",
         "Arsenal at Wolverhampton Wanderers",
@@ -51,18 +47,16 @@
       "later": [
         "Ski Jumping — Team Large Hill",
         "Cross-Country Skiing — Men's 50km Mass Start Classic",
-        "Cross-Country Skiing — Women's 50km Mass Start Classic",
+        "Cross-Country Skiing — Women's 30km Mass Start Classic",
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": [
-        "AT&T Pebble Beach Pro-Am"
-      ]
+      "ended": []
     },
-    "featuredBlockCount": 10,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "healthy",
-    "editorialScore": 77,
+    "editorialScore": 85,
     "issueCount": 0
   },
   "findings": [
@@ -70,12 +64,17 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Qatar Airways Australian Grand Prix\" is 22 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "standings_without_events",
+      "message": "Golf leaderboard exists but no golf events"
     }
   ],
   "summary": {
-    "total": 1,
+    "total": 2,
     "critical": 0,
-    "warning": 1,
+    "warning": 2,
     "info": 0
   },
   "pass": true,
