@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T20:18:21.157Z",
+  "generatedAt": "2026-02-12T22:15:21.805Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 29,
@@ -50,11 +50,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 5,
     "briefPresent": true,
-    "pipelineStatus": "healthy",
-    "editorialScore": 93,
-    "issueCount": 0
+    "pipelineStatus": "warning",
+    "editorialScore": 100,
+    "issueCount": 1
   },
   "findings": [
     {
@@ -63,29 +63,9 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 22 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen begins Freestyle Chess title defense\" which may not match any event"
-    },
-    {
       "severity": "warning",
       "check": "standings_without_events",
       "message": "Golf leaderboard exists but no golf events"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Nothing\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Winter Olympics\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,10 +79,10 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 4,
     "critical": 0,
-    "warning": 6,
-    "info": 2
+    "warning": 3,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
