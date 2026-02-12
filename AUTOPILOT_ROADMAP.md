@@ -372,8 +372,8 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [PENDING] Add unit tests for `scripts/fetch/football.js` — Football fetcher exports `fetchFootballESPN()` but has no dedicated test file for its internal logic. Create `tests/football-fetcher.test.js` testing ESPN response parsing, event normalization, and OBOS-ligaen integration. ~80 lines, LOW risk.
 
-- [PENDING] Clamp inline style values in dashboard rendering — In `docs/js/dashboard.js`, shots stats (line 938) inject string values from live data directly into inline HTML text. While `homePoss` is already clamped via `parseFloat()`, the shots values at lines 934-937 are used raw. Add `parseInt()` fallback for shots/onTarget values to ensure numeric display. Only change `docs/js/dashboard.js`. ~4 lines, LOW risk.
+- [DONE] (PR #57) Clamp inline style values in dashboard rendering — Parsed shots/onTarget stats as integers via `parseInt()` instead of raw strings.
 
 ### LOW Priority
 
-- [PENDING] Add structured logging to live polling catch blocks — In `docs/js/dashboard.js` lines 1171 and 1214, live score polling failures are silently caught (`catch { /* silent */ }`). Replace with `catch (e) { console.debug('Live poll failed:', e.message); }` for development diagnostics while keeping user-facing behavior silent. Only change `docs/js/dashboard.js`. ~2 lines, LOW risk.
+- [DONE] (PR #57) Add structured logging to live polling catch blocks — Replaced silent catch blocks with `console.debug` logging for development diagnostics.
