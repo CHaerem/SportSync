@@ -719,10 +719,13 @@ class Dashboard {
 			}
 		}
 
-		// "Ended" indicator: past events >3h old without live data
+		// "Ended" indicator: past events without live data
+		// For multi-day events (golf), use endTime; otherwise use 3h heuristic
 		const hoursAgo = (now - date) / (1000 * 60 * 60);
 		const hasLiveScore = this.liveScores[event.id];
-		if (!hasLiveScore && hoursAgo > 3) {
+		const endTime = event.endTime ? new Date(event.endTime) : null;
+		const isActuallyEnded = endTime ? now > endTime : hoursAgo > 3;
+		if (!hasLiveScore && isActuallyEnded) {
 			timeStr = '<span class="row-ended">Ended</span>';
 			isEnded = true;
 		}
@@ -1153,10 +1156,12 @@ class Dashboard {
 
 	async pollGolfScores() {
 		const now = Date.now();
-		const hasActiveGolf = this.allEvents.some(e =>
-			e.sport === 'golf' && new Date(e.time).getTime() <= now &&
-			new Date(e.time).getTime() > now - 12 * 60 * 60 * 1000
-		);
+		const hasActiveGolf = this.allEvents.some(e => {
+			if (e.sport !== 'golf') return false;
+			const start = new Date(e.time).getTime();
+			const end = e.endTime ? new Date(e.endTime).getTime() : start + 4 * 24 * 60 * 60 * 1000;
+			return start <= now && now <= end;
+		});
 		if (!hasActiveGolf) return;
 
 		const LIVE_TTL = 30 * 1000; // 30 seconds

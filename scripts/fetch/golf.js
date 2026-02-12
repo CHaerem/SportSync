@@ -393,13 +393,19 @@ export async function fetchGolfESPN() {
 
 					console.log(`Found ${norwegianCompetitors.length} Norwegian player(s) in ${ev.name}: ${norwegianPlayersList.map(p => p.name).join(", ")}`);
 
+					const startTime = normalizeToUTC(ev.date);
+					// Golf tournaments are multi-day (typically Thu-Sun = 4 days)
+					const endDate = new Date(new Date(startTime).getTime() + 3 * 24 * 60 * 60 * 1000);
+					endDate.setUTCHours(23, 59, 0, 0);
+
 					tournaments.push({
 						name: tour.name,
 						events: [{
 							title: ev.name || "Golf Tournament",
 							meta: tour.name,
 							tournament: tour.name,
-							time: normalizeToUTC(ev.date),
+							time: startTime,
+							endTime: endDate.toISOString(),
 							venue,
 							sport: "golf",
 							streaming: getNorwegianStreaming("golf", tour.name),
@@ -416,13 +422,18 @@ export async function fetchGolfESPN() {
 						const confirmed = filterNorwegiansAgainstField(tourGolfers, pgaField);
 						if (confirmed.length > 0) {
 							console.log(`Verified ${confirmed.length} Norwegian player(s) in ${ev.name} via pgatour.com`);
+							const startTime2 = normalizeToUTC(ev.date);
+							const endDate2 = new Date(new Date(startTime2).getTime() + 3 * 24 * 60 * 60 * 1000);
+							endDate2.setUTCHours(23, 59, 0, 0);
+
 							tournaments.push({
 								name: tour.name,
 								events: [{
 									title: ev.name || "Golf Tournament",
 									meta: tour.name,
 									tournament: tour.name,
-									time: normalizeToUTC(ev.date),
+									time: startTime2,
+									endTime: endDate2.toISOString(),
 									venue,
 									sport: "golf",
 									streaming: getNorwegianStreaming("golf", tour.name),
