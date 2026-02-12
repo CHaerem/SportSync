@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T12:25:27.317Z",
+  "generatedAt": "2026-02-12T12:38:40.903Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -7,7 +7,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.806
+      "tagsCoverage": 0.774
     },
     "after": {
       "totalEvents": 31,
@@ -19,12 +19,11 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 6,
+    "fallbackFieldsFilled": 7,
     "aiUpdatedFields": 31,
     "failedBatches": 0,
     "totalEvents": 31,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
@@ -41,8 +40,8 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 22323,
+    "blockCount": 7,
+    "generationMs": 30512,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -67,7 +66,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 123,
+      "avgScore": 112,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
