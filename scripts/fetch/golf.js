@@ -512,6 +512,9 @@ export async function fetchGolfESPN() {
 	};
 }
 
+// Exported for testing
+export { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups };
+
 // Run if executed directly
 if (process.argv[1]?.includes('golf.js')) {
 	fetchGolfESPN().then(data => {
