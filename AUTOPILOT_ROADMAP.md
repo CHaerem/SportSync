@@ -258,7 +258,7 @@ During nightly runs, the autopilot should:
 
 - [DONE] (already implemented) Add render-once guard for watch-plan UI — `renderWatchPlan()` exists in `dashboard.js` lines 430-490 with full CSS styling. Loads `watch-plan.json`, renders top picks with time, reasons, streaming info, and click-to-scroll.
 
-- [PENDING] Improve sport iteration efficiency in `renderBand()` — `docs/js/dashboard.js:379-401` iterates all SPORT_CONFIG entries even when only 1-2 sports have events. Iterate `sportGroups.entries()` instead and look up sport config by ID. ~10 lines changed, LOW risk.
+- [DONE] (PR #46) Improve sport iteration efficiency in `renderBand()` — Refactored to iterate only sport groups with events instead of all SPORT_CONFIG entries. Builds index map for ordered lookup.
 
 ---
 
