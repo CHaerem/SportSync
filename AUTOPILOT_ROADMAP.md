@@ -298,7 +298,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [PENDING] Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health. Requires workflow file change (needs human approval).
 
-- [PENDING] Add trend tracking to autonomy scorecard — Track score over time in `quality-history.json` snapshots to detect autonomy regressions.
+- [DONE] (PR #48) Add trend tracking to autonomy scorecard — Added `trackTrend()` and `detectRegressions()` to track autonomy score over time in `autonomy-trend.json`. Wired into pipeline-health.js.
 
 - [PENDING] Add preference evolution logic — Observe which events get expanded/clicked in the dashboard, which sports dominate engagement. Periodically update `user-context.json` sport weights to reflect actual interest patterns. ~100 lines, new script.
 

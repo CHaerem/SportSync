@@ -309,6 +309,16 @@
       "tests_passed": true,
       "files_changed": 4,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-12",
+      "task": "Add trend tracking to autonomy scorecard",
+      "outcome": "completed",
+      "pr": 48,
+      "details": "Added trackTrend() and detectRegressions() to autonomy-scorecard.js. Tracks score over time in autonomy-trend.json (max 30 entries). Wired into pipeline-health.js with regression warnings. 7 new tests.",
+      "tests_passed": true,
+      "files_changed": 4,
+      "scouted": 0
     }
   ]
 }
