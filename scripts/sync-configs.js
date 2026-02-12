@@ -14,6 +14,7 @@
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_HOUR } from "./lib/helpers.js";
+import { syncEventPlayers } from "./discover-events.js";
 
 const defaultConfigDir = path.resolve(process.cwd(), "scripts", "config");
 const defaultArchiveDir = path.resolve(process.cwd(), "scripts", "config", "archive");
@@ -69,7 +70,7 @@ export function syncConfigs({ configDir, archiveDir, now } = {}) {
 	const arcDir = archiveDir || defaultArchiveDir;
 	const timestamp = now || new Date();
 
-	const result = { pruned: 0, archived: [], flagged: [], errors: [] };
+	const result = { pruned: 0, archived: [], flagged: [], rosterSynced: [], errors: [] };
 
 	if (!fs.existsSync(cfgDir)) {
 		console.log("No config directory found — nothing to sync.");
@@ -106,7 +107,18 @@ export function syncConfigs({ configDir, archiveDir, now } = {}) {
 				console.log(`  Pruned ${prunedCount} expired events from ${file}`);
 			}
 
-			// 3. Flag needsResearch
+			// 3. Sync per-event norwegianPlayers with top-level roster
+			if (Array.isArray(config.norwegianAthletes) && Array.isArray(config.events)) {
+				const beforeSync = JSON.stringify(config.events);
+				syncEventPlayers(config);
+				if (JSON.stringify(config.events) !== beforeSync) {
+					modified = true;
+					result.rosterSynced.push(file);
+					console.log(`  Roster-synced: ${file} (per-event players updated)`);
+				}
+			}
+
+			// 4. Flag needsResearch
 			if (shouldResearch(config) && !config.needsResearch) {
 				config.needsResearch = true;
 				modified = true;
@@ -123,7 +135,7 @@ export function syncConfigs({ configDir, archiveDir, now } = {}) {
 		}
 	}
 
-	console.log(`\nSync complete: ${result.pruned} events pruned, ${result.archived.length} archived, ${result.flagged.length} flagged`);
+	console.log(`\nSync complete: ${result.pruned} events pruned, ${result.archived.length} archived, ${result.flagged.length} flagged, ${result.rosterSynced.length} roster-synced`);
 	return result;
 }
 

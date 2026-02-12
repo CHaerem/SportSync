@@ -224,4 +224,84 @@ describe("syncConfigs()", () => {
 		const result = syncConfigs({ configDir, archiveDir });
 		expect(result.flagged).toHaveLength(0);
 	});
+
+	it("syncs per-event norwegianPlayers with roster", () => {
+		const now = new Date("2026-02-12T12:00:00Z");
+		writeJson(path.join(configDir, "olympics.json"), {
+			name: "Olympics",
+			endDate: "2026-03-01",
+			norwegianAthletes: ["Klaebo", "Kristoffersen"],
+			events: [
+				{
+					title: "XC Men",
+					time: "2026-02-13T10:00:00Z",
+					norwegian: true,
+					norwegianPlayers: [
+						{ name: "Klaebo" },
+						{ name: "Johaug" },
+					],
+				},
+				{
+					title: "Alpine",
+					time: "2026-02-14T10:00:00Z",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Kristoffersen" }],
+				},
+			],
+		});
+
+		const result = syncConfigs({ configDir, archiveDir, now });
+		expect(result.rosterSynced).toContain("olympics.json");
+
+		const updated = JSON.parse(fs.readFileSync(path.join(configDir, "olympics.json"), "utf-8"));
+		// Johaug should be removed from XC Men (not in roster)
+		expect(updated.events[0].norwegianPlayers).toHaveLength(1);
+		expect(updated.events[0].norwegianPlayers[0].name).toBe("Klaebo");
+		// Alpine should be unchanged
+		expect(updated.events[1].norwegianPlayers).toHaveLength(1);
+	});
+
+	it("does not mark roster-synced when no changes needed", () => {
+		const now = new Date("2026-02-12T12:00:00Z");
+		writeJson(path.join(configDir, "clean.json"), {
+			name: "Clean",
+			endDate: "2026-03-01",
+			norwegianAthletes: ["Klaebo"],
+			events: [
+				{
+					title: "XC",
+					time: "2026-02-13T10:00:00Z",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Klaebo" }],
+				},
+			],
+		});
+
+		const result = syncConfigs({ configDir, archiveDir, now });
+		expect(result.rosterSynced).toHaveLength(0);
+	});
+
+	it("sets norwegian=false when all players removed by roster sync", () => {
+		const now = new Date("2026-02-12T12:00:00Z");
+		writeJson(path.join(configDir, "stale.json"), {
+			name: "Stale",
+			endDate: "2026-03-01",
+			norwegianAthletes: ["Klaebo"],
+			events: [
+				{
+					title: "Event",
+					time: "2026-02-13T10:00:00Z",
+					norwegian: true,
+					norwegianPlayers: [{ name: "Retired Player" }],
+				},
+			],
+		});
+
+		const result = syncConfigs({ configDir, archiveDir, now });
+		expect(result.rosterSynced).toContain("stale.json");
+
+		const updated = JSON.parse(fs.readFileSync(path.join(configDir, "stale.json"), "utf-8"));
+		expect(updated.events[0].norwegianPlayers).toHaveLength(0);
+		expect(updated.events[0].norwegian).toBe(false);
+	});
 });

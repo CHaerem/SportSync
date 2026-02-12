@@ -135,4 +135,65 @@ describe("runSanityCheck()", () => {
 		const missing = report.findings.find(f => f.check === "missing_title");
 		expect(missing).toBeDefined();
 	});
+
+	it("detects norwegian flag with no players", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "XC Women",
+					sport: "olympics",
+					time: new Date(Date.now() + 3600000).toISOString(),
+					norwegian: true,
+					norwegianPlayers: [],
+				},
+			];
+			return null;
+		});
+		const report = await runSanityCheck();
+		const flag = report.findings.find(f => f.check === "norwegian_flag_no_players");
+		expect(flag).toBeDefined();
+		expect(flag.message).toContain("XC Women");
+	});
+
+	it("does not flag norwegian events with players", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "XC Men",
+					sport: "olympics",
+					time: new Date(Date.now() + 3600000).toISOString(),
+					norwegian: true,
+					norwegianPlayers: [{ name: "Klaebo" }],
+				},
+			];
+			return null;
+		});
+		const report = await runSanityCheck();
+		const flag = report.findings.find(f => f.check === "norwegian_flag_no_players");
+		expect(flag).toBeUndefined();
+	});
+
+	it("detects featured athlete not in events data", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "XC Men",
+					sport: "olympics",
+					time: new Date(Date.now() + 3600000).toISOString(),
+					norwegian: true,
+					norwegianPlayers: [{ name: "Klaebo" }],
+				},
+			];
+			if (filePath.includes("featured.json")) return {
+				blocks: [
+					{ type: "narrative", text: "Johaug returns for Olympic gold in her signature event." },
+				],
+			};
+			return null;
+		});
+		const report = await runSanityCheck();
+		const mismatch = report.findings.find(f => f.check === "featured_unknown_athlete");
+		expect(mismatch).toBeDefined();
+		expect(mismatch.message).toContain("Johaug");
+	});
 });

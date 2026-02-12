@@ -141,13 +141,108 @@ function runDeterministicChecks(data) {
 		eventKeys.add(key);
 	}
 
-	// 9. Events with missing critical fields
+	// 9. Featured mentions athletes not in any event's norwegianPlayers
+	if (featured?.blocks) {
+		const allNorwegianPlayers = new Set();
+		for (const ev of events) {
+			if (Array.isArray(ev.norwegianPlayers)) {
+				for (const p of ev.norwegianPlayers) {
+					if (p.name) allNorwegianPlayers.add(p.name.toLowerCase());
+				}
+			}
+		}
+		// Also collect top-level norwegianAthletes from events (they have tournament field)
+		const norwegianAthleteNames = new Set();
+		for (const ev of events) {
+			if (ev.norwegian && ev.title) {
+				// Extract athlete-like names from event data
+			}
+		}
+
+		for (const block of featured.blocks) {
+			if (!block.text) continue;
+			if (block.type !== "narrative" && block.type !== "event-line") continue;
+			// Look for capitalized names that could be athlete references
+			const namePattern = /\b([A-Z][a-zæøå]+(?:\s+[A-Z][a-zæøå]+)*)\b/g;
+			let match;
+			while ((match = namePattern.exec(block.text)) !== null) {
+				const name = match[1];
+				// Skip common non-name words
+				if (["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today"].includes(name)) continue;
+				// Check if this name appears in event titles or norwegianPlayers
+				const nameLower = name.toLowerCase();
+				const inEvents = events.some(e =>
+					e.title?.toLowerCase().includes(nameLower) ||
+					(Array.isArray(e.norwegianPlayers) && e.norwegianPlayers.some(p => p.name?.toLowerCase().includes(nameLower)))
+				);
+				if (!inEvents && allNorwegianPlayers.size > 0) {
+					// Only flag if we have norwegianPlayers data to compare against
+					const couldBeAthlete = allNorwegianPlayers.size > 0 &&
+						!events.some(e => e.tournament?.toLowerCase().includes(nameLower));
+					if (couldBeAthlete && name.length > 3) {
+						findings.push({
+							severity: "warning",
+							check: "featured_unknown_athlete",
+							message: `Featured mentions "${name}" but no matching athlete found in events data`,
+						});
+					}
+				}
+			}
+		}
+	}
+
+	// 10. Roster/event player desync — config norwegianPlayers not in roster
+	// (This is caught by sync-configs at runtime, but sanity-check catches it post-hoc)
+	for (const ev of events) {
+		if (!Array.isArray(ev.norwegianPlayers) || !ev.norwegian) continue;
+		if (ev.norwegianPlayers.length === 0 && ev.norwegian === true) {
+			findings.push({
+				severity: "info",
+				check: "norwegian_flag_no_players",
+				message: `"${ev.title}" marked norwegian=true but has no norwegianPlayers`,
+			});
+		}
+	}
+
+	// 11. Featured event times don't match events.json
+	if (featured?.blocks) {
+		const timePattern = /(\d{1,2}:\d{2})/;
+		for (const block of featured.blocks) {
+			if (block.type !== "event-line" || !block.text) continue;
+			const timeMatch = block.text.match(timePattern);
+			if (!timeMatch) continue;
+			const featuredTime = timeMatch[1];
+			// Find matching event by partial title match
+			const titlePart = block.text.replace(/^[⚽🏌🎾🏎♟🎮🏅]\s*/, "").replace(timePattern, "").replace(/[—\-,]/g, " ").trim().split(/\s+/).filter(w => w.length > 3).slice(0, 2).join(" ").toLowerCase();
+			if (!titlePart) continue;
+			const matchingEvent = events.find(e => {
+				const eLower = e.title?.toLowerCase() || "";
+				return titlePart.split(" ").some(w => eLower.includes(w));
+			});
+			if (matchingEvent?.time) {
+				// Convert event time to HH:MM in local timezone (Europe/Oslo)
+				try {
+					const evDate = new Date(matchingEvent.time);
+					const evTimeStr = evDate.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Oslo" });
+					if (evTimeStr !== featuredTime) {
+						findings.push({
+							severity: "warning",
+							check: "featured_time_mismatch",
+							message: `Featured shows "${featuredTime}" for "${matchingEvent.title}" but events.json has ${evTimeStr}`,
+						});
+					}
+				} catch { /* timezone not available in all environments */ }
+			}
+		}
+	}
+
+	// 12. Events with missing critical fields
 	for (const ev of events) {
 		if (!ev.title) {
 			findings.push({ severity: "warning", check: "missing_title", message: `Event missing title (sport: ${ev.sport})` });
 		}
 		if (!ev.time) {
-			findings.push({ severity: "warning", check: "missing_time", message: `"${ev.title}" has no time field` });
+			findings.push({ severity: "warning", check: "missing_time", message: `"${ev.title || 'unknown'}" has no time field` });
 		}
 	}
 
