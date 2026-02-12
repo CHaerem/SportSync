@@ -250,6 +250,37 @@ class PreferencesManager {
 		};
 	}
 
+	// Watch-plan feedback
+	getWatchFeedback() {
+		try {
+			const stored = localStorage.getItem('sportsync-watch-feedback');
+			return stored ? JSON.parse(stored) : {};
+		} catch { return {}; }
+	}
+
+	setWatchFeedback(pickId, value) {
+		if (!pickId) return;
+		const feedback = this.getWatchFeedback();
+		if (value === null) {
+			delete feedback[pickId];
+		} else {
+			feedback[pickId] = { value, timestamp: Date.now() };
+		}
+		try {
+			localStorage.setItem('sportsync-watch-feedback', JSON.stringify(feedback));
+		} catch { /* storage full */ }
+	}
+
+	getWatchFeedbackCounts() {
+		const feedback = this.getWatchFeedback();
+		let up = 0, down = 0;
+		for (const entry of Object.values(feedback)) {
+			if (entry.value === 'up') up++;
+			else if (entry.value === 'down') down++;
+		}
+		return { up, down, total: up + down };
+	}
+
 	// Reset preferences
 	reset() {
 		localStorage.removeItem(this.STORAGE_KEY);
