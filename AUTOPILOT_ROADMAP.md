@@ -366,7 +366,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### HIGH Priority
 
-- [PENDING] Add keyboard accessibility to band toggles and news toggle — In `docs/js/dashboard.js`, band labels (line 611) have `role="button"` and `tabindex="0"` but only have a click handler (line 1284). Similarly, the news toggle (line 532) lacks keyboard support. Add keydown handlers for Enter/Space to both `bindBandToggles()` (line 1282) and the news toggle handler (line 540). Only change `docs/js/dashboard.js`. ~12 lines, LOW risk.
+- [DONE] (PR #56) Add keyboard accessibility to band toggles — Added keydown handler for Enter/Space on band toggle labels. News toggle already uses native `<button>` with built-in keyboard support.
 
 ### MEDIUM Priority
 
