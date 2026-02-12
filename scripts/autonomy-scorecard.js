@@ -433,6 +433,53 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 	};
 }
 
+// Trend tracking — append autonomy snapshot to history file (max 30 entries)
+export function trackTrend(report, dataDir = ROOT) {
+	const trendPath = path.join(dataDir, "autonomy-trend.json");
+	const existing = readJsonIfExists(trendPath) || [];
+
+	const entry = {
+		timestamp: report.generatedAt,
+		overallScore: report.overallScore,
+		loopsClosed: report.loopsClosed,
+		loopsTotal: report.loopsTotal,
+		loopScores: Object.fromEntries(
+			Object.entries(report.loops).map(([k, v]) => [k, v.score])
+		),
+	};
+
+	existing.push(entry);
+
+	// Keep only last 30 entries
+	const trimmed = existing.slice(-30);
+	writeJsonPretty(trendPath, trimmed);
+	return trimmed;
+}
+
+// Detect regressions — compare latest entry to previous
+export function detectRegressions(trend) {
+	if (!Array.isArray(trend) || trend.length < 2) return [];
+
+	const prev = trend[trend.length - 2];
+	const curr = trend[trend.length - 1];
+	const regressions = [];
+
+	if (curr.overallScore < prev.overallScore) {
+		regressions.push(`Overall autonomy dropped from ${prev.overallScore} to ${curr.overallScore}`);
+	}
+
+	if (curr.loopScores && prev.loopScores) {
+		for (const [loop, score] of Object.entries(curr.loopScores)) {
+			const prevScore = prev.loopScores[loop];
+			if (prevScore !== undefined && score < prevScore) {
+				regressions.push(`${loop} regressed from ${prevScore} to ${score}`);
+			}
+		}
+	}
+
+	return regressions;
+}
+
 // CLI entry point
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname);
 if (isMain) {

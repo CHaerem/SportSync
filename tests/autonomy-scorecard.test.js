@@ -12,6 +12,8 @@ import {
 	evaluateEventDiscovery,
 	evaluateScheduleVerification,
 	evaluateAutonomy,
+	trackTrend,
+	detectRegressions,
 } from "../scripts/autonomy-scorecard.js";
 
 let tmpDir;
@@ -574,5 +576,80 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.codeHealth.status).toBe("open");
 		expect(report.loops.eventDiscovery.status).toBe("open");
 		expect(report.loops.scheduleVerification.status).toBe("open");
+	});
+});
+
+// --- Trend Tracking ---
+
+describe("trackTrend()", () => {
+	it("creates trend file with first entry", () => {
+		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
+		const trend = trackTrend(report, dataDir);
+		expect(trend).toHaveLength(1);
+		expect(trend[0].overallScore).toBe(report.overallScore);
+		expect(trend[0].loopsClosed).toBe(report.loopsClosed);
+		expect(trend[0].loopScores).toBeDefined();
+	});
+
+	it("appends to existing trend", () => {
+		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
+		trackTrend(report, dataDir);
+		trackTrend(report, dataDir);
+		const trendPath = path.join(dataDir, "autonomy-trend.json");
+		const trend = JSON.parse(fs.readFileSync(trendPath, "utf8"));
+		expect(trend).toHaveLength(2);
+	});
+
+	it("trims to 30 entries max", () => {
+		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
+		// Seed with 30 entries
+		const existing = Array.from({ length: 30 }, (_, i) => ({
+			timestamp: `2026-01-${String(i + 1).padStart(2, "0")}`,
+			overallScore: 0.5,
+			loopsClosed: 4,
+			loopsTotal: 8,
+			loopScores: {},
+		}));
+		writeJson(path.join(dataDir, "autonomy-trend.json"), existing);
+		const trend = trackTrend(report, dataDir);
+		expect(trend).toHaveLength(30);
+		// First old entry should be dropped, last entry is the new one
+		expect(trend[29].overallScore).toBe(report.overallScore);
+		expect(trend[0].timestamp).toBe("2026-01-02");
+	});
+});
+
+describe("detectRegressions()", () => {
+	it("returns empty when trend is too short", () => {
+		expect(detectRegressions([])).toEqual([]);
+		expect(detectRegressions([{ overallScore: 1.0 }])).toEqual([]);
+	});
+
+	it("detects overall score regression", () => {
+		const trend = [
+			{ overallScore: 1.0, loopScores: {} },
+			{ overallScore: 0.75, loopScores: {} },
+		];
+		const regressions = detectRegressions(trend);
+		expect(regressions.length).toBeGreaterThan(0);
+		expect(regressions[0]).toContain("Overall autonomy dropped");
+	});
+
+	it("detects individual loop regression", () => {
+		const trend = [
+			{ overallScore: 1.0, loopScores: { featuredQuality: 1.0, watchPlan: 1.0 } },
+			{ overallScore: 1.0, loopScores: { featuredQuality: 0.5, watchPlan: 1.0 } },
+		];
+		const regressions = detectRegressions(trend);
+		expect(regressions).toHaveLength(1);
+		expect(regressions[0]).toContain("featuredQuality");
+	});
+
+	it("returns empty when no regressions", () => {
+		const trend = [
+			{ overallScore: 0.5, loopScores: { a: 0.5 } },
+			{ overallScore: 1.0, loopScores: { a: 1.0 } },
+		];
+		expect(detectRegressions(trend)).toEqual([]);
 	});
 });
