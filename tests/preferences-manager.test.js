@@ -251,6 +251,40 @@ describe("PreferencesManager", () => {
 		});
 	});
 
+	describe("watch feedback", () => {
+		it("stores and retrieves feedback", () => {
+			pm.setWatchFeedback("pick-1", "up");
+			const fb = pm.getWatchFeedback();
+			expect(fb["pick-1"].value).toBe("up");
+			expect(fb["pick-1"].timestamp).toBeGreaterThan(0);
+		});
+
+		it("toggles feedback off when set to null", () => {
+			pm.setWatchFeedback("pick-1", "up");
+			pm.setWatchFeedback("pick-1", null);
+			const fb = pm.getWatchFeedback();
+			expect(fb["pick-1"]).toBeUndefined();
+		});
+
+		it("counts up and down feedback", () => {
+			pm.setWatchFeedback("pick-1", "up");
+			pm.setWatchFeedback("pick-2", "down");
+			pm.setWatchFeedback("pick-3", "up");
+			const counts = pm.getWatchFeedbackCounts();
+			expect(counts).toEqual({ up: 2, down: 1, total: 3 });
+		});
+
+		it("ignores null pickId", () => {
+			pm.setWatchFeedback(null, "up");
+			expect(pm.getWatchFeedbackCounts().total).toBe(0);
+		});
+
+		it("returns empty object when no feedback stored", () => {
+			expect(pm.getWatchFeedback()).toEqual({});
+			expect(pm.getWatchFeedbackCounts()).toEqual({ up: 0, down: 0, total: 0 });
+		});
+	});
+
 	describe("reset()", () => {
 		it("clears localStorage and restores defaults", () => {
 			pm.toggleFavoriteSport("chess");

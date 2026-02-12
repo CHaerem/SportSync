@@ -790,6 +790,27 @@
 			border-radius: 10px;
 			padding: 1px 7px;
 		}
+		.pick-feedback {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			flex-shrink: 0;
+			align-self: center;
+		}
+		.pick-fb-btn {
+			background: none;
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			color: var(--muted);
+			font-size: 0.55rem;
+			cursor: pointer;
+			padding: 1px 5px;
+			line-height: 1;
+			transition: color 0.15s, border-color 0.15s;
+		}
+		.pick-fb-btn:hover { color: var(--accent); border-color: var(--accent); }
+		.pick-fb-btn.active { color: var(--accent); border-color: var(--accent); opacity: 1; }
+		.pick-fb-down.active { color: var(--muted); border-color: var(--muted); opacity: 0.6; }
 		.watch-plan-more {
 			background: none;
 			border: none;
