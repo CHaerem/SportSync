@@ -1255,7 +1255,12 @@ class Dashboard {
 			const row = e.target.closest('.event-row');
 			if (row) {
 				const id = row.dataset.id;
-				this.expandedId = this.expandedId === id ? null : id;
+				const expanding = this.expandedId !== id;
+				this.expandedId = expanding ? id : null;
+				if (expanding && this.preferences) {
+					const event = this.events.find(ev => ev.id === id);
+					if (event?.sport) this.preferences.trackEngagement(event.sport);
+				}
 				this.render();
 			}
 		});
