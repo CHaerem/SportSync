@@ -700,12 +700,12 @@
     "hintsApplied": []
   },
   {
-    "timestamp": "2026-02-12T09:48:52.804Z",
+    "timestamp": "2026-02-12T10:03:14.957Z",
     "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
+      "score": 89,
+      "mustWatchCoverage": 0.8,
       "sportDiversity": 1,
-      "blockCount": 8
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -713,37 +713,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
-    ]
-  },
-  {
-    "timestamp": "2026-02-12T10:07:40.776Z",
-    "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -755,35 +727,28 @@
       "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
     ],
     "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0,
-        "tracked": false
-      },
+      "enrichment": null,
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
         "output": 0,
-        "calls": 5,
+        "calls": 0,
         "total": 0
       }
     }
   },
   {
-    "timestamp": "2026-02-12T10:25:11.361Z",
+    "timestamp": "2026-02-12T10:03:15.132Z",
     "editorial": {
-      "score": 77,
-      "mustWatchCoverage": 0.333,
+      "score": 89,
+      "mustWatchCoverage": 0.8,
       "sportDiversity": 1,
-      "blockCount": 10
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -791,9 +756,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 10,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -805,24 +770,17 @@
       "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
     ],
     "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0,
-        "tracked": false
-      },
+      "enrichment": null,
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
         "output": 0,
-        "calls": 5,
+        "calls": 0,
         "total": 0
       }
     }
