@@ -358,4 +358,4 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### LOW Priority
 
-- [PENDING] Remove unused `meta` field from dashboard event loading — `docs/js/dashboard.js` line 85 loads `ev.meta` but it's never rendered in any DOM output. Remove the field from the event mapping to reduce unnecessary data. Only change `docs/js/dashboard.js`. ~1 line, LOW risk.
+- [DONE] (already resolved) Remove unused `meta` field from dashboard event loading — `ev.meta` is not loaded in the event mapping. The `meta` references in dashboard.js are for `this.meta` (loaded from `meta.json`), which is actively used for freshness display. No change needed.
