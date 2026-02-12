@@ -251,6 +251,39 @@ function findFieldPlayer(golfer, pgaField) {
 }
 
 /**
+ * Build featured groups for Norwegian players from PGA Tour field data.
+ * Groups players by teeTime + startingHole, then returns groups containing
+ * at least one Norwegian player with their groupmates listed.
+ */
+function buildFeaturedGroups(norwegianPlayersList, pgaField) {
+	if (!pgaField?.players?.length) return [];
+	// Build groups keyed by teeTime + startingHole
+	const groups = new Map();
+	for (const p of pgaField.players) {
+		if (!p.teeTime) continue;
+		const key = `${p.teeTime}|${p.startingHole || 1}`;
+		if (!groups.has(key)) groups.set(key, []);
+		groups.get(key).push(p);
+	}
+	// For each Norwegian player, find their group and list groupmates
+	const featuredGroups = [];
+	for (const np of norwegianPlayersList) {
+		const fieldPlayer = pgaField.players.find(p => playerNameMatches(p.displayName, { name: np.name }));
+		if (!fieldPlayer?.teeTime) continue;
+		const key = `${fieldPlayer.teeTime}|${fieldPlayer.startingHole || 1}`;
+		const group = groups.get(key);
+		if (!group || group.length <= 1) continue;
+		const groupmates = group
+			.filter(p => p.displayName !== fieldPlayer.displayName)
+			.map(p => ({ name: p.displayName, teeTime: p.teeTime }));
+		if (groupmates.length > 0) {
+			featuredGroups.push({ player: np.name, teeTime: np.teeTime, groupmates });
+		}
+	}
+	return featuredGroups;
+}
+
+/**
  * Get the tour key used in config for a given tour name.
  */
 function tourConfigKey(tourName) {
@@ -411,6 +444,9 @@ export async function fetchGolfESPN() {
 							streaming: getNorwegianStreaming("golf", tour.name),
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
+							featuredGroups: isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName)
+								? buildFeaturedGroups(norwegianPlayersList, pgaField)
+								: [],
 							totalPlayers: competitors.length
 						}]
 					});
@@ -447,6 +483,10 @@ export async function fetchGolfESPN() {
 											status: "Confirmed",
 										};
 									}),
+									featuredGroups: buildFeaturedGroups(
+										confirmed.map(g => ({ name: g.name, teeTime: findFieldPlayer(g, pgaField)?.teeTime || null })),
+										pgaField
+									),
 									totalPlayers: pgaField.players.length
 								}]
 							});
