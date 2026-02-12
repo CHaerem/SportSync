@@ -765,7 +765,7 @@ class Dashboard {
 		}
 
 		return `
-			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}">
+			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
@@ -1263,6 +1263,14 @@ class Dashboard {
 				}
 				this.render();
 			}
+		});
+
+		container.addEventListener('keydown', (e) => {
+			if (e.key !== 'Enter' && e.key !== ' ') return;
+			const row = e.target.closest('.event-row');
+			if (!row) return;
+			e.preventDefault();
+			row.click();
 		});
 	}
 
