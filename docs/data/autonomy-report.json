@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-02-12T08:57:34.583Z",
+  "overallScore": 0.92,
+  "loopsClosed": 5,
+  "loopsTotal": 6,
+  "loops": {
+    "featuredQuality": {
+      "score": 1,
+      "status": "closed",
+      "details": "22 entries, hints wired and ready (quality is good)"
+    },
+    "enrichmentQuality": {
+      "score": 1,
+      "status": "closed",
+      "details": "Enrichment hints tracked (0 applied)"
+    },
+    "coverageGaps": {
+      "score": 1,
+      "status": "closed",
+      "details": "Gap detection works, resolver exists, no gaps to resolve (full coverage)"
+    },
+    "pipelineHealth": {
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (1 min old)"
+    },
+    "watchPlan": {
+      "score": 0.5,
+      "status": "partial",
+      "details": "1 picks but missing reasons data"
+    },
+    "codeHealth": {
+      "score": 1,
+      "status": "closed",
+      "details": "27 completed tasks in autopilot log"
+    }
+  },
+  "nextActions": [
+    "Ensure watch plan picks include both reasons and streaming arrays"
+  ]
+}

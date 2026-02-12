@@ -1,32 +1,27 @@
-import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
+import { ESPNAdapter } from "../lib/adapters/espn-adapter.js";
+import { sportsConfig } from "../config/sports-config.js";
+
+export class F1Fetcher extends ESPNAdapter {
+	constructor() {
+		super(sportsConfig.f1);
+	}
+
+	transformESPNEvent(espnEvent) {
+		const event = super.transformESPNEvent(espnEvent);
+		if (!event) return null;
+
+		// F1 specific transformations
+		event.meta = "Formula 1 2025 - Race Weekend";
+		event.venue = event.venue || "F1 Circuit";
+		
+		// F1 doesn't have Norwegian focus
+		event.norwegian = false;
+
+		return event;
+	}
+}
 
 export async function fetchF1ESPN() {
-	const url =
-		"https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard";
-	let events = [];
-	try {
-		const data = await fetchJson(url);
-		const now = new Date();
-		events = (data.events || [])
-			.filter(
-				(e) => new Date(e.date) > now && e.status?.type?.name !== "STATUS_FINAL"
-			)
-			.slice(0, 4)
-			.map((ev) => ({
-				title: ev.name || ev.shortName,
-				meta: "Formula 1 2025 - Race Weekend",
-				time: normalizeToUTC(ev.date),
-				venue: ev.competitions?.[0]?.venue?.fullName || "F1 Circuit",
-				sport: "formula1",
-				streaming: [],
-				norwegian: false,
-			}));
-	} catch (err) {
-		console.error("F1 fetch failed:", err.message);
-	}
-	return {
-		lastUpdated: iso(),
-		source: "ESPN F1 Racing API",
-		tournaments: [{ name: "Formula 1 2025", events }],
-	};
+	const fetcher = new F1Fetcher();
+	return await fetcher.fetch();
 }

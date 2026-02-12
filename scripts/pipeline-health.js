@@ -11,6 +11,7 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { evaluateAutonomy } from "./autonomy-scorecard.js";
 
 const dataDir = rootDataPath();
 
@@ -184,6 +185,12 @@ async function main() {
 	for (const issue of report.issues) {
 		console.log(`  [${issue.severity}] ${issue.message}`);
 	}
+
+	// Generate autonomy scorecard alongside health report
+	const autonomyReport = evaluateAutonomy();
+	const autonomyPath = path.join(dataDir, "autonomy-report.json");
+	writeJsonPretty(autonomyPath, autonomyReport);
+	console.log(`Autonomy: ${Math.round(autonomyReport.overallScore * 100)}% (${autonomyReport.loopsClosed}/${autonomyReport.loopsTotal} loops closed)`);
 
 	// Create GitHub issue if critical and running in CI
 	if (report.status === "critical" && process.env.GITHUB_ACTIONS) {

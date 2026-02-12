@@ -83,6 +83,49 @@ export function detectQualityRegression(current, previous) {
 	return { issues, hasRegression };
 }
 
+export function detectTrendRegression(history) {
+	const issues = [];
+	if (!Array.isArray(history) || history.length < 6) {
+		return { hasTrendRegression: false, issues };
+	}
+
+	const recent = history.slice(-3);
+	const previous = history.slice(-6, -3);
+
+	function avg(entries, accessor) {
+		const values = entries.map(accessor).filter((v) => v !== null && v !== undefined);
+		return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;
+	}
+
+	const recentEditorial = avg(recent, (e) => e.editorial?.score ?? null);
+	const previousEditorial = avg(previous, (e) => e.editorial?.score ?? null);
+	if (recentEditorial !== null && previousEditorial !== null) {
+		const drop = previousEditorial - recentEditorial;
+		if (drop > 15) {
+			issues.push({
+				severity: "warning",
+				code: "editorial_trend_regression",
+				message: `Editorial score trend dropped from avg ${Math.round(previousEditorial)} to ${Math.round(recentEditorial)} (-${Math.round(drop)})`,
+			});
+		}
+	}
+
+	const recentMW = avg(recent, (e) => e.editorial?.mustWatchCoverage ?? null);
+	const previousMW = avg(previous, (e) => e.editorial?.mustWatchCoverage ?? null);
+	if (recentMW !== null && previousMW !== null) {
+		const drop = previousMW - recentMW;
+		if (drop > 0.25) {
+			issues.push({
+				severity: "warning",
+				code: "must_watch_trend_regression",
+				message: `Must-watch coverage trend dropped from avg ${(previousMW * 100).toFixed(0)}% to ${(recentMW * 100).toFixed(0)}% (-${(drop * 100).toFixed(0)}%)`,
+			});
+		}
+	}
+
+	return { hasTrendRegression: issues.length > 0, issues };
+}
+
 function getPreviousQuality() {
 	try {
 		const raw = execSync("git show HEAD:docs/data/ai-quality.json", {

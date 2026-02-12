@@ -79,4 +79,21 @@ describe("buildWatchPlan()", () => {
 		expect(plan.picks).toEqual([]);
 		expect(plan.windows.every((w) => w.items.length === 0)).toBe(true);
 	});
+
+	it("caps picks at 3 even with many events", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const events = Array.from({ length: 10 }, (_, i) => ({
+			sport: "football",
+			title: `Match ${i + 1}`,
+			tournament: "Premier League",
+			time: new Date(now.getTime() + (i + 1) * 3600000).toISOString(),
+			homeTeam: `Home ${i}`,
+			awayTeam: `Away ${i}`,
+			importance: 3,
+			norwegian: false,
+			tags: [],
+		}));
+		const plan = buildWatchPlan(events, { now });
+		expect(plan.picks).toHaveLength(3);
+	});
 });

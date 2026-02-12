@@ -23,6 +23,42 @@ import {
 const BATCH_SIZE = 10;
 const CONFIG_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
+/**
+ * Builds adaptive hints for enrichment based on previous ai-quality.json metrics.
+ * Mirrors the pattern used in generate-featured.js's buildAdaptiveHints.
+ * @param {object|null} qualityData - Previous ai-quality.json contents
+ * @returns {string[]} Array of hint strings
+ */
+export function buildEnrichmentHints(qualityData) {
+	const hints = [];
+	if (!qualityData || typeof qualityData !== "object") return hints;
+
+	const enrichment = qualityData.enrichment;
+	const editorial = qualityData.editorial;
+
+	// Check enrichment tag coverage
+	if (enrichment?.after?.tagsCoverage != null && enrichment.after.tagsCoverage < 0.8) {
+		hints.push("CORRECTION: Recent enrichment had low tag coverage. Ensure EVERY event gets at least 1-2 relevant tags.");
+	}
+
+	// Check enrichment summary coverage
+	if (enrichment?.after?.summaryCoverage != null && enrichment.after.summaryCoverage < 0.9) {
+		hints.push("CORRECTION: Recent enrichment missed summaries for some events. Write a concise summary for EVERY event.");
+	}
+
+	// Check batch failures
+	if (enrichment?.failedBatches != null && enrichment.failedBatches > 0) {
+		hints.push("CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.");
+	}
+
+	// Check editorial must-watch coverage
+	if (editorial?.metrics?.mustWatchCoverage != null && editorial.metrics.mustWatchCoverage < 0.6) {
+		hints.push("CORRECTION: Important events were missed in editorial. Ensure importance \u22654 events get rich, descriptive summaries.");
+	}
+
+	return hints;
+}
+
 async function completeWithClaudeCLI(systemPrompt, userPrompt) {
 	const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
 	const tmpFile = path.join(rootDataPath(), ".enrich-prompt.tmp");
@@ -71,9 +107,18 @@ async function main() {
 		console.log(`Using ${useClaudeCLI ? "Claude CLI (Opus 4.6 via Max subscription)" : llm.getProviderName()} for enrichment.`);
 	}
 
-	// 3. Read user context
+	// 3. Read user context and build system prompt
 	const userContext = readJsonIfExists(CONFIG_PATH) || {};
-	const systemPrompt = buildSystemPrompt(userContext);
+	const existingQuality = readJsonIfExists(qualityPath) || {};
+	let systemPrompt = buildSystemPrompt(userContext);
+
+	// 3b. Inject adaptive hints from previous quality data
+	const enrichmentHints = buildEnrichmentHints(existingQuality);
+	if (enrichmentHints.length > 0) {
+		console.log(`Enrichment adaptive hints active: ${enrichmentHints.length} correction(s)`);
+		for (const hint of enrichmentHints) console.log(`  → ${hint.slice(0, 100)}`);
+		systemPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${enrichmentHints.map((h) => `- ${h}`).join("\n")}`;
+	}
 
 	// 4. Batch and enrich
 	let enrichedCount = 0;
@@ -143,7 +188,6 @@ async function main() {
 
 	// 6. Write enriched events + quality report
 	writeJsonPretty(eventsPath, events);
-	const existingQuality = readJsonIfExists(qualityPath) || {};
 	writeJsonPretty(qualityPath, {
 		...existingQuality,
 		generatedAt: new Date().toISOString(),
@@ -158,6 +202,7 @@ async function main() {
 			aiUpdatedFields: enrichedCount,
 			failedBatches,
 			totalEvents: events.length,
+			hintsApplied: enrichmentHints,
 		},
 	});
 

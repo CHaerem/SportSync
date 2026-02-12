@@ -5,6 +5,31 @@
  */
 
 const PROVIDERS = {
+	anthropic: {
+		url: "https://api.anthropic.com/v1/messages",
+		model: "claude-opus-4-6",
+		envKey: "ANTHROPIC_API_KEY",
+		buildRequest(apiKey, systemPrompt, userPrompt) {
+			return {
+				url: this.url,
+				headers: {
+					"Content-Type": "application/json",
+					"x-api-key": apiKey,
+					"anthropic-version": "2023-06-01",
+				},
+				body: {
+					model: this.model,
+					max_tokens: 4096,
+					system: systemPrompt,
+					messages: [{ role: "user", content: userPrompt }],
+					temperature: 0.3,
+				},
+			};
+		},
+		extractContent(response) {
+			return response.content?.[0]?.text;
+		},
+	},
 	openai: {
 		url: "https://api.openai.com/v1/chat/completions",
 		model: "gpt-4o-mini",
@@ -29,31 +54,6 @@ const PROVIDERS = {
 		},
 		extractContent(response) {
 			return response.choices?.[0]?.message?.content;
-		},
-	},
-	anthropic: {
-		url: "https://api.anthropic.com/v1/messages",
-		model: "claude-opus-4-6",
-		envKey: "ANTHROPIC_API_KEY",
-		buildRequest(apiKey, systemPrompt, userPrompt) {
-			return {
-				url: this.url,
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": apiKey,
-					"anthropic-version": "2023-06-01",
-				},
-				body: {
-					model: this.model,
-					max_tokens: 4096,
-					system: systemPrompt,
-					messages: [{ role: "user", content: userPrompt }],
-					temperature: 0.3,
-				},
-			};
-		},
-		extractContent(response) {
-			return response.content?.[0]?.text;
 		},
 	},
 };
@@ -85,7 +85,7 @@ export class LLMClient {
 	async complete(systemPrompt, userPrompt, { maxRetries = 2 } = {}) {
 		if (!this.isAvailable()) {
 			throw new Error(
-				"No LLM API key found. Set OPENAI_API_KEY or ANTHROPIC_API_KEY."
+				"No LLM API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY."
 			);
 		}
 

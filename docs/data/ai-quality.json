@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T08:23:03.316Z",
+  "generatedAt": "2026-02-12T08:56:43.893Z",
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
-      "totalEvents": 35,
+      "totalEvents": 1,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.743
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 35,
+      "totalEvents": 1,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -19,17 +19,40 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
-    "aiUpdatedFields": 35,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 35
+    "totalEvents": 1,
+    "hintsApplied": []
   },
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 10
+    "blockCount": 3,
+    "generationMs": 5
+  },
+  "editorial": {
+    "score": 100,
+    "metrics": {
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockTypeBalance": 1,
+      "textQuality": 1,
+      "quietDayCompliance": 1,
+      "blockCountTarget": 1
+    },
+    "issues": []
+  },
+  "watchPlan": {
+    "score": 40,
+    "metrics": {
+      "pickCount": 1,
+      "avgScore": 44,
+      "streamingCoverage": 0,
+      "reasonCoverage": 0
+    }
   }
 }

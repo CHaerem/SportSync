@@ -1,10 +1,7 @@
-import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
-
-// Esports integration for CS2: 100 Thieves (rain) tracking.
-// Primary: PandaScore API (free tier, needs PANDASCORE_API_KEY)
-// Fallback: HLTV community API (may have stale data)
-
-const TRACKED_ALIASES = ["100 thieves", "100t"];
+import { BaseFetcher } from "../lib/base-fetcher.js";
+import { sportsConfig } from "../config/sports-config.js";
+import { EventNormalizer } from "../lib/event-normalizer.js";
+import { EventFilters } from "../lib/filters.js";
 
 // Top-tier CS2 events to always include for general coverage
 const MAJOR_CS2_PATTERNS = [
@@ -12,244 +9,218 @@ const MAJOR_CS2_PATTERNS = [
 	/pgl/i, /dreamhack/i, /champions/i, /pro league/i
 ];
 
-function isTrackedTeam(teamName) {
-	return TRACKED_ALIASES.some(alias => (teamName || "").toLowerCase().includes(alias));
+function isMajorEvent(name) {
+	return MAJOR_CS2_PATTERNS.some(p => p.test(name || ""));
 }
 
-function isMajorEvent(tournamentName) {
-	return MAJOR_CS2_PATTERNS.some(p => p.test(tournamentName || ""));
-}
-
-// Filter events to current week only
-function filterCurrentWeek(events) {
-	const now = new Date();
-	const startOfWeek = new Date(now);
-	startOfWeek.setDate(now.getDate() - now.getDay());
-	startOfWeek.setHours(0, 0, 0, 0);
-
-	const endOfWeek = new Date(startOfWeek);
-	endOfWeek.setDate(startOfWeek.getDate() + 7);
-
-	return events.filter(event => {
-		const eventDate = new Date(event.time);
-		return eventDate >= startOfWeek && eventDate < endOfWeek;
-	});
-}
-
-// ─── PandaScore API (primary source) ────────────────────────────
-// Free tier: 1000 requests/hour. Sign up at pandascore.co (no credit card)
-// Set PANDASCORE_API_KEY as env var or GitHub secret
-
-async function fetchFromPandaScore() {
-	const apiKey = process.env.PANDASCORE_API_KEY;
-	if (!apiKey) {
-		console.log("PANDASCORE_API_KEY not set, skipping PandaScore");
-		return null;
+export class EsportsFetcher extends BaseFetcher {
+	constructor() {
+		super(sportsConfig.esports);
 	}
 
-	const events = [];
-
-	try {
-		// Fetch upcoming CS2 matches
-		const upcoming = await fetchJson(
-			`https://api.pandascore.co/cs2/matches/upcoming?per_page=50&token=${apiKey}`,
-			{ retries: 2 }
-		);
-
-		if (!Array.isArray(upcoming)) {
-			console.warn("PandaScore upcoming response is not an array");
-			return null;
+	async fetchFromSource(source) {
+		if (source.api === "hltv") {
+			// Try PandaScore first if API key available
+			const pandaEvents = await this.fetchPandaScore();
+			if (pandaEvents.length > 0) return pandaEvents;
+			// Fallback to HLTV community API
+			return await this.fetchHLTV(source);
+		} else if (source.api === "fallback" && source.enabled) {
+			return await this.fetchFallbackMatches();
 		}
+		return [];
+	}
 
-		console.log(`PandaScore: ${upcoming.length} upcoming CS2 matches`);
+	async fetchPandaScore() {
+		const apiKey = process.env.PANDASCORE_API_KEY;
+		if (!apiKey) return [];
 
-		// Find tournaments where 100 Thieves is playing
-		const trackedTournaments = new Set();
-		for (const match of upcoming) {
-			const opponents = match.opponents || [];
-			for (const opp of opponents) {
-				const teamName = opp.opponent?.name || "";
-				if (isTrackedTeam(teamName)) {
-					const tournamentName = match.tournament?.name || match.league?.name || "";
-					if (tournamentName) trackedTournaments.add(tournamentName);
-				}
-			}
-		}
-
-		console.log("PandaScore: 100 Thieves tournaments:", Array.from(trackedTournaments));
-
-		// Get matches from tracked tournaments + major events
-		for (const match of upcoming) {
-			const tournamentName = match.tournament?.name || match.league?.name || "";
-			const opponents = match.opponents || [];
-			const team1 = opponents[0]?.opponent?.name || "TBD";
-			const team2 = opponents[1]?.opponent?.name || "TBD";
-
-			const isInTrackedTournament = trackedTournaments.has(tournamentName);
-			const isDirectMatch = isTrackedTeam(team1) || isTrackedTeam(team2);
-			const isMajor = isMajorEvent(tournamentName);
-
-			if (!isInTrackedTournament && !isDirectMatch && !isMajor) continue;
-
-			events.push({
-				title: `${team1} vs ${team2}`,
-				meta: tournamentName || "CS2 Match",
-				time: normalizeToUTC(match.begin_at || match.scheduled_at),
-				venue: match.tournament?.slug ? "LAN" : "Online",
-				sport: "esports",
-				streaming: match.streams_list
-					? match.streams_list.slice(0, 2).map(s => ({
-						platform: s.language === "en" ? "Main Stream" : s.language,
-						url: s.raw_url || "",
-						type: "twitch",
-					}))
-					: [{ platform: "Twitch", url: "https://twitch.tv", type: "twitch" }],
-				norwegian: isDirectMatch, // rain (Norwegian) on 100 Thieves
-				tournament: tournamentName || "CS2 Tournament",
-			});
-		}
-
-		// Also fetch running matches
+		const matches = [];
 		try {
-			const running = await fetchJson(
-				`https://api.pandascore.co/cs2/matches/running?token=${apiKey}`,
-				{ retries: 1 }
+			const upcoming = await this.apiClient.fetchJSON(
+				`https://api.pandascore.co/cs2/matches/upcoming?per_page=50&token=${apiKey}`
 			);
-			if (Array.isArray(running)) {
-				for (const match of running) {
-					const opponents = match.opponents || [];
-					const team1 = opponents[0]?.opponent?.name || "TBD";
-					const team2 = opponents[1]?.opponent?.name || "TBD";
-					if (isTrackedTeam(team1) || isTrackedTeam(team2)) {
-						const tournamentName = match.tournament?.name || match.league?.name || "";
-						events.push({
-							title: `LIVE: ${team1} vs ${team2}`,
-							meta: tournamentName || "CS2 Match",
-							time: normalizeToUTC(match.begin_at || new Date().toISOString()),
-							venue: "Online",
-							sport: "esports",
-							streaming: [{ platform: "Twitch", url: "https://twitch.tv", type: "twitch" }],
-							norwegian: true,
-							tournament: tournamentName || "CS2 Tournament",
-						});
+			if (!Array.isArray(upcoming)) return [];
+
+			const focusTeams = this.config.filters?.teams || [];
+			const trackedTournaments = new Set();
+
+			// Find tournaments with tracked teams
+			for (const match of upcoming) {
+				const opponents = match.opponents || [];
+				for (const opp of opponents) {
+					const name = opp.opponent?.name || "";
+					if (focusTeams.some(t => name.toLowerCase().includes(t.toLowerCase()))) {
+						const tournament = match.tournament?.name || match.league?.name || "";
+						if (tournament) trackedTournaments.add(tournament);
 					}
 				}
 			}
+
+			// Get matches from tracked tournaments + major events
+			for (const match of upcoming) {
+				const tournament = match.tournament?.name || match.league?.name || "";
+				const opponents = match.opponents || [];
+				const team1 = opponents[0]?.opponent?.name || "TBD";
+				const team2 = opponents[1]?.opponent?.name || "TBD";
+				const isDirect = focusTeams.some(t =>
+					team1.toLowerCase().includes(t.toLowerCase()) ||
+					team2.toLowerCase().includes(t.toLowerCase())
+				);
+
+				if (!trackedTournaments.has(tournament) && !isDirect && !isMajorEvent(tournament)) continue;
+
+				matches.push({
+					title: `${team1} vs ${team2}`,
+					time: match.begin_at || match.scheduled_at,
+					venue: "Online",
+					tournament: tournament || "CS2 Match",
+					norwegian: isDirect,
+					meta: tournament || "CS2 Competition",
+				});
+			}
+
+			console.log(`PandaScore: ${matches.length} relevant CS2 matches`);
 		} catch (err) {
-			console.warn("PandaScore running matches failed:", err.message);
+			console.warn("PandaScore fetch failed:", err.message);
 		}
-
-		console.log(`PandaScore: ${events.length} relevant events`);
-		return events;
-	} catch (err) {
-		console.error("PandaScore fetch failed:", err.message);
-		return null;
+		return matches;
 	}
-}
 
-// ─── HLTV Community API (fallback) ──────────────────────────────
-// NOTE: This API may have stale data. Use as fallback only.
+	async fetchHLTV(source) {
+		const matches = [];
+		
+		try {
+			console.log("Fetching HLTV matches from:", source.url);
+			const data = await this.apiClient.fetchJSON(source.url, { retries: 2 });
+			
+			if (!Array.isArray(data)) {
+				console.warn("HLTV API did not return an array");
+				return matches;
+			}
+			
+			console.log(`Total HLTV matches found: ${data.length}`);
 
-async function fetchFromHLTV() {
-	const HLTV_UPCOMING = "https://hltv-api.vercel.app/api/matches.json";
-	const events = [];
+			// Check data freshness
+			const newest = data.reduce((max, m) => {
+				const t = new Date(m.date || m.time || 0).getTime();
+				return t > max ? t : max;
+			}, 0);
+			const daysSinceNewest = (Date.now() - newest) / (1000 * 60 * 60 * 24);
+			if (daysSinceNewest > 30) {
+				console.warn(`HLTV data is stale (${Math.round(daysSinceNewest)} days old), skipping`);
+				return matches;
+			}
 
-	try {
-		console.log("Trying HLTV community API as fallback...");
-		const data = await fetchJson(HLTV_UPCOMING, { retries: 1 });
+			const focusTeams = this.config.filters?.teams || [];
+			
+			const filteredMatches = data.filter(match => {
+				const team1 = this.extractTeamName(match, 0);
+				const team2 = this.extractTeamName(match, 1);
+				const eventName = match.event?.name || match.tournament?.name || "";
 
-		if (!Array.isArray(data) || data.length === 0) {
-			console.warn("HLTV API returned no data");
-			return null;
+				const hasFocusTeam = focusTeams.some(team =>
+					team1.toLowerCase().includes(team.toLowerCase()) ||
+					team2.toLowerCase().includes(team.toLowerCase())
+				);
+				return hasFocusTeam || isMajorEvent(eventName);
+			});
+			
+			console.log(`Filtered to ${filteredMatches.length} matches with focus teams`);
+			
+			for (const match of filteredMatches.slice(0, 10)) {
+				matches.push({
+					title: `${this.extractTeamName(match, 0)} vs ${this.extractTeamName(match, 1)}`,
+					time: match.date || match.time || match.timestamp,
+					venue: "Online",
+					tournament: match.event?.name || match.tournament?.name || "CS2 Match",
+					norwegian: this.isNorwegianTeam(match),
+					meta: match.event?.name || "CS2 Competition"
+				});
+			}
+		} catch (error) {
+			console.error("Failed to fetch HLTV data:", error.message);
 		}
+		
+		return matches;
+	}
 
-		// Check data freshness — if newest match is more than 30 days old, data is stale
-		const newest = data.reduce((max, m) => {
-			const t = new Date(m.time || m.date || 0).getTime();
-			return t > max ? t : max;
-		}, 0);
-		const daysSinceNewest = (Date.now() - newest) / (1000 * 60 * 60 * 24);
-		if (daysSinceNewest > 30) {
-			console.warn(`HLTV data is stale (newest match is ${Math.round(daysSinceNewest)} days old)`);
-			return null;
+	async fetchFallbackMatches() {
+		const now = new Date();
+		const currentWeekStart = new Date(now);
+		currentWeekStart.setDate(now.getDate() - now.getDay());
+		const currentWeekEnd = new Date(currentWeekStart);
+		currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+		
+		// No hardcoded matches — rely on API data
+		const knownMatches = [];
+		
+		return knownMatches.filter(match => {
+			const matchDate = new Date(match.time);
+			return matchDate >= currentWeekStart && matchDate <= currentWeekEnd;
+		});
+	}
+
+	extractTeamName(match, index) {
+		// Try multiple possible structures
+		const paths = [
+			`team${index + 1}.name`,
+			`team${['A', 'B'][index]}.name`,
+			`opponents[${index}].name`,
+			`competitors[${index}].name`
+		];
+		
+		for (const path of paths) {
+			const value = this.getNestedValue(match, path);
+			if (value) return value;
 		}
+		
+		return "TBD";
+	}
 
-		console.log(`HLTV: ${data.length} matches, newest is ${Math.round(daysSinceNewest)} days ago`);
+	getNestedValue(obj, path) {
+		return path.split(/[\.\[\]]/).filter(Boolean).reduce((current, key) => {
+			return current?.[key];
+		}, obj);
+	}
 
-		// Find 100 Thieves tournaments + major events
-		const trackedEvents = new Set();
-		for (const m of data) {
-			const teams = m.teams || [];
-			const team1 = teams[0]?.name || "";
-			const team2 = teams[1]?.name || "";
-			const eventName = m.event?.name || "";
-			if (isTrackedTeam(team1) || isTrackedTeam(team2)) {
-				if (eventName) trackedEvents.add(eventName);
+	isNorwegianTeam(match) {
+		const norwegianTeams = this.config.norwegian?.teams || [];
+		const matchText = JSON.stringify(match).toLowerCase();
+		
+		return norwegianTeams.some(team => 
+			matchText.includes(team.toLowerCase())
+		);
+	}
+
+	transformToEvents(rawData) {
+		const events = [];
+		
+		for (const item of rawData) {
+			const normalized = EventNormalizer.normalize(item, this.config.sport);
+			if (normalized && EventNormalizer.validateEvent(normalized)) {
+				// Add streaming platforms
+				if (this.config.streaming && normalized.norwegian) {
+					normalized.streaming = this.config.streaming;
+				}
+				events.push(normalized);
 			}
 		}
+		
+		return EventNormalizer.deduplicate(events);
+	}
 
-		// Get matches from tracked tournaments + major events
-		const now = Date.now();
-		for (const m of data) {
-			const eventName = m.event?.name || "";
-			const isTracked = trackedEvents.has(eventName);
-			const isMajor = isMajorEvent(eventName);
-			if (!isTracked && !isMajor) continue;
-			const matchTime = new Date(m.time || m.date);
-			if (matchTime.getTime() <= now) continue;
-
-			const teams = m.teams || [];
-			const team1 = teams[0]?.name || "TBD";
-			const team2 = teams[1]?.name || "TBD";
-
-			events.push({
-				title: `${team1} vs ${team2}`,
-				meta: eventName || "CS2 Match",
-				time: normalizeToUTC(m.time || m.date),
-				venue: "Online",
-				sport: "esports",
-				streaming: [{ platform: "Twitch", url: "https://twitch.tv", type: "twitch" }],
-				norwegian: isTrackedTeam(team1) || isTrackedTeam(team2),
-				tournament: eventName || "CS2 Tournament",
-			});
+	applyCustomFilters(events) {
+		// Apply current week filter if configured
+		if (this.config.filters?.currentWeek) {
+			events = EventFilters.filterCurrentWeek(events);
 		}
-
-		return events.length > 0 ? events : null;
-	} catch (err) {
-		console.warn("HLTV community API failed:", err.message);
-		return null;
+		
+		return super.applyCustomFilters(events);
 	}
 }
 
-// ─── Main export ────────────────────────────────────────────────
-
 export async function fetchEsports() {
-	// Try PandaScore first (reliable, needs API key)
-	let events = await fetchFromPandaScore();
-
-	// Fallback to HLTV community API
-	if (!events || events.length === 0) {
-		events = await fetchFromHLTV();
-	}
-
-	if (!events || events.length === 0) {
-		console.log("No esports events found from any source.");
-		if (!process.env.PANDASCORE_API_KEY) {
-			console.log("Tip: Set PANDASCORE_API_KEY env var for reliable CS2 data (free at pandascore.co)");
-		}
-		return {
-			lastUpdated: iso(),
-			source: "No data available",
-			tournaments: [],
-		};
-	}
-
-	const filtered = filterCurrentWeek(events);
-	console.log(`Esports: ${filtered.length} events this week (${events.length} total)`);
-
-	return {
-		lastUpdated: iso(),
-		source: process.env.PANDASCORE_API_KEY ? "PandaScore API" : "HLTV community API",
-		tournaments: filtered.length ? [{ name: "CS2 Focus", events: filtered }] : [],
-	};
+	const fetcher = new EsportsFetcher();
+	return await fetcher.fetch();
 }

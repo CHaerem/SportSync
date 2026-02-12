@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildSystemPrompt, buildUserPrompt } from "../scripts/lib/enrichment-prompts.js";
+import { buildEnrichmentHints } from "../scripts/enrich-events.js";
 
 describe("buildSystemPrompt()", () => {
 	it("includes user context in prompt", () => {
@@ -92,5 +93,100 @@ describe("buildUserPrompt()", () => {
 		const prompt = buildUserPrompt(events);
 		expect(prompt).toContain("Viktor Hovland");
 		expect(prompt).toContain("Kristoffer Reitan");
+	});
+});
+
+describe("buildEnrichmentHints()", () => {
+	it("returns empty hints when no previous quality data", () => {
+		expect(buildEnrichmentHints(null)).toEqual([]);
+		expect(buildEnrichmentHints(undefined)).toEqual([]);
+		expect(buildEnrichmentHints({})).toEqual([]);
+	});
+
+	it("returns tag coverage hint when tags are low", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 0.5, summaryCoverage: 1.0 },
+				failedBatches: 0,
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toHaveLength(1);
+		expect(hints[0]).toContain("tag coverage");
+		expect(hints[0]).toContain("CORRECTION");
+	});
+
+	it("returns summary hint when summaries are low", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 1.0, summaryCoverage: 0.7 },
+				failedBatches: 0,
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toHaveLength(1);
+		expect(hints[0]).toContain("summaries");
+		expect(hints[0]).toContain("CORRECTION");
+	});
+
+	it("returns batch failure hint when batches failed", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 1.0, summaryCoverage: 1.0 },
+				failedBatches: 2,
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toHaveLength(1);
+		expect(hints[0]).toContain("batch failures");
+		expect(hints[0]).toContain("same number of events");
+	});
+
+	it("returns must-watch hint when editorial must-watch coverage is low", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 1.0, summaryCoverage: 1.0 },
+				failedBatches: 0,
+			},
+			editorial: {
+				metrics: { mustWatchCoverage: 0.4 },
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toHaveLength(1);
+		expect(hints[0]).toContain("Important events were missed");
+		expect(hints[0]).toContain("importance");
+	});
+
+	it("returns no hints when all metrics are good", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 0.95, summaryCoverage: 0.95 },
+				failedBatches: 0,
+			},
+			editorial: {
+				metrics: { mustWatchCoverage: 0.8 },
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toEqual([]);
+	});
+
+	it("returns multiple hints when multiple metrics are bad", () => {
+		const qualityData = {
+			enrichment: {
+				after: { tagsCoverage: 0.5, summaryCoverage: 0.6 },
+				failedBatches: 3,
+			},
+			editorial: {
+				metrics: { mustWatchCoverage: 0.3 },
+			},
+		};
+		const hints = buildEnrichmentHints(qualityData);
+		expect(hints).toHaveLength(4);
+		expect(hints.some((h) => h.includes("tag coverage"))).toBe(true);
+		expect(hints.some((h) => h.includes("summaries"))).toBe(true);
+		expect(hints.some((h) => h.includes("batch failures"))).toBe(true);
+		expect(hints.some((h) => h.includes("Important events"))).toBe(true);
 	});
 });

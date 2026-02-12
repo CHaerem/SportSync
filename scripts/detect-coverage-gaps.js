@@ -9,6 +9,7 @@
 
 import path from "path";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { resolveCoverageGaps } from "./resolve-coverage-gaps.js";
 
 const dataDir = rootDataPath();
 
@@ -129,6 +130,18 @@ async function main() {
 	console.log(`Coverage gaps: ${result.summary.totalGapsDetected} detected (${result.summary.actionableGaps} actionable, ${result.summary.informationalGaps} informational)`);
 	for (const gap of result.gaps) {
 		console.log(`  [${gap.confidence}] ${gap.sport}/${gap.type}: ${gap.matchedPattern} (${gap.headlines.length} headline(s))`);
+	}
+
+	// Auto-resolve actionable gaps by creating skeleton configs
+	if (result.summary.actionableGaps > 0) {
+		console.log("\nAttempting to resolve actionable gaps...");
+		const { created, skipped } = resolveCoverageGaps();
+		if (created.length > 0) {
+			console.log(`Auto-resolved: ${created.length} new config(s) created`);
+		}
+		if (skipped.length > 0) {
+			console.log(`Skipped: ${skipped.length} (already covered)`);
+		}
 	}
 }
 

@@ -36,7 +36,7 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #5) Implement `updateFilterCount()` stub in `docs/js/simple-dashboard.js` — Called on lines 60 and 80 but the method body (lines 95-98) is empty. Add a visible count indicator showing how many events match the active filter.
 
-- [BLOCKED] exceeds automation limits — Remove legacy fetch scripts — `scripts/fetch/` contains duplicate pairs (e.g. `football.js` + `football-refactored.js`). The refactored versions are active via `MigrationHelper.parallelFetch()`. Remove the legacy files and simplify `scripts/fetch/index.js` to use refactored versions directly. ~1,000 lines of dead code.
+- [DONE] (manual session) Remove legacy fetch scripts — Deleted 5 legacy fetchers, `migration-helper.js`, and `test-refactored.js`. Renamed `-refactored` versions to clean names via `git mv`. Simplified `scripts/fetch/index.js` to call fetchers directly. ~1,000 lines removed.
 
 ## MEDIUM Priority
 
@@ -259,3 +259,35 @@ During nightly runs, the autopilot should:
 - [PENDING] Add render-once guard for watch-plan UI — Watch-plan data (`docs/data/watch-plan.json`) is generated and cached but never rendered. Add a minimal read-only display in `dashboard.js` showing top 3 picks below the brief section. ~60 lines, 1 file, LOW risk. Prerequisite for the EXPERIENCE Lane tasks.
 
 - [PENDING] Improve sport iteration efficiency in `renderBand()` — `docs/js/dashboard.js:379-401` iterates all SPORT_CONFIG entries even when only 1-2 sports have events. Iterate `sportGroups.entries()` instead and look up sport config by ID. ~10 lines changed, LOW risk.
+
+---
+
+## Autonomy Infrastructure (2026-02-12)
+
+Closed-loop self-improvement system. Autonomy score: **100% (6/6 loops closed)**.
+
+### Completed
+
+- [DONE] (manual session) Adaptive prompt hints for featured generation — `buildAdaptiveHints()` in `ai-quality-gates.js` reads last 5 quality snapshots, generates corrective prompts when metrics underperform thresholds. Wired into `generate-featured.js`. 8 tests.
+
+- [DONE] (manual session) Adaptive enrichment hints — `buildEnrichmentHints()` in `enrich-events.js` checks `ai-quality.json` for low tag/summary coverage or failed batches, injects corrections into enrichment prompt. 7 tests.
+
+- [DONE] (manual session) Coverage gap auto-resolver — `scripts/resolve-coverage-gaps.js` reads `coverage-gaps.json` and creates skeleton curated configs for high/medium-confidence actionable gaps. Wired into `detect-coverage-gaps.js` to run automatically. 11 tests.
+
+- [DONE] (manual session) Autonomy scorecard — `scripts/autonomy-scorecard.js` evaluates 6 feedback loops (featured quality, enrichment quality, coverage gaps, pipeline health, watch plan, code health). Wired into `pipeline-health.js`. Outputs `autonomy-report.json`. 33 tests.
+
+- [DONE] (manual session) Centralize time constants — `MS_PER_MINUTE`, `MS_PER_HOUR`, `MS_PER_DAY` in `helpers.js`, replaced magic numbers across codebase.
+
+- [DONE] (manual session) Reorder LLM provider priority — Anthropic checked before OpenAI in `llm-client.js`.
+
+- [DONE] (manual session) Clean dead frontend code — Removed `renderRadar()`, `#radar` div, radar CSS. Trimmed SW cache from 14 to 6 data files.
+
+- [DONE] (manual session) Fix gitignore whitelist — Added `health-report.json`, `coverage-gaps.json`, `quality-history.json`, `autonomy-report.json` to whitelist. Diagnostic data was being silently excluded from commits.
+
+### Pending Autonomy Tasks
+
+- [PENDING] Add watch-plan rendering to dashboard — Display top picks in `docs/js/dashboard.js` below the brief. ~60 lines. Prerequisite for user feedback loop.
+
+- [PENDING] Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health. Requires workflow file change (needs human approval).
+
+- [PENDING] Add trend tracking to autonomy scorecard — Track score over time in `quality-history.json` snapshots to detect autonomy regressions.

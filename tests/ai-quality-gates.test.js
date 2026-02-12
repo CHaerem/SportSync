@@ -5,6 +5,10 @@ import {
 	enforceEnrichmentQuality,
 	getEnrichmentCoverage,
 	isMajorEventActive,
+	evaluateEditorialQuality,
+	evaluateWatchPlanQuality,
+	buildQualitySnapshot,
+	buildAdaptiveHints,
 } from "../scripts/lib/ai-quality-gates.js";
 
 describe("validateFeaturedContent()", () => {
@@ -99,9 +103,225 @@ describe("validateBlocksContent()", () => {
 	});
 });
 
+describe("blocks_too_many warning", () => {
+	it("triggers warning when blocks exceed 10", () => {
+		const blocks = Array.from({ length: 12 }, (_, i) => ({
+			type: "event-line",
+			text: `⚽ Match ${i + 1}, 21:00`,
+		}));
+		const result = validateBlocksContent(blocks, { events: [] });
+		const tooMany = result.issues.find((i) => i.code === "blocks_too_many");
+		expect(tooMany).toBeDefined();
+		expect(tooMany.message).toContain("12");
+		expect(result.score).toBeLessThan(100);
+	});
+});
+
 describe("isMajorEventActive()", () => {
 	it("detects major events from context and title", () => {
 		expect(isMajorEventActive([{ context: "olympics-2026", title: "Sprint Final" }])).toBe(true);
 		expect(isMajorEventActive([{ context: "league-week", title: "Regular fixture" }])).toBe(false);
+	});
+});
+
+describe("evaluateEditorialQuality()", () => {
+	const now = new Date("2026-02-12T12:00:00Z");
+
+	it("scores well when must-watch events are covered", () => {
+		const events = [
+			{ sport: "football", title: "Liverpool vs Arsenal", importance: 5, time: "2026-02-12T20:00:00Z" },
+			{ sport: "golf", title: "Hovland Round 3", importance: 4, time: "2026-02-12T14:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Title race showdown tonight" },
+				{ type: "event-line", text: "⚽ Liverpool vs Arsenal, 21:00" },
+				{ type: "event-line", text: "⛳ Hovland Round 3, 15:00" },
+				{ type: "divider", text: "This Week" },
+				{ type: "event-line", text: "♟️ Carlsen at Freestyle" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.score).toBeGreaterThanOrEqual(60);
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("penalizes missed must-watch events", () => {
+		const events = [
+			{ sport: "football", title: "Liverpool vs Arsenal", importance: 5, time: "2026-02-12T20:00:00Z" },
+			{ sport: "golf", title: "Hovland Round 3", importance: 4, time: "2026-02-12T14:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "⚽ Random match, 18:00" },
+				{ type: "event-line", text: "🎾 Tennis open, 12:00" },
+				{ type: "narrative", text: "A quiet day in sports." },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(0);
+		expect(result.issues.some((i) => i.code === "must_watch_missed")).toBe(true);
+	});
+
+	it("handles empty events gracefully", () => {
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "⚽ Match, 21:00" },
+				{ type: "event-line", text: "⛳ Golf, 14:00" },
+				{ type: "divider", text: "This Week" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, [], { now });
+		expect(result.score).toBeGreaterThanOrEqual(0);
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("penalizes quiet-day violations", () => {
+		const events = [
+			{ sport: "football", title: "Match A", importance: 2, time: "2026-02-12T20:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "⚽ Match A, 21:00" },
+				{ type: "event-line", text: "⚽ Match B, 21:00" },
+				{ type: "event-line", text: "⚽ Match C, 21:00" },
+				{ type: "event-line", text: "⚽ Match D, 21:00" },
+				{ type: "event-line", text: "⚽ Match E, 21:00" },
+				{ type: "event-line", text: "⚽ Match F, 21:00" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.quietDayCompliance).toBeLessThan(1);
+	});
+});
+
+describe("evaluateWatchPlanQuality()", () => {
+	it("scores normal watch plan with picks", () => {
+		const watchPlan = {
+			picks: [
+				{ title: "Match A", score: 80, streaming: [{ platform: "Viaplay" }], reasons: ["Favorite team"] },
+				{ title: "Match B", score: 60, streaming: [], reasons: ["Must-watch"] },
+				{ title: "Match C", score: 50, streaming: [{ platform: "TV2" }], reasons: [] },
+			],
+		};
+		const result = evaluateWatchPlanQuality(watchPlan);
+		expect(result.score).toBeGreaterThan(40);
+		expect(result.metrics.pickCount).toBe(3);
+		expect(result.metrics.avgScore).toBe(63);
+		expect(result.metrics.streamingCoverage).toBeCloseTo(0.667, 2);
+		expect(result.metrics.reasonCoverage).toBeCloseTo(0.667, 2);
+	});
+
+	it("returns zero score for empty picks", () => {
+		const result = evaluateWatchPlanQuality({ picks: [] });
+		expect(result.score).toBe(0);
+		expect(result.metrics.pickCount).toBe(0);
+	});
+});
+
+describe("buildQualitySnapshot()", () => {
+	it("builds compact snapshot from all sections", () => {
+		const editorial = { score: 78, metrics: { mustWatchCoverage: 0.8, sportDiversity: 0.6 } };
+		const enrichment = { score: 95, importanceCoverage: 1, summaryCoverage: 0.9 };
+		const featured = { blocks: [{ type: "event-line" }, { type: "headline" }], score: 85, provider: "claude-cli", valid: true };
+		const watchPlan = { metrics: { pickCount: 3, avgScore: 70, streamingCoverage: 0.67 } };
+
+		const snapshot = buildQualitySnapshot(editorial, enrichment, featured, watchPlan);
+		expect(snapshot.timestamp).toBeTruthy();
+		expect(snapshot.editorial.score).toBe(78);
+		expect(snapshot.editorial.blockCount).toBe(2);
+		expect(snapshot.enrichment.score).toBe(95);
+		expect(snapshot.featured.provider).toBe("claude-cli");
+		expect(snapshot.watchPlan.pickCount).toBe(3);
+	});
+
+	it("handles null sections gracefully", () => {
+		const snapshot = buildQualitySnapshot(null, null, null, null);
+		expect(snapshot.timestamp).toBeTruthy();
+		expect(snapshot.editorial).toBeNull();
+		expect(snapshot.enrichment).toBeNull();
+		expect(snapshot.featured).toBeNull();
+		expect(snapshot.watchPlan).toBeNull();
+	});
+
+	it("includes hintsApplied when provided", () => {
+		const editorial = { score: 78, metrics: { mustWatchCoverage: 0.8, sportDiversity: 0.6 } };
+		const featured = { blocks: [{ type: "event-line" }], score: 85, provider: "claude-cli", valid: true };
+		const hints = ["CORRECTION: Recent outputs missed must-watch events."];
+		const snapshot = buildQualitySnapshot(editorial, null, featured, null, { hintsApplied: hints });
+		expect(snapshot.hintsApplied).toEqual(hints);
+	});
+
+	it("defaults hintsApplied to empty array", () => {
+		const snapshot = buildQualitySnapshot(null, null, null, null);
+		expect(snapshot.hintsApplied).toEqual([]);
+	});
+});
+
+describe("buildAdaptiveHints()", () => {
+	function makeEditorialEntry(overrides = {}) {
+		return {
+			editorial: {
+				score: 80,
+				mustWatchCoverage: 1,
+				sportDiversity: 0.8,
+				blockTypeBalance: 1,
+				textQuality: 1,
+				blockCountTarget: 1,
+				quietDayCompliance: 1,
+				...overrides,
+			},
+		};
+	}
+
+	it("returns empty hints with fewer than 3 history entries", () => {
+		const history = [makeEditorialEntry(), makeEditorialEntry()];
+		const result = buildAdaptiveHints(history);
+		expect(result.hints).toEqual([]);
+		expect(result.metrics).toEqual({});
+	});
+
+	it("returns must-watch hint when coverage is low", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ mustWatchCoverage: 0.3 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("must-watch");
+		expect(result.metrics.mustWatchCoverage).toBeCloseTo(0.3);
+	});
+
+	it("returns sport diversity hint when diversity is low", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ sportDiversity: 0.2 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some((h) => h.includes("too focused on one sport"))).toBe(true);
+	});
+
+	it("returns text quality hint when blocks exceed limits", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ textQuality: 0.5 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some((h) => h.includes("word limits"))).toBe(true);
+	});
+
+	it("returns multiple hints when multiple metrics are bad", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({
+				mustWatchCoverage: 0.2,
+				sportDiversity: 0.1,
+				textQuality: 0.4,
+			})
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.length).toBeGreaterThanOrEqual(3);
+	});
+
+	it("returns no hints when all metrics are good", () => {
+		const history = Array.from({ length: 5 }, () => makeEditorialEntry());
+		const result = buildAdaptiveHints(history);
+		expect(result.hints).toEqual([]);
 	});
 });

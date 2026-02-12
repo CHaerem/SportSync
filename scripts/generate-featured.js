@@ -17,7 +17,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
-import { validateFeaturedContent } from "./lib/ai-quality-gates.js";
+import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
@@ -73,9 +73,17 @@ COMPOSITION RULES:
 - Start with today's top stories (headline or event-lines)
 - Use event-group when 3+ events share a theme (Olympics, PL matchday)
 - Use narrative sparingly for context that enriches the page
-- Place a divider before "This Week" content
-- Total 3-15 blocks. At least 1 event-line or event-group.
-- On quiet days, fewer blocks (3-5). On big days (Olympics, CL night), more (8-12).
+- Place a divider before "This Week" content only if something notable is coming this week
+- Total 3-8 blocks. At least 1 event-line or event-group.
+- Quiet day: 3-4 blocks (2 event-lines, maybe a divider + 1 look-ahead)
+- Big day (Olympics, CL night): up to 8 blocks
+- NEVER pad with low-importance events. If only 2 things matter today, show 2 things.
+
+EDITOR'S INSTINCT:
+- You are an editor, not a data dumper. Pick THE story of the day.
+- Ask yourself: if I could only tell the reader ONE thing, what is it?
+- Be ruthless about cutting. Every block must earn its place.
+- Silence is editorial — a 3-block page on a quiet day is perfect.
 
 VOICE & PERSPECTIVE:
 - Write like a sports ticker editor at VG or Dagbladet — punchy, opinionated, never bland
@@ -123,10 +131,16 @@ Olympics day:
 Quiet Tuesday:
 { "blocks": [
   { "type": "event-line", "text": "⛳ Hovland at PGA event, 14:30" },
-  { "type": "event-line", "text": "⚽ La Liga mid-table, 21:00" },
-  { "type": "divider", "text": "This Week" },
-  { "type": "event-line", "text": "⚽ Fri — Big match preview" }
+  { "type": "event-line", "text": "⚽ La Liga mid-table, 21:00" }
 ]}
+
+AVAILABLE TOOLS:
+You have access to SportSync data tools and web browsing. Use them to write better content.
+- Use mcp__sportsync__query_events to verify event details or find events you're unsure about
+- Use mcp__sportsync__get_recommendations to see the user's personalized top picks
+- Use WebSearch to look up breaking news, injuries, or context for today's top 1-2 events
+- Keep it focused: max 2 web searches, only for the story of the day
+- Your final response must be ONLY the JSON blocks object
 
 OUTPUT:
 - Return ONLY valid JSON: { "blocks": [...] }
@@ -246,7 +260,7 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	});
 
 	const summary = weekEvents
-		.slice(0, 30)
+		.slice(0, 20)
 		.map((e) => {
 			const t = new Date(e.time);
 			const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
@@ -285,20 +299,20 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 
 	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
 
-Events (next 7 days, max 30 shown):
+Events (next 7 days, max 20 shown):
 ${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${enrichmentContext}
 
 Generate the editorial zone as a blocks array matching this schema:
 ${JSON.stringify(BLOCKS_SCHEMA, null, 2)}
 
 Remember:
-- Compose 3-15 blocks. Start with today's top stories, end with "This Week" after a divider.
+- Compose 3-8 blocks. Start with today's top stories. Use divider + look-ahead only if something notable is coming this week.
 - Use headline only when there's a strong narrative (CL night, Olympics medal day). Skip on quiet days.
 - event-line is the workhorse — one event per block. Favorites/user interests first.
 - event-group for 3+ related events (Olympics, PL matchday). Use label + items array.
 - section only for major active events (Olympics, World Cup) — use curated data for accuracy.
 - narrative adds context sparingly (max 3). Don't narrate every event.
-- divider before "This Week" or "Looking Ahead" content.
+- NEVER pad — if only 2 things matter, show 2 things.
 - Return ONLY valid JSON: { "blocks": [...] }, no markdown wrapper`;
 }
 
@@ -307,10 +321,23 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 	const tmpFile = path.join(rootDataPath(), ".featured-prompt.tmp");
 	fs.writeFileSync(tmpFile, fullPrompt);
 	try {
-		const output = execSync(
-			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text`,
-			{ encoding: "utf-8", timeout: 120000, maxBuffer: 1024 * 1024 }
-		);
+		let cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text --max-turns 6`;
+
+		// Wire MCP tools if .mcp.json exists
+		const mcpConfigPath = path.resolve(process.cwd(), ".mcp.json");
+		if (fs.existsSync(mcpConfigPath)) {
+			const allowedTools = [
+				"mcp__sportsync__query_events",
+				"mcp__sportsync__get_recommendations",
+				"mcp__sportsync__get_event_details",
+				"mcp__sportsync__dashboard_status",
+				"WebSearch",
+				"WebFetch",
+			].map((t) => `"${t}"`).join(" ");
+			cmd += ` --mcp-config "${mcpConfigPath}" --allowedTools ${allowedTools}`;
+		}
+
+		const output = execSync(cmd, { encoding: "utf-8", timeout: 180000, maxBuffer: 1024 * 1024 });
 		return output.trim();
 	} finally {
 		try { fs.unlinkSync(tmpFile); } catch {}
@@ -594,13 +621,25 @@ async function main() {
 	}
 
 	const systemPrompt = buildSystemPrompt(VOICE);
-	const baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
+	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
+
+	// Adaptive hints: read recent quality history and inject corrective instructions
+	const historyPath = path.join(dataDir, "quality-history.json");
+	const qualityHistory = readJsonIfExists(historyPath) || [];
+	const { hints: adaptiveHints } = buildAdaptiveHints(qualityHistory);
+	if (adaptiveHints.length > 0) {
+		console.log(`Adaptive hints active: ${adaptiveHints.length} correction(s)`);
+		for (const hint of adaptiveHints) console.log(`  → ${hint.slice(0, 80)}`);
+		baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${adaptiveHints.map((h) => `- ${h}`).join("\n")}`;
+	}
+
 	let featured = null;
 	let provider = "none";
 	let attempts = 0;
 	let qualityResult = null;
 	let qualityCorrections = [];
 
+	const generationStart = Date.now();
 	for (let attempt = 1; attempt <= 2; attempt++) {
 		attempts = attempt;
 		let userPrompt = baseUserPrompt;
@@ -654,12 +693,16 @@ async function main() {
 
 	// Only write watch-plan and quality for the main featured.json (not voice variants)
 	if (!FEATURED_SUFFIX) {
+		const generationMs = Date.now() - generationStart;
 		const watchPlan = buildWatchPlan(events, {
 			now,
 			userContext,
 			featured,
 		});
 		writeJsonPretty(watchPlanPath, watchPlan);
+
+		const editorialResult = evaluateEditorialQuality(featured, events, { now });
+		const watchPlanResult = evaluateWatchPlanQuality(watchPlan);
 
 		const blockCount = featured.blocks ? featured.blocks.length : 0;
 		const existingQuality = readJsonIfExists(qualityPath) || {};
@@ -673,8 +716,32 @@ async function main() {
 				score: finalQuality.score,
 				issues: finalQuality.issues.map((issue) => issue.message),
 				blockCount,
+				generationMs,
+			},
+			editorial: {
+				score: editorialResult.score,
+				metrics: editorialResult.metrics,
+				issues: editorialResult.issues.map((issue) => issue.message),
+			},
+			watchPlan: {
+				score: watchPlanResult.score,
+				metrics: watchPlanResult.metrics,
 			},
 		});
+
+		// Append snapshot to quality history
+		const history = readJsonIfExists(historyPath) || qualityHistory;
+		const snapshot = buildQualitySnapshot(
+			editorialResult,
+			existingQuality.enrichment || null,
+			{ blocks: featured.blocks, score: finalQuality.score, provider, valid: finalQuality.valid },
+			watchPlanResult,
+			{ hintsApplied: adaptiveHints }
+		);
+		history.push(snapshot);
+		// Cap at 100 entries
+		while (history.length > 100) history.shift();
+		writeJsonPretty(historyPath, history);
 	}
 
 	const blockCount = featured.blocks ? featured.blocks.length : 0;

@@ -437,13 +437,10 @@ class Dashboard {
 		}
 
 		const picks = this.watchPlan.picks;
-		const initialCount = 2;
-		const hasMore = picks.length > initialCount;
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
 		picks.forEach((pick, i) => {
-			const hidden = i >= initialCount && hasMore ? ' style="display:none"' : '';
 			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === pick.sport) : null;
 			const emoji = sportConfig ? sportConfig.emoji : '';
 
@@ -458,7 +455,7 @@ class Dashboard {
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
 			const streaming = pick.streaming || null;
 
-			html += `<div class="watch-pick" data-pick-index="${i}"${hidden}>`;
+			html += `<div class="watch-pick" data-pick-index="${i}">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
 			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
@@ -471,26 +468,7 @@ class Dashboard {
 			html += `</div></div>`;
 		});
 
-		if (hasMore) {
-			html += `<button class="watch-plan-more" data-expanded="false">Show ${picks.length - initialCount} more \u25b8</button>`;
-		}
-
 		container.innerHTML = html;
-
-		// Bind "show more" toggle
-		const moreBtn = container.querySelector('.watch-plan-more');
-		if (moreBtn) {
-			moreBtn.addEventListener('click', () => {
-				const expanded = moreBtn.dataset.expanded === 'true';
-				container.querySelectorAll('.watch-pick').forEach((el, i) => {
-					if (i >= initialCount) el.style.display = expanded ? 'none' : '';
-				});
-				moreBtn.dataset.expanded = expanded ? 'false' : 'true';
-				moreBtn.textContent = expanded
-					? `Show ${picks.length - initialCount} more \u25b8`
-					: 'Show less \u25be';
-			});
-		}
 
 		// Bind pick clicks to scroll to matching event
 		container.querySelectorAll('.watch-pick').forEach(el => {
@@ -509,13 +487,6 @@ class Dashboard {
 				}
 			});
 		});
-	}
-
-	// --- Radar (merged into brief/editorial) ---
-
-	renderRadar() {
-		const container = document.getElementById('radar');
-		if (container) container.innerHTML = '';
 	}
 
 	// --- News ---

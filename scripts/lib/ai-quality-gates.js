@@ -1,3 +1,5 @@
+import { MS_PER_DAY } from "./helpers.js";
+
 const BLOCK_WORD_LIMITS = {
 	headline: 15,
 	"event-line": 20,
@@ -212,8 +214,8 @@ export function validateBlocksContent(blocks, { events = [] } = {}) {
 		issues.push({ severity: "error", code: "blocks_too_few", message: `Only ${sanitized.length} valid blocks (min 3).` });
 		score -= 35;
 	}
-	if (sanitized.length > 15) {
-		issues.push({ severity: "warning", code: "blocks_too_many", message: `${sanitized.length} blocks exceeds recommended max of 15.` });
+	if (sanitized.length > 10) {
+		issues.push({ severity: "warning", code: "blocks_too_many", message: `${sanitized.length} blocks exceeds recommended max of 10.` });
 		score -= 10;
 	}
 
@@ -348,4 +350,212 @@ export function enforceEnrichmentQuality(events = [], options = {}) {
 		issues,
 		valid: issues.length === 0,
 	};
+}
+
+// --- Editorial quality evaluation ---
+
+function mustWatchCoverage(blocks, events) {
+	const mustWatch = (events || []).filter((e) => e.importance >= 4);
+	if (mustWatch.length === 0) return 1;
+	const allText = blocks
+		.map((b) => {
+			let text = b.text || "";
+			if (b.label) text += " " + b.label;
+			if (Array.isArray(b.items)) {
+				text += " " + b.items.map((i) => (typeof i === "string" ? i : i.text || "")).join(" ");
+			}
+			return text.toLowerCase();
+		})
+		.join(" ");
+
+	let covered = 0;
+	for (const event of mustWatch) {
+		const needles = [event.title, event.homeTeam, event.awayTeam].filter(Boolean);
+		if (needles.some((n) => allText.includes(n.toLowerCase()))) covered++;
+	}
+	return covered / mustWatch.length;
+}
+
+function sportDiversity(blocks, events) {
+	const eventSports = new Set((events || []).map((e) => e.sport).filter(Boolean));
+	if (eventSports.size === 0) return 1;
+	const blockText = blocks
+		.map((b) => {
+			let text = b.text || "";
+			if (Array.isArray(b.items)) text += " " + b.items.map((i) => (typeof i === "string" ? i : i.text || "")).join(" ");
+			return text;
+		})
+		.join(" ");
+	const sportEmojis = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎", f1: "🏎", chess: "♟", esports: "🎮", olympics: "🏅" };
+	const found = new Set();
+	for (const [sport, emoji] of Object.entries(sportEmojis)) {
+		if (blockText.includes(emoji)) found.add(sport === "f1" ? "formula1" : sport);
+	}
+	return Math.min(found.size / eventSports.size, 1);
+}
+
+function blockTypeBalance(blocks) {
+	if (blocks.length === 0) return 1;
+	const counts = {};
+	for (const b of blocks) {
+		counts[b.type] = (counts[b.type] || 0) + 1;
+	}
+	const maxRatio = Math.max(...Object.values(counts)) / blocks.length;
+	return maxRatio > 0.8 ? 0.5 : 1;
+}
+
+function textQualityRatio(blocks) {
+	let checked = 0;
+	let withinLimit = 0;
+	for (const block of blocks) {
+		const limit = BLOCK_WORD_LIMITS[block.type];
+		if (limit && block.text) {
+			checked++;
+			if (countWords(block.text) <= limit) withinLimit++;
+		}
+	}
+	return checked === 0 ? 1 : withinLimit / checked;
+}
+
+function quietDayPenalty(blocks, events) {
+	const todayCount = (events || []).length;
+	if (todayCount < 3 && blocks.length > 5) return 0.3;
+	return 1;
+}
+
+function blockCountScore(blocks) {
+	const count = blocks.length;
+	if (count >= 3 && count <= 8) return 1;
+	if (count < 3 || count > 10) return 0.4;
+	return 0.7; // 9-10 blocks
+}
+
+export function evaluateEditorialQuality(featured, events, options = {}) {
+	const blocks = Array.isArray(featured?.blocks) ? featured.blocks : [];
+	const todayEvents = filterTodayEvents(events, options.now);
+
+	const metrics = {
+		mustWatchCoverage: roundRatio(mustWatchCoverage(blocks, todayEvents)),
+		sportDiversity: roundRatio(sportDiversity(blocks, todayEvents)),
+		blockTypeBalance: roundRatio(blockTypeBalance(blocks)),
+		textQuality: roundRatio(textQualityRatio(blocks)),
+		quietDayCompliance: roundRatio(quietDayPenalty(blocks, todayEvents)),
+		blockCountTarget: roundRatio(blockCountScore(blocks)),
+	};
+
+	const weights = {
+		mustWatchCoverage: 30,
+		sportDiversity: 20,
+		blockTypeBalance: 15,
+		textQuality: 15,
+		quietDayCompliance: 10,
+		blockCountTarget: 10,
+	};
+
+	let score = 0;
+	for (const [key, weight] of Object.entries(weights)) {
+		score += metrics[key] * weight;
+	}
+	score = clamp(Math.round(score), 0, 100);
+
+	const issues = [];
+	if (metrics.mustWatchCoverage < 0.5) {
+		issues.push({ severity: "warning", code: "must_watch_missed", message: `Only ${Math.round(metrics.mustWatchCoverage * 100)}% of must-watch events covered in blocks` });
+	}
+	if (metrics.sportDiversity < 0.3) {
+		issues.push({ severity: "warning", code: "low_sport_diversity", message: `Sport diversity is ${Math.round(metrics.sportDiversity * 100)}%` });
+	}
+	if (metrics.blockCountTarget < 0.5) {
+		issues.push({ severity: "warning", code: "block_count_out_of_range", message: `Block count ${blocks.length} is outside ideal range (3-8)` });
+	}
+
+	return { score, metrics, issues };
+}
+
+function filterTodayEvents(events, now) {
+	if (!Array.isArray(events)) return [];
+	const ref = now || new Date();
+	const todayStart = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
+	return events.filter((e) => {
+		const t = new Date(e.time);
+		return t >= todayStart && t < todayEnd;
+	});
+}
+
+export function evaluateWatchPlanQuality(watchPlan) {
+	const picks = Array.isArray(watchPlan?.picks) ? watchPlan.picks : [];
+
+	const pickCount = picks.length;
+	const avgScore = pickCount > 0 ? Math.round(picks.reduce((sum, p) => sum + (p.score || 0), 0) / pickCount) : 0;
+	const streamingCoverage = pickCount > 0
+		? roundRatio(picks.filter((p) => Array.isArray(p.streaming) && p.streaming.length > 0).length / pickCount)
+		: 0;
+	const reasonCoverage = pickCount > 0
+		? roundRatio(picks.filter((p) => Array.isArray(p.reasons) && p.reasons.length > 0).length / pickCount)
+		: 0;
+
+	const metrics = { pickCount, avgScore, streamingCoverage, reasonCoverage };
+
+	let score = 0;
+	if (pickCount > 0) score += 40;
+	score += streamingCoverage * 30;
+	score += reasonCoverage * 30;
+	score = clamp(Math.round(score), 0, 100);
+
+	return { score, metrics };
+}
+
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied } = {}) {
+	return {
+		timestamp: new Date().toISOString(),
+		editorial: editorial
+			? { score: editorial.score, mustWatchCoverage: editorial.metrics.mustWatchCoverage, sportDiversity: editorial.metrics.sportDiversity, blockCount: featured?.blocks?.length ?? 0 }
+			: null,
+		enrichment: enrichment
+			? { score: enrichment.score ?? null, importanceCoverage: enrichment.importanceCoverage ?? enrichment.after?.importanceCoverage ?? null, summaryCoverage: enrichment.summaryCoverage ?? enrichment.after?.summaryCoverage ?? null }
+			: null,
+		featured: featured
+			? { score: featured.score ?? null, blockCount: Array.isArray(featured.blocks) ? featured.blocks.length : featured.blockCount ?? 0, provider: featured.provider ?? null, valid: featured.valid ?? null }
+			: null,
+		watchPlan: watchPlan
+			? { pickCount: watchPlan.metrics?.pickCount ?? watchPlan.pickCount ?? 0, avgScore: watchPlan.metrics?.avgScore ?? watchPlan.avgScore ?? 0, streamingCoverage: watchPlan.metrics?.streamingCoverage ?? 0 }
+			: null,
+		hintsApplied: hintsApplied || [],
+	};
+}
+
+const ADAPTIVE_HINT_RULES = [
+	{ metric: "mustWatchCoverage", threshold: 0.6, hint: "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix." },
+	{ metric: "sportDiversity", threshold: 0.4, hint: "CORRECTION: Recent outputs were too focused on one sport. Include events from at least 2 different sports when available." },
+	{ metric: "blockTypeBalance", threshold: 0.6, hint: "CORRECTION: Recent outputs used too many of the same block type. Mix headlines, event-lines, narratives, and dividers." },
+	{ metric: "textQuality", threshold: 0.7, hint: "CORRECTION: Recent blocks exceeded word limits. headline: max 15 words, event-line: max 20, narrative: max 40." },
+	{ metric: "blockCountTarget", threshold: 0.6, hint: "CORRECTION: Keep total block count between 3 and 8. Recent outputs were outside this range." },
+	{ metric: "quietDayCompliance", threshold: 0.5, hint: "CORRECTION: On quiet days (<3 events), use only 3-4 blocks. Don't pad with low-importance events." },
+];
+
+export function buildAdaptiveHints(history) {
+	const empty = { hints: [], metrics: {} };
+	if (!Array.isArray(history) || history.length < 3) return empty;
+
+	const recent = history.slice(-5);
+	const metricKeys = ADAPTIVE_HINT_RULES.map((r) => r.metric);
+	const averages = {};
+
+	for (const key of metricKeys) {
+		const values = recent
+			.map((entry) => entry.editorial?.[key] ?? null)
+			.filter((v) => v !== null && v !== undefined);
+		averages[key] = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;
+	}
+
+	const hints = [];
+	for (const rule of ADAPTIVE_HINT_RULES) {
+		const avg = averages[rule.metric];
+		if (avg !== null && avg < rule.threshold) {
+			hints.push(rule.hint);
+		}
+	}
+
+	return { hints, metrics: averages };
 }

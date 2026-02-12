@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_HOUR } from "./lib/helpers.js";
 
 const dataDir = rootDataPath();
 const sports = ["football", "golf", "tennis", "f1", "chess", "esports"];
@@ -64,7 +64,7 @@ if (fs.existsSync(configDir)) {
 	}
 }
 // Keep events that started up to 6 hours ago (ongoing matches/rounds)
-const now = Date.now() - 6 * 60 * 60 * 1000;
+const now = Date.now() - 6 * MS_PER_HOUR;
 const future = all.filter((e) => e.time && Date.parse(e.time) >= now);
 future.sort((a, b) => new Date(a.time) - new Date(b.time));
 fs.writeFileSync(

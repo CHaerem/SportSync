@@ -1,6 +1,6 @@
 const PLAN_WINDOWS_MINUTES = [30, 60, 120];
 const MAX_WINDOW_ITEMS = 3;
-const MAX_PICKS = 6;
+const MAX_PICKS = 3;
 
 function normalize(value) {
 	return typeof value === "string" ? value.toLowerCase().trim() : "";
