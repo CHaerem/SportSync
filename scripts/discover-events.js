@@ -21,6 +21,7 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY } from "./lib/helpers.js";
+import { buildVerificationHints } from "./lib/schedule-verifier.js";
 
 const MAX_TASKS_PER_RUN = 3;
 const ATHLETE_REFRESH_DAYS = 7;
@@ -116,8 +117,11 @@ export function findResearchTasks(configs, coverageGaps, now = new Date()) {
 
 /**
  * Build a research prompt for a discovery task.
+ * @param {object} task - Discovery task
+ * @param {object} userContext - User preferences
+ * @param {string[]} verificationHints - Optional accuracy correction hints from verification history
  */
-export function buildResearchPrompt(task, userContext) {
+export function buildResearchPrompt(task, userContext, verificationHints) {
 	const now = new Date();
 	const windowEnd = new Date(now.getTime() + EVENT_WINDOW_DAYS * MS_PER_DAY);
 	const windowStr = `${now.toISOString().split("T")[0]} to ${windowEnd.toISOString().split("T")[0]}`;
@@ -153,6 +157,10 @@ Return ONLY the JSON object, no markdown fences.`;
 		? `\nUSER INTERESTS: ${JSON.stringify(userContext)}`
 		: "";
 
+	const accuracySection = Array.isArray(verificationHints) && verificationHints.length > 0
+		? `\n\nACCURACY CORRECTIONS:\n${verificationHints.join("\n")}`
+		: "";
+
 	return `You are a sports research assistant. Your job is to find accurate, current schedule data.
 
 TASK: Research "${nameHint}" (${sportHint})
@@ -183,7 +191,7 @@ INSTRUCTIONS:
 6. For athletes, verify current nationality and retirement status
 7. For streaming, check if NRK, TV2, Eurosport, or Viaplay broadcast this event in Norway
 
-Return ONLY the JSON object, no markdown fences.`;
+Return ONLY the JSON object, no markdown fences.${accuracySection}`;
 }
 
 /**
@@ -338,6 +346,13 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 	const coverageGaps = readJsonIfExists(path.join(dDir, "coverage-gaps.json"));
 	const userContext = readJsonIfExists(path.join(cfgDir, "user-context.json"));
 
+	// Load verification history for accuracy hints
+	const verificationHistory = readJsonIfExists(path.join(dDir, "verification-history.json"));
+	const { hints: verificationHints } = buildVerificationHints(verificationHistory);
+	if (verificationHints.length > 0) {
+		console.log(`Injecting ${verificationHints.length} accuracy correction(s) from verification history`);
+	}
+
 	const tasks = findResearchTasks(configs, coverageGaps, timestamp);
 
 	if (tasks.length === 0) {
@@ -360,7 +375,7 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 		console.log(`\n  Researching: ${taskLog.target} (${task.reason})`);
 
 		try {
-			const prompt = buildResearchPrompt(task, userContext);
+			const prompt = buildResearchPrompt(task, userContext, verificationHints);
 			const rawResult = await discoverWithClaudeCLI(prompt);
 			const result = parseDiscoveryResult(rawResult);
 

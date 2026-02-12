@@ -264,6 +264,64 @@ export function evaluateEventDiscovery(dataDir = ROOT, scriptsDir = SCRIPTS) {
 	return makeLoop(score, parts.join(", "));
 }
 
+// Loop 8: Schedule Verification
+// observe: verification-history.json -> decide: buildVerificationHints -> act: inject into discovery prompt
+export function evaluateScheduleVerification(dataDir = ROOT, scriptsDir = SCRIPTS) {
+	let score = 0;
+	const parts = [];
+
+	// 0.33 if verification-history.json exists and is recent
+	const historyPath = path.join(dataDir, "verification-history.json");
+	const history = readJsonIfExists(historyPath);
+	const historyAge = fileAgeMsOrNull(historyPath);
+	if (history && Array.isArray(history.runs) && history.runs.length > 0 && historyAge !== null && historyAge < MS_PER_DAY) {
+		score += 0.33;
+		parts.push("verification history exists and is fresh");
+	} else if (history && Array.isArray(history.runs) && history.runs.length > 0) {
+		parts.push("verification history exists but is stale");
+	} else {
+		parts.push("no verification history");
+	}
+
+	// 0.33 if schedule-verifier.js exists
+	const verifierPath = path.join(scriptsDir, "lib", "schedule-verifier.js");
+	if (fs.existsSync(verifierPath)) {
+		score += 0.33;
+		parts.push("schedule-verifier exists");
+	} else {
+		parts.push("no schedule-verifier module");
+	}
+
+	// 0.34 if at least one config has verificationSummary
+	const configDir = path.join(scriptsDir, "config");
+	let hasVerifiedConfig = false;
+	try {
+		const configFiles = fs.readdirSync(configDir).filter((f) => f.endsWith(".json"));
+		for (const file of configFiles) {
+			const config = readJsonIfExists(path.join(configDir, file));
+			if (config && config.verificationSummary) {
+				hasVerifiedConfig = true;
+				break;
+			}
+		}
+	} catch {
+		// config dir may not exist
+	}
+
+	if (hasVerifiedConfig) {
+		score += 0.34;
+		parts.push("configs have verification summaries");
+	} else if (score >= 0.66) {
+		// Both exist but verification hasn't run yet
+		parts.push("verification not yet applied to configs");
+	} else {
+		parts.push("no verified configs");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
 // Generate next-actions suggestions for open/partial loops
 function buildNextActions(loops) {
 	const actions = [];
@@ -332,6 +390,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.scheduleVerification && loops.scheduleVerification.score < 1.0) {
+		if (loops.scheduleVerification.score < 0.33) {
+			actions.push("Run verify-schedules.js to generate verification history");
+		}
+		if (loops.scheduleVerification.score < 0.66) {
+			actions.push("Ensure scripts/lib/schedule-verifier.js exists with verification engine");
+		}
+		if (loops.scheduleVerification.score < 1.0) {
+			actions.push("Run verification to apply verificationSummary to at least one config");
+		}
+	}
+
 	return actions;
 }
 
@@ -344,6 +414,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		watchPlan: evaluateWatchPlan(dataDir),
 		codeHealth: evaluateCodeHealth(rootDir),
 		eventDiscovery: evaluateEventDiscovery(dataDir, scriptsDir),
+		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

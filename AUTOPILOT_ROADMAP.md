@@ -22,11 +22,11 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 ### Current Tasks
 
-- [BLOCKED] requires watch-plan UI — Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs. Blocked because watch-plan data has no frontend UI rendering yet; adding UI + feedback + persistence exceeds 300-line automation limit.
+- [PENDING] Add watch-plan feedback loop — Add thumbs-up/thumbs-down controls to `docs/js/dashboard.js` watch-plan items, persist feedback in `localStorage`, and expose aggregate counts in a small `docs/data/watch-feedback.json` artifact during pipeline runs. **Phase 1, Step 2 of vision roadmap.**
 
-- [BLOCKED] requires watch-plan UI — Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic. Blocked because watch-plan items are not rendered in the dashboard.
+- [PENDING] Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens, then surface weekly totals in `docs/data/ai-quality.json` so autopilot can optimize ranking logic.
 
-- [BLOCKED] already implemented server-side — Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`. Client-side integration requires watch-plan UI first.
+- [DONE] (already implemented server-side) Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`.
 
 ---
 
@@ -256,7 +256,7 @@ During nightly runs, the autopilot should:
 
 - [DONE] (PR #42) Add `aria-expanded` to featured section expand buttons — Added `aria-expanded="false"` attribute and toggle in click handler, matching band toggle pattern.
 
-- [PENDING] Add render-once guard for watch-plan UI — Watch-plan data (`docs/data/watch-plan.json`) is generated and cached but never rendered. Add a minimal read-only display in `dashboard.js` showing top 3 picks below the brief section. ~60 lines, 1 file, LOW risk. Prerequisite for the EXPERIENCE Lane tasks.
+- [DONE] (already implemented) Add render-once guard for watch-plan UI — `renderWatchPlan()` exists in `dashboard.js` lines 430-490 with full CSS styling. Loads `watch-plan.json`, renders top picks with time, reasons, streaming info, and click-to-scroll.
 
 - [PENDING] Improve sport iteration efficiency in `renderBand()` — `docs/js/dashboard.js:379-401` iterates all SPORT_CONFIG entries even when only 1-2 sports have events. Iterate `sportGroups.entries()` instead and look up sport config by ID. ~10 lines changed, LOW risk.
 
@@ -264,7 +264,7 @@ During nightly runs, the autopilot should:
 
 ## Autonomy Infrastructure (2026-02-12)
 
-Closed-loop self-improvement system. Autonomy score: **100% (6/6 loops closed)**.
+Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**.
 
 ### Completed
 
@@ -274,7 +274,11 @@ Closed-loop self-improvement system. Autonomy score: **100% (6/6 loops closed)**
 
 - [DONE] (manual session) Coverage gap auto-resolver — `scripts/resolve-coverage-gaps.js` reads `coverage-gaps.json` and creates skeleton curated configs for high/medium-confidence actionable gaps. Wired into `detect-coverage-gaps.js` to run automatically. 11 tests.
 
-- [DONE] (manual session) Autonomy scorecard — `scripts/autonomy-scorecard.js` evaluates 6 feedback loops (featured quality, enrichment quality, coverage gaps, pipeline health, watch plan, code health). Wired into `pipeline-health.js`. Outputs `autonomy-report.json`. 33 tests.
+- [DONE] (manual session) Autonomy scorecard — `scripts/autonomy-scorecard.js` evaluates 8 feedback loops (featured quality, enrichment quality, coverage gaps, pipeline health, watch plan, code health, discovery, schedule verification). Wired into `pipeline-health.js`. Outputs `autonomy-report.json`.
+
+- [DONE] (manual session) Discovery feedback loop (Loop 7) — `discover-events.js` + `sync-configs.js` auto-discover events, athletes, and schedules via Claude CLI + WebSearch. `autonomy-scorecard.js` tracks discovery health.
+
+- [DONE] (manual session) Schedule verification feedback loop (Loop 8) — `scripts/lib/schedule-verifier.js` with 5 pluggable verifiers (static, ESPN, RSS, sport data, web re-check). Per-event confidence scoring. `buildVerificationHints()` injects accuracy corrections into discovery prompts. `verification-history.json` tracks last 50 runs. 68 tests.
 
 - [DONE] (manual session) Centralize time constants — `MS_PER_MINUTE`, `MS_PER_HOUR`, `MS_PER_DAY` in `helpers.js`, replaced magic numbers across codebase.
 
@@ -286,8 +290,18 @@ Closed-loop self-improvement system. Autonomy score: **100% (6/6 loops closed)**
 
 ### Pending Autonomy Tasks
 
-- [PENDING] Add watch-plan rendering to dashboard — Display top picks in `docs/js/dashboard.js` below the brief. ~60 lines. Prerequisite for user feedback loop.
+- [DONE] (already implemented) Add watch-plan rendering to dashboard — `renderWatchPlan()` in `dashboard.js` lines 430-490. Renders picks with time, emoji, reasons, streaming, and click-to-event navigation.
+
+- [PENDING] Add thumbs-up/down feedback to watch-plan items — After watch-plan renders in dashboard, add lightweight feedback controls. Persist in `localStorage`, export aggregate counts via `preferences-manager.js`. ~40 lines. Enables the system to learn from user reactions.
+
+- [PENDING] Surface engagement signals in pipeline — Read `localStorage` feedback data via a small client-side export mechanism. Feed into `watch-plan.js` scoring to boost/demote events matching user feedback patterns. ~80 lines across 2 files.
 
 - [PENDING] Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health. Requires workflow file change (needs human approval).
 
 - [PENDING] Add trend tracking to autonomy scorecard — Track score over time in `quality-history.json` snapshots to detect autonomy regressions.
+
+- [PENDING] Add preference evolution logic — Observe which events get expanded/clicked in the dashboard, which sports dominate engagement. Periodically update `user-context.json` sport weights to reflect actual interest patterns. ~100 lines, new script.
+
+- [PENDING] Add opportunity detection to autopilot scouting — After completing roadmap tasks, analyze RSS trends + coverage gaps + engagement signals to identify new features or data sources worth adding. Propose as new roadmap tasks. ~60 lines added to autopilot prompt.
+
+- [PENDING] Replace silent pipeline failures with structured error reporting — Audit all `|| echo "failed"` handlers in the pipeline. Replace with structured error objects in `health-report.json` that the autopilot can read and attempt to repair. ~120 lines across 3-4 files.

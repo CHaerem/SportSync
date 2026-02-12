@@ -96,4 +96,5 @@ describe("buildWatchPlan()", () => {
 		const plan = buildWatchPlan(events, { now });
 		expect(plan.picks).toHaveLength(3);
 	});
+
 });

@@ -465,7 +465,8 @@ class Dashboard {
 				streams.forEach(s => { html += `<span class="pick-stream">${this.esc(s.platform || s)}</span>`; });
 				html += '</div>';
 			}
-			html += `</div></div>`;
+			html += `</div>`;
+			html += `</div>`;
 		});
 
 		container.innerHTML = html;

@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T16:28:37.976Z",
+  "generatedAt": "2026-02-12T16:46:11.057Z",
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
-      "totalEvents": 32,
-      "importanceCoverage": 0.688,
-      "summaryCoverage": 0.688,
-      "relevanceCoverage": 0.688,
-      "tagsCoverage": 0.531
+      "totalEvents": 31,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 32,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -19,42 +19,43 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 55,
-    "aiUpdatedFields": 22,
-    "failedBatches": 1,
-    "totalEvents": 32,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
+    "failedBatches": 0,
+    "totalEvents": 31,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
+    "score": 90,
+    "issues": [
+      "event-line block exceeds 20 words: \"⚽ Atlético Madrid v Barcelona, 21:00, Copa del Rey...\"",
+      "event-line block exceeds 20 words: \"⚽ Brentford v Arsenal, 21:00, Premier League — Ars...\""
+    ],
     "blockCount": 8,
-    "generationMs": 11962,
+    "generationMs": 2,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 85,
+    "score": 96,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.714,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },

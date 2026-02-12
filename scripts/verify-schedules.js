@@ -2,46 +2,28 @@
 /**
  * Schedule Verification Script
  *
- * Cross-references curated config event dates/times against live API data
- * (ESPN scoreboard). Reports mismatches to health-report.json and auto-corrects
- * dates when confidence is high.
+ * Thin CLI orchestrator that imports from schedule-verifier.js.
+ * Runs the 5-verifier chain, writes verification-history.json,
+ * applies high-confidence corrections, flags unverified configs
+ * for re-research, and merges summary into health-report.json.
  */
 
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, fetchJson } from "./lib/helpers.js";
+import {
+	titleSimilarity,
+	detectSportFromTitle,
+	ESPN_SCOREBOARD_URLS,
+	verifyConfig,
+	buildVerificationHints,
+} from "./lib/schedule-verifier.js";
 
 const configDir = path.resolve(process.cwd(), "scripts", "config");
 const dataDir = rootDataPath();
 
-const ESPN_SCOREBOARD_URLS = {
-	"cross-country": "https://site.api.espn.com/apis/site/v2/sports/skiing/cross-country/scoreboard",
-	biathlon: "https://site.api.espn.com/apis/site/v2/sports/skiing/biathlon/scoreboard",
-	"ski-jumping": "https://site.api.espn.com/apis/site/v2/sports/skiing/ski-jumping/scoreboard",
-	"alpine-skiing": "https://site.api.espn.com/apis/site/v2/sports/skiing/alpine/scoreboard",
-	"nordic-combined": "https://site.api.espn.com/apis/site/v2/sports/skiing/nordic-combined/scoreboard",
-	football: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
-	golf: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard",
-	tennis: "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard",
-	f1: "https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard",
-};
-
-/**
- * Detect which ESPN sport category a curated event title maps to.
- */
-export function detectSportFromTitle(title) {
-	const lower = title.toLowerCase();
-	if (lower.includes("cross-country")) return "cross-country";
-	if (lower.includes("biathlon")) return "biathlon";
-	if (lower.includes("ski jumping")) return "ski-jumping";
-	if (lower.includes("alpine")) return "alpine-skiing";
-	if (lower.includes("nordic combined")) return "nordic-combined";
-	if (lower.includes("football") || lower.includes("soccer")) return "football";
-	if (lower.includes("golf")) return "golf";
-	if (lower.includes("tennis")) return "tennis";
-	if (lower.includes("formula") || lower.includes("f1") || lower.includes("grand prix")) return "f1";
-	return null;
-}
+const MAX_HISTORY_RUNS = 50;
+const UNVERIFIED_THRESHOLD = 0.5;
 
 /**
  * Load all curated configs that have an `events` array with date info.
@@ -63,11 +45,11 @@ export function loadCuratedConfigs() {
 /**
  * Check a single curated config for schedule issues.
  * Returns { issues, corrections } without making API calls.
+ * (Preserved for backward compatibility with existing tests.)
  */
 export function verifyConfigDates(config) {
 	const issues = [];
 	const corrections = [];
-	const now = new Date();
 
 	// Check config-level dates
 	if (config.startDate && config.endDate) {
@@ -143,6 +125,7 @@ export function verifyConfigDates(config) {
 /**
  * Cross-reference curated events against ESPN scoreboard data.
  * Returns matches and mismatches.
+ * (Preserved for backward compatibility with existing tests.)
  */
 export function crossReferenceWithAPI(configEvents, apiEvents, sportKey) {
 	const results = [];
@@ -151,7 +134,6 @@ export function crossReferenceWithAPI(configEvents, apiEvents, sportKey) {
 		const configDate = new Date(configEvent.time);
 		if (isNaN(configDate.getTime())) continue;
 
-		// Try to match by title similarity and date proximity
 		let bestMatch = null;
 		let bestScore = 0;
 
@@ -159,15 +141,14 @@ export function crossReferenceWithAPI(configEvents, apiEvents, sportKey) {
 			const apiDate = new Date(apiEvent.date || apiEvent.time);
 			if (isNaN(apiDate.getTime())) continue;
 
-			// Score: title similarity + date proximity
-			const titleScore = titleSimilarity(configEvent.title, apiEvent.name || apiEvent.title || "");
+			const tScore = titleSimilarity(configEvent.title, apiEvent.name || apiEvent.title || "");
 			const timeDiffHours = Math.abs(configDate - apiDate) / (1000 * 60 * 60);
 			const dateScore = timeDiffHours < 1 ? 1.0 : timeDiffHours < 24 ? 0.5 : timeDiffHours < 72 ? 0.2 : 0;
 
-			const score = titleScore * 0.6 + dateScore * 0.4;
+			const score = tScore * 0.6 + dateScore * 0.4;
 			if (score > bestScore && score > 0.3) {
 				bestScore = score;
-				bestMatch = { apiEvent, titleScore, timeDiffHours, score };
+				bestMatch = { apiEvent, titleScore: tScore, timeDiffHours, score };
 			}
 		}
 
@@ -187,23 +168,100 @@ export function crossReferenceWithAPI(configEvents, apiEvents, sportKey) {
 	return results;
 }
 
-/**
- * Simple title similarity score (0-1) based on word overlap.
- */
-export function titleSimilarity(a, b) {
-	const wordsA = new Set(a.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean));
-	const wordsB = new Set(b.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean));
-	if (wordsA.size === 0 || wordsB.size === 0) return 0;
+// Re-export from schedule-verifier for backward compatibility
+export { titleSimilarity, detectSportFromTitle };
 
-	let overlap = 0;
-	for (const w of wordsA) {
-		if (wordsB.has(w)) overlap++;
+/**
+ * Fetch ESPN data for all relevant sports (batched).
+ */
+async function fetchESPNData(fetchFn) {
+	const espnEvents = {};
+	for (const [sport, url] of Object.entries(ESPN_SCOREBOARD_URLS)) {
+		try {
+			const data = await fetchFn(url);
+			if (data?.events && Array.isArray(data.events)) {
+				espnEvents[sport] = data.events;
+			}
+		} catch (err) {
+			console.warn(`ESPN ${sport} fetch failed: ${err.message}`);
+		}
 	}
-	return (2 * overlap) / (wordsA.size + wordsB.size);
+	return espnEvents;
 }
 
 /**
- * Run full schedule verification.
+ * Load sport data files from docs/data/{sport}.json.
+ */
+function loadSportDataMap(dDir) {
+	const sportDataMap = {};
+	const sportFiles = ["football", "golf", "tennis", "f1", "chess", "esports"];
+	for (const sport of sportFiles) {
+		const data = readJsonIfExists(path.join(dDir, `${sport}.json`));
+		if (data) {
+			sportDataMap[sport] = data;
+		}
+	}
+	return sportDataMap;
+}
+
+/**
+ * Apply a date correction to a curated config file.
+ */
+function applyCorrection(correction) {
+	const filePath = path.join(configDir, correction.config);
+	const data = readJsonIfExists(filePath);
+	if (!data || !Array.isArray(data.events)) return;
+
+	let modified = false;
+	for (const event of data.events) {
+		if (event.title === correction.event && event.time === correction.oldValue) {
+			event.time = correction.newValue;
+			modified = true;
+		}
+	}
+
+	if (modified) {
+		writeJsonPretty(filePath, data);
+		console.log(`Corrected "${correction.event}" in ${correction.config}: ${correction.oldValue} → ${correction.newValue}`);
+	}
+}
+
+/**
+ * Flag configs with >50% unverified events as needsResearch.
+ */
+function flagUnverifiedConfigs(configResults) {
+	for (const result of configResults) {
+		if (result.eventsChecked === 0) continue;
+		const unverifiedRatio = result.unverified / result.eventsChecked;
+		if (unverifiedRatio > UNVERIFIED_THRESHOLD) {
+			const filePath = path.join(configDir, result.file);
+			const data = readJsonIfExists(filePath);
+			if (data && !data.needsResearch) {
+				data.needsResearch = true;
+				data.verificationSummary = result.verificationSummary;
+				writeJsonPretty(filePath, data);
+				console.log(`Flagged ${result.file} for re-research (${Math.round(unverifiedRatio * 100)}% unverified)`);
+			}
+		}
+	}
+}
+
+/**
+ * Write verificationSummary to each config.
+ */
+function writeVerificationSummaries(configResults) {
+	for (const result of configResults) {
+		const filePath = path.join(configDir, result.file);
+		const data = readJsonIfExists(filePath);
+		if (data) {
+			data.verificationSummary = result.verificationSummary;
+			writeJsonPretty(filePath, data);
+		}
+	}
+}
+
+/**
+ * Run full schedule verification using the modular verifier engine.
  * @param {object} options - { configs, fetchFn, dryRun }
  */
 export async function verifySchedules(options = {}) {
@@ -213,14 +271,14 @@ export async function verifySchedules(options = {}) {
 	const allCorrections = [];
 	const apiMismatches = [];
 
-	// Step 1: Static validation of all configs
+	// Step 1: Static validation of all configs (preserved for backward compat)
 	for (const config of configs) {
 		const { issues, corrections } = verifyConfigDates(config);
 		allIssues.push(...issues);
 		allCorrections.push(...corrections);
 	}
 
-	// Step 2: Cross-reference with ESPN APIs (best-effort)
+	// Step 2: Cross-reference with ESPN APIs (best-effort, backward compat)
 	for (const config of configs) {
 		for (const event of config.events) {
 			const sport = detectSportFromTitle(event.title);
@@ -246,7 +304,7 @@ export async function verifySchedules(options = {}) {
 						}
 
 						allIssues.push({
-							severity: m.confidence === "high" ? "warning" : "warning",
+							severity: "warning",
 							code: "schedule_mismatch",
 							config: config.file,
 							event: m.configEvent,
@@ -255,7 +313,6 @@ export async function verifySchedules(options = {}) {
 					}
 				}
 			} catch (err) {
-				// API fetch failures are non-fatal
 				console.warn(`ESPN ${sport} fetch failed: ${err.message}`);
 			}
 		}
@@ -264,7 +321,7 @@ export async function verifySchedules(options = {}) {
 	// Step 3: Apply high-confidence corrections
 	if (!dryRun && allCorrections.length > 0) {
 		for (const correction of allCorrections) {
-			applyCorrection(correction);
+			applyCorrection({ ...correction, oldValue: correction.oldTime, newValue: correction.newTime });
 		}
 	}
 
@@ -279,59 +336,120 @@ export async function verifySchedules(options = {}) {
 }
 
 /**
- * Apply a date correction to a curated config file.
+ * Run the full modular verification pipeline (verifier chain + history + health).
  */
-function applyCorrection(correction) {
-	const filePath = path.join(configDir, correction.config);
-	const data = readJsonIfExists(filePath);
-	if (!data || !Array.isArray(data.events)) return;
+export async function runVerification(options = {}) {
+	const {
+		configs = loadCuratedConfigs(),
+		fetchFn = fetchJson,
+		dryRun = false,
+		dDir = dataDir,
+		cfgDir = configDir,
+	} = options;
 
-	let modified = false;
-	for (const event of data.events) {
-		if (event.title === correction.event && event.time === correction.oldTime) {
-			event.time = correction.newTime;
-			modified = true;
+	// Load context
+	const rssDigest = readJsonIfExists(path.join(dDir, "rss-digest.json"));
+	const sportDataMap = loadSportDataMap(dDir);
+	const espnEvents = await fetchESPNData(fetchFn);
+	const verificationHistory = readJsonIfExists(path.join(dDir, "verification-history.json")) || { runs: [] };
+
+	const context = {
+		rssDigest,
+		sportDataMap,
+		espnEvents,
+		now: new Date(),
+		webSearchUsed: false,
+	};
+
+	// Run verifier chain for each config
+	const configResults = [];
+	for (const config of configs) {
+		const result = await verifyConfig(config, context, { skipWebSearch: true, dryRun });
+		configResults.push(result);
+	}
+
+	// Apply high-confidence corrections
+	if (!dryRun) {
+		for (const result of configResults) {
+			for (const correction of result.corrections) {
+				applyCorrection({ config: result.file, ...correction });
+			}
 		}
+
+		// Flag configs with >50% unverified for re-research
+		flagUnverifiedConfigs(configResults);
+
+		// Write verificationSummary to each config
+		writeVerificationSummaries(configResults);
 	}
 
-	if (modified) {
-		writeJsonPretty(filePath, data);
-		console.log(`Corrected "${correction.event}" in ${correction.config}: ${correction.oldTime} → ${correction.newTime}`);
+	// Build run record
+	const runRecord = {
+		timestamp: new Date().toISOString(),
+		configsChecked: configs.length,
+		eventsChecked: configs.reduce((sum, c) => sum + c.events.length, 0),
+		results: configResults.map((r) => ({
+			file: r.file,
+			sport: configs.find((c) => c.file === r.file)?.sport || null,
+			eventsChecked: r.eventsChecked,
+			verified: r.verified,
+			plausible: r.plausible,
+			unverified: r.unverified,
+			overallConfidence: r.overallConfidence,
+			corrections: r.corrections,
+		})),
+	};
+
+	// Append to verification history (keep last 50)
+	verificationHistory.runs.push(runRecord);
+	while (verificationHistory.runs.length > MAX_HISTORY_RUNS) {
+		verificationHistory.runs.shift();
 	}
+
+	if (!dryRun) {
+		writeJsonPretty(path.join(dDir, "verification-history.json"), verificationHistory);
+	}
+
+	return { runRecord, verificationHistory, configResults };
 }
 
 async function main() {
 	console.log("Verifying curated config schedules...");
 
-	const result = await verifySchedules();
+	const dDir = rootDataPath();
+	const result = await runVerification({ dDir, dryRun: false });
+	const { runRecord } = result;
 
-	console.log(`Checked ${result.configsChecked} config(s), ${result.eventsChecked} event(s).`);
-	console.log(`Issues: ${result.issues.length}, Corrections: ${result.corrections.length}`);
+	console.log(`Checked ${runRecord.configsChecked} config(s), ${runRecord.eventsChecked} event(s).`);
 
-	for (const issue of result.issues) {
-		console.log(`  [${issue.severity}] ${issue.message}`);
+	let totalVerified = 0;
+	let totalPlausible = 0;
+	let totalUnverified = 0;
+	let totalCorrections = 0;
+
+	for (const r of runRecord.results) {
+		totalVerified += r.verified;
+		totalPlausible += r.plausible;
+		totalUnverified += r.unverified;
+		totalCorrections += (r.corrections || []).length;
+		console.log(`  ${r.file}: ${r.verified} verified, ${r.plausible} plausible, ${r.unverified} unverified (confidence: ${r.overallConfidence})`);
 	}
 
-	// Merge issues into existing health report
-	const healthPath = path.join(dataDir, "health-report.json");
+	console.log(`Total: ${totalVerified} verified, ${totalPlausible} plausible, ${totalUnverified} unverified, ${totalCorrections} corrections`);
+
+	// Merge verification summary into health report
+	const healthPath = path.join(dDir, "health-report.json");
 	const health = readJsonIfExists(healthPath);
 	if (health) {
-		// Remove old schedule issues, add new ones
-		health.issues = (health.issues || []).filter((i) => i.code !== "schedule_mismatch" && !i.code?.startsWith("config_"));
-		health.issues.push(...result.issues);
-
-		// Recalculate status
-		const hasCritical = health.issues.some((i) => i.severity === "critical");
-		const hasWarning = health.issues.some((i) => i.severity === "warning");
-		health.status = hasCritical ? "critical" : hasWarning ? "warning" : "healthy";
 		health.scheduleVerification = {
-			lastChecked: result.generatedAt,
-			configsChecked: result.configsChecked,
-			eventsChecked: result.eventsChecked,
-			issueCount: result.issues.length,
-			correctionsApplied: result.corrections.length,
+			lastChecked: runRecord.timestamp,
+			configsChecked: runRecord.configsChecked,
+			eventsChecked: runRecord.eventsChecked,
+			verified: totalVerified,
+			plausible: totalPlausible,
+			unverified: totalUnverified,
+			correctionsApplied: totalCorrections,
 		};
-
 		writeJsonPretty(healthPath, health);
 	}
 }

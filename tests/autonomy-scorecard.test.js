@@ -10,6 +10,7 @@ import {
 	evaluateWatchPlan,
 	evaluateCodeHealth,
 	evaluateEventDiscovery,
+	evaluateScheduleVerification,
 	evaluateAutonomy,
 } from "../scripts/autonomy-scorecard.js";
 
@@ -368,6 +369,67 @@ describe("evaluateEventDiscovery()", () => {
 	});
 });
 
+// --- Loop 8: Schedule Verification ---
+
+describe("evaluateScheduleVerification()", () => {
+	it("scores 0 when all data is missing", () => {
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+	});
+
+	it("scores 0.33 when only fresh verification history exists", () => {
+		writeJson(path.join(dataDir, "verification-history.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
+		});
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(0.33);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("verification history exists");
+	});
+
+	it("scores 0.66 when history + verifier module exist", () => {
+		writeJson(path.join(dataDir, "verification-history.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
+		});
+		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
+		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(0.66);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("schedule-verifier exists");
+	});
+
+	it("scores 1.0 when history + verifier + verified configs all exist", () => {
+		writeJson(path.join(dataDir, "verification-history.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
+		});
+		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
+		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
+		writeJson(path.join(scriptsDir, "config", "verified-event.json"), {
+			name: "Verified Event",
+			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
+		});
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("verification summaries");
+	});
+
+	it("does not count stale history as fresh", () => {
+		const historyPath = path.join(dataDir, "verification-history.json");
+		writeJson(historyPath, {
+			runs: [{ timestamp: "2026-01-01T00:00:00Z", results: [] }],
+		});
+		// Set mtime to 2 days ago
+		const twoDaysAgo = new Date(Date.now() - 2 * 24 * 3600 * 1000);
+		fs.utimesSync(historyPath, twoDaysAgo, twoDaysAgo);
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("stale");
+	});
+});
+
 // --- Overall evaluation ---
 
 describe("evaluateAutonomy()", () => {
@@ -401,11 +463,21 @@ describe("evaluateAutonomy()", () => {
 			name: "Researched",
 			lastResearched: "2026-02-12T00:00:00Z",
 		});
+		// Loop 8: Schedule Verification
+		writeJson(path.join(dataDir, "verification-history.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
+		});
+		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
+		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
+		writeJson(path.join(scriptsDir, "config", "verified.json"), {
+			name: "Verified",
+			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(7);
-		expect(report.loopsTotal).toBe(7);
+		expect(report.loopsClosed).toBe(8);
+		expect(report.loopsTotal).toBe(8);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -417,10 +489,10 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/7 ≈ 0.29
-		expect(report.overallScore).toBeCloseTo(0.29, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/8 = 0.25
+		expect(report.overallScore).toBeCloseTo(0.25, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(7);
+		expect(report.loopsTotal).toBe(8);
 	});
 
 	it("generates nextActions for open loops", () => {
@@ -460,6 +532,16 @@ describe("evaluateAutonomy()", () => {
 			name: "Researched",
 			lastResearched: "2026-02-12T00:00:00Z",
 		});
+		// Loop 8: Schedule Verification
+		writeJson(path.join(dataDir, "verification-history.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
+		});
+		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
+		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
+		writeJson(path.join(scriptsDir, "config", "verified.json"), {
+			name: "Verified",
+			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions).toHaveLength(0);
@@ -483,7 +565,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(7);
+		expect(report.loopsTotal).toBe(8);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -491,5 +573,6 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.watchPlan.status).toBe("open");
 		expect(report.loops.codeHealth.status).toBe("open");
 		expect(report.loops.eventDiscovery.status).toBe("open");
+		expect(report.loops.scheduleVerification.status).toBe("open");
 	});
 });
