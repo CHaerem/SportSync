@@ -11,7 +11,7 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
-import { evaluateAutonomy } from "./autonomy-scorecard.js";
+import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { LLMClient } from "./lib/llm-client.js";
 
 const dataDir = rootDataPath();
@@ -226,6 +226,14 @@ async function main() {
 	const autonomyPath = path.join(dataDir, "autonomy-report.json");
 	writeJsonPretty(autonomyPath, autonomyReport);
 	console.log(`Autonomy: ${Math.round(autonomyReport.overallScore * 100)}% (${autonomyReport.loopsClosed}/${autonomyReport.loopsTotal} loops closed)`);
+
+	// Track autonomy trend and check for regressions
+	const trend = trackTrend(autonomyReport, dataDir);
+	const regressions = detectRegressions(trend);
+	if (regressions.length > 0) {
+		console.log(`Autonomy regressions detected:`);
+		for (const r of regressions) console.log(`  [WARN] ${r}`);
+	}
 
 	// Generate status summary
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
