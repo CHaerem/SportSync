@@ -250,6 +250,24 @@ class PreferencesManager {
 		};
 	}
 
+	// Engagement tracking — records per-sport expand/click counts
+	trackEngagement(sport) {
+		if (!sport?.trim()) return;
+		if (!this.preferences.engagement) {
+			this.preferences.engagement = {};
+		}
+		if (!this.preferences.engagement[sport]) {
+			this.preferences.engagement[sport] = { clicks: 0, lastClick: null };
+		}
+		this.preferences.engagement[sport].clicks++;
+		this.preferences.engagement[sport].lastClick = new Date().toISOString();
+		this.savePreferences();
+	}
+
+	getEngagement() {
+		return this.preferences.engagement || {};
+	}
+
 	// Reset preferences
 	reset() {
 		localStorage.removeItem(this.STORAGE_KEY);

@@ -330,12 +330,14 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [BLOCKED] reverted — depends on feedback UI | Surface engagement signals in pipeline — Read `localStorage` feedback data via a small client-side export mechanism. Feed into `watch-plan.js` scoring to boost/demote events matching user feedback patterns. ~80 lines across 2 files.
 
-- [PENDING] Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health. Requires workflow file change (needs human approval).
+- [BLOCKED] protected path — requires `.github/workflows/` modification | Wire autonomy score into GitHub Actions summary — Add autonomy score to the workflow step summary output alongside pipeline health.
 
 - [DONE] (PR #48) Add trend tracking to autonomy scorecard — Added `trackTrend()` and `detectRegressions()` to track autonomy score over time in `autonomy-trend.json`. Wired into pipeline-health.js.
 
-- [PENDING] Add preference evolution logic — Observe which events get expanded/clicked in the dashboard, which sports dominate engagement. Periodically update `user-context.json` sport weights to reflect actual interest patterns. ~100 lines, new script.
+- [PENDING] Add client-side engagement tracking — Track which events get expanded/clicked in localStorage via `preferences-manager.js`. Store per-sport click counts and timestamps. ~40 lines in `docs/js/dashboard.js` + `docs/js/preferences-manager.js`. LOW risk. (Step 1 of preference evolution; pipeline consumption requires a data export mechanism.)
 
-- [PENDING] Add opportunity detection to autopilot scouting — After completing roadmap tasks, analyze RSS trends + coverage gaps + engagement signals to identify new features or data sources worth adding. Propose as new roadmap tasks. ~60 lines added to autopilot prompt.
+- [BLOCKED] depends on engagement tracking + data export | Add preference evolution pipeline script — New script to read engagement data and update `user-context.json` sport weights. Requires a mechanism to get client-side localStorage data back to the pipeline.
 
-- [PENDING] Replace silent pipeline failures with structured error reporting — Audit all `|| echo "failed"` handlers in the pipeline. Replace with structured error objects in `health-report.json` that the autopilot can read and attempt to repair. ~120 lines across 3-4 files.
+- [BLOCKED] protected path — requires autopilot workflow/prompt modification | Add opportunity detection to autopilot scouting — After completing roadmap tasks, analyze RSS trends + coverage gaps + engagement signals to identify new features or data sources worth adding.
+
+- [BLOCKED] protected path — all `|| echo "failed"` handlers are in `.github/workflows/update-sports-data.yml` | Replace silent pipeline failures with structured error reporting — Requires workflow file modification which is a protected path.
