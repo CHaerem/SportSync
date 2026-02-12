@@ -209,6 +209,61 @@ export function evaluateCodeHealth(rootDir = process.cwd()) {
 	return makeLoop(0.5, "Roadmap exists but no completed autopilot tasks logged");
 }
 
+// Loop 7: Event Discovery
+// observe: discovery-log.json -> decide: needsResearch flags -> act: populate configs
+export function evaluateEventDiscovery(dataDir = ROOT, scriptsDir = SCRIPTS) {
+	let score = 0;
+	const parts = [];
+
+	// Check: discovery-log.json exists and is recent
+	const logPath = path.join(dataDir, "discovery-log.json");
+	const log = readJsonIfExists(logPath);
+	if (log && Array.isArray(log.runs) && log.runs.length > 0) {
+		score += 0.33;
+		parts.push("discovery log exists");
+	} else {
+		parts.push("no discovery log");
+	}
+
+	// Check: sync-configs.js exists
+	const syncPath = path.join(scriptsDir, "sync-configs.js");
+	if (fs.existsSync(syncPath)) {
+		score += 0.33;
+		parts.push("sync-configs exists");
+	} else {
+		parts.push("no sync-configs script");
+	}
+
+	// Check: at least one config has lastResearched (discovery has run)
+	const configDir = path.join(scriptsDir, "config");
+	let hasResearchedConfig = false;
+	try {
+		const configFiles = fs.readdirSync(configDir).filter((f) => f.endsWith(".json"));
+		for (const file of configFiles) {
+			const config = readJsonIfExists(path.join(configDir, file));
+			if (config && config.lastResearched) {
+				hasResearchedConfig = true;
+				break;
+			}
+		}
+	} catch {
+		// config dir may not exist
+	}
+
+	if (hasResearchedConfig) {
+		score += 0.34;
+		parts.push("configs have been researched");
+	} else if (score >= 0.66) {
+		// Both scripts exist but discovery hasn't run yet — check if there's work to do
+		parts.push("discovery not yet run");
+	} else {
+		parts.push("no researched configs");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
 // Generate next-actions suggestions for open/partial loops
 function buildNextActions(loops) {
 	const actions = [];
@@ -265,6 +320,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.eventDiscovery.score < 1.0) {
+		if (loops.eventDiscovery.score < 0.33) {
+			actions.push("Run discover-events.js to generate discovery log");
+		}
+		if (loops.eventDiscovery.score < 0.66) {
+			actions.push("Create scripts/sync-configs.js for config maintenance");
+		}
+		if (loops.eventDiscovery.score < 1.0) {
+			actions.push("Run discovery to populate at least one config with lastResearched");
+		}
+	}
+
 	return actions;
 }
 
@@ -276,6 +343,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		pipelineHealth: evaluatePipelineHealth(dataDir),
 		watchPlan: evaluateWatchPlan(dataDir),
 		codeHealth: evaluateCodeHealth(rootDir),
+		eventDiscovery: evaluateEventDiscovery(dataDir, scriptsDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

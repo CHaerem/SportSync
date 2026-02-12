@@ -9,6 +9,7 @@ import {
 	evaluatePipelineHealth,
 	evaluateWatchPlan,
 	evaluateCodeHealth,
+	evaluateEventDiscovery,
 	evaluateAutonomy,
 } from "../scripts/autonomy-scorecard.js";
 
@@ -321,6 +322,52 @@ describe("evaluateCodeHealth()", () => {
 	});
 });
 
+// --- Loop 7: Event Discovery ---
+
+describe("evaluateEventDiscovery()", () => {
+	it("scores 0 when all data is missing", () => {
+		const result = evaluateEventDiscovery(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+	});
+
+	it("scores 0.33 when only discovery log exists", () => {
+		writeJson(path.join(dataDir, "discovery-log.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
+		});
+		const result = evaluateEventDiscovery(dataDir, scriptsDir);
+		expect(result.score).toBe(0.33);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("discovery log exists");
+	});
+
+	it("scores 0.66 when discovery log + sync-configs exist", () => {
+		writeJson(path.join(dataDir, "discovery-log.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
+		});
+		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
+		const result = evaluateEventDiscovery(dataDir, scriptsDir);
+		expect(result.score).toBe(0.66);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("sync-configs exists");
+	});
+
+	it("scores 1.0 when log + sync + researched configs all exist", () => {
+		writeJson(path.join(dataDir, "discovery-log.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
+		});
+		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
+		writeJson(path.join(scriptsDir, "config", "event.json"), {
+			name: "Event",
+			lastResearched: "2026-02-12T00:00:00Z",
+		});
+		const result = evaluateEventDiscovery(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("configs have been researched");
+	});
+});
+
 // --- Overall evaluation ---
 
 describe("evaluateAutonomy()", () => {
@@ -345,11 +392,20 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(rootDir, "docs", "data", "autopilot-log.json"), {
 			runs: [{ outcome: "completed", task: "T", pr: 1 }],
 		});
+		// Loop 7: Event Discovery
+		writeJson(path.join(dataDir, "discovery-log.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
+		});
+		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
+		writeJson(path.join(scriptsDir, "config", "researched.json"), {
+			name: "Researched",
+			lastResearched: "2026-02-12T00:00:00Z",
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(6);
-		expect(report.loopsTotal).toBe(6);
+		expect(report.loopsClosed).toBe(7);
+		expect(report.loopsTotal).toBe(7);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -361,18 +417,18 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/6 = 0.33
-		expect(report.overallScore).toBeCloseTo(0.33, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/7 ≈ 0.29
+		expect(report.overallScore).toBeCloseTo(0.29, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(6);
+		expect(report.loopsTotal).toBe(7);
 	});
 
 	it("generates nextActions for open loops", () => {
 		// Everything missing
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions.length).toBeGreaterThan(0);
-		// Should suggest actions for all 6 open loops
-		expect(report.nextActions.length).toBeGreaterThanOrEqual(6);
+		// Should suggest actions for all 7 open loops
+		expect(report.nextActions.length).toBeGreaterThanOrEqual(7);
 	});
 
 	it("generates no nextActions when all loops are closed", () => {
@@ -394,6 +450,15 @@ describe("evaluateAutonomy()", () => {
 		fs.writeFileSync(path.join(rootDir, "AUTOPILOT_ROADMAP.md"), "# Roadmap\n");
 		writeJson(path.join(rootDir, "docs", "data", "autopilot-log.json"), {
 			runs: [{ outcome: "completed", task: "T", pr: 1 }],
+		});
+		// Loop 7: Event Discovery
+		writeJson(path.join(dataDir, "discovery-log.json"), {
+			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
+		});
+		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
+		writeJson(path.join(scriptsDir, "config", "researched.json"), {
+			name: "Researched",
+			lastResearched: "2026-02-12T00:00:00Z",
 		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
@@ -418,12 +483,13 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(6);
+		expect(report.loopsTotal).toBe(7);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
 		expect(report.loops.pipelineHealth.status).toBe("open");
 		expect(report.loops.watchPlan.status).toBe("open");
 		expect(report.loops.codeHealth.status).toBe("open");
+		expect(report.loops.eventDiscovery.status).toBe("open");
 	});
 });

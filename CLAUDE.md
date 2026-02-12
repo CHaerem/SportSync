@@ -16,6 +16,7 @@ This is a hybrid static/dynamic application:
 - **Standings & RSS**: ESPN standings and RSS news digests feed into the editorial pipeline
 - **Live Score Polling**: Client-side ESPN polling every 60s for football scores and golf leaderboards
 - **Curated Event Configs**: `scripts/config/*.json` files auto-discovered by build pipeline
+- **Autonomous Discovery**: Config maintenance (prune, archive) + LLM-powered event/athlete discovery via Claude CLI + WebSearch
 - **No Backend**: Serverless architecture using only GitHub infrastructure
 
 ### Key Components
@@ -35,14 +36,16 @@ This is a hybrid static/dynamic application:
 3. **JSON files** are generated and committed to `docs/data/`
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
 5. **`fetch-rss.js`** fetches 11 RSS feeds (NRK, TV2, BBC, ESPN, Autosport, ChessBase, HLTV)
-6. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
-7. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
-8. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + curated configs → generates `featured.json` (brief, sections, radar)
-9. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings health → generates `health-report.json`
-10. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
-11. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
-12. **Client-side** loads `events.json` + `featured.json` + `standings.json`, renders editorial dashboard
-13. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
+6. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
+7. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
+8. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
+9. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
+10. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + curated configs → generates `featured.json` (brief, sections, radar)
+11. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings health → generates `health-report.json`
+12. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
+13. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
+14. **Client-side** loads `events.json` + `featured.json` + `standings.json`, renders editorial dashboard
+15. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
 
@@ -107,6 +110,8 @@ docs/
     ├── ai-quality.json     # AI quality-gate metrics (enrichment + featured)
     ├── health-report.json  # Pipeline health report (coverage, freshness, anomalies)
     ├── coverage-gaps.json  # RSS vs events coverage gap detection
+    ├── discovery-log.json  # Event discovery actions log
+    ├── config-sync-log.json # Config sync/maintenance log
     ├── events.ics          # Calendar export
     ├── football.json       # Per-sport source files
     ├── golf.json / tennis.json / f1.json / chess.json / esports.json
@@ -115,8 +120,9 @@ docs/
 scripts/
 ├── fetch/                  # Modular API fetchers (one per sport)
 ├── config/                 # Auto-discovered curated event configs
+│   ├── archive/            # Expired configs (auto-archived by sync-configs.js)
 │   ├── olympics-2026.json  # Winter Olympics 2026 schedule
-│   ├── user-context.json   # User preferences for enrichment personalization
+│   ├── user-context.json   # User preferences + dynamicAthletes config
 │   ├── chess-tournaments.json
 │   └── norwegian-chess-players.json
 ├── lib/
@@ -132,6 +138,8 @@ scripts/
 │   └── filters.js          # Event filtering utilities
 ├── fetch-standings.js      # ESPN standings → standings.json
 ├── fetch-rss.js            # RSS digest → rss-digest.json
+├── sync-configs.js         # Config maintenance: prune, archive, flag needsResearch
+├── discover-events.js      # LLM-powered event/athlete discovery (Claude CLI + WebSearch)
 ├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
 ├── enrich-events.js        # LLM enrichment (importance, tags, summaries)
 ├── generate-featured.js    # Claude CLI → featured.json (brief, sections, radar)
@@ -175,6 +183,16 @@ To add a curated major event (Olympics, World Cup, etc.):
 2. Events auto-merge into `events.json` during build — no registration needed
 3. `generate-featured.js` auto-detects the config and feeds it to Claude for featured content
 4. The autopilot should create these configs autonomously (see `AUTOPILOT_ROADMAP.md`)
+
+### Autonomous Discovery
+
+SportSync aspires to zero manual configuration. The discovery pipeline:
+- **`sync-configs.js`** runs every pipeline cycle: prunes expired events (>6h old), archives expired configs, flags empty auto-generated configs as `needsResearch: true`
+- **`discover-events.js`** runs every pipeline cycle: finds configs needing research, invokes Claude CLI with WebSearch to look up real schedules, Norwegian athletes, and streaming info
+- **Athlete refresh**: Configs with `norwegianAthletes` arrays are re-researched every 7 days to catch retirements, nationality changes, and rising stars
+- **Dynamic athletes**: `user-context.json` has `dynamicAthletes` config for auto-discovering Norwegian athletes per sport
+- **Safeguards**: Max 3 discovery tasks per run, JSON schema validation, `autoGenerated: true` on all machine-written configs
+- **7th feedback loop**: `autonomy-scorecard.js` tracks discovery health (log exists + sync script + researched configs)
 
 ## Automation Rules
 
