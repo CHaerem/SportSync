@@ -1,63 +1,68 @@
 {
-  "today": [
-    "🏅 Johaug, Boe, and Kristoffersen hunt gold across three disciplines, 10:00-13:00 — Norway's triple medal shot",
-    "Also: Hovland tees off 06:00 at Pebble Beach, Arsenal at Brentford 21:00, Barcelona at Atlético Copa semifinal 21:00"
-  ],
-  "sections": [
+  "blocks": [
     {
+      "type": "headline",
+      "text": "Medal day in Milano-Cortina"
+    },
+    {
+      "type": "narrative",
+      "text": "Johaug returns to Olympic racing after retirement reversal, overwhelming favorite at 13:00. The Boe brothers hunt biathlon gold at 10:00."
+    },
+    {
+      "type": "event-group",
+      "label": "🏅 Olympics today",
+      "items": [
+        "Johaug in women's 10km XC, 13:00",
+        "Boe brothers in men's 20km biathlon, 10:00",
+        "Kristoffersen & Braathen in giant slalom, 10:00"
+      ]
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Barcelona at Atlético Madrid — Copa semifinal, 21:00"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ Hovland at Pebble Beach Pro-Am, 06:00"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Arsenal at Brentford — Leaders visit tricky Brentford, 21:00"
+    },
+    {
+      "type": "section",
       "id": "olympics-2026",
       "title": "Winter Olympics 2026",
       "emoji": "🏅",
       "style": "highlight",
       "items": [
         {
-          "text": "Thu 10:00 — Boe brothers in biathlon 20km individual, Norway's first gold chase",
-          "type": "event"
+          "text": "Milano-Cortina, Italy — Feb 6-22",
+          "type": "text"
         },
         {
-          "text": "Thu 10:00 — Kristoffersen and Braathen in giant slalom, alpine medal hunt begins",
-          "type": "event"
-        },
-        {
-          "text": "Thu 13:00 — Johaug opens cross-country campaign in 10km free, heavy favorite",
-          "type": "event"
-        },
-        {
-          "text": "Fri 11:45 — Klaebo in 10km free · 15:00 — Riiber in nordic combined gundersen",
-          "type": "event"
+          "text": "Norway: 8 medal events this week",
+          "type": "stat"
         }
       ],
-      "expandLabel": "Weekend schedule",
-      "expandItems": [
-        {
-          "text": "Sat 10:00 — Roeiseland in women's 15km biathlon, another gold shot",
-          "type": "event"
-        },
-        {
-          "text": "Sat 11:00 — Kilde in men's downhill, alpine's marquee race",
-          "type": "event"
-        },
-        {
-          "text": "Sat 12:00 — Women's relay 4x7.5km, Norway heavy favorites with Johaug",
-          "type": "event"
-        },
-        {
-          "text": "Sun 12:00 — Men's relay 4x10km, Klaebo leads gold charge",
-          "type": "event"
-        },
-        {
-          "text": "Sun 16:00 — Granerud in large hill ski jump, showcase individual event",
-          "type": "event"
-        },
-        {
-          "text": "Mon 14:00 — Boe brothers lead biathlon relay, Norway's best gold bet",
-          "type": "event"
-        }
-      ]
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "divider",
+      "text": "This Week"
+    },
+    {
+      "type": "event-line",
+      "text": "♟️ Fri 15:00 — Carlsen opens Freestyle Chess title defense"
+    },
+    {
+      "type": "event-line",
+      "text": "🏅 Fri 11:45 — Klaebo hunts 10km XC gold"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Mon 21:00 — Barcelona at Girona, Catalan derby"
     }
-  ],
-  "thisWeek": [
-    "♟️ Fri 15:00 — Carlsen opens Freestyle Chess Grand Slam round-robin",
-    "⚽ Sat 21:00 — Real Madrid host Real Sociedad · Sun 21:00 — Barcelona at Girona Catalan derby"
   ]
 }
