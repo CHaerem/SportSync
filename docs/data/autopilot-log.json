@@ -249,6 +249,16 @@
       "tests_passed": true,
       "files_changed": 1,
       "scouted": 6
+    },
+    {
+      "date": "2026-02-12",
+      "task": "Add curated config schedule verification script",
+      "outcome": "completed",
+      "pr": 39,
+      "details": "Created scripts/verify-schedules.js that cross-references curated config event dates against ESPN scoreboard data, validates date ranges, detects mismatches, and auto-corrects high-confidence time drift. Integrates into health-report.json. 37 unit tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "scouted": 0
     }
   ]
 }
