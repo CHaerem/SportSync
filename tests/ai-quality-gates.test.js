@@ -1,56 +1,31 @@
 import { describe, it, expect } from "vitest";
 import {
 	validateFeaturedContent,
+	validateBlocksContent,
 	enforceEnrichmentQuality,
 	getEnrichmentCoverage,
 	isMajorEventActive,
 } from "../scripts/lib/ai-quality-gates.js";
 
 describe("validateFeaturedContent()", () => {
-	it("accepts well-formed featured payload", () => {
+	it("validates blocks format", () => {
 		const featured = {
-			today: ["⚽ Liverpool at Sunderland, 21:15 — title race crunch", "⛳ Hovland tees off, 14:00"],
-			sections: [
-				{
-					id: "olympics-2026",
-					title: "Winter Olympics 2026",
-					emoji: "🏅",
-					style: "highlight",
-					items: [{ text: "14:30 — Mixed relay biathlon", type: "event" }],
-				},
+			blocks: [
+				{ type: "event-line", text: "⚽ Match, 21:00" },
+				{ type: "event-line", text: "⛳ Golf, 14:00" },
+				{ type: "divider", text: "This Week" },
+				{ type: "event-line", text: "⚽ Fri fixture" },
 			],
-			thisWeek: ["🎾 Thu — Ruud faces seeded rival in next round", "⚽ Fri — Arsenal title-race test at Everton"],
-		};
-		const events = [{ context: "olympics-2026", title: "Biathlon relay", time: "2026-02-12T14:30:00Z" }];
-		const result = validateFeaturedContent(featured, { events });
-
-		expect(result.valid).toBe(true);
-		expect(result.score).toBeGreaterThan(70);
-		expect(result.normalized.today).toHaveLength(2);
-		expect(result.normalized.thisWeek).toHaveLength(2);
-	});
-
-	it("accepts old brief/radar payload via backward compat", () => {
-		const featured = {
-			brief: ["Hovland tees off in a packed leaderboard race.", "Premier League night brings four key fixtures."],
-			sections: [],
-			radar: ["Ruud could meet a seeded rival.", "Watch for title-race shifts."],
 		};
 		const result = validateFeaturedContent(featured, { events: [] });
 		expect(result.valid).toBe(true);
-		expect(result.normalized.today).toHaveLength(2);
-		expect(result.normalized.thisWeek).toHaveLength(2);
+		expect(result.normalized.blocks).toBeDefined();
+		expect(result.normalized.blocks).toHaveLength(4);
 	});
 
-	it("flags missing thisWeek lines", () => {
-		const featured = {
-			today: ["Line one", "Line two"],
-			sections: [],
-			thisWeek: [],
-		};
-		const result = validateFeaturedContent(featured, { events: [] });
+	it("rejects empty featured (no blocks)", () => {
+		const result = validateFeaturedContent({}, { events: [] });
 		expect(result.valid).toBe(false);
-		expect(result.issues.some((i) => i.code === "this_week_too_short")).toBe(true);
 	});
 });
 
@@ -95,6 +70,32 @@ describe("enrichment quality gates", () => {
 		expect(coverage.summaryCoverage).toBe(1);
 		expect(coverage.relevanceCoverage).toBe(1);
 		expect(coverage.tagsCoverage).toBe(1);
+	});
+});
+
+describe("validateBlocksContent()", () => {
+	it("accepts valid blocks with mixed types", () => {
+		const blocks = [
+			{ type: "headline", text: "Medal day in Milano-Cortina" },
+			{ type: "event-line", text: "⚽ Barcelona at Atlético Madrid, 21:00" },
+			{ type: "event-group", label: "🏅 Olympics today", items: ["Biathlon 10:00", "GS 10:00", "XC 13:00"] },
+			{ type: "narrative", text: "Norway's golden generation goes for three medals today." },
+			{ type: "divider", text: "This Week" },
+			{ type: "event-line", text: "♟️ Carlsen opens Freestyle Chess, Fri 15:00" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.blocks).toHaveLength(6);
+	});
+
+	it("rejects blocks without any event content", () => {
+		const blocks = [
+			{ type: "headline", text: "Headline" },
+			{ type: "narrative", text: "Some context." },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(false);
 	});
 });
 

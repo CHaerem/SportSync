@@ -1,4 +1,12 @@
-const FEATURED_WORD_LIMIT = 20;
+const BLOCK_WORD_LIMITS = {
+	headline: 15,
+	"event-line": 20,
+	"event-group": 20,
+	narrative: 40,
+	section: 0, // sections validated by items
+	divider: 8,
+};
+const VALID_BLOCK_TYPES = ["headline", "event-line", "event-group", "narrative", "section", "divider"];
 const ENRICHMENT_DEFAULTS = {
 	minImportanceCoverage: 0.85,
 	minSummaryCoverage: 0.6,
@@ -20,21 +28,6 @@ function countWords(text) {
 function normalizeLine(text) {
 	if (typeof text !== "string") return "";
 	return text.replace(/\s+/g, " ").trim();
-}
-
-function uniqueLines(lines, maxItems = Infinity) {
-	const out = [];
-	const seen = new Set();
-	for (const line of Array.isArray(lines) ? lines : []) {
-		const normalized = normalizeLine(line);
-		if (!normalized) continue;
-		const key = normalized.toLowerCase();
-		if (seen.has(key)) continue;
-		seen.add(key);
-		out.push(normalized);
-		if (out.length >= maxItems) break;
-	}
-	return out;
 }
 
 function looksLikeMajorEvent(event) {
@@ -173,79 +166,89 @@ export function isMajorEventActive(events = []) {
 	return events.some((event) => looksLikeMajorEvent(event));
 }
 
-export function validateFeaturedContent(featured, { events = [] } = {}) {
+function sanitizeBlock(block) {
+	if (!block || typeof block !== "object") return null;
+	const type = typeof block.type === "string" ? block.type.trim() : "";
+	if (!VALID_BLOCK_TYPES.includes(type)) return null;
+
+	const out = { type };
+
+	if (type === "section") {
+		const section = sanitizeSection(block);
+		if (!section.title || section.items.length === 0) return null;
+		return { type, ...section };
+	}
+
+	if (type === "event-group") {
+		out.label = normalizeLine(block.label || "");
+		out.items = (Array.isArray(block.items) ? block.items : [])
+			.map((item) => {
+				if (typeof item === "string") return normalizeLine(item);
+				return normalizeLine(item?.text || "");
+			})
+			.filter(Boolean);
+		if (out.items.length === 0) return null;
+		return out;
+	}
+
+	out.text = normalizeLine(block.text || "");
+	if (type !== "divider" && !out.text) return null;
+	if (type === "divider" && !out.text) out.text = "";
+	return out;
+}
+
+export function validateBlocksContent(blocks, { events = [] } = {}) {
 	const issues = [];
 	let score = 100;
 
-	// Backward compat: accept brief/radar from old payloads
-	const todaySource = featured?.today || featured?.brief || [];
-	const thisWeekSource = featured?.thisWeek || featured?.radar || [];
+	if (!Array.isArray(blocks) || blocks.length === 0) {
+		issues.push({ severity: "error", code: "blocks_empty", message: "Blocks array is empty." });
+		return { valid: false, score: 0, issues, normalized: { blocks: [] } };
+	}
 
-	const normalized = {
-		today: uniqueLines(todaySource, 2),
-		sections: (Array.isArray(featured?.sections) ? featured.sections : [])
-			.map((section) => sanitizeSection(section))
-			.filter((section) => section.title && section.items.length > 0),
-		thisWeek: uniqueLines(thisWeekSource, 2),
-	};
+	const sanitized = blocks.map(sanitizeBlock).filter(Boolean);
 
-	if (normalized.today.length < 1) {
-		issues.push({
-			severity: "error",
-			code: "today_too_short",
-			message: "Today should contain at least 1 line.",
-		});
+	if (sanitized.length < 3) {
+		issues.push({ severity: "error", code: "blocks_too_few", message: `Only ${sanitized.length} valid blocks (min 3).` });
 		score -= 35;
 	}
-
-	for (const line of normalized.today) {
-		if (countWords(line) > FEATURED_WORD_LIMIT) {
-			issues.push({
-				severity: "error",
-				code: "today_line_too_long",
-				message: `Today line exceeds ${FEATURED_WORD_LIMIT} words: "${line}"`,
-			});
-			score -= 10;
-		}
-	}
-
-	if (normalized.thisWeek.length < 1) {
-		issues.push({
-			severity: "error",
-			code: "this_week_too_short",
-			message: "This week should contain at least 1 forward-looking line.",
-		});
-		score -= 25;
-	}
-
-	if (isMajorEventActive(events) && normalized.sections.length === 0) {
-		issues.push({
-			severity: "warning",
-			code: "missing_major_section",
-			message: "Major events are active but featured sections are empty.",
-		});
-		score -= 15;
-	}
-
-	if (
-		normalized.today.length > 0 &&
-		normalized.thisWeek.length > 0 &&
-		normalized.today.every((line) =>
-			normalized.thisWeek.some((weekLine) => weekLine.toLowerCase() === line.toLowerCase())
-		)
-	) {
-		issues.push({
-			severity: "warning",
-			code: "this_week_duplicates_today",
-			message: "This week content duplicates today lines.",
-		});
+	if (sanitized.length > 15) {
+		issues.push({ severity: "warning", code: "blocks_too_many", message: `${sanitized.length} blocks exceeds recommended max of 15.` });
 		score -= 10;
 	}
 
-	score = clamp(score, 0, 100);
-	const valid = issues.filter((issue) => issue.severity === "error").length === 0;
+	const eventLineCount = sanitized.filter((b) => b.type === "event-line" || b.type === "event-group").length;
+	if (eventLineCount < 1) {
+		issues.push({ severity: "error", code: "no_event_blocks", message: "At least 1 event-line or event-group block is required." });
+		score -= 25;
+	}
 
-	return { valid, score, issues, normalized };
+	const narrativeCount = sanitized.filter((b) => b.type === "narrative").length;
+	if (narrativeCount > 3) {
+		issues.push({ severity: "warning", code: "too_many_narratives", message: `${narrativeCount} narratives exceeds max of 3.` });
+		score -= 10;
+	}
+
+	for (const block of sanitized) {
+		const limit = BLOCK_WORD_LIMITS[block.type];
+		if (limit && block.text && countWords(block.text) > limit) {
+			issues.push({
+				severity: "warning",
+				code: "block_text_too_long",
+				message: `${block.type} block exceeds ${limit} words: "${block.text.slice(0, 50)}..."`,
+			});
+			score -= 5;
+		}
+	}
+
+	score = clamp(score, 0, 100);
+	const valid = issues.filter((i) => i.severity === "error").length === 0;
+	return { valid, score, issues, normalized: { blocks: sanitized } };
+}
+
+export function validateFeaturedContent(featured, { events = [] } = {}) {
+	const blocks = Array.isArray(featured?.blocks) ? featured.blocks : [];
+	return validateBlocksContent(blocks, { events });
 }
 
 export function getEnrichmentCoverage(events = []) {

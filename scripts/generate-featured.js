@@ -1,17 +1,15 @@
 #!/usr/bin/env node
 /**
- * Generates featured.json with AI-curated editorial content:
- * - today: emoji-prefixed telegraphic lines about today's events
- * - sections: dynamic featured content (Olympics, World Cup, CL, etc.)
- * - thisWeek: emoji-prefixed lines about upcoming days
- * - watch-plan: ranked "what to watch next" windows for the UI
- * - ai-quality: quality gate report (structure + freshness checks)
+ * Generates featured.json with AI-curated editorial content using block-based layout.
+ * Output: { blocks: [{ type, text, ... }, ...] }
+ *
+ * Block types: headline, event-line, event-group, narrative, section, divider
  *
  * Auth (checked in order):
  *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI (Max subscription)
  *   2. ANTHROPIC_API_KEY — direct Anthropic API
  *   3. OPENAI_API_KEY — direct OpenAI API
- *   4. Fallback — template-based brief (no AI)
+ *   4. Fallback — template-based blocks (no AI)
  */
 
 import fs from "fs";
@@ -39,105 +37,99 @@ Adopt an energetic, enthusiastic voice. Use exclamation marks freely, casual lan
 	return voices[voice] || "";
 }
 
-const FEATURED_SCHEMA = {
-	today: [
-		"string — Line 1: editorial headline about the day's main story (the ONE thing that matters most)",
-		"string — Line 2: compact summary of what else is on, e.g. 'Plus 4 PL matches from 20:30 and Copa del Rey semifinal'",
-	],
-	sections: [
+const BLOCKS_SCHEMA = {
+	blocks: [
+		{ type: "headline", text: "string — Bold editorial headline, the story of the day (max 15 words)" },
+		{ type: "event-line", text: "string — Single event highlight: emoji + description + time (max 20 words)" },
+		{ type: "event-group", label: "string — Group label", items: ["string — compact event lines"] },
+		{ type: "narrative", text: "string — 1-2 editorial sentences, context/analysis (max 40 words)" },
 		{
-			id: "string — kebab-case identifier like olympics-2026",
-			title: "string — display title",
-			emoji: "string — relevant emoji",
+			type: "section", id: "string — kebab-case", title: "string", emoji: "string",
 			style: "highlight | default",
-			items: [
-				{
-					text: "string — the content line",
-					type: "stat | event | text",
-				},
-			],
-			expandLabel: "string or null — label for expand button",
-			expandItems: [{ text: "string", type: "stat | event | text" }],
+			items: [{ text: "string", type: "stat | event | text" }],
+			expandLabel: "string or null", expandItems: [{ text: "string", type: "stat | event | text" }],
 		},
-	],
-	thisWeek: [
-		"string — 1-2 lines about upcoming NON-section events, e.g. '⛳ Thu — Hovland at Pebble Beach · ♟️ Sat — Carlsen in Freestyle Chess'",
+		{ type: "divider", text: "string — section label like 'This Week' or 'Looking Ahead'" },
 	],
 };
 
 function buildSystemPrompt(voice) {
 	const voiceOverride = buildVoiceOverride(voice);
-	return `You are a Norwegian sports editor for SportSync, a minimal sports dashboard.
-Your job is to generate curated editorial content in JSON format.
+	return `You are the editor-in-chief of SportSync, a minimal sports dashboard.
+Your job is to COMPOSE today's editorial zone using a palette of layout blocks.
+Return a JSON object with a single "blocks" array.
+
+YOUR EDITORIAL TOOLS (block types):
+1. "headline" — Bold editorial headline, the story of the day. Max 15 words. Use when there's a strong narrative.
+2. "event-line" — Single event highlight (the workhorse). Emoji + text + time. Max 20 words.
+3. "event-group" — Multiple related events under a label. Use when 3+ events share a theme (e.g. Olympics today, PL matchday).
+   Has "label" (string) and "items" (array of strings).
+4. "narrative" — 1-2 editorial sentences adding context or analysis. Italic styling. Max 40 words. Use sparingly (max 3 per page).
+5. "section" — Major event card with expand/collapse. For Olympics, World Cup, etc. Same structure as before:
+   { type:"section", id, title, emoji, style, items:[{text,type}], expandLabel, expandItems }
+6. "divider" — Section break with label. Use to separate today from "This Week" or "Looking Ahead".
+
+COMPOSITION RULES:
+- Start with today's top stories (headline or event-lines)
+- Use event-group when 3+ events share a theme (Olympics, PL matchday)
+- Use narrative sparingly for context that enriches the page
+- Place a divider before "This Week" content
+- Total 3-15 blocks. At least 1 event-line or event-group.
+- On quiet days, fewer blocks (3-5). On big days (Olympics, CL night), more (8-12).
 
 VOICE & PERSPECTIVE:
 - Write like a sports ticker editor at VG or Dagbladet — punchy, opinionated, never bland
-- Write in English with a Norwegian sports fan perspective
-- Prioritize Norwegian athletes: Hovland (golf), Ruud (tennis), Carlsen (chess),
-  Klaebo/Johaug/Boe (winter sports), rain (esports), Lyn/Barcelona/Liverpool (football)
+- English with a Norwegian sports fan perspective
+- Prioritize: Hovland, Ruud, Carlsen, Klaebo/Johaug/Boe, rain (esports), Lyn/Barcelona/Liverpool
 - Lead with drama, stakes, and narrative — not just fixture facts
 - Reference standings positions and point gaps when relevant
-- Never write a line that just restates the fixture — every line must add context, stakes, or narrative
+- Events marked ★4 or ★5 are must-watch — always include these
+
+LINE FORMAT:
+- event-line text starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
+- 🏅 is reserved for Olympics ONLY
+- Use 24h HH:MM times, telegraphic style
+- For football, mention BOTH team names (for inline logo rendering)
+- Use actual team names from events data
 
 STANDINGS INTEGRATION:
 - When a football match involves a top-5 PL team, mention league position or point gap
-  e.g. "leaders Liverpool at Sunderland" not just "Liverpool vs Sunderland"
-- When a golfer is on the leaderboard, mention their position e.g. "Hovland T5, three back"
+- When a golfer is on the leaderboard, mention position
 - When F1 standings are tight, reference the championship battle
 
-NEWS HOOK:
-- Use the breaking news headlines to make content timely
-- If a headline relates to a scheduled event, weave it in
-- Events marked ★4 or ★5 are must-watch — always include these
+EXAMPLE COMPOSITIONS:
 
-BRIEF STRUCTURE (critical — the brief must NOT restate the event list below it):
-- "today" has exactly 2 lines:
-  Line 1: The editorial headline — the ONE story that defines today. Emoji-prefixed, with HH:MM time.
-  Line 2: A compact "what else" summary — counts and time ranges, NOT individual match listings.
-  Example: "Plus 4 PL matches from 20:30 and Copa del Rey semifinal at 21:00"
-  Example: "Also: Hovland tees off 14:30 at Pebble Beach, Carlsen in Norway Chess 17:00"
-- "thisWeek" has 1-2 lines:
-  Only mention sports NOT already covered by a featured section.
-  If Olympics section exists, do NOT repeat Olympics events in thisWeek.
-  Use middot (·) to combine multiple sports on one line.
-  Example: "⛳ Thu — Hovland at Pebble Beach Pro-Am · ♟️ Sat — Carlsen opens Freestyle Chess"
+Champions League night:
+{ "blocks": [
+  { "type": "headline", "text": "All eyes on the Bernabéu" },
+  { "type": "event-line", "text": "⚽ Real Madrid vs Liverpool, 21:00" },
+  { "type": "narrative", "text": "Holders Liverpool arrive three points clear of the pack. Ancelotti's men need a result." },
+  { "type": "event-line", "text": "⚽ PSG vs Bayern Munich, 21:00" },
+  { "type": "divider", "text": "This Week" },
+  { "type": "event-line", "text": "⚽ Sat — Weekend PL fixtures" }
+]}
 
-LINE FORMAT:
-- Headline line starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
-- 🏅 is reserved for Olympics events ONLY
-- Use 24h HH:MM times (21:15, never 9:15 PM), max 18 words, telegraphic
-- The "what else" line can skip emoji — it's a summary, not a headline
-- No full sentences — headline/ticker style only
+Olympics day:
+{ "blocks": [
+  { "type": "headline", "text": "Medal day in Milano-Cortina" },
+  { "type": "event-line", "text": "⚽ Barcelona at Atlético Madrid — Copa semifinal, 21:00" },
+  { "type": "event-line", "text": "⛳ Hovland at Pebble Beach, tee time 19:03" },
+  { "type": "event-group", "label": "🏅 Olympics today", "items": ["Boe brothers in biathlon, 10:00", "Kristoffersen in GS, 10:00", "Johaug in women's XC, 13:00"] },
+  { "type": "section", "id": "olympics-2026", "title": "Winter Olympics 2026", "emoji": "🏅", "style": "highlight", "items": [{"text":"Full week schedule","type":"text"}], "expandLabel": null, "expandItems": [] },
+  { "type": "divider", "text": "This Week" },
+  { "type": "event-line", "text": "♟️ Fri 15:00 — Carlsen opens Freestyle Chess" }
+]}
 
-TEAM NAMES (important for logo rendering):
-- For football headline lines, mention BOTH team names explicitly so the UI can render inline logos
-- Use actual team names from events data (e.g. "Liverpool" not "the Reds")
-
-QUALITY EXAMPLES:
-Excellent today (2 lines only):
-  Line 1: "🏅 Granerud and Lindvik chase ski jump gold, 16:00 — Norway's first medal shot"
-  Line 2: "Plus 3 PL matches from 20:30 and Basque derby Copa semifinal at 21:00"
-
-  Line 1: "⚽ Leaders Liverpool at Sunderland, 21:15 — six-point cushion on the line"
-  Line 2: "Also: Hovland tees off 14:30 at Pebble Beach, Copa del Rey semifinal at 21:00"
-
-BAD today (DO NOT write like this — these restate the event list):
-  "⚽ Liverpool vs Sunderland, 21:15"
-  "⚽ Fulham at Manchester City, 20:30"
-  "⚽ Real Sociedad at Athletic Club, 21:00"
-  (This is just the fixture list rewritten — the events section already shows this)
-
-GOLF TEE TIMES:
-- If tee time data is provided, include the golfer's tee time in the line
-- Format: "Hovland tees off 14:30" or "Hovland/Scheffler pairing at 14:30"
-
-SECTIONS:
-- Featured sections highlight major events currently active: Olympics, World Cup,
-  Champions League knockout stages, Grand Slams, etc.
-- If no major featured event is active, return an empty sections array
+Quiet Tuesday:
+{ "blocks": [
+  { "type": "event-line", "text": "⛳ Hovland at PGA event, 14:30" },
+  { "type": "event-line", "text": "⚽ La Liga mid-table, 21:00" },
+  { "type": "divider", "text": "This Week" },
+  { "type": "event-line", "text": "⚽ Fri — Big match preview" }
+]}
 
 OUTPUT:
-- Always return valid JSON matching the provided schema exactly
+- Return ONLY valid JSON: { "blocks": [...] }
 - No markdown wrapper — raw JSON only${voiceOverride ? `\n\n${voiceOverride}` : ""}`;
 }
 
@@ -296,14 +288,18 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 Events (next 7 days, max 30 shown):
 ${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${enrichmentContext}
 
-Generate featured.json matching this schema:
-${JSON.stringify(FEATURED_SCHEMA, null, 2)}
+Generate the editorial zone as a blocks array matching this schema:
+${JSON.stringify(BLOCKS_SCHEMA, null, 2)}
 
 Remember:
-- today: EXACTLY 2 lines. Line 1 = editorial headline (the ONE story of the day). Line 2 = compact "what else" summary (counts + time ranges, not individual fixtures)
-- sections: only if a major event (Olympics, World Cup, CL, etc.) is active — use the curated data above for accurate details
-- thisWeek: 1-2 lines about upcoming events NOT covered by sections. Skip any sport that has its own section above.
-- Return ONLY valid JSON, no markdown wrapper`;
+- Compose 3-15 blocks. Start with today's top stories, end with "This Week" after a divider.
+- Use headline only when there's a strong narrative (CL night, Olympics medal day). Skip on quiet days.
+- event-line is the workhorse — one event per block. Favorites/user interests first.
+- event-group for 3+ related events (Olympics, PL matchday). Use label + items array.
+- section only for major active events (Olympics, World Cup) — use curated data for accuracy.
+- narrative adds context sparingly (max 3). Don't narrate every event.
+- divider before "This Week" or "Looking Ahead" content.
+- Return ONLY valid JSON: { "blocks": [...] }, no markdown wrapper`;
 }
 
 async function generateWithClaudeCLI(systemPrompt, userPrompt) {
@@ -332,24 +328,10 @@ function parseResponseJSON(rawContent) {
 }
 
 function toFeaturedShape(result) {
-	// Backward compat: accept brief/radar from old AI responses
-	const todayLines = result?.today || result?.brief || [];
-	const thisWeekLines = result?.thisWeek || result?.radar || [];
-	return {
-		today: Array.isArray(todayLines) ? todayLines.slice(0, 2) : [],
-		sections: Array.isArray(result?.sections)
-			? result.sections.map((s) => ({
-					id: s?.id || "unknown",
-					title: s?.title || "",
-					emoji: s?.emoji || "",
-					style: s?.style || "default",
-					items: Array.isArray(s?.items) ? s.items : [],
-					expandLabel: s?.expandLabel || null,
-					expandItems: Array.isArray(s?.expandItems) ? s.expandItems : [],
-				}))
-			: [],
-		thisWeek: Array.isArray(thisWeekLines) ? thisWeekLines.slice(0, 2) : [],
-	};
+	if (Array.isArray(result?.blocks)) {
+		return { blocks: result.blocks };
+	}
+	return { blocks: [] };
 }
 
 function looksLikeMajorEvent(event) {
@@ -421,29 +403,52 @@ function generateFallbackThisWeek(events, now, sectionSports = []) {
 		usedSports.add(event.sport);
 		const t = new Date(event.time);
 		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
-		parts.push(`${sportEmoji(event.sport)} ${day} — ${event.title}`);
-		if (parts.length >= 2) break;
+		const time = t.toLocaleTimeString("en-NO", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Oslo" });
+		parts.push(`${sportEmoji(event.sport)} ${day} ${time} — ${event.title}`);
+		if (parts.length >= 3) break;
 	}
 
-	// If we have 2 short items, combine them with middot on one line
-	if (parts.length === 2 && parts[0].length + parts[1].length < 80) {
-		return [`${parts[0]} · ${parts[1]}`];
-	}
-
-	return parts.slice(0, 2);
+	return parts.slice(0, 3);
 }
 
 function buildFallbackFeatured(events, now) {
+	const blocks = [];
+
+	// Today event lines
+	const todayLines = generateFallbackToday(events, now);
+	for (const line of todayLines) {
+		blocks.push({ type: "event-line", text: line });
+	}
+
+	// Sections for major events
 	const sections = buildFallbackSections(events, now);
+	for (const s of sections) {
+		blocks.push({
+			type: "section",
+			id: s.id,
+			title: s.title,
+			emoji: s.emoji,
+			style: s.style,
+			items: s.items,
+			expandLabel: s.expandLabel,
+			expandItems: s.expandItems,
+		});
+	}
+
+	// This week
 	const sectionSports = sections.map((s) => {
 		if (/olympic/i.test(s.id || s.title)) return "olympics";
 		return null;
 	}).filter(Boolean);
-	return {
-		today: generateFallbackToday(events, now),
-		sections,
-		thisWeek: generateFallbackThisWeek(events, now, sectionSports),
-	};
+	const thisWeekLines = generateFallbackThisWeek(events, now, sectionSports);
+	if (thisWeekLines.length > 0) {
+		blocks.push({ type: "divider", text: "This Week" });
+		for (const line of thisWeekLines) {
+			blocks.push({ type: "event-line", text: line });
+		}
+	}
+
+	return { blocks };
 }
 
 function fallbackLine(e) {
@@ -483,33 +488,26 @@ function generateFallbackToday(events, now) {
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 
-	// Line 1: editorial headline — pick the single most important event
-	const headline = todayEvents.filter((e) => e.norwegian).sort((a, b) => (b.importance || 0) - (a.importance || 0))[0]
-		|| todayEvents.filter((e) => e.importance >= 4).sort((a, b) => (b.importance || 0) - (a.importance || 0))[0]
-		|| todayEvents[0];
+	// Sort by: favorites first, then importance, then Norwegian relevance
+	const sorted = [...todayEvents].sort((a, b) => {
+		if (a.isFavorite && !b.isFavorite) return -1;
+		if (!a.isFavorite && b.isFavorite) return 1;
+		if ((b.importance || 0) !== (a.importance || 0)) return (b.importance || 0) - (a.importance || 0);
+		return (b.norwegianRelevance || 0) - (a.norwegianRelevance || 0);
+	});
 
-	const lines = [fallbackLine(headline)];
+	// One event per line, up to 4
+	const lines = [];
+	const used = new Set();
 
-	// Line 2: compact "what else" summary
-	const rest = todayEvents.filter((e) => e !== headline);
-	if (rest.length > 0) {
-		const sportCounts = {};
-		for (const e of rest) {
-			sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1;
-		}
-		const times = rest.map((e) => new Date(e.time));
-		const earliest = new Date(Math.min(...times));
-		const earliestTime = earliest.toLocaleTimeString("en-NO", {
-			hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Oslo",
-		});
-		const parts = Object.entries(sportCounts).map(([sport, count]) => {
-			const label = { football: "football", golf: "golf", tennis: "tennis", formula1: "F1", chess: "chess", esports: "esports", olympics: "Olympics" }[sport] || sport;
-			return `${count} ${label}`;
-		});
-		lines.push(`Plus ${parts.join(", ")} from ${earliestTime}`);
+	for (const e of sorted) {
+		if (lines.length >= 4) break;
+		if (used.has(e.title)) continue;
+		used.add(e.title);
+		lines.push(fallbackLine(e));
 	}
 
-	return lines.slice(0, 2);
+	return lines;
 }
 
 async function generateRawFeatured(systemPrompt, userPrompt) {
@@ -553,7 +551,11 @@ async function main() {
 	const events = readJsonIfExists(eventsPath);
 	if (!events || !Array.isArray(events) || events.length === 0) {
 		console.log("No events found. Writing minimal featured.json.");
-		const fallback = { today: ["No events scheduled today."], sections: [], thisWeek: ["Check back after the next data sync."] };
+		const fallback = { blocks: [
+			{ type: "event-line", text: "No events scheduled today." },
+			{ type: "divider", text: "This Week" },
+			{ type: "event-line", text: "Check back after the next data sync." },
+		] };
 		writeJsonPretty(featuredPath, fallback);
 		writeJsonPretty(watchPlanPath, buildWatchPlan([], { now: new Date() }));
 		const existingQuality = readJsonIfExists(qualityPath) || {};
@@ -566,9 +568,7 @@ async function main() {
 				valid: true,
 				score: 100,
 				issues: [],
-				todayLines: fallback.today.length,
-				sectionCount: 0,
-				thisWeekLines: fallback.thisWeek.length,
+				blockCount: fallback.blocks.length,
 			},
 		});
 		return;
@@ -640,15 +640,11 @@ async function main() {
 		featured = qualityResult.normalized;
 	}
 
-	if (!featured.today || featured.today.length === 0) {
-		featured.today = generateFallbackToday(events, now);
-	}
-	if (!featured.thisWeek || featured.thisWeek.length === 0) {
-		const sectionSports = (featured.sections || []).map((s) => {
-			if (/olympic/i.test(s.id || s.title)) return "olympics";
-			return null;
-		}).filter(Boolean);
-		featured.thisWeek = generateFallbackThisWeek(events, now, sectionSports);
+	// Ensure blocks have at least some event content
+	if (featured.blocks && featured.blocks.filter((b) => b.type === "event-line" || b.type === "event-group").length === 0) {
+		const todayLines = generateFallbackToday(events, now);
+		const eventBlocks = todayLines.map((line) => ({ type: "event-line", text: line }));
+		featured.blocks = [...eventBlocks, ...featured.blocks];
 	}
 
 	const finalQuality = validateFeaturedContent(featured, { events });
@@ -665,6 +661,7 @@ async function main() {
 		});
 		writeJsonPretty(watchPlanPath, watchPlan);
 
+		const blockCount = featured.blocks ? featured.blocks.length : 0;
 		const existingQuality = readJsonIfExists(qualityPath) || {};
 		writeJsonPretty(qualityPath, {
 			...existingQuality,
@@ -675,15 +672,14 @@ async function main() {
 				valid: finalQuality.valid,
 				score: finalQuality.score,
 				issues: finalQuality.issues.map((issue) => issue.message),
-				todayLines: featured.today.length,
-				sectionCount: featured.sections.length,
-				thisWeekLines: featured.thisWeek.length,
+				blockCount,
 			},
 		});
 	}
 
+	const blockCount = featured.blocks ? featured.blocks.length : 0;
 	console.log(
-		`Featured content generated (${featuredFile}): ${featured.today.length} today lines, ${featured.sections.length} sections, ${featured.thisWeek.length} this-week items.`
+		`Featured content generated (${featuredFile}): ${blockCount} blocks.`
 	);
 	if (!FEATURED_SUFFIX) {
 		const watchPlanData = readJsonIfExists(watchPlanPath);

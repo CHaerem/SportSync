@@ -63,7 +63,7 @@ describe("buildWatchPlan()", () => {
 				favoriteEsportsOrgs: [],
 				sportPreferences: { football: "high", golf: "high" },
 			},
-			featured: { brief: ["Tonight has two high-stakes moments."] },
+			featured: { blocks: [{ type: "headline", text: "Tonight has two high-stakes moments." }] },
 		});
 
 		expect(plan.summary).toContain("priority picks");

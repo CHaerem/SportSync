@@ -89,6 +89,13 @@ describe("dashboard.js key classes used in CSS", () => {
 		"row-rel-soon",
 		"row-rel-far",
 		"row-ft",
+		"block-headline",
+		"block-event-line",
+		"block-event-group",
+		"block-group-label",
+		"block-group-item",
+		"block-narrative",
+		"block-divider",
 	];
 
 	for (const cls of keyClasses) {

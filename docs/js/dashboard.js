@@ -143,8 +143,7 @@ class Dashboard {
 
 	render() {
 		this.renderDateLine();
-		this.renderBrief();
-		this.renderSections();
+		this.renderEditorial();
 		this.renderWatchPlan();
 		this.renderEvents();
 		this.renderNews();
@@ -171,68 +170,95 @@ class Dashboard {
 		el.textContent = text;
 	}
 
-	// --- Editorial (Today + This Week) ---
+	// --- Editorial (Block-based layout) ---
 
-	renderBrief() {
-		const el = document.getElementById('the-brief');
+	getEditorialBlocks() {
+		if (!this.featured || !Array.isArray(this.featured.blocks)) return [];
+		return this.featured.blocks;
+	}
 
-		// Read editorial lines (backward compat: fall back to brief/radar)
-		let todayLines = [];
-		if (this.featured) {
-			const src = this.featured.today || this.featured.brief;
-			if (Array.isArray(src) && src.length > 0) {
-				todayLines = src.slice(0, 2);
-			}
+	renderEditorial() {
+		const briefEl = document.getElementById('the-brief');
+		const sectionsEl = document.getElementById('featured-sections');
+
+		let blocks = this.getEditorialBlocks();
+
+		if (blocks.length === 0) {
+			// Fallback: generate brief lines
+			const lines = this.generateBriefLines();
+			blocks = lines.map(line => ({ type: 'event-line', text: line }));
 		}
-		if (todayLines.length === 0) {
-			todayLines = this.generateBriefLines();
-		}
 
-		// Dynamic adjustment: replace static brief with live context
+		// Dynamic adjustment: replace first event-line with live context
 		const dynamicLine = this.generateDynamicBriefLine();
 		if (dynamicLine) {
-			todayLines = [dynamicLine, ...todayLines.slice(1)];
-		}
-
-		// Append live score lines
-		const liveLines = this.generateLiveBriefLines();
-		if (liveLines.length > 0) {
-			todayLines = [...liveLines, ...todayLines.slice(0, 1)];
-		}
-
-		let thisWeekLines = [];
-		if (this.featured) {
-			const src = this.featured.thisWeek || this.featured.radar;
-			if (Array.isArray(src) && src.length > 0) {
-				thisWeekLines = src.slice(0, 2);
+			const firstEventIdx = blocks.findIndex(b => b.type === 'event-line');
+			if (firstEventIdx >= 0) {
+				blocks = [...blocks];
+				blocks[firstEventIdx] = { type: 'event-line', text: dynamicLine };
 			}
 		}
 
-		if (todayLines.length === 0 && thisWeekLines.length === 0) {
-			el.style.display = 'none';
+		// Prepend live score lines as event-line blocks
+		const liveLines = this.generateLiveBriefLines();
+		if (liveLines.length > 0) {
+			const liveBlocks = liveLines.map(line => ({ type: 'event-line', text: line, _live: true }));
+			blocks = [...liveBlocks, ...blocks];
+		}
+
+		if (blocks.length === 0) {
+			briefEl.style.display = 'none';
+			sectionsEl.innerHTML = '';
 			return;
 		}
 
-		el.style.display = '';
-		let html = '';
+		briefEl.style.display = '';
 
-		if (todayLines.length > 0) {
-			html += '<div class="editorial-header">Today</div>';
-			html += todayLines.map((line, i) => {
-				const isLive = line.startsWith('LIVE:') || line.startsWith('\u26f3');
-				const cls = isLive ? ' brief-live' : (i === 0 ? ' brief-headline' : ' brief-secondary');
-				return `<div class="editorial-line${cls}">${this.renderBriefLine(line)}</div>`;
-			}).join('');
+		// Split: section blocks go to #featured-sections, all others to #the-brief
+		const briefBlocks = blocks.filter(b => b.type !== 'section');
+		const sectionBlocks = blocks.filter(b => b.type === 'section');
+
+		// Render brief blocks
+		briefEl.innerHTML = briefBlocks.map(block => this.renderBlock(block)).join('');
+
+		// Render section blocks
+		if (sectionBlocks.length > 0) {
+			sectionsEl.innerHTML = sectionBlocks.map(block => this.renderSection(block)).join('');
+			this.bindSectionExpands();
+		} else {
+			sectionsEl.innerHTML = '';
 		}
+	}
 
-		if (thisWeekLines.length > 0) {
-			html += '<div class="editorial-header">This Week</div>';
-			html += thisWeekLines.map(line =>
-				`<div class="editorial-line brief-secondary">${this.renderBriefLine(line)}</div>`
-			).join('');
+	renderBlock(block) {
+		switch (block.type) {
+			case 'headline':
+				return `<div class="block-headline">${this.renderBriefLine(block.text || '')}</div>`;
+			case 'event-line': {
+				const isLive = block._live || (block.text && (block.text.startsWith('LIVE:') || block.text.startsWith('\u26f3')));
+				const cls = isLive ? ' brief-live' : '';
+				return `<div class="block-event-line editorial-line${cls}">${this.renderBriefLine(block.text || '')}</div>`;
+			}
+			case 'event-group': {
+				let html = `<div class="block-event-group">`;
+				html += `<div class="block-group-label">${this.esc(block.label || '')}</div>`;
+				const items = Array.isArray(block.items) ? block.items : [];
+				for (const item of items) {
+					const text = typeof item === 'string' ? item : (item?.text || '');
+					html += `<div class="block-group-item">${this.renderBriefLine(text)}</div>`;
+				}
+				html += `</div>`;
+				return html;
+			}
+			case 'narrative':
+				return `<div class="block-narrative">${this.renderBriefLine(block.text || '')}</div>`;
+			case 'divider':
+				return `<div class="block-divider">${this.esc(block.text || '')}</div>`;
+			case 'section':
+				return ''; // Sections rendered separately
+			default:
+				return '';
 		}
-
-		el.innerHTML = html;
 	}
 
 	generateDynamicBriefLine() {
@@ -355,17 +381,6 @@ class Dashboard {
 	}
 
 	// --- Featured Sections ---
-
-	renderSections() {
-		const container = document.getElementById('featured-sections');
-		if (!this.featured || !Array.isArray(this.featured.sections) || this.featured.sections.length === 0) {
-			container.innerHTML = '';
-			return;
-		}
-
-		container.innerHTML = this.featured.sections.map(section => this.renderSection(section)).join('');
-		this.bindSectionExpands();
-	}
 
 	renderSection(section) {
 		const styleClass = section.style === 'highlight' ? ' highlight' : '';

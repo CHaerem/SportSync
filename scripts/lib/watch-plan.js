@@ -121,6 +121,15 @@ function toPlanItem(event, scored) {
 	};
 }
 
+function extractHeadline(featured) {
+	if (!Array.isArray(featured?.blocks)) return "Your AI-ranked watch plan";
+	const headlineBlock = featured.blocks.find((b) => b.type === "headline");
+	if (headlineBlock?.text) return headlineBlock.text;
+	const eventLine = featured.blocks.find((b) => b.type === "event-line");
+	if (eventLine?.text) return eventLine.text;
+	return "Your AI-ranked watch plan";
+}
+
 export function buildWatchPlan(events = [], { now = new Date(), userContext = {}, featured = null } = {}) {
 	const upcoming = (Array.isArray(events) ? events : [])
 		.filter((event) => event?.time && Number.isFinite(new Date(event.time).getTime()))
@@ -156,10 +165,7 @@ export function buildWatchPlan(events = [], { now = new Date(), userContext = {}
 		generatedAt: now.toISOString(),
 		timezone: "Europe/Oslo",
 		summary,
-		headline:
-			Array.isArray(featured?.brief) && featured.brief.length > 0
-				? featured.brief[0]
-				: "Your AI-ranked watch plan",
+		headline: extractHeadline(featured),
 		windows,
 		picks,
 	};
