@@ -1281,6 +1281,12 @@ class Dashboard {
 
 	bindBandToggles() {
 		document.querySelectorAll('.band-label.collapsible[data-band]').forEach(label => {
+			label.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					label.click();
+				}
+			});
 			label.addEventListener('click', () => {
 				const bandId = label.dataset.band;
 				const content = document.querySelector(`.band-content[data-band-content="${bandId}"]`);
