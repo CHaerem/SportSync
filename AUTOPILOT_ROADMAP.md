@@ -52,9 +52,9 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 ### Current Tasks
 
-- [PENDING] Populate golf `featuredGroups` in fetcher — In `scripts/fetch/golf.js`, after finding Norwegian players' tee times, group all field players by tee time + starting hole. For each Norwegian player's group, store groupmate names as `featuredGroups: [{name, teeTime}]` on the event object. Only change `scripts/fetch/golf.js`. ~15 lines, LOW risk.
+- [DONE] (PR #49) Populate golf `featuredGroups` in fetcher — Added `buildFeaturedGroups()` to `scripts/fetch/golf.js` that groups PGA Tour field players by teeTime + startingHole and stores groupmates for each Norwegian player.
 
-- [PENDING] Render golf `featuredGroups` in dashboard — In `docs/js/dashboard.js`, when rendering expanded golf event details, check if `event.featuredGroups` has entries and render "Playing with: X, Y" under each Norwegian player. Only change `docs/js/dashboard.js`. ~15 lines, LOW risk.
+- [DONE] (PR #50) Render golf `featuredGroups` in dashboard — Added "Playing with: X, Y" display under each Norwegian player's tee time in expanded golf event view. CSS class `.exp-playing-with` added to `index.html`.
 
 - [BLOCKED] reverted — user prefers manual user-context.json | Add watch-plan feedback loop — PR #47 was reverted. Thumbs-up/down controls are not wanted at this time.
 
