@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-12T12:38:40.903Z",
+  "generatedAt": "2026-02-12T12:05:28.384Z",
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
-      "totalEvents": 31,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.774
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 31,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -19,46 +19,44 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
-    "aiUpdatedFields": 31,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 31,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "totalEvents": 35,
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 4,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 7,
-    "generationMs": 30512,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"⚽ Atlético Madrid v Barcelona, 21:00, Copa del Rey...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 3,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 85,
+    "score": 89,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 0.8,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.875,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
     "issues": []
   },
@@ -66,7 +64,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 112,
+      "avgScore": 123,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }

@@ -1,213 +1,125 @@
-# SportSync Data Fetching Scripts
+# SportSync Scripts
 
-This directory contains the data fetching infrastructure for SportSync, a sports dashboard that aggregates events from multiple APIs.
+Data pipeline, AI enrichment, and autonomous discovery for the SportSync dashboard.
 
-## 🚀 Quick Start
+## Pipeline Order
 
-```bash
-# Fetch all sports data
-node scripts/fetch/index.js
+This is the order scripts run in the GitHub Actions workflow (every 2 hours):
 
-# Build unified events file
-node scripts/build-events.js
-
-# Generate calendar export
-node scripts/build-ics.js
-
-# Validate data integrity
-node scripts/validate-events.js
+```
+1. fetch/index.js          — Fetch all sports APIs (ESPN, PGA, PandaScore, fotball.no)
+2. fetch-standings.js      — ESPN standings (PL table, golf leaderboards, F1 drivers)
+3. fetch-rss.js            — RSS digest (11 feeds: NRK, TV2, BBC, ESPN, etc.)
+4. sync-configs.js         — Prune expired events, archive old configs, flag empty ones
+5. discover-events.js      — Claude CLI + WebSearch to research flagged configs
+6. build-events.js         — Aggregate sport JSONs + curated configs → events.json
+7. enrich-events.js        — AI adds importance (1-5), summaries, tags
+8. generate-featured.js    — Claude CLI → featured.json (editorial blocks + watch plan)
+9. validate-events.js      — Data integrity checks
+10. pipeline-health.js     — Coverage, freshness, anomaly detection → health-report.json
+11. detect-coverage-gaps.js — RSS vs events → coverage-gaps.json + auto-resolve
+12. build-ics.js           — Calendar export → events.ics
 ```
 
 ## Directory Structure
 
 ```
 scripts/
+├── fetch/                          # Sport-specific API fetchers
+│   ├── index.js                    # Orchestrator (Promise.allSettled)
+│   ├── football.js                 # ESPN + fotball.no
+│   ├── golf.js                     # ESPN + PGA Tour tee times
+│   ├── tennis.js                   # ESPN ATP/WTA
+│   ├── f1.js                       # ESPN Racing
+│   ├── chess.js                    # Curated config reader
+│   └── esports.js                  # PandaScore CS2
 ├── config/                         # Auto-discovered curated event configs
-├── lib/                            # Core libraries and utilities
+│   ├── archive/                    # Expired configs (auto-archived by sync-configs)
+│   ├── olympics-2026.json          # Winter Olympics schedule
+│   ├── user-context.json           # User preferences + dynamicAthletes
+│   ├── chess-tournaments.json      # Chess event data
+│   ├── norwegian-chess-players.json
+│   └── norwegian-golfers.json
+├── lib/
+│   ├── llm-client.js               # LLM abstraction (Anthropic preferred, OpenAI fallback)
+│   ├── helpers.js                  # Utilities, time constants (MS_PER_DAY, etc.)
+│   ├── ai-quality-gates.js         # Quality gates, adaptive hints, quality snapshots
+│   ├── enrichment-prompts.js       # Prompts for AI event enrichment
+│   ├── event-normalizer.js         # Event validation and normalization
 │   ├── response-validator.js       # API response schema validation
-│   ├── ai-quality-gates.js         # AI enrichment quality gates
-│   └── ...                         # helpers, LLM client, normalizer, filters
-├── fetch/                          # Sport-specific fetchers
-├── fetch-standings.js              # ESPN standings → standings.json
-├── fetch-rss.js                    # RSS digest → rss-digest.json
-├── build-events.js                 # Aggregates all sports into events.json
+│   ├── base-fetcher.js             # Base class for sport fetchers
+│   ├── api-client.js               # HTTP client wrapper with retry/cache
+│   ├── norwegian-streaming.js      # Norwegian streaming platform info
+│   ├── filters.js                  # Event filtering utilities
+│   └── watch-plan.js               # Watch plan scoring and generation
+├── sync-configs.js                 # Config maintenance (prune, archive, flag)
+├── discover-events.js              # LLM discovery (Claude CLI + WebSearch)
+├── build-events.js                 # Aggregates sport JSONs + curated configs
 ├── enrich-events.js                # AI enrichment (importance, tags, summaries)
-├── generate-featured.js            # Claude CLI → featured.json
-├── pipeline-health.js              # Pipeline health report → health-report.json
+├── generate-featured.js            # Claude CLI → featured.json + watch-plan.json
+├── autonomy-scorecard.js           # 7-loop autonomy evaluation
+├── pipeline-health.js              # Pipeline health → health-report.json
 ├── check-quality-regression.js     # AI quality regression detection
-├── detect-coverage-gaps.js         # RSS vs events blind spot detection
+├── detect-coverage-gaps.js         # RSS vs events + auto-resolve gaps
+├── resolve-coverage-gaps.js        # Creates skeleton configs for gaps
+├── merge-open-data.js              # Merges open source + primary data
 ├── validate-events.js              # Data integrity checks
-└── build-ics.js                    # Calendar export generator
+├── verify-schedules.js             # ESPN cross-reference for curated configs
+├── build-ics.js                    # Calendar export generator
+├── pre-commit-gate.js              # Pre-commit validation gate
+└── ai-sanity-check.js              # AI output sanity check
 ```
 
-## 🏗️ Architecture
+## Quick Start
 
-SportSync uses a **modular, object-oriented architecture** with configuration-driven fetchers:
+```bash
+# Fetch all sports data
+node scripts/fetch/index.js
 
-- **Base Classes**: Shared functionality through inheritance
-- **Configuration**: Centralized settings for all sports
-- **Robust Error Handling**: Multiple fallback layers
-- **Future-Ready**: Prepared for user personalization
+# Sync and discover (requires CLAUDE_CODE_OAUTH_TOKEN for discovery)
+node scripts/sync-configs.js
+node scripts/discover-events.js
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
+# Build unified events file
+node scripts/build-events.js
 
-## ⚙️ Configuration
+# AI enrichment (requires ANTHROPIC_API_KEY or OPENAI_API_KEY)
+node scripts/enrich-events.js
 
-All sports are configured in `config/sports-config.js`:
+# Generate featured content (requires CLAUDE_CODE_OAUTH_TOKEN)
+node scripts/generate-featured.js
 
-```javascript
-{
-  football: {
-    sources: [...],     // API endpoints
-    filters: {...},     // Filtering rules
-    norwegian: {...}    // Norwegian focus
-  }
-}
+# Run all tests (554 tests across 29 files)
+npm test
 ```
 
-## 🏃‍♂️ Sports Supported
+## Sports Supported
 
-| Sport | Primary API | Fetcher | Norwegian Focus |
-|-------|------------|---------|-----------------|
 | Sport | Primary API | Fetcher | Norwegian Focus |
 |-------|------------|---------|-----------------|
 | Football | ESPN + fotball.no | `football.js` | FK Lyn Oslo, Barcelona, Liverpool |
 | Tennis | ESPN | `tennis.js` | Casper Ruud |
 | Golf | ESPN + PGA Tour | `golf.js` | Viktor Hovland |
-| F1 | ESPN | `f1.js` | None |
+| F1 | ESPN | `f1.js` | — |
 | Chess | Curated configs | `chess.js` | Magnus Carlsen |
 | Esports | PandaScore | `esports.js` | CS2 competitions |
+| Olympics | Auto-discovered | via configs | All Norwegian athletes |
 
-## Data Pipeline
+## Environment Variables
 
-1. **Fetch**: API calls to all sports (ESPN, PGA Tour, PandaScore, fotball.no)
-2. **Validate**: Response validators filter invalid items, log warnings
-3. **Transform**: Convert to normalized event structure
-4. **Filter**: Apply sport-specific rules (Norwegian focus, date range)
-5. **Aggregate**: Combine into unified events.json (with curated configs)
-6. **Enrich**: AI adds importance, summaries, tags (OpenAI/Anthropic)
-7. **Generate**: Claude CLI creates featured.json (brief, sections, radar)
-8. **Monitor**: Pipeline health, quality regression, coverage gap detection
-9. **Export**: Generate calendar file (.ics)
+```bash
+CLAUDE_CODE_OAUTH_TOKEN=...  # Claude Max subscription (featured, discovery, autopilot)
+ANTHROPIC_API_KEY=...        # Direct Anthropic API (enrichment, featured fallback)
+OPENAI_API_KEY=...           # OpenAI (enrichment fallback)
+PANDASCORE_API_KEY=...       # Esports CS2 competitions
+```
 
-## Error Handling & Self-Healing
-
-The system includes multiple layers of resilience:
+## Error Handling
 
 - **Response validation** — schema checks filter invalid items without rejecting entire responses
 - **API retries** with exponential backoff
 - **Retain last good** data on total failure
 - **Pipeline health monitoring** — detects sport drops, stale data, RSS/standings issues
-- **Quality regression gate** — alerts when AI enrichment or featured scores drop
+- **Quality regression gate** — alerts when AI scores drop
 - **Coverage gap detection** — finds blind spots by cross-referencing RSS vs events
-
-## Testing
-
-```bash
-# Run all tests (279 tests across 18 files)
-npm test
-
-# Validate output structure
-node scripts/validate-events.js
-
-# Run pipeline health check
-node scripts/pipeline-health.js
-
-# Check quality regression
-node scripts/check-quality-regression.js
-
-# Detect coverage gaps
-node scripts/detect-coverage-gaps.js
-```
-
-## 🔧 Adding a New Sport
-
-1. **Configure** in `config/sports-config.js`:
-```javascript
-basketball: {
-  sport: "basketball",
-  sources: [{
-    api: "espn",
-    url: "https://site.api.espn.com/.../nba/scoreboard"
-  }]
-}
-```
-
-2. **Create fetcher** extending base class:
-```javascript
-// fetch/basketball-refactored.js
-import { ESPNAdapter } from "../lib/adapters/espn-adapter.js";
-
-export class BasketballFetcher extends ESPNAdapter {
-  constructor() {
-    super(sportsConfig.basketball);
-  }
-}
-```
-
-3. **Add to pipeline** in `fetch/index.js`
-
-## 📊 Output Format
-
-All fetchers produce consistent JSON structure:
-
-```json
-{
-  "lastUpdated": "2025-08-20T12:00:00Z",
-  "source": "ESPN API",
-  "tournaments": [
-    {
-      "name": "Premier League",
-      "events": [
-        {
-          "title": "Arsenal vs Chelsea",
-          "time": "2025-08-21T19:00:00Z",
-          "venue": "Emirates Stadium",
-          "sport": "football",
-          "norwegian": false
-        }
-      ]
-    }
-  ]
-}
-```
-
-## 🔍 Debugging
-
-Enable verbose logging:
-```javascript
-// In any fetcher
-console.log(`Fetching ${this.config.sport}...`);
-```
-
-Check fetcher status:
-```bash
-node scripts/fetch/index.js | grep "Refactored fetchers"
-```
-
-## 🚀 Performance
-
-- **Parallel fetching** for all sports
-- **60-second cache** for API responses
-- **Rate limiting** (150ms between calls)
-- **Data deduplication**
-
-## Environment Variables
-
-```bash
-CLAUDE_CODE_OAUTH_TOKEN=...  # Claude Max subscription for featured generation
-OPENAI_API_KEY=...           # OpenAI for event enrichment
-PANDASCORE_API_KEY=...       # Esports CS2 competitions
-```
-
-## 🤝 Contributing
-
-1. Follow the established architecture patterns
-2. Extend base classes rather than duplicating code
-3. Update configuration instead of hardcoding values
-4. Add error handling and logging
-5. Test both refactored and legacy paths
-
-## 📄 License
-
-MIT - See root LICENSE file
+- **Discovery safeguards** — max 3 tasks per run, JSON validation, autoGenerated flag

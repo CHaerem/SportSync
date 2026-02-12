@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SportSync is a static website that displays a personalized sports dashboard using live data from various sports APIs. It focuses on upcoming events for football, golf, tennis, Formula 1, chess, esports, and Olympics, with Norway-centric time formatting and preferences. The site is automatically updated via GitHub Actions and hosted on GitHub Pages. It features an AI-powered editorial content system that generates daily briefs, featured sections, and "on the radar" content using Claude API, plus client-side live score polling from ESPN.
+SportSync is a self-maintaining sports dashboard that aspires to **zero manual intervention**. It covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. The system automatically fetches live data, detects major events from RSS/news signals, researches real schedules via web search, discovers Norwegian athletes, enriches events with AI, generates editorial content, and deploys — all without human involvement. Seven closed feedback loops ensure the system self-corrects quality, coverage, and content. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
 
 ## Architecture
 
@@ -54,7 +54,7 @@ This is a hybrid static/dynamic application:
 - `npm run build:events` - Aggregate sport data + curated configs into events.json
 - `npm run enrich` - AI enrichment of events (needs OPENAI_API_KEY or ANTHROPIC_API_KEY)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
-- `npm test` - Run all tests (vitest, 279 tests across 18 files)
+- `npm test` - Run all tests (vitest, 554 tests across 29 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 

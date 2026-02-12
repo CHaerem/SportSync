@@ -786,12 +786,12 @@
     }
   },
   {
-    "timestamp": "2026-02-12T12:25:27.318Z",
+    "timestamp": "2026-02-12T12:02:05.169Z",
     "editorial": {
-      "score": 85,
-      "mustWatchCoverage": 0.5,
+      "score": 89,
+      "mustWatchCoverage": 0.8,
       "sportDiversity": 1,
-      "blockCount": 8
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -799,9 +799,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -816,21 +816,159 @@
       "enrichment": {
         "input": 0,
         "output": 0,
-        "calls": 4,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
         "output": 0,
-        "calls": 5,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-12T12:02:05.263Z",
+    "editorial": {
+      "score": 89,
+      "mustWatchCoverage": 0.8,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 123,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-12T12:05:28.330Z",
+    "editorial": {
+      "score": 89,
+      "mustWatchCoverage": 0.8,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 123,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-12T12:05:28.385Z",
+    "editorial": {
+      "score": 89,
+      "mustWatchCoverage": 0.8,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 123,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
         "total": 0
       }
     }
