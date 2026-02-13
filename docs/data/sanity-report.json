@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2026-02-13T06:32:14.534Z",
+  "generatedAt": "2026-02-13T07:16:56.686Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 29,
+    "totalEvents": 30,
     "sports": [
+      "golf",
       "olympics",
       "chess",
       "football",
@@ -11,7 +12,9 @@
       "f1"
     ],
     "bands": {
-      "live": [],
+      "live": [
+        "AT&T Pebble Beach Pro-Am"
+      ],
       "today": [
         "Cross-Country Skiing — Men's 10km Free",
         "Round 1 – FIDE Freestyle Chess World Championship 2026 | Round-Robin",
@@ -51,27 +54,17 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 63,
-    "issueCount": 1
+    "issueCount": 2
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Qatar Airways Australian Grand Prix\" is 21 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen defends Freestyle Chess crown\" which may not match any event"
-    },
-    {
-      "severity": "warning",
-      "check": "standings_without_events",
-      "message": "Golf leaderboard exists but no golf events"
     },
     {
       "severity": "warning",
@@ -81,7 +74,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -91,7 +84,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Klæbo\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -105,10 +98,10 @@
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 7,
     "critical": 0,
-    "warning": 7,
-    "info": 2
+    "warning": 6,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
