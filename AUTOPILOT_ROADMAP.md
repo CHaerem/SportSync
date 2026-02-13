@@ -370,7 +370,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### MEDIUM Priority
 
-- [PENDING] Add unit tests for `scripts/fetch/football.js` — Football fetcher exports `fetchFootballESPN()` but has no dedicated test file for its internal logic. Create `tests/football-fetcher.test.js` testing ESPN response parsing, event normalization, and OBOS-ligaen integration. ~80 lines, LOW risk.
+- [DONE] (PR #58) Add unit tests for `scripts/fetch/football.js` — 28 tests covering checkFavorite, transformToEvents, applyCustomFilters, fetchFotballNo, and fetchFromSource.
 
 - [DONE] (PR #57) Clamp inline style values in dashboard rendering — Parsed shots/onTarget stats as integers via `parseInt()` instead of raw strings.
 
