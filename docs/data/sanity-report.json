@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T04:46:20.346Z",
+  "generatedAt": "2026-02-13T06:32:14.534Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 29,
@@ -51,10 +51,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
+    "editorialScore": 63,
     "issueCount": 1
   },
   "findings": [
@@ -66,17 +66,7 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Magnus Carlsen opens Freestyle Chess World Championship\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"Real Madrid vs Real Sociedad at Bernabéu\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfc5 Sun — Granerud in large hill ski jumping\" which may not match any event"
+      "message": "Featured block references \"️ Carlsen defends Freestyle Chess crown\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -85,18 +75,23 @@
     },
     {
       "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 63/100 (below threshold)"
+    },
+    {
+      "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -110,10 +105,10 @@
     }
   ],
   "summary": {
-    "total": 10,
+    "total": 9,
     "critical": 0,
-    "warning": 6,
-    "info": 4
+    "warning": 7,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
