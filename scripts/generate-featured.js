@@ -214,7 +214,11 @@ export function buildStandingsContext(standings) {
 		if (tour?.name && tour.leaderboard?.length > 0) {
 			const label = key === "pga" ? "PGA Tour" : "DP World Tour";
 			const rows = tour.leaderboard.slice(0, 5).map(
-				(p) => `  ${p.position || "-"}. ${p.player} (${p.score})`
+				(p) => {
+					const thru = p.thru && p.thru !== "-" ? ` thru ${p.thru}` : "";
+					const today = p.today && p.today !== "-" ? ` today ${p.today}` : "";
+					return `  ${p.position || "-"}. ${p.player} (${p.score}${today}${thru})`;
+				}
 			);
 			parts.push(`${label} — ${tour.name} (${tour.status}):\n${rows.join("\n")}`);
 		}
@@ -267,7 +271,10 @@ export function buildResultsContext(recentResults) {
 		const label = key === "pga" ? "PGA" : "DP World";
 		const statusLabel = tour.status === "final" ? "Final" : `R${tour.completedRound}`;
 		const leader = tour.topPlayers?.[0];
-		const norPlayers = (tour.norwegianPlayers || []).map((p) => `${p.player} T${p.position} (${p.score})`).join(", ");
+		const norPlayers = (tour.norwegianPlayers || []).map((p) => {
+			const thru = p.thru && p.thru !== "-" ? ` thru ${p.thru}` : "";
+			return `${p.player} T${p.position} (${p.score}${thru})`;
+		}).join(", ");
 		const leaderLine = leader ? `Leader: ${leader.player} ${leader.score}` : "";
 		const norLine = norPlayers ? `, Norwegian: ${norPlayers}` : "";
 		parts.push(`  ${label} — ${tour.tournamentName || "?"} ${statusLabel}: ${leaderLine}${norLine}`);

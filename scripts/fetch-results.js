@@ -267,6 +267,7 @@ export async function fetchGolfResults(options = {}) {
 				player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
 				score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
 				roundScore: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
+				thru: c.status?.thru?.toString() || "-",
 			}));
 
 			// Find Norwegian players (or any favorite players)
@@ -281,6 +282,7 @@ export async function fetchGolfResults(options = {}) {
 					player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
 					score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
 					roundScore: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
+					thru: c.status?.thru?.toString() || "-",
 				}));
 
 			result[tour.key] = {

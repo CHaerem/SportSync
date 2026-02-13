@@ -1,70 +1,16 @@
 {
-  "generatedAt": "2026-02-13T13:37:31.019Z",
-  "featured": {
-    "provider": "claude-cli",
-    "attempts": 1,
-    "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 7,
-    "generationMs": 17270,
-    "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
-    }
-  },
-  "editorial": {
-    "score": 63,
-    "metrics": {
-      "mustWatchCoverage": 0.111,
-      "sportDiversity": 0.5,
-      "blockTypeBalance": 1,
-      "textQuality": 1,
-      "quietDayCompliance": 1,
-      "blockCountTarget": 1
-    },
-    "issues": [
-      "Only 11% of must-watch events covered in blocks"
-    ]
-  },
-  "watchPlan": {
-    "score": 100,
-    "metrics": {
-      "pickCount": 3,
-      "avgScore": 118,
-      "streamingCoverage": 1,
-      "reasonCoverage": 1
-    }
-  },
-  "results": {
-    "score": 80,
-    "metrics": {
-      "integrityRate": 1,
-      "freshnessScore": 1,
-      "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
-      "favoriteCoverage": 0.5,
-      "golfPresent": 1,
-      "footballCount": 27
-    },
-    "issues": [
-      "Only 0% of results have recap headlines"
-    ]
-  },
+  "generatedAt": "2026-02-11T15:16:04.457Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 30,
-      "importanceCoverage": 0.667,
-      "summaryCoverage": 0.667,
-      "relevanceCoverage": 0.667,
-      "tagsCoverage": 0.467
+      "totalEvents": 40,
+      "importanceCoverage": 0.75,
+      "summaryCoverage": 0.75,
+      "relevanceCoverage": 0.75,
+      "tagsCoverage": 0.6
     },
     "after": {
-      "totalEvents": 30,
+      "totalEvents": 40,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -74,16 +20,18 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 56,
-    "aiUpdatedFields": 20,
+    "aiUpdatedFields": 30,
     "failedBatches": 1,
-    "totalEvents": 30,
-    "hintsApplied": [],
-    "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 2,
-      "total": 0,
-      "tracked": false
-    }
+    "totalEvents": 40
+  },
+  "featured": {
+    "provider": "fallback",
+    "attempts": 1,
+    "valid": true,
+    "score": 100,
+    "issues": [],
+    "todayLines": 2,
+    "sectionCount": 1,
+    "thisWeekLines": 2
   }
 }
