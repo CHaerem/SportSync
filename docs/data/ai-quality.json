@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T07:40:07.543Z",
+  "generatedAt": "2026-02-13T07:48:36.782Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -24,7 +24,6 @@
     "failedBatches": 0,
     "totalEvents": 30,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
@@ -41,8 +40,8 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 9740,
+    "blockCount": 7,
+    "generationMs": 13804,
     "tokenUsage": {
       "input": 0,
       "output": 0,
