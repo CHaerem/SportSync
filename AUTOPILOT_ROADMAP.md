@@ -38,6 +38,18 @@ Check if API fetchers extract data that's discarded or only partially used. Fetc
 
 **Example:** PGA Tour scraper gets tee times for 150+ players but only stores Norwegian players' times on events — groupmate names are available in the same API response but discarded.
 
+### D. Pattern Report Analysis
+
+Read `docs/data/pattern-report.json` (generated every 2h by `scripts/analyze-patterns.js`). For each high-severity pattern, create a `[PENDING]` task:
+
+- **`hint_fatigue`** — The hint-based correction isn't working. Don't add more hints — investigate the underlying code or data issue that prevents the metric from improving. Example: if `mustWatchCoverage` hint has fired 15+ times, the problem is in how featured content selects events, not in the prompt.
+- **`stagnant_loop`** — A feedback loop score is stuck below 1.0 across many runs. Check what's needed to close it (missing script, missing data, broken wiring). The `suggestion` field describes the specific loop.
+- **`quality_decline`** — A quality metric is trending downward. Investigate recent changes to prompts, data pipeline, or enrichment logic that may have caused the regression.
+- **`recurring_health_warning`** — The same health issue keeps firing every pipeline run. Fix the root cause (broken API, stale data source, config issue) rather than letting it accumulate.
+- **`autopilot_failure_pattern`** — Tasks are failing repeatedly. Mark them `[BLOCKED]` with a reason, or investigate the common failure mode.
+
+**How to check:** Read `pattern-report.json`, filter for `severity: "high"`, and create one task per pattern. Use the `suggestion` field as the task description.
+
 ---
 
 ## EXPERIENCE Lane (User Impact)
@@ -403,3 +415,15 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 ### LOW Priority
 
 - [PENDING] Add descriptive alt text to brief-line images — `docs/js/dashboard.js:1381,1387` uses empty `alt=""` for team logos and golfer headshots in brief lines. Add team name / player name for screen reader accessibility. ~10 lines, LOW risk.
+
+---
+
+## Known Limitations (Do Not Attempt to Fix)
+
+### Usage API scope limitation
+
+`scripts/track-usage.js` calls the Anthropic usage API (`GET api.anthropic.com/api/oauth/usage`) to get real utilization %. This currently returns a permission error in CI because `claude setup-token` only grants `user:inference` scope, while the usage endpoint requires `user:profile`. This is a known upstream bug: [anthropics/claude-code#11985](https://github.com/anthropics/claude-code/issues/11985).
+
+**Do NOT attempt to fix this** — no code change on our side can resolve it. The run-count and duration tracking in `usage-tracking.json` works correctly as a fallback. Once Anthropic ships a fix (adding `user:profile` to `setup-token`), real utilization data will flow automatically without any code changes.
+
+The `docs/status.html` quota card already handles both states: it shows utilization bars when API data is available, and falls back to run-count / duration display when it's not.

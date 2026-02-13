@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-02-13T11:50:22.969Z",
+  "patternsDetected": 3,
+  "patterns": [
+    {
+      "type": "quality_decline",
+      "severity": "high",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 0.5,
+      "lateAvg": 0.17,
+      "drop": 0.33,
+      "suggestion": "Must-watch coverage dropped from 50% to 17%. Featured content is missing high-importance events."
+    },
+    {
+      "type": "stagnant_loop",
+      "severity": "high",
+      "loopName": "scheduleVerification",
+      "score": 0.33,
+      "stagnantRuns": 17,
+      "suggestion": "Feedback loop \"scheduleVerification\" has been stuck at 0.33 for 17 consecutive runs. It needs intervention to progress toward 1.0."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "mustWatchCoverage",
+      "fireCount": 9,
+      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 9 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+    }
+  ],
+  "issueCodeHistory": {
+    "failed_batches_increase": {
+      "count": 1,
+      "firstSeen": "2026-02-13T11:50:22.968Z",
+      "lastSeen": "2026-02-13T11:50:22.969Z"
+    }
+  },
+  "summary": "3 patterns detected (2 high, 1 medium). Top priority: quality_decline — Must-watch coverage dropped from 50% to 17%."
+}

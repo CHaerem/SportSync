@@ -12,6 +12,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from "./lib/helpers.js";
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
+import { analyzePatterns } from "./analyze-patterns.js";
 import { LLMClient } from "./lib/llm-client.js";
 
 const dataDir = rootDataPath();
@@ -256,6 +257,11 @@ async function main() {
 		console.log(`Autonomy regressions detected:`);
 		for (const r of regressions) console.log(`  [WARN] ${r}`);
 	}
+
+	// Run pattern analysis
+	const patternReport = analyzePatterns({ dataDir });
+	writeJsonPretty(path.join(dataDir, "pattern-report.json"), patternReport);
+	console.log(`Patterns: ${patternReport.patternsDetected} detected`);
 
 	// Generate status summary
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
