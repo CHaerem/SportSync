@@ -1,57 +1,48 @@
 {
-  "generatedAt": "2026-02-13T20:19:04.722Z",
-  "patternsDetected": 6,
+  "generatedAt": "2026-02-13T22:17:00.896Z",
+  "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 16,
+      "count": 18,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-13T20:19:04.720Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 16 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "quality_decline",
-      "severity": "high",
-      "metric": "editorialScore",
-      "earlyAvg": 85,
-      "lateAvg": 66,
-      "drop": 18,
-      "suggestion": "Editorial quality score dropped from 85 to 66 (18 point decline). Investigate recent prompt or data changes."
+      "lastSeen": "2026-02-13T22:17:00.894Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 18 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "quality_decline",
       "severity": "high",
       "metric": "mustWatchCoverage",
-      "earlyAvg": 0.69,
+      "earlyAvg": 0.54,
       "lateAvg": 0.08,
-      "drop": 0.61,
-      "suggestion": "Must-watch coverage dropped from 69% to 8%. Featured content is missing high-importance events."
+      "drop": 0.45,
+      "suggestion": "Must-watch coverage dropped from 54% to 8%. Featured content is missing high-importance events."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "high",
+      "hintKey": "unknown",
+      "fireCount": 10,
+      "hintText": "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "suggestion": "Hint \"RESULTS NOTE: Few recap headlines available — focus on scorelines and goal score...\" has fired 10 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "stagnant_loop",
       "severity": "medium",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 8,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 8 consecutive runs. It needs intervention to progress toward 1.0."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "medium",
-      "hintKey": "unknown",
-      "fireCount": 9,
-      "hintText": "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "suggestion": "Hint \"RESULTS NOTE: Few recap headlines available — focus on scorelines and goal score...\" has fired 9 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "stagnantRuns": 9,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 9 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "mustWatchCoverage",
-      "fireCount": 5,
+      "fireCount": 6,
       "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 5 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 6 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -61,10 +52,10 @@
       "lastSeen": "2026-02-13T13:46:59.623Z"
     },
     "sport_zero_events": {
-      "count": 16,
+      "count": 18,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-13T20:19:04.720Z"
+      "lastSeen": "2026-02-13T22:17:00.894Z"
     }
   },
-  "summary": "6 patterns detected (3 high, 3 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 16 times since 2026-02-13."
+  "summary": "5 patterns detected (3 high, 2 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 18 times since 2026-02-13."
 }
