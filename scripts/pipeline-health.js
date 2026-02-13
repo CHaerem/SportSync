@@ -30,6 +30,32 @@ function sportEventCounts(events) {
 	return counts;
 }
 
+/**
+ * Detect events that exist in events.json but would be invisible on the dashboard.
+ * Replicates the client-side categorizeEvents() visibility logic so the pipeline
+ * can catch mismatches (e.g. multi-day events dropped because only start time was checked).
+ */
+function findInvisibleEvents(events) {
+	const now = new Date();
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const invisible = [];
+
+	for (const e of events) {
+		if (!e.time) continue;
+		const t = new Date(e.time);
+		const end = e.endTime ? new Date(e.endTime) : null;
+
+		// Visible: starts today or later
+		if (t >= todayStart) continue;
+		// Visible: multi-day event with endTime still today or later
+		if (end && end >= todayStart) continue;
+		// Invisible: started before today, no relevant endTime
+		invisible.push(e);
+	}
+
+	return invisible;
+}
+
 function checkSchemaCompleteness(events) {
 	if (events.length === 0) return { venuePercent: 1, streamingPercent: 1 };
 	let venue = 0, streaming = 0;
@@ -139,6 +165,17 @@ export function generateHealthReport(options = {}) {
 				message: `${key} standings data is empty`,
 			});
 		}
+	}
+
+	// 6. Dashboard visibility — events in data but invisible on dashboard
+	const invisibleEvents = findInvisibleEvents(events);
+	if (invisibleEvents.length > 0) {
+		const sports = [...new Set(invisibleEvents.map((e) => e.sport))];
+		issues.push({
+			severity: "warning",
+			code: "invisible_events",
+			message: `${invisibleEvents.length} event(s) won't appear on dashboard (${sports.join(", ")})`,
+		});
 	}
 
 	// Determine overall status
