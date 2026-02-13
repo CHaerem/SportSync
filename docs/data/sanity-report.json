@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-13T18:23:54.273Z",
+  "generatedAt": "2026-02-13T20:19:10.615Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 29,
+    "totalEvents": 27,
     "sports": [
       "golf",
-      "olympics",
       "chess",
+      "olympics",
       "football",
       "cs2",
       "f1"
@@ -16,9 +16,7 @@
         "AT&T Pebble Beach Pro-Am",
         "Round 6 – FIDE Freestyle Chess World Championship 2026 | Round-Robin"
       ],
-      "today": [
-        "Osasuna at Elche"
-      ],
+      "today": [],
       "tomorrow": [
         "Alpine Skiing — Men's Giant Slalom",
         "Cross-Country Skiing — Women's Relay 4x5km",
@@ -50,14 +48,12 @@
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": [
-        "Nordic Combined — Individual Gundersen"
-      ]
+      "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 65,
+    "editorialScore": 64,
     "issueCount": 2
   },
   "findings": [
@@ -69,22 +65,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen in Freestyle Chess R6\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfc5 Nordic Combined with Oftebro\" which may not match any event"
+      "message": "Featured block references \"️ Magnus Carlsen in Freestyle Chess WC Round 6\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 65/100 (below threshold)"
+      "message": "Editorial quality score is 64/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,7 +90,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bhatia\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Real Sociedad Saturday\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -113,10 +104,10 @@
     }
   ],
   "summary": {
-    "total": 10,
+    "total": 9,
     "critical": 0,
     "warning": 7,
-    "info": 3
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
