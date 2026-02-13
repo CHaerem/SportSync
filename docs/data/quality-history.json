@@ -2060,12 +2060,12 @@
     }
   },
   {
-    "timestamp": "2026-02-13T07:16:17.141Z",
+    "timestamp": "2026-02-13T07:04:01.879Z",
     "editorial": {
-      "score": 63,
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
-      "blockCount": 8
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -2073,9 +2073,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -2090,16 +2090,15 @@
       "enrichment": {
         "input": 0,
         "output": 0,
-        "calls": 2,
+        "calls": 3,
         "total": 0,
         "tracked": false
       },
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
@@ -2110,12 +2109,12 @@
     }
   },
   {
-    "timestamp": "2026-02-13T07:40:07.544Z",
+    "timestamp": "2026-02-13T07:04:02.458Z",
     "editorial": {
-      "score": 63,
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
-      "blockCount": 8
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -2123,9 +2122,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -2147,14 +2146,475 @@
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
         "output": 0,
-        "calls": 4,
+        "calls": 3,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:06:06.489Z",
+    "editorial": {
+      "score": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 54,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:06:06.654Z",
+    "editorial": {
+      "score": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 54,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:14:03.250Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:14:03.445Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:17:36.927Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:17:37.126Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:36:07.544Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:36:07.986Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:46:10.654Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T07:46:10.996Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
         "total": 0
       }
     }

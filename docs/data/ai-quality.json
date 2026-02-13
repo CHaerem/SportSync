@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-13T07:48:36.782Z",
+  "generatedAt": "2026-02-13T07:46:11.222Z",
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 30,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.7
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 30,
@@ -19,56 +19,52 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
-    "aiUpdatedFields": 30,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 30,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 7,
-    "generationMs": 13804,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"♟️ Round 1 – FIDE Freestyle Chess World Championsh...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 4,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 63,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.875,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
-    "issues": [
-      "Only 0% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 112,
+      "avgScore": 90,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
