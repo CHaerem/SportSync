@@ -195,6 +195,11 @@ tests/                      # 634 tests across 30 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
+## Conventions
+
+### Event time filtering — use `isEventInWindow()`
+When filtering events by time, **always** use `isEventInWindow(event, windowStart, windowEnd)` from `scripts/lib/helpers.js` (server-side) or the global function in `dashboard.js` (client-side). This handles multi-day events (golf tournaments, Olympics sessions) that have an `endTime` spanning multiple days. Never write manual `new Date(e.time) >= start` filters — they silently drop multi-day events.
+
 ## Development Notes
 
 - **No build process** - pure static files with embedded CSS

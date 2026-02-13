@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
+import { isEventInWindow } from "../scripts/lib/helpers.js";
 
 // Extract categorizeEvents from dashboard.js to test it directly.
-// The method only depends on this.allEvents and this.liveScores (no DOM).
+// The method only depends on this.allEvents, this.liveScores, and isEventInWindow (no DOM).
 const src = fs.readFileSync(path.resolve("docs/js/dashboard.js"), "utf-8");
 const match = src.match(/categorizeEvents\(\)\s*\{([\s\S]*?)\n\t\}/);
 if (!match) throw new Error("Could not extract categorizeEvents from dashboard.js");
-const categorizeEvents = new Function(match[1]);
+// Provide isEventInWindow in scope (it's a global function in dashboard.js)
+const categorizeEvents = new Function("isEventInWindow", `return function() {${match[1]}}`)(isEventInWindow);
 
 function categorize(allEvents, liveScores = {}) {
 	return categorizeEvents.call({ allEvents, liveScores });

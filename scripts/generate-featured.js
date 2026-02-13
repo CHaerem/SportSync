@@ -15,7 +15,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
@@ -171,11 +171,9 @@ function buildCuratedContext(configs, now) {
 		if (c.norwegianAthletes?.length) {
 			lines.push(`Norwegian athletes: ${c.norwegianAthletes.join(", ")}`);
 		}
+		const farFuture = new Date(now.getTime() + 365 * MS_PER_DAY);
 		const upcoming = (c.events || [])
-			.filter((e) => {
-				const end = e.endTime ? new Date(e.endTime) : new Date(e.time);
-				return end >= now;
-			})
+			.filter((e) => isEventInWindow(e, now, farFuture))
 			.slice(0, 8);
 		if (upcoming.length > 0) {
 			lines.push("Upcoming events:");
@@ -249,27 +247,11 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	});
 
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const weekEnd = new Date(todayStart);
-	weekEnd.setDate(weekEnd.getDate() + 7);
+	const tomorrowStart = new Date(todayStart.getTime() + MS_PER_DAY);
+	const weekEnd = new Date(todayStart.getTime() + 7 * MS_PER_DAY);
 
-	const tomorrowStart = new Date(todayStart.getTime() + 86400000);
-	const todayEvents = events.filter((e) => {
-		const t = new Date(e.time);
-		const end = e.endTime ? new Date(e.endTime) : null;
-		if (t >= todayStart && t < tomorrowStart) return true;
-		// Multi-day event that started before today but hasn't ended
-		if (t < todayStart && end && end >= todayStart) return true;
-		return false;
-	});
-
-	const weekEvents = events.filter((e) => {
-		const t = new Date(e.time);
-		const end = e.endTime ? new Date(e.endTime) : null;
-		if (t >= todayStart && t < weekEnd) return true;
-		// Multi-day event that started before the window but ends within it
-		if (t < todayStart && end && end >= todayStart) return true;
-		return false;
-	});
+	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, tomorrowStart));
+	const weekEvents = events.filter((e) => isEventInWindow(e, todayStart, weekEnd));
 
 	const summary = weekEvents
 		.slice(0, 20)
@@ -518,15 +500,9 @@ function fallbackLine(e) {
 
 function generateFallbackToday(events, now) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const todayEnd = new Date(todayStart.getTime() + 86400000);
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
 
-	const todayEvents = events.filter((e) => {
-		const t = new Date(e.time);
-		const end = e.endTime ? new Date(e.endTime) : null;
-		if (t >= todayStart && t < todayEnd) return true;
-		if (t < todayStart && end && end >= todayStart) return true;
-		return false;
-	});
+	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 

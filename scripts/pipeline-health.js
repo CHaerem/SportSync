@@ -10,7 +10,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from "./lib/helpers.js";
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { LLMClient } from "./lib/llm-client.js";
 
@@ -32,28 +32,13 @@ function sportEventCounts(events) {
 
 /**
  * Detect events that exist in events.json but would be invisible on the dashboard.
- * Replicates the client-side categorizeEvents() visibility logic so the pipeline
- * can catch mismatches (e.g. multi-day events dropped because only start time was checked).
+ * Uses isEventInWindow — if an event doesn't overlap [today, far future), it's invisible.
  */
 function findInvisibleEvents(events) {
 	const now = new Date();
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const invisible = [];
-
-	for (const e of events) {
-		if (!e.time) continue;
-		const t = new Date(e.time);
-		const end = e.endTime ? new Date(e.endTime) : null;
-
-		// Visible: starts today or later
-		if (t >= todayStart) continue;
-		// Visible: multi-day event with endTime still today or later
-		if (end && end >= todayStart) continue;
-		// Invisible: started before today, no relevant endTime
-		invisible.push(e);
-	}
-
-	return invisible;
+	const farFuture = new Date(todayStart.getTime() + 365 * 86400000);
+	return events.filter((e) => e.time && !isEventInWindow(e, todayStart, farFuture));
 }
 
 function checkSchemaCompleteness(events) {

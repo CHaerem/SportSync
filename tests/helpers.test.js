@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen } from "../scripts/lib/helpers.js";
+import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow } from "../scripts/lib/helpers.js";
 
 describe("iso()", () => {
 	it("returns valid ISO string for current time", () => {
@@ -91,5 +91,52 @@ describe("mergePrimaryAndOpen()", () => {
 		// Note: hasEvents() checks for .tournaments prop, individual tournament objects don't have it
 		// so open overrides primary for same-named tournaments
 		expect(result.tournaments[0].events[0].title).toBe("Open");
+	});
+});
+
+describe("isEventInWindow()", () => {
+	const day1 = new Date("2026-02-12T00:00:00Z");
+	const day2 = new Date("2026-02-13T00:00:00Z");
+	const day3 = new Date("2026-02-14T00:00:00Z");
+	const day5 = new Date("2026-02-16T00:00:00Z");
+
+	it("single-day event inside window", () => {
+		expect(isEventInWindow({ time: "2026-02-12T15:00:00Z" }, day1, day2)).toBe(true);
+	});
+
+	it("single-day event outside window", () => {
+		expect(isEventInWindow({ time: "2026-02-14T15:00:00Z" }, day1, day2)).toBe(false);
+	});
+
+	it("multi-day event overlapping window start", () => {
+		expect(isEventInWindow({ time: "2026-02-11T05:00:00Z", endTime: "2026-02-13T23:00:00Z" }, day2, day3)).toBe(true);
+	});
+
+	it("multi-day event overlapping window end", () => {
+		expect(isEventInWindow({ time: "2026-02-13T05:00:00Z", endTime: "2026-02-15T23:00:00Z" }, day2, day3)).toBe(true);
+	});
+
+	it("multi-day event spanning entire window", () => {
+		expect(isEventInWindow({ time: "2026-02-11T00:00:00Z", endTime: "2026-02-16T00:00:00Z" }, day2, day3)).toBe(true);
+	});
+
+	it("multi-day event entirely before window", () => {
+		expect(isEventInWindow({ time: "2026-02-10T00:00:00Z", endTime: "2026-02-11T23:00:00Z" }, day2, day3)).toBe(false);
+	});
+
+	it("multi-day event entirely after window", () => {
+		expect(isEventInWindow({ time: "2026-02-15T00:00:00Z", endTime: "2026-02-16T00:00:00Z" }, day1, day2)).toBe(false);
+	});
+
+	it("returns false for null event", () => {
+		expect(isEventInWindow(null, day1, day2)).toBe(false);
+	});
+
+	it("returns false for event without time", () => {
+		expect(isEventInWindow({ title: "No time" }, day1, day2)).toBe(false);
+	});
+
+	it("accepts numeric timestamps as window bounds", () => {
+		expect(isEventInWindow({ time: "2026-02-12T15:00:00Z" }, day1.getTime(), day2.getTime())).toBe(true);
 	});
 });
