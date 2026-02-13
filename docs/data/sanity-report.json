@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T03:13:49.247Z",
+  "generatedAt": "2026-02-13T04:46:20.346Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 29,
@@ -53,9 +53,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "healthy",
-    "editorialScore": 63,
-    "issueCount": 0
+    "pipelineStatus": "warning",
+    "editorialScore": 70,
+    "issueCount": 1
   },
   "findings": [
     {
@@ -66,7 +66,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen opens Freestyle Chess World Championship\" which may not match any event"
+      "message": "Featured block references \"️ Magnus Carlsen opens Freestyle Chess World Championship\" which may not match any event"
+    },
+    {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"Real Madrid vs Real Sociedad at Bernabéu\" which may not match any event"
+    },
+    {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfc5 Sun — Granerud in large hill ski jumping\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -75,13 +85,18 @@
     },
     {
       "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 63/100 (below threshold)"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -91,19 +106,14 @@
     {
       "severity": "warning",
       "check": "featured_time_mismatch",
-      "message": "Featured shows \"12:00\" for \"Cross-Country Skiing — Men's 10km Free\" but events.json has 11:45"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"14:00\" for \"Cross-Country Skiing — Women's Relay 4x5km\" but events.json has 12:00"
+      "message": "Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15"
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 10,
     "critical": 0,
     "warning": 6,
-    "info": 2
+    "info": 4
   },
   "pass": true,
   "tokenUsage": null

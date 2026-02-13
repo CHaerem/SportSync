@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T03:13:48.985Z",
+  "generatedAt": "2026-02-13T04:46:20.094Z",
   "eventCount": 29,
   "sportCoverage": {
     "olympics": {
@@ -34,8 +34,8 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 301,
-      "stale": false
+      "ageMinutes": 393,
+      "stale": true
     },
     "tennis.json": {
       "ageMinutes": 2,
@@ -67,10 +67,16 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [],
-  "status": "healthy",
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "golf.json: data is 393 minutes old"
+    }
+  ],
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 7/8 feedback loops closed. Pipeline is healthy with 29 events across 5 sports. Editorial quality score is 63/100.",
+    "text": "Autonomy at 92% with 7/8 feedback loops closed. Pipeline is warning with 1 warning issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
