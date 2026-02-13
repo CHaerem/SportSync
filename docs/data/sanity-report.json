@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T14:12:24.313Z",
+  "generatedAt": "2026-02-13T14:25:45.941Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 30,
@@ -58,7 +58,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 68,
+    "editorialScore": 65,
     "issueCount": 2
   },
   "findings": [
@@ -70,27 +70,27 @@
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 68/100 (below threshold)"
+      "message": "Editorial quality score is 65/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Sunday\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Germany\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Olympic Nordic Combined Individual Gundersen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -99,19 +99,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 8,
     "critical": 0,
-    "warning": 8,
+    "warning": 7,
     "info": 1
   },
   "pass": true,
