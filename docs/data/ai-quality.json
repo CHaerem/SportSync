@@ -1,39 +1,40 @@
 {
-  "generatedAt": "2026-02-13T13:32:16.588Z",
+  "generatedAt": "2026-02-13T13:37:31.019Z",
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"♟️ Round 1 – FIDE Freestyle Chess World Championsh...\""
-    ],
-    "blockCount": 9,
-    "generationMs": 2,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 17270,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 1,
+      "total": 0,
+      "tracked": false
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 63,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.111,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
-      "textQuality": 0.875,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7
+      "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 11% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 97,
+      "avgScore": 118,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,13 +55,13 @@
     ]
   },
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
       "totalEvents": 30,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "importanceCoverage": 0.667,
+      "summaryCoverage": 0.667,
+      "relevanceCoverage": 0.667,
+      "tagsCoverage": 0.467
     },
     "after": {
       "totalEvents": 30,
@@ -72,16 +73,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
-    "failedBatches": 0,
+    "fallbackFieldsFilled": 56,
+    "aiUpdatedFields": 20,
+    "failedBatches": 1,
     "totalEvents": 30,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 2,
+      "total": 0,
+      "tracked": false
     }
   }
 }

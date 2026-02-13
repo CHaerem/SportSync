@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-02-13T12:38:51.777Z",
-  "overallScore": 0.92,
+  "generatedAt": "2026-02-13T13:38:33.204Z",
+  "overallScore": 0.93,
   "loopsClosed": 7,
-  "loopsTotal": 8,
+  "loopsTotal": 9,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "82 entries, hints fired 22 times"
+      "details": "100 entries, hints fired 25 times"
     },
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (1 applied)"
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "Health report is fresh (4 min old)"
+      "score": 0.75,
+      "status": "partial",
+      "details": "Health report is fresh (1h old) but has 3 issue(s)"
     },
     "watchPlan": {
       "score": 1,
@@ -40,13 +40,18 @@
       "details": "discovery log exists, sync-configs exists, configs have been researched"
     },
     "scheduleVerification": {
-      "score": 0.33,
+      "score": 1,
+      "status": "closed",
+      "details": "verification history exists and is fresh, schedule-verifier exists, configs have verification summaries"
+    },
+    "resultsHealth": {
+      "score": 0.66,
       "status": "partial",
-      "details": "no verification history, schedule-verifier exists, no verified configs"
+      "details": "fetcher exists, results data is fresh, health report exists but doesn't monitor results"
     }
   },
   "nextActions": [
-    "Ensure scripts/lib/schedule-verifier.js exists with verification engine",
-    "Run verification to apply verificationSummary to at least one config"
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Ensure pipeline-health.js monitors results freshness (resultsHealth field)"
   ]
 }

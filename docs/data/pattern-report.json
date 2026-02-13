@@ -1,30 +1,18 @@
 {
-  "generatedAt": "2026-02-13T12:38:51.797Z",
-  "patternsDetected": 2,
-  "patterns": [
-    {
-      "type": "stagnant_loop",
-      "severity": "high",
-      "loopName": "scheduleVerification",
-      "score": 0.33,
-      "stagnantRuns": 20,
-      "suggestion": "Feedback loop \"scheduleVerification\" has been stuck at 0.33 for 20 consecutive runs. It needs intervention to progress toward 1.0."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "high",
-      "hintKey": "mustWatchCoverage",
-      "fireCount": 12,
-      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 12 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
-    }
-  ],
+  "generatedAt": "2026-02-13T13:38:33.222Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "failed_batches_increase": {
-      "count": 1,
+      "count": 2,
       "firstSeen": "2026-02-13T11:50:22.968Z",
-      "lastSeen": "2026-02-13T11:50:22.969Z"
+      "lastSeen": "2026-02-13T13:38:33.221Z"
+    },
+    "sport_zero_events": {
+      "count": 2,
+      "firstSeen": "2026-02-13T13:38:33.221Z",
+      "lastSeen": "2026-02-13T13:38:33.221Z"
     }
   },
-  "summary": "2 patterns detected (2 high). Top priority: stagnant_loop — Feedback loop \"scheduleVerification\" has been stuck at 0."
+  "summary": "0 patterns detected"
 }
