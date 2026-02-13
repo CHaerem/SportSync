@@ -85,6 +85,7 @@ class Dashboard {
 					id: `${ev.sport}-${ev.title}-${ev.time}`.replace(/\s+/g, '-').toLowerCase(),
 					title: ev.title,
 					time: ev.time,
+					endTime: ev.endTime || null,
 					sport: ev.sport === 'f1' ? 'formula1' : ev.sport,
 					tournament: ev.tournament || '',
 					venue: ev.venue || '',

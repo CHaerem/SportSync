@@ -168,3 +168,12 @@ describe("categorizeEvents()", () => {
 		expect(bands.live).toHaveLength(1);
 	});
 });
+
+describe("loadEvents mapper preserves endTime", () => {
+	it("event mapper includes endTime in mapped fields", () => {
+		// Verify the loadEvents mapper doesn't strip endTime
+		const mapperMatch = src.match(/this\.allEvents\s*=\s*data\s*\n?\s*\.map\(ev\s*=>\s*\(\{([\s\S]*?)\}\)\)/);
+		expect(mapperMatch, "Could not find event mapper in dashboard.js").toBeTruthy();
+		expect(mapperMatch[1]).toContain("endTime");
+	});
+});
