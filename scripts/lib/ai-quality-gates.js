@@ -479,7 +479,10 @@ function filterTodayEvents(events, now) {
 	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
 	return events.filter((e) => {
 		const t = new Date(e.time);
-		return t >= todayStart && t < todayEnd;
+		const end = e.endTime ? new Date(e.endTime) : null;
+		if (t >= todayStart && t < todayEnd) return true;
+		if (t < todayStart && end && end >= todayStart) return true;
+		return false;
 	});
 }
 

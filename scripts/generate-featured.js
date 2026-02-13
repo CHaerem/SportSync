@@ -172,7 +172,10 @@ function buildCuratedContext(configs, now) {
 			lines.push(`Norwegian athletes: ${c.norwegianAthletes.join(", ")}`);
 		}
 		const upcoming = (c.events || [])
-			.filter((e) => new Date(e.time) >= now)
+			.filter((e) => {
+				const end = e.endTime ? new Date(e.endTime) : new Date(e.time);
+				return end >= now;
+			})
 			.slice(0, 8);
 		if (upcoming.length > 0) {
 			lines.push("Upcoming events:");
@@ -249,14 +252,23 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	const weekEnd = new Date(todayStart);
 	weekEnd.setDate(weekEnd.getDate() + 7);
 
+	const tomorrowStart = new Date(todayStart.getTime() + 86400000);
 	const todayEvents = events.filter((e) => {
 		const t = new Date(e.time);
-		return t >= todayStart && t < new Date(todayStart.getTime() + 86400000);
+		const end = e.endTime ? new Date(e.endTime) : null;
+		if (t >= todayStart && t < tomorrowStart) return true;
+		// Multi-day event that started before today but hasn't ended
+		if (t < todayStart && end && end >= todayStart) return true;
+		return false;
 	});
 
 	const weekEvents = events.filter((e) => {
 		const t = new Date(e.time);
-		return t >= todayStart && t < weekEnd;
+		const end = e.endTime ? new Date(e.endTime) : null;
+		if (t >= todayStart && t < weekEnd) return true;
+		// Multi-day event that started before the window but ends within it
+		if (t < todayStart && end && end >= todayStart) return true;
+		return false;
 	});
 
 	const summary = weekEvents
@@ -510,7 +522,10 @@ function generateFallbackToday(events, now) {
 
 	const todayEvents = events.filter((e) => {
 		const t = new Date(e.time);
-		return t >= todayStart && t < todayEnd;
+		const end = e.endTime ? new Date(e.endTime) : null;
+		if (t >= todayStart && t < todayEnd) return true;
+		if (t < todayStart && end && end >= todayStart) return true;
+		return false;
 	});
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
