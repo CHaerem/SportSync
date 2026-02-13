@@ -1,46 +1,18 @@
 import { describe, it, expect } from "vitest";
-import { calculateDelta, pruneOldRuns, calculateShare, shouldGate } from "../scripts/track-usage.js";
+import { pruneOldRuns, calculateShare, shouldGate } from "../scripts/track-usage.js";
 
-describe("calculateDelta", () => {
-	it("computes deltas between before/after snapshots", () => {
-		const before = { five_hour: { utilization: 10 }, seven_day: { utilization: 40 } };
-		const after = { five_hour: { utilization: 13.5 }, seven_day: { utilization: 41.2 } };
-		const d = calculateDelta(before, after);
-		expect(d.delta5h).toBe(3.5);
-		expect(d.delta7d).toBe(1.2);
-	});
-
-	it("returns zeros when before is null", () => {
-		const d = calculateDelta(null, { five_hour: { utilization: 10 }, seven_day: { utilization: 50 } });
-		expect(d.delta5h).toBe(0);
-		expect(d.delta7d).toBe(0);
-	});
-
-	it("returns zeros when after is null", () => {
-		const d = calculateDelta({ five_hour: { utilization: 10 }, seven_day: { utilization: 50 } }, null);
-		expect(d.delta5h).toBe(0);
-		expect(d.delta7d).toBe(0);
-	});
-
-	it("handles missing nested fields gracefully", () => {
-		const d = calculateDelta({}, {});
-		expect(d.delta5h).toBe(0);
-		expect(d.delta7d).toBe(0);
-	});
-});
+const MS_PER_5H = 5 * 3_600_000;
+const MS_PER_7D = 7 * 86_400_000;
 
 describe("pruneOldRuns", () => {
-	const MS_PER_7D = 7 * 86_400_000;
-
 	it("removes runs older than 7 days", () => {
 		const now = Date.now();
 		const runs = [
-			{ timestamp: new Date(now - MS_PER_7D - 1000).toISOString(), context: "pipeline", delta7d: 1 },
-			{ timestamp: new Date(now - 1000).toISOString(), context: "pipeline", delta7d: 2 },
+			{ timestamp: new Date(now - MS_PER_7D - 1000).toISOString(), context: "pipeline" },
+			{ timestamp: new Date(now - 1000).toISOString(), context: "pipeline" },
 		];
 		const result = pruneOldRuns(runs, now);
 		expect(result).toHaveLength(1);
-		expect(result[0].delta7d).toBe(2);
 	});
 
 	it("returns empty array for null input", () => {
@@ -50,57 +22,80 @@ describe("pruneOldRuns", () => {
 	it("keeps all recent runs", () => {
 		const now = Date.now();
 		const runs = [
-			{ timestamp: new Date(now - 3600000).toISOString(), delta7d: 1 },
-			{ timestamp: new Date(now - 7200000).toISOString(), delta7d: 2 },
+			{ timestamp: new Date(now - 3600000).toISOString() },
+			{ timestamp: new Date(now - 7200000).toISOString() },
 		];
 		expect(pruneOldRuns(runs, now)).toHaveLength(2);
 	});
 });
 
 describe("calculateShare", () => {
-	it("sums delta7d and counts contexts", () => {
+	it("counts contexts and sums duration", () => {
 		const runs = [
-			{ context: "pipeline", delta7d: 1.5 },
-			{ context: "pipeline", delta7d: 2.0 },
-			{ context: "autopilot", delta7d: 3.0 },
+			{ context: "pipeline", durationMs: 120000 },
+			{ context: "pipeline", durationMs: 130000 },
+			{ context: "autopilot", durationMs: 900000 },
 		];
 		const share = calculateShare(runs);
-		expect(share.sevenDay).toBe(6.5);
 		expect(share.pipelineRuns).toBe(2);
 		expect(share.autopilotRuns).toBe(1);
+		expect(share.totalDurationMs).toBe(1150000);
 	});
 
 	it("returns zeros for empty array", () => {
 		const share = calculateShare([]);
-		expect(share.sevenDay).toBe(0);
 		expect(share.pipelineRuns).toBe(0);
 		expect(share.autopilotRuns).toBe(0);
+		expect(share.totalDurationMs).toBe(0);
 	});
 
 	it("handles null input", () => {
 		const share = calculateShare(null);
-		expect(share.sevenDay).toBe(0);
+		expect(share.pipelineRuns).toBe(0);
+	});
+
+	it("handles missing durationMs", () => {
+		const runs = [{ context: "pipeline" }];
+		expect(calculateShare(runs).totalDurationMs).toBe(0);
 	});
 });
 
 describe("shouldGate", () => {
-	it("gates when utilization exceeds threshold", () => {
-		expect(shouldGate(85, 80)).toBe(true);
+	it("blocks when too many autopilot runs in 7d", () => {
+		const runs = Array.from({ length: 7 }, (_, i) => ({
+			timestamp: new Date(Date.now() - i * 86_400_000).toISOString(),
+			context: "autopilot",
+		}));
+		const result = shouldGate(runs);
+		expect(result.blocked).toBe(true);
+		expect(result.reason).toContain("autopilot");
 	});
 
-	it("passes when utilization is at threshold", () => {
-		expect(shouldGate(80, 80)).toBe(false);
+	it("passes with few autopilot runs", () => {
+		const runs = [
+			{ timestamp: new Date().toISOString(), context: "autopilot" },
+			{ timestamp: new Date().toISOString(), context: "pipeline" },
+		];
+		const result = shouldGate(runs, Date.now() + MS_PER_5H + 1000);
+		expect(result.blocked).toBe(false);
 	});
 
-	it("passes when utilization is below threshold", () => {
-		expect(shouldGate(50, 80)).toBe(false);
+	it("blocks when too many runs in 5h burst window", () => {
+		const now = Date.now();
+		const runs = Array.from({ length: 4 }, (_, i) => ({
+			timestamp: new Date(now - i * 60_000).toISOString(),
+			context: "pipeline",
+		}));
+		const result = shouldGate(runs, now);
+		expect(result.blocked).toBe(true);
+		expect(result.reason).toContain("5h");
 	});
 
-	it("passes for null utilization", () => {
-		expect(shouldGate(null, 80)).toBe(false);
+	it("passes for null input", () => {
+		expect(shouldGate(null).blocked).toBe(false);
 	});
 
-	it("passes for undefined utilization", () => {
-		expect(shouldGate(undefined, 80)).toBe(false);
+	it("passes for empty runs", () => {
+		expect(shouldGate([]).blocked).toBe(false);
 	});
 });

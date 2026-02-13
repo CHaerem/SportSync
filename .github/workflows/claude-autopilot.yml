@@ -36,14 +36,10 @@ jobs:
 
       - name: Check quota headroom
         id: quota
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: node scripts/track-usage.js gate && echo "gate=pass" >> $GITHUB_OUTPUT || echo "gate=skip" >> $GITHUB_OUTPUT
 
       - name: Snapshot usage (before autopilot)
         if: steps.quota.outputs.gate != 'skip'
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: node scripts/track-usage.js snapshot || true
 
       - uses: anthropics/claude-code-action@v1
@@ -224,6 +220,4 @@ jobs:
 
       - name: Report autopilot usage
         if: steps.quota.outputs.gate != 'skip'
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: node scripts/track-usage.js report autopilot || true

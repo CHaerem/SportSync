@@ -580,40 +580,47 @@
 				'</div>';
 		}
 
+		function fmtDuration(ms) {
+			if (!ms) return '0m';
+			const mins = Math.round(ms / 60000);
+			if (mins < 60) return mins + 'm';
+			const hrs = Math.floor(mins / 60);
+			return hrs + 'h ' + (mins % 60) + 'm';
+		}
+
 		function renderQuota(usage) {
 			const el = document.getElementById('quota');
-			if (!usage) { el.innerHTML = ''; return; }
-			const c = usage.current || {};
-			const u5 = c.fiveHour?.utilization;
-			const u7 = c.sevenDay?.utilization;
+			if (!usage || !usage.runs || usage.runs.length === 0) { el.innerHTML = ''; return; }
 			const share = usage.sportsyncShare || {};
-			const threshold = usage.gateThreshold || 80;
+			const gate = usage.gateConfig || {};
+			const runs = usage.runs || [];
 
-			if (u5 == null && u7 == null) { el.innerHTML = ''; return; }
+			// 5h burst: count runs in last 5h
+			const fiveHAgo = Date.now() - 5 * 3600000;
+			const recent5h = runs.filter(r => new Date(r.timestamp).getTime() > fiveHAgo).length;
+			const max5h = gate.maxRuns5h || 4;
+			const pct5h = Math.min(100, Math.round((recent5h / max5h) * 100));
 
-			const bar = (label, pct, thresholdMark) => {
-				const p = Math.min(100, Math.max(0, pct || 0));
-				const color = p > 80 ? 'var(--red)' : p > 60 ? 'var(--amber)' : 'var(--green)';
-				let markHtml = '';
-				if (thresholdMark != null) {
-					markHtml = '<div style="position:absolute;left:' + thresholdMark + '%;top:-3px;width:2px;height:10px;background:var(--red);border-radius:1px;opacity:0.6" title="Gate: ' + thresholdMark + '%"></div>';
-				}
-				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + (pct != null ? pct + '%' : '—') + '</span></div>' +
-					'<div class="score-bar" style="position:relative"><div class="score-bar-fill" style="width:' + p + '%;background:' + color + '"></div>' + markHtml + '</div>';
+			// 7d autopilot
+			const autopilotCount = share.autopilotRuns || 0;
+			const maxAuto = gate.maxAutopilot7d || 7;
+			const pctAuto = Math.min(100, Math.round((autopilotCount / maxAuto) * 100));
+
+			const bar = (label, current, max, pct) => {
+				const color = pct > 80 ? 'var(--red)' : pct > 60 ? 'var(--amber)' : 'var(--green)';
+				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + current + ' / ' + max + '</span></div>' +
+					'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>';
 			};
 
-			const resetsAt = c.sevenDay?.resets_at ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">Resets ' + timeAgo(c.sevenDay.resets_at).replace(' ago', '') + (new Date(c.sevenDay.resets_at) > new Date() ? ' from now' : ' ago') + '</div>' : '';
-
-			const shareText = share.sevenDay != null
-				? '<div style="font-size:0.72rem;margin-top:8px">SportSync: ~' + share.sevenDay + '% of 7d quota (' + (share.pipelineRuns || 0) + ' pipeline + ' + (share.autopilotRuns || 0) + ' autopilot runs)</div>'
-				: '';
-
 			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Claude Code Quota</div>' +
-				bar('5-hour window', u5, null) +
-				bar('7-day window', u7, threshold) +
-				resetsAt +
-				shareText +
+				'<div class="card-header">Claude Code Usage</div>' +
+				bar('Runs in last 5h', recent5h, max5h, pct5h) +
+				bar('Autopilot runs (7d)', autopilotCount, maxAuto, pctAuto) +
+				'<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
+				'<div class="metric-row"><span class="metric-label">Pipeline runs (7d)</span><span class="metric-value">' + (share.pipelineRuns || 0) + '</span></div>' +
+				'<div class="metric-row"><span class="metric-label">AI time (7d)</span><span class="metric-value">' + fmtDuration(share.totalDurationMs) + '</span></div>' +
+				'</div>' +
+				'<div style="font-size:0.65rem;color:var(--muted);margin-top:6px">Updated ' + timeAgo(usage.lastUpdated) + '</div>' +
 				'</div>';
 		}
 

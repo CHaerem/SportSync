@@ -1,25 +1,18 @@
+import fs from "fs";
 import path from "path";
-import { fetchJson, readJsonIfExists, writeJsonPretty, rootDataPath, iso } from "./lib/helpers.js";
+import { readJsonIfExists, writeJsonPretty, rootDataPath, iso } from "./lib/helpers.js";
 
-const USAGE_API = "https://api.anthropic.com/api/oauth/usage";
 const TRACKING_FILE = "usage-tracking.json";
 const BEFORE_FILE = ".usage-before.json";
+const MS_PER_5H = 5 * 3_600_000;
 const MS_PER_7D = 7 * 86_400_000;
-const GATE_THRESHOLD = 80;
+
+// Max autopilot runs per 7-day window before gating
+const GATE_MAX_AUTOPILOT_7D = 7;
+// Max total AI runs (pipeline+autopilot) in a 5h window before gating
+const GATE_MAX_RUNS_5H = 4;
 
 // --- Pure functions (exported for testing) ---
-
-export function calculateDelta(before, after) {
-	if (!before || !after) return { delta5h: 0, delta7d: 0 };
-	const b5 = before.five_hour?.utilization ?? 0;
-	const a5 = after.five_hour?.utilization ?? 0;
-	const b7 = before.seven_day?.utilization ?? 0;
-	const a7 = after.seven_day?.utilization ?? 0;
-	return {
-		delta5h: Math.round((a5 - b5) * 100) / 100,
-		delta7d: Math.round((a7 - b7) * 100) / 100,
-	};
-}
 
 export function pruneOldRuns(runs, now = Date.now()) {
 	if (!Array.isArray(runs)) return [];
@@ -29,62 +22,47 @@ export function pruneOldRuns(runs, now = Date.now()) {
 
 export function calculateShare(runs) {
 	if (!Array.isArray(runs) || runs.length === 0) {
-		return { sevenDay: 0, pipelineRuns: 0, autopilotRuns: 0 };
+		return { pipelineRuns: 0, autopilotRuns: 0, totalDurationMs: 0 };
 	}
-	let total7d = 0;
 	let pipelineRuns = 0;
 	let autopilotRuns = 0;
+	let totalDurationMs = 0;
 	for (const r of runs) {
-		total7d += r.delta7d || 0;
 		if (r.context === "pipeline") pipelineRuns++;
 		if (r.context === "autopilot") autopilotRuns++;
+		totalDurationMs += r.durationMs || 0;
 	}
-	return {
-		sevenDay: Math.round(total7d * 100) / 100,
-		pipelineRuns,
-		autopilotRuns,
-	};
+	return { pipelineRuns, autopilotRuns, totalDurationMs };
 }
 
-export function shouldGate(utilization, threshold = GATE_THRESHOLD) {
-	return typeof utilization === "number" && utilization > threshold;
-}
+export function shouldGate(runs, now = Date.now()) {
+	if (!Array.isArray(runs)) return { blocked: false, reason: "no data" };
 
-// --- API helper ---
+	// Check autopilot frequency over 7d
+	const autopilotCount = runs.filter((r) => r.context === "autopilot").length;
+	if (autopilotCount >= GATE_MAX_AUTOPILOT_7D) {
+		return { blocked: true, reason: `${autopilotCount} autopilot runs in 7d (max ${GATE_MAX_AUTOPILOT_7D})` };
+	}
 
-async function fetchUsage() {
-	const token = process.env.CLAUDE_CODE_OAUTH_TOKEN;
-	if (!token) {
-		console.log("No CLAUDE_CODE_OAUTH_TOKEN — skipping usage fetch");
-		return null;
+	// Check burst: too many AI runs in the last 5h
+	const fiveHAgo = now - MS_PER_5H;
+	const recentRuns = runs.filter((r) => new Date(r.timestamp).getTime() > fiveHAgo);
+	if (recentRuns.length >= GATE_MAX_RUNS_5H) {
+		return { blocked: true, reason: `${recentRuns.length} runs in last 5h (max ${GATE_MAX_RUNS_5H})` };
 	}
-	try {
-		const data = await fetchJson(USAGE_API, {
-			headers: { Authorization: `Bearer ${token}` },
-		});
-		if (data?.error) {
-			console.error("Usage API error:", JSON.stringify(data));
-			return null;
-		}
-		console.log("Usage API response keys:", Object.keys(data || {}));
-		return data;
-	} catch (err) {
-		console.error("Failed to fetch usage:", err.message);
-		return null;
-	}
+
+	return { blocked: false, reason: "ok" };
 }
 
 // --- Subcommands ---
 
-async function snapshot() {
-	const usage = await fetchUsage();
-	if (!usage) return;
+function snapshot() {
 	const beforePath = path.join(rootDataPath(), BEFORE_FILE);
-	writeJsonPretty(beforePath, { timestamp: iso(), usage });
-	console.log("Usage snapshot saved");
+	writeJsonPretty(beforePath, { timestamp: iso() });
+	console.log("Usage snapshot saved (timestamp only)");
 }
 
-async function report(context) {
+function report(context) {
 	if (!context) {
 		console.error("Usage: track-usage.js report <pipeline|autopilot>");
 		process.exit(1);
@@ -94,57 +72,50 @@ async function report(context) {
 	const trackingPath = path.join(dataDir, TRACKING_FILE);
 
 	const beforeData = readJsonIfExists(beforePath);
-	const currentUsage = await fetchUsage();
-	if (!currentUsage) return;
-
-	const before = beforeData?.usage || null;
-	const delta = calculateDelta(before, currentUsage);
 	const now = iso();
+	const durationMs = beforeData?.timestamp
+		? Date.now() - new Date(beforeData.timestamp).getTime()
+		: 0;
 
 	const existing = readJsonIfExists(trackingPath) || { runs: [] };
 	const newRun = {
 		timestamp: now,
 		context,
-		delta5h: delta.delta5h,
-		delta7d: delta.delta7d,
+		durationMs: Math.round(durationMs),
 	};
 	const runs = pruneOldRuns([...(existing.runs || []), newRun]);
 	const share = calculateShare(runs);
 
+	const durationMin = Math.round(durationMs / 60_000);
 	const tracking = {
 		lastUpdated: now,
-		current: {
-			fiveHour: { utilization: currentUsage.five_hour?.utilization ?? null },
-			sevenDay: {
-				utilization: currentUsage.seven_day?.utilization ?? null,
-				resets_at: currentUsage.seven_day?.resets_at ?? null,
-			},
-		},
 		sportsyncShare: share,
-		gateThreshold: GATE_THRESHOLD,
+		gateConfig: {
+			maxAutopilot7d: GATE_MAX_AUTOPILOT_7D,
+			maxRuns5h: GATE_MAX_RUNS_5H,
+		},
 		runs,
 	};
 
 	writeJsonPretty(trackingPath, tracking);
-	console.log(`Usage report saved (${context}: delta7d=${delta.delta7d}%)`);
+	console.log(`Usage report saved (${context}: ${durationMin}min, ${share.pipelineRuns} pipeline + ${share.autopilotRuns} autopilot in 7d)`);
 
 	// Clean up before file
 	try {
-		const fs = await import("fs");
 		fs.unlinkSync(beforePath);
 	} catch { /* ignore */ }
 }
 
-async function gate() {
-	const usage = await fetchUsage();
-	if (!usage) {
-		console.log("No usage data — gate passes by default");
-		process.exit(0);
-	}
-	const util7d = usage.seven_day?.utilization ?? 0;
-	console.log(`7-day utilization: ${util7d}% (threshold: ${GATE_THRESHOLD}%)`);
-	if (shouldGate(util7d, GATE_THRESHOLD)) {
-		console.log("Gate BLOCKED — utilization too high, skipping autopilot");
+function gate() {
+	const dataDir = rootDataPath();
+	const trackingPath = path.join(dataDir, TRACKING_FILE);
+	const existing = readJsonIfExists(trackingPath);
+	const runs = pruneOldRuns(existing?.runs || []);
+	const result = shouldGate(runs);
+
+	console.log(`Gate check: ${result.reason}`);
+	if (result.blocked) {
+		console.log("Gate BLOCKED — backing off to preserve quota");
 		process.exit(1);
 	}
 	console.log("Gate passed");
