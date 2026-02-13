@@ -591,32 +591,46 @@
 		function renderQuota(usage) {
 			const el = document.getElementById('quota');
 			if (!usage || !usage.runs || usage.runs.length === 0) { el.innerHTML = ''; return; }
+			const c = usage.current || {};
 			const share = usage.sportsyncShare || {};
 			const gate = usage.gateConfig || {};
 			const runs = usage.runs || [];
 
-			// 5h burst: count runs in last 5h
-			const fiveHAgo = Date.now() - 5 * 3600000;
-			const recent5h = runs.filter(r => new Date(r.timestamp).getTime() > fiveHAgo).length;
-			const max5h = gate.maxRuns5h || 4;
-			const pct5h = Math.min(100, Math.round((recent5h / max5h) * 100));
+			const utilBar = (label, pct) => {
+				if (pct == null) return '';
+				const p = Math.min(100, Math.max(0, pct));
+				const color = p > 80 ? 'var(--red)' : p > 60 ? 'var(--amber)' : 'var(--green)';
+				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + pct + '%</span></div>' +
+					'<div class="score-bar"><div class="score-bar-fill" style="width:' + p + '%;background:' + color + '"></div></div>';
+			};
 
-			// 7d autopilot
-			const autopilotCount = share.autopilotRuns || 0;
-			const maxAuto = gate.maxAutopilot7d || 7;
-			const pctAuto = Math.min(100, Math.round((autopilotCount / maxAuto) * 100));
-
-			const bar = (label, current, max, pct) => {
+			const countBar = (label, current, max) => {
+				const pct = Math.min(100, Math.round((current / max) * 100));
 				const color = pct > 80 ? 'var(--red)' : pct > 60 ? 'var(--amber)' : 'var(--green)';
 				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + current + ' / ' + max + '</span></div>' +
 					'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>';
 			};
 
+			// Real utilization bars (when API data available)
+			const u5 = c.fiveHour?.utilization;
+			const u7 = c.sevenDay?.utilization;
+			let utilHtml = utilBar('5-hour window', u5) + utilBar('7-day window', u7);
+			if (c.sevenDay?.resets_at) {
+				const resetDate = new Date(c.sevenDay.resets_at);
+				const resetText = resetDate > new Date() ? 'Resets in ' + timeAgo(c.sevenDay.resets_at).replace(' ago', '') : 'Reset ' + timeAgo(c.sevenDay.resets_at);
+				utilHtml += '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">' + resetText + '</div>';
+			}
+
+			// Run count bars
+			const fiveHAgo = Date.now() - 5 * 3600000;
+			const recent5h = runs.filter(r => new Date(r.timestamp).getTime() > fiveHAgo).length;
+
 			el.innerHTML = '<div class="card">' +
 				'<div class="card-header">Claude Code Usage</div>' +
-				bar('Runs in last 5h', recent5h, max5h, pct5h) +
-				bar('Autopilot runs (7d)', autopilotCount, maxAuto, pctAuto) +
-				'<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
+				utilHtml +
+				'<div style="margin-top:' + (utilHtml ? '8px;border-top:1px solid var(--border);padding-top:8px' : '0') + '">' +
+				countBar('Runs in last 5h', recent5h, gate.maxRuns5h || 4) +
+				countBar('Autopilot runs (7d)', share.autopilotRuns || 0, gate.maxAutopilot7d || 7) +
 				'<div class="metric-row"><span class="metric-label">Pipeline runs (7d)</span><span class="metric-value">' + (share.pipelineRuns || 0) + '</span></div>' +
 				'<div class="metric-row"><span class="metric-label">AI time (7d)</span><span class="metric-value">' + fmtDuration(share.totalDurationMs) + '</span></div>' +
 				'</div>' +

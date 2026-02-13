@@ -61,23 +61,30 @@ describe("calculateShare", () => {
 });
 
 describe("shouldGate", () => {
+	it("blocks when 7d utilization exceeds threshold", () => {
+		const result = shouldGate([], 85);
+		expect(result.blocked).toBe(true);
+		expect(result.reason).toContain("utilization");
+	});
+
+	it("passes when utilization is at threshold", () => {
+		const result = shouldGate([], 80);
+		expect(result.blocked).toBe(false);
+	});
+
+	it("passes when utilization is null (API unavailable)", () => {
+		const result = shouldGate([], null);
+		expect(result.blocked).toBe(false);
+	});
+
 	it("blocks when too many autopilot runs in 7d", () => {
 		const runs = Array.from({ length: 7 }, (_, i) => ({
 			timestamp: new Date(Date.now() - i * 86_400_000).toISOString(),
 			context: "autopilot",
 		}));
-		const result = shouldGate(runs);
+		const result = shouldGate(runs, null);
 		expect(result.blocked).toBe(true);
 		expect(result.reason).toContain("autopilot");
-	});
-
-	it("passes with few autopilot runs", () => {
-		const runs = [
-			{ timestamp: new Date().toISOString(), context: "autopilot" },
-			{ timestamp: new Date().toISOString(), context: "pipeline" },
-		];
-		const result = shouldGate(runs, Date.now() + MS_PER_5H + 1000);
-		expect(result.blocked).toBe(false);
 	});
 
 	it("blocks when too many runs in 5h burst window", () => {
@@ -86,16 +93,32 @@ describe("shouldGate", () => {
 			timestamp: new Date(now - i * 60_000).toISOString(),
 			context: "pipeline",
 		}));
-		const result = shouldGate(runs, now);
+		const result = shouldGate(runs, null, now);
 		expect(result.blocked).toBe(true);
 		expect(result.reason).toContain("5h");
 	});
 
-	it("passes for null input", () => {
-		expect(shouldGate(null).blocked).toBe(false);
+	it("passes with few runs and no utilization data", () => {
+		const runs = [
+			{ timestamp: new Date().toISOString(), context: "autopilot" },
+			{ timestamp: new Date().toISOString(), context: "pipeline" },
+		];
+		const result = shouldGate(runs, null, Date.now() + MS_PER_5H + 1000);
+		expect(result.blocked).toBe(false);
+	});
+
+	it("passes for null runs", () => {
+		expect(shouldGate(null, null).blocked).toBe(false);
 	});
 
 	it("passes for empty runs", () => {
-		expect(shouldGate([]).blocked).toBe(false);
+		expect(shouldGate([], null).blocked).toBe(false);
+	});
+
+	it("utilization gate takes priority over run-count checks", () => {
+		// Even with 0 runs, high utilization should block
+		const result = shouldGate([], 95);
+		expect(result.blocked).toBe(true);
+		expect(result.reason).toContain("utilization");
 	});
 });

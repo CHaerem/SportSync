@@ -1,15 +1,16 @@
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, writeJsonPretty, rootDataPath, iso } from "./lib/helpers.js";
+import { fetchJson, readJsonIfExists, writeJsonPretty, rootDataPath, iso } from "./lib/helpers.js";
 
+const USAGE_API = "https://api.anthropic.com/api/oauth/usage";
 const TRACKING_FILE = "usage-tracking.json";
 const BEFORE_FILE = ".usage-before.json";
 const MS_PER_5H = 5 * 3_600_000;
 const MS_PER_7D = 7 * 86_400_000;
 
-// Max autopilot runs per 7-day window before gating
+// Gate thresholds
+const GATE_UTILIZATION_7D = 80;
 const GATE_MAX_AUTOPILOT_7D = 7;
-// Max total AI runs (pipeline+autopilot) in a 5h window before gating
 const GATE_MAX_RUNS_5H = 4;
 
 // --- Pure functions (exported for testing) ---
@@ -35,16 +36,21 @@ export function calculateShare(runs) {
 	return { pipelineRuns, autopilotRuns, totalDurationMs };
 }
 
-export function shouldGate(runs, now = Date.now()) {
+export function shouldGate(runs, utilization, now = Date.now()) {
+	// Real utilization gate (preferred)
+	if (typeof utilization === "number" && utilization > GATE_UTILIZATION_7D) {
+		return { blocked: true, reason: `7d utilization ${utilization}% > ${GATE_UTILIZATION_7D}%` };
+	}
+
 	if (!Array.isArray(runs)) return { blocked: false, reason: "no data" };
 
-	// Check autopilot frequency over 7d
+	// Autopilot frequency over 7d
 	const autopilotCount = runs.filter((r) => r.context === "autopilot").length;
 	if (autopilotCount >= GATE_MAX_AUTOPILOT_7D) {
 		return { blocked: true, reason: `${autopilotCount} autopilot runs in 7d (max ${GATE_MAX_AUTOPILOT_7D})` };
 	}
 
-	// Check burst: too many AI runs in the last 5h
+	// Burst: too many AI runs in the last 5h
 	const fiveHAgo = now - MS_PER_5H;
 	const recentRuns = runs.filter((r) => new Date(r.timestamp).getTime() > fiveHAgo);
 	if (recentRuns.length >= GATE_MAX_RUNS_5H) {
@@ -54,15 +60,39 @@ export function shouldGate(runs, now = Date.now()) {
 	return { blocked: false, reason: "ok" };
 }
 
-// --- Subcommands ---
+// --- API helper ---
 
-function snapshot() {
-	const beforePath = path.join(rootDataPath(), BEFORE_FILE);
-	writeJsonPretty(beforePath, { timestamp: iso() });
-	console.log("Usage snapshot saved (timestamp only)");
+async function fetchUsage() {
+	const token = process.env.CLAUDE_CODE_OAUTH_TOKEN;
+	if (!token) return null;
+	try {
+		const data = await fetchJson(USAGE_API, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"anthropic-beta": "oauth-2025-04-20",
+			},
+		});
+		if (data?.error) {
+			console.error("Usage API error:", data.error.message || JSON.stringify(data.error));
+			return null;
+		}
+		return data;
+	} catch (err) {
+		console.error("Failed to fetch usage:", err.message);
+		return null;
+	}
 }
 
-function report(context) {
+// --- Subcommands ---
+
+async function snapshot() {
+	const beforePath = path.join(rootDataPath(), BEFORE_FILE);
+	const usage = await fetchUsage();
+	writeJsonPretty(beforePath, { timestamp: iso(), usage: usage || null });
+	console.log(usage ? "Usage snapshot saved (with utilization)" : "Usage snapshot saved (no API data)");
+}
+
+async function report(context) {
 	if (!context) {
 		console.error("Usage: track-usage.js report <pipeline|autopilot>");
 		process.exit(1);
@@ -77,6 +107,9 @@ function report(context) {
 		? Date.now() - new Date(beforeData.timestamp).getTime()
 		: 0;
 
+	// Fetch current utilization
+	const usage = await fetchUsage();
+
 	const existing = readJsonIfExists(trackingPath) || { runs: [] };
 	const newRun = {
 		timestamp: now,
@@ -85,12 +118,20 @@ function report(context) {
 	};
 	const runs = pruneOldRuns([...(existing.runs || []), newRun]);
 	const share = calculateShare(runs);
-
 	const durationMin = Math.round(durationMs / 60_000);
+
 	const tracking = {
 		lastUpdated: now,
+		current: usage ? {
+			fiveHour: { utilization: usage.five_hour?.utilization ?? null },
+			sevenDay: {
+				utilization: usage.seven_day?.utilization ?? null,
+				resets_at: usage.seven_day?.resets_at ?? null,
+			},
+		} : null,
 		sportsyncShare: share,
 		gateConfig: {
+			utilizationThreshold: GATE_UTILIZATION_7D,
 			maxAutopilot7d: GATE_MAX_AUTOPILOT_7D,
 			maxRuns5h: GATE_MAX_RUNS_5H,
 		},
@@ -98,22 +139,25 @@ function report(context) {
 	};
 
 	writeJsonPretty(trackingPath, tracking);
-	console.log(`Usage report saved (${context}: ${durationMin}min, ${share.pipelineRuns} pipeline + ${share.autopilotRuns} autopilot in 7d)`);
+	const utilStr = usage?.seven_day?.utilization != null ? `, 7d util: ${usage.seven_day.utilization}%` : "";
+	console.log(`Usage report saved (${context}: ${durationMin}min${utilStr})`);
 
 	// Clean up before file
-	try {
-		fs.unlinkSync(beforePath);
-	} catch { /* ignore */ }
+	try { fs.unlinkSync(beforePath); } catch { /* ignore */ }
 }
 
-function gate() {
+async function gate() {
 	const dataDir = rootDataPath();
 	const trackingPath = path.join(dataDir, TRACKING_FILE);
 	const existing = readJsonIfExists(trackingPath);
 	const runs = pruneOldRuns(existing?.runs || []);
-	const result = shouldGate(runs);
 
-	console.log(`Gate check: ${result.reason}`);
+	// Try to get real utilization for the gate
+	const usage = await fetchUsage();
+	const util7d = usage?.seven_day?.utilization ?? null;
+
+	const result = shouldGate(runs, util7d);
+	console.log(`Gate check: ${result.reason}${util7d != null ? ` (7d: ${util7d}%)` : ""}`);
 	if (result.blocked) {
 		console.log("Gate BLOCKED — backing off to preserve quota");
 		process.exit(1);
