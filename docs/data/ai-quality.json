@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-13T07:16:17.141Z",
+  "generatedAt": "2026-02-13T07:40:07.543Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
       "totalEvents": 30,
-      "importanceCoverage": 0.667,
-      "summaryCoverage": 0.667,
-      "relevanceCoverage": 0.667,
-      "tagsCoverage": 0.467
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.7
     },
     "after": {
       "totalEvents": 30,
@@ -19,17 +19,18 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 56,
-    "aiUpdatedFields": 20,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 9,
+    "aiUpdatedFields": 30,
+    "failedBatches": 0,
     "totalEvents": 30,
     "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 2,
+      "calls": 3,
       "total": 0,
       "tracked": false
     }
@@ -41,7 +42,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 16876,
+    "generationMs": 9740,
     "tokenUsage": {
       "input": 0,
       "output": 0,

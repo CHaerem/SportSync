@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-02-13T07:16:56.382Z",
+  "generatedAt": "2026-02-13T07:40:50.301Z",
   "eventCount": 30,
   "sportCoverage": {
     "golf": {
       "count": 1,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 1,
+      "delta": 0
     },
     "olympics": {
       "count": 14,
@@ -39,7 +39,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 544,
+      "ageMinutes": 568,
       "stale": true
     },
     "tennis.json": {
@@ -76,12 +76,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 544 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
+      "message": "golf.json: data is 568 minutes old"
     }
   ],
   "status": "warning",
@@ -90,13 +85,7 @@
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [
-      {
-        "severity": "warning",
-        "code": "failed_batches_increase",
-        "message": "Failed batches increased from 0 to 1"
-      }
-    ],
-    "hasRegression": true
+    "issues": [],
+    "hasRegression": false
   }
 }
