@@ -139,6 +139,7 @@ export function validateResults(output) {
 const LEAGUE_MAP = {
 	"eng.1": "Premier League",
 	"esp.1": "La Liga",
+	"esp.copa_del_rey": "Copa del Rey",
 };
 
 export async function fetchFootballResults(options = {}) {
