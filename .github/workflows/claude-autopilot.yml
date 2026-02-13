@@ -84,6 +84,18 @@ jobs:
 
             3. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
 
+            4. Learn from recent runs:
+               Read `docs/data/autopilot-log.json` and analyze the last 10 entries.
+               Look for patterns:
+               - Tasks that failed or were blocked — avoid similar pitfalls
+               - Tasks that took many turns — plan more carefully for similar work
+               - Tasks that succeeded quickly — note what made them efficient
+               - Recurring failure patterns — if the same type of task keeps failing,
+                 consider creating an issue rather than retrying
+
+               Write a brief internal summary of lessons learned. Use these insights
+               to inform your planning (step 1a½) throughout this run.
+
             ## Step 1: Task loop
 
             For each PENDING task in the roadmap (top to bottom):
@@ -152,6 +164,25 @@ jobs:
             in the appropriate priority section. Be specific — include file paths,
             line numbers, and concrete descriptions. Commit and push to main.
 
+            ## Step 3: Self-improvement proposals
+
+            After scouting, reflect on this run and your own effectiveness:
+            - Did you waste turns on anything? Why?
+            - Did a task take longer than expected? What would have helped?
+            - Are there workflow improvements that would make future runs more efficient?
+            - Are the scouting heuristics in the roadmap missing patterns you noticed?
+
+            For any actionable improvement to the autopilot workflow itself (turn limits,
+            prompt changes, new scouting heuristics, tooling gaps), create a GitHub issue:
+            `gh issue create --title "Autopilot self-improvement: <description>" --label "autopilot-meta" --body "<details>"`
+
+            You CANNOT modify `.github/workflows/` directly (protected path), but issues
+            let the human know what changes would help. Be specific — include data from
+            this run (turns used, tasks completed, time spent) to justify the suggestion.
+
+            Also update the Scouting Heuristics section in `AUTOPILOT_ROADMAP.md` if you
+            discovered new detection patterns worth applying in future runs.
+
             ## Status log format
 
             Each task gets an entry in `docs/data/autopilot-log.json`:
@@ -159,11 +190,13 @@ jobs:
             {
               "date": "YYYY-MM-DD",
               "task": "Short description",
-              "outcome": "completed|skipped|failed|blocked",
+              "outcome": "completed|skipped|failed|blocked|decomposed",
               "pr": null or PR number,
               "details": "What happened",
               "tests_passed": true or false,
               "files_changed": number,
+              "turns_used": estimated turns spent on this task,
+              "lesson": "Brief note on what went well or poorly (for future learning)",
               "scouted": number of new tasks discovered
             }
             ```
