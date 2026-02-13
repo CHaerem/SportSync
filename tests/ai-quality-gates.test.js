@@ -176,6 +176,37 @@ describe("evaluateEditorialQuality()", () => {
 		expect(result.metrics.mustWatchCoverage).toBe(1);
 	});
 
+	it("includes events within 3-day featured window", () => {
+		const events = [
+			{ sport: "football", title: "Liverpool vs Arsenal", importance: 5, time: "2026-02-14T20:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Weekend showdown" },
+				{ type: "event-line", text: "⚽ Liverpool vs Arsenal, Sat 21:00" },
+				{ type: "divider", text: "This Week" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("excludes events beyond 3-day featured window", () => {
+		const events = [
+			{ sport: "football", title: "Liverpool vs Arsenal", importance: 5, time: "2026-02-16T20:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "⚽ Liverpool vs Arsenal, Mon 21:00" },
+				{ type: "event-line", text: "⛳ Golf, 14:00" },
+				{ type: "divider", text: "This Week" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		// Event is beyond window, so no must-watch events to cover → defaults to 1
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
 	it("penalizes quiet-day violations", () => {
 		const events = [
 			{ sport: "football", title: "Match A", importance: 2, time: "2026-02-12T20:00:00Z" },

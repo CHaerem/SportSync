@@ -14,6 +14,7 @@ import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { analyzePatterns } from "./analyze-patterns.js";
 import { LLMClient } from "./lib/llm-client.js";
+import { runVerification } from "./verify-schedules.js";
 
 const dataDir = rootDataPath();
 
@@ -103,6 +104,19 @@ export function generateHealthReport(options = {}) {
 					message: `${sport}: ${info.count} events (was ${info.previousCount}, -${Math.round(dropPct * 100)}%)`,
 				});
 			}
+		}
+	}
+
+	// 1b. Detect sports with data files but zero events
+	for (const filename of Object.keys(sportFiles)) {
+		const sport = filename.replace(".json", "");
+		if (!sportCoverage[sport]) {
+			sportCoverage[sport] = { count: 0, previousCount: previousCounts[sport]?.count ?? null, delta: null };
+			issues.push({
+				severity: "warning",
+				code: "sport_zero_events",
+				message: `${sport}: data file exists but 0 events in events.json`,
+			});
 		}
 	}
 
@@ -262,6 +276,15 @@ async function main() {
 	const patternReport = analyzePatterns({ dataDir });
 	writeJsonPretty(path.join(dataDir, "pattern-report.json"), patternReport);
 	console.log(`Patterns: ${patternReport.patternsDetected} detected`);
+
+	// Run schedule verification
+	try {
+		const verification = await runVerification({ dDir: dataDir });
+		const vr = verification.runRecord;
+		console.log(`Verification: ${vr.configsChecked} configs, ${vr.eventsChecked} events checked`);
+	} catch (err) {
+		console.warn("Schedule verification failed (non-blocking):", err.message);
+	}
 
 	// Generate status summary
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));

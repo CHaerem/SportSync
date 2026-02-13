@@ -42,6 +42,18 @@ export function evaluateFeaturedQuality(dataDir = ROOT) {
 	if (wiredEntries.length > 0) {
 		// Loop is wired — hints field exists. Whether they fired depends on quality.
 		if (hintsCount > 0) {
+			// Check if hints are firing without improving the metric
+			const recent = history.slice(-5);
+			const recentEditorial = recent
+				.map((e) => e.editorial?.mustWatchCoverage ?? null)
+				.filter((v) => v !== null);
+			const IMPROVEMENT_THRESHOLD = 0.6;
+			const stillBelowThreshold = recentEditorial.length >= 3 &&
+				recentEditorial.every((v) => v < IMPROVEMENT_THRESHOLD);
+
+			if (stillBelowThreshold) {
+				return makeLoop(0.75, `${history.length} entries, hints fired ${hintsCount} times but metric not improving`);
+			}
 			return makeLoop(1.0, `${history.length} entries, hints fired ${hintsCount} times`);
 		}
 		return makeLoop(1.0, `${history.length} entries, hints wired and ready (quality is good)`);
@@ -153,6 +165,10 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 
 	if (ageMs < 6 * MS_PER_HOUR) {
 		const label = ageMinutes < 60 ? `${ageMinutes} min` : `${ageHours}h`;
+		const issueCount = Array.isArray(report.issues) ? report.issues.length : 0;
+		if (issueCount > 0) {
+			return makeLoop(0.75, `Health report is fresh (${label} old) but has ${issueCount} issue(s)`);
+		}
 		return makeLoop(1.0, `Health report is fresh (${label} old)`);
 	}
 

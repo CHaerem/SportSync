@@ -432,7 +432,7 @@ function blockCountScore(blocks) {
 
 export function evaluateEditorialQuality(featured, events, options = {}) {
 	const blocks = Array.isArray(featured?.blocks) ? featured.blocks : [];
-	const todayEvents = filterTodayEvents(events, options.now);
+	const todayEvents = filterFeaturedWindowEvents(events, options.now);
 
 	const metrics = {
 		mustWatchCoverage: roundRatio(mustWatchCoverage(blocks, todayEvents)),
@@ -472,12 +472,12 @@ export function evaluateEditorialQuality(featured, events, options = {}) {
 	return { score, metrics, issues };
 }
 
-function filterTodayEvents(events, now) {
+function filterFeaturedWindowEvents(events, now) {
 	if (!Array.isArray(events)) return [];
 	const ref = now || new Date();
 	const todayStart = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
-	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
-	return events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
+	const windowEnd = new Date(todayStart.getTime() + 3 * MS_PER_DAY);
+	return events.filter((e) => isEventInWindow(e, todayStart, windowEnd));
 }
 
 export function evaluateWatchPlanQuality(watchPlan) {

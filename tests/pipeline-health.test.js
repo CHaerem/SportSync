@@ -153,6 +153,35 @@ describe("generateHealthReport()", () => {
 		expect(report.standingsHealth.premierLeague).toBe(false);
 	});
 
+	it("detects sport with data file but zero events", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"football.json": { lastUpdated: new Date().toISOString() },
+				"tennis.json": { lastUpdated: new Date().toISOString() },
+			},
+		});
+
+		expect(report.sportCoverage.tennis).toBeDefined();
+		expect(report.sportCoverage.tennis.count).toBe(0);
+		const zeroIssue = report.issues.find((i) => i.code === "sport_zero_events");
+		expect(zeroIssue).toBeDefined();
+		expect(zeroIssue.message).toContain("tennis");
+	});
+
+	it("does not flag sport_zero_events when all sports have events", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5, tennis: 2 }),
+			sportFiles: {
+				"football.json": { lastUpdated: new Date().toISOString() },
+				"tennis.json": { lastUpdated: new Date().toISOString() },
+			},
+		});
+
+		const zeroIssue = report.issues.find((i) => i.code === "sport_zero_events");
+		expect(zeroIssue).toBeUndefined();
+	});
+
 	it("handles missing previous report", () => {
 		const report = generateHealthReport({
 			events: makeEvents({ football: 5 }),
