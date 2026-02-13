@@ -113,15 +113,6 @@ jobs:
         run: |
           npm run generate:featured || echo "Featured generation failed, using fallback"
 
-      - name: Generate themed featured variants
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          for THEME in broadsheet terminal playful; do
-            echo "Generating featured-${THEME}.json..."
-            SPORTSYNC_VOICE=$THEME SPORTSYNC_FEATURED_SUFFIX=$THEME node scripts/generate-featured.js || echo "Voice variant $THEME failed"
-          done
-
       - name: Report usage (after AI)
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
