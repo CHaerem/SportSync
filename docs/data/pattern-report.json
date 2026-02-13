@@ -1,18 +1,28 @@
 {
-  "generatedAt": "2026-02-13T13:38:33.222Z",
-  "patternsDetected": 0,
-  "patterns": [],
+  "generatedAt": "2026-02-13T13:46:59.625Z",
+  "patternsDetected": 1,
+  "patterns": [
+    {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 1,
+      "lateAvg": 0.69,
+      "drop": 0.31,
+      "suggestion": "Must-watch coverage dropped from 100% to 69%. Featured content is missing high-importance events."
+    }
+  ],
   "issueCodeHistory": {
     "failed_batches_increase": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-13T11:50:22.968Z",
-      "lastSeen": "2026-02-13T13:38:33.221Z"
+      "lastSeen": "2026-02-13T13:46:59.623Z"
     },
     "sport_zero_events": {
-      "count": 2,
+      "count": 4,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-13T13:38:33.221Z"
+      "lastSeen": "2026-02-13T13:46:59.623Z"
     }
   },
-  "summary": "0 patterns detected"
+  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Must-watch coverage dropped from 100% to 69%."
 }
