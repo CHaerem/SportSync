@@ -1,8 +1,6 @@
 services:
   github-runner:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: myoung34/github-runner:latest
     container_name: sportsync-runner
     restart: unless-stopped
     environment:
