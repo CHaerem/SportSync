@@ -454,7 +454,7 @@ class Dashboard {
 			return;
 		}
 
-		const picks = this.watchPlan.picks;
+		const picks = [...this.watchPlan.picks].sort((a, b) => new Date(a.time || 0) - new Date(b.time || 0));
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
