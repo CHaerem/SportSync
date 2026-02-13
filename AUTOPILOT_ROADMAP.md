@@ -377,3 +377,29 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 ### LOW Priority
 
 - [DONE] (PR #57) Add structured logging to live polling catch blocks — Replaced silent catch blocks with `console.debug` logging for development diagnostics.
+
+---
+
+## Scouted Tasks (2026-02-13)
+
+### HIGH Priority
+
+- [DONE] (PR #59) Add `aria-expanded` to news toggle button — Added attribute to button HTML and toggle in click handler.
+
+- [DONE] (PR #59) Remove dead `summaryLine()` export — Removed unused function from helpers.js.
+
+- [DONE] (PR #59) Remove unused `golf-refactored.js` — Deleted file never imported by any module.
+
+### MEDIUM Priority
+
+- [PENDING] Add unit tests for `scripts/fetch/tennis.js` — Tennis fetcher has no dedicated test file. Create `tests/tennis-fetcher.test.js` testing ESPN response parsing, competitor extraction, and Norwegian player detection. ~80 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch/chess.js` — Chess fetcher has no dedicated test file. Create `tests/chess-fetcher.test.js` testing curated config loading, tournament merging, and player handling. ~80 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch/esports.js` — Esports fetcher has no dedicated test file. Create `tests/esports-fetcher.test.js` testing HLTV parsing, major event patterns, and fallback logic. ~80 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch/fotball-no.js` — fotball-no fetcher has no dedicated test file. Create `tests/fotball-no.test.js` testing iCalendar parsing, Lyn match extraction, and week filtering. ~60 lines, LOW risk.
+
+### LOW Priority
+
+- [PENDING] Add descriptive alt text to brief-line images — `docs/js/dashboard.js:1381,1387` uses empty `alt=""` for team logos and golfer headshots in brief lines. Add team name / player name for screen reader accessibility. ~10 lines, LOW risk.
