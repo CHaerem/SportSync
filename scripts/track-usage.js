@@ -62,6 +62,10 @@ async function fetchUsage() {
 		const data = await fetchJson(USAGE_API, {
 			headers: { Authorization: `Bearer ${token}` },
 		});
+		if (data?.error) {
+			console.error("Usage API error:", JSON.stringify(data));
+			return null;
+		}
 		console.log("Usage API response keys:", Object.keys(data || {}));
 		return data;
 	} catch (err) {
