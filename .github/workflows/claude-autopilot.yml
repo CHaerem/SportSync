@@ -34,7 +34,20 @@ jobs:
 
       - run: npm ci
 
+      - name: Check quota headroom
+        id: quota
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: node scripts/track-usage.js gate && echo "gate=pass" >> $GITHUB_OUTPUT || echo "gate=skip" >> $GITHUB_OUTPUT
+
+      - name: Snapshot usage (before autopilot)
+        if: steps.quota.outputs.gate != 'skip'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: node scripts/track-usage.js snapshot || true
+
       - uses: anthropics/claude-code-action@v1
+        if: steps.quota.outputs.gate != 'skip'
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
@@ -208,3 +221,9 @@ jobs:
             - Always run `npm test` before committing. Revert if tests fail.
             - Keep each task focused and minimal
             - If anything goes wrong, STOP — don't push broken code
+
+      - name: Report autopilot usage
+        if: steps.quota.outputs.gate != 'skip'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: node scripts/track-usage.js report autopilot || true

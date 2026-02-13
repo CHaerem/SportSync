@@ -279,6 +279,7 @@
 		<div id="pipeline"></div>
 		<div id="quality"></div>
 		<div id="tokens"></div>
+		<div id="quota"></div>
 		<div id="trend"></div>
 		<div id="sanity"></div>
 		<div id="gaps"></div>
@@ -579,6 +580,43 @@
 				'</div>';
 		}
 
+		function renderQuota(usage) {
+			const el = document.getElementById('quota');
+			if (!usage) { el.innerHTML = ''; return; }
+			const c = usage.current || {};
+			const u5 = c.fiveHour?.utilization;
+			const u7 = c.sevenDay?.utilization;
+			const share = usage.sportsyncShare || {};
+			const threshold = usage.gateThreshold || 80;
+
+			if (u5 == null && u7 == null) { el.innerHTML = ''; return; }
+
+			const bar = (label, pct, thresholdMark) => {
+				const p = Math.min(100, Math.max(0, pct || 0));
+				const color = p > 80 ? 'var(--red)' : p > 60 ? 'var(--amber)' : 'var(--green)';
+				let markHtml = '';
+				if (thresholdMark != null) {
+					markHtml = '<div style="position:absolute;left:' + thresholdMark + '%;top:-3px;width:2px;height:10px;background:var(--red);border-radius:1px;opacity:0.6" title="Gate: ' + thresholdMark + '%"></div>';
+				}
+				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + (pct != null ? pct + '%' : '—') + '</span></div>' +
+					'<div class="score-bar" style="position:relative"><div class="score-bar-fill" style="width:' + p + '%;background:' + color + '"></div>' + markHtml + '</div>';
+			};
+
+			const resetsAt = c.sevenDay?.resets_at ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">Resets ' + timeAgo(c.sevenDay.resets_at).replace(' ago', '') + (new Date(c.sevenDay.resets_at) > new Date() ? ' from now' : ' ago') + '</div>' : '';
+
+			const shareText = share.sevenDay != null
+				? '<div style="font-size:0.72rem;margin-top:8px">SportSync: ~' + share.sevenDay + '% of 7d quota (' + (share.pipelineRuns || 0) + ' pipeline + ' + (share.autopilotRuns || 0) + ' autopilot runs)</div>'
+				: '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Claude Code Quota</div>' +
+				bar('5-hour window', u5, null) +
+				bar('7-day window', u7, threshold) +
+				resetsAt +
+				shareText +
+				'</div>';
+		}
+
 		// Fetch all data in parallel and render
 		Promise.all([
 			fetchJSON('autonomy-report.json'),
@@ -588,13 +626,15 @@
 			fetchJSON('coverage-gaps.json'),
 			fetchJSON('autopilot-log.json'),
 			fetchJSON('meta.json'),
-			fetchJSON('sanity-report.json')
-		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity]) => {
+			fetchJSON('sanity-report.json'),
+			fetchJSON('usage-tracking.json')
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage]) => {
 			renderSummary(health);
 			renderAutonomy(autonomy);
 			renderPipeline(health);
 			renderQuality(quality);
 			renderTokens(quality, history);
+			renderQuota(usage);
 			renderTrend(history);
 			renderSanity(sanity);
 			renderGaps(gaps);
