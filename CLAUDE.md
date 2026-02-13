@@ -38,7 +38,7 @@ Some form of lightweight user feedback would complete the vision — allowing th
 
 ## Project Overview
 
-SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Eight closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, and code health. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
+SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Nine closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, and code health. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
 
 ## Architecture
 
@@ -48,6 +48,7 @@ This is a hybrid static/dynamic application:
 - **AI Enrichment**: LLM adds importance scores, summaries, and tags to each event
 - **AI Featured Content**: Claude CLI generates editorial briefs and featured sections each build
 - **Standings & RSS**: ESPN standings and RSS news digests feed into the editorial pipeline
+- **Recent Results**: ESPN scoreboard history (7 days) for narrative continuity in editorial briefs
 - **Live Score Polling**: Client-side ESPN polling every 60s for football scores and golf leaderboards
 - **Curated Event Configs**: `scripts/config/*.json` files auto-discovered by build pipeline
 - **Autonomous Discovery**: Config maintenance (prune, archive) + LLM-powered event/athlete discovery via Claude CLI + WebSearch
@@ -56,7 +57,7 @@ This is a hybrid static/dynamic application:
 ### Key Components
 
 - **docs/index.html** - Main dashboard with ultra-minimal embedded CSS (480px max-width)
-- **docs/js/dashboard.js** - Dashboard controller (~860 lines): brief, sections, events, standings, live polling
+- **docs/js/dashboard.js** - Dashboard controller (~950 lines): brief, sections, events, recent results, standings, live polling
 - **docs/js/asset-maps.js** - Team logo and golfer headshot URL mappings
 - **docs/js/sport-config.js** - Sport metadata (emoji, color, aliases for 7 sports)
 - **docs/js/preferences-manager.js** - Favorites storage (localStorage)
@@ -70,17 +71,18 @@ This is a hybrid static/dynamic application:
 3. **JSON files** are generated and committed to `docs/data/`
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
 5. **`fetch-rss.js`** fetches 11 RSS feeds (NRK, TV2, BBC, ESPN, Autosport, ChessBase, HLTV)
-6. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
-7. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
-8. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
-9. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
-10. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
-11. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + curated configs → generates `featured.json` (brief, sections)
-12. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings health → generates `health-report.json`
-13. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
-14. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
-15. **Client-side** loads `events.json` + `featured.json` + `standings.json`, renders editorial dashboard
-16. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
+6. **`fetch-results.js`** fetches completed match scores (PL, La Liga) and golf leaderboard positions from ESPN, merges with existing history (7-day retention), tags favorites from `user-context.json`, matches RSS recap headlines → `recent-results.json`
+7. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
+8. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
+9. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
+10. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
+11. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
+12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (brief, sections)
+13. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings/results health → generates `health-report.json`
+14. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
+15. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
+16. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band
+17. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
 
@@ -88,8 +90,9 @@ This is a hybrid static/dynamic application:
 - `npm run build` - Fetch data, build events, build calendar
 - `npm run build:events` - Aggregate sport data + curated configs into events.json
 - `npm run enrich` - AI enrichment of events (needs OPENAI_API_KEY or ANTHROPIC_API_KEY)
+- `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
-- `npm test` - Run all tests (vitest, 634 tests across 30 files)
+- `npm test` - Run all tests (vitest, 879 tests across 39 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 
@@ -98,7 +101,7 @@ This is a hybrid static/dynamic application:
 The **update-sports-data.yml** workflow:
 - **Trigger**: Every 2 hours + manual dispatch
 - **Fetches**: Football, Golf, Tennis, F1, Chess, Esports data from APIs
-- **Fetches**: Standings (ESPN PL/golf/F1) and RSS news digest (11 feeds)
+- **Fetches**: Standings (ESPN PL/golf/F1), RSS news digest (11 feeds), and recent results (football + golf)
 - **Builds**: events.json (with auto-discovered curated configs from `scripts/config/`)
 - **Enriches**: AI adds importance, summaries, tags to events (OpenAI)
 - **Generates**: featured.json via Claude CLI (CLAUDE_CODE_OAUTH_TOKEN)
@@ -141,6 +144,7 @@ docs/
     ├── featured.json       # AI-generated editorial content (brief, sections, radar)
     ├── standings.json      # ESPN standings (PL table, golf leaderboards, F1 drivers)
     ├── rss-digest.json     # RSS news digest (11 feeds, Norwegian-filtered)
+    ├── recent-results.json # Recent completed matches + golf positions (7-day history)
     ├── ai-quality.json     # AI quality-gate metrics (enrichment + featured)
     ├── health-report.json  # Pipeline health report (coverage, freshness, anomalies)
     ├── coverage-gaps.json  # RSS vs events coverage gap detection
@@ -174,6 +178,7 @@ scripts/
 │   └── filters.js          # Event filtering utilities
 ├── fetch-standings.js      # ESPN standings → standings.json
 ├── fetch-rss.js            # RSS digest → rss-digest.json
+├── fetch-results.js        # ESPN recent results → recent-results.json (7-day history)
 ├── sync-configs.js         # Config maintenance: prune, archive, flag needsResearch
 ├── discover-events.js      # LLM-powered event/athlete discovery (Claude CLI + WebSearch)
 ├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
@@ -191,7 +196,7 @@ scripts/
 ├── update-sports-data.yml  # Data pipeline (every 2 hours)
 └── claude-autopilot.yml    # Autonomous improvement agent (nightly)
 
-tests/                      # 634 tests across 30 files (vitest)
+tests/                      # 879 tests across 39 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
@@ -235,7 +240,8 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 - **Dynamic athletes**: `user-context.json` has `dynamicAthletes` config for auto-discovering Norwegian athletes per sport
 - **Safeguards**: Max 3 discovery tasks per run, JSON schema validation, `autoGenerated: true` on all machine-written configs
 - **8th feedback loop**: `schedule-verifier.js` verifies discovered schedules against ESPN/RSS/sport data, injects accuracy hints into discovery prompts
-- **Autonomy scorecard**: `autonomy-scorecard.js` tracks all 8 feedback loops → `autonomy-report.json`
+- **9th feedback loop**: `fetch-results.js` fetches recent results → `pipeline-health.js` monitors freshness → health report surfaces issues
+- **Autonomy scorecard**: `autonomy-scorecard.js` tracks all 9 feedback loops → `autonomy-report.json`
 
 ## Current State vs. Vision
 
@@ -251,9 +257,10 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Coverage gaps** | Autonomous | RSS cross-ref detects missing events, auto-creates configs |
 | **Pipeline health** | Autonomous | Self-monitoring with pre-commit gate |
 | **Code improvements** | Autonomous | Nightly autopilot scouts + PRs + auto-merge |
-| **Autonomy tracking** | Autonomous | 8/8 feedback loops closed, scored by autonomy-scorecard.js |
+| **Results health** | Autonomous | Recent results fetched, monitored for staleness (Loop 9) |
+| **Autonomy tracking** | Autonomous | 9/9 feedback loops closed, scored by autonomy-scorecard.js |
 
-**Autonomy score: 100% (8/8 loops closed)**
+**Autonomy score: 100% (9/9 loops closed)**
 
 ### What's Missing (Gap to Vision)
 

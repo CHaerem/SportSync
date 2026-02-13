@@ -1,13 +1,66 @@
 {
-  "generatedAt": "2026-02-13T12:37:37.078Z",
+  "generatedAt": "2026-02-13T13:32:16.588Z",
+  "featured": {
+    "provider": "fallback",
+    "attempts": 1,
+    "valid": true,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"♟️ Round 1 – FIDE Freestyle Chess World Championsh...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 2,
+    "tokenUsage": {
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
+    }
+  },
+  "editorial": {
+    "score": 95,
+    "metrics": {
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockTypeBalance": 1,
+      "textQuality": 0.875,
+      "quietDayCompliance": 1,
+      "blockCountTarget": 0.7
+    },
+    "issues": []
+  },
+  "watchPlan": {
+    "score": 100,
+    "metrics": {
+      "pickCount": 3,
+      "avgScore": 97,
+      "streamingCoverage": 1,
+      "reasonCoverage": 1
+    }
+  },
+  "results": {
+    "score": 80,
+    "metrics": {
+      "integrityRate": 1,
+      "freshnessScore": 1,
+      "goalScorerCoverage": 1,
+      "recapHeadlineRate": 0,
+      "favoriteCoverage": 0.5,
+      "golfPresent": 1,
+      "footballCount": 27
+    },
+    "issues": [
+      "Only 0% of results have recap headlines"
+    ]
+  },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 30,
-      "importanceCoverage": 0.667,
-      "summaryCoverage": 0.667,
-      "relevanceCoverage": 0.667,
-      "tagsCoverage": 0.5
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 30,
@@ -19,58 +72,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 55,
-    "aiUpdatedFields": 20,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
+    "failedBatches": 0,
     "totalEvents": 30,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 2,
-      "total": 0,
-      "tracked": false
-    }
-  },
-  "featured": {
-    "provider": "claude-cli",
-    "attempts": 1,
-    "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 24339,
-    "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
-    }
-  },
-  "editorial": {
-    "score": 65,
-    "metrics": {
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.75,
-      "blockTypeBalance": 1,
-      "textQuality": 1,
-      "quietDayCompliance": 1,
-      "blockCountTarget": 1
-    },
-    "issues": [
-      "Only 0% of must-watch events covered in blocks"
-    ]
-  },
-  "watchPlan": {
-    "score": 100,
-    "metrics": {
-      "pickCount": 3,
-      "avgScore": 118,
-      "streamingCoverage": 1,
-      "reasonCoverage": 1
+      "calls": 0,
+      "total": 0
     }
   }
 }

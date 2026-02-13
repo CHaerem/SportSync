@@ -190,6 +190,50 @@ describe("generateHealthReport()", () => {
 		expect(report.sportCoverage.football.previousCount).toBeNull();
 		expect(report.sportCoverage.football.delta).toBeNull();
 	});
+
+	it("warns when recent-results.json is stale", () => {
+		const staleDate = new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: { lastUpdated: staleDate, football: [], golf: {} },
+		});
+
+		expect(report.resultsHealth.present).toBe(true);
+		expect(report.resultsHealth.stale).toBe(true);
+		const staleIssue = report.issues.find((i) => i.code === "results_stale");
+		expect(staleIssue).toBeDefined();
+	});
+
+	it("no results warning when fresh", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				lastUpdated: new Date().toISOString(),
+				football: [{ homeTeam: "Arsenal", awayTeam: "Liverpool" }],
+				golf: {},
+			},
+			standings: {
+				football: { premierLeague: [{ team: "Arsenal" }] },
+				golf: { pga: { leaderboard: [{ player: "S" }] } },
+				f1: { drivers: [{ driver: "V" }] },
+			},
+			rssDigest: { items: new Array(10).fill({ title: "News" }) },
+		});
+
+		expect(report.resultsHealth.present).toBe(true);
+		expect(report.resultsHealth.stale).toBe(false);
+		expect(report.resultsHealth.footballCount).toBe(1);
+		const staleIssue = report.issues.find((i) => i.code === "results_stale");
+		expect(staleIssue).toBeUndefined();
+	});
+
+	it("handles null recentResults gracefully", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: null,
+		});
+		expect(report.resultsHealth.present).toBe(false);
+	});
 });
 
 describe("generateStatusSummary()", () => {

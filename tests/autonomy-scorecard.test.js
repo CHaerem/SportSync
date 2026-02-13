@@ -11,6 +11,7 @@ import {
 	evaluateCodeHealth,
 	evaluateEventDiscovery,
 	evaluateScheduleVerification,
+	evaluateResultsHealth,
 	evaluateAutonomy,
 	trackTrend,
 	detectRegressions,
@@ -460,6 +461,65 @@ describe("evaluateScheduleVerification()", () => {
 	});
 });
 
+// --- Loop 9: Results Health ---
+
+describe("evaluateResultsHealth()", () => {
+	it("scores 0 when all data is missing", () => {
+		const result = evaluateResultsHealth(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+	});
+
+	it("scores 0.33 when only fetch-results.js exists", () => {
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		const result = evaluateResultsHealth(dataDir, scriptsDir);
+		expect(result.score).toBe(0.33);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("fetcher exists");
+	});
+
+	it("scores 0.66 when fetcher + fresh results exist", () => {
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		writeJson(path.join(dataDir, "recent-results.json"), {
+			lastUpdated: new Date().toISOString(),
+			football: [],
+			golf: { pga: null, dpWorld: null },
+		});
+		const result = evaluateResultsHealth(dataDir, scriptsDir);
+		expect(result.score).toBe(0.66);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("results data is fresh");
+	});
+
+	it("scores 1.0 when fetcher + fresh results + health monitoring all exist", () => {
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		writeJson(path.join(dataDir, "recent-results.json"), {
+			lastUpdated: new Date().toISOString(),
+			football: [{ homeTeam: "Arsenal", awayTeam: "Liverpool" }],
+			golf: { pga: null, dpWorld: null },
+		});
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			resultsHealth: { present: true, stale: false, footballCount: 1 },
+		});
+		const result = evaluateResultsHealth(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("pipeline monitors results health");
+	});
+
+	it("scores partial when results are stale", () => {
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		const resultsPath = path.join(dataDir, "recent-results.json");
+		writeJson(resultsPath, { lastUpdated: "2026-01-01T00:00:00Z", football: [] });
+		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
+		fs.utimesSync(resultsPath, sevenHoursAgo, sevenHoursAgo);
+		const result = evaluateResultsHealth(dataDir, scriptsDir);
+		expect(result.score).toBe(0.33);
+		expect(result.details).toContain("stale");
+	});
+});
+
 // --- Overall evaluation ---
 
 describe("evaluateAutonomy()", () => {
@@ -503,11 +563,22 @@ describe("evaluateAutonomy()", () => {
 			name: "Verified",
 			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
 		});
+		// Loop 9: Results Health
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		writeJson(path.join(dataDir, "recent-results.json"), {
+			lastUpdated: new Date().toISOString(),
+			football: [{ homeTeam: "Arsenal" }],
+		});
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			issues: [],
+			resultsHealth: { present: true, stale: false, footballCount: 1 },
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(8);
-		expect(report.loopsTotal).toBe(8);
+		expect(report.loopsClosed).toBe(9);
+		expect(report.loopsTotal).toBe(9);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -519,18 +590,18 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/8 = 0.25
-		expect(report.overallScore).toBeCloseTo(0.25, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/9 ≈ 0.22
+		expect(report.overallScore).toBeCloseTo(0.22, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(8);
+		expect(report.loopsTotal).toBe(9);
 	});
 
 	it("generates nextActions for open loops", () => {
 		// Everything missing
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions.length).toBeGreaterThan(0);
-		// Should suggest actions for all 7 open loops
-		expect(report.nextActions.length).toBeGreaterThanOrEqual(7);
+		// Should suggest actions for all 9 open loops
+		expect(report.nextActions.length).toBeGreaterThanOrEqual(9);
 	});
 
 	it("generates no nextActions when all loops are closed", () => {
@@ -572,6 +643,17 @@ describe("evaluateAutonomy()", () => {
 			name: "Verified",
 			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
 		});
+		// Loop 9: Results Health
+		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
+		writeJson(path.join(dataDir, "recent-results.json"), {
+			lastUpdated: new Date().toISOString(),
+			football: [{ homeTeam: "Arsenal" }],
+		});
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			issues: [],
+			resultsHealth: { present: true, stale: false, footballCount: 1 },
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions).toHaveLength(0);
@@ -595,7 +677,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(8);
+		expect(report.loopsTotal).toBe(9);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -604,6 +686,7 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.codeHealth.status).toBe("open");
 		expect(report.loops.eventDiscovery.status).toBe("open");
 		expect(report.loops.scheduleVerification.status).toBe("open");
+		expect(report.loops.resultsHealth.status).toBe("open");
 	});
 });
 

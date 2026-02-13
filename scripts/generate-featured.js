@@ -17,7 +17,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
-import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints } from "./lib/ai-quality-gates.js";
+import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
@@ -99,6 +99,11 @@ LINE FORMAT:
 - Use 24h HH:MM times, telegraphic style
 - For football, mention BOTH team names (for inline logo rendering)
 - Use actual team names from events data
+
+RESULTS AWARENESS:
+- Reference recent results for narrative continuity: "After Arsenal's comeback...", "Hovland's T22 at Pebble Beach..."
+- Use results to frame today's stakes — don't just list them
+- Favorite team/player results are marked [FAV] — weave these into the narrative
 
 STANDINGS INTEGRATION:
 - When a football match involves a top-5 PL team, mention league position or point gap
@@ -237,7 +242,42 @@ export function buildRssContext(rssDigest) {
 	return `\n\nRecent sports news headlines:\n${lines.join("\n")}`;
 }
 
-function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
+export function buildResultsContext(recentResults) {
+	if (!recentResults) return "";
+	const parts = [];
+
+	// Football results
+	const football = recentResults.football || [];
+	if (football.length > 0) {
+		const lines = football.slice(0, 6).map((m) => {
+			const date = new Date(m.date);
+			const day = date.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
+			const league = m.league === "Premier League" ? "PL" : m.league === "La Liga" ? "LL" : m.league;
+			const fav = m.isFavorite ? " [FAV]" : "";
+			const recap = m.recapHeadline ? ` — "${m.recapHeadline}"` : "";
+			return `  ${day}: ${m.homeTeam} ${m.homeScore}-${m.awayScore} ${m.awayTeam} (${league})${fav}${recap}`;
+		});
+		parts.push(`Football results:\n${lines.join("\n")}`);
+	}
+
+	// Golf results
+	const golf = recentResults.golf || {};
+	for (const [key, tour] of Object.entries(golf)) {
+		if (!tour) continue;
+		const label = key === "pga" ? "PGA" : "DP World";
+		const statusLabel = tour.status === "final" ? "Final" : `R${tour.completedRound}`;
+		const leader = tour.topPlayers?.[0];
+		const norPlayers = (tour.norwegianPlayers || []).map((p) => `${p.player} T${p.position} (${p.score})`).join(", ");
+		const leaderLine = leader ? `Leader: ${leader.player} ${leader.score}` : "";
+		const norLine = norPlayers ? `, Norwegian: ${norPlayers}` : "";
+		parts.push(`  ${label} — ${tour.tournamentName || "?"} ${statusLabel}: ${leaderLine}${norLine}`);
+	}
+
+	if (parts.length === 0) return "";
+	return `\n\nRecent results (last few days):\n${parts.join("\n")}`;
+}
+
+function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults) {
 	const dateStr = now.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
@@ -279,6 +319,7 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	const curatedContext = buildCuratedContext(curatedConfigs || [], now);
 	const standingsContext = buildStandingsContext(standings);
 	const rssContext = buildRssContext(rssDigest);
+	const resultsContext = buildResultsContext(recentResults);
 
 	// Enrichment context — highlight must-watch events for Claude
 	let enrichmentContext = "";
@@ -294,7 +335,7 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest) {
 	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
 
 Events (next 7 days, max 20 shown):
-${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${enrichmentContext}
+${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${resultsContext}${enrichmentContext}
 
 Generate the editorial zone as a blocks array matching this schema:
 ${JSON.stringify(BLOCKS_SCHEMA, null, 2)}
@@ -611,17 +652,26 @@ async function main() {
 		console.log(`Loaded rss-digest.json: ${rssDigest.items.length} headlines.`);
 	}
 
+	const resultsPath = path.join(dataDir, "recent-results.json");
+	const recentResults = readJsonIfExists(resultsPath);
+	if (recentResults?.football?.length || recentResults?.golf?.pga || recentResults?.golf?.dpWorld) {
+		const fCount = recentResults.football?.length || 0;
+		console.log(`Loaded recent-results.json: ${fCount} football results.`);
+	}
+
 	const systemPrompt = buildSystemPrompt(VOICE);
-	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest);
+	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults);
 
 	// Adaptive hints: read recent quality history and inject corrective instructions
 	const historyPath = path.join(dataDir, "quality-history.json");
 	const qualityHistory = readJsonIfExists(historyPath) || [];
 	const { hints: adaptiveHints } = buildAdaptiveHints(qualityHistory);
-	if (adaptiveHints.length > 0) {
-		console.log(`Adaptive hints active: ${adaptiveHints.length} correction(s)`);
-		for (const hint of adaptiveHints) console.log(`  → ${hint.slice(0, 80)}`);
-		baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${adaptiveHints.map((h) => `- ${h}`).join("\n")}`;
+	const { hints: resultsHints } = buildResultsHints(qualityHistory);
+	const allHints = [...adaptiveHints, ...resultsHints];
+	if (allHints.length > 0) {
+		console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results)`);
+		for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
+		baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${allHints.map((h) => `- ${h}`).join("\n")}`;
 	}
 
 	let featured = null;
@@ -696,6 +746,7 @@ async function main() {
 
 		const editorialResult = evaluateEditorialQuality(featured, events, { now });
 		const watchPlanResult = evaluateWatchPlanQuality(watchPlan);
+		const resultsQuality = evaluateResultsQuality(recentResults, events, rssDigest, userContext);
 
 		const blockCount = featured.blocks ? featured.blocks.length : 0;
 		const featuredTokenUsage = provider === "claude-cli"
@@ -724,6 +775,11 @@ async function main() {
 				score: watchPlanResult.score,
 				metrics: watchPlanResult.metrics,
 			},
+			results: {
+				score: resultsQuality.score,
+				metrics: resultsQuality.metrics,
+				issues: resultsQuality.issues.map((issue) => issue.message),
+			},
 		});
 
 		// Append snapshot to quality history
@@ -738,12 +794,13 @@ async function main() {
 			{ blocks: featured.blocks, score: finalQuality.score, provider, valid: finalQuality.valid },
 			watchPlanResult,
 			{
-				hintsApplied: adaptiveHints,
+				hintsApplied: allHints,
 				tokenUsage: {
 					enrichment: enrichmentTokens,
 					featured: featuredTokenUsage,
 					total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput },
 				},
+				results: resultsQuality,
 			}
 		);
 		history.push(snapshot);

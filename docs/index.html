@@ -881,6 +881,96 @@
 		}
 		.news-link:hover { color: var(--accent); }
 
+		/* --- Recent Results --- */
+		#recent-results { margin-bottom: 24px; }
+		.results-toggle {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--muted);
+			cursor: pointer;
+			padding: 16px 0 8px;
+			border-top: 1px solid var(--border);
+			background: none;
+			border-left: none; border-right: none; border-bottom: none;
+			width: 100%;
+			text-align: left;
+			transition: opacity 0.15s;
+		}
+		.results-toggle:hover { opacity: 0.7; }
+		.results-preview {
+			font-size: 0.7rem;
+			color: var(--muted);
+			opacity: 0.55;
+			margin: 2px 0 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.results-content { display: none; }
+		.results-content.open { display: block; }
+		.results-sport-group { margin-bottom: 12px; }
+		.results-sport-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--fg);
+			margin-bottom: 4px;
+		}
+		.result-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 4px 0;
+			font-size: 0.8rem;
+		}
+		.result-row.result-favorite {
+			font-weight: 500;
+		}
+		.result-day {
+			font-size: 0.65rem;
+			color: var(--muted);
+			min-width: 28px;
+			flex-shrink: 0;
+		}
+		.result-pos {
+			font-size: 0.7rem;
+			color: var(--muted);
+			min-width: 28px;
+			flex-shrink: 0;
+			font-variant-numeric: tabular-nums;
+		}
+		.result-match { flex: 1; min-width: 0; }
+		.result-score {
+			font-weight: 600;
+			font-variant-numeric: tabular-nums;
+		}
+		.result-league {
+			font-size: 0.55rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			padding: 1px 5px;
+			flex-shrink: 0;
+		}
+		.result-recap {
+			font-size: 0.7rem;
+			font-style: italic;
+			color: var(--muted);
+			padding: 0 0 2px 36px;
+			line-height: 1.4;
+		}
+		.result-scorers {
+			font-size: 0.65rem;
+			color: var(--muted);
+			padding: 0 0 4px 36px;
+			line-height: 1.4;
+		}
+
 		/* --- Reduced motion --- */
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
@@ -912,6 +1002,8 @@
 		<div id="featured-sections"></div>
 
 		<div id="watch-plan"></div>
+
+		<div id="recent-results"></div>
 
 		<div id="events">
 			<div class="loading">Loading...</div>

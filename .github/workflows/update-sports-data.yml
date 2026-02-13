@@ -77,6 +77,10 @@ jobs:
             echo "One or more parallel steps failed (non-fatal)"
           fi
 
+      - name: Fetch recent results
+        run: |
+          node scripts/fetch-results.js || echo "Results fetch failed (non-fatal)"
+
       - name: Sync configs
         run: |
           node scripts/sync-configs.js || echo "Config sync failed (non-fatal)"

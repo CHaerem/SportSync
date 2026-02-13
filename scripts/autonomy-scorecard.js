@@ -338,6 +338,51 @@ export function evaluateScheduleVerification(dataDir = ROOT, scriptsDir = SCRIPT
 	return makeLoop(score, parts.join(", "));
 }
 
+// Loop 9: Results Health
+// observe: recent-results.json -> decide: pipeline-health checks staleness -> act: health report surfaces issues
+export function evaluateResultsHealth(dataDir = ROOT, scriptsDir = SCRIPTS) {
+	let score = 0;
+	const parts = [];
+
+	// 0.33 if fetch-results.js exists
+	const fetcherPath = path.join(scriptsDir, "fetch-results.js");
+	if (fs.existsSync(fetcherPath)) {
+		score += 0.33;
+		parts.push("fetcher exists");
+	} else {
+		parts.push("no fetch-results.js");
+	}
+
+	// 0.33 if recent-results.json exists and is fresh (<6h)
+	const resultsPath = path.join(dataDir, "recent-results.json");
+	const results = readJsonIfExists(resultsPath);
+	const resultsAge = fileAgeMsOrNull(resultsPath);
+
+	if (results && resultsAge !== null && resultsAge < 6 * MS_PER_HOUR) {
+		score += 0.33;
+		parts.push("results data is fresh");
+	} else if (results) {
+		parts.push("results data exists but is stale");
+	} else {
+		parts.push("no results data");
+	}
+
+	// 0.34 if pipeline-health monitors results (resultsHealth field in health-report.json)
+	const reportPath = path.join(dataDir, "health-report.json");
+	const report = readJsonIfExists(reportPath);
+	if (report && report.resultsHealth) {
+		score += 0.34;
+		parts.push("pipeline monitors results health");
+	} else if (report) {
+		parts.push("health report exists but doesn't monitor results");
+	} else {
+		parts.push("no health report");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
 // Generate next-actions suggestions for open/partial loops
 function buildNextActions(loops) {
 	const actions = [];
@@ -418,6 +463,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.resultsHealth && loops.resultsHealth.score < 1.0) {
+		if (loops.resultsHealth.score < 0.33) {
+			actions.push("Create scripts/fetch-results.js to fetch recent match results");
+		}
+		if (loops.resultsHealth.score < 0.66) {
+			actions.push("Run fetch-results.js to generate fresh recent-results.json");
+		}
+		if (loops.resultsHealth.score < 1.0) {
+			actions.push("Ensure pipeline-health.js monitors results freshness (resultsHealth field)");
+		}
+	}
+
 	return actions;
 }
 
@@ -431,6 +488,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		codeHealth: evaluateCodeHealth(rootDir),
 		eventDiscovery: evaluateEventDiscovery(dataDir, scriptsDir),
 		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
+		resultsHealth: evaluateResultsHealth(dataDir, scriptsDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

@@ -503,7 +503,7 @@ export function evaluateWatchPlanQuality(watchPlan) {
 	return { score, metrics };
 }
 
-export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage } = {}) {
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results } = {}) {
 	return {
 		timestamp: new Date().toISOString(),
 		editorial: editorial
@@ -518,9 +518,139 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 		watchPlan: watchPlan
 			? { pickCount: watchPlan.metrics?.pickCount ?? watchPlan.pickCount ?? 0, avgScore: watchPlan.metrics?.avgScore ?? watchPlan.avgScore ?? 0, streamingCoverage: watchPlan.metrics?.streamingCoverage ?? 0 }
 			: null,
+		results: results
+			? { score: results.score ?? null, recapHeadlineRate: results.metrics?.recapHeadlineRate ?? null, goalScorerCoverage: results.metrics?.goalScorerCoverage ?? null, footballCount: results.metrics?.footballCount ?? 0, freshnessScore: results.metrics?.freshnessScore ?? null }
+			: null,
 		hintsApplied: hintsApplied || [],
 		tokenUsage: tokenUsage || null,
 	};
+}
+
+// --- Results quality evaluation ---
+
+export function evaluateResultsQuality(recentResults, events, rssDigest, userContext) {
+	if (!recentResults) {
+		return { score: 0, metrics: {}, issues: [{ severity: "warning", code: "no_results", message: "No recent results data" }] };
+	}
+
+	const football = Array.isArray(recentResults.football) ? recentResults.football : [];
+	const golf = recentResults.golf || {};
+	const issues = [];
+
+	// 1. Integrity rate (25%) — validation pass rate from embedded metrics
+	const vm = recentResults.validationMetrics;
+	const integrityRate = vm && vm.totalResults > 0
+		? vm.validResults / vm.totalResults
+		: (football.length > 0 || golf.pga || golf.dpWorld ? 1 : 0);
+
+	// 2. Freshness score (20%) — age of newest result
+	let freshnessScore = 0;
+	if (recentResults.lastUpdated) {
+		const ageMs = Date.now() - new Date(recentResults.lastUpdated).getTime();
+		const ageHours = ageMs / (1000 * 60 * 60);
+		if (ageHours < 24) freshnessScore = 1.0;
+		else if (ageHours < 7 * 24) freshnessScore = 0.4;
+		else freshnessScore = 0.1;
+	}
+
+	// 3. Goal scorer coverage (20%) — % of non-0-0 matches with scorers
+	const nonNilMatches = football.filter(m => (m.homeScore || 0) + (m.awayScore || 0) > 0);
+	const goalScorerCoverage = nonNilMatches.length > 0
+		? nonNilMatches.filter(m => Array.isArray(m.goalScorers) && m.goalScorers.length > 0).length / nonNilMatches.length
+		: 1;
+
+	// 4. Recap headline rate (15%) — % of football results with RSS headline
+	const recapHeadlineRate = football.length > 0
+		? football.filter(m => m.recapHeadline).length / football.length
+		: 0;
+
+	// 5. Favorite coverage (10%) — favorite teams present in results
+	const favTeams = (userContext?.favoriteTeams || []).map(t => t.toLowerCase());
+	let favoriteCoverage = 0;
+	if (favTeams.length > 0) {
+		const found = favTeams.filter(fav =>
+			football.some(m =>
+				(m.homeTeam || "").toLowerCase().includes(fav) ||
+				(m.awayTeam || "").toLowerCase().includes(fav)
+			)
+		);
+		favoriteCoverage = found.length / favTeams.length;
+	} else {
+		favoriteCoverage = 1; // No favorites configured, skip
+	}
+
+	// 6. Golf present (10%) — golf data available
+	const golfExpected = Array.isArray(events) && events.some(e => e.sport === "golf");
+	const golfPresent = golf.pga !== null || golf.dpWorld !== null ? 1 : 0;
+	const golfScore = !golfExpected ? 1 : golfPresent;
+
+	const metrics = {
+		integrityRate: roundRatio(integrityRate),
+		freshnessScore: roundRatio(freshnessScore),
+		goalScorerCoverage: roundRatio(goalScorerCoverage),
+		recapHeadlineRate: roundRatio(recapHeadlineRate),
+		favoriteCoverage: roundRatio(favoriteCoverage),
+		golfPresent: roundRatio(golfScore),
+		footballCount: football.length,
+	};
+
+	// Weighted score
+	const score = clamp(Math.round(
+		integrityRate * 25 +
+		freshnessScore * 20 +
+		goalScorerCoverage * 20 +
+		recapHeadlineRate * 15 +
+		favoriteCoverage * 10 +
+		golfScore * 10
+	), 0, 100);
+
+	if (recapHeadlineRate < 0.2 && football.length > 0) {
+		issues.push({ severity: "warning", code: "low_recap_rate", message: `Only ${Math.round(recapHeadlineRate * 100)}% of results have recap headlines` });
+	}
+	if (goalScorerCoverage < 0.5 && nonNilMatches.length > 0) {
+		issues.push({ severity: "warning", code: "low_scorer_coverage", message: `Only ${Math.round(goalScorerCoverage * 100)}% of non-nil matches have goal scorers` });
+	}
+	if (favoriteCoverage < 0.3 && favTeams.length > 0) {
+		issues.push({ severity: "warning", code: "low_favorite_coverage", message: `Only ${Math.round(favoriteCoverage * 100)}% of favorite teams present in results` });
+	}
+	if (freshnessScore < 0.4) {
+		issues.push({ severity: "warning", code: "stale_results", message: "Results data is stale (>24h old)" });
+	}
+
+	return { score, metrics, issues };
+}
+
+const RESULTS_HINT_RULES = [
+	{ metric: "recapHeadlineRate", threshold: 0.3, hint: "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives." },
+	{ metric: "goalScorerCoverage", threshold: 0.5, hint: "RESULTS NOTE: Goal scorer data is sparse — mention scorers only when available in the data, never fabricate." },
+	{ metric: "favoriteCoverage", threshold: 0.5, hint: "RESULTS NOTE: Favorite team results may be missing from the data — don't assume results you can't verify." },
+	{ metric: "freshnessScore", threshold: 0.5, hint: "RESULTS NOTE: Results data may be stale — be cautious about referencing recent outcomes." },
+];
+
+export function buildResultsHints(history) {
+	const empty = { hints: [], metrics: {} };
+	if (!Array.isArray(history) || history.length < 3) return empty;
+
+	const recent = history.slice(-5);
+	const metricKeys = RESULTS_HINT_RULES.map(r => r.metric);
+	const averages = {};
+
+	for (const key of metricKeys) {
+		const values = recent
+			.map(entry => entry.results?.[key] ?? null)
+			.filter(v => v !== null && v !== undefined);
+		averages[key] = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;
+	}
+
+	const hints = [];
+	for (const rule of RESULTS_HINT_RULES) {
+		const avg = averages[rule.metric];
+		if (avg !== null && avg < rule.threshold) {
+			hints.push(rule.hint);
+		}
+	}
+
+	return { hints, metrics: averages };
 }
 
 const ADAPTIVE_HINT_RULES = [

@@ -79,6 +79,45 @@ export function detectQualityRegression(current, previous) {
 		});
 	}
 
+	// Results score regression
+	const currentResultsScore = current.results?.score ?? null;
+	const prevResultsScore = previous.results?.score ?? null;
+	if (currentResultsScore !== null && prevResultsScore !== null) {
+		const drop = prevResultsScore - currentResultsScore;
+		if (drop > 15) {
+			issues.push({
+				severity: "warning",
+				code: "results_regression",
+				message: `Results score dropped from ${prevResultsScore} to ${currentResultsScore} (-${drop})`,
+			});
+		}
+	}
+
+	// Football count collapse
+	const currentFootball = current.results?.metrics?.footballCount ?? null;
+	const prevFootball = previous.results?.metrics?.footballCount ?? null;
+	if (currentFootball !== null && prevFootball !== null && prevFootball > 0) {
+		const dropPct = (prevFootball - currentFootball) / prevFootball;
+		if (dropPct > 0.5) {
+			issues.push({
+				severity: "critical",
+				code: "football_count_collapse",
+				message: `Football results dropped from ${prevFootball} to ${currentFootball} (-${Math.round(dropPct * 100)}%)`,
+			});
+		}
+	}
+
+	// Favorite coverage drop
+	const currentFavCov = current.results?.metrics?.favoriteCoverage ?? null;
+	const prevFavCov = previous.results?.metrics?.favoriteCoverage ?? null;
+	if (currentFavCov !== null && prevFavCov !== null && prevFavCov > 0.5 && currentFavCov < 0.3) {
+		issues.push({
+			severity: "warning",
+			code: "favorite_coverage_drop",
+			message: `Favorite coverage dropped from ${Math.round(prevFavCov * 100)}% to ${Math.round(currentFavCov * 100)}%`,
+		});
+	}
+
 	const hasRegression = issues.length > 0;
 	return { issues, hasRegression };
 }
@@ -119,6 +158,20 @@ export function detectTrendRegression(history) {
 				severity: "warning",
 				code: "must_watch_trend_regression",
 				message: `Must-watch coverage trend dropped from avg ${(previousMW * 100).toFixed(0)}% to ${(recentMW * 100).toFixed(0)}% (-${(drop * 100).toFixed(0)}%)`,
+			});
+		}
+	}
+
+	// Results quality trend regression
+	const recentResults = avg(recent, (e) => e.results?.score ?? null);
+	const previousResults = avg(previous, (e) => e.results?.score ?? null);
+	if (recentResults !== null && previousResults !== null) {
+		const drop = previousResults - recentResults;
+		if (drop > 15) {
+			issues.push({
+				severity: "warning",
+				code: "results_trend_regression",
+				message: `Results quality trend dropped from avg ${Math.round(previousResults)} to ${Math.round(recentResults)} (-${Math.round(drop)})`,
 			});
 		}
 	}

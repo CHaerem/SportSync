@@ -90,6 +90,32 @@ describe("detectQualityRegression()", () => {
 		expect(result.hasRegression).toBe(true);
 		expect(result.issues.find((i) => i.code === "event_count_collapse")).toBeDefined();
 	});
+
+	it("detects results score drop > 15", () => {
+		const previous = { results: { score: 80, metrics: { footballCount: 10 } } };
+		const current = { results: { score: 60, metrics: { footballCount: 10 } } };
+		const result = detectQualityRegression(current, previous);
+		expect(result.hasRegression).toBe(true);
+		expect(result.issues.find(i => i.code === "results_regression")).toBeDefined();
+	});
+
+	it("detects football count collapse > 50%", () => {
+		const previous = { results: { score: 80, metrics: { footballCount: 20 } } };
+		const current = { results: { score: 80, metrics: { footballCount: 5 } } };
+		const result = detectQualityRegression(current, previous);
+		expect(result.hasRegression).toBe(true);
+		const issue = result.issues.find(i => i.code === "football_count_collapse");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("critical");
+	});
+
+	it("detects favorite coverage drop from high to low", () => {
+		const previous = { results: { metrics: { favoriteCoverage: 0.8 } } };
+		const current = { results: { metrics: { favoriteCoverage: 0.2 } } };
+		const result = detectQualityRegression(current, previous);
+		expect(result.hasRegression).toBe(true);
+		expect(result.issues.find(i => i.code === "favorite_coverage_drop")).toBeDefined();
+	});
 });
 
 describe("detectTrendRegression()", () => {
@@ -143,5 +169,19 @@ describe("detectTrendRegression()", () => {
 		];
 		const result = detectTrendRegression(history);
 		expect(result.hasTrendRegression).toBe(false);
+	});
+
+	it("detects results quality trend regression", () => {
+		const history = [
+			{ ...makeEntry(80, 0.9), results: { score: 80 } },
+			{ ...makeEntry(80, 0.9), results: { score: 78 } },
+			{ ...makeEntry(80, 0.9), results: { score: 82 } },
+			{ ...makeEntry(80, 0.9), results: { score: 55 } },
+			{ ...makeEntry(80, 0.9), results: { score: 50 } },
+			{ ...makeEntry(80, 0.9), results: { score: 58 } },
+		];
+		const result = detectTrendRegression(history);
+		expect(result.hasTrendRegression).toBe(true);
+		expect(result.issues.some(i => i.code === "results_trend_regression")).toBe(true);
 	});
 });

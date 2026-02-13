@@ -61,6 +61,7 @@ export function generateHealthReport(options = {}) {
 		events = [],
 		standings = null,
 		rssDigest = null,
+		recentResults = null,
 		previousReport = null,
 		sportFiles = {},
 	} = options;
@@ -167,7 +168,40 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 6. Dashboard visibility — events in data but invisible on dashboard
+	// 6. Results freshness and quality
+	const resultsHealth = { present: false, stale: false, footballCount: 0, validationPassRate: null, recapHeadlineRate: null, issues: [] };
+	if (recentResults) {
+		resultsHealth.present = true;
+		const football = Array.isArray(recentResults.football) ? recentResults.football : [];
+		resultsHealth.footballCount = football.length;
+		const resultsAge = ageMinutes(recentResults.lastUpdated);
+		resultsHealth.stale = resultsAge > STALE_THRESHOLD_MINUTES;
+		if (resultsHealth.stale) {
+			issues.push({
+				severity: "warning",
+				code: "results_stale",
+				message: `recent-results.json is ${Math.round(resultsAge)} minutes old`,
+			});
+		}
+
+		// Validation pass rate from embedded metrics
+		const vm = recentResults.validationMetrics;
+		if (vm && vm.totalResults > 0) {
+			resultsHealth.validationPassRate = Number((vm.validResults / vm.totalResults).toFixed(2));
+			if (resultsHealth.validationPassRate < 0.9) {
+				const msg = `Results validation pass rate is ${Math.round(resultsHealth.validationPassRate * 100)}%`;
+				resultsHealth.issues.push(msg);
+				issues.push({ severity: "warning", code: "results_validation_low", message: msg });
+			}
+		}
+
+		// Recap headline rate
+		if (football.length > 0) {
+			resultsHealth.recapHeadlineRate = Number((football.filter(m => m.recapHeadline).length / football.length).toFixed(2));
+		}
+	}
+
+	// 7. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {
 		const sports = [...new Set(invisibleEvents.map((e) => e.sport))];
@@ -191,6 +225,7 @@ export function generateHealthReport(options = {}) {
 		schemaCompleteness,
 		rssFeedHealth,
 		standingsHealth,
+		resultsHealth,
 		issues,
 		status,
 	};
@@ -242,6 +277,7 @@ async function main() {
 	const eventsData = readJsonIfExists(path.join(dataDir, "events.json")) || [];
 	const standings = readJsonIfExists(path.join(dataDir, "standings.json"));
 	const rssDigest = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
+	const recentResults = readJsonIfExists(path.join(dataDir, "recent-results.json"));
 	const previousReport = readJsonIfExists(path.join(dataDir, "health-report.json"));
 
 	const sportFileNames = ["football.json", "golf.json", "tennis.json", "f1.json", "chess.json", "esports.json"];
@@ -254,6 +290,7 @@ async function main() {
 		events: eventsData,
 		standings,
 		rssDigest,
+		recentResults,
 		previousReport,
 		sportFiles,
 	});

@@ -246,6 +246,66 @@ function runDeterministicChecks(data) {
 		}
 	}
 
+	// --- Results sanity checks (13-17) ---
+	const recentResults = data.recentResults;
+	if (recentResults) {
+		const football = Array.isArray(recentResults.football) ? recentResults.football : [];
+
+		// 13. Future dates — result dated after now
+		for (const m of football) {
+			if (m.date && new Date(m.date).getTime() > now.getTime() + 86400000) {
+				findings.push({
+					severity: "warning",
+					check: "result_future_date",
+					message: `Result "${m.homeTeam} v ${m.awayTeam}" has future date: ${m.date}`,
+				});
+			}
+		}
+
+		// 14. Extreme scores — football score > 10 (likely data corruption)
+		for (const m of football) {
+			if ((m.homeScore || 0) > 10 || (m.awayScore || 0) > 10) {
+				findings.push({
+					severity: "warning",
+					check: "result_extreme_score",
+					message: `Extreme score: ${m.homeTeam} ${m.homeScore}-${m.awayScore} ${m.awayTeam}`,
+				});
+			}
+		}
+
+		// 15. Incomplete final — golf "final" with <4 rounds
+		const golf = recentResults.golf || {};
+		for (const [key, tour] of Object.entries(golf)) {
+			if (tour && tour.status === "final" && (tour.completedRound || 0) < 4) {
+				findings.push({
+					severity: "warning",
+					check: "result_incomplete_final",
+					message: `Golf ${key} marked final but only ${tour.completedRound || 0} rounds completed`,
+				});
+			}
+		}
+
+		// 16. Duplicate teams — same team on both sides
+		for (const m of football) {
+			if (m.homeTeam && m.awayTeam && m.homeTeam === m.awayTeam) {
+				findings.push({
+					severity: "warning",
+					check: "result_duplicate_teams",
+					message: `Duplicate teams: "${m.homeTeam}" appears as both home and away`,
+				});
+			}
+		}
+
+		// 17. All recaps null — every football result has null recapHeadline (RSS broken)
+		if (football.length >= 3 && football.every(m => !m.recapHeadline)) {
+			findings.push({
+				severity: "warning",
+				check: "result_all_recaps_null",
+				message: `All ${football.length} football results have null recapHeadline — RSS matching may be broken`,
+			});
+		}
+	}
+
 	return findings;
 }
 
@@ -346,7 +406,9 @@ export async function runSanityCheck() {
 	const standings = readJsonIfExists(path.join(dataDir, "standings.json"));
 	const meta = readJsonIfExists(path.join(dataDir, "meta.json"));
 
-	const data = { events, featured, health, quality, standings, meta };
+	const recentResults = readJsonIfExists(path.join(dataDir, "recent-results.json"));
+
+	const data = { events, featured, health, quality, standings, meta, recentResults };
 
 	// 1. Deterministic checks (always run)
 	const deterministicFindings = runDeterministicChecks(data);

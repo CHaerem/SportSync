@@ -9,6 +9,8 @@ import {
 	evaluateWatchPlanQuality,
 	buildQualitySnapshot,
 	buildAdaptiveHints,
+	evaluateResultsQuality,
+	buildResultsHints,
 } from "../scripts/lib/ai-quality-gates.js";
 
 describe("validateFeaturedContent()", () => {
@@ -286,6 +288,20 @@ describe("buildQualitySnapshot()", () => {
 	it("defaults hintsApplied to empty array", () => {
 		const snapshot = buildQualitySnapshot(null, null, null, null);
 		expect(snapshot.hintsApplied).toEqual([]);
+	});
+
+	it("includes results metrics when provided", () => {
+		const results = { score: 75, metrics: { recapHeadlineRate: 0.6, goalScorerCoverage: 0.8, footballCount: 12, freshnessScore: 1.0 } };
+		const snapshot = buildQualitySnapshot(null, null, null, null, { results });
+		expect(snapshot.results).toBeDefined();
+		expect(snapshot.results.score).toBe(75);
+		expect(snapshot.results.recapHeadlineRate).toBe(0.6);
+		expect(snapshot.results.footballCount).toBe(12);
+	});
+
+	it("handles null results gracefully", () => {
+		const snapshot = buildQualitySnapshot(null, null, null, null, {});
+		expect(snapshot.results).toBeNull();
 	});
 });
 
