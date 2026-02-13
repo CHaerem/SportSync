@@ -31,29 +31,40 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
       - name: Assemble site root from main
         run: |
           mkdir -p _site
           cp -r docs/* _site/
 
-      - name: Checkout and assemble glass preview
-        continue-on-error: true
-        run: |
-          git fetch origin design/glass --depth=1 || exit 0
-          git checkout origin/design/glass -- docs/ || exit 0
-          mkdir -p _site/preview/glass
-          cp -r docs/* _site/preview/glass/
-          git checkout main -- docs/
-
-      - name: Checkout and assemble chronological preview
-        continue-on-error: true
-        run: |
-          git fetch origin chronological-events --depth=1 || exit 0
-          git checkout origin/chronological-events -- docs/ || exit 0
-          mkdir -p _site/preview/chronological
-          cp -r docs/* _site/preview/chronological/
-          git checkout main -- docs/
+      - name: Assemble PR previews
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 10
+            });
+            for (const pr of prs) {
+              const branch = pr.head.ref;
+              const slug = branch.replace(/[^a-zA-Z0-9-]/g, '-');
+              console.log(`Assembling preview for PR #${pr.number}: ${branch} → /preview/${slug}/`);
+              try {
+                execSync(`git fetch origin ${branch} --depth=1`, { stdio: 'inherit' });
+                execSync(`git checkout origin/${branch} -- docs/`, { stdio: 'inherit' });
+                execSync(`mkdir -p _site/preview/${slug}`, { stdio: 'inherit' });
+                execSync(`cp -r docs/* _site/preview/${slug}/`, { stdio: 'inherit' });
+                execSync(`git checkout main -- docs/`, { stdio: 'inherit' });
+                console.log(`  ✓ Preview ready at /preview/${slug}/`);
+              } catch (err) {
+                console.log(`  ✗ Skipped: ${err.message}`);
+                try { execSync(`git checkout main -- docs/`, { stdio: 'inherit' }); } catch {}
+              }
+            }
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
