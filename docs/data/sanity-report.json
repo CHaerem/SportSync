@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T00:48:44.452Z",
+  "generatedAt": "2026-02-13T03:13:49.247Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 29,
@@ -66,7 +66,7 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen begins Freestyle Chess World Championship\" which may not match any event"
+      "message": "Featured block references \"️ Carlsen opens Freestyle Chess World Championship\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -84,31 +84,6 @@
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Germany\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Dolomites\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – FIDE Freestyle Chess World Championship 2026 | Round-Robin\" marked norwegian=true but has no norwegianPlayers"
@@ -116,13 +91,18 @@
     {
       "severity": "warning",
       "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15"
+      "message": "Featured shows \"12:00\" for \"Cross-Country Skiing — Men's 10km Free\" but events.json has 11:45"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"14:00\" for \"Cross-Country Skiing — Women's Relay 4x5km\" but events.json has 12:00"
     }
   ],
   "summary": {
-    "total": 12,
+    "total": 8,
     "critical": 0,
-    "warning": 10,
+    "warning": 6,
     "info": 2
   },
   "pass": true,
