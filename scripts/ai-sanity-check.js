@@ -293,25 +293,38 @@ async function runLLMCheck(snapshot, deterministicFindings, data, externalLlm) {
 	const llm = externalLlm || new LLMClient();
 	if (!llm.isAvailable()) return null;
 
-	const systemPrompt = `You are a QA tester for SportSync, a sports dashboard. You receive a snapshot of what the user sees. Look for anything that seems wrong, inconsistent, or confusing from a user perspective.
+	const systemPrompt = `You are a QA tester for SportSync, a sports dashboard. You receive a snapshot of what the user sees plus detailed event data. Look for anything that seems wrong, inconsistent, or confusing from a user perspective.
 
 Focus on:
 - Events showing wrong status (ended when still ongoing, live when not started)
 - Missing or mismatched data (standings for a sport with no events)
 - Temporal inconsistencies (events in wrong day band)
 - Content quality issues (empty sections, broken references)
+- Data completeness: fields that should have values but are null/empty (e.g., a golf event with 80 players but tee times are null, or a football match with no venue). Think about what data SHOULD be there given the context — an in-progress tournament should have tee times, a match today should have a venue.
+- Sport-specific anomalies: anything that doesn't make sense for that sport (e.g., golf tournament with 0 featured groups despite Norwegian players, football match in the wrong timezone)
 - Anything a real user would find confusing or incorrect
 
-Return a JSON array of findings. Each finding: {"severity": "critical|warning|info", "check": "short_id", "message": "description"}
+When you find data quality issues, include actionable detail in the message: which field is wrong, what the expected value would be, and what component likely caused it (fetcher, enrichment, config).
+
+Return a JSON array of findings. Each finding: {"severity": "critical|warning|info", "check": "short_id", "message": "description", "actionable": true/false}
+Set "actionable" to true for findings that represent fixable code/data issues (vs. transient API issues or cosmetic observations).
 Return [] if everything looks good.`;
 
 	const userPrompt = JSON.stringify({
 		currentTime: new Date().toISOString(),
 		snapshot,
 		deterministicFindings,
-		sampleEvents: data.events.slice(0, 10).map(e => ({
+		events: data.events.slice(0, 30).map(e => ({
 			title: e.title, sport: e.sport, time: e.time, endTime: e.endTime || null,
-			importance: e.importance,
+			importance: e.importance, venue: e.venue,
+			norwegian: e.norwegian || false,
+			...(e.norwegianPlayers?.length > 0 && {
+				norwegianPlayers: e.norwegianPlayers.map(p => ({
+					name: p.name, teeTime: p.teeTime || null, status: p.status || null,
+				})),
+			}),
+			...(e.featuredGroups?.length > 0 && { featuredGroupCount: e.featuredGroups.length }),
+			...(e.totalPlayers && { totalPlayers: e.totalPlayers }),
 		})),
 	});
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups } from '../scripts/fetch/golf.js';
+import { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups, fetchPGATourTeeTimes } from '../scripts/fetch/golf.js';
 
 describe('playerNameMatches()', () => {
 	it('matches exact full name', () => {
@@ -198,5 +198,65 @@ describe('buildFeaturedGroups()', () => {
 		];
 		const result = buildFeaturedGroups(norwegians, pgaField);
 		expect(result).toHaveLength(2);
+	});
+
+	it('prefers pgaTeeTimes data over pgaField when available', () => {
+		const pgaField = {
+			players: [
+				{ displayName: 'Viktor Hovland', teeTime: '8:45', startingHole: 1 },
+				{ displayName: 'Tiger Woods', teeTime: '8:45', startingHole: 1 },
+			]
+		};
+		const pgaTeeTimes = {
+			playerTeeTimes: new Map([
+				['viktor hovland', { teeTime: '09:15', teeTimeUTC: '2026-02-13T14:15:00Z', startingHole: 1, groupmates: ['Rory McIlroy', 'Jon Rahm'] }],
+			]),
+		};
+		const norwegians = [{ name: 'Viktor Hovland', teeTime: '09:15' }];
+		const result = buildFeaturedGroups(norwegians, pgaField, pgaTeeTimes);
+		expect(result).toHaveLength(1);
+		expect(result[0].teeTime).toBe('09:15');
+		expect(result[0].groupmates.map(g => g.name)).toContain('Rory McIlroy');
+		expect(result[0].groupmates.map(g => g.name)).toContain('Jon Rahm');
+	});
+
+	it('falls back to pgaField when pgaTeeTimes has no match', () => {
+		const pgaField = {
+			players: [
+				{ displayName: 'Viktor Hovland', teeTime: '8:45', startingHole: 1 },
+				{ displayName: 'Tiger Woods', teeTime: '8:45', startingHole: 1 },
+			]
+		};
+		const pgaTeeTimes = {
+			playerTeeTimes: new Map(), // empty — no tee times available
+		};
+		const norwegians = [{ name: 'Viktor Hovland', teeTime: '8:45' }];
+		const result = buildFeaturedGroups(norwegians, pgaField, pgaTeeTimes);
+		expect(result).toHaveLength(1);
+		expect(result[0].groupmates.map(g => g.name)).toContain('Tiger Woods');
+	});
+
+	it('falls back to pgaField when pgaTeeTimes is null', () => {
+		const pgaField = {
+			players: [
+				{ displayName: 'Viktor Hovland', teeTime: '8:45', startingHole: 1 },
+				{ displayName: 'Tiger Woods', teeTime: '8:45', startingHole: 1 },
+			]
+		};
+		const norwegians = [{ name: 'Viktor Hovland', teeTime: '8:45' }];
+		const result = buildFeaturedGroups(norwegians, pgaField, null);
+		expect(result).toHaveLength(1);
+		expect(result[0].groupmates.map(g => g.name)).toContain('Tiger Woods');
+	});
+
+	it('skips players without groupmates in pgaTeeTimes', () => {
+		const pgaTeeTimes = {
+			playerTeeTimes: new Map([
+				['viktor hovland', { teeTime: '09:15', teeTimeUTC: null, startingHole: 1, groupmates: [] }],
+			]),
+		};
+		const norwegians = [{ name: 'Viktor Hovland', teeTime: '09:15' }];
+		const result = buildFeaturedGroups(norwegians, null, pgaTeeTimes);
+		expect(result).toHaveLength(0);
 	});
 });

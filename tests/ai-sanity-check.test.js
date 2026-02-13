@@ -173,6 +173,58 @@ describe("runSanityCheck()", () => {
 		expect(flag).toBeUndefined();
 	});
 
+	it("includes sport-specific data in snapshot for LLM", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "Genesis Invitational",
+					sport: "golf",
+					time: new Date(Date.now() - 7200000).toISOString(),
+					endTime: new Date(Date.now() + 2 * 86400000).toISOString(),
+					importance: 4,
+					venue: "Riviera CC",
+					norwegian: true,
+					norwegianPlayers: [
+						{ name: "Viktor Hovland", teeTime: null, status: "active" },
+					],
+					featuredGroups: [],
+					totalPlayers: 80,
+				},
+			];
+			return null;
+		});
+		// We can't directly inspect the LLM payload, but we verify the report
+		// runs successfully with sport-specific data present
+		const report = await runSanityCheck();
+		expect(report.snapshot.totalEvents).toBe(1);
+		expect(report.snapshot.sports).toContain("golf");
+	});
+
+	it("handles events with norwegianPlayers having null tee times", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "AT&T Pebble Beach",
+					sport: "golf",
+					time: new Date(Date.now() - 3600000).toISOString(),
+					endTime: new Date(Date.now() + 2 * 86400000).toISOString(),
+					importance: 3,
+					norwegian: true,
+					norwegianPlayers: [
+						{ name: "Viktor Hovland", teeTime: null, status: null },
+						{ name: "Kristoffer Ventura", teeTime: null, status: null },
+					],
+					featuredGroups: [],
+					totalPlayers: 156,
+				},
+			];
+			return null;
+		});
+		const report = await runSanityCheck();
+		expect(report.pass).toBe(true);
+		expect(report.snapshot.totalEvents).toBe(1);
+	});
+
 	it("detects featured athlete not in events data", async () => {
 		readJsonIfExists.mockImplementation((filePath) => {
 			if (filePath.includes("events.json")) return [

@@ -3114,12 +3114,12 @@
     }
   },
   {
-    "timestamp": "2026-02-13T11:40:29.104Z",
+    "timestamp": "2026-02-13T11:50:33.274Z",
     "editorial": {
-      "score": 70,
-      "mustWatchCoverage": 0,
+      "score": 95,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
-      "blockCount": 8
+      "blockCount": 9
     },
     "enrichment": {
       "score": 100,
@@ -3127,9 +3127,9 @@
       "summaryCoverage": 1
     },
     "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -3144,21 +3144,20 @@
       "enrichment": {
         "input": 0,
         "output": 0,
-        "calls": 3,
+        "calls": 2,
         "total": 0,
         "tracked": false
       },
       "featured": {
         "input": 0,
         "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
+        "calls": 0,
+        "total": 0
       },
       "total": {
         "input": 0,
         "output": 0,
-        "calls": 4,
+        "calls": 2,
         "total": 0
       }
     }

@@ -38,7 +38,17 @@ Check if API fetchers extract data that's discarded or only partially used. Fetc
 
 **Example:** PGA Tour scraper gets tee times for 150+ players but only stores Norwegian players' times on events — groupmate names are available in the same API response but discarded.
 
-### D. Pattern Report Analysis
+### D. Data Quality Scouting (Sanity Report)
+
+Read `docs/data/sanity-report.json` — look for findings with `"actionable": true`. These are LLM-detected data quality issues from the pipeline's AI sanity check (`scripts/ai-sanity-check.js`).
+
+For each actionable finding, investigate the root cause in the code and create a `[PENDING]` task with a specific fix description. The finding's `message` field contains detail about which field is wrong, what the expected value would be, and what component likely caused it (fetcher, enrichment, config).
+
+**How to check:** Read `sanity-report.json`, filter findings for `actionable: true`, and cross-reference with the relevant fetcher or script. If the issue is transient (API downtime), skip it. If it's a code bug or missing data path, create a task.
+
+**Example:** Finding says "golf event with 80 totalPlayers but all norwegianPlayers have null teeTime during in-progress tournament — likely fetcher issue in scripts/fetch/golf.js". Investigate the tee-time scraping logic and create a task to fix the data path.
+
+### E. Pattern Report Analysis
 
 Read `docs/data/pattern-report.json` (generated every 2h by `scripts/analyze-patterns.js`). For each high-severity pattern, create a `[PENDING]` task:
 

@@ -81,19 +81,19 @@ function parseTeeTimeToUTC(teeTimeStr, tournamentDate, timezone) {
 }
 
 /**
- * Fetch the current week's PGA Tour field from pgatour.com.
- * Extracts __NEXT_DATA__ JSON embedded in the leaderboard page.
- * Returns { tournamentName, timezone, players: [...] } or null on any failure.
+ * Fetch a PGA Tour page and extract __NEXT_DATA__ JSON.
+ * Shared helper for both leaderboard and tee-times pages.
+ * Returns { nextData, queries } or null on any failure.
  */
-async function fetchPGATourField() {
+async function fetchPGATourPage(pagePath) {
 	try {
+		const url = `https://www.pgatour.com${pagePath}`;
 		const html = await new Promise((resolve, reject) => {
-			const req = https.get("https://www.pgatour.com/leaderboard", {
+			const req = https.get(url, {
 				headers: { "User-Agent": "Mozilla/5.0 (compatible; SportSync/1.0)" },
 				timeout: 10000,
 			}, (res) => {
 				if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-					// Follow one redirect
 					const redirectReq = https.get(res.headers.location, {
 						headers: { "User-Agent": "Mozilla/5.0 (compatible; SportSync/1.0)" },
 						timeout: 10000,
@@ -116,10 +116,9 @@ async function fetchPGATourField() {
 			req.on("timeout", () => { req.destroy(); reject(new Error("Timeout")); });
 		});
 
-		// Extract __NEXT_DATA__ JSON from HTML
 		const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
 		if (!match) {
-			console.warn("PGA Tour: __NEXT_DATA__ script tag not found in HTML");
+			console.warn(`PGA Tour ${pagePath}: __NEXT_DATA__ script tag not found`);
 			return null;
 		}
 
@@ -127,15 +126,32 @@ async function fetchPGATourField() {
 		try {
 			nextData = JSON.parse(match[1]);
 		} catch (parseErr) {
-			console.warn(`PGA Tour: Failed to parse __NEXT_DATA__ JSON: ${parseErr.message}`);
+			console.warn(`PGA Tour ${pagePath}: Failed to parse __NEXT_DATA__: ${parseErr.message}`);
 			return null;
 		}
 
 		const queries = nextData?.props?.pageProps?.dehydratedState?.queries;
 		if (!Array.isArray(queries)) {
-			console.warn("PGA Tour: No queries array in __NEXT_DATA__");
+			console.warn(`PGA Tour ${pagePath}: No queries array in __NEXT_DATA__`);
 			return null;
 		}
+
+		return { nextData, queries };
+	} catch (err) {
+		console.warn(`PGA Tour ${pagePath} fetch failed: ${err.message}`);
+		return null;
+	}
+}
+
+/**
+ * Fetch the current week's PGA Tour field from pgatour.com.
+ * Returns { tournamentName, timezone, players: [...] } or null on any failure.
+ */
+async function fetchPGATourField() {
+	try {
+		const page = await fetchPGATourPage("/leaderboard");
+		if (!page) return null;
+		const { nextData, queries } = page;
 
 		// Find the leaderboard query
 		const lbQuery = queries.find(q =>
@@ -218,6 +234,132 @@ async function fetchPGATourField() {
 }
 
 /**
+ * Fetch tee times from pgatour.com/tee-times page.
+ * Returns { tournamentName, timezone, playerTeeTimes: Map<normalizedName, info> } or null.
+ * The tee-times page has real tee times during in-progress tournaments
+ * when the leaderboard page only shows scoring data.
+ */
+async function fetchPGATourTeeTimes() {
+	try {
+		const page = await fetchPGATourPage("/tee-times");
+		if (!page) return null;
+		const { nextData, queries } = page;
+
+		const tournamentName = nextData?.props?.pageProps?.tournament?.tournamentName || null;
+		const timezone = nextData?.props?.pageProps?.tournament?.timezone || null;
+		const currentRound = nextData?.props?.pageProps?.tournament?.currentRound || 1;
+
+		// Find tee-times query — try multiple key patterns
+		const ttQuery = queries.find(q =>
+			q.queryKey?.some?.(k => typeof k === "string" &&
+				(k.toLowerCase().includes("teetimes") || k.toLowerCase().includes("tee-times") || k.toLowerCase().includes("tee_times"))
+			)
+		) || queries.find(q => q.state?.data?.rounds);
+
+		const ttData = ttQuery?.state?.data?.teeTimeV3 || ttQuery?.state?.data;
+		if (!ttData) {
+			console.warn("PGA Tour tee-times: No tee-time data found in queries");
+			return null;
+		}
+
+		// Navigate to rounds array
+		const rounds = ttData.rounds || ttData.teeTimeRounds || [];
+		if (!Array.isArray(rounds) || rounds.length === 0) {
+			console.warn("PGA Tour tee-times: No rounds data");
+			return null;
+		}
+
+		// Use currentRound (1-indexed) to pick the right round
+		const roundIndex = Math.min(currentRound - 1, rounds.length - 1);
+		const round = rounds[roundIndex];
+		if (!round) {
+			console.warn(`PGA Tour tee-times: Round ${currentRound} not found`);
+			return null;
+		}
+
+		const groups = round.groups || round.teeTimeGroups || [];
+		const playerTeeTimes = new Map();
+
+		for (const group of groups) {
+			const rawTeeTime = group.time || group.teeTime || null;
+			const startTee = group.startTee || group.startingHole || 1;
+			const courseName = group.course?.courseName || group.courseName || null;
+			const players = group.players || group.golfers || [];
+
+			// Parse group tee time
+			let teeTimeDisplay = null;
+			let teeTimeUTC = null;
+			if (typeof rawTeeTime === "number" && rawTeeTime > 0) {
+				const dt = new Date(rawTeeTime);
+				if (!isNaN(dt.getTime())) {
+					teeTimeUTC = dt.toISOString();
+					try {
+						teeTimeDisplay = dt.toLocaleTimeString("no-NO", {
+							timeZone: "Europe/Oslo", hour: "2-digit", minute: "2-digit", hour12: false
+						});
+					} catch {
+						teeTimeDisplay = dt.toLocaleTimeString("no-NO", {
+							hour: "2-digit", minute: "2-digit", hour12: false
+						});
+					}
+				}
+			} else if (typeof rawTeeTime === "string" && rawTeeTime) {
+				// May be "8:45 AM" format or ISO
+				if (/\d{4}-\d{2}-\d{2}/.test(rawTeeTime)) {
+					const dt = new Date(rawTeeTime);
+					if (!isNaN(dt.getTime())) {
+						teeTimeUTC = dt.toISOString();
+						try {
+							teeTimeDisplay = dt.toLocaleTimeString("no-NO", {
+								timeZone: "Europe/Oslo", hour: "2-digit", minute: "2-digit", hour12: false
+							});
+						} catch {
+							teeTimeDisplay = dt.toLocaleTimeString("no-NO", {
+								hour: "2-digit", minute: "2-digit", hour12: false
+							});
+						}
+					}
+				} else {
+					teeTimeDisplay = rawTeeTime;
+				}
+			}
+
+			// Build groupmate names for this group
+			const groupPlayerNames = players.map(p => {
+				const display = p.displayName || p.playerName || `${p.firstName || ""} ${p.lastName || ""}`.trim();
+				return display;
+			}).filter(Boolean);
+
+			for (const p of players) {
+				const displayName = p.displayName || p.playerName || `${p.firstName || ""} ${p.lastName || ""}`.trim();
+				if (!displayName) continue;
+				const key = displayName.toLowerCase();
+				const groupmates = groupPlayerNames.filter(n => n.toLowerCase() !== key);
+
+				playerTeeTimes.set(key, {
+					teeTime: teeTimeDisplay,
+					teeTimeUTC,
+					startingHole: typeof startTee === "number" ? startTee : parseInt(startTee, 10) || 1,
+					courseName,
+					groupmates,
+				});
+			}
+		}
+
+		if (playerTeeTimes.size === 0) {
+			console.warn("PGA Tour tee-times: Parsed page but 0 player tee times extracted");
+			return null;
+		}
+
+		console.log(`PGA Tour tee-times loaded: ${tournamentName} round ${currentRound} (${playerTeeTimes.size} players)`);
+		return { tournamentName, timezone, playerTeeTimes };
+	} catch (err) {
+		console.warn(`PGA Tour tee-times scrape failed: ${err.message}`);
+		return null;
+	}
+}
+
+/**
  * Check if two tournament names likely refer to the same event.
  * Requires at least 2 meaningful words in common to avoid false positives
  * (e.g. "Open" matching both "U.S. Open" and "British Open").
@@ -251,13 +393,28 @@ function findFieldPlayer(golfer, pgaField) {
 }
 
 /**
- * Build featured groups for Norwegian players from PGA Tour field data.
- * Groups players by teeTime + startingHole, then returns groups containing
- * at least one Norwegian player with their groupmates listed.
+ * Build featured groups for Norwegian players.
+ * If pgaTeeTimes is available (from /tee-times page), use its real group data.
+ * Otherwise fall back to synthetic grouping from pgaField (leaderboard page).
  */
-function buildFeaturedGroups(norwegianPlayersList, pgaField) {
+function buildFeaturedGroups(norwegianPlayersList, pgaField, pgaTeeTimes) {
+	// Prefer tee-times data (has real groups from the /tee-times page)
+	if (pgaTeeTimes?.playerTeeTimes?.size > 0) {
+		const featuredGroups = [];
+		for (const np of norwegianPlayersList) {
+			const info = pgaTeeTimes.playerTeeTimes.get(np.name.toLowerCase());
+			if (!info?.teeTime || !info.groupmates?.length) continue;
+			featuredGroups.push({
+				player: np.name,
+				teeTime: info.teeTime,
+				groupmates: info.groupmates.map(name => ({ name, teeTime: info.teeTime })),
+			});
+		}
+		return featuredGroups;
+	}
+
+	// Fallback: synthetic grouping from leaderboard field
 	if (!pgaField?.players?.length) return [];
-	// Build groups keyed by teeTime + startingHole
 	const groups = new Map();
 	for (const p of pgaField.players) {
 		if (!p.teeTime) continue;
@@ -265,7 +422,6 @@ function buildFeaturedGroups(norwegianPlayersList, pgaField) {
 		if (!groups.has(key)) groups.set(key, []);
 		groups.get(key).push(p);
 	}
-	// For each Norwegian player, find their group and list groupmates
 	const featuredGroups = [];
 	for (const np of norwegianPlayersList) {
 		const fieldPlayer = pgaField.players.find(p => playerNameMatches(p.displayName, { name: np.name }));
@@ -323,13 +479,20 @@ export async function fetchGolfESPN() {
 		datesToQuery.push(date.toISOString().slice(0, 10).replace(/-/g, ''));
 	}
 
-	// Fetch PGA Tour field once for cross-referencing
-	console.log("Fetching PGA Tour field for verification...");
-	const pgaField = await fetchPGATourField();
+	// Fetch PGA Tour field and tee times in parallel
+	console.log("Fetching PGA Tour field + tee times for verification...");
+	const [pgaField, pgaTeeTimes] = await Promise.allSettled([
+		fetchPGATourField(),
+		fetchPGATourTeeTimes(),
+	]).then(results => results.map(r => r.status === "fulfilled" ? r.value : null));
+
 	if (pgaField) {
 		console.log(`PGA Tour field: ${pgaField.tournamentName} (${pgaField.players.length} players)`);
 	} else {
 		console.warn("PGA Tour field unavailable — tournaments without ESPN field data will be skipped");
+	}
+	if (pgaTeeTimes) {
+		console.log(`PGA Tour tee-times: ${pgaTeeTimes.tournamentName} (${pgaTeeTimes.playerTeeTimes.size} players)`);
 	}
 
 	for (const tour of tours) {
@@ -409,12 +572,23 @@ export async function fetchGolfESPN() {
 				if (norwegianCompetitors.length > 0) {
 					// Confirmed Norwegian players in field from ESPN
 					const isPGATour = tour.name === "PGA Tour";
+					const teeTimesMatch = isPGATour && pgaTeeTimes && tournamentNameMatches(ev.name, pgaTeeTimes.tournamentName);
+					const fieldMatch = isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName);
+
 					const norwegianPlayersList = norwegianCompetitors.map(comp => {
 						const name = comp.athlete?.displayName || "Unknown";
 						let teeTime = null;
 						let teeTimeUTC = null;
-						// Cross-reference tee time from PGA Tour field
-						if (isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName)) {
+						// Prefer tee-times page (has real tee times during in-progress tournaments)
+						if (teeTimesMatch) {
+							const info = pgaTeeTimes.playerTeeTimes.get(name.toLowerCase());
+							if (info?.teeTime) {
+								teeTime = info.teeTime;
+								teeTimeUTC = info.teeTimeUTC;
+							}
+						}
+						// Fallback to leaderboard field
+						if (!teeTime && fieldMatch) {
 							const golfer = tourGolfers.find(g => playerNameMatches(name, g));
 							if (golfer) {
 								const fieldPlayer = findFieldPlayer(golfer, pgaField);
@@ -434,6 +608,7 @@ export async function fetchGolfESPN() {
 					const endDate = new Date(new Date(startTime).getTime() + 3 * 24 * 60 * 60 * 1000);
 					endDate.setUTCHours(23, 59, 0, 0);
 
+					const matchedTeeTimes = teeTimesMatch ? pgaTeeTimes : null;
 					tournaments.push({
 						name: tour.name,
 						events: [{
@@ -447,8 +622,8 @@ export async function fetchGolfESPN() {
 							streaming: getNorwegianStreaming("golf", tour.name),
 							norwegian: true,
 							norwegianPlayers: norwegianPlayersList,
-							featuredGroups: isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName)
-								? buildFeaturedGroups(norwegianPlayersList, pgaField)
+							featuredGroups: (teeTimesMatch || fieldMatch)
+								? buildFeaturedGroups(norwegianPlayersList, fieldMatch ? pgaField : null, matchedTeeTimes)
 								: [],
 							totalPlayers: competitors.length
 						}]
@@ -459,12 +634,34 @@ export async function fetchGolfESPN() {
 
 					if (isPGA && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName)) {
 						const confirmed = filterNorwegiansAgainstField(tourGolfers, pgaField);
+						const teeTimesMatch2 = pgaTeeTimes && tournamentNameMatches(ev.name, pgaTeeTimes.tournamentName);
 						if (confirmed.length > 0) {
 							console.log(`Verified ${confirmed.length} Norwegian player(s) in ${ev.name} via pgatour.com`);
 							const startTime2 = normalizeToUTC(ev.date);
 							const endDate2 = new Date(new Date(startTime2).getTime() + 3 * 24 * 60 * 60 * 1000);
 							endDate2.setUTCHours(23, 59, 0, 0);
 
+							const playersList2 = confirmed.map(golfer => {
+								let teeTime = null;
+								let teeTimeUTC = null;
+								// Prefer tee-times page
+								if (teeTimesMatch2) {
+									const info = pgaTeeTimes.playerTeeTimes.get(golfer.name.toLowerCase());
+									if (info?.teeTime) {
+										teeTime = info.teeTime;
+										teeTimeUTC = info.teeTimeUTC;
+									}
+								}
+								// Fallback to leaderboard field
+								if (!teeTime) {
+									const fieldPlayer = findFieldPlayer(golfer, pgaField);
+									teeTime = fieldPlayer?.teeTime || null;
+									teeTimeUTC = fieldPlayer?.teeTimeUTC || null;
+								}
+								return { name: golfer.name, teeTime, teeTimeUTC, status: "Confirmed" };
+							});
+
+							const matchedTeeTimes2 = teeTimesMatch2 ? pgaTeeTimes : null;
 							tournaments.push({
 								name: tour.name,
 								events: [{
@@ -477,19 +674,8 @@ export async function fetchGolfESPN() {
 									sport: "golf",
 									streaming: getNorwegianStreaming("golf", tour.name),
 									norwegian: true,
-									norwegianPlayers: confirmed.map(golfer => {
-										const fieldPlayer = findFieldPlayer(golfer, pgaField);
-										return {
-											name: golfer.name,
-											teeTime: fieldPlayer?.teeTime || null,
-											teeTimeUTC: fieldPlayer?.teeTimeUTC || null,
-											status: "Confirmed",
-										};
-									}),
-									featuredGroups: buildFeaturedGroups(
-										confirmed.map(g => ({ name: g.name, teeTime: findFieldPlayer(g, pgaField)?.teeTime || null })),
-										pgaField
-									),
+									norwegianPlayers: playersList2,
+									featuredGroups: buildFeaturedGroups(playersList2, pgaField, matchedTeeTimes2),
 									totalPlayers: pgaField.players.length
 								}]
 							});
@@ -516,7 +702,7 @@ export async function fetchGolfESPN() {
 }
 
 // Exported for testing
-export { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups };
+export { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups, fetchPGATourPage, fetchPGATourTeeTimes };
 
 // Run if executed directly
 if (process.argv[1]?.includes('golf.js')) {
