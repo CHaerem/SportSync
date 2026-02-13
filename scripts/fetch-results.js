@@ -136,11 +136,13 @@ export function validateResults(output) {
 	return { totalResults, validResults, issues };
 }
 
-const LEAGUE_MAP = {
-	"eng.1": "Premier League",
-	"esp.1": "La Liga",
-	"esp.copa_del_rey": "Copa del Rey",
-};
+import { sportsConfig } from "./config/sports-config.js";
+
+// Derive league map from central config — single source of truth
+const LEAGUE_MAP = Object.fromEntries(
+	(sportsConfig.football?.sources?.find(s => s.api === "espn")?.leagues || [])
+		.map(l => [l.code, l.name])
+);
 
 export async function fetchFootballResults(options = {}) {
 	const { daysBack = 7, userContext = null } = options;

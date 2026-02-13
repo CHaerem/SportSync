@@ -1215,6 +1215,7 @@ class Dashboard {
 		if (!hasLiveFootball) return;
 
 		const LIVE_TTL = 30 * 1000; // 30 seconds
+		// Keep in sync with scripts/config/sports-config.js football.sources[0].leagues
 		const leagues = ['eng.1', 'esp.1', 'esp.copa_del_rey'];
 		const fetches = leagues.map(league => {
 			const cached = this._cacheGet('live_football_' + league, LIVE_TTL);
