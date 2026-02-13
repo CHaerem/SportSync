@@ -137,10 +137,6 @@ export function rootDataPath() {
 	return process.env.SPORTSYNC_DATA_DIR || path.resolve(process.cwd(), "docs", "data");
 }
 
-export function summaryLine(label, value) {
-	return `- **${label}**: ${value}`;
-}
-
 export function countEvents(obj) {
 	if (!obj || !Array.isArray(obj.tournaments)) return 0;
 	return obj.tournaments.reduce((acc, t) => acc + (t.events?.length || 0), 0);
