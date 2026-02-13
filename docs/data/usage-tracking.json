@@ -1,20 +1,14 @@
 {
-  "lastUpdated": "2026-02-13T08:23:34.992Z",
-  "current": {
-    "fiveHour": {
-      "utilization": null
-    },
-    "sevenDay": {
-      "utilization": null,
-      "resets_at": null
-    }
-  },
+  "lastUpdated": "2026-02-13T08:36:56.670Z",
   "sportsyncShare": {
-    "sevenDay": 0,
-    "pipelineRuns": 4,
-    "autopilotRuns": 0
+    "pipelineRuns": 5,
+    "autopilotRuns": 0,
+    "totalDurationMs": 116821
   },
-  "gateThreshold": 80,
+  "gateConfig": {
+    "maxAutopilot7d": 7,
+    "maxRuns5h": 4
+  },
   "runs": [
     {
       "timestamp": "2026-02-13T07:40:50.069Z",
@@ -39,6 +33,11 @@
       "context": "pipeline",
       "delta5h": 0,
       "delta7d": 0
+    },
+    {
+      "timestamp": "2026-02-13T08:36:56.670Z",
+      "context": "pipeline",
+      "durationMs": 116821
     }
   ]
 }

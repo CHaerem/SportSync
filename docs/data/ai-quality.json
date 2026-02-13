@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T08:30:07.935Z",
+  "generatedAt": "2026-02-13T08:36:17.873Z",
   "enrichment": {
     "provider": "claude-cli",
     "before": {
@@ -7,7 +7,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.767
+      "tagsCoverage": 0.733
     },
     "after": {
       "totalEvents": 30,
@@ -19,7 +19,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
+    "fallbackFieldsFilled": 8,
     "aiUpdatedFields": 30,
     "failedBatches": 0,
     "totalEvents": 30,
@@ -41,7 +41,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 11419,
+    "generationMs": 9936,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -51,10 +51,10 @@
     }
   },
   "editorial": {
-    "score": 63,
+    "score": 70,
     "metrics": {
       "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
