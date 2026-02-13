@@ -1,11 +1,13 @@
 {
-  "lastUpdated": "2026-02-13T08:36:56.670Z",
+  "lastUpdated": "2026-02-13T08:50:00.973Z",
+  "current": null,
   "sportsyncShare": {
-    "pipelineRuns": 5,
+    "pipelineRuns": 6,
     "autopilotRuns": 0,
-    "totalDurationMs": 116821
+    "totalDurationMs": 241797
   },
   "gateConfig": {
+    "utilizationThreshold": 80,
     "maxAutopilot7d": 7,
     "maxRuns5h": 4
   },
@@ -38,6 +40,11 @@
       "timestamp": "2026-02-13T08:36:56.670Z",
       "context": "pipeline",
       "durationMs": 116821
+    },
+    {
+      "timestamp": "2026-02-13T08:50:00.973Z",
+      "context": "pipeline",
+      "durationMs": 124976
     }
   ]
 }
