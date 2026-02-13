@@ -1,4 +1,4 @@
-import { MS_PER_DAY } from "./helpers.js";
+import { MS_PER_DAY, isEventInWindow } from "./helpers.js";
 
 const BLOCK_WORD_LIMITS = {
 	headline: 15,
@@ -477,13 +477,7 @@ function filterTodayEvents(events, now) {
 	const ref = now || new Date();
 	const todayStart = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
 	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
-	return events.filter((e) => {
-		const t = new Date(e.time);
-		const end = e.endTime ? new Date(e.endTime) : null;
-		if (t >= todayStart && t < todayEnd) return true;
-		if (t < todayStart && end && end >= todayStart) return true;
-		return false;
-	});
+	return events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
 }
 
 export function evaluateWatchPlanQuality(watchPlan) {

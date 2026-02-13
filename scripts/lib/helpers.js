@@ -10,6 +10,21 @@ export function iso(d = Date.now()) {
 	return new Date(d).toISOString();
 }
 
+/**
+ * Check if an event overlaps with a time window.
+ * Handles multi-day events (endTime) and single-point events uniformly.
+ * An event overlaps [windowStart, windowEnd) if it starts before the window
+ * ends AND it ends at or after the window starts.
+ */
+export function isEventInWindow(event, windowStart, windowEnd) {
+	if (!event?.time) return false;
+	const start = new Date(event.time).getTime();
+	const end = event.endTime ? new Date(event.endTime).getTime() : start;
+	const ws = windowStart instanceof Date ? windowStart.getTime() : windowStart;
+	const we = windowEnd instanceof Date ? windowEnd.getTime() : windowEnd;
+	return start < we && end >= ws;
+}
+
 export function normalizeToUTC(dateString) {
 	// Handle various date formats from APIs and ensure proper UTC conversion
 	if (!dateString) return new Date().toISOString();

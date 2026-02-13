@@ -1,4 +1,15 @@
 // SportSync Dashboard — Sport-organized layout
+
+/** Check if an event overlaps a time window. Handles multi-day events (endTime). */
+function isEventInWindow(event, windowStart, windowEnd) {
+	if (!event?.time) return false;
+	const start = new Date(event.time).getTime();
+	const end = event.endTime ? new Date(event.endTime).getTime() : start;
+	const ws = windowStart instanceof Date ? windowStart.getTime() : windowStart;
+	const we = windowEnd instanceof Date ? windowEnd.getTime() : windowEnd;
+	return start < we && end >= ws;
+}
+
 class Dashboard {
 	constructor() {
 		this.allEvents = [];
@@ -302,13 +313,9 @@ class Dashboard {
 	generateBriefLines() {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const todayEnd = new Date(todayStart);
-		todayEnd.setDate(todayEnd.getDate() + 1);
+		const todayEnd = new Date(todayStart.getTime() + 86400000);
 
-		const todayEvents = this.allEvents.filter(e => {
-			const t = new Date(e.time);
-			return t >= todayStart && t < todayEnd;
-		});
+		const todayEvents = this.allEvents.filter(e => isEventInWindow(e, todayStart, todayEnd));
 
 		if (todayEvents.length === 0) return [];
 
@@ -563,7 +570,6 @@ class Dashboard {
 
 		for (const e of this.allEvents) {
 			const t = new Date(e.time);
-			const end = e.endTime ? new Date(e.endTime) : null;
 			const live = this.liveScores[e.id];
 
 			// Has live score data — use state directly
@@ -571,17 +577,14 @@ class Dashboard {
 				bands.live.push(e);
 			} else if (live && live.state === 'post') {
 				bands.results.push(e);
-			} else if (t >= todayStart && t < tomorrowStart) {
-				// Today, no live data
+			} else if (isEventInWindow(e, todayStart, tomorrowStart)) {
+				// Active today (includes multi-day events that started before today)
 				const hoursAgo = (now - t) / (1000 * 60 * 60);
-				if (hoursAgo > 3) {
-					bands.results.push(e); // Likely finished
+				if (t >= todayStart && hoursAgo > 3) {
+					bands.results.push(e); // Single-day event, likely finished
 				} else {
 					bands.today.push(e);
 				}
-			} else if (t < todayStart && end && end >= todayStart) {
-				// Multi-day event that started before today but hasn't ended
-				bands.today.push(e);
 			} else if (t >= tomorrowStart && t < dayAfterTomorrow) {
 				bands.tomorrow.push(e);
 			} else if (t >= dayAfterTomorrow && t < weekEnd) {

@@ -1,4 +1,4 @@
-import { iso, normalizeToUTC } from "./helpers.js";
+import { iso, normalizeToUTC, isEventInWindow } from "./helpers.js";
 import { APIClient } from "./api-client.js";
 
 export class BaseFetcher {
@@ -63,10 +63,7 @@ export class BaseFetcher {
 	filterByTimeRange(events, range) {
 		const now = new Date();
 		const future = new Date(now.getTime() + range * 86400000);
-		return events.filter(event => {
-			const eventDate = new Date(event.time);
-			return eventDate >= now && eventDate <= future;
-		});
+		return events.filter(event => isEventInWindow(event, now, future));
 	}
 
 	applyCustomFilters(events) {
