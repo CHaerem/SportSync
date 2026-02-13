@@ -381,9 +381,12 @@ export async function fetchGolfESPN() {
 				console.warn(`${tour.name} default query failed: ${err.message}`);
 			}
 
+			// Golf tournaments run Thu–Sun (4 days). Allow events that started
+			// up to 4 days ago so in-progress tournaments aren't dropped.
+			const lookback = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 4);
 			const events = allEvents
 				.filter(e =>
-					new Date(e.date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()) &&
+					new Date(e.date) >= lookback &&
 					!["STATUS_FINAL"].includes(e.status?.type?.name)
 				)
 				.sort((a, b) => new Date(a.date) - new Date(b.date))
