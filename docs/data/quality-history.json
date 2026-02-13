@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T08:26:25.896Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 108,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": []
-  },
-  {
     "timestamp": "2026-02-12T08:26:26.189Z",
     "editorial": {
       "score": 97,
@@ -4042,6 +4016,63 @@
     "editorial": {
       "score": 65,
       "mustWatchCoverage": 0,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 118,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 27,
+      "freshnessScore": 1
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13T13:55:40.116Z",
+    "editorial": {
+      "score": 68,
+      "mustWatchCoverage": 0.111,
       "sportDiversity": 0.75,
       "blockCount": 8
     },

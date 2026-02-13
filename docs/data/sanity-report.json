@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T13:47:06.533Z",
+  "generatedAt": "2026-02-13T13:55:49.608Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 30,
@@ -58,7 +58,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 65,
+    "editorialScore": 68,
     "issueCount": 2
   },
   "findings": [
@@ -70,12 +70,12 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen defends Freestyle Chess title\" which may not match any event"
+      "message": "Featured block references \"️ Carlsen opens Freestyle Chess World Championship\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 65/100 (below threshold)"
+      "message": "Editorial quality score is 68/100 (below threshold)"
     },
     {
       "severity": "warning",
@@ -95,17 +95,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Girona Monday\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -114,14 +104,19 @@
     },
     {
       "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 11,
+    "total": 10,
     "critical": 0,
-    "warning": 9,
+    "warning": 8,
     "info": 2
   },
   "pass": true,
