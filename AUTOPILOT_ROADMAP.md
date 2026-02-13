@@ -394,7 +394,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #60) Add unit tests for `scripts/fetch/tennis.js` — 11 tests covering transformESPNEvent, participant extraction, Norwegian player detection, and filter modes.
 
-- [PENDING] Add unit tests for `scripts/fetch/chess.js` — Chess fetcher has no dedicated test file. Create `tests/chess-fetcher.test.js` testing curated config loading, tournament merging, and player handling. ~80 lines, LOW risk.
+- [DONE] (PR #61) Add unit tests for `scripts/fetch/chess.js` — 21 tests covering findNorwegianPlayers, Lichess broadcast processing, curated tournaments, and event normalization.
 
 - [PENDING] Add unit tests for `scripts/fetch/esports.js` — Esports fetcher has no dedicated test file. Create `tests/esports-fetcher.test.js` testing HLTV parsing, major event patterns, and fallback logic. ~80 lines, LOW risk.
 
