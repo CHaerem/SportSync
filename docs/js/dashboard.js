@@ -690,8 +690,14 @@ class Dashboard {
 	}
 
 	renderRow(event, showDay, showDate, inlineSportEmoji = null) {
-		const date = new Date(event.time);
+		let date = new Date(event.time);
 		const now = new Date();
+
+		// Golf: use Norwegian player's tee time instead of tournament first-tee
+		if (event.sport === 'golf' && event.norwegianPlayers?.length > 0) {
+			const teeUTC = event.norwegianPlayers.find(p => p.teeTimeUTC)?.teeTimeUTC;
+			if (teeUTC) date = new Date(teeUTC);
+		}
 
 		let timeStr;
 		let isEnded = false;
