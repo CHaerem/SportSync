@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-13T07:46:11.222Z",
+  "generatedAt": "2026-02-13T07:58:05.403Z",
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
       "totalEvents": 30,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.7
     },
     "after": {
       "totalEvents": 30,
@@ -19,52 +19,54 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 9,
+    "aiUpdatedFields": 30,
     "failedBatches": 0,
     "totalEvents": 30,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 3,
+      "total": 0,
+      "tracked": false
     }
   },
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"♟️ Round 1 – FIDE Freestyle Chess World Championsh...\""
-    ],
-    "blockCount": 9,
-    "generationMs": 4,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 10013,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 1,
+      "total": 0,
+      "tracked": false
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 57,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0,
+      "sportDiversity": 0.333,
       "blockTypeBalance": 1,
-      "textQuality": 0.875,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7
+      "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 0% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 90,
+      "avgScore": 112,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
