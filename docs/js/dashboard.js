@@ -454,7 +454,7 @@ class Dashboard {
 			return;
 		}
 
-		const picks = this.watchPlan.picks;
+		const picks = [...this.watchPlan.picks].sort((a, b) => new Date(a.time || 0) - new Date(b.time || 0));
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
@@ -762,41 +762,13 @@ class Dashboard {
 			html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
 		}
 
-		// Group events within band by sport
-		const sportGroups = new Map();
-		for (const e of events) {
-			if (!sportGroups.has(e.sport)) sportGroups.set(e.sport, []);
-			sportGroups.get(e.sport).push(e);
-		}
+		// Sort events chronologically within band
+		const sorted = [...events].sort((a, b) => new Date(a.time) - new Date(b.time));
 
-		// Build sport config index for ordered lookup
-		const sportIndex = new Map();
-		for (let i = 0; i < SPORT_CONFIG.length; i++) sportIndex.set(SPORT_CONFIG[i].id, i);
-
-		// Sort sport groups by SPORT_CONFIG order, then render only groups with events
-		const sortedSports = [...sportGroups.keys()].sort((a, b) => (sportIndex.get(a) ?? 999) - (sportIndex.get(b) ?? 999));
-
-		for (const sportId of sortedSports) {
-			const group = sportGroups.get(sportId);
-			const sport = SPORT_CONFIG[sportIndex.get(sportId)] || { emoji: '🏆', name: sportId, color: '#888' };
-
-			// Single-event sport groups: skip header, use compact, pass inline emoji
-			if (group.length === 1) {
-				html += `<div class="sport-section compact" style="border-left-color:${sport.color}">`;
-				html += this.renderRow(group[0], showDay || showDate, showDate, sport.emoji);
-				html += `</div>`;
-				continue;
-			}
-
-			html += `<div class="sport-section" style="border-left-color:${sport.color}">`;
-			html += `<div class="sport-header">
-				<span class="sport-name">${sport.emoji} ${this.esc(sport.name)}</span>
-			</div>`;
-
-			for (const e of group) {
-				html += this.renderRow(e, showDay || showDate, showDate);
-			}
-
+		for (const e of sorted) {
+			const sport = SPORT_CONFIG.find(s => s.id === e.sport) || { emoji: '', name: e.sport, color: '#888' };
+			html += `<div class="sport-section compact" style="border-left-color:${sport.color}">`;
+			html += this.renderRow(e, showDay || showDate, showDate, sport.emoji);
 			html += `</div>`;
 		}
 
