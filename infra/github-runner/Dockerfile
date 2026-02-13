@@ -1,4 +1,4 @@
-FROM myoung34/github-actions-runner:latest
+FROM myoung34/github-runner:latest
 
 # Node.js 20
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
