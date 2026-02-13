@@ -46,6 +46,15 @@ jobs:
           cp -r docs/* _site/preview/glass/
           git checkout main -- docs/
 
+      - name: Checkout and assemble chronological preview
+        continue-on-error: true
+        run: |
+          git fetch origin chronological-events --depth=1 || exit 0
+          git checkout origin/chronological-events -- docs/ || exit 0
+          mkdir -p _site/preview/chronological
+          cp -r docs/* _site/preview/chronological/
+          git checkout main -- docs/
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
