@@ -29,7 +29,8 @@ export function pruneExpiredEvents(config, now = new Date()) {
 	const before = config.events.length;
 	config.events = config.events.filter((e) => {
 		if (!e.time) return true;
-		return new Date(e.time) >= cutoff;
+		const relevantTime = e.endTime ? new Date(e.endTime) : new Date(e.time);
+		return relevantTime >= cutoff;
 	});
 	return before - config.events.length;
 }

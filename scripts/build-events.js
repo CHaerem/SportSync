@@ -13,6 +13,7 @@ function pushEvent(ev, sport, tournament) {
 		tournament: tournament,
 		title: ev.title,
 		time: ev.time,
+		endTime: ev.endTime || null,
 		venue: ev.venue,
 		meta: ev.meta,
 		norwegian: ev.norwegian || false,
@@ -63,9 +64,13 @@ if (fs.existsSync(configDir)) {
 		});
 	}
 }
-// Keep events that started up to 6 hours ago (ongoing matches/rounds)
+// Keep events that are ongoing or upcoming (use endTime for multi-day events)
 const now = Date.now() - 6 * MS_PER_HOUR;
-const future = all.filter((e) => e.time && Date.parse(e.time) >= now);
+const future = all.filter((e) => {
+	if (!e.time) return false;
+	const relevantTime = e.endTime ? Date.parse(e.endTime) : Date.parse(e.time);
+	return relevantTime >= now;
+});
 future.sort((a, b) => new Date(a.time) - new Date(b.time));
 fs.writeFileSync(
 	path.join(dataDir, "events.json"),
