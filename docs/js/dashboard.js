@@ -562,6 +562,7 @@ class Dashboard {
 
 		for (const e of this.allEvents) {
 			const t = new Date(e.time);
+			const end = e.endTime ? new Date(e.endTime) : null;
 			const live = this.liveScores[e.id];
 
 			// Has live score data — use state directly
@@ -577,6 +578,9 @@ class Dashboard {
 				} else {
 					bands.today.push(e);
 				}
+			} else if (t < todayStart && end && end >= todayStart) {
+				// Multi-day event that started before today but hasn't ended
+				bands.today.push(e);
 			} else if (t >= tomorrowStart && t < dayAfterTomorrow) {
 				bands.tomorrow.push(e);
 			} else if (t >= dayAfterTomorrow && t < weekEnd) {
