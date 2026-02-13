@@ -42,7 +42,8 @@ for (const ev of events) {
 		console.warn("Invalid time format for", key, ev.time);
 		errors++;
 	}
-	if (ts < now) {
+	const endTs = ev.endTime ? Date.parse(ev.endTime) : ts;
+	if (endTs < now) {
 		console.warn("Past event found (will fail):", key, ev.time);
 		errors++;
 	}
