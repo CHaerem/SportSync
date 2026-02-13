@@ -529,7 +529,7 @@ class Dashboard {
 			contentHtml += `</div>`;
 		}
 
-		let html = `<button class="news-toggle" data-expanded="false">Latest News \u25b8</button>`;
+		let html = `<button class="news-toggle" data-expanded="false" aria-expanded="false">Latest News \u25b8</button>`;
 		html += `<div class="news-content">${contentHtml}</div>`;
 
 		container.innerHTML = html;
@@ -541,6 +541,7 @@ class Dashboard {
 				const isOpen = content.classList.contains('open');
 				content.classList.toggle('open');
 				toggle.textContent = isOpen ? 'Latest News \u25b8' : 'Latest News \u25be';
+				toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 			});
 		}
 	}
