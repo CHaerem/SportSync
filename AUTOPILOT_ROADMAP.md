@@ -392,7 +392,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### MEDIUM Priority
 
-- [PENDING] Add unit tests for `scripts/fetch/tennis.js` — Tennis fetcher has no dedicated test file. Create `tests/tennis-fetcher.test.js` testing ESPN response parsing, competitor extraction, and Norwegian player detection. ~80 lines, LOW risk.
+- [DONE] (PR #60) Add unit tests for `scripts/fetch/tennis.js` — 11 tests covering transformESPNEvent, participant extraction, Norwegian player detection, and filter modes.
 
 - [PENDING] Add unit tests for `scripts/fetch/chess.js` — Chess fetcher has no dedicated test file. Create `tests/chess-fetcher.test.js` testing curated config loading, tournament merging, and player handling. ~80 lines, LOW risk.
 
