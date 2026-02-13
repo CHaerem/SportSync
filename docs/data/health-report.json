@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T12:23:31.725Z",
+  "generatedAt": "2026-02-13T12:38:51.758Z",
   "eventCount": 30,
   "sportCoverage": {
     "golf": {
@@ -31,6 +31,16 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "tennis": {
+      "count": 0,
+      "previousCount": null,
+      "delta": null
+    },
+    "esports": {
+      "count": 0,
+      "previousCount": null,
+      "delta": null
     }
   },
   "dataFreshness": {
@@ -39,7 +49,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
@@ -72,14 +82,36 @@
     "pgaGolf": true,
     "f1Drivers": true
   },
-  "issues": [],
-  "status": "healthy",
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "sport_zero_events",
+      "message": "tennis: data file exists but 0 events in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "sport_zero_events",
+      "message": "esports: data file exists but 0 events in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
+    }
+  ],
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 7/8 feedback loops closed. Pipeline is healthy with 30 events across 6 sports. Editorial quality score is 65/100.",
+    "text": "Autonomy at 92% with 7/8 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 65/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
   }
 }

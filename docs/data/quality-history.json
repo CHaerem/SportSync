@@ -3261,5 +3261,55 @@
         "total": 0
       }
     }
+  },
+  {
+    "timestamp": "2026-02-13T12:37:37.081Z",
+    "editorial": {
+      "score": 65,
+      "mustWatchCoverage": 0,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 118,
+      "streamingCoverage": 1
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0
+      }
+    }
   }
 ]
