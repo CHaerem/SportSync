@@ -1,0 +1,24 @@
+services:
+  github-runner:
+    build: .
+    container_name: sportsync-runner
+    restart: unless-stopped
+    environment:
+      REPO_URL: https://github.com/CHaerem/SportSync
+      RUNNER_NAME: serverpi-sportsync
+      RUNNER_TOKEN: ${RUNNER_TOKEN}
+      LABELS: self-hosted,linux,ARM64,pi4
+      RUNNER_WORKDIR: /tmp/runner/work
+      DISABLE_AUTO_UPDATE: "false"
+    volumes:
+      - runner-work:/tmp/runner/work
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+volumes:
+  runner-work:
+    driver: local

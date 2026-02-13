@@ -5,8 +5,17 @@ on:
   schedule:
     - cron: "0 */2 * * *"
 
-  # Allow manual trigger
+  # Allow manual trigger with runner selection
   workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Runner type'
+        required: false
+        default: 'self-hosted'
+        type: choice
+        options:
+          - self-hosted
+          - ubuntu-latest
 
   # Run on pushes to main branch (for testing)
   push:
@@ -21,7 +30,7 @@ concurrency:
 
 jobs:
   update-data:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner == 'ubuntu-latest' && 'ubuntu-latest' || fromJSON('["self-hosted","linux","ARM64"]') }}
     permissions:
       contents: write
       issues: write
@@ -42,17 +51,13 @@ jobs:
           npm install node-fetch@2.7.0
           npm install
 
-      - name: Fetch Open Source Data (fallbacks)
-        run: |
-          npm run update:data || echo "Open source data fetch failed, continuing with primary sources"
-
       - name: Create data directory
         run: |
           mkdir -p docs/data
 
       - name: Fetch All Sports Data
         run: |
-          npm run update:data
+          npm run update:data || echo "Sports data fetch failed, continuing with available data"
 
       - name: Merge data + Fetch standings + Fetch RSS (parallel)
         run: |
@@ -230,4 +235,9 @@ jobs:
           if [ "$GATE" = "fail" ]; then
             echo "⚠️ Pre-commit gate FAILED — only monitoring files committed" >> $GITHUB_STEP_SUMMARY
           fi
+          echo "- **Runner**: ${{ runner.name }} (${{ runner.os }})" >> $GITHUB_STEP_SUMMARY
           echo "✅ Dashboard updated with current week real data only!" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup (self-hosted)
+        if: always() && !contains(runner.name, 'GitHub Actions')
+        run: rm -rf node_modules 2>/dev/null || true
