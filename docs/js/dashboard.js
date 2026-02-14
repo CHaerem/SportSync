@@ -1055,15 +1055,12 @@ class Dashboard {
 			subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
 		}
 
-		const fbHtml = this.renderFeedbackButtons(event.id);
-
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${subtitleHtml}</span>
-					${fbHtml}
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -1078,11 +1075,11 @@ class Dashboard {
 	renderFeedbackButtons(eventId) {
 		if (!this.feedback) return '';
 		const vote = this.feedback.getVote(eventId);
-		return `<span class="fb-row" data-fb-id="${this.esc(eventId)}">` +
-			`<button class="fb-btn fb-up${vote === 'up' ? ' active' : ''}" data-fb="up" title="Like">\u{1F44D}</button>` +
-			`<button class="fb-btn fb-down${vote === 'down' ? ' active' : ''}" data-fb="down" title="Dislike">\u{1F44E}</button>` +
-			`<button class="fb-btn fb-flag" data-fb="flag" title="Report issue">\u{1F6A9}</button>` +
-			`</span>`;
+		return `<div class="fb-row" data-fb-id="${this.esc(eventId)}">` +
+			`<button class="fb-btn fb-up${vote === 'up' ? ' active' : ''}" data-fb="up" title="More like this">\u25B2</button>` +
+			`<button class="fb-btn fb-down${vote === 'down' ? ' active' : ''}" data-fb="down" title="Less like this">\u25BC</button>` +
+			`<button class="fb-btn fb-flag" data-fb="flag" title="Report issue">Report</button>` +
+			`</div>`;
 	}
 
 	renderFeedbackPanel() {
@@ -1283,6 +1280,9 @@ class Dashboard {
 			});
 			content += '</div>';
 		}
+
+		// Feedback actions
+		content += this.renderFeedbackButtons(event.id);
 
 		content += '</div>';
 		return content;

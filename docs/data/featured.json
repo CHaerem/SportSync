@@ -1,48 +1,73 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Norway's Olympic medal rush begins"
+      "type": "event-line",
+      "text": "🏅 Alpine Skiing — Men's Giant Slalom, 10:00 — Winter Olympics 2026"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Today's medal events",
+      "type": "event-line",
+      "text": "🏅 Cross-Country Skiing — Women's Relay 4x5km, 12:00 — Winter Olympics 2026"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ AT&T Pebble Beach Pro-Am, 06:00 — PGA Tour"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Real Madrid v Real Sociedad, 21:00, La Liga — Real Madrid host dangerous Real Sociedad in crucial title race fixture"
+    },
+    {
+      "type": "section",
+      "id": "olympics-2026",
+      "title": "Winter Olympics 2026",
+      "emoji": "🏅",
+      "style": "highlight",
       "items": [
-        "Granerud in ski jumping large hill final, 16:00",
-        "Klaebo anchors men's 4x10km relay, 12:00"
-      ]
-    },
-    {
-      "type": "event-line",
-      "text": "♟️ Carlsen in Freestyle Chess semi-final Game 4, 19:40"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ Hovland chasing top-10 at Pebble Beach, final round underway"
-    },
-    {
-      "type": "narrative",
-      "text": "After Barcelona's 4-0 Copa del Rey collapse at Atlético on Thursday, focus shifts to winter sports dominance and chess brilliance."
+        {
+          "text": "12:00 — Cross-Country Skiing — Men's Relay 4x10km",
+          "type": "event"
+        },
+        {
+          "text": "16:00 — Ski Jumping — Large Hill Individual",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Alpine Skiing — Men's Slalom",
+          "type": "event"
+        },
+        {
+          "text": "14:00 — Biathlon — Men's Relay 4x7.5km",
+          "type": "event"
+        },
+        {
+          "text": "09:45 — Cross-Country Skiing — Team Sprint Free",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Roman Imperium Cup V",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Medal chances ahead",
-      "items": [
-        "Mon 10:00 — Kristoffersen in alpine slalom",
-        "Mon 14:00 — Boe brothers in biathlon relay",
-        "Wed 09:45 — Klaebo in team sprint",
-        "Thu 14:00 — Laegreid/Botn in biathlon mass start"
-      ]
+      "type": "event-line",
+      "text": "🏆 Thu 10:00 — Roman Imperium Cup V"
     },
     {
       "type": "event-line",
-      "text": "⚽ Mon 21:00 — Barcelona at Girona, Catalan derby"
+      "text": "⚽ Mon 21:00 — Barcelona at Girona"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-14T19:00:44.050Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-14T18:57:03.638Z",
+  "provider": "fallback"
 }
