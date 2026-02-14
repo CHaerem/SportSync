@@ -269,12 +269,12 @@ class Dashboard {
 		el.innerHTML = `
 			<div class="day-nav-inner">
 				<button class="day-nav-arrow" data-dir="-1" aria-label="Previous day">\u2039</button>
-				<button class="day-nav-label" aria-label="Pick a date">
+				<div class="day-nav-label" aria-label="Pick a date">
 					${this.esc(label)}
-				</button>
+					<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1" aria-label="Select date">
+				</div>
 				<button class="day-nav-arrow" data-dir="1" aria-label="Next day">\u203A</button>
 			</div>
-			<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1" aria-hidden="true">
 		`;
 
 		this.bindDayNav();
@@ -296,18 +296,9 @@ class Dashboard {
 			});
 		});
 
-		// Label click → open date picker
-		const label = el.querySelector('.day-nav-label');
+		// Date input overlays the label — user taps it directly
 		const dateInput = el.querySelector('.day-nav-date-input');
-		if (label && dateInput) {
-			label.addEventListener('click', () => {
-				try {
-					dateInput.showPicker();
-				} catch {
-					dateInput.focus();
-					dateInput.click();
-				}
-			});
+		if (dateInput) {
 			dateInput.addEventListener('change', () => {
 				if (!dateInput.value) return;
 				const [y, m, d] = dateInput.value.split('-').map(Number);
