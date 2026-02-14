@@ -613,7 +613,7 @@ class Dashboard {
 				const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.homeTeam) : null;
 				const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.awayTeam) : null;
 				const logoHtml = (hLogo && aLogo)
-					? `<span class="row-icons"><img src="${hLogo}" alt="" class="row-logo" loading="lazy"><img src="${aLogo}" alt="" class="row-logo" loading="lazy"></span>`
+					? `<span class="row-icons"><img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="row-logo" loading="lazy"><img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="row-logo" loading="lazy"></span>`
 					: '';
 
 				html += `<div class="result-row${match.isFavorite ? ' result-favorite' : ''}">`;
@@ -659,7 +659,7 @@ class Dashboard {
 				for (const p of tour.norwegianPlayers) {
 					const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
 					const headshotHtml = headshot
-						? `<img src="${headshot}" alt="" class="row-headshot" loading="lazy">`
+						? `<img src="${headshot}" alt="${this.esc(p.player)}" class="row-headshot" loading="lazy">`
 						: '';
 					html += `<div class="result-row result-favorite">`;
 					html += `<span class="result-pos">T${p.position}</span>`;
