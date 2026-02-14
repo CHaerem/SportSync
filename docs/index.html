@@ -87,6 +87,51 @@
 			margin-bottom: 16px;
 		}
 
+		/* --- Day Navigator --- */
+		#day-nav {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 16px;
+			margin-bottom: 4px;
+		}
+		.day-nav-arrow {
+			background: none;
+			border: none;
+			font-size: 0.75rem;
+			color: var(--muted);
+			cursor: pointer;
+			padding: 4px 8px;
+			transition: color 0.15s;
+			line-height: 1;
+		}
+		.day-nav-arrow:hover { color: var(--fg); }
+		.day-nav-label {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: var(--fg);
+			cursor: pointer;
+			position: relative;
+			padding: 2px 0;
+			border: none;
+			background: none;
+			font-family: var(--font);
+		}
+		.day-nav-label:hover { color: var(--accent); }
+		.day-nav-date-input {
+			position: absolute;
+			opacity: 0;
+			width: 0;
+			height: 0;
+			overflow: hidden;
+		}
+		.date-empty {
+			text-align: center;
+			color: var(--muted);
+			padding: 32px 0;
+			font-size: 0.8rem;
+		}
+
 		/* --- The Brief / Editorial --- */
 		#the-brief {
 			padding: 0 0 20px;
@@ -959,6 +1004,7 @@
 			</div>
 		</header>
 
+		<div id="day-nav"></div>
 		<div id="date-line"></div>
 		<div id="the-brief"></div>
 

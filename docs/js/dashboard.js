@@ -23,6 +23,7 @@ class Dashboard {
 		this.liveLeaderboard = null; // golf live leaderboard
 		this._liveInterval = null;
 		this._liveVisible = true;
+		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		this.init();
 	}
@@ -160,26 +161,182 @@ class Dashboard {
 		}
 	}
 
+	// --- Day navigation ---
+
+	_isSameDay(a, b) {
+		return a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate();
+	}
+
+	_isToday(date) {
+		return this._isSameDay(date, new Date());
+	}
+
+	_isYesterday(date) {
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return this._isSameDay(date, yesterday);
+	}
+
+	_isTomorrow(date) {
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		return this._isSameDay(date, tomorrow);
+	}
+
+	_startOfDay(date) {
+		return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+	}
+
+	_getSelectedDate() {
+		return this.selectedDate || this._startOfDay(new Date());
+	}
+
+	_isViewingToday() {
+		return !this.selectedDate || this._isToday(this.selectedDate);
+	}
+
+	getEventsForDate(date) {
+		const dayStart = this._startOfDay(date);
+		const dayEnd = new Date(dayStart.getTime() + 86400000);
+		const now = new Date();
+
+		const dayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
+
+		const live = [];
+		const upcoming = [];
+		const results = [];
+
+		for (const e of dayEvents) {
+			const t = new Date(e.time);
+			const liveScore = this.liveScores[e.id];
+
+			if (liveScore && liveScore.state === 'in') {
+				live.push(e);
+			} else if (liveScore && liveScore.state === 'post') {
+				results.push(e);
+			} else {
+				const hoursAgo = (now - t) / (1000 * 60 * 60);
+				const endTime = e.endTime ? new Date(e.endTime) : null;
+				const isEnded = endTime ? now > endTime : hoursAgo > 3;
+				if (t < now && isEnded) {
+					results.push(e);
+				} else {
+					upcoming.push(e);
+				}
+			}
+		}
+
+		return { live, upcoming, results };
+	}
+
+	renderDayNav() {
+		const el = document.getElementById('day-nav');
+		if (!el) return;
+
+		const viewDate = this._getSelectedDate();
+		const isToday = this._isViewingToday();
+
+		let label;
+		if (isToday) {
+			label = 'Today';
+		} else if (this._isYesterday(viewDate)) {
+			label = 'Yesterday';
+		} else if (this._isTomorrow(viewDate)) {
+			label = 'Tomorrow';
+		} else {
+			label = viewDate.toLocaleDateString('en-US', {
+				weekday: 'short', month: 'short', day: 'numeric',
+				timeZone: 'Europe/Oslo'
+			});
+		}
+
+		// Format for the hidden date input (YYYY-MM-DD)
+		const y = viewDate.getFullYear();
+		const m = String(viewDate.getMonth() + 1).padStart(2, '0');
+		const d = String(viewDate.getDate()).padStart(2, '0');
+		const inputValue = `${y}-${m}-${d}`;
+
+		el.innerHTML = `
+			<button class="day-nav-arrow" data-dir="-1" aria-label="Previous day">\u2190</button>
+			<button class="day-nav-label" aria-label="Pick a date">
+				${this.esc(label)}
+				<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1">
+			</button>
+			<button class="day-nav-arrow" data-dir="1" aria-label="Next day">\u2192</button>
+		`;
+
+		this.bindDayNav();
+	}
+
+	bindDayNav() {
+		const el = document.getElementById('day-nav');
+		if (!el) return;
+
+		// Arrow buttons
+		el.querySelectorAll('.day-nav-arrow').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const dir = parseInt(btn.dataset.dir, 10);
+				const current = this._getSelectedDate();
+				const next = new Date(current);
+				next.setDate(next.getDate() + dir);
+				this.selectedDate = this._isToday(next) ? null : this._startOfDay(next);
+				this.render();
+			});
+		});
+
+		// Label click → open date picker
+		const label = el.querySelector('.day-nav-label');
+		const dateInput = el.querySelector('.day-nav-date-input');
+		if (label && dateInput) {
+			label.addEventListener('click', (e) => {
+				if (e.target === dateInput) return;
+				dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+			});
+			dateInput.addEventListener('change', () => {
+				if (!dateInput.value) return;
+				const [y, m, d] = dateInput.value.split('-').map(Number);
+				const picked = new Date(y, m - 1, d);
+				this.selectedDate = this._isToday(picked) ? null : this._startOfDay(picked);
+				this.render();
+			});
+		}
+	}
+
 	// --- Rendering ---
 
 	render() {
+		this.renderDayNav();
 		this.renderDateLine();
+		const isToday = this._isViewingToday();
 		this.renderEditorial();
 		this.renderWatchPlan();
 		this.renderRecentResults();
 		this.renderEvents();
 		this.renderNews();
+
+		// Hide today-centric sections on non-today dates
+		const todayOnlySections = ['the-brief', 'featured-sections', 'watch-plan', 'news'];
+		for (const id of todayOnlySections) {
+			const section = document.getElementById(id);
+			if (section) section.style.display = isToday ? '' : 'none';
+		}
+		// Show/hide recent-results based on date
+		const resultsSection = document.getElementById('recent-results');
+		if (resultsSection) resultsSection.style.display = isToday ? '' : 'none';
 	}
 
 	renderDateLine() {
 		const el = document.getElementById('date-line');
 		if (!el) return;
-		const now = new Date();
-		let text = now.toLocaleDateString('en-US', {
+		const viewDate = this._getSelectedDate();
+		let text = viewDate.toLocaleDateString('en-US', {
 			weekday: 'long', month: 'long', day: 'numeric',
 			timeZone: 'Europe/Oslo'
 		});
-		if (this.meta && this.meta.lastUpdate) {
+		if (this._isViewingToday() && this.meta && this.meta.lastUpdate) {
+			const now = new Date();
 			const updated = new Date(this.meta.lastUpdate);
 			const diffMin = Math.round((now - updated) / 60000);
 			let ago;
@@ -778,6 +935,27 @@ class Dashboard {
 
 	renderEvents() {
 		const container = document.getElementById('events');
+
+		if (!this._isViewingToday()) {
+			// Non-today: show events for the selected date only
+			const { live, upcoming, results } = this.getEventsForDate(this.selectedDate);
+
+			let html = '';
+			html += this.renderBand('Live now', live, { cssClass: 'live' });
+			html += this.renderBand('Events', upcoming, {});
+			html += this.renderBand('Results', results, { cssClass: 'results' });
+
+			if (!html) {
+				html = '<p class="date-empty">No events on this date.</p>';
+			}
+
+			container.innerHTML = html;
+			this.bindEventRows();
+			this.bindBandToggles();
+			return;
+		}
+
+		// Today: full 6-band layout
 		const bands = this.categorizeEvents();
 
 		let html = '';

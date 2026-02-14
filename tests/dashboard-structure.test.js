@@ -14,6 +14,7 @@ describe("index.html structure", () => {
 		"watch-plan",
 		"news",
 		"featured-sections",
+		"day-nav",
 		"date-line",
 		"themeToggle",
 	];
@@ -150,6 +151,10 @@ describe("dashboard.js key classes used in CSS", () => {
 		"block-group-item",
 		"block-narrative",
 		"block-divider",
+		"day-nav-arrow",
+		"day-nav-label",
+		"day-nav-date-input",
+		"date-empty",
 	];
 
 	for (const cls of keyClasses) {
