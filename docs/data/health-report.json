@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-14T12:54:43.033Z",
-  "eventCount": 28,
+  "generatedAt": "2026-02-14T13:07:46.194Z",
+  "eventCount": 27,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -12,15 +12,15 @@
       "previousCount": 12,
       "delta": 0
     },
-    "football": {
-      "count": 12,
-      "previousCount": 12,
-      "delta": 0
-    },
     "chess": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "football": {
+      "count": 11,
+      "previousCount": 12,
+      "delta": -1
     },
     "cs2": {
       "count": 1,
@@ -45,32 +45,32 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 1,
+      "stale": false
     },
     "ai-quality.json": {
       "ageMinutes": 1,
@@ -108,16 +108,11 @@
       "severity": "warning",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is Infinity minutes old"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 76/100.",
+    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 72/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
