@@ -25,7 +25,8 @@ class PreferencesManager {
 			},
 			favoritePlayers: {
 				golf: ['Viktor Hovland'],
-				tennis: ['Casper Ruud']
+				tennis: ['Casper Ruud'],
+				chess: ['Magnus Carlsen']
 			},
 			favoriteEvents: [],
 			hidePassedEvents: false,

@@ -25,6 +25,7 @@ class Dashboard {
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.recentResults = null; // recent-results.json data
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
+		window._ssPreferences = this.preferences;
 		this.feedback = window.FeedbackManager ? new FeedbackManager() : null;
 		this.init();
 	}
@@ -1072,13 +1073,10 @@ class Dashboard {
 		return name.replace(/ FC$| AFC$| CF$| FK$/i, '').replace(/^FC |^AFC /i, '').trim();
 	}
 
-	renderFeedbackButtons(eventId) {
+	renderFeedbackButtons(eventId, sport, tournament) {
 		if (!this.feedback) return '';
-		const vote = this.feedback.getVote(eventId);
-		return `<div class="fb-row" data-fb-id="${this.esc(eventId)}">` +
-			`<button class="fb-btn fb-up${vote === 'up' ? ' active' : ''}" data-fb="up" title="More like this">\u25B2</button>` +
-			`<button class="fb-btn fb-down${vote === 'down' ? ' active' : ''}" data-fb="down" title="Less like this">\u25BC</button>` +
-			`<button class="fb-btn fb-flag" data-fb="flag" title="Report issue">Report</button>` +
+		return `<div class="fb-row" data-fb-id="${this.esc(eventId)}" data-fb-sport="${this.esc(sport || '')}" data-fb-tournament="${this.esc(tournament || '')}">` +
+			`<button class="fb-btn fb-flag" data-fb="flag" title="Report an issue with this event">Report issue</button>` +
 			`</div>`;
 	}
 
@@ -1087,17 +1085,24 @@ class Dashboard {
 		if (!el || !this.feedback) return;
 
 		const count = this.feedback.pendingCount();
+		const hasFavorites = this.preferences &&
+			(Object.values(this.preferences.getPreferences().favoriteTeams || {}).some(t => t.length > 0) ||
+			 Object.values(this.preferences.getPreferences().favoritePlayers || {}).some(p => p.length > 0));
+		const canSubmit = count > 0 || hasFavorites;
+
 		el.innerHTML = `
 			<div class="fb-section-label">Feedback</div>
 			<div class="fb-panel-row">
 				<input type="text" id="fb-suggest-input" placeholder="Suggest a sport, event, or feature..." maxlength="200">
 				<button id="fb-suggest-btn">Add</button>
 			</div>
+			${count > 0 ? `<div class="fb-pending">${count} pending item${count > 1 ? 's' : ''}</div>` : ''}
 			<div class="fb-panel-row">
-				<button class="fb-submit" id="fb-submit-btn" ${count === 0 ? 'disabled' : ''}>
-					Submit feedback${count > 0 ? `<span class="fb-count">(${count})</span>` : ''}
+				<button class="fb-submit" id="fb-submit-btn" ${canSubmit ? '' : 'disabled'}>
+					Send feedback via GitHub
 				</button>
 			</div>
+			<div class="fb-hint">Includes your starred favorites, reports, and suggestions</div>
 		`;
 
 		document.getElementById('fb-suggest-btn')?.addEventListener('click', () => {
@@ -1116,11 +1121,9 @@ class Dashboard {
 		});
 
 		document.getElementById('fb-submit-btn')?.addEventListener('click', () => {
-			if (this.feedback.pendingCount() > 0) {
-				this.feedback.submit();
-				this.renderFeedbackPanel();
-				this.renderEvents();
-			}
+			this.feedback.submit();
+			this.renderFeedbackPanel();
+			this.renderEvents();
 		});
 	}
 
@@ -1134,17 +1137,14 @@ class Dashboard {
 					const eventId = row.dataset.fbId;
 					const action = btn.dataset.fb;
 
-					if (action === 'up' || action === 'down') {
-						this.feedback.vote(eventId, action);
-						// Update button states
-						row.querySelector('.fb-up').classList.toggle('active', this.feedback.getVote(eventId) === 'up');
-						row.querySelector('.fb-down').classList.toggle('active', this.feedback.getVote(eventId) === 'down');
-						this.renderFeedbackPanel();
-					} else if (action === 'flag') {
+					if (action === 'flag') {
 						const eventTitle = row.closest('.event-row')?.querySelector('.row-title-text')?.textContent || eventId;
+						const sport = row.dataset.fbSport || null;
+						const tournament = row.dataset.fbTournament || null;
 						const msg = prompt('What\'s wrong with this event?');
 						if (msg) {
-							this.feedback.report(eventId, eventTitle, msg);
+							this.feedback.report(eventId, eventTitle, msg, sport, tournament);
+							btn.textContent = 'Reported';
 							btn.classList.add('active');
 							this.renderFeedbackPanel();
 						}
@@ -1282,7 +1282,7 @@ class Dashboard {
 		}
 
 		// Feedback actions
-		content += this.renderFeedbackButtons(event.id);
+		content += this.renderFeedbackButtons(event.id, event.sport, event.tournament);
 
 		content += '</div>';
 		return content;

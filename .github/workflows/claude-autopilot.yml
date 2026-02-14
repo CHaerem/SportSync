@@ -112,6 +112,12 @@ jobs:
                Write a brief internal summary of lessons learned. Use these insights
                to inform your planning (step 1a½) throughout this run.
 
+            5. Check for user feedback:
+               `gh issue list --label user-feedback --state open --author CHaerem`
+               If any open feedback issues exist, prioritize processing them before
+               other tasks. See Heuristic I in the Scouting Heuristics section of
+               AUTOPILOT_ROADMAP.md for processing rules.
+
             ## Step 1: Task loop
 
             For each PENDING task in the roadmap (top to bottom):

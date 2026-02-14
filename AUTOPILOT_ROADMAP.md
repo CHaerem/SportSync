@@ -111,7 +111,7 @@ Check for GitHub Issues with the `user-feedback` label created by the repo owner
 
 **Processing rules:**
 
-1. **Votes** (`votes` object): Thumbs up/down on events. Use to adjust `sportPreferences` weights in `scripts/config/user-context.json`. Many "up" votes on a sport → increase its weight. Many "down" → decrease. Don't change after a single vote; look for patterns across multiple submissions.
+1. **Favorites** (`favorites` object): Contains `favoriteTeams`, `favoritePlayers`, and `engagement` (click counts per sport). Compare against current `user-context.json` — if the user has starred new teams/players not in the config, add them. If engagement data shows heavy usage of a sport, increase its weight in `sportPreferences`. Look for patterns across multiple submissions before making changes.
 
 2. **Reports** (`reports` array): Misinformation or data issues. For each report, investigate the root cause (wrong API data, stale config, enrichment error). Create a `[PENDING]` fix task if it's a code issue, or note it as transient if it's API-side.
 

@@ -1,6 +1,8 @@
 // Feedback Manager for SportSync
-// Collects user feedback (votes, reports, suggestions) in localStorage
+// Collects user feedback (reports, suggestions) in localStorage
 // and generates a pre-filled GitHub Issue URL for submission.
+// Favorites come from PreferencesManager (star system) and are
+// included automatically in the issue body.
 
 class FeedbackManager {
 	constructor() {
@@ -14,7 +16,7 @@ class FeedbackManager {
 			const raw = localStorage.getItem(this.STORAGE_KEY);
 			if (raw) return JSON.parse(raw);
 		} catch { /* ignore */ }
-		return { votes: {}, reports: [], suggestions: [] };
+		return { reports: [], suggestions: [] };
 	}
 
 	_save() {
@@ -23,29 +25,15 @@ class FeedbackManager {
 		} catch { /* ignore */ }
 	}
 
-	// --- Votes (thumbs up/down on events and picks) ---
-
-	vote(eventId, direction) {
-		// direction: 'up' | 'down' | null (toggle off)
-		if (direction === null || this.data.votes[eventId] === direction) {
-			delete this.data.votes[eventId];
-		} else {
-			this.data.votes[eventId] = direction;
-		}
-		this._save();
-	}
-
-	getVote(eventId) {
-		return this.data.votes[eventId] || null;
-	}
-
 	// --- Reports (flag misinformation or issues) ---
 
-	report(eventId, eventTitle, message) {
+	report(eventId, eventTitle, message, sport, tournament) {
 		this.data.reports.push({
 			eventId,
 			title: eventTitle,
 			message,
+			sport: sport || null,
+			tournament: tournament || null,
 			timestamp: new Date().toISOString(),
 		});
 		this._save();
@@ -65,31 +53,47 @@ class FeedbackManager {
 	// --- Pending count ---
 
 	pendingCount() {
-		return Object.keys(this.data.votes).length +
-			this.data.reports.length +
+		return this.data.reports.length +
 			this.data.suggestions.length;
+	}
+
+	// --- Favorites snapshot (from PreferencesManager) ---
+
+	_getPreferencesSnapshot() {
+		if (!window.PreferencesManager) return null;
+		// Find the live instance on the dashboard, or create a temporary read
+		const pm = window._ssPreferences || new PreferencesManager();
+		const prefs = pm.getPreferences();
+		return {
+			favoriteTeams: prefs.favoriteTeams || {},
+			favoritePlayers: prefs.favoritePlayers || {},
+			engagement: prefs.engagement || {},
+		};
 	}
 
 	// --- Generate GitHub Issue URL ---
 
 	buildIssueURL() {
-		const votes = this.data.votes;
 		const reports = this.data.reports;
 		const suggestions = this.data.suggestions;
+		const favorites = this._getPreferencesSnapshot();
 
 		let body = '## SportSync User Feedback\n\n';
 
-		// Votes section
-		const voteEntries = Object.entries(votes);
-		if (voteEntries.length > 0) {
-			body += '### Votes\n\n';
-			body += '| Event | Vote |\n|-------|------|\n';
-			for (const [id, dir] of voteEntries) {
-				const emoji = dir === 'up' ? '\u{1F44D}' : '\u{1F44E}';
-				const label = id.replace(/-/g, ' ').replace(/^(result |football |golf |tennis |formula1 |chess |esports |olympics )/, '');
-				body += `| ${label} | ${emoji} |\n`;
+		// Favorites section — shows current preferences state
+		if (favorites) {
+			const teams = Object.entries(favorites.favoriteTeams).filter(([, v]) => v.length > 0);
+			const players = Object.entries(favorites.favoritePlayers).filter(([, v]) => v.length > 0);
+			if (teams.length > 0 || players.length > 0) {
+				body += '### Current Favorites\n\n';
+				for (const [sport, names] of teams) {
+					body += `- **${sport}** teams: ${names.join(', ')}\n`;
+				}
+				for (const [sport, names] of players) {
+					body += `- **${sport}** players: ${names.join(', ')}\n`;
+				}
+				body += '\n';
 			}
-			body += '\n';
 		}
 
 		// Reports section
@@ -111,9 +115,10 @@ class FeedbackManager {
 		}
 
 		// Machine-readable JSON block for autopilot parsing
+		const payload = { favorites, reports, suggestions, date: new Date().toISOString().slice(0, 10) };
 		body += '### Data (for autopilot)\n\n';
 		body += '```json\n';
-		body += JSON.stringify({ votes, reports, suggestions, date: new Date().toISOString().slice(0, 10) }, null, 2);
+		body += JSON.stringify(payload);
 		body += '\n```\n';
 
 		const title = `User feedback ${new Date().toISOString().slice(0, 10)}`;
@@ -123,20 +128,26 @@ class FeedbackManager {
 			labels: 'user-feedback',
 		});
 
-		return `https://github.com/${this.REPO}/issues/new?${params.toString()}`;
+		const url = `https://github.com/${this.REPO}/issues/new?${params.toString()}`;
+
+		// GitHub URL-based issue creation truncates around 8k chars
+		if (url.length > 7500) {
+			console.warn(`Feedback URL is ${url.length} chars — may be truncated. Consider submitting more frequently.`);
+		}
+
+		return url;
 	}
 
 	// --- Submit (open GitHub Issue and clear) ---
 
 	submit() {
-		if (this.pendingCount() === 0) return;
 		const url = this.buildIssueURL();
 		window.open(url, '_blank');
 		this.clear();
 	}
 
 	clear() {
-		this.data = { votes: {}, reports: [], suggestions: [] };
+		this.data = { reports: [], suggestions: [] };
 		this._save();
 	}
 }

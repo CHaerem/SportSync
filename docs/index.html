@@ -90,23 +90,20 @@
 		.cal-link:hover { opacity: 1; text-decoration: underline; }
 
 		/* --- Feedback controls --- */
-		.fb-row { display: flex; gap: 2px; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border, #e0e0e0); }
-		.fb-btn { background: none; border: 1px solid transparent; cursor: pointer; font-size: 0.6rem; padding: 2px 8px; opacity: 0.4; border-radius: 3px; line-height: 1.4; color: var(--muted); }
-		.fb-btn:hover { opacity: 0.8; border-color: var(--border, #e0e0e0); }
-		.fb-btn.active { opacity: 1; border-color: var(--border, #e0e0e0); }
-		.fb-btn.fb-up.active { color: var(--green, #2ecc71); }
-		.fb-btn.fb-down.active { color: var(--red, #e74c3c); }
-		.fb-btn.fb-flag { margin-left: auto; }
+		.fb-row { display: flex; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border, #e0e0e0); }
+		.fb-btn { background: none; border: 1px solid transparent; cursor: pointer; font-size: 0.6rem; padding: 2px 8px; opacity: 0.35; border-radius: 3px; line-height: 1.4; color: var(--muted); margin-left: auto; }
+		.fb-btn:hover { opacity: 0.7; border-color: var(--border, #e0e0e0); }
+		.fb-btn.active { opacity: 0.6; }
 		#feedback-panel { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border, #e0e0e0); }
 		.fb-panel-row { display: flex; gap: 8px; margin-bottom: 8px; }
-		.fb-panel-row input, .fb-panel-row textarea { flex: 1; font: inherit; font-size: 0.75rem; padding: 6px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; background: var(--bg, #fff); color: var(--fg, #111); }
-		.fb-panel-row textarea { resize: vertical; min-height: 48px; }
+		.fb-panel-row input { flex: 1; font: inherit; font-size: 0.75rem; padding: 6px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; background: var(--bg, #fff); color: var(--fg, #111); }
 		.fb-panel-row button { font: inherit; font-size: 0.7rem; padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; cursor: pointer; background: var(--bg, #fff); color: var(--fg, #111); white-space: nowrap; }
 		.fb-panel-row button:hover { background: var(--hover, rgba(0,0,0,0.05)); }
-		.fb-submit { font: inherit; font-size: 0.7rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--fg, #111); border-radius: 4px; cursor: pointer; background: var(--fg, #111); color: var(--bg, #fff); }
+		.fb-submit { font: inherit; font-size: 0.7rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--fg, #111); border-radius: 4px; cursor: pointer; background: var(--fg, #111); color: var(--bg, #fff); width: 100%; }
 		.fb-submit:hover { opacity: 0.85; }
 		.fb-submit:disabled { opacity: 0.3; cursor: default; }
-		.fb-count { font-size: 0.6rem; color: var(--muted); margin-left: 4px; }
+		.fb-pending { font-size: 0.65rem; color: var(--muted); margin-bottom: 6px; }
+		.fb-hint { font-size: 0.6rem; color: var(--muted); opacity: 0.6; margin-top: 2px; }
 		.fb-section-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
 
 		/* --- Day Navigator --- */
