@@ -154,7 +154,11 @@
 			height: 100%;
 			opacity: 0;
 			cursor: pointer;
-			/* native input overlays the label so taps go directly to it */
+			-webkit-appearance: none;
+			appearance: none;
+			border: none;
+			background: none;
+			font-size: 16px; /* prevents iOS zoom */
 		}
 		.date-empty {
 			text-align: center;

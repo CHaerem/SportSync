@@ -299,6 +299,10 @@ class Dashboard {
 		// Date input overlays the label — user taps it directly
 		const dateInput = el.querySelector('.day-nav-date-input');
 		if (dateInput) {
+			// Force picker open on any click (not just the tiny calendar icon)
+			dateInput.addEventListener('click', (e) => {
+				try { dateInput.showPicker(); } catch { /* older browsers fall through to native */ }
+			});
 			dateInput.addEventListener('change', () => {
 				if (!dateInput.value) return;
 				const [y, m, d] = dateInput.value.split('-').map(Number);
