@@ -166,7 +166,7 @@ describe("fallbackLine()", () => {
 		expect(line).toContain("PGA Tour");
 	});
 
-	it("formats event with summary when no separate tournament", () => {
+	it("formats event without tournament as title only", () => {
 		const line = fallbackLine({
 			sport: "tennis",
 			title: "Australian Open Final",
@@ -175,7 +175,8 @@ describe("fallbackLine()", () => {
 		});
 		expect(line).toContain("🎾");
 		expect(line).toContain("Australian Open Final");
-		expect(line).toContain("Sinner vs Djokovic");
+		// Summary is not included in fallback lines (avoids duplication)
+		expect(line).not.toContain("Sinner vs Djokovic");
 	});
 
 	it("includes time in HH:MM format", () => {

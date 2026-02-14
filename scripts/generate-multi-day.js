@@ -13,7 +13,10 @@ import path from "path";
 import { execSync } from "child_process";
 import { rootDataPath, formatDateKey, readJsonIfExists, MS_PER_DAY } from "./lib/helpers.js";
 
-const MAX_AI_CALLS = 2;
+// --backfill N: generate recaps for the last N days (default: 1 = yesterday only)
+const backfillArg = process.argv.find(a => a.startsWith("--backfill"));
+const BACKFILL_DAYS = backfillArg ? parseInt(backfillArg.split("=")[1] || process.argv[process.argv.indexOf(backfillArg) + 1] || "1", 10) : 1;
+const MAX_AI_CALLS = BACKFILL_DAYS + 1; // backfill days + tomorrow preview
 
 function generateBriefing(dateKey, mode) {
 	console.log(`Generating ${mode} briefing for ${dateKey}...`);
@@ -33,54 +36,54 @@ function main() {
 	const now = new Date();
 	let aiCalls = 0;
 
-	// --- Yesterday recap ---
-	const yesterday = new Date(now.getTime() - MS_PER_DAY);
-	const yesterdayKey = formatDateKey(yesterday);
-	const yesterdayFile = path.join(dataDir, `featured-${yesterdayKey}.json`);
+	// --- Past day recaps (1..BACKFILL_DAYS days ago) ---
+	for (let i = 1; i <= BACKFILL_DAYS; i++) {
+		const pastDate = new Date(now.getTime() - i * MS_PER_DAY);
+		const pastKey = formatDateKey(pastDate);
+		const pastFile = path.join(dataDir, `featured-${pastKey}.json`);
 
-	if (!fs.existsSync(yesterdayFile)) {
-		try {
-			generateBriefing(yesterdayKey, "recap");
-			aiCalls++;
-		} catch (err) {
-			console.error(`Recap generation failed for ${yesterdayKey}:`, err.message);
+		if (!fs.existsSync(pastFile)) {
+			try {
+				generateBriefing(pastKey, "recap");
+				aiCalls++;
+			} catch (err) {
+				console.error(`Recap generation failed for ${pastKey}:`, err.message);
+			}
+		} else {
+			console.log(`Recap for ${pastKey} already exists, skipping.`);
 		}
-	} else {
-		console.log(`Recap for ${yesterdayKey} already exists, skipping.`);
 	}
 
 	// --- Tomorrow preview ---
-	if (aiCalls < MAX_AI_CALLS) {
-		const tomorrow = new Date(now.getTime() + MS_PER_DAY);
-		const tomorrowKey = formatDateKey(tomorrow);
-		const tomorrowFile = path.join(dataDir, `featured-${tomorrowKey}.json`);
+	const tomorrow = new Date(now.getTime() + MS_PER_DAY);
+	const tomorrowKey = formatDateKey(tomorrow);
+	const tomorrowFile = path.join(dataDir, `featured-${tomorrowKey}.json`);
 
-		let shouldGenerate = false;
-		if (!fs.existsSync(tomorrowFile)) {
-			shouldGenerate = true;
-		} else {
-			// Regenerate if older than 24h
-			const existing = readJsonIfExists(tomorrowFile);
-			const generatedAt = existing?._meta?.generatedAt;
-			if (generatedAt) {
-				const age = now.getTime() - new Date(generatedAt).getTime();
-				if (age > MS_PER_DAY) {
-					shouldGenerate = true;
-					console.log(`Preview for ${tomorrowKey} is stale (${Math.round(age / MS_PER_DAY * 10) / 10}d old), regenerating.`);
-				}
+	let shouldGenerate = false;
+	if (!fs.existsSync(tomorrowFile)) {
+		shouldGenerate = true;
+	} else {
+		// Regenerate if older than 24h
+		const existing = readJsonIfExists(tomorrowFile);
+		const generatedAt = existing?._meta?.generatedAt;
+		if (generatedAt) {
+			const age = now.getTime() - new Date(generatedAt).getTime();
+			if (age > MS_PER_DAY) {
+				shouldGenerate = true;
+				console.log(`Preview for ${tomorrowKey} is stale (${Math.round(age / MS_PER_DAY * 10) / 10}d old), regenerating.`);
 			}
 		}
+	}
 
-		if (shouldGenerate) {
-			try {
-				generateBriefing(tomorrowKey, "preview");
-				aiCalls++;
-			} catch (err) {
-				console.error(`Preview generation failed for ${tomorrowKey}:`, err.message);
-			}
-		} else {
-			console.log(`Preview for ${tomorrowKey} is fresh, skipping.`);
+	if (shouldGenerate) {
+		try {
+			generateBriefing(tomorrowKey, "preview");
+			aiCalls++;
+		} catch (err) {
+			console.error(`Preview generation failed for ${tomorrowKey}:`, err.message);
 		}
+	} else {
+		console.log(`Preview for ${tomorrowKey} is fresh, skipping.`);
 	}
 
 	// --- Cleanup: delete briefings older than 7 days ---
