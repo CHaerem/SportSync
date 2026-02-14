@@ -1,47 +1,47 @@
 {
-  "generatedAt": "2026-02-14T08:14:55.854Z",
+  "generatedAt": "2026-02-14T10:13:49.079Z",
   "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 28,
+      "count": 30,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T08:14:55.851Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 28 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-14T10:13:49.077Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 30 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "featuredQuality",
       "score": 0.75,
-      "stagnantRuns": 10,
-      "suggestion": "Feedback loop \"featuredQuality\" has been stuck at 0.75 for 10 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 11,
+      "suggestion": "Feedback loop \"featuredQuality\" has been stuck at 0.75 for 11 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 14,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 14 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 15,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 15 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "unknown",
-      "fireCount": 15,
+      "fireCount": 16,
       "hintText": "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "suggestion": "Hint \"RESULTS NOTE: Few recap headlines available — focus on scorelines and goal score...\" has fired 15 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"RESULTS NOTE: Few recap headlines available — focus on scorelines and goal score...\" has fired 16 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "mustWatchCoverage",
-      "fireCount": 11,
+      "fireCount": 12,
       "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 11 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 12 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -51,10 +51,10 @@
       "lastSeen": "2026-02-13T13:46:59.623Z"
     },
     "sport_zero_events": {
-      "count": 28,
+      "count": 30,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T08:14:55.851Z"
+      "lastSeen": "2026-02-14T10:13:49.077Z"
     }
   },
-  "summary": "5 patterns detected (5 high). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 28 times since 2026-02-13."
+  "summary": "5 patterns detected (5 high). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 30 times since 2026-02-13."
 }

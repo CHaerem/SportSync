@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T08:45:45.335Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 3
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 3,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 1,
-      "avgScore": 44,
-      "streamingCoverage": 0
-    },
-    "hintsApplied": []
-  },
-  {
     "timestamp": "2026-02-12T08:45:45.354Z",
     "editorial": {
       "score": 100,
@@ -4441,6 +4415,64 @@
     "watchPlan": {
       "pickCount": 3,
       "avgScore": 103,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 30,
+      "freshnessScore": 1
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T10:13:47.587Z",
+    "editorial": {
+      "score": 67,
+      "mustWatchCoverage": 0.222,
+      "sportDiversity": 0.5,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 106,
       "streamingCoverage": 1
     },
     "results": {
