@@ -17,7 +17,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
-import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints } from "./lib/ai-quality-gates.js";
+import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
@@ -255,7 +255,7 @@ export function buildResultsContext(recentResults) {
 	if (football.length > 0) {
 		const lines = football.slice(0, 6).map((m) => {
 			const date = new Date(m.date);
-			const day = date.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
+			const day = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "Europe/Oslo" });
 			const league = m.league === "Premier League" ? "PL" : m.league === "La Liga" ? "LL" : m.league;
 			const fav = m.isFavorite ? " [FAV]" : "";
 			const recap = m.recapHeadline ? ` — "${m.recapHeadline}"` : "";
@@ -674,9 +674,12 @@ async function main() {
 	const qualityHistory = readJsonIfExists(historyPath) || [];
 	const { hints: adaptiveHints } = buildAdaptiveHints(qualityHistory);
 	const { hints: resultsHints } = buildResultsHints(qualityHistory);
-	const allHints = [...adaptiveHints, ...resultsHints];
+	const sanityReportPath = path.join(dataDir, "sanity-report.json");
+	const sanityReport = readJsonIfExists(sanityReportPath);
+	const { hints: sanityHints, findingCount: sanityFindingCount } = buildSanityHints(sanityReport);
+	const allHints = [...adaptiveHints, ...resultsHints, ...sanityHints];
 	if (allHints.length > 0) {
-		console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results)`);
+		console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity)`);
 		for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
 		baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${allHints.map((h) => `- ${h}`).join("\n")}`;
 	}
@@ -808,6 +811,11 @@ async function main() {
 					total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput },
 				},
 				results: resultsQuality,
+				sanity: sanityReport ? {
+					findingCount: sanityReport.summary?.total ?? 0,
+					warningCount: sanityReport.summary?.warning ?? 0,
+					pass: sanityReport.pass ?? true,
+				} : null,
 			}
 		);
 		history.push(snapshot);

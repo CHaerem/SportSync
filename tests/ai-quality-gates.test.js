@@ -9,6 +9,7 @@ import {
 	evaluateWatchPlanQuality,
 	buildQualitySnapshot,
 	buildAdaptiveHints,
+	buildSanityHints,
 	evaluateResultsQuality,
 	buildResultsHints,
 } from "../scripts/lib/ai-quality-gates.js";
@@ -370,5 +371,92 @@ describe("buildAdaptiveHints()", () => {
 		const history = Array.from({ length: 5 }, () => makeEditorialEntry());
 		const result = buildAdaptiveHints(history);
 		expect(result.hints).toEqual([]);
+	});
+});
+
+describe("buildSanityHints()", () => {
+	it("returns empty for null report", () => {
+		const result = buildSanityHints(null);
+		expect(result.hints).toEqual([]);
+		expect(result.findingCount).toBe(0);
+	});
+
+	it("returns empty for passing report with zero findings", () => {
+		const result = buildSanityHints({ pass: true, summary: { total: 0 }, findings: [] });
+		expect(result.hints).toEqual([]);
+		expect(result.findingCount).toBe(0);
+	});
+
+	it("emits content hint for featured warnings", () => {
+		const report = {
+			pass: true,
+			summary: { total: 1, warning: 1 },
+			findings: [
+				{ severity: "warning", check: "featured_orphan_ref", message: 'Featured references "Unknown Match"' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("SANITY:");
+		expect(result.hints[0]).toContain("content issues");
+		expect(result.findingCount).toBe(1);
+	});
+
+	it("includes actionable LLM findings", () => {
+		const report = {
+			pass: true,
+			summary: { total: 1, warning: 0 },
+			findings: [
+				{ severity: "info", check: "llm_data_quality", message: "Golf event missing tee times", actionable: true },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("SANITY:");
+		expect(result.hints[0]).toContain("Golf event missing tee times");
+	});
+
+	it("groups result findings together", () => {
+		const report = {
+			pass: true,
+			summary: { total: 2, warning: 2 },
+			findings: [
+				{ severity: "warning", check: "result_future_date", message: "Result has future date" },
+				{ severity: "warning", check: "result_extreme_score", message: "Extreme score detected" },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("Results data had quality issues");
+		expect(result.findingCount).toBe(2);
+	});
+
+	it("emits coverage hint for sport_vanished", () => {
+		const report = {
+			pass: false,
+			summary: { total: 1, critical: 1 },
+			findings: [
+				{ severity: "critical", check: "sport_vanished", message: "chess: 0 events" },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("Coverage gaps detected");
+	});
+});
+
+describe("buildQualitySnapshot() with sanity", () => {
+	it("includes sanity section when provided", () => {
+		const sanity = { findingCount: 3, warningCount: 2, pass: true };
+		const snapshot = buildQualitySnapshot(null, null, null, null, { sanity });
+		expect(snapshot.sanity).toBeDefined();
+		expect(snapshot.sanity.findingCount).toBe(3);
+		expect(snapshot.sanity.warningCount).toBe(2);
+		expect(snapshot.sanity.pass).toBe(true);
+	});
+
+	it("sanity is null when not provided", () => {
+		const snapshot = buildQualitySnapshot(null, null, null, null);
+		expect(snapshot.sanity).toBeNull();
 	});
 });

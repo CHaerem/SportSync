@@ -503,7 +503,7 @@ export function evaluateWatchPlanQuality(watchPlan) {
 	return { score, metrics };
 }
 
-export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results } = {}) {
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity } = {}) {
 	return {
 		timestamp: new Date().toISOString(),
 		editorial: editorial
@@ -520,6 +520,9 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 			: null,
 		results: results
 			? { score: results.score ?? null, recapHeadlineRate: results.metrics?.recapHeadlineRate ?? null, goalScorerCoverage: results.metrics?.goalScorerCoverage ?? null, footballCount: results.metrics?.footballCount ?? 0, freshnessScore: results.metrics?.freshnessScore ?? null }
+			: null,
+		sanity: sanity
+			? { findingCount: sanity.findingCount ?? 0, warningCount: sanity.warningCount ?? 0, pass: sanity.pass ?? true }
 			: null,
 		hintsApplied: hintsApplied || [],
 		tokenUsage: tokenUsage || null,
@@ -661,6 +664,47 @@ const ADAPTIVE_HINT_RULES = [
 	{ metric: "blockCountTarget", threshold: 0.6, hint: "CORRECTION: Keep total block count between 3 and 8. Recent outputs were outside this range." },
 	{ metric: "quietDayCompliance", threshold: 0.5, hint: "CORRECTION: On quiet days (<3 events), use only 3-4 blocks. Don't pad with low-importance events." },
 ];
+
+export function buildSanityHints(sanityReport) {
+	const empty = { hints: [], findingCount: 0 };
+	if (!sanityReport || (sanityReport.pass === true && sanityReport.summary?.total === 0)) return empty;
+
+	const findings = Array.isArray(sanityReport.findings) ? sanityReport.findings : [];
+	if (findings.length === 0) return empty;
+
+	const hints = [];
+
+	// Group findings by check code prefix
+	const featured = findings.filter(f => f.check?.startsWith("featured_"));
+	const result = findings.filter(f => f.check?.startsWith("result_"));
+	const coverage = findings.filter(f => f.check === "sport_vanished" || f.check === "standings_without_events");
+	const actionable = findings.filter(f => f.actionable === true);
+
+	if (featured.length > 0) {
+		const msgs = featured.map(f => f.message).join("; ");
+		hints.push(`SANITY: Previous brief had content issues: ${msgs}. Verify all claims against provided data.`);
+	}
+
+	if (result.length > 0) {
+		const msgs = result.map(f => f.message).join("; ");
+		hints.push(`SANITY: Results data had quality issues: ${msgs}. Be cautious referencing results.`);
+	}
+
+	if (coverage.length > 0) {
+		const msgs = coverage.map(f => f.message).join("; ");
+		hints.push(`SANITY: Coverage gaps detected: ${msgs}.`);
+	}
+
+	// Include actionable LLM findings directly (skip those already covered above)
+	const coveredChecks = new Set([...featured, ...result, ...coverage].map(f => f.message));
+	for (const f of actionable) {
+		if (!coveredChecks.has(f.message)) {
+			hints.push(`SANITY: ${f.message}`);
+		}
+	}
+
+	return { hints, findingCount: findings.length };
+}
 
 export function buildAdaptiveHints(history) {
 	const empty = { hints: [], metrics: {} };
