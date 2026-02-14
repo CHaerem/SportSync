@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-14T19:00:45.680Z",
-  "eventCount": 23,
+  "generatedAt": "2026-02-14T20:12:16.707Z",
+  "eventCount": 22,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -12,15 +12,15 @@
       "previousCount": 1,
       "delta": 0
     },
-    "football": {
-      "count": 9,
-      "previousCount": 9,
-      "delta": 0
-    },
     "olympics": {
       "count": 10,
       "previousCount": 10,
       "delta": 0
+    },
+    "football": {
+      "count": 8,
+      "previousCount": 9,
+      "delta": -1
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 74,
       "stale": false
     },
     "esports.json": {
@@ -108,15 +108,26 @@
       "severity": "warning",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 69/100.",
+    "text": "Autonomy at 97% with 8/9 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 55/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
   }
 }

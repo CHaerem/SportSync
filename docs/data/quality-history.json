@@ -1,52 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T14:01:30.005Z",
-    "editorial": {
-      "score": 96,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 90,
-      "blockCount": 8,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 122,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0,
-        "tracked": false
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-12T14:01:30.304Z",
     "editorial": {
       "score": 96,
@@ -4969,6 +4922,70 @@
         "input": 0,
         "output": 0,
         "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T20:12:15.151Z",
+    "editorial": {
+      "score": 55,
+      "mustWatchCoverage": 0,
+      "sportDiversity": 0.25,
+      "blockCount": 5
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 5,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 97,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 24,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen in Freestyle Chess semi-final Game 4\" which may not match any event; Featured mentions \"Carlsen\" but no matching athlete found in events data; Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 24 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
         "total": 0
       }
     }
