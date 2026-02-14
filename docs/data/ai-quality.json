@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-14T10:13:47.584Z",
+  "generatedAt": "2026-02-14T11:15:23.352Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 29535,
+    "blockCount": 9,
+    "generationMs": 20831,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,14 +17,14 @@
     }
   },
   "editorial": {
-    "score": 67,
+    "score": 69,
     "metrics": {
       "mustWatchCoverage": 0.222,
-      "sportDiversity": 0.5,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
     "issues": [
       "Only 22% of must-watch events covered in blocks"
@@ -61,7 +61,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.786
+      "tagsCoverage": 0.75
     },
     "after": {
       "totalEvents": 28,
@@ -73,7 +73,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 6,
+    "fallbackFieldsFilled": 7,
     "aiUpdatedFields": 28,
     "failedBatches": 0,
     "totalEvents": 28,
