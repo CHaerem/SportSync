@@ -52,7 +52,7 @@ export async function fetchOBOSLigaenFromFotballNo() {
 	}
 }
 
-function parseIcsForLynMatches(icsData) {
+export function parseIcsForLynMatches(icsData) {
 	const matches = [];
 	const events = icsData.split('BEGIN:VEVENT');
 	
@@ -108,13 +108,13 @@ function parseIcsForLynMatches(icsData) {
 	return matches;
 }
 
-function extractIcsField(eventData, fieldName) {
+export function extractIcsField(eventData, fieldName) {
 	const regex = new RegExp(`^${fieldName}[^:]*:(.*)$`, 'm');
 	const match = eventData.match(regex);
 	return match ? match[1].trim() : null;
 }
 
-function parseIcsDateTime(dtString) {
+export function parseIcsDateTime(dtString) {
 	if (!dtString) return null;
 	
 	try {
