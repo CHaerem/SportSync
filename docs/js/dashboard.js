@@ -267,12 +267,14 @@ class Dashboard {
 		const inputValue = `${y}-${m}-${d}`;
 
 		el.innerHTML = `
-			<button class="day-nav-arrow" data-dir="-1" aria-label="Previous day">\u2190</button>
-			<button class="day-nav-label" aria-label="Pick a date">
-				${this.esc(label)}
-				<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1">
-			</button>
-			<button class="day-nav-arrow" data-dir="1" aria-label="Next day">\u2192</button>
+			<div class="day-nav-inner">
+				<button class="day-nav-arrow" data-dir="-1" aria-label="Previous day">\u2039</button>
+				<button class="day-nav-label" aria-label="Pick a date">
+					${this.esc(label)}
+				</button>
+				<button class="day-nav-arrow" data-dir="1" aria-label="Next day">\u203A</button>
+			</div>
+			<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1" aria-hidden="true">
 		`;
 
 		this.bindDayNav();
@@ -298,9 +300,13 @@ class Dashboard {
 		const label = el.querySelector('.day-nav-label');
 		const dateInput = el.querySelector('.day-nav-date-input');
 		if (label && dateInput) {
-			label.addEventListener('click', (e) => {
-				if (e.target === dateInput) return;
-				dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+			label.addEventListener('click', () => {
+				try {
+					dateInput.showPicker();
+				} catch {
+					dateInput.focus();
+					dateInput.click();
+				}
 			});
 			dateInput.addEventListener('change', () => {
 				if (!dateInput.value) return;
