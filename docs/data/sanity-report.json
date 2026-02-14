@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T13:07:51.510Z",
+  "generatedAt": "2026-02-14T13:28:57.848Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 27,
@@ -52,7 +52,7 @@
         "Alpine Skiing — Men's Giant Slalom"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 72,
@@ -63,11 +63,6 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Qatar Airways Australian Grand Prix\" is 20 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfc5 Sun — Klaebo anchors men's relay\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -86,11 +81,6 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "featured_time_mismatch",
       "message": "Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15"
     },
@@ -101,10 +91,10 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 6,
     "critical": 0,
-    "warning": 7,
-    "info": 1
+    "warning": 6,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null

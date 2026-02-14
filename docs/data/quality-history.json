@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T08:53:36.492Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 3
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 3,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 1,
-      "avgScore": 90,
-      "streamingCoverage": 0
-    },
-    "hintsApplied": []
-  },
-  {
     "timestamp": "2026-02-12T08:56:43.715Z",
     "editorial": {
       "score": 100,
@@ -4640,6 +4614,71 @@
       "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
       "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
       "SANITY: Previous brief had content issues: Featured block references \"️ Freestyle Chess semi-finals — Carlsen's rapid format\" which may not match any event; Featured block references \"\udfc5 Sun — Klaebo leads men's relay\" which may not match any event; Featured mentions \"After Atl\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalans\" but no matching athlete found in events data; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Carlsen\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T13:28:48.554Z",
+    "editorial": {
+      "score": 72,
+      "mustWatchCoverage": 0.222,
+      "sportDiversity": 0.75,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 92,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Klaebo anchors men's relay\" which may not match any event; Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
       "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
     ],
     "tokenUsage": {
