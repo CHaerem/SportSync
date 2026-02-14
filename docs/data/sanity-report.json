@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T00:45:15.362Z",
+  "generatedAt": "2026-02-14T03:07:52.292Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 28,
@@ -65,6 +65,11 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 20 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"Real Madrid vs Real Sociedad — Bernabéu title race clash\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "low_editorial_quality",
       "message": "Editorial quality score is 67/100 (below threshold)"
@@ -77,12 +82,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"19:00\" for \"AT&T Pebble Beach Pro-Am\" but events.json has 06:00"
     },
     {
       "severity": "warning",
@@ -96,10 +106,10 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 9,
     "critical": 0,
-    "warning": 7,
-    "info": 0
+    "warning": 8,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
