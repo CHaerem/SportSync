@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-13T22:17:07.151Z",
+  "generatedAt": "2026-02-14T00:45:15.362Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 27,
+    "totalEvents": 28,
     "sports": [
       "golf",
       "olympics",
@@ -15,8 +15,7 @@
       "live": [
         "AT&T Pebble Beach Pro-Am"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Alpine Skiing — Men's Giant Slalom",
         "Cross-Country Skiing — Women's Relay 4x5km",
         "Celta Vigo at Espanyol",
@@ -25,13 +24,15 @@
         "Alavés at Sevilla",
         "Real Sociedad at Real Madrid"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Cross-Country Skiing — Men's Relay 4x10km",
         "Athletic Club at Real Oviedo",
         "Ski Jumping — Large Hill Individual",
         "Atlético Madrid at Rayo Vallecano",
         "Valencia at Levante",
-        "Real Betis at Mallorca",
+        "Real Betis at Mallorca"
+      ],
+      "thisWeek": [
         "Alpine Skiing — Men's Slalom",
         "Biathlon — Men's Relay 4x7.5km",
         "Barcelona at Girona",
@@ -40,37 +41,38 @@
         "Arsenal at Wolverhampton Wanderers",
         "Roman Imperium Cup V",
         "Biathlon — Men's Mass Start",
-        "Ski Jumping — Team Large Hill"
+        "Ski Jumping — Team Large Hill",
+        "Elche at Athletic Club",
+        "Cross-Country Skiing — Men's 50km Mass Start Classic"
       ],
       "later": [
-        "Cross-Country Skiing — Men's 50km Mass Start Classic",
         "Cross-Country Skiing — Women's 30km Mass Start Classic",
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 69,
+    "editorialScore": 67,
     "issueCount": 2
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Qatar Airways Australian Grand Prix\" is 21 days away — may clutter the dashboard"
+      "message": "\"Qatar Airways Australian Grand Prix\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 69/100 (below threshold)"
+      "message": "Editorial quality score is 67/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -80,12 +82,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"City\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,9 +96,9 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 7,
     "critical": 0,
-    "warning": 8,
+    "warning": 7,
     "info": 0
   },
   "pass": true,
