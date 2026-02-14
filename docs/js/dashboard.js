@@ -1503,13 +1503,13 @@ class Dashboard {
 
 		// Inject team logos
 		for (const [name, logo] of teamEntries) {
-			const imgHtml = `<img src="${logo}" alt="" class="brief-logo" loading="lazy">`;
+			const imgHtml = `<img src="${logo}" alt="${this.esc(name)}" class="brief-logo" loading="lazy">`;
 			escaped = insertLogo(escaped, name, imgHtml);
 		}
 
 		// Inject golfer headshots
 		for (const [name, headshot] of golferEntries) {
-			const imgHtml = `<img src="${headshot}" alt="" class="brief-logo brief-headshot" loading="lazy">`;
+			const imgHtml = `<img src="${headshot}" alt="${this.esc(name)}" class="brief-logo brief-headshot" loading="lazy">`;
 			escaped = insertLogo(escaped, name, imgHtml);
 		}
 
