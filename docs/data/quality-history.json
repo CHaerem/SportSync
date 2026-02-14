@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T08:56:43.715Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 3
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 3,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 1,
-      "avgScore": 44,
-      "streamingCoverage": 0
-    },
-    "hintsApplied": []
-  },
-  {
     "timestamp": "2026-02-12T08:56:43.730Z",
     "editorial": {
       "score": 100,
@@ -4679,6 +4653,71 @@
       "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
       "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
       "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Klaebo anchors men's relay\" which may not match any event; Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T13:43:45.560Z",
+    "editorial": {
+      "score": 71,
+      "mustWatchCoverage": 0.2,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 101,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 6,
+      "warningCount": 6,
+      "pass": true
+    },
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
       "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
     ],
     "tokenUsage": {
