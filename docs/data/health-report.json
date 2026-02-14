@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T12:18:13.481Z",
+  "generatedAt": "2026-02-14T12:54:43.033Z",
   "eventCount": 28,
   "sportCoverage": {
     "golf": {
@@ -32,27 +32,23 @@
       "previousCount": 1,
       "delta": 0
     },
-    "tennis": {
+    "esports": {
       "count": 0,
       "previousCount": 0,
       "delta": null
     },
-    "esports": {
+    "tennis": {
       "count": 0,
       "previousCount": 0,
       "delta": null
     }
   },
   "dataFreshness": {
-    "football.json": {
-      "ageMinutes": 2,
+    "chess.json": {
+      "ageMinutes": 3,
       "stale": false
     },
-    "golf.json": {
-      "ageMinutes": 2,
-      "stale": false
-    },
-    "tennis.json": {
+    "esports.json": {
       "ageMinutes": 3,
       "stale": false
     },
@@ -60,12 +56,24 @@
       "ageMinutes": 3,
       "stale": false
     },
-    "chess.json": {
+    "football.json": {
       "ageMinutes": 3,
       "stale": false
     },
-    "esports.json": {
+    "golf.json": {
       "ageMinutes": 3,
+      "stale": false
+    },
+    "tennis.json": {
+      "ageMinutes": 3,
+      "stale": false
+    },
+    "featured.json": {
+      "ageMinutes": null,
+      "stale": true
+    },
+    "ai-quality.json": {
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -85,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 30,
+    "footballCount": 29,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -94,17 +102,22 @@
     {
       "severity": "warning",
       "code": "sport_zero_events",
-      "message": "tennis: data file exists but 0 events in events.json"
+      "message": "esports: data file exists but 0 events in events.json"
     },
     {
       "severity": "warning",
       "code": "sport_zero_events",
-      "message": "esports: data file exists but 0 events in events.json"
+      "message": "tennis: data file exists but 0 events in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is Infinity minutes old"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 67/100.",
+    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 76/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

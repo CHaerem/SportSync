@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T12:18:12.039Z",
+  "generatedAt": "2026-02-14T12:54:06.912Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
@@ -7,7 +7,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 22703,
+    "generationMs": 22939,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,24 +17,24 @@
     }
   },
   "editorial": {
-    "score": 67,
+    "score": 76,
     "metrics": {
-      "mustWatchCoverage": 0.222,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 0.2,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
     "issues": [
-      "Only 22% of must-watch events covered in blocks"
+      "Only 20% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 95,
+      "avgScore": 101,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -48,7 +48,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 30
+      "footballCount": 29
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -61,7 +61,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.75
+      "tagsCoverage": 0.786
     },
     "after": {
       "totalEvents": 28,
@@ -73,7 +73,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
+    "fallbackFieldsFilled": 6,
     "aiUpdatedFields": 28,
     "failedBatches": 0,
     "totalEvents": 28,
