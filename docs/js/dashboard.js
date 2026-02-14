@@ -1664,32 +1664,34 @@ class Dashboard {
 		const teamEntries = Array.from(knownTeams.entries()).sort((a, b) => b[0].length - a[0].length);
 		const golferEntries = Array.from(knownGolfers.entries()).sort((a, b) => b[0].length - a[0].length);
 
-		// Track which positions have been replaced to avoid overlapping
-		const replaced = new Set();
+		// Collect all name matches on the ORIGINAL escaped string, then build output in one pass.
+		// This avoids stale-position bugs from mutating the string during iteration.
+		const allEntries = [
+			...teamEntries.map(([name, url]) => [name, `<img src="${url}" alt="" class="brief-logo" loading="lazy">`]),
+			...golferEntries.map(([name, url]) => [name, `<img src="${url}" alt="" class="brief-logo brief-headshot" loading="lazy">`]),
+		];
 
-		const insertLogo = (escapedLine, name, imgHtml) => {
+		const matches = []; // { idx, len, imgHtml }
+		for (const [name, imgHtml] of allEntries) {
 			const escapedName = this.esc(name);
-			const idx = escapedLine.indexOf(escapedName);
-			if (idx === -1) return escapedLine;
-			// Check no overlap with already-replaced regions
-			for (const [start, end] of replaced) {
-				if (idx < end && idx + escapedName.length > start) return escapedLine;
-			}
-			replaced.add([idx, idx + escapedName.length]);
-			return escapedLine.substring(0, idx) + imgHtml + escapedLine.substring(idx);
-		};
-
-		// Inject team logos
-		for (const [name, logo] of teamEntries) {
-			const imgHtml = `<img src="${logo}" alt="${this.esc(name)}" class="brief-logo" loading="lazy">`;
-			escaped = insertLogo(escaped, name, imgHtml);
+			const idx = escaped.indexOf(escapedName);
+			if (idx === -1) continue;
+			// Skip if this range overlaps a previously found match
+			const overlaps = matches.some(m => idx < m.idx + m.len && idx + escapedName.length > m.idx);
+			if (overlaps) continue;
+			matches.push({ idx, len: escapedName.length, imgHtml });
 		}
 
-		// Inject golfer headshots
-		for (const [name, headshot] of golferEntries) {
-			const imgHtml = `<img src="${headshot}" alt="${this.esc(name)}" class="brief-logo brief-headshot" loading="lazy">`;
-			escaped = insertLogo(escaped, name, imgHtml);
+		// Sort by position, build output in one pass
+		matches.sort((a, b) => a.idx - b.idx);
+		let result = '';
+		let cursor = 0;
+		for (const m of matches) {
+			result += escaped.substring(cursor, m.idx) + m.imgHtml;
+			cursor = m.idx; // keep the original name after the logo
 		}
+		result += escaped.substring(cursor);
+		escaped = result;
 
 		return escaped;
 	}

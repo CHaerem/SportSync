@@ -306,6 +306,117 @@ function runDeterministicChecks(data) {
 		}
 	}
 
+	// --- Factual accuracy checks (18-21): cross-reference brief against data ---
+	if (featured?.blocks && recentResults) {
+		const football = Array.isArray(recentResults.football) ? recentResults.football : [];
+		const allBlockText = featured.blocks
+			.map(b => {
+				let text = b.text || "";
+				if (Array.isArray(b.items)) text += " " + b.items.map(i => typeof i === "string" ? i : i.text || "").join(" ");
+				return text;
+			})
+			.join(" ");
+		const briefLower = allBlockText.toLowerCase();
+
+		// 18. Score mismatch — brief mentions a score that doesn't match results
+		const scorePattern = /(\w[\w\s]+?)\s+(\d{1,2})\s*[-–]\s*(\d{1,2})\s+(\w[\w\s]+?)(?:\s|,|\.|\)|$)/g;
+		let scoreMatch;
+		while ((scoreMatch = scorePattern.exec(allBlockText)) !== null) {
+			const [, home, homeScore, awayScore, away] = scoreMatch;
+			const homeLower = home.trim().toLowerCase();
+			const awayLower = away.trim().toLowerCase();
+			const hScore = parseInt(homeScore, 10);
+			const aScore = parseInt(awayScore, 10);
+
+			const matched = football.find(m =>
+				(m.homeTeam.toLowerCase().includes(homeLower) || homeLower.includes(m.homeTeam.toLowerCase())) &&
+				(m.awayTeam.toLowerCase().includes(awayLower) || awayLower.includes(m.awayTeam.toLowerCase()))
+			);
+			if (matched && (matched.homeScore !== hScore || matched.awayScore !== aScore)) {
+				findings.push({
+					severity: "warning",
+					check: "brief_score_mismatch",
+					message: `Brief says ${home.trim()} ${hScore}-${aScore} ${away.trim()} but data has ${matched.homeTeam} ${matched.homeScore}-${matched.awayScore} ${matched.awayTeam}`,
+				});
+			}
+		}
+
+		// 19. Chronology error — "after X" patterns where X happened AFTER the referenced event
+		const afterPattern = /after\s+(?:the\s+)?(\w[\w\s']+?)(?:'s|,|\s+(?:the|at|in|vs|v\b))/gi;
+		let afterMatch;
+		while ((afterMatch = afterPattern.exec(allBlockText)) !== null) {
+			const teamRef = afterMatch[1].trim().toLowerCase().replace(/'s$/i, "");
+			// Find results involving this team
+			const teamResults = football.filter(m =>
+				m.homeTeam.toLowerCase().includes(teamRef) || m.awayTeam.toLowerCase().includes(teamRef)
+			);
+			if (teamResults.length >= 2) {
+				// Check if the brief's implied ordering matches actual chronology
+				const sorted = [...teamResults].sort((a, b) => new Date(a.date) - new Date(b.date));
+				const newest = sorted[sorted.length - 1];
+				const oldest = sorted[0];
+				// If the "after" reference is about a result that's actually the NEWER one, chronology is reversed
+				const afterText = allBlockText.substring(afterMatch.index, afterMatch.index + 150).toLowerCase();
+				const olderTeams = `${oldest.homeTeam} ${oldest.awayTeam}`.toLowerCase();
+				const newerTeams = `${newest.homeTeam} ${newest.awayTeam}`.toLowerCase();
+				// Check if both results are referenced and order is wrong
+				if (afterText.includes(olderTeams.split(" ")[0]) && briefLower.includes(newerTeams.split(" ")[0])) {
+					const oldDate = new Date(oldest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+					const newDate = new Date(newest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+					if (new Date(newest.date) - new Date(oldest.date) > 86400000) {
+						// Only flag if dates are different days — same-day ordering is ambiguous
+						findings.push({
+							severity: "info",
+							check: "brief_chronology_suspect",
+							message: `Brief uses "after" with ${teamRef} — verify chronology: results on ${oldDate} and ${newDate}`,
+						});
+					}
+				}
+			}
+		}
+
+		// 20. League/standings conflation — PL standings cited alongside non-PL teams
+		const plStandingsTerms = ["premier league lead", "pl lead", "point lead", "points clear", "top of the table", "league position"];
+		const nonPlTeams = ["real madrid", "barcelona", "atlético", "atletico", "girona", "sevilla", "betis", "mallorca", "villarreal", "valencia", "sociedad"];
+		for (const block of featured.blocks) {
+			const text = (block.text || "").toLowerCase();
+			const hasPLRef = plStandingsTerms.some(term => text.includes(term));
+			const hasNonPLTeam = nonPlTeams.some(team => text.includes(team));
+			if (hasPLRef && hasNonPLTeam) {
+				findings.push({
+					severity: "warning",
+					check: "brief_league_conflation",
+					message: `Block mixes PL standings language with non-PL team: "${(block.text || "").substring(0, 80)}..."`,
+				});
+			}
+		}
+
+		// 21. Fabricated result — brief references a result not in our data
+		for (const block of featured.blocks) {
+			if (block.type !== "narrative" && block.type !== "event-line") continue;
+			const text = block.text || "";
+			// Look for "X beat/defeated/drew with Y" patterns
+			const resultVerbs = /(\w[\w\s]+?)\s+(?:beat|defeated|thrashed|demolished|crushed|edged|drew with|held)\s+(\w[\w\s]+?)(?:\s|,|\.|\)|$)/gi;
+			let verbMatch;
+			while ((verbMatch = resultVerbs.exec(text)) !== null) {
+				const team1 = verbMatch[1].trim().toLowerCase();
+				const team2 = verbMatch[2].trim().toLowerCase();
+				if (team1.length < 3 || team2.length < 3) continue;
+				const inData = football.some(m =>
+					(m.homeTeam.toLowerCase().includes(team1) || m.awayTeam.toLowerCase().includes(team1)) &&
+					(m.homeTeam.toLowerCase().includes(team2) || m.awayTeam.toLowerCase().includes(team2))
+				);
+				if (!inData && football.length > 0) {
+					findings.push({
+						severity: "warning",
+						check: "brief_unverified_result",
+						message: `Brief references "${team1}" vs "${team2}" result but no matching data in recent-results.json`,
+					});
+				}
+			}
+		}
+	}
+
 	return findings;
 }
 

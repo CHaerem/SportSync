@@ -104,10 +104,13 @@ RESULTS AWARENESS:
 - Reference recent results for narrative continuity: "After Arsenal's comeback...", "Hovland's T22 at Pebble Beach..."
 - Use results to frame today's stakes — don't just list them
 - Favorite team/player results are marked [FAV] — weave these into the narrative
+- CRITICAL: Results are listed newest-first with explicit dates. Respect chronological order — if Match A was on Feb 10 and Match B on Feb 12, Match B happened AFTER Match A. Never reverse the timeline.
+- Only reference results that appear in the provided data. Do not fabricate or assume results.
 
 STANDINGS INTEGRATION:
 - When a football match involves a top-5 PL team, mention league position or point gap
 - When a golfer is on the leaderboard, mention position
+- CRITICAL: Premier League standings apply to PL teams only. Do not cite PL positions when discussing La Liga, Copa del Rey, or other competitions. Each league has its own context.
 - When F1 standings are tight, reference the championship battle
 
 EXAMPLE COMPOSITIONS:
@@ -250,18 +253,20 @@ export function buildResultsContext(recentResults) {
 	if (!recentResults) return "";
 	const parts = [];
 
-	// Football results
-	const football = recentResults.football || [];
+	// Football results — sorted newest first with explicit dates for chronological accuracy
+	const football = [...(recentResults.football || [])]
+		.sort((a, b) => new Date(b.date) - new Date(a.date))
+		.slice(0, 8);
 	if (football.length > 0) {
-		const lines = football.slice(0, 6).map((m) => {
+		const lines = football.map((m) => {
 			const date = new Date(m.date);
-			const day = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "Europe/Oslo" });
+			const dayDate = date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "Europe/Oslo" });
 			const league = m.league === "Premier League" ? "PL" : m.league === "La Liga" ? "LL" : m.league;
 			const fav = m.isFavorite ? " [FAV]" : "";
 			const recap = m.recapHeadline ? ` — "${m.recapHeadline}"` : "";
-			return `  ${day}: ${m.homeTeam} ${m.homeScore}-${m.awayScore} ${m.awayTeam} (${league})${fav}${recap}`;
+			return `  ${dayDate}: ${m.homeTeam} ${m.homeScore}-${m.awayScore} ${m.awayTeam} (${league})${fav}${recap}`;
 		});
-		parts.push(`Football results:\n${lines.join("\n")}`);
+		parts.push(`Football results (newest first):\n${lines.join("\n")}`);
 	}
 
 	// Golf results
