@@ -1,23 +1,22 @@
 {
-  "generatedAt": "2026-02-14T16:13:55.019Z",
+  "generatedAt": "2026-02-14T18:15:39.784Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 25,
+    "totalEvents": 23,
     "sports": [
       "golf",
-      "olympics",
       "chess",
       "football",
+      "olympics",
       "cs2",
       "f1"
     ],
     "bands": {
       "live": [
         "AT&T Pebble Beach Pro-Am",
-        "Game 2 – FIDE Freestyle Chess World Championship 2026 | Semi Finals"
+        "Game 3 – FIDE Freestyle Chess World Championship 2026 | Semi Finals"
       ],
       "today": [
-        "Alavés at Sevilla",
         "Real Sociedad at Real Madrid"
       ],
       "tomorrow": [
@@ -46,14 +45,12 @@
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": [
-        "Cross-Country Skiing — Women's Relay 4x5km"
-      ]
+      "ended": []
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 67,
+    "editorialScore": 69,
     "issueCount": 2
   },
   "findings": [
@@ -65,17 +62,22 @@
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 67/100 (below threshold)"
+      "message": "Editorial quality score is 69/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Both\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Alpine Slalom\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -89,9 +91,9 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 7,
     "critical": 0,
-    "warning": 6,
+    "warning": 7,
     "info": 0
   },
   "pass": true,

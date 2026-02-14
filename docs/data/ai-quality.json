@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T16:13:47.570Z",
+  "generatedAt": "2026-02-14T18:15:31.463Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
@@ -7,7 +7,7 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 22546,
+    "generationMs": 17720,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,9 +17,9 @@
     }
   },
   "editorial": {
-    "score": 67,
+    "score": 69,
     "metrics": {
-      "mustWatchCoverage": 0.222,
+      "mustWatchCoverage": 0.286,
       "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -27,14 +27,14 @@
       "blockCountTarget": 1
     },
     "issues": [
-      "Only 22% of must-watch events covered in blocks"
+      "Only 29% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 109,
+      "avgScore": 111,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -57,14 +57,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 25,
+      "totalEvents": 23,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.88
+      "tagsCoverage": 0.783
     },
     "after": {
-      "totalEvents": 25,
+      "totalEvents": 23,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -73,10 +73,10 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 3,
-    "aiUpdatedFields": 25,
+    "fallbackFieldsFilled": 5,
+    "aiUpdatedFields": 23,
     "failedBatches": 0,
-    "totalEvents": 25,
+    "totalEvents": 23,
     "hintsApplied": [
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
