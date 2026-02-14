@@ -89,7 +89,7 @@ node scripts/enrich-events.js
 # Generate featured content (requires CLAUDE_CODE_OAUTH_TOKEN)
 node scripts/generate-featured.js
 
-# Run all tests (554 tests across 29 files)
+# Run all tests (975 tests across 43 files)
 npm test
 ```
 

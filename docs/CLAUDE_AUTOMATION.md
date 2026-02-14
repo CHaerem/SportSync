@@ -8,23 +8,23 @@ SportSync uses four Claude Code workflows that form a proactive improvement syst
 
 | Workflow | Role | Trigger | Creates PRs? |
 |----------|------|---------|-------------|
-| **Autopilot** | Proactive improvement | Nightly 03:00 UTC | Yes |
+| **Autopilot** | Proactive improvement | Nightly 01:00 UTC | Yes |
 | **Maintenance** | Read-only health check | Weekly Monday 06:00 UTC | No |
 | **Interactive** | On-demand assistance | `@claude` mentions | Yes |
 | **CI Fix** | Failure recovery | Data workflow fails | Yes |
 
 ## 1. Autopilot (`claude-autopilot.yml`) — Primary Workflow
 
-The autopilot is the main driver of continuous improvement. It reads a prioritized roadmap, picks a task, executes it, and opens a PR — one task per run, one open PR at a time.
+The autopilot autonomously improves the codebase. The roadmap (`AUTOPILOT_ROADMAP.md`) is **self-curated** — the autopilot discovers its own tasks via creative scouting, not just executes human-written ones. It loops through multiple tasks per run.
 
 ### How It Works
 
-1. **Check**: Are there any open `autopilot`-labeled PRs? If yes, skip this run.
-2. **Pick**: Read `AUTOPILOT_ROADMAP.md`, find the first `[PENDING]` task.
-3. **Validate**: Confirm the task fits automation constraints (8 files, 300 lines, allowed paths).
-4. **Execute**: Create branch `claude/improve-*`, make changes, run `npm test`.
-5. **Ship**: Open a PR with label `autopilot`, mark the task `[DONE]` in the roadmap.
-6. **Scout**: Scan for new improvement opportunities and append them as `[PENDING]`.
+1. **Pre-flight**: Run tests, merge stale PRs, read autopilot-log.json for lessons learned.
+2. **Task loop** (repeats until done/blocked): Pick first `[PENDING]` task → validate constraints → branch → code → test → visual validation (screenshot if UI change) → PR → merge → repeat.
+3. **Scout** (maintenance): Read health-report.json, autonomy-report.json, pattern-report.json. Fix test failures, dead code, TODO/FIXME.
+4. **Scout** (creative): Screenshot the dashboard, read RSS/coverage-gaps/quality data. Propose new features, UX improvements, capability expansions.
+5. **Scout** (heuristics): Apply detection patterns A-H from roadmap. Add new heuristics when discovered.
+6. **Self-improve**: Reflect on run effectiveness, file issues for workflow improvements.
 
 ### The Roadmap
 
@@ -40,10 +40,10 @@ The autopilot is the main driver of continuous improvement. It reads a prioritiz
 
 ### Configuration
 
-- **Schedule**: Nightly at 03:00 UTC + manual `workflow_dispatch`
+- **Schedule**: Nightly at 01:00 UTC + manual `workflow_dispatch`
 - **Task override**: Manual runs accept a `task_override` input to execute a specific task
-- **Timeout**: 20 minutes
-- **Max turns**: 15
+- **Timeout**: 30 minutes
+- **Max turns**: 100
 - **Branch prefix**: `claude/improve-`
 - **PR label**: `autopilot`
 

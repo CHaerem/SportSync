@@ -266,7 +266,7 @@ const personalData = await PersonalFetcher.fetch(userPrefs.apiKeys);
 
 ## Testing
 
-279 tests across 18 files (vitest):
+975 tests across 43 files (vitest):
 
 ```bash
 npm test

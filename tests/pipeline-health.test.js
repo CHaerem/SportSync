@@ -234,6 +234,47 @@ describe("generateHealthReport()", () => {
 		});
 		expect(report.resultsHealth.present).toBe(false);
 	});
+
+	it("flags stale critical outputs (featured.json, ai-quality.json)", () => {
+		const staleDate = new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { generatedAt: staleDate },
+				"ai-quality.json": { generatedAt: staleDate },
+			},
+		});
+
+		const staleIssues = report.issues.filter((i) => i.code === "stale_output");
+		expect(staleIssues).toHaveLength(2);
+		expect(staleIssues[0].message).toContain("featured.json");
+		expect(staleIssues[1].message).toContain("ai-quality.json");
+		expect(report.dataFreshness["featured.json"].stale).toBe(true);
+	});
+
+	it("does not flag fresh critical outputs", () => {
+		const freshDate = new Date().toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { generatedAt: freshDate },
+				"ai-quality.json": { generatedAt: freshDate },
+			},
+		});
+
+		const staleIssues = report.issues.filter((i) => i.code === "stale_output");
+		expect(staleIssues).toHaveLength(0);
+		expect(report.dataFreshness["featured.json"].stale).toBe(false);
+	});
+
+	it("handles missing criticalOutputs gracefully", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+		// No criticalOutputs passed — should not crash
+		const staleIssues = report.issues.filter((i) => i.code === "stale_output");
+		expect(staleIssues).toHaveLength(0);
+	});
 });
 
 describe("generateStatusSummary()", () => {

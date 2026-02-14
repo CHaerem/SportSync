@@ -14,7 +14,7 @@ A **static sports dashboard** that runs itself. New major events are auto-detect
 - **Inline team logos** — football crests and golfer headshots in event rows
 - **AI watch plan** — ranked "next 30/60/120 minutes" picks for quick decisions
 - **Live scores** — client-side ESPN polling with pulsing LIVE dot
-- **7 feedback loops** — self-correcting quality, coverage, content, and code health
+- **9 feedback loops** — self-correcting quality, coverage, content, code health, schedule verification, and results health
 - **480px reading column** — phone-width, OLED-ready dark mode
 - **Fully automated** — fresh data every 2 hours, AI content via Claude, nightly code improvements
 
@@ -67,7 +67,7 @@ SportSync has three automation layers:
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│  Autopilot (nightly at 03:00 UTC)                   │
+│  Autopilot (nightly at 01:00 UTC)                   │
 │                                                     │
 │  1. Reads AUTOPILOT_ROADMAP.md task queue           │
 │  2. Branch → implement → test → PR → merge          │
@@ -141,7 +141,7 @@ No human needed at any step.
 docs/                               # GitHub Pages root
 ├── index.html                      # Dashboard (HTML + embedded CSS, 480px max-width)
 ├── js/
-│   ├── dashboard.js                # Dashboard controller (~860 lines)
+│   ├── dashboard.js                # Dashboard controller (~1650 lines)
 │   ├── asset-maps.js               # Team logos + golfer headshot URLs
 │   ├── sport-config.js             # Sport metadata (7 sports)
 │   └── preferences-manager.js      # Favorites + theme (localStorage)
@@ -183,7 +183,7 @@ scripts/
 ├── resolve-coverage-gaps.js        # Auto-creates skeleton configs for gaps
 └── ...                             # Standings, RSS, calendar, validation
 
-tests/                              # 554 tests across 29 files (vitest)
+tests/                              # 975 tests across 43 files (vitest)
 
 .github/workflows/
 ├── update-sports-data.yml          # Data pipeline (every 2 hours)
@@ -205,7 +205,7 @@ npm run dev          # http://localhost:8000
 
 ```bash
 npm run dev              # Local dev server
-npm test                 # Run all tests (554 tests, vitest)
+npm test                 # Run all tests (975 tests, vitest)
 npm run build:events     # Generate events.json from sport files
 npm run generate:featured # Generate featured.json (needs API key or Claude CLI)
 npm run validate:data    # Check data integrity

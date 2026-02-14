@@ -55,7 +55,7 @@ SportSync/
 ├── docs/                 # GitHub Pages root (frontend)
 │   ├── index.html       # Main dashboard (HTML + embedded CSS, 480px max-width)
 │   ├── js/              # Client-side JavaScript
-│   │   ├── dashboard.js          # Dashboard controller (~860 lines): brief, events, live polling
+│   │   ├── dashboard.js          # Dashboard controller (~1650 lines): blocks, events, live polling
 │   │   ├── asset-maps.js         # Team logos + golfer headshot URLs
 │   │   ├── sport-config.js       # Sport metadata (emoji, color, aliases for 7 sports)
 │   │   └── preferences-manager.js # Favorites storage (localStorage)
@@ -71,7 +71,7 @@ SportSync/
 │   ├── detect-coverage-gaps.js   # RSS vs events blind spot detection
 │   └── build-*.js       # Build scripts
 │
-├── tests/               # 279 tests across 18 files (vitest)
+├── tests/               # 975 tests across 43 files (vitest)
 ├── .github/workflows/   # GitHub Actions (data pipeline + autopilot)
 └── package.json         # Project metadata
 ```
@@ -86,7 +86,7 @@ Every 2 hours, GitHub Actions:
 2. Generates individual sport JSON files + fetches standings and RSS
 3. Runs `scripts/build-events.js` to create unified events.json (auto-discovers curated configs)
 4. AI enrichment adds importance, summaries, tags to events
-5. Claude CLI generates featured.json (brief, sections, radar)
+5. Claude CLI generates featured.json (block-based editorial content)
 6. Validates data, runs pipeline health check and quality regression gate
 7. Detects coverage gaps (RSS headlines vs events)
 8. Commits updated files, GitHub Pages automatically deploys
@@ -216,7 +216,7 @@ Most sports use ESPN's public APIs:
 ## Testing
 
 ```bash
-# Run all tests (279 tests across 18 files)
+# Run all tests (975 tests across 43 files)
 npm test
 
 # Validate data structure
@@ -385,7 +385,8 @@ Follow conventional commits:
 
 ### Completed
 - ✅ Ultra-minimal editorial dashboard (480px, system-ui, newspaper aesthetic)
-- ✅ AI editorial brief, featured sections, and radar via Claude CLI
+- ✅ AI editorial blocks (headline, event-line, event-group, narrative, section, divider) via Claude CLI
+- ✅ Multi-day briefings — yesterday recap + tomorrow preview with day navigator
 - ✅ AI event enrichment (importance 1-5, summaries, tags, Norwegian relevance)
 - ✅ AI watch plan (ranked "what to watch" windows)
 - ✅ Live score polling (ESPN football scores + golf leaderboard every 60s)
@@ -393,7 +394,7 @@ Follow conventional commits:
 - ✅ Self-healing pipeline (response validation, health monitoring, quality regression, coverage gaps)
 - ✅ User preferences, favorites, dark mode (localStorage)
 - ✅ Nightly autopilot for continuous improvement
-- ✅ 279 tests across 18 files
+- ✅ 975 tests across 43 files
 
 ## Resources
 

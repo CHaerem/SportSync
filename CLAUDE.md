@@ -57,7 +57,7 @@ This is a hybrid static/dynamic application:
 ### Key Components
 
 - **docs/index.html** - Main dashboard with ultra-minimal embedded CSS (480px max-width)
-- **docs/js/dashboard.js** - Dashboard controller (~950 lines): brief, sections, events, recent results, standings, live polling
+- **docs/js/dashboard.js** - Dashboard controller (~1650 lines): blocks, events, recent results, standings, live polling, day navigator
 - **docs/js/asset-maps.js** - Team logo and golfer headshot URL mappings
 - **docs/js/sport-config.js** - Sport metadata (emoji, color, aliases for 7 sports)
 - **docs/js/preferences-manager.js** - Favorites storage (localStorage)
@@ -75,14 +75,15 @@ This is a hybrid static/dynamic application:
 7. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
 8. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
 9. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
-10. **`build-events.js`** auto-discovers curated configs from `scripts/config/*.json` and merges them into `events.json`
+10. **`build-events.js`** auto-discovers sport files from `docs/data/*.json` by convention (any file with `{ tournaments: [...] }`) and curated configs from `scripts/config/*.json`, merges all into `events.json`
 11. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
-12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (brief, sections)
-13. **`pipeline-health.js`** checks sport coverage, data freshness, RSS/standings/results health → generates `health-report.json`
-14. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
-15. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
-16. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band
-17. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
+12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (block-based editorial). Supports date-specific modes via `SPORTSYNC_FEATURED_DATE` + `SPORTSYNC_FEATURED_MODE` (live/recap/preview)
+13. **`generate-multi-day.js`** orchestrates yesterday's recap and tomorrow's preview as `featured-{YYYY-MM-DD}.json`. Idempotent (skips existing recaps, regenerates stale previews). Cleans up briefings >7 days old
+14. **`pipeline-health.js`** checks sport coverage (auto-discovered), data freshness, critical output freshness (featured.json, ai-quality.json), RSS/standings/results health → generates `health-report.json`
+15. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
+16. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
+17. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band. **Day navigator** lets users browse past/future days, async-loads `featured-{date}.json` for date-specific briefings
+18. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
 
@@ -92,9 +93,11 @@ This is a hybrid static/dynamic application:
 - `npm run enrich` - AI enrichment of events (needs OPENAI_API_KEY or ANTHROPIC_API_KEY)
 - `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
-- `npm test` - Run all tests (vitest, 879 tests across 39 files)
+- `npm run generate:multiday` - Generate yesterday recap + tomorrow preview briefings
+- `npm test` - Run all tests (vitest, 975 tests across 43 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
+- `npm run screenshot` - Take a screenshot of the dashboard (needs Playwright)
 
 ## GitHub Actions Workflow
 
@@ -105,6 +108,7 @@ The **update-sports-data.yml** workflow:
 - **Builds**: events.json (with auto-discovered curated configs from `scripts/config/`)
 - **Enriches**: AI adds importance, summaries, tags to events (OpenAI)
 - **Generates**: featured.json via Claude CLI (CLAUDE_CODE_OAUTH_TOKEN)
+- **Generates**: Multi-day briefings — yesterday recap + tomorrow preview as `featured-{date}.json`
 - **Validates**: Data integrity checks
 - **Monitors**: Pipeline health report, quality regression gate, coverage gap detection
 - **Commits**: Updated JSON files to repository
@@ -141,7 +145,7 @@ docs/
 │   └── preferences-manager.js # Favorites storage (localStorage)
 └── data/                   # Pre-fetched API data (auto-generated)
     ├── events.json         # Unified events feed (includes curated configs + enrichment)
-    ├── featured.json       # AI-generated editorial content (brief, sections, radar)
+    ├── featured.json       # AI-generated editorial content (block-based editorial content)
     ├── standings.json      # ESPN standings (PL table, golf leaderboards, F1 drivers)
     ├── rss-digest.json     # RSS news digest (11 feeds, Norwegian-filtered)
     ├── recent-results.json # Recent completed matches + golf positions (7-day history)
@@ -183,20 +187,22 @@ scripts/
 ├── discover-events.js      # LLM-powered event/athlete discovery (Claude CLI + WebSearch)
 ├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
 ├── enrich-events.js        # LLM enrichment (importance, tags, summaries)
-├── generate-featured.js    # Claude CLI → featured.json (brief, sections, radar)
+├── generate-featured.js    # Claude CLI → featured.json (block-based editorial, supports date modes)
+├── generate-multi-day.js   # Orchestrates recap (yesterday) + preview (tomorrow) briefings
 ├── pipeline-health.js      # Pipeline health report → health-report.json
 ├── check-quality-regression.js # AI quality regression detection
 ├── detect-coverage-gaps.js # RSS vs events coverage gap detection
 ├── merge-open-data.js      # Merges open source + primary data
 ├── verify-schedules.js     # Schedule verification orchestrator → verification-history.json
 ├── validate-events.js      # Data integrity checks
-└── build-ics.js            # Calendar export generator
+├── build-ics.js            # Calendar export generator
+└── screenshot.js           # Dashboard screenshot for visual validation (Playwright)
 
 .github/workflows/
 ├── update-sports-data.yml  # Data pipeline (every 2 hours)
 └── claude-autopilot.yml    # Autonomous improvement agent (nightly)
 
-tests/                      # 879 tests across 39 files (vitest)
+tests/                      # 975 tests across 43 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
@@ -221,9 +227,12 @@ When filtering events by time, **always** use `isEventInWindow(event, windowStar
 ## Extending the Dashboard
 
 To add a new sport:
-1. Add API fetching logic to the GitHub Actions workflow
-2. Add sport config to `docs/js/sport-config.js`
-3. Events will auto-display via sport-organized layout in `dashboard.js`
+1. Write a fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` format to `docs/data/{sport}.json`
+2. Register it in `scripts/fetch/index.js`
+3. Add sport config to `docs/js/sport-config.js` (emoji, color, aliases)
+4. `build-events.js` auto-discovers the sport file by convention — no registration needed
+5. `pipeline-health.js` auto-monitors freshness — no registration needed
+6. Events auto-display via sport-organized layout in `dashboard.js`
 
 To add a curated major event (Olympics, World Cup, etc.):
 1. Create a JSON config in `scripts/config/{event}-{year}.json` (see `olympics-2026.json` for format)
@@ -268,7 +277,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 |-----|-------------|------------|
 | **User feedback loop** | No mechanism for user to signal what they liked/disliked. Watch-plan picks are generated but never rendered in the UI. Without feedback signals, personalization can't evolve. | Medium |
 | **Evolving preferences** | `user-context.json` is static. The system should observe which events the user engages with and adjust sport preferences, favorite teams/players over time. | Medium |
-| **Self-expanding capabilities** | The autopilot fixes known issues from a roadmap, but doesn't yet recognize entirely new capability opportunities (e.g., "users might want push notifications" or "a new sport is trending in Norway"). | Hard |
+| **Self-expanding capabilities** | The autopilot now has creative scouting (opportunity detection, UX improvement, capability seeding heuristics) but hasn't yet demonstrated end-to-end feature creation from a self-discovered opportunity. | Medium |
 | **Resilience hardening** | 24 soft-failure handlers (`|| echo "failed"`) in the pipeline. Failures are swallowed silently — the system should detect, diagnose, and attempt repair autonomously. | Medium |
 | **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
 | **Watch-plan feedback** | Watch-plan picks render in the dashboard but there's no mechanism to capture user reactions (thumbs-up/down). Without this signal, personalization can't learn. | Low |
@@ -287,8 +296,8 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 7. Discovery loop reads updated preferences → adjusts research priorities
 
 **Phase 3 — Self-Expanding Capabilities**
-8. Add "opportunity detection" to autopilot scouting: analyze RSS trends, coverage gaps, and user engagement to identify new features worth building
-9. Let autopilot propose capability expansions (new sports, new data sources, new UI features) as roadmap tasks
+8. ~~Add "opportunity detection" to autopilot scouting~~ — DONE: creative scouting (heuristics F/G/H) reads RSS trends, coverage gaps, dashboard code, and quality data to propose features, UX improvements, and new capabilities
+9. Let autopilot propose AND SHIP capability expansions (new sports, new data sources, new UI features) autonomously — validate with first end-to-end self-discovered feature
 10. Resilience hardening: replace silent failures with structured error reporting → autopilot repair tasks
 
 **Phase 4 — Full Autonomy Proof**
@@ -337,13 +346,16 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 
 ### Autopilot
 
-The autopilot workflow (`claude-autopilot.yml`) proactively improves the codebase using a roadmap-driven approach:
+The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones.
 
-- **Roadmap**: `AUTOPILOT_ROADMAP.md` is the prioritized task queue
-- **Cadence**: Runs nightly at 03:00 UTC
+- **Roadmap**: `AUTOPILOT_ROADMAP.md` is a self-curated task queue — the autopilot adds, prioritizes, and executes tasks
+- **Cadence**: Runs nightly at 01:00 UTC
 - **PR label**: `autopilot`
-- **Multi-task loop**: The autopilot works through PENDING tasks continuously until it runs out of turns, tasks, or hits an error
+- **Multi-task loop**: Works through PENDING tasks continuously until it runs out of turns, tasks, or hits an error
 - **Auto-merge**: Each task is branched, PR'd, and merged immediately after tests pass
-- **Self-curating**: After completing tasks, the autopilot scouts the codebase for new improvement opportunities and appends them to the roadmap
+- **Maintenance scouting**: Reads health-report.json, autonomy-report.json, pattern-report.json, sanity-report.json to detect and repair pipeline issues
+- **Creative scouting**: Reads RSS trends, coverage gaps, quality history, and standings data to propose new features, UX improvements, and capability expansions (heuristics F/G/H in roadmap)
+- **Visual validation**: Takes screenshots of the dashboard via Playwright (`scripts/screenshot.js`) before/after UI changes, reads images to verify visual correctness
+- **Self-improving heuristics**: The scouting heuristics section of the roadmap is updated by the autopilot itself when it discovers new detection patterns
 - **Safe stops**: If tests fail or a merge fails, the loop stops — no broken code gets pushed
 - **Human control**: Reorder tasks in the roadmap to change priority. Mark tasks `[BLOCKED]` to skip them.

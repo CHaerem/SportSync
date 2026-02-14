@@ -15,7 +15,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
@@ -24,6 +24,8 @@ const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user
 
 const VOICE = process.env.SPORTSYNC_VOICE || "";
 const FEATURED_SUFFIX = process.env.SPORTSYNC_FEATURED_SUFFIX || "";
+const FEATURED_DATE = process.env.SPORTSYNC_FEATURED_DATE || ""; // YYYY-MM-DD
+const FEATURED_MODE = process.env.SPORTSYNC_FEATURED_MODE || "live"; // live | recap | preview
 
 function buildVoiceOverride(voice) {
 	const voices = {
@@ -149,6 +151,75 @@ You have access to SportSync data tools and web browsing. Use them to write bett
 - Use WebSearch to look up breaking news, injuries, or context for today's top 1-2 events
 - Keep it focused: max 2 web searches, only for the story of the day
 - Your final response must be ONLY the JSON blocks object
+
+OUTPUT:
+- Return ONLY valid JSON: { "blocks": [...] }
+- No markdown wrapper — raw JSON only${voiceOverride ? `\n\n${voiceOverride}` : ""}`;
+}
+
+function buildRecapSystemPrompt(voice) {
+	const voiceOverride = buildVoiceOverride(voice);
+	return `You are the editor-in-chief of SportSync, a minimal sports dashboard.
+Your job is to COMPOSE a recap of a past day's sports action using layout blocks.
+Return a JSON object with a single "blocks" array.
+
+YOUR EDITORIAL TOOLS (block types):
+1. "headline" — Bold recap headline summarizing the day's story. Max 15 words.
+2. "event-line" — Single result or outcome highlight. Emoji + text. Max 20 words.
+3. "event-group" — Multiple related results under a label. Use for 3+ results from same sport.
+4. "narrative" — 1-2 editorial sentences reflecting on outcomes, surprises, performances. Max 40 words.
+5. "divider" — Section break with label (e.g. "Key Results").
+
+RECAP RULES:
+- Focus on RESULTS: scores, performances, surprises, narrative arcs that concluded
+- Reference actual scores and outcomes from the results data
+- Lead with the biggest story — the result that changed the most
+- Highlight Norwegian athletes' performances prominently
+- Total 3-6 blocks. Be concise — this is a historical record.
+- If nothing notable happened, a 2-block page is fine.
+
+VOICE & PERSPECTIVE:
+- Write like a morning-after sports editor — reflective but punchy
+- English with a Norwegian sports fan perspective
+- Past tense: "Hovland finished T5", "Arsenal won 2-1"
+
+LINE FORMAT:
+- event-line text starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
+- No times needed (it's a recap)
+
+OUTPUT:
+- Return ONLY valid JSON: { "blocks": [...] }
+- No markdown wrapper — raw JSON only${voiceOverride ? `\n\n${voiceOverride}` : ""}`;
+}
+
+function buildPreviewSystemPrompt(voice) {
+	const voiceOverride = buildVoiceOverride(voice);
+	return `You are the editor-in-chief of SportSync, a minimal sports dashboard.
+Your job is to COMPOSE a preview of an upcoming day's sports action using layout blocks.
+Return a JSON object with a single "blocks" array.
+
+YOUR EDITORIAL TOOLS (block types):
+1. "headline" — Bold preview headline. Max 15 words. Use when there's a compelling storyline.
+2. "event-line" — Single event preview. Emoji + text + time. Max 20 words.
+3. "event-group" — Multiple related events under a label. Use for 3+ events from same sport.
+4. "narrative" — 1-2 editorial sentences setting up storylines, stakes. Max 40 words.
+5. "divider" — Section break with label.
+
+PREVIEW RULES:
+- Focus on STORYLINES: what to watch for, stakes, Norwegian angles
+- Include times (24h format) for events
+- Lead with the most anticipated event
+- Total 3-6 blocks. Be concise.
+- If it's a quiet day, a 2-block page is fine.
+
+VOICE & PERSPECTIVE:
+- Write like an anticipatory sports editor — building excitement
+- English with a Norwegian sports fan perspective
+- Future tense: "Hovland tees off at 14:30", "Arsenal face Liverpool"
+
+LINE FORMAT:
+- event-line text starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
+- Use 24h HH:MM times
 
 OUTPUT:
 - Return ONLY valid JSON: { "blocks": [...] }
@@ -289,7 +360,7 @@ export function buildResultsContext(recentResults) {
 	return `\n\nRecent results (last few days):\n${parts.join("\n")}`;
 }
 
-function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults) {
+function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults, mode = "live") {
 	const dateStr = now.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
@@ -302,10 +373,22 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, rece
 	const tomorrowStart = new Date(todayStart.getTime() + MS_PER_DAY);
 	const weekEnd = new Date(todayStart.getTime() + 7 * MS_PER_DAY);
 
-	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, tomorrowStart));
-	const weekEvents = events.filter((e) => isEventInWindow(e, todayStart, weekEnd));
+	// For recap/preview, scope events to the target day only
+	let scopedEvents, scopeLabel;
+	if (mode === "recap") {
+		scopedEvents = events.filter((e) => isEventInWindow(e, todayStart, tomorrowStart));
+		scopeLabel = `Events on ${dateStr}`;
+	} else if (mode === "preview") {
+		scopedEvents = events.filter((e) => isEventInWindow(e, todayStart, new Date(tomorrowStart.getTime() + MS_PER_DAY)));
+		scopeLabel = `Upcoming events on ${dateStr}`;
+	} else {
+		scopedEvents = events.filter((e) => isEventInWindow(e, todayStart, weekEnd));
+		scopeLabel = `Events (next 7 days, max 20 shown)`;
+	}
 
-	const summary = weekEvents
+	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, tomorrowStart));
+
+	const summary = scopedEvents
 		.slice(0, 20)
 		.map((e) => {
 			const t = new Date(e.time);
@@ -335,7 +418,7 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, rece
 
 	// Enrichment context — highlight must-watch events for Claude
 	let enrichmentContext = "";
-	const mustWatch = weekEvents.filter((e) => e.importance >= 4);
+	const mustWatch = scopedEvents.filter((e) => e.importance >= 4);
 	if (mustWatch.length > 0) {
 		const items = mustWatch.slice(0, 5).map((e) => {
 			const s = e.summary ? `: ${e.summary}` : "";
@@ -344,9 +427,29 @@ function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, rece
 		enrichmentContext = `\n\nMust-watch events (importance \u22654):\n${items.join("\n")}`;
 	}
 
-	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${weekEvents.length} this week.
+	if (mode === "recap") {
+		return `This is a RECAP for ${dateStr}. There were ${todayEvents.length} events on this date.
 
-Events (next 7 days, max 20 shown):
+${scopeLabel}:
+${summary || "(no events)"}${standingsContext}${rssContext}${resultsContext}${enrichmentContext}
+
+Compose a recap of what happened on ${dateStr}. Focus on results, key performances, surprises, and narrative arcs that concluded.
+Return ONLY valid JSON: { "blocks": [...] }, no markdown wrapper`;
+	}
+
+	if (mode === "preview") {
+		return `This is a PREVIEW for ${dateStr}. There are ${todayEvents.length} events scheduled.
+
+${scopeLabel}:
+${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${enrichmentContext}
+
+Compose a preview of what's coming on ${dateStr}. Focus on storylines to watch, Norwegian angles, and stakes.
+Return ONLY valid JSON: { "blocks": [...] }, no markdown wrapper`;
+	}
+
+	return `Today is ${dateStr}. There are ${todayEvents.length} events today and ${scopedEvents.length} this week.
+
+${scopeLabel}:
 ${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${resultsContext}${enrichmentContext}
 
 Generate the editorial zone as a blocks array matching this schema:
@@ -391,7 +494,7 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 	}
 }
 
-function parseResponseJSON(rawContent) {
+export function parseResponseJSON(rawContent) {
 	try {
 		return JSON.parse(rawContent);
 	} catch {
@@ -401,14 +504,14 @@ function parseResponseJSON(rawContent) {
 	}
 }
 
-function toFeaturedShape(result) {
+export function toFeaturedShape(result) {
 	if (Array.isArray(result?.blocks)) {
 		return { blocks: result.blocks };
 	}
 	return { blocks: [] };
 }
 
-function looksLikeMajorEvent(event) {
+export function looksLikeMajorEvent(event) {
 	const haystack = `${event?.context || ""} ${event?.tournament || ""} ${event?.title || ""}`;
 	return /olympics|world cup|champions league|grand slam|masters|major|playoff|final/i.test(haystack);
 }
@@ -485,7 +588,7 @@ function generateFallbackThisWeek(events, now, sectionSports = []) {
 	return parts.slice(0, 3);
 }
 
-function buildFallbackFeatured(events, now) {
+export function buildFallbackFeatured(events, now) {
 	const blocks = [];
 
 	// Today event lines
@@ -525,7 +628,7 @@ function buildFallbackFeatured(events, now) {
 	return { blocks };
 }
 
-function fallbackLine(e) {
+export function fallbackLine(e) {
 	const time = new Date(e.time).toLocaleTimeString("en-NO", {
 		hour: "2-digit",
 		minute: "2-digit",
@@ -611,13 +714,22 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 async function main() {
 	const dataDir = rootDataPath();
 	const eventsPath = path.join(dataDir, "events.json");
-	const featuredFile = FEATURED_SUFFIX ? `featured-${FEATURED_SUFFIX}.json` : "featured.json";
+
+	// Determine output file: date-specific files for multi-day, otherwise default
+	const isDateMode = !!FEATURED_DATE;
+	const featuredFile = isDateMode
+		? `featured-${FEATURED_DATE}.json`
+		: (FEATURED_SUFFIX ? `featured-${FEATURED_SUFFIX}.json` : "featured.json");
 	const featuredPath = path.join(dataDir, featuredFile);
 	const watchPlanPath = path.join(dataDir, "watch-plan.json");
 	const qualityPath = path.join(dataDir, "ai-quality.json");
 
+	// Skip watch-plan and quality tracking for non-live modes
+	const isLiveMode = !isDateMode && FEATURED_MODE === "live";
+
 	if (VOICE) console.log(`Voice override: ${VOICE}`);
 	if (FEATURED_SUFFIX) console.log(`Output file: ${featuredFile}`);
+	if (isDateMode) console.log(`Date mode: ${FEATURED_DATE} (${FEATURED_MODE})`);
 
 	const events = readJsonIfExists(eventsPath);
 	if (!events || !Array.isArray(events) || events.length === 0) {
@@ -645,7 +757,11 @@ async function main() {
 		return;
 	}
 
-	const now = new Date();
+	// For date mode, construct the target date; otherwise use current time
+	const now = isDateMode ? (() => {
+		const [y, m, d] = FEATURED_DATE.split("-").map(Number);
+		return new Date(y, m - 1, d, 12, 0, 0); // noon on target date
+	})() : new Date();
 	const userContext = readJsonIfExists(USER_CONTEXT_PATH) || {};
 	const curatedConfigs = loadCuratedConfigs();
 	if (curatedConfigs.length > 0) {
@@ -671,22 +787,31 @@ async function main() {
 		console.log(`Loaded recent-results.json: ${fCount} football results.`);
 	}
 
-	const systemPrompt = buildSystemPrompt(VOICE);
-	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults);
+	const systemPrompt = FEATURED_MODE === "recap"
+		? buildRecapSystemPrompt(VOICE)
+		: FEATURED_MODE === "preview"
+			? buildPreviewSystemPrompt(VOICE)
+			: buildSystemPrompt(VOICE);
+	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults, FEATURED_MODE);
 
-	// Adaptive hints: read recent quality history and inject corrective instructions
-	const historyPath = path.join(dataDir, "quality-history.json");
-	const qualityHistory = readJsonIfExists(historyPath) || [];
-	const { hints: adaptiveHints } = buildAdaptiveHints(qualityHistory);
-	const { hints: resultsHints } = buildResultsHints(qualityHistory);
-	const sanityReportPath = path.join(dataDir, "sanity-report.json");
-	const sanityReport = readJsonIfExists(sanityReportPath);
-	const { hints: sanityHints, findingCount: sanityFindingCount } = buildSanityHints(sanityReport);
-	const allHints = [...adaptiveHints, ...resultsHints, ...sanityHints];
-	if (allHints.length > 0) {
-		console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity)`);
-		for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
-		baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${allHints.map((h) => `- ${h}`).join("\n")}`;
+	// Adaptive hints: only for live mode (recap/preview don't need quality corrections)
+	let allHints = [];
+	let sanityReport = null;
+	let qualityHistory = [];
+	if (isLiveMode) {
+		const historyPath = path.join(dataDir, "quality-history.json");
+		qualityHistory = readJsonIfExists(historyPath) || [];
+		const { hints: adaptiveHints } = buildAdaptiveHints(qualityHistory);
+		const { hints: resultsHints } = buildResultsHints(qualityHistory);
+		const sanityReportPath = path.join(dataDir, "sanity-report.json");
+		sanityReport = readJsonIfExists(sanityReportPath);
+		const { hints: sanityHints } = buildSanityHints(sanityReport);
+		allHints = [...adaptiveHints, ...resultsHints, ...sanityHints];
+		if (allHints.length > 0) {
+			console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity)`);
+			for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
+			baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${allHints.map((h) => `- ${h}`).join("\n")}`;
+		}
 	}
 
 	let featured = null;
@@ -747,10 +872,19 @@ async function main() {
 	const finalQuality = validateFeaturedContent(featured, { events });
 	featured = finalQuality.normalized;
 
+	// Add _meta for date-specific briefings
+	if (isDateMode) {
+		featured._meta = {
+			date: FEATURED_DATE,
+			mode: FEATURED_MODE,
+			generatedAt: new Date().toISOString(),
+		};
+	}
+
 	writeJsonPretty(featuredPath, featured);
 
-	// Only write watch-plan and quality for the main featured.json (not voice variants)
-	if (!FEATURED_SUFFIX) {
+	// Only write watch-plan and quality for the main live featured.json (not voice variants or date modes)
+	if (isLiveMode && !FEATURED_SUFFIX) {
 		const generationMs = Date.now() - generationStart;
 		const watchPlan = buildWatchPlan(events, {
 			now,
@@ -798,6 +932,7 @@ async function main() {
 		});
 
 		// Append snapshot to quality history
+		const historyPath = path.join(dataDir, "quality-history.json");
 		const history = readJsonIfExists(historyPath) || qualityHistory;
 		const enrichmentTokens = existingQuality?.enrichment?.tokenUsage || null;
 		const totalInput = (enrichmentTokens?.input || 0) + (featuredTokenUsage.input || 0);
@@ -833,7 +968,7 @@ async function main() {
 	console.log(
 		`Featured content generated (${featuredFile}): ${blockCount} blocks.`
 	);
-	if (!FEATURED_SUFFIX) {
+	if (isLiveMode && !FEATURED_SUFFIX) {
 		const watchPlanData = readJsonIfExists(watchPlanPath);
 		if (watchPlanData) {
 			console.log(

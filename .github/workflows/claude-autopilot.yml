@@ -34,6 +34,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Install Playwright for visual validation
+        run: npx playwright install chromium --with-deps
+
       - name: Check quota headroom
         id: quota
         env:
@@ -137,7 +140,11 @@ jobs:
             2. Make the changes following your plan from 1a½
             3. Run `npm test` — if tests fail, revert ALL changes, create a GitHub
                issue, and STOP the loop (don't attempt more tasks)
-            4. Commit with a descriptive message
+            4. If you changed any UI code (index.html, dashboard.js, CSS), run visual
+               validation: `node scripts/screenshot.js docs/data/screenshot.png --full-page`
+               then read `docs/data/screenshot.png` to verify the dashboard looks correct.
+               If it looks broken, fix the issue before committing.
+            5. Commit with a descriptive message
 
             ### 1b½. Decompose if stuck
             If you've spent significant effort on a task and it's clearly not
@@ -164,16 +171,73 @@ jobs:
 
             Then loop back to pick the next PENDING task.
 
-            ## Step 2: Scout for new tasks
+            ## Step 2: Scout for improvements
 
-            After the task loop ends (all done, or stopped), scan the codebase for
-            new improvement opportunities:
+            After the task loop ends, perform TWO kinds of scouting. You are not
+            just a maintenance bot — you are responsible for making the dashboard
+            genuinely better every night.
+
+            ### 2a. Maintenance scouting
             - Run `npm test` and note any issues
             - Scan for TODO/FIXME comments
-            - Look for dead code, missing tests, accessibility gaps, performance wins
+            - Look for dead code, missing tests, accessibility gaps
             - Check for new patterns or issues introduced by the tasks you just completed
+            - Read `docs/data/health-report.json` — if status is "warning" or "critical",
+              the issues array describes what's wrong. Create repair tasks for persistent issues.
+            - Read `docs/data/autonomy-report.json` — if any loop score dropped or overall
+              score decreased, investigate and create a task to fix the regression.
+            - Read `docs/data/pattern-report.json` if it exists — recurring patterns
+              or anomalies may indicate systemic issues worth addressing.
 
-            Append any discoveries to `AUTOPILOT_ROADMAP.md` as `[PENDING]` tasks
+            ### 2b. Creative scouting — features, UX, and capabilities
+
+            Read these data signals to understand the current state of the product:
+            - `docs/data/rss-digest.json` — what sports topics are trending right now?
+            - `docs/data/coverage-gaps.json` — what events are in the news but missing?
+            - `docs/data/quality-history.json` — are quality scores improving or stagnating?
+            - `docs/data/watch-plan.json` — what picks are being generated?
+            - `scripts/config/user-context.json` — what does the user care about?
+            - `docs/data/events.json` — what data is available?
+            - `docs/data/standings.json` — what standings data exists?
+            - `docs/data/recent-results.json` — what results are being tracked?
+
+            Then look at the actual dashboard:
+            - Run `node scripts/screenshot.js docs/data/screenshot.png --full-page`
+            - Read `docs/data/screenshot.png` — you can SEE the dashboard as an image
+            - Also read `docs/index.html` and `docs/js/dashboard.js` for the code
+
+            Ask yourself these questions:
+            1. **Data → UI gaps**: Is there useful data in the pipeline that the dashboard
+               doesn't show? (e.g., standings data exists but isn't rendered inline,
+               results are fetched but not surfaced prominently)
+            2. **Feature opportunities**: Based on RSS trends and coverage gaps, would a
+               new data source or sport improve the experience? If so, create a task to
+               write the fetcher — it auto-flows into events.json if it uses the standard
+               `{ tournaments: [...] }` format.
+            3. **Visual improvements**: Read the HTML/CSS and dashboard.js render methods.
+               Is the layout making the best use of the data? Could the visual hierarchy
+               be improved? Are must-watch events prominent enough? Is the design consistent?
+            4. **Missing interactions**: Are there actions the user would want to take that
+               the dashboard doesn't support? (e.g., filtering, sorting, linking to streams)
+            5. **Editorial quality**: Read `featured.json` and the quality scores. Is the
+               editorial content compelling? Could the prompt or fallback logic be improved?
+            6. **New capability seeds**: Could a small addition unlock a larger capability?
+               (e.g., adding a small data export enables a future feedback loop)
+
+            For each idea, evaluate: does it fit within automation limits (≤8 files,
+            ≤300 lines)? If yes, create a `[PENDING]` task. If it's larger, decompose it
+            into shippable increments.
+
+            Prioritize tasks that improve the EXPERIENCE LANE in the roadmap — user-facing
+            improvements matter more than internal cleanups.
+
+            ### 2c. Scouting heuristics
+
+            Apply the detection patterns in the `Scouting Heuristics` section of
+            `AUTOPILOT_ROADMAP.md`. If you discover new detection patterns during this
+            run, add them to that section so future runs benefit.
+
+            Append all discoveries to `AUTOPILOT_ROADMAP.md` as `[PENDING]` tasks
             in the appropriate priority section. Be specific — include file paths,
             line numbers, and concrete descriptions. Commit and push to main.
 
@@ -184,6 +248,8 @@ jobs:
             - Did a task take longer than expected? What would have helped?
             - Are there workflow improvements that would make future runs more efficient?
             - Are the scouting heuristics in the roadmap missing patterns you noticed?
+            - Did you discover a new category of improvement that the scouting prompts
+              don't cover? Propose adding it.
 
             For any actionable improvement to the autopilot workflow itself (turn limits,
             prompt changes, new scouting heuristics, tooling gaps), create a GitHub issue:
@@ -192,9 +258,6 @@ jobs:
             You CANNOT modify `.github/workflows/` directly (protected path), but issues
             let the human know what changes would help. Be specific — include data from
             this run (turns used, tasks completed, time spent) to justify the suggestion.
-
-            Also update the Scouting Heuristics section in `AUTOPILOT_ROADMAP.md` if you
-            discovered new detection patterns worth applying in future runs.
 
             ## Status log format
 

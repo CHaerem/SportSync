@@ -137,6 +137,21 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 2b. Critical output freshness (featured.json, ai-quality.json)
+	const { criticalOutputs = {} } = options;
+	for (const [name, data] of Object.entries(criticalOutputs)) {
+		const age = ageMinutes(data?.generatedAt || data?.timestamp);
+		const stale = age > STALE_THRESHOLD_MINUTES;
+		dataFreshness[name] = { ageMinutes: Math.round(age), stale };
+		if (stale) {
+			issues.push({
+				severity: "warning",
+				code: "stale_output",
+				message: `${name}: critical output is ${Math.round(age)} minutes old`,
+			});
+		}
+	}
+
 	// 3. Schema completeness
 	const schemaCompleteness = checkSchemaCompleteness(events);
 
@@ -280,11 +295,21 @@ async function main() {
 	const recentResults = readJsonIfExists(path.join(dataDir, "recent-results.json"));
 	const previousReport = readJsonIfExists(path.join(dataDir, "health-report.json"));
 
-	const sportFileNames = ["football.json", "golf.json", "tennis.json", "f1.json", "chess.json", "esports.json"];
+	// Auto-discover sport files by convention: any JSON with { tournaments: [...] }
 	const sportFiles = {};
-	for (const name of sportFileNames) {
-		sportFiles[name] = readJsonIfExists(path.join(dataDir, name));
+	const allJsonFiles = fs.readdirSync(dataDir).filter(f => f.endsWith('.json'));
+	for (const name of allJsonFiles) {
+		const data = readJsonIfExists(path.join(dataDir, name));
+		if (data && Array.isArray(data.tournaments)) {
+			sportFiles[name] = data;
+		}
 	}
+
+	// Check critical pipeline outputs for freshness
+	const criticalOutputs = {
+		"featured.json": readJsonIfExists(path.join(dataDir, "featured.json")),
+		"ai-quality.json": readJsonIfExists(path.join(dataDir, "ai-quality.json")),
+	};
 
 	const report = generateHealthReport({
 		events: eventsData,
@@ -293,6 +318,7 @@ async function main() {
 		recentResults,
 		previousReport,
 		sportFiles,
+		criticalOutputs,
 	});
 
 	// Generate autonomy scorecard alongside health report

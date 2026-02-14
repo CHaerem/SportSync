@@ -124,11 +124,18 @@ async function main() {
 	let enrichedCount = 0;
 	let failedBatches = 0;
 
-	if (llmAvailable) {
-		for (let i = 0; i < events.length; i += BATCH_SIZE) {
-			const batch = events.slice(i, i + BATCH_SIZE);
+	// Filter to only events needing enrichment (skip already-enriched)
+	const needsEnrichment = events.filter(e => !e.enrichedAt);
+	const alreadyEnriched = events.length - needsEnrichment.length;
+	if (alreadyEnriched > 0) {
+		console.log(`Skipping ${alreadyEnriched} already-enriched events.`);
+	}
+
+	if (llmAvailable && needsEnrichment.length > 0) {
+		for (let i = 0; i < needsEnrichment.length; i += BATCH_SIZE) {
+			const batch = needsEnrichment.slice(i, i + BATCH_SIZE);
 			const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-			const totalBatches = Math.ceil(events.length / BATCH_SIZE);
+			const totalBatches = Math.ceil(needsEnrichment.length / BATCH_SIZE);
 
 			console.log(
 				`Enriching batch ${batchNum}/${totalBatches} (${batch.length} events)...`
@@ -151,7 +158,7 @@ async function main() {
 
 				for (let j = 0; j < batch.length; j++) {
 					const e = enrichments[j];
-					const event = events[i + j];
+					const event = needsEnrichment[i + j];
 
 					// Validate and merge
 					if (typeof e.importance === "number" && e.importance >= 1 && e.importance <= 5) {

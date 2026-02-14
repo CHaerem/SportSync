@@ -1,6 +1,6 @@
 # Autopilot Roadmap
 
-Prioritized task queue for the Claude autopilot workflow. The autopilot picks the first `[PENDING]` task, executes it, and opens a PR. Reorder tasks to change priority. One task per run, one open PR at a time.
+Self-curated task queue for the Claude autopilot workflow. The autopilot discovers tasks via creative scouting, picks the first `[PENDING]` task, executes it, and opens a PR. It loops through multiple tasks per run. Reorder tasks to change priority.
 
 ## Task Format
 
@@ -59,6 +59,49 @@ Read `docs/data/pattern-report.json` (generated every 2h by `scripts/analyze-pat
 - **`autopilot_failure_pattern`** — Tasks are failing repeatedly. Mark them `[BLOCKED]` with a reason, or investigate the common failure mode.
 
 **How to check:** Read `pattern-report.json`, filter for `severity: "high"`, and create one task per pattern. Use the `suggestion` field as the task description.
+
+### F. Opportunity Detection (RSS + Coverage Gaps)
+
+Identify new sports, events, or data sources the dashboard should cover based on what's trending in the news but missing from the data.
+
+**How to check:** Read `docs/data/rss-digest.json` and `docs/data/coverage-gaps.json`. Look for:
+- A sport or event mentioned repeatedly in RSS that has no fetcher or curated config
+- Norwegian athletes in the news who aren't tracked in `user-context.json`
+- A new league/tour season starting that needs a config (e.g., OBOS-ligaen spring season)
+
+**Action:** Create a task to add the data source. For API-backed sports, this means writing a new fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` — it auto-flows into events.json. For event-based sports, create a curated config in `scripts/config/`.
+
+**Example:** RSS shows multiple cycling headlines about Tour of Norway with a Norwegian stage winner → create task to add cycling fetcher using a public cycling API or curated config.
+
+### G. Dashboard UX Improvement
+
+Read the dashboard code (`docs/index.html`, `docs/js/dashboard.js`) and reason about the user experience. The dashboard is the entire product — visual improvements directly impact value.
+
+**How to check:**
+- Read the HTML structure and CSS. Is the visual hierarchy clear? Are must-watch events visually distinct from minor ones?
+- Read the `render*()` methods in dashboard.js. Is data being presented in the most useful format?
+- Check what data exists in `events.json`, `standings.json`, `watch-plan.json`, `recent-results.json` but isn't rendered or is underutilized.
+- Look at the mobile experience (480px max-width constraint). Does the layout work well at that width?
+
+**Action:** Create tasks for specific visual or interaction improvements. Each task should describe WHAT changes, WHERE in the code, and WHY it improves the experience. Keep tasks small (≤300 lines) and independently shippable.
+
+**Examples:**
+- "Standings data exists but only appears in editorial brief text — add collapsible inline PL table widget to football section"
+- "Must-watch events use subtle accent background but could have a more prominent visual treatment — add a ★ badge or border style"
+- "Recent results band is collapsed by default — experiment with showing the most recent favorite-team result prominently"
+
+### H. New Capability Seeding
+
+Look for small additions that enable larger future capabilities. The best autonomous improvements are ones that create stepping stones.
+
+**How to check:** Read `CLAUDE.md` Phase 1-4 roadmap and the blocked tasks below. Ask: is there a small, shippable change (≤300 lines) that partially unblocks something larger?
+
+**Action:** Create tasks that are independently valuable AND unlock future work. Clearly note in the task description what larger capability this enables.
+
+**Examples:**
+- "Add a lightweight event-click counter in dashboard.js (localStorage) — enables future preference evolution by tracking which sports/events the user actually engages with" (stepping stone for Phase 2)
+- "Write a `scripts/export-engagement.js` that reads localStorage engagement data on next page load and writes to a data file — bridges client-side signals to the server-side pipeline" (stepping stone for feedback loop)
+- "Add configurable dashboard sections order in user-context.json — enables future personalization of which sports appear first"
 
 ---
 
@@ -192,15 +235,14 @@ Build pipeline auto-discovers config → merges events into events.json
                                         ↓
 generate-featured.js reads events.json + curated configs → calls Claude API
                                         ↓
-Claude generates featured.json (brief, sections, radar)
+Claude generates featured.json (block-based editorial content)
                                         ↓
 Dashboard renders featured.json flexibly — no frontend changes needed
 ```
 
 **`featured.json` schema:**
-- **brief**: 2-3 editorial lines summarizing the day
-- **sections**: dynamic featured content blocks (types: "stat", "event", "text")
-- **radar**: 2-3 "on the radar" sentences about upcoming events
+- **blocks**: array of editorial blocks (types: "headline", "event-line", "event-group", "narrative", "section", "divider")
+- Date-specific briefings: `featured-{YYYY-MM-DD}.json` with `_meta.date` and `_meta.mode` (recap/preview)
 
 ### Autonomous Autopilot Directive
 
@@ -360,7 +402,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [BLOCKED] depends on engagement tracking + data export | Add preference evolution pipeline script — New script to read engagement data and update `user-context.json` sport weights. Requires a mechanism to get client-side localStorage data back to the pipeline.
 
-- [BLOCKED] protected path — requires autopilot workflow/prompt modification | Add opportunity detection to autopilot scouting — After completing roadmap tasks, analyze RSS trends + coverage gaps + engagement signals to identify new features or data sources worth adding.
+- [DONE] (manual session) Add opportunity detection to autopilot scouting — Expanded Step 2 scouting prompt with creative scouting (2b): reads RSS, coverage gaps, quality history, standings, and dashboard code to propose features, UX improvements, and new capabilities. Added heuristics F (opportunity detection), G (dashboard UX), H (capability seeding) to roadmap.
 
 - [BLOCKED] protected path — all `|| echo "failed"` handlers are in `.github/workflows/update-sports-data.yml` | Replace silent pipeline failures with structured error reporting — Requires workflow file modification which is a protected path.
 

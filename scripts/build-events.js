@@ -1,10 +1,20 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath, MS_PER_HOUR } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY } from "./lib/helpers.js";
 
 const dataDir = rootDataPath();
-const sports = ["football", "golf", "tennis", "f1", "chess", "esports"];
+
+// Auto-discover sport files by convention: any JSON with a { tournaments: [...] } structure
+const dataFiles = fs.readdirSync(dataDir).filter(f => f.endsWith('.json'));
+const sports = [];
+for (const f of dataFiles) {
+	const data = readJsonIfExists(path.join(dataDir, f));
+	if (data && Array.isArray(data.tournaments)) {
+		sports.push(f.replace('.json', ''));
+	}
+}
+
 const all = [];
 
 function pushEvent(ev, sport, tournament) {
@@ -64,8 +74,8 @@ if (fs.existsSync(configDir)) {
 		});
 	}
 }
-// Keep events that are ongoing or upcoming (use endTime for multi-day events)
-const now = Date.now() - 6 * MS_PER_HOUR;
+// Keep events from the last 14 days + upcoming (for day navigator history)
+const now = Date.now() - 14 * MS_PER_DAY;
 const future = all.filter((e) => {
 	if (!e.time) return false;
 	const relevantTime = e.endTime ? Date.parse(e.endTime) : Date.parse(e.time);

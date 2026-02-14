@@ -155,6 +155,7 @@ describe("dashboard.js key classes used in CSS", () => {
 		"day-nav-label",
 		"day-nav-date-input",
 		"date-empty",
+		"briefing-mode-label",
 	];
 
 	for (const cls of keyClasses) {

@@ -17,6 +17,8 @@
     "enrich": "node scripts/enrich-events.js",
     "fetch:results": "node scripts/fetch-results.js",
     "generate:featured": "node scripts/generate-featured.js",
+    "generate:multiday": "node scripts/generate-multi-day.js",
+    "screenshot": "node scripts/screenshot.js",
     "clean": "rm -rf docs/data/*.json docs/data/*.ics",
     "refresh": "npm run clean && npm run build"
   },

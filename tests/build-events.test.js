@@ -52,9 +52,6 @@ describe("build-events.js", () => {
 				},
 			],
 		});
-		for (const sport of ["tennis", "f1", "chess", "esports"]) {
-			writeSportFile(sport, { tournaments: [] });
-		}
 
 		const events = runBuildEvents();
 		expect(events).toHaveLength(2);
@@ -63,23 +60,41 @@ describe("build-events.js", () => {
 		expect(events.find((e) => e.sport === "golf")).toBeTruthy();
 	});
 
-	it("filters out past events", () => {
-		const pastTime = new Date(Date.now() - 12 * 3600000).toISOString();
+	it("retains events from the last 14 days", () => {
+		const recentPast = new Date(Date.now() - 3 * 24 * 3600000).toISOString(); // 3 days ago
 		const futTime = futureTime();
 		writeSportFile("football", {
 			tournaments: [
 				{
 					name: "Test",
 					events: [
-						{ title: "Past Game", time: pastTime },
+						{ title: "Recent Past Game", time: recentPast },
 						{ title: "Future Game", time: futTime },
 					],
 				},
 			],
 		});
-		for (const sport of ["golf", "tennis", "f1", "chess", "esports"]) {
-			writeSportFile(sport, { tournaments: [] });
-		}
+
+		const events = runBuildEvents();
+		expect(events).toHaveLength(2);
+		expect(events.find(e => e.title === "Recent Past Game")).toBeTruthy();
+		expect(events.find(e => e.title === "Future Game")).toBeTruthy();
+	});
+
+	it("filters out events older than 14 days", () => {
+		const oldPast = new Date(Date.now() - 15 * 24 * 3600000).toISOString(); // 15 days ago
+		const futTime = futureTime();
+		writeSportFile("football", {
+			tournaments: [
+				{
+					name: "Test",
+					events: [
+						{ title: "Old Game", time: oldPast },
+						{ title: "Future Game", time: futTime },
+					],
+				},
+			],
+		});
 
 		const events = runBuildEvents();
 		expect(events).toHaveLength(1);
@@ -107,9 +122,6 @@ describe("build-events.js", () => {
 				},
 			],
 		});
-		for (const sport of ["golf", "tennis", "f1", "chess", "esports"]) {
-			writeSportFile(sport, { tournaments: [] });
-		}
 
 		const events = runBuildEvents();
 		expect(events).toHaveLength(1);
@@ -135,12 +147,55 @@ describe("build-events.js", () => {
 				},
 			],
 		});
-		for (const sport of ["golf", "tennis", "f1", "chess", "esports"]) {
-			writeSportFile(sport, { tournaments: [] });
-		}
 
 		const events = runBuildEvents();
 		expect(events[0].title).toBe("Earlier Game");
 		expect(events[1].title).toBe("Later Game");
+	});
+
+	it("auto-discovers sport files by tournaments convention", () => {
+		const time = futureTime();
+		// Write a non-standard sport file with tournaments array
+		writeSportFile("cycling", {
+			tournaments: [
+				{
+					name: "Tour de France",
+					events: [{ title: "Stage 1", time }],
+				},
+			],
+		});
+		writeSportFile("football", {
+			tournaments: [
+				{
+					name: "PL",
+					events: [{ title: "Arsenal vs Chelsea", time }],
+				},
+			],
+		});
+
+		const events = runBuildEvents();
+		expect(events.find((e) => e.sport === "cycling")).toBeTruthy();
+		expect(events.find((e) => e.sport === "football")).toBeTruthy();
+		expect(events).toHaveLength(2);
+	});
+
+	it("ignores non-sport JSON files (no tournaments array)", () => {
+		const time = futureTime();
+		writeSportFile("football", {
+			tournaments: [
+				{
+					name: "PL",
+					events: [{ title: "Arsenal vs Chelsea", time }],
+				},
+			],
+		});
+		// Write files that should NOT be discovered
+		fs.writeFileSync(path.join(tmpDataDir, "events.json"), JSON.stringify([]));
+		fs.writeFileSync(path.join(tmpDataDir, "meta.json"), JSON.stringify({ lastUpdated: new Date().toISOString() }));
+		fs.writeFileSync(path.join(tmpDataDir, "standings.json"), JSON.stringify({ football: {} }));
+
+		const events = runBuildEvents();
+		expect(events).toHaveLength(1);
+		expect(events[0].sport).toBe("football");
 	});
 });

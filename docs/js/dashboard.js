@@ -17,7 +17,6 @@ class Dashboard {
 		this.standings = null;
 		this.watchPlan = null;
 		this.rssDigest = null;
-		this.recentResults = null;
 		this.expandedId = null;
 		this.liveScores = {};      // { eventId: { home, away, clock, state } }
 		this.liveLeaderboard = null; // golf live leaderboard
@@ -65,7 +64,6 @@ class Dashboard {
 		const cachedStandings = this._cacheGet('standings', STATIC_TTL);
 		const cachedWatchPlan = this._cacheGet('watchPlan', STATIC_TTL);
 		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
-		const cachedResults = this._cacheGet('recentResults', STATIC_TTL);
 
 		// Always fetch meta.json for freshness display (tiny, not cached)
 		fetch('data/meta.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
@@ -78,20 +76,18 @@ class Dashboard {
 			this.standings = cachedStandings;
 			this.watchPlan = cachedWatchPlan;
 			this.rssDigest = cachedRssDigest;
-			this.recentResults = cachedResults;
 			this.render();
 			return;
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, resultsResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
 				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
 				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null),
-				fetch('data/meta.json?t=' + Date.now()).catch(() => null),
-				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null)
+				fetch('data/meta.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -138,10 +134,6 @@ class Dashboard {
 				try { this.rssDigest = await rssDigestResp.json(); } catch { this.rssDigest = null; }
 			}
 
-			if (resultsResp && resultsResp.ok) {
-				try { this.recentResults = await resultsResp.json(); } catch { this.recentResults = null; }
-			}
-
 			if (metaResp && metaResp.ok) {
 				try { this.meta = await metaResp.json(); } catch { this.meta = null; }
 			}
@@ -151,7 +143,6 @@ class Dashboard {
 			this._cacheSet('standings', this.standings);
 			this._cacheSet('watchPlan', this.watchPlan);
 			this._cacheSet('rssDigest', this.rssDigest);
-			this._cacheSet('recentResults', this.recentResults);
 
 			this.render();
 		} catch (err) {
@@ -304,6 +295,31 @@ class Dashboard {
 		}
 	}
 
+	// --- Date briefing loading ---
+
+	_dateKey(date) {
+		const y = date.getFullYear();
+		const m = String(date.getMonth() + 1).padStart(2, '0');
+		const d = String(date.getDate()).padStart(2, '0');
+		return `${y}-${m}-${d}`;
+	}
+
+	async loadDateBriefing(dateKey) {
+		// Check session cache first (5 min TTL)
+		const cached = this._cacheGet('featured_' + dateKey, 5 * 60 * 1000);
+		if (cached) return cached;
+
+		try {
+			const resp = await fetch(`data/featured-${dateKey}.json?t=${Date.now()}`);
+			if (!resp.ok) return null;
+			const data = await resp.json();
+			this._cacheSet('featured_' + dateKey, data);
+			return data;
+		} catch {
+			return null;
+		}
+	}
+
 	// --- Rendering ---
 
 	render() {
@@ -312,19 +328,23 @@ class Dashboard {
 		const isToday = this._isViewingToday();
 		this.renderEditorial();
 		this.renderWatchPlan();
-		this.renderRecentResults();
 		this.renderEvents();
 		this.renderNews();
 
 		// Hide today-centric sections on non-today dates
-		const todayOnlySections = ['the-brief', 'featured-sections', 'watch-plan', 'news'];
+		const todayOnlySections = ['watch-plan', 'news'];
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
 		}
-		// Show/hide recent-results based on date
-		const resultsSection = document.getElementById('recent-results');
-		if (resultsSection) resultsSection.style.display = isToday ? '' : 'none';
+
+		// For non-today dates, async-load date-specific briefings
+		if (!isToday) {
+			const dateKey = this._dateKey(this._getSelectedDate());
+			this.loadDateBriefing(dateKey).then(briefing => {
+				this.renderEditorial(briefing);
+			});
+		}
 	}
 
 	renderDateLine() {
@@ -356,10 +376,46 @@ class Dashboard {
 		return this.featured.blocks;
 	}
 
-	renderEditorial() {
+	renderEditorial(dateBriefing) {
 		const briefEl = document.getElementById('the-brief');
 		const sectionsEl = document.getElementById('featured-sections');
+		const isToday = this._isViewingToday();
 
+		// For non-today dates with a date-specific briefing
+		if (!isToday && dateBriefing) {
+			const blocks = Array.isArray(dateBriefing.blocks) ? dateBriefing.blocks : [];
+			const mode = dateBriefing._meta?.mode;
+			const modeLabel = mode === 'recap' ? "Yesterday's Recap"
+				: mode === 'preview' ? "Tomorrow's Preview"
+				: this._getSelectedDate().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+
+			let html = `<div class="briefing-mode-label">${this.esc(modeLabel)}</div>`;
+			html += blocks.filter(b => b.type !== 'section').map(block => this.renderBlock(block)).join('');
+			briefEl.innerHTML = html;
+			briefEl.style.display = '';
+
+			const sectionBlocks = blocks.filter(b => b.type === 'section');
+			if (sectionBlocks.length > 0) {
+				sectionsEl.innerHTML = sectionBlocks.map(block => this.renderSection(block)).join('');
+				sectionsEl.style.display = '';
+				this.bindSectionExpands();
+			} else {
+				sectionsEl.innerHTML = '';
+				sectionsEl.style.display = '';
+			}
+			return;
+		}
+
+		// Non-today with no briefing available
+		if (!isToday && !dateBriefing) {
+			briefEl.innerHTML = '<div class="briefing-mode-label">No briefing available for this date</div>';
+			briefEl.style.display = '';
+			sectionsEl.innerHTML = '';
+			sectionsEl.style.display = '';
+			return;
+		}
+
+		// Today: original behavior
 		let blocks = this.getEditorialBlocks();
 
 		if (blocks.length === 0) {
@@ -716,133 +772,6 @@ class Dashboard {
 				const isOpen = content.classList.contains('open');
 				content.classList.toggle('open');
 				toggle.textContent = isOpen ? 'Latest News \u25b8' : 'Latest News \u25be';
-				toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-			});
-		}
-	}
-
-	// --- Recent Results ---
-
-	renderRecentResults() {
-		const container = document.getElementById('recent-results');
-		if (!container) return;
-
-		if (!this.recentResults) {
-			container.innerHTML = '';
-			return;
-		}
-
-		const football = this.recentResults.football || [];
-		const golf = this.recentResults.golf || {};
-		if (football.length === 0 && !golf.pga && !golf.dpWorld) {
-			container.innerHTML = '';
-			return;
-		}
-
-		// Build preview line from most notable results
-		const previews = [];
-		if (football.length > 0) {
-			const top = football[0];
-			previews.push(`\u26bd ${this.shortName(top.homeTeam)} ${top.homeScore}-${top.awayScore} ${this.shortName(top.awayTeam)}`);
-		}
-		if (golf.pga?.norwegianPlayers?.length > 0) {
-			const p = golf.pga.norwegianPlayers[0];
-			previews.push(`\u26f3 ${p.player.split(' ').pop()} T${p.position} (${p.score})`);
-		} else if (golf.pga?.topPlayers?.length > 0) {
-			const p = golf.pga.topPlayers[0];
-			previews.push(`\u26f3 ${p.player.split(' ').pop()} leads (${p.score})`);
-		}
-		const previewText = previews.join(', ');
-
-		let html = '';
-		html += `<button class="results-toggle" data-expanded="false" aria-expanded="false">Recent Results \u25b8</button>`;
-		html += `<div class="results-preview">${this.esc(previewText)}</div>`;
-		html += `<div class="results-content">`;
-
-		// Football results
-		if (football.length > 0) {
-			html += '<div class="results-sport-group">';
-			html += '<div class="results-sport-label">\u26bd Football</div>';
-			for (const match of football.slice(0, 8)) {
-				const matchDate = new Date(match.date);
-				const dayStr = matchDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
-
-				const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.homeTeam) : null;
-				const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.awayTeam) : null;
-				const logoHtml = (hLogo && aLogo)
-					? `<span class="row-icons"><img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="row-logo" loading="lazy"><img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="row-logo" loading="lazy"></span>`
-					: '';
-
-				html += `<div class="result-row${match.isFavorite ? ' result-favorite' : ''}">`;
-				html += `<span class="result-day">${this.esc(dayStr)}</span>`;
-				html += logoHtml;
-				html += `<span class="result-match">${this.esc(this.shortName(match.homeTeam))} <span class="result-score">${match.homeScore}-${match.awayScore}</span> ${this.esc(this.shortName(match.awayTeam))}</span>`;
-				html += `<span class="result-league">${this.esc(match.league === 'Premier League' ? 'PL' : 'LL')}</span>`;
-				html += '</div>';
-
-				if (match.recapHeadline) {
-					html += `<div class="result-recap">${this.esc(match.recapHeadline)}</div>`;
-				}
-
-				if (match.goalScorers && match.goalScorers.length > 0) {
-					const scorerText = match.goalScorers.map(g => `${g.player} ${g.minute}`).join(', ');
-					html += `<div class="result-scorers">${this.esc(scorerText)}</div>`;
-				}
-			}
-			html += '</div>';
-		}
-
-		// Golf results
-		for (const [key, tour] of Object.entries(golf)) {
-			if (!tour) continue;
-			const label = key === 'pga' ? 'PGA Tour' : 'DP World Tour';
-			const statusLabel = tour.status === 'final' ? 'Final' : `R${tour.completedRound}`;
-
-			html += '<div class="results-sport-group">';
-			html += `<div class="results-sport-label">\u26f3 ${this.esc(label)} \u2014 ${this.esc(tour.tournamentName || '')} (${this.esc(statusLabel)})</div>`;
-
-			// Leader
-			if (tour.topPlayers?.length > 0) {
-				const leader = tour.topPlayers[0];
-				html += `<div class="result-row">`;
-				html += `<span class="result-pos">${leader.position}</span>`;
-				html += `<span class="result-match">${this.esc(leader.player)}</span>`;
-				html += `<span class="result-score">${this.esc(leader.score)}</span>`;
-				html += '</div>';
-			}
-
-			// Norwegian players
-			if (tour.norwegianPlayers?.length > 0) {
-				for (const p of tour.norwegianPlayers) {
-					const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
-					const headshotHtml = headshot
-						? `<img src="${headshot}" alt="${this.esc(p.player)}" class="row-headshot" loading="lazy">`
-						: '';
-					html += `<div class="result-row result-favorite">`;
-					html += `<span class="result-pos">T${p.position}</span>`;
-					html += headshotHtml;
-					html += `<span class="result-match">${this.esc(p.player)}</span>`;
-					html += `<span class="result-score">${this.esc(p.score)} (R${tour.completedRound}: ${this.esc(p.roundScore)})</span>`;
-					html += '</div>';
-				}
-			}
-
-			html += '</div>';
-		}
-
-		html += '</div>';
-		container.innerHTML = html;
-
-		// Bind toggle
-		const toggle = container.querySelector('.results-toggle');
-		const preview = container.querySelector('.results-preview');
-		const content = container.querySelector('.results-content');
-		if (toggle && content) {
-			toggle.addEventListener('click', () => {
-				const isOpen = content.classList.contains('open');
-				content.classList.toggle('open');
-				if (preview) preview.style.display = isOpen ? '' : 'none';
-				toggle.textContent = isOpen ? 'Recent Results \u25b8' : 'Recent Results \u25be';
 				toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 			});
 		}
