@@ -59,7 +59,7 @@ class Dashboard {
 	// --- Data loading ---
 
 	async loadEvents() {
-		const STATIC_TTL = 5 * 60 * 1000; // 5 minutes — data only changes every 2h
+		const STATIC_TTL = 15 * 60 * 1000; // 15 minutes — data only changes every 2h
 		const cachedEvents = this._cacheGet('events', STATIC_TTL);
 		const cachedFeatured = this._cacheGet('featured', STATIC_TTL);
 		const cachedStandings = this._cacheGet('standings', STATIC_TTL);
@@ -372,6 +372,7 @@ class Dashboard {
 			weekday: 'long', month: 'long', day: 'numeric',
 			timeZone: 'Europe/Oslo'
 		});
+		let suffix = '';
 		if (this._isViewingToday() && this.meta && this.meta.lastUpdate) {
 			const now = new Date();
 			const updated = new Date(this.meta.lastUpdate);
@@ -381,9 +382,9 @@ class Dashboard {
 			else if (diffMin < 60) ago = `${diffMin}m ago`;
 			else if (diffMin < 1440) ago = `${Math.round(diffMin / 60)}h ago`;
 			else ago = `${Math.round(diffMin / 1440)}d ago`;
-			text += `  ·  Updated ${ago}`;
+			suffix = `  \u00b7  Updated ${ago}  \u00b7  <a href="data/events.ics" class="cal-link" title="Subscribe to calendar">iCal</a>`;
 		}
-		el.textContent = text;
+		el.innerHTML = this.esc(text) + suffix;
 	}
 
 	// --- Editorial (Block-based layout) ---

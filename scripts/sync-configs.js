@@ -13,7 +13,7 @@
 
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_HOUR } from "./lib/helpers.js";
+import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_HOUR, MS_PER_DAY } from "./lib/helpers.js";
 import { syncEventPlayers } from "./discover-events.js";
 
 const defaultConfigDir = path.resolve(process.cwd(), "scripts", "config");
@@ -61,6 +61,26 @@ function isEventConfig(config, filename) {
 	// Skip array configs (norwegian-golfers, chess-tournaments) — they're roster files
 	if (Array.isArray(config)) return false;
 	return typeof config.name === "string";
+}
+
+/**
+ * Clean up archive: delete configs older than 90 days.
+ */
+export function cleanupArchive(archiveDir, now = new Date()) {
+	if (!fs.existsSync(archiveDir)) return 0;
+	const cutoff = new Date(now.getTime() - 90 * MS_PER_DAY);
+	const files = fs.readdirSync(archiveDir).filter(f => f.endsWith(".json"));
+	let removed = 0;
+	for (const file of files) {
+		const filePath = path.join(archiveDir, file);
+		const stat = fs.statSync(filePath);
+		if (stat.mtime < cutoff) {
+			fs.unlinkSync(filePath);
+			removed++;
+			console.log(`  Cleaned archive: ${file} (modified ${stat.mtime.toISOString()})`);
+		}
+	}
+	return removed;
 }
 
 /**
@@ -136,7 +156,11 @@ export function syncConfigs({ configDir, archiveDir, now } = {}) {
 		}
 	}
 
-	console.log(`\nSync complete: ${result.pruned} events pruned, ${result.archived.length} archived, ${result.flagged.length} flagged, ${result.rosterSynced.length} roster-synced`);
+	// Clean up old archived configs (>90 days)
+	const cleaned = cleanupArchive(arcDir, timestamp);
+	result.archiveCleaned = cleaned;
+
+	console.log(`\nSync complete: ${result.pruned} events pruned, ${result.archived.length} archived, ${result.flagged.length} flagged, ${result.rosterSynced.length} roster-synced, ${cleaned} archive cleaned`);
 	return result;
 }
 

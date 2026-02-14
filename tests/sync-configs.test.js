@@ -7,6 +7,7 @@ import {
 	shouldArchive,
 	shouldResearch,
 	syncConfigs,
+	cleanupArchive,
 } from "../scripts/sync-configs.js";
 
 let tmpDir;
@@ -303,5 +304,52 @@ describe("syncConfigs()", () => {
 		const updated = JSON.parse(fs.readFileSync(path.join(configDir, "stale.json"), "utf-8"));
 		expect(updated.events[0].norwegianPlayers).toHaveLength(0);
 		expect(updated.events[0].norwegian).toBe(false);
+	});
+
+	it("cleans up archived configs older than 90 days", () => {
+		const now = new Date("2026-02-12T12:00:00Z");
+		fs.mkdirSync(archiveDir, { recursive: true });
+
+		// Write an old archived config and set its mtime to 100 days ago
+		const oldFile = path.join(archiveDir, "ancient-event.json");
+		writeJson(oldFile, { name: "Ancient Event" });
+		const oldDate = new Date(now.getTime() - 100 * 86400000);
+		fs.utimesSync(oldFile, oldDate, oldDate);
+
+		// Write a recent archived config
+		const recentFile = path.join(archiveDir, "recent-event.json");
+		writeJson(recentFile, { name: "Recent Event" });
+
+		const result = syncConfigs({ configDir, archiveDir, now });
+		expect(result.archiveCleaned).toBe(1);
+		expect(fs.existsSync(oldFile)).toBe(false);
+		expect(fs.existsSync(recentFile)).toBe(true);
+	});
+});
+
+// --- cleanupArchive ---
+
+describe("cleanupArchive()", () => {
+	it("returns 0 when archive directory does not exist", () => {
+		const removed = cleanupArchive("/nonexistent/archive");
+		expect(removed).toBe(0);
+	});
+
+	it("deletes files older than 90 days", () => {
+		const now = new Date("2026-02-12T12:00:00Z");
+		fs.mkdirSync(archiveDir, { recursive: true });
+
+		const oldFile = path.join(archiveDir, "old.json");
+		writeJson(oldFile, { name: "Old" });
+		const oldDate = new Date(now.getTime() - 91 * 86400000);
+		fs.utimesSync(oldFile, oldDate, oldDate);
+
+		const freshFile = path.join(archiveDir, "fresh.json");
+		writeJson(freshFile, { name: "Fresh" });
+
+		const removed = cleanupArchive(archiveDir, now);
+		expect(removed).toBe(1);
+		expect(fs.existsSync(oldFile)).toBe(false);
+		expect(fs.existsSync(freshFile)).toBe(true);
 	});
 });

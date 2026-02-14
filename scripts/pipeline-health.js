@@ -382,6 +382,16 @@ async function main() {
 		console.log(`  [${issue.severity}] ${issue.message}`);
 	}
 
+	// Trim autopilot-log.json to last 100 entries
+	const autopilotLogPath = path.join(dataDir, "autopilot-log.json");
+	const autopilotLog = readJsonIfExists(autopilotLogPath);
+	if (autopilotLog && Array.isArray(autopilotLog.runs) && autopilotLog.runs.length > 100) {
+		const before = autopilotLog.runs.length;
+		autopilotLog.runs = autopilotLog.runs.slice(-100);
+		writeJsonPretty(autopilotLogPath, autopilotLog);
+		console.log(`Trimmed autopilot-log.json: ${before} → 100 entries`);
+	}
+
 	// Create GitHub issue if critical and running in CI
 	if (report.status === "critical" && process.env.GITHUB_ACTIONS) {
 		try {
