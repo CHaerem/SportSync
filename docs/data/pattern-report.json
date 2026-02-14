@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-14T18:15:33.190Z",
+  "generatedAt": "2026-02-14T19:00:45.716Z",
   "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 48,
+      "count": 50,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T18:15:33.187Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 48 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-14T19:00:45.713Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 50 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -51,9 +51,9 @@
       "lastSeen": "2026-02-13T13:46:59.623Z"
     },
     "sport_zero_events": {
-      "count": 48,
+      "count": 50,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T18:15:33.187Z"
+      "lastSeen": "2026-02-14T19:00:45.713Z"
     },
     "stale_output": {
       "count": 1,
@@ -61,5 +61,5 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     }
   },
-  "summary": "5 patterns detected (4 high, 1 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 48 times since 2026-02-13."
+  "summary": "5 patterns detected (4 high, 1 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 50 times since 2026-02-13."
 }
