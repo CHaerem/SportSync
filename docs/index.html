@@ -89,6 +89,26 @@
 		.cal-link { color: var(--muted); text-decoration: none; opacity: 0.7; }
 		.cal-link:hover { opacity: 1; text-decoration: underline; }
 
+		/* --- Feedback controls --- */
+		.fb-row { display: flex; gap: 4px; align-items: center; margin-left: auto; flex-shrink: 0; }
+		.fb-btn { background: none; border: none; cursor: pointer; font-size: 0.75rem; padding: 2px 4px; opacity: 0.35; border-radius: 3px; line-height: 1; }
+		.fb-btn:hover { opacity: 0.8; background: var(--hover, rgba(0,0,0,0.05)); }
+		.fb-btn.active { opacity: 1; }
+		.fb-btn.fb-up.active { color: var(--green, #2ecc71); }
+		.fb-btn.fb-down.active { color: var(--red, #e74c3c); }
+		.fb-btn.fb-flag { font-size: 0.65rem; }
+		#feedback-panel { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border, #e0e0e0); }
+		.fb-panel-row { display: flex; gap: 8px; margin-bottom: 8px; }
+		.fb-panel-row input, .fb-panel-row textarea { flex: 1; font: inherit; font-size: 0.75rem; padding: 6px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; background: var(--bg, #fff); color: var(--fg, #111); }
+		.fb-panel-row textarea { resize: vertical; min-height: 48px; }
+		.fb-panel-row button { font: inherit; font-size: 0.7rem; padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; cursor: pointer; background: var(--bg, #fff); color: var(--fg, #111); white-space: nowrap; }
+		.fb-panel-row button:hover { background: var(--hover, rgba(0,0,0,0.05)); }
+		.fb-submit { font: inherit; font-size: 0.7rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--fg, #111); border-radius: 4px; cursor: pointer; background: var(--fg, #111); color: var(--bg, #fff); }
+		.fb-submit:hover { opacity: 0.85; }
+		.fb-submit:disabled { opacity: 0.3; cursor: default; }
+		.fb-count { font-size: 0.6rem; color: var(--muted); margin-left: 4px; }
+		.fb-section-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+
 		/* --- Day Navigator --- */
 		#day-nav {
 			display: flex;
@@ -940,11 +960,14 @@
 
 		<div id="news"></div>
 
+		<div id="feedback-panel"></div>
+
 	</div>
 
 	<script src="js/sport-config.js?v=2026021006"></script>
 	<script src="js/asset-maps.js?v=2026021006"></script>
 	<script src="js/preferences-manager.js?v=2026021006"></script>
+	<script src="js/feedback-manager.js?v=2026021401"></script>
 	<script src="js/dashboard.js?v=2026021006"></script>
 
 	<script>

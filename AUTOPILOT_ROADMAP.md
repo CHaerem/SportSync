@@ -103,6 +103,22 @@ Look for small additions that enable larger future capabilities. The best autono
 - "Write a `scripts/export-engagement.js` that reads localStorage engagement data on next page load and writes to a data file — bridges client-side signals to the server-side pipeline" (stepping stone for feedback loop)
 - "Add configurable dashboard sections order in user-context.json — enables future personalization of which sports appear first"
 
+### I. User Feedback Processing
+
+Check for GitHub Issues with the `user-feedback` label created by the repo owner (`CHaerem`). These contain structured feedback from the dashboard's feedback system.
+
+**How to check:** Run `gh issue list --label user-feedback --state open --author CHaerem`. For each issue, parse the JSON block in the issue body.
+
+**Processing rules:**
+
+1. **Votes** (`votes` object): Thumbs up/down on events. Use to adjust `sportPreferences` weights in `scripts/config/user-context.json`. Many "up" votes on a sport → increase its weight. Many "down" → decrease. Don't change after a single vote; look for patterns across multiple submissions.
+
+2. **Reports** (`reports` array): Misinformation or data issues. For each report, investigate the root cause (wrong API data, stale config, enrichment error). Create a `[PENDING]` fix task if it's a code issue, or note it as transient if it's API-side.
+
+3. **Suggestions** (`suggestions` array): New sports, events, features. Create new curated configs for event/sport requests. Add feature requests as `[PENDING]` tasks in the roadmap. Update `user-context.json` for preference changes (new favorite teams, players).
+
+**After processing:** Close the issue with a comment summarizing actions taken. If changes were made to `user-context.json` or configs, include them in the next autopilot PR.
+
 ---
 
 ## EXPERIENCE Lane (User Impact)

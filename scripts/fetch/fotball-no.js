@@ -137,14 +137,14 @@ export function parseIcsDateTime(dtString) {
 			const second = cleanDt.substring(13, 15);
 			
 			// Assume Norwegian timezone (CET/CEST) for fotball.no events
-			// Convert to UTC by subtracting 1 hour (CET) or 2 hours (CEST)
-			const localDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
-			
+			// Parse as UTC first (Z suffix), then subtract CET/CEST offset
+			const asUTC = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}Z`);
+
 			// Rough check for daylight saving time (CEST: March-October)
 			const isDST = month >= '03' && month <= '10';
 			const offsetHours = isDST ? 2 : 1;
-			
-			return new Date(localDate.getTime() - (offsetHours * 60 * 60 * 1000));
+
+			return new Date(asUTC.getTime() - (offsetHours * 60 * 60 * 1000));
 		}
 	} catch (error) {
 		console.warn("Failed to parse ICS datetime:", dtString, error);

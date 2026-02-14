@@ -25,6 +25,7 @@ class Dashboard {
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.recentResults = null; // recent-results.json data
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
+		this.feedback = window.FeedbackManager ? new FeedbackManager() : null;
 		this.init();
 	}
 
@@ -347,6 +348,7 @@ class Dashboard {
 		this.renderWatchPlan();
 		this.renderEvents();
 		this.renderNews();
+		this.renderFeedbackPanel();
 
 		// Hide today-centric sections on non-today dates
 		const todayOnlySections = ['watch-plan', 'news'];
@@ -918,6 +920,7 @@ class Dashboard {
 			container.innerHTML = html;
 			this.bindEventRows();
 			this.bindBandToggles();
+			this.bindFeedbackButtons();
 			return;
 		}
 
@@ -940,6 +943,7 @@ class Dashboard {
 		container.innerHTML = html;
 		this.bindEventRows();
 		this.bindBandToggles();
+		this.bindFeedbackButtons();
 	}
 
 	renderRow(event, showDay, showDate, inlineSportEmoji = null) {
@@ -1051,12 +1055,15 @@ class Dashboard {
 			subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
 		}
 
+		const fbHtml = this.renderFeedbackButtons(event.id);
+
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
 				<div class="row-main">
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${subtitleHtml}</span>
+					${fbHtml}
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -1066,6 +1073,88 @@ class Dashboard {
 	shortName(name) {
 		if (!name) return '';
 		return name.replace(/ FC$| AFC$| CF$| FK$/i, '').replace(/^FC |^AFC /i, '').trim();
+	}
+
+	renderFeedbackButtons(eventId) {
+		if (!this.feedback) return '';
+		const vote = this.feedback.getVote(eventId);
+		return `<span class="fb-row" data-fb-id="${this.esc(eventId)}">` +
+			`<button class="fb-btn fb-up${vote === 'up' ? ' active' : ''}" data-fb="up" title="Like">\u{1F44D}</button>` +
+			`<button class="fb-btn fb-down${vote === 'down' ? ' active' : ''}" data-fb="down" title="Dislike">\u{1F44E}</button>` +
+			`<button class="fb-btn fb-flag" data-fb="flag" title="Report issue">\u{1F6A9}</button>` +
+			`</span>`;
+	}
+
+	renderFeedbackPanel() {
+		const el = document.getElementById('feedback-panel');
+		if (!el || !this.feedback) return;
+
+		const count = this.feedback.pendingCount();
+		el.innerHTML = `
+			<div class="fb-section-label">Feedback</div>
+			<div class="fb-panel-row">
+				<input type="text" id="fb-suggest-input" placeholder="Suggest a sport, event, or feature..." maxlength="200">
+				<button id="fb-suggest-btn">Add</button>
+			</div>
+			<div class="fb-panel-row">
+				<button class="fb-submit" id="fb-submit-btn" ${count === 0 ? 'disabled' : ''}>
+					Submit feedback${count > 0 ? `<span class="fb-count">(${count})</span>` : ''}
+				</button>
+			</div>
+		`;
+
+		document.getElementById('fb-suggest-btn')?.addEventListener('click', () => {
+			const input = document.getElementById('fb-suggest-input');
+			if (input?.value?.trim()) {
+				this.feedback.suggest(input.value);
+				input.value = '';
+				this.renderFeedbackPanel();
+			}
+		});
+
+		document.getElementById('fb-suggest-input')?.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				document.getElementById('fb-suggest-btn')?.click();
+			}
+		});
+
+		document.getElementById('fb-submit-btn')?.addEventListener('click', () => {
+			if (this.feedback.pendingCount() > 0) {
+				this.feedback.submit();
+				this.renderFeedbackPanel();
+				this.renderEvents();
+			}
+		});
+	}
+
+	bindFeedbackButtons() {
+		if (!this.feedback) return;
+
+		document.querySelectorAll('.fb-row').forEach(row => {
+			row.querySelectorAll('.fb-btn').forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const eventId = row.dataset.fbId;
+					const action = btn.dataset.fb;
+
+					if (action === 'up' || action === 'down') {
+						this.feedback.vote(eventId, action);
+						// Update button states
+						row.querySelector('.fb-up').classList.toggle('active', this.feedback.getVote(eventId) === 'up');
+						row.querySelector('.fb-down').classList.toggle('active', this.feedback.getVote(eventId) === 'down');
+						this.renderFeedbackPanel();
+					} else if (action === 'flag') {
+						const eventTitle = row.closest('.event-row')?.querySelector('.row-title-text')?.textContent || eventId;
+						const msg = prompt('What\'s wrong with this event?');
+						if (msg) {
+							this.feedback.report(eventId, eventTitle, msg);
+							btn.classList.add('active');
+							this.renderFeedbackPanel();
+						}
+					}
+				});
+			});
+		});
 	}
 
 	renderExpanded(event) {
