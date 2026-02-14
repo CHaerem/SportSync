@@ -1,143 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T09:38:43.631Z",
-    "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": []
-  },
-  {
-    "timestamp": "2026-02-12T09:45:52.446Z",
-    "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": []
-  },
-  {
-    "timestamp": "2026-02-12T10:03:14.957Z",
-    "editorial": {
-      "score": 89,
-      "mustWatchCoverage": 0.8,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 95,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 123,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      }
-    }
-  },
-  {
-    "timestamp": "2026-02-12T10:03:15.132Z",
-    "editorial": {
-      "score": 89,
-      "mustWatchCoverage": 0.8,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 95,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 123,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-12T12:02:05.169Z",
     "editorial": {
       "score": 89,
@@ -4849,6 +4711,227 @@
         "calls": 0,
         "total": 0
       },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T14:20:08.169Z",
+    "editorial": {
+      "score": 92,
+      "mustWatchCoverage": 0.9,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 104,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"️ Freestyle Chess semis begin\" which may not match any event; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T14:20:14.427Z",
+    "editorial": {
+      "score": 92,
+      "mustWatchCoverage": 0.9,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 104,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"️ Freestyle Chess semis begin\" which may not match any event; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T14:20:17.070Z",
+    "editorial": {
+      "score": 92,
+      "mustWatchCoverage": 0.9,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 104,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"️ Freestyle Chess semis begin\" which may not match any event; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T14:20:20.039Z",
+    "editorial": {
+      "score": 92,
+      "mustWatchCoverage": 0.9,
+      "sportDiversity": 1,
+      "blockCount": 9
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 95,
+      "blockCount": 9,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 104,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"️ Freestyle Chess semis begin\" which may not match any event; Featured mentions \"Bernab\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
       "featured": {
         "input": 0,
         "output": 0,
