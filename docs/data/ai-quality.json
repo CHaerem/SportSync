@@ -1,34 +1,33 @@
 {
-  "generatedAt": "2026-02-14T13:43:45.556Z",
+  "generatedAt": "2026-02-14T13:57:52.332Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 20481,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"⚽ Real Madrid v Real Sociedad, 21:00, La Liga — Re...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 5,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 71,
+    "score": 90,
     "metrics": {
-      "mustWatchCoverage": 0.2,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.875,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
-    "issues": [
-      "Only 20% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -55,13 +54,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.741
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 27,
@@ -73,19 +72,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
-    "aiUpdatedFields": 27,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 27,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   }
 }
