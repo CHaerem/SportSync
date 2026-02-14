@@ -1,66 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-02-09",
-      "task": "Fix service worker stale file references",
-      "outcome": "completed",
-      "pr": 4,
-      "details": "Removed personalized-dashboard.js and event-filter.js from SW cache list (files don't exist). Bumped cache version to v10-cleanup.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 1
-    },
-    {
-      "date": "2026-02-09",
-      "task": "Implement updateFilterCount() stub",
-      "outcome": "completed",
-      "pr": 5,
-      "details": "Implemented the empty updateFilterCount() method to show a visible count of filtered events (e.g. '12 of 45 events'). Added #filterCount element and CSS to index.html. Count updates on filter toggle and initial load.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-09",
-      "task": "Add dashboard filter and utility unit tests",
-      "outcome": "completed",
-      "pr": 6,
-      "details": "Extracted pure functions into docs/js/dashboard-helpers.js and added 52 unit tests covering escapeHtml, formatEventTime, getRelativeTime, sportDisplayName, getAbbreviatedTeamName, truncateTitle, passesFilter, and isFavoriteEvent.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-09",
-      "task": "Remove dead open-data fallback fetches",
-      "outcome": "completed",
-      "pr": 8,
-      "details": "Removed 4 dead fallback fetch attempts for non-existent -open.json files (football-open.json, f1-open.json, chess-open.json, esports-open.json) from docs/js/sports-api.js. These caused unnecessary 404 network errors on every page load.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-09",
-      "task": "Add ARIA accessibility attributes to dashboard",
-      "outcome": "completed",
-      "pr": 9,
-      "details": "Added role=navigation to filter section, aria-pressed to all filter buttons with dynamic JS toggling, aria-label to icon-only buttons, role=list/listitem to events container/cards, and aria-live=polite to dynamically updated regions.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-09",
-      "task": "Add lazy loading to event card images",
-      "outcome": "completed",
-      "pr": 10,
-      "details": "Added loading=lazy attribute to team logo images (home/away) and golfer headshot images in simple-dashboard.js for improved page load performance.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
       "date": "2026-02-10",
       "task": "Remove production console.log statements",
       "outcome": "completed",
@@ -319,6 +259,54 @@
       "tests_passed": true,
       "files_changed": 4,
       "scouted": 0
+    },
+    {
+      "date": "2026-02-14",
+      "task": "Add unit tests for fotball-no.js",
+      "outcome": "completed",
+      "pr": 67,
+      "details": "19 tests covering extractIcsField, parseIcsDateTime (date-only, CET, CEST timezone conversion), and parseIcsForLynMatches (Lyn extraction, TZID handling, missing location, edge cases). Exported 3 internal parsing helpers for testability.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 8,
+      "lesson": "Exporting private functions for testing is a clean pattern — minimal change, big test coverage gain.",
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-14",
+      "task": "Add descriptive alt text to brief-line images",
+      "outcome": "completed",
+      "pr": 68,
+      "details": "Added team/player name as alt text on brief-line logo and headshot images in dashboard.js for screen reader accessibility.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "lesson": "Simple a11y fixes are quick wins — variable already in scope, just needs wiring into alt attribute.",
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-14",
+      "task": "Remove dead CSS rules from index.html",
+      "outcome": "completed",
+      "pr": 69,
+      "details": "Removed .editorial-header, .section-divider, .more-toggle, .more-content CSS rules (~30 lines) — no JS code generates elements with these classes.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "lesson": "Verify CSS class usage via grep before removal. .band-results looked dead but was actually dynamically generated.",
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-14",
+      "task": "Add descriptive alt text to result row images",
+      "outcome": "completed",
+      "pr": 70,
+      "details": "Added team names to football result logos and player names to golf result headshots as alt text. Completes all empty alt='' fixes in dashboard.js.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "lesson": "Batch similar a11y fixes across the same file for efficiency.",
+      "scouted": 8
     }
   ]
 }

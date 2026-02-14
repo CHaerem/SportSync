@@ -420,11 +420,39 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #62) Add unit tests for `scripts/fetch/esports.js` — 21 tests covering extractTeamName, HLTV staleness detection, major event patterns, and focus team filtering.
 
-- [PENDING] Add unit tests for `scripts/fetch/fotball-no.js` — fotball-no fetcher has no dedicated test file. Create `tests/fotball-no.test.js` testing iCalendar parsing, Lyn match extraction, and week filtering. ~60 lines, LOW risk.
+- [DONE] (PR #67) Add unit tests for `scripts/fetch/fotball-no.js` — 19 tests covering extractIcsField, parseIcsDateTime (date-only, CET, CEST), and parseIcsForLynMatches (Lyn extraction, TZID handling, edge cases).
 
 ### LOW Priority
 
-- [PENDING] Add descriptive alt text to brief-line images — `docs/js/dashboard.js:1381,1387` uses empty `alt=""` for team logos and golfer headshots in brief lines. Add team name / player name for screen reader accessibility. ~10 lines, LOW risk.
+- [DONE] (PR #68) Add descriptive alt text to brief-line images — Added team/player name as alt text on brief-line logo and headshot images for screen reader accessibility.
+
+---
+
+## Scouted Tasks (2026-02-14)
+
+### HIGH Priority
+
+- [PENDING] Add `aria-label` to favorite buttons in expanded view — `docs/js/dashboard.js` `.exp-fav-btn` buttons lack descriptive labels for screen readers. Add `aria-label="Add to favorites"` / `"Remove from favorites"` based on current state. ~10 lines, LOW risk.
+
+- [PENDING] Add keyboard accessibility to watch-plan picks — `docs/js/dashboard.js` `.watch-pick` divs are clickable (scroll to event on click) but lack `role="button"`, `tabindex="0"`, and keydown handler for Enter/Space. ~15 lines, LOW risk.
+
+### MEDIUM Priority
+
+- [PENDING] Add `aria-label` to streaming badge links — `docs/js/dashboard.js` `.exp-stream-badge` links lack descriptive labels. Add `aria-label` with platform name + "streaming link" for screen readers. ~5 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch-results.js` — No dedicated test file exists. Test RSS-to-result headline matching, favorite tagging, result merging, and 7-day retention logic. ~80 lines, LOW risk.
+
+- [PENDING] Add unit tests for `scripts/fetch-rss.js` — No dedicated test file exists. Test RSS feed parsing, Norwegian filtering, and digest generation. ~60 lines, LOW risk.
+
+### LOW Priority
+
+- [PENDING] Add alt text to expanded view team logos — `docs/js/dashboard.js` expanded event view renders team logos but they may use empty alt text. Verify and fix if needed. ~5 lines, LOW risk.
+
+### Data Quality (Not Code Fixable)
+
+- [BLOCKED] data availability — Tennis zero events: ESPN API returns matches but all filtered out by exclusive Norwegian filter (no Casper Ruud matches currently scheduled). Will resolve when tennis season resumes.
+
+- [BLOCKED] stale upstream API — Esports zero events: HLTV API returns data older than 30 days, rejected by staleness check. Needs fresh data source or curated config expansion.
 
 ---
 
