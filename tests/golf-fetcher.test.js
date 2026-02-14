@@ -260,3 +260,32 @@ describe('buildFeaturedGroups()', () => {
 		expect(result).toHaveLength(0);
 	});
 });
+
+describe('golf endTime calculation', () => {
+	it('uses 20:00 UTC to avoid CET midnight bleed', () => {
+		// Simulate the endTime calculation from fetchGolfESPN
+		const startTime = '2026-02-12T07:00:00.000Z'; // Thursday
+		const endDate = new Date(new Date(startTime).getTime() + 3 * 24 * 60 * 60 * 1000);
+		endDate.setUTCHours(20, 0, 0, 0); // Must be 20:00, not 23:59
+
+		expect(endDate.getUTCHours()).toBe(20);
+		expect(endDate.getUTCMinutes()).toBe(0);
+
+		// Verify this doesn't cross midnight in CET (UTC+1)
+		const endCET = new Date(endDate.getTime() + 3600000);
+		const endUTCDay = endDate.toISOString().slice(0, 10);
+		const endCETDay = endCET.toISOString().slice(0, 10);
+		expect(endUTCDay).toBe(endCETDay); // Same day — no bleed
+	});
+
+	it('23:59 UTC would bleed into next CET day', () => {
+		const startTime = '2026-02-12T07:00:00.000Z';
+		const endDate = new Date(new Date(startTime).getTime() + 3 * 24 * 60 * 60 * 1000);
+		endDate.setUTCHours(23, 59, 0, 0); // Old behavior
+
+		const endCET = new Date(endDate.getTime() + 3600000);
+		const endUTCDay = endDate.toISOString().slice(0, 10);
+		const endCETDay = endCET.toISOString().slice(0, 10);
+		expect(endUTCDay).not.toBe(endCETDay); // Bleeds!
+	});
+});

@@ -72,6 +72,16 @@ for (const ev of events) {
 		console.warn("Invalid tags (must be array) for", key);
 		errors++;
 	}
+	// Timezone bleed check: endTime crossing midnight in CET but not UTC
+	if (ev.endTime) {
+		const endUTC = new Date(ev.endTime);
+		const endCET = new Date(endUTC.getTime() + 3600000); // UTC+1
+		const endUTCDay = endUTC.toISOString().slice(0, 10);
+		const endCETDay = endCET.toISOString().slice(0, 10);
+		if (endUTCDay !== endCETDay) {
+			console.warn(`Timezone bleed: ${key} endTime ${ev.endTime} crosses midnight in CET (${endCETDay})`);
+		}
+	}
 }
 let enrichedCount = events.filter(e => e.importance != null).length;
 console.log(`Validated ${events.length} events with ${errors} error(s). ${enrichedCount} enriched.`);

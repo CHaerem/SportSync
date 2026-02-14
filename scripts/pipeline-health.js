@@ -227,6 +227,24 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
+	// 8. Day navigator coverage — past 5 days should have events or results
+	const footballResults = Array.isArray(recentResults?.football) ? recentResults.football : [];
+	for (let i = 1; i <= 5; i++) {
+		const d = new Date(Date.now() - i * 86400000);
+		const dateKey = d.toISOString().slice(0, 10);
+		const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+		const dayEnd = new Date(dayStart.getTime() + 86400000);
+		const dayEvents = events.filter(e => isEventInWindow(e, dayStart, dayEnd));
+		const dayResults = footballResults.filter(m => m.date?.startsWith(dateKey));
+		if (dayEvents.length === 0 && dayResults.length === 0) {
+			issues.push({
+				severity: "info",
+				code: "empty_day",
+				message: `${dateKey}: no events or results for day navigator`,
+			});
+		}
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");

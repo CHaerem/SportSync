@@ -85,4 +85,49 @@ describe("validate-events.js", () => {
 		]);
 		expect(() => runValidate()).toThrow();
 	});
+
+	it("warns about timezone bleed when endTime crosses CET midnight", () => {
+		// endTime at 23:30 UTC → 00:30 CET next day = timezone bleed
+		const tomorrow = new Date(Date.now() + 24 * 3600000);
+		const endTime = new Date(tomorrow);
+		endTime.setUTCHours(23, 30, 0, 0);
+		writeEvents([
+			{
+				sport: "golf",
+				title: "Test Tournament",
+				time: futureTime(),
+				endTime: endTime.toISOString(),
+				tournament: "PGA Tour",
+			},
+		]);
+		// console.warn goes to stderr — redirect to capture it
+		const output = execSync("node scripts/validate-events.js 2>&1", {
+			cwd: process.cwd(),
+			env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
+		}).toString();
+		expect(output).toContain("Timezone bleed");
+		expect(output).toContain("crosses midnight in CET");
+	});
+
+	it("no timezone bleed warning for safe endTime", () => {
+		const tomorrow = new Date(Date.now() + 24 * 3600000);
+		const endTime = new Date(tomorrow);
+		endTime.setUTCHours(20, 0, 0, 0); // 21:00 CET — safe
+		writeEvents([
+			{
+				sport: "golf",
+				title: "Test Tournament",
+				time: futureTime(),
+				endTime: endTime.toISOString(),
+				tournament: "PGA Tour",
+			},
+		]);
+		// Capture stderr too so we can confirm no timezone bleed warning
+		const output = execSync("node scripts/validate-events.js 2>&1", {
+			cwd: process.cwd(),
+			env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
+		}).toString();
+		expect(output).toContain("0 error(s)");
+		expect(output).not.toContain("Timezone bleed");
+	});
 });

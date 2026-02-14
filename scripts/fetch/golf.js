@@ -606,7 +606,7 @@ export async function fetchGolfESPN() {
 					const startTime = normalizeToUTC(ev.date);
 					// Golf tournaments are multi-day (typically Thu-Sun = 4 days)
 					const endDate = new Date(new Date(startTime).getTime() + 3 * 24 * 60 * 60 * 1000);
-					endDate.setUTCHours(23, 59, 0, 0);
+					endDate.setUTCHours(20, 0, 0, 0);
 
 					const matchedTeeTimes = teeTimesMatch ? pgaTeeTimes : null;
 					tournaments.push({
@@ -639,7 +639,7 @@ export async function fetchGolfESPN() {
 							console.log(`Verified ${confirmed.length} Norwegian player(s) in ${ev.name} via pgatour.com`);
 							const startTime2 = normalizeToUTC(ev.date);
 							const endDate2 = new Date(new Date(startTime2).getTime() + 3 * 24 * 60 * 60 * 1000);
-							endDate2.setUTCHours(23, 59, 0, 0);
+							endDate2.setUTCHours(20, 0, 0, 0);
 
 							const playersList2 = confirmed.map(golfer => {
 								let teeTime = null;

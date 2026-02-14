@@ -29,7 +29,9 @@ describe("generateHealthReport()", () => {
 
 		expect(report.status).toBe("healthy");
 		expect(report.eventCount).toBe(15);
-		expect(report.issues).toHaveLength(0);
+		// info-level issues (empty_day) don't affect health status
+		const nonInfoIssues = report.issues.filter(i => i.severity !== "info");
+		expect(nonInfoIssues).toHaveLength(0);
 		expect(report.generatedAt).toBeDefined();
 		expect(report.sportCoverage.football.count).toBe(10);
 	});
@@ -274,6 +276,39 @@ describe("generateHealthReport()", () => {
 		// No criticalOutputs passed — should not crash
 		const staleIssues = report.issues.filter((i) => i.code === "stale_output");
 		expect(staleIssues).toHaveLength(0);
+	});
+
+	it("detects empty days in day navigator (no events or results)", () => {
+		// No events, no results → all past 5 days are empty
+		const report = generateHealthReport({
+			events: [],
+			recentResults: { football: [] },
+		});
+
+		const emptyDays = report.issues.filter((i) => i.code === "empty_day");
+		expect(emptyDays.length).toBe(5);
+		expect(emptyDays[0].severity).toBe("info");
+		expect(emptyDays[0].message).toContain("no events or results");
+	});
+
+	it("no empty_day warning when results cover past dates", () => {
+		// Create results for each of the past 5 days
+		const football = [];
+		for (let i = 1; i <= 5; i++) {
+			const d = new Date(Date.now() - i * 86400000);
+			football.push({
+				homeTeam: "Arsenal",
+				awayTeam: "Liverpool",
+				date: d.toISOString(),
+			});
+		}
+		const report = generateHealthReport({
+			events: [],
+			recentResults: { football },
+		});
+
+		const emptyDays = report.issues.filter((i) => i.code === "empty_day");
+		expect(emptyDays.length).toBe(0);
 	});
 });
 

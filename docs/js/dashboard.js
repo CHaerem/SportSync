@@ -23,6 +23,7 @@ class Dashboard {
 		this._liveInterval = null;
 		this._liveVisible = true;
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
+		this.recentResults = null; // recent-results.json data
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		this.init();
 	}
@@ -64,6 +65,7 @@ class Dashboard {
 		const cachedStandings = this._cacheGet('standings', STATIC_TTL);
 		const cachedWatchPlan = this._cacheGet('watchPlan', STATIC_TTL);
 		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
+		const cachedRecentResults = this._cacheGet('recentResults', STATIC_TTL);
 
 		// Always fetch meta.json for freshness display (tiny, not cached)
 		fetch('data/meta.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
@@ -76,18 +78,20 @@ class Dashboard {
 			this.standings = cachedStandings;
 			this.watchPlan = cachedWatchPlan;
 			this.rssDigest = cachedRssDigest;
+			this.recentResults = cachedRecentResults;
 			this.render();
 			return;
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
 				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
 				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null),
-				fetch('data/meta.json?t=' + Date.now()).catch(() => null)
+				fetch('data/meta.json?t=' + Date.now()).catch(() => null),
+				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -138,11 +142,16 @@ class Dashboard {
 				try { this.meta = await metaResp.json(); } catch { this.meta = null; }
 			}
 
+			if (recentResultsResp && recentResultsResp.ok) {
+				try { this.recentResults = await recentResultsResp.json(); } catch { this.recentResults = null; }
+			}
+
 			this._cacheSet('events', this.allEvents);
 			this._cacheSet('featured', this.featured);
 			this._cacheSet('standings', this.standings);
 			this._cacheSet('watchPlan', this.watchPlan);
 			this._cacheSet('rssDigest', this.rssDigest);
+			this._cacheSet('recentResults', this.recentResults);
 
 			this.render();
 		} catch (err) {
@@ -220,6 +229,14 @@ class Dashboard {
 		}
 
 		return { live, upcoming, results };
+	}
+
+	getResultsForDate(date) {
+		const football = Array.isArray(this.recentResults?.football) ? this.recentResults.football : [];
+		if (football.length === 0) return [];
+		const dayStart = this._startOfDay(date);
+		const dateKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
+		return football.filter(m => m.date && m.date.startsWith(dateKey));
 	}
 
 	renderDayNav() {
@@ -869,10 +886,29 @@ class Dashboard {
 			// Non-today: show events for the selected date only
 			const { live, upcoming, results } = this.getEventsForDate(this.selectedDate);
 
+			// For past dates, also pull football results from recent-results.json
+			const matchResults = this.getResultsForDate(this.selectedDate);
+			const resultEvents = matchResults.map(m => ({
+				id: `result-${m.homeTeam}-${m.awayTeam}-${m.date}`.replace(/\s+/g, '-').toLowerCase(),
+				title: `${m.homeTeam} ${m.homeScore}\u2013${m.awayScore} ${m.awayTeam}`,
+				sport: 'football',
+				time: m.date,
+				tournament: m.league || '',
+				venue: m.venue || '',
+				_isResult: true,
+				_goalScorers: m.goalScorers || [],
+				_isFavorite: m.isFavorite || false,
+			}));
+
+			// Merge: combine event-based results with recent-results (dedupe by teams+date)
+			const existingResultKeys = new Set(results.map(e => `${e.homeTeam}-${e.awayTeam}`));
+			const newResults = resultEvents.filter(r => !existingResultKeys.has(r.title.split(' ')[0] + '-' + r.title.split(' ').slice(-1)[0]));
+			const allResults = [...results, ...newResults];
+
 			let html = '';
 			html += this.renderBand('Live now', live, { cssClass: 'live' });
 			html += this.renderBand('Events', upcoming, {});
-			html += this.renderBand('Results', results, { cssClass: 'results' });
+			html += this.renderBand('Results', allResults, { cssClass: 'results' });
 
 			if (!html) {
 				html = '<p class="date-empty">No events on this date.</p>';
@@ -906,6 +942,25 @@ class Dashboard {
 	}
 
 	renderRow(event, showDay, showDate, inlineSportEmoji = null) {
+		// Recent result pseudo-events: show FT and score title directly
+		if (event._isResult) {
+			const isMustWatch = event._isFavorite;
+			const sport = SPORT_CONFIG.find(s => s.id === event.sport) || { emoji: '', name: event.sport, color: '#888' };
+			const emojiPrefix = inlineSportEmoji ? `${inlineSportEmoji} ` : '';
+			let subtitleHtml = '';
+			if (event.tournament) {
+				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+			}
+			return `
+				<div class="event-row${isMustWatch ? ' must-watch' : ''}" data-id="${this.esc(event.id)}">
+					<div class="row-main">
+						<span class="row-time"><span class="row-ft">FT</span></span>
+						<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${this.esc(event.title)}</span>${subtitleHtml}</span>
+					</div>
+				</div>
+			`;
+		}
+
 		let date = new Date(event.time);
 		const now = new Date();
 
