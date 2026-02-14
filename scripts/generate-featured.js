@@ -644,12 +644,10 @@ export function fallbackLine(e) {
 		return `${emoji} ${e.homeTeam} v ${e.awayTeam}, ${time}${tourContext}${summaryTail}`;
 	}
 
-	// Other sports: add tournament + summary when available
+	// Other sports: add tournament context when not already in title
 	const parts = [emoji, e.title + ",", time];
 	if (e.tournament && !e.title.includes(e.tournament)) {
 		parts.push(`— ${e.tournament}`);
-	} else if (e.summary) {
-		parts.push(`— ${e.summary.split(".")[0]}`);
 	}
 	return parts.join(" ");
 }
@@ -872,13 +870,16 @@ async function main() {
 	const finalQuality = validateFeaturedContent(featured, { events });
 	featured = finalQuality.normalized;
 
-	// Add _meta for date-specific briefings
+	// Add _meta for provenance tracking
 	if (isDateMode) {
 		featured._meta = {
 			date: FEATURED_DATE,
 			mode: FEATURED_MODE,
 			generatedAt: new Date().toISOString(),
 		};
+	} else {
+		featured.generatedAt = new Date().toISOString();
+		featured.provider = provider;
 	}
 
 	writeJsonPretty(featuredPath, featured);
