@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T20:12:22.303Z",
+  "generatedAt": "2026-02-14T22:11:35.966Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 22,
@@ -13,8 +13,7 @@
     ],
     "bands": {
       "live": [
-        "AT&T Pebble Beach Pro-Am",
-        "Game 4 – FIDE Freestyle Chess World Championship 2026 | Semi Finals"
+        "AT&T Pebble Beach Pro-Am"
       ],
       "today": [],
       "tomorrow": [
@@ -43,13 +42,15 @@
         "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": []
+      "ended": [
+        "Game 4 – FIDE Freestyle Chess World Championship 2026 | Semi Finals"
+      ]
     },
-    "featuredBlockCount": 5,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 55,
-    "issueCount": 3
+    "editorialScore": 70,
+    "issueCount": 2
   },
   "findings": [
     {
@@ -58,26 +59,36 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 20 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 55/100 (below threshold)"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"️ Freestyle Chess semi-final game 4 deciding finalists\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bhatia\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 24 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 6,
     "critical": 0,
-    "warning": 4,
-    "info": 0
+    "warning": 5,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

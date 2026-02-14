@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-14T20:12:16.741Z",
-  "patternsDetected": 6,
+  "generatedAt": "2026-02-14T22:11:30.104Z",
+  "patternsDetected": 7,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 52,
+      "count": 54,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T20:12:16.738Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 52 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-14T22:11:30.098Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 54 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -44,24 +44,33 @@
       "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Kl...\" has fired 12 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 1,
+      "lateAvg": 0.69,
+      "drop": 0.31,
+      "suggestion": "Must-watch coverage dropped from 100% to 69%. Featured content is missing high-importance events."
+    },
+    {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "mustWatchCoverage",
-      "fireCount": 6,
+      "fireCount": 5,
       "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 6 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 5 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
     "failed_batches_increase": {
-      "count": 3,
+      "count": 4,
       "firstSeen": "2026-02-13T11:50:22.968Z",
-      "lastSeen": "2026-02-13T13:46:59.623Z"
+      "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "sport_zero_events": {
-      "count": 52,
+      "count": 54,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T20:12:16.738Z"
+      "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "stale_output": {
       "count": 1,
@@ -69,5 +78,5 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     }
   },
-  "summary": "6 patterns detected (5 high, 1 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 52 times since 2026-02-13."
+  "summary": "7 patterns detected (5 high, 2 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 54 times since 2026-02-13."
 }

@@ -1,52 +1,5 @@
 [
   {
-    "timestamp": "2026-02-12T14:01:30.304Z",
-    "editorial": {
-      "score": 96,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 90,
-      "blockCount": 8,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 122,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0,
-        "tracked": false
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-12T14:05:18.083Z",
     "editorial": {
       "score": 96,
@@ -4986,6 +4939,70 @@
         "input": 0,
         "output": 0,
         "calls": 3,
+        "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:28.160Z",
+    "editorial": {
+      "score": 70,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 0.75,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 97,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 4,
+      "warningCount": 4,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Bhatia\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 24 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 3,
+        "total": 0,
+        "tracked": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "tracked": false
+      },
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 4,
         "total": 0
       }
     }
