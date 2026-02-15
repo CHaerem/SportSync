@@ -1410,9 +1410,10 @@ class Dashboard {
 			content += '</div>';
 		}
 
-		// Football: match details (stats + key events)
+		// Football: live match details OR recent result for completed matches
 		if (event.sport === 'football') {
-			content += this.renderMatchDetails(event);
+			const liveDetails = this.renderMatchDetails(event);
+			content += liveDetails || this.renderRecentResult(event);
 		}
 
 		// Football: mini league table
@@ -1442,6 +1443,17 @@ class Dashboard {
 			if (event.link) {
 				content += `<a href="${this.esc(event.link)}" target="_blank" rel="noopener noreferrer" class="exp-link">\ud83d\udcca Leaderboard \u2197</a>`;
 			}
+			content += '</div>';
+		}
+
+		// Non-golf: Norwegian athletes (Olympics, esports, etc.)
+		if (event.sport !== 'golf' && event.norwegianPlayers?.length > 0) {
+			content += '<div class="exp-athletes">';
+			content += '<div class="exp-athletes-header">Norwegian Athletes</div>';
+			event.norwegianPlayers.forEach(player => {
+				const name = typeof player === 'string' ? player : player.name;
+				content += `<div class="exp-athlete">${this.esc(name)}</div>`;
+			});
 			content += '</div>';
 		}
 
@@ -1482,11 +1494,12 @@ class Dashboard {
 				content += `<button class="exp-fav-btn" data-action="team" data-sport="football" data-name="${this.esc(team)}" aria-label="${isTeamFav ? 'Remove' : 'Add'} ${this.esc(team)} ${isTeamFav ? 'from' : 'to'} favorites">${isTeamFav ? '\u2605' : '\u2606'} ${this.esc(team)}</button>`;
 			});
 			content += '</div>';
-		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+		} else if (event.norwegianPlayers?.length > 0) {
 			content += '<div class="exp-fav-actions">';
 			event.norwegianPlayers.forEach(player => {
-				const isPlayerFav = this.preferences && this.preferences.isPlayerFavorite('golf', player.name);
-				content += `<button class="exp-fav-btn" data-action="player" data-sport="golf" data-name="${this.esc(player.name)}" aria-label="${isPlayerFav ? 'Remove' : 'Add'} ${this.esc(player.name)} ${isPlayerFav ? 'from' : 'to'} favorites">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(player.name)}</button>`;
+				const name = typeof player === 'string' ? player : player.name;
+				const isPlayerFav = this.preferences?.isPlayerFavorite(event.sport, name);
+				content += `<button class="exp-fav-btn" data-action="player" data-sport="${this.esc(event.sport)}" data-name="${this.esc(name)}" aria-label="${isPlayerFav ? 'Remove' : 'Add'} ${this.esc(name)} ${isPlayerFav ? 'from' : 'to'} favorites">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(name)}</button>`;
 			});
 			content += '</div>';
 		}
@@ -1540,6 +1553,45 @@ class Dashboard {
 			html += '</div>';
 		}
 
+		return html;
+	}
+
+	renderRecentResult(event) {
+		const football = Array.isArray(this.recentResults?.football) ? this.recentResults.football : [];
+		if (!football.length || !event.homeTeam || !event.awayTeam) return '';
+
+		const eventDate = event.time ? new Date(event.time) : null;
+		if (!eventDate) return '';
+		const eventDateKey = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, '0')}-${String(eventDate.getDate()).padStart(2, '0')}`;
+
+		const homeL = event.homeTeam.toLowerCase();
+		const awayL = event.awayTeam.toLowerCase();
+
+		const match = football.find(m => {
+			if (!m.date) return false;
+			const matchDate = m.date.slice(0, 10);
+			if (matchDate !== eventDateKey) return false;
+			const mHome = (m.homeTeam || '').toLowerCase();
+			const mAway = (m.awayTeam || '').toLowerCase();
+			return (mHome.includes(homeL) || homeL.includes(mHome)) &&
+				(mAway.includes(awayL) || awayL.includes(mAway));
+		});
+
+		if (!match || match.homeScore == null) return '';
+
+		let html = '<div class="exp-result">';
+		html += `<div class="exp-result-score">${this.esc(match.homeTeam)} ${match.homeScore} – ${match.awayScore} ${this.esc(match.awayTeam)}</div>`;
+
+		if (match.goalScorers?.length > 0) {
+			html += '<div class="exp-result-scorers">';
+			for (const gs of match.goalScorers) {
+				const scorer = gs.player ? `${this.esc(gs.player)} (${this.esc(this.shortName(gs.team))})` : this.esc(this.shortName(gs.team));
+				html += `<div class="exp-scorer">\u26bd ${this.esc(gs.minute)} ${scorer}</div>`;
+			}
+			html += '</div>';
+		}
+
+		html += '</div>';
 		return html;
 	}
 
