@@ -156,6 +156,16 @@ describe("dashboard.js key classes used in CSS", () => {
 		"day-nav-date-input",
 		"date-empty",
 		"briefing-mode-label",
+		"exp-athletes",
+		"exp-athletes-header",
+		"exp-athlete",
+		"exp-result",
+		"exp-result-score",
+		"exp-scorer",
+		"exp-context-bar",
+		"exp-context-label",
+		"exp-medal-badge",
+		"exp-multiday",
 	];
 
 	for (const cls of keyClasses) {
@@ -164,4 +174,36 @@ describe("dashboard.js key classes used in CSS", () => {
 			expect(indexHtml).toMatch(regex);
 		});
 	}
+});
+
+describe("sport mapping completeness", () => {
+	it("all event sports map to SPORT_CONFIG entries", () => {
+		const eventsPath = path.join(docsDir, "data/events.json");
+		if (!fs.existsSync(eventsPath)) return; // skip if no events data
+		const events = JSON.parse(fs.readFileSync(eventsPath, "utf-8"));
+		const sportConfigJs = fs.readFileSync(
+			path.join(docsDir, "js/sport-config.js"),
+			"utf-8",
+		);
+		// Extract sport IDs and aliases from SPORT_CONFIG
+		const idMatches = [...sportConfigJs.matchAll(/id:\s*'(\w+)'/g)].map(
+			(m) => m[1],
+		);
+		const aliasMatches = [
+			...sportConfigJs.matchAll(/aliases:\s*\[([^\]]+)\]/g),
+		].flatMap(
+			(m) =>
+				m[1].match(/'(\w+)'/g)?.map((a) => a.replace(/'/g, "")) || [],
+		);
+		const knownSports = new Set([...idMatches, ...aliasMatches]);
+		// Normalization map (mirrors dashboard.js line 107)
+		const normalize = (s) =>
+			s === "f1" ? "formula1" : s === "cs2" ? "esports" : s;
+		const unmapped = [
+			...new Set(events.map((e) => e.sport)),
+		].filter((s) => !knownSports.has(normalize(s)));
+		expect(unmapped, `Unmapped sports: ${unmapped.join(", ")}`).toEqual(
+			[],
+		);
+	});
 });

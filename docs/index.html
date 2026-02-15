@@ -653,7 +653,7 @@
 			background: var(--bg-secondary);
 			border: 1px solid var(--border);
 			border-radius: 20px;
-			padding: 3px 12px;
+			padding: 7px 14px;
 			text-decoration: none;
 			display: inline-block;
 			transition: border-color 0.15s;
@@ -671,7 +671,7 @@
 			background: none;
 			border: 1px solid var(--border);
 			border-radius: 20px;
-			padding: 3px 12px;
+			padding: 7px 14px;
 			font-size: 0.7rem;
 			color: var(--muted);
 			cursor: pointer;
@@ -681,6 +681,10 @@
 			border-color: var(--accent);
 			color: var(--accent);
 		}
+		.exp-fav-btn:focus-visible, .exp-stream-badge:focus-visible {
+			outline: 2px solid var(--accent); outline-offset: 2px;
+		}
+		.exp-fav-btn:active, .exp-stream-badge:active { opacity: 0.6; }
 
 		/* --- Standings mini-tables --- */
 		.exp-standings { margin: 12px 0; }
@@ -690,7 +694,7 @@
 		}
 		.exp-mini-table {
 			width: 100%; border-collapse: collapse;
-			font-size: 0.72rem; font-variant-numeric: tabular-nums;
+			font-size: 0.75rem; font-variant-numeric: tabular-nums;
 		}
 		.exp-mini-table th {
 			text-align: left; font-weight: 400; color: var(--muted);
@@ -936,10 +940,43 @@
 			}
 		}
 
+		/* --- Olympics context & multi-day --- */
+		.exp-context-bar {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 8px;
+		}
+		.exp-context-label {
+			font-size: 0.7rem;
+			color: var(--muted);
+		}
+		.exp-medal-badge {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: #b8860b;
+			border: 1px solid #b8860b;
+			border-radius: 4px;
+			padding: 1px 6px;
+		}
+		.dark .exp-medal-badge {
+			color: #daa520;
+			border-color: #daa520;
+		}
+		.exp-multiday {
+			font-size: 0.7rem;
+			color: var(--muted);
+			margin-bottom: 8px;
+		}
+
 		/* --- Mobile tweaks --- */
 		@media (max-width: 380px) {
 			.wrap { padding: 24px 16px 40px; }
 			.row-title-text { font-size: 0.78rem; }
+			.row-expanded { padding-left: 16px; }
+			.exp-teams { gap: 12px; }
 		}
 	</style>
 </head>

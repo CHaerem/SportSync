@@ -104,7 +104,7 @@ class Dashboard {
 					title: ev.title,
 					time: ev.time,
 					endTime: ev.endTime || null,
-					sport: ev.sport === 'f1' ? 'formula1' : ev.sport,
+					sport: ev.sport === 'f1' ? 'formula1' : (ev.sport === 'cs2' ? 'esports' : ev.sport),
 					tournament: ev.tournament || '',
 					venue: ev.venue || '',
 					norwegian: ev.norwegian || false,
@@ -1372,6 +1372,16 @@ class Dashboard {
 			content += `<div class="exp-venue">${this.esc(event.venue)}</div>`;
 		}
 
+		// Multi-day progress (golf tournaments, Olympics sessions)
+		if (event.endTime) {
+			content += this.renderMultiDayProgress(event);
+		}
+
+		// Olympics context bar (discipline + medal badge)
+		if (event.context === 'olympics-2026') {
+			content += this.renderOlympicsContext(event);
+		}
+
 		// AI summary
 		if (event.summary) {
 			content += `<div class="exp-summary">${this.esc(event.summary)}</div>`;
@@ -1448,8 +1458,9 @@ class Dashboard {
 
 		// Non-golf: Norwegian athletes (Olympics, esports, etc.)
 		if (event.sport !== 'golf' && event.norwegianPlayers?.length > 0) {
+			const isOlympics = event.context === 'olympics-2026';
 			content += '<div class="exp-athletes">';
-			content += '<div class="exp-athletes-header">Norwegian Athletes</div>';
+			content += `<div class="exp-athletes-header">${isOlympics ? '\ud83c\uddf3\ud83c\uddf4 Norwegian Athletes' : 'Norwegian Players'}</div>`;
 			event.norwegianPlayers.forEach(player => {
 				const name = typeof player === 'string' ? player : player.name;
 				content += `<div class="exp-athlete">${this.esc(name)}</div>`;
@@ -1467,9 +1478,20 @@ class Dashboard {
 			content += this.renderF1Standings();
 		}
 
-		// Participants (chess, tennis)
+		// Participants (chess, tennis) — structured vertical list
 		if (event.participants && event.participants.length > 0 && (event.sport === 'chess' || event.sport === 'tennis')) {
-			content += `<div class="exp-participants">Players: ${event.participants.map(p => this.esc(typeof p === 'string' ? p : p.name)).join(', ')}</div>`;
+			content += '<div class="exp-athletes">';
+			content += `<div class="exp-athletes-header">${event.sport === 'chess' ? 'Players' : 'Draw'}</div>`;
+			event.participants.forEach(p => {
+				const name = typeof p === 'string' ? p : p.name;
+				content += `<div class="exp-athlete">${this.esc(name)}</div>`;
+			});
+			content += '</div>';
+		}
+
+		// Event link (non-golf — golf renders its own link above)
+		if (event.link && event.sport !== 'golf') {
+			content += `<a href="${this.esc(event.link)}" target="_blank" rel="noopener noreferrer" class="exp-link">More details \u2197</a>`;
 		}
 
 		// Streaming
@@ -1509,6 +1531,41 @@ class Dashboard {
 
 		content += '</div>';
 		return content;
+	}
+
+	renderMultiDayProgress(event) {
+		const start = new Date(event.time);
+		const end = new Date(event.endTime);
+		const totalMs = end.getTime() - start.getTime();
+		const totalDays = Math.round(totalMs / (24 * 60 * 60 * 1000)) + 1;
+		if (totalDays <= 1) return '';
+
+		const now = new Date();
+		if (now < start) {
+			return `<div class="exp-multiday">${totalDays}-day event</div>`;
+		} else if (now > end) {
+			return '<div class="exp-multiday">Completed</div>';
+		}
+		const elapsedMs = now.getTime() - start.getTime();
+		const currentDay = Math.floor(elapsedMs / (24 * 60 * 60 * 1000)) + 1;
+		return `<div class="exp-multiday">Day ${currentDay} of ${totalDays}</div>`;
+	}
+
+	renderOlympicsContext(event) {
+		const parts = event.title.split(' \u2014 ');
+		const discipline = parts.length > 1 ? parts[0] : null;
+		const titleLower = event.title.toLowerCase();
+		const isCeremony = titleLower.includes('ceremony') || titleLower.includes('opening') || titleLower.includes('closing');
+
+		let html = '<div class="exp-context-bar">';
+		if (discipline) {
+			html += `<span class="exp-context-label">${this.esc(discipline)}</span>`;
+		}
+		if (!isCeremony) {
+			html += '<span class="exp-medal-badge">\ud83c\udfc5 Medal Event</span>';
+		}
+		html += '</div>';
+		return html;
 	}
 
 	// --- Match details (football) ---
