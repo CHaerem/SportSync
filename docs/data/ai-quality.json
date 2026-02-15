@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-15T08:16:56.353Z",
+  "generatedAt": "2026-02-15T10:14:08.282Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 22727,
+    "blockCount": 9,
+    "generationMs": 24005,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,26 +17,26 @@
     }
   },
   "editorial": {
-    "score": 70,
+    "score": 67,
     "metrics": {
-      "mustWatchCoverage": 0,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
     "issues": [
-      "Only 0% of must-watch events covered in blocks"
+      "Only 17% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
-    "score": 90,
+    "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 100,
+      "avgScore": 121,
       "streamingCoverage": 1,
-      "reasonCoverage": 0.667
+      "reasonCoverage": 1
     }
   },
   "results": {
