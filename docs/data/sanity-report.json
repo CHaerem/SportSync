@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T00:50:09.032Z",
+  "generatedAt": "2026-02-15T03:14:08.354Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,10 +55,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 9,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 64,
+    "editorialScore": 67,
     "issueCount": 2
   },
   "findings": [
@@ -68,19 +68,14 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 19 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess final begins\" which may not match any event"
-    },
-    {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 64/100 (below threshold)"
+      "message": "Editorial quality score is 67/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Atl\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -90,7 +85,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Barcelona Thursday\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,10 +104,10 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 8,
     "critical": 0,
-    "warning": 6,
-    "info": 1
+    "warning": 8,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
