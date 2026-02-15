@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-02-15T12:19:00.660Z",
+  "generatedAt": "2026-02-15T14:16:44.067Z",
   "featured": {
     "provider": "claude-cli",
-    "attempts": 1,
+    "attempts": 2,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 16800,
+    "blockCount": 8,
+    "generationMs": 69688,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
+      "calls": 2,
       "total": 0,
       "tracked": false
     }
@@ -34,7 +34,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 117,
+      "avgScore": 119,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -48,7 +48,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 23
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -57,14 +57,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 31,
+      "totalEvents": 30,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.742
+      "tagsCoverage": 0.767
     },
     "after": {
-      "totalEvents": 31,
+      "totalEvents": 30,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -73,15 +73,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 8,
-    "aiUpdatedFields": 31,
+    "fallbackFieldsFilled": 7,
+    "aiUpdatedFields": 30,
     "failedBatches": 0,
-    "totalEvents": 31,
-    "hintsApplied": [],
+    "totalEvents": 30,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 4,
+      "calls": 3,
       "total": 0,
       "tracked": false
     }

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-15T12:19:02.524Z",
-  "eventCount": 31,
+  "generatedAt": "2026-02-15T14:16:45.966Z",
+  "eventCount": 30,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -12,15 +12,15 @@
       "previousCount": 10,
       "delta": 0
     },
-    "football": {
-      "count": 17,
-      "previousCount": 17,
-      "delta": 0
-    },
     "chess": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "football": {
+      "count": 16,
+      "previousCount": 17,
+      "delta": -1
     },
     "cs2": {
       "count": 1,
@@ -45,19 +45,19 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
@@ -65,7 +65,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.93,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 25,
+    "footballCount": 23,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []

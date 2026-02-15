@@ -1,48 +1,13 @@
 {
-  "generatedAt": "2026-02-15T12:18:43.734Z",
+  "generatedAt": "2026-02-15T14:15:34.258Z",
   "timezone": "Europe/Oslo",
-  "summary": "3 priority picks across 2 watch windows.",
-  "headline": "Norway's Olympic Sunday: Relay gold and ski jumping medals",
+  "summary": "3 priority picks across 3 watch windows.",
+  "headline": "Gold medal Sunday in Milano-Cortina",
   "windows": [
     {
       "id": "next-30",
       "label": "Next 30 min",
       "windowMinutes": 30,
-      "items": []
-    },
-    {
-      "id": "next-60",
-      "label": "Next 60 min",
-      "windowMinutes": 60,
-      "items": [
-        {
-          "id": "football-athletic-club-at-real-oviedo-2026-02-15t13:00:00.000z",
-          "title": "Athletic Club at Real Oviedo",
-          "sport": "football",
-          "tournament": "La Liga",
-          "time": "2026-02-15T13:00:00.000Z",
-          "timeLabel": "15 Feb, 14:00",
-          "relativeStart": "In 41m",
-          "importance": 2,
-          "norwegian": false,
-          "streaming": [
-            {
-              "platform": "TV 2 Play",
-              "url": "https://play.tv2.no",
-              "type": "streaming"
-            }
-          ],
-          "score": 58,
-          "reasons": [
-            "Starting soon"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "next-120",
-      "label": "Next 120 min",
-      "windowMinutes": 120,
       "items": [
         {
           "id": "chess-game-1-–-fide-freestyle-chess-world-championship-2026-|-finals-2026-02-15t14:00:00.000z",
@@ -51,7 +16,7 @@
           "tournament": "FIDE Freestyle Chess World Championship 2026 | Finals",
           "time": "2026-02-15T14:00:00.000Z",
           "timeLabel": "15 Feb, 15:00",
-          "relativeStart": "In 1h 41m",
+          "relativeStart": "Started",
           "importance": 3,
           "norwegian": false,
           "streaming": [
@@ -70,16 +35,45 @@
           "reasons": [
             "Starting soon"
           ]
+        }
+      ]
+    },
+    {
+      "id": "next-60",
+      "label": "Next 60 min",
+      "windowMinutes": 60,
+      "items": [
+        {
+          "id": "olympics-ski-jumping-—-large-hill-individual-2026-02-15t16:00:00+01:00",
+          "title": "Ski Jumping — Large Hill Individual",
+          "sport": "olympics",
+          "tournament": "Winter Olympics 2026",
+          "time": "2026-02-15T16:00:00+01:00",
+          "timeLabel": "15 Feb, 16:00",
+          "relativeStart": "In 44m",
+          "importance": 5,
+          "norwegian": true,
+          "streaming": [
+            {
+              "platform": "NRK",
+              "type": "tv"
+            }
+          ],
+          "score": 128,
+          "reasons": [
+            "Norwegian interest",
+            "Starting soon"
+          ]
         },
         {
-          "id": "football-athletic-club-at-real-oviedo-2026-02-15t13:00:00.000z",
-          "title": "Athletic Club at Real Oviedo",
+          "id": "football-atlético-madrid-at-rayo-vallecano-2026-02-15t15:15:00.000z",
+          "title": "Atlético Madrid at Rayo Vallecano",
           "sport": "football",
           "tournament": "La Liga",
-          "time": "2026-02-15T13:00:00.000Z",
-          "timeLabel": "15 Feb, 14:00",
-          "relativeStart": "In 41m",
-          "importance": 2,
+          "time": "2026-02-15T15:15:00.000Z",
+          "timeLabel": "15 Feb, 16:15",
+          "relativeStart": "In 59m",
+          "importance": 3,
           "norwegian": false,
           "streaming": [
             {
@@ -88,7 +82,112 @@
               "type": "streaming"
             }
           ],
-          "score": 58,
+          "score": 76,
+          "reasons": [
+            "Starting soon"
+          ]
+        },
+        {
+          "id": "chess-game-1-–-fide-freestyle-chess-world-championship-2026-|-finals-2026-02-15t14:00:00.000z",
+          "title": "Game 1 – FIDE Freestyle Chess World Championship 2026 | Finals",
+          "sport": "chess",
+          "tournament": "FIDE Freestyle Chess World Championship 2026 | Finals",
+          "time": "2026-02-15T14:00:00.000Z",
+          "timeLabel": "15 Feb, 15:00",
+          "relativeStart": "Started",
+          "importance": 3,
+          "norwegian": false,
+          "streaming": [
+            {
+              "platform": "chess24",
+              "url": "https://chess24.com",
+              "type": "streaming"
+            },
+            {
+              "platform": "Chess.com",
+              "url": "https://chess.com/tv",
+              "type": "streaming"
+            }
+          ],
+          "score": 71,
+          "reasons": [
+            "Starting soon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next-120",
+      "label": "Next 120 min",
+      "windowMinutes": 120,
+      "items": [
+        {
+          "id": "olympics-ski-jumping-—-large-hill-individual-2026-02-15t16:00:00+01:00",
+          "title": "Ski Jumping — Large Hill Individual",
+          "sport": "olympics",
+          "tournament": "Winter Olympics 2026",
+          "time": "2026-02-15T16:00:00+01:00",
+          "timeLabel": "15 Feb, 16:00",
+          "relativeStart": "In 44m",
+          "importance": 5,
+          "norwegian": true,
+          "streaming": [
+            {
+              "platform": "NRK",
+              "type": "tv"
+            }
+          ],
+          "score": 128,
+          "reasons": [
+            "Norwegian interest",
+            "Starting soon"
+          ]
+        },
+        {
+          "id": "football-atlético-madrid-at-rayo-vallecano-2026-02-15t15:15:00.000z",
+          "title": "Atlético Madrid at Rayo Vallecano",
+          "sport": "football",
+          "tournament": "La Liga",
+          "time": "2026-02-15T15:15:00.000Z",
+          "timeLabel": "15 Feb, 16:15",
+          "relativeStart": "In 59m",
+          "importance": 3,
+          "norwegian": false,
+          "streaming": [
+            {
+              "platform": "TV 2 Play",
+              "url": "https://play.tv2.no",
+              "type": "streaming"
+            }
+          ],
+          "score": 76,
+          "reasons": [
+            "Starting soon"
+          ]
+        },
+        {
+          "id": "chess-game-1-–-fide-freestyle-chess-world-championship-2026-|-finals-2026-02-15t14:00:00.000z",
+          "title": "Game 1 – FIDE Freestyle Chess World Championship 2026 | Finals",
+          "sport": "chess",
+          "tournament": "FIDE Freestyle Chess World Championship 2026 | Finals",
+          "time": "2026-02-15T14:00:00.000Z",
+          "timeLabel": "15 Feb, 15:00",
+          "relativeStart": "Started",
+          "importance": 3,
+          "norwegian": false,
+          "streaming": [
+            {
+              "platform": "chess24",
+              "url": "https://chess24.com",
+              "type": "streaming"
+            },
+            {
+              "platform": "Chess.com",
+              "url": "https://chess.com/tv",
+              "type": "streaming"
+            }
+          ],
+          "score": 71,
           "reasons": [
             "Starting soon"
           ]
@@ -104,7 +203,7 @@
       "tournament": "Winter Olympics 2026",
       "time": "2026-02-15T16:00:00+01:00",
       "timeLabel": "15 Feb, 16:00",
-      "relativeStart": "In 2h 41m",
+      "relativeStart": "In 44m",
       "importance": 5,
       "norwegian": true,
       "streaming": [
@@ -113,20 +212,20 @@
           "type": "tv"
         }
       ],
-      "score": 122,
+      "score": 128,
       "reasons": [
         "Norwegian interest",
-        "Must-watch"
+        "Starting soon"
       ]
     },
     {
-      "id": "olympics-cross-country-skiing-—-men's-relay-4x10km-2026-02-15t12:00:00+01:00",
-      "title": "Cross-Country Skiing — Men's Relay 4x10km",
+      "id": "olympics-alpine-skiing-—-men's-slalom-2026-02-16t10:00:00+01:00",
+      "title": "Alpine Skiing — Men's Slalom",
       "sport": "olympics",
       "tournament": "Winter Olympics 2026",
-      "time": "2026-02-15T12:00:00+01:00",
-      "timeLabel": "15 Feb, 12:00",
-      "relativeStart": "Started",
+      "time": "2026-02-16T10:00:00+01:00",
+      "timeLabel": "16 Feb, 10:00",
+      "relativeStart": "In 18h 44m",
       "importance": 5,
       "norwegian": true,
       "streaming": [
@@ -142,13 +241,13 @@
       ]
     },
     {
-      "id": "olympics-alpine-skiing-—-men's-slalom-2026-02-16t10:00:00+01:00",
-      "title": "Alpine Skiing — Men's Slalom",
+      "id": "olympics-biathlon-—-men's-relay-4x7.5km-2026-02-16t14:00:00+01:00",
+      "title": "Biathlon — Men's Relay 4x7.5km",
       "sport": "olympics",
       "tournament": "Winter Olympics 2026",
-      "time": "2026-02-16T10:00:00+01:00",
-      "timeLabel": "16 Feb, 10:00",
-      "relativeStart": "In 20h 41m",
+      "time": "2026-02-16T14:00:00+01:00",
+      "timeLabel": "16 Feb, 14:00",
+      "relativeStart": "In 22h 44m",
       "importance": 5,
       "norwegian": true,
       "streaming": [
