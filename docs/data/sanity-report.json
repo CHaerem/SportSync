@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-15T18:16:53.145Z",
+  "generatedAt": "2026-02-15T20:13:19.491Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 27,
+    "totalEvents": 26,
     "sports": [
       "golf",
       "olympics",
@@ -12,13 +12,8 @@
       "f1"
     ],
     "bands": {
-      "live": [
-        "AT&T Pebble Beach Pro-Am",
-        "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
-      ],
-      "today": [
-        "Real Betis at Mallorca"
-      ],
+      "live": [],
+      "today": [],
       "tomorrow": [
         "Alpine Skiing — Men's Slalom",
         "Biathlon — Men's Relay 4x7.5km",
@@ -49,13 +44,15 @@
         "Qatar Airways Australian Grand Prix"
       ],
       "ended": [
-        "Ski Jumping — Large Hill Individual"
+        "AT&T Pebble Beach Pro-Am",
+        "Ski Jumping — Large Hill Individual",
+        "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 71,
+    "editorialScore": 76,
     "issueCount": 3
   },
   "findings": [
@@ -67,12 +64,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Atl\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Ski Jumping Large Hill Individual\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Freestyle Chess Finals Game\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -81,19 +78,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 5,
     "critical": 0,
-    "warning": 6,
+    "warning": 5,
     "info": 0
   },
   "pass": true,

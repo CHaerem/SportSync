@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-15",
-  "generatedAt": "2026-02-15T18:16:44.766Z",
+  "generatedAt": "2026-02-15T20:13:11.202Z",
   "events": {
-    "upcoming": [
+    "upcoming": [],
+    "results": [
       {
         "sport": "golf",
         "tournament": "PGA Tour",
@@ -29,42 +30,66 @@
         "norwegianPlayers": [
           {
             "name": "Viktor Hovland",
-            "teeTime": "16:55",
-            "teeTimeUTC": "2026-02-15T15:55:00.000Z",
+            "teeTime": null,
+            "teeTimeUTC": null,
             "status": null
           }
         ],
         "totalPlayers": 80,
         "link": null,
         "status": null,
-        "featuredGroups": [
-          {
-            "player": "Viktor Hovland",
-            "teeTime": "16:55",
-            "groupmates": [
-              {
-                "name": "Wyndham Clark",
-                "teeTime": "16:55"
-              },
-              {
-                "name": "Emiliano Grillo",
-                "teeTime": "16:55"
-              }
-            ]
-          }
-        ],
+        "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
         "importance": 4,
-        "importanceReason": "PGA Tour signature event with Viktor Hovland competing at iconic Pebble Beach venue",
-        "summary": "Viktor Hovland competes at prestigious Pebble Beach Pro-Am, one of PGA Tour's most scenic and historic venues.",
+        "importanceReason": "PGA Tour signature event featuring Viktor Hovland at iconic Pebble Beach venue",
+        "summary": "Viktor Hovland competes at Pebble Beach's prestigious pro-am, one of PGA Tour's most scenic and challenging venues",
         "tags": [
           "norwegian-player",
           "must-watch"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-15T18:16:24.623Z"
+        "enrichedAt": "2026-02-15T20:12:35.199Z"
+      },
+      {
+        "sport": "olympics",
+        "tournament": "Winter Olympics 2026",
+        "title": "Ski Jumping — Large Hill Individual",
+        "time": "2026-02-15T16:00:00+01:00",
+        "endTime": null,
+        "venue": "Predazzo Ski Jumping Stadium",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "NRK",
+            "type": "tv"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Halvor Egner Granerud"
+          }
+        ],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "context": "olympics-2026",
+        "importance": 5,
+        "importanceReason": "Olympic ski jumping event with Norwegian medal contender Granerud competing for gold",
+        "summary": "Halvor Egner Granerud chases Olympic gold in large hill ski jumping, Norway's traditional strength at Winter Games",
+        "tags": [
+          "must-watch",
+          "norwegian-player",
+          "major"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-15T20:12:35.200Z"
       },
       {
         "sport": "chess",
@@ -97,93 +122,41 @@
         "awayTeam": null,
         "isFavorite": false,
         "importance": 3,
-        "importanceReason": "Final round of FIDE Freestyle Chess World Championship, innovative format gaining attention",
-        "summary": "Decisive game in FIDE Freestyle Chess World Championship finals. New fast-paced format without Magnus Carlsen.",
+        "importanceReason": "World championship finals match in new freestyle format, but no Norwegian involvement",
+        "summary": "Finals game in FIDE's new freestyle chess format, showcasing rapid-fire world championship chess",
         "tags": [
-          "final",
-          "major"
+          "final"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-15T18:16:24.624Z"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Real Betis at Mallorca",
-        "time": "2026-02-15T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadi Mallorca Son Moix",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Mallorca",
-        "awayTeam": "Real Betis",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table La Liga fixture with minimal title or relegation implications",
-        "summary": "Routine La Liga match between mid-table sides. Limited stakes for either team in standings.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-15T18:16:24.625Z"
-      }
-    ],
-    "results": [
-      {
-        "sport": "olympics",
-        "tournament": "Winter Olympics 2026",
-        "title": "Ski Jumping — Large Hill Individual",
-        "time": "2026-02-15T16:00:00+01:00",
-        "endTime": null,
-        "venue": "Predazzo Ski Jumping Stadium",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "NRK",
-            "type": "tv"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Halvor Egner Granerud"
-          }
-        ],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "context": "olympics-2026",
-        "importance": 5,
-        "importanceReason": "Olympic ski jumping medal event with Norwegian medal favorite Halvor Egner Granerud competing",
-        "summary": "Olympic large hill ski jumping final. Norway's Halvor Egner Granerud is a strong medal contender in discipline.",
-        "tags": [
-          "must-watch",
-          "norwegian-player",
-          "major"
-        ],
-        "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-15T18:16:24.623Z"
+        "enrichedAt": "2026-02-15T20:12:35.200Z"
       }
     ]
   },
   "matchResults": [
+    {
+      "homeTeam": "Levante",
+      "awayTeam": "Valencia",
+      "homeScore": 0,
+      "awayScore": 2,
+      "date": "2026-02-15T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadi Ciutat de València",
+      "goalScorers": [
+        {
+          "player": "Largie Ramazani",
+          "team": "Valencia",
+          "minute": "64'"
+        },
+        {
+          "player": "Umar Sadiq",
+          "team": "Valencia",
+          "minute": "84'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
     {
       "homeTeam": "Rayo Vallecano",
       "awayTeam": "Atlético Madrid",
@@ -307,37 +280,37 @@
         "leaderboard": [
           {
             "position": 1,
-            "player": "Akshay Bhatia",
+            "player": "Sam Burns",
             "score": "-19",
-            "today": "E",
+            "today": "-5",
             "thru": "-"
           },
           {
             "position": 2,
+            "player": "Jacob Bridgeman",
+            "score": "-19",
+            "today": "-3",
+            "thru": "-"
+          },
+          {
+            "position": 3,
+            "player": "Collin Morikawa",
+            "score": "-19",
+            "today": "-2",
+            "thru": "-"
+          },
+          {
+            "position": 4,
             "player": "Scottie Scheffler",
             "score": "-18",
             "today": "-7",
             "thru": "-"
           },
           {
-            "position": 3,
-            "player": "Jacob Bridgeman",
-            "score": "-17",
-            "today": "-1",
-            "thru": "-"
-          },
-          {
-            "position": 4,
-            "player": "Jake Knapp",
-            "score": "-17",
-            "today": "E",
-            "thru": "-"
-          },
-          {
             "position": 5,
-            "player": "Collin Morikawa",
-            "score": "-17",
-            "today": "E",
+            "player": "Nico Echavarria",
+            "score": "-18",
+            "today": "-5",
             "thru": "-"
           }
         ]
@@ -384,13 +357,36 @@
   "watchPlan": {
     "picks": [
       {
+        "id": "football-barcelona-at-girona-2026-02-16t20:00:00.000z",
+        "title": "Barcelona at Girona",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-02-16T20:00:00.000Z",
+        "timeLabel": "16 Feb, 21:00",
+        "relativeStart": "In 23h 47m",
+        "importance": 5,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no",
+            "type": "streaming"
+          }
+        ],
+        "score": 126,
+        "reasons": [
+          "Favorite team",
+          "Must-watch"
+        ]
+      },
+      {
         "id": "olympics-alpine-skiing-—-men's-slalom-2026-02-16t10:00:00+01:00",
         "title": "Alpine Skiing — Men's Slalom",
         "sport": "olympics",
         "tournament": "Winter Olympics 2026",
         "time": "2026-02-16T10:00:00+01:00",
         "timeLabel": "16 Feb, 10:00",
-        "relativeStart": "In 14h 44m",
+        "relativeStart": "In 12h 47m",
         "importance": 5,
         "norwegian": true,
         "streaming": [
@@ -412,7 +408,7 @@
         "tournament": "Winter Olympics 2026",
         "time": "2026-02-16T14:00:00+01:00",
         "timeLabel": "16 Feb, 14:00",
-        "relativeStart": "In 18h 44m",
+        "relativeStart": "In 16h 47m",
         "importance": 5,
         "norwegian": true,
         "streaming": [
@@ -426,71 +422,48 @@
           "Norwegian interest",
           "Must-watch"
         ]
-      },
-      {
-        "id": "football-real-betis-at-mallorca-2026-02-15t20:00:00.000z",
-        "title": "Real Betis at Mallorca",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-02-15T20:00:00.000Z",
-        "timeLabel": "15 Feb, 21:00",
-        "relativeStart": "In 1h 44m",
-        "importance": 2,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "score": 58,
-        "reasons": [
-          "Starting soon"
-        ]
       }
     ],
-    "headline": "Norway's Olympic medal hunt intensifies"
+    "headline": "Granerud chases Olympic gold in large hill"
   },
   "rssHighlights": [
     {
-      "title": "Silver medal shared as Italy's Brignone wins 'incredible' slalom gold",
+      "title": "Weston & Stoecker win GB's second gold of day",
       "source": "bbc-winter",
       "sport": "olympics",
-      "link": "https://www.bbc.com/sport/videos/c4g4pz3vp10o?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.bbc.com/sport/articles/cm2x7m17jydo?at_medium=RSS&amp;at_campaign=rss"
     },
     {
-      "title": "Atletico tapte med målløs Sørloth tilbake fra start",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/atletico-tapte-med-mallos-sorloth-tilbake-fra-start-1.17770488"
-    },
-    {
-      "title": "'We're going for gold, nothing else' - Bankes & Nightingale on gold",
+      "title": "Why GB's first Olympic gold on snow has been just a matter of time",
       "source": "bbc-winter",
       "sport": "olympics",
-      "link": "https://www.bbc.com/sport/videos/c1kgm0m1vwxo?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.bbc.com/sport/articles/c1kgm079jrro?at_medium=RSS&amp;at_campaign=rss"
     },
     {
-      "title": "OL-gull til Femke Kok – sølv for Jutta Leerdam",
+      "title": "'I can't believe it' - Weston and Stoecker react to historic gold",
+      "source": "bbc-winter",
+      "sport": "olympics",
+      "link": "https://www.bbc.com/sport/videos/c33j4m0ypxlo?at_medium=RSS&amp;at_campaign=rss"
+    },
+    {
+      "title": "Maria Thorisdottir gir seg på landslaget",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/ol-gull-til-femke-kok-_-solv-for-jutta-leerdam-1.17770511"
+      "link": "https://www.nrk.no/sport/maria-thorisdottir-gir-seg-pa-landslaget-1.17770446"
     },
     {
-      "title": "Gullet glapp for Leerdam",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18571003"
+      "title": "Why are Team GB so good at skeleton?",
+      "source": "bbc-winter",
+      "sport": "olympics",
+      "link": "https://www.bbc.com/sport/articles/cz6ejev058eo?at_medium=RSS&amp;at_campaign=rss"
     }
   ],
   "meta": {
-    "eventCount": 4,
+    "eventCount": 3,
     "sportsCovered": [
       "golf",
       "olympics",
-      "chess",
-      "football"
+      "chess"
     ],
     "hasResults": true,
     "hasStandings": true

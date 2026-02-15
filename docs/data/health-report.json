@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-15T18:16:46.218Z",
-  "eventCount": 27,
+  "generatedAt": "2026-02-15T20:13:12.619Z",
+  "eventCount": 26,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -9,8 +9,8 @@
     },
     "olympics": {
       "count": 9,
-      "previousCount": 10,
-      "delta": -1
+      "previousCount": 9,
+      "delta": 0
     },
     "chess": {
       "count": 1,
@@ -18,8 +18,8 @@
       "delta": 0
     },
     "football": {
-      "count": 14,
-      "previousCount": 15,
+      "count": 13,
+      "previousCount": 14,
       "delta": -1
     },
     "cs2": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 119,
       "stale": false
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.92,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -101,7 +101,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 day snapshot(s) have 0 events and 0 results"
+      "2 day snapshot(s) have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -119,12 +119,12 @@
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "1 day snapshot(s) have 0 events and 0 results"
+      "message": "2 day snapshot(s) have 0 events and 0 results"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 71/100.",
+    "text": "Autonomy at 95% with 8/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 76/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
