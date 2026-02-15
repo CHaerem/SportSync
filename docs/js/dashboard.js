@@ -1417,6 +1417,8 @@ class Dashboard {
 	renderF1Standings() {
 		const drivers = this.standings.f1.drivers.slice(0, 5);
 		if (drivers.length === 0) return '';
+		// Hide standings when all drivers have zero points (pre-season or stale data)
+		if (drivers.every(d => !d.points)) return '';
 
 		let html = '<div class="exp-standings"><div class="exp-standings-header">Driver Standings</div>';
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Team</th><th>Pts</th></tr></thead><tbody>';
