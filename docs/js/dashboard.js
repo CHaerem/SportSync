@@ -486,8 +486,8 @@ class Dashboard {
 		const matchResults = snapshot.matchResults || [];
 
 		if (events.length === 0 && matchResults.length === 0) {
-			briefEl.innerHTML = '<div class="briefing-mode-label">No events on this date</div>';
-			briefEl.style.display = '';
+			briefEl.innerHTML = '';
+			briefEl.style.display = 'none';
 			if (sectionsEl) { sectionsEl.innerHTML = ''; sectionsEl.style.display = ''; }
 			return;
 		}
@@ -505,10 +505,7 @@ class Dashboard {
 			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
 			.join(', ');
 
-		const [sy, sm, sd] = snapshot.date.split('-').map(Number);
-		const snapDate = new Date(sy, sm - 1, sd);
-		const dateLabel = snapDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
-		let html = `<div class="briefing-mode-label">${this.esc(dateLabel)}</div>`;
+		let html = '';
 
 		// Summary line
 		if (events.length > 0) {
@@ -568,7 +565,7 @@ class Dashboard {
 		this.renderFeedbackPanel();
 
 		// Hide today-centric sections on non-today dates
-		const todayOnlySections = ['watch-plan', 'news'];
+		const todayOnlySections = ['watch-plan', 'news', 'feedback-panel'];
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
@@ -615,12 +612,11 @@ class Dashboard {
 			const blocks = Array.isArray(dateBriefing.blocks) ? dateBriefing.blocks : [];
 			const mode = dateBriefing._meta?.mode;
 			const viewDate = this._getSelectedDate();
-			const dateFormatted = viewDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
 			const modeLabel = (mode === 'recap' && this._isYesterday(viewDate)) ? "Yesterday's Recap"
 				: (mode === 'preview' && this._isTomorrow(viewDate)) ? "Tomorrow's Preview"
-				: dateFormatted;
+				: null;
 
-			let html = `<div class="briefing-mode-label">${this.esc(modeLabel)}</div>`;
+			let html = modeLabel ? `<div class="briefing-mode-label">${this.esc(modeLabel)}</div>` : '';
 			html += blocks.filter(b => b.type !== 'section').map(block => this.renderBlock(block)).join('');
 			briefEl.innerHTML = html;
 			briefEl.style.display = '';
@@ -637,10 +633,10 @@ class Dashboard {
 			return;
 		}
 
-		// Non-today with no briefing available
+		// Non-today with no briefing: hide brief area (auto-editorial from snapshot handles this)
 		if (!isToday && !dateBriefing) {
-			briefEl.innerHTML = '<div class="briefing-mode-label">No briefing available for this date</div>';
-			briefEl.style.display = '';
+			briefEl.innerHTML = '';
+			briefEl.style.display = 'none';
 			sectionsEl.innerHTML = '';
 			sectionsEl.style.display = '';
 			return;
