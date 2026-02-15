@@ -707,7 +707,7 @@ class Dashboard {
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
 			const streams = Array.isArray(pick.streaming) ? pick.streaming : [];
 
-			html += `<div class="watch-pick" data-pick-index="${i}">`;
+			html += `<div class="watch-pick" data-pick-index="${i}" role="button" tabindex="0">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
 			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
@@ -723,21 +723,25 @@ class Dashboard {
 
 		container.innerHTML = html;
 
-		// Bind pick clicks to scroll to matching event
+		// Bind pick clicks and keyboard to scroll to matching event
+		const handlePickActivate = (el) => {
+			const idx = parseInt(el.dataset.pickIndex, 10);
+			const pick = picks[idx];
+			if (!pick) return;
+			const matchedEvent = this.allEvents.find(e =>
+				e.title === pick.title || (pick.eventId && e.id === pick.eventId)
+			);
+			if (matchedEvent) {
+				this.expandedId = matchedEvent.id;
+				this.render();
+				const row = document.querySelector(`.event-row[data-id="${matchedEvent.id}"]`);
+				if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		};
 		container.querySelectorAll('.watch-pick').forEach(el => {
-			el.addEventListener('click', () => {
-				const idx = parseInt(el.dataset.pickIndex, 10);
-				const pick = picks[idx];
-				if (!pick) return;
-				const matchedEvent = this.allEvents.find(e =>
-					e.title === pick.title || (pick.eventId && e.id === pick.eventId)
-				);
-				if (matchedEvent) {
-					this.expandedId = matchedEvent.id;
-					this.render();
-					const row = document.querySelector(`.event-row[data-id="${matchedEvent.id}"]`);
-					if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
+			el.addEventListener('click', () => handlePickActivate(el));
+			el.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePickActivate(el); }
 			});
 		});
 	}
@@ -1255,7 +1259,7 @@ class Dashboard {
 			content += '<div class="exp-streaming">';
 			event.streaming.forEach(s => {
 				if (s.url) {
-					content += `<a href="${this.esc(s.url)}" target="_blank" rel="noopener noreferrer" class="exp-stream-badge">\ud83d\udcfa ${this.esc(s.platform)}</a>`;
+					content += `<a href="${this.esc(s.url)}" target="_blank" rel="noopener noreferrer" class="exp-stream-badge" aria-label="Watch on ${this.esc(s.platform)}">\ud83d\udcfa ${this.esc(s.platform)}</a>`;
 				} else {
 					content += `<span class="exp-stream-badge">\ud83d\udcfa ${this.esc(s.platform)}</span>`;
 				}
@@ -1269,14 +1273,14 @@ class Dashboard {
 			content += '<div class="exp-fav-actions">';
 			teams.forEach(team => {
 				const isTeamFav = this.preferences && this.preferences.isTeamFavorite('football', team);
-				content += `<button class="exp-fav-btn" data-action="team" data-sport="football" data-name="${this.esc(team)}">${isTeamFav ? '\u2605' : '\u2606'} ${this.esc(team)}</button>`;
+				content += `<button class="exp-fav-btn" data-action="team" data-sport="football" data-name="${this.esc(team)}" aria-label="${isTeamFav ? 'Remove' : 'Add'} ${this.esc(team)} ${isTeamFav ? 'from' : 'to'} favorites">${isTeamFav ? '\u2605' : '\u2606'} ${this.esc(team)}</button>`;
 			});
 			content += '</div>';
 		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
 			content += '<div class="exp-fav-actions">';
 			event.norwegianPlayers.forEach(player => {
 				const isPlayerFav = this.preferences && this.preferences.isPlayerFavorite('golf', player.name);
-				content += `<button class="exp-fav-btn" data-action="player" data-sport="golf" data-name="${this.esc(player.name)}">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(player.name)}</button>`;
+				content += `<button class="exp-fav-btn" data-action="player" data-sport="golf" data-name="${this.esc(player.name)}" aria-label="${isPlayerFav ? 'Remove' : 'Add'} ${this.esc(player.name)} ${isPlayerFav ? 'from' : 'to'} favorites">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(player.name)}</button>`;
 			});
 			content += '</div>';
 		}
@@ -1741,8 +1745,8 @@ class Dashboard {
 		// Collect all name matches on the ORIGINAL escaped string, then build output in one pass.
 		// This avoids stale-position bugs from mutating the string during iteration.
 		const allEntries = [
-			...teamEntries.map(([name, url]) => [name, `<img src="${url}" alt="" class="brief-logo" loading="lazy">`]),
-			...golferEntries.map(([name, url]) => [name, `<img src="${url}" alt="" class="brief-logo brief-headshot" loading="lazy">`]),
+			...teamEntries.map(([name, url]) => [name, `<img src="${url}" alt="${this.esc(name)}" class="brief-logo" loading="lazy">`]),
+			...golferEntries.map(([name, url]) => [name, `<img src="${url}" alt="${this.esc(name)}" class="brief-logo brief-headshot" loading="lazy">`]),
 		];
 
 		const matches = []; // { idx, len, imgHtml }
