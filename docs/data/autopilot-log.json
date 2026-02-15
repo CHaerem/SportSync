@@ -2,36 +2,6 @@
   "runs": [
     {
       "date": "2026-02-10",
-      "task": "Remove production console.log statements",
-      "outcome": "completed",
-      "pr": 11,
-      "details": "Removed 32 debug-level console.log calls from docs/sw.js (9), docs/js/sports-api.js (18), docs/js/simple-dashboard.js (2), and docs/index.html (3). Retained console.error calls. Upgraded SW registration failure to console.error.",
-      "tests_passed": true,
-      "files_changed": 4,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add CSS styling for event-time-exact class",
-      "outcome": "completed",
-      "pr": 12,
-      "details": "Added missing CSS definition for .event-time-exact class in docs/index.html. Styled with smaller font (0.75rem), muted color, reduced opacity, and tabular-nums for aligned digits.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add keyboard focus styles for filter buttons",
-      "outcome": "completed",
-      "pr": 13,
-      "details": "Added :focus-visible outline styles to .filter-btn and .sport-filter elements in docs/index.html. Keyboard users can now see focused buttons during tab navigation.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
       "task": "Clarify scripts/fetch/fotball-no.js integration status",
       "outcome": "skipped",
       "pr": null,
@@ -307,6 +277,42 @@
       "turns_used": 4,
       "lesson": "Batch similar a11y fixes across the same file for efficiency.",
       "scouted": 8
+    },
+    {
+      "date": "2026-02-15",
+      "task": "Add a11y labels to favorites, streaming, watch-plan, and brief logos",
+      "outcome": "completed",
+      "pr": 73,
+      "details": "Added aria-label to favorite buttons (add/remove state), streaming badge links (Watch on {platform}), watch-plan picks (role=button, tabindex=0, keydown handler), and descriptive alt text to brief-line logos. Batched 4 small a11y tasks into one PR.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 6,
+      "lesson": "Batching multiple small a11y fixes in the same file into one PR is very efficient.",
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-15",
+      "task": "Add validation and helper tests for fetch-results.js",
+      "outcome": "completed",
+      "pr": 74,
+      "details": "Exported formatDate, isFavoriteTeam, isFavoritePlayer for testability. Added 31 new tests covering validation functions and helper utilities.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 6,
+      "lesson": "Check existing test files before creating new ones — the roadmap said no test file existed but it did. Added tests for untested functions instead.",
+      "scouted": 0
+    },
+    {
+      "date": "2026-02-15",
+      "task": "Add unit tests for fetch-rss.js",
+      "outcome": "skipped",
+      "pr": null,
+      "details": "Test file already exists with 17 tests covering parseRssItems, isNorwegianRelevant, filterRecent, buildRssContext, and schema. Roadmap was inaccurate.",
+      "tests_passed": true,
+      "files_changed": 0,
+      "turns_used": 1,
+      "lesson": "Always verify task assumptions (like 'no test file exists') before starting work.",
+      "scouted": 0
     }
   ]
 }

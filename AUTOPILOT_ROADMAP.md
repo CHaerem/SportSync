@@ -490,21 +490,21 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### HIGH Priority
 
-- [PENDING] Add `aria-label` to favorite buttons in expanded view — `docs/js/dashboard.js` `.exp-fav-btn` buttons lack descriptive labels for screen readers. Add `aria-label="Add to favorites"` / `"Remove from favorites"` based on current state. ~10 lines, LOW risk.
+- [DONE] (PR #73) Add `aria-label` to favorite buttons in expanded view — Added aria-label showing add/remove state for screen readers.
 
-- [PENDING] Add keyboard accessibility to watch-plan picks — `docs/js/dashboard.js` `.watch-pick` divs are clickable (scroll to event on click) but lack `role="button"`, `tabindex="0"`, and keydown handler for Enter/Space. ~15 lines, LOW risk.
+- [DONE] (PR #73) Add keyboard accessibility to watch-plan picks — Added role="button", tabindex="0", and Enter/Space keydown handler.
 
 ### MEDIUM Priority
 
-- [PENDING] Add `aria-label` to streaming badge links — `docs/js/dashboard.js` `.exp-stream-badge` links lack descriptive labels. Add `aria-label` with platform name + "streaming link" for screen readers. ~5 lines, LOW risk.
+- [DONE] (PR #73) Add `aria-label` to streaming badge links — Added aria-label with "Watch on {platform}" text.
 
-- [PENDING] Add unit tests for `scripts/fetch-results.js` — No dedicated test file exists. Test RSS-to-result headline matching, favorite tagging, result merging, and 7-day retention logic. ~80 lines, LOW risk.
+- [DONE] (PR #74) Add validation and helper tests for `scripts/fetch-results.js` — Exported formatDate, isFavoriteTeam, isFavoritePlayer. Added 31 tests for validation and helper functions.
 
-- [PENDING] Add unit tests for `scripts/fetch-rss.js` — No dedicated test file exists. Test RSS feed parsing, Norwegian filtering, and digest generation. ~60 lines, LOW risk.
+- [DONE] (already resolved) Add unit tests for `scripts/fetch-rss.js` — Test file already exists with 17 tests covering parseRssItems, isNorwegianRelevant, filterRecent, buildRssContext, and schema.
 
 ### LOW Priority
 
-- [PENDING] Add alt text to expanded view team logos — `docs/js/dashboard.js` expanded event view renders team logos but they may use empty alt text. Verify and fix if needed. ~5 lines, LOW risk.
+- [DONE] (already resolved) Add alt text to expanded view team logos — Expanded view logos already have descriptive alt text. Brief-line logo alt text fixed in PR #73.
 
 ### Data Quality (Not Code Fixable)
 
