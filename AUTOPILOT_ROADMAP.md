@@ -514,6 +514,30 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ---
 
+## Scouted Tasks (2026-02-15)
+
+### HIGH Priority
+
+- [DONE] (PR #75) Hide F1 standings when all drivers have zero points — Added guard to `renderF1Standings()` to skip rendering when all driver points are zero (pre-season/stale data).
+
+- [PENDING] Add Norwegian relevance badge to event rows — `docs/js/dashboard.js` event rows don't visually indicate Norwegian interest. Add a small flag indicator next to events where `event.norwegian === true` or `event.norwegianRelevance >= 4` or `event.norwegianPlayers.length > 0`. ~15 lines across 2 files (dashboard.js + index.html CSS), LOW risk.
+
+### MEDIUM Priority
+
+- [PENDING] Render recap headlines in recent results band — `docs/js/dashboard.js` result rows (lines 897-930) don't show `recapHeadline` text even when available. Add italic micro-text under score lines for results that have recap headlines. ~15 lines across 2 files, LOW risk.
+
+- [PENDING] Add live status indicator to watch-plan picks — `docs/js/dashboard.js` watch-plan picks (lines 693-747) don't show whether the event is live, upcoming, or finished. Cross-reference `pick.eventId` against `this.liveScores` and event dates to show a status badge. ~25 lines across 2 files, LOW risk.
+
+### LOW Priority
+
+- [PENDING] Visualize watch-plan pick confidence scores — `docs/data/watch-plan.json` includes `score` (0-200) per pick but `renderWatchPlan()` doesn't display it. Add a subtle confidence indicator (e.g., bar or dot opacity) to each pick. ~20 lines across 2 files, LOW risk.
+
+### Data Quality (Not Code Fixable)
+
+- [BLOCKED] data availability — RSS recap headline matching (0% rate): RSS feeds are dominated by Winter Olympics content. The `matchRssHeadline()` function works correctly but RSS simply lacks football match recap headlines during Olympics period. Will self-resolve as Olympics end.
+
+---
+
 ## Known Limitations (Do Not Attempt to Fix)
 
 ### Usage API scope limitation

@@ -2,16 +2,6 @@
   "runs": [
     {
       "date": "2026-02-10",
-      "task": "Clarify scripts/fetch/fotball-no.js integration status",
-      "outcome": "skipped",
-      "pr": null,
-      "details": "Investigated and found fotball-no.js is already properly integrated: imported by both football.js and football-refactored.js to fetch OBOS-ligaen Lyn matches via fotball.no API. No changes needed.",
-      "tests_passed": true,
-      "files_changed": 0,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
       "task": "Add ai-assistant.js to service worker cache list",
       "outcome": "skipped",
       "pr": null,
@@ -313,6 +303,18 @@
       "turns_used": 1,
       "lesson": "Always verify task assumptions (like 'no test file exists') before starting work.",
       "scouted": 0
+    },
+    {
+      "date": "2026-02-15",
+      "task": "Hide F1 standings when all drivers have zero points",
+      "outcome": "completed",
+      "pr": 75,
+      "details": "Added guard in renderF1Standings() to skip rendering when all driver points are zero. Prevents misleading empty standings display during pre-season or with stale API data.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "lesson": "Data quality guards in the UI layer are quick wins — prevent misleading displays without touching the data pipeline.",
+      "scouted": 5
     }
   ]
 }
