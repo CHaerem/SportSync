@@ -1,34 +1,33 @@
 {
-  "generatedAt": "2026-02-15T10:20:56.610Z",
+  "generatedAt": "2026-02-15T10:13:56.679Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 16876,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"⚽ Rayo Vallecano v Atlético Madrid, 16:15, La Liga...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 5,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 69,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.875,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
-    "issues": [
-      "Only 14% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -55,16 +54,16 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
-      "totalEvents": 31,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.742
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 31,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -73,19 +72,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 8,
-    "aiUpdatedFields": 31,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 31,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "totalEvents": 27,
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 4,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   }
 }

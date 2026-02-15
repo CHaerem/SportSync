@@ -505,7 +505,9 @@ class Dashboard {
 			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
 			.join(', ');
 
-		const dateLabel = snapshot.date;
+		const [sy, sm, sd] = snapshot.date.split('-').map(Number);
+		const snapDate = new Date(sy, sm - 1, sd);
+		const dateLabel = snapDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
 		let html = `<div class="briefing-mode-label">${this.esc(dateLabel)}</div>`;
 
 		// Summary line
@@ -612,9 +614,11 @@ class Dashboard {
 		if (!isToday && dateBriefing) {
 			const blocks = Array.isArray(dateBriefing.blocks) ? dateBriefing.blocks : [];
 			const mode = dateBriefing._meta?.mode;
-			const modeLabel = mode === 'recap' ? "Yesterday's Recap"
-				: mode === 'preview' ? "Tomorrow's Preview"
-				: this._getSelectedDate().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+			const viewDate = this._getSelectedDate();
+			const dateFormatted = viewDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'Europe/Oslo' });
+			const modeLabel = (mode === 'recap' && this._isYesterday(viewDate)) ? "Yesterday's Recap"
+				: (mode === 'preview' && this._isTomorrow(viewDate)) ? "Tomorrow's Preview"
+				: dateFormatted;
 
 			let html = `<div class="briefing-mode-label">${this.esc(modeLabel)}</div>`;
 			html += blocks.filter(b => b.type !== 'section').map(block => this.renderBlock(block)).join('');

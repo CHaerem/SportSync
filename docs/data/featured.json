@@ -1,28 +1,55 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Norway hunts double Olympic gold"
+      "type": "event-line",
+      "text": "🏅 Cross-Country Skiing — Men's Relay 4x10km, 12:00 — Winter Olympics 2026"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Medal day in Milano-Cortina",
+      "type": "event-line",
+      "text": "🏅 Ski Jumping — Large Hill Individual, 16:00 — Winter Olympics 2026"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ AT&T Pebble Beach Pro-Am, 06:00 — PGA Tour"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Rayo Vallecano v Atlético Madrid, 16:15, La Liga — Atlético Madrid travel to Rayo Vallecano in a competitive La Liga fixture with European qualification implications"
+    },
+    {
+      "type": "section",
+      "id": "olympics-2026",
+      "title": "Winter Olympics 2026",
+      "emoji": "🏅",
+      "style": "highlight",
       "items": [
-        "Granerud on the large hill ski jump, 16:00",
-        "Klaebo leads men's relay 4x10km, 12:00"
-      ]
-    },
-    {
-      "type": "narrative",
-      "text": "Two of Norway's strongest gold medal shots today. Granerud jumps for individual glory, Klaebo anchors the relay dream team."
-    },
-    {
-      "type": "event-line",
-      "text": "♟️ Carlsen in Freestyle Chess final Game 1, 15:00"
-    },
-    {
-      "type": "event-line",
-      "text": "⚽ Atlético Madrid at Rayo Vallecano — Madrid derby, 16:15"
+        {
+          "text": "12:00 — Cross-Country Skiing — Men's Relay 4x10km",
+          "type": "event"
+        },
+        {
+          "text": "16:00 — Ski Jumping — Large Hill Individual",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Alpine Skiing — Men's Slalom",
+          "type": "event"
+        },
+        {
+          "text": "14:00 — Biathlon — Men's Relay 4x7.5km",
+          "type": "event"
+        },
+        {
+          "text": "09:45 — Cross-Country Skiing — Team Sprint Free",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Roman Imperium Cup V",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
       "type": "divider",
@@ -30,13 +57,17 @@
     },
     {
       "type": "event-line",
-      "text": "🏅 Mon 10:00 — Kristoffersen hunts slalom gold"
+      "text": "🏆 Thu 10:00 — Roman Imperium Cup V"
     },
     {
       "type": "event-line",
-      "text": "⚽ Mon 21:00 — Barcelona at Girona, Catalan derby"
+      "text": "⚽ Mon 21:00 — Barcelona at Girona"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-15T10:20:56.590Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-15T10:13:56.557Z",
+  "provider": "fallback"
 }
