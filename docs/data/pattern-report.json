@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-14T22:11:30.104Z",
-  "patternsDetected": 7,
+  "generatedAt": "2026-02-15T00:50:03.049Z",
+  "patternsDetected": 6,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 54,
+      "count": 56,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T22:11:30.098Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 54 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-15T00:50:03.045Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 56 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -48,17 +48,9 @@
       "severity": "medium",
       "metric": "mustWatchCoverage",
       "earlyAvg": 1,
-      "lateAvg": 0.69,
-      "drop": 0.31,
-      "suggestion": "Must-watch coverage dropped from 100% to 69%. Featured content is missing high-importance events."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "medium",
-      "hintKey": "mustWatchCoverage",
-      "fireCount": 5,
-      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 5 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "lateAvg": 0.55,
+      "drop": 0.45,
+      "suggestion": "Must-watch coverage dropped from 100% to 55%. Featured content is missing high-importance events."
     }
   ],
   "issueCodeHistory": {
@@ -68,9 +60,9 @@
       "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "sport_zero_events": {
-      "count": 54,
+      "count": 56,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-14T22:11:30.098Z"
+      "lastSeen": "2026-02-15T00:50:03.045Z"
     },
     "stale_output": {
       "count": 1,
@@ -78,5 +70,5 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     }
   },
-  "summary": "7 patterns detected (5 high, 2 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 54 times since 2026-02-13."
+  "summary": "6 patterns detected (5 high, 1 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 56 times since 2026-02-13."
 }

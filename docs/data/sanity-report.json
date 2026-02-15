@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-14T22:11:35.966Z",
+  "generatedAt": "2026-02-15T00:50:09.032Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 22,
+    "totalEvents": 31,
     "sports": [
       "golf",
-      "chess",
       "olympics",
       "football",
+      "chess",
       "cs2",
       "f1"
     ],
@@ -15,19 +15,21 @@
       "live": [
         "AT&T Pebble Beach Pro-Am"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Cross-Country Skiing — Men's Relay 4x10km",
         "Athletic Club at Real Oviedo",
+        "Game 1 – FIDE Freestyle Chess World Championship 2026 | Finals",
         "Ski Jumping — Large Hill Individual",
         "Atlético Madrid at Rayo Vallecano",
         "Valencia at Levante",
         "Real Betis at Mallorca"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Alpine Skiing — Men's Slalom",
         "Biathlon — Men's Relay 4x7.5km",
-        "Barcelona at Girona",
+        "Barcelona at Girona"
+      ],
+      "thisWeek": [
         "Cross-Country Skiing — Team Sprint Free",
         "Villarreal at Levante",
         "Arsenal at Wolverhampton Wanderers",
@@ -35,38 +37,50 @@
         "Biathlon — Men's Mass Start",
         "Ski Jumping — Team Large Hill",
         "Elche at Athletic Club",
-        "Cross-Country Skiing — Men's 50km Mass Start Classic"
+        "Cross-Country Skiing — Men's 50km Mass Start Classic",
+        "Real Oviedo at Real Sociedad",
+        "Leeds United at Aston Villa",
+        "Brighton & Hove Albion at Brentford",
+        "Burnley at Chelsea",
+        "Rayo Vallecano at Real Betis",
+        "AFC Bournemouth at West Ham United",
+        "Real Madrid at Osasuna",
+        "Newcastle United at Manchester City",
+        "Espanyol at Atlético Madrid",
+        "Cross-Country Skiing — Women's 30km Mass Start Classic",
+        "Closing Ceremony"
       ],
       "later": [
-        "Cross-Country Skiing — Women's 30km Mass Start Classic",
-        "Closing Ceremony",
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": [
-        "Game 4 – FIDE Freestyle Chess World Championship 2026 | Semi Finals"
-      ]
+      "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
+    "editorialScore": 64,
     "issueCount": 2
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Qatar Airways Australian Grand Prix\" is 20 days away — may clutter the dashboard"
+      "message": "\"Qatar Airways Australian Grand Prix\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess semi-final game 4 deciding finalists\" which may not match any event"
+      "message": "Featured block references \"️ Freestyle Chess final begins\" which may not match any event"
+    },
+    {
+      "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 64/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Atl\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -76,7 +90,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Barcelona Thursday\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -85,9 +99,9 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 7,
     "critical": 0,
-    "warning": 5,
+    "warning": 6,
     "info": 1
   },
   "pass": true,

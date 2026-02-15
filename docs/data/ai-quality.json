@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-14T22:11:28.153Z",
+  "generatedAt": "2026-02-15T00:49:30.514Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 17488,
+    "blockCount": 6,
+    "generationMs": 17771,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,26 +17,26 @@
     }
   },
   "editorial": {
-    "score": 70,
+    "score": 64,
     "metrics": {
-      "mustWatchCoverage": 0.167,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 0.143,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
     "issues": [
-      "Only 17% of must-watch events covered in blocks"
+      "Only 14% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
-    "score": 90,
+    "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 97,
+      "avgScore": 104,
       "streamingCoverage": 1,
-      "reasonCoverage": 0.667
+      "reasonCoverage": 1
     }
   },
   "results": {
@@ -57,14 +57,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 22,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.773
+      "tagsCoverage": 0.871
     },
     "after": {
-      "totalEvents": 22,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -73,18 +73,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 5,
-    "aiUpdatedFields": 22,
+    "fallbackFieldsFilled": 4,
+    "aiUpdatedFields": 31,
     "failedBatches": 0,
-    "totalEvents": 22,
+    "totalEvents": 31,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
+      "calls": 4,
       "total": 0,
       "tracked": false
     }
