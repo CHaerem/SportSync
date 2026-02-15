@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-15T16:14:05.402Z",
-  "patternsDetected": 8,
+  "generatedAt": "2026-02-15T18:16:46.269Z",
+  "patternsDetected": 9,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 74,
+      "count": 76,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T16:14:05.397Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 74 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-15T18:16:46.265Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 76 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -38,27 +38,36 @@
     {
       "type": "quality_decline",
       "severity": "medium",
+      "metric": "editorialScore",
+      "earlyAvg": 95,
+      "lateAvg": 79,
+      "drop": 16,
+      "suggestion": "Editorial quality score dropped from 95 to 79 (16 point decline). Investigate recent prompt or data changes."
+    },
+    {
+      "type": "quality_decline",
+      "severity": "medium",
       "metric": "mustWatchCoverage",
       "earlyAvg": 1,
-      "lateAvg": 0.58,
-      "drop": 0.42,
-      "suggestion": "Must-watch coverage dropped from 100% to 58%. Featured content is missing high-importance events."
+      "lateAvg": 0.45,
+      "drop": 0.55,
+      "suggestion": "Must-watch coverage dropped from 100% to 45%. Featured content is missing high-importance events."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "unknown",
-      "fireCount": 9,
+      "fireCount": 8,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen in Freestyle Chess semi-final Game 4\" wh",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"️ Carlsen ...\" has fired 9 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"️ Carlsen ...\" has fired 8 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "unknown",
-      "fireCount": 9,
+      "fireCount": 8,
       "hintText": "SANITY: Results data had quality issues: All 24 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 24 football results have null recap...\" has fired 9 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Results data had quality issues: All 24 football results have null recap...\" has fired 8 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
@@ -76,9 +85,9 @@
       "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "sport_zero_events": {
-      "count": 74,
+      "count": 76,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T16:14:05.397Z"
+      "lastSeen": "2026-02-15T18:16:46.265Z"
     },
     "stale_output": {
       "count": 1,
@@ -86,10 +95,10 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     },
     "empty_day_snapshot": {
-      "count": 3,
+      "count": 4,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-15T16:14:05.397Z"
+      "lastSeen": "2026-02-15T18:16:46.265Z"
     }
   },
-  "summary": "8 patterns detected (4 high, 4 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 74 times since 2026-02-13."
+  "summary": "9 patterns detected (4 high, 5 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 76 times since 2026-02-13."
 }
