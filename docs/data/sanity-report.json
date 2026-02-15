@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T04:48:00.270Z",
+  "generatedAt": "2026-02-15T06:28:28.487Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,10 +55,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 10,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 65,
+    "editorialScore": 67,
     "issueCount": 2
   },
   "findings": [
@@ -70,22 +70,27 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess final begins with Carlsen\" which may not match any event"
+      "message": "Featured block references \"️ Freestyle Chess World Championship finals kick off\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 65/100 (below threshold)"
+      "message": "Editorial quality score is 67/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Thursday\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -94,9 +99,9 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 7,
     "critical": 0,
-    "warning": 5,
+    "warning": 6,
     "info": 1
   },
   "pass": true,
