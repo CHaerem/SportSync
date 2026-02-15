@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-15T20:13:12.668Z",
-  "patternsDetected": 10,
+  "generatedAt": "2026-02-15T22:11:44.101Z",
+  "patternsDetected": 7,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 78,
+      "count": 80,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T20:13:12.664Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 78 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-15T22:11:44.097Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 80 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -31,52 +31,18 @@
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "unknown",
-      "fireCount": 10,
+      "fireCount": 16,
       "hintText": "SANITY: Results data had quality issues: All 25 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 25 football results have null recap...\" has fired 10 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Results data had quality issues: All 25 football results have null recap...\" has fired 16 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
       "severity": "medium",
       "issueCode": "empty_day_snapshot",
-      "count": 5,
+      "count": 6,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-15T20:13:12.664Z",
-      "suggestion": "Health warning \"empty_day_snapshot\" has fired 5 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "editorialScore",
-      "earlyAvg": 95,
-      "lateAvg": 76,
-      "drop": 19,
-      "suggestion": "Editorial quality score dropped from 95 to 76 (19 point decline). Investigate recent prompt or data changes."
-    },
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "mustWatchCoverage",
-      "earlyAvg": 1,
-      "lateAvg": 0.31,
-      "drop": 0.69,
-      "suggestion": "Must-watch coverage dropped from 100% to 31%. Featured content is missing high-importance events."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "medium",
-      "hintKey": "unknown",
-      "fireCount": 7,
-      "hintText": "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen in Freestyle Chess semi-final Game 4\" wh",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"️ Carlsen ...\" has fired 7 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "medium",
-      "hintKey": "unknown",
-      "fireCount": 7,
-      "hintText": "SANITY: Results data had quality issues: All 24 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 24 football results have null recap...\" has fired 7 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "lastSeen": "2026-02-15T22:11:44.097Z",
+      "suggestion": "Health warning \"empty_day_snapshot\" has fired 6 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "hint_fatigue",
@@ -84,6 +50,14 @@
       "hintKey": "unknown",
       "fireCount": 8,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen opens Freestyle Chess World Championship",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"️ Carlsen ...\" has fired 8 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "unknown",
+      "fireCount": 8,
+      "hintText": "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen in Freestyle Chess final Game 1\" which m",
       "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"️ Carlsen ...\" has fired 8 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
@@ -94,9 +68,9 @@
       "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "sport_zero_events": {
-      "count": 78,
+      "count": 80,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T20:13:12.664Z"
+      "lastSeen": "2026-02-15T22:11:44.097Z"
     },
     "stale_output": {
       "count": 1,
@@ -104,10 +78,10 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     },
     "empty_day_snapshot": {
-      "count": 5,
+      "count": 6,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-15T20:13:12.664Z"
+      "lastSeen": "2026-02-15T22:11:44.097Z"
     }
   },
-  "summary": "10 patterns detected (4 high, 6 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 78 times since 2026-02-13."
+  "summary": "7 patterns detected (4 high, 3 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 80 times since 2026-02-13."
 }

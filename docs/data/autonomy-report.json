@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-02-15T20:13:12.644Z",
-  "overallScore": 0.95,
-  "loopsClosed": 8,
+  "generatedAt": "2026-02-15T22:11:44.080Z",
+  "overallScore": 0.98,
+  "loopsClosed": 9,
   "loopsTotal": 10,
   "loops": {
     "featuredQuality": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "100 entries, hints fired 82 times but metric not improving"
+      "score": 1,
+      "status": "closed",
+      "details": "100 entries, hints fired 84 times"
     },
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (1 applied)"
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -56,7 +56,6 @@
     }
   },
   "nextActions": [
-    "Wire hintsApplied field into quality history snapshots",
     "Run pipeline more frequently to keep health report fresh (< 6h)"
   ]
 }

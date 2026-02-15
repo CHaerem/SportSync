@@ -1,15 +1,10 @@
 {
-  "generatedAt": "2026-02-15T20:13:12.619Z",
-  "eventCount": 26,
+  "generatedAt": "2026-02-15T22:11:44.061Z",
+  "eventCount": 25,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
-      "delta": 0
-    },
-    "olympics": {
-      "count": 9,
-      "previousCount": 9,
       "delta": 0
     },
     "chess": {
@@ -17,10 +12,15 @@
       "previousCount": 1,
       "delta": 0
     },
+    "olympics": {
+      "count": 8,
+      "previousCount": 9,
+      "delta": -1
+    },
     "football": {
       "count": 13,
-      "previousCount": 14,
-      "delta": -1
+      "previousCount": 13,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 119,
+      "ageMinutes": 238,
       "stale": false
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 21,
+    "footballCount": 22,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -124,7 +124,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 95% with 8/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 76/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 73/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

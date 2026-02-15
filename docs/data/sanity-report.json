@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-15T20:13:19.491Z",
+  "generatedAt": "2026-02-15T22:11:50.280Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 26,
+    "totalEvents": 25,
     "sports": [
       "golf",
-      "olympics",
       "chess",
+      "olympics",
       "football",
       "cs2",
       "f1"
@@ -45,14 +45,13 @@
       ],
       "ended": [
         "AT&T Pebble Beach Pro-Am",
-        "Ski Jumping — Large Hill Individual",
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 76,
+    "editorialScore": 73,
     "issueCount": 3
   },
   "findings": [
@@ -62,14 +61,24 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 19 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Ski Jumping Large Hill Individual\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"️ Freestyle Chess World Championship Finals — Game 3\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Freestyle Chess Finals Game\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Morikawa\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Scheffler\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Freestyle Chess World Championship Finals\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -78,15 +87,25 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 9,
     "critical": 0,
-    "warning": 5,
-    "info": 0
+    "warning": 8,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
