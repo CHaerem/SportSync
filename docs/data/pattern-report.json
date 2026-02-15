@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-02-15T06:28:22.690Z",
-  "patternsDetected": 7,
+  "generatedAt": "2026-02-15T08:16:58.091Z",
+  "patternsDetected": 8,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 62,
+      "count": 64,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T06:28:22.687Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 62 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-15T08:16:58.088Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 64 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "quality_decline",
       "severity": "high",
       "metric": "editorialScore",
-      "earlyAvg": 93,
-      "lateAvg": 65,
-      "drop": 29,
-      "suggestion": "Editorial quality score dropped from 93 to 65 (29 point decline). Investigate recent prompt or data changes."
+      "earlyAvg": 88,
+      "lateAvg": 67,
+      "drop": 20,
+      "suggestion": "Editorial quality score dropped from 88 to 67 (20 point decline). Investigate recent prompt or data changes."
     },
     {
       "type": "quality_decline",
       "severity": "high",
       "metric": "mustWatchCoverage",
-      "earlyAvg": 1,
+      "earlyAvg": 0.83,
       "lateAvg": 0.11,
-      "drop": 0.89,
-      "suggestion": "Must-watch coverage dropped from 100% to 11%. Featured content is missing high-importance events."
+      "drop": 0.73,
+      "suggestion": "Must-watch coverage dropped from 83% to 11%. Featured content is missing high-importance events."
     },
     {
       "type": "stagnant_loop",
@@ -49,17 +49,25 @@
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "unknown",
-      "fireCount": 10,
-      "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Klaebo anchors men's relay\" which may not ",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Kl...\" has fired 10 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "fireCount": 13,
+      "hintText": "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. B",
+      "suggestion": "Hint \"SANITY: Results data had quality issues: All 29 football results have null recap...\" has fired 13 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
-      "severity": "high",
+      "severity": "medium",
       "hintKey": "unknown",
-      "fireCount": 14,
-      "hintText": "SANITY: Results data had quality issues: All 29 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 29 football results have null recap...\" has fired 14 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "fireCount": 9,
+      "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Klaebo anchors men's relay\" which may not ",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfc5 Sun — Kl...\" has fired 9 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "unknown",
+      "fireCount": 5,
+      "hintText": "SANITY: Results data had quality issues: All 25 football results have null recapHeadline — RSS matching may be broken. B",
+      "suggestion": "Hint \"SANITY: Results data had quality issues: All 25 football results have null recap...\" has fired 5 times without improving unknown. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -69,9 +77,9 @@
       "lastSeen": "2026-02-14T22:11:30.098Z"
     },
     "sport_zero_events": {
-      "count": 62,
+      "count": 64,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-15T06:28:22.687Z"
+      "lastSeen": "2026-02-15T08:16:58.088Z"
     },
     "stale_output": {
       "count": 1,
@@ -79,5 +87,5 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     }
   },
-  "summary": "7 patterns detected (7 high). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 62 times since 2026-02-13."
+  "summary": "8 patterns detected (6 high, 2 medium). Top priority: recurring_health_warning — Health warning \"sport_zero_events\" has fired 64 times since 2026-02-13."
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T06:28:28.487Z",
+  "generatedAt": "2026-02-15T08:17:03.904Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,10 +55,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 10,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 67,
+    "editorialScore": 70,
     "issueCount": 2
   },
   "findings": [
@@ -70,27 +70,22 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess World Championship finals kick off\" which may not match any event"
+      "message": "Featured block references \"️ Carlsen opens Freestyle Chess World Championship finals\" which may not match any event"
     },
     {
-      "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 67/100 (below threshold)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfc5 Mon — Kristoffersen in slalom\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Thursday\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Five Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,10 +94,10 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 6,
     "critical": 0,
-    "warning": 6,
-    "info": 1
+    "warning": 4,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
