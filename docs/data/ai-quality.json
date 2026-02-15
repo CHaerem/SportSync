@@ -1,39 +1,40 @@
 {
-  "generatedAt": "2026-02-15T10:13:56.679Z",
+  "generatedAt": "2026-02-15T12:19:00.660Z",
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"⚽ Rayo Vallecano v Atlético Madrid, 16:15, La Liga...\""
-    ],
-    "blockCount": 9,
-    "generationMs": 5,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 16800,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 1,
+      "total": 0,
+      "tracked": false
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 70,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
-      "textQuality": 0.875,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7
+      "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 17% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 121,
+      "avgScore": 117,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,16 +55,16 @@
     ]
   },
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
-      "totalEvents": 27,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.742
     },
     "after": {
-      "totalEvents": 27,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -72,16 +73,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 8,
+    "aiUpdatedFields": 31,
     "failedBatches": 0,
-    "totalEvents": 27,
+    "totalEvents": 31,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 0,
-      "total": 0
+      "calls": 4,
+      "total": 0,
+      "tracked": false
     }
   }
 }
