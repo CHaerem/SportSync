@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-15T10:14:09.933Z",
-  "overallScore": 0.94,
+  "generatedAt": "2026-02-15T10:20:58.605Z",
+  "overallScore": 0.92,
   "loopsClosed": 7,
-  "loopsTotal": 9,
+  "loopsTotal": 10,
   "loops": {
     "featuredQuality": {
       "score": 0.75,
       "status": "partial",
-      "details": "100 entries, hints fired 62 times but metric not improving"
+      "details": "100 entries, hints fired 63 times but metric not improving"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 0.75,
       "status": "partial",
-      "details": "Health report is fresh (2h old) but has 2 issue(s)"
+      "details": "Health report is fresh (7 min old) but has 2 issue(s)"
     },
     "watchPlan": {
       "score": 1,
@@ -48,10 +48,16 @@
       "score": 1,
       "status": "closed",
       "details": "fetcher exists, results data is fresh, pipeline monitors results health"
+    },
+    "snapshotHealth": {
+      "score": 0.67,
+      "status": "partial",
+      "details": "15 snapshots exist, health report exists but doesn't monitor snapshots, snapshots are fresh"
     }
   },
   "nextActions": [
     "Wire hintsApplied field into quality history snapshots",
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Run pipeline more frequently to keep snapshots fresh (< 6h)"
   ]
 }

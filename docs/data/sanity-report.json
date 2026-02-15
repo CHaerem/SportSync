@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T10:14:16.823Z",
+  "generatedAt": "2026-02-15T10:21:04.374Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,11 +55,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 9,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 67,
-    "issueCount": 2
+    "editorialScore": 69,
+    "issueCount": 3
   },
   "findings": [
     {
@@ -70,22 +70,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess World Championship finals begin\" which may not match any event"
+      "message": "Featured block references \"️ Carlsen in Freestyle Chess final Game 1\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 67/100 (below threshold)"
+      "message": "Editorial quality score is 69/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -94,19 +89,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 6,
     "critical": 0,
-    "warning": 7,
+    "warning": 5,
     "info": 1
   },
   "pass": true,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T10:14:09.912Z",
+  "generatedAt": "2026-02-15T10:20:58.586Z",
   "eventCount": 31,
   "sportCoverage": {
     "golf": {
@@ -57,7 +57,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
@@ -98,6 +98,13 @@
     "recapHeadlineRate": 0,
     "issues": []
   },
+  "snapshotHealth": {
+    "present": true,
+    "issues": [
+      "1 day snapshot(s) have 0 events and 0 results"
+    ],
+    "snapshotCount": 15
+  },
   "issues": [
     {
       "severity": "warning",
@@ -108,11 +115,16 @@
       "severity": "warning",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
+    },
+    {
+      "severity": "info",
+      "code": "empty_day_snapshot",
+      "message": "1 day snapshot(s) have 0 events and 0 results"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 94% with 7/9 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 67/100.",
+    "text": "Autonomy at 92% with 7/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 69/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
