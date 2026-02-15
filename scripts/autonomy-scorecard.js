@@ -383,6 +383,49 @@ export function evaluateResultsHealth(dataDir = ROOT, scriptsDir = SCRIPTS) {
 	return makeLoop(score, parts.join(", "));
 }
 
+// Loop 10: Snapshot Health
+// observe: docs/data/days/_meta.json -> decide: pipeline-health checks snapshot issues -> act: autopilot repairs
+export function evaluateSnapshotHealth(dataDir = ROOT) {
+	let score = 0;
+	const parts = [];
+
+	// 0.33 if day snapshots directory exists with snapshots
+	const metaPath = path.join(dataDir, "days", "_meta.json");
+	const meta = readJsonIfExists(metaPath);
+	if (meta && meta.snapshotCount > 0) {
+		score += 0.33;
+		parts.push(`${meta.snapshotCount} snapshots exist`);
+	} else {
+		parts.push("no day snapshots");
+	}
+
+	// 0.33 if pipeline-health checks snapshot issues (snapshotHealth field in health-report.json)
+	const reportPath = path.join(dataDir, "health-report.json");
+	const report = readJsonIfExists(reportPath);
+	if (report && report.snapshotHealth) {
+		score += 0.33;
+		parts.push("pipeline monitors snapshot health");
+	} else if (report) {
+		parts.push("health report exists but doesn't monitor snapshots");
+	} else {
+		parts.push("no health report");
+	}
+
+	// 0.34 if snapshots are fresh (generated within 6h)
+	const metaAge = fileAgeMsOrNull(metaPath);
+	if (metaAge !== null && metaAge < 6 * MS_PER_HOUR) {
+		score += 0.34;
+		parts.push("snapshots are fresh");
+	} else if (metaAge !== null) {
+		parts.push("snapshots are stale");
+	} else {
+		parts.push("no snapshot metadata");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
 // Generate next-actions suggestions for open/partial loops
 function buildNextActions(loops) {
 	const actions = [];
@@ -475,6 +518,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.snapshotHealth && loops.snapshotHealth.score < 1.0) {
+		if (loops.snapshotHealth.score < 0.33) {
+			actions.push("Run build-day-snapshots.js to generate day snapshot files");
+		}
+		if (loops.snapshotHealth.score < 0.66) {
+			actions.push("Ensure pipeline-health.js monitors snapshot health (snapshotHealth field)");
+		}
+		if (loops.snapshotHealth.score < 1.0) {
+			actions.push("Run pipeline more frequently to keep snapshots fresh (< 6h)");
+		}
+	}
+
 	return actions;
 }
 
@@ -489,6 +544,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		eventDiscovery: evaluateEventDiscovery(dataDir, scriptsDir),
 		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
 		resultsHealth: evaluateResultsHealth(dataDir, scriptsDir),
+		snapshotHealth: evaluateSnapshotHealth(dataDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

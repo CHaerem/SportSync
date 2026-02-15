@@ -119,6 +119,10 @@ jobs:
         run: |
           node scripts/generate-multi-day.js --backfill 5 || echo "Multi-day briefings failed (non-fatal)"
 
+      - name: Build day snapshots
+        run: |
+          node scripts/build-day-snapshots.js || echo "Day snapshot build failed (non-fatal)"
+
       - name: Report usage (after AI)
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -175,6 +179,7 @@ jobs:
             git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true
           else
             git add docs/data/
+            git add docs/data/days/ 2>/dev/null || true
             git add scripts/config/ 2>/dev/null || true
           fi
           if git diff --staged --quiet; then

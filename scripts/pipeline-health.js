@@ -245,6 +245,65 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 9. Day snapshot health
+	const { snapshotHealth: snapHealthOpts = {} } = options;
+	const snapMeta = snapHealthOpts.meta || null;
+	const snapshotHealth = { present: false, issues: [] };
+
+	if (snapMeta) {
+		snapshotHealth.present = true;
+		snapshotHealth.snapshotCount = snapMeta.snapshotCount || 0;
+
+		// Check for empty snapshots
+		const emptySnaps = Array.isArray(snapMeta.emptyDays) ? snapMeta.emptyDays : [];
+		if (emptySnaps.length > 0) {
+			const msg = `${emptySnaps.length} day snapshot(s) have 0 events and 0 results`;
+			snapshotHealth.issues.push(msg);
+			issues.push({ severity: "info", code: "empty_day_snapshot", message: msg });
+		}
+
+		// Check for stale snapshots (generatedAt > 4h old)
+		if (snapMeta.generatedAt) {
+			const snapAge = ageMinutes(snapMeta.generatedAt);
+			if (snapAge > 240) { // 4 hours = 2 pipeline cycles
+				const msg = `Day snapshots are ${Math.round(snapAge)} minutes old (stale > 240m)`;
+				snapshotHealth.issues.push(msg);
+				issues.push({ severity: "warning", code: "stale_snapshot", message: msg });
+			}
+		}
+
+		// Check for missing snapshots in expected range
+		if (snapMeta.perDay) {
+			const expectedDays = [];
+			const now = new Date();
+			for (let i = -7; i <= 7; i++) {
+				const d = new Date(now);
+				d.setDate(d.getDate() + i);
+				expectedDays.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+			}
+			const missing = expectedDays.filter(dk => !snapMeta.perDay[dk]);
+			if (missing.length > 0) {
+				const msg = `${missing.length} expected day snapshot(s) missing`;
+				snapshotHealth.issues.push(msg);
+				issues.push({ severity: "warning", code: "missing_snapshot", message: msg });
+			}
+		}
+
+		// Check for event count mismatch (inconsistency)
+		if (snapMeta.perDay && events.length > 0) {
+			for (const [dateKey, dayInfo] of Object.entries(snapMeta.perDay)) {
+				const dayStart = new Date(dateKey + "T00:00:00");
+				const dayEnd = new Date(dayStart.getTime() + 86400000);
+				const expectedCount = events.filter(e => isEventInWindow(e, dayStart, dayEnd)).length;
+				if (dayInfo.eventCount !== expectedCount) {
+					const msg = `Snapshot ${dateKey}: ${dayInfo.eventCount} events but events.json has ${expectedCount}`;
+					snapshotHealth.issues.push(msg);
+					issues.push({ severity: "critical", code: "snapshot_event_mismatch", message: msg });
+				}
+			}
+		}
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -259,6 +318,7 @@ export function generateHealthReport(options = {}) {
 		rssFeedHealth,
 		standingsHealth,
 		resultsHealth,
+		snapshotHealth,
 		issues,
 		status,
 	};
@@ -329,6 +389,9 @@ async function main() {
 		"ai-quality.json": readJsonIfExists(path.join(dataDir, "ai-quality.json")),
 	};
 
+	// Read day snapshot metadata
+	const snapMeta = readJsonIfExists(path.join(dataDir, "days", "_meta.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -337,6 +400,7 @@ async function main() {
 		previousReport,
 		sportFiles,
 		criticalOutputs,
+		snapshotHealth: { meta: snapMeta },
 	});
 
 	// Generate autonomy scorecard alongside health report

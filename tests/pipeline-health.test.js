@@ -312,6 +312,121 @@ describe("generateHealthReport()", () => {
 	});
 });
 
+describe("snapshot health checks", () => {
+	it("reports snapshotHealth when meta is provided", () => {
+		const now = new Date();
+		const perDay = {};
+		for (let i = -7; i <= 7; i++) {
+			const d = new Date(now);
+			d.setDate(d.getDate() + i);
+			const dk = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+			perDay[dk] = { eventCount: 0, resultCount: 0, sports: [] };
+		}
+		const report = generateHealthReport({
+			events: [],
+			snapshotHealth: {
+				meta: {
+					generatedAt: now.toISOString(),
+					snapshotCount: 15,
+					perDay,
+					emptyDays: [],
+				},
+			},
+		});
+
+		expect(report.snapshotHealth.present).toBe(true);
+		expect(report.snapshotHealth.snapshotCount).toBe(15);
+	});
+
+	it("flags empty day snapshots as info", () => {
+		const report = generateHealthReport({
+			events: [],
+			snapshotHealth: {
+				meta: {
+					generatedAt: new Date().toISOString(),
+					snapshotCount: 15,
+					perDay: {},
+					emptyDays: ["2026-02-10", "2026-02-11"],
+				},
+			},
+		});
+
+		const emptySnap = report.issues.find(i => i.code === "empty_day_snapshot");
+		expect(emptySnap).toBeDefined();
+		expect(emptySnap.severity).toBe("info");
+		expect(emptySnap.message).toContain("2");
+	});
+
+	it("flags stale snapshots as warning", () => {
+		const staleDate = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(); // 5h ago
+		const report = generateHealthReport({
+			events: [],
+			snapshotHealth: {
+				meta: {
+					generatedAt: staleDate,
+					snapshotCount: 15,
+					perDay: {},
+					emptyDays: [],
+				},
+			},
+		});
+
+		const staleSnap = report.issues.find(i => i.code === "stale_snapshot");
+		expect(staleSnap).toBeDefined();
+		expect(staleSnap.severity).toBe("warning");
+	});
+
+	it("flags missing snapshots as warning", () => {
+		const report = generateHealthReport({
+			events: [],
+			snapshotHealth: {
+				meta: {
+					generatedAt: new Date().toISOString(),
+					snapshotCount: 5,
+					perDay: { "2026-01-01": { eventCount: 0, resultCount: 0, sports: [] } },
+					emptyDays: [],
+				},
+			},
+		});
+
+		const missing = report.issues.find(i => i.code === "missing_snapshot");
+		expect(missing).toBeDefined();
+		expect(missing.severity).toBe("warning");
+	});
+
+	it("flags event count mismatch as critical", () => {
+		const now = new Date();
+		const dk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			snapshotHealth: {
+				meta: {
+					generatedAt: now.toISOString(),
+					snapshotCount: 1,
+					perDay: { [dk]: { eventCount: 99, resultCount: 0, sports: ["football"] } },
+					emptyDays: [],
+				},
+			},
+		});
+
+		const mismatch = report.issues.find(i => i.code === "snapshot_event_mismatch");
+		expect(mismatch).toBeDefined();
+		expect(mismatch.severity).toBe("critical");
+	});
+
+	it("no snapshot issues when meta is absent", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+
+		expect(report.snapshotHealth.present).toBe(false);
+		const snapIssues = report.issues.filter(i =>
+			["empty_day_snapshot", "stale_snapshot", "missing_snapshot", "snapshot_event_mismatch"].includes(i.code)
+		);
+		expect(snapIssues).toHaveLength(0);
+	});
+});
+
 describe("generateStatusSummary()", () => {
 	it("generates a fallback summary without API key", async () => {
 		const report = generateHealthReport({

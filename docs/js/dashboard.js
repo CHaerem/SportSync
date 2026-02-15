@@ -339,16 +339,230 @@ class Dashboard {
 		}
 	}
 
+	// --- Day Snapshots ---
+
+	async loadDaySnapshot(dateKey) {
+		// Check session cache first (5 min TTL)
+		const cached = this._cacheGet('snapshot_' + dateKey, 5 * 60 * 1000);
+		if (cached) return cached;
+
+		try {
+			const resp = await fetch(`data/days/${dateKey}.json?t=${Date.now()}`);
+			if (!resp.ok) return this.buildClientSnapshot(dateKey);
+			const data = await resp.json();
+			this._cacheSet('snapshot_' + dateKey, data);
+			return data;
+		} catch {
+			return this.buildClientSnapshot(dateKey);
+		}
+	}
+
+	buildClientSnapshot(dateKey) {
+		const [y, m, d] = dateKey.split('-').map(Number);
+		const date = new Date(y, m - 1, d);
+		const { upcoming, results } = this.getEventsForDate(date);
+		const matchResults = this.getResultsForDate(date);
+
+		return {
+			schemaVersion: 1,
+			date: dateKey,
+			generatedAt: new Date().toISOString(),
+			events: { upcoming, results },
+			matchResults,
+			standings: null,
+			watchPlan: null,
+			rssHighlights: null,
+			meta: {
+				eventCount: upcoming.length + results.length,
+				sportsCovered: [...new Set([...upcoming, ...results].map(e => e.sport).filter(Boolean))],
+				hasResults: matchResults.length > 0,
+				hasStandings: false,
+			},
+		};
+	}
+
+	async renderFromSnapshot(snapshot, dateKey) {
+		// Render structured content immediately (fast, always available)
+		this.renderSnapshotEvents(snapshot);
+		this.renderSnapshotResults(snapshot);
+
+		// Show standings and RSS from snapshot if available
+		if (snapshot.standings) {
+			this.renderSnapshotStandings(snapshot.standings);
+		}
+
+		// Async-load editorial overlay (enhances but not required)
+		const briefing = await this.loadDateBriefing(dateKey);
+		if (briefing) {
+			this.renderEditorial(briefing);
+		} else {
+			this.renderAutoEditorial(snapshot);
+		}
+	}
+
+	renderSnapshotEvents(snapshot) {
+		const container = document.getElementById('events');
+		if (!container) return;
+
+		const upcoming = snapshot.events?.upcoming || [];
+		const results = snapshot.events?.results || [];
+
+		// Convert match results to result pseudo-events
+		const matchResults = (snapshot.matchResults || []).map(m => ({
+			id: `result-${m.homeTeam}-${m.awayTeam}-${m.date}`.replace(/\s+/g, '-').toLowerCase(),
+			title: `${m.homeTeam} ${m.homeScore}\u2013${m.awayScore} ${m.awayTeam}`,
+			sport: 'football',
+			time: m.date,
+			tournament: m.league || '',
+			venue: m.venue || '',
+			_isResult: true,
+			_goalScorers: m.goalScorers || [],
+			_isFavorite: m.isFavorite || false,
+		}));
+
+		// Merge event-based results with match results (dedupe)
+		const existingKeys = new Set(results.map(e => `${e.homeTeam}-${e.awayTeam}`));
+		const newResults = matchResults.filter(r => !existingKeys.has(`${r.title.split(' ')[0]}-${r.title.split(' ').slice(-1)[0]}`));
+		const allResults = [...results, ...newResults];
+
+		let html = '';
+		html += this.renderBand('Events', upcoming, {});
+		html += this.renderBand('Results', allResults, { cssClass: 'results' });
+
+		if (!html) {
+			html = '<p class="date-empty">No events on this date.</p>';
+		}
+
+		container.innerHTML = html;
+		this.bindEventRows();
+		this.bindBandToggles();
+		this.bindFeedbackButtons();
+	}
+
+	renderSnapshotResults(snapshot) {
+		// Match results are already rendered as part of renderSnapshotEvents
+		// This method exists as an extension point for future per-component rendering
+	}
+
+	renderSnapshotStandings(standings) {
+		// Render standings in the featured-sections area if available
+		const sectionsEl = document.getElementById('featured-sections');
+		if (!sectionsEl || !standings) return;
+
+		let html = '';
+
+		if (standings.premierLeague?.length > 0) {
+			html += '<div class="featured-section">';
+			html += '<div class="feat-header">Premier League</div>';
+			for (const team of standings.premierLeague) {
+				const text = `${team.rank || ''} ${team.team || team.name || ''} — ${team.points || 0} pts`;
+				html += `<div class="feat-item text">${this.esc(text)}</div>`;
+			}
+			html += '</div>';
+		}
+
+		if (standings.golf?.pga?.leaderboard?.length > 0) {
+			html += '<div class="featured-section">';
+			html += `<div class="feat-header">${this.esc(standings.golf.pga.name || 'PGA Tour')}</div>`;
+			for (const entry of standings.golf.pga.leaderboard) {
+				const text = `${entry.position || ''} ${entry.player || entry.name || ''} (${entry.score || ''})`;
+				html += `<div class="feat-item text">${this.esc(text)}</div>`;
+			}
+			html += '</div>';
+		}
+
+		if (html) {
+			sectionsEl.innerHTML += html;
+			sectionsEl.style.display = '';
+		}
+	}
+
+	renderAutoEditorial(snapshot) {
+		const briefEl = document.getElementById('the-brief');
+		const sectionsEl = document.getElementById('featured-sections');
+		if (!briefEl) return;
+
+		const events = [...(snapshot.events?.upcoming || []), ...(snapshot.events?.results || [])];
+		const matchResults = snapshot.matchResults || [];
+
+		if (events.length === 0 && matchResults.length === 0) {
+			briefEl.innerHTML = '<div class="briefing-mode-label">No events on this date</div>';
+			briefEl.style.display = '';
+			if (sectionsEl) { sectionsEl.innerHTML = ''; sectionsEl.style.display = ''; }
+			return;
+		}
+
+		// Build a deterministic editorial from the snapshot data
+		const sportCounts = {};
+		events.forEach(e => { sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1; });
+
+		const sportLabels = {
+			football: 'football', golf: 'golf', tennis: 'tennis',
+			formula1: 'F1', chess: 'chess', esports: 'esports', olympics: 'Olympics'
+		};
+
+		const parts = Object.entries(sportCounts)
+			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
+			.join(', ');
+
+		const dateLabel = snapshot.date;
+		let html = `<div class="briefing-mode-label">${this.esc(dateLabel)}</div>`;
+
+		// Summary line
+		if (events.length > 0) {
+			html += `<div class="block-event-line editorial-line">${events.length} event${events.length !== 1 ? 's' : ''} \u2014 ${this.esc(parts)}</div>`;
+		}
+
+		// Top importance events as event-lines
+		const topEvents = [...events]
+			.filter(e => e.importance >= 4)
+			.sort((a, b) => (b.importance || 0) - (a.importance || 0))
+			.slice(0, 3);
+
+		for (const e of topEvents) {
+			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === e.sport) : null;
+			const emoji = sportConfig ? sportConfig.emoji : '';
+			const time = new Date(e.time).toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+			const text = `${emoji} ${time} ${e.title}${e.summary ? ' \u2014 ' + e.summary : ''}`;
+			html += `<div class="block-event-line editorial-line">${this.renderBriefLine(text)}</div>`;
+		}
+
+		// Match results summary
+		if (matchResults.length > 0) {
+			const favResults = matchResults.filter(m => m.isFavorite);
+			const displayResults = favResults.length > 0 ? favResults : matchResults.slice(0, 3);
+			for (const m of displayResults) {
+				const text = `${m.homeTeam} ${m.homeScore}\u2013${m.awayScore} ${m.awayTeam}`;
+				html += `<div class="block-event-line editorial-line">${this.esc(text)}</div>`;
+			}
+		}
+
+		briefEl.innerHTML = html;
+		briefEl.style.display = '';
+		if (sectionsEl) { sectionsEl.innerHTML = ''; sectionsEl.style.display = ''; }
+	}
+
 	// --- Rendering ---
 
 	render() {
 		this.renderDayNav();
 		this.renderDateLine();
 		const isToday = this._isViewingToday();
-		this.renderEditorial();
-		this.renderWatchPlan();
-		this.renderEvents();
-		this.renderNews();
+
+		if (isToday) {
+			// Today: existing full behavior (live polling, dynamic briefs, etc.)
+			this.renderEditorial();
+			this.renderWatchPlan();
+			this.renderEvents();
+			this.renderNews();
+		} else {
+			// Other dates: snapshot-driven rendering
+			const dateKey = this._dateKey(this._getSelectedDate());
+			this.loadDaySnapshot(dateKey).then(snapshot => {
+				this.renderFromSnapshot(snapshot, dateKey);
+			});
+		}
+
 		this.renderFeedbackPanel();
 
 		// Hide today-centric sections on non-today dates
@@ -356,14 +570,6 @@ class Dashboard {
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
-		}
-
-		// For non-today dates, async-load date-specific briefings
-		if (!isToday) {
-			const dateKey = this._dateKey(this._getSelectedDate());
-			this.loadDateBriefing(dateKey).then(briefing => {
-				this.renderEditorial(briefing);
-			});
 		}
 	}
 

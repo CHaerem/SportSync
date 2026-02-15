@@ -573,12 +573,21 @@ describe("evaluateAutonomy()", () => {
 			status: "ok",
 			issues: [],
 			resultsHealth: { present: true, stale: false, footballCount: 1 },
+			snapshotHealth: { present: true, snapshotCount: 15, issues: [] },
+		});
+		// Loop 10: Snapshot Health
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		writeJson(path.join(dataDir, "days", "_meta.json"), {
+			generatedAt: new Date().toISOString(),
+			snapshotCount: 15,
+			perDay: {},
+			emptyDays: [],
 		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(9);
-		expect(report.loopsTotal).toBe(9);
+		expect(report.loopsClosed).toBe(10);
+		expect(report.loopsTotal).toBe(10);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -590,10 +599,10 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/9 ≈ 0.22
-		expect(report.overallScore).toBeCloseTo(0.22, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/10 = 0.20
+		expect(report.overallScore).toBeCloseTo(0.20, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(9);
+		expect(report.loopsTotal).toBe(10);
 	});
 
 	it("generates nextActions for open loops", () => {
@@ -653,6 +662,15 @@ describe("evaluateAutonomy()", () => {
 			status: "ok",
 			issues: [],
 			resultsHealth: { present: true, stale: false, footballCount: 1 },
+			snapshotHealth: { present: true, snapshotCount: 15, issues: [] },
+		});
+		// Loop 10: Snapshot Health
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		writeJson(path.join(dataDir, "days", "_meta.json"), {
+			generatedAt: new Date().toISOString(),
+			snapshotCount: 15,
+			perDay: {},
+			emptyDays: [],
 		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
@@ -677,7 +695,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(9);
+		expect(report.loopsTotal).toBe(10);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
