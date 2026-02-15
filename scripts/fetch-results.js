@@ -17,7 +17,7 @@ import { validateESPNScoreboard } from "./lib/response-validator.js";
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
-function formatDate(d) {
+export function formatDate(d) {
 	return d.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
@@ -25,13 +25,13 @@ function loadUserContext() {
 	return readJsonIfExists(USER_CONTEXT_PATH) || {};
 }
 
-function isFavoriteTeam(teamName, userContext) {
+export function isFavoriteTeam(teamName, userContext) {
 	const favorites = (userContext.favoriteTeams || []).map(t => t.toLowerCase());
 	const name = (teamName || "").toLowerCase();
 	return favorites.some(fav => name.includes(fav) || fav.includes(name));
 }
 
-function isFavoritePlayer(playerName, userContext) {
+export function isFavoritePlayer(playerName, userContext) {
 	const favorites = (userContext.favoritePlayers || []).map(p => p.toLowerCase());
 	const name = (playerName || "").toLowerCase();
 	return favorites.some(fav => name.includes(fav) || fav.includes(name));

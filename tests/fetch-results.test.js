@@ -12,10 +12,16 @@ vi.mock("../scripts/lib/helpers.js", async () => {
 
 const { fetchJson, readJsonIfExists } = await import("../scripts/lib/helpers.js");
 const {
+	formatDate,
+	isFavoriteTeam,
+	isFavoritePlayer,
 	fetchFootballResults,
 	fetchGolfResults,
 	matchRssHeadline,
 	mergeFootballResults,
+	validateFootballResult,
+	validateGolfResult,
+	validateResults,
 } = await import("../scripts/fetch-results.js");
 
 // Also test buildResultsContext from generate-featured
@@ -141,6 +147,210 @@ const mockUserContext = {
 beforeEach(() => {
 	vi.resetAllMocks();
 	readJsonIfExists.mockReturnValue(null);
+});
+
+// --- formatDate ---
+describe("formatDate()", () => {
+	it("formats a date as YYYYMMDD", () => {
+		expect(formatDate(new Date("2026-02-15T00:00:00Z"))).toBe("20260215");
+	});
+
+	it("handles single-digit months and days", () => {
+		expect(formatDate(new Date("2026-01-05T00:00:00Z"))).toBe("20260105");
+	});
+});
+
+// --- isFavoriteTeam ---
+describe("isFavoriteTeam()", () => {
+	const ctx = { favoriteTeams: ["Liverpool", "Lyn"] };
+
+	it("matches exact team name", () => {
+		expect(isFavoriteTeam("Liverpool", ctx)).toBe(true);
+	});
+
+	it("matches case-insensitively", () => {
+		expect(isFavoriteTeam("liverpool", ctx)).toBe(true);
+	});
+
+	it("matches substring (team name contains favorite)", () => {
+		expect(isFavoriteTeam("Liverpool FC", ctx)).toBe(true);
+	});
+
+	it("returns false for non-favorite", () => {
+		expect(isFavoriteTeam("Manchester United", ctx)).toBe(false);
+	});
+
+	it("handles null team name (empty string matches empty substring)", () => {
+		// null coerces to "" and "".includes("") is true for any favorite
+		expect(isFavoriteTeam(null, ctx)).toBe(true);
+	});
+
+	it("handles empty favoriteTeams", () => {
+		expect(isFavoriteTeam("Liverpool", {})).toBe(false);
+	});
+});
+
+// --- isFavoritePlayer ---
+describe("isFavoritePlayer()", () => {
+	const ctx = { favoritePlayers: ["Viktor Hovland", "Magnus Carlsen"] };
+
+	it("matches exact player name", () => {
+		expect(isFavoritePlayer("Viktor Hovland", ctx)).toBe(true);
+	});
+
+	it("matches case-insensitively", () => {
+		expect(isFavoritePlayer("magnus carlsen", ctx)).toBe(true);
+	});
+
+	it("returns false for non-favorite", () => {
+		expect(isFavoritePlayer("Rory McIlroy", ctx)).toBe(false);
+	});
+
+	it("handles null player name (empty string matches empty substring)", () => {
+		// null coerces to "" and "".includes("") is true for any favorite
+		expect(isFavoritePlayer(null, ctx)).toBe(true);
+	});
+
+	it("handles empty favoritePlayers", () => {
+		expect(isFavoritePlayer("Viktor Hovland", {})).toBe(false);
+	});
+});
+
+// --- validateFootballResult ---
+describe("validateFootballResult()", () => {
+	const validResult = {
+		homeTeam: "Liverpool",
+		awayTeam: "Arsenal",
+		homeScore: 2,
+		awayScore: 1,
+		date: "2026-02-14T20:00:00Z",
+		goalScorers: [
+			{ player: "Salah", team: "Liverpool", minute: "23'" },
+			{ player: "Salah", team: "Liverpool", minute: "67'" },
+			{ player: "Saka", team: "Arsenal", minute: "45'" },
+		],
+	};
+
+	it("validates a correct result", () => {
+		const v = validateFootballResult(validResult);
+		expect(v.valid).toBe(true);
+		expect(v.issues).toHaveLength(0);
+	});
+
+	it("rejects null input", () => {
+		expect(validateFootballResult(null).valid).toBe(false);
+	});
+
+	it("rejects missing homeTeam", () => {
+		const v = validateFootballResult({ ...validResult, homeTeam: "" });
+		expect(v.valid).toBe(false);
+		expect(v.issues).toContain("homeTeam missing or empty");
+	});
+
+	it("rejects same home and away team", () => {
+		expect(validateFootballResult({ ...validResult, awayTeam: "Liverpool" }).valid).toBe(false);
+	});
+
+	it("rejects negative score", () => {
+		expect(validateFootballResult({ ...validResult, homeScore: -1 }).valid).toBe(false);
+	});
+
+	it("rejects score over 20", () => {
+		expect(validateFootballResult({ ...validResult, awayScore: 25 }).valid).toBe(false);
+	});
+
+	it("rejects missing date", () => {
+		const r = { ...validResult };
+		delete r.date;
+		const v = validateFootballResult(r);
+		expect(v.issues).toContain("date missing");
+	});
+
+	it("rejects invalid date string", () => {
+		expect(validateFootballResult({ ...validResult, date: "not-a-date" }).valid).toBe(false);
+	});
+
+	it("flags excess goal scorers", () => {
+		const tooMany = Array(8).fill({ player: "X", team: "Y", minute: "1'" });
+		const v = validateFootballResult({ ...validResult, homeScore: 1, awayScore: 1, goalScorers: tooMany });
+		expect(v.issues.some(i => i.includes("goalScorers count"))).toBe(true);
+	});
+});
+
+// --- validateGolfResult ---
+describe("validateGolfResult()", () => {
+	it("validates null as valid (no tournament)", () => {
+		expect(validateGolfResult(null).valid).toBe(true);
+	});
+
+	it("rejects non-object input", () => {
+		expect(validateGolfResult("string").valid).toBe(false);
+	});
+
+	it("validates valid in-progress tournament", () => {
+		const v = validateGolfResult({
+			tournamentName: "The Masters",
+			status: "in_progress",
+			completedRound: 2,
+			topPlayers: [
+				{ position: 1, player: "A", score: "-10" },
+				{ position: 2, player: "B", score: "-8" },
+			],
+		});
+		expect(v.valid).toBe(true);
+	});
+
+	it("flags final tournament with no topPlayers", () => {
+		const v = validateGolfResult({ status: "final", completedRound: 4, topPlayers: [] });
+		expect(v.valid).toBe(false);
+	});
+
+	it("flags final tournament with too few rounds", () => {
+		const v = validateGolfResult({
+			status: "final",
+			completedRound: 2,
+			topPlayers: [{ position: 1, player: "A", score: "-5" }],
+		});
+		expect(v.valid).toBe(false);
+	});
+
+	it("flags non-ascending positions", () => {
+		const v = validateGolfResult({
+			topPlayers: [
+				{ position: 3, player: "A", score: "-5" },
+				{ position: 1, player: "B", score: "-10" },
+			],
+		});
+		expect(v.issues).toContain("topPlayers positions not ascending");
+	});
+
+	it("flags empty tournamentName", () => {
+		expect(validateGolfResult({ tournamentName: "  " }).valid).toBe(false);
+	});
+});
+
+// --- validateResults ---
+describe("validateResults()", () => {
+	it("counts valid and invalid results", () => {
+		const output = {
+			football: [
+				{ homeTeam: "A", awayTeam: "B", homeScore: 1, awayScore: 0, date: "2026-02-14T20:00:00Z" },
+				{ homeTeam: "", awayTeam: "B", homeScore: 1, awayScore: 0, date: "2026-02-14T20:00:00Z" },
+			],
+			golf: { pga: null, dpWorld: { tournamentName: "  " } },
+		};
+		const v = validateResults(output);
+		expect(v.totalResults).toBe(3);
+		expect(v.validResults).toBe(1);
+		expect(v.issues.length).toBeGreaterThan(0);
+	});
+
+	it("handles empty output", () => {
+		const v = validateResults({});
+		expect(v.totalResults).toBe(0);
+		expect(v.validResults).toBe(0);
+		expect(v.issues).toHaveLength(0);
+	});
 });
 
 describe("fetchFootballResults()", () => {
