@@ -1173,6 +1173,20 @@ class Dashboard {
 		return html;
 	}
 
+	renderEmptySportNotes(allEvents) {
+		const PREF_MAP = { football: 'high', golf: 'high', f1: 'medium', tennis: 'medium', chess: 'medium', formula1: 'medium' };
+		const activeSports = new Set(allEvents.map(e => e.sport));
+		const missing = SPORT_CONFIG
+			.filter(s => {
+				const pref = PREF_MAP[s.id];
+				return (pref === 'high' || pref === 'medium') && !activeSports.has(s.id);
+			});
+		if (missing.length === 0) return '';
+		return missing.map(s =>
+			`<div class="empty-sport-note">${s.emoji} No upcoming ${s.name.toLowerCase()} events</div>`
+		).join('');
+	}
+
 	renderEvents() {
 		const container = document.getElementById('events');
 
@@ -1230,6 +1244,7 @@ class Dashboard {
 		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
 		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
 		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
+		html += this.renderEmptySportNotes(this.allEvents);
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
