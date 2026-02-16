@@ -520,7 +520,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #75) Hide F1 standings when all drivers have zero points — Added guard to `renderF1Standings()` to skip rendering when all driver points are zero (pre-season/stale data).
 
-- [PENDING] Add Norwegian relevance badge to event rows — `docs/js/dashboard.js` event rows don't visually indicate Norwegian interest. Add a small flag indicator next to events where `event.norwegian === true` or `event.norwegianRelevance >= 4` or `event.norwegianPlayers.length > 0`. ~15 lines across 2 files (dashboard.js + index.html CSS), LOW risk.
+- [DONE] (PR #77) Add Norwegian relevance badge to event rows — Added 🇳🇴 flag indicator next to events with Norwegian interest (norwegian flag, norwegianPlayers, or norwegianRelevance >= 4).
 
 ### MEDIUM Priority
 
