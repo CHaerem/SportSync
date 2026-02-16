@@ -12,6 +12,7 @@ import {
 	buildSanityHints,
 	evaluateResultsQuality,
 	buildResultsHints,
+	computeRollingAverages,
 } from "../scripts/lib/ai-quality-gates.js";
 
 describe("validateFeaturedContent()", () => {
@@ -458,5 +459,52 @@ describe("buildQualitySnapshot() with sanity", () => {
 	it("sanity is null when not provided", () => {
 		const snapshot = buildQualitySnapshot(null, null, null, null);
 		expect(snapshot.sanity).toBeNull();
+	});
+});
+
+describe("computeRollingAverages()", () => {
+	it("returns null for empty or insufficient history", () => {
+		expect(computeRollingAverages(null)).toBeNull();
+		expect(computeRollingAverages([])).toBeNull();
+		expect(computeRollingAverages([{}])).toBeNull();
+	});
+
+	it("computes averages from history entries", () => {
+		const history = [
+			{ editorial: { score: 80, mustWatchCoverage: 0.6, sportDiversity: 0.5 }, enrichment: { score: 90 }, results: { score: 70 } },
+			{ editorial: { score: 90, mustWatchCoverage: 0.8, sportDiversity: 0.7 }, enrichment: { score: 100 }, results: { score: 80 } },
+			{ editorial: { score: 85, mustWatchCoverage: 0.7, sportDiversity: 0.6 }, enrichment: { score: 95 }, results: { score: 75 } },
+		];
+		const avg = computeRollingAverages(history);
+		expect(avg).not.toBeNull();
+		expect(avg.windowSize).toBe(3);
+		expect(avg.editorialScore).toBeCloseTo(85, 0);
+		expect(avg.mustWatchCoverage).toBeCloseTo(0.7, 1);
+		expect(avg.enrichmentScore).toBeCloseTo(95, 0);
+		expect(avg.resultsScore).toBeCloseTo(75, 0);
+	});
+
+	it("uses only last N entries for window", () => {
+		const history = [
+			{ editorial: { score: 50 } },
+			{ editorial: { score: 60 } },
+			{ editorial: { score: 70 } },
+			{ editorial: { score: 80 } },
+			{ editorial: { score: 90 } },
+		];
+		const avg3 = computeRollingAverages(history, 3);
+		expect(avg3.windowSize).toBe(3);
+		expect(avg3.editorialScore).toBeCloseTo(80, 0); // avg of 70, 80, 90
+	});
+
+	it("handles missing metric values gracefully", () => {
+		const history = [
+			{ editorial: { score: 80 } },
+			{ editorial: null },
+			{ editorial: { score: 90 } },
+		];
+		const avg = computeRollingAverages(history);
+		expect(avg.editorialScore).toBeCloseTo(85, 0); // only 2 valid values
+		expect(avg.enrichmentScore).toBeNull(); // no enrichment data
 	});
 });

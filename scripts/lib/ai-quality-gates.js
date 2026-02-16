@@ -561,6 +561,34 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 	};
 }
 
+/**
+ * Compute rolling averages from quality history.
+ * Returns an object with 7-entry rolling averages for key metrics,
+ * enabling slow decline detection that per-run noise masks.
+ */
+export function computeRollingAverages(history, windowSize = 7) {
+	if (!Array.isArray(history) || history.length === 0) return null;
+
+	const window = history.slice(-windowSize);
+	const count = window.length;
+	if (count < 2) return null;
+
+	function avg(arr, getter) {
+		const values = arr.map(getter).filter(v => v != null && !isNaN(v));
+		if (values.length === 0) return null;
+		return roundRatio(values.reduce((a, b) => a + b, 0) / values.length);
+	}
+
+	return {
+		windowSize: count,
+		editorialScore: avg(window, e => e.editorial?.score),
+		mustWatchCoverage: avg(window, e => e.editorial?.mustWatchCoverage),
+		sportDiversity: avg(window, e => e.editorial?.sportDiversity),
+		enrichmentScore: avg(window, e => e.enrichment?.score),
+		resultsScore: avg(window, e => e.results?.score),
+	};
+}
+
 // --- Results quality evaluation ---
 
 export function evaluateResultsQuality(recentResults, events, rssDigest, userContext) {
