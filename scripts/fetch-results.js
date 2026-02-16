@@ -4,6 +4,7 @@
  * - Football: completed matches from PL and La Liga (past 7 days)
  * - Golf: PGA Tour + DP World Tour final/in-progress leaderboard positions
  * - Tennis: ATP + WTA completed match results (past 7 days)
+ * - F1: race and sprint results (past 14 days, 30-day retention)
  *
  * Matches football results against rss-digest.json for recap headlines
  * and user-context.json for favorite tagging (Casper Ruud for tennis).
@@ -143,6 +144,18 @@ export function validateResults(output) {
 			validResults++;
 		} else {
 			issues.push(...v.issues.map(i => `Tennis [${r.winner || "?"} v ${r.loser || "?"}]: ${i}`));
+		}
+	}
+
+	// Validate F1
+	const f1 = Array.isArray(output?.f1) ? output.f1 : [];
+	for (const r of f1) {
+		totalResults++;
+		const v = validateF1Result(r);
+		if (v.valid) {
+			validResults++;
+		} else {
+			issues.push(...v.issues.map(i => `F1 [${r.raceName || "?"}]: ${i}`));
 		}
 	}
 
@@ -437,6 +450,109 @@ export function mergeTennisResults(existing, fresh, retainDays = 7) {
 	return Array.from(map.values());
 }
 
+export function validateF1Result(result) {
+	const issues = [];
+	if (!result || typeof result !== "object") return { valid: false, issues: ["Not an object"] };
+
+	if (typeof result.raceName !== "string" || !result.raceName.trim()) issues.push("raceName missing or empty");
+	if (!Array.isArray(result.topDrivers) || result.topDrivers.length === 0) issues.push("topDrivers missing or empty");
+
+	if (result.date) {
+		const d = new Date(result.date);
+		if (isNaN(d.getTime())) issues.push("Invalid date");
+		else if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) issues.push("Date is in the future");
+	} else {
+		issues.push("date missing");
+	}
+
+	return { valid: issues.length === 0, issues };
+}
+
+const F1_URL = `${ESPN_SITE}/racing/f1/scoreboard`;
+
+export async function fetchF1Results(options = {}) {
+	const { daysBack = 14 } = options;
+	const results = [];
+	const seen = new Set();
+	const now = new Date();
+
+	for (let d = 0; d < daysBack; d++) {
+		const date = new Date(now.getTime() - d * MS_PER_DAY);
+		const dateStr = formatDate(date);
+		const url = `${F1_URL}?dates=${dateStr}`;
+
+		try {
+			const data = await fetchJson(url);
+
+			for (const event of (data?.events || [])) {
+				const raceName = event.name || "Unknown Grand Prix";
+				for (const comp of (event.competitions || [])) {
+					const state = comp.status?.type?.state;
+					if (state !== "post") continue;
+
+					const type = comp.type?.abbreviation || comp.type?.text || "";
+					// Only include races, not practice/qualifying (unless it's the main race)
+					if (type && !["Race", "R", "Sprint", "S"].includes(type)) continue;
+
+					const competitors = comp.competitors || [];
+					if (competitors.length === 0) continue;
+
+					const key = `${raceName}-${event.date}-${type}`;
+					if (seen.has(key)) continue;
+					seen.add(key);
+
+					const sorted = [...competitors].sort((a, b) => (a.order || 999) - (b.order || 999));
+
+					const topDrivers = sorted.slice(0, 10).map(c => ({
+						position: c.order || 0,
+						driver: c.athlete?.displayName || "Unknown",
+						team: c.team?.displayName || c.team?.name || null,
+						status: c.status?.type?.shortDetail || null,
+					}));
+
+					const venue = comp.venue?.fullName || comp.venue?.address?.city || null;
+					const circuit = event.circuit?.fullName || venue || null;
+
+					results.push({
+						raceName,
+						type: type || "Race",
+						date: event.date || date.toISOString(),
+						circuit,
+						topDrivers,
+						totalDrivers: competitors.length,
+					});
+				}
+			}
+		} catch (err) {
+			console.warn(`F1 results fetch failed for ${dateStr}:`, err.message);
+		}
+	}
+
+	// Sort by date descending
+	results.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+	return results;
+}
+
+export function mergeF1Results(existing, fresh, retainDays = 30) {
+	const cutoff = Date.now() - retainDays * MS_PER_DAY;
+	const map = new Map();
+
+	for (const r of (existing || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		const key = `${r.raceName}-${r.date}-${r.type}`;
+		map.set(key, r);
+	}
+
+	for (const r of (fresh || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		const key = `${r.raceName}-${r.date}-${r.type}`;
+		map.set(key, r);
+	}
+
+	return Array.from(map.values());
+}
+
 export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
 	if (!homeTeam || !awayTeam || !Array.isArray(rssItems)) return null;
 
@@ -554,6 +670,18 @@ async function main() {
 	} catch (err) {
 		console.warn("Tennis results failed:", err.message);
 		output.tennis = existing?.tennis || [];
+	}
+
+	// F1 results — merge with existing history (30-day retention for race weekends)
+	try {
+		const fresh = await fetchF1Results();
+		const merged = mergeF1Results(existing?.f1, fresh);
+		merged.sort((a, b) => new Date(b.date) - new Date(a.date));
+		output.f1 = merged;
+		console.log(`F1: ${merged.length} results (${fresh.length} fresh)`);
+	} catch (err) {
+		console.warn("F1 results failed:", err.message);
+		output.f1 = existing?.f1 || [];
 	}
 
 	// Validate before writing
