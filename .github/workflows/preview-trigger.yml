@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   trigger:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, ARM64]
     steps:
       - name: Trigger preview deployment
         uses: actions/github-script@v7
