@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T20:14:36.558Z",
+  "generatedAt": "2026-02-16T20:51:00.357Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
@@ -7,24 +7,24 @@
     "score": 100,
     "issues": [],
     "blockCount": 6,
-    "generationMs": 16606,
+    "generationMs": 16384,
     "tokenUsage": {
-      "input": 32953,
-      "output": 324,
-      "cacheCreation": 17742,
+      "input": 33160,
+      "output": 437,
+      "cacheCreation": 17949,
       "cacheRead": 15208,
-      "total": 33277,
-      "costUSD": 0.1271545,
+      "total": 33597,
+      "costUSD": 0.13115325,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 76,
+    "score": 66,
     "metrics": {
       "mustWatchCoverage": 0.2,
-      "sportDiversity": 1,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -65,7 +65,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.727
+      "tagsCoverage": 0.697
     },
     "after": {
       "totalEvents": 33,
@@ -77,20 +77,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
+    "fallbackFieldsFilled": 10,
     "aiUpdatedFields": 33,
     "failedBatches": 0,
     "totalEvents": 33,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 119117,
-      "output": 3053,
+      "input": 118969,
+      "output": 3263,
       "calls": 4,
-      "total": 122170,
-      "costUSD": 0.41253475000000006,
+      "total": 122232,
+      "costUSD": 0.41687,
       "tracked": true,
       "estimated": false
     }

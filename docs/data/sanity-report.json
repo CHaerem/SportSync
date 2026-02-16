@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T20:14:44.863Z",
+  "generatedAt": "2026-02-16T20:51:08.558Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 33,
@@ -59,7 +59,7 @@
     "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 76,
+    "editorialScore": 66,
     "issueCount": 9
   },
   "findings": [
@@ -69,24 +69,14 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 18 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfc5 Ski Jumping Men's Super Team\" which may not match any event"
+      "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 66/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Winter Olympics\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Ski Jumping Men\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Olympic Men\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -95,10 +85,10 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 4,
     "critical": 0,
-    "warning": 5,
-    "info": 1
+    "warning": 4,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
