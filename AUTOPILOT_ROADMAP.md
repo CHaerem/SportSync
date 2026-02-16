@@ -764,7 +764,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 ### HIGH Priority
 
-- [PENDING] [MAINTENANCE] **Fix pipelineHealth loop stagnation** — Autonomy report shows pipelineHealth loop stuck at 0.75 for 10 consecutive runs. The health report has 9 issues but hints aren't resolving them. Investigate `pipeline-health.js` thresholds and either fix the root causes (sport_zero_events, stale_data) or adjust the scoring to reflect that some issues are data-availability and not code bugs. Files: `scripts/pipeline-health.js` (~30 lines).
+- [DONE] (direct) **Fix pipelineHealth loop stagnation** — `evaluatePipelineHealth()` in autonomy-scorecard.js now filters known data-availability patterns (sport_zero_events, quota_api_unavailable) and info-severity issues from the actionable count. Loop will score 1.0 when only known data gaps remain. 1 new test.
 
 - [PENDING] [MAINTENANCE] **Improve empty-sport notes with data reasons** — Current `renderEmptySportNotes()` shows "No upcoming X events" but doesn't explain WHY (off-season, API issue, etc.). Read health-report.json status for each sport and show contextual messages like "Tennis off-season" or "Esports data source unavailable". Files: `docs/js/dashboard.js` (~20 lines).
 

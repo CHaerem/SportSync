@@ -393,6 +393,22 @@
       "lesson": "Following established UI patterns (inline standings widget) makes new data sources trivially renderable. Data→UI latency was near-zero by doing both in the same run.",
       "scouted": 0,
       "meta_insight": "All four standings sources (PL, golf, F1, tennis) now have inline widgets. The inline standings pattern is fully mature and extensible."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Fix pipelineHealth loop stagnation",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "quality",
+      "details": "evaluatePipelineHealth() now filters known data-availability patterns (sport_zero_events, quota_api_unavailable) and info-severity issues. Loop will score 1.0 when only known data gaps remain. 1 new test.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 5,
+      "turns_estimated": 6,
+      "lesson": "Autonomy scoring should distinguish between real pipeline failures and known data gaps. Scoring all issues equally creates noise that masks real problems.",
+      "scouted": 0,
+      "meta_insight": "The pipelineHealth loop was stuck for 10 runs because of false positives. Fixing scoring classification has multiplicative value — downstream detectors now get cleaner signals."
     }
   ]
 }
