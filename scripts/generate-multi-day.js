@@ -11,21 +11,43 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { rootDataPath, formatDateKey, readJsonIfExists, writeJsonPretty, MS_PER_DAY } from "./lib/helpers.js";
+import { rootDataPath, formatDateKey, readJsonIfExists, writeJsonPretty, MS_PER_DAY, isEventInWindow } from "./lib/helpers.js";
+import crypto from "crypto";
 
 // --backfill N: generate recaps for the last N days (default: 1 = yesterday only)
 const backfillArg = process.argv.find(a => a.startsWith("--backfill"));
 const BACKFILL_DAYS = backfillArg ? parseInt(backfillArg.split("=")[1] || process.argv[process.argv.indexOf(backfillArg) + 1] || "1", 10) : 1;
 const MAX_AI_CALLS = BACKFILL_DAYS + 1; // backfill days + tomorrow preview
 
-function generateBriefing(dateKey, mode) {
+/**
+ * Compute a fingerprint of events for a given date. Used to detect
+ * whether the preview needs regeneration (events changed vs. cached version).
+ */
+export function computeEventFingerprint(events, dateKey) {
+	if (!Array.isArray(events) || !dateKey) return "";
+	const [y, m, d] = dateKey.split("-").map(Number);
+	const dayStart = new Date(y, m - 1, d);
+	const dayEnd = new Date(y, m - 1, d + 1);
+
+	const dayEvents = events
+		.filter(ev => isEventInWindow(ev, dayStart, dayEnd))
+		.map(ev => `${ev.sport || ""}:${ev.title || ""}:${ev.time || ""}`)
+		.sort();
+
+	if (dayEvents.length === 0) return "empty";
+	return crypto.createHash("md5").update(dayEvents.join("|")).digest("hex").slice(0, 12);
+}
+
+function generateBriefing(dateKey, mode, eventFingerprint) {
 	console.log(`Generating ${mode} briefing for ${dateKey}...`);
+	const env = {
+		...process.env,
+		SPORTSYNC_FEATURED_DATE: dateKey,
+		SPORTSYNC_FEATURED_MODE: mode,
+	};
+	if (eventFingerprint) env.SPORTSYNC_EVENT_FINGERPRINT = eventFingerprint;
 	execSync("node scripts/generate-featured.js", {
-		env: {
-			...process.env,
-			SPORTSYNC_FEATURED_DATE: dateKey,
-			SPORTSYNC_FEATURED_MODE: mode,
-		},
+		env,
 		stdio: "inherit",
 		timeout: 180000,
 	});
@@ -71,25 +93,38 @@ function main() {
 	const tomorrowKey = formatDateKey(tomorrow);
 	const tomorrowFile = path.join(dataDir, `featured-${tomorrowKey}.json`);
 
+	// Load events to compute fingerprint for preview caching
+	const allEvents = readJsonIfExists(path.join(dataDir, "events.json")) || [];
+	const tomorrowFingerprint = computeEventFingerprint(allEvents, tomorrowKey);
+
 	let shouldGenerate = false;
 	if (!fs.existsSync(tomorrowFile)) {
 		shouldGenerate = true;
 	} else {
-		// Regenerate if older than 24h
 		const existing = readJsonIfExists(tomorrowFile);
-		const generatedAt = existing?._meta?.generatedAt;
-		if (generatedAt) {
-			const age = now.getTime() - new Date(generatedAt).getTime();
-			if (age > MS_PER_DAY) {
-				shouldGenerate = true;
-				console.log(`Preview for ${tomorrowKey} is stale (${Math.round(age / MS_PER_DAY * 10) / 10}d old), regenerating.`);
+		const cachedFingerprint = existing?._meta?.eventFingerprint;
+		if (cachedFingerprint && cachedFingerprint === tomorrowFingerprint) {
+			// Events haven't changed — skip regeneration
+			console.log(`Preview for ${tomorrowKey} events unchanged (fingerprint: ${tomorrowFingerprint}), skipping.`);
+		} else if (cachedFingerprint) {
+			shouldGenerate = true;
+			console.log(`Preview for ${tomorrowKey} events changed (${cachedFingerprint} → ${tomorrowFingerprint}), regenerating.`);
+		} else {
+			// No fingerprint in cached file — regenerate if older than 24h (legacy behavior)
+			const generatedAt = existing?._meta?.generatedAt;
+			if (generatedAt) {
+				const age = now.getTime() - new Date(generatedAt).getTime();
+				if (age > MS_PER_DAY) {
+					shouldGenerate = true;
+					console.log(`Preview for ${tomorrowKey} is stale (${Math.round(age / MS_PER_DAY * 10) / 10}d old, no fingerprint), regenerating.`);
+				}
 			}
 		}
 	}
 
 	if (shouldGenerate) {
 		try {
-			generateBriefing(tomorrowKey, "preview");
+			generateBriefing(tomorrowKey, "preview", tomorrowFingerprint);
 			aiCalls++;
 			const usage = readTokenUsageFromQuality(dataDir);
 			if (usage) {

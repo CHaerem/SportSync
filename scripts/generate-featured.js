@@ -914,6 +914,9 @@ async function main() {
 			mode: FEATURED_MODE,
 			generatedAt: new Date().toISOString(),
 		};
+		if (process.env.SPORTSYNC_EVENT_FINGERPRINT) {
+			featured._meta.eventFingerprint = process.env.SPORTSYNC_EVENT_FINGERPRINT;
+		}
 	} else {
 		featured.generatedAt = new Date().toISOString();
 		featured.provider = provider;

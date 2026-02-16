@@ -5,6 +5,7 @@ import os from "os";
 
 // Test the helper used by the orchestrator
 import { formatDateKey, MS_PER_DAY } from "../scripts/lib/helpers.js";
+import { computeEventFingerprint } from "../scripts/generate-multi-day.js";
 
 describe("formatDateKey", () => {
 	it("formats a date as YYYY-MM-DD", () => {
@@ -65,6 +66,61 @@ describe("generate-multi-day cleanup logic", () => {
 
 		expect(toClean).toHaveLength(1);
 		expect(toClean[0]).toBe(`featured-${oldKey}.json`);
+	});
+});
+
+describe("computeEventFingerprint()", () => {
+	it("generates a fingerprint from events on the given date", () => {
+		const events = [
+			{ sport: "football", title: "Match A", time: "2026-02-17T15:00:00Z" },
+			{ sport: "golf", title: "Tournament B", time: "2026-02-17T08:00:00Z" },
+		];
+		const fp = computeEventFingerprint(events, "2026-02-17");
+		expect(fp).toBeTruthy();
+		expect(fp.length).toBe(12);
+	});
+
+	it("returns the same fingerprint for identical events", () => {
+		const events = [
+			{ sport: "football", title: "Match A", time: "2026-02-17T15:00:00Z" },
+			{ sport: "golf", title: "Tournament B", time: "2026-02-17T08:00:00Z" },
+		];
+		const fp1 = computeEventFingerprint(events, "2026-02-17");
+		const fp2 = computeEventFingerprint(events, "2026-02-17");
+		expect(fp1).toBe(fp2);
+	});
+
+	it("returns different fingerprint when events change", () => {
+		const events1 = [
+			{ sport: "football", title: "Match A", time: "2026-02-17T15:00:00Z" },
+		];
+		const events2 = [
+			{ sport: "football", title: "Match A", time: "2026-02-17T15:00:00Z" },
+			{ sport: "golf", title: "Tournament B", time: "2026-02-17T08:00:00Z" },
+		];
+		expect(computeEventFingerprint(events1, "2026-02-17"))
+			.not.toBe(computeEventFingerprint(events2, "2026-02-17"));
+	});
+
+	it("returns 'empty' for dates with no events", () => {
+		const events = [
+			{ sport: "football", title: "Match A", time: "2026-02-18T15:00:00Z" },
+		];
+		expect(computeEventFingerprint(events, "2026-02-17")).toBe("empty");
+	});
+
+	it("handles null/undefined input gracefully", () => {
+		expect(computeEventFingerprint(null, "2026-02-17")).toBe("");
+		expect(computeEventFingerprint([], null)).toBe("");
+	});
+
+	it("includes multi-day events (endTime spanning target date)", () => {
+		const events = [
+			{ sport: "golf", title: "Tournament", time: "2026-02-16T08:00:00Z", endTime: "2026-02-19T20:00:00Z" },
+		];
+		// This multi-day event should appear in the Feb 17 fingerprint
+		const fp = computeEventFingerprint(events, "2026-02-17");
+		expect(fp).not.toBe("empty");
 	});
 });
 
