@@ -19,6 +19,7 @@ import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PE
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
+import { factCheck, buildFactCheckHints, appendFactCheckHistory } from "./lib/fact-checker.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
 
@@ -514,44 +515,52 @@ export function toFeaturedShape(result) {
 
 export function looksLikeMajorEvent(event) {
 	const haystack = `${event?.context || ""} ${event?.tournament || ""} ${event?.title || ""}`;
-	return /olympics|world cup|champions league|grand slam|masters|major|playoff|final/i.test(haystack);
+	if (/olympics|world cup|champions league|grand slam|playoff|final/i.test(haystack)) return true;
+	if (/masters|major/i.test(haystack) && event?.sport === "golf") return true;
+	return false;
 }
 
 function buildFallbackSections(events, now) {
 	const upcomingMajor = events
 		.filter((event) => new Date(event.time) >= now)
-		.filter((event) => looksLikeMajorEvent(event))
-		.slice(0, 6);
+		.filter((event) => looksLikeMajorEvent(event));
 
 	if (upcomingMajor.length === 0) return [];
 
-	const sectionKey = upcomingMajor[0].context || upcomingMajor[0].tournament || "featured-now";
-	const sectionTitle = upcomingMajor[0].tournament || upcomingMajor[0].context || "Major Event Focus";
-	const items = upcomingMajor.map((event) => {
-		const t = new Date(event.time);
-		const time = t.toLocaleTimeString("en-NO", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-			timeZone: "Europe/Oslo",
-		});
-		return {
-			text: `${time} — ${event.title}`,
-			type: "event",
-		};
-	});
+	// Group by context or sport — never mix different competitions
+	const groups = {};
+	for (const event of upcomingMajor) {
+		const key = event.context || event.sport || "featured";
+		if (!groups[key]) groups[key] = [];
+		groups[key].push(event);
+	}
 
-	return [
-		{
-			id: sectionKey.toLowerCase().replace(/\s+/g, "-"),
-			title: sectionTitle,
-			emoji: "🏅",
+	return Object.entries(groups).slice(0, 2).map(([key, groupEvents]) => {
+		const first = groupEvents[0];
+		const items = groupEvents.slice(0, 6).map((event) => {
+			const t = new Date(event.time);
+			const time = t.toLocaleTimeString("en-NO", {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: false,
+				timeZone: "Europe/Oslo",
+			});
+			return {
+				text: `${time} — ${event.title}`,
+				type: "event",
+			};
+		});
+
+		return {
+			id: key.toLowerCase().replace(/\s+/g, "-"),
+			title: first.tournament || first.context || key,
+			emoji: sportEmoji(first.sport),
 			style: "highlight",
 			items,
 			expandLabel: null,
 			expandItems: [],
-		},
-	];
+		};
+	});
 }
 
 function sportEmoji(sport) {
@@ -805,7 +814,10 @@ async function main() {
 		const sanityReportPath = path.join(dataDir, "sanity-report.json");
 		sanityReport = readJsonIfExists(sanityReportPath);
 		const { hints: sanityHints } = buildSanityHints(sanityReport);
-		allHints = [...adaptiveHints, ...resultsHints, ...sanityHints];
+		const factCheckHistoryPath = path.join(dataDir, "fact-check-history.json");
+		const factCheckHistory = readJsonIfExists(factCheckHistoryPath) || [];
+		const { hints: factCheckHintsFromHistory } = buildFactCheckHints(factCheckHistory);
+		allHints = [...adaptiveHints, ...resultsHints, ...sanityHints, ...factCheckHintsFromHistory];
 		if (allHints.length > 0) {
 			console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity)`);
 			for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
@@ -820,6 +832,7 @@ async function main() {
 	let qualityCorrections = [];
 	let featuredLlm = null;
 	let cliUsage = null;
+	let factCheckFindings = null;
 
 	const generationStart = Date.now();
 	for (let attempt = 1; attempt <= 2; attempt++) {
@@ -841,6 +854,27 @@ async function main() {
 			qualityResult = validateFeaturedContent(candidate, { events });
 
 			if (qualityResult.valid) {
+				// Fact-check featured blocks (live mode only, best-effort)
+				if (isLiveMode && featuredLlm) {
+					try {
+						const factResult = await factCheck({
+							items: qualityResult.normalized.blocks,
+							itemType: "featured-blocks",
+							context: { events, standings, rssDigest, recentResults },
+							llm: featuredLlm,
+						});
+						if (factResult.findings.some((f) => f.severity === "error")) {
+							qualityCorrections = factResult.findings
+								.filter((f) => f.severity === "error")
+								.map((f) => `FACTUAL ERROR: ${f.message}`);
+							console.warn(`Fact-check found ${qualityCorrections.length} error(s), retrying...`);
+							continue;
+						}
+						factCheckFindings = factResult;
+					} catch (fcErr) {
+						console.warn("Fact-check failed (non-blocking):", fcErr.message);
+					}
+				}
 				featured = qualityResult.normalized;
 				break;
 			}
@@ -960,12 +994,29 @@ async function main() {
 					warningCount: sanityReport.summary?.warning ?? 0,
 					pass: sanityReport.pass ?? true,
 				} : null,
+				factCheck: factCheckFindings ? {
+					itemsChecked: factCheckFindings.itemsChecked,
+					issuesFound: factCheckFindings.issuesFound,
+					provider: factCheckFindings.provider,
+				} : null,
 			}
 		);
 		history.push(snapshot);
 		// Cap at 100 entries
 		while (history.length > 100) history.shift();
 		writeJsonPretty(historyPath, history);
+
+		// Write fact-check history (feedback loop #10)
+		if (factCheckFindings) {
+			const fcHistoryPath = path.join(dataDir, "fact-check-history.json");
+			appendFactCheckHistory(fcHistoryPath, {
+				...factCheckFindings,
+				itemType: "featured-blocks",
+			});
+			if (factCheckFindings.issuesFound > 0) {
+				console.log(`Fact-check: ${factCheckFindings.issuesFound} issue(s) found in featured content`);
+			}
+		}
 	}
 
 	const blockCount = featured.blocks ? featured.blocks.length : 0;

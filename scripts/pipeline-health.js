@@ -216,6 +216,20 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 6b. Fact-check history freshness
+	const { factCheckHistory: fcHistoryOpt = null } = options;
+	if (fcHistoryOpt && Array.isArray(fcHistoryOpt) && fcHistoryOpt.length > 0) {
+		const lastEntry = fcHistoryOpt[fcHistoryOpt.length - 1];
+		const fcAge = ageMinutes(lastEntry.timestamp);
+		if (fcAge > 2880) { // 48 hours
+			issues.push({
+				severity: "warning",
+				code: "fact_check_stale",
+				message: `fact-check-history.json last entry is ${Math.round(fcAge / 60)}h old (>48h)`,
+			});
+		}
+	}
+
 	// 7. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {
@@ -422,6 +436,9 @@ async function main() {
 	// Read usage tracking for quota API status
 	const usageTracking = readJsonIfExists(path.join(dataDir, "usage-tracking.json"));
 
+	// Read fact-check history for freshness monitoring
+	const factCheckHistory = readJsonIfExists(path.join(dataDir, "fact-check-history.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -432,6 +449,7 @@ async function main() {
 		criticalOutputs,
 		snapshotHealth: { meta: snapMeta },
 		usageTracking,
+		factCheckHistory,
 	});
 
 	// Generate autonomy scorecard alongside health report

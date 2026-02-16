@@ -77,8 +77,12 @@ describe("looksLikeMajorEvent()", () => {
 		expect(looksLikeMajorEvent({ tournament: "Australian Open Grand Slam" })).toBe(true);
 	});
 
-	it("detects Masters", () => {
-		expect(looksLikeMajorEvent({ tournament: "The Masters" })).toBe(true);
+	it("detects Masters (golf)", () => {
+		expect(looksLikeMajorEvent({ tournament: "The Masters", sport: "golf" })).toBe(true);
+	});
+
+	it("does not detect Major in non-golf sport", () => {
+		expect(looksLikeMajorEvent({ tournament: "CS2 Major Tournaments", sport: "esports" })).toBe(false);
 	});
 
 	it("detects playoff/final", () => {

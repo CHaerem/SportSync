@@ -16,7 +16,7 @@ const ENRICHMENT_DEFAULTS = {
 };
 
 const MAJOR_EVENT_RE =
-	/olympics|world cup|champions league|grand slam|masters|major|playoff|final/i;
+	/olympics|world cup|champions league|grand slam|playoff|final/i;
 
 function clamp(value, min, max) {
 	return Math.max(min, Math.min(max, value));
@@ -34,7 +34,9 @@ function normalizeLine(text) {
 
 function looksLikeMajorEvent(event) {
 	const haystack = `${event?.context || ""} ${event?.tournament || ""} ${event?.title || ""}`;
-	return MAJOR_EVENT_RE.test(haystack);
+	if (MAJOR_EVENT_RE.test(haystack)) return true;
+	if (/masters|major/i.test(haystack) && event?.sport === "golf") return true;
+	return false;
 }
 
 function sanitizeSection(section) {
@@ -503,7 +505,7 @@ export function evaluateWatchPlanQuality(watchPlan) {
 	return { score, metrics };
 }
 
-export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity } = {}) {
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity, factCheck } = {}) {
 	// Expand tokenUsage with discovery and multiDay if present, and compute realPct
 	let expandedTokenUsage = tokenUsage || null;
 	if (expandedTokenUsage) {
@@ -550,6 +552,9 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 			: null,
 		sanity: sanity
 			? { findingCount: sanity.findingCount ?? 0, warningCount: sanity.warningCount ?? 0, pass: sanity.pass ?? true }
+			: null,
+		factCheck: factCheck
+			? { itemsChecked: factCheck.itemsChecked ?? 0, issuesFound: factCheck.issuesFound ?? 0, provider: factCheck.provider ?? null }
 			: null,
 		hintsApplied: hintsApplied || [],
 		tokenUsage: expandedTokenUsage,

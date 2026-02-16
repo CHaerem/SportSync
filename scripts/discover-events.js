@@ -22,6 +22,8 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY, parseCliJsonOutput } from "./lib/helpers.js";
 import { buildVerificationHints } from "./lib/schedule-verifier.js";
+import { factCheck, buildFactCheckHints, appendFactCheckHistory } from "./lib/fact-checker.js";
+import { LLMClient } from "./lib/llm-client.js";
 
 const MAX_TASKS_PER_RUN = 3;
 const ATHLETE_REFRESH_DAYS = 7;
@@ -354,6 +356,21 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 		console.log(`Injecting ${verificationHints.length} accuracy correction(s) from verification history`);
 	}
 
+	// Load fact-check history for accuracy hints
+	const factCheckHistoryPath = path.join(dDir, "fact-check-history.json");
+	const factCheckHistoryData = readJsonIfExists(factCheckHistoryPath) || [];
+	const { hints: fcHints } = buildFactCheckHints(factCheckHistoryData);
+	const allVerificationHints = [...verificationHints, ...fcHints];
+	if (fcHints.length > 0) {
+		console.log(`Injecting ${fcHints.length} fact-check hint(s) from history`);
+	}
+
+	// Load reference data for fact-checking discovered configs
+	const allEvents = readJsonIfExists(path.join(dDir, "events.json")) || [];
+	const standings = readJsonIfExists(path.join(dDir, "standings.json"));
+	const rssDigest = readJsonIfExists(path.join(dDir, "rss-digest.json"));
+	const factCheckLlm = new LLMClient();
+
 	const tasks = findResearchTasks(configs, coverageGaps, timestamp);
 
 	if (tasks.length === 0) {
@@ -381,7 +398,7 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 		console.log(`\n  Researching: ${taskLog.target} (${task.reason})`);
 
 		try {
-			const prompt = buildResearchPrompt(task, userContext, verificationHints);
+			const prompt = buildResearchPrompt(task, userContext, allVerificationHints);
 			totalCalls++;
 			const cliResult = await discoverWithClaudeCLI(prompt);
 			totalInput += cliResult.usage.input;
@@ -432,6 +449,28 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 				taskLog.filename = filename;
 				taskLog.eventsFound = result.events?.length || 0;
 				console.log(`  Created ${filename} with ${taskLog.eventsFound} events`);
+			}
+			// Fact-check discovered events (best-effort)
+			if (Array.isArray(result.events) && result.events.length > 0 && factCheckLlm.isAvailable()) {
+				try {
+					const factResult = await factCheck({
+						items: result.events,
+						itemType: "config-events",
+						context: { events: allEvents, standings, rssDigest },
+						llm: factCheckLlm,
+					});
+					if (factResult.issuesFound > 0) {
+						console.log(`  Fact-check: ${factResult.issuesFound} issue(s) in ${taskLog.target}`);
+						for (const f of factResult.findings) console.log(`    ${f.severity}: ${f.message}`);
+					}
+					taskLog.factCheck = { issues: factResult.issuesFound, findings: factResult.findings };
+					appendFactCheckHistory(factCheckHistoryPath, {
+						...factResult,
+						itemType: "config-events",
+					});
+				} catch (fcErr) {
+					console.warn(`  Fact-check failed (non-blocking): ${fcErr.message}`);
+				}
 			}
 		} catch (err) {
 			taskLog.outcome = "failed";
