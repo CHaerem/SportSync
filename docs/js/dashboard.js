@@ -934,6 +934,13 @@ class Dashboard {
 				const pct = Math.min(100, Math.round((pick.score / 150) * 100));
 				html += `<div class="pick-confidence" title="Match score: ${pick.score}"><div class="pick-confidence-bar" style="width:${pct}%"></div></div>`;
 			}
+			// Thumbs-up/down feedback
+			const pickKey = `${(pick.title || '').replace(/[^a-zA-Z0-9]/g, '_')}_${(pick.time || '').slice(0, 10)}`;
+			const fb = this.preferences ? this.preferences.getWatchFeedback(pickKey) : null;
+			html += `<div class="pick-feedback" data-pick-key="${this.esc(pickKey)}">`;
+			html += `<button class="pick-fb-btn${fb === 'up' ? ' active' : ''}" data-fb="up" title="Good pick" aria-label="Thumbs up">\u25b2</button>`;
+			html += `<button class="pick-fb-btn${fb === 'down' ? ' active' : ''}" data-fb="down" title="Not for me" aria-label="Thumbs down">\u25bc</button>`;
+			html += `</div>`;
 			html += `</div>`;
 			html += `</div>`;
 		});
@@ -956,9 +963,31 @@ class Dashboard {
 			}
 		};
 		container.querySelectorAll('.watch-pick').forEach(el => {
-			el.addEventListener('click', () => handlePickActivate(el));
+			el.addEventListener('click', (e) => {
+				// Don't navigate if clicking a feedback button
+				if (e.target.closest('.pick-feedback')) return;
+				handlePickActivate(el);
+			});
 			el.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePickActivate(el); }
+			});
+		});
+
+		// Bind feedback buttons
+		container.querySelectorAll('.pick-fb-btn').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				if (!this.preferences) return;
+				const feedbackEl = btn.closest('.pick-feedback');
+				const pickKey = feedbackEl?.dataset.pickKey;
+				if (!pickKey) return;
+				const value = btn.dataset.fb;
+				const current = this.preferences.getWatchFeedback(pickKey);
+				// Toggle: clicking same button clears it
+				this.preferences.setWatchFeedback(pickKey, current === value ? null : value);
+				// Update button states
+				feedbackEl.querySelectorAll('.pick-fb-btn').forEach(b => b.classList.remove('active'));
+				if (current !== value) btn.classList.add('active');
 			});
 		});
 	}
