@@ -224,19 +224,21 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 |--------|-------------------|---------------|-------|
 | 1. Data | ~88% | 2026-02-16 | 6 APIs + tennis rankings, 11 RSS feeds, event-fingerprint caching |
 | 2. Code | ~82% | 2026-02-16 | 102 PRs, 1437 tests |
-| 3. Capabilities | ~60% | 2026-02-16 | Pipeline manifest, generate-insights, 4 inline standings widgets (PL, golf, F1, tennis) |
+| 3. Capabilities | ~62% | 2026-02-16 | Pipeline manifest, generate-insights, 5 inline standings widgets (PL, La Liga, golf, F1, tennis) |
 | 4. Personalization | ~50% | 2026-02-16 | Watch-plan feedback loop closed (thumbs→scoring), sport weights + favorites evolve, empty-sport notes |
 | 5. Quality | ~90% | 2026-02-16 | 11 loops, hint fatigue demoted to info |
 
 ### Run History Insights
 
-**Run 2026-02-16 (Run 3):** 5 tasks completed (1 already done, 2 branch-pr, 2 direct-to-main). Highly efficient run:
+**Run 2026-02-16 (Run 3):** 7 tasks completed (1 already done, 2 branch-pr, 4 direct-to-main). Most productive run yet:
 - Watch-plan feedback scoring (PR #101): 8 turns, branch-pr. Closes personalization loop.
 - Empty-sport notes: 4 turns, direct-to-main. Quick UI win.
 - Tennis ATP/WTA rankings (PR #102): 10 turns, branch-pr. New data source + editorial context.
-- Inline tennis widget: 4 turns, direct-to-main. Closes data-to-UI gap immediately after data task.
-- Pattern: chaining data→UI tasks in same run maximizes value per turn.
-- Direct-to-main continues to be safe and efficient for small UI changes.
+- Inline tennis widget: 4 turns, direct-to-main. Data→UI gap closed in same run.
+- PipelineHealth loop fix: 5 turns, direct-to-main. Unblocks autonomy scoring.
+- La Liga inline widget: 4 turns, direct-to-main. Fifth inline standings widget.
+- Patterns: chaining data→UI tasks maximizes value. Direct-to-main is safe and efficient.
+- 6 new tasks scouted. Total: ~40 turns for 7 tasks + scouting.
 
 **Run 2026-02-16 (Run 2):** 4 tasks completed + 7 tasks scouted. First run using process strategy file. Key learnings:
 - Direct-to-main mode works well for single-file UI changes (2 uses, 0 issues)
@@ -770,7 +772,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 ### MEDIUM Priority
 
-- [PENDING] [MAINTENANCE] **Add inline La Liga standings widget** — La Liga standings data is already fetched (`standings.football.laLiga`) but only PL has an inline widget. Add collapsible La Liga mini-table following the PL pattern. Barcelona is a user favorite. Files: `docs/js/dashboard.js` (~25 lines).
+- [DONE] (direct) **Add inline La Liga standings widget** — Collapsible La Liga mini-table following PL pattern, with Barcelona highlighting. Fifth inline standings widget.
 
 - [PENDING] [FEATURE] **Add tennis Casper Ruud match tracking** — Tennis events are currently filtered by Norwegian players but produce 0 events. Consider adding a "focused" filter mode for tennis that also includes top-50 ATP events (Grand Slams, Masters) even without Norwegian participation, since the user has medium tennis preference. Files: `scripts/fetch/tennis.js` (~30 lines).
 

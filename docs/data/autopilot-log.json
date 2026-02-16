@@ -409,6 +409,22 @@
       "lesson": "Autonomy scoring should distinguish between real pipeline failures and known data gaps. Scoring all issues equally creates noise that masks real problems.",
       "scouted": 0,
       "meta_insight": "The pipelineHealth loop was stuck for 10 runs because of false positives. Fixing scoring classification has multiplicative value — downstream detectors now get cleaner signals."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add inline La Liga standings widget",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "capabilities",
+      "details": "Collapsible La Liga mini-table following PL pattern. Top 5 + Barcelona highlighted. Fifth inline standings widget.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "turns_estimated": 4,
+      "lesson": "Copy-paste of PL widget pattern with La Liga data took 4 turns. All five inline widgets now follow identical structure — could be refactored into a generic function.",
+      "scouted": 0,
+      "meta_insight": "Five inline standings widgets (PL, La Liga, golf, F1, tennis) now close all data-to-UI gaps for standings. The pattern is ripe for extraction into a generic renderInlineStandings() function."
     }
   ]
 }
