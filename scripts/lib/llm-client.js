@@ -7,7 +7,7 @@
 const PROVIDERS = {
 	anthropic: {
 		url: "https://api.anthropic.com/v1/messages",
-		model: "claude-opus-4-6",
+		model: process.env.ANTHROPIC_MODEL || "claude-opus-4-6",
 		envKey: "ANTHROPIC_API_KEY",
 		buildRequest(apiKey, systemPrompt, userPrompt) {
 			return {
@@ -37,7 +37,7 @@ const PROVIDERS = {
 	},
 	openai: {
 		url: "https://api.openai.com/v1/chat/completions",
-		model: "gpt-4o-mini",
+		model: process.env.OPENAI_MODEL || "gpt-4o-mini",
 		envKey: "OPENAI_API_KEY",
 		buildRequest(apiKey, systemPrompt, userPrompt) {
 			return {

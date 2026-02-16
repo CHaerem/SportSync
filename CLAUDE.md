@@ -32,6 +32,16 @@ The dashboard is personalized based on user interests defined in `scripts/config
 
 Beyond data and content autonomy, the underlying code structure is itself a target for autonomous improvement. The nightly autopilot (`claude-autopilot.yml`) reads `AUTOPILOT_ROADMAP.md`, picks tasks, creates PRs, runs tests, and merges — then scouts the codebase for new improvement opportunities. Errors and shortcomings should be autonomously identified and fixed without human involvement.
 
+### Acceleration Thesis
+
+The system doesn't just improve the product — it improves at improving. Three forces create compounding returns:
+
+1. **Better models over time** — More capable AI = more ambitious autonomous tasks. What requires careful planning today becomes routine tomorrow.
+2. **Accumulated knowledge** — Each run records what works. After 100 runs, the system knows which task types are fast, which heuristics find value, and which approaches fail.
+3. **Richer architecture** — Each new feedback loop, pipeline step, or detection mechanism creates more surface area for autonomous improvement.
+
+The practical implication: early runs should prioritize **velocity** (many small improvements, rapid learning). As the system matures, shift toward **depth** (harder problems, self-discovered features). Eventually, the system reaches **refinement** (optimization, personalization fine-tuning).
+
 ### Human-in-the-Loop (Future)
 
 Some form of lightweight user feedback would complete the vision — allowing the system to learn which recommendations land, which content formats work, and which sports coverage matters most. This could be as simple as thumbs-up/down on watch-plan picks surfaced via `localStorage` feedback signals.
@@ -71,6 +81,19 @@ Changes should not create ongoing manual maintenance obligations. If a feature r
 Ask: **"How will we know this change is working?"**
 
 Every non-trivial change should be observable through existing metrics (autonomy scorecard, quality history, health report) or should add its own measurement. If a change can't be measured, it can't be improved autonomously.
+
+### 6. Compound Learning
+
+Ask: **"Does this run leave the system smarter, not just better?"**
+
+Every autopilot run should deposit knowledge — what works, what fails, which approaches are efficient, which heuristics find value. This knowledge accumulates in the "Lessons & Effectiveness" section of the roadmap and in the enhanced autopilot log.
+
+The system has three acceleration vectors:
+- **Model improvement** — as underlying AI models improve, the system can take on more complex tasks, generate better content, and make more nuanced decisions. Task ambition should scale with model capability.
+- **Knowledge accumulation** — patterns learned from hundreds of runs compound. What takes 8 turns today should take 3 turns after the system has seen similar tasks.
+- **Architecture maturity** — each new feedback loop, pipeline step, or detection mechanism makes the system more capable of self-improvement.
+
+**Test:** After this run, is there something recorded that will make the next run more effective?
 
 ## Project Overview
 
@@ -332,6 +355,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Resilience hardening** | Pipeline manifest captures per-step outcomes in `pipeline-result.json`. Remaining gap: autopilot doesn't yet auto-diagnose and repair failed steps. | Low |
 | **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
 | **Watch-plan feedback** | Watch-plan picks render in the dashboard but there's no mechanism to capture user reactions (thumbs-up/down). Without this signal, personalization can't learn. | Low |
+| **Meta-learning** | The system doesn't yet systematically track which improvements are most effective or accumulate structured knowledge about its own improvement process. | Low |
 
 ### Roadmap (Prioritized Next Steps)
 

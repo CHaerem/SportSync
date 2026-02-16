@@ -189,6 +189,112 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 ---
 
+## Lessons & Effectiveness
+
+*This section is maintained by the autopilot. It accumulates knowledge across runs.*
+
+### Task Efficiency Patterns
+
+*(To be filled by the autopilot as it learns)*
+
+### Heuristic Effectiveness
+
+| Heuristic | Tasks Found | Tasks Completed | Hit Rate | Notes |
+|-----------|-------------|-----------------|----------|-------|
+| A. Dead Field | - | - | - | |
+| B. Data-to-UI Gap | - | - | - | |
+| C. Fetcher Waste | - | - | - | |
+| D. Sanity Report | - | - | - | |
+| E. Pattern Report | - | - | - | |
+| F. Opportunity | - | - | - | |
+| G. Dashboard UX | - | - | - | |
+| H. Capability Seed | - | - | - | |
+| I. User Feedback | - | - | - | |
+| J. Upstream Issues | - | - | - | |
+| K. Vision-Guided | - | - | - | |
+
+### Pillar Progress
+
+| Pillar | Estimated Maturity | Last Advanced | Notes |
+|--------|-------------------|---------------|-------|
+| 1. Data | ~85% | - | 6 APIs, 11 RSS feeds, results for 2/6 sports |
+| 2. Code | ~80% | - | 80+ PRs, 1295 tests, but gaps in test coverage |
+| 3. Capabilities | ~40% | - | Pipeline manifest enables expansion, no self-discovered feature yet |
+| 4. Personalization | ~30% | - | Sport weights evolve, teams/players don't, no feedback UI |
+| 5. Quality | ~90% | - | 11 loops, but hint fatigue unresolved |
+
+### Run History Insights
+
+*(Autopilot updates this with cross-run patterns)*
+
+---
+
+## Sprint: Foundation
+
+Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopilot should work through these in sprint mode (85% execution, 10% scouting, 5% meta-learning).
+
+### Pillar 1: Self-Maintaining Data
+
+1. [PENDING] [MAINTENANCE] **Fix tennis zero events: change filterMode from "exclusive" to "inclusive"** — `docs/js/sport-config.js` line ~99 has `filterMode: "exclusive"` for tennis, which hides ALL events when Casper Ruud has nothing scheduled. Change to "inclusive" so matches are visible with Norwegian ones highlighted. This single change fixes the "sport_zero_events" pattern that has fired 88 times.
+
+2. [PENDING] [MAINTENANCE] **Fix hint fatigue: add RESULTS and SANITY to hintMetricMap** — `scripts/analyze-patterns.js` ~line 199 has `hintMetricMap` that maps hint types to quality metrics but is missing entries for RESULTS and SANITY hints. All hint fatigue for these categories reports `hintKey: "unknown"`. Add the mappings so pattern detection can track whether these hints are effective.
+
+3. [PENDING] [MAINTENANCE] **Add results tracking for tennis** — `scripts/fetch-results.js` fetches football and golf results from ESPN. Extend it to also fetch tennis results (ATP/WTA tournament scores). ESPN has tennis scoreboard endpoints. Add to the existing fetcher pattern, tag Casper Ruud as favorite.
+
+4. [PENDING] [MAINTENANCE] **Add results tracking for F1** — Extend `scripts/fetch-results.js` to fetch F1 race results from ESPN Racing scoreboard. Include qualifying positions, race results, and points.
+
+5. [PENDING] [FEATURE] **Fix esports data staleness** — HLTV community API returns data from 2022. Options: (a) expand curated config `esports-cs2-2026.json` with current tournament data, (b) add HLTV web scraping as fallback, or (c) switch to Liquipedia API. Investigate and implement best option.
+
+6. [PENDING] [MAINTENANCE] **Resolve recurring health warnings** — `docs/data/pattern-report.json` shows "sport_zero_events" for tennis/esports firing 88+ times. After fixing the tennis filterMode (task 1), investigate remaining sport_zero_events patterns and fix root causes.
+
+7. [PENDING] [MAINTENANCE] **Add golf empty-competitor fallback** — ESPN API sometimes returns empty competitor arrays for golf events, causing the validator to drop them and golf.json to go stale. Add a fallback that retains the last known good competitors when the API returns empty arrays.
+
+8. [PENDING] [EXPLORE] **Investigate new sport data sources** — Check what free APIs exist for: biathlon (major Norwegian sport), cross-country skiing, handball (Norwegian league), cycling (Tour de France). For each, evaluate: data quality, update frequency, Norwegian focus potential. Create concrete `[FEATURE]` tasks for viable sources.
+
+### Pillar 2: Self-Maintaining Code
+
+9. [PENDING] [MAINTENANCE] **Add tests for analyze-patterns.js** — `scripts/analyze-patterns.js` has zero test coverage. Add tests for all 5 pattern detectors: recurring health warnings, quality decline, stagnant loops, hint fatigue, autopilot failure patterns.
+
+10. [PENDING] [MAINTENANCE] **Add tests for pipeline-health.js** — `scripts/pipeline-health.js` is a critical pipeline step with limited test coverage. Add tests for sport coverage detection, freshness checking, and health report generation.
+
+11. [PENDING] [MAINTENANCE] **Add tests for sync-configs.js** — Config maintenance script with no dedicated tests. Add tests for config pruning, archiving expired configs, and flagging needsResearch.
+
+12. [PENDING] [MAINTENANCE] **Fix pre-existing test failure in validate-events-extended** — The "fails on past events (beyond grace window)" test fails intermittently. Investigate whether the grace window logic has a timezone bug or test fixture staleness issue.
+
+13. [PENDING] [MAINTENANCE] **Add error categorization to pipeline-result.json** — `scripts/run-pipeline.js` captures step failures but only stores the first 200 chars of error messages. Categorize errors (network, timeout, validation, auth) so the autopilot can diagnose patterns without reading full logs.
+
+### Pillar 3: Self-Expanding Capabilities
+
+14. [PENDING] [EXPLORE] **Investigate inline standings widgets** — Standings data exists in `standings.json` for PL, golf, and F1 but is only surfaced in editorial text. Explore adding collapsible inline widgets: mini PL table in football section, top-5 golf leaderboard in golf section, driver standings in F1 section. Identify exact render points in `dashboard.js`.
+
+15. [PENDING] [FEATURE] **Add inline Premier League mini-table** — Based on explore findings. Render a collapsible 5-row PL standings table in the football section of the dashboard, using data from `standings.json`. Show pos, team, pts, GD. Highlight favorite teams.
+
+16. [PENDING] [FEATURE] **Add new pipeline step: generate-insights** — Create `scripts/generate-insights.js` that reads events + standings + results + RSS to produce `docs/data/insights.json` — short analytical nuggets like "Liverpool unbeaten in 12" or "Hovland T3 going into Sunday". Wire into pipeline-manifest.json generate phase. Dashboard renders as accent cards.
+
+17. [PENDING] [EXPLORE] **Investigate biathlon/cross-country data** — Norway dominates these winter sports. Check if IBU (biathlon) or FIS (cross-country skiing) have public APIs or data feeds. Evaluate feasibility of a winter-sports fetcher.
+
+18. [PENDING] [FEATURE] **Add day-specific editorial caching** — `generate-multi-day.js` regenerates stale previews but doesn't cache effectively. Add smarter caching: never regenerate past recaps, only regenerate previews if events changed.
+
+### Pillar 4: Personalized Output
+
+19. [PENDING] [FEATURE] **Add thumbs-up/down on watch-plan picks** — Add lightweight feedback controls on watch-plan items in the dashboard. Store feedback in `localStorage` alongside engagement data. Export via the existing engagement export bridge.
+
+20. [PENDING] [MAINTENANCE] **Evolve favorite teams from engagement data** — `evolve-preferences.js` currently only adjusts sport-level weights. Extend it to also detect frequently-clicked teams (from engagement data) and suggest promoting them to favorites in `user-context.json`.
+
+21. [PENDING] [MAINTENANCE] **Add sport-section ordering by preference** — Dashboard renders sports in a fixed order. Read `user-context.json` sport weights and render the highest-weight sports first. Simple change in `dashboard.js` sort logic.
+
+22. [PENDING] [FEATURE] **Add personalized "For You" editorial block** — In `generate-featured.js`, add a dedicated block type that highlights events specifically matching the user's top preferences (favorite teams/players, highest-weight sports). Separate from the general editorial brief.
+
+### Pillar 5: Self-Correcting Quality
+
+23. [PENDING] [MAINTENANCE] **Add intervention effectiveness tracking** — When a hint fires and the next pipeline run shows metric improvement, record the correlation in quality-history.json. When a hint fires repeatedly without improvement (hint fatigue), flag it for replacement rather than repetition.
+
+24. [PENDING] [MAINTENANCE] **Add cross-loop dependency detection** — Enrichment quality affects featured quality. When featured scores drop, check if enrichment scores also dropped in the same window. Record the correlation in pattern-report.json so the autopilot fixes root causes not symptoms.
+
+25. [PENDING] [MAINTENANCE] **Add quality trend visualization data** — Extend `quality-history.json` snapshots to include a rolling 7-day average alongside per-run scores. The autopilot can then detect slow declines that per-run noise masks.
+
+---
+
 ## EXPERIENCE Lane (User Impact)
 
 Keep this section near the top so the autopilot continuously improves user-facing outcomes, not just code hygiene.

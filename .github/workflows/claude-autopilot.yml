@@ -94,6 +94,24 @@ jobs:
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
+            ## Execution mode
+
+            Adapt your strategy to the roadmap state:
+
+            **Sprint mode** (>5 PENDING tasks): Maximize throughput. Spend 85% of
+            turns executing tasks, 10% scouting, 5% on meta-learning. Skip deep
+            planning for tasks you understand immediately — read the relevant files
+            and start coding. Simple [MAINTENANCE] tasks should take 3-5 turns,
+            not 8-10.
+
+            **Cruise mode** (1-5 PENDING tasks): Balanced. Execute remaining tasks,
+            then invest equally in scouting and meta-learning.
+
+            **Scout mode** (0 PENDING tasks): Invest heavily in creative scouting
+            (heuristics F/G/H/K). Generate at least 5-10 new [PENDING] tasks.
+            Read all data signals. Take a screenshot and study the dashboard.
+            Think about what would make this product genuinely better.
+
             ## Step 0: Pre-flight checks and self-repair
 
             1. Run `npm test` to check baseline health.
@@ -145,6 +163,11 @@ jobs:
 
             ### 1a. Pick and validate
             - If TASK OVERRIDE is non-empty, use that instead (one-shot, no loop)
+            - When choosing among multiple PENDING tasks, prefer:
+              1. Tasks that fix recurring pattern-report issues (highest leverage)
+              2. Tasks serving the least-advanced pillar (balance the vision)
+              3. Tasks that unblock other tasks (multiplier effect)
+              4. Higher-tier tasks when in sprint mode (more impact per PR)
             - Check task tier: `[MAINTENANCE]` (default if unspecified), `[FEATURE]`, or `[EXPLORE]`
             - Apply tier-specific limits:
               - `[MAINTENANCE]`: max 8 files, max 300 lines changed
@@ -155,18 +178,14 @@ jobs:
             - Verify the task fits its tier constraints: allowed paths only, LOW or MEDIUM risk
             - If invalid, mark `[BLOCKED] exceeds automation limits` and continue
 
-            ### 1a½. Plan before coding
-            Before writing any code, spend a few turns thinking:
-            1. Read ONLY the files mentioned in the task description (don't explore broadly)
-            2. Identify the exact functions/lines that need to change
-            3. Write a brief mental plan: what files to touch, what each diff looks like,
-               what order to make changes in
-            4. If the task is underspecified or harder than it looks, consider whether
-               to decompose it NOW (before wasting turns) rather than after getting stuck
-            5. Only then start coding — with a clear picture of the finish line
+            ### 1a½. Plan proportionally
+            - For obvious [MAINTENANCE] tasks (typo fix, add a guard, extend an
+              array): Read the file, make the change. No multi-turn planning.
+            - For medium tasks: Brief mental plan (1 turn), then execute.
+            - For [FEATURE] tasks: Full planning as before (identify files, plan
+              diffs, consider edge cases).
 
-            This planning step is critical for efficiency. A task that takes 5 turns
-            with a plan might take 40+ turns without one.
+            Rule of thumb: Planning should never take more turns than execution.
 
             ### 1b. Execute
             For `[EXPLORE]` tasks: skip branching/PR. Read code, data, and APIs.
@@ -297,6 +316,34 @@ jobs:
             in the appropriate priority section. Be specific — include file paths,
             line numbers, and concrete descriptions. Commit and push to main.
 
+            ## Step 2½: Meta-learning checkpoint
+
+            After scouting, update the "Lessons & Effectiveness" section of
+            AUTOPILOT_ROADMAP.md. This section persists across runs and accumulates
+            knowledge:
+
+            1. **What worked this run**: Which tasks were fastest? What made them
+               efficient? (e.g., "Adding tests for well-structured modules takes
+               3 turns; tangled modules take 8+")
+
+            2. **What to avoid**: Patterns that waste turns. (e.g., "Don't attempt
+               tasks that require exploring >5 files without an [EXPLORE] first")
+
+            3. **Heuristic effectiveness**: Which scouting heuristics found the
+               most actionable tasks? Which found noise? Update heuristic
+               descriptions if you learn something new.
+
+            4. **Pillar progress**: Which pillar advanced most this run? Which is
+               most neglected? Adjust task creation to balance pillars.
+
+            5. **Model capability notes**: If you notice you can now do something
+               that previous runs couldn't (more complex reasoning, better code
+               generation, fewer errors), note it — this helps calibrate task
+               ambition for future runs.
+
+            This section is your accumulated wisdom. Read it in Step 0. Write to
+            it in Step 2½. It should grow more valuable over time.
+
             ## Step 3: Self-improvement proposals
 
             After scouting, reflect on this run, your own effectiveness, and the
@@ -327,12 +374,15 @@ jobs:
               "task": "Short description",
               "outcome": "completed|skipped|failed|blocked|decomposed",
               "pr": null or PR number,
+              "pillar": "data|code|capabilities|personalization|quality",
               "details": "What happened",
               "tests_passed": true or false,
               "files_changed": number,
-              "turns_used": estimated turns spent on this task,
-              "lesson": "Brief note on what went well or poorly (for future learning)",
-              "scouted": number of new tasks discovered
+              "turns_used": estimated turns,
+              "turns_estimated": estimated before starting,
+              "lesson": "Brief note on what worked or didn't",
+              "scouted": number of new tasks discovered,
+              "meta_insight": "Optional: what this task taught about how to improve effectively"
             }
             ```
             Keep only the last 30 entries. Remove oldest if over 30.
