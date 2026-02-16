@@ -254,7 +254,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 2: Self-Maintaining Code
 
-9. [PENDING] [MAINTENANCE] **Add tests for analyze-patterns.js** — `scripts/analyze-patterns.js` has zero test coverage. Add tests for all 5 pattern detectors: recurring health warnings, quality decline, stagnant loops, hint fatigue, autopilot failure patterns.
+9. [DONE] (already implemented) **Add tests for analyze-patterns.js** — 48 tests already exist in `tests/analyze-patterns.test.js` covering all 5 detectors + orchestrator. Added in PR #85.
 
 10. [PENDING] [MAINTENANCE] **Add tests for pipeline-health.js** — `scripts/pipeline-health.js` is a critical pipeline step with limited test coverage. Add tests for sport coverage detection, freshness checking, and health report generation.
 
@@ -262,7 +262,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 12. [PENDING] [MAINTENANCE] **Fix pre-existing test failure in validate-events-extended** — The "fails on past events (beyond grace window)" test fails intermittently. Investigate whether the grace window logic has a timezone bug or test fixture staleness issue.
 
-13. [PENDING] [MAINTENANCE] **Add error categorization to pipeline-result.json** — `scripts/run-pipeline.js` captures step failures but only stores the first 200 chars of error messages. Categorize errors (network, timeout, validation, auth) so the autopilot can diagnose patterns without reading full logs.
+13. [DONE] (PR #87) **Add error categorization to pipeline-result.json** — Added `categorizeError()` function and `errorCategory` field on failed steps (timeout|network|auth|validation|parse|command|unknown). 11 new tests.
 
 ### Pillar 3: Self-Expanding Capabilities
 
