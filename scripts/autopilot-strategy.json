@@ -42,6 +42,10 @@
       {
         "date": "2026-02-16",
         "note": "First run with strategy file. Direct-to-main used for 2 small tasks (4 turns each), branch-pr for 2 features (10-15 turns). Feature tasks were faster than estimated (15 vs 25 budget). Preflight was 10 turns (included branch cleanup). Scouting used 10 turns via Task agents. Total: ~70 turns for 4 tasks + scouting + meta. Updated turn budgets to match actuals."
+      },
+      {
+        "date": "2026-02-16",
+        "note": "Run 3: 5 tasks in ~35 turns (4 completed + 1 already done). Chaining data→UI tasks (tennis rankings → inline widget) in same run is highly efficient — eliminates context-loading overhead. Direct-to-main saves ~6 turns per task vs branch-pr and was safe for all 2 uses. Pre-verifying task completion status avoids wasted work. Scouting via Task agent was efficient (~5 turns)."
       }
     ]
   }

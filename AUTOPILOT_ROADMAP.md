@@ -222,13 +222,21 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~85% | 2026-02-16 | 6 APIs, 11 RSS feeds, event-fingerprint caching |
-| 2. Code | ~80% | 2026-02-16 | 100 PRs, 1411 tests |
-| 3. Capabilities | ~55% | 2026-02-16 | Pipeline manifest, generate-insights step, inline standings widgets |
-| 4. Personalization | ~45% | 2026-02-16 | Sport weights + team/player favorites evolve, watch-plan feedback UI |
+| 1. Data | ~88% | 2026-02-16 | 6 APIs + tennis rankings, 11 RSS feeds, event-fingerprint caching |
+| 2. Code | ~82% | 2026-02-16 | 102 PRs, 1437 tests |
+| 3. Capabilities | ~60% | 2026-02-16 | Pipeline manifest, generate-insights, 4 inline standings widgets (PL, golf, F1, tennis) |
+| 4. Personalization | ~50% | 2026-02-16 | Watch-plan feedback loop closed (thumbs→scoring), sport weights + favorites evolve, empty-sport notes |
 | 5. Quality | ~90% | 2026-02-16 | 11 loops, hint fatigue demoted to info |
 
 ### Run History Insights
+
+**Run 2026-02-16 (Run 3):** 5 tasks completed (1 already done, 2 branch-pr, 2 direct-to-main). Highly efficient run:
+- Watch-plan feedback scoring (PR #101): 8 turns, branch-pr. Closes personalization loop.
+- Empty-sport notes: 4 turns, direct-to-main. Quick UI win.
+- Tennis ATP/WTA rankings (PR #102): 10 turns, branch-pr. New data source + editorial context.
+- Inline tennis widget: 4 turns, direct-to-main. Closes data-to-UI gap immediately after data task.
+- Pattern: chaining data→UI tasks in same run maximizes value per turn.
+- Direct-to-main continues to be safe and efficient for small UI changes.
 
 **Run 2026-02-16 (Run 2):** 4 tasks completed + 7 tasks scouted. First run using process strategy file. Key learnings:
 - Direct-to-main mode works well for single-file UI changes (2 uses, 0 issues)
@@ -728,17 +736,17 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 ### HIGH Priority
 
-- [PENDING] [MAINTENANCE] **Add empty-sport explanatory text in dashboard** — Tennis and esports show 0 events but the dashboard silently hides these sports. Add a conditional render message like "No upcoming matches" for sports with `sportPreferences` of "medium" or higher but zero events. Prevents user confusion. Files: `docs/js/dashboard.js` (~20 lines in `renderBand()`).
+- [DONE] (direct) **Add empty-sport explanatory text in dashboard** — Added `renderEmptySportNotes()` to dashboard.js showing "No upcoming X events" for followed sports with zero events. CSS styled with muted text and left border.
 
-- [PENDING] [MAINTENANCE] **Export watch-plan feedback to pipeline** — PR #98 added thumbs-up/down UI. The feedback is stored in `localStorage` via `PreferencesManager.setWatchFeedback()` but isn't exported to the pipeline. Extend `exportForBackend()` to include `watchFeedback` data, then make `evolve-preferences.js` read it and adjust watch-plan scoring. Closes the watch-plan personalization loop. Files: `docs/js/preferences-manager.js`, `scripts/evolve-preferences.js` (~50 lines).
+- [DONE] (PR #101) **Export watch-plan feedback to pipeline** — Added `computeFeedbackAdjustments()` to watch-plan.js that parses sport from pick IDs, computes per-sport scoring adjustments. generate-featured.js reads engagement-data.json and passes adjustments to buildWatchPlan(). 8 new tests.
 
 ### MEDIUM Priority
 
-- [PENDING] [FEATURE] **Add tennis ATP/WTA rankings to standings** — Tennis has "medium" user preference but no standings data. Add ATP rankings fetching to `scripts/fetch-standings.js` using ESPN tennis rankings endpoint. Store in `standings.json` under `tennis.atp`. Enables future inline widget. Files: `scripts/fetch-standings.js`, `tests/standings.test.js` (~80 lines).
+- [DONE] (PR #102 + direct) **Add tennis ATP/WTA rankings to standings** — fetchTennisRankings() fetches top 20 ATP/WTA from ESPN. buildStandingsContext() includes ATP top 10 in editorial prompts. Inline ATP rankings widget added to dashboard with Ruud highlighting. 6 new tests.
 
-- [PENDING] [MAINTENANCE] **Add insights to service worker data cache** — `insights.json` was added to SW install cache but not to the DATA_FILES array for network-first updates. Add to DATA_FILES. File: `docs/sw.js` (1 line). Also add `recent-results.json` which is missing.
+- [DONE] (already implemented) **Add insights to service worker data cache** — insights.json and recent-results.json were already in DATA_FILES.
 
-- [PENDING] [FEATURE] **Add "no events" message for favorite sports** — When a sport the user follows has no upcoming events (tennis during off-season, esports with stale API), show a brief explanatory card in the dashboard. Reads sport preferences from `user-context.json` defaults and event data. Files: `docs/js/dashboard.js` (~30 lines).
+- [DONE] (merged with empty-sport task) **Add "no events" message for favorite sports** — Covered by renderEmptySportNotes() above.
 
 ### LOW Priority
 
@@ -749,6 +757,28 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 - [BLOCKED] data availability — Stale golf/chess data: ESPN golf and chess endpoints sometimes return stale data (649-884 minutes old). This is an API timing issue, not a code bug. Pipeline-health.js monitors freshness and alerts.
 
 - [BLOCKED] data availability — All football recapHeadlines are null: RSS feeds during Olympics period lack football match recap headlines. The `matchRssHeadline()` function works correctly. Will self-resolve as Olympics end (Feb 26).
+
+---
+
+## Scouted Tasks (2026-02-16, run 3)
+
+### HIGH Priority
+
+- [PENDING] [MAINTENANCE] **Fix pipelineHealth loop stagnation** — Autonomy report shows pipelineHealth loop stuck at 0.75 for 10 consecutive runs. The health report has 9 issues but hints aren't resolving them. Investigate `pipeline-health.js` thresholds and either fix the root causes (sport_zero_events, stale_data) or adjust the scoring to reflect that some issues are data-availability and not code bugs. Files: `scripts/pipeline-health.js` (~30 lines).
+
+- [PENDING] [MAINTENANCE] **Improve empty-sport notes with data reasons** — Current `renderEmptySportNotes()` shows "No upcoming X events" but doesn't explain WHY (off-season, API issue, etc.). Read health-report.json status for each sport and show contextual messages like "Tennis off-season" or "Esports data source unavailable". Files: `docs/js/dashboard.js` (~20 lines).
+
+### MEDIUM Priority
+
+- [PENDING] [MAINTENANCE] **Add inline La Liga standings widget** — La Liga standings data is already fetched (`standings.football.laLiga`) but only PL has an inline widget. Add collapsible La Liga mini-table following the PL pattern. Barcelona is a user favorite. Files: `docs/js/dashboard.js` (~25 lines).
+
+- [PENDING] [FEATURE] **Add tennis Casper Ruud match tracking** — Tennis events are currently filtered by Norwegian players but produce 0 events. Consider adding a "focused" filter mode for tennis that also includes top-50 ATP events (Grand Slams, Masters) even without Norwegian participation, since the user has medium tennis preference. Files: `scripts/fetch/tennis.js` (~30 lines).
+
+- [PENDING] [MAINTENANCE] **Create missing diagnostic files** — `fact-check-history.json` and `preference-evolution.json` don't exist yet. Initialize them with empty structures so the pipeline doesn't silently skip them. Files: `scripts/generate-featured.js`, `scripts/evolve-preferences.js` (~10 lines).
+
+### LOW Priority
+
+- [PENDING] [EXPLORE] **Investigate day snapshot empty content** — Pattern report shows 17 fires of `empty_day_snapshot`. Investigate which dates have no events/results and whether this is due to data gaps or snapshot generation timing. Check `generate-multi-day.js` logic.
 
 ---
 

@@ -1,46 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-02-10",
-      "task": "Extract duplicate sport emoji mappings into shared config",
-      "outcome": "completed",
-      "pr": 24,
-      "details": "Created docs/js/sport-config.js with shared SPORT_CONFIG constant. Replaced duplicate emoji/name mappings in simple-dashboard.js (3 locations), settings-ui.js, and dashboard-helpers.js. Added to SW cache (v12).",
-      "tests_passed": true,
-      "files_changed": 6,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add input validation to preferences-manager",
-      "outcome": "completed",
-      "pr": 25,
-      "details": "Added null/empty/whitespace guards to addFavoriteTeam() and addFavoritePlayer(). Methods now return true/false. Added 6 validation tests.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 7
-    },
-    {
-      "date": "2026-02-11",
-      "task": "Improve dashboard quality: a11y, perf, dead code, SW cache",
-      "outcome": "completed",
-      "pr": 26,
-      "details": "Added alt attributes to inline team logo and golfer headshot images. Added role=button, tabindex=0, and aria-expanded to collapsible band toggles. Replaced per-element event listeners with event delegation on #events container. Removed duplicate listener re-binding from bindBandToggles. Removed dead updateLiveDOM() method (29 lines). Added rss-digest.json and ai-quality.json to SW data cache. Bumped SW cache to v18-quality.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-11",
-      "task": "Add unit tests for EventFilters utility",
-      "outcome": "completed",
-      "pr": 27,
-      "details": "Added 44 tests covering all 10 static methods on EventFilters in scripts/lib/filters.js. Tests cover time range, current week, teams, players, leagues, Norwegian, sport, sort, limit, deduplication, merge, and combined filters with edge cases.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
       "date": "2026-02-11",
       "task": "Add unit tests for Norwegian streaming mapper",
       "outcome": "completed",
@@ -369,6 +329,70 @@
       "lesson": "Caching improvements that reduce unnecessary AI calls are high-leverage. The fingerprint approach is simple and deterministic.",
       "scouted": 0,
       "meta_insight": "Event fingerprinting can be extended to other cached content (e.g., enrichment could skip re-processing unchanged events)."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Close watch-plan feedback loop in scoring",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 101,
+      "pillar": "personalization",
+      "details": "Added computeFeedbackAdjustments() to watch-plan.js — parses sport from pick IDs, computes per-sport scoring adjustments (-10 to +10). generate-featured.js reads engagement-data.json and passes adjustments. 8 new tests.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 8,
+      "turns_estimated": 10,
+      "lesson": "Watch feedback data was already being collected and stored — the gap was only in the scoring function consuming it. Small change, large personalization impact.",
+      "scouted": 0,
+      "meta_insight": "The watch-plan personalization loop is now fully closed: collect → store → aggregate → score. This is the first end-to-end feedback loop for content personalization."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add empty-sport explanatory text in dashboard",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "personalization",
+      "details": "Added renderEmptySportNotes() showing 'No upcoming X events' for followed sports with zero events. CSS styled with muted text and left border.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 4,
+      "turns_estimated": 5,
+      "lesson": "Simple UI affordances that explain missing data reduce user confusion. The implementation was straightforward since SPORT_CONFIG already had all needed metadata.",
+      "scouted": 0,
+      "meta_insight": "Empty states are important UX — the dashboard now communicates absence of data instead of silently hiding sports."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add tennis ATP/WTA rankings to standings pipeline",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 102,
+      "pillar": "data",
+      "details": "Added fetchTennisRankings() for ATP/WTA (top 20 per tour). buildStandingsContext() includes ATP top 10 in editorial prompts. 6 new tests.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 10,
+      "turns_estimated": 12,
+      "lesson": "ESPN tennis standings API follows the exact same structure as F1 — the pattern was instantly reusable. Chaining data+UI tasks in same run maximizes value.",
+      "scouted": 6,
+      "meta_insight": "Tennis now has rankings data flowing through the pipeline. This enables inline widget (done) and richer editorial context. The data-to-capability pipeline is proven: fetch → store → context → render."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add inline ATP tennis rankings widget",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "capabilities",
+      "details": "Collapsible ATP top 5 + Casper Ruud widget following PL/golf/F1 inline standings pattern. Fourth inline widget added to dashboard.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "turns_estimated": 4,
+      "lesson": "Following established UI patterns (inline standings widget) makes new data sources trivially renderable. Data→UI latency was near-zero by doing both in the same run.",
+      "scouted": 0,
+      "meta_insight": "All four standings sources (PL, golf, F1, tennis) now have inline widgets. The inline standings pattern is fully mature and extensible."
     }
   ]
 }
