@@ -1,69 +1,41 @@
 {
   "blocks": [
     {
-      "type": "event-line",
-      "text": "⚽ Girona v Barcelona, 21:00, La Liga — Catalan derby with title implications"
+      "type": "headline",
+      "text": "Medal hunt begins for Norway"
     },
     {
-      "type": "event-line",
-      "text": "🏅 Alpine Skiing — Men's Slalom, 09:00 — Winter Olympics 2026"
-    },
-    {
-      "type": "event-line",
-      "text": "🏅 Ski Jumping — Men's Super Team, 16:00 — Winter Olympics 2026"
-    },
-    {
-      "type": "section",
-      "id": "olympics-2026",
-      "title": "Winter Olympics 2026",
-      "emoji": "🏅",
-      "style": "highlight",
+      "type": "event-group",
+      "label": "🏅 Olympics today",
       "items": [
-        {
-          "text": "14:45 — Biathlon — Men's 4x7.5km Relay",
-          "type": "event"
-        },
-        {
-          "text": "09:45 — Cross-Country Skiing — Team Sprint Free",
-          "type": "event"
-        },
-        {
-          "text": "14:45 — Biathlon — Women's 4x6km Relay",
-          "type": "event"
-        },
-        {
-          "text": "14:45 — Biathlon — Men's 15km Mass Start",
-          "type": "event"
-        },
-        {
-          "text": "11:00 — Cross-Country Skiing — Men's 50km Mass Start Classic",
-          "type": "event"
-        },
-        {
-          "text": "14:45 — Biathlon — Women's 12.5km Mass Start",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+        "Kristoffersen in men's slalom, 09:00",
+        "Granerud in ski jumping super team, 16:00"
+      ]
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Barcelona at Girona — Catalan derby, 21:00"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-line",
-      "text": "🏆 Thu 10:00 — Roman Imperium Cup V"
+      "type": "event-group",
+      "label": "🏅 Olympic showdowns",
+      "items": [
+        "Tue 14:45 — Men's biathlon relay (Laegreid)",
+        "Wed 09:45 — XC team sprint (Klaebo)",
+        "Fri 14:45 — Men's biathlon mass start",
+        "Sat 11:00 — Men's 50km classic (Klaebo, Iversen)",
+        "Sat 14:45 — Women's biathlon mass start"
+      ]
     },
     {
-      "type": "event-line",
-      "text": "⚽ Sat 21:00 — Newcastle United at Manchester City"
-    },
-    {
-      "type": "event-line",
-      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
+      "type": "narrative",
+      "text": "The Games build toward Saturday's endurance showpiece—the 50km classic, Norway's crown jewel race."
     }
   ],
-  "generatedAt": "2026-02-16T19:18:48.601Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-16T19:33:41.036Z",
+  "provider": "claude-cli"
 }

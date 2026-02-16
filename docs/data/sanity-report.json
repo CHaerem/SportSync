@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T19:26:25.751Z",
+  "generatedAt": "2026-02-16T19:33:48.366Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 34,
@@ -61,8 +61,8 @@
     "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 65,
-    "issueCount": 8
+    "editorialScore": 60,
+    "issueCount": 9
   },
   "findings": [
     {
@@ -73,7 +73,7 @@
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 65/100 (below threshold)"
+      "message": "Editorial quality score is 60/100 (below threshold)"
     },
     {
       "severity": "warning",
@@ -83,7 +83,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Peak Olympic\" but no matching athlete found in events data"
+      "message": "Featured mentions \"The Games\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
