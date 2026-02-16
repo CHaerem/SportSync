@@ -5,6 +5,9 @@ import os from "os";
 import {
 	computeSportWeights,
 	parseEngagementFromIssueBody,
+	parseFavoritesFromIssueBody,
+	readFavoritesFromFile,
+	detectNewFavorites,
 	mergeEngagement,
 	readEngagementFromFile,
 	evolvePreferences,
@@ -240,6 +243,116 @@ describe("readEngagementFromFile()", () => {
 });
 
 // ============================================================
+// parseFavoritesFromIssueBody
+// ============================================================
+describe("parseFavoritesFromIssueBody()", () => {
+	it("parses favorites from favorites path", () => {
+		const body = '```json\n{"favorites":{"favoriteTeams":["Liverpool","Arsenal"],"favoritePlayers":["Salah"]}}\n```';
+		const result = parseFavoritesFromIssueBody(body);
+		expect(result.favoriteTeams).toEqual(["Liverpool", "Arsenal"]);
+		expect(result.favoritePlayers).toEqual(["Salah"]);
+	});
+
+	it("parses favorites from backendPreferences path", () => {
+		const body = '```json\n{"backendPreferences":{"favoriteTeams":["Barcelona"],"favoritePlayers":[]}}\n```';
+		const result = parseFavoritesFromIssueBody(body);
+		expect(result.favoriteTeams).toEqual(["Barcelona"]);
+		expect(result.favoritePlayers).toEqual([]);
+	});
+
+	it("returns null when no favorites present", () => {
+		const body = '```json\n{"favorites":{"engagement":{"football":{"clicks":5}}}}\n```';
+		expect(parseFavoritesFromIssueBody(body)).toBeNull();
+	});
+
+	it("returns null for empty teams and players", () => {
+		const body = '```json\n{"favorites":{"favoriteTeams":[],"favoritePlayers":[]}}\n```';
+		expect(parseFavoritesFromIssueBody(body)).toBeNull();
+	});
+
+	it("returns null for null/undefined input", () => {
+		expect(parseFavoritesFromIssueBody(null)).toBeNull();
+		expect(parseFavoritesFromIssueBody(undefined)).toBeNull();
+	});
+});
+
+// ============================================================
+// readFavoritesFromFile
+// ============================================================
+describe("readFavoritesFromFile()", () => {
+	it("reads favorites from engagement-data.json", () => {
+		const tmpDir = makeTempDir();
+		fs.writeFileSync(path.join(tmpDir, "engagement-data.json"), JSON.stringify({
+			favoriteTeams: ["Liverpool"],
+			favoritePlayers: ["Salah"],
+		}));
+		const result = readFavoritesFromFile(tmpDir);
+		expect(result.favoriteTeams).toEqual(["Liverpool"]);
+		expect(result.favoritePlayers).toEqual(["Salah"]);
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+
+	it("returns null when file has no favorites", () => {
+		const tmpDir = makeTempDir();
+		fs.writeFileSync(path.join(tmpDir, "engagement-data.json"), JSON.stringify({
+			engagement: { football: { clicks: 5 } },
+		}));
+		expect(readFavoritesFromFile(tmpDir)).toBeNull();
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+
+	it("returns null when file does not exist", () => {
+		const tmpDir = makeTempDir();
+		expect(readFavoritesFromFile(tmpDir)).toBeNull();
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+});
+
+// ============================================================
+// detectNewFavorites
+// ============================================================
+describe("detectNewFavorites()", () => {
+	const userContext = {
+		favoriteTeams: ["Barcelona", "Lyn"],
+		favoritePlayers: ["Viktor Hovland", "Casper Ruud"],
+	};
+
+	it("detects new teams not in user-context", () => {
+		const client = { favoriteTeams: ["Barcelona", "Liverpool", "Arsenal"], favoritePlayers: [] };
+		const { newTeams, newPlayers } = detectNewFavorites(client, userContext);
+		expect(newTeams).toEqual(["Liverpool", "Arsenal"]);
+		expect(newPlayers).toEqual([]);
+	});
+
+	it("detects new players not in user-context", () => {
+		const client = { favoriteTeams: [], favoritePlayers: ["Viktor Hovland", "Erling Haaland"] };
+		const { newTeams, newPlayers } = detectNewFavorites(client, userContext);
+		expect(newTeams).toEqual([]);
+		expect(newPlayers).toEqual(["Erling Haaland"]);
+	});
+
+	it("is case-insensitive when matching", () => {
+		const client = { favoriteTeams: ["barcelona", "BARCELONA"], favoritePlayers: ["casper ruud"] };
+		const { newTeams, newPlayers } = detectNewFavorites(client, userContext);
+		expect(newTeams).toEqual([]);
+		expect(newPlayers).toEqual([]);
+	});
+
+	it("returns empty arrays for null input", () => {
+		const { newTeams, newPlayers } = detectNewFavorites(null, userContext);
+		expect(newTeams).toEqual([]);
+		expect(newPlayers).toEqual([]);
+	});
+
+	it("handles empty user-context gracefully", () => {
+		const client = { favoriteTeams: ["Liverpool"], favoritePlayers: ["Salah"] };
+		const { newTeams, newPlayers } = detectNewFavorites(client, {});
+		expect(newTeams).toEqual(["Liverpool"]);
+		expect(newPlayers).toEqual(["Salah"]);
+	});
+});
+
+// ============================================================
 // evolvePreferences (integration)
 // ============================================================
 describe("evolvePreferences()", () => {
@@ -336,7 +449,7 @@ describe("evolvePreferences()", () => {
 		expect(history.runs.length).toBeLessThanOrEqual(50);
 	});
 
-	it("does not modify protected fields (favoriteTeams, favoritePlayers, etc.)", async () => {
+	it("preserves location and other non-evolving fields", async () => {
 		const ctx = writeUserContext({ football: "low" });
 		writeEngagement({
 			football: { clicks: 30, lastClick: new Date().toISOString() },
@@ -344,9 +457,28 @@ describe("evolvePreferences()", () => {
 
 		await evolvePreferences({ configDir, dataDir });
 		const updated = JSON.parse(fs.readFileSync(path.join(configDir, "user-context.json"), "utf-8"));
-		expect(updated.favoriteTeams).toEqual(ctx.favoriteTeams);
-		expect(updated.favoritePlayers).toEqual(ctx.favoritePlayers);
 		expect(updated.location).toBe(ctx.location);
+	});
+
+	it("syncs new favorite teams from engagement-data.json", async () => {
+		const ctx = writeUserContext({ football: "high" });
+		// Write engagement data with favorites not in user-context
+		const data = {
+			engagement: { football: { clicks: 30, lastClick: new Date().toISOString() } },
+			favoriteTeams: ["Barcelona", "Liverpool", "Arsenal"],
+			favoritePlayers: ["Viktor Hovland", "Erling Haaland"],
+		};
+		fs.writeFileSync(path.join(dataDir, "engagement-data.json"), JSON.stringify(data));
+
+		const result = await evolvePreferences({ configDir, dataDir });
+		expect(result.skipped).toBe(false);
+
+		const updated = JSON.parse(fs.readFileSync(path.join(configDir, "user-context.json"), "utf-8"));
+		expect(updated.favoriteTeams).toContain("Liverpool");
+		expect(updated.favoriteTeams).toContain("Arsenal");
+		expect(updated.favoritePlayers).toContain("Erling Haaland");
+		// Already-existing should not be duplicated
+		expect(updated.favoriteTeams.filter(t => t === "Barcelona")).toHaveLength(1);
 	});
 
 	it("handles missing user-context.json gracefully", async () => {
