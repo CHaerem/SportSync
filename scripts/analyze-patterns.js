@@ -5,12 +5,14 @@
  * Analyzes diagnostic data (quality-history, health-report, autonomy-trend,
  * autopilot-log) to detect recurring patterns that the autopilot should act on.
  *
- * Five generic detectors:
+ * Seven generic detectors:
  *   1. Recurring health warnings — same issue.code across runs
  *   2. Quality decline — editorial/enrichment score trending down
  *   3. Stagnant loops — autonomy loop stuck below 1.0
  *   4. Hint fatigue — hints fire repeatedly without metric improvement
  *   5. Autopilot failures — repeated task failures
+ *   6. Intervention effectiveness — hint fire vs metric improvement correlation
+ *   7. Cross-loop dependencies — upstream quality drops causing downstream drops
  *
  * Output: docs/data/pattern-report.json
  * Runs every 2h via pipeline-health.js
@@ -372,7 +374,73 @@ export function analyzeInterventionEffectiveness(qualityHistory) {
 }
 
 /**
- * Orchestrator: runs all 5 detectors, sorts by severity.
+ * Detector 7: Cross-Loop Dependency Detection
+ * When featured quality drops, checks if enrichment quality dropped in the
+ * same window. Enrichment feeds featured, so upstream drops are the root cause.
+ * Also checks results → editorial dependency (results data feeds editorial narrative).
+ */
+export function analyzeCrossLoopDependencies(qualityHistory) {
+	const patterns = [];
+	if (!Array.isArray(qualityHistory) || qualityHistory.length < 4) return patterns;
+
+	const recent = qualityHistory.slice(-10);
+
+	// Check consecutive pairs for correlated drops
+	const dependencies = [
+		{
+			upstream: { name: "enrichment", getter: e => e.enrichment?.score },
+			downstream: { name: "featured/editorial", getter: e => e.editorial?.score },
+			description: "Enrichment quality affects featured editorial quality",
+		},
+		{
+			upstream: { name: "results", getter: e => e.results?.score },
+			downstream: { name: "featured/editorial", getter: e => e.editorial?.score },
+			description: "Results data quality affects editorial narrative accuracy",
+		},
+	];
+
+	for (const dep of dependencies) {
+		let correlatedDrops = 0;
+		let totalDownstreamDrops = 0;
+
+		for (let i = 1; i < recent.length; i++) {
+			const prev = recent[i - 1];
+			const curr = recent[i];
+
+			const prevDown = dep.downstream.getter(prev);
+			const currDown = dep.downstream.getter(curr);
+			const prevUp = dep.upstream.getter(prev);
+			const currUp = dep.upstream.getter(curr);
+
+			if (prevDown == null || currDown == null) continue;
+
+			const downDrop = prevDown - currDown;
+			if (downDrop > 5) {
+				totalDownstreamDrops++;
+				if (prevUp != null && currUp != null && prevUp - currUp > 5) {
+					correlatedDrops++;
+				}
+			}
+		}
+
+		if (correlatedDrops >= 2 || (totalDownstreamDrops >= 3 && correlatedDrops >= 1)) {
+			patterns.push({
+				type: "cross_loop_dependency",
+				severity: correlatedDrops >= 3 ? "high" : "medium",
+				upstream: dep.upstream.name,
+				downstream: dep.downstream.name,
+				correlatedDrops,
+				totalDownstreamDrops,
+				suggestion: `${dep.description}. ${dep.downstream.name} dropped ${totalDownstreamDrops} times, and ${correlatedDrops} of those correlated with ${dep.upstream.name} drops. Fix ${dep.upstream.name} first — it's the root cause.`,
+			});
+		}
+	}
+
+	return patterns;
+}
+
+/**
+ * Orchestrator: runs all detectors, sorts by severity.
  */
 export function analyzePatterns({ dataDir } = {}) {
 	const dir = dataDir || rootDataPath();
@@ -394,6 +462,7 @@ export function analyzePatterns({ dataDir } = {}) {
 	const fatiguePatterns = analyzeHintFatigue(qualityHistory);
 	const failurePatterns = analyzeAutopilotFailures(autopilotLog);
 	const interventionEffectiveness = analyzeInterventionEffectiveness(qualityHistory);
+	const crossLoopPatterns = analyzeCrossLoopDependencies(qualityHistory);
 
 	const allPatterns = [
 		...healthPatterns,
@@ -401,6 +470,7 @@ export function analyzePatterns({ dataDir } = {}) {
 		...stagnantPatterns,
 		...fatiguePatterns,
 		...failurePatterns,
+		...crossLoopPatterns,
 	];
 
 	// Sort: high first, then medium
