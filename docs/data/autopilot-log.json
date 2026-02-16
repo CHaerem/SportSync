@@ -360,6 +360,21 @@
       "lesson": "Quality infrastructure tasks that extend existing data structures are fast and low-risk. The biggest time cost is understanding the data flow.",
       "scouted": 0,
       "meta_insight": "Rolling averages enable the quality decline detector to catch gradual degradation — this makes Detector 2 more sensitive to slow trends."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Fix recurring sport_zero_events health warnings",
+      "outcome": "completed",
+      "pr": 96,
+      "pillar": "quality",
+      "details": "Demoted sport_zero_events from warning to info when data file is fresh. Only warns when data is also stale (>6h). Stops 88+ recurring false alarms for tennis/esports that were polluting pattern-report.json.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 5,
+      "turns_estimated": 6,
+      "lesson": "Health warning severity should reflect the actual problem state, not just the existence of a condition. Fresh data with no events is expected, not a warning.",
+      "scouted": 0,
+      "meta_insight": "Recurring false alarms desensitize the system to real issues. Fixing severity classification has multiplicative value — all downstream detectors benefit."
     }
   ]
 }

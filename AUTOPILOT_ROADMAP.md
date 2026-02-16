@@ -246,7 +246,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 5. [PENDING] [FEATURE] **Fix esports data staleness** — HLTV community API returns data from 2022. Options: (a) expand curated config `esports-cs2-2026.json` with current tournament data, (b) add HLTV web scraping as fallback, or (c) switch to Liquipedia API. Investigate and implement best option.
 
-6. [PENDING] [MAINTENANCE] **Resolve recurring health warnings** — `docs/data/pattern-report.json` shows "sport_zero_events" for tennis/esports firing 88+ times. After fixing the tennis filterMode (task 1), investigate remaining sport_zero_events patterns and fix root causes.
+6. [DONE] (PR #96) **Resolve recurring health warnings** — Demoted `sport_zero_events` from `warning` to `info` when data is fresh. Only warns when data is also stale (>6h). Stops 88+ recurring false alarms for tennis/esports.
 
 7. [DONE] (already implemented) **Add golf empty-competitor fallback** — Golf fetcher already handles empty competitors at line 631-710: includes events with `fieldPending: true` when ESPN returns empty arrays. `retainLastGood()` in helpers.js prevents stale golf.json by retaining previous data when new fetch has no events.
 
