@@ -897,6 +897,16 @@
 			border-radius: 10px;
 			padding: 1px 7px;
 		}
+		.pick-feedback {
+			display: flex; gap: 4px; margin-top: 4px;
+		}
+		.pick-fb-btn {
+			background: none; border: 1px solid var(--border); border-radius: 4px;
+			color: var(--muted); cursor: pointer; font-size: 0.6rem;
+			padding: 1px 8px; line-height: 1.4;
+		}
+		.pick-fb-btn:hover { border-color: var(--accent); color: var(--accent); }
+		.pick-fb-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 		.watch-plan-more {
 			background: none;
 			border: none;

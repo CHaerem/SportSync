@@ -284,6 +284,28 @@ class PreferencesManager {
 		return this.preferences.engagement || {};
 	}
 
+	// Watch-plan feedback — thumbs-up/down on picks
+	setWatchFeedback(pickKey, value) {
+		if (!pickKey) return;
+		if (!this.preferences.watchFeedback) {
+			this.preferences.watchFeedback = {};
+		}
+		if (value === null) {
+			delete this.preferences.watchFeedback[pickKey];
+		} else {
+			this.preferences.watchFeedback[pickKey] = { value, timestamp: new Date().toISOString() };
+		}
+		this.savePreferences();
+	}
+
+	getWatchFeedback(pickKey) {
+		return this.preferences.watchFeedback?.[pickKey]?.value ?? null;
+	}
+
+	getAllWatchFeedback() {
+		return this.preferences.watchFeedback || {};
+	}
+
 	// Reset preferences
 	reset() {
 		localStorage.removeItem(this.STORAGE_KEY);
