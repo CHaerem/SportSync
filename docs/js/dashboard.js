@@ -418,6 +418,7 @@ class Dashboard {
 			_isResult: true,
 			_goalScorers: m.goalScorers || [],
 			_isFavorite: m.isFavorite || false,
+			_recapHeadline: m.recapHeadline || '',
 		}));
 
 		// Merge event-based results with match results (dedupe)
@@ -1112,6 +1113,7 @@ class Dashboard {
 				_isResult: true,
 				_goalScorers: m.goalScorers || [],
 				_isFavorite: m.isFavorite || false,
+				_recapHeadline: m.recapHeadline || '',
 			}));
 
 			// Merge: combine event-based results with recent-results (dedupe by teams+date)
@@ -1167,11 +1169,12 @@ class Dashboard {
 			if (event.tournament) {
 				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
 			}
+			const recapHtml = event._recapHeadline ? `<span class="row-recap">${this.esc(event._recapHeadline)}</span>` : '';
 			return `
 				<div class="event-row${isMustWatch ? ' must-watch' : ''}" data-id="${this.esc(event.id)}">
 					<div class="row-main">
 						<span class="row-time"><span class="row-ft">FT</span></span>
-						<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${this.esc(event.title)}</span>${subtitleHtml}</span>
+						<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${this.esc(event.title)}</span>${recapHtml}${subtitleHtml}</span>
 					</div>
 				</div>
 			`;
