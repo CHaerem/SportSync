@@ -65,16 +65,17 @@ Three automation layers run continuously without human intervention:
 │  from a self-curated roadmap, and ships improvements:    │
 │                                                          │
 │  1. Self-repair: fixes broken tests before anything else │
-│  2. Task loop: branch → implement → test → PR → merge    │
+│  2. Task loop: choose ship mode → implement → test →     │
+│     ship (direct-to-main / PR / batch)                   │
 │  3. Creative scouting: reads data signals, screenshots   │
 │     the dashboard, reasons about gaps in the autonomy    │
 │     vision, and creates new tasks                        │
-│  4. Meta-learning: records what worked, updates the      │
-│     "Lessons & Effectiveness" section for future runs    │
+│  4. Meta-learning: records what worked, evolves its own  │
+│     process strategy for future runs                     │
 │                                                          │
-│  Adapts strategy to workload: sprint mode (>5 tasks)     │
-│  maximizes throughput, scout mode (0 tasks) invests in   │
-│  discovering new improvements.                           │
+│  Controls its own process via autopilot-strategy.json:   │
+│  ship modes, turn budgets, and accumulated process       │
+│  knowledge — all self-evolving based on measured results. │
 │                                                          │
 │  80+ PRs completed autonomously.                         │
 └──────────────────────────────────────────────────────────┘
@@ -190,7 +191,7 @@ To add a **curated event**: create a JSON config in `scripts/config/`. Or just c
 The system doesn't just improve the product — it improves at improving. Three forces create compounding returns:
 
 1. **Better models over time** — model names live in code (not external config). When a better model ships, updating 5 references is a single PR. The system's reasoning, code generation, and editorial quality all improve.
-2. **Accumulated knowledge** — each autopilot run deposits lessons in a persistent "Lessons & Effectiveness" section of the roadmap. After 100 runs, the system knows which task types are fast, which heuristics find value, and which approaches fail.
+2. **Accumulated knowledge** — each autopilot run deposits lessons in a persistent "Lessons & Effectiveness" section of the roadmap and evolves its own process strategy (`autopilot-strategy.json`). After 100 runs, the system knows which task types are fast, which ship modes save turns, and which approaches fail.
 3. **Richer architecture** — each new feedback loop, pipeline step, or detection mechanism creates more surface area for autonomous improvement.
 
 Early runs prioritize **velocity** (25 seeded tasks, sprint mode). As the system matures, it shifts toward **depth** (self-discovered features). Eventually: **refinement** (optimization, personalization fine-tuning).
@@ -202,7 +203,7 @@ The system is autonomous at 11/11 feedback loops, but gaps remain toward the ful
 - **User feedback loop** — engagement tracking flows, but explicit thumbs-up/down on watch-plan picks would give a richer signal
 - **Evolving favorites** — sport-level weights evolve, but favorite teams and players are still manually configured
 - **End-to-end self-expansion** — the autopilot can now add pipeline steps via the manifest, but hasn't yet demonstrated creating a new sport fetcher from a self-discovered opportunity start to finish
-- **Meta-learning** — the system now accumulates structured knowledge about its own effectiveness, but this needs time to compound
+- **Meta-learning** — the system accumulates knowledge and evolves its own process strategy (ship modes, turn budgets), but needs time to compound
 
 The goal: a system that detects a new major event, creates the config, discovers the schedule, verifies accuracy, enriches the data, generates editorial content, and serves a personalized dashboard — all without human intervention.
 

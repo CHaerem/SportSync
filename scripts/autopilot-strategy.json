@@ -1,0 +1,43 @@
+{
+  "_description": "Autopilot process strategy — the autopilot reads this at startup and evolves it based on what it learns. This file lives in an allowed path so the autopilot can modify it.",
+  "version": 1,
+  "updatedAt": "2026-02-16",
+  "updatedBy": "human",
+
+  "shipModes": {
+    "_description": "How to ship completed tasks. The autopilot chooses the mode per-task based on risk and efficiency.",
+    "branchPr": {
+      "description": "Full ceremony: branch, test, PR, merge. Safest, most expensive (~12 turns overhead).",
+      "useWhen": "FEATURE tasks, MEDIUM-risk changes, multi-file logic changes, any change you're not 100% confident about"
+    },
+    "directToMain": {
+      "description": "Commit directly to main after tests pass. Cheapest (~3 turns overhead).",
+      "useWhen": "LOW-risk MAINTENANCE tasks under 100 lines: test additions, config tweaks, dead code removal, documentation updates, adding guards or validation",
+      "safeguards": "Must pass npm test before AND after commit. If post-commit test fails, immediately revert with git revert HEAD."
+    },
+    "batch": {
+      "description": "Group 2-4 compatible small tasks into one branch/PR. Medium cost (~15 turns for 3 tasks vs ~36 for 3 separate PRs).",
+      "useWhen": "Multiple MAINTENANCE tasks in the same pillar or touching the same files. Tasks must be independently correct (each commit passes tests).",
+      "maxTasksPerBatch": 4
+    }
+  },
+
+  "turnBudgets": {
+    "_description": "Expected turn costs per activity. Updated by the autopilot based on actual measurements.",
+    "preflight": 8,
+    "perTask": {
+      "maintenanceDirect": 5,
+      "maintenanceBranchPr": 15,
+      "feature": 25,
+      "explore": 8
+    },
+    "scouting": 15,
+    "metaLearning": 5,
+    "reserve": 10
+  },
+
+  "processNotes": {
+    "_description": "Accumulated process knowledge. The autopilot adds notes here about what works and what doesn't.",
+    "entries": []
+  }
+}

@@ -90,17 +90,41 @@ jobs:
             ## How you work
 
             You loop through tasks in the roadmap, completing as many as possible
-            in a single run. For each task: branch, fix, test, PR, merge, repeat.
-            Stop when:
+            in a single run. You choose HOW to ship each task based on its risk
+            and your process strategy. Stop when:
             - No more PENDING tasks remain
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
-            Turn budget: You have 200 max turns. Be aware of how many you've
-            used. Pre-flight should take ~5-8 turns. Each task takes ~15-20.
-            If you've used >170 turns, skip scouting/meta-learning and stop
-            cleanly. Never burn remaining turns on branch cleanup or other
-            housekeeping — tasks are more valuable.
+            Turn budget: You have 200 max turns. Read `scripts/autopilot-strategy.json`
+            for expected turn costs per activity. Track your actual usage and update
+            the strategy's `turnBudgets` if your estimates diverge from reality.
+            If you've used >170 turns, skip scouting/meta-learning and stop cleanly.
+
+            ## Process autonomy
+
+            You control your own process. `scripts/autopilot-strategy.json` is your
+            strategy file — read it at startup, follow it during execution, and
+            evolve it based on what you learn. The strategy defines three ship modes:
+
+            **branch-pr**: Full ceremony (branch → test → PR → merge). Use for
+            FEATURE tasks, MEDIUM-risk changes, or anything you're not fully
+            confident about. Safest but most expensive (~12 turns overhead).
+
+            **direct-to-main**: Commit directly to main after tests pass. Use for
+            LOW-risk MAINTENANCE tasks under ~100 lines: test additions, config
+            tweaks, dead code removal, guard clauses, documentation. Cheapest
+            (~3 turns overhead). Safety net: run `npm test` before AND after
+            committing. If post-commit tests fail, immediately `git revert HEAD`
+            and switch to branch-pr mode for that task.
+
+            **batch**: Group 2-4 compatible small tasks into one branch/PR. Use
+            when multiple MAINTENANCE tasks touch the same area or pillar. Each
+            commit must pass tests independently. One PR for the batch.
+
+            Choose the mode per-task. The strategy file has guidance, but you can
+            override it based on your judgement. If you discover a mode works
+            better or worse than expected, update the strategy file.
 
             ## Execution mode
 
@@ -156,6 +180,11 @@ jobs:
             4. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
                Also read the "Lessons & Effectiveness" section — this is your
                accumulated wisdom from previous runs. Use it to inform planning.
+
+            4½. Read `scripts/autopilot-strategy.json` — your process strategy.
+               This tells you how to ship tasks (branch-pr vs direct-to-main vs
+               batch), expected turn costs, and accumulated process knowledge.
+               Follow it, but override when your judgement says otherwise.
 
             5. Learn from recent runs:
                Read `docs/data/autopilot-log.json` and analyze the last 10 entries.
@@ -213,7 +242,9 @@ jobs:
             skip steps 1c/1d and continue to the next task.
 
             For `[MAINTENANCE]` and `[FEATURE]` tasks:
-            1. Create branch: `claude/improve-<short-slug>`
+            1. Choose ship mode first (see 1c). If using branch-pr or batch,
+               create branch: `claude/improve-<short-slug>`. If using
+               direct-to-main, stay on main.
             2. Make the changes following your plan from 1a½
             3. Run `npm test` — if tests fail, revert ALL changes, create a GitHub
                issue, and STOP the loop (don't attempt more tasks)
@@ -234,13 +265,38 @@ jobs:
             4. Commit the roadmap update to main
             5. Continue the loop — the subtasks may be small enough to pick up now
 
-            ### 1c. Ship
+            ### 1c. Ship (choose your mode)
+
+            Pick a ship mode based on the task's risk level and your strategy:
+
+            **If direct-to-main** (LOW-risk MAINTENANCE, <100 lines):
+            1. You should already be on main. Commit with a descriptive message.
+            2. Run `npm test` — if tests fail, `git revert HEAD` immediately,
+               then retry the task using branch-pr mode instead.
+            3. Push to main: `git push`
+            4. Mark task `[DONE] (direct)` in `AUTOPILOT_ROADMAP.md`
+            5. Commit and push the roadmap update to main
+
+            **If branch-pr** (FEATURE tasks, MEDIUM-risk, or when unsure):
             1. Push and open a PR with label `autopilot`
             2. Merge immediately: `gh pr merge <number> --merge`
                If merge fails, leave PR open for human review and STOP the loop.
             3. Switch to main and pull: `git checkout main && git pull`
             4. Mark task `[DONE] (PR #N)` in `AUTOPILOT_ROADMAP.md`
             5. Commit and push the roadmap update to main
+
+            **If batch** (grouping 2-4 compatible MAINTENANCE tasks):
+            1. Stay on the same branch. Pick the next compatible task and
+               execute it (step 1a → 1b). Each task gets its own commit.
+               Run `npm test` after each commit.
+            2. When the batch is full (or no more compatible tasks), push
+               and open a single PR with label `autopilot`.
+            3. Merge, switch to main, pull.
+            4. Mark all batched tasks `[DONE] (PR #N)` in the roadmap.
+            5. Commit and push the roadmap update to main.
+
+            When in doubt, use branch-pr. The overhead is worth the safety.
+            Track which mode you used in the log entry.
 
             ### 1d. Log the task
             Append an entry to `docs/data/autopilot-log.json` (see format below).
@@ -359,6 +415,15 @@ jobs:
                generation, fewer errors), note it — this helps calibrate task
                ambition for future runs.
 
+            6. **Process strategy evolution**: Review `scripts/autopilot-strategy.json`.
+               Update it based on this run's experience:
+               - Did direct-to-main save turns without issues? Note it.
+               - Did a batch work well? Adjust batch preferences.
+               - Were turn estimates accurate? Update `turnBudgets`.
+               - Add a note to `processNotes.entries` describing what you learned
+                 about process efficiency this run.
+               Commit the updated strategy file to main.
+
             This section is your accumulated wisdom. Read it in Step 0. Write to
             it in Step 2½. It should grow more valuable over time.
 
@@ -375,13 +440,19 @@ jobs:
             - **Vision check**: Which pillar is furthest from "done"? What single
               change would most advance it? If this is actionable, create a task.
 
-            For any actionable improvement to the autopilot workflow itself (turn limits,
-            prompt changes, new scouting heuristics, tooling gaps), create a GitHub issue:
+            For process improvements you CAN make yourself:
+            - Update `scripts/autopilot-strategy.json` — ship modes, turn budgets,
+              process notes. This is your primary tool for self-improvement.
+            - Update scouting heuristics in `AUTOPILOT_ROADMAP.md`
+            - Add detection tests or health checks
+
+            For improvements that require workflow changes (turn limits, new tools,
+            prompt structure), create a GitHub issue:
             `gh issue create --title "Autopilot self-improvement: <description>" --label "autopilot-meta" --body "<details>"`
 
             You CANNOT modify `.github/workflows/` directly (protected path), but issues
-            let the human know what changes would help. Be specific — include data from
-            this run (turns used, tasks completed, time spent) to justify the suggestion.
+            let the human know what workflow changes would help. Be specific — include
+            data from this run (turns used, tasks completed, ship modes used) to justify.
 
             ## Status log format
 
@@ -391,6 +462,7 @@ jobs:
               "date": "YYYY-MM-DD",
               "task": "Short description",
               "outcome": "completed|skipped|failed|blocked|decomposed",
+              "shipMode": "branch-pr|direct-to-main|batch",
               "pr": null or PR number,
               "pillar": "data|code|capabilities|personalization|quality",
               "details": "What happened",

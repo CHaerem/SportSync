@@ -266,6 +266,7 @@ scripts/
 ├── run-pipeline.js         # Pipeline runner — reads manifest, orchestrates all phases
 ├── generate-capabilities.js # Capability registry generator → capabilities.json
 ├── pipeline-manifest.json  # Declarative pipeline step definitions (autopilot-editable)
+├── autopilot-strategy.json # Autopilot process strategy (ship modes, turn budgets — autopilot-editable)
 ├── validate-events.js      # Data integrity checks
 ├── build-ics.js            # Calendar export generator
 └── screenshot.js           # Dashboard screenshot for visual validation (Playwright)
@@ -357,7 +358,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Resilience hardening** | Pipeline manifest captures per-step outcomes in `pipeline-result.json`. Remaining gap: autopilot doesn't yet auto-diagnose and repair failed steps. | Low |
 | **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
 | **Watch-plan feedback** | Watch-plan picks render in the dashboard but there's no mechanism to capture user reactions (thumbs-up/down). Without this signal, personalization can't learn. | Low |
-| **Meta-learning** | The system doesn't yet systematically track which improvements are most effective or accumulate structured knowledge about its own improvement process. | Low |
+| **Meta-learning** | The autopilot records knowledge in `AUTOPILOT_ROADMAP.md` Lessons section and evolves its process strategy in `scripts/autopilot-strategy.json`. Remaining gap: strategy evolution is manual/heuristic — no automated correlation between strategy changes and outcome improvements. | Low |
 
 ### Roadmap (Prioritized Next Steps)
 
@@ -431,13 +432,15 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones. All autopilot changes must satisfy the Change Principles above — especially vision alignment and closing the loop.
 
 - **Roadmap**: `AUTOPILOT_ROADMAP.md` is a self-curated task queue — the autopilot adds, prioritizes, and executes tasks
+- **Strategy**: `scripts/autopilot-strategy.json` is the autopilot's process playbook — ship modes, turn budgets, and accumulated process knowledge. The autopilot reads it at startup and evolves it based on what it learns.
 - **Cadence**: Runs nightly at 01:00 UTC
 - **PR label**: `autopilot`
 - **Multi-task loop**: Works through PENDING tasks continuously until it runs out of turns, tasks, or hits an error
-- **Auto-merge**: Each task is branched, PR'd, and merged immediately after tests pass
+- **Ship modes**: The autopilot chooses per-task: `branch-pr` (full ceremony, safest), `direct-to-main` (LOW-risk only, fastest), or `batch` (groups compatible tasks). The strategy file guides the choice, but the autopilot can override based on judgement.
 - **Maintenance scouting**: Reads health-report.json, autonomy-report.json, pattern-report.json, sanity-report.json to detect and repair pipeline issues
 - **Creative scouting**: Reads RSS trends, coverage gaps, quality history, and standings data to propose new features, UX improvements, and capability expansions (heuristics F/G/H in roadmap)
 - **Visual validation**: Takes screenshots of the dashboard via Playwright (`scripts/screenshot.js`) before/after UI changes, reads images to verify visual correctness
 - **Self-improving heuristics**: The scouting heuristics section of the roadmap is updated by the autopilot itself when it discovers new detection patterns
+- **Process autonomy**: The autopilot controls its own ship process via `scripts/autopilot-strategy.json` — choosing between branch-pr, direct-to-main, or batch mode per task, and evolving the strategy based on measured outcomes
 - **Safe stops**: If tests fail or a merge fails, the loop stops — no broken code gets pushed
 - **Human control**: Reorder tasks in the roadmap to change priority. Mark tasks `[BLOCKED]` to skip them.
