@@ -1,51 +1,5 @@
 [
   {
-    "timestamp": "2026-02-13T12:33:28.814Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 95,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 118,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-13T12:33:30.907Z",
     "editorial": {
       "score": 95,
@@ -5342,6 +5296,75 @@
         "output": 0,
         "calls": 5,
         "total": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-16T08:29:23.944Z",
+    "editorial": {
+      "score": 76,
+      "mustWatchCoverage": 0.2,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 119,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 3,
+      "warningCount": 3,
+      "pass": true
+    },
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Catalan\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 6371,
+        "output": 2240,
+        "calls": 4,
+        "total": 8611,
+        "tracked": false,
+        "estimated": true
+      },
+      "featured": {
+        "input": 4066,
+        "output": 377,
+        "calls": 1,
+        "total": 4443,
+        "tracked": false,
+        "estimated": true
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 10437,
+        "output": 2617,
+        "calls": 5,
+        "total": 13054,
+        "realPct": 0
       }
     }
   }

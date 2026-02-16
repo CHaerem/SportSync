@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T08:24:55.618Z",
+  "generatedAt": "2026-02-16T08:29:25.976Z",
   "eventCount": 32,
   "sportCoverage": {
     "golf": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 851,
+      "ageMinutes": 855,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 615,
+      "ageMinutes": 620,
       "stale": true
     },
     "tennis.json": {
@@ -105,6 +105,11 @@
     ],
     "snapshotCount": 15
   },
+  "quotaApiHealth": {
+    "available": false,
+    "transitioned": false,
+    "unavailableSince": "2026-02-16T08:29:25.078Z"
+  },
   "issues": [
     {
       "severity": "warning",
@@ -119,12 +124,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 851 minutes old"
+      "message": "chess.json: data is 855 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 615 minutes old"
+      "message": "golf.json: data is 620 minutes old"
     },
     {
       "severity": "warning",
@@ -135,11 +140,16 @@
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) have 0 events and 0 results"
+    },
+    {
+      "severity": "info",
+      "code": "quota_api_unavailable",
+      "message": "Quota API unavailable (upstream scope limitation)"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 78/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 76/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T08:25:01.121Z",
+  "generatedAt": "2026-02-16T08:29:34.876Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 32,
@@ -55,11 +55,11 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 78,
-    "issueCount": 6
+    "editorialScore": 76,
+    "issueCount": 7
   },
   "findings": [
     {
@@ -74,14 +74,29 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 3,
+    "total": 6,
     "critical": 0,
-    "warning": 3,
+    "warning": 6,
     "info": 0
   },
   "pass": true,
