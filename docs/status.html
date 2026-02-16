@@ -94,7 +94,7 @@
 			box-shadow: var(--shadow);
 		}
 		.card-header {
-			font-size: 0.6rem;
+			font-size: 0.65rem;
 			font-weight: 600;
 			text-transform: uppercase;
 			letter-spacing: 0.1em;
@@ -262,8 +262,19 @@
 			}
 		}
 
+		/* --- Autopilot impact --- */
+		.impact-stats { display: flex; gap: 12px; margin-bottom: 14px; }
+		.impact-stat { flex: 1; text-align: center; }
+		.impact-stat-value { font-size: 1.4rem; font-weight: 300; }
+		.impact-stat-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+		.impact-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+		.impact-cat { font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
+		.lesson-item { font-size: 0.7rem; color: var(--muted); font-style: italic; padding: 3px 0; border-bottom: 1px solid var(--border); }
+		.lesson-item:last-child { border-bottom: none; }
+
 		@media (max-width: 380px) {
 			.wrap { padding: 24px 16px 40px; }
+			.impact-stats { gap: 8px; }
 		}
 	</style>
 </head>
@@ -276,14 +287,14 @@
 
 		<div id="summary"></div>
 		<div id="autonomy"><div class="loading">Loading...</div></div>
+		<div id="autopilot"></div>
 		<div id="pipeline"></div>
 		<div id="quality"></div>
-		<div id="tokens"></div>
-		<div id="quota"></div>
 		<div id="trend"></div>
 		<div id="sanity"></div>
 		<div id="gaps"></div>
-		<div id="autopilot"></div>
+		<div id="tokens"></div>
+		<div id="quota"></div>
 		<div id="freshness"></div>
 	</div>
 
@@ -321,6 +332,17 @@
 			return Math.floor(hrs / 24) + 'd ago';
 		}
 
+		function timeUntil(iso) {
+			if (!iso) return 'unknown';
+			const diff = new Date(iso).getTime() - Date.now();
+			if (diff <= 0) return 'now';
+			const mins = Math.floor(diff / 60000);
+			if (mins < 60) return mins + 'm';
+			const hrs = Math.floor(mins / 60);
+			if (hrs < 24) return hrs + 'h ' + (mins % 60) + 'm';
+			return Math.floor(hrs / 24) + 'd';
+		}
+
 		function statusColor(score) {
 			if (score >= 0.8) return 'var(--green)';
 			if (score >= 0.5) return 'var(--amber)';
@@ -333,7 +355,11 @@
 			coverageGaps: 'Coverage Gaps',
 			pipelineHealth: 'Pipeline Health',
 			watchPlan: 'Watch Plan',
-			codeHealth: 'Code Health'
+			codeHealth: 'Code Health',
+			eventDiscovery: 'Event Discovery',
+			scheduleVerification: 'Schedule Verification',
+			resultsHealth: 'Results Health',
+			snapshotHealth: 'Snapshot Health'
 		};
 
 		function renderSummary(health) {
@@ -344,7 +370,7 @@
 			el.innerHTML = '<div class="summary">' + text + '</div>';
 		}
 
-		function renderAutonomy(report) {
+		function renderAutonomy(report, trend) {
 			const el = document.getElementById('autonomy');
 			if (!report) { el.innerHTML = '<div class="card"><div class="card-header">Autonomy</div><div class="empty-state">No data available</div></div>'; return; }
 			const pct = Math.round(report.overallScore * 100);
@@ -358,6 +384,18 @@
 					'</div>';
 			}).join('');
 
+			let trendHtml = '';
+			if (Array.isArray(trend) && trend.length > 1) {
+				const last20 = trend.slice(-20);
+				const bars = last20.map(e => {
+					const h = Math.max(2, e.overallScore * 40);
+					const title = new Date(e.timestamp).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ': ' + Math.round(e.overallScore * 100) + '%';
+					return '<div class="spark-bar" style="height:' + h + 'px" title="' + title + '"></div>';
+				}).join('');
+				trendHtml = '<div style="margin-top:4px;margin-bottom:12px"><div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px">Autonomy trend (last ' + last20.length + ' snapshots)</div>' +
+					'<div class="sparkline">' + bars + '</div></div>';
+			}
+
 			let actionsHtml = '';
 			if (report.nextActions && report.nextActions.length > 0) {
 				actionsHtml = '<div style="margin-top:12px"><div class="card-header" style="margin-bottom:6px">Next Actions</div>' +
@@ -369,6 +407,7 @@
 				'<div class="score-big">' + pct + '%</div>' +
 				'<div class="score-label">' + report.loopsClosed + ' of ' + report.loopsTotal + ' feedback loops closed</div>' +
 				'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:' + statusColor(report.overallScore) + '"></div></div>' +
+				trendHtml +
 				loopRows +
 				actionsHtml +
 				'</div>';
@@ -379,7 +418,7 @@
 			if (!health) { el.innerHTML = ''; return; }
 			const badgeClass = health.status === 'healthy' ? 'healthy' : health.status === 'warning' ? 'warning' : 'critical';
 			const coverage = Object.entries(health.sportCoverage || {}).map(([sport, data]) => {
-				const delta = data.delta !== 0 ? ' (' + (data.delta > 0 ? '+' : '') + data.delta + ')' : '';
+				const delta = data.delta != null && data.delta !== 0 ? ' (' + (data.delta > 0 ? '+' : '') + data.delta + ')' : '';
 				return '<div class="metric-row"><span class="metric-label">' + sport + '</span><span class="metric-value">' + data.count + ' events' + delta + '</span></div>';
 			}).join('');
 
@@ -551,21 +590,77 @@
 				'</div>';
 		}
 
+		function categorizeTask(run) {
+			const text = ((run.task || '') + ' ' + (run.details || '')).toLowerCase();
+			if (/aria|alt text|a11y|focus|accessible|screen.?reader/.test(text)) return 'Accessibility';
+			if (/\btest|tests|unit test|spec\b/.test(text)) return 'Testing';
+			if (/\badd\b|render|visualize|implement|feature/.test(text)) return 'Features';
+			if (/remove|dead code|fix|cleanup|refactor|simplify|rename/.test(text)) return 'Code Quality';
+			if (/guard|validation|hide|standings|data|stale|freshness/.test(text)) return 'Data Quality';
+			return 'Other';
+		}
+
 		function renderAutopilot(log) {
 			const el = document.getElementById('autopilot');
 			if (!log || !log.runs || !log.runs.length) { el.innerHTML = ''; return; }
-			const last5 = log.runs.filter(r => r.outcome === 'completed').slice(-5).reverse();
-			const items = last5.map(run => {
+			const completed = log.runs.filter(r => r.outcome === 'completed');
+
+			// Header stats
+			const prsMerged = completed.filter(r => r.pr).length;
+			const tasksCompleted = completed.length;
+			const filesImproved = completed.reduce((s, r) => s + (r.files_changed || 0), 0);
+
+			const statsHtml = '<div class="impact-stats">' +
+				'<div class="impact-stat"><div class="impact-stat-value">' + prsMerged + '</div><div class="impact-stat-label">PRs Merged</div></div>' +
+				'<div class="impact-stat"><div class="impact-stat-value">' + tasksCompleted + '</div><div class="impact-stat-label">Tasks Done</div></div>' +
+				'<div class="impact-stat"><div class="impact-stat-value">' + filesImproved + '</div><div class="impact-stat-label">Files Improved</div></div>' +
+				'</div>';
+
+			// Categories
+			const cats = {};
+			completed.forEach(r => {
+				const cat = categorizeTask(r);
+				cats[cat] = (cats[cat] || 0) + 1;
+			});
+			const topCats = Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 3);
+			const catsHtml = topCats.length > 0
+				? '<div class="impact-cats">' + topCats.map(([cat, count]) => '<span class="impact-cat">' + cat + ' (' + count + ')</span>').join('') + '</div>'
+				: '';
+
+			// Recent activity
+			const last5 = completed.slice(-5).reverse();
+			const itemsHtml = last5.map(run => {
 				const prLink = run.pr ? ' <a class="log-pr" href="' + REPO_URL + '/pull/' + run.pr + '" target="_blank" rel="noopener">#' + run.pr + '</a>' : '';
+				const cat = categorizeTask(run);
+				const detail = run.details ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + run.details.slice(0, 80) + (run.details.length > 80 ? '...' : '') + '</div>' : '';
 				return '<div class="log-item">' +
-					'<div class="log-task">' + run.task + '</div>' +
+					'<div class="log-task">' + run.task + ' <span class="impact-cat">' + cat + '</span></div>' +
+					detail +
 					'<div class="log-meta">' + run.date + prLink + (run.files_changed ? ' &middot; ' + run.files_changed + ' files' : '') + '</div>' +
 					'</div>';
 			}).join('');
 
+			// Lessons learned
+			const lessons = [];
+			const seen = new Set();
+			for (let i = log.runs.length - 1; i >= 0 && lessons.length < 3; i--) {
+				const r = log.runs[i];
+				if (r.lesson && !seen.has(r.lesson)) {
+					seen.add(r.lesson);
+					lessons.push(r.lesson);
+				}
+			}
+			const lessonsHtml = lessons.length > 0
+				? '<div style="margin-top:10px"><div class="card-header" style="margin-bottom:4px">Lessons Learned</div>' +
+					lessons.map(l => '<div class="lesson-item">' + l + '</div>').join('') + '</div>'
+				: '';
+
 			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Recent Autopilot Runs</div>' +
-				items +
+				'<div class="card-header">Autopilot Impact</div>' +
+				statsHtml +
+				catsHtml +
+				'<div style="margin-top:2px"><div class="card-header" style="margin-bottom:4px">Recent Activity</div>' + itemsHtml + '</div>' +
+				lessonsHtml +
 				'</div>';
 		}
 
@@ -617,7 +712,7 @@
 			let utilHtml = utilBar('5-hour window', u5) + utilBar('7-day window', u7);
 			if (c.sevenDay?.resets_at) {
 				const resetDate = new Date(c.sevenDay.resets_at);
-				const resetText = resetDate > new Date() ? 'Resets in ' + timeAgo(c.sevenDay.resets_at).replace(' ago', '') : 'Reset ' + timeAgo(c.sevenDay.resets_at);
+				const resetText = resetDate > new Date() ? 'Resets in ' + timeUntil(c.sevenDay.resets_at) : 'Reset ' + timeAgo(c.sevenDay.resets_at);
 				utilHtml += '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">' + resetText + '</div>';
 			}
 
@@ -648,18 +743,19 @@
 			fetchJSON('autopilot-log.json'),
 			fetchJSON('meta.json'),
 			fetchJSON('sanity-report.json'),
-			fetchJSON('usage-tracking.json')
-		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage]) => {
+			fetchJSON('usage-tracking.json'),
+			fetchJSON('autonomy-trend.json')
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage, autonomyTrend]) => {
 			renderSummary(health);
-			renderAutonomy(autonomy);
+			renderAutonomy(autonomy, autonomyTrend);
+			renderAutopilot(autopilotLog);
 			renderPipeline(health);
 			renderQuality(quality);
-			renderTokens(quality, history);
-			renderQuota(usage);
 			renderTrend(history);
 			renderSanity(sanity);
 			renderGaps(gaps);
-			renderAutopilot(autopilotLog);
+			renderTokens(quality, history);
+			renderQuota(usage);
 			renderFreshness(meta);
 		});
 	</script>
