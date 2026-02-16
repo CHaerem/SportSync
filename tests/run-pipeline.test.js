@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { loadManifest, checkRequirements, executeStep, runPhase, runPipeline } from "../scripts/run-pipeline.js";
+import { loadManifest, checkRequirements, executeStep, runPhase, runPipeline, categorizeError } from "../scripts/run-pipeline.js";
 
 // Test fixtures
 const FIXTURES_DIR = path.join(os.tmpdir(), "sportsync-pipeline-test-" + Date.now());
@@ -136,6 +136,66 @@ describe("executeStep", () => {
 			100 // 100ms timeout
 		);
 		expect(result.status).toBe("failed");
+	});
+});
+
+describe("categorizeError", () => {
+	it("categorizes timeout errors", () => {
+		expect(categorizeError("ETIMEDOUT: request timed out")).toBe("timeout");
+		expect(categorizeError("Command timed out after 5000ms")).toBe("timeout");
+		expect(categorizeError("socket hang up (timeout)")).toBe("timeout");
+	});
+
+	it("categorizes network errors", () => {
+		expect(categorizeError("ECONNREFUSED 127.0.0.1:443")).toBe("network");
+		expect(categorizeError("ECONNRESET by peer")).toBe("network");
+		expect(categorizeError("ENOTFOUND api.example.com")).toBe("network");
+		expect(categorizeError("fetch failed for URL")).toBe("network");
+	});
+
+	it("categorizes auth errors", () => {
+		expect(categorizeError("HTTP 401 Unauthorized")).toBe("auth");
+		expect(categorizeError("HTTP 403 Forbidden")).toBe("auth");
+		expect(categorizeError("Authentication required")).toBe("auth");
+	});
+
+	it("categorizes parse errors", () => {
+		expect(categorizeError("Unexpected token < in JSON at position 0")).toBe("parse");
+		expect(categorizeError("SyntaxError: invalid json")).toBe("parse");
+		expect(categorizeError("Failed to parse response")).toBe("parse");
+	});
+
+	it("categorizes validation errors", () => {
+		expect(categorizeError("Validation failed: missing field")).toBe("validation");
+		expect(categorizeError("Invalid schema for events.json")).toBe("validation");
+	});
+
+	it("categorizes command errors", () => {
+		expect(categorizeError("Command failed: node scripts/fetch.js")).toBe("command");
+		expect(categorizeError("ENOENT: no such file or directory")).toBe("command");
+		expect(categorizeError("Process exited with exit code 1")).toBe("command");
+	});
+
+	it("returns unknown for unrecognized errors", () => {
+		expect(categorizeError("Something weird happened")).toBe("unknown");
+		expect(categorizeError("")).toBe("unknown");
+		expect(categorizeError(null)).toBe("unknown");
+		expect(categorizeError(undefined)).toBe("unknown");
+	});
+});
+
+describe("executeStep errorCategory", () => {
+	it("includes errorCategory on failed steps", () => {
+		const result = executeStep({ name: "bad", command: "exit 1", errorPolicy: "continue" });
+		expect(result.status).toBe("failed");
+		expect(result.errorCategory).toBeDefined();
+		expect(typeof result.errorCategory).toBe("string");
+	});
+
+	it("does not include errorCategory on success", () => {
+		const result = executeStep({ name: "ok", command: "echo hello", errorPolicy: "continue" });
+		expect(result.status).toBe("success");
+		expect(result.errorCategory).toBeUndefined();
 	});
 });
 

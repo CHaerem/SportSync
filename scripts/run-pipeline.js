@@ -20,6 +20,23 @@ const RESULT_PATH = path.join(DATA_DIR, "pipeline-result.json");
 const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
 
 /**
+ * Categorize an error message for pattern detection by the autopilot.
+ * @param {string} message - error message
+ * @returns {string} category: network|timeout|validation|auth|parse|command|unknown
+ */
+export function categorizeError(message) {
+	if (!message) return "unknown";
+	const m = message.toLowerCase();
+	if (m.includes("etimedout") || m.includes("timedout") || m.includes("timed out") || m.includes("timeout")) return "timeout";
+	if (m.includes("econnrefused") || m.includes("econnreset") || m.includes("enotfound") || m.includes("fetch failed") || m.includes("network")) return "network";
+	if (m.includes("401") || m.includes("403") || m.includes("unauthorized") || m.includes("forbidden") || m.includes("auth")) return "auth";
+	if (m.includes("validation") || m.includes("schema")) return "validation";
+	if (m.includes("json") || m.includes("parse") || m.includes("unexpected token") || m.includes("syntaxerror")) return "parse";
+	if (m.includes("command failed") || m.includes("enoent") || m.includes("not found") || m.includes("exit code")) return "command";
+	return "unknown";
+}
+
+/**
  * Load and validate the pipeline manifest.
  * @returns {object} parsed manifest
  */
@@ -89,11 +106,13 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 			duration: Date.now() - start,
 		};
 	} catch (err) {
+		const errorMsg = err.message?.slice(0, 200) || "unknown error";
 		return {
 			name: step.name,
 			status: "failed",
 			duration: Date.now() - start,
-			error: err.message?.slice(0, 200) || "unknown error",
+			error: errorMsg,
+			errorCategory: categorizeError(err.message),
 		};
 	}
 }
