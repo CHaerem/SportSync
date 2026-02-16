@@ -268,6 +268,60 @@ describe("analyzeHintFatigue", () => {
 		expect(analyzeHintFatigue(history)).toEqual([]);
 	});
 
+	it("detects RESULTS NOTE hint fatigue", () => {
+		const history = Array(8).fill({
+			hintsApplied: ["RESULTS NOTE: Few recap headlines available — focus on scorelines"],
+			results: { score: 70 },
+		});
+		const patterns = analyzeHintFatigue(history);
+		expect(patterns).toHaveLength(1);
+		expect(patterns[0].hintKey).toBe("resultsScore");
+		expect(patterns[0].fireCount).toBe(8);
+	});
+
+	it("detects SANITY hint fatigue", () => {
+		const history = Array(7).fill({
+			hintsApplied: ["SANITY: Previous brief had content issues: data mismatch"],
+			sanity: { findingCount: 5 },
+		});
+		const patterns = analyzeHintFatigue(history);
+		expect(patterns).toHaveLength(1);
+		expect(patterns[0].hintKey).toBe("sanityScore");
+	});
+
+	it("does not flag RESULTS hint when results score improved", () => {
+		const history = [
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 40 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 50 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 60 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 70 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 80 } },
+		];
+		expect(analyzeHintFatigue(history)).toEqual([]);
+	});
+
+	it("does not flag SANITY hint when finding count decreased", () => {
+		const history = [
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 10 } },
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 8 } },
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 6 } },
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 4 } },
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 2 } },
+		];
+		// Lower findingCount = higher sanityScore, so metric improved
+		expect(analyzeHintFatigue(history)).toEqual([]);
+	});
+
+	it("maps unknown hints to unknown metric key", () => {
+		const history = Array(6).fill({
+			hintsApplied: ["Some unmapped hint text that fires a lot"],
+			editorial: { score: 80 },
+		});
+		const patterns = analyzeHintFatigue(history);
+		expect(patterns).toHaveLength(1);
+		expect(patterns[0].hintKey).toBe("unknown");
+	});
+
 	it("handles entries without hintsApplied", () => {
 		const history = Array(10).fill({ editorial: { score: 80 } });
 		expect(analyzeHintFatigue(history)).toEqual([]);
