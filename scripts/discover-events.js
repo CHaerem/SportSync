@@ -333,7 +333,7 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 	const dDir = dataDir || rootDataPath();
 	const timestamp = now || new Date();
 
-	const log = { timestamp: iso(timestamp), tasks: [], skipped: null };
+	const log = { timestamp: iso(timestamp), tasks: [], skipped: null, tokenUsage: null };
 
 	// Check for Claude CLI token
 	if (!process.env.CLAUDE_CODE_OAUTH_TOKEN) {
@@ -363,6 +363,10 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 
 	console.log(`Found ${tasks.length} discovery task(s):`);
 
+	let totalPromptChars = 0;
+	let totalResponseChars = 0;
+	let totalCalls = 0;
+
 	for (const task of tasks) {
 		const taskLog = {
 			type: task.type,
@@ -376,7 +380,10 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 
 		try {
 			const prompt = buildResearchPrompt(task, userContext, verificationHints);
+			totalPromptChars += prompt.length;
+			totalCalls++;
 			const rawResult = await discoverWithClaudeCLI(prompt);
+			totalResponseChars += rawResult.length;
 			const result = parseDiscoveryResult(rawResult);
 
 			if (task.type === "refresh-athletes") {
@@ -432,6 +439,34 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 
 	const succeeded = log.tasks.filter((t) => t.outcome === "success").length;
 	const failed = log.tasks.filter((t) => t.outcome === "failed").length;
+
+	// Token usage estimation (~4 chars per token for CLI calls)
+	const estInput = Math.ceil(totalPromptChars / 4);
+	const estOutput = Math.ceil(totalResponseChars / 4);
+	log.tokenUsage = {
+		input: estInput,
+		output: estOutput,
+		calls: totalCalls,
+		total: estInput + estOutput,
+		tracked: false,
+		estimated: true,
+	};
+
+	// Write discovery token usage to ai-quality.json
+	const qualityPath = path.join(dDir, "ai-quality.json");
+	const existingQuality = readJsonIfExists(qualityPath) || {};
+	writeJsonPretty(qualityPath, {
+		...existingQuality,
+		discovery: {
+			...existingQuality.discovery,
+			tokenUsage: log.tokenUsage,
+			lastRun: iso(timestamp),
+			tasksExecuted: totalCalls,
+			succeeded,
+			failed,
+		},
+	});
+
 	console.log(`\nDiscovery complete: ${succeeded} succeeded, ${failed} failed`);
 
 	return log;

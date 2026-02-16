@@ -13,6 +13,10 @@ const GATE_UTILIZATION_7D = 80;
 const GATE_MAX_AUTOPILOT_7D = 7;
 const GATE_MAX_RUNS_5H = 4;
 
+// Internal token budgets (self-imposed guardrails)
+const DAILY_TOKEN_BUDGET = 500000;
+const WEEKLY_TOKEN_BUDGET = 2000000;
+
 // --- Pure functions (exported for testing) ---
 
 export function pruneOldRuns(runs, now = Date.now()) {
@@ -34,6 +38,60 @@ export function calculateShare(runs) {
 		totalDurationMs += r.durationMs || 0;
 	}
 	return { pipelineRuns, autopilotRuns, totalDurationMs };
+}
+
+export function aggregateInternalTokens(quality) {
+	if (!quality || typeof quality !== "object") return null;
+	const enrichment = quality.enrichment?.tokenUsage?.total || 0;
+	const featured = quality.featured?.tokenUsage?.total || 0;
+	const discovery = quality.discovery?.tokenUsage?.total || 0;
+	const multiDay = quality.multiDay?.tokenUsage?.total || 0;
+	const runTotal = enrichment + featured + discovery + multiDay;
+	return { enrichment, featured, discovery, multiDay, runTotal };
+}
+
+export function calculateBudget(runs, now = Date.now()) {
+	if (!Array.isArray(runs) || runs.length === 0) {
+		return { dailyUsed: 0, weeklyUsed: 0, dailyBudget: DAILY_TOKEN_BUDGET, weeklyBudget: WEEKLY_TOKEN_BUDGET, dailyPct: 0, weeklyPct: 0 };
+	}
+	const dayAgo = now - 86_400_000;
+	const weekAgo = now - MS_PER_7D;
+	let dailyUsed = 0;
+	let weeklyUsed = 0;
+	for (const r of runs) {
+		const ts = new Date(r.timestamp).getTime();
+		const tokens = r.tokens || 0;
+		if (ts > dayAgo) dailyUsed += tokens;
+		if (ts > weekAgo) weeklyUsed += tokens;
+	}
+	return {
+		dailyUsed,
+		weeklyUsed,
+		dailyBudget: DAILY_TOKEN_BUDGET,
+		weeklyBudget: WEEKLY_TOKEN_BUDGET,
+		dailyPct: Math.round((dailyUsed / DAILY_TOKEN_BUDGET) * 100),
+		weeklyPct: Math.round((weeklyUsed / WEEKLY_TOKEN_BUDGET) * 100),
+	};
+}
+
+/**
+ * Track quota API availability state transitions.
+ * Detects when the API goes from unavailable → available (or vice versa).
+ * @param {boolean} apiAvailable - Whether the current API call succeeded
+ * @param {object|null} previousStatus - Previous quotaApiStatus from usage-tracking.json
+ * @returns {{ available: boolean, since: string, previousState: string|null, transitioned: boolean }}
+ */
+export function trackApiStatus(apiAvailable, previousStatus) {
+	const now = new Date().toISOString();
+	const prevAvailable = previousStatus?.available ?? null;
+	const transitioned = prevAvailable !== null && prevAvailable !== apiAvailable;
+	return {
+		available: apiAvailable,
+		since: transitioned ? now : (previousStatus?.since || now),
+		previousState: prevAvailable === null ? null : (prevAvailable ? "available" : "unavailable"),
+		transitioned,
+		checkedAt: now,
+	};
 }
 
 export function shouldGate(runs, utilization, now = Date.now()) {
@@ -110,15 +168,28 @@ async function report(context) {
 	// Fetch current utilization
 	const usage = await fetchUsage();
 
+	// Read internal token data from ai-quality.json
+	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
+	const internalTokens = aggregateInternalTokens(quality);
+
 	const existing = readJsonIfExists(trackingPath) || { runs: [] };
 	const newRun = {
 		timestamp: now,
 		context,
 		durationMs: Math.round(durationMs),
+		tokens: internalTokens?.runTotal || 0,
 	};
 	const runs = pruneOldRuns([...(existing.runs || []), newRun]);
 	const share = calculateShare(runs);
+	const budget = calculateBudget(runs);
 	const durationMin = Math.round(durationMs / 60_000);
+
+	// Track quota API availability state
+	const apiStatus = trackApiStatus(usage !== null, existing.quotaApiStatus || null);
+	if (apiStatus.transitioned) {
+		const newState = apiStatus.available ? "AVAILABLE" : "UNAVAILABLE";
+		console.log(`*** Quota API state changed: ${apiStatus.previousState} → ${newState} ***`);
+	}
 
 	const tracking = {
 		lastUpdated: now,
@@ -129,6 +200,9 @@ async function report(context) {
 				resets_at: usage.seven_day?.resets_at ?? null,
 			},
 		} : null,
+		quotaApiStatus: apiStatus,
+		internalTokens,
+		budget,
 		sportsyncShare: share,
 		gateConfig: {
 			utilizationThreshold: GATE_UTILIZATION_7D,

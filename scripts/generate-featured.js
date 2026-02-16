@@ -687,8 +687,10 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 	if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
 		console.log("Using Claude CLI (OAuth) to generate featured content.");
 		try {
+			const pChars = (systemPrompt + userPrompt).length;
 			const rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
-			return { rawContent, provider: "claude-cli", llm: null };
+			const rChars = rawContent.length;
+			return { rawContent, provider: "claude-cli", llm: null, promptChars: pChars, responseChars: rChars };
 		} catch (err) {
 			console.error("Claude CLI failed:", err.message);
 		}
@@ -700,13 +702,13 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 		console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
 		try {
 			const rawContent = await llm.complete(systemPrompt, userPrompt);
-			return { rawContent, provider: llm.getProviderName(), llm };
+			return { rawContent, provider: llm.getProviderName(), llm, promptChars: 0, responseChars: 0 };
 		} catch (err) {
 			console.error("LLM API failed:", err.message);
 		}
 	}
 
-	return { rawContent: null, provider: "none", llm: null };
+	return { rawContent: null, provider: "none", llm: null, promptChars: 0, responseChars: 0 };
 }
 
 async function main() {
@@ -818,6 +820,8 @@ async function main() {
 	let qualityResult = null;
 	let qualityCorrections = [];
 	let featuredLlm = null;
+	let promptChars = 0;
+	let responseChars = 0;
 
 	const generationStart = Date.now();
 	for (let attempt = 1; attempt <= 2; attempt++) {
@@ -831,6 +835,8 @@ async function main() {
 		if (!generated.rawContent) break;
 		provider = generated.provider;
 		if (generated.llm) featuredLlm = generated.llm;
+		if (generated.promptChars != null) promptChars = generated.promptChars;
+		if (generated.responseChars != null) responseChars = generated.responseChars;
 
 		try {
 			const parsed = parseResponseJSON(generated.rawContent);
@@ -900,7 +906,11 @@ async function main() {
 
 		const blockCount = featured.blocks ? featured.blocks.length : 0;
 		const featuredTokenUsage = provider === "claude-cli"
-			? { input: 0, output: 0, calls: attempts, total: 0, tracked: false }
+			? (() => {
+				const estInput = Math.ceil(promptChars / 4);
+				const estOutput = Math.ceil(responseChars / 4);
+				return { input: estInput, output: estOutput, calls: attempts, total: estInput + estOutput, tracked: false, estimated: true };
+			})()
 			: featuredLlm ? featuredLlm.getUsage() : { input: 0, output: 0, calls: 0, total: 0 };
 		const existingQuality = readJsonIfExists(qualityPath) || {};
 		writeJsonPretty(qualityPath, {
@@ -936,9 +946,8 @@ async function main() {
 		const historyPath = path.join(dataDir, "quality-history.json");
 		const history = readJsonIfExists(historyPath) || qualityHistory;
 		const enrichmentTokens = existingQuality?.enrichment?.tokenUsage || null;
-		const totalInput = (enrichmentTokens?.input || 0) + (featuredTokenUsage.input || 0);
-		const totalOutput = (enrichmentTokens?.output || 0) + (featuredTokenUsage.output || 0);
-		const totalCalls = (enrichmentTokens?.calls || 0) + (featuredTokenUsage.calls || 0);
+		const discoveryTokens = existingQuality?.discovery?.tokenUsage || null;
+		const multiDayTokens = existingQuality?.multiDay?.tokenUsage || null;
 		const snapshot = buildQualitySnapshot(
 			editorialResult,
 			existingQuality.enrichment || null,
@@ -949,7 +958,8 @@ async function main() {
 				tokenUsage: {
 					enrichment: enrichmentTokens,
 					featured: featuredTokenUsage,
-					total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput },
+					discovery: discoveryTokens,
+					multiDay: multiDayTokens,
 				},
 				results: resultsQuality,
 				sanity: sanityReport ? {

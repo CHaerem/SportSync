@@ -36,6 +36,42 @@ Beyond data and content autonomy, the underlying code structure is itself a targ
 
 Some form of lightweight user feedback would complete the vision — allowing the system to learn which recommendations land, which content formats work, and which sports coverage matters most. This could be as simple as thumbs-up/down on watch-plan picks surfaced via `localStorage` feedback signals.
 
+## Change Principles
+
+Every change — whether made in a manual Claude session, by the nightly autopilot, or in a PR review — must pass these checks. These are not guidelines; they are hard rules.
+
+### 1. Vision Alignment
+
+Before implementing, ask: **"Does this change advance the autonomy thesis?"**
+
+The five pillars of the vision are: self-maintaining data, self-maintaining code, self-expanding capabilities, personalized output, and self-correcting quality. Every change should serve at least one pillar. A bug fix that only fixes the bug is incomplete — it should also make the system capable of detecting similar issues autonomously (via tests, health checks, or feedback loops).
+
+**Test:** Can you point to which pillar(s) this change serves? If not, reconsider.
+
+### 2. Close the Loop
+
+Ask: **"How would the system have found this problem on its own?"**
+
+If the answer is "it couldn't", the change is incomplete. Add detection: a test that catches regressions, a health check that surfaces the issue, a quality gate that blocks bad output, or a scouting heuristic that spots the pattern. The goal is that every class of problem is found exactly once by a human and forever after by the system.
+
+### 3. Zero Infrastructure Constraint
+
+Ask: **"Does this stay within GitHub Actions + Claude Code Max + GitHub Pages?"**
+
+No new services, no databases, no paid APIs, no deployment infrastructure. If a feature seems to need external infrastructure, find a way to do it within the constraint — that's the point of the experiment.
+
+### 4. Autonomous by Default
+
+Ask: **"Does this work without human intervention after deployment?"**
+
+Changes should not create ongoing manual maintenance obligations. If a feature requires periodic human attention (manual config updates, data refreshes, monitoring), it's not done — add the automation that closes the gap. Static configs should have refresh loops. External dependencies should have availability monitoring. Edge cases should have fallback paths.
+
+### 5. Measurable Impact
+
+Ask: **"How will we know this change is working?"**
+
+Every non-trivial change should be observable through existing metrics (autonomy scorecard, quality history, health report) or should add its own measurement. If a change can't be measured, it can't be improved autonomously.
+
 ## Project Overview
 
 SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Nine closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, and code health. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
@@ -346,7 +382,7 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 
 ### Autopilot
 
-The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones.
+The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones. All autopilot changes must satisfy the Change Principles above — especially vision alignment and closing the loop.
 
 - **Roadmap**: `AUTOPILOT_ROADMAP.md` is a self-curated task queue — the autopilot adds, prioritizes, and executes tasks
 - **Cadence**: Runs nightly at 01:00 UTC

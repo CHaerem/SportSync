@@ -459,3 +459,48 @@ describe("generateStatusSummary()", () => {
 		expect(summary).toContain("critical");
 	});
 });
+
+describe("quota API health check", () => {
+	it("reports quota_api_unavailable when API is down", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			usageTracking: {
+				quotaApiStatus: { available: false, since: "2026-01-01T00:00:00Z", transitioned: false },
+			},
+		});
+		expect(report.quotaApiHealth.available).toBe(false);
+		const issue = report.issues.find(i => i.code === "quota_api_unavailable");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("info");
+	});
+
+	it("reports quota_api_restored on transition to available", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			usageTracking: {
+				quotaApiStatus: { available: true, since: "2026-02-16T00:00:00Z", transitioned: true },
+			},
+		});
+		expect(report.quotaApiHealth.available).toBe(true);
+		expect(report.quotaApiHealth.transitioned).toBe(true);
+		const issue = report.issues.find(i => i.code === "quota_api_restored");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("info");
+	});
+
+	it("includes quotaApiHealth in report when no tracking data", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+		expect(report.quotaApiHealth).toBeDefined();
+		expect(report.quotaApiHealth.available).toBe(false);
+	});
+
+	it("does not add issues when no usageTracking provided", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+		const quotaIssues = report.issues.filter(i => i.code?.startsWith("quota_api"));
+		expect(quotaIssues).toHaveLength(0);
+	});
+});

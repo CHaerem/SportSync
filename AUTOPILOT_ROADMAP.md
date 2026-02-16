@@ -10,6 +10,20 @@ Self-curated task queue for the Claude autopilot workflow. The autopilot discove
 
 ---
 
+## Change Principles Gate
+
+Before creating or executing ANY task, verify it passes the Change Principles from `CLAUDE.md`:
+
+1. **Vision alignment** — Which autonomy pillar does this serve? (data, code, capabilities, personalization, quality)
+2. **Close the loop** — Does this add detection so the system catches similar issues autonomously in the future?
+3. **Zero infrastructure** — Does this stay within GitHub Actions + Claude Code Max + GitHub Pages?
+4. **Autonomous by default** — Does this work without ongoing human intervention?
+5. **Measurable impact** — How will we know this change is working? (metrics, health checks, quality scores)
+
+If a scouted improvement fails any principle, either redesign it to pass or skip it. A code cleanup that doesn't close the loop (add a test, health check, or detection) is incomplete.
+
+---
+
 ## Scouting Heuristics
 
 When scouting for improvement opportunities, apply these detection patterns in addition to the standard checks (dead code, TODO comments, missing tests):
@@ -118,6 +132,25 @@ Check for GitHub Issues with the `user-feedback` label created by the repo owner
 3. **Suggestions** (`suggestions` array): New sports, events, features. Create new curated configs for event/sport requests. Add feature requests as `[PENDING]` tasks in the roadmap. Update `user-context.json` for preference changes (new favorite teams, players).
 
 **After processing:** Close the issue with a comment summarizing actions taken. If changes were made to `user-context.json` or configs, include them in the next autopilot PR.
+
+### J. Upstream Issue Resolution Detection
+
+Monitor external dependencies documented in "Known Limitations" below. When an upstream issue is resolved, the system should detect it and create a task to remove workarounds.
+
+**How to check:**
+
+1. Read `docs/data/health-report.json` — check `quotaApiHealth.transitioned`. If `true` and `available` is `true`, the quota API scope issue is resolved. Create a `[PENDING]` task to validate the data and clean up workaround code.
+
+2. Read `docs/data/usage-tracking.json` — check `quotaApiStatus.available`. If it has been `true` for 3+ consecutive runs, the fix is stable.
+
+3. For GitHub issue tracking: run `gh issue view 11985 --repo anthropics/claude-code --json state -q '.state'`. If the state is `CLOSED`, the upstream fix may be available. Cross-reference with the `quotaApiStatus` data.
+
+**Action:** When an upstream limitation is confirmed resolved:
+- Create a `[PENDING]` task to validate the fix (e.g., verify real utilization data is flowing)
+- Create a follow-up task to remove any workaround code or "unavailable" UI messages
+- Update the "Known Limitations" section to mark the issue as resolved
+
+**Example:** If the quota API starts returning real utilization data, create a task: "Quota API scope fixed — validate real utilization data and update status page to remove unavailable message."
 
 ---
 
@@ -546,4 +579,8 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 **Do NOT attempt to fix this** — no code change on our side can resolve it. The run-count and duration tracking in `usage-tracking.json` works correctly as a fallback. Once Anthropic ships a fix (adding `user:profile` to `setup-token`), real utilization data will flow automatically without any code changes.
 
-The `docs/status.html` quota card already handles both states: it shows utilization bars when API data is available, and falls back to run-count / duration display when it's not.
+**Auto-detection:** The system monitors this issue automatically:
+- `track-usage.js` records `quotaApiStatus` in `usage-tracking.json` every pipeline run (available/unavailable + since when + transition flag)
+- `pipeline-health.js` surfaces `quotaApiHealth` in `health-report.json`, including a `quota_api_restored` info issue on state transitions
+- Scouting heuristic J reads these signals and creates tasks when the fix is detected
+- The `docs/status.html` quota card handles both states: utilization bars when API data is available, "unavailable" message when not

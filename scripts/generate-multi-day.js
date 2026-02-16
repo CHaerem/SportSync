@@ -11,7 +11,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { rootDataPath, formatDateKey, readJsonIfExists, MS_PER_DAY } from "./lib/helpers.js";
+import { rootDataPath, formatDateKey, readJsonIfExists, writeJsonPretty, MS_PER_DAY } from "./lib/helpers.js";
 
 // --backfill N: generate recaps for the last N days (default: 1 = yesterday only)
 const backfillArg = process.argv.find(a => a.startsWith("--backfill"));
@@ -31,10 +31,17 @@ function generateBriefing(dateKey, mode) {
 	});
 }
 
+function readTokenUsageFromQuality(dataDir) {
+	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
+	return quality?.featured?.tokenUsage || null;
+}
+
 function main() {
 	const dataDir = rootDataPath();
 	const now = new Date();
 	let aiCalls = 0;
+	let totalInput = 0;
+	let totalOutput = 0;
 
 	// --- Past day recaps (1..BACKFILL_DAYS days ago) ---
 	for (let i = 1; i <= BACKFILL_DAYS; i++) {
@@ -46,6 +53,11 @@ function main() {
 			try {
 				generateBriefing(pastKey, "recap");
 				aiCalls++;
+				const usage = readTokenUsageFromQuality(dataDir);
+				if (usage) {
+					totalInput += usage.input || 0;
+					totalOutput += usage.output || 0;
+				}
 			} catch (err) {
 				console.error(`Recap generation failed for ${pastKey}:`, err.message);
 			}
@@ -79,6 +91,11 @@ function main() {
 		try {
 			generateBriefing(tomorrowKey, "preview");
 			aiCalls++;
+			const usage = readTokenUsageFromQuality(dataDir);
+			if (usage) {
+				totalInput += usage.input || 0;
+				totalOutput += usage.output || 0;
+			}
 		} catch (err) {
 			console.error(`Preview generation failed for ${tomorrowKey}:`, err.message);
 		}
@@ -101,6 +118,27 @@ function main() {
 			cleaned++;
 			console.log(`Cleaned up old briefing: ${file}`);
 		}
+	}
+
+	// Write multi-day token usage to ai-quality.json
+	if (aiCalls > 0) {
+		const qualityPath = path.join(dataDir, "ai-quality.json");
+		const existingQuality = readJsonIfExists(qualityPath) || {};
+		writeJsonPretty(qualityPath, {
+			...existingQuality,
+			multiDay: {
+				...existingQuality.multiDay,
+				tokenUsage: {
+					input: totalInput,
+					output: totalOutput,
+					calls: aiCalls,
+					total: totalInput + totalOutput,
+					tracked: false,
+					estimated: true,
+				},
+				lastRun: now.toISOString(),
+			},
+		});
 	}
 
 	console.log(`Multi-day briefings done: ${aiCalls} AI call(s), ${cleaned} old file(s) cleaned.`);

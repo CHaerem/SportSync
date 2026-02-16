@@ -304,6 +304,32 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 10. Quota API availability (from usage-tracking.json)
+	const { usageTracking = null } = options;
+	const quotaApiHealth = { available: false, transitioned: false, unavailableSince: null };
+	if (usageTracking?.quotaApiStatus) {
+		const qs = usageTracking.quotaApiStatus;
+		quotaApiHealth.available = qs.available === true;
+		quotaApiHealth.transitioned = qs.transitioned === true;
+		quotaApiHealth.unavailableSince = !qs.available ? qs.since : null;
+
+		if (qs.transitioned && qs.available) {
+			issues.push({
+				severity: "info",
+				code: "quota_api_restored",
+				message: "Quota API is now available — external utilization data flowing",
+			});
+		}
+		if (!qs.available) {
+			// Not a warning — it's a known upstream limitation
+			issues.push({
+				severity: "info",
+				code: "quota_api_unavailable",
+				message: "Quota API unavailable (upstream scope limitation)",
+			});
+		}
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -319,6 +345,7 @@ export function generateHealthReport(options = {}) {
 		standingsHealth,
 		resultsHealth,
 		snapshotHealth,
+		quotaApiHealth,
 		issues,
 		status,
 	};
@@ -392,6 +419,9 @@ async function main() {
 	// Read day snapshot metadata
 	const snapMeta = readJsonIfExists(path.join(dataDir, "days", "_meta.json"));
 
+	// Read usage tracking for quota API status
+	const usageTracking = readJsonIfExists(path.join(dataDir, "usage-tracking.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -401,6 +431,7 @@ async function main() {
 		sportFiles,
 		criticalOutputs,
 		snapshotHealth: { meta: snapMeta },
+		usageTracking,
 	});
 
 	// Generate autonomy scorecard alongside health report

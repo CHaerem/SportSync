@@ -504,6 +504,32 @@ export function evaluateWatchPlanQuality(watchPlan) {
 }
 
 export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity } = {}) {
+	// Expand tokenUsage with discovery and multiDay if present, and compute realPct
+	let expandedTokenUsage = tokenUsage || null;
+	if (expandedTokenUsage) {
+		const enrichTok = expandedTokenUsage.enrichment || {};
+		const featTok = expandedTokenUsage.featured || {};
+		const discTok = expandedTokenUsage.discovery || {};
+		const mdTok = expandedTokenUsage.multiDay || {};
+
+		const allOps = [enrichTok, featTok, discTok, mdTok];
+		const totalInput = allOps.reduce((s, o) => s + (o.input || 0), 0);
+		const totalOutput = allOps.reduce((s, o) => s + (o.output || 0), 0);
+		const totalCalls = allOps.reduce((s, o) => s + (o.calls || 0), 0);
+		const totalTotal = totalInput + totalOutput;
+
+		// realPct: percentage of tokens from real API counts (not estimated)
+		const realTotal = allOps
+			.filter(o => !o.estimated && o.tracked !== false)
+			.reduce((s, o) => s + (o.input || 0) + (o.output || 0), 0);
+		const realPct = totalTotal > 0 ? Math.round((realTotal / totalTotal) * 100) : 0;
+
+		expandedTokenUsage = {
+			...expandedTokenUsage,
+			total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalTotal, realPct },
+		};
+	}
+
 	return {
 		timestamp: new Date().toISOString(),
 		editorial: editorial
@@ -525,7 +551,7 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 			? { findingCount: sanity.findingCount ?? 0, warningCount: sanity.warningCount ?? 0, pass: sanity.pass ?? true }
 			: null,
 		hintsApplied: hintsApplied || [],
-		tokenUsage: tokenUsage || null,
+		tokenUsage: expandedTokenUsage,
 	};
 }
 

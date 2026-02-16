@@ -475,35 +475,54 @@
 			return String(n);
 		}
 
-		function renderTokens(quality, history) {
+		function renderTokens(quality, history, usage) {
 			const el = document.getElementById('tokens');
 
 			// Gather per-step usage from ai-quality.json
 			const enrichUsage = quality?.enrichment?.tokenUsage || null;
 			const featuredUsage = quality?.featured?.tokenUsage || null;
+			const discoveryUsage = quality?.discovery?.tokenUsage || null;
+			const multiDayUsage = quality?.multiDay?.tokenUsage || null;
 
-			if (!enrichUsage && !featuredUsage) { el.innerHTML = ''; return; }
+			if (!enrichUsage && !featuredUsage && !discoveryUsage && !multiDayUsage) { el.innerHTML = ''; return; }
 
 			const steps = [];
-			if (enrichUsage) {
-				const label = enrichUsage.tracked === false ? 'Enrichment (untracked)' : 'Enrichment';
-				steps.push({ label, usage: enrichUsage });
-			}
-			if (featuredUsage) {
-				const label = featuredUsage.tracked === false ? 'Featured (untracked)' : 'Featured';
-				steps.push({ label, usage: featuredUsage });
-			}
+			const addStep = (name, u) => {
+				if (!u) return;
+				const est = u.estimated ? ' (est)' : '';
+				steps.push({ label: name + est, usage: u });
+			};
+			addStep('Enrichment', enrichUsage);
+			addStep('Featured', featuredUsage);
+			addStep('Discovery', discoveryUsage);
+			addStep('Multi-day', multiDayUsage);
 
 			const totalInput = steps.reduce((s, x) => s + (x.usage.input || 0), 0);
 			const totalOutput = steps.reduce((s, x) => s + (x.usage.output || 0), 0);
 			const totalCalls = steps.reduce((s, x) => s + (x.usage.calls || 0), 0);
-			const anyUntracked = steps.some(x => x.usage.tracked === false);
+			const totalAll = totalInput + totalOutput;
+			const anyEstimated = steps.some(x => x.usage.estimated);
 
-			let stepsHtml = steps.map(s =>
-				'<div class="metric-row"><span class="metric-label">' + s.label + '</span><span class="metric-value">' +
-				(s.usage.tracked === false ? s.usage.calls + ' call(s)' : fmtTokens(s.usage.input + s.usage.output) + ' tokens') +
-				'</span></div>'
-			).join('');
+			// Header stats from usage-tracking.json (7d window)
+			const budget = usage?.budget || {};
+			const share = usage?.sportsyncShare || {};
+			let headerHtml = '';
+			if (budget.weeklyUsed != null || share.totalDurationMs) {
+				headerHtml = '<div class="impact-stats">' +
+					'<div class="impact-stat"><div class="impact-stat-value">' + fmtTokens(budget.weeklyUsed || 0) + '</div><div class="impact-stat-label">Tokens (7d)</div></div>' +
+					'<div class="impact-stat"><div class="impact-stat-value">' + (usage?.runs?.length > 0 ? fmtTokens(Math.round((budget.weeklyUsed || 0) / usage.runs.length)) : '0') + '</div><div class="impact-stat-label">Avg per run</div></div>' +
+					'<div class="impact-stat"><div class="impact-stat-value">' + fmtDuration(share.totalDurationMs) + '</div><div class="impact-stat-label">AI time (7d)</div></div>' +
+					'</div>';
+			}
+
+			// Per-operation breakdown bars
+			const maxTokens = Math.max(...steps.map(s => (s.usage.input || 0) + (s.usage.output || 0)), 1);
+			let breakdownHtml = steps.map(s => {
+				const tokens = (s.usage.input || 0) + (s.usage.output || 0);
+				const pct = Math.max(2, Math.round((tokens / maxTokens) * 100));
+				return '<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:2px"><span class="metric-label">' + s.label + '</span><span class="metric-value">' + fmtTokens(tokens) + '</span></div>' +
+					'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:var(--accent)"></div></div></div>';
+			}).join('');
 
 			// Sparkline from quality-history.json tokenUsage.total.total
 			let sparkHtml = '';
@@ -518,19 +537,35 @@
 				}
 			}
 
-			const untrackedNote = anyUntracked
-				? '<div style="font-size:0.65rem;color:var(--muted);margin-top:6px;font-style:italic">Claude CLI calls via Max subscription — tokens not tracked</div>'
+			// Budget progress bars
+			let budgetHtml = '';
+			if (budget.dailyBudget) {
+				const dPct = Math.min(100, budget.dailyPct || 0);
+				const wPct = Math.min(100, budget.weeklyPct || 0);
+				const dColor = dPct > 80 ? 'var(--red)' : dPct > 60 ? 'var(--amber)' : 'var(--green)';
+				const wColor = wPct > 80 ? 'var(--red)' : wPct > 60 ? 'var(--amber)' : 'var(--green)';
+				budgetHtml = '<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">' +
+					'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">Budget</div>' +
+					'<div class="metric-row"><span class="metric-label">Daily (' + fmtTokens(budget.dailyBudget) + ')</span><span class="metric-value">' + dPct + '%</span></div>' +
+					'<div class="score-bar"><div class="score-bar-fill" style="width:' + dPct + '%;background:' + dColor + '"></div></div>' +
+					'<div class="metric-row"><span class="metric-label">Weekly (' + fmtTokens(budget.weeklyBudget) + ')</span><span class="metric-value">' + wPct + '%</span></div>' +
+					'<div class="score-bar"><div class="score-bar-fill" style="width:' + wPct + '%;background:' + wColor + '"></div></div>' +
+					'</div>';
+			}
+
+			const estNote = anyEstimated
+				? '<div style="font-size:0.65rem;color:var(--muted);margin-top:6px;font-style:italic">CLI token counts estimated from content size (~4 chars/token)</div>'
 				: '';
 
 			el.innerHTML = '<div class="card">' +
 				'<div class="card-header">Token Usage</div>' +
-				'<div class="metric-row"><span class="metric-label">Input tokens</span><span class="metric-value">' + fmtTokens(totalInput) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Output tokens</span><span class="metric-value">' + fmtTokens(totalOutput) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Total</span><span class="metric-value">' + fmtTokens(totalInput + totalOutput) + '</span></div>' +
+				headerHtml +
+				'<div class="metric-row"><span class="metric-label">This run</span><span class="metric-value">' + fmtTokens(totalAll) + ' tokens</span></div>' +
 				'<div class="metric-row"><span class="metric-label">API calls</span><span class="metric-value">' + totalCalls + '</span></div>' +
-				'<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' + stepsHtml + '</div>' +
+				'<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' + breakdownHtml + '</div>' +
 				sparkHtml +
-				untrackedNote +
+				budgetHtml +
+				estNote +
 				'</div>';
 		}
 
@@ -709,11 +744,16 @@
 			// Real utilization bars (when API data available)
 			const u5 = c.fiveHour?.utilization;
 			const u7 = c.sevenDay?.utilization;
-			let utilHtml = utilBar('5-hour window', u5) + utilBar('7-day window', u7);
-			if (c.sevenDay?.resets_at) {
-				const resetDate = new Date(c.sevenDay.resets_at);
-				const resetText = resetDate > new Date() ? 'Resets in ' + timeUntil(c.sevenDay.resets_at) : 'Reset ' + timeAgo(c.sevenDay.resets_at);
-				utilHtml += '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">' + resetText + '</div>';
+			let utilHtml = '';
+			if (u5 != null || u7 != null) {
+				utilHtml = utilBar('5-hour window', u5) + utilBar('7-day window', u7);
+				if (c.sevenDay?.resets_at) {
+					const resetDate = new Date(c.sevenDay.resets_at);
+					const resetText = resetDate > new Date() ? 'Resets in ' + timeUntil(c.sevenDay.resets_at) : 'Reset ' + timeAgo(c.sevenDay.resets_at);
+					utilHtml += '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px">' + resetText + '</div>';
+				}
+			} else {
+				utilHtml = '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-style:italic">External quota unavailable (API scope limitation)</div>';
 			}
 
 			// Run count bars
@@ -723,11 +763,10 @@
 			el.innerHTML = '<div class="card">' +
 				'<div class="card-header">Claude Code Usage</div>' +
 				utilHtml +
-				'<div style="margin-top:' + (utilHtml ? '8px;border-top:1px solid var(--border);padding-top:8px' : '0') + '">' +
+				'<div style="margin-top:' + (u5 != null || u7 != null ? '8px;border-top:1px solid var(--border);padding-top:8px' : '0') + '">' +
 				countBar('Runs in last 5h', recent5h, gate.maxRuns5h || 4) +
 				countBar('Autopilot runs (7d)', share.autopilotRuns || 0, gate.maxAutopilot7d || 7) +
 				'<div class="metric-row"><span class="metric-label">Pipeline runs (7d)</span><span class="metric-value">' + (share.pipelineRuns || 0) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">AI time (7d)</span><span class="metric-value">' + fmtDuration(share.totalDurationMs) + '</span></div>' +
 				'</div>' +
 				'<div style="font-size:0.65rem;color:var(--muted);margin-top:6px">Updated ' + timeAgo(usage.lastUpdated) + '</div>' +
 				'</div>';
@@ -754,7 +793,7 @@
 			renderTrend(history);
 			renderSanity(sanity);
 			renderGaps(gaps);
-			renderTokens(quality, history);
+			renderTokens(quality, history, usage);
 			renderQuota(usage);
 			renderFreshness(meta);
 		});

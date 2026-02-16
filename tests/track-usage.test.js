@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pruneOldRuns, calculateShare, shouldGate } from "../scripts/track-usage.js";
+import { pruneOldRuns, calculateShare, shouldGate, aggregateInternalTokens, calculateBudget, trackApiStatus } from "../scripts/track-usage.js";
 
 const MS_PER_5H = 5 * 3_600_000;
 const MS_PER_7D = 7 * 86_400_000;
@@ -120,5 +120,154 @@ describe("shouldGate", () => {
 		const result = shouldGate([], 95);
 		expect(result.blocked).toBe(true);
 		expect(result.reason).toContain("utilization");
+	});
+});
+
+describe("aggregateInternalTokens", () => {
+	it("sums all operation token totals", () => {
+		const quality = {
+			enrichment: { tokenUsage: { input: 1000, output: 500, total: 1500 } },
+			featured: { tokenUsage: { input: 2000, output: 800, total: 2800 } },
+			discovery: { tokenUsage: { input: 300, output: 200, total: 500 } },
+			multiDay: { tokenUsage: { input: 400, output: 300, total: 700 } },
+		};
+		const result = aggregateInternalTokens(quality);
+		expect(result.enrichment).toBe(1500);
+		expect(result.featured).toBe(2800);
+		expect(result.discovery).toBe(500);
+		expect(result.multiDay).toBe(700);
+		expect(result.runTotal).toBe(5500);
+	});
+
+	it("returns null for null input", () => {
+		expect(aggregateInternalTokens(null)).toBeNull();
+	});
+
+	it("returns null for non-object input", () => {
+		expect(aggregateInternalTokens("string")).toBeNull();
+	});
+
+	it("handles missing operations gracefully", () => {
+		const quality = {
+			enrichment: { tokenUsage: { total: 1000 } },
+		};
+		const result = aggregateInternalTokens(quality);
+		expect(result.enrichment).toBe(1000);
+		expect(result.featured).toBe(0);
+		expect(result.discovery).toBe(0);
+		expect(result.multiDay).toBe(0);
+		expect(result.runTotal).toBe(1000);
+	});
+
+	it("handles quality with no tokenUsage fields", () => {
+		const quality = {
+			enrichment: { score: 90 },
+			featured: { provider: "claude-cli" },
+		};
+		const result = aggregateInternalTokens(quality);
+		expect(result.runTotal).toBe(0);
+	});
+});
+
+describe("calculateBudget", () => {
+	it("calculates daily and weekly usage from runs", () => {
+		const now = Date.now();
+		const runs = [
+			{ timestamp: new Date(now - 3600000).toISOString(), tokens: 50000 },
+			{ timestamp: new Date(now - 7200000).toISOString(), tokens: 30000 },
+		];
+		const result = calculateBudget(runs, now);
+		expect(result.dailyUsed).toBe(80000);
+		expect(result.weeklyUsed).toBe(80000);
+		expect(result.dailyBudget).toBe(500000);
+		expect(result.weeklyBudget).toBe(2000000);
+		expect(result.dailyPct).toBe(16);
+		expect(result.weeklyPct).toBe(4);
+	});
+
+	it("separates daily from weekly usage", () => {
+		const now = Date.now();
+		const runs = [
+			{ timestamp: new Date(now - 3600000).toISOString(), tokens: 10000 },
+			{ timestamp: new Date(now - 2 * 86_400_000).toISOString(), tokens: 20000 },
+		];
+		const result = calculateBudget(runs, now);
+		expect(result.dailyUsed).toBe(10000);
+		expect(result.weeklyUsed).toBe(30000);
+	});
+
+	it("returns zeros for empty runs", () => {
+		const result = calculateBudget([]);
+		expect(result.dailyUsed).toBe(0);
+		expect(result.weeklyUsed).toBe(0);
+		expect(result.dailyPct).toBe(0);
+		expect(result.weeklyPct).toBe(0);
+	});
+
+	it("returns zeros for null runs", () => {
+		const result = calculateBudget(null);
+		expect(result.dailyUsed).toBe(0);
+	});
+
+	it("handles runs with missing tokens field", () => {
+		const now = Date.now();
+		const runs = [
+			{ timestamp: new Date(now - 3600000).toISOString() },
+		];
+		const result = calculateBudget(runs, now);
+		expect(result.dailyUsed).toBe(0);
+	});
+});
+
+describe("trackApiStatus", () => {
+	it("detects transition from unavailable to available", () => {
+		const prev = { available: false, since: "2026-01-01T00:00:00Z" };
+		const result = trackApiStatus(true, prev);
+		expect(result.available).toBe(true);
+		expect(result.transitioned).toBe(true);
+		expect(result.previousState).toBe("unavailable");
+	});
+
+	it("detects transition from available to unavailable", () => {
+		const prev = { available: true, since: "2026-01-01T00:00:00Z" };
+		const result = trackApiStatus(false, prev);
+		expect(result.available).toBe(false);
+		expect(result.transitioned).toBe(true);
+		expect(result.previousState).toBe("available");
+	});
+
+	it("no transition when state unchanged (still unavailable)", () => {
+		const prev = { available: false, since: "2026-01-01T00:00:00Z" };
+		const result = trackApiStatus(false, prev);
+		expect(result.available).toBe(false);
+		expect(result.transitioned).toBe(false);
+		expect(result.since).toBe("2026-01-01T00:00:00Z");
+	});
+
+	it("no transition when state unchanged (still available)", () => {
+		const prev = { available: true, since: "2026-02-01T00:00:00Z" };
+		const result = trackApiStatus(true, prev);
+		expect(result.available).toBe(true);
+		expect(result.transitioned).toBe(false);
+		expect(result.since).toBe("2026-02-01T00:00:00Z");
+	});
+
+	it("handles null previous status (first run)", () => {
+		const result = trackApiStatus(false, null);
+		expect(result.available).toBe(false);
+		expect(result.transitioned).toBe(false);
+		expect(result.previousState).toBeNull();
+		expect(result.since).toBeTruthy(); // gets a new timestamp
+	});
+
+	it("preserves since timestamp when state unchanged", () => {
+		const since = "2026-01-15T12:00:00Z";
+		const result = trackApiStatus(true, { available: true, since });
+		expect(result.since).toBe(since);
+	});
+
+	it("updates since timestamp on transition", () => {
+		const result = trackApiStatus(true, { available: false, since: "2026-01-01T00:00:00Z" });
+		expect(result.since).not.toBe("2026-01-01T00:00:00Z");
 	});
 });

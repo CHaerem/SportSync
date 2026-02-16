@@ -123,6 +123,8 @@ async function main() {
 	// 4. Batch and enrich
 	let enrichedCount = 0;
 	let failedBatches = 0;
+	let totalPromptChars = 0;
+	let totalResponseChars = 0;
 
 	// Filter to only events needing enrichment (skip already-enriched)
 	const needsEnrichment = events.filter(e => !e.enrichedAt);
@@ -143,9 +145,15 @@ async function main() {
 
 			try {
 				const userPrompt = buildUserPrompt(batch);
+				if (useClaudeCLI) {
+					totalPromptChars += (systemPrompt + userPrompt).length;
+				}
 				const result = useClaudeCLI
 					? await completeWithClaudeCLI(systemPrompt, userPrompt)
 					: await llm.completeJSON(systemPrompt, userPrompt);
+				if (useClaudeCLI && result) {
+					totalResponseChars += JSON.stringify(result).length;
+				}
 
 				const enrichments = result.events;
 				if (!Array.isArray(enrichments) || enrichments.length !== batch.length) {
@@ -196,7 +204,12 @@ async function main() {
 	// 6. Write enriched events + quality report
 	writeJsonPretty(eventsPath, events);
 	const tokenUsage = useClaudeCLI
-		? { input: 0, output: 0, calls: enrichedCount > 0 ? Math.ceil(events.length / BATCH_SIZE) - failedBatches : 0, total: 0, tracked: false }
+		? (() => {
+			const estInput = Math.ceil(totalPromptChars / 4);
+			const estOutput = Math.ceil(totalResponseChars / 4);
+			const calls = enrichedCount > 0 ? Math.ceil(needsEnrichment.length / BATCH_SIZE) - failedBatches : 0;
+			return { input: estInput, output: estOutput, calls, total: estInput + estOutput, tracked: false, estimated: true };
+		})()
 		: llm.getUsage();
 
 	writeJsonPretty(qualityPath, {
