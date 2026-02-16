@@ -234,7 +234,7 @@ describe("evaluatePipelineHealth()", () => {
 		expect(result.details).toContain("fresh");
 	});
 
-	it("scores 0.75 when health report is fresh but has issues", () => {
+	it("scores 0.75 when health report is fresh but has actionable issues", () => {
 		writeJson(path.join(dataDir, "health-report.json"), {
 			generatedAt: new Date().toISOString(),
 			status: "warning",
@@ -245,7 +245,24 @@ describe("evaluatePipelineHealth()", () => {
 		const result = evaluatePipelineHealth(dataDir);
 		expect(result.score).toBe(0.75);
 		expect(result.status).toBe("partial");
-		expect(result.details).toContain("1 issue");
+		expect(result.details).toContain("1 actionable");
+	});
+
+	it("scores 1.0 when all issues are known data gaps or info severity", () => {
+		writeJson(path.join(dataDir, "health-report.json"), {
+			generatedAt: new Date().toISOString(),
+			status: "warning",
+			issues: [
+				{ severity: "info", code: "empty_day_snapshot", message: "2 snapshots empty" },
+				{ severity: "info", code: "quota_api_unavailable", message: "Quota API unavailable" },
+				{ severity: "warning", code: "sport_zero_events", message: "tennis: 0 events" },
+				{ severity: "warning", code: "sport_zero_events", message: "esports: 0 events" },
+			],
+		});
+		const result = evaluatePipelineHealth(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("info/known");
 	});
 
 	it("scores 0.5 when health report exists but is stale (> 6h)", () => {

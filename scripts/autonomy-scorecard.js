@@ -165,11 +165,16 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 
 	if (ageMs < 6 * MS_PER_HOUR) {
 		const label = ageMinutes < 60 ? `${ageMinutes} min` : `${ageHours}h`;
-		const issueCount = Array.isArray(report.issues) ? report.issues.length : 0;
-		if (issueCount > 0) {
-			return makeLoop(0.75, `Health report is fresh (${label} old) but has ${issueCount} issue(s)`);
+		// Only count actionable issues (warning/critical, excluding known data-availability patterns)
+		const KNOWN_DATA_GAPS = new Set(["sport_zero_events", "quota_api_unavailable"]);
+		const actionableIssues = Array.isArray(report.issues)
+			? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
+			: [];
+		const totalIssues = Array.isArray(report.issues) ? report.issues.length : 0;
+		if (actionableIssues.length > 0) {
+			return makeLoop(0.75, `Health report is fresh (${label} old) but has ${actionableIssues.length} actionable issue(s) (${totalIssues} total)`);
 		}
-		return makeLoop(1.0, `Health report is fresh (${label} old)`);
+		return makeLoop(1.0, `Health report is fresh (${label} old), ${totalIssues} issue(s) are info/known`);
 	}
 
 	return makeLoop(0.5, `Health report exists but is stale (${ageHours}h old)`);
