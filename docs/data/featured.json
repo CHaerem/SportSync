@@ -1,28 +1,51 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Gold medal Monday in Milano-Cortina"
-    },
-    {
-      "type": "event-group",
-      "label": "🏅 Olympics today",
-      "items": [
-        "Kristoffersen in men's slalom final, 10:00",
-        "Laegreid & Botn in biathlon relay, 14:00"
-      ]
-    },
-    {
-      "type": "narrative",
-      "text": "Norway chases two golds today. Kristoffersen aims for the alpine skiing medal that's eluded Norwegian men, while the biathlon relay squad hunts dominance in their signature discipline."
+      "type": "event-line",
+      "text": "⚽ Girona v Barcelona, 21:00, La Liga — Catalan derby as Barcelona visits Girona"
     },
     {
       "type": "event-line",
-      "text": "⚽ Barcelona at Girona — Catalan derby, 21:00"
+      "text": "🏅 Alpine Skiing — Men's Slalom, 10:00 — Winter Olympics 2026"
     },
     {
-      "type": "narrative",
-      "text": "After Wednesday's 4-0 Copa del Rey humiliation at Atlético, Barcelona must respond. Two points behind Real Madrid with a game in hand — the title race stays alive only if they win."
+      "type": "event-line",
+      "text": "🏅 Biathlon — Men's Relay 4x7.5km, 14:00 — Winter Olympics 2026"
+    },
+    {
+      "type": "section",
+      "id": "olympics-2026",
+      "title": "Winter Olympics 2026",
+      "emoji": "🏅",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "14:00 — Biathlon — Men's Relay 4x7.5km",
+          "type": "event"
+        },
+        {
+          "text": "09:45 — Cross-Country Skiing — Team Sprint Free",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Roman Imperium Cup V",
+          "type": "event"
+        },
+        {
+          "text": "14:00 — Biathlon — Men's Mass Start",
+          "type": "event"
+        },
+        {
+          "text": "16:00 — Ski Jumping — Team Large Hill",
+          "type": "event"
+        },
+        {
+          "text": "11:00 — Cross-Country Skiing — Men's 50km Mass Start Classic",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
       "type": "divider",
@@ -30,13 +53,17 @@
     },
     {
       "type": "event-line",
-      "text": "🏅 Wed 09:45 — Klæbo leads team sprint free"
+      "text": "🏆 Thu 10:00 — Roman Imperium Cup V"
     },
     {
       "type": "event-line",
-      "text": "⚽ Wed 21:00 — Arsenal at Wolves, top-4 battle"
+      "text": "⚽ Wed 21:00 — Arsenal at Wolverhampton Wanderers"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-16T08:58:18.177Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-16T09:38:57.362Z",
+  "provider": "fallback"
 }
