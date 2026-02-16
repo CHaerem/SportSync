@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-14T12:54:06.916Z",
-    "editorial": {
-      "score": 76,
-      "mustWatchCoverage": 0.2,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 101,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 10,
-      "warningCount": 10,
-      "pass": true
-    },
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalans\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"Los Blancos\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Villarreal at Getafe\" but events.json has 16:15. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 30 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 3,
-        "total": 0,
-        "tracked": false
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 4,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-14T13:06:21.615Z",
     "editorial": {
       "score": 72,
@@ -5783,6 +5718,81 @@
         "calls": 5,
         "total": 197350,
         "costUSD": 0.63445225,
+        "realPct": 100
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-16T17:23:17.932Z",
+    "editorial": {
+      "score": 75,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 2,
+      "avgScore": 115,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 5,
+      "warningCount": 5,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 118216,
+        "output": 3200,
+        "calls": 4,
+        "total": 121416,
+        "costUSD": 0.41044800000000004,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32803,
+        "output": 340,
+        "cacheCreation": 17592,
+        "cacheRead": 15208,
+        "total": 33143,
+        "costUSD": 0.12643700000000002,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 151019,
+        "output": 3540,
+        "calls": 5,
+        "total": 154559,
+        "costUSD": 0.5368850000000001,
         "realPct": 100
       }
     }
