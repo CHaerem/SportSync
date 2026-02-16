@@ -936,6 +936,10 @@ class Dashboard {
 				streams.forEach(s => { html += `<span class="pick-stream">${this.esc(s.platform || s)}</span>`; });
 				html += '</div>';
 			}
+			if (typeof pick.score === 'number' && pick.score > 0) {
+				const pct = Math.min(100, Math.round((pick.score / 150) * 100));
+				html += `<div class="pick-confidence" title="Match score: ${pick.score}"><div class="pick-confidence-bar" style="width:${pct}%"></div></div>`;
+			}
 			html += `</div>`;
 			html += `</div>`;
 		});
