@@ -1,0 +1,24 @@
+name: Setup SportSync
+description: Checkout, install Node.js, and install dependencies
+
+inputs:
+  fetch-depth:
+    description: Git fetch depth
+    default: '1'
+  node-version:
+    description: Node.js version
+    default: '20'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - run: npm ci
+      shell: bash

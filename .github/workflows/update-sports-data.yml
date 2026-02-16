@@ -36,24 +36,10 @@ jobs:
       issues: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: |
-          npm install node-fetch@2.7.0
-          npm install
+      - uses: ./.github/actions/setup
 
       - name: Create data directory
-        run: |
-          mkdir -p docs/data
+        run: mkdir -p docs/data
 
       - name: Fetch All Sports Data
         run: |

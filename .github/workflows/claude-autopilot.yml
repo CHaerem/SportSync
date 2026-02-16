@@ -24,15 +24,7 @@ jobs:
       issues: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - run: npm ci
+      - uses: ./.github/actions/setup
 
       - name: Install Playwright for visual validation
         run: npx playwright install chromium --with-deps
