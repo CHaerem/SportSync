@@ -315,6 +315,36 @@
       "turns_used": 4,
       "lesson": "Data quality guards in the UI layer are quick wins — prevent misleading displays without touching the data pipeline.",
       "scouted": 5
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Update roadmap: mark 7 already-implemented tasks as DONE",
+      "outcome": "completed",
+      "pr": 93,
+      "pillar": "code",
+      "details": "Tasks #3 (tennis results), #4 (F1 results), #7 (golf fallback), #10 (pipeline-health tests), #11 (sync-configs tests), #12 (test fix), and #23 (intervention tracking) were all already implemented but roadmap was stale.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 3,
+      "turns_estimated": 2,
+      "lesson": "Always verify task completion before starting work — many tasks were already done by previous runs but roadmap wasn't updated.",
+      "scouted": 0,
+      "meta_insight": "Roadmap staleness is a recurring issue. Each completed task should update the roadmap atomically within its own PR."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add cross-loop dependency detection (Detector 7)",
+      "outcome": "completed",
+      "pr": 94,
+      "pillar": "quality",
+      "details": "Added analyzeCrossLoopDependencies() to analyze-patterns.js. Detects when enrichment or results drops correlate with editorial drops. 6 new tests. Wired into orchestrator and pattern-report.json.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 8,
+      "turns_estimated": 8,
+      "lesson": "Pattern detection tasks are straightforward when the data structure and existing detectors provide clear examples to follow.",
+      "scouted": 0,
+      "meta_insight": "The analyze-patterns.js detector pattern is highly composable — adding new detectors takes minimal effort because the structure is consistent."
     }
   ]
 }

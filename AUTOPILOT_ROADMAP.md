@@ -290,7 +290,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 23. [DONE] (already implemented) **Add intervention effectiveness tracking** — `analyzeInterventionEffectiveness()` in `scripts/analyze-patterns.js` (Detector 6) already tracks per-hint-type effectiveness rates by comparing consecutive quality-history entries. Outputs to `pattern-report.json` as `interventionEffectiveness`. Hint fatigue also tracked by Detector 4.
 
-24. [PENDING] [MAINTENANCE] **Add cross-loop dependency detection** — Enrichment quality affects featured quality. When featured scores drop, check if enrichment scores also dropped in the same window. Record the correlation in pattern-report.json so the autopilot fixes root causes not symptoms.
+24. [DONE] (PR #94) **Add cross-loop dependency detection** — `analyzeCrossLoopDependencies()` Detector 7 in `scripts/analyze-patterns.js`. Checks enrichment→editorial and results→editorial correlations. 6 new tests.
 
 25. [PENDING] [MAINTENANCE] **Add quality trend visualization data** — Extend `quality-history.json` snapshots to include a rolling 7-day average alongside per-run scores. The autopilot can then detect slow declines that per-run noise masks.
 
