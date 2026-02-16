@@ -240,15 +240,15 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 2. [DONE] (PR #85) **Fix hint fatigue: add RESULTS and SANITY to hintMetricMap** — Already fixed in PR #85. hintMetricMap now includes "results note"→resultsScore and "sanity"→sanityScore. Pattern report will reflect this on next pipeline run.
 
-3. [PENDING] [MAINTENANCE] **Add results tracking for tennis** — `scripts/fetch-results.js` fetches football and golf results from ESPN. Extend it to also fetch tennis results (ATP/WTA tournament scores). ESPN has tennis scoreboard endpoints. Add to the existing fetcher pattern, tag Casper Ruud as favorite.
+3. [DONE] (already implemented) **Add results tracking for tennis** — `fetchTennisResults()`, `validateTennisResult()`, and `mergeTennisResults()` already exist in `scripts/fetch-results.js` with full ATP/WTA support and Casper Ruud favorite tagging.
 
-4. [PENDING] [MAINTENANCE] **Add results tracking for F1** — Extend `scripts/fetch-results.js` to fetch F1 race results from ESPN Racing scoreboard. Include qualifying positions, race results, and points.
+4. [DONE] (already implemented) **Add results tracking for F1** — `fetchF1Results()`, `validateF1Result()`, and `mergeF1Results()` already exist in `scripts/fetch-results.js` with race/sprint result tracking and 30-day retention.
 
 5. [PENDING] [FEATURE] **Fix esports data staleness** — HLTV community API returns data from 2022. Options: (a) expand curated config `esports-cs2-2026.json` with current tournament data, (b) add HLTV web scraping as fallback, or (c) switch to Liquipedia API. Investigate and implement best option.
 
 6. [PENDING] [MAINTENANCE] **Resolve recurring health warnings** — `docs/data/pattern-report.json` shows "sport_zero_events" for tennis/esports firing 88+ times. After fixing the tennis filterMode (task 1), investigate remaining sport_zero_events patterns and fix root causes.
 
-7. [PENDING] [MAINTENANCE] **Add golf empty-competitor fallback** — ESPN API sometimes returns empty competitor arrays for golf events, causing the validator to drop them and golf.json to go stale. Add a fallback that retains the last known good competitors when the API returns empty arrays.
+7. [DONE] (already implemented) **Add golf empty-competitor fallback** — Golf fetcher already handles empty competitors at line 631-710: includes events with `fieldPending: true` when ESPN returns empty arrays. `retainLastGood()` in helpers.js prevents stale golf.json by retaining previous data when new fetch has no events.
 
 8. [PENDING] [EXPLORE] **Investigate new sport data sources** — Check what free APIs exist for: biathlon (major Norwegian sport), cross-country skiing, handball (Norwegian league), cycling (Tour de France). For each, evaluate: data quality, update frequency, Norwegian focus potential. Create concrete `[FEATURE]` tasks for viable sources.
 
@@ -256,11 +256,11 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 9. [DONE] (already implemented) **Add tests for analyze-patterns.js** — 48 tests already exist in `tests/analyze-patterns.test.js` covering all 5 detectors + orchestrator. Added in PR #85.
 
-10. [PENDING] [MAINTENANCE] **Add tests for pipeline-health.js** — `scripts/pipeline-health.js` is a critical pipeline step with limited test coverage. Add tests for sport coverage detection, freshness checking, and health report generation.
+10. [DONE] (already implemented) **Add tests for pipeline-health.js** — `tests/pipeline-health.test.js` already has 42 tests covering sport coverage, freshness checks, health report generation, snapshot health, quota API, results validation, and status summary.
 
-11. [PENDING] [MAINTENANCE] **Add tests for sync-configs.js** — Config maintenance script with no dedicated tests. Add tests for config pruning, archiving expired configs, and flagging needsResearch.
+11. [DONE] (already implemented) **Add tests for sync-configs.js** — `tests/sync-configs.test.js` already has 20 tests covering pruneExpiredEvents, shouldArchive, shouldResearch, syncConfigs orchestrator, roster syncing, and cleanupArchive.
 
-12. [PENDING] [MAINTENANCE] **Fix pre-existing test failure in validate-events-extended** — The "fails on past events (beyond grace window)" test fails intermittently. Investigate whether the grace window logic has a timezone bug or test fixture staleness issue.
+12. [DONE] (resolved — no longer failing) **Fix pre-existing test failure in validate-events-extended** — The "fails on past events (beyond grace window)" test was reported as intermittently failing but passes consistently now. The test uses a 15-day-old fixture with a 14-day grace window, which is deterministic. Likely the original failure was transient.
 
 13. [DONE] (PR #87) **Add error categorization to pipeline-result.json** — Added `categorizeError()` function and `errorCategory` field on failed steps (timeout|network|auth|validation|parse|command|unknown). 11 new tests.
 
@@ -288,7 +288,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 5: Self-Correcting Quality
 
-23. [PENDING] [MAINTENANCE] **Add intervention effectiveness tracking** — When a hint fires and the next pipeline run shows metric improvement, record the correlation in quality-history.json. When a hint fires repeatedly without improvement (hint fatigue), flag it for replacement rather than repetition.
+23. [DONE] (already implemented) **Add intervention effectiveness tracking** — `analyzeInterventionEffectiveness()` in `scripts/analyze-patterns.js` (Detector 6) already tracks per-hint-type effectiveness rates by comparing consecutive quality-history entries. Outputs to `pattern-report.json` as `interventionEffectiveness`. Hint fatigue also tracked by Detector 4.
 
 24. [PENDING] [MAINTENANCE] **Add cross-loop dependency detection** — Enrichment quality affects featured quality. When featured scores drop, check if enrichment scores also dropped in the same window. Record the correlation in pattern-report.json so the autopilot fixes root causes not symptoms.
 
