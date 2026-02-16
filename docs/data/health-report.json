@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T07:41:41.473Z",
+  "generatedAt": "2026-02-16T08:24:55.618Z",
   "eventCount": 32,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 20,
-      "previousCount": 13,
-      "delta": 7
+      "previousCount": 20,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 808,
+      "ageMinutes": 851,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 572,
+      "ageMinutes": 615,
       "stale": true
     },
     "tennis.json": {
@@ -119,12 +119,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 808 minutes old"
+      "message": "chess.json: data is 851 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 572 minutes old"
+      "message": "golf.json: data is 615 minutes old"
     },
     {
       "severity": "warning",
@@ -139,7 +139,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 95% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 82/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 78/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

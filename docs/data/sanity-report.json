@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T07:41:47.243Z",
+  "generatedAt": "2026-02-16T08:25:01.121Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 32,
@@ -55,10 +55,10 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 82,
+    "editorialScore": 78,
     "issueCount": 6
   },
   "findings": [
@@ -66,16 +66,6 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Qatar Airways Australian Grand Prix\" is 18 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 9 hours old"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Two Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -89,9 +79,9 @@
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 3,
     "critical": 0,
-    "warning": 5,
+    "warning": 3,
     "info": 0
   },
   "pass": true,

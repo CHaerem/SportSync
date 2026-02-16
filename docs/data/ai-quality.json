@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-16T07:41:25.889Z",
+  "generatedAt": "2026-02-16T08:24:53.544Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 15903,
+    "blockCount": 6,
+    "generationMs": 35265,
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -17,9 +17,9 @@
     }
   },
   "editorial": {
-    "score": 82,
+    "score": 78,
     "metrics": {
-      "mustWatchCoverage": 0.4,
+      "mustWatchCoverage": 0.25,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -27,7 +27,7 @@
       "blockCountTarget": 1
     },
     "issues": [
-      "Only 40% of must-watch events covered in blocks"
+      "Only 25% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
@@ -61,7 +61,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.656
+      "tagsCoverage": 0.719
     },
     "after": {
       "totalEvents": 32,
@@ -73,11 +73,13 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 11,
+    "fallbackFieldsFilled": 9,
     "aiUpdatedFields": 32,
     "failedBatches": 0,
     "totalEvents": 32,
-    "hintsApplied": [],
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
