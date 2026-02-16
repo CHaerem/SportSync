@@ -18,7 +18,7 @@ import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey, parseCliJsonOutput } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints, computeRollingAverages } from "./lib/ai-quality-gates.js";
-import { buildWatchPlan } from "./lib/watch-plan.js";
+import { buildWatchPlan, computeFeedbackAdjustments } from "./lib/watch-plan.js";
 import { factCheck, buildFactCheckHints, appendFactCheckHistory } from "./lib/fact-checker.js";
 
 const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
@@ -927,9 +927,16 @@ async function main() {
 	// Only write watch-plan and quality for the main live featured.json (not voice variants or date modes)
 	if (isLiveMode && !FEATURED_SUFFIX) {
 		const generationMs = Date.now() - generationStart;
+		// Read watch feedback to adjust scoring based on user thumbs-up/down
+		const engagementData = readJsonIfExists(path.join(dataDir, "engagement-data.json"));
+		const feedbackAdjustments = computeFeedbackAdjustments(engagementData?.watchFeedback);
+		const enrichedContext = Object.keys(feedbackAdjustments).length > 0
+			? { ...userContext, _feedbackAdjustments: feedbackAdjustments }
+			: userContext;
+
 		const watchPlan = buildWatchPlan(events, {
 			now,
-			userContext,
+			userContext: enrichedContext,
 			featured,
 		});
 		writeJsonPretty(watchPlanPath, watchPlan);

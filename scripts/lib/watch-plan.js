@@ -59,6 +59,32 @@ function getSportPreferenceWeight(event, userContext) {
 	return 0;
 }
 
+/**
+ * Compute per-sport feedback adjustments from watch feedback data.
+ * Parses sport from pick IDs (format: sport-title-time) and tallies up/down.
+ * Returns a map of { sport: adjustment } where positive = user likes, negative = user dislikes.
+ */
+export function computeFeedbackAdjustments(watchFeedback) {
+	if (!watchFeedback || typeof watchFeedback !== "object") return {};
+	const sportCounts = {};
+	for (const [key, entry] of Object.entries(watchFeedback)) {
+		if (!entry?.value) continue;
+		const sport = key.split("-")[0];
+		if (!sport) continue;
+		if (!sportCounts[sport]) sportCounts[sport] = { up: 0, down: 0 };
+		if (entry.value === "up") sportCounts[sport].up++;
+		else if (entry.value === "down") sportCounts[sport].down++;
+	}
+	const adjustments = {};
+	for (const [sport, counts] of Object.entries(sportCounts)) {
+		const total = counts.up + counts.down;
+		if (total === 0) continue;
+		const ratio = (counts.up - counts.down) / total;
+		adjustments[sport] = Math.round(ratio * 10);
+	}
+	return adjustments;
+}
+
 export function scoreEventForWatchPlan(event, now, userContext = {}) {
 	const minutes = startsInMinutes(event.time, now);
 	const importance = toImportance(event);
@@ -101,6 +127,14 @@ export function scoreEventForWatchPlan(event, now, userContext = {}) {
 	}
 
 	score += getSportPreferenceWeight(event, userContext);
+
+	// Apply watch feedback adjustment (per-sport boost/penalty from user thumbs)
+	const feedbackAdj = userContext?._feedbackAdjustments?.[event.sport];
+	if (feedbackAdj) {
+		score += feedbackAdj;
+		if (feedbackAdj > 0) reasons.push("Liked sport");
+	}
+
 	return { score, minutes, reasons };
 }
 
