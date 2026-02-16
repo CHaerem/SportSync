@@ -5,6 +5,7 @@ import {
 	analyzeStagnantLoops,
 	analyzeHintFatigue,
 	analyzeAutopilotFailures,
+	analyzeInterventionEffectiveness,
 	analyzePatterns,
 } from "../scripts/analyze-patterns.js";
 import fs from "fs";
@@ -416,6 +417,92 @@ describe("analyzeAutopilotFailures", () => {
 	});
 });
 
+// --- Detector 6: Intervention Effectiveness ---
+
+describe("analyzeInterventionEffectiveness", () => {
+	it("returns empty for insufficient data", () => {
+		expect(analyzeInterventionEffectiveness(null)).toEqual({});
+		expect(analyzeInterventionEffectiveness([])).toEqual({});
+		expect(analyzeInterventionEffectiveness([{}])).toEqual({});
+	});
+
+	it("tracks improvement when hint fires and metric goes up", () => {
+		const history = [
+			{ hintsApplied: ["must-watch events are missing"], editorial: { mustWatchCoverage: 0.3 } },
+			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.6 } },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.mustWatchCoverage.fires).toBe(1);
+		expect(eff.mustWatchCoverage.improved).toBe(1);
+		expect(eff.mustWatchCoverage.effectivenessRate).toBe(1);
+	});
+
+	it("tracks unchanged when metric stays the same", () => {
+		const history = [
+			{ hintsApplied: ["editorial quality needs work"], editorial: { score: 80 } },
+			{ hintsApplied: [], editorial: { score: 80 } },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.editorialScore.fires).toBe(1);
+		expect(eff.editorialScore.unchanged).toBe(1);
+		expect(eff.editorialScore.effectivenessRate).toBe(0);
+	});
+
+	it("tracks worsened when metric drops after hint", () => {
+		const history = [
+			{ hintsApplied: ["must-watch events are missing"], editorial: { mustWatchCoverage: 0.8 } },
+			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.5 } },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.mustWatchCoverage.worsened).toBe(1);
+	});
+
+	it("accumulates across multiple entries", () => {
+		const history = [
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 50 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 60 } },
+			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 55 } },
+			{ hintsApplied: [], results: { score: 70 } },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.resultsScore.fires).toBe(3);
+		expect(eff.resultsScore.improved).toBe(2); // 50→60 and 55→70
+		expect(eff.resultsScore.worsened).toBe(1); // 60→55
+	});
+
+	it("handles SANITY hints with inverted metric", () => {
+		const history = [
+			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 10 } },
+			{ hintsApplied: [], sanity: { findingCount: 5 } }, // fewer findings = improved
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.sanityScore.fires).toBe(1);
+		expect(eff.sanityScore.improved).toBe(1); // lower count = higher score
+	});
+
+	it("maps unknown hints correctly", () => {
+		const history = [
+			{ hintsApplied: ["some random hint"] },
+			{ hintsApplied: [] },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.unknown.fires).toBe(1);
+		expect(eff.unknown.unchanged).toBe(1); // null metrics = unchanged
+	});
+
+	it("deduplicates hint types per entry", () => {
+		const history = [
+			{
+				hintsApplied: ["must-watch A", "must watch B"], // both map to mustWatchCoverage
+				editorial: { mustWatchCoverage: 0.3 },
+			},
+			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.6 } },
+		];
+		const eff = analyzeInterventionEffectiveness(history);
+		expect(eff.mustWatchCoverage.fires).toBe(1); // not 2
+	});
+});
+
 // --- Orchestrator ---
 
 describe("analyzePatterns", () => {
@@ -431,6 +518,7 @@ describe("analyzePatterns", () => {
 		expect(report.patternsDetected).toBe(0);
 		expect(report.patterns).toEqual([]);
 		expect(report.issueCodeHistory).toEqual({});
+		expect(report.interventionEffectiveness).toEqual({});
 		expect(report.summary).toContain("0 patterns");
 	});
 
