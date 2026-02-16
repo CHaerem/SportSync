@@ -683,8 +683,30 @@ export async function fetchGolfESPN() {
 							console.log(`No Norwegian players in ${ev.name} field (verified via pgatour.com), skipping`);
 						}
 					} else {
-						// Cannot verify Norwegian participation — skip rather than fabricate
-						console.warn(`Skipping ${ev.name} (${tour.name}): no ESPN field and no PGA Tour verification available`);
+						// Cannot verify Norwegian participation — include as pending so
+						// golf.json stays fresh and retainLastGood doesn't trigger
+						console.log(`Including ${ev.name} (${tour.name}) with pending field (no ESPN competitors, no PGA Tour match)`);
+						const startTime3 = normalizeToUTC(ev.date);
+						const endDate3 = new Date(new Date(startTime3).getTime() + 3 * 24 * 60 * 60 * 1000);
+						endDate3.setUTCHours(20, 0, 0, 0);
+						tournaments.push({
+							name: tour.name,
+							events: [{
+								title: ev.name || "Golf Tournament",
+								meta: tour.name,
+								tournament: tour.name,
+								time: startTime3,
+								endTime: endDate3.toISOString(),
+								venue,
+								sport: "golf",
+								streaming: getNorwegianStreaming("golf", tour.name),
+								norwegian: false,
+								norwegianPlayers: [],
+								featuredGroups: [],
+								totalPlayers: 0,
+								fieldPending: true,
+							}]
+						});
 					}
 				}
 				// If competitors exist but no Norwegians found, skip silently (not relevant)
