@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T17:23:25.914Z",
+  "generatedAt": "2026-02-16T18:46:41.721Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 34,
@@ -12,9 +12,7 @@
       "f1"
     ],
     "bands": {
-      "live": [
-        "Ski Jumping — Men's Super Team"
-      ],
+      "live": [],
       "today": [
         "Barcelona at Girona"
       ],
@@ -56,13 +54,14 @@
       "ended": [
         "AT&T Pebble Beach Pro-Am",
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals",
-        "Alpine Skiing — Men's Slalom"
+        "Alpine Skiing — Men's Slalom",
+        "Ski Jumping — Men's Super Team"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 75,
+    "editorialScore": 74,
     "issueCount": 8
   },
   "findings": [
@@ -78,14 +77,24 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"14:45\" for \"Alpine Skiing — Men's Slalom\" but events.json has 09:00"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 3,
+    "total": 5,
     "critical": 0,
-    "warning": 3,
+    "warning": 5,
     "info": 0
   },
   "pass": true,
