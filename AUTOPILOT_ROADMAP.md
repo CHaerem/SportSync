@@ -196,23 +196,27 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 ### Task Efficiency Patterns
 
-*(To be filled by the autopilot as it learns)*
+- **Direct-to-main saves 5+ turns for LOW-risk changes**: Inline golf/F1 widgets took 4 turns direct vs ~12 for branch-pr. Safe when changes are contained to one file and follow existing patterns.
+- **Pipeline scripts (generate-insights) take ~15 turns**: Main time cost is understanding data structures and writing comprehensive tests. Watch for falsy zero with `||` — use `??` for numeric map lookups.
+- **Extending existing scripts (evolve-preferences) is efficient at ~10 turns**: Pattern is clear, tests are additive. Key: understand data flow before coding.
+- **Caching improvements are high-leverage**: Event fingerprinting (6 turns) saves AI calls on every pipeline run. Compound returns.
+- **Always verify existing implementations before starting**: Multiple tasks in early roadmap were already done but not marked. Check code first, then code.
 
 ### Heuristic Effectiveness
 
 | Heuristic | Tasks Found | Tasks Completed | Hit Rate | Notes |
 |-----------|-------------|-----------------|----------|-------|
-| A. Dead Field | - | - | - | |
-| B. Data-to-UI Gap | - | - | - | |
-| C. Fetcher Waste | - | - | - | |
-| D. Sanity Report | - | - | - | |
-| E. Pattern Report | - | - | - | |
-| F. Opportunity | - | - | - | |
-| G. Dashboard UX | - | - | - | |
-| H. Capability Seed | - | - | - | |
-| I. User Feedback | - | - | - | |
-| J. Upstream Issues | - | - | - | |
-| K. Vision-Guided | - | - | - | |
+| A. Dead Field | 1 | 1 | 100% | Golf featuredGroups (PR #49-50) |
+| B. Data-to-UI Gap | 3 | 3 | 100% | Inline PL/golf/F1 standings, insights rendering |
+| C. Fetcher Waste | 0 | 0 | - | Not yet applied systematically |
+| D. Sanity Report | 2 | 0 | 0% | Findings are mostly data/API issues, not code bugs |
+| E. Pattern Report | 3 | 2 | 67% | Health warning fix (PR #96), hint fatigue still data-driven |
+| F. Opportunity | 2 | 0 | 0% | Winter sports + cycling identified, not yet implemented |
+| G. Dashboard UX | 5 | 5 | 100% | a11y, PL table, watch-plan UI, insights cards |
+| H. Capability Seed | 2 | 2 | 100% | generate-insights, event fingerprinting |
+| I. User Feedback | 0 | 0 | - | No feedback issues submitted yet |
+| J. Upstream Issues | 0 | 0 | - | Quota API still unavailable |
+| K. Vision-Guided | 3 | 2 | 67% | Favorites evolution, insights pipeline |
 
 ### Pillar Progress
 
@@ -226,7 +230,12 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 ### Run History Insights
 
-*(Autopilot updates this with cross-run patterns)*
+**Run 2026-02-16 (Run 2):** 4 tasks completed + 7 tasks scouted. First run using process strategy file. Key learnings:
+- Direct-to-main mode works well for single-file UI changes (2 uses, 0 issues)
+- Branch-pr mode used for multi-file logic changes (2 uses, 0 merge conflicts)
+- First pipeline step added via manifest editing (generate-insights) — proves Pillar 3 capability
+- Most pattern-report issues are data availability (Olympics, API timing), not code bugs
+- Scouting found actionable UX + pipeline tasks. Heuristics B, G, H most productive.
 
 ---
 
@@ -712,6 +721,34 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 ### Data Quality (Not Code Fixable)
 
 - [BLOCKED] data availability — RSS recap headline matching (0% rate): RSS feeds are dominated by Winter Olympics content. The `matchRssHeadline()` function works correctly but RSS simply lacks football match recap headlines during Olympics period. Will self-resolve as Olympics end.
+
+---
+
+## Scouted Tasks (2026-02-16)
+
+### HIGH Priority
+
+- [PENDING] [MAINTENANCE] **Add empty-sport explanatory text in dashboard** — Tennis and esports show 0 events but the dashboard silently hides these sports. Add a conditional render message like "No upcoming matches" for sports with `sportPreferences` of "medium" or higher but zero events. Prevents user confusion. Files: `docs/js/dashboard.js` (~20 lines in `renderBand()`).
+
+- [PENDING] [MAINTENANCE] **Export watch-plan feedback to pipeline** — PR #98 added thumbs-up/down UI. The feedback is stored in `localStorage` via `PreferencesManager.setWatchFeedback()` but isn't exported to the pipeline. Extend `exportForBackend()` to include `watchFeedback` data, then make `evolve-preferences.js` read it and adjust watch-plan scoring. Closes the watch-plan personalization loop. Files: `docs/js/preferences-manager.js`, `scripts/evolve-preferences.js` (~50 lines).
+
+### MEDIUM Priority
+
+- [PENDING] [FEATURE] **Add tennis ATP/WTA rankings to standings** — Tennis has "medium" user preference but no standings data. Add ATP rankings fetching to `scripts/fetch-standings.js` using ESPN tennis rankings endpoint. Store in `standings.json` under `tennis.atp`. Enables future inline widget. Files: `scripts/fetch-standings.js`, `tests/standings.test.js` (~80 lines).
+
+- [PENDING] [MAINTENANCE] **Add insights to service worker data cache** — `insights.json` was added to SW install cache but not to the DATA_FILES array for network-first updates. Add to DATA_FILES. File: `docs/sw.js` (1 line). Also add `recent-results.json` which is missing.
+
+- [PENDING] [FEATURE] **Add "no events" message for favorite sports** — When a sport the user follows has no upcoming events (tennis during off-season, esports with stale API), show a brief explanatory card in the dashboard. Reads sport preferences from `user-context.json` defaults and event data. Files: `docs/js/dashboard.js` (~30 lines).
+
+### LOW Priority
+
+- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. Check if CyclingArchives, UCI, or procyclingstats.com have free APIs or scrapable data. Norwegian cyclists (e.g., Markus Hoelgaard) could be tracked. Create `[FEATURE]` task if viable API found.
+
+### Data Quality (Not Code Fixable)
+
+- [BLOCKED] data availability — Stale golf/chess data: ESPN golf and chess endpoints sometimes return stale data (649-884 minutes old). This is an API timing issue, not a code bug. Pipeline-health.js monitors freshness and alerts.
+
+- [BLOCKED] data availability — All football recapHeadlines are null: RSS feeds during Olympics period lack football match recap headlines. The `matchRssHeadline()` function works correctly. Will self-resolve as Olympics end (Feb 26).
 
 ---
 

@@ -8,6 +8,7 @@ const DATA_FILES = [
     '/SportSync/data/standings.json',
     '/SportSync/data/rss-digest.json',
     '/SportSync/data/meta.json',
+    '/SportSync/data/recent-results.json',
     '/SportSync/data/autonomy-report.json',
     '/SportSync/data/health-report.json',
     '/SportSync/data/autopilot-log.json'

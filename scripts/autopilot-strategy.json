@@ -1,8 +1,8 @@
 {
   "_description": "Autopilot process strategy — the autopilot reads this at startup and evolves it based on what it learns. This file lives in an allowed path so the autopilot can modify it.",
-  "version": 1,
+  "version": 2,
   "updatedAt": "2026-02-16",
-  "updatedBy": "human",
+  "updatedBy": "autopilot",
 
   "shipModes": {
     "_description": "How to ship completed tasks. The autopilot chooses the mode per-task based on risk and efficiency.",
@@ -24,20 +24,25 @@
 
   "turnBudgets": {
     "_description": "Expected turn costs per activity. Updated by the autopilot based on actual measurements.",
-    "preflight": 8,
+    "preflight": 10,
     "perTask": {
-      "maintenanceDirect": 5,
-      "maintenanceBranchPr": 15,
-      "feature": 25,
+      "maintenanceDirect": 4,
+      "maintenanceBranchPr": 10,
+      "feature": 15,
       "explore": 8
     },
-    "scouting": 15,
+    "scouting": 10,
     "metaLearning": 5,
     "reserve": 10
   },
 
   "processNotes": {
     "_description": "Accumulated process knowledge. The autopilot adds notes here about what works and what doesn't.",
-    "entries": []
+    "entries": [
+      {
+        "date": "2026-02-16",
+        "note": "First run with strategy file. Direct-to-main used for 2 small tasks (4 turns each), branch-pr for 2 features (10-15 turns). Feature tasks were faster than estimated (15 vs 25 budget). Preflight was 10 turns (included branch cleanup). Scouting used 10 turns via Task agents. Total: ~70 turns for 4 tasks + scouting + meta. Updated turn budgets to match actuals."
+      }
+    ]
   }
 }
