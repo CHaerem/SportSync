@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildWatchPlan, scoreEventForWatchPlan } from "../scripts/lib/watch-plan.js";
+import { buildWatchPlan, scoreEventForWatchPlan, computeFeedbackAdjustments } from "../scripts/lib/watch-plan.js";
 
 describe("scoreEventForWatchPlan()", () => {
 	it("boosts favorite team and near-term events", () => {
@@ -97,4 +97,95 @@ describe("buildWatchPlan()", () => {
 		expect(plan.picks).toHaveLength(3);
 	});
 
+});
+
+describe("computeFeedbackAdjustments()", () => {
+	it("returns empty object for null/undefined input", () => {
+		expect(computeFeedbackAdjustments(null)).toEqual({});
+		expect(computeFeedbackAdjustments(undefined)).toEqual({});
+	});
+
+	it("computes positive adjustment for sport with all thumbs-up", () => {
+		const feedback = {
+			"football-match-1-2026-02-10t18:00:00z": { value: "up", timestamp: "2026-02-10T20:00:00Z" },
+			"football-match-2-2026-02-10t20:00:00z": { value: "up", timestamp: "2026-02-10T22:00:00Z" },
+		};
+		const adj = computeFeedbackAdjustments(feedback);
+		expect(adj.football).toBe(10);
+	});
+
+	it("computes negative adjustment for sport with all thumbs-down", () => {
+		const feedback = {
+			"golf-hovland-round-1-2026-02-10t12:00:00z": { value: "down", timestamp: "2026-02-10T14:00:00Z" },
+		};
+		const adj = computeFeedbackAdjustments(feedback);
+		expect(adj.golf).toBe(-10);
+	});
+
+	it("computes mixed adjustment correctly", () => {
+		const feedback = {
+			"football-match-a-2026-02-10t18:00:00z": { value: "up", timestamp: "2026-02-10T20:00:00Z" },
+			"football-match-b-2026-02-10t20:00:00z": { value: "down", timestamp: "2026-02-10T22:00:00Z" },
+			"football-match-c-2026-02-10t21:00:00z": { value: "up", timestamp: "2026-02-10T23:00:00Z" },
+		};
+		const adj = computeFeedbackAdjustments(feedback);
+		// 2 up, 1 down => ratio = 1/3 => round(3.33) = 3
+		expect(adj.football).toBe(3);
+	});
+
+	it("handles multiple sports independently", () => {
+		const feedback = {
+			"football-match-2026-02-10t18:00:00z": { value: "up", timestamp: "2026-02-10T20:00:00Z" },
+			"golf-hovland-2026-02-10t12:00:00z": { value: "down", timestamp: "2026-02-10T14:00:00Z" },
+		};
+		const adj = computeFeedbackAdjustments(feedback);
+		expect(adj.football).toBe(10);
+		expect(adj.golf).toBe(-10);
+	});
+
+	it("skips entries with no value", () => {
+		const feedback = {
+			"football-match-2026-02-10t18:00:00z": { timestamp: "2026-02-10T20:00:00Z" },
+		};
+		const adj = computeFeedbackAdjustments(feedback);
+		expect(adj).toEqual({});
+	});
+});
+
+describe("scoreEventForWatchPlan() with feedback adjustments", () => {
+	it("boosts score for sport with positive feedback", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "football",
+			title: "Test Match",
+			time: "2026-02-10T18:20:00Z",
+			homeTeam: "TeamA",
+			awayTeam: "TeamB",
+			importance: 3,
+			tags: [],
+		};
+		const base = scoreEventForWatchPlan(event, now, {});
+		const boosted = scoreEventForWatchPlan(event, now, {
+			_feedbackAdjustments: { football: 10 },
+		});
+		expect(boosted.score).toBe(base.score + 10);
+		expect(boosted.reasons).toContain("Liked sport");
+	});
+
+	it("penalizes score for sport with negative feedback", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "golf",
+			title: "PGA Event",
+			time: "2026-02-10T18:20:00Z",
+			importance: 3,
+			tags: [],
+		};
+		const base = scoreEventForWatchPlan(event, now, {});
+		const penalized = scoreEventForWatchPlan(event, now, {
+			_feedbackAdjustments: { golf: -10 },
+		});
+		expect(penalized.score).toBe(base.score - 10);
+		expect(penalized.reasons).not.toContain("Liked sport");
+	});
 });
