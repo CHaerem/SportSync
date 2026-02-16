@@ -88,6 +88,8 @@ This is a hybrid static/dynamic application:
 - **Live Score Polling**: Client-side ESPN polling every 60s for football scores and golf leaderboards
 - **Curated Event Configs**: `scripts/config/*.json` files auto-discovered by build pipeline
 - **Autonomous Discovery**: Config maintenance (prune, archive) + LLM-powered event/athlete discovery via Claude CLI + WebSearch
+- **Pipeline Manifest**: Declarative `scripts/pipeline-manifest.json` defines all pipeline steps — the autopilot can add/remove/reorder steps without touching the workflow file
+- **Capability Registry**: `scripts/generate-capabilities.js` auto-generates `docs/data/capabilities.json` — the autopilot reads this to identify system gaps
 - **No Backend**: Serverless architecture using only GitHub infrastructure
 
 ### Key Components
@@ -102,7 +104,8 @@ This is a hybrid static/dynamic application:
 
 ### Data Flow
 
-1. **GitHub Actions** run every 2 hours to fetch fresh sports data
+0. **Pipeline runner** (`scripts/run-pipeline.js`) reads `scripts/pipeline-manifest.json` and orchestrates all steps phase by phase. Writes `docs/data/pipeline-result.json` with per-step outcomes, timing, and gate status.
+1. **GitHub Actions** run every 2 hours, invoking the pipeline runner
 2. **API calls** to ESPN and fotball.no
 3. **JSON files** are generated and committed to `docs/data/`
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
@@ -130,7 +133,7 @@ This is a hybrid static/dynamic application:
 - `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
 - `npm run generate:multiday` - Generate yesterday recap + tomorrow preview briefings
-- `npm test` - Run all tests (vitest, 975 tests across 43 files)
+- `npm test` - Run all tests (vitest, 1295 tests across 55 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 - `npm run screenshot` - Take a screenshot of the dashboard (needs Playwright)
@@ -196,7 +199,9 @@ docs/
     ├── events.ics          # Calendar export
     ├── football.json       # Per-sport source files
     ├── golf.json / tennis.json / f1.json / chess.json / esports.json
-    └── meta.json           # Update timestamps
+    ├── meta.json           # Update timestamps
+    ├── capabilities.json   # System introspection: sports, gaps, pipeline steps (auto-generated)
+    └── pipeline-result.json # Pipeline runner: per-step outcomes, timing, gate (auto-generated)
 
 scripts/
 ├── fetch/                  # Modular API fetchers (one per sport)
@@ -233,6 +238,9 @@ scripts/
 ├── merge-open-data.js      # Merges open source + primary data
 ├── verify-schedules.js     # Schedule verification orchestrator → verification-history.json
 ├── evolve-preferences.js   # Preference evolution engine → preference-evolution.json
+├── run-pipeline.js         # Pipeline runner — reads manifest, orchestrates all phases
+├── generate-capabilities.js # Capability registry generator → capabilities.json
+├── pipeline-manifest.json  # Declarative pipeline step definitions (autopilot-editable)
 ├── validate-events.js      # Data integrity checks
 ├── build-ics.js            # Calendar export generator
 └── screenshot.js           # Dashboard screenshot for visual validation (Playwright)
@@ -241,7 +249,7 @@ scripts/
 ├── update-sports-data.yml  # Data pipeline (every 2 hours)
 └── claude-autopilot.yml    # Autonomous improvement agent (nightly)
 
-tests/                      # 975 tests across 43 files (vitest)
+tests/                      # 1295 tests across 55 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
@@ -320,8 +328,8 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 |-----|-------------|------------|
 | **User feedback loop** | Engagement tracking (click counts) flows from client to pipeline via GitHub Issues and `evolve-preferences.js`. Watch-plan picks render in the dashboard. Missing: explicit thumbs-up/down on watch-plan items for richer signal. | Low |
 | **Evolving preferences** | `evolve-preferences.js` reads engagement data and updates `user-context.json` sport weights. Missing: evolving favorite teams/players (currently only sport-level weights evolve). | Low |
-| **Self-expanding capabilities** | The autopilot now has creative scouting (opportunity detection, UX improvement, capability seeding heuristics) but hasn't yet demonstrated end-to-end feature creation from a self-discovered opportunity. | Medium |
-| **Resilience hardening** | 24 soft-failure handlers (`|| echo "failed"`) in the pipeline. Failures are swallowed silently — the system should detect, diagnose, and attempt repair autonomously. | Medium |
+| **Self-expanding capabilities** | Pipeline manifest pattern enables the autopilot to add pipeline steps by editing `scripts/pipeline-manifest.json`. Capability registry (`capabilities.json`) + heuristic K guide strategic decisions. First end-to-end self-discovered feature still pending demonstration. | Medium |
+| **Resilience hardening** | Pipeline manifest captures per-step outcomes in `pipeline-result.json`. Remaining gap: autopilot doesn't yet auto-diagnose and repair failed steps. | Low |
 | **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
 | **Watch-plan feedback** | Watch-plan picks render in the dashboard but there's no mechanism to capture user reactions (thumbs-up/down). Without this signal, personalization can't learn. | Low |
 
@@ -341,7 +349,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 **Phase 3 — Self-Expanding Capabilities**
 8. ~~Add "opportunity detection" to autopilot scouting~~ — DONE: creative scouting (heuristics F/G/H) reads RSS trends, coverage gaps, dashboard code, and quality data to propose features, UX improvements, and new capabilities
 9. Let autopilot propose AND SHIP capability expansions (new sports, new data sources, new UI features) autonomously — validate with first end-to-end self-discovered feature
-10. Resilience hardening: replace silent failures with structured error reporting → autopilot repair tasks
+10. Resilience hardening: pipeline manifest captures structured errors — autopilot should auto-diagnose and repair failed steps
 
 **Phase 4 — Full Autonomy Proof**
 11. End-to-end demonstration: system detects a new major event, creates config, discovers schedule, verifies accuracy, enriches, generates editorial content, serves personalized dashboard — all without human intervention
@@ -369,9 +377,14 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 - `AUTOPILOT_ROADMAP.md`
 - `docs/data/autopilot-log.json`
 
-### Change Limits
-- Maximum **8 files** per automated PR
-- Maximum **300 lines changed** per automated PR
+### Change Limits (Task Tiers)
+
+| Tier | Files | Lines | Behavior |
+|------|-------|-------|----------|
+| `[MAINTENANCE]` (default) | 8 | 300 | Single PR, auto-merge |
+| `[FEATURE]` | 12 | 500 | Single PR, auto-merge — for new capabilities |
+| `[EXPLORE]` | 0 | 0 | Read-only investigation — no PRs, writes findings + tasks |
+
 - One bounded fix per maintenance run
 
 ### Risk Classification

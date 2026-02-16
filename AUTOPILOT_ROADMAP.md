@@ -8,6 +8,20 @@ Self-curated task queue for the Claude autopilot workflow. The autopilot discove
 - `[DONE]` (PR #N) — Completed
 - `[BLOCKED]` reason — Cannot proceed until unblocked
 
+### Task Tiers
+
+Each `[PENDING]` task may have a tier tag. If no tier is specified, `[MAINTENANCE]` is the default.
+
+| Tier | Tag | Files | Lines | Behavior |
+|------|-----|-------|-------|----------|
+| Maintenance | `[MAINTENANCE]` | 8 | 300 | Single PR, auto-merge (default) |
+| Feature | `[FEATURE]` | 12 | 500 | Single PR, auto-merge — for new capabilities |
+| Explore | `[EXPLORE]` | 0 | 0 | Read-only investigation — no code changes, no PRs |
+
+**`[EXPLORE]` tasks** are for strategic investigation. The autopilot reads code, data, and APIs, writes a findings summary in the roadmap, and creates concrete `[PENDING]` tasks from findings. No branches, no PRs.
+
+**Example:** `- [EXPLORE] Investigate handball data sources — Check if free APIs exist, evaluate coverage quality, determine if a fetcher is feasible`
+
 ---
 
 ## Change Principles Gate
@@ -19,6 +33,7 @@ Before creating or executing ANY task, verify it passes the Change Principles fr
 3. **Zero infrastructure** — Does this stay within GitHub Actions + Claude Code Max + GitHub Pages?
 4. **Autonomous by default** — Does this work without ongoing human intervention?
 5. **Measurable impact** — How will we know this change is working? (metrics, health checks, quality scores)
+6. **Tier limits** — Does this task fit within its tier's file/line limits? (see Task Tiers above)
 
 If a scouted improvement fails any principle, either redesign it to pass or skip it. A code cleanup that doesn't close the loop (add a test, health check, or detection) is incomplete.
 
@@ -151,6 +166,26 @@ Monitor external dependencies documented in "Known Limitations" below. When an u
 - Update the "Known Limitations" section to mark the issue as resolved
 
 **Example:** If the quota API starts returning real utilization data, create a task: "Quota API scope fixed — validate real utilization data and update status page to remove unavailable message."
+
+### K. Vision-Guided Exploration
+
+Strategic scouting that reasons about the autonomy vision rather than pattern-matching. This heuristic enables the autopilot to think beyond code health and propose capability expansions.
+
+**How to check:**
+1. Read `docs/data/capabilities.json` — what gaps exist in sports coverage, live scores, standings, results?
+2. Read `docs/data/preference-evolution.json` — what sports does the user engage with most?
+3. Read `CLAUDE.md` "What's Missing" table — what's the next step toward full autonomy?
+4. Read `docs/data/rss-digest.json` — what's trending that we don't cover?
+5. Read `scripts/pipeline-manifest.json` — what pipeline steps could be added for value?
+
+**Ask:** "What single change would most advance the autonomy vision while serving the user?"
+
+**Action:** Create `[EXPLORE]` tasks for strategic investigations, or `[FEATURE]` tasks for concrete capabilities. Always link back to which vision pillar (data/code/capabilities/personalization/quality) this serves.
+
+**Examples:**
+- `[EXPLORE]` "Investigate cycling data sources for Tour de France coverage" — the user's RSS shows cycling interest but we have no cycling fetcher (capabilities pillar)
+- `[FEATURE]` "Add handball fetcher using free API" — user-context.json shows Norwegian focus, handball is a major Norwegian sport (data + personalization pillars)
+- `[EXPLORE]` "Evaluate client-side feedback mechanisms beyond localStorage" — the preference evolution loop is working but limited to click counts (quality pillar)
 
 ---
 
@@ -453,7 +488,9 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 - [DONE] (manual session) Add opportunity detection to autopilot scouting — Expanded Step 2 scouting prompt with creative scouting (2b): reads RSS, coverage gaps, quality history, standings, and dashboard code to propose features, UX improvements, and new capabilities. Added heuristics F (opportunity detection), G (dashboard UX), H (capability seeding) to roadmap.
 
-- [BLOCKED] protected path — all `|| echo "failed"` handlers are in `.github/workflows/update-sports-data.yml` | Replace silent pipeline failures with structured error reporting — Requires workflow file modification which is a protected path.
+- [DONE] (manual session) Pipeline manifest — Created `scripts/pipeline-manifest.json` with declarative step definitions, `scripts/run-pipeline.js` runner, and `scripts/generate-capabilities.js` registry. The autopilot can now add/remove/reorder pipeline steps by editing the manifest (allowed path). Workflow rewritten to use single `node scripts/run-pipeline.js` call. Task tiers (`[MAINTENANCE]`/`[FEATURE]`/`[EXPLORE]`) and heuristic K (vision-guided exploration) added.
+
+- [DONE] (resolved by pipeline manifest) Replace silent pipeline failures with structured error reporting — The pipeline runner (`scripts/run-pipeline.js`) captures per-step exit codes, timing, and errors in `docs/data/pipeline-result.json`. No more `|| echo "failed"` handlers — each step has an explicit `errorPolicy` ("continue" or "required").
 
 ---
 

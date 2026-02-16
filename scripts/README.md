@@ -4,21 +4,50 @@ Data pipeline, AI enrichment, and autonomous discovery for the SportSync dashboa
 
 ## Pipeline Order
 
-This is the order scripts run in the GitHub Actions workflow (every 2 hours):
+All pipeline steps are defined declaratively in `pipeline-manifest.json`. The pipeline runner (`run-pipeline.js`) reads this manifest and executes steps phase by phase. The autopilot can add/remove/reorder steps by editing the manifest.
 
 ```
-1. fetch/index.js          — Fetch all sports APIs (ESPN, PGA, HLTV, fotball.no)
-2. fetch-standings.js      — ESPN standings (PL table, golf leaderboards, F1 drivers)
-3. fetch-rss.js            — RSS digest (11 feeds: NRK, TV2, BBC, ESPN, etc.)
-4. sync-configs.js         — Prune expired events, archive old configs, flag empty ones
-5. discover-events.js      — Claude CLI + WebSearch to research flagged configs
-6. build-events.js         — Aggregate sport JSONs + curated configs → events.json
-7. enrich-events.js        — AI adds importance (1-5), summaries, tags
-8. generate-featured.js    — Claude CLI → featured.json (editorial blocks + watch plan)
-9. validate-events.js      — Data integrity checks
-10. pipeline-health.js     — Coverage, freshness, anomaly detection → health-report.json
-11. detect-coverage-gaps.js — RSS vs events → coverage-gaps.json + auto-resolve
-12. build-ics.js           — Calendar export → events.ics
+Phase: fetch (parallel)
+  fetch-sports           — Fetch all sports APIs (ESPN, PGA, HLTV, fotball.no)
+  fetch-standings        — ESPN standings (PL table, golf leaderboards, F1 drivers)
+  fetch-rss              — RSS digest (11 feeds: NRK, TV2, BBC, ESPN, etc.)
+  merge-data             — Merge open source + primary data
+  fetch-results          — ESPN recent results (football + golf, 7-day history)
+
+Phase: prepare
+  sync-configs           — Prune expired events, archive old configs, flag empty ones
+  usage-snapshot         — Snapshot Claude usage metrics
+
+Phase: discover
+  discover-events        — Claude CLI + WebSearch to research flagged configs
+
+Phase: build
+  build-events           — Aggregate sport JSONs + curated configs → events.json
+  enrich-events          — AI adds importance (1-5), summaries, tags
+
+Phase: generate
+  generate-featured      — Claude CLI → featured.json (editorial blocks + watch plan)
+  generate-multiday      — Yesterday recap + tomorrow preview briefings
+  build-snapshots        — Build day-specific snapshot files
+
+Phase: validate
+  validate-data          — Data integrity checks (required — aborts on failure)
+
+Phase: monitor (parallel)
+  pipeline-health        — Coverage, freshness, anomaly detection → health-report.json
+  quality-regression     — AI quality regression detection
+  coverage-gaps          — RSS vs events → coverage-gaps.json + auto-resolve
+  build-calendar         — Calendar export → events.ics
+  ai-sanity-check        — AI output sanity check
+
+Phase: personalize
+  evolve-preferences     — Engagement data → sport weight adjustments
+
+Phase: finalize
+  usage-report           — Report Claude usage metrics
+  generate-capabilities  — Auto-generate capability registry → capabilities.json
+  update-meta            — Write meta.json timestamps
+  pre-commit-gate        — Pre-commit validation gate
 ```
 
 ## Directory Structure
@@ -52,12 +81,16 @@ scripts/
 │   ├── norwegian-streaming.js      # Norwegian streaming platform info
 │   ├── filters.js                  # Event filtering utilities
 │   └── watch-plan.js               # Watch plan scoring and generation
+├── run-pipeline.js                 # Pipeline runner (reads manifest, orchestrates phases)
+├── pipeline-manifest.json          # Declarative pipeline step definitions (autopilot-editable)
+├── generate-capabilities.js        # Capability registry generator → capabilities.json
 ├── sync-configs.js                 # Config maintenance (prune, archive, flag)
 ├── discover-events.js              # LLM discovery (Claude CLI + WebSearch)
 ├── build-events.js                 # Aggregates sport JSONs + curated configs
 ├── enrich-events.js                # AI enrichment (importance, tags, summaries)
 ├── generate-featured.js            # Claude CLI → featured.json + watch-plan.json
-├── autonomy-scorecard.js           # 7-loop autonomy evaluation
+├── evolve-preferences.js           # Engagement → preference evolution
+├── autonomy-scorecard.js           # 11-loop autonomy evaluation
 ├── pipeline-health.js              # Pipeline health → health-report.json
 ├── check-quality-regression.js     # AI quality regression detection
 ├── detect-coverage-gaps.js         # RSS vs events + auto-resolve gaps
@@ -65,6 +98,7 @@ scripts/
 ├── merge-open-data.js              # Merges open source + primary data
 ├── validate-events.js              # Data integrity checks
 ├── verify-schedules.js             # ESPN cross-reference for curated configs
+├── fetch-results.js                # ESPN recent results (football + golf)
 ├── build-ics.js                    # Calendar export generator
 ├── pre-commit-gate.js              # Pre-commit validation gate
 └── ai-sanity-check.js              # AI output sanity check
@@ -89,7 +123,10 @@ node scripts/enrich-events.js
 # Generate featured content (requires CLAUDE_CODE_OAUTH_TOKEN)
 node scripts/generate-featured.js
 
-# Run all tests (975 tests across 43 files)
+# Run the full pipeline (reads pipeline-manifest.json)
+node scripts/run-pipeline.js
+
+# Run all tests (1295 tests across 55 files)
 npm test
 ```
 

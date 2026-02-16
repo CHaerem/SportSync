@@ -41,126 +41,28 @@ jobs:
       - name: Create data directory
         run: mkdir -p docs/data
 
-      - name: Fetch All Sports Data
-        run: |
-          npm run update:data || echo "Sports data fetch failed, continuing with available data"
-
-      - name: Merge data + Fetch standings + Fetch RSS (parallel)
-        run: |
-          node scripts/merge-open-data.js &
-          PID_MERGE=$!
-          node scripts/fetch-standings.js &
-          PID_STANDINGS=$!
-          node scripts/fetch-rss.js &
-          PID_RSS=$!
-
-          FAIL=0
-          wait $PID_MERGE || { echo "Merge step failed"; FAIL=1; }
-          wait $PID_STANDINGS || { echo "Standings fetch failed"; FAIL=1; }
-          wait $PID_RSS || { echo "RSS fetch failed"; FAIL=1; }
-
-          if [ $FAIL -ne 0 ]; then
-            echo "One or more parallel steps failed (non-fatal)"
-          fi
-
-      - name: Fetch recent results
-        run: |
-          node scripts/fetch-results.js || echo "Results fetch failed (non-fatal)"
-
-      - name: Sync configs
-        run: |
-          node scripts/sync-configs.js || echo "Config sync failed (non-fatal)"
-
-      - name: Snapshot usage (before AI)
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: node scripts/track-usage.js snapshot || echo "Usage snapshot failed (non-fatal)"
-
-      - name: Discover events
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          node scripts/discover-events.js || echo "Event discovery failed (non-fatal)"
-
-      - name: Generate aggregated events file
-        run: |
-          npm run build:events || echo "Aggregation failed"
-
-      - name: Enrich events with AI
+      - name: Run data pipeline
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          npm run enrich || echo "AI enrichment failed, using raw data"
-
-      - name: Generate featured content
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          npm run generate:featured || echo "Featured generation failed, using fallback"
-
-      - name: Generate multi-day briefings
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          node scripts/generate-multi-day.js --backfill 5 || echo "Multi-day briefings failed (non-fatal)"
-
-      - name: Build day snapshots
-        run: |
-          node scripts/build-day-snapshots.js || echo "Day snapshot build failed (non-fatal)"
-
-      - name: Report usage (after AI)
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: node scripts/track-usage.js report pipeline || echo "Usage report failed (non-fatal)"
-
-      - name: Validate unified events (future-only)
-        run: |
-          npm run validate:data
-
-      - name: Pipeline health check
-        run: |
-          node scripts/pipeline-health.js || true
-
-      - name: Quality regression + Coverage gaps + Calendar (parallel)
-        run: |
-          node scripts/check-quality-regression.js &
-          PID_QUALITY=$!
-          node scripts/detect-coverage-gaps.js &
-          PID_GAPS=$!
-          npm run build:calendar &
-          PID_CAL=$!
-
-          wait $PID_QUALITY || echo "Quality regression check failed"
-          wait $PID_GAPS || echo "Coverage gap detection failed"
-          wait $PID_CAL || echo "Calendar build failed"
-
-      - name: AI sanity check
-        env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          node scripts/ai-sanity-check.js || echo "Sanity check failed (non-fatal)"
+        run: node scripts/run-pipeline.js || true
 
-      - name: Update meta timestamp
+      - name: Read pipeline result
+        id: pipeline
         run: |
-          echo '{
-            "lastUpdate": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
-            "nextUpdate": "'$(date -u -d "+2 hours 10 minutes" +"%Y-%m-%dT%H:%M:%SZ")'",
-            "timezone": "Europe/Oslo",
-            "openSources": true
-          }' > docs/data/meta.json
-
-      - name: Pre-commit gate
-        id: gate
-        run: |
-          node scripts/pre-commit-gate.js && echo "gate=pass" >> $GITHUB_OUTPUT || echo "gate=fail" >> $GITHUB_OUTPUT
+          if [ -f docs/data/pipeline-result.json ]; then
+            GATE=$(jq -r '.gate // "fail"' docs/data/pipeline-result.json)
+          else
+            GATE="fail"
+          fi
+          echo "gate=$GATE" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [ "${{ steps.gate.outputs.gate }}" = "fail" ]; then
+          if [ "${{ steps.pipeline.outputs.gate }}" = "fail" ]; then
             echo "Gate failed — committing health/monitoring files only"
             git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true
           else
@@ -195,6 +97,15 @@ jobs:
         run: |
           echo "## 📊 Sports Data Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Timestamp**: $(date -u +"%Y-%m-%d %H:%M UTC")" >> $GITHUB_STEP_SUMMARY
+          if [ -f docs/data/pipeline-result.json ]; then
+            SUCCESS=$(jq -r '.summary.success // 0' docs/data/pipeline-result.json)
+            TOTAL=$(jq -r '.summary.total // 0' docs/data/pipeline-result.json)
+            FAILED=$(jq -r '.summary.failed // 0' docs/data/pipeline-result.json)
+            SKIPPED=$(jq -r '.summary.skipped // 0' docs/data/pipeline-result.json)
+            DURATION=$(jq -r '.duration // 0' docs/data/pipeline-result.json)
+            DURATION_S=$((DURATION / 1000))
+            echo "- **Pipeline**: $SUCCESS/$TOTAL steps succeeded ($FAILED failed, $SKIPPED skipped) in ${DURATION_S}s" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "- **Football**: $(jq -r '.tournaments | length' docs/data/football.json 2>/dev/null || echo 0) tournaments" >> $GITHUB_STEP_SUMMARY
           echo "- **Golf**: $(jq -r '.tournaments | length' docs/data/golf.json 2>/dev/null || echo 0) tournaments" >> $GITHUB_STEP_SUMMARY
           echo "- **Tennis**: $(jq -r '.tournaments | length' docs/data/tennis.json 2>/dev/null || echo 0) tournaments" >> $GITHUB_STEP_SUMMARY
@@ -203,27 +114,17 @@ jobs:
           echo "- **Esports**: $(jq -r '.tournaments | length' docs/data/esports.json 2>/dev/null || echo 0) tournaments" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ -f docs/data/events.json ]; then
-            TOTAL=$(jq -r 'length' docs/data/events.json 2>/dev/null || echo 0)
-            echo "- **Total Events**: $TOTAL" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ -f docs/data/events.json ]; then
+            TOTAL_EVENTS=$(jq -r 'length' docs/data/events.json 2>/dev/null || echo 0)
+            echo "- **Total Events**: $TOTAL_EVENTS" >> $GITHUB_STEP_SUMMARY
             ENRICHED=$(jq -r '[.[] | select(.importance != null)] | length' docs/data/events.json 2>/dev/null || echo 0)
-            echo "- **AI Enriched**: $ENRICHED/$TOTAL events" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ -f docs/data/events.ics ]; then
-            SIZE=$(wc -c < docs/data/events.ics | tr -d ' ')
-            echo "- **ICS Calendar**: ${SIZE} bytes" >> $GITHUB_STEP_SUMMARY
+            echo "- **AI Enriched**: $ENRICHED/$TOTAL_EVENTS events" >> $GITHUB_STEP_SUMMARY
           fi
           if [ -f docs/data/health-report.json ]; then
             STATUS=$(jq -r '.status' docs/data/health-report.json 2>/dev/null || echo "unknown")
             ISSUES=$(jq -r '.issues | length' docs/data/health-report.json 2>/dev/null || echo 0)
             echo "- **Pipeline Health**: $STATUS ($ISSUES issues)" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ -f docs/data/coverage-gaps.json ]; then
-            GAPS=$(jq -r '.summary.totalGapsDetected' docs/data/coverage-gaps.json 2>/dev/null || echo 0)
-            echo "- **Coverage Gaps**: $GAPS detected" >> $GITHUB_STEP_SUMMARY
-          fi
-          GATE="${{ steps.gate.outputs.gate }}"
+          GATE="${{ steps.pipeline.outputs.gate }}"
           if [ "$GATE" = "fail" ]; then
             echo "⚠️ Pre-commit gate FAILED — only monitoring files committed" >> $GITHUB_STEP_SUMMARY
           fi

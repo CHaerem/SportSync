@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "description": "SportSync data pipeline — autopilot can add/remove/reorder steps by editing this file",
+  "phases": [
+    {
+      "name": "fetch",
+      "description": "Fetch data from external APIs",
+      "parallel": true,
+      "steps": [
+        { "name": "fetch-sports", "command": "npm run update:data", "errorPolicy": "continue" },
+        { "name": "fetch-standings", "command": "node scripts/fetch-standings.js", "errorPolicy": "continue" },
+        { "name": "fetch-rss", "command": "node scripts/fetch-rss.js", "errorPolicy": "continue" },
+        { "name": "merge-data", "command": "node scripts/merge-open-data.js", "errorPolicy": "continue" },
+        { "name": "fetch-results", "command": "node scripts/fetch-results.js", "errorPolicy": "continue" }
+      ]
+    },
+    {
+      "name": "prepare",
+      "description": "Config maintenance and usage tracking",
+      "steps": [
+        { "name": "sync-configs", "command": "node scripts/sync-configs.js", "errorPolicy": "continue" },
+        { "name": "usage-snapshot", "command": "node scripts/track-usage.js snapshot", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
+      ]
+    },
+    {
+      "name": "discover",
+      "description": "LLM-powered event discovery",
+      "steps": [
+        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
+      ]
+    },
+    {
+      "name": "build",
+      "description": "Aggregate and enrich events",
+      "steps": [
+        { "name": "build-events", "command": "npm run build:events", "errorPolicy": "continue" },
+        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
+      ]
+    },
+    {
+      "name": "generate",
+      "description": "AI-powered content generation",
+      "steps": [
+        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
+        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
+        { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" }
+      ]
+    },
+    {
+      "name": "validate",
+      "description": "Data integrity checks",
+      "steps": [
+        { "name": "validate-data", "command": "npm run validate:data", "errorPolicy": "required" }
+      ]
+    },
+    {
+      "name": "monitor",
+      "description": "Health monitoring and quality checks",
+      "parallel": true,
+      "steps": [
+        { "name": "pipeline-health", "command": "node scripts/pipeline-health.js", "errorPolicy": "continue" },
+        { "name": "quality-regression", "command": "node scripts/check-quality-regression.js", "errorPolicy": "continue" },
+        { "name": "coverage-gaps", "command": "node scripts/detect-coverage-gaps.js", "errorPolicy": "continue" },
+        { "name": "build-calendar", "command": "npm run build:calendar", "errorPolicy": "continue" },
+        { "name": "ai-sanity-check", "command": "node scripts/ai-sanity-check.js", "errorPolicy": "continue" }
+      ]
+    },
+    {
+      "name": "personalize",
+      "description": "Evolve user preferences from engagement data",
+      "steps": [
+        { "name": "evolve-preferences", "command": "node scripts/evolve-preferences.js", "errorPolicy": "continue" }
+      ]
+    },
+    {
+      "name": "finalize",
+      "description": "Usage reporting, capability registry, meta, gate",
+      "steps": [
+        { "name": "usage-report", "command": "node scripts/track-usage.js report pipeline", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
+        { "name": "generate-capabilities", "command": "node scripts/generate-capabilities.js", "errorPolicy": "continue" },
+        { "name": "update-meta", "command": "node -e \"const fs=require('fs');const p=require('path');const d=p.join(process.cwd(),'docs','data','meta.json');const now=new Date();const next=new Date(now.getTime()+2*3600000+600000);fs.writeFileSync(d,JSON.stringify({lastUpdate:now.toISOString(),nextUpdate:next.toISOString(),timezone:'Europe/Oslo',openSources:true},null,2))\"", "errorPolicy": "continue" },
+        { "name": "pre-commit-gate", "command": "node scripts/pre-commit-gate.js", "errorPolicy": "continue" }
+      ]
+    }
+  ]
+}

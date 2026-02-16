@@ -117,8 +117,14 @@ jobs:
 
             ### 1a. Pick and validate
             - If TASK OVERRIDE is non-empty, use that instead (one-shot, no loop)
-            - Verify the task fits constraints: allowed paths only, max 8 files,
-              max 300 lines, LOW or MEDIUM risk
+            - Check task tier: `[MAINTENANCE]` (default if unspecified), `[FEATURE]`, or `[EXPLORE]`
+            - Apply tier-specific limits:
+              - `[MAINTENANCE]`: max 8 files, max 300 lines changed
+              - `[FEATURE]`: max 12 files, max 500 lines changed
+              - `[EXPLORE]`: read-only investigation — no code changes, no PRs.
+                Investigate, write findings as a comment block in the roadmap,
+                create concrete `[PENDING]` tasks from findings.
+            - Verify the task fits its tier constraints: allowed paths only, LOW or MEDIUM risk
             - If invalid, mark `[BLOCKED] exceeds automation limits` and continue
 
             ### 1a½. Plan before coding
@@ -135,6 +141,13 @@ jobs:
             with a plan might take 40+ turns without one.
 
             ### 1b. Execute
+            For `[EXPLORE]` tasks: skip branching/PR. Read code, data, and APIs.
+            Write a findings summary as a comment block in AUTOPILOT_ROADMAP.md.
+            Create concrete `[PENDING]` tasks (with `[MAINTENANCE]` or `[FEATURE]`
+            tier) from your findings. Commit the roadmap update to main, then
+            skip steps 1c/1d and continue to the next task.
+
+            For `[MAINTENANCE]` and `[FEATURE]` tasks:
             1. Create branch: `claude/improve-<short-slug>`
             2. Make the changes following your plan from 1a½
             3. Run `npm test` — if tests fail, revert ALL changes, create a GitHub
@@ -190,7 +203,13 @@ jobs:
 
             ### 2b. Creative scouting — features, UX, and capabilities
 
+            Read `docs/data/capabilities.json` — what are the system's current gaps?
+            Use heuristic K (vision-guided exploration) to propose strategic improvements.
+            For larger opportunities, create `[EXPLORE]` tasks first, then `[FEATURE]`
+            tasks from findings.
+
             Read these data signals to understand the current state of the product:
+            - `docs/data/capabilities.json` — what are the system's gaps and capabilities?
             - `docs/data/rss-digest.json` — what sports topics are trending right now?
             - `docs/data/coverage-gaps.json` — what events are in the news but missing?
             - `docs/data/quality-history.json` — are quality scores improving or stagnating?
@@ -199,6 +218,8 @@ jobs:
             - `docs/data/events.json` — what data is available?
             - `docs/data/standings.json` — what standings data exists?
             - `docs/data/recent-results.json` — what results are being tracked?
+            - `docs/data/preference-evolution.json` — what sports does the user engage with?
+            - `scripts/pipeline-manifest.json` — what pipeline phases and steps exist?
 
             Then look at the actual dashboard:
             - Run `node scripts/screenshot.js docs/data/screenshot.png --full-page`
@@ -222,6 +243,9 @@ jobs:
                editorial content compelling? Could the prompt or fallback logic be improved?
             6. **New capability seeds**: Could a small addition unlock a larger capability?
                (e.g., adding a small data export enables a future feedback loop)
+            7. **Pipeline expansion**: Could a new step in `scripts/pipeline-manifest.json`
+               add value? (e.g., a new fetcher, a new quality check, a new data export)
+               The autopilot can add steps by editing the manifest — no workflow changes needed.
 
             For each idea, evaluate: does it fit within automation limits (≤8 files,
             ≤300 lines)? If yes, create a `[PENDING]` task. If it's larger, decompose it

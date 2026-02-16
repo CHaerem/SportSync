@@ -14,7 +14,7 @@ A **static sports dashboard** that runs itself. New major events are auto-detect
 - **Inline team logos** — football crests and golfer headshots in event rows
 - **AI watch plan** — ranked "next 30/60/120 minutes" picks for quick decisions
 - **Live scores** — client-side ESPN polling with pulsing LIVE dot
-- **9 feedback loops** — self-correcting quality, coverage, content, code health, schedule verification, and results health
+- **11 feedback loops** — self-correcting quality, coverage, content, code health, schedule verification, results health, fact verification, and preference evolution
 - **480px reading column** — phone-width, OLED-ready dark mode
 - **Fully automated** — fresh data every 2 hours, AI content via Claude, nightly code improvements
 
@@ -41,17 +41,21 @@ SportSync has three automation layers:
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Data Pipeline (every 2 hours)                      │
+│  Orchestrated by scripts/run-pipeline.js            │
+│  Steps defined in scripts/pipeline-manifest.json    │
 │                                                     │
-│  1. Fetch sports APIs (ESPN, PGA, HLTV)              │
-│  2. Fetch standings (PL, golf, F1) + RSS (11 feeds) │
-│  3. Sync configs (prune expired, archive old)       │
-│  4. Discover events (Claude CLI + WebSearch)         │
-│  5. Build unified events.json                       │
-│  6. Enrich with AI (importance, tags, summaries)    │
-│  7. Generate editorial + watch plan via Claude       │
-│  8. Validate → health check → quality gates         │
-│  9. Coverage gap detection (RSS vs events)          │
-│  10. Commit → deploy to GitHub Pages                │
+│  fetch     → Fetch sports APIs, standings, RSS      │
+│  prepare   → Sync configs, snapshot usage           │
+│  discover  → LLM event discovery (Claude + Web)     │
+│  build     → Build events.json, AI enrichment       │
+│  generate  → Editorial brief, multi-day briefings   │
+│  validate  → Data integrity checks                  │
+│  monitor   → Health, quality, coverage gaps          │
+│  personal. → Evolve user preferences                │
+│  finalize  → Usage report, capabilities, gate       │
+│                                                     │
+│  The autopilot can add pipeline steps by editing     │
+│  the manifest — no workflow changes needed.          │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
@@ -72,11 +76,11 @@ SportSync has three automation layers:
 │  1. Reads AUTOPILOT_ROADMAP.md task queue           │
 │  2. Branch → implement → test → PR → merge          │
 │  3. Scouts codebase for new improvements            │
-│  4. 27+ PRs completed autonomously                  │
+│  4. 50+ PRs completed autonomously                   │
 └─────────────────────────────────────────────────────┘
 ```
 
-### 7 Self-Correcting Feedback Loops
+### 11 Self-Correcting Feedback Loops
 
 | # | Loop | What it does |
 |---|------|-------------|
@@ -87,6 +91,10 @@ SportSync has three automation layers:
 | 5 | Watch Plan | Score events → rank picks → explain reasoning |
 | 6 | Code Health | Scout codebase → roadmap → autopilot PRs |
 | 7 | Event Discovery | Flag empty configs → web research → populate real schedules |
+| 8 | Schedule Verification | 5-stage verifier chain → accuracy feedback into discovery prompts |
+| 9 | Results Health | Recent results fetched → staleness monitoring → health report |
+| 10 | Fact Verification | LLM claim verification against source data |
+| 11 | Preference Evolution | Engagement data → sport weight adjustments → personalized pipeline |
 
 ### The Featured Content System
 
@@ -151,12 +159,13 @@ docs/                               # GitHub Pages root
 │   ├── watch-plan.json             # AI-ranked watch recommendations
 │   ├── standings.json              # ESPN standings (PL, golf, F1)
 │   ├── rss-digest.json             # RSS news digest (11 feeds)
+│   ├── recent-results.json         # ESPN match results (7-day history)
 │   ├── ai-quality.json             # AI quality-gate metrics
 │   ├── health-report.json          # Pipeline health report
 │   ├── coverage-gaps.json          # RSS vs events gap detection
-│   ├── discovery-log.json          # Event discovery actions log
-│   ├── config-sync-log.json        # Config maintenance log
-│   ├── autonomy-report.json        # Autonomy scorecard (7 loops)
+│   ├── autonomy-report.json        # Autonomy scorecard (11 loops)
+│   ├── capabilities.json           # System capability registry (auto-generated)
+│   ├── pipeline-result.json        # Pipeline runner step outcomes
 │   └── events.ics                  # Calendar export
 └── sw.js                           # Service worker
 
@@ -172,18 +181,22 @@ scripts/
 │   ├── helpers.js                  # Utilities, time constants
 │   ├── ai-quality-gates.js         # Quality gates + adaptive hints
 │   └── ...                         # Normalizer, validator, filters, etc.
+├── run-pipeline.js                 # Pipeline runner (reads manifest, orchestrates phases)
+├── pipeline-manifest.json          # Declarative pipeline step definitions (autopilot-editable)
+├── generate-capabilities.js        # Capability registry generator
 ├── sync-configs.js                 # Config maintenance (prune, archive, flag)
 ├── discover-events.js              # LLM discovery (Claude CLI + WebSearch)
 ├── build-events.js                 # Merges sport JSONs + curated configs
 ├── enrich-events.js                # AI enrichment (importance, tags, summaries)
 ├── generate-featured.js            # Claude CLI → featured.json
-├── autonomy-scorecard.js           # 7-loop autonomy evaluation
+├── evolve-preferences.js           # Engagement → preference evolution
+├── autonomy-scorecard.js           # 11-loop autonomy evaluation
 ├── pipeline-health.js              # Pipeline health report
 ├── detect-coverage-gaps.js         # RSS vs events blind spot detection
 ├── resolve-coverage-gaps.js        # Auto-creates skeleton configs for gaps
 └── ...                             # Standings, RSS, calendar, validation
 
-tests/                              # 975 tests across 43 files (vitest)
+tests/                              # 1295 tests across 55 files (vitest)
 
 .github/workflows/
 ├── update-sports-data.yml          # Data pipeline (every 2 hours)
@@ -205,7 +218,7 @@ npm run dev          # http://localhost:8000
 
 ```bash
 npm run dev              # Local dev server
-npm test                 # Run all tests (975 tests, vitest)
+npm test                 # Run all tests (1295 tests, vitest)
 npm run build:events     # Generate events.json from sport files
 npm run generate:featured # Generate featured.json (needs API key or Claude CLI)
 npm run validate:data    # Check data integrity
