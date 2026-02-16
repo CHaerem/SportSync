@@ -1,40 +1,39 @@
 {
-  "generatedAt": "2026-02-15T22:11:42.234Z",
+  "generatedAt": "2026-02-16T07:23:03.040Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 17790,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"⚽ Girona v Barcelona, 21:00, La Liga — Barcelona f...\""
+    ],
+    "blockCount": 9,
+    "generationMs": 3,
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 73,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0.25,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.875,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
-    "issues": [
-      "Only 25% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 112,
+      "avgScore": 119,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -48,23 +47,23 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 22
+      "footballCount": 21
     },
     "issues": [
       "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
-      "totalEvents": 25,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.64
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 25,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -73,17 +72,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
-    "aiUpdatedFields": 25,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 25,
+    "totalEvents": 27,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 3,
-      "total": 0,
-      "tracked": false
+      "calls": 0,
+      "total": 0
     }
   }
 }

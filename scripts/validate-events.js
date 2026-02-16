@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { rootDataPath } from "./lib/helpers.js";
 
-const GRACE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours — matches build-events.js ongoing event window
+const GRACE_WINDOW_MS = 14 * 24 * 60 * 60 * 1000; // 14 days — matches build-events.js day navigator history window
 const dataDir = rootDataPath();
 const file = path.join(dataDir, "events.json");
 if (!fs.existsSync(file)) {
