@@ -290,3 +290,7 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           SESSION_ID: ${{ steps.autopilot.outputs.session_id }}
         run: node scripts/track-usage.js report autopilot || true
+
+      - name: Cleanup (self-hosted)
+        if: always() && !contains(runner.name, 'GitHub Actions')
+        run: rm -rf node_modules 2>/dev/null || true
