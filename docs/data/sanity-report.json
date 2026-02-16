@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-16T20:51:08.558Z",
+  "generatedAt": "2026-02-16T22:14:37.056Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 33,
+    "totalEvents": 32,
     "sports": [
       "golf",
       "chess",
@@ -52,14 +52,13 @@
       ],
       "ended": [
         "AT&T Pebble Beach Pro-Am",
-        "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals",
-        "Ski Jumping — Men's Super Team"
+        "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 66,
+    "editorialScore": 68,
     "issueCount": 9
   },
   "findings": [
@@ -71,23 +70,48 @@
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 66/100 (below threshold)"
+      "message": "Editorial quality score is 68/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Olympic Men\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Tricky\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Leeds United at Aston Villa\" but events.json has 16:00"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Villarreal at Levante\" but events.json has 20:00"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 9,
     "critical": 0,
-    "warning": 4,
+    "warning": 9,
     "info": 0
   },
   "pass": true,
