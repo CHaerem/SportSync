@@ -268,7 +268,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 14. [PENDING] [EXPLORE] **Investigate inline standings widgets** — Standings data exists in `standings.json` for PL, golf, and F1 but is only surfaced in editorial text. Explore adding collapsible inline widgets: mini PL table in football section, top-5 golf leaderboard in golf section, driver standings in F1 section. Identify exact render points in `dashboard.js`.
 
-15. [PENDING] [FEATURE] **Add inline Premier League mini-table** — Based on explore findings. Render a collapsible 5-row PL standings table in the football section of the dashboard, using data from `standings.json`. Show pos, team, pts, GD. Highlight favorite teams.
+15. [DONE] (PR #97) **Add inline Premier League mini-table** — Collapsible top-5 + favorites PL standings table in the events section. Uses existing exp-mini-table styling and band toggle pattern.
 
 16. [PENDING] [FEATURE] **Add new pipeline step: generate-insights** — Create `scripts/generate-insights.js` that reads events + standings + results + RSS to produce `docs/data/insights.json` — short analytical nuggets like "Liverpool unbeaten in 12" or "Hovland T3 going into Sunday". Wire into pipeline-manifest.json generate phase. Dashboard renders as accent cards.
 

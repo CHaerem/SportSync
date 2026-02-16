@@ -375,6 +375,21 @@
       "lesson": "Health warning severity should reflect the actual problem state, not just the existence of a condition. Fresh data with no events is expected, not a warning.",
       "scouted": 0,
       "meta_insight": "Recurring false alarms desensitize the system to real issues. Fixing severity classification has multiplicative value — all downstream detectors benefit."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add collapsible inline Premier League mini-table",
+      "outcome": "completed",
+      "pr": 97,
+      "pillar": "personalization",
+      "details": "Added renderInlinePLTable() to dashboard.js. Shows top 5 PL teams + favorite teams, collapsed by default, with position gaps and favorite highlighting. Added inline-standings CSS.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 10,
+      "turns_estimated": 12,
+      "lesson": "UI features that reuse existing patterns (exp-mini-table, band toggle) are quick to implement. The research phase was the biggest time cost.",
+      "scouted": 0,
+      "meta_insight": "The dashboard has clear extension points: band system for sections, exp-mini-table for data display, preferences for personalization. New widgets slot in easily."
     }
   ]
 }
