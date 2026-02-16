@@ -96,6 +96,12 @@ jobs:
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
+            Turn budget: You have 100 max turns. Be aware of how many you've
+            used. Pre-flight should take ~5-8 turns. Each task takes ~5-10.
+            If you've used >85 turns, skip scouting/meta-learning and stop
+            cleanly. Never burn remaining turns on branch cleanup or other
+            housekeeping — tasks are more valuable.
+
             ## Execution mode
 
             Adapt your strategy to the roadmap state:
@@ -139,11 +145,13 @@ jobs:
                If merge fails (conflicts, etc.), close the PR and continue.
                This prevents stale PRs from blocking future runs.
 
-            3. Clean up merged branches:
-               `gh api repos/{owner}/{repo}/branches --jq '.[].name' | grep 'claude/'`
-               For each `claude/*` branch that has already been merged (no open PR),
-               delete it: `git push origin --delete <branch>`.
-               Keep the workspace clean — stale branches accumulate over time.
+            3. Clean up merged branches (do this in ONE command to save turns):
+               ```
+               gh api repos/{owner}/{repo}/branches --jq '.[].name' | grep 'claude/' | \
+                 xargs -I{} sh -c 'pr=$(gh pr list --head "{}" --state open --json number --jq length 2>/dev/null); [ "$pr" = "0" ] || [ -z "$pr" ] && git push origin --delete "{}" 2>/dev/null || true'
+               ```
+               This deletes all merged `claude/*` branches in a single Bash call.
+               Skip this step entirely if you're low on turns (< 80 remaining).
 
             4. Read `AUTOPILOT_ROADMAP.md` to understand the current state.
                Also read the "Lessons & Effectiveness" section — this is your
