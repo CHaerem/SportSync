@@ -1225,6 +1225,8 @@ class Dashboard {
 		html += this.renderBand('Today', bands.today, {});
 		html += this.renderBand('Results', bands.results, { cssClass: 'results' });
 		html += this.renderInlinePLTable();
+		html += this.renderInlineGolfLeaderboard();
+		html += this.renderInlineF1Standings();
 		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
 		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
 		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
@@ -1775,6 +1777,61 @@ class Dashboard {
 			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
 			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
 			lastPos = row.position;
+		}
+
+		html += '</tbody></table></div></div>';
+		return html;
+	}
+
+	renderInlineGolfLeaderboard() {
+		const pga = this.standings?.golf?.pga;
+		if (!pga?.leaderboard?.length || pga.status === 'scheduled') return '';
+
+		const top5 = pga.leaderboard.slice(0, 5);
+		// Find Norwegian players not in top 5
+		const norwegianNames = ['Hovland', 'Ventura', 'Aberg'];
+		const norRows = pga.leaderboard.filter(p =>
+			norwegianNames.some(n => p.player?.includes(n)) && !top5.includes(p)
+		);
+		const rows = [...top5, ...norRows].sort((a, b) => a.position - b.position);
+
+		let html = '<div class="inline-standings">';
+		html += `<div class="band-label collapsible" data-band="golf-lb" role="button" tabindex="0" aria-expanded="false">${this.esc(pga.name || 'Golf Leaderboard')} \u25b8</div>`;
+		html += '<div class="band-content collapsed" data-band-content="golf-lb">';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Thru</th></tr></thead><tbody>';
+
+		let lastPos = 0;
+		for (const row of rows) {
+			if (row.position - lastPos > 1 && lastPos > 0) {
+				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
+			}
+			const isNor = norwegianNames.some(n => row.player?.includes(n));
+			const cls = isNor ? ' class="highlight"' : '';
+			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.player)}</td><td>${this.esc(row.score)}</td><td>${this.esc(row.thru || '')}</td></tr>`;
+			lastPos = row.position;
+		}
+
+		html += '</tbody></table></div></div>';
+		return html;
+	}
+
+	renderInlineF1Standings() {
+		const drivers = this.standings?.f1?.drivers;
+		if (!Array.isArray(drivers) || drivers.length === 0) return '';
+
+		// Skip if all points are zero (pre-season)
+		const totalPoints = drivers.reduce((s, d) => s + (d.points || 0), 0);
+		if (totalPoints === 0) return '';
+
+		const top5 = drivers.slice(0, 5);
+
+		let html = '<div class="inline-standings">';
+		html += '<div class="band-label collapsible" data-band="f1-standings" role="button" tabindex="0" aria-expanded="false">F1 Standings \u25b8</div>';
+		html += '<div class="band-content collapsed" data-band-content="f1-standings">';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Pts</th><th>Wins</th></tr></thead><tbody>';
+
+		for (const d of top5) {
+			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${d.points}</td><td>${d.wins}</td></tr>`;
 		}
 
 		html += '</tbody></table></div></div>';
