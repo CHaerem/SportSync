@@ -8,10 +8,10 @@ const BEFORE_FILE = ".usage-before.json";
 const MS_PER_5H = 5 * 3_600_000;
 const MS_PER_7D = 7 * 86_400_000;
 
-// Gate thresholds
+// Gate thresholds (permissive — Max subscription, self-hosted runner)
 const GATE_UTILIZATION_7D = 80;
-const GATE_MAX_AUTOPILOT_7D = 7;
-const GATE_MAX_RUNS_5H = 4;
+const GATE_MAX_AUTOPILOT_7D = 14;
+const GATE_MAX_RUNS_5H = 10;
 
 // Internal token budgets (self-imposed guardrails)
 // Now based on real token counts from CLI JSON output (includes cache tokens)

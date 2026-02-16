@@ -78,8 +78,8 @@ describe("shouldGate", () => {
 	});
 
 	it("blocks when too many autopilot runs in 7d", () => {
-		const runs = Array.from({ length: 7 }, (_, i) => ({
-			timestamp: new Date(Date.now() - i * 86_400_000).toISOString(),
+		const runs = Array.from({ length: 14 }, (_, i) => ({
+			timestamp: new Date(Date.now() - i * 86_400_000 / 2).toISOString(),
 			context: "autopilot",
 		}));
 		const result = shouldGate(runs, null);
@@ -89,7 +89,7 @@ describe("shouldGate", () => {
 
 	it("blocks when too many runs in 5h burst window", () => {
 		const now = Date.now();
-		const runs = Array.from({ length: 4 }, (_, i) => ({
+		const runs = Array.from({ length: 10 }, (_, i) => ({
 			timestamp: new Date(now - i * 60_000).toISOString(),
 			context: "pipeline",
 		}));

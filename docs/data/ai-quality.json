@@ -1,38 +1,31 @@
 {
-  "generatedAt": "2026-02-16T19:26:17.680Z",
+  "generatedAt": "2026-02-16T19:18:49.182Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 20216,
+    "blockCount": 8,
+    "generationMs": 3,
     "tokenUsage": {
-      "input": 33200,
-      "output": 795,
-      "cacheCreation": 17989,
-      "cacheRead": 15208,
-      "total": 33995,
-      "costUSD": 0.14049825,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 65,
+    "score": 100,
     "metrics": {
-      "mustWatchCoverage": 0.167,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 17% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -59,13 +52,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 34,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.706
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 34,
@@ -77,21 +70,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 10,
-    "aiUpdatedFields": 34,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 34,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 119116,
-      "output": 3344,
-      "calls": 4,
-      "total": 122460,
-      "costUSD": 0.41996374999999997,
-      "tracked": true,
-      "estimated": false
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   }
 }
