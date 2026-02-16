@@ -15,7 +15,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey, parseCliJsonOutput } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
@@ -471,7 +471,7 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 	const tmpFile = path.join(rootDataPath(), ".featured-prompt.tmp");
 	fs.writeFileSync(tmpFile, fullPrompt);
 	try {
-		let cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text --max-turns 6`;
+		let cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 6`;
 
 		// Wire MCP tools if .mcp.json exists
 		const mcpConfigPath = path.resolve(process.cwd(), ".mcp.json");
@@ -487,8 +487,9 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 			cmd += ` --mcp-config "${mcpConfigPath}" --allowedTools ${allowedTools}`;
 		}
 
-		const output = execSync(cmd, { encoding: "utf-8", timeout: 180000, maxBuffer: 1024 * 1024 });
-		return output.trim();
+		const output = execSync(cmd, { encoding: "utf-8", timeout: 180000, maxBuffer: 2 * 1024 * 1024 });
+		const parsed = parseCliJsonOutput(output);
+		return { content: parsed.result, usage: { ...parsed.usage, tracked: true, estimated: false } };
 	} finally {
 		try { fs.unlinkSync(tmpFile); } catch {}
 	}
@@ -687,10 +688,8 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 	if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
 		console.log("Using Claude CLI (OAuth) to generate featured content.");
 		try {
-			const pChars = (systemPrompt + userPrompt).length;
-			const rawContent = await generateWithClaudeCLI(systemPrompt, userPrompt);
-			const rChars = rawContent.length;
-			return { rawContent, provider: "claude-cli", llm: null, promptChars: pChars, responseChars: rChars };
+			const cliResult = await generateWithClaudeCLI(systemPrompt, userPrompt);
+			return { rawContent: cliResult.content, provider: "claude-cli", llm: null, cliUsage: cliResult.usage };
 		} catch (err) {
 			console.error("Claude CLI failed:", err.message);
 		}
@@ -702,13 +701,13 @@ async function generateRawFeatured(systemPrompt, userPrompt) {
 		console.log(`Using ${llm.getProviderName()} API to generate featured content.`);
 		try {
 			const rawContent = await llm.complete(systemPrompt, userPrompt);
-			return { rawContent, provider: llm.getProviderName(), llm, promptChars: 0, responseChars: 0 };
+			return { rawContent, provider: llm.getProviderName(), llm, cliUsage: null };
 		} catch (err) {
 			console.error("LLM API failed:", err.message);
 		}
 	}
 
-	return { rawContent: null, provider: "none", llm: null, promptChars: 0, responseChars: 0 };
+	return { rawContent: null, provider: "none", llm: null, cliUsage: null };
 }
 
 async function main() {
@@ -820,8 +819,7 @@ async function main() {
 	let qualityResult = null;
 	let qualityCorrections = [];
 	let featuredLlm = null;
-	let promptChars = 0;
-	let responseChars = 0;
+	let cliUsage = null;
 
 	const generationStart = Date.now();
 	for (let attempt = 1; attempt <= 2; attempt++) {
@@ -835,8 +833,7 @@ async function main() {
 		if (!generated.rawContent) break;
 		provider = generated.provider;
 		if (generated.llm) featuredLlm = generated.llm;
-		if (generated.promptChars != null) promptChars = generated.promptChars;
-		if (generated.responseChars != null) responseChars = generated.responseChars;
+		if (generated.cliUsage) cliUsage = generated.cliUsage;
 
 		try {
 			const parsed = parseResponseJSON(generated.rawContent);
@@ -905,12 +902,8 @@ async function main() {
 		const resultsQuality = evaluateResultsQuality(recentResults, events, rssDigest, userContext);
 
 		const blockCount = featured.blocks ? featured.blocks.length : 0;
-		const featuredTokenUsage = provider === "claude-cli"
-			? (() => {
-				const estInput = Math.ceil(promptChars / 4);
-				const estOutput = Math.ceil(responseChars / 4);
-				return { input: estInput, output: estOutput, calls: attempts, total: estInput + estOutput, tracked: false, estimated: true };
-			})()
+		const featuredTokenUsage = cliUsage
+			? { ...cliUsage, calls: attempts }
 			: featuredLlm ? featuredLlm.getUsage() : { input: 0, output: 0, calls: 0, total: 0 };
 		const existingQuality = readJsonIfExists(qualityPath) || {};
 		writeJsonPretty(qualityPath, {

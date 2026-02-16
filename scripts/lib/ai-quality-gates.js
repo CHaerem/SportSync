@@ -518,15 +518,16 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 		const totalCalls = allOps.reduce((s, o) => s + (o.calls || 0), 0);
 		const totalTotal = totalInput + totalOutput;
 
-		// realPct: percentage of tokens from real API counts (not estimated)
+		// realPct: percentage of tokens from real counts (tracked: true or no estimated flag)
 		const realTotal = allOps
-			.filter(o => !o.estimated && o.tracked !== false)
+			.filter(o => o.tracked === true || (!o.estimated && o.tracked !== false))
 			.reduce((s, o) => s + (o.input || 0) + (o.output || 0), 0);
+		const totalCostUSD = allOps.reduce((s, o) => s + (o.costUSD || 0), 0);
 		const realPct = totalTotal > 0 ? Math.round((realTotal / totalTotal) * 100) : 0;
 
 		expandedTokenUsage = {
 			...expandedTokenUsage,
-			total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalTotal, realPct },
+			total: { input: totalInput, output: totalOutput, calls: totalCalls, total: totalTotal, costUSD: totalCostUSD, realPct },
 		};
 	}
 

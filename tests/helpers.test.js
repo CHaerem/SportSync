@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow } from "../scripts/lib/helpers.js";
+import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput } from "../scripts/lib/helpers.js";
 
 describe("iso()", () => {
 	it("returns valid ISO string for current time", () => {
@@ -138,5 +138,62 @@ describe("isEventInWindow()", () => {
 
 	it("accepts numeric timestamps as window bounds", () => {
 		expect(isEventInWindow({ time: "2026-02-12T15:00:00Z" }, day1.getTime(), day2.getTime())).toBe(true);
+	});
+});
+
+describe("parseCliJsonOutput()", () => {
+	it("extracts result and usage from CLI JSON", () => {
+		const raw = JSON.stringify({
+			type: "result",
+			subtype: "success",
+			is_error: false,
+			result: "Hello world",
+			total_cost_usd: 0.05,
+			num_turns: 2,
+			duration_api_ms: 3000,
+			usage: {
+				input_tokens: 100,
+				output_tokens: 50,
+				cache_creation_input_tokens: 5000,
+				cache_read_input_tokens: 8000,
+			},
+		});
+		const parsed = parseCliJsonOutput(raw);
+		expect(parsed.result).toBe("Hello world");
+		expect(parsed.usage.input).toBe(100 + 5000 + 8000);
+		expect(parsed.usage.output).toBe(50);
+		expect(parsed.usage.cacheCreation).toBe(5000);
+		expect(parsed.usage.cacheRead).toBe(8000);
+		expect(parsed.usage.total).toBe(100 + 5000 + 8000 + 50);
+		expect(parsed.usage.costUSD).toBe(0.05);
+		expect(parsed.numTurns).toBe(2);
+		expect(parsed.durationApiMs).toBe(3000);
+	});
+
+	it("throws on CLI error response", () => {
+		const raw = JSON.stringify({
+			type: "result",
+			is_error: true,
+			result: "Something went wrong",
+		});
+		expect(() => parseCliJsonOutput(raw)).toThrow("CLI error: Something went wrong");
+	});
+
+	it("handles missing usage fields gracefully", () => {
+		const raw = JSON.stringify({
+			type: "result",
+			is_error: false,
+			result: "ok",
+		});
+		const parsed = parseCliJsonOutput(raw);
+		expect(parsed.result).toBe("ok");
+		expect(parsed.usage.input).toBe(0);
+		expect(parsed.usage.output).toBe(0);
+		expect(parsed.usage.total).toBe(0);
+		expect(parsed.usage.costUSD).toBe(0);
+	});
+
+	it("throws on invalid JSON", () => {
+		expect(() => parseCliJsonOutput("not json")).toThrow();
 	});
 });

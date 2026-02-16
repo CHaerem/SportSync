@@ -12,7 +12,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, parseCliJsonOutput } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { enforceEnrichmentQuality } from "./lib/ai-quality-gates.js";
 import {
@@ -65,17 +65,20 @@ async function completeWithClaudeCLI(systemPrompt, userPrompt) {
 	fs.writeFileSync(tmpFile, fullPrompt);
 	try {
 		const output = execSync(
-			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text`,
-			{ encoding: "utf-8", timeout: 120000, maxBuffer: 1024 * 1024 }
+			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json`,
+			{ encoding: "utf-8", timeout: 120000, maxBuffer: 2 * 1024 * 1024 }
 		);
-		const text = output.trim();
+		const parsed = parseCliJsonOutput(output);
+		const text = parsed.result;
+		let content;
 		try {
-			return JSON.parse(text);
+			content = JSON.parse(text);
 		} catch {
 			const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-			if (match) return JSON.parse(match[1].trim());
-			throw new Error(`Could not parse JSON from Claude CLI: ${text.substring(0, 200)}`);
+			if (match) content = JSON.parse(match[1].trim());
+			else throw new Error(`Could not parse JSON from Claude CLI: ${text.substring(0, 200)}`);
 		}
+		return { content, usage: { ...parsed.usage, tracked: true, estimated: false } };
 	} finally {
 		try { fs.unlinkSync(tmpFile); } catch {}
 	}
@@ -123,8 +126,10 @@ async function main() {
 	// 4. Batch and enrich
 	let enrichedCount = 0;
 	let failedBatches = 0;
-	let totalPromptChars = 0;
-	let totalResponseChars = 0;
+	let totalInput = 0;
+	let totalOutput = 0;
+	let totalCostUSD = 0;
+	let totalCalls = 0;
 
 	// Filter to only events needing enrichment (skip already-enriched)
 	const needsEnrichment = events.filter(e => !e.enrichedAt);
@@ -145,14 +150,16 @@ async function main() {
 
 			try {
 				const userPrompt = buildUserPrompt(batch);
+				let result;
 				if (useClaudeCLI) {
-					totalPromptChars += (systemPrompt + userPrompt).length;
-				}
-				const result = useClaudeCLI
-					? await completeWithClaudeCLI(systemPrompt, userPrompt)
-					: await llm.completeJSON(systemPrompt, userPrompt);
-				if (useClaudeCLI && result) {
-					totalResponseChars += JSON.stringify(result).length;
+					const cliResult = await completeWithClaudeCLI(systemPrompt, userPrompt);
+					totalInput += cliResult.usage.input;
+					totalOutput += cliResult.usage.output;
+					totalCostUSD += cliResult.usage.costUSD || 0;
+					totalCalls++;
+					result = cliResult.content;
+				} else {
+					result = await llm.completeJSON(systemPrompt, userPrompt);
 				}
 
 				const enrichments = result.events;
@@ -204,12 +211,7 @@ async function main() {
 	// 6. Write enriched events + quality report
 	writeJsonPretty(eventsPath, events);
 	const tokenUsage = useClaudeCLI
-		? (() => {
-			const estInput = Math.ceil(totalPromptChars / 4);
-			const estOutput = Math.ceil(totalResponseChars / 4);
-			const calls = enrichedCount > 0 ? Math.ceil(needsEnrichment.length / BATCH_SIZE) - failedBatches : 0;
-			return { input: estInput, output: estOutput, calls, total: estInput + estOutput, tracked: false, estimated: true };
-		})()
+		? { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput, costUSD: totalCostUSD, tracked: true, estimated: false }
 		: llm.getUsage();
 
 	writeJsonPretty(qualityPath, {

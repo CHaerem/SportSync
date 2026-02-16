@@ -164,3 +164,34 @@ export function countEvents(obj) {
 	if (!obj || !Array.isArray(obj.tournaments)) return 0;
 	return obj.tournaments.reduce((acc, t) => acc + (t.events?.length || 0), 0);
 }
+
+/**
+ * Parse Claude CLI --output-format json response.
+ * Extracts the result text and real token usage data.
+ * @param {string} rawOutput - Raw JSON string from CLI stdout
+ * @returns {{ result: string, usage: object }}
+ */
+export function parseCliJsonOutput(rawOutput) {
+	const response = JSON.parse(rawOutput);
+	if (response.is_error) {
+		throw new Error(`CLI error: ${response.result || "unknown error"}`);
+	}
+	const u = response.usage || {};
+	const inputTokens = u.input_tokens || 0;
+	const outputTokens = u.output_tokens || 0;
+	const cacheCreation = u.cache_creation_input_tokens || 0;
+	const cacheRead = u.cache_read_input_tokens || 0;
+	return {
+		result: response.result || "",
+		usage: {
+			input: inputTokens + cacheCreation + cacheRead,
+			output: outputTokens,
+			cacheCreation,
+			cacheRead,
+			total: inputTokens + cacheCreation + cacheRead + outputTokens,
+			costUSD: response.total_cost_usd || 0,
+		},
+		numTurns: response.num_turns || 0,
+		durationApiMs: response.duration_api_ms || 0,
+	};
+}

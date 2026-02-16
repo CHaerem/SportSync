@@ -14,8 +14,9 @@ const GATE_MAX_AUTOPILOT_7D = 7;
 const GATE_MAX_RUNS_5H = 4;
 
 // Internal token budgets (self-imposed guardrails)
-const DAILY_TOKEN_BUDGET = 500000;
-const WEEKLY_TOKEN_BUDGET = 2000000;
+// Now based on real token counts from CLI JSON output (includes cache tokens)
+const DAILY_TOKEN_BUDGET = 5000000;
+const WEEKLY_TOKEN_BUDGET = 25000000;
 
 // --- Pure functions (exported for testing) ---
 

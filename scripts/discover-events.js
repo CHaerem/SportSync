@@ -20,7 +20,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY } from "./lib/helpers.js";
+import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY, parseCliJsonOutput } from "./lib/helpers.js";
 import { buildVerificationHints } from "./lib/schedule-verifier.js";
 
 const MAX_TASKS_PER_RUN = 3;
@@ -297,13 +297,14 @@ async function discoverWithClaudeCLI(prompt) {
 	const tmpFile = path.join(dataDir, ".discovery-prompt.tmp");
 	fs.writeFileSync(tmpFile, prompt);
 	try {
-		const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format text --max-turns 8 --allowedTools "WebSearch" "WebFetch"`;
+		const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 8 --allowedTools "WebSearch" "WebFetch"`;
 		const output = execSync(cmd, {
 			encoding: "utf-8",
 			timeout: 180000,
-			maxBuffer: 1024 * 1024,
+			maxBuffer: 2 * 1024 * 1024,
 		});
-		return output.trim();
+		const parsed = parseCliJsonOutput(output);
+		return { content: parsed.result, usage: { ...parsed.usage, tracked: true, estimated: false } };
 	} finally {
 		try { fs.unlinkSync(tmpFile); } catch {}
 	}
@@ -363,8 +364,9 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 
 	console.log(`Found ${tasks.length} discovery task(s):`);
 
-	let totalPromptChars = 0;
-	let totalResponseChars = 0;
+	let totalInput = 0;
+	let totalOutput = 0;
+	let totalCostUSD = 0;
 	let totalCalls = 0;
 
 	for (const task of tasks) {
@@ -380,11 +382,12 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 
 		try {
 			const prompt = buildResearchPrompt(task, userContext, verificationHints);
-			totalPromptChars += prompt.length;
 			totalCalls++;
-			const rawResult = await discoverWithClaudeCLI(prompt);
-			totalResponseChars += rawResult.length;
-			const result = parseDiscoveryResult(rawResult);
+			const cliResult = await discoverWithClaudeCLI(prompt);
+			totalInput += cliResult.usage.input;
+			totalOutput += cliResult.usage.output;
+			totalCostUSD += cliResult.usage.costUSD || 0;
+			const result = parseDiscoveryResult(cliResult.content);
 
 			if (task.type === "refresh-athletes") {
 				// Apply athlete refresh to existing config
@@ -440,16 +443,14 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 	const succeeded = log.tasks.filter((t) => t.outcome === "success").length;
 	const failed = log.tasks.filter((t) => t.outcome === "failed").length;
 
-	// Token usage estimation (~4 chars per token for CLI calls)
-	const estInput = Math.ceil(totalPromptChars / 4);
-	const estOutput = Math.ceil(totalResponseChars / 4);
 	log.tokenUsage = {
-		input: estInput,
-		output: estOutput,
+		input: totalInput,
+		output: totalOutput,
 		calls: totalCalls,
-		total: estInput + estOutput,
-		tracked: false,
-		estimated: true,
+		total: totalInput + totalOutput,
+		costUSD: totalCostUSD,
+		tracked: true,
+		estimated: false,
 	};
 
 	// Write discovery token usage to ai-quality.json
@@ -494,8 +495,8 @@ async function refreshDynamicAthletes(configDir, userContext) {
 Return ONLY valid JSON: { "athletes": ["Name 1", "Name 2", ...] }
 Include only currently active, professional Norwegian athletes. Max 10.
 No markdown fences.`;
-			const raw = await discoverWithClaudeCLI(prompt);
-			const result = parseDiscoveryResult(raw);
+			const cliResult = await discoverWithClaudeCLI(prompt);
+			const result = parseDiscoveryResult(cliResult.content);
 			if (Array.isArray(result.athletes) && result.athletes.length > 0) {
 				// Update favoritePlayers with discovered athletes
 				const existing = new Set(userContext.favoritePlayers || []);

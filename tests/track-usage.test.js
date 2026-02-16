@@ -179,10 +179,10 @@ describe("calculateBudget", () => {
 		const result = calculateBudget(runs, now);
 		expect(result.dailyUsed).toBe(80000);
 		expect(result.weeklyUsed).toBe(80000);
-		expect(result.dailyBudget).toBe(500000);
-		expect(result.weeklyBudget).toBe(2000000);
-		expect(result.dailyPct).toBe(16);
-		expect(result.weeklyPct).toBe(4);
+		expect(result.dailyBudget).toBe(5000000);
+		expect(result.weeklyBudget).toBe(25000000);
+		expect(result.dailyPct).toBe(2);
+		expect(result.weeklyPct).toBe(0);
 	});
 
 	it("separates daily from weekly usage", () => {
