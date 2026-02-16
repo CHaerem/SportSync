@@ -14,6 +14,7 @@ const {
 	fetchFootballStandings,
 	fetchGolfLeaderboard,
 	fetchF1Standings,
+	fetchTennisRankings,
 } = await import("../scripts/fetch-standings.js");
 
 // Also test buildStandingsContext from generate-featured
@@ -207,6 +208,108 @@ describe("fetchF1Standings()", () => {
 	});
 });
 
+const mockTennisResponse = {
+	children: [{
+		standings: {
+			entries: [
+				{
+					athlete: { displayName: "Jannik Sinner" },
+					team: { displayName: "Jannik Sinner", abbreviation: "ITA" },
+					stats: [
+						{ name: "rank", value: 1 },
+						{ name: "points", value: 11830 },
+					],
+				},
+				{
+					athlete: { displayName: "Alexander Zverev" },
+					team: { displayName: "Alexander Zverev", abbreviation: "GER" },
+					stats: [
+						{ name: "rank", value: 2 },
+						{ name: "points", value: 8135 },
+					],
+				},
+				{
+					athlete: { displayName: "Casper Ruud" },
+					team: { displayName: "Casper Ruud", abbreviation: "NOR" },
+					stats: [
+						{ name: "rank", value: 6 },
+						{ name: "points", value: 5050 },
+					],
+				},
+			],
+		},
+	}],
+};
+
+describe("fetchTennisRankings()", () => {
+	it("parses ESPN tennis rankings correctly", async () => {
+		fetchJson.mockResolvedValue(mockTennisResponse);
+		const result = await fetchTennisRankings();
+
+		expect(result.atp).toBeDefined();
+		expect(result.atp).toHaveLength(3);
+		expect(result.atp[0]).toEqual({
+			position: 1,
+			player: "Jannik Sinner",
+			country: "ITA",
+			points: 11830,
+		});
+		expect(result.atp[2].player).toBe("Casper Ruud");
+	});
+
+	it("returns empty arrays when data structure is missing", async () => {
+		fetchJson.mockResolvedValue({});
+		const result = await fetchTennisRankings();
+		expect(result.atp).toEqual([]);
+	});
+
+	it("sorts by position", async () => {
+		const reversed = {
+			children: [{
+				standings: {
+					entries: [
+						mockTennisResponse.children[0].standings.entries[2],
+						mockTennisResponse.children[0].standings.entries[0],
+						mockTennisResponse.children[0].standings.entries[1],
+					],
+				},
+			}],
+		};
+		fetchJson.mockResolvedValue(reversed);
+		const result = await fetchTennisRankings();
+		expect(result.atp[0].position).toBe(1);
+		expect(result.atp[1].position).toBe(2);
+		expect(result.atp[2].position).toBe(6);
+	});
+
+	it("handles fetch errors gracefully", async () => {
+		fetchJson.mockRejectedValue(new Error("Network error"));
+		const result = await fetchTennisRankings();
+		expect(result.atp).toEqual([]);
+		expect(result.wta).toEqual([]);
+	});
+
+	it("caps at 20 players", async () => {
+		const manyEntries = {
+			children: [{
+				standings: {
+					entries: Array.from({ length: 50 }, (_, i) => ({
+						athlete: { displayName: `Player ${i + 1}` },
+						team: { abbreviation: "TST" },
+						stats: [
+							{ name: "rank", value: i + 1 },
+							{ name: "points", value: 10000 - i * 100 },
+						],
+					})),
+				},
+			}],
+		};
+		fetchJson.mockResolvedValue(manyEntries);
+		const result = await fetchTennisRankings();
+		expect(result.atp).toHaveLength(20);
+	});
+});
+
 describe("standings.json output shape", () => {
 	it("should have the expected top-level structure", async () => {
 		fetchJson.mockResolvedValue(mockFootballResponse);
@@ -286,5 +389,21 @@ describe("buildStandingsContext()", () => {
 		const result = buildStandingsContext(standings);
 		expect(result).toContain("F1 Driver Standings");
 		expect(result).toContain("Verstappen");
+	});
+
+	it("formats tennis ATP rankings correctly", () => {
+		const standings = {
+			tennis: {
+				atp: [
+					{ position: 1, player: "Jannik Sinner", country: "ITA", points: 11830 },
+					{ position: 6, player: "Casper Ruud", country: "NOR", points: 5050 },
+				],
+			},
+		};
+		const result = buildStandingsContext(standings);
+		expect(result).toContain("ATP Rankings");
+		expect(result).toContain("Jannik Sinner");
+		expect(result).toContain("Casper Ruud");
+		expect(result).toContain("11830pts");
 	});
 });

@@ -308,6 +308,15 @@ export function buildStandingsContext(standings) {
 		parts.push(`F1 Driver Standings (top 5):\n${rows.join("\n")}`);
 	}
 
+	// Tennis ATP top 10
+	const atp = standings.tennis?.atp;
+	if (Array.isArray(atp) && atp.length > 0) {
+		const rows = atp.slice(0, 10).map(
+			(p) => `  ${p.position}. ${p.player} (${p.country}) — ${p.points}pts`
+		);
+		parts.push(`ATP Rankings (top 10):\n${rows.join("\n")}`);
+	}
+
 	if (parts.length === 0) return "";
 	return `\n\nCurrent standings data:\n${parts.join("\n\n")}`;
 }

@@ -126,6 +126,42 @@ export async function fetchF1Standings() {
 	});
 }
 
+export async function fetchTennisRankings() {
+	const tours = [
+		{ key: "atp", url: `${ESPN_BASE}/tennis/atp/standings` },
+		{ key: "wta", url: `${ESPN_BASE}/tennis/wta/standings` },
+	];
+
+	const result = {};
+	for (const tour of tours) {
+		try {
+			const data = await fetchJson(tour.url);
+			const group = data?.children?.[0];
+			if (!group?.standings?.entries) {
+				result[tour.key] = [];
+				continue;
+			}
+
+			result[tour.key] = group.standings.entries.slice(0, 20).map((entry) => {
+				const stats = {};
+				for (const s of entry.stats || []) {
+					stats[s.name] = s.value;
+				}
+				return {
+					position: stats.rank || 0,
+					player: entry.athlete?.displayName || entry.team?.displayName || "Unknown",
+					country: entry.team?.abbreviation || "",
+					points: stats.points || 0,
+				};
+			}).sort((a, b) => a.position - b.position);
+		} catch (err) {
+			console.warn(`Tennis ${tour.key} rankings failed:`, err.message);
+			result[tour.key] = [];
+		}
+	}
+	return result;
+}
+
 async function main() {
 	const dataDir = rootDataPath();
 	const outPath = path.join(dataDir, "standings.json");
@@ -167,6 +203,17 @@ async function main() {
 	} catch (err) {
 		console.warn("F1 standings failed:", err.message);
 		standings.f1 = { drivers: [] };
+	}
+
+	// Tennis
+	try {
+		standings.tennis = await fetchTennisRankings();
+		const atpCount = standings.tennis.atp?.length || 0;
+		const wtaCount = standings.tennis.wta?.length || 0;
+		console.log(`Tennis: ATP top ${atpCount}, WTA top ${wtaCount}`);
+	} catch (err) {
+		console.warn("Tennis rankings failed:", err.message);
+		standings.tennis = { atp: [], wta: [] };
 	}
 
 	writeJsonPretty(outPath, standings);
