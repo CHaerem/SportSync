@@ -203,6 +203,8 @@ export function analyzeHintFatigue(qualityHistory) {
 		{ pattern: "editorial", metric: "editorialScore", key: "editorialScore" },
 		{ pattern: "sport diversity", metric: "sportDiversity", key: "sportDiversity" },
 		{ pattern: "summary", metric: "summaryCoverage", key: "summaryCoverage" },
+		{ pattern: "results note", metric: "resultsScore", key: "resultsScore" },
+		{ pattern: "sanity", metric: "sanityScore", key: "sanityScore" },
 	];
 
 	for (const [hintText, fireCount] of hintCounts) {
@@ -247,6 +249,12 @@ function getMetricValue(entry, key) {
 	if (key === "mustWatchCoverage") return entry.editorial?.mustWatchCoverage ?? null;
 	if (key === "sportDiversity") return entry.editorial?.sportDiversity ?? null;
 	if (key === "summaryCoverage") return entry.enrichment?.summaryCoverage ?? null;
+	if (key === "resultsScore") return entry.results?.score ?? null;
+	if (key === "sanityScore") {
+		// Lower findingCount is better, so invert: fewer findings = higher score
+		const count = entry.sanity?.findingCount;
+		return count != null ? Math.max(0, 1 - count / 20) : null;
+	}
 	return null;
 }
 
