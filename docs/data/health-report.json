@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-15T22:11:44.061Z",
-  "eventCount": 25,
+  "generatedAt": "2026-02-16T07:41:41.473Z",
+  "eventCount": 32,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -14,13 +14,13 @@
     },
     "olympics": {
       "count": 8,
-      "previousCount": 9,
-      "delta": -1
+      "previousCount": 8,
+      "delta": 0
     },
     "football": {
-      "count": 13,
+      "count": 20,
       "previousCount": 13,
-      "delta": 0
+      "delta": 7
     },
     "cs2": {
       "count": 1,
@@ -45,8 +45,8 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 238,
-      "stale": false
+      "ageMinutes": 808,
+      "stale": true
     },
     "esports.json": {
       "ageMinutes": 3,
@@ -57,12 +57,12 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
-      "stale": false
+      "ageMinutes": 572,
+      "stale": true
     },
     "tennis.json": {
       "ageMinutes": 3,
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.92,
+    "venuePercent": 0.94,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -117,6 +117,21 @@
       "message": "tennis: data file exists but 0 events in events.json"
     },
     {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "chess.json: data is 808 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "golf.json: data is 572 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "invisible_events",
+      "message": "2 event(s) won't appear on dashboard (golf, chess)"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) have 0 events and 0 results"
@@ -124,7 +139,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 73/100.",
+    "text": "Autonomy at 95% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 82/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

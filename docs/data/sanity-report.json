@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-15T22:11:50.280Z",
+  "generatedAt": "2026-02-16T07:41:47.243Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 25,
+    "totalEvents": 32,
     "sports": [
       "golf",
       "chess",
@@ -13,12 +13,12 @@
     ],
     "bands": {
       "live": [],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Alpine Skiing — Men's Slalom",
         "Biathlon — Men's Relay 4x7.5km",
         "Barcelona at Girona"
       ],
+      "tomorrow": [],
       "thisWeek": [
         "Cross-Country Skiing — Team Sprint Free",
         "Villarreal at Levante",
@@ -38,6 +38,13 @@
         "Newcastle United at Manchester City",
         "Espanyol at Atlético Madrid",
         "Cross-Country Skiing — Women's 30km Mass Start Classic",
+        "Sevilla at Getafe",
+        "Wolverhampton Wanderers at Crystal Palace",
+        "Liverpool at Nottingham Forest",
+        "Fulham at Sunderland",
+        "Levante at Barcelona",
+        "Arsenal at Tottenham Hotspur",
+        "Mallorca at Celta Vigo",
         "Closing Ceremony"
       ],
       "later": [
@@ -48,37 +55,27 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 73,
-    "issueCount": 3
+    "editorialScore": 82,
+    "issueCount": 6
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Qatar Airways Australian Grand Prix\" is 19 days away — may clutter the dashboard"
+      "message": "\"Qatar Airways Australian Grand Prix\" is 18 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Freestyle Chess World Championship Finals — Game 3\" which may not match any event"
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 9 hours old"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Morikawa\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Scheffler\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Freestyle Chess World Championship Finals\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Two Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -87,25 +84,15 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 5,
     "critical": 0,
-    "warning": 8,
-    "info": 1
+    "warning": 5,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
