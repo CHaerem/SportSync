@@ -17,7 +17,7 @@ concurrency:
 jobs:
   autopilot:
     runs-on: [self-hosted, linux, ARM64]
-    timeout-minutes: 30
+    timeout-minutes: 90
     permissions:
       contents: write
       pull-requests: write
