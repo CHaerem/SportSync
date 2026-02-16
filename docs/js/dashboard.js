@@ -86,14 +86,15 @@ class Dashboard {
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
 				fetch('data/watch-plan.json?t=' + Date.now()).catch(() => null),
 				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null),
 				fetch('data/meta.json?t=' + Date.now()).catch(() => null),
-				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null)
+				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null),
+				fetch('data/insights.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -146,6 +147,10 @@ class Dashboard {
 
 			if (recentResultsResp && recentResultsResp.ok) {
 				try { this.recentResults = await recentResultsResp.json(); } catch { this.recentResults = null; }
+			}
+
+			if (insightsResp && insightsResp.ok) {
+				try { this.insights = await insightsResp.json(); } catch { this.insights = null; }
 			}
 
 			this._cacheSet('events', this.allEvents);
@@ -547,6 +552,7 @@ class Dashboard {
 			// Today: existing full behavior (live polling, dynamic briefs, etc.)
 			this.renderEditorial();
 			this.renderWatchPlan();
+			this.renderInsights();
 			this.renderEvents();
 			this.renderNews();
 		} else {
@@ -560,7 +566,7 @@ class Dashboard {
 		this.renderFeedbackPanel();
 
 		// Hide today-centric sections on non-today dates
-		const todayOnlySections = ['watch-plan', 'news', 'feedback-panel'];
+		const todayOnlySections = ['watch-plan', 'insights', 'news', 'feedback-panel'];
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
@@ -990,6 +996,27 @@ class Dashboard {
 				if (current !== value) btn.classList.add('active');
 			});
 		});
+	}
+
+	// --- Insights ---
+
+	renderInsights() {
+		const container = document.getElementById('insights');
+		if (!container) return;
+
+		if (!this.insights || !Array.isArray(this.insights.insights) || this.insights.insights.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+
+		// Show top 5 insights, prioritizing high-priority ones
+		const top = this.insights.insights.slice(0, 5);
+		let html = '<div class="insights-header">Key Numbers</div>';
+		for (const insight of top) {
+			const pClass = insight.priority === 'high' ? 'high' : 'medium';
+			html += `<div class="insight-card ${pClass}">${this.esc(insight.text)}</div>`;
+		}
+		container.innerHTML = html;
 	}
 
 	// --- News ---
