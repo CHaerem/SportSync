@@ -111,6 +111,62 @@ export function parseEngagementFromIssueBody(body) {
 }
 
 /**
+ * Parse favorite teams/players from a GitHub Issue JSON body block.
+ * Returns { favoriteTeams: string[], favoritePlayers: string[] } or null.
+ */
+export function parseFavoritesFromIssueBody(body) {
+	if (!body) return null;
+	const match = body.match(/```json\s*\n([\s\S]*?)\n```/);
+	if (!match) return null;
+
+	try {
+		const parsed = JSON.parse(match[1]);
+		const src = parsed?.favorites || parsed?.backendPreferences || null;
+		if (!src) return null;
+		const teams = Array.isArray(src.favoriteTeams) ? src.favoriteTeams : [];
+		const players = Array.isArray(src.favoritePlayers) ? src.favoritePlayers : [];
+		if (teams.length === 0 && players.length === 0) return null;
+		return { favoriteTeams: teams, favoritePlayers: players };
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Read favorite teams/players from local engagement-data.json.
+ */
+export function readFavoritesFromFile(dataDir) {
+	const filePath = path.join(dataDir, "engagement-data.json");
+	const data = readJsonIfExists(filePath);
+	if (!data) return null;
+	const teams = Array.isArray(data.favoriteTeams) ? data.favoriteTeams : [];
+	const players = Array.isArray(data.favoritePlayers) ? data.favoritePlayers : [];
+	if (teams.length === 0 && players.length === 0) return null;
+	return { favoriteTeams: teams, favoritePlayers: players };
+}
+
+/**
+ * Detect new favorites from client-side exports that aren't in user-context.json.
+ * Returns { newTeams: string[], newPlayers: string[] }.
+ */
+export function detectNewFavorites(clientFavorites, userContext) {
+	if (!clientFavorites) return { newTeams: [], newPlayers: [] };
+	const currentTeams = userContext.favoriteTeams || [];
+	const currentPlayers = userContext.favoritePlayers || [];
+
+	const normalize = s => s.toLowerCase().trim();
+	const currentTeamSet = new Set(currentTeams.map(normalize));
+	const currentPlayerSet = new Set(currentPlayers.map(normalize));
+
+	const newTeams = (clientFavorites.favoriteTeams || [])
+		.filter(t => t && typeof t === "string" && !currentTeamSet.has(normalize(t)));
+	const newPlayers = (clientFavorites.favoritePlayers || [])
+		.filter(p => p && typeof p === "string" && !currentPlayerSet.has(normalize(p)));
+
+	return { newTeams, newPlayers };
+}
+
+/**
  * Merge multiple engagement objects by summing clicks, keeping latest lastClick.
  */
 export function mergeEngagement(...sources) {
@@ -135,11 +191,11 @@ export function mergeEngagement(...sources) {
 
 /**
  * Read engagement from GitHub Issues (label: user-feedback).
- * Returns merged engagement object or null.
+ * Returns { engagement, favorites } where each may be null.
  */
-export async function readEngagementFromIssues() {
+export async function readFromIssues() {
 	if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN && !process.env.GITHUB_ACTIONS) {
-		return null;
+		return { engagement: null, favorites: null };
 	}
 
 	try {
@@ -148,17 +204,40 @@ export async function readEngagementFromIssues() {
 			{ encoding: "utf-8", timeout: 15000 }
 		);
 		const issues = JSON.parse(output);
-		if (!Array.isArray(issues) || issues.length === 0) return null;
+		if (!Array.isArray(issues) || issues.length === 0) return { engagement: null, favorites: null };
 
 		const engagements = issues
 			.map(issue => parseEngagementFromIssueBody(issue.body))
 			.filter(Boolean);
 
-		if (engagements.length === 0) return null;
-		return mergeEngagement(...engagements);
+		const favoritesList = issues
+			.map(issue => parseFavoritesFromIssueBody(issue.body))
+			.filter(Boolean);
+
+		const engagement = engagements.length > 0 ? mergeEngagement(...engagements) : null;
+
+		// Merge favorites: union of all teams and players across issues
+		let favorites = null;
+		if (favoritesList.length > 0) {
+			const allTeams = new Set();
+			const allPlayers = new Set();
+			for (const f of favoritesList) {
+				for (const t of f.favoriteTeams) allTeams.add(t);
+				for (const p of f.favoritePlayers) allPlayers.add(p);
+			}
+			favorites = { favoriteTeams: [...allTeams], favoritePlayers: [...allPlayers] };
+		}
+
+		return { engagement, favorites };
 	} catch {
-		return null;
+		return { engagement: null, favorites: null };
 	}
+}
+
+// Backwards-compatible wrapper
+export async function readEngagementFromIssues() {
+	const { engagement } = await readFromIssues();
+	return engagement;
 }
 
 /**
@@ -188,49 +267,94 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 	const currentPrefs = userContext.sportPreferences || {};
 
 	// Read from both sources
-	const issueEngagement = await readEngagementFromIssues();
+	const issueData = await readFromIssues();
 	const fileEngagement = readEngagementFromFile(dDir);
+	const fileFavorites = readFavoritesFromFile(dDir);
 
-	// Merge both sources
-	const merged = mergeEngagement(issueEngagement, fileEngagement);
+	// Merge engagement from both sources
+	const merged = mergeEngagement(issueData.engagement, fileEngagement);
 	const totalClicks = Object.values(merged).reduce((s, e) => s + (e.clicks || 0), 0);
 
 	const sources = [];
-	if (issueEngagement) sources.push("github-issues");
+	if (issueData.engagement) sources.push("github-issues");
 	if (fileEngagement) sources.push("local-file");
 
-	if (totalClicks < MIN_TOTAL_CLICKS) {
-		console.log(`evolve-preferences: insufficient data (${totalClicks} clicks, need ${MIN_TOTAL_CLICKS})`);
+	// --- Sport weight evolution ---
+	let weightChanges = [];
+	let newWeights = { ...currentPrefs };
+
+	if (totalClicks >= MIN_TOTAL_CLICKS) {
+		newWeights = computeSportWeights(merged, currentPrefs);
+
+		const allSports = new Set([...Object.keys(currentPrefs), ...Object.keys(newWeights)]);
+		for (const sport of allSports) {
+			const from = currentPrefs[sport] || null;
+			const to = newWeights[sport] || null;
+			if (from !== to) {
+				const sportData = merged[sport] || { clicks: 0 };
+				const share = totalClicks > 0 ? sportData.clicks / totalClicks : 0;
+				weightChanges.push({ sport, from, to, share: Number(share.toFixed(3)) });
+			}
+		}
+	} else {
+		console.log(`evolve-preferences: insufficient engagement data (${totalClicks} clicks, need ${MIN_TOTAL_CLICKS})`);
+	}
+
+	// --- Favorite teams/players evolution ---
+	// Merge client-side favorites from issues and local file
+	const allFavSources = [issueData.favorites, fileFavorites].filter(Boolean);
+	let mergedFavorites = null;
+	if (allFavSources.length > 0) {
+		const teamSet = new Set();
+		const playerSet = new Set();
+		for (const f of allFavSources) {
+			for (const t of f.favoriteTeams) teamSet.add(t);
+			for (const p of f.favoritePlayers) playerSet.add(p);
+		}
+		mergedFavorites = { favoriteTeams: [...teamSet], favoritePlayers: [...playerSet] };
+	}
+
+	const { newTeams, newPlayers } = detectNewFavorites(mergedFavorites, userContext);
+
+	const changes = [...weightChanges];
+	for (const team of newTeams) {
+		changes.push({ type: "team", name: team, action: "added" });
+	}
+	for (const player of newPlayers) {
+		changes.push({ type: "player", name: player, action: "added" });
+	}
+
+	if (changes.length === 0 && totalClicks < MIN_TOTAL_CLICKS) {
 		return { skipped: true, reason: "insufficient-data", totalClicks, sources };
 	}
 
-	// Compute new weights
-	const newWeights = computeSportWeights(merged, currentPrefs);
-
-	// Detect changes
-	const changes = [];
-	const allSports = new Set([...Object.keys(currentPrefs), ...Object.keys(newWeights)]);
-	for (const sport of allSports) {
-		const from = currentPrefs[sport] || null;
-		const to = newWeights[sport] || null;
-		if (from !== to) {
-			const sportData = merged[sport] || { clicks: 0 };
-			const share = totalClicks > 0 ? sportData.clicks / totalClicks : 0;
-			changes.push({ sport, from, to, share: Number(share.toFixed(3)) });
-		}
-	}
-
 	if (changes.length === 0) {
-		console.log("evolve-preferences: no weight changes needed");
+		console.log("evolve-preferences: no changes needed");
 		return { skipped: false, changes: [], totalClicks, sources, currentWeights: newWeights };
 	}
 
 	// Update user-context.json (preserve all other fields)
-	userContext.sportPreferences = newWeights;
-	writeJsonPretty(contextPath, userContext);
-	console.log(`evolve-preferences: updated ${changes.length} sport weight(s)`);
-	for (const c of changes) {
-		console.log(`  ${c.sport}: ${c.from || "none"} → ${c.to} (share: ${Math.round(c.share * 100)}%)`);
+	let modified = false;
+	if (weightChanges.length > 0) {
+		userContext.sportPreferences = newWeights;
+		modified = true;
+		console.log(`evolve-preferences: updated ${weightChanges.length} sport weight(s)`);
+		for (const c of weightChanges) {
+			console.log(`  ${c.sport}: ${c.from || "none"} → ${c.to} (share: ${Math.round(c.share * 100)}%)`);
+		}
+	}
+	if (newTeams.length > 0) {
+		userContext.favoriteTeams = [...(userContext.favoriteTeams || []), ...newTeams];
+		modified = true;
+		console.log(`evolve-preferences: added ${newTeams.length} new favorite team(s): ${newTeams.join(", ")}`);
+	}
+	if (newPlayers.length > 0) {
+		userContext.favoritePlayers = [...(userContext.favoritePlayers || []), ...newPlayers];
+		modified = true;
+		console.log(`evolve-preferences: added ${newPlayers.length} new favorite player(s): ${newPlayers.join(", ")}`);
+	}
+	if (modified) {
+		writeJsonPretty(contextPath, userContext);
 	}
 
 	// Write evolution history
@@ -240,6 +364,9 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 		timestamp: new Date().toISOString(),
 		totalClicks,
 		changes: changes.length,
+		weightChanges: weightChanges.length,
+		newTeams: newTeams.length,
+		newPlayers: newPlayers.length,
 		source: sources.join("+"),
 	};
 	existing.runs = existing.runs || [];
