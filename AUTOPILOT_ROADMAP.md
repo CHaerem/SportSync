@@ -526,7 +526,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #78) Render recap headlines in recent results band — Added italic `recapHeadline` text under result score lines. Flows from `recent-results.json` through result pseudo-events to the UI.
 
-- [PENDING] Add live status indicator to watch-plan picks — `docs/js/dashboard.js` watch-plan picks (lines 693-747) don't show whether the event is live, upcoming, or finished. Cross-reference `pick.eventId` against `this.liveScores` and event dates to show a status badge. ~25 lines across 2 files, LOW risk.
+- [DONE] (PR #79) Add live status indicator to watch-plan picks — Added LIVE (pulsing dot) and FT badges to watch-plan picks using live score polling and time-based inference.
 
 ### LOW Priority
 
