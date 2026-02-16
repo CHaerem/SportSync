@@ -530,7 +530,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### LOW Priority
 
-- [PENDING] Visualize watch-plan pick confidence scores — `docs/data/watch-plan.json` includes `score` (0-200) per pick but `renderWatchPlan()` doesn't display it. Add a subtle confidence indicator (e.g., bar or dot opacity) to each pick. ~20 lines across 2 files, LOW risk.
+- [DONE] (PR #80) Visualize watch-plan pick confidence scores — Added thin accent-colored confidence bar under each pick, width proportional to match score (normalized to 150).
 
 ### Data Quality (Not Code Fixable)
 
