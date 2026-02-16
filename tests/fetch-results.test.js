@@ -17,10 +17,13 @@ const {
 	isFavoritePlayer,
 	fetchFootballResults,
 	fetchGolfResults,
+	fetchTennisResults,
 	matchRssHeadline,
 	mergeFootballResults,
+	mergeTennisResults,
 	validateFootballResult,
 	validateGolfResult,
+	validateTennisResult,
 	validateResults,
 } = await import("../scripts/fetch-results.js");
 
@@ -598,6 +601,186 @@ describe("mergeFootballResults()", () => {
 		];
 		const merged = mergeFootballResults(null, fresh);
 		expect(merged).toHaveLength(1);
+	});
+});
+
+// --- validateTennisResult ---
+describe("validateTennisResult()", () => {
+	const validResult = {
+		winner: "Casper Ruud",
+		loser: "Carlos Alcaraz",
+		score: "6-3, 7-5",
+		date: "2026-02-14T14:00:00Z",
+		tournament: "ATP Dubai",
+		tour: "ATP",
+	};
+
+	it("accepts valid tennis result", () => {
+		expect(validateTennisResult(validResult).valid).toBe(true);
+	});
+
+	it("rejects null input", () => {
+		expect(validateTennisResult(null).valid).toBe(false);
+	});
+
+	it("rejects missing winner", () => {
+		const v = validateTennisResult({ ...validResult, winner: "" });
+		expect(v.valid).toBe(false);
+		expect(v.issues).toContain("winner missing or empty");
+	});
+
+	it("rejects same winner and loser", () => {
+		const v = validateTennisResult({ ...validResult, loser: "Casper Ruud" });
+		expect(v.valid).toBe(false);
+	});
+
+	it("rejects missing score", () => {
+		const v = validateTennisResult({ ...validResult, score: null });
+		expect(v.valid).toBe(false);
+	});
+
+	it("rejects missing date", () => {
+		const r = { ...validResult };
+		delete r.date;
+		expect(validateTennisResult(r).valid).toBe(false);
+	});
+});
+
+// --- fetchTennisResults ---
+describe("fetchTennisResults()", () => {
+	const mockTennisMatch = {
+		events: [{
+			name: "ATP Dubai Championships",
+			date: "2026-02-14T14:00:00Z",
+			competitions: [{
+				status: { type: { state: "post", shortDetail: "Final" } },
+				competitors: [
+					{
+						winner: true,
+						athlete: { displayName: "Casper Ruud" },
+						score: "2",
+						linescores: [{ value: 6 }, { value: 7 }],
+					},
+					{
+						winner: false,
+						athlete: { displayName: "Carlos Alcaraz" },
+						score: "0",
+						linescores: [{ value: 3 }, { value: 5 }],
+					},
+				],
+			}],
+		}],
+	};
+
+	it("parses completed tennis matches", async () => {
+		fetchJson.mockResolvedValue(mockTennisMatch);
+		const results = await fetchTennisResults({ daysBack: 1, userContext: {} });
+
+		expect(results.length).toBeGreaterThanOrEqual(1);
+		const match = results.find(r => r.winner === "Casper Ruud");
+		expect(match).toBeDefined();
+		expect(match.loser).toBe("Carlos Alcaraz");
+		expect(match.score).toBe("6-3, 7-5");
+		expect(match.tournament).toBe("ATP Dubai Championships");
+	});
+
+	it("tags favorite players", async () => {
+		fetchJson.mockResolvedValue(mockTennisMatch);
+		const results = await fetchTennisResults({
+			daysBack: 1,
+			userContext: { favoritePlayers: ["Casper Ruud"] },
+		});
+
+		const match = results.find(r => r.winner === "Casper Ruud");
+		expect(match.isFavorite).toBe(true);
+	});
+
+	it("skips in-progress matches", async () => {
+		fetchJson.mockResolvedValue({
+			events: [{
+				name: "Match",
+				date: "2026-02-14T14:00:00Z",
+				competitions: [{
+					status: { type: { state: "in" } },
+					competitors: [
+						{ winner: false, athlete: { displayName: "A" }, score: "1" },
+						{ winner: false, athlete: { displayName: "B" }, score: "0" },
+					],
+				}],
+			}],
+		});
+		const results = await fetchTennisResults({ daysBack: 1, userContext: {} });
+		expect(results).toHaveLength(0);
+	});
+
+	it("handles fetch errors gracefully", async () => {
+		fetchJson.mockRejectedValue(new Error("Network error"));
+		const results = await fetchTennisResults({ daysBack: 1, userContext: {} });
+		expect(results).toEqual([]);
+	});
+});
+
+// --- mergeTennisResults ---
+describe("mergeTennisResults()", () => {
+	it("merges fresh results with existing", () => {
+		const existing = [
+			{ winner: "A", loser: "B", date: new Date().toISOString(), tour: "ATP", score: "6-3, 6-4" },
+		];
+		const fresh = [
+			{ winner: "C", loser: "D", date: new Date().toISOString(), tour: "ATP", score: "7-5, 6-2" },
+		];
+		const merged = mergeTennisResults(existing, fresh);
+		expect(merged).toHaveLength(2);
+	});
+
+	it("deduplicates by match key", () => {
+		const date = new Date().toISOString();
+		const existing = [
+			{ winner: "A", loser: "B", date, tour: "ATP", score: "6-3, 6-4" },
+		];
+		const fresh = [
+			{ winner: "A", loser: "B", date, tour: "ATP", score: "6-3, 6-4", round: "Final" },
+		];
+		const merged = mergeTennisResults(existing, fresh);
+		expect(merged).toHaveLength(1);
+		expect(merged[0].round).toBe("Final");
+	});
+
+	it("prunes results older than 7 days", () => {
+		const oldDate = new Date(Date.now() - 10 * 86400000).toISOString();
+		const recentDate = new Date().toISOString();
+		const existing = [
+			{ winner: "A", loser: "B", date: oldDate, tour: "ATP", score: "6-3, 6-4" },
+			{ winner: "C", loser: "D", date: recentDate, tour: "ATP", score: "7-5, 6-2" },
+		];
+		const merged = mergeTennisResults(existing, []);
+		expect(merged).toHaveLength(1);
+	});
+
+	it("handles null existing gracefully", () => {
+		const fresh = [
+			{ winner: "A", loser: "B", date: new Date().toISOString(), tour: "ATP", score: "6-3, 6-4" },
+		];
+		const merged = mergeTennisResults(null, fresh);
+		expect(merged).toHaveLength(1);
+	});
+});
+
+// --- validateResults with tennis ---
+describe("validateResults() with tennis", () => {
+	it("validates tennis results in combined output", () => {
+		const output = {
+			football: [],
+			golf: {},
+			tennis: [
+				{ winner: "Ruud", loser: "Alcaraz", score: "6-3, 7-5", date: "2026-02-14T14:00:00Z" },
+				{ winner: "", loser: "Djokovic", score: "6-4, 6-3", date: "2026-02-14T14:00:00Z" },
+			],
+		};
+		const v = validateResults(output);
+		expect(v.totalResults).toBe(2);
+		expect(v.validResults).toBe(1);
+		expect(v.issues.some(i => i.includes("Tennis"))).toBe(true);
 	});
 });
 
