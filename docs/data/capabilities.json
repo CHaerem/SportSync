@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-02-16T14:27:19.317Z",
+  "sports": {
+    "football": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 20,
+      "liveScores": true,
+      "standings": true,
+      "results": true
+    },
+    "golf": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 1,
+      "liveScores": true,
+      "standings": true,
+      "results": true
+    },
+    "tennis": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 0,
+      "liveScores": false,
+      "standings": false,
+      "results": false
+    },
+    "f1": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 1,
+      "liveScores": false,
+      "standings": true,
+      "results": false
+    },
+    "chess": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 1,
+      "liveScores": false,
+      "standings": false,
+      "results": false
+    },
+    "esports": {
+      "fetcher": true,
+      "data": true,
+      "eventCount": 0,
+      "liveScores": false,
+      "standings": false,
+      "results": false
+    }
+  },
+  "pipelineSteps": 24,
+  "pipelinePhases": [
+    "fetch",
+    "prepare",
+    "discover",
+    "build",
+    "generate",
+    "validate",
+    "monitor",
+    "personalize",
+    "finalize"
+  ],
+  "feedbackLoops": 0,
+  "scoutingHeuristics": 11,
+  "curatedConfigs": 5,
+  "gaps": [
+    "No live scores for tennis, f1, chess, esports",
+    "No standings for tennis, chess, esports",
+    "No results tracking for tennis, f1, chess, esports",
+    "Esports HLTV API stale — relying on curated configs only",
+    "Missing diagnostic files: fact-check-history.json, preference-evolution.json"
+  ]
+}

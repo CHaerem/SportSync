@@ -145,6 +145,11 @@
       "severity": "info",
       "code": "quota_api_unavailable",
       "message": "Quota API unavailable (upstream scope limitation)"
+    },
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
     }
   ],
   "status": "warning",
@@ -153,7 +158,13 @@
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
   }
 }

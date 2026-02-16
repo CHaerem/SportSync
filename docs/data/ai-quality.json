@@ -1,37 +1,44 @@
 {
-  "generatedAt": "2026-02-16T10:50:55.336Z",
+  "generatedAt": "2026-02-16T14:27:11.052Z",
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 3,
+    "blockCount": 7,
+    "generationMs": 16450,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 32626,
+      "output": 376,
+      "cacheCreation": 17415,
+      "cacheRead": 15208,
+      "total": 33002,
+      "costUSD": 0.12642075,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 69,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.286,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 29% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 60,
+      "pickCount": 3,
+      "avgScore": 119,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -52,16 +59,16 @@
     ]
   },
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
-      "totalEvents": 32,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "totalEvents": 34,
+      "importanceCoverage": 0.706,
+      "summaryCoverage": 0.706,
+      "relevanceCoverage": 0.706,
+      "tagsCoverage": 0.529
     },
     "after": {
-      "totalEvents": 32,
+      "totalEvents": 34,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -70,16 +77,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
-    "failedBatches": 0,
-    "totalEvents": 32,
+    "fallbackFieldsFilled": 56,
+    "aiUpdatedFields": 24,
+    "failedBatches": 1,
+    "totalEvents": 34,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 87950,
+      "output": 2237,
+      "calls": 3,
+      "total": 90187,
+      "costUSD": 0.31404050000000006,
+      "tracked": true,
+      "estimated": false
     }
   }
 }

@@ -1,42 +1,5 @@
 [
   {
-    "timestamp": "2026-02-13T13:06:07.401Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 95,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 97,
-      "streamingCoverage": 1
-    },
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-13T13:06:07.685Z",
     "editorial": {
       "score": 95,
@@ -5551,6 +5514,81 @@
         "total": 0,
         "costUSD": 0,
         "realPct": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-16T14:27:11.057Z",
+    "editorial": {
+      "score": 69,
+      "mustWatchCoverage": 0.286,
+      "sportDiversity": 0.5,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 119,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"After Wednesday\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Klæbo\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 87950,
+        "output": 2237,
+        "calls": 3,
+        "total": 90187,
+        "costUSD": 0.31404050000000006,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32626,
+        "output": 376,
+        "cacheCreation": 17415,
+        "cacheRead": 15208,
+        "total": 33002,
+        "costUSD": 0.12642075,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 120576,
+        "output": 2613,
+        "calls": 4,
+        "total": 123189,
+        "costUSD": 0.44046125,
+        "realPct": 100
       }
     }
   }
