@@ -216,7 +216,20 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 6b. Fact-check history freshness
+	// 6b. Preference evolution freshness
+	const { preferenceEvolution = null } = options;
+	if (preferenceEvolution?.lastEvolved) {
+		const evoAge = ageMinutes(preferenceEvolution.lastEvolved);
+		if (evoAge > 10080) { // 7 days
+			issues.push({
+				severity: "info",
+				code: "preference_evolution_stale",
+				message: `Preference evolution last ran ${Math.round(evoAge / 1440)} days ago`,
+			});
+		}
+	}
+
+	// 6c. Fact-check history freshness
 	const { factCheckHistory: fcHistoryOpt = null } = options;
 	if (fcHistoryOpt && Array.isArray(fcHistoryOpt) && fcHistoryOpt.length > 0) {
 		const lastEntry = fcHistoryOpt[fcHistoryOpt.length - 1];
@@ -439,6 +452,9 @@ async function main() {
 	// Read fact-check history for freshness monitoring
 	const factCheckHistory = readJsonIfExists(path.join(dataDir, "fact-check-history.json"));
 
+	// Read preference evolution history
+	const preferenceEvolution = readJsonIfExists(path.join(dataDir, "preference-evolution.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -450,6 +466,7 @@ async function main() {
 		snapshotHealth: { meta: snapMeta },
 		usageTracking,
 		factCheckHistory,
+		preferenceEvolution,
 	});
 
 	// Generate autonomy scorecard alongside health report

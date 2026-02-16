@@ -71,6 +71,12 @@ class FeedbackManager {
 		};
 	}
 
+	_getBackendExport() {
+		if (!window.PreferencesManager) return null;
+		const pm = window._ssPreferences || new PreferencesManager();
+		return pm.exportForBackend();
+	}
+
 	// --- Generate GitHub Issue URL ---
 
 	buildIssueURL() {
@@ -115,7 +121,8 @@ class FeedbackManager {
 		}
 
 		// Machine-readable JSON block for autopilot parsing
-		const payload = { favorites, reports, suggestions, date: new Date().toISOString().slice(0, 10) };
+		const backendPreferences = this._getBackendExport();
+		const payload = { favorites, backendPreferences, reports, suggestions, date: new Date().toISOString().slice(0, 10) };
 		body += '### Data (for autopilot)\n\n';
 		body += '```json\n';
 		body += JSON.stringify(payload);

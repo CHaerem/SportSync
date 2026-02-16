@@ -242,12 +242,27 @@ class PreferencesManager {
 		for (const [sport, sportPlayers] of Object.entries(this.preferences.favoritePlayers || {})) {
 			players.push(...sportPlayers);
 		}
+
+		// Derive sport preference levels from engagement
+		const engagement = this.getEngagement();
+		const sportPreferences = {};
+		const totalClicks = Object.values(engagement).reduce((s, e) => s + (e.clicks || 0), 0);
+		if (totalClicks >= 20) {
+			for (const [sport, data] of Object.entries(engagement)) {
+				const share = data.clicks / totalClicks;
+				if (share >= 0.25) sportPreferences[sport] = 'high';
+				else if (share >= 0.10) sportPreferences[sport] = 'medium';
+				else sportPreferences[sport] = 'low';
+			}
+		}
+
 		return {
 			favoriteTeams: teams,
 			favoritePlayers: players,
 			favoriteEsportsOrgs: this.preferences.favoriteTeams?.esports || [],
 			location: 'Norway',
-			sportPreferences: {}
+			sportPreferences,
+			engagement,
 		};
 	}
 
