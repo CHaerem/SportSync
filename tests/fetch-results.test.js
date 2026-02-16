@@ -18,12 +18,15 @@ const {
 	fetchFootballResults,
 	fetchGolfResults,
 	fetchTennisResults,
+	fetchF1Results,
 	matchRssHeadline,
 	mergeFootballResults,
 	mergeTennisResults,
+	mergeF1Results,
 	validateFootballResult,
 	validateGolfResult,
 	validateTennisResult,
+	validateF1Result,
 	validateResults,
 } = await import("../scripts/fetch-results.js");
 
@@ -781,6 +784,163 @@ describe("validateResults() with tennis", () => {
 		expect(v.totalResults).toBe(2);
 		expect(v.validResults).toBe(1);
 		expect(v.issues.some(i => i.includes("Tennis"))).toBe(true);
+	});
+});
+
+// --- validateF1Result ---
+describe("validateF1Result()", () => {
+	const validResult = {
+		raceName: "Monaco Grand Prix",
+		date: "2026-02-14T14:00:00Z",
+		topDrivers: [{ position: 1, driver: "Verstappen", team: "Red Bull" }],
+		type: "Race",
+	};
+
+	it("accepts valid F1 result", () => {
+		expect(validateF1Result(validResult).valid).toBe(true);
+	});
+
+	it("rejects null input", () => {
+		expect(validateF1Result(null).valid).toBe(false);
+	});
+
+	it("rejects missing raceName", () => {
+		const v = validateF1Result({ ...validResult, raceName: "" });
+		expect(v.valid).toBe(false);
+	});
+
+	it("rejects empty topDrivers", () => {
+		const v = validateF1Result({ ...validResult, topDrivers: [] });
+		expect(v.valid).toBe(false);
+	});
+
+	it("rejects missing date", () => {
+		const r = { ...validResult };
+		delete r.date;
+		expect(validateF1Result(r).valid).toBe(false);
+	});
+});
+
+// --- fetchF1Results ---
+describe("fetchF1Results()", () => {
+	const mockF1Race = {
+		events: [{
+			name: "Monaco Grand Prix",
+			date: "2026-02-14T14:00:00Z",
+			competitions: [{
+				status: { type: { state: "post" } },
+				type: { abbreviation: "Race", text: "Race" },
+				competitors: [
+					{ order: 1, athlete: { displayName: "Max Verstappen" }, team: { displayName: "Red Bull Racing" }, status: { type: { shortDetail: "Finished" } } },
+					{ order: 2, athlete: { displayName: "Charles Leclerc" }, team: { displayName: "Ferrari" }, status: { type: { shortDetail: "Finished" } } },
+					{ order: 3, athlete: { displayName: "Lando Norris" }, team: { displayName: "McLaren" }, status: { type: { shortDetail: "Finished" } } },
+				],
+				venue: { fullName: "Circuit de Monaco" },
+			}],
+		}],
+	};
+
+	it("parses completed F1 races", async () => {
+		fetchJson.mockResolvedValue(mockF1Race);
+		const results = await fetchF1Results({ daysBack: 1 });
+
+		expect(results.length).toBeGreaterThanOrEqual(1);
+		const race = results.find(r => r.raceName === "Monaco Grand Prix");
+		expect(race).toBeDefined();
+		expect(race.topDrivers).toHaveLength(3);
+		expect(race.topDrivers[0].driver).toBe("Max Verstappen");
+		expect(race.topDrivers[0].team).toBe("Red Bull Racing");
+		expect(race.type).toBe("Race");
+	});
+
+	it("skips practice and qualifying sessions", async () => {
+		fetchJson.mockResolvedValue({
+			events: [{
+				name: "Monaco GP",
+				date: "2026-02-13T10:00:00Z",
+				competitions: [{
+					status: { type: { state: "post" } },
+					type: { abbreviation: "Q", text: "Qualifying" },
+					competitors: [
+						{ order: 1, athlete: { displayName: "Verstappen" } },
+					],
+				}],
+			}],
+		});
+		const results = await fetchF1Results({ daysBack: 1 });
+		expect(results).toHaveLength(0);
+	});
+
+	it("handles fetch errors gracefully", async () => {
+		fetchJson.mockRejectedValue(new Error("Network error"));
+		const results = await fetchF1Results({ daysBack: 1 });
+		expect(results).toEqual([]);
+	});
+});
+
+// --- mergeF1Results ---
+describe("mergeF1Results()", () => {
+	it("merges fresh results with existing", () => {
+		const existing = [
+			{ raceName: "Monaco GP", date: new Date().toISOString(), type: "Race", topDrivers: [{ driver: "V" }] },
+		];
+		const fresh = [
+			{ raceName: "Spanish GP", date: new Date().toISOString(), type: "Race", topDrivers: [{ driver: "L" }] },
+		];
+		const merged = mergeF1Results(existing, fresh);
+		expect(merged).toHaveLength(2);
+	});
+
+	it("deduplicates by race key", () => {
+		const date = new Date().toISOString();
+		const existing = [
+			{ raceName: "Monaco GP", date, type: "Race", topDrivers: [{ driver: "V" }] },
+		];
+		const fresh = [
+			{ raceName: "Monaco GP", date, type: "Race", topDrivers: [{ driver: "V", team: "Red Bull" }] },
+		];
+		const merged = mergeF1Results(existing, fresh);
+		expect(merged).toHaveLength(1);
+		expect(merged[0].topDrivers[0].team).toBe("Red Bull");
+	});
+
+	it("prunes results older than 30 days", () => {
+		const oldDate = new Date(Date.now() - 35 * 86400000).toISOString();
+		const recentDate = new Date().toISOString();
+		const existing = [
+			{ raceName: "Old GP", date: oldDate, type: "Race", topDrivers: [{ driver: "A" }] },
+			{ raceName: "New GP", date: recentDate, type: "Race", topDrivers: [{ driver: "B" }] },
+		];
+		const merged = mergeF1Results(existing, []);
+		expect(merged).toHaveLength(1);
+		expect(merged[0].raceName).toBe("New GP");
+	});
+
+	it("handles null existing gracefully", () => {
+		const fresh = [
+			{ raceName: "GP", date: new Date().toISOString(), type: "Race", topDrivers: [{ driver: "A" }] },
+		];
+		const merged = mergeF1Results(null, fresh);
+		expect(merged).toHaveLength(1);
+	});
+});
+
+// --- validateResults with F1 ---
+describe("validateResults() with F1", () => {
+	it("validates F1 results in combined output", () => {
+		const output = {
+			football: [],
+			golf: {},
+			tennis: [],
+			f1: [
+				{ raceName: "Monaco GP", date: "2026-02-14T14:00:00Z", topDrivers: [{ driver: "V" }] },
+				{ raceName: "", date: "2026-02-14T14:00:00Z", topDrivers: [] },
+			],
+		};
+		const v = validateResults(output);
+		expect(v.totalResults).toBe(2);
+		expect(v.validResults).toBe(1);
+		expect(v.issues.some(i => i.includes("F1"))).toBe(true);
 	});
 });
 
