@@ -236,9 +236,9 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 1: Self-Maintaining Data
 
-1. [PENDING] [MAINTENANCE] **Fix tennis zero events: change filterMode from "exclusive" to "inclusive"** — `docs/js/sport-config.js` line ~99 has `filterMode: "exclusive"` for tennis, which hides ALL events when Casper Ruud has nothing scheduled. Change to "inclusive" so matches are visible with Norwegian ones highlighted. This single change fixes the "sport_zero_events" pattern that has fired 88 times.
+1. [BLOCKED] misdiagnosed — Tennis filterMode is already "focused" (not "exclusive"), and ESPN API returns zero tennis events regardless of filter mode. The sport_zero_events pattern fires because there are no tennis events on ESPN during the current period. Will self-resolve when tennis season resumes. **Fix tennis zero events: change filterMode from "exclusive" to "inclusive"**
 
-2. [PENDING] [MAINTENANCE] **Fix hint fatigue: add RESULTS and SANITY to hintMetricMap** — `scripts/analyze-patterns.js` ~line 199 has `hintMetricMap` that maps hint types to quality metrics but is missing entries for RESULTS and SANITY hints. All hint fatigue for these categories reports `hintKey: "unknown"`. Add the mappings so pattern detection can track whether these hints are effective.
+2. [DONE] (PR #85) **Fix hint fatigue: add RESULTS and SANITY to hintMetricMap** — Already fixed in PR #85. hintMetricMap now includes "results note"→resultsScore and "sanity"→sanityScore. Pattern report will reflect this on next pipeline run.
 
 3. [PENDING] [MAINTENANCE] **Add results tracking for tennis** — `scripts/fetch-results.js` fetches football and golf results from ESPN. Extend it to also fetch tennis results (ATP/WTA tournament scores). ESPN has tennis scoreboard endpoints. Add to the existing fetcher pattern, tag Casper Ruud as favorite.
 
@@ -282,7 +282,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 20. [PENDING] [MAINTENANCE] **Evolve favorite teams from engagement data** — `evolve-preferences.js` currently only adjusts sport-level weights. Extend it to also detect frequently-clicked teams (from engagement data) and suggest promoting them to favorites in `user-context.json`.
 
-21. [PENDING] [MAINTENANCE] **Add sport-section ordering by preference** — Dashboard renders sports in a fixed order. Read `user-context.json` sport weights and render the highest-weight sports first. Simple change in `dashboard.js` sort logic.
+21. [DONE] (PR #86) **Add sport-section ordering by preference** — Added SPORT_WEIGHT fallback map in dashboard.js renderBand(). Events sort by engagement clicks + preference weight (high=3, medium=2, low=1), giving sensible ordering even for new users.
 
 22. [PENDING] [FEATURE] **Add personalized "For You" editorial block** — In `generate-featured.js`, add a dedicated block type that highlights events specifically matching the user's top preferences (favorite teams/players, highest-weight sports). Separate from the general editorial brief.
 
