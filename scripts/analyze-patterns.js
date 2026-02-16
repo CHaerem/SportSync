@@ -297,6 +297,81 @@ export function analyzeAutopilotFailures(autopilotLog) {
 }
 
 /**
+ * Detector 6: Intervention Effectiveness
+ * Compares consecutive quality-history entries. When a hint fires in entry N,
+ * checks if the targeted metric improved in entry N+1. Tracks per-hint-type
+ * effectiveness rates so the autopilot can replace ineffective hints.
+ */
+export function analyzeInterventionEffectiveness(qualityHistory) {
+	if (!Array.isArray(qualityHistory) || qualityHistory.length < 2) return {};
+
+	const hintMetricMap = [
+		{ pattern: "must-watch", key: "mustWatchCoverage" },
+		{ pattern: "must watch", key: "mustWatchCoverage" },
+		{ pattern: "importance", key: "mustWatchCoverage" },
+		{ pattern: "editorial", key: "editorialScore" },
+		{ pattern: "sport diversity", key: "sportDiversity" },
+		{ pattern: "summary", key: "summaryCoverage" },
+		{ pattern: "results note", key: "resultsScore" },
+		{ pattern: "sanity", key: "sanityScore" },
+	];
+
+	function resolveHintKey(hintText) {
+		const lower = hintText.toLowerCase();
+		for (const { pattern, key } of hintMetricMap) {
+			if (lower.includes(pattern)) return key;
+		}
+		return "unknown";
+	}
+
+	const recent = qualityHistory.slice(-20);
+	const effectiveness = {};
+
+	for (let i = 0; i < recent.length - 1; i++) {
+		const entry = recent[i];
+		const next = recent[i + 1];
+		const hints = entry.hintsApplied;
+		if (!Array.isArray(hints) || hints.length === 0) continue;
+
+		// Track each unique hint type in this entry
+		const seenKeys = new Set();
+		for (const hint of hints) {
+			const metricKey = resolveHintKey(hint);
+			if (seenKeys.has(metricKey)) continue;
+			seenKeys.add(metricKey);
+
+			if (!effectiveness[metricKey]) {
+				effectiveness[metricKey] = { fires: 0, improved: 0, unchanged: 0, worsened: 0 };
+			}
+
+			effectiveness[metricKey].fires++;
+
+			const before = getMetricValue(entry, metricKey);
+			const after = getMetricValue(next, metricKey);
+
+			if (before == null || after == null) {
+				effectiveness[metricKey].unchanged++;
+			} else if (after > before) {
+				effectiveness[metricKey].improved++;
+			} else if (after < before) {
+				effectiveness[metricKey].worsened++;
+			} else {
+				effectiveness[metricKey].unchanged++;
+			}
+		}
+	}
+
+	// Compute rates
+	for (const data of Object.values(effectiveness)) {
+		data.effectivenessRate = data.fires > 0
+			? Number((data.improved / data.fires).toFixed(2))
+			: 0;
+	}
+
+	return effectiveness;
+}
+
+/**
  * Orchestrator: runs all 5 detectors, sorts by severity.
  */
 export function analyzePatterns({ dataDir } = {}) {
@@ -318,6 +393,7 @@ export function analyzePatterns({ dataDir } = {}) {
 	const stagnantPatterns = analyzeStagnantLoops(autonomyTrend);
 	const fatiguePatterns = analyzeHintFatigue(qualityHistory);
 	const failurePatterns = analyzeAutopilotFailures(autopilotLog);
+	const interventionEffectiveness = analyzeInterventionEffectiveness(qualityHistory);
 
 	const allPatterns = [
 		...healthPatterns,
@@ -350,6 +426,7 @@ export function analyzePatterns({ dataDir } = {}) {
 		patternsDetected: allPatterns.length,
 		patterns: allPatterns,
 		issueCodeHistory,
+		interventionEffectiveness,
 		summary,
 	};
 }
