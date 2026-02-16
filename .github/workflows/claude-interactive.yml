@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   respond:
-    runs-on: [self-hosted, linux, ARM64]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     if: >
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
