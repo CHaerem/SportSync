@@ -278,7 +278,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 4: Personalized Output
 
-19. [PENDING] [FEATURE] **Add thumbs-up/down on watch-plan picks** — Add lightweight feedback controls on watch-plan items in the dashboard. Store feedback in `localStorage` alongside engagement data. Export via the existing engagement export bridge.
+19. [DONE] (PR #98) **Add thumbs-up/down on watch-plan picks** — Feedback buttons on watch-plan picks with toggle behavior, stored in localStorage via PreferencesManager. CSS with accent active state.
 
 20. [PENDING] [MAINTENANCE] **Evolve favorite teams from engagement data** — `evolve-preferences.js` currently only adjusts sport-level weights. Extend it to also detect frequently-clicked teams (from engagement data) and suggest promoting them to favorites in `user-context.json`.
 

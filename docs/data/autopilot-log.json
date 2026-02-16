@@ -390,6 +390,21 @@
       "lesson": "UI features that reuse existing patterns (exp-mini-table, band toggle) are quick to implement. The research phase was the biggest time cost.",
       "scouted": 0,
       "meta_insight": "The dashboard has clear extension points: band system for sections, exp-mini-table for data display, preferences for personalization. New widgets slot in easily."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add thumbs-up/down feedback on watch-plan picks",
+      "outcome": "completed",
+      "pr": 98,
+      "pillar": "personalization",
+      "details": "Added watch-plan feedback controls: thumbs-up/down buttons on each pick, stored in localStorage via PreferencesManager. Toggle behavior, proper event propagation handling. CSS styling consistent with existing design.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 8,
+      "turns_estimated": 10,
+      "lesson": "UI feedback features that integrate with existing storage patterns (PreferencesManager) are quick to implement. The main complexity is proper event handling (stopPropagation for buttons inside clickable containers).",
+      "scouted": 0,
+      "meta_insight": "Watch-plan feedback is the prerequisite for closing the personalization loop. Next step: export this feedback to the pipeline so it influences future watch-plan scoring."
     }
   ]
 }
