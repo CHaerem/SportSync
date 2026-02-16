@@ -111,6 +111,50 @@ export function parseEngagementFromIssueBody(body) {
 }
 
 /**
+ * Parse watch-plan feedback from a GitHub Issue JSON body block.
+ * Returns { up: number, down: number, total: number } or null.
+ */
+export function parseWatchFeedbackFromIssueBody(body) {
+	if (!body) return null;
+	const match = body.match(/```json\s*\n([\s\S]*?)\n```/);
+	if (!match) return null;
+
+	try {
+		const parsed = JSON.parse(match[1]);
+		const fb = parsed?.favorites?.watchFeedback
+			|| parsed?.backendPreferences?.watchFeedback
+			|| null;
+		if (!fb || typeof fb !== "object") return null;
+		let up = 0, down = 0;
+		for (const entry of Object.values(fb)) {
+			if (entry?.value === "up") up++;
+			else if (entry?.value === "down") down++;
+		}
+		if (up === 0 && down === 0) return null;
+		return { up, down, total: up + down };
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Read watch-plan feedback from local engagement-data.json.
+ * Returns { up: number, down: number, total: number } or null.
+ */
+export function readWatchFeedbackFromFile(dataDir) {
+	const filePath = path.join(dataDir, "engagement-data.json");
+	const data = readJsonIfExists(filePath);
+	if (!data?.watchFeedback || typeof data.watchFeedback !== "object") return null;
+	let up = 0, down = 0;
+	for (const entry of Object.values(data.watchFeedback)) {
+		if (entry?.value === "up") up++;
+		else if (entry?.value === "down") down++;
+	}
+	if (up === 0 && down === 0) return null;
+	return { up, down, total: up + down };
+}
+
+/**
  * Parse favorite teams/players from a GitHub Issue JSON body block.
  * Returns { favoriteTeams: string[], favoritePlayers: string[] } or null.
  */
@@ -191,11 +235,11 @@ export function mergeEngagement(...sources) {
 
 /**
  * Read engagement from GitHub Issues (label: user-feedback).
- * Returns { engagement, favorites } where each may be null.
+ * Returns { engagement, favorites, watchFeedback } where each may be null.
  */
 export async function readFromIssues() {
 	if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN && !process.env.GITHUB_ACTIONS) {
-		return { engagement: null, favorites: null };
+		return { engagement: null, favorites: null, watchFeedback: null };
 	}
 
 	try {
@@ -204,7 +248,7 @@ export async function readFromIssues() {
 			{ encoding: "utf-8", timeout: 15000 }
 		);
 		const issues = JSON.parse(output);
-		if (!Array.isArray(issues) || issues.length === 0) return { engagement: null, favorites: null };
+		if (!Array.isArray(issues) || issues.length === 0) return { engagement: null, favorites: null, watchFeedback: null };
 
 		const engagements = issues
 			.map(issue => parseEngagementFromIssueBody(issue.body))
@@ -212,6 +256,10 @@ export async function readFromIssues() {
 
 		const favoritesList = issues
 			.map(issue => parseFavoritesFromIssueBody(issue.body))
+			.filter(Boolean);
+
+		const watchFeedbackList = issues
+			.map(issue => parseWatchFeedbackFromIssueBody(issue.body))
 			.filter(Boolean);
 
 		const engagement = engagements.length > 0 ? mergeEngagement(...engagements) : null;
@@ -228,9 +276,20 @@ export async function readFromIssues() {
 			favorites = { favoriteTeams: [...allTeams], favoritePlayers: [...allPlayers] };
 		}
 
-		return { engagement, favorites };
+		// Merge watch feedback: sum up/down across issues
+		let watchFeedback = null;
+		if (watchFeedbackList.length > 0) {
+			let up = 0, down = 0;
+			for (const wf of watchFeedbackList) {
+				up += wf.up;
+				down += wf.down;
+			}
+			watchFeedback = { up, down, total: up + down };
+		}
+
+		return { engagement, favorites, watchFeedback };
 	} catch {
-		return { engagement: null, favorites: null };
+		return { engagement: null, favorites: null, watchFeedback: null };
 	}
 }
 
@@ -270,6 +329,7 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 	const issueData = await readFromIssues();
 	const fileEngagement = readEngagementFromFile(dDir);
 	const fileFavorites = readFavoritesFromFile(dDir);
+	const fileWatchFeedback = readWatchFeedbackFromFile(dDir);
 
 	// Merge engagement from both sources
 	const merged = mergeEngagement(issueData.engagement, fileEngagement);
@@ -324,13 +384,52 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 		changes.push({ type: "player", name: player, action: "added" });
 	}
 
-	if (changes.length === 0 && totalClicks < MIN_TOTAL_CLICKS) {
+	// Merge watch feedback from both sources
+	const watchFeedbackSources = [issueData.watchFeedback, fileWatchFeedback].filter(Boolean);
+	let mergedWatchFeedback = null;
+	if (watchFeedbackSources.length > 0) {
+		let up = 0, down = 0;
+		for (const wf of watchFeedbackSources) {
+			up += wf.up;
+			down += wf.down;
+		}
+		mergedWatchFeedback = { up, down, total: up + down };
+	}
+
+	if (mergedWatchFeedback) {
+		console.log(`evolve-preferences: watch feedback — ${mergedWatchFeedback.up} up, ${mergedWatchFeedback.down} down (${mergedWatchFeedback.total} total)`);
+	}
+
+	if (changes.length === 0 && totalClicks < MIN_TOTAL_CLICKS && !mergedWatchFeedback) {
 		return { skipped: true, reason: "insufficient-data", totalClicks, sources };
 	}
 
-	if (changes.length === 0) {
+	if (changes.length === 0 && !mergedWatchFeedback) {
 		console.log("evolve-preferences: no changes needed");
 		return { skipped: false, changes: [], totalClicks, sources, currentWeights: newWeights };
+	}
+
+	if (changes.length === 0 && mergedWatchFeedback) {
+		// No weight/favorite changes but we have watch feedback to record
+		const evolutionPath = path.join(dDir, "preference-evolution.json");
+		const existing = readJsonIfExists(evolutionPath) || { runs: [] };
+		const run = {
+			timestamp: new Date().toISOString(),
+			totalClicks,
+			changes: 0,
+			watchFeedback: mergedWatchFeedback,
+			source: sources.join("+"),
+		};
+		existing.runs = existing.runs || [];
+		existing.runs.push(run);
+		if (existing.runs.length > 50) existing.runs = existing.runs.slice(-50);
+		existing.lastEvolved = run.timestamp;
+		existing.totalEngagementClicks = totalClicks;
+		existing.sources = sources;
+		existing.watchFeedback = mergedWatchFeedback;
+		existing.currentWeights = newWeights;
+		writeJsonPretty(evolutionPath, existing);
+		return { skipped: false, changes: [], totalClicks, sources, currentWeights: newWeights, watchFeedback: mergedWatchFeedback };
 	}
 
 	// Update user-context.json (preserve all other fields)
@@ -369,6 +468,9 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 		newPlayers: newPlayers.length,
 		source: sources.join("+"),
 	};
+	if (mergedWatchFeedback) {
+		run.watchFeedback = mergedWatchFeedback;
+	}
 	existing.runs = existing.runs || [];
 	existing.runs.push(run);
 	// Cap at 50 entries
@@ -380,10 +482,13 @@ export async function evolvePreferences({ configDir, dataDir } = {}) {
 	existing.sources = sources;
 	existing.changes = changes;
 	existing.currentWeights = newWeights;
+	if (mergedWatchFeedback) {
+		existing.watchFeedback = mergedWatchFeedback;
+	}
 
 	writeJsonPretty(evolutionPath, existing);
 
-	return { skipped: false, changes, totalClicks, sources, currentWeights: newWeights };
+	return { skipped: false, changes, totalClicks, sources, currentWeights: newWeights, watchFeedback: mergedWatchFeedback };
 }
 
 if (process.argv[1]?.includes("evolve-preferences")) {

@@ -263,6 +263,7 @@ class PreferencesManager {
 			location: 'Norway',
 			sportPreferences,
 			engagement,
+			watchFeedback: this.getAllWatchFeedback(),
 		};
 	}
 

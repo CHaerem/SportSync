@@ -6,7 +6,9 @@ import {
 	computeSportWeights,
 	parseEngagementFromIssueBody,
 	parseFavoritesFromIssueBody,
+	parseWatchFeedbackFromIssueBody,
 	readFavoritesFromFile,
+	readWatchFeedbackFromFile,
 	detectNewFavorites,
 	mergeEngagement,
 	readEngagementFromFile,
@@ -277,6 +279,81 @@ describe("parseFavoritesFromIssueBody()", () => {
 });
 
 // ============================================================
+// parseWatchFeedbackFromIssueBody
+// ============================================================
+describe("parseWatchFeedbackFromIssueBody()", () => {
+	it("parses watch feedback from favorites path", () => {
+		const body = '```json\n{"favorites":{"watchFeedback":{"pick1":{"value":"up","timestamp":"2026-02-15T12:00:00Z"},"pick2":{"value":"down","timestamp":"2026-02-15T13:00:00Z"}}}}\n```';
+		const result = parseWatchFeedbackFromIssueBody(body);
+		expect(result).toEqual({ up: 1, down: 1, total: 2 });
+	});
+
+	it("parses watch feedback from backendPreferences path", () => {
+		const body = '```json\n{"backendPreferences":{"watchFeedback":{"a":{"value":"up"},"b":{"value":"up"},"c":{"value":"down"}}}}\n```';
+		const result = parseWatchFeedbackFromIssueBody(body);
+		expect(result).toEqual({ up: 2, down: 1, total: 3 });
+	});
+
+	it("returns null when no watch feedback present", () => {
+		const body = '```json\n{"favorites":{"engagement":{"football":{"clicks":5}}}}\n```';
+		expect(parseWatchFeedbackFromIssueBody(body)).toBeNull();
+	});
+
+	it("returns null for empty watch feedback", () => {
+		const body = '```json\n{"favorites":{"watchFeedback":{}}}\n```';
+		expect(parseWatchFeedbackFromIssueBody(body)).toBeNull();
+	});
+
+	it("returns null for null/undefined input", () => {
+		expect(parseWatchFeedbackFromIssueBody(null)).toBeNull();
+		expect(parseWatchFeedbackFromIssueBody(undefined)).toBeNull();
+	});
+});
+
+// ============================================================
+// readWatchFeedbackFromFile
+// ============================================================
+describe("readWatchFeedbackFromFile()", () => {
+	it("reads watch feedback from engagement-data.json", () => {
+		const tmpDir = makeTempDir();
+		fs.writeFileSync(path.join(tmpDir, "engagement-data.json"), JSON.stringify({
+			watchFeedback: {
+				"pick1": { value: "up", timestamp: "2026-02-15T12:00:00Z" },
+				"pick2": { value: "down", timestamp: "2026-02-15T13:00:00Z" },
+				"pick3": { value: "up", timestamp: "2026-02-15T14:00:00Z" },
+			},
+		}));
+		const result = readWatchFeedbackFromFile(tmpDir);
+		expect(result).toEqual({ up: 2, down: 1, total: 3 });
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+
+	it("returns null when file has no watch feedback", () => {
+		const tmpDir = makeTempDir();
+		fs.writeFileSync(path.join(tmpDir, "engagement-data.json"), JSON.stringify({
+			engagement: { football: { clicks: 5 } },
+		}));
+		expect(readWatchFeedbackFromFile(tmpDir)).toBeNull();
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+
+	it("returns null when file does not exist", () => {
+		const tmpDir = makeTempDir();
+		expect(readWatchFeedbackFromFile(tmpDir)).toBeNull();
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+
+	it("returns null for empty watch feedback object", () => {
+		const tmpDir = makeTempDir();
+		fs.writeFileSync(path.join(tmpDir, "engagement-data.json"), JSON.stringify({
+			watchFeedback: {},
+		}));
+		expect(readWatchFeedbackFromFile(tmpDir)).toBeNull();
+		fs.rmSync(tmpDir, { recursive: true });
+	});
+});
+
+// ============================================================
 // readFavoritesFromFile
 // ============================================================
 describe("readFavoritesFromFile()", () => {
@@ -487,7 +564,7 @@ describe("evolvePreferences()", () => {
 		expect(result.reason).toBe("no-user-context");
 	});
 
-	it("skips when insufficient engagement data", async () => {
+	it("skips when insufficient engagement data and no watch feedback", async () => {
 		writeUserContext({ football: "high" });
 		writeEngagement({
 			football: { clicks: 5, lastClick: new Date().toISOString() },
@@ -496,6 +573,42 @@ describe("evolvePreferences()", () => {
 		const result = await evolvePreferences({ configDir, dataDir });
 		expect(result.skipped).toBe(true);
 		expect(result.reason).toBe("insufficient-data");
+	});
+
+	it("records watch feedback in evolution history", async () => {
+		writeUserContext({ football: "high" });
+		const data = {
+			engagement: { football: { clicks: 30, lastClick: new Date().toISOString() } },
+			watchFeedback: {
+				"pick1": { value: "up", timestamp: "2026-02-15T12:00:00Z" },
+				"pick2": { value: "down", timestamp: "2026-02-15T13:00:00Z" },
+			},
+		};
+		fs.writeFileSync(path.join(dataDir, "engagement-data.json"), JSON.stringify(data));
+
+		const result = await evolvePreferences({ configDir, dataDir });
+		expect(result.skipped).toBe(false);
+		expect(result.watchFeedback).toEqual({ up: 1, down: 1, total: 2 });
+
+		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
+		expect(history.watchFeedback).toEqual({ up: 1, down: 1, total: 2 });
+	});
+
+	it("does not skip when only watch feedback is available (no weight changes)", async () => {
+		writeUserContext({ football: "high" });
+		const data = {
+			engagement: { football: { clicks: 5, lastClick: new Date().toISOString() } },
+			watchFeedback: {
+				"pick1": { value: "up" },
+				"pick2": { value: "up" },
+			},
+		};
+		fs.writeFileSync(path.join(dataDir, "engagement-data.json"), JSON.stringify(data));
+
+		const result = await evolvePreferences({ configDir, dataDir });
+		// Should NOT skip — watch feedback present even though clicks < 20
+		expect(result.skipped).toBe(false);
+		expect(result.watchFeedback).toEqual({ up: 2, down: 0, total: 2 });
 	});
 });
 
@@ -534,5 +647,15 @@ describe("PreferencesManager.exportForBackend()", () => {
 		pm.trackEngagement("golf");
 		const exported = pm.exportForBackend();
 		expect(exported.sportPreferences).toEqual({});
+	});
+
+	it("includes watchFeedback in export", () => {
+		const pm = new PreferencesManager();
+		pm.setWatchFeedback("pick-1", "up");
+		pm.setWatchFeedback("pick-2", "down");
+		const exported = pm.exportForBackend();
+		expect(exported.watchFeedback).toBeDefined();
+		expect(exported.watchFeedback["pick-1"].value).toBe("up");
+		expect(exported.watchFeedback["pick-2"].value).toBe("down");
 	});
 });
