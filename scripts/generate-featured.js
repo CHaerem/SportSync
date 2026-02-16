@@ -17,7 +17,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey, parseCliJsonOutput } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
-import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints } from "./lib/ai-quality-gates.js";
+import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints, computeRollingAverages } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan } from "./lib/watch-plan.js";
 import { factCheck, buildFactCheckHints, appendFactCheckHistory } from "./lib/fact-checker.js";
 
@@ -1001,7 +1001,13 @@ async function main() {
 				} : null,
 			}
 		);
+		// Compute rolling averages and attach to snapshot
+		// (include current snapshot in the window)
 		history.push(snapshot);
+		const rollingAvg = computeRollingAverages(history);
+		if (rollingAvg) {
+			snapshot.rollingAverage = rollingAvg;
+		}
 		// Cap at 100 entries
 		while (history.length > 100) history.shift();
 		writeJsonPretty(historyPath, history);
