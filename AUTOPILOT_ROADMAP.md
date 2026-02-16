@@ -524,7 +524,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 ### MEDIUM Priority
 
-- [PENDING] Render recap headlines in recent results band — `docs/js/dashboard.js` result rows (lines 897-930) don't show `recapHeadline` text even when available. Add italic micro-text under score lines for results that have recap headlines. ~15 lines across 2 files, LOW risk.
+- [DONE] (PR #78) Render recap headlines in recent results band — Added italic `recapHeadline` text under result score lines. Flows from `recent-results.json` through result pseudo-events to the UI.
 
 - [PENDING] Add live status indicator to watch-plan picks — `docs/js/dashboard.js` watch-plan picks (lines 693-747) don't show whether the event is live, upcoming, or finished. Cross-reference `pick.eventId` against `this.liveScores` and event dates to show a status badge. ~25 lines across 2 files, LOW risk.
 
