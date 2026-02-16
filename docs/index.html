@@ -920,6 +920,28 @@
 		}
 		.watch-plan-more:hover { opacity: 0.7; }
 
+		/* --- Insights --- */
+		.insights-header {
+			font-size: 0.65rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			color: var(--muted);
+			margin-bottom: 8px;
+		}
+		.insight-card {
+			font-size: 0.75rem;
+			padding: 6px 10px;
+			margin-bottom: 6px;
+			border-left: 3px solid var(--accent);
+			background: var(--card);
+			border-radius: 3px;
+			line-height: 1.5;
+			color: var(--fg);
+		}
+		.insight-card.high { border-left-color: var(--accent); }
+		.insight-card.medium { border-left-color: var(--border); }
+
 		/* --- Importance reason (expanded view) --- */
 		.exp-importance-reason {
 			font-size: 0.7rem;
@@ -1053,6 +1075,8 @@
 		<div id="featured-sections"></div>
 
 		<div id="watch-plan"></div>
+
+		<div id="insights"></div>
 
 		<div id="events">
 			<div class="loading">Loading...</div>

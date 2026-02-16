@@ -43,7 +43,8 @@
       "steps": [
         { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
         { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
-        { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" }
+        { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" },
+        { "name": "generate-insights", "command": "node scripts/generate-insights.js", "errorPolicy": "continue" }
       ]
     },
     {
