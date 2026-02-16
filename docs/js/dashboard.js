@@ -1090,15 +1090,18 @@ class Dashboard {
 			html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
 		}
 
-		// Sort events by sport engagement priority, then chronologically within sport
+		// Sort events by sport preference, then chronologically within sport.
+		// Engagement clicks take priority; fallback weights from user preferences
+		// ensure sensible ordering for new users with no engagement data.
+		const SPORT_WEIGHT = { football: 3, golf: 3, tennis: 2, formula1: 2, chess: 2, esports: 1, olympics: 3 };
 		const engagement = this.preferences ? this.preferences.getEngagement() : {};
 		const sportClicks = {};
 		for (const [sport, data] of Object.entries(engagement)) {
 			sportClicks[sport] = data.clicks || 0;
 		}
 		const sorted = [...events].sort((a, b) => {
-			const aPri = sportClicks[a.sport] || 0;
-			const bPri = sportClicks[b.sport] || 0;
+			const aPri = (sportClicks[a.sport] || 0) + (SPORT_WEIGHT[a.sport] || 0) * 0.1;
+			const bPri = (sportClicks[b.sport] || 0) + (SPORT_WEIGHT[b.sport] || 0) * 0.1;
 			if (aPri !== bPri) return bPri - aPri;
 			return new Date(a.time) - new Date(b.time);
 		});
