@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-02-16T19:30:01.294Z",
-  "completedAt": "2026-02-16T19:33:49.489Z",
-  "duration": 228194,
+  "startedAt": "2026-02-16T20:11:09.643Z",
+  "completedAt": "2026-02-16T20:14:45.995Z",
+  "duration": 216351,
   "gate": "pass",
   "phases": {
     "fetch": {
@@ -11,27 +11,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 30136
+          "duration": 32064
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 2272
+          "duration": 2511
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8650
+          "duration": 8717
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 219
+          "duration": 145
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 45807
+          "duration": 46643
         }
       ]
     },
@@ -42,12 +42,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 167
+          "duration": 181
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 497
+          "duration": 551
         }
       ]
     },
@@ -58,7 +58,7 @@
         {
           "name": "discover-events",
           "status": "success",
-          "duration": 170
+          "duration": 163
         }
       ]
     },
@@ -69,12 +69,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 660
+          "duration": 623
         },
         {
           "name": "enrich-events",
           "status": "success",
-          "duration": 90947
+          "duration": 97959
         }
       ]
     },
@@ -85,17 +85,22 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 40270
+          "duration": 17392
         },
         {
           "name": "generate-multiday",
           "status": "success",
-          "duration": 140
+          "duration": 149
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 171
+          "duration": 169
+        },
+        {
+          "name": "generate-insights",
+          "status": "success",
+          "duration": 169
         }
       ]
     },
@@ -106,7 +111,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 631
+          "duration": 603
         }
       ]
     },
@@ -117,29 +122,29 @@
         {
           "name": "pipeline-health",
           "status": "failed",
-          "duration": 5121,
+          "duration": 6084,
           "error": "Command failed: node scripts/pipeline-health.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\".",
           "errorCategory": "network"
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 260
+          "duration": 150
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 149
+          "duration": 147
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 601
+          "duration": 591
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 205
+          "duration": 207
         }
       ]
     },
@@ -150,7 +155,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 258
+          "duration": 247
         }
       ]
     },
@@ -161,29 +166,29 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 481
+          "duration": 518
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 143
+          "duration": 149
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 70
+          "duration": 66
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 143
+          "duration": 127
         }
       ]
     }
   },
   "summary": {
-    "total": 24,
-    "success": 23,
+    "total": 25,
+    "success": 24,
     "failed": 1,
     "skipped": 0
   }
