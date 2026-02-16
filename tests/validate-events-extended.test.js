@@ -71,7 +71,8 @@ describe("validate-events.js — extended", () => {
 	});
 
 	it("fails on past events (beyond grace window)", () => {
-		const pastTime = new Date(Date.now() - 12 * 3600000).toISOString();
+		// 15 days ago — beyond the 14-day grace window
+		const pastTime = new Date(Date.now() - 15 * 24 * 3600000).toISOString();
 		writeEvents([{ sport: "football", title: "Old Match", time: pastTime, tournament: "PL" }]);
 		expect(() => runValidate()).toThrow();
 	});
