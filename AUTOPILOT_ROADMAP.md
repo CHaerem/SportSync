@@ -33,7 +33,8 @@ Before creating or executing ANY task, verify it passes the Change Principles fr
 3. **Zero infrastructure** — Does this stay within GitHub Actions + Claude Code Max + GitHub Pages?
 4. **Autonomous by default** — Does this work without ongoing human intervention?
 5. **Measurable impact** — How will we know this change is working? (metrics, health checks, quality scores)
-6. **Tier limits** — Does this task fit within its tier's file/line limits? (see Task Tiers above)
+6. **Compound learning** — Does this run leave the system smarter, not just better? Record what works.
+7. **Tier limits** — Does this task fit within its tier's file/line limits? (see Task Tiers above)
 
 If a scouted improvement fails any principle, either redesign it to pass or skip it. A code cleanup that doesn't close the loop (add a test, health check, or detection) is incomplete.
 
