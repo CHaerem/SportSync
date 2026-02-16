@@ -411,7 +411,7 @@ During nightly runs, the autopilot should:
 
 ## Autonomy Infrastructure (2026-02-12)
 
-Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**.
+Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)**.
 
 ### Completed
 
@@ -449,7 +449,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (8/8 loops closed)**
 
 - [DONE] (PR #51) Add client-side engagement tracking — Added `trackEngagement()` to `preferences-manager.js` that records per-sport click counts and timestamps in localStorage. Wired into dashboard expand handler.
 
-- [BLOCKED] depends on engagement tracking + data export | Add preference evolution pipeline script — New script to read engagement data and update `user-context.json` sport weights. Requires a mechanism to get client-side localStorage data back to the pipeline.
+- [DONE] (manual session) Add preference evolution pipeline script — Created `scripts/evolve-preferences.js` that reads engagement data from GitHub Issues + local `engagement-data.json`, computes relative click share with recency decay, and updates `user-context.json` sport weights. Writes history to `preference-evolution.json`. 33 tests in `tests/evolve-preferences.test.js`.
 
 - [DONE] (manual session) Add opportunity detection to autopilot scouting — Expanded Step 2 scouting prompt with creative scouting (2b): reads RSS, coverage gaps, quality history, standings, and dashboard code to propose features, UX improvements, and new capabilities. Added heuristics F (opportunity detection), G (dashboard UX), H (capability seeding) to roadmap.
 
