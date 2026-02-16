@@ -345,6 +345,21 @@
       "lesson": "Pattern detection tasks are straightforward when the data structure and existing detectors provide clear examples to follow.",
       "scouted": 0,
       "meta_insight": "The analyze-patterns.js detector pattern is highly composable — adding new detectors takes minimal effort because the structure is consistent."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add rolling quality trend averages to snapshots",
+      "outcome": "completed",
+      "pr": 95,
+      "pillar": "quality",
+      "details": "Added computeRollingAverages() to ai-quality-gates.js. Each quality-history snapshot now includes rollingAverage with 7-entry moving averages for key metrics. Wired into generate-featured.js. 4 new tests.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 6,
+      "turns_estimated": 8,
+      "lesson": "Quality infrastructure tasks that extend existing data structures are fast and low-risk. The biggest time cost is understanding the data flow.",
+      "scouted": 0,
+      "meta_insight": "Rolling averages enable the quality decline detector to catch gradual degradation — this makes Detector 2 more sensitive to slow trends."
     }
   ]
 }

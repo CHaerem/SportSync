@@ -292,7 +292,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 24. [DONE] (PR #94) **Add cross-loop dependency detection** — `analyzeCrossLoopDependencies()` Detector 7 in `scripts/analyze-patterns.js`. Checks enrichment→editorial and results→editorial correlations. 6 new tests.
 
-25. [PENDING] [MAINTENANCE] **Add quality trend visualization data** — Extend `quality-history.json` snapshots to include a rolling 7-day average alongside per-run scores. The autopilot can then detect slow declines that per-run noise masks.
+25. [DONE] (PR #95) **Add quality trend visualization data** — `computeRollingAverages()` in `ai-quality-gates.js`. Each quality-history snapshot now includes `rollingAverage` field with 7-entry moving averages. 4 new tests.
 
 ---
 
