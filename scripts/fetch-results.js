@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
  * Fetches recent results from ESPN APIs:
- * - Football: completed matches from PL and La Liga (past 3 days)
+ * - Football: completed matches from PL and La Liga (past 7 days)
  * - Golf: PGA Tour + DP World Tour final/in-progress leaderboard positions
+ * - Tennis: ATP + WTA completed match results (past 7 days)
  *
- * Matches results against rss-digest.json for recap headlines
- * and user-context.json for favorite tagging.
+ * Matches football results against rss-digest.json for recap headlines
+ * and user-context.json for favorite tagging (Casper Ruud for tennis).
  *
  * Output: docs/data/recent-results.json
  */
@@ -130,6 +131,18 @@ export function validateResults(output) {
 			validResults++;
 		} else {
 			issues.push(...v.issues.map(i => `Golf [${key}]: ${i}`));
+		}
+	}
+
+	// Validate tennis
+	const tennis = Array.isArray(output?.tennis) ? output.tennis : [];
+	for (const r of tennis) {
+		totalResults++;
+		const v = validateTennisResult(r);
+		if (v.valid) {
+			validResults++;
+		} else {
+			issues.push(...v.issues.map(i => `Tennis [${r.winner || "?"} v ${r.loser || "?"}]: ${i}`));
 		}
 	}
 
@@ -304,6 +317,126 @@ export async function fetchGolfResults(options = {}) {
 	return result;
 }
 
+export function validateTennisResult(result) {
+	const issues = [];
+	if (!result || typeof result !== "object") return { valid: false, issues: ["Not an object"] };
+
+	if (typeof result.winner !== "string" || !result.winner.trim()) issues.push("winner missing or empty");
+	if (typeof result.loser !== "string" || !result.loser.trim()) issues.push("loser missing or empty");
+	if (result.winner && result.loser && result.winner === result.loser) issues.push("winner equals loser");
+
+	if (!result.score || typeof result.score !== "string") issues.push("score missing or not a string");
+
+	if (result.date) {
+		const d = new Date(result.date);
+		if (isNaN(d.getTime())) issues.push("Invalid date");
+		else if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) issues.push("Date is in the future");
+	} else {
+		issues.push("date missing");
+	}
+
+	return { valid: issues.length === 0, issues };
+}
+
+const TENNIS_TOURS = [
+	{ key: "atp", url: `${ESPN_SITE}/tennis/atp/scoreboard`, name: "ATP" },
+	{ key: "wta", url: `${ESPN_SITE}/tennis/wta/scoreboard`, name: "WTA" },
+];
+
+export async function fetchTennisResults(options = {}) {
+	const { daysBack = 7, userContext = null } = options;
+	const ctx = userContext || loadUserContext();
+	const results = [];
+	const seen = new Set();
+	const now = new Date();
+
+	for (const tour of TENNIS_TOURS) {
+		for (let d = 0; d < daysBack; d++) {
+			const date = new Date(now.getTime() - d * MS_PER_DAY);
+			const dateStr = formatDate(date);
+			const url = `${tour.url}?dates=${dateStr}`;
+
+			try {
+				const data = await fetchJson(url);
+
+				for (const event of (data?.events || [])) {
+					const tournamentName = event.name || "Unknown Tournament";
+					for (const comp of (event.competitions || [])) {
+						const state = comp.status?.type?.state;
+						if (state !== "post") continue;
+
+						const competitors = comp.competitors || [];
+						if (competitors.length < 2) continue;
+
+						const winner = competitors.find(c => c.winner);
+						const loser = competitors.find(c => !c.winner);
+						if (!winner || !loser) continue;
+
+						const winnerName = winner.athlete?.displayName || "Unknown";
+						const loserName = loser.athlete?.displayName || "Unknown";
+
+						const key = `${winnerName}-${loserName}-${event.date}-${tour.key}`;
+						if (seen.has(key)) continue;
+						seen.add(key);
+
+						// Build score string from linescores (set scores)
+						const sets = (winner.linescores || []).map((ws, i) => {
+							const ls = loser.linescores?.[i];
+							return `${ws.value ?? ws.displayValue ?? "-"}-${ls?.value ?? ls?.displayValue ?? "-"}`;
+						});
+						const score = sets.length > 0 ? sets.join(", ") : `${winner.score || "?"}-${loser.score || "?"}`;
+
+						const round = comp.status?.type?.shortDetail || comp.type?.text || null;
+
+						const isFav = isFavoritePlayer(winnerName, ctx) || isFavoritePlayer(loserName, ctx);
+
+						results.push({
+							winner: winnerName,
+							loser: loserName,
+							score,
+							date: event.date || date.toISOString(),
+							tournament: tournamentName,
+							tour: tour.name,
+							round,
+							isFavorite: isFav,
+						});
+					}
+				}
+			} catch (err) {
+				console.warn(`Tennis results fetch failed for ${tour.name} ${dateStr}:`, err.message);
+			}
+		}
+	}
+
+	// Sort: favorites first, then by date descending
+	results.sort((a, b) => {
+		if (a.isFavorite && !b.isFavorite) return -1;
+		if (!a.isFavorite && b.isFavorite) return 1;
+		return new Date(b.date) - new Date(a.date);
+	});
+
+	return results;
+}
+
+export function mergeTennisResults(existing, fresh, retainDays = 7) {
+	const cutoff = Date.now() - retainDays * MS_PER_DAY;
+	const map = new Map();
+
+	for (const r of (existing || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		const key = `${r.winner}-${r.loser}-${r.date}-${r.tour}`;
+		map.set(key, r);
+	}
+
+	for (const r of (fresh || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		const key = `${r.winner}-${r.loser}-${r.date}-${r.tour}`;
+		map.set(key, r);
+	}
+
+	return Array.from(map.values());
+}
+
 export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
 	if (!homeTeam || !awayTeam || !Array.isArray(rssItems)) return null;
 
@@ -405,6 +538,22 @@ async function main() {
 	} catch (err) {
 		console.warn("Golf results failed:", err.message);
 		output.golf = existing?.golf || { pga: null, dpWorld: null };
+	}
+
+	// Tennis results — merge with existing history
+	try {
+		const fresh = await fetchTennisResults({ userContext });
+		const merged = mergeTennisResults(existing?.tennis, fresh);
+		merged.sort((a, b) => {
+			if (a.isFavorite && !b.isFavorite) return -1;
+			if (!a.isFavorite && b.isFavorite) return 1;
+			return new Date(b.date) - new Date(a.date);
+		});
+		output.tennis = merged;
+		console.log(`Tennis: ${merged.length} results (${merged.filter(r => r.isFavorite).length} favorites, ${fresh.length} fresh)`);
+	} catch (err) {
+		console.warn("Tennis results failed:", err.message);
+		output.tennis = existing?.tennis || [];
 	}
 
 	// Validate before writing
