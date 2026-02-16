@@ -171,6 +171,36 @@ describe("generateHealthReport()", () => {
 		expect(zeroIssue.message).toContain("tennis");
 	});
 
+	it("uses info severity for zero events with fresh data", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"football.json": { lastUpdated: new Date().toISOString() },
+				"tennis.json": { lastUpdated: new Date().toISOString() },
+			},
+		});
+
+		const zeroIssue = report.issues.find((i) => i.code === "sport_zero_events");
+		expect(zeroIssue).toBeDefined();
+		expect(zeroIssue.severity).toBe("info");
+	});
+
+	it("uses warning severity for zero events with stale data", () => {
+		const staleTime = new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(); // 7h ago
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"football.json": { lastUpdated: new Date().toISOString() },
+				"tennis.json": { lastUpdated: staleTime },
+			},
+		});
+
+		const zeroIssue = report.issues.find((i) => i.code === "sport_zero_events");
+		expect(zeroIssue).toBeDefined();
+		expect(zeroIssue.severity).toBe("warning");
+		expect(zeroIssue.message).toContain("stale");
+	});
+
 	it("does not flag sport_zero_events when all sports have events", () => {
 		const report = generateHealthReport({
 			events: makeEvents({ football: 5, tennis: 2 }),

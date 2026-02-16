@@ -109,21 +109,25 @@ export function generateHealthReport(options = {}) {
 	}
 
 	// 1b. Detect sports with data files but zero events
+	const STALE_THRESHOLD_MINUTES = 360; // 6 hours
 	for (const filename of Object.keys(sportFiles)) {
 		const sport = filename.replace(".json", "");
 		if (!sportCoverage[sport]) {
 			sportCoverage[sport] = { count: 0, previousCount: previousCounts[sport]?.count ?? null, delta: null };
+			// Fresh data file with 0 events = normal gap (tournaments not running)
+			// Stale data file with 0 events = real problem worth warning about
+			const dataAge = ageMinutes(sportFiles[filename]?.lastUpdated);
+			const isStale = dataAge > STALE_THRESHOLD_MINUTES;
 			issues.push({
-				severity: "warning",
+				severity: isStale ? "warning" : "info",
 				code: "sport_zero_events",
-				message: `${sport}: data file exists but 0 events in events.json`,
+				message: `${sport}: data file exists but 0 events in events.json${isStale ? " (data is stale)" : ""}`,
 			});
 		}
 	}
 
 	// 2. Data freshness
 	const dataFreshness = {};
-	const STALE_THRESHOLD_MINUTES = 360; // 6 hours
 	for (const [filename, data] of Object.entries(sportFiles)) {
 		const age = ageMinutes(data?.lastUpdated);
 		const stale = age > STALE_THRESHOLD_MINUTES;
