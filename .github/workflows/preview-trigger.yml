@@ -5,36 +5,11 @@ on:
     types: [opened, synchronize, reopened, closed]
 
 permissions:
-  actions: read
   contents: write
 
 jobs:
-  check-runner:
-    runs-on: ubuntu-latest
-    outputs:
-      runner: ${{ steps.check.outputs.runner }}
-    steps:
-      - id: check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            try {
-              const { data } = await github.rest.actions.listSelfHostedRunnersForRepo({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-              });
-              const online = data.runners.some(r => r.status === 'online');
-              const runner = online ? '["self-hosted","linux","ARM64"]' : '"ubuntu-latest"';
-              core.setOutput('runner', runner);
-              console.log(online ? 'Self-hosted runner is online' : 'Falling back to ubuntu-latest');
-            } catch (e) {
-              core.setOutput('runner', '"ubuntu-latest"');
-              console.log(`Runner check failed: ${e.message}`);
-            }
-
   trigger:
-    needs: check-runner
-    runs-on: ${{ fromJSON(needs.check-runner.outputs.runner) }}
+    runs-on: [self-hosted, linux, ARM64]
     steps:
       - name: Trigger preview deployment
         uses: actions/github-script@v7
