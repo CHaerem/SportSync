@@ -1241,6 +1241,7 @@ class Dashboard {
 		html += this.renderInlinePLTable();
 		html += this.renderInlineGolfLeaderboard();
 		html += this.renderInlineF1Standings();
+		html += this.renderInlineTennisRankings();
 		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
 		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
 		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
@@ -1847,6 +1848,32 @@ class Dashboard {
 
 		for (const d of top5) {
 			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${d.points}</td><td>${d.wins}</td></tr>`;
+		}
+
+		html += '</tbody></table></div></div>';
+		return html;
+	}
+
+	renderInlineTennisRankings() {
+		const atp = this.standings?.tennis?.atp;
+		if (!Array.isArray(atp) || atp.length === 0) return '';
+
+		const top5 = atp.slice(0, 5);
+		// Highlight Casper Ruud if he's not in top 5
+		const ruud = atp.find(p => p.player.toLowerCase().includes('ruud'));
+		const showRuud = ruud && !top5.some(p => p.player === ruud.player);
+
+		let html = '<div class="inline-standings">';
+		html += '<div class="band-label collapsible" data-band="tennis-rankings" role="button" tabindex="0" aria-expanded="false">ATP Rankings \u25b8</div>';
+		html += '<div class="band-content collapsed" data-band-content="tennis-rankings">';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Pts</th></tr></thead><tbody>';
+
+		for (const p of top5) {
+			const cls = p.player.toLowerCase().includes('ruud') ? ' class="fav"' : '';
+			html += `<tr${cls}><td>${p.position}</td><td>${this.esc(p.player)}</td><td>${p.points}</td></tr>`;
+		}
+		if (showRuud) {
+			html += `<tr class="fav gap"><td>${ruud.position}</td><td>${this.esc(ruud.player)}</td><td>${ruud.points}</td></tr>`;
 		}
 
 		html += '</tbody></table></div></div>';
