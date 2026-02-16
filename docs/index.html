@@ -348,7 +348,6 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
-		.band-content { }
 		.band-content.collapsed { display: none; }
 
 		/* Results band: muted titles, bold times */
@@ -822,6 +821,7 @@
 		}
 		.watch-pick:last-child { border-bottom: none; }
 		.watch-pick:hover { background: var(--bg-secondary); }
+		.watch-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 		.pick-time {
 			font-size: 0.75rem;
 			color: var(--muted);
