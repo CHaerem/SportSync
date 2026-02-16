@@ -1,4 +1,5 @@
 import fs from "fs";
+import os from "os";
 import path from "path";
 import https from "https";
 
@@ -194,4 +195,44 @@ export function parseCliJsonOutput(rawOutput) {
 		numTurns: response.num_turns || 0,
 		durationApiMs: response.duration_api_ms || 0,
 	};
+}
+
+/**
+ * Parse token usage from a Claude Code session JSONL file.
+ * Session files are stored in ~/.claude/projects/{project-dir}/{sessionId}.jsonl.
+ * Each assistant message contains usage data with input/output/cache tokens.
+ * @param {string} sessionId - The session ID (from claude-code-action output)
+ * @returns {{ input: number, output: number, cacheCreation: number, cacheRead: number, total: number } | null}
+ */
+export function parseSessionUsage(sessionId) {
+	if (!sessionId) return null;
+	const claudeDir = path.join(os.homedir(), ".claude", "projects");
+	if (!fs.existsSync(claudeDir)) return null;
+
+	// Search project dirs for the session file (path varies by machine)
+	let sessionFile = null;
+	for (const dir of fs.readdirSync(claudeDir)) {
+		const candidate = path.join(claudeDir, dir, `${sessionId}.jsonl`);
+		if (fs.existsSync(candidate)) { sessionFile = candidate; break; }
+	}
+	if (!sessionFile) return null;
+
+	const content = fs.readFileSync(sessionFile, "utf-8");
+	let input = 0, output = 0, cacheCreation = 0, cacheRead = 0;
+	for (const line of content.split("\n")) {
+		if (!line) continue;
+		try {
+			const entry = JSON.parse(line);
+			if (entry.type === "assistant") {
+				const u = entry.message?.usage;
+				if (u) {
+					input += u.input_tokens || 0;
+					output += u.output_tokens || 0;
+					cacheCreation += u.cache_creation_input_tokens || 0;
+					cacheRead += u.cache_read_input_tokens || 0;
+				}
+			}
+		} catch { /* skip malformed lines */ }
+	}
+	return { input, output, cacheCreation, cacheRead, total: input + output + cacheCreation + cacheRead };
 }

@@ -1,5 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput } from "../scripts/lib/helpers.js";
+import { describe, it, expect, afterEach } from "vitest";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput, parseSessionUsage } from "../scripts/lib/helpers.js";
 
 describe("iso()", () => {
 	it("returns valid ISO string for current time", () => {
@@ -195,5 +198,80 @@ describe("parseCliJsonOutput()", () => {
 
 	it("throws on invalid JSON", () => {
 		expect(() => parseCliJsonOutput("not json")).toThrow();
+	});
+});
+
+describe("parseSessionUsage()", () => {
+	const tmpDir = path.join(os.tmpdir(), "sportsync-test-sessions");
+	const projectDir = path.join(tmpDir, "test-project");
+
+	afterEach(() => {
+		fs.rmSync(tmpDir, { recursive: true, force: true });
+	});
+
+	it("returns null for null/undefined session ID", () => {
+		expect(parseSessionUsage(null)).toBeNull();
+		expect(parseSessionUsage(undefined)).toBeNull();
+		expect(parseSessionUsage("")).toBeNull();
+	});
+
+	it("returns null when session file does not exist", () => {
+		expect(parseSessionUsage("nonexistent-session-id")).toBeNull();
+	});
+
+	it("correctly sums tokens from a session JSONL file", () => {
+		// Create a fake session file in the real ~/.claude/projects dir
+		const claudeProjects = path.join(os.homedir(), ".claude", "projects");
+		if (!fs.existsSync(claudeProjects)) {
+			// Can't test without the directory existing
+			return;
+		}
+
+		// Use a temp project dir inside the real projects dir
+		const testProjectDir = path.join(claudeProjects, "sportsync-test-parseSession");
+		fs.mkdirSync(testProjectDir, { recursive: true });
+		const sessionId = "test-session-" + Date.now();
+		const sessionFile = path.join(testProjectDir, `${sessionId}.jsonl`);
+
+		try {
+			const lines = [
+				JSON.stringify({ type: "human", message: { content: "hello" } }),
+				JSON.stringify({ type: "assistant", message: { usage: { input_tokens: 100, output_tokens: 50, cache_creation_input_tokens: 200, cache_read_input_tokens: 300 } } }),
+				JSON.stringify({ type: "assistant", message: { usage: { input_tokens: 150, output_tokens: 75 } } }),
+				"not valid json",
+				"",
+				JSON.stringify({ type: "assistant", message: { usage: { input_tokens: 50, output_tokens: 25, cache_creation_input_tokens: 100, cache_read_input_tokens: 0 } } }),
+			];
+			fs.writeFileSync(sessionFile, lines.join("\n"));
+
+			const result = parseSessionUsage(sessionId);
+			expect(result).not.toBeNull();
+			expect(result.input).toBe(300);       // 100 + 150 + 50
+			expect(result.output).toBe(150);       // 50 + 75 + 25
+			expect(result.cacheCreation).toBe(300); // 200 + 0 + 100
+			expect(result.cacheRead).toBe(300);     // 300 + 0 + 0
+			expect(result.total).toBe(1050);        // 300 + 150 + 300 + 300
+		} finally {
+			fs.rmSync(testProjectDir, { recursive: true, force: true });
+		}
+	});
+
+	it("handles malformed lines gracefully", () => {
+		const claudeProjects = path.join(os.homedir(), ".claude", "projects");
+		if (!fs.existsSync(claudeProjects)) return;
+
+		const testProjectDir = path.join(claudeProjects, "sportsync-test-parseSession2");
+		fs.mkdirSync(testProjectDir, { recursive: true });
+		const sessionId = "test-malformed-" + Date.now();
+		const sessionFile = path.join(testProjectDir, `${sessionId}.jsonl`);
+
+		try {
+			fs.writeFileSync(sessionFile, "garbage\n{bad json\n");
+			const result = parseSessionUsage(sessionId);
+			expect(result).not.toBeNull();
+			expect(result.total).toBe(0);
+		} finally {
+			fs.rmSync(testProjectDir, { recursive: true, force: true });
+		}
 	});
 });

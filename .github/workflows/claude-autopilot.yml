@@ -50,6 +50,7 @@ jobs:
         run: node scripts/track-usage.js snapshot || true
 
       - uses: anthropics/claude-code-action@v1
+        id: autopilot
         if: steps.quota.outputs.gate != 'skip'
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -295,4 +296,5 @@ jobs:
         if: steps.quota.outputs.gate != 'skip'
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          SESSION_ID: ${{ steps.autopilot.outputs.session_id }}
         run: node scripts/track-usage.js report autopilot || true

@@ -217,6 +217,27 @@ describe("calculateBudget", () => {
 		const result = calculateBudget(runs, now);
 		expect(result.dailyUsed).toBe(0);
 	});
+
+	it("includes sessionTokens in daily and weekly sums", () => {
+		const now = Date.now();
+		const runs = [
+			{ timestamp: new Date(now - 3600000).toISOString(), tokens: 10000, sessionTokens: { total: 500000 } },
+			{ timestamp: new Date(now - 2 * 86_400_000).toISOString(), tokens: 5000, sessionTokens: { total: 200000 } },
+		];
+		const result = calculateBudget(runs, now);
+		expect(result.dailyUsed).toBe(510000);   // 10000 + 500000
+		expect(result.weeklyUsed).toBe(715000);   // 510000 + 5000 + 200000
+	});
+
+	it("works with runs that have no sessionTokens (backward compatible)", () => {
+		const now = Date.now();
+		const runs = [
+			{ timestamp: new Date(now - 3600000).toISOString(), tokens: 50000 },
+			{ timestamp: new Date(now - 7200000).toISOString(), tokens: 30000, sessionTokens: { total: 100000 } },
+		];
+		const result = calculateBudget(runs, now);
+		expect(result.dailyUsed).toBe(180000);  // 50000 + 30000 + 100000
+	});
 });
 
 describe("trackApiStatus", () => {

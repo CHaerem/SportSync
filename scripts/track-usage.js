@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchJson, readJsonIfExists, writeJsonPretty, rootDataPath, iso } from "./lib/helpers.js";
+import { fetchJson, readJsonIfExists, writeJsonPretty, rootDataPath, iso, parseSessionUsage } from "./lib/helpers.js";
 
 const USAGE_API = "https://api.anthropic.com/api/oauth/usage";
 const TRACKING_FILE = "usage-tracking.json";
@@ -61,7 +61,7 @@ export function calculateBudget(runs, now = Date.now()) {
 	let weeklyUsed = 0;
 	for (const r of runs) {
 		const ts = new Date(r.timestamp).getTime();
-		const tokens = r.tokens || 0;
+		const tokens = (r.tokens || 0) + (r.sessionTokens?.total || 0);
 		if (ts > dayAgo) dailyUsed += tokens;
 		if (ts > weekAgo) weeklyUsed += tokens;
 	}
@@ -173,12 +173,20 @@ async function report(context) {
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
 	const internalTokens = aggregateInternalTokens(quality);
 
+	// Parse autopilot session tokens if SESSION_ID is set
+	const sessionId = process.env.SESSION_ID;
+	const sessionTokens = parseSessionUsage(sessionId);
+	if (sessionTokens) {
+		console.log(`Session tokens: ${sessionTokens.total.toLocaleString()} total (${sessionTokens.output.toLocaleString()} output)`);
+	}
+
 	const existing = readJsonIfExists(trackingPath) || { runs: [] };
 	const newRun = {
 		timestamp: now,
 		context,
 		durationMs: Math.round(durationMs),
 		tokens: internalTokens?.runTotal || 0,
+		...(sessionTokens && { sessionTokens }),
 	};
 	const runs = pruneOldRuns([...(existing.runs || []), newRun]);
 	const share = calculateShare(runs);
@@ -203,6 +211,7 @@ async function report(context) {
 		} : null,
 		quotaApiStatus: apiStatus,
 		internalTokens,
+		...(sessionTokens && { sessionTokens }),
 		budget,
 		sportsyncShare: share,
 		gateConfig: {
