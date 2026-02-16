@@ -6,6 +6,7 @@ import {
 	analyzeHintFatigue,
 	analyzeAutopilotFailures,
 	analyzeInterventionEffectiveness,
+	analyzeCrossLoopDependencies,
 	analyzePatterns,
 } from "../scripts/analyze-patterns.js";
 import fs from "fs";
@@ -500,6 +501,88 @@ describe("analyzeInterventionEffectiveness", () => {
 		];
 		const eff = analyzeInterventionEffectiveness(history);
 		expect(eff.mustWatchCoverage.fires).toBe(1); // not 2
+	});
+});
+
+// --- Detector 7: Cross-Loop Dependencies ---
+
+describe("analyzeCrossLoopDependencies", () => {
+	it("returns empty for insufficient data", () => {
+		expect(analyzeCrossLoopDependencies(null)).toEqual([]);
+		expect(analyzeCrossLoopDependencies([])).toEqual([]);
+		expect(analyzeCrossLoopDependencies([{}, {}, {}])).toEqual([]);
+	});
+
+	it("detects correlated enrichment→editorial drops", () => {
+		const history = [
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: { score: 80 }, editorial: { score: 75 } },
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: { score: 75 }, editorial: { score: 70 } },
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: { score: 70 }, editorial: { score: 65 } },
+		];
+		const patterns = analyzeCrossLoopDependencies(history);
+		expect(patterns.length).toBeGreaterThanOrEqual(1);
+		const dep = patterns.find(p => p.upstream === "enrichment");
+		expect(dep).toBeDefined();
+		expect(dep.type).toBe("cross_loop_dependency");
+		expect(dep.correlatedDrops).toBeGreaterThanOrEqual(2);
+	});
+
+	it("no pattern when drops are independent", () => {
+		const history = [
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: { score: 95 }, editorial: { score: 70 } }, // editorial drops but enrichment rises
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: { score: 95 }, editorial: { score: 70 } },
+		];
+		const patterns = analyzeCrossLoopDependencies(history);
+		const dep = patterns.find(p => p.upstream === "enrichment");
+		expect(dep).toBeUndefined();
+	});
+
+	it("detects results→editorial dependency", () => {
+		const history = [
+			{ results: { score: 80 }, editorial: { score: 90 } },
+			{ results: { score: 60 }, editorial: { score: 70 } },
+			{ results: { score: 80 }, editorial: { score: 90 } },
+			{ results: { score: 55 }, editorial: { score: 65 } },
+			{ results: { score: 80 }, editorial: { score: 90 } },
+			{ results: { score: 50 }, editorial: { score: 60 } },
+		];
+		const patterns = analyzeCrossLoopDependencies(history);
+		const dep = patterns.find(p => p.upstream === "results");
+		expect(dep).toBeDefined();
+		expect(dep.correlatedDrops).toBeGreaterThanOrEqual(2);
+	});
+
+	it("handles missing metric values gracefully", () => {
+		const history = [
+			{ enrichment: { score: 90 }, editorial: { score: 85 } },
+			{ enrichment: null, editorial: { score: 70 } },
+			{ enrichment: { score: 90 }, editorial: null },
+			{ enrichment: { score: 70 }, editorial: { score: 60 } },
+		];
+		// Should not throw
+		const patterns = analyzeCrossLoopDependencies(history);
+		expect(Array.isArray(patterns)).toBe(true);
+	});
+
+	it("escalates to high severity at 3+ correlated drops", () => {
+		const history = [];
+		for (let i = 0; i < 8; i++) {
+			if (i % 2 === 0) {
+				history.push({ enrichment: { score: 90 }, editorial: { score: 85 } });
+			} else {
+				history.push({ enrichment: { score: 70 }, editorial: { score: 65 } });
+			}
+		}
+		const patterns = analyzeCrossLoopDependencies(history);
+		const dep = patterns.find(p => p.upstream === "enrichment");
+		if (dep && dep.correlatedDrops >= 3) {
+			expect(dep.severity).toBe("high");
+		}
 	});
 });
 
