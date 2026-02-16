@@ -1168,6 +1168,7 @@ class Dashboard {
 		html += this.renderBand('Live now', bands.live, { cssClass: 'live' });
 		html += this.renderBand('Today', bands.today, {});
 		html += this.renderBand('Results', bands.results, { cssClass: 'results' });
+		html += this.renderInlinePLTable();
 		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
 		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
 		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
@@ -1683,6 +1684,46 @@ class Dashboard {
 	}
 
 	// --- Standings renderers ---
+
+	renderInlinePLTable() {
+		const table = this.standings?.football?.premierLeague;
+		if (!Array.isArray(table) || table.length === 0) return '';
+
+		// Show top 5 rows + any favorite teams not already in top 5
+		const prefs = this.preferences ? this.preferences.getPreferences() : {};
+		const favTeams = prefs.favoriteTeams?.football || [];
+		const favorites = favTeams.map(t => t.toLowerCase());
+		const top5 = table.slice(0, 5);
+		const favRows = table.filter(t =>
+			favorites.some(fav =>
+				t.team.toLowerCase().includes(fav) || fav.includes(t.team.toLowerCase())
+			) && !top5.includes(t)
+		);
+
+		const rows = [...top5, ...favRows].sort((a, b) => a.position - b.position);
+
+		let html = '<div class="inline-standings">';
+		html += '<div class="band-label collapsible" data-band="pl-table" role="button" tabindex="0" aria-expanded="false">Premier League \u25b8</div>';
+		html += '<div class="band-content collapsed" data-band-content="pl-table">';
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>Pts</th><th>GD</th></tr></thead><tbody>';
+
+		let lastPos = 0;
+		for (const row of rows) {
+			if (row.position - lastPos > 1 && lastPos > 0) {
+				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
+			}
+			const isFav = favorites.some(fav =>
+				row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
+			);
+			const cls = isFav ? ' class="highlight"' : '';
+			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
+			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
+			lastPos = row.position;
+		}
+
+		html += '</tbody></table></div></div>';
+		return html;
+	}
 
 	renderFootballStandings(event) {
 		const tournament = (event.tournament || '').toLowerCase();
