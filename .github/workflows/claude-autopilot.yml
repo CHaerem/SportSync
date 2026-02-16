@@ -50,7 +50,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
-            --max-turns 200
+            --max-turns 300
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             You are the SportSync autopilot — a proactive agent responsible for
@@ -96,10 +96,10 @@ jobs:
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
-            Turn budget: You have 200 max turns. Read `scripts/autopilot-strategy.json`
+            Turn budget: You have 300 max turns. Read `scripts/autopilot-strategy.json`
             for expected turn costs per activity. Track your actual usage and update
             the strategy's `turnBudgets` if your estimates diverge from reality.
-            If you've used >170 turns, skip scouting/meta-learning and stop cleanly.
+            If you've used >260 turns, skip scouting/meta-learning and stop cleanly.
 
             ## Process autonomy
 
