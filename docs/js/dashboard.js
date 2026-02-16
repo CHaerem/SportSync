@@ -1260,6 +1260,10 @@ class Dashboard {
 		// Inline sport emoji prefix for single-event sport groups
 		const emojiPrefix = inlineSportEmoji ? `${inlineSportEmoji} ` : '';
 
+		// Norwegian interest badge
+		const isNorwegian = event.norwegian || event.norwegianPlayers?.length > 0 || event.norwegianRelevance >= 4;
+		const norBadge = isNorwegian ? '<span class="row-nor" title="Norsk interesse">🇳🇴</span>' : '';
+
 		// Tournament subtitle (skip if title already contains tournament name)
 		let subtitleHtml = '';
 		if (event.tournament && !event.title.toLowerCase().includes(event.tournament.toLowerCase())) {
@@ -1271,7 +1275,7 @@ class Dashboard {
 				<div class="row-main">
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${subtitleHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${norBadge}${subtitleHtml}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
