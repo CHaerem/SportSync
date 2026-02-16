@@ -460,6 +460,171 @@ describe("generateStatusSummary()", () => {
 	});
 });
 
+describe("results validation and recap tracking", () => {
+	it("detects low validation pass rate", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				lastUpdated: new Date().toISOString(),
+				football: [{ homeTeam: "A", awayTeam: "B" }],
+				validationMetrics: { totalResults: 10, validResults: 7 },
+			},
+		});
+
+		expect(report.resultsHealth.validationPassRate).toBe(0.7);
+		const issue = report.issues.find(i => i.code === "results_validation_low");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("70%");
+	});
+
+	it("no validation warning when pass rate is high", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				lastUpdated: new Date().toISOString(),
+				football: [],
+				validationMetrics: { totalResults: 10, validResults: 10 },
+			},
+		});
+
+		expect(report.resultsHealth.validationPassRate).toBe(1);
+		const issue = report.issues.find(i => i.code === "results_validation_low");
+		expect(issue).toBeUndefined();
+	});
+
+	it("computes recapHeadlineRate correctly", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				lastUpdated: new Date().toISOString(),
+				football: [
+					{ homeTeam: "A", awayTeam: "B", recapHeadline: "Great match!" },
+					{ homeTeam: "C", awayTeam: "D" },
+					{ homeTeam: "E", awayTeam: "F", recapHeadline: "Stunning upset" },
+				],
+			},
+		});
+
+		expect(report.resultsHealth.recapHeadlineRate).toBeCloseTo(0.67, 1);
+	});
+
+	it("recapHeadlineRate is null when no football results", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				lastUpdated: new Date().toISOString(),
+				football: [],
+			},
+		});
+
+		expect(report.resultsHealth.recapHeadlineRate).toBeNull();
+	});
+});
+
+describe("preference evolution freshness", () => {
+	it("flags stale preference evolution (>7 days)", () => {
+		const staleDate = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			preferenceEvolution: { lastEvolved: staleDate },
+		});
+
+		const issue = report.issues.find(i => i.code === "preference_evolution_stale");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("info");
+	});
+
+	it("no warning when preference evolution is recent", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			preferenceEvolution: { lastEvolved: new Date().toISOString() },
+		});
+
+		const issue = report.issues.find(i => i.code === "preference_evolution_stale");
+		expect(issue).toBeUndefined();
+	});
+});
+
+describe("fact-check history freshness", () => {
+	it("flags stale fact-check history (>48h)", () => {
+		const staleDate = new Date(Date.now() - 50 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			factCheckHistory: [{ timestamp: staleDate }],
+		});
+
+		const issue = report.issues.find(i => i.code === "fact_check_stale");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("warning");
+	});
+
+	it("no warning when fact-check is recent", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			factCheckHistory: [{ timestamp: new Date().toISOString() }],
+		});
+
+		const issue = report.issues.find(i => i.code === "fact_check_stale");
+		expect(issue).toBeUndefined();
+	});
+
+	it("handles empty fact-check history array", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			factCheckHistory: [],
+		});
+
+		const issue = report.issues.find(i => i.code === "fact_check_stale");
+		expect(issue).toBeUndefined();
+	});
+});
+
+describe("invisible events detection", () => {
+	it("flags events with past dates as invisible", () => {
+		const pastEvent = {
+			sport: "chess",
+			title: "Past Tournament",
+			time: new Date(Date.now() - 2 * 86400000).toISOString(),
+		};
+		const futureEvent = {
+			sport: "football",
+			title: "Future Match",
+			time: new Date(Date.now() + 86400000).toISOString(),
+		};
+		const report = generateHealthReport({
+			events: [pastEvent, futureEvent],
+		});
+
+		const invisible = report.issues.find(i => i.code === "invisible_events");
+		expect(invisible).toBeDefined();
+		expect(invisible.message).toContain("1 event(s)");
+		expect(invisible.message).toContain("chess");
+	});
+
+	it("no invisible events warning when all events are in the future", () => {
+		const events = [
+			{ sport: "football", title: "Match", time: new Date(Date.now() + 86400000).toISOString() },
+		];
+		const report = generateHealthReport({ events });
+
+		const invisible = report.issues.find(i => i.code === "invisible_events");
+		expect(invisible).toBeUndefined();
+	});
+
+	it("multi-day events with endTime spanning today are NOT invisible", () => {
+		const event = {
+			sport: "golf",
+			title: "PGA Tour",
+			time: new Date(Date.now() - 2 * 86400000).toISOString(),
+			endTime: new Date(Date.now() + 2 * 86400000).toISOString(),
+		};
+		const report = generateHealthReport({ events: [event] });
+
+		const invisible = report.issues.find(i => i.code === "invisible_events");
+		expect(invisible).toBeUndefined();
+	});
+});
+
 describe("quota API health check", () => {
 	it("reports quota_api_unavailable when API is down", () => {
 		const report = generateHealthReport({
