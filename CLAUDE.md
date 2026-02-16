@@ -64,6 +64,8 @@ Ask: **"How would the system have found this problem on its own?"**
 
 If the answer is "it couldn't", the change is incomplete. Add detection: a test that catches regressions, a health check that surfaces the issue, a quality gate that blocks bad output, or a scouting heuristic that spots the pattern. The goal is that every class of problem is found exactly once by a human and forever after by the system.
 
+Also ask: **"Does this change leave the system coherent?"** Every change should leave the system in a consistent state — code, tests, documentation, and configuration should all agree. If you add a new capability, the system's self-description should reflect it. If you change data flow, anything that describes the data flow should update too. This isn't a checklist of specific files — it's a principle: the system should understand itself accurately.
+
 ### 3. Zero Infrastructure Constraint
 
 Ask: **"Does this stay within GitHub Actions + Claude Code Max + GitHub Pages?"**

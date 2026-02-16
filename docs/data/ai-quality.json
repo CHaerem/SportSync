@@ -1,44 +1,37 @@
 {
-  "generatedAt": "2026-02-16T14:27:11.052Z",
+  "generatedAt": "2026-02-16T14:04:05.942Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 16450,
+    "blockCount": 8,
+    "generationMs": 2,
     "tokenUsage": {
-      "input": 32626,
-      "output": 376,
-      "cacheCreation": 17415,
-      "cacheRead": 15208,
-      "total": 33002,
-      "costUSD": 0.12642075,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 69,
+    "score": 100,
     "metrics": {
-      "mustWatchCoverage": 0.286,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 29% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 119,
+      "avgScore": 92,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -59,13 +52,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 34,
-      "importanceCoverage": 0.706,
-      "summaryCoverage": 0.706,
-      "relevanceCoverage": 0.706,
-      "tagsCoverage": 0.529
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 34,
@@ -77,19 +70,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 56,
-    "aiUpdatedFields": 24,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
+    "failedBatches": 0,
     "totalEvents": 34,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 87950,
-      "output": 2237,
-      "calls": 3,
-      "total": 90187,
-      "costUSD": 0.31404050000000006,
-      "tracked": true,
-      "estimated": false
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   }
 }
