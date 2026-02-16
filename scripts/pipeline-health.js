@@ -462,6 +462,30 @@ async function main() {
 		console.warn("Schedule verification failed (non-blocking):", err.message);
 	}
 
+	// Check curated configs for low verification confidence with upcoming events
+	const configDir = path.resolve(process.cwd(), "scripts", "config");
+	if (fs.existsSync(configDir)) {
+		const now = Date.now();
+		const weekAhead = now + 7 * 86_400_000;
+		for (const file of fs.readdirSync(configDir)) {
+			if (!file.endsWith(".json") || file === "user-context.json") continue;
+			const cfg = readJsonIfExists(path.join(configDir, file));
+			if (!cfg?.events?.length || !cfg.verificationSummary) continue;
+			const confidence = cfg.verificationSummary.overallConfidence ?? 1;
+			const hasUpcoming = cfg.events.some(e => {
+				const t = new Date(e.time).getTime();
+				return t > now && t < weekAhead;
+			});
+			if (confidence < 0.6 && hasUpcoming) {
+				issues.push({
+					severity: "warning",
+					code: "low_confidence_config",
+					message: `Config ${file} has low verification confidence (${confidence}) with upcoming events — schedule may be inaccurate`,
+				});
+			}
+		}
+	}
+
 	// Generate status summary
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
 	const summaryLlm = new LLMClient();
