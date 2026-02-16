@@ -384,7 +384,6 @@ class Dashboard {
 	async renderFromSnapshot(snapshot, dateKey) {
 		// Render structured content immediately (fast, always available)
 		this.renderSnapshotEvents(snapshot);
-		this.renderSnapshotResults(snapshot);
 
 		// Show standings and RSS from snapshot if available
 		if (snapshot.standings) {
@@ -438,11 +437,6 @@ class Dashboard {
 		this.bindEventRows();
 		this.bindBandToggles();
 		this.bindFeedbackButtons();
-	}
-
-	renderSnapshotResults(snapshot) {
-		// Match results are already rendered as part of renderSnapshotEvents
-		// This method exists as an extension point for future per-component rendering
 	}
 
 	renderSnapshotStandings(standings) {
