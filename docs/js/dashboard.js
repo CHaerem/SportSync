@@ -899,6 +899,7 @@ class Dashboard {
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
+		const now = new Date();
 		picks.forEach((pick, i) => {
 			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === pick.sport) : null;
 			const emoji = sportConfig ? sportConfig.emoji : '';
@@ -911,13 +912,24 @@ class Dashboard {
 				relLabel = this.relativeTime(pickTime) || '';
 			}
 
+			// Live status from polling data or time-based inference
+			let statusHtml = '';
+			const live = pick.eventId ? this.liveScores[pick.eventId] : null;
+			if (live && live.state === 'in') {
+				statusHtml = '<span class="pick-status pick-live"><span class="live-dot"></span>LIVE</span>';
+			} else if (live && live.state === 'post') {
+				statusHtml = '<span class="pick-status pick-ended">FT</span>';
+			} else if (pickTime && pickTime < now && (now - pickTime) > 3 * 60 * 60 * 1000) {
+				statusHtml = '<span class="pick-status pick-ended">FT</span>';
+			}
+
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
 			const streams = Array.isArray(pick.streaming) ? pick.streaming : [];
 
 			html += `<div class="watch-pick" data-pick-index="${i}" role="button" tabindex="0">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
-			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}</div>`;
+			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}${statusHtml}</div>`;
 			if (reasons.length > 0 || streams.length > 0) {
 				html += '<div class="pick-reasons">';
 				reasons.forEach(r => { html += `<span class="pick-reason">${this.esc(r)}</span>`; });
