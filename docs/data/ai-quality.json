@@ -1,37 +1,37 @@
 {
-  "generatedAt": "2026-02-16T18:46:33.365Z",
+  "generatedAt": "2026-02-16T19:26:17.680Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 35314,
+    "blockCount": 6,
+    "generationMs": 20216,
     "tokenUsage": {
-      "input": 138949,
-      "output": 1132,
-      "cacheCreation": 22073,
-      "cacheRead": 116853,
-      "total": 140081,
-      "costUSD": 0.22985075000000002,
+      "input": 33200,
+      "output": 795,
+      "cacheCreation": 17989,
+      "cacheRead": 15208,
+      "total": 33995,
+      "costUSD": 0.14049825,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 74,
+    "score": 65,
     "metrics": {
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
     "issues": [
-      "Only 14% of must-watch events covered in blocks"
+      "Only 17% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
@@ -85,11 +85,11 @@
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 118220,
-      "output": 3133,
+      "input": 119116,
+      "output": 3344,
       "calls": 4,
-      "total": 121353,
-      "costUSD": 0.417934,
+      "total": 122460,
+      "costUSD": 0.41996374999999997,
       "tracked": true,
       "estimated": false
     }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T18:46:41.721Z",
+  "generatedAt": "2026-02-16T19:26:25.751Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 34,
@@ -58,10 +58,10 @@
         "Ski Jumping — Men's Super Team"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 74,
+    "editorialScore": 65,
     "issueCount": 8
   },
   "findings": [
@@ -72,18 +72,18 @@
     },
     {
       "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 65/100 (below threshold)"
+    },
+    {
+      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copa\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"14:45\" for \"Alpine Skiing — Men's Slalom\" but events.json has 09:00"
+      "message": "Featured mentions \"Peak Olympic\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
