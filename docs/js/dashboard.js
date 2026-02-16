@@ -1090,8 +1090,18 @@ class Dashboard {
 			html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
 		}
 
-		// Sort events chronologically within band
-		const sorted = [...events].sort((a, b) => new Date(a.time) - new Date(b.time));
+		// Sort events by sport engagement priority, then chronologically within sport
+		const engagement = this.preferences ? this.preferences.getEngagement() : {};
+		const sportClicks = {};
+		for (const [sport, data] of Object.entries(engagement)) {
+			sportClicks[sport] = data.clicks || 0;
+		}
+		const sorted = [...events].sort((a, b) => {
+			const aPri = sportClicks[a.sport] || 0;
+			const bPri = sportClicks[b.sport] || 0;
+			if (aPri !== bPri) return bPri - aPri;
+			return new Date(a.time) - new Date(b.time);
+		});
 
 		for (const e of sorted) {
 			const sport = SPORT_CONFIG.find(s => s.id === e.sport) || { emoji: '', name: e.sport, color: '#888' };
