@@ -218,11 +218,11 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~85% | - | 6 APIs, 11 RSS feeds, results for 2/6 sports |
-| 2. Code | ~80% | - | 80+ PRs, 1295 tests, but gaps in test coverage |
-| 3. Capabilities | ~40% | - | Pipeline manifest enables expansion, no self-discovered feature yet |
-| 4. Personalization | ~30% | - | Sport weights evolve, teams/players don't, no feedback UI |
-| 5. Quality | ~90% | - | 11 loops, but hint fatigue unresolved |
+| 1. Data | ~85% | 2026-02-16 | 6 APIs, 11 RSS feeds, event-fingerprint caching |
+| 2. Code | ~80% | 2026-02-16 | 100 PRs, 1411 tests |
+| 3. Capabilities | ~55% | 2026-02-16 | Pipeline manifest, generate-insights step, inline standings widgets |
+| 4. Personalization | ~45% | 2026-02-16 | Sport weights + team/player favorites evolve, watch-plan feedback UI |
+| 5. Quality | ~90% | 2026-02-16 | 11 loops, hint fatigue demoted to info |
 
 ### Run History Insights
 
@@ -266,21 +266,21 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 3: Self-Expanding Capabilities
 
-14. [PENDING] [EXPLORE] **Investigate inline standings widgets** — Standings data exists in `standings.json` for PL, golf, and F1 but is only surfaced in editorial text. Explore adding collapsible inline widgets: mini PL table in football section, top-5 golf leaderboard in golf section, driver standings in F1 section. Identify exact render points in `dashboard.js`.
+14. [DONE] (direct + PR #97) **Inline standings widgets** — PL mini-table (PR #97), golf leaderboard, and F1 driver standings widgets added as collapsible inline sections. All three use the exp-mini-table pattern with band toggle.
 
 15. [DONE] (PR #97) **Add inline Premier League mini-table** — Collapsible top-5 + favorites PL standings table in the events section. Uses existing exp-mini-table styling and band toggle pattern.
 
-16. [PENDING] [FEATURE] **Add new pipeline step: generate-insights** — Create `scripts/generate-insights.js` that reads events + standings + results + RSS to produce `docs/data/insights.json` — short analytical nuggets like "Liverpool unbeaten in 12" or "Hovland T3 going into Sunday". Wire into pipeline-manifest.json generate phase. Dashboard renders as accent cards.
+16. [DONE] (PR #100) **Add generate-insights pipeline step** — Created `scripts/generate-insights.js` with football streaks, standings gaps, golf leaderboard, F1 championship, and high-scoring match analysis. Dashboard renders top 5 as accent cards. 22 tests.
 
 17. [PENDING] [EXPLORE] **Investigate biathlon/cross-country data** — Norway dominates these winter sports. Check if IBU (biathlon) or FIS (cross-country skiing) have public APIs or data feeds. Evaluate feasibility of a winter-sports fetcher.
 
-18. [PENDING] [FEATURE] **Add day-specific editorial caching** — `generate-multi-day.js` regenerates stale previews but doesn't cache effectively. Add smarter caching: never regenerate past recaps, only regenerate previews if events changed.
+18. [DONE] (direct) **Add day-specific editorial caching** — Preview briefings now use MD5 event fingerprints for change detection. Only regenerates when events for the preview date actually change, instead of fixed 24h timer. Falls back to time-based staleness for legacy files. 6 tests.
 
 ### Pillar 4: Personalized Output
 
 19. [DONE] (PR #98) **Add thumbs-up/down on watch-plan picks** — Feedback buttons on watch-plan picks with toggle behavior, stored in localStorage via PreferencesManager. CSS with accent active state.
 
-20. [PENDING] [MAINTENANCE] **Evolve favorite teams from engagement data** — `evolve-preferences.js` currently only adjusts sport-level weights. Extend it to also detect frequently-clicked teams (from engagement data) and suggest promoting them to favorites in `user-context.json`.
+20. [DONE] (PR #99) **Evolve favorite teams from engagement data** — Extended `evolve-preferences.js` to sync favorite teams/players from client-side exports into `user-context.json`. Case-insensitive deduplication. Reads from GitHub Issues + local file. 14 new tests.
 
 21. [DONE] (PR #86) **Add sport-section ordering by preference** — Added SPORT_WEIGHT fallback map in dashboard.js renderBand(). Events sort by engagement clicks + preference weight (high=3, medium=2, low=1), giving sensible ordering even for new users.
 

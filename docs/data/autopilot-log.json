@@ -2,106 +2,6 @@
   "runs": [
     {
       "date": "2026-02-10",
-      "task": "Add ai-assistant.js to service worker cache list",
-      "outcome": "skipped",
-      "pr": null,
-      "details": "File was already present in SW install cache at docs/sw.js line 25. No changes needed.",
-      "tests_passed": true,
-      "files_changed": 0,
-      "scouted": 11
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Remove dead code from sports-api.js",
-      "outcome": "completed",
-      "pr": 15,
-      "details": "Removed unreachable TheSportsDB fallback block in fetchFootballEvents(), four unused format methods (formatFootballEvents, formatGolfEvents, formatTennisEvents, formatF1Events), and unused apiKeys property. 93 lines deleted.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Fix memory leak: store setInterval ID",
-      "outcome": "completed",
-      "pr": 16,
-      "details": "Stored setInterval return value in this.refreshInterval in simple-dashboard.js for proper lifecycle management.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add rel=noopener noreferrer to streaming links",
-      "outcome": "completed",
-      "pr": 17,
-      "details": "Added missing rel='noopener noreferrer' to streaming badge links in simple-dashboard.js line 1320. Other external links already had this attribute.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add prefers-reduced-motion support",
-      "outcome": "completed",
-      "pr": 18,
-      "details": "Added @media (prefers-reduced-motion: reduce) block to docs/index.html to disable all CSS transitions and animations for users with vestibular disorders.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Remove unused .view-toggle and .view-btn CSS rules",
-      "outcome": "completed",
-      "pr": 19,
-      "details": "Removed .view-toggle and .view-btn CSS rules (main + mobile overrides) with no corresponding HTML elements. ~39 lines of dead CSS removed. Kept @keyframes spin which is actively used.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add dashboard-helpers.js to service worker cache",
-      "outcome": "completed",
-      "pr": 20,
-      "details": "Added docs/js/dashboard-helpers.js to SW install cache list in docs/sw.js. Bumped cache version to v11-helpers for cache refresh.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add unit tests for preferences-manager.js",
-      "outcome": "completed",
-      "pr": 21,
-      "details": "Added 29 unit tests in tests/preferences-manager.test.js covering load/save, sport/team/player CRUD, fuzzy matching, multi-criteria event favorite detection, view/theme, exportForBackend, and reset.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add unit tests for sports-api.js formatters",
-      "outcome": "completed",
-      "pr": 22,
-      "details": "Added 17 unit tests in tests/sports-api.test.js covering formatTournamentData (structure, defaults, golf fields), formatDateTime (TBD, Today, Tomorrow, N-days), and groupEventsByDay (7-day init, bucketing, TBD/out-of-range filtering).",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
-      "task": "Add meta description and theme-color tags",
-      "outcome": "completed",
-      "pr": 23,
-      "details": "Added <meta name=description> for SEO and <meta name=theme-color content=#667eea> for OS-level theming in mobile browsers. 2 lines added to docs/index.html.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-10",
       "task": "Extract duplicate sport emoji mappings into shared config",
       "outcome": "completed",
       "pr": 24,
@@ -405,6 +305,70 @@
       "lesson": "UI feedback features that integrate with existing storage patterns (PreferencesManager) are quick to implement. The main complexity is proper event handling (stopPropagation for buttons inside clickable containers).",
       "scouted": 0,
       "meta_insight": "Watch-plan feedback is the prerequisite for closing the personalization loop. Next step: export this feedback to the pipeline so it influences future watch-plan scoring."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Evolve favorite teams/players from engagement data",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 99,
+      "pillar": "personalization",
+      "details": "Extended evolve-preferences.js to sync favorite teams/players from client-side exports (GitHub Issues + engagement-data.json) into user-context.json. Case-insensitive deduplication. 14 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 10,
+      "turns_estimated": 10,
+      "lesson": "Extending an existing pipeline script with a new data path is straightforward when the existing structure is clean. The main work is parsing the data format and adding deduplication.",
+      "scouted": 0,
+      "meta_insight": "Personalization now covers both sport-level weights AND individual teams/players. The pipeline can learn new favorites from the client-side without manual config changes."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add generate-insights pipeline step",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 100,
+      "pillar": "capabilities",
+      "details": "Created scripts/generate-insights.js with football streaks, standings gaps, golf leaderboard, F1 championship, and high-scoring match analysis. Dashboard renders top 5 insights as accent cards. Added to pipeline-manifest.json generate phase. 22 tests.",
+      "tests_passed": true,
+      "files_changed": 8,
+      "turns_used": 15,
+      "turns_estimated": 20,
+      "lesson": "Pure data analysis scripts (no LLM) are fast to build and test. The main complexity was sorting priority correctly (0 || 2 = 2 due to falsy zero — use ?? instead of ||).",
+      "scouted": 0,
+      "meta_insight": "First new pipeline step added by the autopilot via pipeline-manifest.json editing. This proves the manifest pattern works for self-expanding capabilities."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add inline golf leaderboard and F1 standings widgets",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "capabilities",
+      "details": "Added collapsible inline widgets for golf (top 5 + Norwegian players) and F1 (top 5 drivers, hidden when pre-season) following the existing PL mini-table pattern.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "turns_estimated": 5,
+      "lesson": "Following an established UI pattern (PL mini-table) makes new widgets trivial. Direct-to-main is appropriate for small, low-risk UI additions.",
+      "scouted": 0,
+      "meta_insight": "All three standings sources (PL, golf, F1) now have inline widgets. This closes the data-to-UI gap for standings."
+    },
+    {
+      "date": "2026-02-16",
+      "task": "Add event-fingerprint-based preview caching",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "data",
+      "details": "Preview briefings now use MD5 event fingerprints for change detection instead of fixed 24h timer. Only regenerates when events for the preview date actually change. Falls back to time-based staleness for legacy files. 6 tests.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 6,
+      "turns_estimated": 8,
+      "lesson": "Caching improvements that reduce unnecessary AI calls are high-leverage. The fingerprint approach is simple and deterministic.",
+      "scouted": 0,
+      "meta_insight": "Event fingerprinting can be extended to other cached content (e.g., enrichment could skip re-processing unchanged events)."
     }
   ]
 }
