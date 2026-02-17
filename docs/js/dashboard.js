@@ -941,10 +941,6 @@ class Dashboard {
 				streams.forEach(s => { html += `<span class="pick-stream">${this.esc(s.platform || s)}</span>`; });
 				html += '</div>';
 			}
-			if (typeof pick.score === 'number' && pick.score > 0) {
-				const pct = Math.min(100, Math.round((pick.score / 150) * 100));
-				html += `<div class="pick-confidence" title="Match score: ${pick.score}"><div class="pick-confidence-bar" style="width:${pct}%"></div></div>`;
-			}
 			// Thumbs-up/down feedback
 			const pickKey = `${(pick.title || '').replace(/[^a-zA-Z0-9]/g, '_')}_${(pick.time || '').slice(0, 10)}`;
 			const fb = this.preferences ? this.preferences.getWatchFeedback(pickKey) : null;
@@ -1014,12 +1010,10 @@ class Dashboard {
 			return;
 		}
 
-		// Show top 5 insights, prioritizing high-priority ones
 		const top = this.insights.insights.slice(0, 5);
 		let html = '<div class="insights-header">Key Numbers</div>';
 		for (const insight of top) {
-			const pClass = insight.priority === 'high' ? 'high' : 'medium';
-			html += `<div class="insight-card ${pClass}">${this.esc(insight.text)}</div>`;
+			html += `<div class="insight-line">${this.esc(insight.text)}</div>`;
 		}
 		container.innerHTML = html;
 	}
@@ -1260,15 +1254,11 @@ class Dashboard {
 		html += this.renderBand('Live now', bands.live, { cssClass: 'live' });
 		html += this.renderBand('Today', bands.today, {});
 		html += this.renderBand('Results', bands.results, { cssClass: 'results' });
-		html += this.renderInlinePLTable();
-		html += this.renderInlineLaLigaTable();
-		html += this.renderInlineGolfLeaderboard();
-		html += this.renderInlineF1Standings();
-		html += this.renderInlineTennisRankings();
 		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
 		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
 		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
 		html += this.renderEmptySportNotes(this.allEvents);
+		html += this.renderStandingsSection();
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
@@ -1423,25 +1413,34 @@ class Dashboard {
 		if (!el || !this.feedback) return;
 
 		const count = this.feedback.pendingCount();
-		const hasFavorites = this.preferences &&
-			(Object.values(this.preferences.getPreferences().favoriteTeams || {}).some(t => t.length > 0) ||
-			 Object.values(this.preferences.getPreferences().favoritePlayers || {}).some(p => p.length > 0));
-		const canSubmit = count > 0 || hasFavorites;
 
 		el.innerHTML = `
-			<div class="fb-section-label">Feedback</div>
-			<div class="fb-panel-row">
-				<input type="text" id="fb-suggest-input" placeholder="Suggest a sport, event, or feature..." maxlength="200">
-				<button id="fb-suggest-btn">Add</button>
+			<button class="fb-toggle" aria-expanded="false">Send feedback${count > 0 ? ` (${count})` : ''} \u25b8</button>
+			<div class="fb-panel-content" style="display:none">
+				<div class="fb-panel-row">
+					<input type="text" id="fb-suggest-input" placeholder="Suggest a sport, event, or feature..." maxlength="200">
+					<button id="fb-suggest-btn">Add</button>
+				</div>
+				${count > 0 ? `<div class="fb-pending">${count} pending item${count > 1 ? 's' : ''}</div>` : ''}
+				<div class="fb-panel-row">
+					<button class="fb-submit" id="fb-submit-btn">
+						Send feedback via GitHub
+					</button>
+				</div>
 			</div>
-			${count > 0 ? `<div class="fb-pending">${count} pending item${count > 1 ? 's' : ''}</div>` : ''}
-			<div class="fb-panel-row">
-				<button class="fb-submit" id="fb-submit-btn" ${canSubmit ? '' : 'disabled'}>
-					Send feedback via GitHub
-				</button>
-			</div>
-			<div class="fb-hint">Includes your starred favorites, reports, and suggestions</div>
 		`;
+
+		el.querySelector('.fb-toggle')?.addEventListener('click', () => {
+			const content = el.querySelector('.fb-panel-content');
+			const toggle = el.querySelector('.fb-toggle');
+			if (!content || !toggle) return;
+			const isOpen = content.style.display !== 'none';
+			content.style.display = isOpen ? 'none' : 'block';
+			toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+			toggle.textContent = isOpen
+				? `Send feedback${count > 0 ? ` (${count})` : ''} \u25b8`
+				: `Send feedback${count > 0 ? ` (${count})` : ''} \u25be`;
+		});
 
 		document.getElementById('fb-suggest-btn')?.addEventListener('click', () => {
 			const input = document.getElementById('fb-suggest-input');
@@ -1780,104 +1779,95 @@ class Dashboard {
 		return html;
 	}
 
-	// --- Standings renderers ---
+	// --- Standings section (consolidated) ---
 
-	renderInlinePLTable() {
-		const table = this.standings?.football?.premierLeague;
-		if (!Array.isArray(table) || table.length === 0) return '';
+	renderStandingsSection() {
+		const tables = [];
 
-		// Show top 5 rows + any favorite teams not already in top 5
-		const prefs = this.preferences ? this.preferences.getPreferences() : {};
-		const favTeams = prefs.favoriteTeams?.football || [];
-		const favorites = favTeams.map(t => t.toLowerCase());
-		const top5 = table.slice(0, 5);
-		const favRows = table.filter(t =>
-			favorites.some(fav =>
-				t.team.toLowerCase().includes(fav) || fav.includes(t.team.toLowerCase())
-			) && !top5.includes(t)
-		);
-
-		const rows = [...top5, ...favRows].sort((a, b) => a.position - b.position);
-
-		let html = '<div class="inline-standings">';
-		html += '<div class="band-label collapsible" data-band="pl-table" role="button" tabindex="0" aria-expanded="false">Premier League \u25b8</div>';
-		html += '<div class="band-content collapsed" data-band-content="pl-table">';
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>Pts</th><th>GD</th></tr></thead><tbody>';
-
-		let lastPos = 0;
-		for (const row of rows) {
-			if (row.position - lastPos > 1 && lastPos > 0) {
-				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
-			}
-			const isFav = favorites.some(fav =>
-				row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
-			);
-			const cls = isFav ? ' class="highlight"' : '';
-			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
-			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
-			lastPos = row.position;
+		// Premier League
+		const plTable = this.standings?.football?.premierLeague;
+		if (Array.isArray(plTable) && plTable.length > 0) {
+			tables.push(this._buildFootballTable('Premier League', plTable));
 		}
 
-		html += '</tbody></table></div></div>';
-		return html;
-	}
-
-	renderInlineLaLigaTable() {
-		const table = this.standings?.football?.laLiga;
-		if (!Array.isArray(table) || table.length === 0) return '';
-
-		const prefs = this.preferences ? this.preferences.getPreferences() : {};
-		const favTeams = prefs.favoriteTeams?.football || [];
-		const favorites = favTeams.map(t => t.toLowerCase());
-		const top5 = table.slice(0, 5);
-		const favRows = table.filter(t =>
-			favorites.some(fav =>
-				t.team.toLowerCase().includes(fav) || fav.includes(t.team.toLowerCase())
-			) && !top5.includes(t)
-		);
-
-		const rows = [...top5, ...favRows].sort((a, b) => a.position - b.position);
-
-		let html = '<div class="inline-standings">';
-		html += '<div class="band-label collapsible" data-band="laliga-table" role="button" tabindex="0" aria-expanded="false">La Liga \u25b8</div>';
-		html += '<div class="band-content collapsed" data-band-content="laliga-table">';
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>Pts</th><th>GD</th></tr></thead><tbody>';
-
-		let lastPos = 0;
-		for (const row of rows) {
-			if (row.position - lastPos > 1 && lastPos > 0) {
-				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
-			}
-			const isFav = favorites.some(fav =>
-				row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
-			);
-			const cls = isFav ? ' class="highlight"' : '';
-			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
-			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
-			lastPos = row.position;
+		// La Liga
+		const laLigaTable = this.standings?.football?.laLiga;
+		if (Array.isArray(laLigaTable) && laLigaTable.length > 0) {
+			tables.push(this._buildFootballTable('La Liga', laLigaTable));
 		}
 
-		html += '</tbody></table></div></div>';
-		return html;
-	}
-
-	renderInlineGolfLeaderboard() {
+		// Golf leaderboard
 		const pga = this.standings?.golf?.pga;
-		if (!pga?.leaderboard?.length || pga.status === 'scheduled') return '';
+		if (pga?.leaderboard?.length && pga.status !== 'scheduled') {
+			tables.push(this._buildGolfTable(pga));
+		}
 
+		// F1 standings
+		const drivers = this.standings?.f1?.drivers;
+		if (Array.isArray(drivers) && drivers.length > 0) {
+			const totalPoints = drivers.reduce((s, d) => s + (d.points || 0), 0);
+			if (totalPoints > 0) {
+				tables.push(this._buildF1Table(drivers));
+			}
+		}
+
+		// ATP rankings
+		const atp = this.standings?.tennis?.atp;
+		if (Array.isArray(atp) && atp.length > 0) {
+			tables.push(this._buildTennisTable(atp));
+		}
+
+		if (tables.length === 0) return '';
+
+		let html = '<div class="inline-standings">';
+		html += '<div class="band-label collapsible" data-band="standings" role="button" tabindex="0" aria-expanded="false">Standings \u25b8</div>';
+		html += '<div class="band-content collapsed" data-band-content="standings">';
+		html += tables.join('');
+		html += '</div></div>';
+		return html;
+	}
+
+	_buildFootballTable(name, table) {
+		const prefs = this.preferences ? this.preferences.getPreferences() : {};
+		const favTeams = prefs.favoriteTeams?.football || [];
+		const favorites = favTeams.map(t => t.toLowerCase());
+		const top5 = table.slice(0, 5);
+		const favRows = table.filter(t =>
+			favorites.some(fav =>
+				t.team.toLowerCase().includes(fav) || fav.includes(t.team.toLowerCase())
+			) && !top5.includes(t)
+		);
+		const rows = [...top5, ...favRows].sort((a, b) => a.position - b.position);
+
+		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(name)}</div>`;
+		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>Pts</th><th>GD</th></tr></thead><tbody>';
+		let lastPos = 0;
+		for (const row of rows) {
+			if (row.position - lastPos > 1 && lastPos > 0) {
+				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
+			}
+			const isFav = favorites.some(fav =>
+				row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
+			);
+			const cls = isFav ? ' class="highlight"' : '';
+			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
+			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
+			lastPos = row.position;
+		}
+		html += '</tbody></table></div>';
+		return html;
+	}
+
+	_buildGolfTable(pga) {
 		const top5 = pga.leaderboard.slice(0, 5);
-		// Find Norwegian players not in top 5
 		const norwegianNames = ['Hovland', 'Ventura', 'Aberg'];
 		const norRows = pga.leaderboard.filter(p =>
 			norwegianNames.some(n => p.player?.includes(n)) && !top5.includes(p)
 		);
 		const rows = [...top5, ...norRows].sort((a, b) => a.position - b.position);
 
-		let html = '<div class="inline-standings">';
-		html += `<div class="band-label collapsible" data-band="golf-lb" role="button" tabindex="0" aria-expanded="false">${this.esc(pga.name || 'Golf Leaderboard')} \u25b8</div>`;
-		html += '<div class="band-content collapsed" data-band-content="golf-lb">';
+		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(pga.name || 'Golf Leaderboard')}</div>`;
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Thru</th></tr></thead><tbody>';
-
 		let lastPos = 0;
 		for (const row of rows) {
 			if (row.position - lastPos > 1 && lastPos > 0) {
@@ -1888,57 +1878,36 @@ class Dashboard {
 			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.player)}</td><td>${this.esc(row.score)}</td><td>${this.esc(row.thru || '')}</td></tr>`;
 			lastPos = row.position;
 		}
-
-		html += '</tbody></table></div></div>';
+		html += '</tbody></table></div>';
 		return html;
 	}
 
-	renderInlineF1Standings() {
-		const drivers = this.standings?.f1?.drivers;
-		if (!Array.isArray(drivers) || drivers.length === 0) return '';
-
-		// Skip if all points are zero (pre-season)
-		const totalPoints = drivers.reduce((s, d) => s + (d.points || 0), 0);
-		if (totalPoints === 0) return '';
-
+	_buildF1Table(drivers) {
 		const top5 = drivers.slice(0, 5);
-
-		let html = '<div class="inline-standings">';
-		html += '<div class="band-label collapsible" data-band="f1-standings" role="button" tabindex="0" aria-expanded="false">F1 Standings \u25b8</div>';
-		html += '<div class="band-content collapsed" data-band-content="f1-standings">';
+		let html = '<div class="standings-table-group"><div class="standings-table-label">F1 Standings</div>';
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Pts</th><th>Wins</th></tr></thead><tbody>';
-
 		for (const d of top5) {
 			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${d.points}</td><td>${d.wins}</td></tr>`;
 		}
-
-		html += '</tbody></table></div></div>';
+		html += '</tbody></table></div>';
 		return html;
 	}
 
-	renderInlineTennisRankings() {
-		const atp = this.standings?.tennis?.atp;
-		if (!Array.isArray(atp) || atp.length === 0) return '';
-
+	_buildTennisTable(atp) {
 		const top5 = atp.slice(0, 5);
-		// Highlight Casper Ruud if he's not in top 5
 		const ruud = atp.find(p => p.player.toLowerCase().includes('ruud'));
 		const showRuud = ruud && !top5.some(p => p.player === ruud.player);
 
-		let html = '<div class="inline-standings">';
-		html += '<div class="band-label collapsible" data-band="tennis-rankings" role="button" tabindex="0" aria-expanded="false">ATP Rankings \u25b8</div>';
-		html += '<div class="band-content collapsed" data-band-content="tennis-rankings">';
+		let html = '<div class="standings-table-group"><div class="standings-table-label">ATP Rankings</div>';
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Pts</th></tr></thead><tbody>';
-
 		for (const p of top5) {
-			const cls = p.player.toLowerCase().includes('ruud') ? ' class="fav"' : '';
+			const cls = p.player.toLowerCase().includes('ruud') ? ' class="highlight"' : '';
 			html += `<tr${cls}><td>${p.position}</td><td>${this.esc(p.player)}</td><td>${p.points}</td></tr>`;
 		}
 		if (showRuud) {
-			html += `<tr class="fav gap"><td>${ruud.position}</td><td>${this.esc(ruud.player)}</td><td>${ruud.points}</td></tr>`;
+			html += `<tr class="highlight"><td>${ruud.position}</td><td>${this.esc(ruud.player)}</td><td>${ruud.points}</td></tr>`;
 		}
-
-		html += '</tbody></table></div></div>';
+		html += '</tbody></table></div>';
 		return html;
 	}
 

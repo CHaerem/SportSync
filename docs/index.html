@@ -94,7 +94,14 @@
 		.fb-btn { background: none; border: 1px solid transparent; cursor: pointer; font-size: 0.6rem; padding: 2px 8px; opacity: 0.35; border-radius: 3px; line-height: 1.4; color: var(--muted); margin-left: auto; }
 		.fb-btn:hover { opacity: 0.7; border-color: var(--border, #e0e0e0); }
 		.fb-btn.active { opacity: 0.6; }
-		#feedback-panel { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border, #e0e0e0); }
+		#feedback-panel { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border, #e0e0e0); }
+		.fb-toggle {
+			background: none; border: none; color: var(--muted); cursor: pointer;
+			font: inherit; font-size: 0.65rem; padding: 0; opacity: 0.5;
+			transition: opacity 0.15s;
+		}
+		.fb-toggle:hover { opacity: 0.8; }
+		.fb-panel-content { margin-top: 10px; }
 		.fb-panel-row { display: flex; gap: 8px; margin-bottom: 8px; }
 		.fb-panel-row input { flex: 1; font: inherit; font-size: 0.75rem; padding: 6px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; background: var(--bg, #fff); color: var(--fg, #111); }
 		.fb-panel-row button { font: inherit; font-size: 0.7rem; padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: 4px; cursor: pointer; background: var(--bg, #fff); color: var(--fg, #111); white-space: nowrap; }
@@ -241,13 +248,13 @@
 		}
 
 		/* --- Featured Sections --- */
-		#featured-sections { margin-bottom: 24px; }
+		#featured-sections { margin-bottom: 16px; }
 		.featured-section {
 			background: var(--bg-secondary);
 			border: none;
 			border-radius: var(--radius);
-			padding: 18px 20px;
-			margin-bottom: 24px;
+			padding: 14px 16px;
+			margin-bottom: 16px;
 			box-shadow: var(--shadow);
 		}
 		.featured-section.highlight {
@@ -360,12 +367,12 @@
 
 		/* --- Sport Sections --- */
 		.sport-section {
-			margin-bottom: 14px;
+			margin-bottom: 8px;
 			padding-left: 14px;
 			border-left: 2.5px solid var(--border);
 		}
 		.sport-section.compact {
-			margin-bottom: 8px;
+			margin-bottom: 6px;
 		}
 		.band-content .sport-section:last-child {
 			margin-bottom: 0;
@@ -702,7 +709,17 @@
 		.exp-fav-btn:active, .exp-stream-badge:active { opacity: 0.6; }
 
 		/* --- Inline standings widget --- */
-		.inline-standings { margin: 8px 0 12px; }
+		.inline-standings { margin: 16px 0; }
+		.standings-table-group { margin-bottom: 12px; }
+		.standings-table-group:last-child { margin-bottom: 0; }
+		.standings-table-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			margin-bottom: 4px;
+		}
 		/* --- Standings mini-tables --- */
 		.exp-standings { margin: 12px 0; }
 		.exp-standings-header {
@@ -808,7 +825,7 @@
 		}
 
 		/* --- Watch Plan --- */
-		#watch-plan { margin-bottom: 24px; }
+		#watch-plan { margin-bottom: 16px; }
 		.watch-plan-header {
 			font-size: 0.6rem;
 			font-weight: 600;
@@ -865,19 +882,6 @@
 			color: var(--muted);
 			opacity: 0.7;
 		}
-		.pick-confidence {
-			height: 2px;
-			background: var(--border);
-			border-radius: 1px;
-			margin-top: 5px;
-			overflow: hidden;
-		}
-		.pick-confidence-bar {
-			height: 100%;
-			background: var(--accent);
-			border-radius: 1px;
-			opacity: 0.5;
-		}
 		.pick-reasons {
 			display: flex;
 			gap: 4px;
@@ -888,11 +892,9 @@
 			font-size: 0.55rem;
 			text-transform: uppercase;
 			letter-spacing: 0.04em;
-			color: var(--accent);
-			border: 1px solid var(--accent);
-			border-radius: 10px;
-			padding: 1px 7px;
-			opacity: 0.8;
+			color: var(--muted);
+			border: none;
+			padding: 0;
 		}
 		.pick-stream {
 			font-size: 0.55rem;
@@ -907,12 +909,12 @@
 			display: flex; gap: 4px; margin-top: 4px;
 		}
 		.pick-fb-btn {
-			background: none; border: 1px solid var(--border); border-radius: 4px;
-			color: var(--muted); cursor: pointer; font-size: 0.6rem;
-			padding: 1px 8px; line-height: 1.4;
+			background: none; border: 1px solid transparent; border-radius: 4px;
+			color: var(--muted); cursor: pointer; font-size: 0.55rem;
+			padding: 1px 6px; line-height: 1.4; opacity: 0.4;
 		}
-		.pick-fb-btn:hover { border-color: var(--accent); color: var(--accent); }
-		.pick-fb-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+		.pick-fb-btn:hover { opacity: 0.8; border-color: var(--border); }
+		.pick-fb-btn.active { opacity: 1; color: var(--accent); border-color: var(--accent); }
 		.watch-plan-more {
 			background: none;
 			border: none;
@@ -935,18 +937,12 @@
 			color: var(--muted);
 			margin-bottom: 8px;
 		}
-		.insight-card {
+		.insight-line {
 			font-size: 0.75rem;
-			padding: 6px 10px;
-			margin-bottom: 6px;
-			border-left: 3px solid var(--accent);
-			background: var(--card);
-			border-radius: 3px;
+			padding: 2px 0;
 			line-height: 1.5;
-			color: var(--fg);
+			color: var(--muted);
 		}
-		.insight-card.high { border-left-color: var(--accent); }
-		.insight-card.medium { border-left-color: var(--border); }
 
 		/* --- Importance reason (expanded view) --- */
 		.exp-importance-reason {
@@ -957,7 +953,7 @@
 		}
 
 		/* --- News --- */
-		#news { margin-top: 24px; }
+		#news { margin-top: 16px; }
 		.news-toggle {
 			font-size: 0.6rem;
 			font-weight: 600;

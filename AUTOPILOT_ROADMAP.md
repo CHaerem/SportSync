@@ -188,6 +188,21 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - `[FEATURE]` "Add handball fetcher using free API" — user-context.json shows Norwegian focus, handball is a major Norwegian sport (data + personalization pillars)
 - `[EXPLORE]` "Evaluate client-side feedback mechanisms beyond localStorage" — the preference evolution loop is working but limited to click counts (quality pillar)
 
+### L. Visual Density Detection
+
+Monitor the dashboard for visual clutter — too many competing card styles, borders, and decorative elements reduce readability.
+
+**How to check:**
+1. Take a screenshot via `scripts/screenshot.js`
+2. Read the CSS in `docs/index.html` and count distinct visual treatments (backgrounds, borders, cards, pills, badges)
+3. Read `docs/js/dashboard.js` render methods — count how many different card/container styles coexist on the "today" page
+
+**Flag when:** More than 4 different card/container styles (e.g., featured-section cards, insight cards, watch-plan picks, event rows, standings tables) all use different visual treatments (borders, backgrounds, shadows, colored accents).
+
+**Action:** Create a `[MAINTENANCE]` task to consolidate visual treatments. The dashboard should have at most 3 distinct container styles: (1) editorial/featured sections, (2) event rows, (3) data tables. Everything else should be inline text or simple dividers.
+
+**Example:** "Consolidate 5 separate standings widgets into one collapsible section" — reduces visual noise by moving from 5 independently-styled collapsible sections to one.
+
 ---
 
 ## Lessons & Effectiveness

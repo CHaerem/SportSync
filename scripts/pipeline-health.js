@@ -509,18 +509,46 @@ async function main() {
 		for (const file of fs.readdirSync(configDir)) {
 			if (!file.endsWith(".json") || file === "user-context.json") continue;
 			const cfg = readJsonIfExists(path.join(configDir, file));
-			if (!cfg?.events?.length || !cfg.verificationSummary) continue;
-			const confidence = cfg.verificationSummary.overallConfidence ?? 1;
-			const hasUpcoming = cfg.events.some(e => {
-				const t = new Date(e.time).getTime();
-				return t > now && t < weekAhead;
-			});
-			if (confidence < 0.6 && hasUpcoming) {
-				issues.push({
-					severity: "warning",
-					code: "low_confidence_config",
-					message: `Config ${file} has low verification confidence (${confidence}) with upcoming events — schedule may be inaccurate`,
+			if (!cfg?.events?.length) continue;
+
+			// Low verification confidence check
+			if (cfg.verificationSummary) {
+				const confidence = cfg.verificationSummary.overallConfidence ?? 1;
+				const hasUpcoming = cfg.events.some(e => {
+					const t = new Date(e.time).getTime();
+					return t > now && t < weekAhead;
 				});
+				if (confidence < 0.6 && hasUpcoming) {
+					issues.push({
+						severity: "warning",
+						code: "low_confidence_config",
+						message: `Config ${file} has low verification confidence (${confidence}) with upcoming events — schedule may be inaccurate`,
+					});
+				}
+			}
+
+			// Olympics/major event stale data check: flag configs with past events not pruned
+			if (file.includes("olympics") || cfg.context?.includes("olympics")) {
+				const pastEvents = cfg.events.filter(e => {
+					const t = new Date(e.time).getTime();
+					const end = e.endTime ? new Date(e.endTime).getTime() : t + 3 * 60 * 60 * 1000; // 3h default duration
+					return end < now;
+				});
+				const totalEvents = cfg.events.length;
+				if (pastEvents.length > 0 && pastEvents.length < totalEvents) {
+					issues.push({
+						severity: "info",
+						code: "olympics_stale_events",
+						message: `${file}: ${pastEvents.length}/${totalEvents} events are in the past — consider pruning`,
+					});
+				}
+				if (pastEvents.length === totalEvents) {
+					issues.push({
+						severity: "warning",
+						code: "olympics_all_past",
+						message: `${file}: all ${totalEvents} events are in the past — config should be archived`,
+					});
+				}
 			}
 		}
 	}
