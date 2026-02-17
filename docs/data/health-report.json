@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-17T20:51:29.770Z",
-  "eventCount": 40,
+  "generatedAt": "2026-02-17T22:13:55.668Z",
+  "eventCount": 39,
   "sportCoverage": {
     "chess": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "olympics": {
-      "count": 10,
+      "count": 9,
       "previousCount": 10,
-      "delta": 0
+      "delta": -1
     },
     "football": {
       "count": 26,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3037,
+      "ageMinutes": 3120,
       "stale": true
     },
     "esports.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 19,
+    "footballCount": 22,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -119,14 +119,14 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 241411,
+    "totalDuration": 227300,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 110815,
-        "share": 46
+        "duration": 88917,
+        "share": 39
       }
     ],
     "failedSteps": [
@@ -153,17 +153,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 3037 minutes old"
+      "message": "chess.json: data is 3120 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 17 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 18 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 19% (5/26) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -188,7 +193,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (111s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 39% of total pipeline time (89s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -208,12 +213,12 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 2/10 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 1/9 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 82/100.",
+    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }
