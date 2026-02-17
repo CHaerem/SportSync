@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateHealthReport, generateStatusSummary } from "../scripts/pipeline-health.js";
+import { generateHealthReport, generateStatusSummary, analyzePipelineTiming } from "../scripts/pipeline-health.js";
 
 const makeEvents = (sports) => {
 	const events = [];
@@ -1042,5 +1042,129 @@ describe("component block resolution checks", () => {
 		});
 		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("golf-status"));
 		expect(issue).toBeDefined();
+	});
+});
+
+describe("analyzePipelineTiming", () => {
+	it("returns null when no pipeline result", () => {
+		const issues = [];
+		const result = analyzePipelineTiming(null, issues);
+		expect(result).toBeNull();
+		expect(issues).toHaveLength(0);
+	});
+
+	it("detects timeout hits from errorCategory", () => {
+		const issues = [];
+		const pipelineResult = {
+			duration: 60000,
+			phases: {
+				monitor: {
+					steps: [
+						{ name: "verify-schedules", status: "failed", duration: 60000, error: "ETIMEDOUT", errorCategory: "timeout" },
+						{ name: "health-check", status: "success", duration: 200 },
+					],
+				},
+			},
+		};
+		const result = analyzePipelineTiming(pipelineResult, issues);
+		expect(result.timeoutHits).toContain("verify-schedules");
+		expect(issues.some(i => i.code === "step_timeout_hit" && i.message.includes("verify-schedules"))).toBe(true);
+	});
+
+	it("detects steps approaching default timeout", () => {
+		const issues = [];
+		const pipelineResult = {
+			duration: 400000,
+			phases: {
+				build: {
+					steps: [
+						{ name: "slow-step", status: "success", duration: 280000 }, // 280s > 90% of 300s default
+					],
+				},
+			},
+		};
+		const result = analyzePipelineTiming(pipelineResult, issues);
+		expect(result.timeoutHits).toContain("slow-step");
+	});
+
+	it("detects dominant steps", () => {
+		const issues = [];
+		const pipelineResult = {
+			duration: 300000,
+			phases: {
+				build: {
+					steps: [
+						{ name: "enrich-events", status: "success", duration: 120000 }, // 40% of total
+						{ name: "build-events", status: "success", duration: 500 },
+					],
+				},
+			},
+		};
+		const result = analyzePipelineTiming(pipelineResult, issues);
+		expect(result.dominantSteps).toHaveLength(1);
+		expect(result.dominantSteps[0].name).toBe("enrich-events");
+		expect(result.dominantSteps[0].share).toBe(40);
+		expect(issues.some(i => i.code === "step_dominant_duration")).toBe(true);
+	});
+
+	it("detects failed steps", () => {
+		const issues = [];
+		const pipelineResult = {
+			duration: 10000,
+			phases: {
+				fetch: {
+					steps: [
+						{ name: "fetch-sports", status: "success", duration: 5000 },
+						{ name: "fetch-rss", status: "failed", duration: 3000, error: "network error", errorCategory: "network" },
+					],
+				},
+			},
+		};
+		const result = analyzePipelineTiming(pipelineResult, issues);
+		expect(result.failedSteps).toContain("fetch-rss");
+		expect(issues.some(i => i.code === "pipeline_step_failures")).toBe(true);
+	});
+
+	it("skips skipped steps", () => {
+		const issues = [];
+		const pipelineResult = {
+			duration: 10000,
+			phases: {
+				discover: {
+					steps: [
+						{ name: "discover-events", status: "skipped", duration: 0, reason: "missing env: CLAUDE_CODE_OAUTH_TOKEN" },
+					],
+				},
+			},
+		};
+		const result = analyzePipelineTiming(pipelineResult, issues);
+		expect(result.stepCount).toBe(0);
+		expect(issues).toHaveLength(0);
+	});
+
+	it("integrates with generateHealthReport via pipelineResult option", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				duration: 500000,
+				phases: {
+					build: {
+						steps: [
+							{ name: "enrich-events", status: "success", duration: 200000 },
+						],
+					},
+					monitor: {
+						steps: [
+							{ name: "verify-schedules", status: "failed", duration: 300000, error: "ETIMEDOUT", errorCategory: "timeout" },
+						],
+					},
+				},
+			},
+		});
+		expect(report.pipelineTimingHealth).not.toBeNull();
+		expect(report.pipelineTimingHealth.timeoutHits).toContain("verify-schedules");
+		expect(report.pipelineTimingHealth.dominantSteps.some(s => s.name === "enrich-events")).toBe(true);
+		expect(report.issues.some(i => i.code === "step_timeout_hit")).toBe(true);
+		expect(report.issues.some(i => i.code === "step_dominant_duration")).toBe(true);
 	});
 });

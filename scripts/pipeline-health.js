@@ -55,6 +55,91 @@ function checkSchemaCompleteness(events) {
 	};
 }
 
+/**
+ * Analyze pipeline-result.json for timing anomalies.
+ * Detects: timeout hits, dominant steps, and repeated failures.
+ * Pushes issues into the shared issues array for autopilot scouting.
+ */
+export function analyzePipelineTiming(pipelineResult, issues) {
+	if (!pipelineResult?.phases) return null;
+
+	const DEFAULT_TIMEOUT = 5 * 60 * 1000;
+	const TIMEOUT_MARGIN = 0.9; // step used >90% of timeout = likely hitting it
+	const DOMINANCE_THRESHOLD = 0.3; // step uses >30% of total pipeline time
+
+	const totalDuration = pipelineResult.duration || 0;
+	const allSteps = [];
+	const timeoutHits = [];
+	const dominantSteps = [];
+	const failedSteps = [];
+
+	for (const [phaseName, phase] of Object.entries(pipelineResult.phases)) {
+		if (!phase?.steps) continue;
+		for (const step of phase.steps) {
+			if (!step.name || step.status === "skipped") continue;
+			allSteps.push({ ...step, phase: phaseName });
+
+			if (step.status === "failed") {
+				failedSteps.push(step.name);
+				// Check if failure looks like a timeout
+				const isTimeout = step.errorCategory === "timeout" ||
+					step.error?.toLowerCase().includes("etimedout") ||
+					step.error?.toLowerCase().includes("timed out");
+				if (isTimeout) {
+					timeoutHits.push(step.name);
+				}
+			}
+
+			// Detect steps consuming close to their timeout
+			if (step.duration > 0) {
+				const stepTimeout = DEFAULT_TIMEOUT; // manifest timeout not in result, use default
+				if (step.duration >= stepTimeout * TIMEOUT_MARGIN) {
+					if (!timeoutHits.includes(step.name)) timeoutHits.push(step.name);
+				}
+			}
+
+			// Detect steps dominating total pipeline time
+			if (totalDuration > 0 && step.duration > 0) {
+				const share = step.duration / totalDuration;
+				if (share >= DOMINANCE_THRESHOLD) {
+					dominantSteps.push({ name: step.name, duration: step.duration, share: Math.round(share * 100) });
+				}
+			}
+		}
+	}
+
+	// Surface issues
+	for (const name of timeoutHits) {
+		issues.push({
+			severity: "warning",
+			code: "step_timeout_hit",
+			message: `Pipeline step "${name}" hit or approached its timeout — consider reducing timeout or fixing the underlying issue`,
+		});
+	}
+	for (const { name, share, duration } of dominantSteps) {
+		issues.push({
+			severity: "info",
+			code: "step_dominant_duration",
+			message: `Pipeline step "${name}" used ${share}% of total pipeline time (${Math.round(duration / 1000)}s) — optimization candidate`,
+		});
+	}
+	if (failedSteps.length > 0) {
+		issues.push({
+			severity: "info",
+			code: "pipeline_step_failures",
+			message: `${failedSteps.length} pipeline step(s) failed: ${failedSteps.join(", ")}`,
+		});
+	}
+
+	return {
+		totalDuration,
+		stepCount: allSteps.length,
+		timeoutHits,
+		dominantSteps,
+		failedSteps,
+	};
+}
+
 export function generateHealthReport(options = {}) {
 	const {
 		events = [],
@@ -63,6 +148,7 @@ export function generateHealthReport(options = {}) {
 		recentResults = null,
 		previousReport = null,
 		sportFiles = {},
+		pipelineResult = null,
 	} = options;
 
 	const issues = [];
@@ -573,6 +659,9 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
+	// Pipeline timing anomaly detection
+	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -589,6 +678,7 @@ export function generateHealthReport(options = {}) {
 		resultsHealth,
 		snapshotHealth,
 		quotaApiHealth,
+		pipelineTimingHealth,
 		unmappedLeagues: [...unmappedTournaments],
 		issues,
 		status,
@@ -672,6 +762,9 @@ async function main() {
 	// Read preference evolution history
 	const preferenceEvolution = readJsonIfExists(path.join(dataDir, "preference-evolution.json"));
 
+	// Read pipeline result for timing anomaly detection
+	const pipelineResult = readJsonIfExists(path.join(dataDir, "pipeline-result.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -685,6 +778,7 @@ async function main() {
 		usageTracking,
 		factCheckHistory,
 		preferenceEvolution,
+		pipelineResult,
 	});
 
 	// Generate autonomy scorecard alongside health report
