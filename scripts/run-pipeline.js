@@ -6,10 +6,13 @@
  * Writes docs/data/pipeline-result.json with per-step outcomes.
  */
 
-import { execSync } from "child_process";
+import { execSync, exec as execCb } from "child_process";
+import { promisify } from "util";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+
+const execAsync = promisify(execCb);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -74,13 +77,14 @@ export function checkRequirements(requires) {
 }
 
 /**
- * Execute a single pipeline step.
+ * Execute a single pipeline step (synchronous).
  * @param {object} step - step definition from manifest
- * @param {number} timeout - timeout in ms
+ * @param {number} timeout - default timeout in ms (step.timeout overrides)
  * @returns {object} result { name, status, duration, error? }
  */
 export function executeStep(step, timeout = STEP_TIMEOUT) {
 	const start = Date.now();
+	const stepTimeout = step.timeout || timeout;
 
 	// Check requirements
 	const { ok, missing } = checkRequirements(step.requires);
@@ -96,9 +100,53 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 	try {
 		execSync(step.command, {
 			cwd: ROOT,
-			timeout,
+			timeout: stepTimeout,
 			stdio: ["pipe", "pipe", "pipe"],
 			env: { ...process.env },
+		});
+		return {
+			name: step.name,
+			status: "success",
+			duration: Date.now() - start,
+		};
+	} catch (err) {
+		const errorMsg = err.message?.slice(0, 200) || "unknown error";
+		return {
+			name: step.name,
+			status: "failed",
+			duration: Date.now() - start,
+			error: errorMsg,
+			errorCategory: categorizeError(err.message),
+		};
+	}
+}
+
+/**
+ * Execute a single pipeline step (async — for true parallel execution).
+ * @param {object} step - step definition from manifest
+ * @param {number} timeout - default timeout in ms (step.timeout overrides)
+ * @returns {Promise<object>} result { name, status, duration, error? }
+ */
+export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
+	const start = Date.now();
+	const stepTimeout = step.timeout || timeout;
+
+	const { ok, missing } = checkRequirements(step.requires);
+	if (!ok) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: `missing env: ${missing.join(", ")}`,
+		};
+	}
+
+	try {
+		await execAsync(step.command, {
+			cwd: ROOT,
+			timeout: stepTimeout,
+			env: { ...process.env },
+			maxBuffer: 10 * 1024 * 1024,
 		});
 		return {
 			name: step.name,
@@ -126,12 +174,7 @@ export async function runPhase(phase) {
 	const results = [];
 
 	if (phase.parallel) {
-		const promises = phase.steps.map(
-			(step) =>
-				new Promise((resolve) => {
-					resolve(executeStep(step));
-				})
-		);
+		const promises = phase.steps.map((step) => executeStepAsync(step));
 		const settled = await Promise.allSettled(promises);
 		for (const r of settled) {
 			results.push(r.status === "fulfilled" ? r.value : { name: "unknown", status: "failed", duration: 0, error: r.reason?.message });

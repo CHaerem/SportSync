@@ -64,7 +64,7 @@
         { "name": "coverage-gaps", "command": "node scripts/detect-coverage-gaps.js", "errorPolicy": "continue" },
         { "name": "build-calendar", "command": "npm run build:calendar", "errorPolicy": "continue" },
         { "name": "ai-sanity-check", "command": "node scripts/ai-sanity-check.js", "errorPolicy": "continue" },
-        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue" }
+        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue", "timeout": 60000 }
       ]
     },
     {

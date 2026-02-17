@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { loadManifest, checkRequirements, executeStep, runPhase, runPipeline, categorizeError } from "../scripts/run-pipeline.js";
+import { loadManifest, checkRequirements, executeStep, executeStepAsync, runPhase, runPipeline, categorizeError } from "../scripts/run-pipeline.js";
 
 // Test fixtures
 const FIXTURES_DIR = path.join(os.tmpdir(), "sportsync-pipeline-test-" + Date.now());
@@ -139,6 +139,52 @@ describe("executeStep", () => {
 	});
 });
 
+describe("executeStep per-step timeout", () => {
+	it("uses step.timeout when specified", () => {
+		const result = executeStep(
+			{ name: "slow", command: "sleep 10", errorPolicy: "continue", timeout: 100 },
+		);
+		expect(result.status).toBe("failed");
+		expect(result.duration).toBeLessThan(2000);
+	});
+});
+
+describe("executeStepAsync", () => {
+	it("executes a successful step", async () => {
+		const result = await executeStepAsync({ name: "echo-async", command: "echo hello", errorPolicy: "continue" });
+		expect(result.status).toBe("success");
+		expect(result.name).toBe("echo-async");
+		expect(result.duration).toBeGreaterThanOrEqual(0);
+	});
+
+	it("returns failed for a bad command", async () => {
+		const result = await executeStepAsync({ name: "bad-async", command: "exit 1", errorPolicy: "continue" });
+		expect(result.status).toBe("failed");
+		expect(result.error).toBeDefined();
+		expect(result.errorCategory).toBeDefined();
+	});
+
+	it("skips step with missing env requirement", async () => {
+		delete process.env.MISSING_FOR_ASYNC_TEST;
+		const result = await executeStepAsync({
+			name: "skip-async",
+			command: "echo should not run",
+			errorPolicy: "continue",
+			requires: ["MISSING_FOR_ASYNC_TEST"],
+		});
+		expect(result.status).toBe("skipped");
+		expect(result.reason).toContain("MISSING_FOR_ASYNC_TEST");
+	});
+
+	it("respects per-step timeout", async () => {
+		const result = await executeStepAsync(
+			{ name: "slow-async", command: "sleep 10", errorPolicy: "continue", timeout: 100 },
+		);
+		expect(result.status).toBe("failed");
+		expect(result.duration).toBeLessThan(2000);
+	});
+});
+
 describe("categorizeError", () => {
 	it("categorizes timeout errors", () => {
 		expect(categorizeError("ETIMEDOUT: request timed out")).toBe("timeout");
@@ -257,6 +303,24 @@ describe("runPhase", () => {
 		const result = await runPhase(phase);
 		expect(result.steps).toHaveLength(2);
 		expect(result.steps.every((s) => s.status === "success")).toBe(true);
+	});
+
+	it("runs parallel steps truly concurrently", async () => {
+		// Two steps each sleep 0.3s. If sequential, total >= 600ms. If parallel, total < 500ms.
+		const phase = {
+			name: "par-timing",
+			parallel: true,
+			steps: [
+				{ name: "s1", command: "sleep 0.3", errorPolicy: "continue" },
+				{ name: "s2", command: "sleep 0.3", errorPolicy: "continue" },
+			],
+		};
+		const start = Date.now();
+		const result = await runPhase(phase);
+		const elapsed = Date.now() - start;
+		expect(result.steps).toHaveLength(2);
+		expect(result.steps.every((s) => s.status === "success")).toBe(true);
+		expect(elapsed).toBeLessThan(500);
 	});
 });
 
