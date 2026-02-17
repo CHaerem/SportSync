@@ -7,6 +7,7 @@ import {
 	analyzeAutopilotFailures,
 	analyzeInterventionEffectiveness,
 	analyzeCrossLoopDependencies,
+	detectArchitecturalFitness,
 	analyzePatterns,
 } from "../scripts/analyze-patterns.js";
 import fs from "fs";
@@ -596,7 +597,7 @@ describe("analyzePatterns", () => {
 	});
 
 	it("produces valid report with empty data dir", () => {
-		const report = analyzePatterns({ dataDir: tmpDir });
+		const report = analyzePatterns({ dataDir: tmpDir, projectRoot: tmpDir });
 		expect(report.generatedAt).toBeDefined();
 		expect(report.patternsDetected).toBe(0);
 		expect(report.patterns).toEqual([]);
@@ -681,8 +682,248 @@ describe("analyzePatterns", () => {
 
 	it("handles bootstrapping with no prior pattern-report.json", () => {
 		// No files at all — should not throw
-		const report = analyzePatterns({ dataDir: tmpDir });
+		const report = analyzePatterns({ dataDir: tmpDir, projectRoot: tmpDir });
 		expect(report.patternsDetected).toBe(0);
 		expect(report.issueCodeHistory).toEqual({});
+	});
+
+	it("includes architecture baseline in output", () => {
+		const report = analyzePatterns({ dataDir: tmpDir });
+		expect(report.architectureBaseline).toBeDefined();
+		expect(report.architectureBaseline.moduleCount).toBeGreaterThan(0);
+		expect(report.architectureBaseline.recordedAt).toBeDefined();
+	});
+});
+
+// --- Detector 8: Architectural Fitness ---
+
+describe("detectArchitecturalFitness", () => {
+	let tmpRoot;
+
+	beforeEach(() => {
+		tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "arch-test-"));
+		// Create a minimal project structure
+		fs.mkdirSync(path.join(tmpRoot, "scripts"));
+		fs.mkdirSync(path.join(tmpRoot, "scripts", "lib"));
+		fs.mkdirSync(path.join(tmpRoot, "scripts", "fetch"));
+		fs.mkdirSync(path.join(tmpRoot, "tests"));
+	});
+
+	function createFiles(dir, files) {
+		for (const [name, lines] of Object.entries(files)) {
+			const content = Array(lines).fill("// line").join("\n");
+			fs.writeFileSync(path.join(dir, name), content);
+		}
+	}
+
+	it("returns empty patterns for small project", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 100, "b.js": 100 });
+		createFiles(path.join(tmpRoot, "scripts", "lib"), { "c.js": 80 });
+		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		expect(result.patterns).toEqual([]);
+		expect(result.metrics.moduleCount).toBe(3);
+		expect(result.metrics.avgModuleSize).toBeGreaterThan(0);
+	});
+
+	it("detects module proliferation at warn threshold", () => {
+		// Create 51 modules (over default 50 threshold)
+		const scripts = {};
+		for (let i = 0; i < 35; i++) scripts[`script${i}.js`] = 60;
+		createFiles(path.join(tmpRoot, "scripts"), scripts);
+		const libs = {};
+		for (let i = 0; i < 12; i++) libs[`lib${i}.js`] = 80;
+		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
+		const fetchers = {};
+		for (let i = 0; i < 5; i++) fetchers[`fetch${i}.js`] = 100;
+		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
+		expect(prolif).toBeDefined();
+		expect(prolif.severity).toBe("medium");
+		expect(prolif.moduleCount).toBe(52);
+		expect(prolif.breakdown).toEqual({ scripts: 35, lib: 12, fetch: 5 });
+	});
+
+	it("flags high severity above 65 modules", () => {
+		const scripts = {};
+		for (let i = 0; i < 50; i++) scripts[`s${i}.js`] = 60;
+		createFiles(path.join(tmpRoot, "scripts"), scripts);
+		const libs = {};
+		for (let i = 0; i < 16; i++) libs[`l${i}.js`] = 80;
+		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
+		expect(prolif).toBeDefined();
+		expect(prolif.severity).toBe("high");
+	});
+
+	it("detects high small module ratio", () => {
+		// 4 out of 8 modules < 30 lines = 50% > 25% threshold
+		createFiles(path.join(tmpRoot, "scripts"), {
+			"a.js": 10, "b.js": 15, "c.js": 20, "d.js": 25,
+			"e.js": 100, "f.js": 200, "g.js": 150, "h.js": 120,
+		});
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const small = result.patterns.find(p => p.type === "architecture_small_module_ratio");
+		expect(small).toBeDefined();
+		expect(small.ratio).toBe(0.5);
+	});
+
+	it("does not flag small ratio below threshold", () => {
+		createFiles(path.join(tmpRoot, "scripts"), {
+			"a.js": 100, "b.js": 100, "c.js": 100, "d.js": 10,
+		});
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const small = result.patterns.find(p => p.type === "architecture_small_module_ratio");
+		expect(small).toBeUndefined();
+	});
+
+	it("detects pipeline bloat", () => {
+		const manifest = {
+			phases: [
+				{ name: "fetch", steps: Array(8).fill({ name: "s", command: "echo" }) },
+				{ name: "build", steps: Array(7).fill({ name: "s", command: "echo" }) },
+				{ name: "monitor", steps: Array(6).fill({ name: "s", command: "echo" }) },
+			],
+		};
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });
+
+		const result = detectArchitecturalFitness({
+			projectRoot: tmpRoot,
+			pipelineManifest: manifest,
+		});
+		const bloat = result.patterns.find(p => p.type === "architecture_pipeline_bloat");
+		expect(bloat).toBeDefined();
+		expect(bloat.pipelineSteps).toBe(21);
+		expect(bloat.severity).toBe("medium");
+	});
+
+	it("flags high severity for pipeline above 25 steps", () => {
+		const manifest = {
+			phases: [
+				{ name: "a", steps: Array(13).fill({ name: "s", command: "echo" }) },
+				{ name: "b", steps: Array(13).fill({ name: "s", command: "echo" }) },
+			],
+		};
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });
+
+		const result = detectArchitecturalFitness({
+			projectRoot: tmpRoot,
+			pipelineManifest: manifest,
+		});
+		const bloat = result.patterns.find(p => p.type === "architecture_pipeline_bloat");
+		expect(bloat).toBeDefined();
+		expect(bloat.severity).toBe("high");
+	});
+
+	it("detects low test coverage ratio", () => {
+		// 10 source modules, 2 test files → ratio 0.2 < 0.5
+		const scripts = {};
+		for (let i = 0; i < 10; i++) scripts[`s${i}.js`] = 60;
+		createFiles(path.join(tmpRoot, "scripts"), scripts);
+		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const coverage = result.patterns.find(p => p.type === "architecture_low_test_coverage");
+		expect(coverage).toBeDefined();
+		expect(coverage.ratio).toBe(0.2);
+		expect(coverage.sourceCount).toBe(10);
+		expect(coverage.testCount).toBe(2);
+	});
+
+	it("does not flag adequate test coverage", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 60 });
+		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const coverage = result.patterns.find(p => p.type === "architecture_low_test_coverage");
+		expect(coverage).toBeUndefined();
+	});
+
+	it("respects threshold overrides from baseline", () => {
+		// 20 modules — normally under threshold of 50, but override to 15
+		const scripts = {};
+		for (let i = 0; i < 20; i++) scripts[`s${i}.js`] = 60;
+		createFiles(path.join(tmpRoot, "scripts"), scripts);
+
+		const baseline = {
+			moduleCount: 18,
+			thresholdOverrides: { moduleCountWarn: 15, moduleCountHigh: 25 },
+		};
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
+		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
+		expect(prolif).toBeDefined();
+		expect(prolif.threshold).toBe(15);
+	});
+
+	it("computes baseline delta when previous baseline exists", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 60, "c.js": 60 });
+
+		const baseline = { moduleCount: 5, avgModuleSize: 100, pipelineSteps: 10 };
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
+		expect(result.baselineDelta).toBeDefined();
+		expect(result.baselineDelta.moduleCount).toBe(3 - 5); // -2
+	});
+
+	it("returns null delta when no baseline exists", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60 });
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		expect(result.baselineDelta).toBeNull();
+	});
+
+	it("records updated baseline with current metrics", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 80 });
+		createFiles(path.join(tmpRoot, "scripts", "lib"), { "c.js": 100 });
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		expect(result.baseline.moduleCount).toBe(3);
+		expect(result.baseline.avgModuleSize).toBe(80);
+		expect(result.baseline.recordedAt).toBeDefined();
+		expect(result.baseline.thresholdOverrides).toEqual({});
+	});
+
+	it("preserves threshold overrides in new baseline", () => {
+		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60 });
+
+		const baseline = { thresholdOverrides: { moduleCountWarn: 30 } };
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
+		expect(result.baseline.thresholdOverrides).toEqual({ moduleCountWarn: 30 });
+	});
+
+	it("suggests inline candidates from small lib modules", () => {
+		// Create 51 modules to trigger proliferation
+		const scripts = {};
+		for (let i = 0; i < 40; i++) scripts[`s${i}.js`] = 60;
+		createFiles(path.join(tmpRoot, "scripts"), scripts);
+		// Small lib modules should appear as inline candidates
+		createFiles(path.join(tmpRoot, "scripts", "lib"), {
+			"tiny-helper.js": 15,
+			"small-util.js": 25,
+			"big-lib.js": 200,
+		});
+		const fetchers = {};
+		for (let i = 0; i < 9; i++) fetchers[`f${i}.js`] = 80;
+		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
+
+		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
+		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
+		expect(prolif).toBeDefined();
+		expect(prolif.inlineCandidates).toContain("tiny-helper.js");
+		expect(prolif.inlineCandidates).toContain("small-util.js");
+		expect(prolif.inlineCandidates).not.toContain("big-lib.js");
+	});
+
+	it("handles missing directories gracefully", () => {
+		const emptyRoot = fs.mkdtempSync(path.join(os.tmpdir(), "empty-root-"));
+		const result = detectArchitecturalFitness({ projectRoot: emptyRoot });
+		expect(result.metrics.moduleCount).toBe(0);
+		expect(result.patterns).toEqual([]);
 	});
 });

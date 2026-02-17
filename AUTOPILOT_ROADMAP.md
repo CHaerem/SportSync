@@ -207,6 +207,30 @@ Monitor the dashboard for visual clutter — too many competing card styles, bor
 
 **Example:** "Consolidate 5 separate standings widgets into one collapsible section" — reduces visual noise by moving from 5 independently-styled collapsible sections to one.
 
+### M. Architectural Fitness
+
+Evaluate whether the codebase structure is healthy — not too fragmented (many tiny scripts), not too monolithic, not too coupled. The system should develop architectural taste through experience.
+
+**How to check:**
+1. Read `docs/data/pattern-report.json` — look for patterns with type prefix `architecture_`
+2. For each finding, evaluate the severity and the suggested consolidation targets
+3. Read the `architectureBaseline` section — compare current metrics to the baseline to see which direction the codebase is trending
+
+**Action rules:**
+- `architecture_module_proliferation` (medium): Create `[MAINTENANCE]` task to consolidate the suggested module pairs. Each task should merge exactly 2-3 related modules, update imports, and run tests.
+- `architecture_module_proliferation` (high): Create `[FEATURE]` task for a larger refactoring — reorganize the script directory structure.
+- `architecture_small_module_ratio`: Identify modules under 30 lines that are imported by exactly one consumer → inline them.
+- `architecture_pipeline_bloat`: Identify pipeline steps that always run together or have trivial logic → combine into single steps.
+- `architecture_low_test_coverage`: Create `[MAINTENANCE]` tasks to add tests for untested modules.
+- `architecture_orphan_scripts`: Verify if orphans are needed. If unused, delete. If needed, wire into pipeline or package.json.
+
+**After completing a refactoring task:** Run the fitness detector again and compare to the `architectureBaseline`. Record the delta in the Lessons section — e.g., "Consolidated X+Y: module count -1, no test regressions, pipeline 2s faster." This feedback compounds into better thresholds over time.
+
+**Example tasks:**
+- `[MAINTENANCE]` "Consolidate track-prediction-accuracy.js into analyze-patterns.js as Detector 9"
+- `[MAINTENANCE]` "Inline norwegian-streaming.js into its only consumer"
+- `[MAINTENANCE]` "Add tests for 5 untested scripts in scripts/"
+
 ---
 
 ## Lessons & Effectiveness
@@ -236,6 +260,8 @@ Monitor the dashboard for visual clutter — too many competing card styles, bor
 | I. User Feedback | 0 | 0 | - | No feedback issues submitted yet |
 | J. Upstream Issues | 0 | 0 | - | Quota API still unavailable |
 | K. Vision-Guided | 3 | 2 | 67% | Favorites evolution, insights pipeline |
+| L. Visual Density | 0 | 0 | - | Not yet applied |
+| M. Architectural Fitness | 0 | 0 | - | New — reads pattern-report architecture_* findings |
 
 ### Pillar Progress
 

@@ -19,6 +19,7 @@
  */
 
 import path from "path";
+import fs from "fs";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY } from "./lib/helpers.js";
 
 const HISTORY_MAX_AGE_DAYS = 7;
@@ -440,9 +441,232 @@ export function analyzeCrossLoopDependencies(qualityHistory) {
 }
 
 /**
+ * Detector 8: Architectural Fitness
+ * Evaluates codebase module structure: proliferation, fragmentation,
+ * pipeline complexity, test coverage ratio, and orphan scripts.
+ * Suggests specific consolidation targets. Tracks baseline for self-adjusting thresholds.
+ */
+export function detectArchitecturalFitness({ projectRoot, pipelineManifest, baseline } = {}) {
+	const patterns = [];
+	const root = projectRoot || path.resolve(process.cwd());
+	const scriptsDir = path.join(root, "scripts");
+	const libDir = path.join(scriptsDir, "lib");
+	const fetchDir = path.join(scriptsDir, "fetch");
+	const testsDir = path.join(root, "tests");
+
+	// --- Count modules ---
+	const countJsFiles = (dir) => {
+		try {
+			return fs.readdirSync(dir).filter(f => f.endsWith(".js")).length;
+		} catch { return 0; }
+	};
+
+	const scriptCount = countJsFiles(scriptsDir);
+	const libCount = countJsFiles(libDir);
+	const fetchCount = countJsFiles(fetchDir);
+	const moduleCount = scriptCount + libCount + fetchCount;
+
+	// --- Module sizes ---
+	const getModuleSizes = (dir) => {
+		try {
+			return fs.readdirSync(dir)
+				.filter(f => f.endsWith(".js"))
+				.map(f => {
+					try {
+						const content = fs.readFileSync(path.join(dir, f), "utf8");
+						return { file: f, lines: content.split("\n").length };
+					} catch { return null; }
+				})
+				.filter(Boolean);
+		} catch { return []; }
+	};
+
+	const allModules = [
+		...getModuleSizes(scriptsDir).map(m => ({ ...m, dir: "scripts" })),
+		...getModuleSizes(libDir).map(m => ({ ...m, dir: "lib" })),
+		...getModuleSizes(fetchDir).map(m => ({ ...m, dir: "fetch" })),
+	];
+
+	const avgModuleSize = allModules.length > 0
+		? Math.round(allModules.reduce((sum, m) => sum + m.lines, 0) / allModules.length)
+		: 0;
+
+	// --- Small module ratio ---
+	const smallModules = allModules.filter(m => m.lines < 30);
+	const smallModuleRatio = allModules.length > 0
+		? Number((smallModules.length / allModules.length).toFixed(2))
+		: 0;
+
+	// --- Pipeline step count ---
+	const manifest = pipelineManifest || readJsonIfExists(path.join(scriptsDir, "pipeline-manifest.json"));
+	const pipelineSteps = (manifest?.phases || []).reduce(
+		(sum, phase) => sum + (phase.steps?.length || 0), 0
+	);
+
+	// --- Test coverage ratio ---
+	const testCount = countJsFiles(testsDir);
+	const sourceCount = moduleCount;
+	const testCoverageRatio = sourceCount > 0
+		? Number((testCount / sourceCount).toFixed(2))
+		: 0;
+
+	// --- Orphan detection ---
+	// Collect all script references from pipeline-manifest and package.json
+	const referencedScripts = new Set();
+	const manifestStr = JSON.stringify(manifest || {});
+	const pkgPath = path.join(root, "package.json");
+	const pkgStr = (() => { try { return fs.readFileSync(pkgPath, "utf8"); } catch { return ""; } })();
+
+	// Extract script filenames from commands
+	const commandPattern = /scripts\/(?:[\w-]+\/)?[\w-]+\.js/g;
+	for (const match of manifestStr.matchAll(commandPattern)) {
+		referencedScripts.add(path.basename(match[0]));
+	}
+	for (const match of pkgStr.matchAll(commandPattern)) {
+		referencedScripts.add(path.basename(match[0]));
+	}
+	// npm run commands resolve to package.json scripts — mark those targets as referenced
+	const npmRunPattern = /npm run (\S+)/g;
+	const pkgJson = readJsonIfExists(pkgPath);
+	for (const match of (manifestStr + pkgStr).matchAll(npmRunPattern)) {
+		const scriptCmd = pkgJson?.scripts?.[match[1]] || "";
+		for (const m of scriptCmd.matchAll(commandPattern)) {
+			referencedScripts.add(path.basename(m[0]));
+		}
+	}
+
+	// Also scan all scripts for import references to find internal consumers
+	const importCounts = new Map(); // file → count of internal imports
+	for (const m of allModules) {
+		const fullPath = path.join(root, "scripts", m.dir === "scripts" ? "" : m.dir, m.file);
+		try {
+			const content = fs.readFileSync(fullPath, "utf8");
+			const importMatches = content.matchAll(/from\s+["']\..*?["']/g);
+			let internalImports = 0;
+			for (const im of importMatches) {
+				internalImports++;
+				// Mark imported file as referenced
+				const importedFile = im[0].match(/\/([\w-]+)\.js/)?.[1];
+				if (importedFile) referencedScripts.add(importedFile + ".js");
+			}
+			importCounts.set(m.file, internalImports);
+		} catch { /* ignore */ }
+	}
+
+	// lib and fetch modules are referenced via imports, not pipeline — only check top-level scripts
+	const topLevelScripts = allModules.filter(m => m.dir === "scripts");
+	const orphans = topLevelScripts
+		.filter(m => !referencedScripts.has(m.file))
+		.map(m => m.file);
+
+	// --- Apply thresholds (with overrides from baseline) ---
+	const overrides = baseline?.thresholdOverrides || {};
+	const thresholds = {
+		moduleCountWarn: overrides.moduleCountWarn ?? 50,
+		moduleCountHigh: overrides.moduleCountHigh ?? 65,
+		smallModuleRatioWarn: overrides.smallModuleRatioWarn ?? 0.25,
+		pipelineStepsWarn: overrides.pipelineStepsWarn ?? 20,
+		pipelineStepsHigh: overrides.pipelineStepsHigh ?? 25,
+		testCoverageWarn: overrides.testCoverageWarn ?? 0.5,
+		orphanScriptsWarn: overrides.orphanScriptsWarn ?? 3,
+	};
+
+	// Module proliferation
+	if (moduleCount > thresholds.moduleCountWarn) {
+		const severity = moduleCount > thresholds.moduleCountHigh ? "high" : "medium";
+		// Suggest consolidation: find modules with fewest lines that are imported by exactly 1 consumer
+		const inlineCandidates = allModules
+			.filter(m => m.dir === "lib" && m.lines < 60)
+			.slice(0, 3)
+			.map(m => m.file);
+		patterns.push({
+			type: "architecture_module_proliferation",
+			severity,
+			moduleCount,
+			threshold: thresholds.moduleCountWarn,
+			breakdown: { scripts: scriptCount, lib: libCount, fetch: fetchCount },
+			inlineCandidates,
+			suggestion: `${moduleCount} modules exceed threshold of ${thresholds.moduleCountWarn}. ${inlineCandidates.length > 0 ? `Consider inlining small lib modules: ${inlineCandidates.join(", ")}.` : "Review scripts/ for consolidation opportunities."}`,
+		});
+	}
+
+	// Small module ratio
+	if (smallModuleRatio > thresholds.smallModuleRatioWarn) {
+		patterns.push({
+			type: "architecture_small_module_ratio",
+			severity: "medium",
+			ratio: smallModuleRatio,
+			threshold: thresholds.smallModuleRatioWarn,
+			smallModules: smallModules.map(m => `${m.dir}/${m.file} (${m.lines}L)`).slice(0, 5),
+			suggestion: `${Math.round(smallModuleRatio * 100)}% of modules are under 30 lines (threshold: ${Math.round(thresholds.smallModuleRatioWarn * 100)}%). Consider inlining into consumers.`,
+		});
+	}
+
+	// Pipeline steps
+	if (pipelineSteps > thresholds.pipelineStepsWarn) {
+		const severity = pipelineSteps > thresholds.pipelineStepsHigh ? "high" : "medium";
+		patterns.push({
+			type: "architecture_pipeline_bloat",
+			severity,
+			pipelineSteps,
+			threshold: thresholds.pipelineStepsWarn,
+			suggestion: `Pipeline has ${pipelineSteps} steps (threshold: ${thresholds.pipelineStepsWarn}). Consider combining steps that always run together.`,
+		});
+	}
+
+	// Test coverage (skip when no source modules — nothing to test)
+	if (sourceCount > 0 && testCoverageRatio < thresholds.testCoverageWarn) {
+		patterns.push({
+			type: "architecture_low_test_coverage",
+			severity: "medium",
+			testCount,
+			sourceCount,
+			ratio: testCoverageRatio,
+			threshold: thresholds.testCoverageWarn,
+			suggestion: `Test coverage ratio is ${testCoverageRatio} (${testCount} test files for ${sourceCount} source modules, threshold: ${thresholds.testCoverageWarn}). Add tests for untested modules.`,
+		});
+	}
+
+	// Orphan scripts
+	if (orphans.length > thresholds.orphanScriptsWarn) {
+		patterns.push({
+			type: "architecture_orphan_scripts",
+			severity: "medium",
+			orphanCount: orphans.length,
+			threshold: thresholds.orphanScriptsWarn,
+			orphans: orphans.slice(0, 8),
+			suggestion: `${orphans.length} scripts not referenced from pipeline-manifest or package.json: ${orphans.slice(0, 5).join(", ")}. Verify they are needed or remove them.`,
+		});
+	}
+
+	// --- Compute baseline delta ---
+	const currentMetrics = { moduleCount, avgModuleSize, pipelineSteps, testCoverageRatio, smallModuleRatio };
+	let baselineDelta = null;
+	if (baseline?.moduleCount != null) {
+		baselineDelta = {
+			moduleCount: moduleCount - baseline.moduleCount,
+			avgModuleSize: avgModuleSize - (baseline.avgModuleSize || 0),
+			pipelineSteps: pipelineSteps - (baseline.pipelineSteps || 0),
+		};
+	}
+
+	const newBaseline = {
+		recordedAt: iso(),
+		moduleCount,
+		avgModuleSize,
+		pipelineSteps,
+		testCoverageRatio,
+		smallModuleRatio,
+		thresholdOverrides: baseline?.thresholdOverrides || {},
+	};
+
+	return { patterns, metrics: currentMetrics, baseline: newBaseline, baselineDelta };
+}
+
+/**
  * Orchestrator: runs all detectors, sorts by severity.
  */
-export function analyzePatterns({ dataDir } = {}) {
+export function analyzePatterns({ dataDir, projectRoot } = {}) {
 	const dir = dataDir || rootDataPath();
 
 	const healthReport = readJsonIfExists(path.join(dir, "health-report.json"));
@@ -463,6 +687,10 @@ export function analyzePatterns({ dataDir } = {}) {
 	const failurePatterns = analyzeAutopilotFailures(autopilotLog);
 	const interventionEffectiveness = analyzeInterventionEffectiveness(qualityHistory);
 	const crossLoopPatterns = analyzeCrossLoopDependencies(qualityHistory);
+	const archResult = detectArchitecturalFitness({
+		projectRoot,
+		baseline: previousReport?.architectureBaseline,
+	});
 
 	const allPatterns = [
 		...healthPatterns,
@@ -471,6 +699,7 @@ export function analyzePatterns({ dataDir } = {}) {
 		...fatiguePatterns,
 		...failurePatterns,
 		...crossLoopPatterns,
+		...archResult.patterns,
 	];
 
 	// Sort: high first, then medium
@@ -497,6 +726,8 @@ export function analyzePatterns({ dataDir } = {}) {
 		patterns: allPatterns,
 		issueCodeHistory,
 		interventionEffectiveness,
+		architectureBaseline: archResult.baseline,
+		architectureDelta: archResult.baselineDelta,
 		summary,
 	};
 }
