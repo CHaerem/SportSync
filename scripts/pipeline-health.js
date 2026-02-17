@@ -290,6 +290,49 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 7b. Editorial content duplication detection
+	const { featured = null } = options;
+	if (featured && Array.isArray(featured.blocks)) {
+		const eventLineTexts = featured.blocks
+			.filter((b) => b.type === "event-line")
+			.map((b) => (b.text || "").toLowerCase().trim());
+		const sectionBlocks = featured.blocks.filter((b) => b.type === "section");
+		const sectionItemTexts = new Set();
+		for (const s of sectionBlocks) {
+			for (const item of (s.items || [])) {
+				const text = (typeof item === "string" ? item : item?.text || "").toLowerCase().trim();
+				if (text) sectionItemTexts.add(text);
+			}
+		}
+		if (eventLineTexts.length > 0 && sectionItemTexts.size > 0) {
+			const dupeCount = eventLineTexts.filter((t) => {
+				for (const st of sectionItemTexts) {
+					if (st.includes(t) || t.includes(st)) return true;
+				}
+				return false;
+			}).length;
+			if (dupeCount > 0 && dupeCount / eventLineTexts.length > 0.5) {
+				issues.push({
+					severity: "warning",
+					code: "editorial_content_duplication",
+					message: `${dupeCount}/${eventLineTexts.length} event-lines duplicate section items — fallback generator may need dedup fix`,
+				});
+			}
+		}
+
+		// 7c. Detect "no editorial value" — fallback with no headline or narrative
+		if (featured.provider === "fallback") {
+			const hasNarrative = featured.blocks.some((b) => b.type === "headline" || b.type === "narrative");
+			if (!hasNarrative) {
+				issues.push({
+					severity: "warning",
+					code: "editorial_no_narrative",
+					message: "featured.json has no headline or narrative blocks — content is event listings only",
+				});
+			}
+		}
+	}
+
 	// 8. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {
@@ -510,6 +553,7 @@ async function main() {
 		previousReport,
 		sportFiles,
 		criticalOutputs,
+		featured: criticalOutputs["featured.json"],
 		snapshotHealth: { meta: snapMeta },
 		usageTracking,
 		factCheckHistory,

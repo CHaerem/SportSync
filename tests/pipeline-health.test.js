@@ -747,6 +747,92 @@ describe("Norwegian tagging anomaly detection", () => {
 	});
 });
 
+describe("editorial content duplication detection", () => {
+	it("flags duplication when event-lines repeat section items", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "event-line", text: "10:00 — Biathlon Sprint" },
+					{ type: "event-line", text: "13:00 — Cross-Country" },
+					{ type: "section", id: "olympics", title: "Olympics", items: [
+						{ text: "10:00 — Biathlon Sprint", type: "event" },
+						{ text: "13:00 — Cross-Country", type: "event" },
+					] },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_content_duplication");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("warning");
+	});
+
+	it("does not flag when event-lines and sections are different", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "event-line", text: "⚽ Arsenal vs Chelsea, 20:00" },
+					{ type: "section", id: "olympics", title: "Olympics", items: [
+						{ text: "10:00 — Biathlon Sprint", type: "event" },
+					] },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_content_duplication");
+		expect(issue).toBeUndefined();
+	});
+});
+
+describe("editorial no narrative detection", () => {
+	it("flags fallback content with no headline or narrative", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "event-line", text: "⚽ Arsenal vs Chelsea" },
+					{ type: "event-line", text: "⛳ PGA Tour" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_no_narrative");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("warning");
+	});
+
+	it("does not flag when headline exists", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "headline", text: "Big day in football" },
+					{ type: "event-line", text: "⚽ Arsenal vs Chelsea" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_no_narrative");
+		expect(issue).toBeUndefined();
+	});
+
+	it("does not flag non-fallback provider", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "claude-cli",
+				blocks: [
+					{ type: "event-line", text: "⚽ Arsenal vs Chelsea" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_no_narrative");
+		expect(issue).toBeUndefined();
+	});
+});
+
 describe("chronic data retention detection", () => {
 	it("flags sport with high consecutive retains", () => {
 		const report = generateHealthReport({

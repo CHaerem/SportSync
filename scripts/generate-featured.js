@@ -607,17 +607,107 @@ function generateFallbackThisWeek(events, now, sectionSports = []) {
 	return parts.slice(0, 3);
 }
 
-export function buildFallbackFeatured(events, now) {
+/**
+ * Build a deterministic headline from the most newsworthy available data.
+ * Priority: results of favorite teams > today's must-watch events > event count summary.
+ */
+export function buildFallbackHeadline(events, now, recentResults, standings, sectionSports = []) {
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
+	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
+
+	// Check for Olympics events today
+	const olympicsToday = todayEvents.filter((e) => e.sport === "olympics" || /olympic/i.test(e.context || ""));
+	if (olympicsToday.length > 0) {
+		return "Medal day in Milano-Cortina";
+	}
+
+	// Check for recent favorite team results (last 48h)
+	const favResults = getFavoriteResults(recentResults, now);
+	if (favResults.length > 0) {
+		const r = favResults[0];
+		const winner = r.homeScore > r.awayScore ? r.homeTeam : r.homeScore < r.awayScore ? r.awayTeam : null;
+		if (winner) {
+			const loser = winner === r.homeTeam ? r.awayTeam : r.homeTeam;
+			return `${winner} ${r.homeScore}-${r.awayScore} ${loser}`;
+		}
+		return `${r.homeTeam} ${r.homeScore}-${r.awayScore} ${r.awayTeam}`;
+	}
+
+	// Check for must-watch events today
+	const mustWatch = todayEvents.filter((e) => (e.importance || 0) >= 4 && !sectionSports.includes(e.sport));
+	if (mustWatch.length > 0) {
+		const e = mustWatch[0];
+		if (e.sport === "football" && e.homeTeam && e.awayTeam) {
+			const tourLabel = e.tournament ? `: ${e.homeTeam} v ${e.awayTeam}` : ` — ${e.homeTeam} v ${e.awayTeam}`;
+			return `${e.tournament || "Football"}${tourLabel}`;
+		}
+		return e.title;
+	}
+
+	// Fallback: event count summary
+	if (todayEvents.length === 0) return null;
+	const sports = [...new Set(todayEvents.map((e) => e.sport))];
+	return `${todayEvents.length} events across ${sports.length} sport${sports.length !== 1 ? "s" : ""} today`;
+}
+
+/**
+ * Get recent results for favorite teams within the last 48h.
+ */
+function getFavoriteResults(recentResults, now) {
+	if (!recentResults?.football?.length) return [];
+	const cutoff = new Date(now.getTime() - 2 * MS_PER_DAY);
+	return recentResults.football
+		.filter((m) => m.isFavorite && new Date(m.date) >= cutoff)
+		.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+/**
+ * Build event-line blocks for recent favorite team results.
+ * Max 2 result lines from the last 48h.
+ */
+export function buildFallbackResultLines(recentResults, now) {
+	const favResults = getFavoriteResults(recentResults, now);
+	if (favResults.length === 0) return [];
+
+	return favResults.slice(0, 2).map((r) => {
+		const scorers = (r.goalScorers || []).slice(0, 2);
+		const scorerText = scorers.length > 0
+			? " — " + scorers.map((g) => `${g.player} ${g.minute}`).join(", ")
+			: "";
+		return `⚽ FT: ${r.homeTeam} ${r.homeScore}-${r.awayScore} ${r.awayTeam}${scorerText}`;
+	});
+}
+
+export function buildFallbackFeatured(events, now, { recentResults, standings, rssDigest } = {}) {
 	const blocks = [];
 
-	// Today event lines
-	const todayLines = generateFallbackToday(events, now);
+	// Sections for major events (compute early so we can dedupe event-lines)
+	const sections = buildFallbackSections(events, now);
+	const sectionSports = sections.map((s) => {
+		if (/olympic/i.test(s.id || s.title)) return "olympics";
+		return null;
+	}).filter(Boolean);
+
+	// Headline block — deterministic editorial headline from best available data
+	const headline = buildFallbackHeadline(events, now, recentResults, standings, sectionSports);
+	if (headline) {
+		blocks.push({ type: "headline", text: headline });
+	}
+
+	// Recent favorite results as event-lines (last 48h)
+	const resultLines = buildFallbackResultLines(recentResults, now);
+	for (const line of resultLines) {
+		blocks.push({ type: "event-line", text: line });
+	}
+
+	// Today event lines — skip sports already covered in sections to avoid duplication
+	const todayLines = generateFallbackToday(events, now, sectionSports);
 	for (const line of todayLines) {
 		blocks.push({ type: "event-line", text: line });
 	}
 
-	// Sections for major events
-	const sections = buildFallbackSections(events, now);
+	// Section cards for major events
 	for (const s of sections) {
 		blocks.push({
 			type: "section",
@@ -632,10 +722,6 @@ export function buildFallbackFeatured(events, now) {
 	}
 
 	// This week
-	const sectionSports = sections.map((s) => {
-		if (/olympic/i.test(s.id || s.title)) return "olympics";
-		return null;
-	}).filter(Boolean);
 	const thisWeekLines = generateFallbackThisWeek(events, now, sectionSports);
 	if (thisWeekLines.length > 0) {
 		blocks.push({ type: "divider", text: "This Week" });
@@ -717,11 +803,13 @@ export function fallbackLine(e) {
 	return parts.join(" ");
 }
 
-function generateFallbackToday(events, now) {
+function generateFallbackToday(events, now, sectionSports = []) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
 
-	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
+	const todayEvents = events
+		.filter((e) => isEventInWindow(e, todayStart, todayEnd))
+		.filter((e) => !sectionSports.includes(e.sport));
 
 	if (todayEvents.length === 0) return ["No events scheduled today."];
 
@@ -947,7 +1035,7 @@ async function main() {
 	if (!featured) {
 		console.log("Using deterministic fallback for featured content.");
 		provider = "fallback";
-		featured = buildFallbackFeatured(events, now);
+		featured = buildFallbackFeatured(events, now, { recentResults, standings, rssDigest });
 		qualityResult = validateFeaturedContent(featured, { events });
 		featured = qualityResult.normalized;
 	}
@@ -957,16 +1045,6 @@ async function main() {
 		const todayLines = generateFallbackToday(events, now);
 		const eventBlocks = todayLines.map((line) => ({ type: "event-line", text: line }));
 		featured.blocks = [...eventBlocks, ...featured.blocks];
-	}
-
-	// Inject personalized "For You" section block
-	const forYouBlock = buildForYouBlock(events, userContext, now);
-	if (forYouBlock && featured.blocks) {
-		// Check if LLM already generated a for-you section
-		const hasForYou = featured.blocks.some(b => b.type === "section" && b.id === "for-you");
-		if (!hasForYou) {
-			featured.blocks.push(forYouBlock);
-		}
 	}
 
 	const finalQuality = validateFeaturedContent(featured, { events });

@@ -651,10 +651,39 @@ class Dashboard {
 		// Today: original behavior
 		let blocks = this.getEditorialBlocks();
 
+		// Filter out "For You" section — content already covered by editorial + watch plan
+		blocks = blocks.filter(b => !(b.type === 'section' && b.id === 'for-you'));
+
 		if (blocks.length === 0) {
 			// Fallback: generate brief lines
 			const lines = this.generateBriefLines();
 			blocks = lines.map(line => ({ type: 'event-line', text: line }));
+		}
+
+		// Client-side result surfacing: if no result lines in blocks but we have favorite results
+		if (this.recentResults?.football?.length > 0) {
+			const hasResultLine = blocks.some(b => b.type === 'event-line' && /\bFT:/.test(b.text || ''));
+			if (!hasResultLine) {
+				const now = new Date();
+				const cutoff = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+				const favResults = this.recentResults.football
+					.filter(m => m.isFavorite && new Date(m.date) >= cutoff)
+					.sort((a, b) => new Date(b.date) - new Date(a.date))
+					.slice(0, 2);
+				if (favResults.length > 0) {
+					const resultBlocks = favResults.map(r => {
+						const scorers = (r.goalScorers || []).slice(0, 2);
+						const scorerText = scorers.length > 0
+							? ' \u2014 ' + scorers.map(g => g.player + ' ' + g.minute).join(', ')
+							: '';
+						return { type: 'event-line', text: '\u26bd FT: ' + r.homeTeam + ' ' + r.homeScore + '-' + r.awayScore + ' ' + r.awayTeam + scorerText };
+					});
+					// Insert after headline (if any), before other event-lines
+					const headlineIdx = blocks.findIndex(b => b.type === 'headline');
+					const insertAt = headlineIdx >= 0 ? headlineIdx + 1 : 0;
+					blocks = [...blocks.slice(0, insertAt), ...resultBlocks, ...blocks.slice(insertAt)];
+				}
+			}
 		}
 
 		// Dynamic adjustment: replace first event-line with live context
@@ -900,7 +929,26 @@ class Dashboard {
 			return;
 		}
 
+		// Check overlap with editorial blocks — collapse if >80% of picks already appear
+		const editorialBlocks = this.getEditorialBlocks();
+		const editorialTexts = editorialBlocks
+			.filter(b => b.type === 'event-line' || b.type === 'event-group' || b.type === 'section')
+			.map(b => {
+				const parts = [b.text || '', b.label || '', b.title || ''];
+				if (Array.isArray(b.items)) parts.push(...b.items.map(i => typeof i === 'string' ? i : (i?.text || '')));
+				return parts.join(' ').toLowerCase();
+			})
+			.join(' ');
 		const picks = [...this.watchPlan.picks].sort((a, b) => new Date(a.time || 0) - new Date(b.time || 0));
+		const overlapping = picks.filter(p => {
+			const title = (p.title || '').toLowerCase();
+			return title && editorialTexts.includes(title);
+		});
+		const overlapRate = picks.length > 0 ? overlapping.length / picks.length : 0;
+		if (overlapRate > 0.8) {
+			container.innerHTML = '<div class="watch-plan-collapsed"><span class="watch-plan-collapsed-label">What to Watch</span> <span class="watch-plan-collapsed-count">' + picks.length + ' picks \u2014 already in brief above</span></div>';
+			return;
+		}
 
 		let html = '<div class="watch-plan-header">What to Watch</div>';
 
