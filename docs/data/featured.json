@@ -2,22 +2,34 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Norway hunts four Olympic golds on super Tuesday"
+      "text": "Medal day meets Champions League knockout chaos"
     },
     {
-      "type": "event-schedule",
-      "filter": {
-        "sport": "olympics",
-        "window": "today"
-      },
-      "label": "🏅 Olympics today",
-      "maxItems": 6,
-      "showFlags": true,
-      "style": "highlight"
+      "type": "event-group",
+      "label": "🏅 Norway's Olympic triple threat",
+      "items": [
+        "10:00 — Nordic Combined: Oftebro chases Gundersen gold",
+        "14:30 — Biathlon relay: Laegreid leads gold favorites",
+        "19:30 — Big Air final: Ruud defends Olympic crown"
+      ]
     },
     {
       "type": "narrative",
-      "text": "Oftebro defends Nordic Combined. Laegreid and Christiansen anchor relay favorites. Birk Ruud flies for Big Air gold."
+      "text": "Three Norwegian medal shots today. The men's biathlon relay is the marquee event — Norway enters as dominant favorites."
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Benfica"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Paris Saint-Germain",
+      "awayTeam": "AS Monaco"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ 21:00 — Atalanta at Borussia Dortmund: High-octane knockout opener"
     },
     {
       "type": "match-result",
@@ -25,20 +37,10 @@
       "awayTeam": "Barcelona"
     },
     {
-      "type": "divider",
-      "text": "Tonight"
-    },
-    {
-      "type": "event-group",
-      "label": "Champions League Round of 16",
-      "items": [
-        "⚽ 18:45 — Juventus at Galatasaray",
-        "⚽ 21:00 — Real Madrid at Benfica",
-        "⚽ 21:00 — PSG at Monaco",
-        "⚽ 21:00 — Atalanta at Dortmund"
-      ]
+      "type": "narrative",
+      "text": "Barcelona stunned at Montilivi last night. Meanwhile Arsenal chase the title at Wolves tomorrow, four points clear at the summit."
     }
   ],
-  "generatedAt": "2026-02-17T16:47:31.193Z",
+  "generatedAt": "2026-02-17T17:02:38.471Z",
   "provider": "claude-cli"
 }

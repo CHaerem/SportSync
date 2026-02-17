@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T16:47:32.564Z",
+  "generatedAt": "2026-02-17T17:02:39.954Z",
   "eventCount": 45,
   "sportCoverage": {
     "golf": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2793,
+      "ageMinutes": 2809,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2558,
+      "ageMinutes": 2573,
       "stale": true
     },
     "tennis.json": {
@@ -110,6 +110,23 @@
     "transitioned": false,
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
+  "pipelineTimingHealth": {
+    "totalDuration": 556296,
+    "stepCount": 26,
+    "timeoutHits": [
+      "verify-schedules"
+    ],
+    "dominantSteps": [
+      {
+        "name": "verify-schedules",
+        "duration": 300068,
+        "share": 54
+      }
+    ],
+    "failedSteps": [
+      "verify-schedules"
+    ]
+  },
   "unmappedLeagues": [
     "FIDE Freestyle Chess World Championship 2026 | Finals",
     "Winter Olympics 2026",
@@ -130,27 +147,37 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2793 minutes old"
+      "message": "chess.json: data is 2809 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2558 minutes old"
+      "message": "golf.json: data is 2573 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 12 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 13 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 12 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 13 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "standings_empty",
       "message": "pgaGolf standings data is empty"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Real Madrid vs Benfica has no matching event in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Paris Saint-Germain vs AS Monaco has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -174,6 +201,21 @@
     },
     {
       "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"verify-schedules\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 54% of total pipeline time (300s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
+    },
+    {
+      "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     },
@@ -190,11 +232,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 86/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 11 warning issue(s). Editorial quality score is 68/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }

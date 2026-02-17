@@ -1,43 +1,45 @@
 {
-  "generatedAt": "2026-02-17T16:47:31.210Z",
+  "generatedAt": "2026-02-17T17:02:38.496Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 16697,
+    "blockCount": 8,
+    "generationMs": 26539,
     "tokenUsage": {
-      "input": 33665,
-      "output": 385,
-      "cacheCreation": 18454,
-      "cacheRead": 15208,
-      "total": 34050,
-      "costUSD": 0.13316450000000002,
+      "input": 67469,
+      "output": 793,
+      "cacheCreation": 18651,
+      "cacheRead": 48808,
+      "total": 68262,
+      "costUSD": 0.16349475000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 86,
+    "score": 68,
     "metrics": {
-      "mustWatchCoverage": 0.75,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0.364,
+      "sportDiversity": 0.333,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Only 36% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 119,
+      "avgScore": 115,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -64,7 +66,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.689
+      "tagsCoverage": 0.644
     },
     "after": {
       "totalEvents": 45,
@@ -76,19 +78,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 14,
+    "fallbackFieldsFilled": 16,
     "aiUpdatedFields": 45,
     "failedBatches": 0,
     "totalEvents": 45,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 150187,
-      "output": 4126,
+      "input": 149982,
+      "output": 3964,
       "calls": 5,
-      "total": 154313,
-      "costUSD": 0.52607,
+      "total": 153946,
+      "costUSD": 0.52077375,
       "tracked": true,
       "estimated": false
     }
