@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T03:12:10.269Z",
+  "generatedAt": "2026-02-17T04:46:28.764Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 33,
@@ -58,7 +58,7 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 95,
@@ -78,17 +78,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Italian Alps\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -107,9 +102,9 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 7,
     "critical": 0,
-    "warning": 6,
+    "warning": 5,
     "info": 2
   },
   "pass": true,
