@@ -1,38 +1,37 @@
 {
-  "generatedAt": "2026-02-17T13:21:16.459Z",
+  "generatedAt": "2026-02-17T13:58:00.695Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 23425,
+    "blockCount": 6,
+    "generationMs": 16113,
     "tokenUsage": {
-      "input": 33798,
-      "output": 581,
-      "cacheCreation": 18587,
+      "input": 33867,
+      "output": 308,
+      "cacheCreation": 18656,
       "cacheRead": 15208,
-      "total": 34379,
-      "costUSD": 0.13873075,
+      "total": 34175,
+      "costUSD": 0.132377,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 93,
     "metrics": {
-      "mustWatchCoverage": 0.143,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 1,
+      "componentUtilization": 1
     },
-    "issues": [
-      "Only 14% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -65,7 +64,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.714
+      "tagsCoverage": 0.629
     },
     "after": {
       "totalEvents": 35,
@@ -77,7 +76,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 10,
+    "fallbackFieldsFilled": 13,
     "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
@@ -85,11 +84,11 @@
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 119962,
-      "output": 3400,
+      "input": 119990,
+      "output": 3536,
       "calls": 4,
-      "total": 123362,
-      "costUSD": 0.42669700000000005,
+      "total": 123526,
+      "costUSD": 0.42993625,
       "tracked": true,
       "estimated": false
     }

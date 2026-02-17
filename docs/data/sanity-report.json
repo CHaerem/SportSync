@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T13:21:18.904Z",
+  "generatedAt": "2026-02-17T13:58:03.210Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 35,
@@ -13,10 +13,10 @@
     ],
     "bands": {
       "live": [
-        "Nordic Combined — Gundersen Large Hill/10km"
+        "Nordic Combined — Gundersen Large Hill/10km",
+        "Biathlon — Men's 4x7.5km Relay"
       ],
       "today": [
-        "Biathlon — Men's 4x7.5km Relay",
         "Freestyle Skiing — Men's Big Air Final"
       ],
       "tomorrow": [
@@ -60,10 +60,10 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 68,
+    "editorialScore": 93,
     "issueCount": 11
   },
   "findings": [
@@ -71,11 +71,6 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Qatar Airways Australian Grand Prix\" is 17 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 68/100 (below threshold)"
     },
     {
       "severity": "warning",
@@ -89,9 +84,9 @@
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 3,
     "critical": 0,
-    "warning": 4,
+    "warning": 3,
     "info": 0
   },
   "pass": true,
