@@ -1,58 +1,5 @@
 [
   {
-    "timestamp": "2026-02-14T19:32:42.957Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 95,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 111,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 24,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 7,
-      "pass": true
-    },
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen in Freestyle Chess semi-final Game 4\" which may not match any event; Featured mentions \"Carlsen\" but no matching athlete found in events data; Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 24 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-14T19:32:43.155Z",
     "editorial": {
       "score": 95,
@@ -6309,6 +6256,95 @@
       "editorialScore": 91.429,
       "mustWatchCoverage": 0.976,
       "sportDiversity": 0.738,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-17T12:05:02.881Z",
+    "editorial": {
+      "score": 68,
+      "mustWatchCoverage": 0.143,
+      "sportDiversity": 0.667,
+      "blockCount": 6
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 6,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 113,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 2,
+      "warningCount": 2,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 119366,
+        "output": 3288,
+        "calls": 4,
+        "total": 122654,
+        "costUSD": 0.42907400000000007,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 125283,
+        "output": 938,
+        "cacheCreation": 43455,
+        "cacheRead": 81811,
+        "total": 126221,
+        "costUSD": 0.33855825,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 67600,
+        "output": 564,
+        "calls": 1,
+        "total": 68164,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 312249,
+        "output": 4790,
+        "calls": 6,
+        "total": 317039,
+        "costUSD": 0.7676322500000001,
+        "realPct": 78
+      }
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 88,
+      "mustWatchCoverage": 0.854,
+      "sportDiversity": 0.726,
       "enrichmentScore": 100,
       "resultsScore": 80
     }
