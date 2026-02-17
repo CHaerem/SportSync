@@ -1,9 +1,10 @@
 name: Update Sports Data
 
 on:
-  # Run every 2 hours
+  # Run every 2 hours during daytime (06-22 UTC = 07-23 CET)
+  # Night hours skipped — no meaningful sports data updates at night
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 6-22/2 * * *"
 
   # Allow manual trigger with runner selection
   workflow_dispatch:
