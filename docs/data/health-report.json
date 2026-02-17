@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T16:13:15.877Z",
+  "generatedAt": "2026-02-17T16:30:31.288Z",
   "eventCount": 45,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 30,
-      "previousCount": 20,
-      "delta": 10
+      "previousCount": 30,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2759,
+      "ageMinutes": 2776,
       "stale": true
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2524,
+      "ageMinutes": 2541,
       "stale": true
     },
     "tennis.json": {
@@ -124,22 +124,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2759 minutes old"
+      "message": "chess.json: data is 2776 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2524 minutes old"
+      "message": "golf.json: data is 2541 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 10 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 11 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 10 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 11 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -179,7 +179,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 62/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 68/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
