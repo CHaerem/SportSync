@@ -222,13 +222,22 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~88% | 2026-02-16 | 6 APIs + tennis rankings, 11 RSS feeds, event-fingerprint caching |
-| 2. Code | ~82% | 2026-02-16 | 102 PRs, 1437 tests |
-| 3. Capabilities | ~62% | 2026-02-16 | Pipeline manifest, generate-insights, 5 inline standings widgets (PL, La Liga, golf, F1, tennis) |
-| 4. Personalization | ~50% | 2026-02-16 | Watch-plan feedback loop closed (thumbs→scoring), sport weights + favorites evolve, empty-sport notes |
+| 1. Data | ~90% | 2026-02-17 | Tennis tournament-level events fixed, diagnostic files initialized, 6 APIs + tennis rankings |
+| 2. Code | ~83% | 2026-02-17 | 104 PRs, 1450 tests |
+| 3. Capabilities | ~63% | 2026-02-17 | Pipeline manifest, generate-insights, 5 inline standings widgets, For You block |
+| 4. Personalization | ~58% | 2026-02-17 | For You editorial block, contextual empty-sport notes, watch-plan feedback loop, sport weights evolve |
 | 5. Quality | ~90% | 2026-02-16 | 11 loops, hint fatigue demoted to info |
 
 ### Run History Insights
+
+**Run 2026-02-17:** 4 tasks completed (2 direct-to-main, 2 branch-pr) + 2 explore tasks resolved + 6 new tasks scouted.
+- Empty-sport notes with data reasons: 4 turns, direct-to-main. Quick UX win.
+- Missing diagnostic files: 2 turns, direct-to-main. Trivial but necessary.
+- Tennis tournament-level events (PR #103): 10 turns, branch-pr. Root cause was ESPN API structure (0 competitions = dropped).
+- For You editorial block (PR #104): 8 turns, branch-pr. Deterministic personalization, no LLM dependency.
+- Explore tasks (winter sports, cycling): Researched via subagent. No public APIs for IBU/FIS/cycling. Curated configs recommended.
+- Scouting found 6 new tasks. Pattern report analysis revealed must-watch coverage decline and stale data patterns.
+- **Key insight**: ESPN tennis API returns tournament-level entries, not match-level. The assumption "0 events = no data" was wrong — the data existed but was dropped by the base adapter.
 
 **Run 2026-02-16 (Run 3):** 7 tasks completed (1 already done, 2 branch-pr, 4 direct-to-main). Most productive run yet:
 - Watch-plan feedback scoring (PR #101): 8 turns, branch-pr. Closes personalization loop.
@@ -255,7 +264,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 ### Pillar 1: Self-Maintaining Data
 
-1. [BLOCKED] misdiagnosed — Tennis filterMode is already "focused" (not "exclusive"), and ESPN API returns zero tennis events regardless of filter mode. The sport_zero_events pattern fires because there are no tennis events on ESPN during the current period. Will self-resolve when tennis season resumes. **Fix tennis zero events: change filterMode from "exclusive" to "inclusive"**
+1. [DONE] (PR #103) **Fix tennis zero events** — ESPN returns tournament-level events with 0 competitions. Added tournament-level event handling in focused mode: creates events from tournament entries (name, dates, venue) when no match data exists. Completed tournaments filtered out. 5 new tests.
 
 2. [DONE] (PR #85) **Fix hint fatigue: add RESULTS and SANITY to hintMetricMap** — Already fixed in PR #85. hintMetricMap now includes "results note"→resultsScore and "sanity"→sanityScore. Pattern report will reflect this on next pipeline run.
 
@@ -269,7 +278,11 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 7. [DONE] (already implemented) **Add golf empty-competitor fallback** — Golf fetcher already handles empty competitors at line 631-710: includes events with `fieldPending: true` when ESPN returns empty arrays. `retainLastGood()` in helpers.js prevents stale golf.json by retaining previous data when new fetch has no events.
 
-8. [PENDING] [EXPLORE] **Investigate new sport data sources** — Check what free APIs exist for: biathlon (major Norwegian sport), cross-country skiing, handball (Norwegian league), cycling (Tour de France). For each, evaluate: data quality, update frequency, Norwegian focus potential. Create concrete `[FEATURE]` tasks for viable sources.
+8. [DONE] (explored, run 2026-02-17) **Investigate new sport data sources** — Researched biathlon (IBU), cross-country skiing (FIS), and cycling APIs. Findings:
+   - **IBU Biathlon**: No public REST API. ibu.org has real-time results pages but no documented API. Web scraping feasible but fragile. Norwegian athletes (J.T. Boe, Laegreid) well-covered.
+   - **FIS Cross-country**: No public API. fis-ski.com renders data client-side. Data feeds exist but undocumented. Norwegian dominance (Klaebo, Johaug). Medium difficulty to build a scraper.
+   - **Cycling**: ProCyclingStats has comprehensive data but no public API. firstcycling.com has some structured data. UCI doesn't offer public APIs. Norwegian cyclists (Hoelgaard) are minor presences.
+   - **Recommendation**: Curated configs for major events (World Championships, Olympics) is the practical path. A dedicated fetcher for IBU/FIS would require web scraping and ongoing maintenance — better suited as a future `[FEATURE]` task once the scraping infrastructure is proven.
 
 ### Pillar 2: Self-Maintaining Code
 
@@ -291,7 +304,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 16. [DONE] (PR #100) **Add generate-insights pipeline step** — Created `scripts/generate-insights.js` with football streaks, standings gaps, golf leaderboard, F1 championship, and high-scoring match analysis. Dashboard renders top 5 as accent cards. 22 tests.
 
-17. [PENDING] [EXPLORE] **Investigate biathlon/cross-country data** — Norway dominates these winter sports. Check if IBU (biathlon) or FIS (cross-country skiing) have public APIs or data feeds. Evaluate feasibility of a winter-sports fetcher.
+17. [DONE] (explored, run 2026-02-17) **Investigate biathlon/cross-country data** — See task #8 findings. No public APIs available for IBU or FIS. Curated configs recommended for major events. Web scraping feasible but fragile — better as future `[FEATURE]` if scraping infrastructure exists.
 
 18. [DONE] (direct) **Add day-specific editorial caching** — Preview briefings now use MD5 event fingerprints for change detection. Only regenerates when events for the preview date actually change, instead of fixed 24h timer. Falls back to time-based staleness for legacy files. 6 tests.
 
@@ -303,7 +316,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 21. [DONE] (PR #86) **Add sport-section ordering by preference** — Added SPORT_WEIGHT fallback map in dashboard.js renderBand(). Events sort by engagement clicks + preference weight (high=3, medium=2, low=1), giving sensible ordering even for new users.
 
-22. [PENDING] [FEATURE] **Add personalized "For You" editorial block** — In `generate-featured.js`, add a dedicated block type that highlights events specifically matching the user's top preferences (favorite teams/players, highest-weight sports). Separate from the general editorial brief.
+22. [DONE] (PR #104) **Add personalized "For You" editorial block** — Added `buildForYouBlock()` to generate-featured.js. Deterministic scoring: favorite teams (+10), players (+10), Norwegian (+3), high-pref sport (+2), must-watch (+2). Injected as highlight section in both LLM and fallback paths. 7 new tests.
 
 ### Pillar 5: Self-Correcting Quality
 
@@ -768,19 +781,41 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 - [DONE] (direct) **Fix pipelineHealth loop stagnation** — `evaluatePipelineHealth()` in autonomy-scorecard.js now filters known data-availability patterns (sport_zero_events, quota_api_unavailable) and info-severity issues from the actionable count. Loop will score 1.0 when only known data gaps remain. 1 new test.
 
-- [PENDING] [MAINTENANCE] **Improve empty-sport notes with data reasons** — Current `renderEmptySportNotes()` shows "No upcoming X events" but doesn't explain WHY (off-season, API issue, etc.). Read health-report.json status for each sport and show contextual messages like "Tennis off-season" or "Esports data source unavailable". Files: `docs/js/dashboard.js` (~20 lines).
+- [DONE] (direct) **Improve empty-sport notes with data reasons** — Dashboard now fetches health-report.json and shows contextual reasons: "no Norwegian player matches scheduled" (tennis), "data source unavailable" (esports), "data source stale", or "off-season". 27 lines changed in dashboard.js.
 
 ### MEDIUM Priority
 
 - [DONE] (direct) **Add inline La Liga standings widget** — Collapsible La Liga mini-table following PL pattern, with Barcelona highlighting. Fifth inline standings widget.
 
-- [PENDING] [FEATURE] **Add tennis Casper Ruud match tracking** — Tennis events are currently filtered by Norwegian players but produce 0 events. Consider adding a "focused" filter mode for tennis that also includes top-50 ATP events (Grand Slams, Masters) even without Norwegian participation, since the user has medium tennis preference. Files: `scripts/fetch/tennis.js` (~30 lines).
+- [DONE] (PR #103) **Add tennis Casper Ruud match tracking** — Root cause: ESPN returns tournament-level events with 0 competitions, which the base adapter dropped. Fixed by adding tournament-level event creation in focused mode. Events now show tournament schedules even without match data. 5 new tests.
 
-- [PENDING] [MAINTENANCE] **Create missing diagnostic files** — `fact-check-history.json` and `preference-evolution.json` don't exist yet. Initialize them with empty structures so the pipeline doesn't silently skip them. Files: `scripts/generate-featured.js`, `scripts/evolve-preferences.js` (~10 lines).
+- [DONE] (direct) **Create missing diagnostic files** — Initialized `fact-check-history.json` (empty array) and `preference-evolution.json` (`{ runs: [] }`) so pipeline scripts don't skip them on first run.
 
 ### LOW Priority
 
 - [PENDING] [EXPLORE] **Investigate day snapshot empty content** — Pattern report shows 17 fires of `empty_day_snapshot`. Investigate which dates have no events/results and whether this is due to data gaps or snapshot generation timing. Check `generate-multi-day.js` logic.
+
+---
+
+## Scouted Tasks (2026-02-17)
+
+### HIGH Priority
+
+- [PENDING] [MAINTENANCE] **Fix must-watch coverage decline in featured content** — Pattern report shows must-watch coverage dropped 40% (72%→32%). Investigate enrichment importance scoring and generate-featured.js event selection. The prompt may be over-filtering high-importance events. Files: `scripts/generate-featured.js`, `scripts/lib/ai-quality-gates.js`.
+
+- [PENDING] [FEATURE] **Add generic renderInlineStandings() function** — Five inline standings widgets (PL, La Liga, golf, F1, tennis) all follow identical structure. Extract into a reusable function to reduce ~200 lines of duplicated code and make adding new standings trivial. Files: `docs/js/dashboard.js` (~250 lines refactored).
+
+### MEDIUM Priority
+
+- [PENDING] [MAINTENANCE] **Investigate stale golf/chess data freshness** — Pattern report shows stale_data fired 26 times. Golf (649min) and chess (884min) data are consistently old. Check fetch retry logic, API rate limits, and caching behavior in `scripts/fetch/golf.js` and `scripts/fetch/chess.js`.
+
+- [PENDING] [EXPLORE] **Investigate Bodø/Glimt Champions League coverage** — RSS shows Bodø/Glimt vs Inter Milan as a major Norwegian fixture. Check if this is already in events.json via football fetcher. If not, may need curated config or Champions League endpoint.
+
+- [PENDING] [FEATURE] **Add biathlon/cross-country curated configs for World Championships** — No public APIs exist for IBU/FIS, but curated configs can cover major events. Create configs for upcoming Biathlon World Championships and FIS Nordic World Ski Championships with Norwegian athlete schedules. Files: `scripts/config/*.json`.
+
+### LOW Priority
+
+- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. ProCyclingStats and firstcycling.com have data but no public APIs. Norwegian cyclists are minor presences. Low priority unless user engagement data shows cycling interest.
 
 ---
 

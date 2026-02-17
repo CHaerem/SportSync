@@ -1,7 +1,7 @@
 {
   "_description": "Autopilot process strategy — the autopilot reads this at startup and evolves it based on what it learns. This file lives in an allowed path so the autopilot can modify it.",
-  "version": 2,
-  "updatedAt": "2026-02-16",
+  "version": 3,
+  "updatedAt": "2026-02-17",
   "updatedBy": "autopilot",
 
   "shipModes": {
@@ -46,6 +46,10 @@
       {
         "date": "2026-02-16",
         "note": "Run 3: 5 tasks in ~35 turns (4 completed + 1 already done). Chaining data→UI tasks (tennis rankings → inline widget) in same run is highly efficient — eliminates context-loading overhead. Direct-to-main saves ~6 turns per task vs branch-pr and was safe for all 2 uses. Pre-verifying task completion status avoids wasted work. Scouting via Task agent was efficient (~5 turns)."
+      },
+      {
+        "date": "2026-02-17",
+        "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       }
     ]
   }

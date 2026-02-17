@@ -1,66 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-02-11",
-      "task": "Add unit tests for Norwegian streaming mapper",
-      "outcome": "completed",
-      "pr": 28,
-      "details": "Added 25 tests covering getNorwegianStreaming(), applyNorwegianStreaming(), and norwegianStreamingMap data structure. Tests verify league matching (case-insensitive, partial), sport aliases (formula1→f1), default fallbacks, null/empty inputs, and event mutation.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 6
-    },
-    {
-      "date": "2026-02-12",
-      "task": "Add curated config schedule verification script",
-      "outcome": "completed",
-      "pr": 39,
-      "details": "Created scripts/verify-schedules.js that cross-references curated config event dates against ESPN scoreboard data, validates date ranges, detects mismatches, and auto-corrects high-confidence time drift. Integrates into health-report.json. 37 unit tests.",
-      "tests_passed": true,
-      "files_changed": 2,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-12",
-      "task": "Add unit tests for api-client.js",
-      "outcome": "completed",
-      "pr": 40,
-      "details": "22 tests covering constructor defaults/custom options, buildURL templating, cache hit/stale fallback, JSON parse errors, HTTP 4xx/5xx handling, retry logic, network error retries, timeout, and fetchWithDates.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-12",
-      "task": "Add unit tests for base-fetcher.js",
-      "outcome": "completed",
-      "pr": 41,
-      "details": "33 tests covering constructor, fetch pipeline, fetchFromAPIs source iteration/error accumulation, applyFilters (timeRange, maxEvents), normalizeEvents, formatResponse, groupEventsByTournament, hasNorwegianInterest, and abstract methods.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-12",
-      "task": "Add aria-expanded to featured section expand buttons",
-      "outcome": "completed",
-      "pr": 42,
-      "details": "Added aria-expanded=false to .feat-expand buttons in renderSection() and toggle in click handler, matching the band toggle pattern from PR #26.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
-      "date": "2026-02-12",
-      "task": "Improve sport iteration efficiency in renderBand()",
-      "outcome": "completed",
-      "pr": 46,
-      "details": "Refactored renderBand() to iterate only sport groups with events using index map for SPORT_CONFIG ordering, instead of iterating all 7 sports. Added fallback for unknown sport IDs.",
-      "tests_passed": true,
-      "files_changed": 1,
-      "scouted": 0
-    },
-    {
       "date": "2026-02-12",
       "task": "Add thumbs-up/down feedback to watch-plan items",
       "outcome": "completed",
@@ -425,6 +365,70 @@
       "lesson": "Copy-paste of PL widget pattern with La Liga data took 4 turns. All five inline widgets now follow identical structure — could be refactored into a generic function.",
       "scouted": 0,
       "meta_insight": "Five inline standings widgets (PL, La Liga, golf, F1, tennis) now close all data-to-UI gaps for standings. The pattern is ripe for extraction into a generic renderInlineStandings() function."
+    },
+    {
+      "date": "2026-02-17",
+      "task": "Add contextual reasons to empty-sport notes",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "personalization",
+      "details": "Dashboard fetches health-report.json and shows contextual reasons for empty sports: no Norwegian matches (tennis), data source unavailable (esports), stale data, off-season.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 4,
+      "turns_estimated": 4,
+      "lesson": "Client-side contextual messages are quick wins when server-side health data already exists.",
+      "scouted": 0,
+      "meta_insight": "Empty states communicate system status to users — the health-report.json pipeline data flows all the way to the UI now."
+    },
+    {
+      "date": "2026-02-17",
+      "task": "Initialize missing diagnostic files",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "quality",
+      "details": "Created fact-check-history.json and preference-evolution.json with empty structures so pipeline scripts dont skip them.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 2,
+      "turns_estimated": 3,
+      "lesson": "Trivial initialization tasks prevent silent pipeline failures. Check for missing files early.",
+      "scouted": 0,
+      "meta_insight": "Missing data files are easy to miss — the pipeline handles them gracefully but feedback loops cant accumulate history."
+    },
+    {
+      "date": "2026-02-17",
+      "task": "Add tournament-level tennis events in focused mode",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 103,
+      "pillar": "data",
+      "details": "ESPN tennis API returns tournament entries with 0 competitions, which base adapter dropped. Added tournament-level event creation in focused mode. Extracted _checkNorwegian() helper. 5 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 10,
+      "turns_estimated": 12,
+      "lesson": "Investigate API response structure before assuming empty data means no events. ESPN has different patterns per sport.",
+      "scouted": 0,
+      "meta_insight": "Tennis events were hidden not due to filtering but due to API structure assumptions. The 108 recurring sport_zero_events warnings should decrease."
+    },
+    {
+      "date": "2026-02-17",
+      "task": "Add personalized For You editorial block",
+      "outcome": "completed",
+      "shipMode": "branch-pr",
+      "pr": 104,
+      "pillar": "personalization",
+      "details": "Deterministic buildForYouBlock() scores events by favorite teams/players/preferences, creates highlight section. Injected in both LLM and fallback paths. 7 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 8,
+      "turns_estimated": 10,
+      "lesson": "Deterministic personalization (no LLM) is reliable and fast. Scoring is simple: favorites (+10), Norwegian (+3), preference (+2).",
+      "scouted": 6,
+      "meta_insight": "The For You block makes personalization visible in the editorial content. Combined with watch-plan feedback, the personalization pillar is advancing significantly."
     }
   ]
 }
