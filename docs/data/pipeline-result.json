@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-02-17T12:01:19.765Z",
-  "completedAt": "2026-02-17T12:10:06.410Z",
-  "duration": 526645,
+  "startedAt": "2026-02-17T12:14:46.179Z",
+  "completedAt": "2026-02-17T12:16:14.412Z",
+  "duration": 88232,
   "gate": "pass",
   "phases": {
     "fetch": {
@@ -11,27 +11,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 31154
+          "duration": 30753
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 3641
+          "duration": 2128
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8612
+          "duration": 8402
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 177
+          "duration": 55
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 44717
+          "duration": 40295
         }
       ]
     },
@@ -42,12 +42,13 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 159
+          "duration": 72
         },
         {
           "name": "usage-snapshot",
-          "status": "success",
-          "duration": 487
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         }
       ]
     },
@@ -57,8 +58,9 @@
       "steps": [
         {
           "name": "discover-events",
-          "status": "success",
-          "duration": 171
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         }
       ]
     },
@@ -69,12 +71,13 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 629
+          "duration": 218
         },
         {
           "name": "enrich-events",
-          "status": "success",
-          "duration": 99488
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         }
       ]
     },
@@ -84,23 +87,25 @@
       "steps": [
         {
           "name": "generate-featured",
-          "status": "success",
-          "duration": 33914
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         },
         {
           "name": "generate-multiday",
-          "status": "success",
-          "duration": 148
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 168
+          "duration": 88
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 160
+          "duration": 47
         }
       ]
     },
@@ -111,40 +116,43 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 655
+          "duration": 140
         }
       ]
     },
     "monitor": {
       "name": "monitor",
-      "status": "partial",
+      "status": "success",
       "steps": [
         {
           "name": "pipeline-health",
-          "status": "failed",
-          "duration": 300059,
-          "error": "spawnSync /bin/sh ETIMEDOUT",
-          "errorCategory": "timeout"
+          "status": "success",
+          "duration": 62
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 145
+          "duration": 75
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 145
+          "duration": 38
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 623
+          "duration": 166
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 204
+          "duration": 60
+        },
+        {
+          "name": "verify-schedules",
+          "status": "success",
+          "duration": 5425
         }
       ]
     },
@@ -155,7 +163,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 253
+          "duration": 70
         }
       ]
     },
@@ -165,31 +173,32 @@
       "steps": [
         {
           "name": "usage-report",
-          "status": "success",
-          "duration": 512
+          "status": "skipped",
+          "duration": 0,
+          "reason": "missing env: CLAUDE_CODE_OAUTH_TOKEN"
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 169
+          "duration": 53
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 86
+          "duration": 40
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 149
+          "duration": 39
         }
       ]
     }
   },
   "summary": {
-    "total": 25,
-    "success": 24,
-    "failed": 1,
-    "skipped": 0
+    "total": 26,
+    "success": 20,
+    "failed": 0,
+    "skipped": 6
   }
 }

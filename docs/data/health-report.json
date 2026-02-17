@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-16T08:58:20.082Z",
-  "eventCount": 32,
+  "generatedAt": "2026-02-17T12:16:08.427Z",
+  "eventCount": 35,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "olympics": {
-      "count": 8,
+      "count": 11,
       "previousCount": 8,
-      "delta": 0
+      "delta": 3
     },
     "football": {
       "count": 20,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 884,
+      "ageMinutes": 2522,
       "stale": true
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 649,
+      "ageMinutes": 2287,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     }
   },
@@ -101,7 +101,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) have 0 events and 0 results"
+      "1 day snapshot(s) have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -112,24 +112,24 @@
   },
   "issues": [
     {
-      "severity": "warning",
+      "severity": "info",
       "code": "sport_zero_events",
       "message": "esports: data file exists but 0 events in events.json"
     },
     {
-      "severity": "warning",
+      "severity": "info",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 884 minutes old"
+      "message": "chess.json: data is 2522 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 649 minutes old"
+      "message": "golf.json: data is 2287 minutes old"
     },
     {
       "severity": "warning",
@@ -139,7 +139,7 @@
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "2 day snapshot(s) have 0 events and 0 results"
+      "message": "1 day snapshot(s) have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -148,32 +148,31 @@
     },
     {
       "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
+      "code": "low_confidence_config",
+      "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     },
     {
       "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
-    },
-    {
-      "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 2"
-    },
-    {
-      "severity": "warning",
-      "code": "failed_batches_increase",
-      "message": "Failed batches increased from 0 to 1"
+      "code": "low_confidence_config",
+      "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 82/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 88/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
     "issues": [],
     "hasRegression": false
+  },
+  "scheduleVerification": {
+    "lastChecked": "2026-02-17T12:16:14.202Z",
+    "configsChecked": 2,
+    "eventsChecked": 12,
+    "verified": 0,
+    "plausible": 12,
+    "unverified": 0,
+    "correctionsApplied": 0
   }
 }
