@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-02-17T16:30:29.939Z",
+  "generatedAt": "2026-02-17T16:47:31.210Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 18463,
+    "blockCount": 6,
+    "generationMs": 16697,
     "tokenUsage": {
-      "input": 33722,
-      "output": 425,
-      "cacheCreation": 18511,
+      "input": 33665,
+      "output": 385,
+      "cacheCreation": 18454,
       "cacheRead": 15208,
-      "total": 34147,
-      "costUSD": 0.13455075,
+      "total": 34050,
+      "costUSD": 0.13316450000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 86,
     "metrics": {
-      "mustWatchCoverage": 0.167,
+      "mustWatchCoverage": 0.75,
       "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -31,9 +31,7 @@
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Only 17% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -66,7 +64,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.667
+      "tagsCoverage": 0.689
     },
     "after": {
       "totalEvents": 45,
@@ -78,7 +76,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 15,
+    "fallbackFieldsFilled": 14,
     "aiUpdatedFields": 45,
     "failedBatches": 0,
     "totalEvents": 45,
@@ -86,11 +84,11 @@
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 150267,
-      "output": 4096,
+      "input": 150187,
+      "output": 4126,
       "calls": 5,
-      "total": 154363,
-      "costUSD": 0.526212,
+      "total": 154313,
+      "costUSD": 0.52607,
       "tracked": true,
       "estimated": false
     }

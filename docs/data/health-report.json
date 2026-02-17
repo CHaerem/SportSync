@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T16:30:31.288Z",
+  "generatedAt": "2026-02-17T16:47:32.564Z",
   "eventCount": 45,
   "sportCoverage": {
     "golf": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2776,
+      "ageMinutes": 2793,
       "stale": true
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2541,
+      "ageMinutes": 2558,
       "stale": true
     },
     "tennis.json": {
@@ -110,6 +110,12 @@
     "transitioned": false,
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
+  "unmappedLeagues": [
+    "FIDE Freestyle Chess World Championship 2026 | Finals",
+    "Winter Olympics 2026",
+    "CS2 Major Tournaments 2026",
+    "Formula 1 2025 - Race Weekend"
+  ],
   "issues": [
     {
       "severity": "info",
@@ -124,22 +130,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2776 minutes old"
+      "message": "chess.json: data is 2793 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2541 minutes old"
+      "message": "golf.json: data is 2558 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 11 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 12 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 11 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 12 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -162,6 +168,11 @@
       "message": "Quota API unavailable (upstream scope limitation)"
     },
     {
+      "severity": "info",
+      "code": "unmapped_leagues",
+      "message": "4 tournament(s) lack league theming: FIDE Freestyle Chess World Championship 2026 | Finals, Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
+    },
+    {
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
@@ -179,7 +190,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 68/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 86/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

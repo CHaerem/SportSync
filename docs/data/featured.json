@@ -2,20 +2,22 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Gold hunt in Milano-Cortina"
+      "text": "Norway hunts four Olympic golds on super Tuesday"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Norwegian medal chances today",
-      "items": [
-        "10:00 — Nordic Combined Gundersen (Oftebro)",
-        "14:30 — Biathlon Men's Relay (Laegreid, Christiansen, Uldal, Botn)",
-        "19:30 — Freestyle Big Air Final (Birk Ruud)"
-      ]
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Olympics today",
+      "maxItems": 6,
+      "showFlags": true,
+      "style": "highlight"
     },
     {
       "type": "narrative",
-      "text": "Three gold opportunities for Norway today. The biathlon relay team enters as favorites, while Oftebro and Ruud hunt medals in their disciplines."
+      "text": "Oftebro defends Nordic Combined. Laegreid and Christiansen anchor relay favorites. Birk Ruud flies for Big Air gold."
     },
     {
       "type": "match-result",
@@ -23,23 +25,20 @@
       "awayTeam": "Barcelona"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League tonight",
-      "items": [
-        "18:45 — Juventus at Galatasaray",
-        "21:00 — Real Madrid at Benfica",
-        "21:00 — PSG at Monaco"
-      ]
-    },
-    {
       "type": "divider",
-      "text": "This Week"
+      "text": "Tonight"
     },
     {
-      "type": "event-line",
-      "text": "🏅 Wed 09:45 — Klaebo anchors team sprint final"
+      "type": "event-group",
+      "label": "Champions League Round of 16",
+      "items": [
+        "⚽ 18:45 — Juventus at Galatasaray",
+        "⚽ 21:00 — Real Madrid at Benfica",
+        "⚽ 21:00 — PSG at Monaco",
+        "⚽ 21:00 — Atalanta at Dortmund"
+      ]
     }
   ],
-  "generatedAt": "2026-02-17T16:30:29.924Z",
+  "generatedAt": "2026-02-17T16:47:31.193Z",
   "provider": "claude-cli"
 }

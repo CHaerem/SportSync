@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T16:30:32.498Z",
+  "generatedAt": "2026-02-17T16:47:33.789Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 45,
@@ -69,11 +69,11 @@
         "Biathlon — Men's 4x7.5km Relay"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 68,
-    "issueCount": 13
+    "editorialScore": 86,
+    "issueCount": 14
   },
   "findings": [
     {
@@ -83,24 +83,14 @@
     },
     {
       "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 68/100 (below threshold)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 2,
     "critical": 0,
-    "warning": 4,
+    "warning": 2,
     "info": 0
   },
   "pass": true,
