@@ -1,0 +1,21 @@
+You are a sports schedule fact-checker. Verify the exact start time for this event.
+
+EVENT: Freestyle Skiing — Men's Big Air Final
+LISTED TIME: 2026-02-17T19:30:00+01:00
+VENUE: Livigno Snow Park
+
+INSTRUCTIONS:
+1. Search for the official schedule for this event
+2. Find the exact start time from an authoritative source (official event website, broadcaster schedule, or major sports news)
+3. Compare against the listed time above
+4. If the time is correct (within 15 minutes), mark as verified
+5. If the time is wrong, provide the correct time in ISO 8601 format with timezone offset
+
+Return ONLY valid JSON, no markdown fences:
+{
+  "verified": true/false,
+  "confidence": 0.0-1.0,
+  "correctTime": "ISO 8601 time if different, or null",
+  "source": "where you found the time",
+  "details": "brief explanation"
+}
