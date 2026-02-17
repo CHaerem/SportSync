@@ -3,10 +3,76 @@ import {
 	parseListingPage,
 	parseMatchPage,
 	parseTeamsFromUrl,
+	parseTeamsFromText,
+	extractChannelsFromIcons,
+	CHANNEL_CLASS_MAP,
 	fetchSportListings,
 	fetchMatchBroadcasters,
 	fetchListingsWithBroadcasters,
 } from "../scripts/lib/tvkampen-scraper.js";
+
+// --- Helper: build realistic event block HTML ---
+
+function makeEventBlock(id, { home, away, time = "20:00", league = "Premier League", channelClasses = [] } = {}) {
+	const channelDiv = channelClasses.length > 0
+		? `<div class="icons-channels-rt-${id} ${channelClasses.map(c => `icons-channels-${c}`).join(" ")}"></div>`
+		: "";
+	return `<div id="${id}"><div class="event-rt">
+		<div class="event-rt-main-info">
+			<a href="/kamp/${home.toLowerCase().replace(/\s+/g, "-")}-${away.toLowerCase().replace(/\s+/g, "-")}-${id}">
+				<div class="match-info-rt">
+					<div class="match-info-rt__sport-time"><time>${time}</time></div>
+				</div>
+			</a>
+		</div>
+		<div class="match-details-rt-participants">
+			<a href="/kamp/${home.toLowerCase().replace(/\s+/g, "-")}-${away.toLowerCase().replace(/\s+/g, "-")}-${id}"><div>${home} - ${away}</div></a>
+		</div>
+		<div class="match-details-rt__league">${league}</div>
+		<div class="match-details-channels-rt">${channelDiv}</div>
+	</div></div>`;
+}
+
+function makeListingHtml(...blocks) {
+	return `<main>${blocks.join("\n")}</main>`;
+}
+
+// --- parseTeamsFromText ---
+
+describe("parseTeamsFromText", () => {
+	it("parses 'Home - Away' format", () => {
+		expect(parseTeamsFromText("Arsenal - Liverpool")).toEqual({ home: "Arsenal", away: "Liverpool" });
+	});
+
+	it("parses 'Home vs Away' format", () => {
+		expect(parseTeamsFromText("Arsenal vs Liverpool")).toEqual({ home: "Arsenal", away: "Liverpool" });
+	});
+
+	it("parses Norwegian 'Home mot Away' format", () => {
+		expect(parseTeamsFromText("Rosenborg mot Molde")).toEqual({ home: "Rosenborg", away: "Molde" });
+	});
+
+	it("handles multi-word team names", () => {
+		expect(parseTeamsFromText("Manchester City - West Ham United")).toEqual({ home: "Manchester City", away: "West Ham United" });
+	});
+
+	it("returns null for text without separator", () => {
+		expect(parseTeamsFromText("Just some random text")).toBeNull();
+	});
+
+	it("returns null for empty/null input", () => {
+		expect(parseTeamsFromText("")).toBeNull();
+		expect(parseTeamsFromText(null)).toBeNull();
+	});
+
+	it("strips HTML comments", () => {
+		expect(parseTeamsFromText("Arsenal <!-- ad --> - <!-- ad --> Liverpool")).toEqual({ home: "Arsenal", away: "Liverpool" });
+	});
+
+	it("returns null for single-char team names", () => {
+		expect(parseTeamsFromText("A - B")).toBeNull();
+	});
+});
 
 // --- parseTeamsFromUrl ---
 
@@ -26,8 +92,8 @@ describe("parseTeamsFromUrl", () => {
 		expect(result).toEqual({ home: "Manchester City", away: "West Ham United" });
 	});
 
-	it("returns null for invalid slugs", () => {
-		expect(parseTeamsFromUrl("/kamp/no-separator-here-123")).toBeNull();
+	it("returns null for slugs without vs/mot", () => {
+		expect(parseTeamsFromUrl("/kamp/arsenal-liverpool-123")).toBeNull();
 		expect(parseTeamsFromUrl("/other/path")).toBeNull();
 	});
 
@@ -42,91 +108,187 @@ describe("parseTeamsFromUrl", () => {
 	});
 });
 
+// --- extractChannelsFromIcons ---
+
+describe("extractChannelsFromIcons", () => {
+	it("extracts known channels from CSS classes", () => {
+		const html = `<div class="icons-channels-rt-123 icons-channels-viaplay icons-channels-tv2play"></div>`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toContain("Viaplay");
+		expect(result).toContain("TV 2 Play");
+	});
+
+	it("extracts DAZN and MAX", () => {
+		const html = `<div class="icons-channels-dazn icons-channels-max"></div>`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toContain("DAZN");
+		expect(result).toContain("MAX");
+	});
+
+	it("extracts Eurosport variants", () => {
+		const html = `<div class="icons-channels-eurosport icons-channels-eurosportnorge"></div>`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toContain("Eurosport 1");
+		expect(result).toContain("Eurosport Norge");
+	});
+
+	it("skips numeric-only icon IDs", () => {
+		const html = `<div class="icons-channels-12345 icons-channels-viaplay"></div>`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toEqual(["Viaplay"]);
+	});
+
+	it("skips 'default' class", () => {
+		const html = `<div class="icons-channels-default icons-channels-tv2play"></div>`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toEqual(["TV 2 Play"]);
+	});
+
+	it("deduplicates channels", () => {
+		const html = `
+			<div class="icons-channels-viaplay"></div>
+			<div class="icons-channels-viaplay"></div>
+		`;
+		const result = extractChannelsFromIcons(html);
+		expect(result).toEqual(["Viaplay"]);
+	});
+
+	it("returns empty array when no icon classes", () => {
+		const html = `<div class="some-other-class"></div>`;
+		expect(extractChannelsFromIcons(html)).toEqual([]);
+	});
+
+	it("maps all entries in CHANNEL_CLASS_MAP", () => {
+		for (const [key, expected] of Object.entries(CHANNEL_CLASS_MAP)) {
+			const html = `<div class="icons-channels-${key}"></div>`;
+			const result = extractChannelsFromIcons(html);
+			expect(result).toContain(expected);
+		}
+	});
+});
+
 // --- parseListingPage ---
 
 describe("parseListingPage", () => {
-	it("extracts matches from anchor links to /kamp/", () => {
-		const html = `
-			<div>
-				<a href="/kamp/arsenal-vs-liverpool-123">
-					<span>20:45</span> Arsenal - Liverpool
-				</a>
-				<a href="/kamp/wolves-vs-brighton-456">
-					<span>18:30</span> Wolves - Brighton
-				</a>
-			</div>
-		`;
+	it("extracts matches from event blocks (primary strategy)", () => {
+		const html = makeListingHtml(
+			makeEventBlock("1001", { home: "Arsenal", away: "Liverpool", time: "20:45", channelClasses: ["viaplay"] }),
+			makeEventBlock("1002", { home: "Wolves", away: "Brighton", time: "18:30", channelClasses: ["tv2play"] }),
+		);
 		const result = parseListingPage(html);
 		expect(result).toHaveLength(2);
 		expect(result[0]).toMatchObject({
-			matchUrl: "https://www.tvkampen.com/kamp/arsenal-vs-liverpool-123",
+			matchUrl: "https://www.tvkampen.com/kamp/arsenal-liverpool-1001",
 			homeTeam: "Arsenal",
 			awayTeam: "Liverpool",
 			time: "20:45",
+			league: "Premier League",
 		});
+		expect(result[0].broadcasters).toContain("Viaplay");
 		expect(result[1]).toMatchObject({
-			matchUrl: "https://www.tvkampen.com/kamp/wolves-vs-brighton-456",
+			matchUrl: "https://www.tvkampen.com/kamp/wolves-brighton-1002",
 			homeTeam: "Wolves",
 			awayTeam: "Brighton",
 			time: "18:30",
 		});
+		expect(result[1].broadcasters).toContain("TV 2 Play");
 	});
 
 	it("deduplicates by matchUrl", () => {
-		const html = `
-			<a href="/kamp/arsenal-vs-liverpool-123">20:45</a>
-			<a href="/kamp/arsenal-vs-liverpool-123">20:45</a>
-		`;
+		const block = makeEventBlock("1001", { home: "Arsenal", away: "Liverpool" });
+		const html = makeListingHtml(block, block);
 		const result = parseListingPage(html);
 		expect(result).toHaveLength(1);
 	});
 
-	it("extracts matches from table rows", () => {
+	it("extracts league name", () => {
+		const html = makeListingHtml(
+			makeEventBlock("2001", { home: "Benfica", away: "Real Madrid", league: "Champions League" }),
+		);
+		const result = parseListingPage(html);
+		expect(result[0].league).toBe("Champions League");
+	});
+
+	it("extracts multiple channel icons from one block", () => {
+		const html = makeListingHtml(
+			makeEventBlock("3001", {
+				home: "Benfica",
+				away: "Real Madrid",
+				channelClasses: ["tv2play", "viaplay", "eurosportnorge", "max"],
+			}),
+		);
+		const result = parseListingPage(html);
+		expect(result[0].broadcasters).toContain("TV 2 Play");
+		expect(result[0].broadcasters).toContain("Viaplay");
+		expect(result[0].broadcasters).toContain("Eurosport Norge");
+		expect(result[0].broadcasters).toContain("MAX");
+	});
+
+	it("handles blocks with no channel icons", () => {
+		const html = makeListingHtml(
+			makeEventBlock("4001", { home: "Chelsea", away: "Newcastle", channelClasses: [] }),
+		);
+		const result = parseListingPage(html);
+		expect(result[0].broadcasters).toEqual([]);
+	});
+
+	it("returns empty array for page with no event blocks", () => {
+		const html = `<main><div><p>No matches today</p></div></main>`;
+		expect(parseListingPage(html)).toEqual([]);
+	});
+
+	it("falls back to anchor tag parsing when no event blocks found", () => {
 		const html = `
-			<table>
-				<tr><td><a href="/kamp/chelsea-vs-newcastle-789">21:00</a></td></tr>
-			</table>
+			<div>
+				<a href="/kamp/arsenal-liverpool-123">Arsenal - Liverpool</a>
+			</div>
 		`;
 		const result = parseListingPage(html);
 		expect(result).toHaveLength(1);
-		expect(result[0].homeTeam).toBe("Chelsea");
-		expect(result[0].awayTeam).toBe("Newcastle");
+		expect(result[0].homeTeam).toBe("Arsenal");
+		expect(result[0].awayTeam).toBe("Liverpool");
+		expect(result[0].matchUrl).toBe("https://www.tvkampen.com/kamp/arsenal-liverpool-123");
 	});
 
-	it("returns empty array for page with no match links", () => {
-		const html = `<div><p>No matches today</p></div>`;
+	it("fallback skips links without team separator", () => {
+		const html = `<a href="/kamp/some-random-page-123">Link text</a>`;
 		expect(parseListingPage(html)).toEqual([]);
 	});
 
-	it("skips links without vs or mot separator", () => {
-		const html = `<a href="/kamp/some-random-page-123">Link</a>`;
-		expect(parseListingPage(html)).toEqual([]);
+	it("fallback deduplicates by URL", () => {
+		const html = `
+			<a href="/kamp/test-match-123">Test FC - Match FC</a>
+			<a href="/kamp/test-match-123">Test FC - Match FC</a>
+		`;
+		const result = parseListingPage(html);
+		expect(result).toHaveLength(1);
 	});
 });
 
 // --- parseMatchPage ---
 
 describe("parseMatchPage", () => {
-	it("extracts broadcasters from Vises på section", () => {
+	it("extracts from rt-match-channel-list__channel-text spans", () => {
 		const html = `
-			<div>
-				<h3>Vises på:</h3>
-				<div>TV 2 Play, V Sport 1</div>
+			<div class="rt-match-channel-list">
+				<span class="rt-match-channel-list__channel-text">TV 2 Play</span>
+				<span class="rt-match-channel-list__channel-text">Viaplay</span>
 			</div>
 		`;
 		const result = parseMatchPage(html);
 		expect(result).toContain("TV 2 Play");
-		expect(result).toContain("V Sport 1");
+		expect(result).toContain("Viaplay");
 	});
 
-	it("extracts broadcasters from channel class elements", () => {
+	it("extracts from icon CSS classes in channel list section", () => {
 		const html = `
-			<span class="channel-name">Viaplay</span>
-			<span class="broadcaster-label">Discovery+</span>
+			<div class="rt-match-channel-list">
+				<div class="icons-channels-dazn icons-channels-max"></div>
+			</div>
 		`;
 		const result = parseMatchPage(html);
-		expect(result).toContain("Viaplay");
-		expect(result).toContain("Discovery+");
+		expect(result).toContain("DAZN");
+		expect(result).toContain("MAX");
 	});
 
 	it("detects known broadcaster names in page text", () => {
@@ -138,8 +300,11 @@ describe("parseMatchPage", () => {
 
 	it("filters out betting sites", () => {
 		const html = `
-			<div>
-				Vises på: </div><div>Viaplay, Bet365, Stake</div>
+			<div class="rt-match-channel-list">
+				<span class="rt-match-channel-list__channel-text">Viaplay</span>
+				<span class="rt-match-channel-list__channel-text">Bet365</span>
+				<span class="rt-match-channel-list__channel-text">Stake</span>
+			</div>
 		`;
 		const result = parseMatchPage(html);
 		expect(result).toContain("Viaplay");
@@ -158,11 +323,32 @@ describe("parseMatchPage", () => {
 		expect(result).toContain("NRK1");
 	});
 
-	it("detects MAX and DAZN", () => {
+	it("detects MAX and DAZN in text", () => {
 		const html = `<div>Stream live on DAZN or MAX</div>`;
 		const result = parseMatchPage(html);
 		expect(result).toContain("DAZN");
 		expect(result).toContain("MAX");
+	});
+
+	it("extracts from aria-label on channel items", () => {
+		const html = `
+			<div class="rt-match-channel-list__item" aria-label="TV 2 Play (NO)"></div>
+		`;
+		const result = parseMatchPage(html);
+		expect(result).toContain("TV 2 Play");
+	});
+
+	it("deduplicates across extraction methods", () => {
+		const html = `
+			<div class="rt-match-channel-list">
+				<span class="rt-match-channel-list__channel-text">Viaplay</span>
+				<div class="icons-channels-viaplay"></div>
+			</div>
+			<p>Se kampen på Viaplay.</p>
+		`;
+		const result = parseMatchPage(html);
+		const viaplayCount = result.filter(b => b === "Viaplay").length;
+		expect(viaplayCount).toBe(1);
 	});
 });
 
@@ -170,9 +356,10 @@ describe("parseMatchPage", () => {
 
 describe("fetchSportListings", () => {
 	it("calls fetcher with correct URL and parses result", async () => {
-		const mockFetcher = vi.fn().mockResolvedValue(
-			`<a href="/kamp/arsenal-vs-chelsea-111">20:00</a>`
+		const html = makeListingHtml(
+			makeEventBlock("5001", { home: "Arsenal", away: "Chelsea", time: "20:00", channelClasses: ["viaplay"] }),
 		);
+		const mockFetcher = vi.fn().mockResolvedValue(html);
 		const result = await fetchSportListings("fotball", "2026-02-17", mockFetcher);
 		expect(mockFetcher).toHaveBeenCalledWith("https://www.tvkampen.com/fotball/date/2026-02-17");
 		expect(result).toHaveLength(1);
@@ -191,9 +378,11 @@ describe("fetchSportListings", () => {
 describe("fetchMatchBroadcasters", () => {
 	it("fetches and parses match page", async () => {
 		const mockFetcher = vi.fn().mockResolvedValue(
-			`<div>Vises på:</div><div>TV 2 Play</div>`
+			`<div class="rt-match-channel-list">
+				<span class="rt-match-channel-list__channel-text">TV 2 Play</span>
+			</div>`
 		);
-		const result = await fetchMatchBroadcasters("https://www.tvkampen.com/kamp/test-vs-test-1", mockFetcher);
+		const result = await fetchMatchBroadcasters("https://www.tvkampen.com/kamp/test-test-1", mockFetcher);
 		expect(result).toContain("TV 2 Play");
 	});
 
@@ -207,14 +396,15 @@ describe("fetchMatchBroadcasters", () => {
 // --- fetchListingsWithBroadcasters ---
 
 describe("fetchListingsWithBroadcasters", () => {
-	it("fetches listings and broadcaster data", async () => {
-		let callCount = 0;
+	it("fetches listings with channel icons from listing page", async () => {
+		const listingHtml = makeListingHtml(
+			makeEventBlock("6001", { home: "Wolves", away: "Arsenal", time: "18:30", channelClasses: ["viaplay"] }),
+		);
 		const mockFetcher = vi.fn().mockImplementation((url) => {
-			callCount++;
 			if (url.includes("/date/")) {
-				return Promise.resolve(`<a href="/kamp/wolves-vs-arsenal-999">18:30</a>`);
+				return Promise.resolve(listingHtml);
 			}
-			return Promise.resolve(`<div>Sendes på Viaplay kl 18:30</div>`);
+			return Promise.resolve("<div></div>");
 		});
 
 		const result = await fetchListingsWithBroadcasters("fotball", ["2026-02-17"], mockFetcher);
@@ -223,22 +413,47 @@ describe("fetchListingsWithBroadcasters", () => {
 		expect(result[0].broadcasters).toContain("Viaplay");
 	});
 
-	it("deduplicates listings across dates", async () => {
+	it("fetches match page for entries without icon channels", async () => {
+		const listingHtml = makeListingHtml(
+			makeEventBlock("7001", { home: "Wolves", away: "Arsenal", time: "18:30", channelClasses: [] }),
+		);
 		const mockFetcher = vi.fn().mockImplementation((url) => {
 			if (url.includes("/date/")) {
-				return Promise.resolve(`<a href="/kamp/wolves-vs-arsenal-999">18:30</a>`);
+				return Promise.resolve(listingHtml);
 			}
-			return Promise.resolve(`<div>Viaplay</div>`);
+			return Promise.resolve(`<div>Sendes på Viaplay kl 18:30</div>`);
+		});
+
+		const result = await fetchListingsWithBroadcasters("fotball", ["2026-02-17"], mockFetcher);
+		expect(result).toHaveLength(1);
+		expect(result[0].broadcasters).toContain("Viaplay");
+	});
+
+	it("deduplicates listings across dates", async () => {
+		const listingHtml = makeListingHtml(
+			makeEventBlock("8001", { home: "Wolves", away: "Arsenal", time: "18:30", channelClasses: ["viaplay"] }),
+		);
+		const mockFetcher = vi.fn().mockImplementation((url) => {
+			if (url.includes("/date/")) {
+				return Promise.resolve(listingHtml);
+			}
+			return Promise.resolve("<div></div>");
 		});
 
 		const result = await fetchListingsWithBroadcasters("fotball", ["2026-02-17", "2026-02-18"], mockFetcher);
-		// Same match URL across both dates — should deduplicate to 1
 		expect(result).toHaveLength(1);
 	});
 
 	it("handles empty listings gracefully", async () => {
-		const mockFetcher = vi.fn().mockResolvedValue("<div>No matches</div>");
+		const mockFetcher = vi.fn().mockResolvedValue("<main><div>No matches</div></main>");
 		const result = await fetchListingsWithBroadcasters("fotball", ["2026-02-17"], mockFetcher);
 		expect(result).toEqual([]);
+	});
+
+	it("first date error propagates for reachability detection", async () => {
+		const mockFetcher = vi.fn().mockRejectedValue(new Error("ECONNREFUSED"));
+		await expect(
+			fetchListingsWithBroadcasters("fotball", ["2026-02-17"], mockFetcher)
+		).rejects.toThrow("ECONNREFUSED");
 	});
 });
