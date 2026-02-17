@@ -816,9 +816,9 @@
 		}
 		.empty-sport-note {
 			color: var(--muted);
-			font-size: 0.78rem;
-			padding: 6px 12px;
-			border-left: 3px solid var(--border);
+			font-size: 0.7rem;
+			padding: 4px 0;
+			opacity: 0.5;
 		}
 		.loading {
 			text-align: center;
@@ -950,11 +950,18 @@
 		}
 
 		/* --- Insights --- */
+		#insights:not(:empty) {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 12px 16px;
+			margin-bottom: 16px;
+			box-shadow: var(--shadow);
+		}
 		.insights-header {
-			font-size: 0.65rem;
+			font-size: 0.6rem;
 			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 0.06em;
+			letter-spacing: 0.1em;
 			color: var(--muted);
 			margin-bottom: 8px;
 		}

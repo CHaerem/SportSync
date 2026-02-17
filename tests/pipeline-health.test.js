@@ -833,6 +833,97 @@ describe("editorial no narrative detection", () => {
 	});
 });
 
+describe("editorial unsorted events detection", () => {
+	it("flags when This Week events are not chronological", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Fri 20:00 — Match A" },
+					{ type: "event-line", text: "🎮 Wed 10:00 — Match B" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("warning");
+	});
+
+	it("does not flag when This Week events are in order", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Wed 20:00 — Match A" },
+					{ type: "event-line", text: "🎮 Thu 10:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Fri 02:30 — Match C" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeUndefined();
+	});
+});
+
+describe("editorial personalization detection", () => {
+	it("flags section with Norwegian events but no flag indicators", () => {
+		const events = [
+			{ sport: "olympics", context: "olympics-2026", title: "Biathlon", time: new Date(Date.now() + 3600000).toISOString(), norwegian: true },
+			{ sport: "olympics", context: "olympics-2026", title: "Cross-Country", time: new Date(Date.now() + 7200000).toISOString(), norwegian: true },
+			{ sport: "football", title: "Match", time: new Date(Date.now() + 3600000).toISOString() },
+		];
+		const report = generateHealthReport({
+			events,
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{
+						type: "section",
+						id: "olympics-2026",
+						title: "Winter Olympics 2026",
+						items: [
+							{ text: "14:30 — Biathlon", type: "event" },
+							{ text: "15:30 — Cross-Country", type: "event" },
+						],
+					},
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_missing_personalization");
+		expect(issue).toBeDefined();
+	});
+
+	it("does not flag when section items have Norwegian flags", () => {
+		const events = [
+			{ sport: "olympics", context: "olympics-2026", title: "Biathlon", time: new Date(Date.now() + 3600000).toISOString(), norwegian: true },
+			{ sport: "olympics", context: "olympics-2026", title: "Cross-Country", time: new Date(Date.now() + 7200000).toISOString(), norwegian: true },
+		];
+		const report = generateHealthReport({
+			events,
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{
+						type: "section",
+						id: "olympics-2026",
+						title: "Winter Olympics 2026",
+						items: [
+							{ text: "14:30 — Biathlon 🇳🇴", type: "event" },
+							{ text: "15:30 — Cross-Country 🇳🇴", type: "event" },
+						],
+					},
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_missing_personalization");
+		expect(issue).toBeUndefined();
+	});
+});
+
 describe("chronic data retention detection", () => {
 	it("flags sport with high consecutive retains", () => {
 		const report = generateHealthReport({

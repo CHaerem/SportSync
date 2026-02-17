@@ -332,6 +332,53 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 7d. Editorial chronological order — "This Week" event-lines should be time-sorted
+	if (featured && Array.isArray(featured.blocks)) {
+		const dividerIdx = featured.blocks.findIndex((b) => b.type === "divider");
+		if (dividerIdx >= 0) {
+			const afterDivider = featured.blocks.slice(dividerIdx + 1).filter((b) => b.type === "event-line");
+			const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+			let prevDayIdx = -1;
+			let outOfOrder = false;
+			for (const line of afterDivider) {
+				const dayMatch = (line.text || "").match(/\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/);
+				if (dayMatch) {
+					const idx = dayOrder.indexOf(dayMatch[1]);
+					if (idx < prevDayIdx) { outOfOrder = true; break; }
+					prevDayIdx = idx;
+				}
+			}
+			if (outOfOrder) {
+				issues.push({
+					severity: "warning",
+					code: "editorial_unsorted_events",
+					message: "This Week event-lines are not in chronological order — fallback generator needs sort fix",
+				});
+			}
+		}
+	}
+
+	// 7e. Norwegian personalization — section items for Norwegian events should have flag indicator
+	if (featured && Array.isArray(featured.blocks)) {
+		const sectionBlocks = featured.blocks.filter((b) => b.type === "section");
+		for (const section of sectionBlocks) {
+			const norEventsInData = events.filter((e) =>
+				e.norwegian && e.context && section.id && e.context.toLowerCase().replace(/\s+/g, "-") === section.id
+			);
+			if (norEventsInData.length > 0) {
+				const itemTexts = (section.items || []).map((i) => (typeof i === "string" ? i : i?.text || ""));
+				const flaggedCount = itemTexts.filter((t) => t.includes("\u{1F1F3}\u{1F1F4}")).length;
+				if (flaggedCount === 0 && norEventsInData.length >= 2) {
+					issues.push({
+						severity: "info",
+						code: "editorial_missing_personalization",
+						message: `Section "${section.title || section.id}" has ${norEventsInData.length} Norwegian events but no flag indicators`,
+					});
+				}
+			}
+		}
+	}
+
 	// 8. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {

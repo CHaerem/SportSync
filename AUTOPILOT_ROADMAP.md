@@ -112,6 +112,8 @@ Read the dashboard code (`docs/index.html`, `docs/js/dashboard.js`) and reason a
 - Read the `render*()` methods in dashboard.js. Is data being presented in the most useful format?
 - Check what data exists in `events.json`, `standings.json`, `watch-plan.json`, `recent-results.json` but isn't rendered or is underutilized.
 - Look at the mobile experience (480px max-width constraint). Does the layout work well at that width?
+- **Read `health-report.json` issues with code prefix `editorial_*`** — These are automated detections of editorial quality issues (unsorted events, missing personalization, content duplication, no narrative). Each issue has a specific fix path.
+- **Take a screenshot** (`node scripts/screenshot.js --full-page`) and read it with the Read tool. Look for visual issues: misaligned sections, awkward spacing, missing visual hierarchy, data that appears but has no visual distinction from surrounding content.
 
 **Action:** Create tasks for specific visual or interaction improvements. Each task should describe WHAT changes, WHERE in the code, and WHY it improves the experience. Keep tasks small (≤300 lines) and independently shippable.
 
@@ -119,6 +121,8 @@ Read the dashboard code (`docs/index.html`, `docs/js/dashboard.js`) and reason a
 - "Standings data exists but only appears in editorial brief text — add collapsible inline PL table widget to football section"
 - "Must-watch events use subtle accent background but could have a more prominent visual treatment — add a ★ badge or border style"
 - "Recent results band is collapsed by default — experiment with showing the most recent favorite-team result prominently"
+- "health-report shows `editorial_unsorted_events` — fix `generateFallbackThisWeek()` to sort picked events by date"
+- "health-report shows `editorial_missing_personalization` — add Norwegian flag indicators to Olympics section items"
 
 ### H. New Capability Seeding
 

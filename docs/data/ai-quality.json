@@ -1,38 +1,31 @@
 {
-  "generatedAt": "2026-02-17T12:40:50.447Z",
+  "generatedAt": "2026-02-17T12:45:38.969Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 17467,
+    "generationMs": 3,
     "tokenUsage": {
-      "input": 33152,
-      "output": 434,
-      "cacheCreation": 17941,
-      "cacheRead": 15208,
-      "total": 33586,
-      "costUSD": 0.13122324999999999,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 96,
     "metrics": {
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0.857,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 14% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -59,13 +52,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.714
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 35,
@@ -77,19 +70,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 10,
-    "aiUpdatedFields": 35,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 35,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 119226,
-      "output": 3364,
-      "calls": 4,
-      "total": 122590,
-      "costUSD": 0.4206345,
-      "tracked": true,
-      "estimated": false
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   }
 }

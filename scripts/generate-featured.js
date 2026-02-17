@@ -560,8 +560,9 @@ function buildFallbackSections(events, now) {
 			const dayPrefix = eventDay !== todayStr
 				? t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" }) + " "
 				: "";
+			const norFlag = event.norwegian ? " 🇳🇴" : "";
 			return {
-				text: `${dayPrefix}${time} — ${event.title}`,
+				text: `${dayPrefix}${time} — ${event.title}${norFlag}`,
 				type: "event",
 			};
 		});
@@ -600,17 +601,23 @@ function generateFallbackThisWeek(events, now, sectionSports = []) {
 		...upcoming,
 	];
 
+	const picked = [];
 	for (const event of candidates) {
 		if (usedSports.has(event.sport)) continue;
 		usedSports.add(event.sport);
+		picked.push(event);
+		if (picked.length >= 3) break;
+	}
+
+	// Sort picked events chronologically for display
+	picked.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+	return picked.map((event) => {
 		const t = new Date(event.time);
 		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
 		const time = t.toLocaleTimeString("en-NO", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Oslo" });
-		parts.push(`${sportEmoji(event.sport)} ${day} ${time} — ${event.title}`);
-		if (parts.length >= 3) break;
-	}
-
-	return parts.slice(0, 3);
+		return `${sportEmoji(event.sport)} ${day} ${time} — ${event.title}`;
+	});
 }
 
 /**
