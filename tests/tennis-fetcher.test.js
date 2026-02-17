@@ -94,8 +94,49 @@ describe('TennisFetcher', () => {
 			expect(fetcher.transformESPNEvent(null)).toBeNull();
 		});
 
-		it('returns null for event without competitions', () => {
+		it('returns null for event without competitions and no date', () => {
 			expect(fetcher.transformESPNEvent({ name: 'Test' })).toBeNull();
+		});
+
+		it('creates tournament-level event in focused mode when no competitions', () => {
+			const espnEvent = {
+				name: 'Dubai Duty Free Tennis Championships',
+				date: futureDate,
+				endDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+				status: { type: { name: 'STATUS_IN_PROGRESS' } },
+				venue: { fullName: 'Dubai Tennis Stadium' },
+				sourceName: 'ATP Tour'
+			};
+
+			const event = fetcher.transformESPNEvent(espnEvent);
+			expect(event).not.toBeNull();
+			expect(event.title).toBe('Dubai Duty Free Tennis Championships');
+			expect(event.endTime).not.toBeNull();
+			expect(event._isTournament).toBe(true);
+		});
+
+		it('skips completed tournaments in focused mode', () => {
+			const espnEvent = {
+				name: 'Completed Open',
+				date: new Date(Date.now() - 86400000).toISOString(),
+				status: { type: { name: 'STATUS_FINAL' } },
+			};
+
+			const event = fetcher.transformESPNEvent(espnEvent);
+			expect(event).toBeNull();
+		});
+
+		it('detects Norwegian player in tournament-level event', () => {
+			const espnEvent = {
+				name: 'ATP 500 - Casper Ruud Entry',
+				date: futureDate,
+				status: { type: { name: 'STATUS_SCHEDULED' } },
+				sourceName: 'ATP Tour'
+			};
+
+			const event = fetcher.transformESPNEvent(espnEvent);
+			expect(event).not.toBeNull();
+			expect(event.norwegian).toBe(true);
 		});
 
 		it('detects Norwegian player by name part match', () => {
@@ -153,6 +194,16 @@ describe('TennisFetcher', () => {
 			const event = fetcher.transformESPNEvent(espnEvent);
 			expect(event).not.toBeNull();
 			expect(event.tournament).toBe('ATP Tour');
+		});
+	});
+
+	describe('_checkNorwegian()', () => {
+		it('returns true when Norwegian player name matches', () => {
+			expect(fetcher._checkNorwegian({ name: 'Casper Ruud vs Djokovic' })).toBe(true);
+		});
+
+		it('returns false for non-Norwegian event', () => {
+			expect(fetcher._checkNorwegian({ name: 'Sinner vs Alcaraz' })).toBe(false);
 		});
 	});
 
