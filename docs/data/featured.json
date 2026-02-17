@@ -2,7 +2,11 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Triple Olympic gold chase for Norway"
+      "text": "Norway's Olympic double: relay gold and Birk Ruud's big air moment"
+    },
+    {
+      "type": "narrative",
+      "text": "Two ★5 events on the same afternoon — the biathlon relay quartet and Birk Ruud in freestyle big air. This is Norway's biggest Olympic day yet in Milano-Cortina."
     },
     {
       "type": "event-schedule",
@@ -10,46 +14,42 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Three finals today",
-      "maxItems": 3,
+      "label": "🏅 Olympics today",
+      "maxItems": 6,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "narrative",
-      "text": "Oftebro hunts Nordic Combined medal at 10:00, biathlon relay dream team targets gold at 14:30, then Ruud defends Big Air title in prime time."
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Girona",
-      "awayTeam": "Barcelona"
-    },
-    {
-      "type": "narrative",
-      "text": "Barcelona's title challenge stumbles at Montilivi — first defeat in six weeks."
-    },
-    {
-      "type": "event-group",
-      "label": "⚽ Champions League returns",
-      "items": [
-        "21:00 — PSG at Monaco (French playoff derby)",
-        "21:00 — Real Madrid at Benfica (first leg)",
-        "21:00 — Atalanta at Dortmund (high-press thriller)"
-      ]
+      "type": "event-line",
+      "text": "⚽ Atalanta at Borussia Dortmund — CL last-16 first leg, Dortmund, 21:15"
     },
     {
       "type": "divider",
-      "text": "This Week"
+      "text": "Tomorrow — Big Wednesday"
     },
     {
-      "type": "event-line",
-      "text": "🏅 Wed 09:45 — Klaebo leads Team Sprint Free, chasing third gold"
+      "type": "event-group",
+      "label": "Champions League Wednesday",
+      "items": [
+        "⚽ Inter Milan at Bodø/Glimt — Historic CL night at Aspmyra, 21:00 [★5]",
+        "⚽ Arsenal at Wolverhampton — Title race, Arsenal lead by 4pts, 21:00 [★4]",
+        "⚽ Atlético Madrid at Club Brugge — CL last-16 first leg, 21:00 [★4]",
+        "⚽ Bayer Leverkusen at Olympiacos — CL last-16 first leg, 21:00 [★4]",
+        "⚽ Newcastle at FK Qarabag — CL last-16 opener, Baku, 18:45"
+      ]
     },
     {
-      "type": "event-line",
-      "text": "⚽ Wed 21:00 — Inter at Bodo/Glimt (historic CL knockout debut)"
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "tomorrow"
+      },
+      "label": "🏅 Olympics Wednesday",
+      "maxItems": 4,
+      "showFlags": true,
+      "style": "default"
     }
   ],
-  "generatedAt": "2026-02-17T18:29:30.593Z",
+  "generatedAt": "2026-02-17T20:02:43.814Z",
   "provider": "claude-cli"
 }

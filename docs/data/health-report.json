@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-17T18:29:32.297Z",
-  "eventCount": 44,
+  "generatedAt": "2026-02-17T20:02:45.246Z",
+  "eventCount": 41,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,14 +13,14 @@
       "delta": 0
     },
     "olympics": {
-      "count": 11,
+      "count": 10,
       "previousCount": 11,
-      "delta": 0
+      "delta": -1
     },
     "football": {
-      "count": 29,
-      "previousCount": 30,
-      "delta": -1
+      "count": 27,
+      "previousCount": 29,
+      "delta": -2
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2895,
+      "ageMinutes": 2989,
       "stale": true
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2660,
+      "ageMinutes": 2753,
       "stale": true
     },
     "tennis.json": {
@@ -93,10 +93,16 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 20,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
+  },
+  "streamingHealth": {
+    "present": true,
+    "tvkampenReachable": true,
+    "matchRate": 0,
+    "eventsEnriched": 0
   },
   "snapshotHealth": {
     "present": true,
@@ -111,14 +117,14 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 304765,
+    "totalDuration": 242832,
     "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 164842,
-        "share": 54
+        "duration": 116100,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -145,27 +151,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2895 minutes old"
+      "message": "chess.json: data is 2989 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2660 minutes old"
+      "message": "golf.json: data is 2753 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 14 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 15 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 14 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 15 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "standings_empty",
       "message": "pgaGolf standings data is empty"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_low_match_rate",
+      "message": "Streaming enrichment match rate is 0% (0/27) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -190,7 +201,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (165s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (116s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -210,12 +221,16 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 2/11 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/10 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 90/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [],
+    "hasRegression": false
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T18:29:32.412Z",
+  "generatedAt": "2026-02-17T20:02:45.371Z",
   "patternsDetected": 14,
   "patterns": [
     {
@@ -15,64 +15,64 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 154,
+      "count": 156,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 154 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 156 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "empty_day_snapshot",
-      "count": 43,
+      "count": 44,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"empty_day_snapshot\" has fired 43 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"empty_day_snapshot\" has fired 44 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "stale_data",
-      "count": 72,
+      "count": 74,
       "firstSeen": "2026-02-16T08:24:55.660Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"stale_data\" has fired 72 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"stale_data\" has fired 74 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "invisible_events",
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-16T08:24:55.660Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"invisible_events\" has fired 36 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"invisible_events\" has fired 37 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "quota_api_unavailable",
-      "count": 34,
+      "count": 35,
       "firstSeen": "2026-02-16T08:58:20.119Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"quota_api_unavailable\" has fired 34 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"quota_api_unavailable\" has fired 35 times since 2026-02-16. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 26,
+      "count": 28,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 26 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 28 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "chronic_data_retention",
-      "count": 22,
+      "count": 24,
       "firstSeen": "2026-02-17T12:50:28.325Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z",
-      "suggestion": "Health warning \"chronic_data_retention\" has fired 22 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"chronic_data_retention\" has fired 24 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -91,36 +91,42 @@
       "suggestion": "Hint \"RESULTS NOTE: Few recap headlines available — focus on scorelines and goal score...\" has fired 20 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
-      "type": "hint_fatigue",
-      "severity": "high",
-      "hintKey": "sanityScore",
-      "fireCount": 20,
-      "hintText": "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 22 football results have null recap...\" has fired 20 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
-    },
-    {
       "type": "architecture_pipeline_bloat",
       "severity": "high",
-      "pipelineSteps": 26,
+      "pipelineSteps": 27,
       "threshold": 20,
-      "suggestion": "Pipeline has 26 steps (threshold: 20). Consider combining steps that always run together."
+      "suggestion": "Pipeline has 27 steps (threshold: 20). Consider combining steps that always run together."
     },
     {
       "type": "recurring_health_warning",
       "severity": "medium",
       "issueCode": "olympics_stale_events",
-      "count": 7,
+      "count": 8,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-17T18:29:32.363Z",
-      "suggestion": "Health warning \"olympics_stale_events\" has fired 7 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"olympics_stale_events\" has fired 8 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
-      "type": "hint_fatigue",
+      "type": "recurring_health_warning",
       "severity": "medium",
-      "hintKey": "sanityScore",
-      "fireCount": 9,
-      "hintText": "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events d",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" b...\" has fired 9 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "issueCode": "standings_empty",
+      "count": 5,
+      "firstSeen": "2026-02-17T16:30:31.335Z",
+      "lastSeen": "2026-02-17T20:02:45.312Z",
+      "suggestion": "Health warning \"standings_empty\" has fired 5 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+    },
+    {
+      "type": "architecture_module_proliferation",
+      "severity": "medium",
+      "moduleCount": 54,
+      "threshold": 50,
+      "breakdown": {
+        "scripts": 30,
+        "lib": 16,
+        "fetch": 8
+      },
+      "inlineCandidates": [],
+      "suggestion": "54 modules exceed threshold of 50. Review scripts/ for consolidation opportunities."
     }
   ],
   "issueCodeHistory": {
@@ -130,9 +136,9 @@
       "lastSeen": "2026-02-17T12:16:08.440Z"
     },
     "sport_zero_events": {
-      "count": 154,
+      "count": 156,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "stale_output": {
       "count": 1,
@@ -140,34 +146,34 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     },
     "empty_day_snapshot": {
-      "count": 43,
+      "count": 44,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "stale_data": {
-      "count": 72,
+      "count": 74,
       "firstSeen": "2026-02-16T08:24:55.660Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "invisible_events": {
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-16T08:24:55.660Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "quota_api_unavailable": {
-      "count": 34,
+      "count": 35,
       "firstSeen": "2026-02-16T08:58:20.119Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "low_confidence_config": {
-      "count": 26,
+      "count": 28,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "chronic_data_retention": {
-      "count": 22,
+      "count": 24,
       "firstSeen": "2026-02-17T12:50:28.325Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "component_unresolvable": {
       "count": 3,
@@ -175,19 +181,19 @@
       "lastSeen": "2026-02-17T18:29:32.362Z"
     },
     "olympics_stale_events": {
-      "count": 7,
+      "count": 8,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-17T18:29:32.363Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "standings_empty": {
-      "count": 4,
+      "count": 5,
       "firstSeen": "2026-02-17T16:30:31.335Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "unmapped_leagues": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-17T17:02:40.037Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "step_timeout_hit": {
       "count": 1,
@@ -195,14 +201,14 @@
       "lastSeen": "2026-02-17T18:29:32.362Z"
     },
     "step_dominant_duration": {
-      "count": 1,
+      "count": 2,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     },
     "pipeline_step_failures": {
-      "count": 1,
+      "count": 2,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-17T20:02:45.312Z"
     }
   },
   "interventionEffectiveness": {
@@ -215,32 +221,32 @@
     },
     "sanityScore": {
       "fires": 19,
-      "improved": 6,
-      "unchanged": 9,
+      "improved": 7,
+      "unchanged": 8,
       "worsened": 4,
-      "effectivenessRate": 0.32
+      "effectivenessRate": 0.37
     },
     "mustWatchCoverage": {
-      "fires": 3,
-      "improved": 1,
+      "fires": 4,
+      "improved": 2,
       "unchanged": 1,
       "worsened": 1,
-      "effectivenessRate": 0.33
+      "effectivenessRate": 0.5
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-17T18:29:32.410Z",
-    "moduleCount": 50,
-    "avgModuleSize": 299,
-    "pipelineSteps": 26,
-    "testCoverageRatio": 1.1,
+    "recordedAt": "2026-02-17T20:02:45.371Z",
+    "moduleCount": 54,
+    "avgModuleSize": 293,
+    "pipelineSteps": 27,
+    "testCoverageRatio": 1.09,
     "smallModuleRatio": 0.02,
     "thresholdOverrides": {}
   },
   "architectureDelta": {
-    "moduleCount": 0,
-    "avgModuleSize": 0,
-    "pipelineSteps": 0
+    "moduleCount": 4,
+    "avgModuleSize": -6,
+    "pipelineSteps": 1
   },
-  "summary": "14 patterns detected (12 high, 2 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 44 times since 2026-02-13."
+  "summary": "14 patterns detected (11 high, 3 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 44 times since 2026-02-13."
 }
