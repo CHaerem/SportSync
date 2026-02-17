@@ -160,6 +160,11 @@
       "severity": "warning",
       "code": "failed_batches_increase",
       "message": "Failed batches increased from 0 to 2"
+    },
+    {
+      "severity": "warning",
+      "code": "failed_batches_increase",
+      "message": "Failed batches increased from 0 to 1"
     }
   ],
   "status": "warning",
@@ -168,7 +173,13 @@
     "tokenUsage": null
   },
   "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "failed_batches_increase",
+        "message": "Failed batches increased from 0 to 1"
+      }
+    ],
+    "hasRegression": true
   }
 }
