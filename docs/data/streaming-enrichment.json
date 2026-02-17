@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-17T20:07:07.001Z",
+  "generatedAt": "2026-02-17T20:49:34.888Z",
   "dates": [
     "2026-02-17",
     "2026-02-18"
   ],
   "tvkampenReachable": true,
   "listingsFound": 22,
-  "matchesAttempted": 30,
-  "matchesSucceeded": 3,
-  "eventsEnriched": 3,
-  "totalEvents": 45,
-  "matchRate": 0.1,
+  "matchesAttempted": 26,
+  "matchesSucceeded": 5,
+  "eventsEnriched": 5,
+  "totalEvents": 40,
+  "matchRate": 0.19,
   "unmatched": [
     {
       "homeTeam": "Bristol City",
@@ -63,6 +63,21 @@
       "time": "21:00"
     },
     {
+      "homeTeam": "Benfica",
+      "awayTeam": "Real Madrid",
+      "time": "21:00"
+    },
+    {
+      "homeTeam": "Monaco",
+      "awayTeam": "Paris Saint-Germain",
+      "time": "21:00"
+    },
+    {
+      "homeTeam": "Borussia Dortmund",
+      "awayTeam": "Atalanta",
+      "time": "21:15"
+    },
+    {
       "homeTeam": "Kristiansund",
       "awayTeam": "HamKam",
       "time": "17:00"
@@ -73,45 +88,49 @@
       "time": "18:45"
     },
     {
-      "homeTeam": "Qarabağ",
-      "awayTeam": "Newcastle",
-      "time": "18:45"
-    },
-    {
-      "homeTeam": "Levante",
-      "awayTeam": "Villarreal",
-      "time": "20:00"
-    },
-    {
       "homeTeam": "Milan",
       "awayTeam": "Como",
       "time": "20:45"
     },
     {
-      "homeTeam": "Wolverhampton",
-      "awayTeam": "Arsenal",
-      "time": "21:00"
-    },
-    {
       "homeTeam": "Arsenal WFC",
       "awayTeam": "OH Leuven",
-      "time": "21:00"
-    },
-    {
-      "homeTeam": "Club Brugge",
-      "awayTeam": "Atlético Madrid",
-      "time": "21:00"
-    },
-    {
-      "homeTeam": "Olympiakos",
-      "awayTeam": "Bayer Leverkusen",
       "time": "21:00"
     }
   ],
   "enrichedEvents": [
     {
-      "homeTeam": "Benfica",
-      "awayTeam": "Real Madrid",
+      "homeTeam": "FK Qarabag",
+      "awayTeam": "Newcastle United",
+      "broadcasters": [
+        "TV 2 Play",
+        "TV 2 Sport 1",
+        "Viaplay",
+        "Eurosport Norge",
+        "MAX"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Levante",
+      "awayTeam": "Villarreal",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Wolverhampton Wanderers",
+      "awayTeam": "Arsenal",
+      "broadcasters": [
+        "Viaplay",
+        "Vsport"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Club Brugge",
+      "awayTeam": "Atlético Madrid",
       "broadcasters": [
         "TV 2 Play",
         "Viaplay",
@@ -121,26 +140,17 @@
       "confidence": 1
     },
     {
-      "homeTeam": "AS Monaco",
-      "awayTeam": "Paris Saint-Germain",
+      "homeTeam": "Olympiacos",
+      "awayTeam": "Bayer Leverkusen",
       "broadcasters": [
         "TV 2 Play",
         "Viaplay",
         "Eurosport Norge",
         "MAX"
       ],
-      "confidence": 1
-    },
-    {
-      "homeTeam": "Borussia Dortmund",
-      "awayTeam": "Atalanta",
-      "broadcasters": [
-        "TV 2 Play",
-        "Viaplay",
-        "Eurosport Norge",
-        "MAX"
-      ],
-      "confidence": 1
+      "confidence": 0.7
     }
-  ]
+  ],
+  "aliasSuggestions": [],
+  "hintsApplied": []
 }

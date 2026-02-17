@@ -1,37 +1,39 @@
 {
-  "generatedAt": "2026-02-17T20:19:42.605Z",
+  "generatedAt": "2026-02-17T20:51:28.105Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 16177,
+    "blockCount": 6,
+    "generationMs": 16253,
     "tokenUsage": {
-      "input": 34126,
-      "output": 469,
-      "cacheCreation": 18628,
+      "input": 34331,
+      "output": 445,
+      "cacheCreation": 18833,
       "cacheRead": 15495,
-      "total": 34595,
-      "costUSD": 0.1365055,
+      "total": 34776,
+      "costUSD": 0.13717675,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 86,
+    "score": 82,
     "metrics": {
-      "mustWatchCoverage": 0.7,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 0.889,
+      "sportDiversity": 0.25,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Sport diversity is 25%"
+    ]
   },
   "watchPlan": {
     "score": 100,
@@ -64,7 +66,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.7
+      "tagsCoverage": 0.725
     },
     "after": {
       "totalEvents": 40,
@@ -76,17 +78,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 12,
+    "fallbackFieldsFilled": 11,
     "aiUpdatedFields": 40,
     "failedBatches": 0,
     "totalEvents": 40,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 121793,
-      "output": 3788,
+      "input": 122901,
+      "output": 2977,
       "calls": 4,
-      "total": 125581,
-      "costUSD": 0.44078075,
+      "total": 125878,
+      "costUSD": 0.426934,
       "tracked": true,
       "estimated": false
     }

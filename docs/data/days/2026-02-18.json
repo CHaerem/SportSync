@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-18",
-  "generatedAt": "2026-02-17T20:19:42.937Z",
+  "generatedAt": "2026-02-17T20:51:28.452Z",
   "events": {
     "upcoming": [
       {
@@ -33,15 +33,15 @@
         "isFavorite": false,
         "context": "olympics-2026",
         "importance": 5,
-        "importanceReason": "Olympic final featuring Johannes Klaebo, Norway's greatest cross-country skier",
-        "summary": "Klaebo leads Norway in the Team Sprint Free — a high-speed, tactical event where Norway is a strong medal contender.",
+        "importanceReason": "Klaebo in Olympic team sprint, Norway gold favourite",
+        "summary": "Johannes Høsflot Klæbo anchors Norway's team sprint bid — Norway is heavy favourite in this flagship cross-country event.",
         "tags": [
           "must-watch",
           "final",
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-17T20:19:25.687Z"
+        "enrichedAt": "2026-02-17T20:51:11.093Z"
       },
       {
         "sport": "olympics",
@@ -75,15 +75,15 @@
         "isFavorite": false,
         "context": "olympics-2026",
         "importance": 4,
-        "importanceReason": "Olympic relay final with two key Norwegian biathletes competing",
-        "summary": "Kirkeeide and Tandrevold anchor Norway's women's biathlon relay bid for Olympic gold at Anterselva.",
+        "importanceReason": "Norwegian biathletes in Olympic relay final",
+        "summary": "Kirkeeide and Tandrevold lead Norway's women's biathlon relay — strong medal contenders at the Milan-Cortina Olympics.",
         "tags": [
           "must-watch",
           "final",
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-17T20:19:25.687Z"
+        "enrichedAt": "2026-02-17T20:51:11.093Z"
       },
       {
         "sport": "football",
@@ -96,9 +96,34 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Check local listings",
-            "url": "",
-            "type": "info"
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "TV 2 Sport 1",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -110,14 +135,16 @@
         "homeTeam": "FK Qarabag",
         "awayTeam": "Newcastle United",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 3,
-        "importanceReason": "Champions League knockout first leg, Newcastle seeking European progress",
-        "summary": "Newcastle travel to Baku for the first leg against Qarabag — English side heavy favourites to advance.",
+        "importanceReason": "Champions League knockout stage first leg",
+        "summary": "Newcastle travel to Baku for a winnable Champions League first leg — English side favoured against Azerbaijani champions.",
         "tags": [
-          "major"
+          "must-watch"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.093Z"
       },
       {
         "sport": "football",
@@ -130,9 +157,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -144,14 +172,16 @@
         "homeTeam": "Levante",
         "awayTeam": "Villarreal",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 2,
-        "importanceReason": "Mid-table La Liga fixture with limited title or relegation stakes",
-        "summary": "Villarreal visit Levante in a routine La Liga fixture — neither side pushing for the title or fighting relegation urgently.",
+        "importanceReason": "Mid-table La Liga fixture, limited stakes",
+        "summary": "Villarreal visit Levante in a routine La Liga match with limited title or relegation implications.",
         "tags": [
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.094Z"
       },
       {
         "sport": "football",
@@ -165,8 +195,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -178,15 +215,17 @@
         "homeTeam": "Wolverhampton Wanderers",
         "awayTeam": "Arsenal",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 4,
-        "importanceReason": "Arsenal title-race match away at Wolves in Premier League",
-        "summary": "Arsenal travel to Molineux needing a win to keep pressure on the top — a pivotal Premier League title-race fixture.",
+        "importanceReason": "Arsenal title challenge — must-win Premier League away fixture",
+        "summary": "Arsenal visit Wolves in a crucial Premier League fixture as the Gunners chase the title — three points vital.",
         "tags": [
           "must-watch",
           "title-race"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.094Z"
       },
       {
         "sport": "football",
@@ -214,16 +253,16 @@
         "awayTeam": "Internazionale",
         "isFavorite": false,
         "importance": 5,
-        "importanceReason": "Norwegian club Bodo/Glimt host Serie A giants Inter in Champions League",
-        "summary": "Bodo/Glimt host Internazionale in a stunning Champions League first leg — Norway's pride against European royalty at Aspmyra.",
+        "importanceReason": "Norwegian club Bodø/Glimt host Inter Milan in Champions League",
+        "summary": "Bodø/Glimt host Internazionale in a historic Champions League knockout tie — Norway's biggest club match in years.",
         "tags": [
           "must-watch",
+          "final",
           "norwegian-team",
-          "upset-potential",
-          "classic-matchup"
+          "upset-potential"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.094Z"
       },
       {
         "sport": "football",
@@ -236,9 +275,28 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Check local listings",
-            "url": "",
-            "type": "info"
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -250,14 +308,16 @@
         "homeTeam": "Club Brugge",
         "awayTeam": "Atlético Madrid",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 4,
-        "importanceReason": "Champions League first leg featuring Atlético Madrid's high-stakes European campaign",
-        "summary": "Atlético Madrid travel to Bruges for the first leg — Simeone's side expected to grind out a result in Belgium.",
+        "importanceReason": "Atlético Madrid in Champions League knockout stage",
+        "summary": "Atlético Madrid face Club Brugge in a tightly contested Champions League first leg — Simeone's side slight favourites.",
         "tags": [
           "must-watch"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.094Z"
       },
       {
         "sport": "football",
@@ -270,9 +330,28 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Check local listings",
-            "url": "",
-            "type": "info"
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -284,15 +363,16 @@
         "homeTeam": "Olympiacos",
         "awayTeam": "Bayer Leverkusen",
         "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "Champions League knockout stage first leg, high stakes European tie.",
-        "summary": "Leverkusen travel to Athens for the first leg of their Champions League knockout round clash.",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 0.7,
+        "importance": 3,
+        "importanceReason": "Champions League knockout stage opener, Leverkusen are strong favorites",
+        "summary": "Leverkusen travel to Greece for the first leg of this Champions League last-32 tie as heavy favorites.",
         "tags": [
-          "must-watch",
-          "classic-matchup"
+          "must-watch"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-17T20:19:25.688Z"
+        "enrichedAt": "2026-02-17T20:51:11.094Z"
       }
     ],
     "results": []

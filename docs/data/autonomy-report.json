@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-17T20:19:44.201Z",
+  "generatedAt": "2026-02-17T20:51:29.809Z",
   "overallScore": 0.98,
-  "loopsClosed": 9,
-  "loopsTotal": 10,
+  "loopsClosed": 10,
+  "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 0.75,
       "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 9 actionable issue(s) (17 total)"
+      "details": "Health report is fresh (0 min old) but has 7 actionable issue(s) (15 total)"
     },
     "watchPlan": {
       "score": 1,
@@ -53,6 +53,11 @@
       "score": 1,
       "status": "closed",
       "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
+    },
+    "streamingVerification": {
+      "score": 1,
+      "status": "closed",
+      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
   "nextActions": [

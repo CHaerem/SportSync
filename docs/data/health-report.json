@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T20:19:44.164Z",
+  "generatedAt": "2026-02-17T20:51:29.770Z",
   "eventCount": 40,
   "sportCoverage": {
     "chess": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 26,
-      "previousCount": 27,
-      "delta": -1
+      "previousCount": 26,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3006,
+      "ageMinutes": 3037,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -101,8 +101,10 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0,
-    "eventsEnriched": 0
+    "matchRate": 0.19,
+    "eventsEnriched": 5,
+    "trend": "stable",
+    "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
@@ -117,14 +119,14 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 259465,
+    "totalDuration": 241411,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 121798,
-        "share": 47
+        "duration": 110815,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -151,22 +153,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 3006 minutes old"
+      "message": "chess.json: data is 3037 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 16 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 17 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 0% (0/26) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
+      "message": "Streaming enrichment match rate is 19% (5/26) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -191,7 +188,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (111s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -216,7 +213,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 86/100.",
+    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 82/100.",
     "tokenUsage": null
   }
 }
