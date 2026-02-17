@@ -141,7 +141,23 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 2b. Critical output freshness (featured.json, ai-quality.json)
+	// 2b. Chronic data retention detection
+	// When retainLastGood keeps old data across multiple pipeline runs, something is wrong:
+	// either the API is consistently failing, the filter is too restrictive, or the data is stale.
+	for (const [filename, data] of Object.entries(sportFiles)) {
+		const retained = data?._retained;
+		if (retained && retained.consecutiveRetains >= 3) {
+			const sport = filename.replace(".json", "");
+			const retainedSince = retained.since ? new Date(retained.since).toISOString().slice(0, 10) : "unknown";
+			issues.push({
+				severity: "warning",
+				code: "chronic_data_retention",
+				message: `${sport}: data retained ${retained.consecutiveRetains} consecutive times (since ${retainedSince}) — fetcher returning empty results, serving stale data`,
+			});
+		}
+	}
+
+	// 2c. Critical output freshness (featured.json, ai-quality.json)
 	const { criticalOutputs = {} } = options;
 	for (const [name, data] of Object.entries(criticalOutputs)) {
 		const age = ageMinutes(data?.generatedAt || data?.timestamp);

@@ -96,6 +96,45 @@ describe("fetch orchestrator patterns", () => {
 				expect(current).toEqual(newData);
 			}
 		});
+
+		it("tracks consecutive retains in _retained metadata", () => {
+			const target = path.join(tmpDir, "tennis.json");
+			const oldData = { tournaments: [{ name: "ATP", events: [{ title: "M1" }] }], lastUpdated: new Date().toISOString() };
+			fs.writeFileSync(target, JSON.stringify(oldData));
+
+			const emptyData = { tournaments: [{ name: "ATP", events: [] }] };
+
+			// First retain
+			const r1 = retainLastGood(target, emptyData);
+			expect(r1.kept).toBe(true);
+			const d1 = JSON.parse(fs.readFileSync(target, "utf-8"));
+			expect(d1._retained).toBeDefined();
+			expect(d1._retained.consecutiveRetains).toBe(1);
+
+			// Second retain
+			const r2 = retainLastGood(target, emptyData);
+			expect(r2.kept).toBe(true);
+			const d2 = JSON.parse(fs.readFileSync(target, "utf-8"));
+			expect(d2._retained.consecutiveRetains).toBe(2);
+			// Since should stay the same
+			expect(d2._retained.since).toBe(d1._retained.since);
+		});
+
+		it("clears _retained when fresh data arrives", () => {
+			const target = path.join(tmpDir, "tennis.json");
+			const oldData = {
+				tournaments: [{ name: "ATP", events: [{ title: "M1" }] }],
+				lastUpdated: new Date().toISOString(),
+				_retained: { since: "2026-02-15T00:00:00Z", consecutiveRetains: 5 },
+			};
+			fs.writeFileSync(target, JSON.stringify(oldData));
+
+			const freshData = { tournaments: [{ name: "ATP", events: [{ title: "M1" }, { title: "M2" }] }] };
+			const result = retainLastGood(target, freshData);
+			expect(result.kept).toBe(false);
+			const current = JSON.parse(fs.readFileSync(target, "utf-8"));
+			expect(current._retained).toBeUndefined();
+		});
 	});
 
 	describe("result filtering logic", () => {

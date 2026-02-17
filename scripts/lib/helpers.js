@@ -119,10 +119,19 @@ export function retainLastGood(targetFile, newData, maxAgeDays = 14) {
 			? (Date.now() - new Date(exists.lastUpdated).getTime()) / (1000 * 60 * 60 * 24)
 			: Infinity;
 		if (retainedAge <= maxAgeDays) {
+			// Mark the retained data so health checks can detect chronic retention
+			exists._retained = {
+				since: exists._retained?.since || new Date().toISOString(),
+				consecutiveRetains: (exists._retained?.consecutiveRetains || 0) + 1,
+				lastFreshFetch: exists._retained?.lastFreshFetch || exists.lastUpdated || null,
+			};
+			writeJsonPretty(targetFile, exists);
 			return { kept: true, data: exists };
 		}
 		console.warn(`Retained data expired (${Math.round(retainedAge)} days old) for ${path.basename(targetFile)}`);
 	}
+	// Fresh data — clear retention marker
+	if (newData && newData._retained) delete newData._retained;
 	writeJsonPretty(targetFile, newData);
 	return { kept: false, data: newData };
 }

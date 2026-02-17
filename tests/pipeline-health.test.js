@@ -746,3 +746,51 @@ describe("Norwegian tagging anomaly detection", () => {
 		expect(anomaly).toBeUndefined();
 	});
 });
+
+describe("chronic data retention detection", () => {
+	it("flags sport with high consecutive retains", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"tennis.json": {
+					lastUpdated: new Date().toISOString(),
+					tournaments: [{ events: [{ title: "Old match", time: new Date().toISOString() }] }],
+					_retained: { since: "2026-02-15T00:00:00Z", consecutiveRetains: 5, lastFreshFetch: "2026-02-14T00:00:00Z" },
+				},
+			},
+		});
+		const issue = report.issues.find(i => i.code === "chronic_data_retention");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("tennis");
+		expect(issue.message).toContain("5 consecutive");
+	});
+
+	it("does not flag sport with low consecutive retains", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"tennis.json": {
+					lastUpdated: new Date().toISOString(),
+					tournaments: [{ events: [{ title: "Match", time: new Date().toISOString() }] }],
+					_retained: { since: "2026-02-17T00:00:00Z", consecutiveRetains: 1 },
+				},
+			},
+		});
+		const issue = report.issues.find(i => i.code === "chronic_data_retention");
+		expect(issue).toBeUndefined();
+	});
+
+	it("does not flag sport without retention metadata", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: {
+				"football.json": {
+					lastUpdated: new Date().toISOString(),
+					tournaments: [{ events: [{ title: "Match", time: new Date().toISOString() }] }],
+				},
+			},
+		});
+		const issue = report.issues.find(i => i.code === "chronic_data_retention");
+		expect(issue).toBeUndefined();
+	});
+});
