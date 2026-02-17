@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-17T13:58:00.695Z",
+  "generatedAt": "2026-02-17T14:29:36.797Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 16113,
+    "blockCount": 7,
+    "generationMs": 33766,
     "tokenUsage": {
-      "input": 33867,
-      "output": 308,
-      "cacheCreation": 18656,
-      "cacheRead": 15208,
-      "total": 34175,
-      "costUSD": 0.132377,
+      "input": 103096,
+      "output": 991,
+      "cacheCreation": 19842,
+      "cacheRead": 83238,
+      "total": 104087,
+      "costUSD": 0.1931495,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -37,7 +37,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 121,
+      "avgScore": 117,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -64,7 +64,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.629
+      "tagsCoverage": 0.743
     },
     "after": {
       "totalEvents": 35,
@@ -76,19 +76,17 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 13,
+    "fallbackFieldsFilled": 9,
     "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 119990,
-      "output": 3536,
+      "input": 119874,
+      "output": 3207,
       "calls": 4,
-      "total": 123526,
-      "costUSD": 0.42993625,
+      "total": 123081,
+      "costUSD": 0.42064925000000003,
       "tracked": true,
       "estimated": false
     }

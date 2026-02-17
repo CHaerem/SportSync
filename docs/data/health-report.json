@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T13:58:02.007Z",
+  "generatedAt": "2026-02-17T14:29:38.134Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2624,
+      "ageMinutes": 2656,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2389,
+      "ageMinutes": 2420,
       "stale": true
     },
     "tennis.json": {
@@ -124,22 +124,27 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2624 minutes old"
+      "message": "chess.json: data is 2656 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2389 minutes old"
+      "message": "golf.json: data is 2420 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 6 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 7 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 6 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 7 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -165,11 +170,16 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+    },
+    {
+      "severity": "info",
+      "code": "olympics_stale_events",
+      "message": "olympics-2026.json: 1/11 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
