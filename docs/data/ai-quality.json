@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T15:21:39.550Z",
+  "generatedAt": "2026-02-17T16:12:55.422Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
@@ -7,24 +7,24 @@
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 17149,
+    "generationMs": 22946,
     "tokenUsage": {
-      "input": 33729,
-      "output": 356,
-      "cacheCreation": 18518,
+      "input": 33700,
+      "output": 448,
+      "cacheCreation": 18489,
       "cacheRead": 15208,
-      "total": 34085,
-      "costUSD": 0.1325945,
+      "total": 34148,
+      "costUSD": 0.13493324999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 62,
     "metrics": {
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0.167,
+      "sportDiversity": 0.333,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -32,7 +32,7 @@
       "componentUtilization": 1
     },
     "issues": [
-      "Only 14% of must-watch events covered in blocks"
+      "Only 17% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
@@ -62,14 +62,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 35,
+      "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.743
+      "tagsCoverage": 0.689
     },
     "after": {
-      "totalEvents": 35,
+      "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -78,19 +78,32 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
-    "aiUpdatedFields": 35,
+    "fallbackFieldsFilled": 14,
+    "aiUpdatedFields": 45,
     "failedBatches": 0,
-    "totalEvents": 35,
-    "hintsApplied": [],
+    "totalEvents": 45,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 119825,
-      "output": 3193,
-      "calls": 4,
-      "total": 123018,
-      "costUSD": 0.42037775,
+      "input": 150127,
+      "output": 4201,
+      "calls": 5,
+      "total": 154328,
+      "costUSD": 0.5281009999999999,
       "tracked": true,
       "estimated": false
     }
+  },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 33700,
+      "output": 448,
+      "calls": 1,
+      "total": 34148,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-02-17T16:12:55.596Z"
   }
 }

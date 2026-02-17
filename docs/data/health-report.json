@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-17T15:21:40.834Z",
-  "eventCount": 35,
+  "generatedAt": "2026-02-17T16:13:15.877Z",
+  "eventCount": 45,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 20,
+      "count": 30,
       "previousCount": 20,
-      "delta": 0
+      "delta": 10
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2708,
+      "ageMinutes": 2759,
       "stale": true
     },
     "esports.json": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2472,
+      "ageMinutes": 2524,
       "stale": true
     },
     "tennis.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -87,7 +87,7 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": true,
+    "pgaGolf": false,
     "f1Drivers": true
   },
   "resultsHealth": {
@@ -124,22 +124,27 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2708 minutes old"
+      "message": "chess.json: data is 2759 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2472 minutes old"
+      "message": "golf.json: data is 2524 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 9 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 10 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 9 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 10 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "standings_empty",
+      "message": "pgaGolf standings data is empty"
     },
     {
       "severity": "warning",
@@ -174,7 +179,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 68/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 62/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
