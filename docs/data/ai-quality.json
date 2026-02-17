@@ -1,34 +1,29 @@
 {
-  "generatedAt": "2026-02-17T09:27:46.173Z",
+  "generatedAt": "2026-02-17T09:25:46.436Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 19503,
+    "blockCount": 10,
+    "generationMs": 3,
     "tokenUsage": {
-      "input": 32851,
-      "output": 421,
-      "cacheCreation": 17640,
-      "cacheRead": 15208,
-      "total": 33272,
-      "costUSD": 0.128977,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 86,
+    "score": 92,
     "metrics": {
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1
+      "blockCountTarget": 0.7
     },
     "issues": []
   },
@@ -36,7 +31,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 121,
+      "avgScore": 109,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -57,13 +52,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.578
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 45,
@@ -75,19 +70,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 19,
-    "aiUpdatedFields": 45,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 45,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 148893,
-      "output": 3952,
-      "calls": 5,
-      "total": 152845,
-      "costUSD": 0.5143814999999999,
-      "tracked": true,
-      "estimated": false
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   }
 }
