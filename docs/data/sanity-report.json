@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-16T22:14:37.056Z",
+  "generatedAt": "2026-02-17T00:47:03.267Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 32,
@@ -13,15 +13,16 @@
     ],
     "bands": {
       "live": [],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Biathlon — Men's 4x7.5km Relay"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Cross-Country Skiing — Team Sprint Free",
         "Biathlon — Women's 4x6km Relay",
         "Villarreal at Levante",
-        "Arsenal at Wolverhampton Wanderers",
+        "Arsenal at Wolverhampton Wanderers"
+      ],
+      "thisWeek": [
         "Roman Imperium Cup V",
         "Biathlon — Men's 15km Mass Start",
         "Elche at Athletic Club",
@@ -45,7 +46,7 @@
         "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
         "Closing Ceremony",
-        "Valencia at Villarreal"
+        "Manchester United at Everton"
       ],
       "later": [
         "Qatar Airways Australian Grand Prix"
@@ -55,52 +56,27 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 68,
+    "editorialScore": 71,
     "issueCount": 9
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Qatar Airways Australian Grand Prix\" is 18 days away — may clutter the dashboard"
+      "message": "\"Qatar Airways Australian Grand Prix\" is 17 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 68/100 (below threshold)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfc5 Biathlon relay — Boe brothers and Laegreid target gold\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tricky\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Leeds United at Aston Villa\" but events.json has 16:00"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Villarreal at Levante\" but events.json has 20:00"
+      "message": "Featured mentions \"Four\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -109,10 +85,10 @@
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 4,
     "critical": 0,
-    "warning": 9,
-    "info": 0
+    "warning": 3,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

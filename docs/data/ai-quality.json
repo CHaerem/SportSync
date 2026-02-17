@@ -1,30 +1,30 @@
 {
-  "generatedAt": "2026-02-16T22:14:28.710Z",
+  "generatedAt": "2026-02-17T00:46:38.536Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 16621,
+    "blockCount": 6,
+    "generationMs": 17633,
     "tokenUsage": {
-      "input": 33045,
-      "output": 495,
-      "cacheCreation": 17834,
+      "input": 33038,
+      "output": 458,
+      "cacheCreation": 17827,
       "cacheRead": 15208,
-      "total": 33540,
-      "costUSD": 0.13183949999999997,
+      "total": 33496,
+      "costUSD": 0.13081074999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 71,
     "metrics": {
       "mustWatchCoverage": 0.25,
-      "sportDiversity": 0.5,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -65,7 +65,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.75
+      "tagsCoverage": 0.656
     },
     "after": {
       "totalEvents": 32,
@@ -77,7 +77,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 8,
+    "fallbackFieldsFilled": 11,
     "aiUpdatedFields": 32,
     "failedBatches": 0,
     "totalEvents": 32,
@@ -85,13 +85,24 @@
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 118907,
-      "output": 3014,
+      "input": 118851,
+      "output": 2957,
       "calls": 4,
-      "total": 121921,
-      "costUSD": 0.4190995,
+      "total": 121808,
+      "costUSD": 0.41749875000000003,
       "tracked": true,
       "estimated": false
     }
+  },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 33038,
+      "output": 458,
+      "calls": 1,
+      "total": 33496,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-02-17T00:46:38.710Z"
   }
 }
