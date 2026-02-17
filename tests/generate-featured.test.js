@@ -116,14 +116,15 @@ describe("buildFallbackFeatured()", () => {
 		expect(result.blocks.length).toBeGreaterThan(0);
 	});
 
-	it("includes event-line blocks for today's events", () => {
+	it("includes event content blocks for today's events", () => {
 		const events = [
 			{ sport: "football", title: "Arsenal vs Chelsea", time: futureTime(), homeTeam: "Arsenal", awayTeam: "Chelsea" },
 			{ sport: "golf", title: "The Open", time: futureTime(3) },
 		];
 		const result = buildFallbackFeatured(events, new Date());
-		const eventLines = result.blocks.filter((b) => b.type === "event-line");
-		expect(eventLines.length).toBeGreaterThanOrEqual(1);
+		// Football becomes match-preview, golf stays as event-line
+		const contentBlocks = result.blocks.filter((b) => ["event-line", "match-preview", "match-result"].includes(b.type));
+		expect(contentBlocks.length).toBeGreaterThanOrEqual(1);
 	});
 
 	it("handles empty events", () => {
@@ -133,14 +134,15 @@ describe("buildFallbackFeatured()", () => {
 		expect(Array.isArray(result.blocks)).toBe(true);
 	});
 
-	it("includes major event sections when applicable", () => {
+	it("includes event-schedule component for Olympics", () => {
 		const events = [
 			{ sport: "olympics", title: "Biathlon", time: futureTime(), context: "olympics-2026", tournament: "Winter Olympics 2026" },
 		];
 		const result = buildFallbackFeatured(events, new Date());
-		const sections = result.blocks.filter((b) => b.type === "section");
-		expect(sections.length).toBeGreaterThanOrEqual(1);
-		expect(sections[0].style).toBe("highlight");
+		const schedules = result.blocks.filter((b) => b.type === "event-schedule");
+		expect(schedules.length).toBe(1);
+		expect(schedules[0].filter.sport).toBe("olympics");
+		expect(schedules[0].style).toBe("highlight");
 	});
 
 	it("includes headline block when events exist", () => {
@@ -152,7 +154,7 @@ describe("buildFallbackFeatured()", () => {
 		expect(headlines.length).toBe(1);
 	});
 
-	it("includes result event-lines when recentResults has favorites", () => {
+	it("includes match-result components when recentResults has favorites", () => {
 		const now = new Date();
 		const events = [
 			{ sport: "football", title: "Arsenal vs Chelsea", time: futureTime(), homeTeam: "Arsenal", awayTeam: "Chelsea" },
@@ -166,10 +168,12 @@ describe("buildFallbackFeatured()", () => {
 			}],
 		};
 		const result = buildFallbackFeatured(events, now, { recentResults });
-		const resultLines = result.blocks.filter((b) => b.type === "event-line" && /FT:/.test(b.text));
-		expect(resultLines.length).toBe(1);
-		expect(resultLines[0].text).toContain("Girona");
-		expect(resultLines[0].text).toContain("Beltrán");
+		const resultBlocks = result.blocks.filter((b) => b.type === "match-result");
+		expect(resultBlocks.length).toBe(1);
+		expect(resultBlocks[0].homeTeam).toBe("Girona");
+		expect(resultBlocks[0].awayTeam).toBe("Barcelona");
+		expect(resultBlocks[0]._fallbackText).toContain("FT:");
+		expect(resultBlocks[0]._fallbackText).toContain("Beltrán");
 	});
 
 	it("does not include For You section", () => {
@@ -181,23 +185,25 @@ describe("buildFallbackFeatured()", () => {
 		expect(forYou.length).toBe(0);
 	});
 
-	it("deduplicates Olympics events between event-lines and sections", () => {
+	it("deduplicates Olympics events between today blocks and event-schedule", () => {
 		const events = [
 			{ sport: "olympics", title: "Biathlon Sprint", time: futureTime(), context: "olympics-2026", tournament: "Winter Olympics 2026" },
 			{ sport: "olympics", title: "Cross-Country", time: futureTime(1), context: "olympics-2026", tournament: "Winter Olympics 2026" },
 			{ sport: "football", title: "Arsenal vs Chelsea", time: futureTime(3), homeTeam: "Arsenal", awayTeam: "Chelsea" },
 		];
 		const result = buildFallbackFeatured(events, new Date());
-		const sections = result.blocks.filter((b) => b.type === "section");
-		const eventLines = result.blocks.filter((b) => b.type === "event-line" && !/FT:/.test(b.text) && b.text !== "No events scheduled today.");
+		const schedules = result.blocks.filter((b) => b.type === "event-schedule");
+		const eventLines = result.blocks.filter((b) => b.type === "event-line" && !/FT:/.test(b.text));
 
-		// Olympics should be in section, not in event-lines
-		expect(sections.length).toBeGreaterThanOrEqual(1);
+		// Olympics should be in event-schedule component, not in event-lines
+		expect(schedules.length).toBe(1);
+		expect(schedules[0].filter.sport).toBe("olympics");
 		const olympicsInLines = eventLines.filter((b) => /biathlon|cross-country/i.test(b.text));
 		expect(olympicsInLines.length).toBe(0);
-		// But football should still be in event-lines
-		const footballInLines = eventLines.filter((b) => /Arsenal/i.test(b.text));
-		expect(footballInLines.length).toBe(1);
+		// Football should be in match-preview component
+		const footballPreviews = result.blocks.filter((b) => b.type === "match-preview");
+		expect(footballPreviews.length).toBe(1);
+		expect(footballPreviews[0].homeTeam).toBe("Arsenal");
 	});
 });
 
@@ -326,7 +332,7 @@ describe("buildFallbackResultLines()", () => {
 		expect(buildFallbackResultLines({}, new Date())).toEqual([]);
 	});
 
-	it("returns FT lines for favorite results within 48h", () => {
+	it("returns match-result component blocks for favorite results within 48h", () => {
 		const now = new Date();
 		const results = {
 			football: [{
@@ -336,11 +342,14 @@ describe("buildFallbackResultLines()", () => {
 				goalScorers: [{ player: "Beltrán", team: "Girona", minute: "86'" }],
 			}],
 		};
-		const lines = buildFallbackResultLines(results, now);
-		expect(lines.length).toBe(1);
-		expect(lines[0]).toContain("FT:");
-		expect(lines[0]).toContain("Girona");
-		expect(lines[0]).toContain("Beltrán");
+		const blocks = buildFallbackResultLines(results, now);
+		expect(blocks.length).toBe(1);
+		expect(blocks[0].type).toBe("match-result");
+		expect(blocks[0].homeTeam).toBe("Girona");
+		expect(blocks[0].awayTeam).toBe("Barcelona");
+		expect(blocks[0]._fallbackText).toContain("FT:");
+		expect(blocks[0]._fallbackText).toContain("Girona");
+		expect(blocks[0]._fallbackText).toContain("Beltrán");
 	});
 
 	it("skips non-favorite results", () => {
@@ -367,7 +376,7 @@ describe("buildFallbackResultLines()", () => {
 		expect(buildFallbackResultLines(results, now)).toEqual([]);
 	});
 
-	it("limits to 2 result lines", () => {
+	it("limits to 2 result blocks", () => {
 		const now = new Date();
 		const results = {
 			football: [
@@ -376,8 +385,9 @@ describe("buildFallbackResultLines()", () => {
 				{ homeTeam: "E", awayTeam: "F", homeScore: 0, awayScore: 0, date: new Date(now.getTime() - 18 * 3600000).toISOString(), isFavorite: true },
 			],
 		};
-		const lines = buildFallbackResultLines(results, now);
-		expect(lines.length).toBe(2);
+		const blocks = buildFallbackResultLines(results, now);
+		expect(blocks.length).toBe(2);
+		expect(blocks[0].type).toBe("match-result");
 	});
 });
 
@@ -431,5 +441,66 @@ describe("fallbackLine()", () => {
 		expect(line).toContain("♟️");
 		// Time should be present (exact format depends on timezone)
 		expect(line).toMatch(/\d{2}:\d{2}/);
+	});
+});
+
+describe("component blocks in fallback", () => {
+	const futureTime = (hoursAhead = 2) => new Date(Date.now() + hoursAhead * 3600000).toISOString();
+
+	it("generates match-preview for football events", () => {
+		const events = [
+			{ sport: "football", title: "Arsenal vs Chelsea", time: futureTime(), homeTeam: "Arsenal", awayTeam: "Chelsea", importance: 4 },
+		];
+		const result = buildFallbackFeatured(events, new Date());
+		const previews = result.blocks.filter((b) => b.type === "match-preview");
+		expect(previews.length).toBe(1);
+		expect(previews[0].homeTeam).toBe("Arsenal");
+		expect(previews[0].awayTeam).toBe("Chelsea");
+		expect(previews[0].showStandings).toBe(true); // importance >= 3
+		expect(previews[0]._fallbackText).toContain("Arsenal");
+	});
+
+	it("generates event-line for non-football sports", () => {
+		const events = [
+			{ sport: "tennis", title: "Australian Open Final", time: futureTime() },
+		];
+		const result = buildFallbackFeatured(events, new Date());
+		const eventLines = result.blocks.filter((b) => b.type === "event-line");
+		expect(eventLines.length).toBeGreaterThanOrEqual(1);
+		expect(eventLines.some((b) => b.text.includes("Australian Open"))).toBe(true);
+	});
+
+	it("generates golf-status component when standings exist", () => {
+		const events = [
+			{ sport: "golf", title: "The Genesis Invitational", time: futureTime() },
+		];
+		const standings = { golf: { pga: { name: "Genesis Invitational", leaderboard: [{ player: "Scheffler", position: "1", score: "-12" }] } } };
+		const result = buildFallbackFeatured(events, new Date(), { standings });
+		const golfStatus = result.blocks.filter((b) => b.type === "golf-status");
+		expect(golfStatus.length).toBe(1);
+		expect(golfStatus[0].tournament).toBe("pga");
+		expect(golfStatus[0]._fallbackText).toContain("Genesis Invitational");
+	});
+
+	it("all component blocks have _fallbackText", () => {
+		const now = new Date();
+		const events = [
+			{ sport: "football", title: "Arsenal vs Chelsea", time: futureTime(), homeTeam: "Arsenal", awayTeam: "Chelsea" },
+			{ sport: "olympics", title: "Biathlon", time: futureTime(), context: "olympics-2026", tournament: "Winter Olympics 2026" },
+		];
+		const recentResults = {
+			football: [{
+				homeTeam: "Girona", awayTeam: "Barcelona", homeScore: 2, awayScore: 1,
+				date: new Date(now.getTime() - 12 * 3600000).toISOString(),
+				isFavorite: true,
+			}],
+		};
+		const standings = { golf: { pga: { name: "PGA Tour", leaderboard: [{ player: "Hovland", position: "T5", score: "-8" }] } } };
+		const result = buildFallbackFeatured(events, now, { recentResults, standings });
+		const componentBlocks = result.blocks.filter((b) => ["match-result", "match-preview", "event-schedule", "golf-status"].includes(b.type));
+		expect(componentBlocks.length).toBeGreaterThan(0);
+		for (const block of componentBlocks) {
+			expect(block._fallbackText).toBeDefined();
+		}
 	});
 });

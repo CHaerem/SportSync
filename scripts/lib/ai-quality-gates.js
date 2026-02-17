@@ -8,7 +8,17 @@ const BLOCK_WORD_LIMITS = {
 	section: 0, // sections validated by items
 	divider: 8,
 };
-const VALID_BLOCK_TYPES = ["headline", "event-line", "event-group", "narrative", "section", "divider"];
+const VALID_BLOCK_TYPES = ["headline", "event-line", "event-group", "narrative", "section", "divider",
+	"match-result", "match-preview", "event-schedule", "golf-status"];
+
+/** Component block registry: defines required/optional fields per component type */
+export const COMPONENT_REGISTRY = {
+	"match-result": { required: ["homeTeam", "awayTeam"], optional: ["_fallbackText"] },
+	"match-preview": { required: ["homeTeam", "awayTeam"], optional: ["showStandings", "_fallbackText"] },
+	"event-schedule": { required: ["filter"], optional: ["label", "maxItems", "showFlags", "style", "_fallbackText"] },
+	"golf-status": { required: ["tournament"], optional: ["_fallbackText"] },
+};
+export const COMPONENT_TYPES = Object.keys(COMPONENT_REGISTRY);
 const ENRICHMENT_DEFAULTS = {
 	minImportanceCoverage: 0.85,
 	minSummaryCoverage: 0.6,
@@ -170,10 +180,40 @@ export function isMajorEventActive(events = []) {
 	return events.some((event) => looksLikeMajorEvent(event));
 }
 
+function sanitizeComponentBlock(block) {
+	const type = block.type;
+	const reg = COMPONENT_REGISTRY[type];
+	if (!reg) return null;
+
+	// Validate required fields are present
+	for (const field of reg.required) {
+		if (block[field] == null || block[field] === "") return null;
+	}
+
+	// Build output with type + required + optional fields (strip unknowns)
+	const out = { type };
+	for (const field of reg.required) out[field] = block[field];
+	for (const field of reg.optional) {
+		if (block[field] != null) out[field] = block[field];
+	}
+
+	// Validate filter object for event-schedule
+	if (type === "event-schedule") {
+		if (!out.filter || typeof out.filter !== "object" || !out.filter.sport) return null;
+	}
+
+	return out;
+}
+
 function sanitizeBlock(block) {
 	if (!block || typeof block !== "object") return null;
 	const type = typeof block.type === "string" ? block.type.trim() : "";
 	if (!VALID_BLOCK_TYPES.includes(type)) return null;
+
+	// Component blocks have their own sanitizer
+	if (COMPONENT_TYPES.includes(type)) {
+		return sanitizeComponentBlock(block);
+	}
 
 	const out = { type };
 
@@ -221,9 +261,10 @@ export function validateBlocksContent(blocks, { events = [] } = {}) {
 		score -= 10;
 	}
 
-	const eventLineCount = sanitized.filter((b) => b.type === "event-line" || b.type === "event-group").length;
+	const EVENT_CONTENT_TYPES = ["event-line", "event-group", ...COMPONENT_TYPES];
+	const eventLineCount = sanitized.filter((b) => EVENT_CONTENT_TYPES.includes(b.type)).length;
 	if (eventLineCount < 1) {
-		issues.push({ severity: "error", code: "no_event_blocks", message: "At least 1 event-line or event-group block is required." });
+		issues.push({ severity: "error", code: "no_event_blocks", message: "At least 1 event-line, event-group, or component block is required." });
 		score -= 25;
 	}
 

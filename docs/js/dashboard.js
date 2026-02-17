@@ -727,7 +727,27 @@ class Dashboard {
 		}
 	}
 
+	// Component renderer registry — structured blocks rendered from pre-loaded data
+	_componentRenderers = {
+		'match-result':      (block) => this._renderMatchResult(block),
+		'match-preview':     (block) => this._renderMatchPreview(block),
+		'event-schedule':    (block) => this._renderEventSchedule(block),
+		'golf-status':       (block) => this._renderGolfStatus(block),
+	};
+
 	renderBlock(block) {
+		// Check component registry first
+		const renderer = this._componentRenderers[block.type];
+		if (renderer) {
+			const html = renderer(block);
+			if (html !== null) return html;
+			// Component couldn't resolve data — fall back to _fallbackText if present
+			if (block._fallbackText) {
+				return `<div class="block-event-line editorial-line">${this.renderBriefLine(block._fallbackText)}</div>`;
+			}
+			return '';
+		}
+
 		switch (block.type) {
 			case 'headline':
 				return `<div class="block-headline">${this.renderBriefLine(block.text || '')}</div>`;
@@ -757,6 +777,164 @@ class Dashboard {
 			default:
 				return '';
 		}
+	}
+
+	/** match-result component: renders a completed match with logos, score, goalscorers from recentResults */
+	_renderMatchResult(block) {
+		const football = Array.isArray(this.recentResults?.football) ? this.recentResults.football : [];
+		if (!football.length || !block.homeTeam || !block.awayTeam) return null;
+
+		const homeL = block.homeTeam.toLowerCase();
+		const awayL = block.awayTeam.toLowerCase();
+		const match = football.find(m => {
+			const mHome = (m.homeTeam || '').toLowerCase();
+			const mAway = (m.awayTeam || '').toLowerCase();
+			return (mHome.includes(homeL) || homeL.includes(mHome)) &&
+				(mAway.includes(awayL) || awayL.includes(mAway));
+		});
+		if (!match || match.homeScore == null) return null;
+
+		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.homeTeam) : null;
+		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.awayTeam) : null;
+		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="brief-logo" loading="lazy">` : '';
+		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="brief-logo" loading="lazy">` : '';
+
+		const scorers = (match.goalScorers || []).slice(0, 3);
+		const scorerHtml = scorers.length > 0
+			? ` <span class="block-scorers">— ${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</span>`
+			: '';
+
+		return `<div class="block-event-line editorial-line result-line block-match-result">⚽ FT: ${hImg}${this.esc(this.shortName(match.homeTeam))} <strong>${match.homeScore}-${match.awayScore}</strong> ${aImg}${this.esc(this.shortName(match.awayTeam))}${scorerHtml}</div>`;
+	}
+
+	/** match-preview component: renders an upcoming match with logos, time, optional standings */
+	_renderMatchPreview(block) {
+		if (!block.homeTeam || !block.awayTeam) return null;
+
+		const homeL = block.homeTeam.toLowerCase();
+		const awayL = block.awayTeam.toLowerCase();
+		const event = this.allEvents.find(e => {
+			if (e.sport !== 'football') return false;
+			const eHome = (e.homeTeam || '').toLowerCase();
+			const eAway = (e.awayTeam || '').toLowerCase();
+			return (eHome.includes(homeL) || homeL.includes(eHome)) &&
+				(eAway.includes(awayL) || awayL.includes(eAway));
+		});
+		if (!event) return null;
+
+		const date = new Date(event.time);
+		const timeStr = date.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+		const rel = this.relativeTime(date) || '';
+
+		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
+		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
+		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(event.homeTeam)}" class="brief-logo" loading="lazy">` : '';
+		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(event.awayTeam)}" class="brief-logo" loading="lazy">` : '';
+
+		let standingsHtml = '';
+		if (block.showStandings && this.standings?.football) {
+			const tournament = (event.tournament || '').toLowerCase();
+			const isSpanish = tournament.includes('la liga') || tournament.includes('copa del rey');
+			const tableKey = isSpanish ? 'laLiga' : 'premierLeague';
+			const table = this.standings.football[tableKey];
+			if (table?.length) {
+				const matchTeams = [event.homeTeam, event.awayTeam].map(t => t.toLowerCase());
+				const positions = table.filter(t =>
+					matchTeams.some(mt => t.team.toLowerCase().includes(mt) || mt.includes(t.team.toLowerCase()))
+				).map(t => `${t.teamShort} ${this.esc(String(t.position))}${t.position === 1 ? 'st' : t.position === 2 ? 'nd' : t.position === 3 ? 'rd' : 'th'}`);
+				if (positions.length > 0) {
+					standingsHtml = ` <span class="block-standings-ctx">(${positions.join(' vs ')})</span>`;
+				}
+			}
+		}
+
+		const relHtml = rel ? ` <span class="row-rel">${this.esc(rel)}</span>` : '';
+		const tourCtx = event.tournament ? `, ${this.esc(event.tournament)}` : '';
+
+		return `<div class="block-event-line editorial-line block-match-preview">⚽ ${hImg}${this.esc(this.shortName(event.homeTeam))} v ${aImg}${this.esc(this.shortName(event.awayTeam))}, ${this.esc(timeStr)}${relHtml}${tourCtx}${standingsHtml}</div>`;
+	}
+
+	/** event-schedule component: renders filtered events from allEvents as a card */
+	_renderEventSchedule(block) {
+		const filter = block.filter || {};
+		if (!filter.sport) return null;
+
+		const now = new Date();
+		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		let windowStart, windowEnd;
+		if (filter.window === 'tomorrow') {
+			windowStart = new Date(todayStart.getTime() + 86400000);
+			windowEnd = new Date(windowStart.getTime() + 86400000);
+		} else if (filter.window === 'week') {
+			windowStart = todayStart;
+			windowEnd = new Date(todayStart.getTime() + 7 * 86400000);
+		} else {
+			windowStart = todayStart;
+			windowEnd = new Date(todayStart.getTime() + 86400000);
+		}
+
+		const filtered = this.allEvents
+			.filter(e => e.sport === filter.sport || (e.context || '').toLowerCase().includes(filter.sport))
+			.filter(e => isEventInWindow(e, windowStart, windowEnd))
+			.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+		if (filtered.length === 0) return null;
+
+		const maxItems = block.maxItems || 6;
+		const items = filtered.slice(0, maxItems);
+		const todayStr = todayStart.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' });
+
+		let html = `<div class="block-event-schedule${block.style === 'highlight' ? ' highlight' : ''}">`;
+		if (block.label) {
+			html += `<div class="block-schedule-label">${this.esc(block.label)}</div>`;
+		}
+		for (const event of items) {
+			const t = new Date(event.time);
+			const timeStr = t.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+			const eventDay = t.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' });
+			const dayPrefix = eventDay !== todayStr
+				? t.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' '
+				: '';
+			const norFlag = (block.showFlags !== false) && (event.norwegian || event.norwegianPlayers?.length > 0) ? ' 🇳🇴' : '';
+			html += `<div class="block-schedule-item">${this.esc(dayPrefix)}${this.esc(timeStr)} — ${this.esc(event.title)}${norFlag}</div>`;
+		}
+		if (filtered.length > maxItems) {
+			html += `<div class="block-schedule-more">+${filtered.length - maxItems} more</div>`;
+		}
+		html += `</div>`;
+		return html;
+	}
+
+	/** golf-status component: renders tournament status with Norwegian player position and leaderboard snippet */
+	_renderGolfStatus(block) {
+		if (!this.standings?.golf) return null;
+		const tourKey = block.tournament === 'dpWorld' ? 'dpWorld' : 'pga';
+		const tour = this.standings.golf[tourKey];
+		if (!tour?.leaderboard?.length) return null;
+
+		const name = tour.name || (tourKey === 'pga' ? 'PGA Tour' : 'DP World Tour');
+
+		// Find Norwegian player on leaderboard
+		const norPlayer = tour.leaderboard.find(p => {
+			const last = p.player.split(' ').pop().toLowerCase();
+			return ['hovland', 'aberg', 'ventura', 'olesen'].includes(last);
+		});
+
+		const headshot = norPlayer && typeof getGolferHeadshot === 'function'
+			? getGolferHeadshot(norPlayer.player) : null;
+		const headshotImg = headshot
+			? `<img src="${headshot}" alt="${this.esc(norPlayer.player)}" class="brief-logo brief-headshot" loading="lazy">`
+			: '';
+
+		let html = `<div class="block-event-line editorial-line block-golf-status">⛳ ${this.esc(name)}: `;
+		if (norPlayer) {
+			html += `${headshotImg}${this.esc(norPlayer.player)} ${this.esc(norPlayer.position || '')} (${this.esc(norPlayer.score || '')})`;
+		} else {
+			const leader = tour.leaderboard[0];
+			html += `${this.esc(leader.player)} leads at ${this.esc(leader.score || '')}`;
+		}
+		html += `</div>`;
+		return html;
 	}
 
 	generateDynamicBriefLine() {

@@ -121,6 +121,101 @@ describe("blocks_too_many warning", () => {
 	});
 });
 
+describe("component block validation", () => {
+	it("accepts valid match-result blocks", () => {
+		const blocks = [
+			{ type: "match-result", homeTeam: "Girona", awayTeam: "Barcelona", _fallbackText: "⚽ FT: Girona 2-1 Barcelona" },
+			{ type: "event-line", text: "⛳ Hovland at Genesis, 14:30" },
+			{ type: "divider", text: "This Week" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.blocks[0].type).toBe("match-result");
+		expect(result.normalized.blocks[0].homeTeam).toBe("Girona");
+	});
+
+	it("accepts valid match-preview blocks", () => {
+		const blocks = [
+			{ type: "match-preview", homeTeam: "Arsenal", awayTeam: "Chelsea", showStandings: true },
+			{ type: "event-line", text: "⛳ Golf, 14:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.blocks[0].type).toBe("match-preview");
+		expect(result.normalized.blocks[0].showStandings).toBe(true);
+	});
+
+	it("accepts valid event-schedule blocks", () => {
+		const blocks = [
+			{ type: "event-schedule", label: "🏅 Olympics today", filter: { sport: "olympics", window: "today" }, maxItems: 6, showFlags: true, style: "highlight" },
+			{ type: "event-line", text: "⚽ Football, 21:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.blocks[0].type).toBe("event-schedule");
+		expect(result.normalized.blocks[0].filter.sport).toBe("olympics");
+	});
+
+	it("accepts valid golf-status blocks", () => {
+		const blocks = [
+			{ type: "golf-status", tournament: "pga" },
+			{ type: "event-line", text: "⚽ Football, 21:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.valid).toBe(true);
+		expect(result.normalized.blocks[0].type).toBe("golf-status");
+	});
+
+	it("rejects component blocks missing required fields", () => {
+		const blocks = [
+			{ type: "match-result", homeTeam: "Girona" }, // missing awayTeam
+			{ type: "event-line", text: "⚽ Football, 21:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		// match-result is stripped, leaving 2 valid blocks (too few = error)
+		expect(result.normalized.blocks).toHaveLength(2);
+	});
+
+	it("rejects event-schedule without filter.sport", () => {
+		const blocks = [
+			{ type: "event-schedule", label: "Schedule", filter: { window: "today" } }, // missing sport
+			{ type: "event-line", text: "⚽ Football, 21:00" },
+			{ type: "event-line", text: "⚽ Football, 22:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		// event-schedule is stripped because filter.sport is missing
+		expect(result.normalized.blocks.find(b => b.type === "event-schedule")).toBeUndefined();
+	});
+
+	it("counts component blocks as event content", () => {
+		const blocks = [
+			{ type: "headline", text: "Test headline" },
+			{ type: "match-preview", homeTeam: "Arsenal", awayTeam: "Chelsea" },
+			{ type: "narrative", text: "Some editorial context for the match." },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		// match-preview counts as event content, so no_event_blocks error should not appear
+		const noEvents = result.issues.find(i => i.code === "no_event_blocks");
+		expect(noEvents).toBeUndefined();
+	});
+
+	it("strips unknown fields from component blocks", () => {
+		const blocks = [
+			{ type: "match-result", homeTeam: "Girona", awayTeam: "Barcelona", _fallbackText: "fallback", unknownField: "junk" },
+			{ type: "event-line", text: "⚽ Football, 21:00" },
+			{ type: "divider", text: "Later" },
+		];
+		const result = validateBlocksContent(blocks, { events: [] });
+		expect(result.normalized.blocks[0].unknownField).toBeUndefined();
+		expect(result.normalized.blocks[0]._fallbackText).toBe("fallback");
+	});
+});
+
 describe("isMajorEventActive()", () => {
 	it("detects major events from context and title", () => {
 		expect(isMajorEventActive([{ context: "olympics-2026", title: "Sprint Final" }])).toBe(true);

@@ -107,7 +107,8 @@ This is a hybrid static/dynamic application:
 - **Static Frontend**: Pure HTML/CSS/JS hosted on GitHub Pages
 - **Automated Data Fetching**: GitHub Actions fetch fresh API data every 2 hours
 - **AI Enrichment**: LLM adds importance scores, summaries, and tags to each event
-- **AI Featured Content**: Claude CLI generates editorial briefs and featured sections each build
+- **AI Featured Content**: Claude CLI generates editorial briefs using narrative + component blocks each build
+- **Component Template System**: Structured blocks (match-result, match-preview, event-schedule, golf-status) reference live data; client renders with logos, scores, times from pre-loaded JSON
 - **Standings & RSS**: ESPN standings and RSS news digests feed into the editorial pipeline
 - **Recent Results**: ESPN scoreboard history (7 days) for narrative continuity in editorial briefs
 - **Live Score Polling**: Client-side ESPN polling every 60s for football scores and golf leaderboards
@@ -141,12 +142,12 @@ This is a hybrid static/dynamic application:
 9. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
 10. **`build-events.js`** auto-discovers sport files from `docs/data/*.json` by convention (any file with `{ tournaments: [...] }`) and curated configs from `scripts/config/*.json`, merges all into `events.json`
 11. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
-12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (block-based editorial). Supports date-specific modes via `SPORTSYNC_FEATURED_DATE` + `SPORTSYNC_FEATURED_MODE` (live/recap/preview)
+12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (narrative + component blocks). Component blocks (`match-result`, `match-preview`, `event-schedule`, `golf-status`) reference structured data; client renders with logos/scores/times. Fallback produces components with `_fallbackText` for graceful degradation. Supports date-specific modes via `SPORTSYNC_FEATURED_DATE` + `SPORTSYNC_FEATURED_MODE` (live/recap/preview)
 13. **`generate-multi-day.js`** orchestrates yesterday's recap and tomorrow's preview as `featured-{YYYY-MM-DD}.json`. Idempotent (skips existing recaps, regenerates stale previews). Cleans up briefings >7 days old
 14. **`pipeline-health.js`** checks sport coverage (auto-discovered), data freshness, critical output freshness (featured.json, ai-quality.json), RSS/standings/results health → generates `health-report.json`
 15. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
 16. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
-17. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band. **Day navigator** lets users browse past/future days, async-loads `featured-{date}.json` for date-specific briefings
+17. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band. **Component blocks** (`match-result`, `match-preview`, `event-schedule`, `golf-status`) resolve against pre-loaded data for logos, scores, times, and standings — falling back to `_fallbackText` when data is unavailable. **Day navigator** lets users browse past/future days, async-loads `featured-{date}.json` for date-specific briefings
 18. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
@@ -158,7 +159,7 @@ This is a hybrid static/dynamic application:
 - `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
 - `npm run generate:multiday` - Generate yesterday recap + tomorrow preview briefings
-- `npm test` - Run all tests (vitest, 1295 tests across 55 files)
+- `npm test` - Run all tests (vitest, 1499 tests across 55 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 - `npm run screenshot` - Take a screenshot of the dashboard (needs Playwright)
@@ -209,7 +210,7 @@ docs/
 │   └── preferences-manager.js # Favorites storage (localStorage)
 └── data/                   # Pre-fetched API data (auto-generated)
     ├── events.json         # Unified events feed (includes curated configs + enrichment)
-    ├── featured.json       # AI-generated editorial content (block-based editorial content)
+    ├── featured.json       # AI-generated editorial content (narrative + component blocks)
     ├── standings.json      # ESPN standings (PL table, golf leaderboards, F1 drivers)
     ├── rss-digest.json     # RSS news digest (11 feeds, Norwegian-filtered)
     ├── recent-results.json # Recent completed matches + golf positions (7-day history)
@@ -255,7 +256,7 @@ scripts/
 ├── discover-events.js      # LLM-powered event/athlete discovery (Claude CLI + WebSearch)
 ├── build-events.js         # Aggregates sport JSONs + curated configs → events.json
 ├── enrich-events.js        # LLM enrichment (importance, tags, summaries)
-├── generate-featured.js    # Claude CLI → featured.json (block-based editorial, supports date modes)
+├── generate-featured.js    # Claude CLI → featured.json (narrative + component blocks, supports date modes)
 ├── generate-multi-day.js   # Orchestrates recap (yesterday) + preview (tomorrow) briefings
 ├── pipeline-health.js      # Pipeline health report → health-report.json
 ├── check-quality-regression.js # AI quality regression detection

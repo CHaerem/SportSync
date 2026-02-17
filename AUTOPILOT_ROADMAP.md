@@ -243,7 +243,7 @@ Monitor the dashboard for visual clutter — too many competing card styles, bor
 |--------|-------------------|---------------|-------|
 | 1. Data | ~90% | 2026-02-17 | Tennis tournament-level events fixed, diagnostic files initialized, 6 APIs + tennis rankings |
 | 2. Code | ~83% | 2026-02-17 | 104 PRs, 1450 tests |
-| 3. Capabilities | ~63% | 2026-02-17 | Pipeline manifest, generate-insights, 5 inline standings widgets, For You block |
+| 3. Capabilities | ~68% | 2026-02-17 | Pipeline manifest, generate-insights, 5 inline standings widgets, For You block, component template system |
 | 4. Personalization | ~58% | 2026-02-17 | For You editorial block, contextual empty-sport notes, watch-plan feedback loop, sport weights evolve |
 | 5. Quality | ~90% | 2026-02-16 | 11 loops, hint fatigue demoted to info |
 
@@ -483,7 +483,10 @@ Dashboard renders featured.json flexibly — no frontend changes needed
 ```
 
 **`featured.json` schema:**
-- **blocks**: array of editorial blocks (types: "headline", "event-line", "event-group", "narrative", "section", "divider")
+- **blocks**: array of editorial blocks in two categories:
+  - **Narrative blocks** (LLM writes text): "headline", "event-line", "event-group", "narrative", "section", "divider"
+  - **Component blocks** (LLM configures, client renders from data): "match-result", "match-preview", "event-schedule", "golf-status"
+- Component blocks reference structured data (teams, tournaments) and the client renders them with logos, scores, times, and standings from pre-loaded JSON. Each component includes `_fallbackText` for graceful degradation.
 - Date-specific briefings: `featured-{YYYY-MM-DD}.json` with `_meta.date` and `_meta.mode` (recap/preview)
 
 ### Autonomous Autopilot Directive

@@ -379,6 +379,67 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 7f. Component block data resolution — verify component blocks can resolve against data
+	if (featured && Array.isArray(featured.blocks)) {
+		const football = Array.isArray(recentResults?.football) ? recentResults.football : [];
+		for (const block of featured.blocks) {
+			if (block.type === "match-result" && block.homeTeam && block.awayTeam) {
+				const homeL = block.homeTeam.toLowerCase();
+				const awayL = block.awayTeam.toLowerCase();
+				const found = football.some(m =>
+					((m.homeTeam || "").toLowerCase().includes(homeL) || homeL.includes((m.homeTeam || "").toLowerCase())) &&
+					((m.awayTeam || "").toLowerCase().includes(awayL) || awayL.includes((m.awayTeam || "").toLowerCase()))
+				);
+				if (!found) {
+					issues.push({
+						severity: "warning",
+						code: "component_unresolvable",
+						message: `match-result component for ${block.homeTeam} vs ${block.awayTeam} has no matching data in recent-results.json`,
+					});
+				}
+			}
+			if (block.type === "match-preview" && block.homeTeam && block.awayTeam) {
+				const homeL = block.homeTeam.toLowerCase();
+				const awayL = block.awayTeam.toLowerCase();
+				const found = events.some(e =>
+					e.sport === "football" &&
+					((e.homeTeam || "").toLowerCase().includes(homeL) || homeL.includes((e.homeTeam || "").toLowerCase())) &&
+					((e.awayTeam || "").toLowerCase().includes(awayL) || awayL.includes((e.awayTeam || "").toLowerCase()))
+				);
+				if (!found) {
+					issues.push({
+						severity: "warning",
+						code: "component_unresolvable",
+						message: `match-preview component for ${block.homeTeam} vs ${block.awayTeam} has no matching event in events.json`,
+					});
+				}
+			}
+			if (block.type === "event-schedule" && block.filter?.sport) {
+				const sportEvents = events.filter(e =>
+					e.sport === block.filter.sport || (e.context || "").toLowerCase().includes(block.filter.sport)
+				);
+				if (sportEvents.length === 0) {
+					issues.push({
+						severity: "warning",
+						code: "component_unresolvable",
+						message: `event-schedule component for sport "${block.filter.sport}" has no matching events`,
+					});
+				}
+			}
+			if (block.type === "golf-status") {
+				const tourKey = block.tournament === "dpWorld" ? "dpWorld" : "pga";
+				const hasData = standings?.golf?.[tourKey]?.leaderboard?.length > 0;
+				if (!hasData) {
+					issues.push({
+						severity: "warning",
+						code: "component_unresolvable",
+						message: `golf-status component for "${tourKey}" has no leaderboard data in standings.json`,
+					});
+				}
+			}
+		}
+	}
+
 	// 8. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {

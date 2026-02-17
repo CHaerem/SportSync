@@ -3,7 +3,8 @@
  * Generates featured.json with AI-curated editorial content using block-based layout.
  * Output: { blocks: [{ type, text, ... }, ...] }
  *
- * Block types: headline, event-line, event-group, narrative, section, divider
+ * Narrative block types: headline, event-line, event-group, narrative, section, divider
+ * Component block types: match-result, match-preview, event-schedule, golf-status
  *
  * Auth (checked in order):
  *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI (Max subscription)
@@ -42,6 +43,7 @@ Adopt an energetic, enthusiastic voice. Use exclamation marks freely, casual lan
 
 const BLOCKS_SCHEMA = {
 	blocks: [
+		// Narrative blocks (LLM writes text)
 		{ type: "headline", text: "string — Bold editorial headline, the story of the day (max 15 words)" },
 		{ type: "event-line", text: "string — Single event highlight: emoji + description + time (max 20 words)" },
 		{ type: "event-group", label: "string — Group label", items: ["string — compact event lines"] },
@@ -53,6 +55,11 @@ const BLOCKS_SCHEMA = {
 			expandLabel: "string or null", expandItems: [{ text: "string", type: "stat | event | text" }],
 		},
 		{ type: "divider", text: "string — section label like 'This Week' or 'Looking Ahead'" },
+		// Component blocks (LLM configures, client renders from data)
+		{ type: "match-result", homeTeam: "string", awayTeam: "string" },
+		{ type: "match-preview", homeTeam: "string", awayTeam: "string", showStandings: "boolean (optional)" },
+		{ type: "golf-status", tournament: "pga | dpWorld" },
+		{ type: "event-schedule", label: "string", filter: { sport: "string", window: "today | tomorrow | week" }, maxItems: "number (optional, default 6)", showFlags: "boolean (optional, default true)", style: "highlight | default" },
 	],
 };
 
@@ -62,15 +69,33 @@ function buildSystemPrompt(voice) {
 Your job is to COMPOSE today's editorial zone using a palette of layout blocks.
 Return a JSON object with a single "blocks" array.
 
-YOUR EDITORIAL TOOLS (block types):
+YOUR EDITORIAL TOOLS — NARRATIVE BLOCKS (you write the text):
 1. "headline" — Bold editorial headline, the story of the day. Max 15 words. Use when there's a strong narrative.
-2. "event-line" — Single event highlight (the workhorse). Emoji + text + time. Max 20 words.
-3. "event-group" — Multiple related events under a label. Use when 3+ events share a theme (e.g. Olympics today, PL matchday).
+2. "event-line" — Single event highlight. Emoji + text + time. Max 20 words. Use for chess, esports, tennis, F1 — sports without component types.
+3. "event-group" — Multiple related events under a label. Use when 3+ events share a theme.
    Has "label" (string) and "items" (array of strings).
 4. "narrative" — 1-2 editorial sentences adding context or analysis. Italic styling. Max 40 words. Use sparingly (max 3 per page).
 5. "section" — Major event card with expand/collapse. For Olympics, World Cup, etc. Same structure as before:
    { type:"section", id, title, emoji, style, items:[{text,type}], expandLabel, expandItems }
 6. "divider" — Section break with label. Use to separate today from "This Week" or "Looking Ahead".
+
+YOUR EDITORIAL TOOLS — COMPONENT BLOCKS (you configure, client renders from live data):
+7. "match-result" — Completed football match. Client renders score, logos, goalscorers from data.
+   { type:"match-result", homeTeam:"Team A", awayTeam:"Team B" }
+8. "match-preview" — Upcoming football match. Client renders time, logos, countdown, optional standings.
+   { type:"match-preview", homeTeam:"Team A", awayTeam:"Team B", showStandings:true }
+9. "golf-status" — Golf tournament status. Client renders leaderboard snippet + Norwegian player position.
+   { type:"golf-status", tournament:"pga" } — tournament is "pga" or "dpWorld"
+10. "event-schedule" — Filtered event list. Client renders sorted events with times, day prefixes, 🇳🇴 flags.
+   { type:"event-schedule", label:"🏅 Olympics today", filter:{sport:"olympics",window:"today"}, maxItems:6, showFlags:true, style:"highlight" }
+
+COMPONENT RULES:
+- Prefer match-result for football results and match-preview for football fixtures — the client adds logos and live data automatically
+- Prefer golf-status for golf tournaments in progress — the client adds leaderboard and Norwegian player tracking
+- Use event-schedule for Olympics day schedules — the client adds sorted times, day prefixes, and Norwegian flags
+- Use event-line only for sports without component types (chess, esports, tennis, F1)
+- Narrative blocks provide your editorial voice around component blocks — components handle the data, you handle the story
+- Component blocks auto-update with live data (scores, times) — text blocks are static
 
 COMPOSITION RULES:
 - Start with today's top stories (headline or event-lines)
@@ -118,30 +143,29 @@ STANDINGS INTEGRATION:
 
 EXAMPLE COMPOSITIONS:
 
-Champions League night:
+Champions League night (mixing narrative + component blocks):
 { "blocks": [
   { "type": "headline", "text": "All eyes on the Bernabéu" },
-  { "type": "event-line", "text": "⚽ Real Madrid vs Liverpool, 21:00" },
+  { "type": "match-preview", "homeTeam": "Real Madrid", "awayTeam": "Liverpool", "showStandings": true },
   { "type": "narrative", "text": "Holders Liverpool arrive three points clear of the pack. Ancelotti's men need a result." },
-  { "type": "event-line", "text": "⚽ PSG vs Bayern Munich, 21:00" },
+  { "type": "match-preview", "homeTeam": "PSG", "awayTeam": "Bayern Munich" },
   { "type": "divider", "text": "This Week" },
   { "type": "event-line", "text": "⚽ Sat — Weekend PL fixtures" }
 ]}
 
-Olympics day:
+Olympics day (component blocks for structured data, event-line for others):
 { "blocks": [
   { "type": "headline", "text": "Medal day in Milano-Cortina" },
-  { "type": "event-line", "text": "⚽ Barcelona at Atlético Madrid — Copa semifinal, 21:00" },
-  { "type": "event-line", "text": "⛳ Hovland at Pebble Beach, tee time 19:03" },
-  { "type": "event-group", "label": "🏅 Olympics today", "items": ["Boe brothers in biathlon, 10:00", "Kristoffersen in GS, 10:00", "Johaug in women's XC, 13:00"] },
-  { "type": "section", "id": "olympics-2026", "title": "Winter Olympics 2026", "emoji": "🏅", "style": "highlight", "items": [{"text":"Full week schedule","type":"text"}], "expandLabel": null, "expandItems": [] },
+  { "type": "match-result", "homeTeam": "Barcelona", "awayTeam": "Atlético Madrid" },
+  { "type": "golf-status", "tournament": "pga" },
+  { "type": "event-schedule", "label": "🏅 Olympics today", "filter": {"sport":"olympics","window":"today"}, "maxItems": 6, "showFlags": true, "style": "highlight" },
   { "type": "divider", "text": "This Week" },
   { "type": "event-line", "text": "♟️ Fri 15:00 — Carlsen opens Freestyle Chess" }
 ]}
 
 Quiet Tuesday:
 { "blocks": [
-  { "type": "event-line", "text": "⛳ Hovland at PGA event, 14:30" },
+  { "type": "golf-status", "tournament": "pga" },
   { "type": "event-line", "text": "⚽ La Liga mid-table, 21:00" }
 ]}
 
@@ -688,7 +712,13 @@ export function buildFallbackResultLines(recentResults, now) {
 		const scorerText = scorers.length > 0
 			? " — " + scorers.map((g) => `${g.player} ${g.minute}`).join(", ")
 			: "";
-		return `⚽ FT: ${r.homeTeam} ${r.homeScore}-${r.awayScore} ${r.awayTeam}${scorerText}`;
+		const fallbackText = `⚽ FT: ${r.homeTeam} ${r.homeScore}-${r.awayScore} ${r.awayTeam}${scorerText}`;
+		return {
+			type: "match-result",
+			homeTeam: r.homeTeam,
+			awayTeam: r.awayTeam,
+			_fallbackText: fallbackText,
+		};
 	});
 }
 
@@ -708,20 +738,36 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 		blocks.push({ type: "headline", text: headline });
 	}
 
-	// Recent favorite results as event-lines (last 48h)
-	const resultLines = buildFallbackResultLines(recentResults, now);
-	for (const line of resultLines) {
-		blocks.push({ type: "event-line", text: line });
+	// Recent favorite results as match-result component blocks (last 48h)
+	const resultBlocks = buildFallbackResultLines(recentResults, now);
+	for (const block of resultBlocks) {
+		blocks.push(block);
 	}
 
-	// Today event lines — skip sports already covered in sections to avoid duplication
-	const todayLines = generateFallbackToday(events, now, sectionSports);
-	for (const line of todayLines) {
-		blocks.push({ type: "event-line", text: line });
+	// Today event lines — football events become match-preview components, others stay as text
+	const todayBlocks = generateFallbackTodayBlocks(events, now, sectionSports);
+	for (const block of todayBlocks) {
+		blocks.push(block);
 	}
 
-	// Section cards for major events
+	// Olympics events as event-schedule component instead of section card
+	const olympicsSport = sectionSports.includes("olympics") ? "olympics" : null;
+	if (olympicsSport) {
+		const olympicsSection = sections.find(s => /olympic/i.test(s.id || s.title));
+		blocks.push({
+			type: "event-schedule",
+			label: `${olympicsSection?.emoji || "🏅"} ${olympicsSection?.title || "Winter Olympics 2026"}`,
+			filter: { sport: "olympics", window: "today" },
+			maxItems: 6,
+			showFlags: true,
+			style: "highlight",
+			_fallbackText: (olympicsSection?.items || []).map(i => i.text || i).join(" · "),
+		});
+	}
+
+	// Section cards for remaining major events (excluding Olympics, now rendered as component)
 	for (const s of sections) {
+		if (/olympic/i.test(s.id || s.title)) continue;
 		blocks.push({
 			type: "section",
 			id: s.id,
@@ -731,6 +777,16 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 			items: s.items,
 			expandLabel: s.expandLabel,
 			expandItems: s.expandItems,
+		});
+	}
+
+	// Golf status component when standings data exists
+	if (standings?.golf?.pga?.leaderboard?.length > 0) {
+		const golfTourName = standings.golf.pga.name || "PGA Tour";
+		blocks.push({
+			type: "golf-status",
+			tournament: "pga",
+			_fallbackText: `⛳ ${golfTourName}`,
 		});
 	}
 
@@ -744,6 +800,52 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 	}
 
 	return { blocks };
+}
+
+/**
+ * Generate today's event blocks — football as match-preview components, others as text event-lines.
+ */
+function generateFallbackTodayBlocks(events, now, sectionSports = []) {
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
+
+	const todayEvents = events
+		.filter((e) => isEventInWindow(e, todayStart, todayEnd))
+		.filter((e) => !sectionSports.includes(e.sport));
+
+	if (todayEvents.length === 0) return [];
+
+	// Sort by: favorites first, then importance, then Norwegian relevance
+	const sorted = [...todayEvents].sort((a, b) => {
+		if (a.isFavorite && !b.isFavorite) return -1;
+		if (!a.isFavorite && b.isFavorite) return 1;
+		if ((b.importance || 0) !== (a.importance || 0)) return (b.importance || 0) - (a.importance || 0);
+		return (b.norwegianRelevance || 0) - (a.norwegianRelevance || 0);
+	});
+
+	const blocks = [];
+	const used = new Set();
+
+	for (const e of sorted) {
+		if (blocks.length >= 4) break;
+		if (used.has(e.title)) continue;
+		used.add(e.title);
+
+		// Football events with both teams → match-preview component
+		if (e.sport === "football" && e.homeTeam && e.awayTeam) {
+			blocks.push({
+				type: "match-preview",
+				homeTeam: e.homeTeam,
+				awayTeam: e.awayTeam,
+				showStandings: (e.importance || 0) >= 3,
+				_fallbackText: fallbackLine(e),
+			});
+		} else {
+			blocks.push({ type: "event-line", text: fallbackLine(e) });
+		}
+	}
+
+	return blocks;
 }
 
 /**
@@ -1053,8 +1155,9 @@ async function main() {
 		featured = qualityResult.normalized;
 	}
 
-	// Ensure blocks have at least some event content
-	if (featured.blocks && featured.blocks.filter((b) => b.type === "event-line" || b.type === "event-group").length === 0) {
+	// Ensure blocks have at least some event content (text blocks or component blocks)
+	const CONTENT_TYPES = ["event-line", "event-group", "match-result", "match-preview", "event-schedule", "golf-status"];
+	if (featured.blocks && featured.blocks.filter((b) => CONTENT_TYPES.includes(b.type)).length === 0) {
 		const todayLines = generateFallbackToday(events, now);
 		const eventBlocks = todayLines.map((line) => ({ type: "event-line", text: line }));
 		featured.blocks = [...eventBlocks, ...featured.blocks];

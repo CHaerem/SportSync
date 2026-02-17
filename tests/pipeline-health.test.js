@@ -971,3 +971,76 @@ describe("chronic data retention detection", () => {
 		expect(issue).toBeUndefined();
 	});
 });
+
+describe("component block resolution checks", () => {
+	it("warns when match-result has no matching data", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: { football: [] },
+			featured: {
+				blocks: [
+					{ type: "match-result", homeTeam: "Girona", awayTeam: "Barcelona" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("match-result"));
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("Girona");
+	});
+
+	it("does not warn when match-result has matching data", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recentResults: {
+				football: [{ homeTeam: "Girona", awayTeam: "Barcelona", homeScore: 2, awayScore: 1 }],
+			},
+			featured: {
+				blocks: [
+					{ type: "match-result", homeTeam: "Girona", awayTeam: "Barcelona" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("match-result"));
+		expect(issue).toBeUndefined();
+	});
+
+	it("warns when match-preview has no matching event", () => {
+		const report = generateHealthReport({
+			events: [{ sport: "golf", title: "PGA", time: new Date().toISOString() }],
+			featured: {
+				blocks: [
+					{ type: "match-preview", homeTeam: "Arsenal", awayTeam: "Chelsea" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("match-preview"));
+		expect(issue).toBeDefined();
+	});
+
+	it("warns when event-schedule has no matching events", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				blocks: [
+					{ type: "event-schedule", filter: { sport: "olympics", window: "today" } },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("olympics"));
+		expect(issue).toBeDefined();
+	});
+
+	it("warns when golf-status has no leaderboard data", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			standings: { golf: { pga: { leaderboard: [] } } },
+			featured: {
+				blocks: [
+					{ type: "golf-status", tournament: "pga" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "component_unresolvable" && i.message.includes("golf-status"));
+		expect(issue).toBeDefined();
+	});
+});
