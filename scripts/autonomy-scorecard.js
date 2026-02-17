@@ -431,6 +431,54 @@ export function evaluateSnapshotHealth(dataDir = ROOT) {
 	return makeLoop(score, parts.join(", "));
 }
 
+// Loop 11: Streaming Verification
+// observe: streaming-verification-history.json -> decide: buildStreamingHints -> act: alias suggestions, trend analysis
+export function evaluateStreamingVerification(dataDir = ROOT) {
+	let score = 0;
+	const parts = [];
+
+	// 0.33 if streaming-verification-history.json exists and is fresh (<24h)
+	const historyPath = path.join(dataDir, "streaming-verification-history.json");
+	const history = readJsonIfExists(historyPath);
+	const historyAge = fileAgeMsOrNull(historyPath);
+	if (history?.runs?.length > 0 && historyAge !== null && historyAge < MS_PER_DAY) {
+		score += 0.33;
+		parts.push("verification history exists and is fresh");
+	} else if (history?.runs?.length > 0) {
+		parts.push("verification history exists but is stale");
+	} else {
+		parts.push("no streaming verification history");
+	}
+
+	// 0.33 if history has >= 3 runs (enough for trend analysis)
+	if (history?.runs?.length >= 3) {
+		score += 0.33;
+		parts.push(`${history.runs.length} runs (trend-capable)`);
+	} else if (history?.runs?.length > 0) {
+		parts.push(`only ${history.runs.length} run(s) (need >= 3 for trend)`);
+	} else {
+		parts.push("no runs for trend analysis");
+	}
+
+	// 0.34 if match rate trend is stable or rising (not declining)
+	if (history?.runs?.length >= 3) {
+		const recent3 = history.runs.slice(-3);
+		const rates = recent3.map((r) => r.matchRate ?? 0);
+		const declining = rates.every((r, i) => i === 0 || r < rates[i - 1]);
+		if (!declining) {
+			score += 0.34;
+			parts.push("match rate trend is stable or rising");
+		} else {
+			parts.push(`match rate declining: ${rates.map(r => Math.round(r * 100) + "%").join(" → ")}`);
+		}
+	} else {
+		parts.push("insufficient data for trend assessment");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
 // Generate next-actions suggestions for open/partial loops
 function buildNextActions(loops) {
 	const actions = [];
@@ -535,6 +583,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.streamingVerification && loops.streamingVerification.score < 1.0) {
+		if (loops.streamingVerification.score < 0.33) {
+			actions.push("Run enrich-streaming.js to generate streaming verification history");
+		}
+		if (loops.streamingVerification.score < 0.66) {
+			actions.push("Run streaming enrichment 3+ times to build trend data");
+		}
+		if (loops.streamingVerification.score < 1.0) {
+			actions.push("Investigate declining streaming match rate — check alias table or tvkampen HTML structure");
+		}
+	}
+
 	return actions;
 }
 
@@ -550,6 +610,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
 		resultsHealth: evaluateResultsHealth(dataDir, scriptsDir),
 		snapshotHealth: evaluateSnapshotHealth(dataDir),
+		streamingVerification: evaluateStreamingVerification(dataDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

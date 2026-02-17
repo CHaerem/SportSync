@@ -15,7 +15,7 @@ The thesis: a system built on nothing but **GitHub Actions**, a **Claude Code Ma
 2. **Maintain its own code** — detect bugs and improvement opportunities, then ship fixes via PRs (50+ merged autonomously)
 3. **Expand its own capabilities** — recognize when new features or data sources would help, and build them (pipeline steps are defined in an editable manifest the autopilot controls)
 4. **Personalize its output** — adapt content to user interests that evolve over time based on engagement signals
-5. **Self-correct quality** — 11 closed feedback loops observe outcomes, decide on corrective actions, and act
+5. **Self-correct quality** — 12 closed feedback loops observe outcomes, decide on corrective actions, and act
 
 No databases. No servers. No paid APIs. No deployment infrastructure. This constraint is deliberate — it proves that meaningful autonomy is possible with minimal infrastructure.
 
@@ -108,7 +108,7 @@ The dashboard adapts to user interests. Engagement tracking records which sports
 
 ### 5. Self-Correcting Quality
 
-11 closed feedback loops form a self-correcting system:
+12 closed feedback loops form a self-correcting system:
 
 | # | Loop | Observe | Decide | Act |
 |---|------|---------|--------|-----|
@@ -123,8 +123,9 @@ The dashboard adapts to user interests. Engagement tracking records which sports
 | 9 | Results Health | Recent results staleness | Detect gaps | Surface in health report |
 | 10 | Fact Verification | LLM claim checking | Verify against source data | Flag inaccuracies |
 | 11 | Preference Evolution | Engagement click data | Compute sport weights | Update user-context.json |
+| 12 | Streaming Verification | tvkampen match rate trends | Mine alias suggestions, detect HTML changes | Feed hints back, surface issues for autopilot |
 
-Measured by `autonomy-scorecard.js` — currently 100% (11/11 loops closed).
+Measured by `autonomy-scorecard.js` — currently 100% (12/12 loops closed).
 
 ## The Dashboard
 
@@ -164,7 +165,7 @@ npm run dev          # http://localhost:8000
 
 ```bash
 npm run dev              # Local dev server
-npm test                 # Run all tests (1295 tests, vitest)
+npm test                 # Run all tests (vitest)
 npm run build:events     # Generate events.json from sport files
 npm run generate:featured # Generate featured.json (needs API key or Claude CLI)
 npm run validate:data    # Check data integrity
@@ -198,7 +199,7 @@ Early runs prioritize **velocity** (25 seeded tasks, sprint mode). As the system
 
 ## What's Next
 
-The system is autonomous at 11/11 feedback loops, but gaps remain toward the full vision:
+The system is autonomous at 12/12 feedback loops, but gaps remain toward the full vision:
 
 - **User feedback loop** — engagement tracking flows, but explicit thumbs-up/down on watch-plan picks would give a richer signal
 - **Evolving favorites** — sport-level weights evolve, but favorite teams and players are still manually configured

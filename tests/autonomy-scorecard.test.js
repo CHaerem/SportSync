@@ -600,11 +600,19 @@ describe("evaluateAutonomy()", () => {
 			perDay: {},
 			emptyDays: [],
 		});
+		// Loop 11: Streaming Verification
+		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.5, listingsFound: 20, eventsEnriched: 10 },
+				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.6, listingsFound: 22, eventsEnriched: 13 },
+				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
+			],
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(10);
-		expect(report.loopsTotal).toBe(10);
+		expect(report.loopsClosed).toBe(11);
+		expect(report.loopsTotal).toBe(11);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -616,18 +624,18 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/10 = 0.20
-		expect(report.overallScore).toBeCloseTo(0.20, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/11 ≈ 0.18
+		expect(report.overallScore).toBeCloseTo(0.18, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(10);
+		expect(report.loopsTotal).toBe(11);
 	});
 
 	it("generates nextActions for open loops", () => {
 		// Everything missing
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions.length).toBeGreaterThan(0);
-		// Should suggest actions for all 9 open loops
-		expect(report.nextActions.length).toBeGreaterThanOrEqual(9);
+		// Should suggest actions for all 11 open loops
+		expect(report.nextActions.length).toBeGreaterThanOrEqual(10);
 	});
 
 	it("generates no nextActions when all loops are closed", () => {
@@ -689,6 +697,14 @@ describe("evaluateAutonomy()", () => {
 			perDay: {},
 			emptyDays: [],
 		});
+		// Loop 11: Streaming Verification
+		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.5, listingsFound: 20, eventsEnriched: 10 },
+				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.6, listingsFound: 22, eventsEnriched: 13 },
+				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
+			],
+		});
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions).toHaveLength(0);
@@ -712,7 +728,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(10);
+		expect(report.loopsTotal).toBe(11);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -722,6 +738,7 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.eventDiscovery.status).toBe("open");
 		expect(report.loops.scheduleVerification.status).toBe("open");
 		expect(report.loops.resultsHealth.status).toBe("open");
+		expect(report.loops.streamingVerification.status).toBe("open");
 	});
 });
 

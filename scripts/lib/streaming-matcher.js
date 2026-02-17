@@ -128,9 +128,10 @@ export function computeMatchScore(tvkEntry, event, dateStr) {
 	const eventDate = new Date(event.time);
 	let timeDiffMin = Infinity;
 
-	if (tvkEntry.time && dateStr) {
+	const matchDate = tvkEntry.date || dateStr;
+	if (tvkEntry.time && matchDate) {
 		const [hours, minutes] = tvkEntry.time.split(":").map(Number);
-		const tvkDate = new Date(`${dateStr}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`);
+		const tvkDate = new Date(`${matchDate}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+01:00`); // CET
 		timeDiffMin = Math.abs(eventDate.getTime() - tvkDate.getTime()) / 60000;
 	} else if (tvkEntry.time) {
 		// Compare just time-of-day if no date context
@@ -210,4 +211,104 @@ export function matchTvkampenToEvents(tvkEntries, events, options = {}) {
 	}
 
 	return matched;
+}
+
+/**
+ * Mine alias suggestions from unmatched tvkampen entries by computing
+ * word overlap against all event team names.
+ *
+ * @param {Array<{homeTeam: string, awayTeam: string}>} unmatched - Unmatched tvkampen entries
+ * @param {Array<{homeTeam: string, awayTeam: string}>} events - events.json events
+ * @returns {Array<{tvkName: string, evtName: string, similarity: number}>}
+ */
+export function mineAliasSuggestions(unmatched, events) {
+	if (!unmatched?.length || !events?.length) return [];
+
+	const suggestions = [];
+	const seen = new Set();
+
+	// Collect all unique event team names
+	const eventNames = new Set();
+	for (const e of events) {
+		if (e.homeTeam) eventNames.add(e.homeTeam);
+		if (e.awayTeam) eventNames.add(e.awayTeam);
+	}
+
+	for (const entry of unmatched) {
+		for (const tvkName of [entry.homeTeam, entry.awayTeam]) {
+			if (!tvkName) continue;
+			const normTvk = normalizeTeamName(tvkName);
+			if (!normTvk) continue;
+			const tvkWords = new Set(normTvk.split(/\s+/));
+
+			for (const evtName of eventNames) {
+				const normEvt = normalizeTeamName(evtName);
+				if (!normEvt || normEvt === normTvk) continue;
+
+				// Skip if teams already match (no suggestion needed)
+				if (teamsMatch(tvkName, evtName)) continue;
+
+				const evtWords = new Set(normEvt.split(/\s+/));
+				const intersection = [...tvkWords].filter((w) => evtWords.has(w));
+				const union = new Set([...tvkWords, ...evtWords]);
+				const similarity = intersection.length / union.size;
+
+				// Near-miss: >= 50% word overlap
+				if (similarity >= 0.5) {
+					const key = [normTvk, normEvt].sort().join("|");
+					if (seen.has(key)) continue;
+					seen.add(key);
+					suggestions.push({ tvkName, evtName, similarity: Number(similarity.toFixed(2)) });
+				}
+			}
+		}
+	}
+
+	return suggestions.sort((a, b) => b.similarity - a.similarity);
+}
+
+/**
+ * Build streaming hints from verification history for adaptive improvement.
+ *
+ * @param {Array<{matchRate: number, listingsFound: number, aliasSuggestions: Array}>} history - Last N verification runs
+ * @returns {string[]} Hints for logging / future prompt injection
+ */
+export function buildStreamingHints(history) {
+	if (!Array.isArray(history) || history.length === 0) return [];
+
+	const hints = [];
+
+	// Detect declining match rate over 3+ consecutive runs
+	if (history.length >= 3) {
+		const recent = history.slice(-3);
+		const rates = recent.map((r) => r.matchRate ?? 0);
+		const declining = rates.every((r, i) => i === 0 || r < rates[i - 1]);
+		if (declining) {
+			hints.push(`WARNING: Match rate declining over last 3 runs (${rates.map(r => Math.round(r * 100) + "%").join(" → ")})`);
+		}
+	}
+
+	// Aggregate alias suggestions — if same pair seen >= 3 times, suggest adding
+	const suggestionCounts = {};
+	for (const run of history) {
+		for (const s of (run.aliasSuggestions || [])) {
+			const key = [normalizeTeamName(s.tvkName), normalizeTeamName(s.evtName)].sort().join("|");
+			suggestionCounts[key] = (suggestionCounts[key] || { ...s, count: 0 });
+			suggestionCounts[key].count++;
+		}
+	}
+	for (const [, s] of Object.entries(suggestionCounts)) {
+		if (s.count >= 3) {
+			hints.push(`ALIAS SUGGESTION (seen ${s.count}x): "${s.tvkName}" ↔ "${s.evtName}" — consider adding to TEAM_ALIASES`);
+		}
+	}
+
+	// Detect listings=0 pattern (possible HTML structure change)
+	const recentListings = history.slice(-3);
+	const allZeroListings = recentListings.every((r) => (r.listingsFound ?? 0) === 0);
+	if (allZeroListings && recentListings.length >= 3) {
+		hints.push("WARNING: tvkampen returned 0 listings for 3+ consecutive runs — HTML structure may have changed");
+	}
+
+	return hints;
 }

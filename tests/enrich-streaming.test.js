@@ -192,6 +192,53 @@ describe("enrichStreaming", () => {
 		}
 	});
 
+	it("matches events from both today and tomorrow dates", async () => {
+		const todayEvent = makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z");
+		const tomorrowEvent = makeEvent("Chelsea", "Newcastle", "2026-02-18T15:00:00Z");
+		const events = [todayEvent, tomorrowEvent];
+
+		const todayHtml = makeListingHtml(
+			makeEventBlock("6001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["tv2play"] }),
+		);
+		const tomorrowHtml = makeListingHtml(
+			makeEventBlock("6002", { home: "Chelsea", away: "Newcastle", time: "16:00", channelClasses: ["viaplay"] }),
+		);
+
+		const mockFetcher = vi.fn().mockImplementation((url) => {
+			if (url.includes("2026-02-18")) return Promise.resolve(tomorrowHtml);
+			if (url.includes("/date/")) return Promise.resolve(todayHtml);
+			return Promise.resolve("<div></div>");
+		});
+
+		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
+
+		// Both dates should produce listings
+		expect(log.listingsFound).toBe(2);
+		// At least one match from each date
+		expect(log.matchesSucceeded).toBeGreaterThanOrEqual(2);
+	});
+
+	it("includes aliasSuggestions and hintsApplied in log", async () => {
+		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+
+		const listingHtml = makeListingHtml(
+			makeEventBlock("7001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("7002", { home: "Unknown Team", away: "Mystery FC", time: "14:00", channelClasses: ["tv2play"] }),
+		);
+
+		const mockFetcher = vi.fn().mockImplementation((url) => {
+			if (url.includes("/date/")) return Promise.resolve(listingHtml);
+			return Promise.resolve("<div></div>");
+		});
+
+		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
+
+		expect(log).toHaveProperty("aliasSuggestions");
+		expect(log).toHaveProperty("hintsApplied");
+		expect(Array.isArray(log.aliasSuggestions)).toBe(true);
+		expect(Array.isArray(log.hintsApplied)).toBe(true);
+	});
+
 	it("sets streamingSource and streamingConfidence on enriched events", async () => {
 		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
 

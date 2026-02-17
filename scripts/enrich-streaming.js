@@ -17,7 +17,7 @@
 import path from "path";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, formatDateKey } from "./lib/helpers.js";
 import { fetchListingsWithBroadcasters } from "./lib/tvkampen-scraper.js";
-import { matchTvkampenToEvents } from "./lib/streaming-matcher.js";
+import { matchTvkampenToEvents, mineAliasSuggestions, buildStreamingHints } from "./lib/streaming-matcher.js";
 import { buildStreamingEntries } from "./lib/broadcaster-urls.js";
 
 /**
@@ -78,11 +78,24 @@ export async function enrichStreaming({ events, fetcher }) {
 		return { events, log };
 	}
 
-	// Match tvkampen entries to football events
-	const matched = matchTvkampenToEvents(tvkEntries, footballEvents, {
-		minConfidence: 0.6,
-		dateStr: today,
-	});
+	// Match tvkampen entries per source date to avoid cross-day confusion
+	const matched = [];
+	const usedEventIds = new Set();
+	for (const date of dates) {
+		const dateEntries = tvkEntries.filter((e) => e.date === date);
+		if (dateEntries.length === 0) continue;
+		// Filter out already-matched events to prevent duplicates across date groups
+		const availableEvents = footballEvents.filter((_, i) => !usedEventIds.has(i));
+		const dateMatches = matchTvkampenToEvents(dateEntries, availableEvents, {
+			minConfidence: 0.6,
+			dateStr: date,
+		});
+		for (const m of dateMatches) {
+			const idx = footballEvents.indexOf(m.event);
+			if (idx >= 0) usedEventIds.add(idx);
+			matched.push(m);
+		}
+	}
 	log.matchesSucceeded = matched.length;
 	log.matchRate = footballEvents.length > 0
 		? Number((matched.length / footballEvents.length).toFixed(2))
@@ -113,6 +126,37 @@ export async function enrichStreaming({ events, fetcher }) {
 			}
 		}
 	}
+
+	// Self-monitoring: mine alias suggestions from unmatched entries
+	const aliasSuggestions = mineAliasSuggestions(log.unmatched, footballEvents);
+	log.aliasSuggestions = aliasSuggestions.slice(0, 10); // cap at 10
+
+	// Read verification history, build hints, and append run record
+	const historyPath = path.join(rootDataPath(), "streaming-verification-history.json");
+	const history = readJsonIfExists(historyPath) || { runs: [] };
+	const hints = buildStreamingHints(history.runs);
+	log.hintsApplied = hints;
+
+	if (hints.length > 0) {
+		console.log(`Streaming hints (${hints.length}):`);
+		for (const h of hints) console.log(`  ${h}`);
+	}
+
+	// Append run record (keep last 50)
+	history.runs.push({
+		timestamp: now.toISOString(),
+		matchRate: log.matchRate,
+		listingsFound: log.listingsFound,
+		eventsEnriched: log.eventsEnriched,
+		matchesSucceeded: log.matchesSucceeded,
+		matchesAttempted: log.matchesAttempted,
+		aliasSuggestions: log.aliasSuggestions,
+		hintsCount: hints.length,
+	});
+	if (history.runs.length > 50) {
+		history.runs = history.runs.slice(-50);
+	}
+	writeJsonPretty(historyPath, history);
 
 	console.log(
 		`Streaming enrichment: ${log.eventsEnriched}/${footballEvents.length} football events enriched ` +

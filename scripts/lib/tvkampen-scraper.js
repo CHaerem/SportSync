@@ -375,14 +375,17 @@ export async function fetchListingsWithBroadcasters(sport, dates, fetcher = fetc
 	// Fetch listings for each date.
 	// First date fetch propagates errors for reachability detection.
 	for (let i = 0; i < dates.length; i++) {
+		let listings;
 		if (i === 0) {
 			const url = `${BASE_URL}/${sport}/date/${dates[0]}`;
 			const html = await fetcher(url);
-			allListings.push(...parseListingPage(html));
+			listings = parseListingPage(html);
 		} else {
-			const listings = await fetchSportListings(sport, dates[i], fetcher);
-			allListings.push(...listings);
+			listings = await fetchSportListings(sport, dates[i], fetcher);
 		}
+		// Tag each listing with its source date for per-date matching
+		for (const l of listings) l.date = dates[i];
+		allListings.push(...listings);
 		if (i < dates.length - 1) await delay(REQUEST_DELAY_MS);
 	}
 

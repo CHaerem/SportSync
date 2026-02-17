@@ -633,7 +633,7 @@ During nightly runs, the autopilot should:
 
 ## Autonomy Infrastructure (2026-02-12)
 
-Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)**.
+Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)**.
 
 ### Completed
 
@@ -643,7 +643,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 
 - [DONE] (manual session) Coverage gap auto-resolver — `scripts/resolve-coverage-gaps.js` reads `coverage-gaps.json` and creates skeleton curated configs for high/medium-confidence actionable gaps. Wired into `detect-coverage-gaps.js` to run automatically. 11 tests.
 
-- [DONE] (manual session) Autonomy scorecard — `scripts/autonomy-scorecard.js` evaluates 8 feedback loops (featured quality, enrichment quality, coverage gaps, pipeline health, watch plan, code health, discovery, schedule verification). Wired into `pipeline-health.js`. Outputs `autonomy-report.json`.
+- [DONE] (manual session) Autonomy scorecard — `scripts/autonomy-scorecard.js` evaluates 11 feedback loops (featured quality, enrichment quality, coverage gaps, pipeline health, watch plan, code health, discovery, schedule verification, results health, snapshot health, streaming verification). Wired into `pipeline-health.js`. Outputs `autonomy-report.json`.
 
 - [DONE] (manual session) Discovery feedback loop (Loop 7) — `discover-events.js` + `sync-configs.js` auto-discover events, athletes, and schedules via Claude CLI + WebSearch. `autonomy-scorecard.js` tracks discovery health.
 
@@ -674,6 +674,8 @@ Closed-loop self-improvement system. Autonomy score: **100% (11/11 loops closed)
 - [DONE] (manual session) Add preference evolution pipeline script — Created `scripts/evolve-preferences.js` that reads engagement data from GitHub Issues + local `engagement-data.json`, computes relative click share with recency decay, and updates `user-context.json` sport weights. Writes history to `preference-evolution.json`. 33 tests in `tests/evolve-preferences.test.js`.
 
 - [DONE] (manual session) Add opportunity detection to autopilot scouting — Expanded Step 2 scouting prompt with creative scouting (2b): reads RSS, coverage gaps, quality history, standings, and dashboard code to propose features, UX improvements, and new capabilities. Added heuristics F (opportunity detection), G (dashboard UX), H (capability seeding) to roadmap.
+
+- [DONE] (manual session) Streaming verification feedback loop (Loop 12) — `enrich-streaming.js` self-monitors match rate, mines alias suggestions via `mineAliasSuggestions()`, builds trend hints via `buildStreamingHints()`. Writes `streaming-verification-history.json` (last 50 runs). `pipeline-health.js` reads history for enhanced diagnostics (trend, pending aliases, HTML structure change detection). `autonomy-scorecard.js` evaluates loop as `evaluateStreamingVerification()`. Fixed root cause bugs: wrong date for tomorrow's matches, missing CET timezone offset.
 
 - [DONE] (manual session) Pipeline manifest — Created `scripts/pipeline-manifest.json` with declarative step definitions, `scripts/run-pipeline.js` runner, and `scripts/generate-capabilities.js` registry. The autopilot can now add/remove/reorder pipeline steps by editing the manifest (allowed path). Workflow rewritten to use single `node scripts/run-pipeline.js` call. Task tiers (`[MAINTENANCE]`/`[FEATURE]`/`[EXPLORE]`) and heuristic K (vision-guided exploration) added.
 

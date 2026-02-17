@@ -321,9 +321,9 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 6a. Streaming enrichment health
-	const { streamingEnrichment = null } = options;
-	const streamingHealth = { present: false, tvkampenReachable: false, matchRate: 0, eventsEnriched: 0 };
+	// 6a. Streaming enrichment health (enhanced with verification history)
+	const { streamingEnrichment = null, streamingVerificationHistory = null } = options;
+	const streamingHealth = { present: false, tvkampenReachable: false, matchRate: 0, eventsEnriched: 0, trend: null, pendingAliasSuggestions: 0 };
 	if (streamingEnrichment) {
 		streamingHealth.present = true;
 		streamingHealth.tvkampenReachable = streamingEnrichment.tvkampenReachable === true;
@@ -342,6 +342,52 @@ export function generateHealthReport(options = {}) {
 				message: `Streaming enrichment match rate is ${Math.round(streamingHealth.matchRate * 100)}% (${streamingEnrichment.matchesSucceeded}/${streamingEnrichment.matchesAttempted}) — team alias table may need updates`,
 			});
 		}
+	}
+
+	// Enhanced streaming diagnostics from verification history
+	const svhRuns = Array.isArray(streamingVerificationHistory?.runs) ? streamingVerificationHistory.runs : [];
+	if (svhRuns.length >= 3) {
+		const recent3 = svhRuns.slice(-3);
+		const rates = recent3.map((r) => r.matchRate ?? 0);
+		const declining = rates.every((r, i) => i === 0 || r < rates[i - 1]);
+		const rising = rates.every((r, i) => i === 0 || r > rates[i - 1]);
+		streamingHealth.trend = declining ? "declining" : rising ? "rising" : "stable";
+
+		if (declining) {
+			issues.push({
+				severity: "warning",
+				code: "streaming_match_rate_declining",
+				message: `Streaming match rate declining over 3 runs: ${rates.map(r => Math.round(r * 100) + "%").join(" → ")}`,
+			});
+		}
+
+		// Check for zero-listings pattern (HTML structure change)
+		const allZero = recent3.every((r) => (r.listingsFound ?? 0) === 0);
+		if (allZero) {
+			issues.push({
+				severity: "warning",
+				code: "streaming_html_structure_change",
+				message: "tvkampen returned 0 listings for 3+ consecutive runs — HTML structure may have changed",
+			});
+		}
+	}
+
+	// Count pending alias suggestions (seen >= 3 times across runs)
+	const aliasCounts = {};
+	for (const run of svhRuns) {
+		for (const s of (run.aliasSuggestions || [])) {
+			const key = `${(s.tvkName || "").toLowerCase()}|${(s.evtName || "").toLowerCase()}`;
+			aliasCounts[key] = (aliasCounts[key] || 0) + 1;
+		}
+	}
+	const pendingCount = Object.values(aliasCounts).filter((c) => c >= 3).length;
+	streamingHealth.pendingAliasSuggestions = pendingCount;
+	if (pendingCount > 0) {
+		issues.push({
+			severity: "info",
+			code: "streaming_alias_suggestions_pending",
+			message: `${pendingCount} streaming alias suggestion(s) seen 3+ times — consider adding to TEAM_ALIASES`,
+		});
 	}
 
 	// 6b. Preference evolution freshness
@@ -786,8 +832,9 @@ async function main() {
 	// Read preference evolution history
 	const preferenceEvolution = readJsonIfExists(path.join(dataDir, "preference-evolution.json"));
 
-	// Read streaming enrichment log
+	// Read streaming enrichment log and verification history
 	const streamingEnrichment = readJsonIfExists(path.join(dataDir, "streaming-enrichment.json"));
+	const streamingVerificationHistory = readJsonIfExists(path.join(dataDir, "streaming-verification-history.json"));
 
 	// Read pipeline result for timing anomaly detection
 	const pipelineResult = readJsonIfExists(path.join(dataDir, "pipeline-result.json"));
@@ -806,6 +853,7 @@ async function main() {
 		factCheckHistory,
 		preferenceEvolution,
 		streamingEnrichment,
+		streamingVerificationHistory,
 		pipelineResult,
 	});
 

@@ -4,6 +4,8 @@ import {
 	teamsMatch,
 	computeMatchScore,
 	matchTvkampenToEvents,
+	mineAliasSuggestions,
+	buildStreamingHints,
 	TEAM_ALIASES,
 } from "../scripts/lib/streaming-matcher.js";
 
@@ -244,6 +246,167 @@ describe("matchTvkampenToEvents", () => {
 	it("handles empty inputs", () => {
 		expect(matchTvkampenToEvents([], events)).toEqual([]);
 		expect(matchTvkampenToEvents([{ homeTeam: "A", awayTeam: "B", time: "12:00", matchUrl: "x" }], [])).toEqual([]);
+	});
+});
+
+// --- Cross-day matching ---
+
+describe("computeMatchScore — cross-day matching", () => {
+	it("uses tvkEntry.date instead of dateStr when available", () => {
+		const event = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "2026-02-18T20:00:00Z",
+			tournament: "Premier League",
+		};
+		// tvkEntry from tomorrow's page, but default dateStr is today
+		const tvk = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "21:00",
+			date: "2026-02-18", // per-entry date
+			matchUrl: "url1",
+		};
+		// With wrong dateStr (today), the per-entry date should take priority
+		const score = computeMatchScore(tvk, event, "2026-02-17");
+		expect(score).toBeGreaterThanOrEqual(0.6);
+	});
+
+	it("falls back to dateStr when tvkEntry.date is absent", () => {
+		const event = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "2026-02-17T20:00:00Z",
+			tournament: "Premier League",
+		};
+		const tvk = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "21:00",
+			matchUrl: "url1",
+		};
+		const score = computeMatchScore(tvk, event, "2026-02-17");
+		expect(score).toBeGreaterThanOrEqual(0.6);
+	});
+});
+
+describe("computeMatchScore — CET timezone", () => {
+	it("handles CET offset: 21:00 CET matches 20:00 UTC", () => {
+		const event = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "2026-02-17T20:00:00Z", // 20:00 UTC
+			tournament: "Premier League",
+		};
+		const tvk = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "21:00", // 21:00 CET = 20:00 UTC
+			matchUrl: "url1",
+		};
+		const score = computeMatchScore(tvk, event, "2026-02-17");
+		expect(score).toBeGreaterThanOrEqual(0.6);
+	});
+
+	it("rejects time mismatch beyond 30 min with CET offset", () => {
+		const event = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "2026-02-17T15:00:00Z", // 15:00 UTC
+			tournament: "Premier League",
+		};
+		const tvk = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "21:00", // 21:00 CET = 20:00 UTC, 5h difference
+			matchUrl: "url1",
+		};
+		const score = computeMatchScore(tvk, event, "2026-02-17");
+		expect(score).toBe(0);
+	});
+});
+
+// --- mineAliasSuggestions ---
+
+describe("mineAliasSuggestions", () => {
+	it("detects near-miss team names", () => {
+		// "Bayer 04 Leverkusen" vs "Bayer Leverkusen" — 2/3 word overlap but
+		// neither is a substring of the other due to "04"
+		const unmatched = [
+			{ homeTeam: "Bayer 04 Leverkusen", awayTeam: "Sevilla" },
+		];
+		const events = [
+			{ homeTeam: "Bayer Leverkusen", awayTeam: "Sevilla FC" },
+		];
+		const suggestions = mineAliasSuggestions(unmatched, events);
+		expect(suggestions.length).toBeGreaterThanOrEqual(1);
+		expect(suggestions.some(s => s.tvkName === "Bayer 04 Leverkusen")).toBe(true);
+	});
+
+	it("returns empty for no unmatched entries", () => {
+		expect(mineAliasSuggestions([], [{ homeTeam: "A", awayTeam: "B" }])).toEqual([]);
+		expect(mineAliasSuggestions(null, [{ homeTeam: "A", awayTeam: "B" }])).toEqual([]);
+	});
+
+	it("skips pairs that already match via teamsMatch", () => {
+		const unmatched = [{ homeTeam: "Wolves", awayTeam: "Arsenal" }];
+		const events = [{ homeTeam: "Wolverhampton", awayTeam: "Arsenal" }];
+		const suggestions = mineAliasSuggestions(unmatched, events);
+		// Wolves ↔ Wolverhampton already matches via alias table
+		const wolfSuggestion = suggestions.find(s =>
+			s.tvkName === "Wolves" && s.evtName === "Wolverhampton"
+		);
+		expect(wolfSuggestion).toBeUndefined();
+	});
+});
+
+// --- buildStreamingHints ---
+
+describe("buildStreamingHints", () => {
+	it("returns empty for empty history", () => {
+		expect(buildStreamingHints([])).toEqual([]);
+		expect(buildStreamingHints(null)).toEqual([]);
+	});
+
+	it("detects declining match rate", () => {
+		const history = [
+			{ matchRate: 0.6, listingsFound: 20 },
+			{ matchRate: 0.4, listingsFound: 20 },
+			{ matchRate: 0.2, listingsFound: 20 },
+		];
+		const hints = buildStreamingHints(history);
+		expect(hints.some(h => h.includes("declining"))).toBe(true);
+	});
+
+	it("returns no warning for stable/rising rate", () => {
+		const history = [
+			{ matchRate: 0.4, listingsFound: 20 },
+			{ matchRate: 0.5, listingsFound: 20 },
+			{ matchRate: 0.6, listingsFound: 20 },
+		];
+		const hints = buildStreamingHints(history);
+		expect(hints.some(h => h.includes("declining"))).toBe(false);
+	});
+
+	it("detects zero-listings pattern", () => {
+		const history = [
+			{ matchRate: 0, listingsFound: 0 },
+			{ matchRate: 0, listingsFound: 0 },
+			{ matchRate: 0, listingsFound: 0 },
+		];
+		const hints = buildStreamingHints(history);
+		expect(hints.some(h => h.includes("0 listings"))).toBe(true);
+	});
+
+	it("suggests aliases seen 3+ times", () => {
+		const suggestion = { tvkName: "Foo FC", evtName: "Foo City" };
+		const history = [
+			{ matchRate: 0.5, listingsFound: 10, aliasSuggestions: [suggestion] },
+			{ matchRate: 0.5, listingsFound: 10, aliasSuggestions: [suggestion] },
+			{ matchRate: 0.5, listingsFound: 10, aliasSuggestions: [suggestion] },
+		];
+		const hints = buildStreamingHints(history);
+		expect(hints.some(h => h.includes("ALIAS SUGGESTION"))).toBe(true);
 	});
 });
 

@@ -99,7 +99,7 @@ The system has three acceleration vectors:
 
 ## Project Overview
 
-SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Eleven closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, and personalization. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
+SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Twelve closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, streaming data, and personalization. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
 
 ## Architecture
 
@@ -222,6 +222,8 @@ docs/
     ├── verification-history.json # Schedule verification history (last 50 runs)
     ├── engagement-data.json # User engagement data (per-sport click counts, exported from client)
     ├── preference-evolution.json # Preference evolution history (sport weight adjustments)
+    ├── streaming-enrichment.json # Streaming enrichment log (tvkampen match rate, enriched events)
+    ├── streaming-verification-history.json # Streaming verification history (match rate trends, alias suggestions)
     ├── events.ics          # Calendar export
     ├── football.json       # Per-sport source files
     ├── golf.json / tennis.json / f1.json / chess.json / esports.json
@@ -248,6 +250,9 @@ scripts/
 │   ├── base-fetcher.js     # Base class for sport fetchers
 │   ├── api-client.js       # HTTP client wrapper
 │   ├── norwegian-streaming.js # Norwegian streaming info
+│   ├── tvkampen-scraper.js  # tvkampen.com scraper (listings, channels, broadcasters)
+│   ├── streaming-matcher.js # Fuzzy team/time matching for tvkampen→events, alias mining, hints
+│   ├── broadcaster-urls.js  # Broadcaster name→URL/type mapping
 │   └── filters.js          # Event filtering utilities
 ├── fetch-standings.js      # ESPN standings → standings.json
 ├── fetch-rss.js            # RSS digest → rss-digest.json
@@ -264,6 +269,7 @@ scripts/
 ├── merge-open-data.js      # Merges open source + primary data
 ├── verify-schedules.js     # Schedule verification orchestrator → verification-history.json
 ├── evolve-preferences.js   # Preference evolution engine → preference-evolution.json
+├── enrich-streaming.js     # tvkampen streaming enrichment → streaming-enrichment.json + verification history
 ├── run-pipeline.js         # Pipeline runner — reads manifest, orchestrates all phases
 ├── generate-capabilities.js # Capability registry generator → capabilities.json
 ├── pipeline-manifest.json  # Declarative pipeline step definitions (autopilot-editable)
@@ -326,6 +332,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 - **9th feedback loop**: `fetch-results.js` fetches recent results → `pipeline-health.js` monitors freshness → health report surfaces issues
 - **10th feedback loop**: `fact-checker.js` verifies featured content claims against source data → `fact-check-history.json`
 - **11th feedback loop**: `evolve-preferences.js` reads engagement data (GitHub Issues + local file) → computes sport weights from click patterns → updates `user-context.json` → enrichment/featured/watch-plan adapt → `preference-evolution.json` tracks history
+- **12th feedback loop**: `enrich-streaming.js` mines alias suggestions from unmatched tvkampen entries → `streaming-verification-history.json` tracks match rate trends → `buildStreamingHints()` feeds corrections back → `pipeline-health.js` surfaces declining rates and pending alias suggestions for autopilot repair
 - **Autonomy scorecard**: `autonomy-scorecard.js` tracks feedback loops → `autonomy-report.json`
 
 ## Current State vs. Vision
@@ -345,9 +352,10 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Results health** | Autonomous | Recent results fetched, monitored for staleness (Loop 9) |
 | **Fact verification** | Autonomous | LLM-powered claim verification against source data (Loop 10) |
 | **Preference evolution** | Autonomous | Engagement signals flow back to pipeline, sport weights evolve (Loop 11) |
-| **Autonomy tracking** | Autonomous | 11/11 feedback loops closed, scored by autonomy-scorecard.js |
+| **Streaming verification** | Autonomous | tvkampen match rate tracked, alias mining, trend analysis (Loop 12) |
+| **Autonomy tracking** | Autonomous | 12/12 feedback loops closed, scored by autonomy-scorecard.js |
 
-**Autonomy score: 100% (11/11 loops closed)**
+**Autonomy score: 100% (12/12 loops closed)**
 
 ### What's Missing (Gap to Vision)
 
