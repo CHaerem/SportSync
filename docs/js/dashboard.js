@@ -86,7 +86,7 @@ class Dashboard {
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
@@ -94,7 +94,8 @@ class Dashboard {
 				fetch('data/rss-digest.json?t=' + Date.now()).catch(() => null),
 				fetch('data/meta.json?t=' + Date.now()).catch(() => null),
 				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null),
-				fetch('data/insights.json?t=' + Date.now()).catch(() => null)
+				fetch('data/insights.json?t=' + Date.now()).catch(() => null),
+				fetch('data/health-report.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -151,6 +152,10 @@ class Dashboard {
 
 			if (insightsResp && insightsResp.ok) {
 				try { this.insights = await insightsResp.json(); } catch { this.insights = null; }
+			}
+
+			if (healthResp && healthResp.ok) {
+				try { this.healthReport = await healthResp.json(); } catch { this.healthReport = null; }
 			}
 
 			this._cacheSet('events', this.allEvents);
@@ -1182,9 +1187,26 @@ class Dashboard {
 				return (pref === 'high' || pref === 'medium') && !activeSports.has(s.id);
 			});
 		if (missing.length === 0) return '';
-		return missing.map(s =>
-			`<div class="empty-sport-note">${s.emoji} No upcoming ${s.name.toLowerCase()} events</div>`
-		).join('');
+		return missing.map(s => {
+			const reason = this._getEmptySportReason(s.id);
+			const suffix = reason ? ` \u2014 ${reason}` : '';
+			return `<div class="empty-sport-note">${s.emoji} No upcoming ${s.name.toLowerCase()} events${suffix}</div>`;
+		}).join('');
+	}
+
+	_getEmptySportReason(sportId) {
+		const h = this.healthReport;
+		if (!h) return '';
+		const dataKey = sportId === 'formula1' ? 'f1' : sportId;
+		const freshness = h.dataFreshness && h.dataFreshness[dataKey + '.json'];
+		const coverage = h.sportCoverage && h.sportCoverage[dataKey];
+		if (freshness && freshness.stale) return 'data source stale';
+		if (coverage && coverage.count === 0 && freshness && !freshness.stale) {
+			if (dataKey === 'tennis') return 'no Norwegian player matches scheduled';
+			if (dataKey === 'esports') return 'data source unavailable';
+			return 'off-season or no scheduled events';
+		}
+		return '';
 	}
 
 	renderEvents() {
