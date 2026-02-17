@@ -69,6 +69,7 @@ class Dashboard {
 		const cachedWatchPlan = this._cacheGet('watchPlan', STATIC_TTL);
 		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
 		const cachedRecentResults = this._cacheGet('recentResults', STATIC_TTL);
+		const cachedLeagueConfig = this._cacheGet('leagueConfig', STATIC_TTL);
 
 		// Always fetch meta.json for freshness display (tiny, not cached)
 		fetch('data/meta.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
@@ -82,12 +83,13 @@ class Dashboard {
 			this.watchPlan = cachedWatchPlan;
 			this.rssDigest = cachedRssDigest;
 			this.recentResults = cachedRecentResults;
+			this.leagueConfig = cachedLeagueConfig;
 			this.render();
 			return;
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp, leagueConfigResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
@@ -96,7 +98,8 @@ class Dashboard {
 				fetch('data/meta.json?t=' + Date.now()).catch(() => null),
 				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null),
 				fetch('data/insights.json?t=' + Date.now()).catch(() => null),
-				fetch('data/health-report.json?t=' + Date.now()).catch(() => null)
+				fetch('data/health-report.json?t=' + Date.now()).catch(() => null),
+				fetch('data/league-config.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -159,12 +162,17 @@ class Dashboard {
 				try { this.healthReport = await healthResp.json(); } catch { this.healthReport = null; }
 			}
 
+			if (leagueConfigResp && leagueConfigResp.ok) {
+				try { this.leagueConfig = await leagueConfigResp.json(); } catch { this.leagueConfig = null; }
+			}
+
 			this._cacheSet('events', this.allEvents);
 			this._cacheSet('featured', this.featured);
 			this._cacheSet('standings', this.standings);
 			this._cacheSet('watchPlan', this.watchPlan);
 			this._cacheSet('rssDigest', this.rssDigest);
 			this._cacheSet('recentResults', this.recentResults);
+			this._cacheSet('leagueConfig', this.leagueConfig);
 
 			this.render();
 		} catch (err) {
@@ -1413,7 +1421,9 @@ class Dashboard {
 
 		for (const e of sorted) {
 			const sport = SPORT_CONFIG.find(s => s.id === e.sport) || { emoji: '', name: e.sport, color: '#888' };
-			html += `<div class="sport-section compact" style="border-left-color:${sport.color}">`;
+			const league = this.getLeagueStyle(e.tournament);
+			const borderColor = league ? league.color : sport.color;
+			html += `<div class="sport-section compact" style="border-left-color:${borderColor}">`;
 			html += this.renderRow(e, showDay || showDate, showDate, sport.emoji);
 			html += `</div>`;
 		}
@@ -1550,7 +1560,12 @@ class Dashboard {
 			const emojiPrefix = inlineSportEmoji ? `${inlineSportEmoji} ` : '';
 			let subtitleHtml = '';
 			if (event.tournament) {
-				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+				const league = this.getLeagueStyle(event.tournament);
+				if (league) {
+					subtitleHtml = `<span class="row-league-badge" style="color:${league.color}">${league.abbr}</span>`;
+				} else {
+					subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+				}
 			}
 			const recapHtml = event._recapHeadline ? `<span class="row-recap">${this.esc(event._recapHeadline)}</span>` : '';
 			return `
@@ -1593,8 +1608,10 @@ class Dashboard {
 		if (event.sport === 'football' && event.homeTeam && event.awayTeam) {
 			const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
 			const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
-			if (hLogo && aLogo) {
-				iconHtml = `<img src="${hLogo}" alt="${this.esc(event.homeTeam)}" class="row-logo" loading="lazy"><img src="${aLogo}" alt="${this.esc(event.awayTeam)}" class="row-logo" loading="lazy">`;
+			if (hLogo || aLogo) {
+				iconHtml = '';
+				if (hLogo) iconHtml += `<img src="${hLogo}" alt="${this.esc(event.homeTeam)}" class="row-logo" loading="lazy">`;
+				if (aLogo) iconHtml += `<img src="${aLogo}" alt="${this.esc(event.awayTeam)}" class="row-logo" loading="lazy">`;
 			}
 			const live = this.liveScores[event.id];
 			if (live) {
@@ -1650,10 +1667,15 @@ class Dashboard {
 		const isNorwegian = event.norwegian || event.norwegianPlayers?.length > 0 || event.norwegianRelevance >= 4;
 		const norBadge = isNorwegian ? '<span class="row-nor" title="Norsk interesse">🇳🇴</span>' : '';
 
-		// Tournament subtitle (skip if title already contains tournament name)
+		// Tournament subtitle: show league badge if configured, else plain subtitle
 		let subtitleHtml = '';
-		if (event.tournament && !event.title.toLowerCase().includes(event.tournament.toLowerCase())) {
-			subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+		if (event.tournament) {
+			const league = this.getLeagueStyle(event.tournament);
+			if (league) {
+				subtitleHtml = `<span class="row-league-badge" style="color:${league.color}">${league.abbr}</span>`;
+			} else if (!event.title.toLowerCase().includes(event.tournament.toLowerCase())) {
+				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
+			}
 		}
 
 		return `
@@ -2633,6 +2655,15 @@ class Dashboard {
 		const remMins = mins % 60;
 		if (remMins === 0 || remMins < 5) return `in ${hrs}h`;
 		return `in ${hrs}h ${remMins}m`;
+	}
+
+	getLeagueStyle(tournament) {
+		if (!tournament || !this.leagueConfig?.leagues) return null;
+		const t = tournament.toLowerCase();
+		for (const [key, val] of Object.entries(this.leagueConfig.leagues)) {
+			if (t.includes(key.toLowerCase())) return val;
+		}
+		return null;
 	}
 
 	esc(str) {

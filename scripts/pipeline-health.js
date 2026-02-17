@@ -554,6 +554,25 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// League theming gap detection
+	const leagueConfig = readJsonIfExists(path.join(dataDir, 'league-config.json'));
+	const leagueKeys = leagueConfig?.leagues ? Object.keys(leagueConfig.leagues).map(k => k.toLowerCase()) : [];
+	const unmappedTournaments = new Set();
+	for (const event of events) {
+		if (event.tournament) {
+			const t = event.tournament.toLowerCase();
+			const mapped = leagueKeys.some(k => t.includes(k));
+			if (!mapped) unmappedTournaments.add(event.tournament);
+		}
+	}
+	if (unmappedTournaments.size > 0) {
+		issues.push({
+			severity: 'info',
+			code: 'unmapped_leagues',
+			message: `${unmappedTournaments.size} tournament(s) lack league theming: ${[...unmappedTournaments].join(', ')}`,
+		});
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -570,6 +589,7 @@ export function generateHealthReport(options = {}) {
 		resultsHealth,
 		snapshotHealth,
 		quotaApiHealth,
+		unmappedLeagues: [...unmappedTournaments],
 		issues,
 		status,
 	};
