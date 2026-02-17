@@ -1,37 +1,44 @@
 {
-  "generatedAt": "2026-02-17T12:13:51.128Z",
+  "generatedAt": "2026-02-17T12:27:53.697Z",
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 2,
+    "blockCount": 6,
+    "generationMs": 33032,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 109592,
+      "output": 857,
+      "cacheCreation": 25104,
+      "cacheRead": 84472,
+      "total": 110449,
+      "costUSD": 0.22108899999999998,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 88,
+    "score": 68,
     "metrics": {
-      "mustWatchCoverage": 0.833,
+      "mustWatchCoverage": 0.143,
       "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": []
+    "issues": [
+      "Only 14% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 107,
+      "avgScore": 113,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -52,13 +59,13 @@
     ]
   },
   "enrichment": {
-    "provider": "none",
+    "provider": "claude-cli",
     "before": {
       "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.743
     },
     "after": {
       "totalEvents": 35,
@@ -70,16 +77,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 9,
+    "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 119194,
+      "output": 3390,
+      "calls": 4,
+      "total": 122584,
+      "costUSD": 0.4215425000000001,
+      "tracked": true,
+      "estimated": false
     }
   }
 }

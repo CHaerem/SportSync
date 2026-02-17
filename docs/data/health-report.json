@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T12:16:08.427Z",
+  "generatedAt": "2026-02-17T12:27:54.981Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "olympics": {
       "count": 11,
-      "previousCount": 8,
-      "delta": 3
+      "previousCount": 11,
+      "delta": 0
     },
     "football": {
       "count": 20,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2522,
+      "ageMinutes": 2534,
       "stale": true
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2287,
+      "ageMinutes": 2298,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -124,12 +124,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2522 minutes old"
+      "message": "chess.json: data is 2534 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2287 minutes old"
+      "message": "golf.json: data is 2298 minutes old"
     },
     {
       "severity": "warning",
@@ -159,20 +159,11 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 88/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 68/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
     "issues": [],
     "hasRegression": false
-  },
-  "scheduleVerification": {
-    "lastChecked": "2026-02-17T12:16:14.202Z",
-    "configsChecked": 2,
-    "eventsChecked": 12,
-    "verified": 0,
-    "plausible": 12,
-    "unverified": 0,
-    "correctionsApplied": 0
   }
 }

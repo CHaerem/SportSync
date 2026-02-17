@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T12:16:08.780Z",
+  "generatedAt": "2026-02-17T12:27:56.122Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 35,
@@ -60,10 +60,10 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 88,
+    "editorialScore": 68,
     "issueCount": 9
   },
   "findings": [
@@ -73,14 +73,14 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 17 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"FT: Girona 2-1 Barcelona — Pau Cubarsí 59'\" which may not match any event"
+      "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 68/100 (below threshold)"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -90,12 +90,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Pau Cubars\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Three Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Thomas Lemar\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -104,10 +109,10 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 8,
     "critical": 0,
-    "warning": 5,
-    "info": 2
+    "warning": 8,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
