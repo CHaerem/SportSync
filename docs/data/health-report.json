@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T14:29:38.134Z",
+  "generatedAt": "2026-02-17T14:51:01.589Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2656,
+      "ageMinutes": 2677,
       "stale": true
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
@@ -61,11 +61,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2420,
+      "ageMinutes": 2442,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -124,27 +124,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2656 minutes old"
+      "message": "chess.json: data is 2677 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2420 minutes old"
+      "message": "golf.json: data is 2442 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 7 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 8 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 7 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
+      "message": "golf: data retained 8 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -179,7 +174,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   },
   "qualityRegression": {
