@@ -1,9 +1,43 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T00:46:55.373Z",
+  "generatedAt": "2026-02-17T02:05:42.537Z",
   "events": {
     "upcoming": [
+      {
+        "sport": "tennis",
+        "tournament": "WTA Events",
+        "title": "Dubai Duty Free Tennis Championships",
+        "time": "2026-02-17T07:00:00.000Z",
+        "endTime": null,
+        "venue": "TBD",
+        "meta": "WTA Events",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 3,
+        "importanceReason": "WTA 1000 event in Dubai",
+        "summary": "Premier WTA tournament featuring top women's players in Dubai.",
+        "tags": [
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-17T02:05:23.413Z"
+      },
       {
         "sport": "olympics",
         "tournament": "Winter Olympics 2026",
@@ -36,15 +70,15 @@
         "isFavorite": false,
         "context": "olympics-2026",
         "importance": 5,
-        "importanceReason": "Olympic biathlon relay with Norwegian medal favorites Laegreid and Christiansen competing",
-        "summary": "Norway's biathlon relay team, featuring world-class stars, targets gold in high-stakes Olympic medal race.",
+        "importanceReason": "Olympic biathlon relay with Norwegian medal contenders",
+        "summary": "Norway's strong biathlon team featuring Laegreid and Christiansen compete for Olympic relay gold.",
         "tags": [
           "must-watch",
           "norwegian-player",
           "major"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-17T00:46:20.173Z"
+        "enrichedAt": "2026-02-17T02:05:23.413Z"
       }
     ],
     "results": []
@@ -197,7 +231,7 @@
         "tournament": "Winter Olympics 2026",
         "time": "2026-02-17T14:45:00+01:00",
         "timeLabel": "17 Feb, 14:45",
-        "relativeStart": "In 12h 59m",
+        "relativeStart": "In 11h 40m",
         "importance": 5,
         "norwegian": true,
         "streaming": [
@@ -211,9 +245,31 @@
           "Norwegian interest",
           "Must-watch"
         ]
+      },
+      {
+        "id": "tennis-dubai-duty-free-tennis-championships-2026-02-17t07:00:00.000z",
+        "title": "Dubai Duty Free Tennis Championships",
+        "sport": "tennis",
+        "tournament": "WTA Events",
+        "time": "2026-02-17T07:00:00.000Z",
+        "timeLabel": "17 Feb, 08:00",
+        "relativeStart": "In 4h 55m",
+        "importance": 3,
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "score": 79,
+        "reasons": [
+          "Norwegian interest"
+        ]
       }
     ],
-    "headline": "Olympic gold rush begins today"
+    "headline": "Olympic relay gold on the line"
   },
   "rssHighlights": [
     {
@@ -248,8 +304,9 @@
     }
   ],
   "meta": {
-    "eventCount": 1,
+    "eventCount": 2,
     "sportsCovered": [
+      "tennis",
       "olympics"
     ],
     "hasResults": false,

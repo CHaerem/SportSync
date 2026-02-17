@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-17T00:46:56.467Z",
-  "overallScore": 0.95,
-  "loopsClosed": 8,
+  "generatedAt": "2026-02-17T02:05:43.504Z",
+  "overallScore": 0.98,
+  "loopsClosed": 9,
   "loopsTotal": 10,
   "loops": {
     "featuredQuality": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "100 entries, hints fired 100 times but metric not improving"
+      "score": 1,
+      "status": "closed",
+      "details": "100 entries, hints fired 100 times"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -22,17 +22,17 @@
     "pipelineHealth": {
       "score": 0.75,
       "status": "partial",
-      "details": "Health report is fresh (3h old) but has 5 actionable issue(s) (9 total)"
+      "details": "Health report is fresh (3 min old) but has 5 actionable issue(s) (9 total)"
     },
     "watchPlan": {
       "score": 1,
       "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "details": "2 picks with reasons (2 with streaming)"
     },
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "31 completed tasks in autopilot log"
+      "details": "29 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -56,7 +56,6 @@
     }
   },
   "nextActions": [
-    "Wire hintsApplied field into quality history snapshots",
     "Run pipeline more frequently to keep health report fresh (< 6h)"
   ]
 }

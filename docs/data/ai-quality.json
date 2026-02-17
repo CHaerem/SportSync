@@ -1,44 +1,42 @@
 {
-  "generatedAt": "2026-02-17T00:46:38.536Z",
+  "generatedAt": "2026-02-17T02:05:42.213Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 17633,
+    "blockCount": 8,
+    "generationMs": 18007,
     "tokenUsage": {
-      "input": 33038,
-      "output": 458,
-      "cacheCreation": 17827,
+      "input": 32946,
+      "output": 361,
+      "cacheCreation": 17735,
       "cacheRead": 15208,
-      "total": 33496,
-      "costUSD": 0.13081074999999998,
+      "total": 33307,
+      "costUSD": 0.12806575,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 71,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0.25,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 25% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 114,
+      "pickCount": 2,
+      "avgScore": 97,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -61,14 +59,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 32,
+      "totalEvents": 33,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.656
+      "tagsCoverage": 0.697
     },
     "after": {
-      "totalEvents": 32,
+      "totalEvents": 33,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -77,19 +75,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 11,
-    "aiUpdatedFields": 32,
+    "fallbackFieldsFilled": 10,
+    "aiUpdatedFields": 33,
     "failedBatches": 0,
-    "totalEvents": 32,
+    "totalEvents": 33,
     "hintsApplied": [
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 118851,
-      "output": 2957,
+      "input": 118937,
+      "output": 2985,
       "calls": 4,
-      "total": 121808,
-      "costUSD": 0.41749875000000003,
+      "total": 121922,
+      "costUSD": 0.41889325,
       "tracked": true,
       "estimated": false
     }
