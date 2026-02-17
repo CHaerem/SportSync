@@ -250,8 +250,33 @@
 		.brief-headshot {
 			border-radius: 50%;
 		}
-		.block-match-result strong, .block-match-preview strong { font-weight: 600; }
-		.block-scorers { font-size: 0.7rem; color: var(--muted); }
+		.block-match-result {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 10px 14px;
+			margin: 8px 0;
+			text-align: center;
+		}
+		.result-card-teams {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			font-size: 0.85rem;
+		}
+		.result-card-side {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			min-width: 0;
+		}
+		.result-card-side:last-child { flex-direction: row-reverse; }
+		.result-card-name { font-weight: 500; }
+		.result-card-logo { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+		.result-card-score { font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+		.result-card-scorers { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+		.result-card-league { font-size: 0.65rem; color: var(--muted); opacity: 0.7; margin-top: 2px; }
+		.block-match-preview strong { font-weight: 600; }
 		.block-standings-ctx { font-size: 0.7rem; color: var(--muted); }
 		.block-event-schedule {
 			background: var(--bg-secondary);

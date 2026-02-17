@@ -8,6 +8,7 @@ import {
 	buildForYouBlock,
 	buildFallbackHeadline,
 	buildFallbackResultLines,
+	buildFallbackNarrative,
 } from "../scripts/generate-featured.js";
 
 describe("parseResponseJSON()", () => {
@@ -502,5 +503,91 @@ describe("component blocks in fallback", () => {
 		for (const block of componentBlocks) {
 			expect(block._fallbackText).toBeDefined();
 		}
+	});
+});
+
+describe("buildFallbackNarrative", () => {
+	const futureTime = (hoursAhead = 2) => new Date(Date.now() + hoursAhead * 3600000).toISOString();
+
+	it("generates narrative for Olympics medal day", () => {
+		const events = [
+			{ sport: "olympics", title: "Biathlon — Men's Relay Final", time: futureTime(1), norwegian: true, context: "olympics-2026" },
+			{ sport: "olympics", title: "Cross-Country — Sprint Final", time: futureTime(2), norwegian: true, context: "olympics-2026" },
+			{ sport: "olympics", title: "Freestyle — Big Air Final", time: futureTime(3), norwegian: true, context: "olympics-2026" },
+		];
+		const result = buildFallbackNarrative(events, new Date(), null, null, []);
+		expect(result).toContain("Norwegian medal");
+		expect(result).toContain("3");
+	});
+
+	it("generates narrative for high-scoring game", () => {
+		const now = new Date();
+		const recentResults = {
+			football: [{
+				homeTeam: "Arsenal", awayTeam: "Chelsea", homeScore: 4, awayScore: 2,
+				date: new Date(now.getTime() - 6 * 3600000).toISOString(),
+				isFavorite: true,
+			}],
+		};
+		const result = buildFallbackNarrative([], now, recentResults, null, []);
+		expect(result).toContain("6-goal thriller");
+	});
+
+	it("returns null when no dominant story", () => {
+		const events = [
+			{ sport: "tennis", title: "ATP 250 Round 1", time: futureTime(), importance: 2 },
+		];
+		const result = buildFallbackNarrative(events, new Date(), null, null, []);
+		expect(result).toBeNull();
+	});
+
+	it("generates narrative for must-watch density", () => {
+		const events = [
+			{ sport: "football", title: "Match 1", time: futureTime(1), importance: 4 },
+			{ sport: "tennis", title: "Match 2", time: futureTime(2), importance: 5 },
+			{ sport: "golf", title: "Match 3", time: futureTime(3), importance: 4 },
+		];
+		const result = buildFallbackNarrative(events, new Date(), null, null, []);
+		expect(result).toContain("3 must-watch");
+	});
+});
+
+describe("This Week match-preview components", () => {
+	it("generates match-preview for football events in This Week", () => {
+		const now = new Date();
+		const tomorrowTime = new Date(now.getTime() + 2 * 86400000).toISOString();
+		const events = [
+			{ sport: "football", title: "Arsenal v Wolves", time: tomorrowTime, homeTeam: "Arsenal", awayTeam: "Wolverhampton Wanderers", importance: 4, norwegian: false },
+		];
+		const result = buildFallbackFeatured(events, now);
+		const previews = result.blocks.filter(b => b.type === "match-preview");
+		expect(previews.length).toBeGreaterThanOrEqual(1);
+		const arsPreview = previews.find(p => p.homeTeam === "Arsenal");
+		expect(arsPreview).toBeDefined();
+		expect(arsPreview._fallbackText).toContain("Arsenal");
+	});
+
+	it("keeps non-football events as text event-lines in This Week", () => {
+		const now = new Date();
+		const tomorrowTime = new Date(now.getTime() + 2 * 86400000).toISOString();
+		const events = [
+			{ sport: "esports", title: "Roman Imperium Cup", time: tomorrowTime, importance: 3 },
+		];
+		const result = buildFallbackFeatured(events, now);
+		const eventLines = result.blocks.filter(b => b.type === "event-line");
+		expect(eventLines.some(b => b.text.includes("Roman Imperium"))).toBe(true);
+	});
+
+	it("narrative block appears in fallback output", () => {
+		const now = new Date();
+		const events = [
+			{ sport: "olympics", title: "Biathlon — Final", time: new Date(now.getTime() + 2 * 3600000).toISOString(), norwegian: true, context: "olympics-2026", tournament: "Winter Olympics 2026" },
+			{ sport: "olympics", title: "Sprint — Final", time: new Date(now.getTime() + 3 * 3600000).toISOString(), norwegian: true, context: "olympics-2026", tournament: "Winter Olympics 2026" },
+			{ sport: "olympics", title: "Big Air — Final", time: new Date(now.getTime() + 4 * 3600000).toISOString(), norwegian: true, context: "olympics-2026", tournament: "Winter Olympics 2026" },
+		];
+		const result = buildFallbackFeatured(events, now);
+		const narratives = result.blocks.filter(b => b.type === "narrative");
+		expect(narratives.length).toBe(1);
+		expect(narratives[0].text).toContain("Norwegian");
 	});
 });

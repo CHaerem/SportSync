@@ -400,10 +400,13 @@ export function enforceEnrichmentQuality(events = [], options = {}) {
 function mustWatchCoverage(blocks, events) {
 	const mustWatch = (events || []).filter((e) => e.importance >= 4);
 	if (mustWatch.length === 0) return 1;
+
+	// Collect text from text-based blocks
 	const allText = blocks
 		.map((b) => {
 			let text = b.text || "";
 			if (b.label) text += " " + b.label;
+			if (b._fallbackText) text += " " + b._fallbackText;
 			if (Array.isArray(b.items)) {
 				text += " " + b.items.map((i) => (typeof i === "string" ? i : i.text || "")).join(" ");
 			}
@@ -411,8 +414,28 @@ function mustWatchCoverage(blocks, events) {
 		})
 		.join(" ");
 
+	// Collect structured references from component blocks
+	const coveredSports = new Set(
+		blocks.filter(b => b.type === "event-schedule" && b.filter?.sport).map(b => b.filter.sport)
+	);
+	const coveredTeams = new Set();
+	for (const b of blocks) {
+		if ((b.type === "match-result" || b.type === "match-preview") && b.homeTeam) {
+			coveredTeams.add(b.homeTeam.toLowerCase());
+		}
+		if ((b.type === "match-result" || b.type === "match-preview") && b.awayTeam) {
+			coveredTeams.add(b.awayTeam.toLowerCase());
+		}
+	}
+
 	let covered = 0;
 	for (const event of mustWatch) {
+		// Check if sport is covered by event-schedule component
+		if (coveredSports.has(event.sport)) { covered++; continue; }
+		// Check if team is covered by match-result/match-preview component
+		const teams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => t.toLowerCase());
+		if (teams.some(t => coveredTeams.has(t))) { covered++; continue; }
+		// Check text-based coverage
 		const needles = [event.title, event.homeTeam, event.awayTeam].filter(Boolean);
 		if (needles.some((n) => allText.includes(n.toLowerCase()))) covered++;
 	}
@@ -425,6 +448,7 @@ function sportDiversity(blocks, events) {
 	const blockText = blocks
 		.map((b) => {
 			let text = b.text || "";
+			if (b._fallbackText) text += " " + b._fallbackText;
 			if (Array.isArray(b.items)) text += " " + b.items.map((i) => (typeof i === "string" ? i : i.text || "")).join(" ");
 			return text;
 		})
@@ -433,6 +457,12 @@ function sportDiversity(blocks, events) {
 	const found = new Set();
 	for (const [sport, emoji] of Object.entries(sportEmojis)) {
 		if (blockText.includes(emoji)) found.add(sport === "f1" ? "formula1" : sport);
+	}
+	// Component blocks also cover sports: match-result/match-preview = football, golf-status = golf, event-schedule = filter.sport
+	for (const b of blocks) {
+		if (b.type === "match-result" || b.type === "match-preview") found.add("football");
+		if (b.type === "golf-status") found.add("golf");
+		if (b.type === "event-schedule" && b.filter?.sport) found.add(b.filter.sport);
 	}
 	return Math.min(found.size / eventSports.size, 1);
 }
@@ -473,6 +503,15 @@ function blockCountScore(blocks) {
 	return 0.7; // 9-10 blocks
 }
 
+/** Measures what fraction of structured content uses component blocks vs text */
+function componentUtilization(blocks) {
+	const componentCount = blocks.filter(b => COMPONENT_TYPES.includes(b.type)).length;
+	const textResultCount = blocks.filter(b => b.type === "event-line" && /\bFT:/.test(b.text || "")).length;
+	const textFootballCount = blocks.filter(b => b.type === "event-line" && /⚽.*\bv\b/i.test(b.text || "")).length;
+	const total = componentCount + textResultCount + textFootballCount;
+	return total === 0 ? 1 : componentCount / total;
+}
+
 export function evaluateEditorialQuality(featured, events, options = {}) {
 	const blocks = Array.isArray(featured?.blocks) ? featured.blocks : [];
 	const todayEvents = filterFeaturedWindowEvents(events, options.now);
@@ -484,6 +523,7 @@ export function evaluateEditorialQuality(featured, events, options = {}) {
 		textQuality: roundRatio(textQualityRatio(blocks)),
 		quietDayCompliance: roundRatio(quietDayPenalty(blocks, todayEvents)),
 		blockCountTarget: roundRatio(blockCountScore(blocks)),
+		componentUtilization: roundRatio(componentUtilization(blocks)),
 	};
 
 	const weights = {
@@ -764,6 +804,7 @@ const ADAPTIVE_HINT_RULES = [
 	{ metric: "textQuality", threshold: 0.7, hint: "CORRECTION: Recent blocks exceeded word limits. headline: max 15 words, event-line: max 20, narrative: max 40." },
 	{ metric: "blockCountTarget", threshold: 0.6, hint: "CORRECTION: Keep total block count between 3 and 8. Recent outputs were outside this range." },
 	{ metric: "quietDayCompliance", threshold: 0.5, hint: "CORRECTION: On quiet days (<3 events), use only 3-4 blocks. Don't pad with low-importance events." },
+	{ metric: "componentUtilization", threshold: 0.3, hint: "IMPROVEMENT: Use component blocks (match-result, match-preview, golf-status) instead of text event-lines for football results, match previews, and golf status. Components render with logos and live data." },
 ];
 
 export function buildSanityHints(sanityReport) {

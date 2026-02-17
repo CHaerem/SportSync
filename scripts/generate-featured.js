@@ -640,7 +640,19 @@ function generateFallbackThisWeek(events, now, sectionSports = []) {
 		const t = new Date(event.time);
 		const day = t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" });
 		const time = t.toLocaleTimeString("en-NO", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Oslo" });
-		return `${sportEmoji(event.sport)} ${day} ${time} — ${event.title}`;
+		const textLine = `${sportEmoji(event.sport)} ${day} ${time} — ${event.title}`;
+
+		// Football events with both teams → match-preview component
+		if (event.sport === "football" && event.homeTeam && event.awayTeam) {
+			return {
+				type: "match-preview",
+				homeTeam: event.homeTeam,
+				awayTeam: event.awayTeam,
+				showStandings: (event.importance || 0) >= 3,
+				_fallbackText: textLine,
+			};
+		}
+		return textLine;
 	});
 }
 
@@ -686,6 +698,50 @@ export function buildFallbackHeadline(events, now, recentResults, standings, sec
 	if (todayEvents.length === 0) return null;
 	const sports = [...new Set(todayEvents.map((e) => e.sport))];
 	return `${todayEvents.length} events across ${sports.length} sport${sports.length !== 1 ? "s" : ""} today`;
+}
+
+/**
+ * Build a deterministic narrative block when there's a dominant story.
+ * Returns null if no clear narrative exists.
+ */
+export function buildFallbackNarrative(events, now, recentResults, standings, sectionSports = []) {
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
+	const todayEvents = events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
+
+	// Olympics narrative: count medal events and Norwegian interest
+	const olympicsToday = todayEvents.filter((e) => e.sport === "olympics" || /olympic/i.test(e.context || ""));
+	if (olympicsToday.length > 0) {
+		const medalEvents = olympicsToday.filter((e) => /final|medal/i.test(e.title || ""));
+		const norEvents = olympicsToday.filter((e) => e.norwegian);
+		if (medalEvents.length >= 2 || norEvents.length >= 3) {
+			const sports = [...new Set(olympicsToday.map((e) => {
+				const m = (e.title || "").match(/^([^—–\-]+)/);
+				return m ? m[1].trim() : null;
+			}).filter(Boolean))];
+			const sportsText = sports.length <= 3 ? sports.join(", ") : `${sports.length} disciplines`;
+			return `${norEvents.length} Norwegian medal chances across ${sportsText} today.`;
+		}
+	}
+
+	// Major result narrative: upset or high-scoring game
+	const favResults = getFavoriteResults(recentResults, now);
+	if (favResults.length > 0) {
+		const r = favResults[0];
+		const totalGoals = (r.homeScore || 0) + (r.awayScore || 0);
+		if (totalGoals >= 5) {
+			return `A ${totalGoals}-goal thriller between ${r.homeTeam} and ${r.awayTeam}.`;
+		}
+	}
+
+	// Must-watch density narrative
+	const mustWatch = todayEvents.filter((e) => (e.importance || 0) >= 4 && !sectionSports.includes(e.sport));
+	if (mustWatch.length >= 3) {
+		const sports = [...new Set(mustWatch.map(e => e.sport))];
+		return `${mustWatch.length} must-watch events across ${sports.join(" and ")} today.`;
+	}
+
+	return null;
 }
 
 /**
@@ -744,6 +800,12 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 		blocks.push(block);
 	}
 
+	// Narrative block — deterministic editorial context for dominant stories
+	const narrative = buildFallbackNarrative(events, now, recentResults, standings, sectionSports);
+	if (narrative) {
+		blocks.push({ type: "narrative", text: narrative });
+	}
+
 	// Today event lines — football events become match-preview components, others stay as text
 	const todayBlocks = generateFallbackTodayBlocks(events, now, sectionSports);
 	for (const block of todayBlocks) {
@@ -790,12 +852,16 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 		});
 	}
 
-	// This week
-	const thisWeekLines = generateFallbackThisWeek(events, now, sectionSports);
-	if (thisWeekLines.length > 0) {
+	// This week — football events become match-preview components
+	const thisWeekItems = generateFallbackThisWeek(events, now, sectionSports);
+	if (thisWeekItems.length > 0) {
 		blocks.push({ type: "divider", text: "This Week" });
-		for (const line of thisWeekLines) {
-			blocks.push({ type: "event-line", text: line });
+		for (const item of thisWeekItems) {
+			if (typeof item === "string") {
+				blocks.push({ type: "event-line", text: item });
+			} else {
+				blocks.push(item);
+			}
 		}
 	}
 

@@ -24,6 +24,7 @@ class Dashboard {
 		this._liveVisible = true;
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.recentResults = null; // recent-results.json data
+		this._editorialCoverage = { sports: new Set(), matchKeys: new Set() }; // tracks what editorial components cover
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		window._ssPreferences = this.preferences;
 		this.feedback = window.FeedbackManager ? new FeedbackManager() : null;
@@ -662,7 +663,8 @@ class Dashboard {
 
 		// Client-side result surfacing: if no result lines in blocks but we have favorite results
 		if (this.recentResults?.football?.length > 0) {
-			const hasResultLine = blocks.some(b => b.type === 'event-line' && /\bFT:/.test(b.text || ''));
+			const hasResultLine = blocks.some(b => b.type === 'event-line' && /\bFT:/.test(b.text || ''))
+				|| blocks.some(b => b.type === 'match-result');
 			if (!hasResultLine) {
 				const now = new Date();
 				const cutoff = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
@@ -710,6 +712,20 @@ class Dashboard {
 		}
 
 		briefEl.style.display = '';
+
+		// Track what editorial components cover — used to deduplicate standalone sections
+		this._editorialCoverage = { sports: new Set(), matchKeys: new Set() };
+		for (const b of blocks) {
+			if (b.type === 'event-schedule' && b.filter?.sport) {
+				this._editorialCoverage.sports.add(b.filter.sport);
+			}
+			if (b.type === 'match-result' && b.homeTeam && b.awayTeam) {
+				this._editorialCoverage.matchKeys.add(`${b.homeTeam.toLowerCase()}:${b.awayTeam.toLowerCase()}`);
+			}
+			if (b.type === 'match-preview' && b.homeTeam && b.awayTeam) {
+				this._editorialCoverage.matchKeys.add(`${b.homeTeam.toLowerCase()}:${b.awayTeam.toLowerCase()}`);
+			}
+		}
 
 		// Split: section blocks go to #featured-sections, all others to #the-brief
 		const briefBlocks = blocks.filter(b => b.type !== 'section');
@@ -779,7 +795,7 @@ class Dashboard {
 		}
 	}
 
-	/** match-result component: renders a completed match with logos, score, goalscorers from recentResults */
+	/** match-result component: renders a completed match as a card with logos, score, goalscorers */
 	_renderMatchResult(block) {
 		const football = Array.isArray(this.recentResults?.football) ? this.recentResults.football : [];
 		if (!football.length || !block.homeTeam || !block.awayTeam) return null;
@@ -796,15 +812,16 @@ class Dashboard {
 
 		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.homeTeam) : null;
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.awayTeam) : null;
-		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="brief-logo" loading="lazy">` : '';
-		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="brief-logo" loading="lazy">` : '';
+		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="result-card-logo" loading="lazy">` : '';
+		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="result-card-logo" loading="lazy">` : '';
 
 		const scorers = (match.goalScorers || []).slice(0, 3);
 		const scorerHtml = scorers.length > 0
-			? ` <span class="block-scorers">— ${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</span>`
+			? `<div class="result-card-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`
 			: '';
+		const leagueHtml = match.league ? `<div class="result-card-league">${this.esc(match.league)}</div>` : '';
 
-		return `<div class="block-event-line editorial-line result-line block-match-result">⚽ FT: ${hImg}${this.esc(this.shortName(match.homeTeam))} <strong>${match.homeScore}-${match.awayScore}</strong> ${aImg}${this.esc(this.shortName(match.awayTeam))}${scorerHtml}</div>`;
+		return `<div class="block-match-result"><div class="result-card-teams"><span class="result-card-side">${hImg}<span class="result-card-name">${this.esc(this.shortName(match.homeTeam))}</span></span><span class="result-card-score">${match.homeScore} - ${match.awayScore}</span><span class="result-card-side">${aImg}<span class="result-card-name">${this.esc(this.shortName(match.awayTeam))}</span></span></div>${scorerHtml}${leagueHtml}</div>`;
 	}
 
 	/** match-preview component: renders an upcoming match with logos, time, optional standings */
@@ -1118,10 +1135,16 @@ class Dashboard {
 				return parts.join(' ').toLowerCase();
 			})
 			.join(' ');
+		// Also check component coverage (event-schedule covers entire sports)
+		const coveredSports = editorialBlocks
+			.filter(b => b.type === 'event-schedule' && b.filter?.sport)
+			.map(b => b.filter.sport);
 		const picks = [...this.watchPlan.picks].sort((a, b) => new Date(a.time || 0) - new Date(b.time || 0));
 		const overlapping = picks.filter(p => {
 			const title = (p.title || '').toLowerCase();
-			return title && editorialTexts.includes(title);
+			if (title && editorialTexts.includes(title)) return true;
+			if (p.sport && coveredSports.includes(p.sport)) return true;
+			return false;
 		});
 		const overlapRate = picks.length > 0 ? overlapping.length / picks.length : 0;
 		if (overlapRate > 0.8) {
@@ -1476,14 +1499,36 @@ class Dashboard {
 		// Today: full 6-band layout
 		const bands = this.categorizeEvents();
 
+		// Deduplicate: filter out events already covered by editorial components
+		const cov = this._editorialCoverage;
+		const isEventCovered = (e) => {
+			// Sport-level coverage (e.g. event-schedule for olympics)
+			if (cov.sports.has(e.sport)) return true;
+			// Match-level coverage (match-result or match-preview)
+			if (e.homeTeam && e.awayTeam) {
+				const key = `${e.homeTeam.toLowerCase()}:${e.awayTeam.toLowerCase()}`;
+				if (cov.matchKeys.has(key)) return true;
+			}
+			return false;
+		};
+		const dedupedToday = bands.today.filter(e => !isEventCovered(e));
+		const dedupedResults = bands.results.filter(e => !isEventCovered(e));
+		const dedupedTomorrow = bands.tomorrow.filter(e => !isEventCovered(e));
+
 		let html = '';
 
 		html += this.renderBand('Live now', bands.live, { cssClass: 'live' });
-		html += this.renderBand('Today', bands.today, {});
-		html += this.renderBand('Results', bands.results, { cssClass: 'results' });
-		html += this.renderBand('Tomorrow', bands.tomorrow, { showDay: true });
-		html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
-		html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
+		html += this.renderBand('Today', dedupedToday, {});
+		html += this.renderBand('Results', dedupedResults, { cssClass: 'results' });
+		html += this.renderBand('Tomorrow', dedupedTomorrow, { showDay: true });
+		// Merge sparse "This week" + "Later" into "Coming Up" when combined items ≤ 4
+		if (bands.week.length + bands.later.length > 0 && bands.week.length + bands.later.length <= 4) {
+			const comingUp = [...bands.week, ...bands.later].sort((a, b) => new Date(a.time) - new Date(b.time));
+			html += this.renderBand('Coming up', comingUp, { collapsed: comingUp.length > 2, showDate: true });
+		} else {
+			html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
+			html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
+		}
 		html += this.renderEmptySportNotes(this.allEvents);
 		html += this.renderStandingsSection();
 
