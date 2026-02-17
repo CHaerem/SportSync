@@ -1,12 +1,7 @@
 {
-  "generatedAt": "2026-02-17T20:02:45.246Z",
-  "eventCount": 41,
+  "generatedAt": "2026-02-17T20:19:44.164Z",
+  "eventCount": 40,
   "sportCoverage": {
-    "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "chess": {
       "count": 1,
       "previousCount": 1,
@@ -14,13 +9,18 @@
     },
     "olympics": {
       "count": 10,
-      "previousCount": 11,
-      "delta": -1
+      "previousCount": 10,
+      "delta": 0
     },
     "football": {
-      "count": 27,
-      "previousCount": 29,
-      "delta": -2
+      "count": 26,
+      "previousCount": 27,
+      "delta": -1
+    },
+    "golf": {
+      "count": 1,
+      "previousCount": 1,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2989,
+      "ageMinutes": 3006,
       "stale": true
     },
     "esports.json": {
@@ -57,12 +57,12 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2753,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "tennis.json": {
       "ageMinutes": 3,
@@ -87,13 +87,13 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": false,
+    "pgaGolf": true,
     "f1Drivers": true
   },
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 20,
+    "footballCount": 19,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -107,7 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 day snapshot(s) have 0 events and 0 results"
+      "2 day snapshot(s) have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -117,14 +117,14 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 242832,
-    "stepCount": 26,
+    "totalDuration": 259465,
+    "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 116100,
-        "share": 48
+        "duration": 121798,
+        "share": 47
       }
     ],
     "failedSteps": [
@@ -151,42 +151,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2989 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "golf.json: data is 2753 minutes old"
+      "message": "chess.json: data is 3006 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 15 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "golf: data retained 15 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "standings_empty",
-      "message": "pgaGolf standings data is empty"
+      "message": "chess: data retained 16 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 0% (0/27) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 0% (0/26) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
-      "message": "2 event(s) won't appear on dashboard (golf, chess)"
+      "message": "1 event(s) won't appear on dashboard (chess)"
     },
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "1 day snapshot(s) have 0 events and 0 results"
+      "message": "2 day snapshot(s) have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -201,7 +191,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (116s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -226,11 +216,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 86/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }

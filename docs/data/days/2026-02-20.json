@@ -1,9 +1,57 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-20",
-  "generatedAt": "2026-02-17T20:02:44.163Z",
+  "generatedAt": "2026-02-17T20:19:42.940Z",
   "events": {
     "upcoming": [
+      {
+        "sport": "golf",
+        "tournament": "PGA Tour",
+        "title": "The Genesis Invitational",
+        "time": "2026-02-19T05:00:00.000Z",
+        "endTime": "2026-02-22T20:00:00.000Z",
+        "venue": "TBD",
+        "meta": "PGA Tour",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Viktor Hovland",
+            "teeTime": null,
+            "teeTimeUTC": null,
+            "status": null
+          }
+        ],
+        "totalPlayers": 72,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 5,
+        "importanceReason": "Prestigious PGA Tour event with Viktor Hovland competing.",
+        "summary": "Viktor Hovland tees up at Riviera in one of the PGA Tour's most storied invitational events.",
+        "tags": [
+          "must-watch",
+          "norwegian-player",
+          "major"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-17T20:19:25.688Z"
+      },
       {
         "sport": "olympics",
         "tournament": "Winter Olympics 2026",
@@ -39,16 +87,15 @@
         "isFavorite": false,
         "context": "olympics-2026",
         "importance": 5,
-        "importanceReason": "Winter Olympics biathlon mass start with three Norwegian medal contenders",
-        "summary": "Laegreid, Christiansen, and Uldal represent Norway's medal hopes in the Olympic biathlon 15km mass start.",
+        "importanceReason": "Olympic biathlon mass start with three Norwegian medal contenders.",
+        "summary": "Laegreid, Christiansen, and Uldal all line up for Norway's strongest biathlon event of the Winter Olympics.",
         "tags": [
           "must-watch",
           "norwegian-player",
-          "final",
-          "major"
+          "final"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-17T20:02:23.849Z"
+        "enrichedAt": "2026-02-17T20:19:25.688Z"
       },
       {
         "sport": "football",
@@ -76,13 +123,13 @@
         "awayTeam": "Elche",
         "isFavorite": false,
         "importance": 2,
-        "importanceReason": "Mid-table La Liga fixture with limited title implications",
-        "summary": "Routine La Liga clash between Athletic Club and Elche with no Norwegian connection or major stakes.",
+        "importanceReason": "Routine La Liga fixture with limited title implications.",
+        "summary": "Athletic Club host Elche at San Mamés in a mid-table La Liga encounter with modest stakes.",
         "tags": [
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-17T20:02:23.850Z"
+        "enrichedAt": "2026-02-17T20:19:25.689Z"
       }
     ],
     "results": []
@@ -92,8 +139,9 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 2,
+    "eventCount": 3,
     "sportsCovered": [
+      "golf",
       "olympics",
       "football"
     ],
