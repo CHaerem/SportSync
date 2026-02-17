@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T12:50:28.284Z",
+  "generatedAt": "2026-02-17T13:21:17.758Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2556,
+      "ageMinutes": 2587,
       "stale": true
     },
     "esports.json": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2321,
+      "ageMinutes": 2352,
       "stale": true
     },
     "tennis.json": {
@@ -124,22 +124,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2556 minutes old"
+      "message": "chess.json: data is 2587 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2321 minutes old"
+      "message": "golf.json: data is 2352 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 4 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 5 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 4 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 5 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",

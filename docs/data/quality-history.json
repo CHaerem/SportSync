@@ -1,63 +1,5 @@
 [
   {
-    "timestamp": "2026-02-16T09:38:55.902Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 115,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 6,
-      "warningCount": 6,
-      "pass": true
-    },
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Catalan\" but no matching athlete found in events data; Featured mentions \"After\" but no matching athlete found in events data; Featured mentions \"Copa\" but no matching athlete found in events data; Featured mentions \"Catalan\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    }
-  },
-  {
     "timestamp": "2026-02-16T09:38:56.212Z",
     "editorial": {
       "score": 100,
@@ -6814,6 +6756,89 @@
       "editorialScore": 92,
       "mustWatchCoverage": 0.755,
       "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-17T13:21:16.465Z",
+    "editorial": {
+      "score": 68,
+      "mustWatchCoverage": 0.143,
+      "sportDiversity": 0.667,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 121,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 5,
+      "warningCount": 5,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Three\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 119962,
+        "output": 3400,
+        "calls": 4,
+        "total": 123362,
+        "costUSD": 0.42669700000000005,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 33798,
+        "output": 581,
+        "cacheCreation": 18587,
+        "cacheRead": 15208,
+        "total": 34379,
+        "costUSD": 0.13873075,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 153760,
+        "output": 3981,
+        "calls": 5,
+        "total": 157741,
+        "costUSD": 0.56542775,
+        "realPct": 100
+      }
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 88,
+      "mustWatchCoverage": 0.653,
+      "sportDiversity": 0.905,
       "enrichmentScore": 100,
       "resultsScore": 80
     }

@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-17T12:50:26.857Z",
+  "generatedAt": "2026-02-17T13:21:16.459Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 29479,
+    "blockCount": 7,
+    "generationMs": 23425,
     "tokenUsage": {
-      "input": 138407,
-      "output": 758,
-      "cacheCreation": 20900,
-      "cacheRead": 117485,
-      "total": 139165,
-      "costUSD": 0.2137505,
+      "input": 33798,
+      "output": 581,
+      "cacheCreation": 18587,
+      "cacheRead": 15208,
+      "total": 34379,
+      "costUSD": 0.13873075,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -65,7 +65,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.686
+      "tagsCoverage": 0.714
     },
     "after": {
       "totalEvents": 35,
@@ -77,17 +77,19 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 11,
+    "fallbackFieldsFilled": 10,
     "aiUpdatedFields": 35,
     "failedBatches": 0,
     "totalEvents": 35,
-    "hintsApplied": [],
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 119198,
-      "output": 3222,
+      "input": 119962,
+      "output": 3400,
       "calls": 4,
-      "total": 122420,
-      "costUSD": 0.41716525,
+      "total": 123362,
+      "costUSD": 0.42669700000000005,
       "tracked": true,
       "estimated": false
     }

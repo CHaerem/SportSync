@@ -2,34 +2,41 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Triple gold hunt in the Alps"
+      "text": "Triple Norwegian gold hunt at Milano-Cortina"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Norway's medal day",
-      "items": [
-        "Nordic Combined final, 10:00 — Oftebro hunts gold",
-        "Biathlon relay, 14:30 — Boe brothers lead favorites",
-        "Big Air final, 19:30 — Ruud defends Olympic title"
-      ]
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Today's medal events",
+      "maxItems": 3,
+      "showFlags": true,
+      "style": "highlight"
     },
     {
       "type": "narrative",
-      "text": "Three finals, three genuine medal shots. Norway fields gold favorites in biathlon and Nordic combined, while defending champion Ruud goes for back-to-back."
+      "text": "Oftebro targets Nordic Combined glory at 10:00, Boe anchors the biathlon relay at 14:30, and defending champion Ruud flies in Big Air at 19:30."
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Girona",
+      "awayTeam": "Barcelona"
     },
     {
       "type": "divider",
-      "text": "Tomorrow"
+      "text": "This Week"
     },
     {
       "type": "event-line",
-      "text": "🏅 Wed 09:45 — Klaebo in team sprint cross-country"
+      "text": "🏅 Wed 09:45 — Klaebo in team sprint free final"
     },
     {
       "type": "event-line",
-      "text": "⚽ Wed 21:00 — Arsenal at Wolves, title race stakes"
+      "text": "⚽ Wed 21:00 — Arsenal at Wolves, title race clash"
     }
   ],
-  "generatedAt": "2026-02-17T12:50:26.837Z",
+  "generatedAt": "2026-02-17T13:21:16.444Z",
   "provider": "claude-cli"
 }
