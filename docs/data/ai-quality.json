@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T06:32:32.592Z",
+  "generatedAt": "2026-02-17T08:29:36.687Z",
   "featured": {
     "provider": "claude-cli",
     "attempts": 1,
@@ -7,24 +7,24 @@
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 16349,
+    "generationMs": 16001,
     "tokenUsage": {
-      "input": 32955,
-      "output": 344,
-      "cacheCreation": 17744,
+      "input": 32852,
+      "output": 309,
+      "cacheCreation": 17641,
       "cacheRead": 15208,
-      "total": 33299,
-      "costUSD": 0.12750199999999998,
+      "total": 33161,
+      "costUSD": 0.12599825,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 85,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 0.833,
+      "sportDiversity": 0.5,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -35,8 +35,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 100,
+      "pickCount": 3,
+      "avgScore": 109,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -59,14 +59,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "before": {
-      "totalEvents": 33,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 0.697
+      "totalEvents": 45,
+      "importanceCoverage": 0.556,
+      "summaryCoverage": 0.556,
+      "relevanceCoverage": 0.556,
+      "tagsCoverage": 0.333
     },
     "after": {
-      "totalEvents": 33,
+      "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -75,30 +75,30 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 10,
-    "aiUpdatedFields": 33,
-    "failedBatches": 0,
-    "totalEvents": 33,
+    "fallbackFieldsFilled": 110,
+    "aiUpdatedFields": 25,
+    "failedBatches": 2,
+    "totalEvents": 45,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 118825,
-      "output": 3072,
-      "calls": 4,
-      "total": 121897,
-      "costUSD": 0.42027900000000007,
+      "input": 89044,
+      "output": 2134,
+      "calls": 3,
+      "total": 91178,
+      "costUSD": 0.30902975000000005,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 33038,
-      "output": 458,
+      "input": 32852,
+      "output": 309,
       "calls": 1,
-      "total": 33496,
+      "total": 33161,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-02-17T00:46:38.710Z"
+    "lastRun": "2026-02-17T08:29:36.859Z"
   }
 }

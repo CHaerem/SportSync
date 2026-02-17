@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-17T06:32:40.956Z",
+  "generatedAt": "2026-02-17T08:30:00.271Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 33,
+    "totalEvents": 45,
     "sports": [
       "golf",
       "chess",
-      "tennis",
       "olympics",
+      "tennis",
       "football",
       "cs2",
       "f1"
@@ -15,10 +15,21 @@
     "bands": {
       "live": [],
       "today": [
+        "Nordic Combined — Gundersen Large Hill/10km",
         "Dubai Duty Free Tennis Championships",
-        "Biathlon — Men's 4x7.5km Relay"
+        "Qatar ExxonMobil Open",
+        "Biathlon — Men's 4x7.5km Relay",
+        "Oeiras 2 Jamor Indoor",
+        "Oeiras 2 Jamor Indoor",
+        "Qatar ExxonMobil Open",
+        "Freestyle Skiing — Men's Big Air Final",
+        "Dow Tennis Classic",
+        "Rio Open presented by Claro",
+        "Dow Tennis Classic",
+        "Dow Tennis Classic"
       ],
       "tomorrow": [
+        "Delray Beach Open",
         "Cross-Country Skiing — Team Sprint Free",
         "Biathlon — Women's 4x6km Relay",
         "Villarreal at Levante",
@@ -26,6 +37,7 @@
       ],
       "thisWeek": [
         "Roman Imperium Cup V",
+        "Nordic Combined — Super Team",
         "Biathlon — Men's 15km Mass Start",
         "Elche at Athletic Club",
         "Cross-Country Skiing — Men's 50km Mass Start Classic",
@@ -61,8 +73,8 @@
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
-    "issueCount": 9
+    "editorialScore": 85,
+    "issueCount": 10
   },
   "findings": [
     {
@@ -73,27 +85,57 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Three Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Dubai Duty Free Tennis Championships\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Oeiras 2 Jamor Indoor\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Oeiras 2 Jamor Indoor\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Qatar ExxonMobil Open\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Dow Tennis Classic\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Rio Open presented by Claro\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Dow Tennis Classic\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Dow Tennis Classic\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Delray Beach Open\" marked norwegian=true but has no norwegianPlayers"
     },
     {
       "severity": "warning",
@@ -102,10 +144,10 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 13,
     "critical": 0,
-    "warning": 6,
-    "info": 1
+    "warning": 4,
+    "info": 9
   },
   "pass": true,
   "tokenUsage": null
