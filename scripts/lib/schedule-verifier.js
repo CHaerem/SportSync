@@ -318,11 +318,11 @@ export function verifyWithSportData(event, context) {
 	return result;
 }
 
-// --- Verifier 5: Web re-check (stub) ---
+// --- Verifier 5: Web re-check ---
 
 /**
- * Claude CLI + WebSearch re-check for unverified events.
- * Only used for max 1 event per run. Requires context.webSearchFn.
+ * Claude CLI + WebSearch re-check for low-confidence events.
+ * Budget-limited per run. Requires context.webSearchFn.
  */
 export async function verifyWithWebSearch(event, context) {
 	const result = { verified: false, confidence: 0, source: "web-search", details: null, correction: null };
@@ -332,14 +332,16 @@ export async function verifyWithWebSearch(event, context) {
 		return result;
 	}
 
-	if (context.webSearchUsed) {
-		result.details = "Web search already used this run (max 1/run)";
+	const maxSearches = context.maxWebSearches || 3;
+	const searchCount = context.webSearchCount || 0;
+	if (searchCount >= maxSearches) {
+		result.details = `Web search budget exhausted (${maxSearches}/${maxSearches} used)`;
 		return result;
 	}
 
 	try {
 		const searchResult = await context.webSearchFn(event);
-		context.webSearchUsed = true;
+		context.webSearchCount = searchCount + 1;
 
 		if (searchResult && searchResult.verified) {
 			result.verified = true;
@@ -443,10 +445,10 @@ export async function verifyConfig(config, context, options = {}) {
 		// 4. Sport data cross-ref (if data available)
 		results.push(verifyWithSportData(event, eventContext));
 
-		// 5. Web search (only for unverified, max 1/run)
+		// 5. Web search (for events below verified threshold)
 		if (!options.skipWebSearch) {
-			const staticAndApi = aggregateConfidence(results);
-			if (staticAndApi.status === "unverified") {
+			const preWebAggregate = aggregateConfidence(results);
+			if (preWebAggregate.confidence < 0.7) {
 				const webResult = await verifyWithWebSearch(event, eventContext);
 				results.push(webResult);
 			}

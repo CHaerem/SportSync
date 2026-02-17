@@ -10,7 +10,8 @@
 
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, writeJsonPretty, rootDataPath, fetchJson } from "./lib/helpers.js";
+import { execSync } from "child_process";
+import { readJsonIfExists, writeJsonPretty, rootDataPath, fetchJson, parseCliJsonOutput } from "./lib/helpers.js";
 import {
 	titleSimilarity,
 	detectSportFromTitle,
@@ -24,6 +25,7 @@ const dataDir = rootDataPath();
 
 const MAX_HISTORY_RUNS = 50;
 const UNVERIFIED_THRESHOLD = 0.5;
+const MAX_WEB_SEARCHES = 3;
 
 /**
  * Load all curated configs that have an `events` array with date info.
@@ -205,6 +207,88 @@ function loadSportDataMap(dDir) {
 }
 
 /**
+ * Create a web search verification function using Claude CLI.
+ * Returns a function compatible with context.webSearchFn.
+ * Returns null if Claude CLI is not available (no CLAUDE_CODE_OAUTH_TOKEN).
+ */
+function createWebSearchFn() {
+	if (!process.env.CLAUDE_CODE_OAUTH_TOKEN) {
+		return null;
+	}
+
+	return async function webSearchVerify(event) {
+		const prompt = `You are a sports schedule fact-checker. Verify the exact start time for this event.
+
+EVENT: ${event.title}
+LISTED TIME: ${event.time}
+VENUE: ${event.venue || "unknown"}
+
+INSTRUCTIONS:
+1. Search for the official schedule for this event
+2. Find the exact start time from an authoritative source (official event website, broadcaster schedule, or major sports news)
+3. Compare against the listed time above
+4. If the time is correct (within 15 minutes), mark as verified
+5. If the time is wrong, provide the correct time in ISO 8601 format with timezone offset
+
+Return ONLY valid JSON, no markdown fences:
+{
+  "verified": true/false,
+  "confidence": 0.0-1.0,
+  "correctTime": "ISO 8601 time if different, or null",
+  "source": "where you found the time",
+  "details": "brief explanation"
+}`;
+
+		const dataDir = rootDataPath();
+		const tmpFile = path.join(dataDir, ".verify-prompt.tmp");
+		fs.writeFileSync(tmpFile, prompt);
+		try {
+			const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 4 --allowedTools "WebSearch" "WebFetch"`;
+			const output = execSync(cmd, {
+				encoding: "utf-8",
+				timeout: 120000,
+				maxBuffer: 2 * 1024 * 1024,
+			});
+			const parsed = parseCliJsonOutput(output);
+			const raw = parsed.result;
+
+			let result;
+			try {
+				result = JSON.parse(raw);
+			} catch {
+				const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
+				if (match) {
+					result = JSON.parse(match[1].trim());
+				} else {
+					const jsonMatch = raw.match(/\{[\s\S]*\}/);
+					if (jsonMatch) result = JSON.parse(jsonMatch[0]);
+					else return { verified: false, confidence: 0.2, details: "Could not parse web search result" };
+				}
+			}
+
+			const searchResult = {
+				verified: !!result.verified,
+				confidence: typeof result.confidence === "number" ? result.confidence : 0.5,
+				details: result.details || result.source || "Web search completed",
+			};
+
+			if (!result.verified && result.correctTime) {
+				searchResult.correction = {
+					field: "time",
+					oldValue: event.time,
+					newValue: result.correctTime,
+					confidence: searchResult.confidence,
+				};
+			}
+
+			return searchResult;
+		} finally {
+			try { fs.unlinkSync(tmpFile); } catch {}
+		}
+	};
+}
+
+/**
  * Apply a date correction to a curated config file.
  */
 function applyCorrection(correction) {
@@ -353,18 +437,24 @@ export async function runVerification(options = {}) {
 	const espnEvents = await fetchESPNData(fetchFn);
 	const verificationHistory = readJsonIfExists(path.join(dDir, "verification-history.json")) || { runs: [] };
 
+	const webSearchFn = createWebSearchFn();
+
 	const context = {
 		rssDigest,
 		sportDataMap,
 		espnEvents,
 		now: new Date(),
-		webSearchUsed: false,
+		webSearchFn,
+		webSearchCount: 0,
+		maxWebSearches: MAX_WEB_SEARCHES,
 	};
 
 	// Run verifier chain for each config
+	// Enable web search when Claude CLI is available (graceful degradation)
+	const skipWebSearch = !webSearchFn;
 	const configResults = [];
 	for (const config of configs) {
-		const result = await verifyConfig(config, context, { skipWebSearch: true, dryRun });
+		const result = await verifyConfig(config, context, { skipWebSearch, dryRun });
 		configResults.push(result);
 	}
 

@@ -393,12 +393,13 @@ describe("verifyWithWebSearch()", () => {
 				confidence: 0.85,
 				details: "Confirmed via web search",
 			}),
-			webSearchUsed: false,
+			webSearchCount: 0,
+			maxWebSearches: 3,
 		};
 		const result = await verifyWithWebSearch(event, context);
 		expect(result.verified).toBe(true);
 		expect(result.confidence).toBe(0.85);
-		expect(context.webSearchUsed).toBe(true);
+		expect(context.webSearchCount).toBe(1);
 	});
 
 	it("skips when webSearchFn is not available", async () => {
@@ -406,20 +407,22 @@ describe("verifyWithWebSearch()", () => {
 		expect(result.details).toContain("No web search function");
 	});
 
-	it("skips when already used this run", async () => {
+	it("skips when budget exhausted", async () => {
 		const context = {
 			webSearchFn: vi.fn(),
-			webSearchUsed: true,
+			webSearchCount: 3,
+			maxWebSearches: 3,
 		};
 		const result = await verifyWithWebSearch({ title: "Test" }, context);
-		expect(result.details).toContain("already used");
+		expect(result.details).toContain("budget exhausted");
 		expect(context.webSearchFn).not.toHaveBeenCalled();
 	});
 
 	it("handles webSearchFn error gracefully", async () => {
 		const context = {
 			webSearchFn: vi.fn().mockRejectedValue(new Error("Timeout")),
-			webSearchUsed: false,
+			webSearchCount: 0,
+			maxWebSearches: 3,
 		};
 		const result = await verifyWithWebSearch({ title: "Test" }, context);
 		expect(result.verified).toBe(false);
@@ -429,7 +432,8 @@ describe("verifyWithWebSearch()", () => {
 	it("handles null return from webSearchFn", async () => {
 		const context = {
 			webSearchFn: vi.fn().mockResolvedValue(null),
-			webSearchUsed: false,
+			webSearchCount: 0,
+			maxWebSearches: 3,
 		};
 		const result = await verifyWithWebSearch({ title: "Test" }, context);
 		expect(result.verified).toBe(false);
