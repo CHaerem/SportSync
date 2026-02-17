@@ -647,6 +647,52 @@ export function buildFallbackFeatured(events, now) {
 	return { blocks };
 }
 
+/**
+ * Build a personalized "For You" section block from user preferences + events.
+ * Deterministic (no LLM) — filters events matching favorites and top preferences.
+ */
+export function buildForYouBlock(events, userContext, now) {
+	if (!events || !userContext) return null;
+	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const windowEnd = new Date(todayStart.getTime() + 3 * MS_PER_DAY);
+
+	const windowEvents = events.filter(e => isEventInWindow(e, todayStart, windowEnd));
+	if (windowEvents.length === 0) return null;
+
+	const teams = (userContext.favoriteTeams || []).map(t => t.toLowerCase());
+	const players = (userContext.favoritePlayers || []).map(p => p.toLowerCase());
+	const prefs = userContext.sportPreferences || {};
+
+	// Score each event for personal relevance
+	const scored = windowEvents.map(e => {
+		let score = 0;
+		const text = `${e.title || ""} ${e.homeTeam || ""} ${e.awayTeam || ""} ${(e.norwegianPlayers || []).map(p => p.name || p).join(" ")}`.toLowerCase();
+		if (teams.some(t => text.includes(t))) score += 10;
+		if (players.some(p => text.includes(p))) score += 10;
+		if (e.norwegian) score += 3;
+		if (prefs[e.sport] === "high") score += 2;
+		if (e.importance >= 4) score += 2;
+		return { event: e, score };
+	});
+
+	const top = scored.filter(s => s.score >= 3).sort((a, b) => b.score - a.score).slice(0, 5);
+	if (top.length === 0) return null;
+
+	const items = top.map(({ event: e }) => ({
+		text: fallbackLine(e),
+		type: "event",
+	}));
+
+	return {
+		type: "section",
+		id: "for-you",
+		title: "For You",
+		emoji: "⭐",
+		style: "highlight",
+		items,
+	};
+}
+
 export function fallbackLine(e) {
 	const time = new Date(e.time).toLocaleTimeString("en-NO", {
 		hour: "2-digit",
@@ -911,6 +957,16 @@ async function main() {
 		const todayLines = generateFallbackToday(events, now);
 		const eventBlocks = todayLines.map((line) => ({ type: "event-line", text: line }));
 		featured.blocks = [...eventBlocks, ...featured.blocks];
+	}
+
+	// Inject personalized "For You" section block
+	const forYouBlock = buildForYouBlock(events, userContext, now);
+	if (forYouBlock && featured.blocks) {
+		// Check if LLM already generated a for-you section
+		const hasForYou = featured.blocks.some(b => b.type === "section" && b.id === "for-you");
+		if (!hasForYou) {
+			featured.blocks.push(forYouBlock);
+		}
 	}
 
 	const finalQuality = validateFeaturedContent(featured, { events });
