@@ -5,6 +5,7 @@ import {
 	looksLikeMajorEvent,
 	buildFallbackFeatured,
 	fallbackLine,
+	buildForYouBlock,
 } from "../scripts/generate-featured.js";
 
 describe("parseResponseJSON()", () => {
@@ -139,6 +140,72 @@ describe("buildFallbackFeatured()", () => {
 		const sections = result.blocks.filter((b) => b.type === "section");
 		expect(sections.length).toBeGreaterThanOrEqual(1);
 		expect(sections[0].style).toBe("highlight");
+	});
+});
+
+describe("buildForYouBlock()", () => {
+	const futureTime = (hoursAhead = 2) => new Date(Date.now() + hoursAhead * 3600000).toISOString();
+	const userContext = {
+		favoriteTeams: ["Barcelona", "Lyn"],
+		favoritePlayers: ["Viktor Hovland"],
+		sportPreferences: { football: "high", golf: "high", tennis: "medium" },
+	};
+
+	it("returns null when no events", () => {
+		expect(buildForYouBlock([], userContext, new Date())).toBeNull();
+	});
+
+	it("returns null when no user context", () => {
+		const events = [{ sport: "football", title: "Test", time: futureTime() }];
+		expect(buildForYouBlock(events, null, new Date())).toBeNull();
+	});
+
+	it("returns section block with for-you id", () => {
+		const events = [
+			{ sport: "football", title: "Barcelona vs Real Madrid", time: futureTime(), homeTeam: "Barcelona", awayTeam: "Real Madrid" },
+		];
+		const block = buildForYouBlock(events, userContext, new Date());
+		expect(block).not.toBeNull();
+		expect(block.type).toBe("section");
+		expect(block.id).toBe("for-you");
+		expect(block.style).toBe("highlight");
+		expect(block.items.length).toBeGreaterThan(0);
+	});
+
+	it("prioritizes favorite team events", () => {
+		const events = [
+			{ sport: "football", title: "Barcelona vs Real Madrid", time: futureTime(), homeTeam: "Barcelona", awayTeam: "Real Madrid" },
+			{ sport: "football", title: "Chelsea vs Arsenal", time: futureTime(3), homeTeam: "Chelsea", awayTeam: "Arsenal" },
+		];
+		const block = buildForYouBlock(events, userContext, new Date());
+		expect(block).not.toBeNull();
+		expect(block.items[0].text).toContain("Barcelona");
+	});
+
+	it("includes Norwegian events for high-pref sports", () => {
+		const events = [
+			{ sport: "football", title: "Lyn vs Brann", time: futureTime(), homeTeam: "Lyn", awayTeam: "Brann", norwegian: true },
+		];
+		const block = buildForYouBlock(events, userContext, new Date());
+		expect(block).not.toBeNull();
+		expect(block.items.length).toBe(1);
+	});
+
+	it("returns null when no events match preferences", () => {
+		const events = [
+			{ sport: "esports", title: "Random CS2 Match", time: futureTime() },
+		];
+		const block = buildForYouBlock(events, { sportPreferences: { esports: "low" } }, new Date());
+		expect(block).toBeNull();
+	});
+
+	it("limits to 5 items", () => {
+		const events = Array.from({ length: 10 }, (_, i) => ({
+			sport: "football", title: `Barcelona vs Team ${i}`, time: futureTime(i + 1),
+			homeTeam: "Barcelona", awayTeam: `Team ${i}`,
+		}));
+		const block = buildForYouBlock(events, userContext, new Date());
+		expect(block.items.length).toBeLessThanOrEqual(5);
 	});
 });
 
