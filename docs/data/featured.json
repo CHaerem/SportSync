@@ -2,34 +2,22 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Medal day meets Champions League knockout chaos"
+      "text": "Triple Olympic gold chase for Norway"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Norway's Olympic triple threat",
-      "items": [
-        "10:00 — Nordic Combined: Oftebro chases Gundersen gold",
-        "14:30 — Biathlon relay: Laegreid leads gold favorites",
-        "19:30 — Big Air final: Ruud defends Olympic crown"
-      ]
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Three finals today",
+      "maxItems": 3,
+      "showFlags": true,
+      "style": "highlight"
     },
     {
       "type": "narrative",
-      "text": "Three Norwegian medal shots today. The men's biathlon relay is the marquee event — Norway enters as dominant favorites."
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Real Madrid",
-      "awayTeam": "Benfica"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Paris Saint-Germain",
-      "awayTeam": "AS Monaco"
-    },
-    {
-      "type": "event-line",
-      "text": "⚽ 21:00 — Atalanta at Borussia Dortmund: High-octane knockout opener"
+      "text": "Oftebro hunts Nordic Combined medal at 10:00, biathlon relay dream team targets gold at 14:30, then Ruud defends Big Air title in prime time."
     },
     {
       "type": "match-result",
@@ -38,9 +26,30 @@
     },
     {
       "type": "narrative",
-      "text": "Barcelona stunned at Montilivi last night. Meanwhile Arsenal chase the title at Wolves tomorrow, four points clear at the summit."
+      "text": "Barcelona's title challenge stumbles at Montilivi — first defeat in six weeks."
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League returns",
+      "items": [
+        "21:00 — PSG at Monaco (French playoff derby)",
+        "21:00 — Real Madrid at Benfica (first leg)",
+        "21:00 — Atalanta at Dortmund (high-press thriller)"
+      ]
+    },
+    {
+      "type": "divider",
+      "text": "This Week"
+    },
+    {
+      "type": "event-line",
+      "text": "🏅 Wed 09:45 — Klaebo leads Team Sprint Free, chasing third gold"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Wed 21:00 — Inter at Bodo/Glimt (historic CL knockout debut)"
     }
   ],
-  "generatedAt": "2026-02-17T17:02:38.471Z",
+  "generatedAt": "2026-02-17T18:29:30.593Z",
   "provider": "claude-cli"
 }

@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-17T17:02:40.133Z",
+  "generatedAt": "2026-02-17T18:29:32.103Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 45,
+    "totalEvents": 44,
     "sports": [
       "golf",
       "chess",
@@ -14,7 +14,6 @@
     "bands": {
       "live": [],
       "today": [
-        "Juventus at Galatasaray",
         "Freestyle Skiing — Men's Big Air Final",
         "Paris Saint-Germain at AS Monaco",
         "Real Madrid at Benfica",
@@ -69,11 +68,11 @@
         "Biathlon — Men's 4x7.5km Relay"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 9,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 68,
-    "issueCount": 14
+    "editorialScore": 85,
+    "issueCount": 19
   },
   "findings": [
     {
@@ -83,49 +82,19 @@
     },
     {
       "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 68/100 (below threshold)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Three Norwegian\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"High\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Montilivi\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Meanwhile Arsenal\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_league_conflation",
-      "message": "Block mixes PL standings language with non-PL team: \"Barcelona stunned at Montilivi last night. Meanwhile Arsenal chase the title at ...\""
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 3,
     "critical": 0,
-    "warning": 9,
+    "warning": 3,
     "info": 0
   },
   "pass": true,

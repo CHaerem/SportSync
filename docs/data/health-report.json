@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-17T17:02:39.954Z",
-  "eventCount": 45,
+  "generatedAt": "2026-02-17T18:29:32.297Z",
+  "eventCount": 44,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 30,
+      "count": 29,
       "previousCount": 30,
-      "delta": 0
+      "delta": -1
     },
     "cs2": {
       "count": 1,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2809,
+      "ageMinutes": 2895,
       "stale": true
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2573,
+      "ageMinutes": 2660,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -111,15 +111,13 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 556296,
+    "totalDuration": 304765,
     "stepCount": 26,
-    "timeoutHits": [
-      "verify-schedules"
-    ],
+    "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 300068,
+        "name": "enrich-events",
+        "duration": 164842,
         "share": 54
       }
     ],
@@ -147,37 +145,27 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2809 minutes old"
+      "message": "chess.json: data is 2895 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2573 minutes old"
+      "message": "golf.json: data is 2660 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 13 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 14 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 13 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 14 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "standings_empty",
       "message": "pgaGolf standings data is empty"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Real Madrid vs Benfica has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Paris Saint-Germain vs AS Monaco has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -200,14 +188,9 @@
       "message": "4 tournament(s) lack league theming: FIDE Freestyle Chess World Championship 2026 | Finals, Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"verify-schedules\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
-    },
-    {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 54% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (165s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -232,7 +215,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 11 warning issue(s). Editorial quality score is 68/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
   }
 }
