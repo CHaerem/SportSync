@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T12:27:56.122Z",
+  "generatedAt": "2026-02-17T12:40:52.849Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 35,
@@ -60,11 +60,11 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 68,
-    "issueCount": 9
+    "issueCount": 11
   },
   "findings": [
     {
@@ -79,39 +79,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Three Norwegian\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 3,
     "critical": 0,
-    "warning": 8,
+    "warning": 3,
     "info": 0
   },
   "pass": true,
