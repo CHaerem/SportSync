@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T02:05:48.570Z",
+  "generatedAt": "2026-02-17T03:12:10.269Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 33,
@@ -58,7 +58,7 @@
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 95,
@@ -73,17 +73,27 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfc5 Biathlon men's relay\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfbe Dubai WTA\" which may not match any event"
+      "message": "Featured block references \"\udfc5 Biathlon men's 4x7.5km relay\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Ruud\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Barcelona\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Girona\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Italian Alps\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -97,10 +107,10 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 8,
     "critical": 0,
-    "warning": 3,
-    "info": 3
+    "warning": 6,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
