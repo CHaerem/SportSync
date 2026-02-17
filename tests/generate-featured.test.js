@@ -129,9 +129,8 @@ describe("buildFallbackFeatured()", () => {
 	it("handles empty events", () => {
 		const result = buildFallbackFeatured([], new Date());
 		expect(result.blocks).toBeDefined();
-		// Should have at least a "no events" line
-		const eventLines = result.blocks.filter((b) => b.type === "event-line");
-		expect(eventLines.length).toBeGreaterThanOrEqual(1);
+		// With no events, no sections, no results — blocks may be empty (no misleading "no events" message)
+		expect(Array.isArray(result.blocks)).toBe(true);
 	});
 
 	it("includes major event sections when applicable", () => {

@@ -546,7 +546,9 @@ function buildFallbackSections(events, now) {
 
 	return Object.entries(groups).slice(0, 2).map(([key, groupEvents]) => {
 		const first = groupEvents[0];
-		const items = groupEvents.slice(0, 6).map((event) => {
+		const sorted = [...groupEvents].sort((a, b) => new Date(a.time) - new Date(b.time));
+		const todayStr = now.toLocaleDateString("en-CA", { timeZone: "Europe/Oslo" });
+		const items = sorted.slice(0, 6).map((event) => {
 			const t = new Date(event.time);
 			const time = t.toLocaleTimeString("en-NO", {
 				hour: "2-digit",
@@ -554,8 +556,12 @@ function buildFallbackSections(events, now) {
 				hour12: false,
 				timeZone: "Europe/Oslo",
 			});
+			const eventDay = t.toLocaleDateString("en-CA", { timeZone: "Europe/Oslo" });
+			const dayPrefix = eventDay !== todayStr
+				? t.toLocaleDateString("en-US", { weekday: "short", timeZone: "Europe/Oslo" }) + " "
+				: "";
 			return {
-				text: `${time} — ${event.title}`,
+				text: `${dayPrefix}${time} — ${event.title}`,
 				type: "event",
 			};
 		});
@@ -573,7 +579,7 @@ function buildFallbackSections(events, now) {
 }
 
 function sportEmoji(sport) {
-	const map = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎️", f1: "🏎️", chess: "♟️", esports: "🎮", olympics: "🏅" };
+	const map = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎️", f1: "🏎️", chess: "♟️", esports: "🎮", cs2: "🎮", olympics: "🏅" };
 	return map[sport] || "🏆";
 }
 
@@ -811,7 +817,7 @@ function generateFallbackToday(events, now, sectionSports = []) {
 		.filter((e) => isEventInWindow(e, todayStart, todayEnd))
 		.filter((e) => !sectionSports.includes(e.sport));
 
-	if (todayEvents.length === 0) return ["No events scheduled today."];
+	if (todayEvents.length === 0) return [];
 
 	// Sort by: favorites first, then importance, then Norwegian relevance
 	const sorted = [...todayEvents].sort((a, b) => {

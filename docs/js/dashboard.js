@@ -733,7 +733,8 @@ class Dashboard {
 				return `<div class="block-headline">${this.renderBriefLine(block.text || '')}</div>`;
 			case 'event-line': {
 				const isLive = block._live || (block.text && (block.text.startsWith('LIVE:') || block.text.startsWith('\u26f3')));
-				const cls = isLive ? ' brief-live' : '';
+				const isResult = !isLive && block.text && /\bFT:/.test(block.text);
+				const cls = isLive ? ' brief-live' : isResult ? ' result-line' : '';
 				return `<div class="block-event-line editorial-line${cls}">${this.renderBriefLine(block.text || '')}</div>`;
 			}
 			case 'event-group': {
