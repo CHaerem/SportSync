@@ -61,8 +61,8 @@ export const sportsConfig = {
 			custom: true
 		},
 		norwegian: {
-			players: ["Casper Ruud", "Ruud, Casper", "C. Ruud", "Ruud"],
-			filterMode: "focused"
+			players: ["Casper Ruud"],
+			filterMode: "exclusive"
 		}
 	},
 

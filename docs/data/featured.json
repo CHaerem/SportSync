@@ -1,21 +1,20 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Gold medal day in Milano-Cortina"
+      "type": "event-line",
+      "text": "🏅 Biathlon — Men's 4x7.5km Relay, 14:30 — Winter Olympics 2026"
     },
     {
-      "type": "event-group",
-      "label": "🏅 Olympics today",
-      "items": [
-        "Boe brothers lead biathlon relay, 14:30",
-        "Birk Ruud in Big Air final, 19:30",
-        "Jens Luraas Oftebro in Nordic Combined, 10:00"
-      ]
+      "type": "event-line",
+      "text": "🏅 Nordic Combined — Gundersen Large Hill/10km, 10:00 — Winter Olympics 2026"
     },
     {
-      "type": "narrative",
-      "text": "Norway's strongest medal day yet. Johannes and Tarjei Boe anchor the relay, while Ruud targets freestyle gold."
+      "type": "event-line",
+      "text": "🏅 Freestyle Skiing — Men's Big Air Final, 18:30 — Winter Olympics 2026"
+    },
+    {
+      "type": "event-line",
+      "text": "🎾 Dow Tennis Classic, 19:00 — WTA Events"
     },
     {
       "type": "section",
@@ -25,8 +24,28 @@
       "style": "highlight",
       "items": [
         {
-          "text": "Biathlon relay 14:30 · Big Air final 19:30",
-          "type": "text"
+          "text": "10:00 — Nordic Combined — Gundersen Large Hill/10km",
+          "type": "event"
+        },
+        {
+          "text": "14:30 — Biathlon — Men's 4x7.5km Relay",
+          "type": "event"
+        },
+        {
+          "text": "18:30 — Freestyle Skiing — Men's Big Air Final",
+          "type": "event"
+        },
+        {
+          "text": "09:45 — Cross-Country Skiing — Team Sprint Free",
+          "type": "event"
+        },
+        {
+          "text": "14:45 — Biathlon — Women's 4x6km Relay",
+          "type": "event"
+        },
+        {
+          "text": "10:00 — Nordic Combined — Super Team",
+          "type": "event"
         }
       ],
       "expandLabel": null,
@@ -38,11 +57,15 @@
     },
     {
       "type": "event-line",
-      "text": "🏅 Wed 09:45 — Klaebo leads team sprint free"
+      "text": "🎾 Wed 02:00 — Delray Beach Open"
     },
     {
       "type": "event-line",
-      "text": "⚽ Wed 21:00 — Arsenal at Wolves, title race stakes"
+      "text": "🏆 Thu 10:00 — Roman Imperium Cup V"
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ Sat 21:00 — Newcastle United at Manchester City"
     },
     {
       "type": "section",
@@ -60,7 +83,7 @@
           "type": "event"
         },
         {
-          "text": "🏅 Freestyle Skiing — Men's Big Air Final, 19:30 — Winter Olympics 2026",
+          "text": "🏅 Freestyle Skiing — Men's Big Air Final, 18:30 — Winter Olympics 2026",
           "type": "event"
         },
         {
@@ -76,6 +99,6 @@
       "expandItems": []
     }
   ],
-  "generatedAt": "2026-02-17T08:54:27.354Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-17T08:55:49.050Z",
+  "provider": "fallback"
 }

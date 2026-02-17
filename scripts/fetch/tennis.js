@@ -60,8 +60,9 @@ export class TennisFetcher extends ESPNAdapter {
 		if (!this.config.norwegian?.players) return false;
 		const eventText = JSON.stringify(espnEvent).toLowerCase();
 		return this.config.norwegian.players.some(player => {
-			const nameParts = player.toLowerCase().split(/[\s,]+/);
-			return nameParts.some(part => eventText.includes(part));
+			const nameParts = player.toLowerCase().split(/[\s,]+/).filter(p => p.length >= 3);
+			if (nameParts.length === 0) return false;
+			return nameParts.every(part => eventText.includes(part));
 		});
 	}
 

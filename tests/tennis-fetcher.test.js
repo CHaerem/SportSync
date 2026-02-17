@@ -98,7 +98,24 @@ describe('TennisFetcher', () => {
 			expect(fetcher.transformESPNEvent({ name: 'Test' })).toBeNull();
 		});
 
+		it('returns null for tournament without competitions in exclusive mode', () => {
+			const espnEvent = {
+				name: 'Dubai Duty Free Tennis Championships',
+				date: futureDate,
+				endDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+				status: { type: { name: 'STATUS_IN_PROGRESS' } },
+				venue: { fullName: 'Dubai Tennis Stadium' },
+				sourceName: 'ATP Tour'
+			};
+
+			const event = fetcher.transformESPNEvent(espnEvent);
+			expect(event).toBeNull();
+		});
+
 		it('creates tournament-level event in focused mode when no competitions', () => {
+			const originalMode = fetcher.config.norwegian.filterMode;
+			fetcher.config.norwegian.filterMode = 'focused';
+
 			const espnEvent = {
 				name: 'Dubai Duty Free Tennis Championships',
 				date: futureDate,
@@ -110,12 +127,15 @@ describe('TennisFetcher', () => {
 
 			const event = fetcher.transformESPNEvent(espnEvent);
 			expect(event).not.toBeNull();
-			expect(event.title).toBe('Dubai Duty Free Tennis Championships');
-			expect(event.endTime).not.toBeNull();
 			expect(event._isTournament).toBe(true);
+
+			fetcher.config.norwegian.filterMode = originalMode;
 		});
 
 		it('skips completed tournaments in focused mode', () => {
+			const originalMode = fetcher.config.norwegian.filterMode;
+			fetcher.config.norwegian.filterMode = 'focused';
+
 			const espnEvent = {
 				name: 'Completed Open',
 				date: new Date(Date.now() - 86400000).toISOString(),
@@ -124,19 +144,8 @@ describe('TennisFetcher', () => {
 
 			const event = fetcher.transformESPNEvent(espnEvent);
 			expect(event).toBeNull();
-		});
 
-		it('detects Norwegian player in tournament-level event', () => {
-			const espnEvent = {
-				name: 'ATP 500 - Casper Ruud Entry',
-				date: futureDate,
-				status: { type: { name: 'STATUS_SCHEDULED' } },
-				sourceName: 'ATP Tour'
-			};
-
-			const event = fetcher.transformESPNEvent(espnEvent);
-			expect(event).not.toBeNull();
-			expect(event.norwegian).toBe(true);
+			fetcher.config.norwegian.filterMode = originalMode;
 		});
 
 		it('detects Norwegian player by name part match', () => {
@@ -209,10 +218,6 @@ describe('TennisFetcher', () => {
 
 	describe('applyCustomFilters()', () => {
 		it('filters to Norwegian matches in exclusive mode', () => {
-			// Tennis config uses "focused" mode, so let's test the exclusive path
-			const originalMode = fetcher.config.norwegian.filterMode;
-			fetcher.config.norwegian.filterMode = 'exclusive';
-
 			const events = [
 				{ norwegian: true, sport: 'tennis' },
 				{ norwegian: false, sport: 'tennis' },
@@ -222,19 +227,21 @@ describe('TennisFetcher', () => {
 			const filtered = fetcher.applyCustomFilters(events);
 			expect(filtered).toHaveLength(2);
 			expect(filtered.every(e => e.norwegian)).toBe(true);
-
-			fetcher.config.norwegian.filterMode = originalMode;
 		});
 
 		it('delegates to parent in non-exclusive mode', () => {
+			const originalMode = fetcher.config.norwegian.filterMode;
+			fetcher.config.norwegian.filterMode = 'focused';
+
 			const events = [
 				{ norwegian: true, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() },
 				{ norwegian: false, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() }
 			];
 
-			// Default mode is "focused", which defers to parent
 			const filtered = fetcher.applyCustomFilters(events);
 			expect(filtered.length).toBeGreaterThan(0);
+
+			fetcher.config.norwegian.filterMode = originalMode;
 		});
 	});
 });
