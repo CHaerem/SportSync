@@ -8,11 +8,33 @@ export class TennisFetcher extends ESPNAdapter {
 
 	transformESPNEvent(espnEvent) {
 		const event = super.transformESPNEvent(espnEvent);
+
+		// If parent returns null (no competitions), create tournament-level event
+		// for focused mode — shows tournament schedule even without match data
+		if (!event && espnEvent && this.config.norwegian?.filterMode === "focused") {
+			const statusName = espnEvent.status?.type?.name || "";
+			// Skip completed tournaments
+			if (statusName === "STATUS_FINAL") return null;
+			if (!espnEvent.name || !espnEvent.date) return null;
+
+			const tournamentEvent = {
+				title: espnEvent.name,
+				time: espnEvent.date,
+				endTime: espnEvent.endDate || null,
+				venue: espnEvent.venue?.fullName || espnEvent.venue?.address?.city || "TBD",
+				tournament: espnEvent.sourceName || "ATP/WTA Tour",
+				streaming: [],
+				status: statusName,
+				_isTournament: true,
+			};
+			tournamentEvent.norwegian = this._checkNorwegian(espnEvent);
+			return tournamentEvent;
+		}
+
 		if (!event) return null;
 
 		// Handle different tennis data structures
 		if (espnEvent.competitors && !espnEvent.competitions) {
-			// Direct competitors format (mixed doubles)
 			const competitors = espnEvent.competitors;
 			event.participants = [
 				competitors[0]?.displayName || competitors[0]?.team?.displayName || "TBD",
@@ -30,17 +52,17 @@ export class TennisFetcher extends ESPNAdapter {
 			}
 		}
 
-		// Check for Norwegian players
-		if (this.config.norwegian?.players) {
-			const eventText = JSON.stringify(espnEvent).toLowerCase();
-			event.norwegian = this.config.norwegian.players.some(player => {
-				const playerLower = player.toLowerCase();
-				const nameParts = playerLower.split(/[\s,]+/);
-				return nameParts.some(part => eventText.includes(part));
-			});
-		}
-
+		event.norwegian = this._checkNorwegian(espnEvent);
 		return event;
+	}
+
+	_checkNorwegian(espnEvent) {
+		if (!this.config.norwegian?.players) return false;
+		const eventText = JSON.stringify(espnEvent).toLowerCase();
+		return this.config.norwegian.players.some(player => {
+			const nameParts = player.toLowerCase().split(/[\s,]+/);
+			return nameParts.some(part => eventText.includes(part));
+		});
 	}
 
 	applyCustomFilters(events) {
