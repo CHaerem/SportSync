@@ -1,44 +1,37 @@
 {
-  "generatedAt": "2026-02-17T12:05:02.875Z",
+  "generatedAt": "2026-02-17T11:57:18.290Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 33159,
+    "blockCount": 8,
+    "generationMs": 3,
     "tokenUsage": {
-      "input": 125283,
-      "output": 938,
-      "cacheCreation": 43455,
-      "cacheRead": 81811,
-      "total": 126221,
-      "costUSD": 0.33855825,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 68,
+    "score": 88,
     "metrics": {
-      "mustWatchCoverage": 0.143,
+      "mustWatchCoverage": 0.833,
       "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1
     },
-    "issues": [
-      "Only 14% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 113,
+      "avgScore": 107,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -59,13 +52,13 @@
     ]
   },
   "enrichment": {
-    "provider": "claude-cli",
+    "provider": "none",
     "before": {
       "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.743
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 35,
@@ -77,32 +70,16 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
-    "aiUpdatedFields": 35,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 35,
-    "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 119366,
-      "output": 3288,
-      "calls": 4,
-      "total": 122654,
-      "costUSD": 0.42907400000000007,
-      "tracked": true,
-      "estimated": false
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
-  },
-  "multiDay": {
-    "tokenUsage": {
-      "input": 67600,
-      "output": 564,
-      "calls": 1,
-      "total": 68164,
-      "tracked": false,
-      "estimated": true
-    },
-    "lastRun": "2026-02-17T10:27:51.078Z"
   }
 }

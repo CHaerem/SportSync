@@ -14,7 +14,6 @@ import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { analyzePatterns } from "./analyze-patterns.js";
 import { LLMClient } from "./lib/llm-client.js";
-import { runVerification } from "./verify-schedules.js";
 
 const dataDir = rootDataPath();
 
@@ -579,34 +578,27 @@ async function main() {
 	writeJsonPretty(path.join(dataDir, "pattern-report.json"), patternReport);
 	console.log(`Patterns: ${patternReport.patternsDetected} detected`);
 
-	// Run schedule verification
-	try {
-		const verification = await runVerification({ dDir: dataDir });
-		const vr = verification.runRecord;
-		console.log(`Verification: ${vr.configsChecked} configs, ${vr.eventsChecked} events checked`);
-	} catch (err) {
-		console.warn("Schedule verification failed (non-blocking):", err.message);
-	}
+	// Schedule verification now runs as a separate pipeline step (verify-schedules.js)
+	// instead of embedded here — this was the primary cause of 5-minute timeouts.
 
-	// Check curated configs for low verification confidence with upcoming events
+	// Config confidence checks (moved from loose `issues` scope to report.issues)
 	const configDir = path.resolve(process.cwd(), "scripts", "config");
 	if (fs.existsSync(configDir)) {
-		const now = Date.now();
-		const weekAhead = now + 7 * 86_400_000;
+		const nowMs = Date.now();
+		const weekAhead = nowMs + 7 * 86_400_000;
 		for (const file of fs.readdirSync(configDir)) {
 			if (!file.endsWith(".json") || file === "user-context.json") continue;
 			const cfg = readJsonIfExists(path.join(configDir, file));
 			if (!cfg?.events?.length) continue;
 
-			// Low verification confidence check
 			if (cfg.verificationSummary) {
 				const confidence = cfg.verificationSummary.overallConfidence ?? 1;
 				const hasUpcoming = cfg.events.some(e => {
 					const t = new Date(e.time).getTime();
-					return t > now && t < weekAhead;
+					return t > nowMs && t < weekAhead;
 				});
 				if (confidence < 0.6 && hasUpcoming) {
-					issues.push({
+					report.issues.push({
 						severity: "warning",
 						code: "low_confidence_config",
 						message: `Config ${file} has low verification confidence (${confidence}) with upcoming events — schedule may be inaccurate`,
@@ -614,23 +606,22 @@ async function main() {
 				}
 			}
 
-			// Olympics/major event stale data check: flag configs with past events not pruned
 			if (file.includes("olympics") || cfg.context?.includes("olympics")) {
 				const pastEvents = cfg.events.filter(e => {
 					const t = new Date(e.time).getTime();
-					const end = e.endTime ? new Date(e.endTime).getTime() : t + 3 * 60 * 60 * 1000; // 3h default duration
-					return end < now;
+					const end = e.endTime ? new Date(e.endTime).getTime() : t + 3 * 60 * 60 * 1000;
+					return end < nowMs;
 				});
 				const totalEvents = cfg.events.length;
 				if (pastEvents.length > 0 && pastEvents.length < totalEvents) {
-					issues.push({
+					report.issues.push({
 						severity: "info",
 						code: "olympics_stale_events",
 						message: `${file}: ${pastEvents.length}/${totalEvents} events are in the past — consider pruning`,
 					});
 				}
 				if (pastEvents.length === totalEvents) {
-					issues.push({
+					report.issues.push({
 						severity: "warning",
 						code: "olympics_all_past",
 						message: `${file}: all ${totalEvents} events are in the past — config should be archived`,
@@ -640,11 +631,10 @@ async function main() {
 		}
 	}
 
-	// Generate status summary
+	// Status summary — deterministic fallback only (LLM summary moved to separate step to avoid timeout)
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
-	const summaryLlm = new LLMClient();
-	const summary = await generateStatusSummary(report, autonomyReport, quality, summaryLlm);
-	report.statusSummary = { text: summary, tokenUsage: summaryLlm.isAvailable() ? summaryLlm.getUsage() : null };
+	const summary = buildFallbackSummary(report, autonomyReport, quality);
+	report.statusSummary = { text: summary, tokenUsage: null };
 	console.log(`Status summary: ${summary}`);
 
 	const outPath = path.join(dataDir, "health-report.json");
