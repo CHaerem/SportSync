@@ -321,6 +321,29 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 6a. Streaming enrichment health
+	const { streamingEnrichment = null } = options;
+	const streamingHealth = { present: false, tvkampenReachable: false, matchRate: 0, eventsEnriched: 0 };
+	if (streamingEnrichment) {
+		streamingHealth.present = true;
+		streamingHealth.tvkampenReachable = streamingEnrichment.tvkampenReachable === true;
+		streamingHealth.matchRate = streamingEnrichment.matchRate || 0;
+		streamingHealth.eventsEnriched = streamingEnrichment.eventsEnriched || 0;
+		if (!streamingHealth.tvkampenReachable) {
+			issues.push({
+				severity: "warning",
+				code: "tvkampen_unavailable",
+				message: "tvkampen.com was unreachable — streaming enrichment skipped",
+			});
+		} else if (streamingHealth.matchRate < 0.5 && (streamingEnrichment.matchesAttempted || 0) >= 3) {
+			issues.push({
+				severity: "warning",
+				code: "streaming_low_match_rate",
+				message: `Streaming enrichment match rate is ${Math.round(streamingHealth.matchRate * 100)}% (${streamingEnrichment.matchesSucceeded}/${streamingEnrichment.matchesAttempted}) — team alias table may need updates`,
+			});
+		}
+	}
+
 	// 6b. Preference evolution freshness
 	const { preferenceEvolution = null } = options;
 	if (preferenceEvolution?.lastEvolved) {
@@ -676,6 +699,7 @@ export function generateHealthReport(options = {}) {
 		rssFeedHealth,
 		standingsHealth,
 		resultsHealth,
+		streamingHealth,
 		snapshotHealth,
 		quotaApiHealth,
 		pipelineTimingHealth,
@@ -762,6 +786,9 @@ async function main() {
 	// Read preference evolution history
 	const preferenceEvolution = readJsonIfExists(path.join(dataDir, "preference-evolution.json"));
 
+	// Read streaming enrichment log
+	const streamingEnrichment = readJsonIfExists(path.join(dataDir, "streaming-enrichment.json"));
+
 	// Read pipeline result for timing anomaly detection
 	const pipelineResult = readJsonIfExists(path.join(dataDir, "pipeline-result.json"));
 
@@ -778,6 +805,7 @@ async function main() {
 		usageTracking,
 		factCheckHistory,
 		preferenceEvolution,
+		streamingEnrichment,
 		pipelineResult,
 	});
 

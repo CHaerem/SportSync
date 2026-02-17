@@ -34,6 +34,7 @@
       "description": "Aggregate and enrich events",
       "steps": [
         { "name": "build-events", "command": "npm run build:events", "errorPolicy": "continue" },
+        { "name": "enrich-streaming", "command": "node scripts/enrich-streaming.js", "errorPolicy": "continue", "timeout": 90000 },
         { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
       ]
     },
