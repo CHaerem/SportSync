@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T14:51:01.589Z",
+  "generatedAt": "2026-02-17T15:21:40.834Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2677,
+      "ageMinutes": 2708,
       "stale": true
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
@@ -61,11 +61,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2442,
+      "ageMinutes": 2472,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -124,22 +124,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "chess.json: data is 2677 minutes old"
+      "message": "chess.json: data is 2708 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2442 minutes old"
+      "message": "golf.json: data is 2472 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "chess: data retained 8 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "chess: data retained 9 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 8 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 9 consecutive times (since 2026-02-17) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -169,12 +169,12 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/11 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/11 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 9/10 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 68/100.",
     "tokenUsage": null
   },
   "qualityRegression": {

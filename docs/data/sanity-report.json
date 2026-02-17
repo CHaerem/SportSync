@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T14:51:02.865Z",
+  "generatedAt": "2026-02-17T15:21:42.006Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 35,
@@ -12,9 +12,7 @@
       "f1"
     ],
     "bands": {
-      "live": [
-        "Biathlon — Men's 4x7.5km Relay"
-      ],
+      "live": [],
       "today": [
         "Freestyle Skiing — Men's Big Air Final"
       ],
@@ -57,13 +55,14 @@
       "ended": [
         "AT&T Pebble Beach Pro-Am",
         "Game 3 – FIDE Freestyle Chess World Championship 2026 | Finals",
-        "Nordic Combined — Gundersen Large Hill/10km"
+        "Nordic Combined — Gundersen Large Hill/10km",
+        "Biathlon — Men's 4x7.5km Relay"
       ]
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
+    "editorialScore": 68,
     "issueCount": 12
   },
   "findings": [
@@ -74,13 +73,13 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Boe\" but no matching athlete found in events data"
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 68/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Oftebro\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",

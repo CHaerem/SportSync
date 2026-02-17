@@ -2,22 +2,20 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Norway hunts three Olympic golds today"
+      "text": "Triple Norwegian medal hunt at Milano-Cortina"
     },
     {
-      "type": "event-schedule",
-      "filter": {
-        "sport": "olympics",
-        "window": "today"
-      },
-      "label": "🏅 Three medal chances",
-      "maxItems": 3,
-      "showFlags": true,
-      "style": "highlight"
+      "type": "event-group",
+      "label": "🏅 Norway's Olympic Tuesday",
+      "items": [
+        "10:00 — Nordic Combined Gundersen, Oftebro chasing gold",
+        "14:30 — Men's biathlon relay, Laegreid leads favorites",
+        "19:30 — Birk Ruud defends Big Air title in primetime"
+      ]
     },
     {
       "type": "narrative",
-      "text": "The Boe brothers anchor the biathlon relay at 14:30, Klaebo chases team sprint gold Wednesday morning, and Birk Ruud defends his Big Air crown tonight."
+      "text": "After Oftebro's majestic gold in individual Nordic combined, Norway fields medal favorites across three disciplines today."
     },
     {
       "type": "match-result",
@@ -30,13 +28,13 @@
     },
     {
       "type": "event-line",
-      "text": "⚽ Wed 21:00 — Arsenal at Wolves, title race point"
+      "text": "🏅 Wed 09:45 — Klaebo leads Norway in team sprint free"
     },
     {
       "type": "event-line",
-      "text": "🏅 Sat 11:00 — Klaebo in the Olympic 50km marathon"
+      "text": "⚽ Wed 21:00 — Arsenal at Wolverhampton Wanderers, title race stakes"
     }
   ],
-  "generatedAt": "2026-02-17T14:51:00.229Z",
+  "generatedAt": "2026-02-17T15:21:39.536Z",
   "provider": "claude-cli"
 }
