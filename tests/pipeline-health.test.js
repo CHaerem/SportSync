@@ -699,3 +699,50 @@ describe("quota API health check", () => {
 		expect(quotaIssues).toHaveLength(0);
 	});
 });
+
+describe("Norwegian tagging anomaly detection", () => {
+	it("flags sport where all events are tagged norwegian without players", () => {
+		const events = [];
+		for (let i = 0; i < 5; i++) {
+			events.push({ sport: "tennis", title: `Tennis match ${i}`, time: new Date().toISOString(), norwegian: true });
+		}
+		const report = generateHealthReport({ events });
+		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
+		expect(anomaly).toBeDefined();
+		expect(anomaly.message).toContain("tennis");
+		expect(anomaly.message).toContain("false positives");
+	});
+
+	it("does not flag when events have norwegianPlayers listed", () => {
+		const events = [];
+		for (let i = 0; i < 5; i++) {
+			events.push({
+				sport: "tennis", title: `Tennis match ${i}`, time: new Date().toISOString(),
+				norwegian: true, norwegianPlayers: [{ name: "Casper Ruud" }],
+			});
+		}
+		const report = generateHealthReport({ events });
+		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
+		expect(anomaly).toBeUndefined();
+	});
+
+	it("does not flag sports with fewer than 3 events", () => {
+		const events = [
+			{ sport: "chess", title: "Chess 1", time: new Date().toISOString(), norwegian: true },
+			{ sport: "chess", title: "Chess 2", time: new Date().toISOString(), norwegian: true },
+		];
+		const report = generateHealthReport({ events });
+		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
+		expect(anomaly).toBeUndefined();
+	});
+
+	it("does not flag when tagging rate is below threshold", () => {
+		const events = [];
+		for (let i = 0; i < 10; i++) {
+			events.push({ sport: "football", title: `Match ${i}`, time: new Date().toISOString(), norwegian: i < 2 });
+		}
+		const report = generateHealthReport({ events });
+		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
+		expect(anomaly).toBeUndefined();
+	});
+});

@@ -247,7 +247,34 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 7. Dashboard visibility — events in data but invisible on dashboard
+	// 7. Norwegian tagging anomaly detection
+	// If a sport has many events tagged norwegian=true but none have actual norwegianPlayers,
+	// the matching logic is likely broken (false positives).
+	const norwegianBySport = {};
+	for (const ev of events) {
+		const sport = ev.sport || "unknown";
+		if (!norwegianBySport[sport]) norwegianBySport[sport] = { total: 0, tagged: 0, withPlayers: 0 };
+		norwegianBySport[sport].total++;
+		if (ev.norwegian) {
+			norwegianBySport[sport].tagged++;
+			const players = ev.norwegianPlayers || ev.players || [];
+			if (Array.isArray(players) && players.length > 0) norwegianBySport[sport].withPlayers++;
+		}
+	}
+	for (const [sport, stats] of Object.entries(norwegianBySport)) {
+		if (stats.total < 3) continue; // too few events to judge
+		const tagRate = stats.tagged / stats.total;
+		// Anomaly: >80% tagged Norwegian but <20% have actual Norwegian players listed
+		if (tagRate > 0.8 && stats.tagged > 2 && stats.withPlayers / stats.tagged < 0.2) {
+			issues.push({
+				severity: "warning",
+				code: "norwegian_tagging_anomaly",
+				message: `${sport}: ${stats.tagged}/${stats.total} events tagged Norwegian but only ${stats.withPlayers} have Norwegian players — likely false positives in name matching`,
+			});
+		}
+	}
+
+	// 8. Dashboard visibility — events in data but invisible on dashboard
 	const invisibleEvents = findInvisibleEvents(events);
 	if (invisibleEvents.length > 0) {
 		const sports = [...new Set(invisibleEvents.map((e) => e.sport))];
@@ -258,7 +285,7 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
-	// 8. Day navigator coverage — past 5 days should have events or results
+	// 9. Day navigator coverage — past 5 days should have events or results
 	const footballResults = Array.isArray(recentResults?.football) ? recentResults.football : [];
 	for (let i = 1; i <= 5; i++) {
 		const d = new Date(Date.now() - i * 86400000);
@@ -276,7 +303,7 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 9. Day snapshot health
+	// 10. Day snapshot health
 	const { snapshotHealth: snapHealthOpts = {} } = options;
 	const snapMeta = snapHealthOpts.meta || null;
 	const snapshotHealth = { present: false, issues: [] };
@@ -335,7 +362,7 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
-	// 10. Quota API availability (from usage-tracking.json)
+	// 11. Quota API availability (from usage-tracking.json)
 	const { usageTracking = null } = options;
 	const quotaApiHealth = { available: false, transitioned: false, unavailableSince: null };
 	if (usageTracking?.quotaApiStatus) {
