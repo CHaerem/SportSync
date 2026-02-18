@@ -75,6 +75,19 @@ export function parseRateLimitHeaders(headers) {
  * @param {object|null} quota — from parseRateLimitHeaders
  * @returns {{ tier: number, tierName: string, maxPriority: number, model: string|null, constrained: boolean, reason: string }}
  */
+/**
+ * Compute minutes until a reset timestamp.
+ * @param {string|null} resetIso — ISO 8601 timestamp
+ * @param {Date} [now] — current time (for testing)
+ * @returns {number|null} minutes until reset, or null if unavailable
+ */
+export function minutesUntilReset(resetIso, now = new Date()) {
+	if (!resetIso) return null;
+	const resetMs = new Date(resetIso).getTime();
+	if (isNaN(resetMs)) return null;
+	return Math.max(0, Math.round((resetMs - now.getTime()) / 60000));
+}
+
 export function evaluateQuota(quota) {
 	if (!quota) return { tier: 0, tierName: "green", maxPriority: 3, model: null, constrained: false, reason: "no quota data (permissive)" };
 
@@ -82,29 +95,47 @@ export function evaluateQuota(quota) {
 	const h7d = typeof quota.sevenDay === "number" ? quota.sevenDay : 0;
 
 	// Walk tiers from most permissive to most restrictive
+	let rawTier = TIERS.length - 1;
 	for (let i = 0; i < TIERS.length - 1; i++) {
 		const t = TIERS[i];
 		if (h5 <= t.ceiling5h && h7d <= t.ceiling7d) {
-			return {
-				tier: i,
-				tierName: t.name,
-				maxPriority: t.maxPriority,
-				model: t.model,
-				constrained: i > 0,
-				reason: i === 0 ? "ok" : `${t.name}: 5h ${h5}%, 7d ${h7d}%`,
-			};
+			rawTier = i;
+			break;
 		}
 	}
 
-	// Exceeded all ceilings → critical
-	const critical = TIERS[TIERS.length - 1];
+	// Reset-time intelligence: if the 5h window is the driver and resets soon,
+	// the high utilization is temporary — relax the tier by 1 level.
+	// Only applies if 5h is the constraining window (not 7d) and resets within 60min.
+	let effectiveTier = rawTier;
+	let resetNote = null;
+	if (rawTier > 0) {
+		const min5h = minutesUntilReset(quota.fiveHourReset);
+		const min7d = minutesUntilReset(quota.sevenDayReset);
+
+		// Determine which window is driving the tier
+		const fiveHourDriving = h5 > h7d;
+
+		if (fiveHourDriving && min5h != null && min5h <= 60) {
+			effectiveTier = Math.max(0, rawTier - 1);
+			resetNote = `5h resets in ${min5h}min — tier relaxed from ${rawTier} to ${effectiveTier}`;
+		} else if (!fiveHourDriving && min7d != null && min7d <= 60) {
+			effectiveTier = Math.max(0, rawTier - 1);
+			resetNote = `7d resets in ${min7d}min — tier relaxed from ${rawTier} to ${effectiveTier}`;
+		}
+	}
+
+	const tier = TIERS[effectiveTier];
 	return {
-		tier: TIERS.length - 1,
-		tierName: critical.name,
-		maxPriority: critical.maxPriority,
-		model: critical.model,
-		constrained: true,
-		reason: `critical: 5h ${h5}%, 7d ${h7d}%`,
+		tier: effectiveTier,
+		tierName: tier.name,
+		maxPriority: tier.maxPriority,
+		model: tier.model,
+		constrained: effectiveTier > 0,
+		reason: effectiveTier === 0
+			? (resetNote || "ok")
+			: `${tier.name}: 5h ${h5}%, 7d ${h7d}%${resetNote ? ` (${resetNote})` : ""}`,
+		resetNote,
 	};
 }
 

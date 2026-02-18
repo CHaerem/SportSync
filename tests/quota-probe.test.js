@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseRateLimitHeaders, evaluateQuota, TIERS } from "../scripts/lib/quota-probe.js";
+import { parseRateLimitHeaders, evaluateQuota, TIERS, minutesUntilReset } from "../scripts/lib/quota-probe.js";
 
 describe("parseRateLimitHeaders", () => {
 	it("parses both 5h and 7d utilization (converts ratio to percentage)", () => {
@@ -168,6 +168,98 @@ describe("evaluateQuota — tiered response", () => {
 		const result = evaluateQuota({ fiveHour: 100, sevenDay: 100 });
 		expect(result.tier).toBe(3);
 		expect(result.tierName).toBe("critical");
+	});
+});
+
+describe("minutesUntilReset", () => {
+	it("calculates minutes to a future reset", () => {
+		const now = new Date("2026-02-18T12:00:00Z");
+		const reset = "2026-02-18T13:00:00Z";
+		expect(minutesUntilReset(reset, now)).toBe(60);
+	});
+
+	it("returns 0 for a past reset", () => {
+		const now = new Date("2026-02-18T14:00:00Z");
+		const reset = "2026-02-18T13:00:00Z";
+		expect(minutesUntilReset(reset, now)).toBe(0);
+	});
+
+	it("returns null for null input", () => {
+		expect(minutesUntilReset(null)).toBeNull();
+	});
+
+	it("returns null for invalid date", () => {
+		expect(minutesUntilReset("not-a-date")).toBeNull();
+	});
+});
+
+describe("evaluateQuota — reset-time intelligence", () => {
+	it("relaxes tier when 5h is driving and resets within 60min", () => {
+		const quota = {
+			fiveHour: 55, sevenDay: 30,
+			fiveHourReset: new Date(Date.now() + 30 * 60000).toISOString(),
+			sevenDayReset: new Date(Date.now() + 48 * 3600000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		// Without reset intelligence, 55% → tier 1. With 5h resetting in 30min → tier 0.
+		expect(result.tier).toBe(0);
+		expect(result.tierName).toBe("green");
+		expect(result.resetNote).toContain("5h resets in");
+	});
+
+	it("does not relax when 7d is the driver", () => {
+		const quota = {
+			fiveHour: 30, sevenDay: 55,
+			fiveHourReset: new Date(Date.now() + 30 * 60000).toISOString(),
+			sevenDayReset: new Date(Date.now() + 120 * 3600000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		// 7d is driving (55% > 30%) and 7d doesn't reset soon → stays tier 1
+		expect(result.tier).toBe(1);
+		expect(result.resetNote).toBeNull();
+	});
+
+	it("relaxes when 7d is driving and resets within 60min", () => {
+		const quota = {
+			fiveHour: 30, sevenDay: 55,
+			fiveHourReset: new Date(Date.now() + 120 * 60000).toISOString(),
+			sevenDayReset: new Date(Date.now() + 45 * 60000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		expect(result.tier).toBe(0);
+		expect(result.resetNote).toContain("7d resets in");
+	});
+
+	it("does not relax when reset is far away", () => {
+		const quota = {
+			fiveHour: 55, sevenDay: 30,
+			fiveHourReset: new Date(Date.now() + 180 * 60000).toISOString(),
+			sevenDayReset: new Date(Date.now() + 48 * 3600000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		expect(result.tier).toBe(1);
+		expect(result.resetNote).toBeNull();
+	});
+
+	it("does not relax below tier 0", () => {
+		const quota = {
+			fiveHour: 20, sevenDay: 20,
+			fiveHourReset: new Date(Date.now() + 10 * 60000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		expect(result.tier).toBe(0);
+	});
+
+	it("relaxes tier 2 to tier 1 when 5h resets soon", () => {
+		const quota = {
+			fiveHour: 75, sevenDay: 40,
+			fiveHourReset: new Date(Date.now() + 20 * 60000).toISOString(),
+			sevenDayReset: new Date(Date.now() + 72 * 3600000).toISOString(),
+		};
+		const result = evaluateQuota(quota);
+		// Without reset: 75% → tier 2. With 5h resetting in 20min → tier 1.
+		expect(result.tier).toBe(1);
+		expect(result.tierName).toBe("moderate");
 	});
 });
 
