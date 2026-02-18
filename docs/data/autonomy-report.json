@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-18T13:35:42.499Z",
-  "overallScore": 1,
+  "generatedAt": "2026-02-18T13:51:36.912Z",
+  "overallScore": 0.92,
   "loopsClosed": 11,
-  "loopsTotal": 11,
+  "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 13 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -54,11 +54,20 @@
       "status": "closed",
       "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
     },
+    "uxQuality": {
+      "score": 0,
+      "status": "open",
+      "details": "no UX report, no UX history, no score data"
+    },
     "streamingVerification": {
       "score": 1,
       "status": "closed",
       "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
-  "nextActions": []
+  "nextActions": [
+    "Run evaluate-ux.js to generate UX report",
+    "Run UX evaluation 3+ times to build trend data",
+    "Investigate UX issues to raise score above 70 threshold"
+  ]
 }

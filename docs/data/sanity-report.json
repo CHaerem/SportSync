@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T13:35:42.416Z",
+  "generatedAt": "2026-02-18T13:51:37.107Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 42,
@@ -11,9 +11,10 @@
       "f1"
     ],
     "bands": {
-      "live": [],
+      "live": [
+        "Biathlon — Women's 4x6km Relay"
+      ],
       "today": [
-        "Biathlon — Women's 4x6km Relay",
         "Newcastle United at FK Qarabag",
         "Villarreal at Levante",
         "Arsenal at Wolverhampton Wanderers",
@@ -65,11 +66,11 @@
         "Cross-Country Skiing — Team Sprint Free"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 10,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
-    "issueCount": 13
+    "editorialScore": 92,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -78,19 +79,39 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Aspmyra Stadion\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"21:00 — Bodø/Glimt host Internazionale in historic Champions League first leg at Aspmyra\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"And Klæbo\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sweden\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Title\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Nordic Combined Super Team\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,10 +120,10 @@
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 9,
     "critical": 0,
-    "warning": 5,
-    "info": 0
+    "warning": 8,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
