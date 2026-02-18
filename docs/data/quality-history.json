@@ -1,95 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T06:32:32.598Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 2,
-      "avgScore": 100,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 7,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Biathlon men's 4x7.5km relay\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 118825,
-        "output": 3072,
-        "calls": 4,
-        "total": 121897,
-        "costUSD": 0.42027900000000007,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32955,
-        "output": 344,
-        "cacheCreation": 17744,
-        "cacheRead": 15208,
-        "total": 33299,
-        "costUSD": 0.12750199999999998,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33038,
-        "output": 458,
-        "calls": 1,
-        "total": 33496,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 184818,
-        "output": 3874,
-        "calls": 6,
-        "total": 188692,
-        "costUSD": 0.5477810000000001,
-        "realPct": 82
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 83.571,
-      "mustWatchCoverage": 0.671,
-      "sportDiversity": 0.667,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T08:29:36.693Z",
     "editorial": {
       "score": 85,
@@ -7571,6 +7481,95 @@
       "sportDiversity": 0.743,
       "enrichmentScore": 100,
       "resultsScore": 80.429
+    }
+  },
+  {
+    "timestamp": "2026-02-18T14:18:34.455Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 117,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Internazionale at Bodø/Glimt\" which may not match any event; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Bruges\" but no matching athlete found in events data; Featured mentions \"Country Skiing Men\" but no matching athlete found in events data; Featured mentions \"Klæbo\" but no matching athlete found in events data; Featured shows \"11:00\" for \"Cross-Country Skiing — Team Sprint Free\" but events.json has 09:45. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 136755,
+        "output": 3897,
+        "calls": 5,
+        "total": 140652,
+        "costUSD": 0.16867,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 31311,
+        "output": 436,
+        "cacheCreation": 13738,
+        "cacheRead": 17570,
+        "total": 31747,
+        "costUSD": 0.10615050000000001,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 168066,
+        "output": 4333,
+        "calls": 6,
+        "total": 172399,
+        "costUSD": 0.2748205,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 92.571,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.736,
+      "enrichmentScore": 100,
+      "resultsScore": 80.286
     }
   }
 ]
