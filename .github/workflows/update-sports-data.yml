@@ -78,33 +78,37 @@ jobs:
             git commit -m "🔄 Update sports data with real API sources - $(date -u +"%Y-%m-%d %H:%M UTC")"
             for i in 1 2 3; do
               git push && break
-              echo "Push attempt $i failed, rebasing..."
-              git pull --rebase origin main || true
-              sleep 5
+              echo "Push attempt $i failed, syncing with remote..."
+              # Abort any in-progress rebase to get back to a clean state
+              git rebase --abort 2>/dev/null || true
+              # Fetch latest remote
+              git fetch origin main
+              # Reset to remote main, keeping our data as uncommitted changes
+              git reset --soft origin/main
+              # Re-stage our data files (fully regenerated each run, always authoritative)
+              if [ "${{ steps.pipeline.outputs.gate }}" = "fail" ]; then
+                git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true
+              else
+                git add docs/data/
+                git add docs/data/days/ 2>/dev/null || true
+                git add scripts/config/ 2>/dev/null || true
+              fi
+              # Re-commit on top of latest remote
+              git commit -m "🔄 Update sports data with real API sources - $(date -u +"%Y-%m-%d %H:%M UTC")"
+              sleep 2
             done
           fi
-
-      - name: Trigger preview deployment
-        if: success()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'preview-deploy'
-            });
 
       - name: Summary
         run: |
           echo "## 📊 Sports Data Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Timestamp**: $(date -u +"%Y-%m-%d %H:%M UTC")" >> $GITHUB_STEP_SUMMARY
           if [ -f docs/data/pipeline-result.json ]; then
-            SUCCESS=$(jq -r '.summary.success // 0' docs/data/pipeline-result.json)
-            TOTAL=$(jq -r '.summary.total // 0' docs/data/pipeline-result.json)
-            FAILED=$(jq -r '.summary.failed // 0' docs/data/pipeline-result.json)
-            SKIPPED=$(jq -r '.summary.skipped // 0' docs/data/pipeline-result.json)
-            DURATION=$(jq -r '.duration // 0' docs/data/pipeline-result.json)
+            SUCCESS=$(jq -r '.summary.success // 0' docs/data/pipeline-result.json 2>/dev/null || echo 0)
+            TOTAL=$(jq -r '.summary.total // 0' docs/data/pipeline-result.json 2>/dev/null || echo 0)
+            FAILED=$(jq -r '.summary.failed // 0' docs/data/pipeline-result.json 2>/dev/null || echo 0)
+            SKIPPED=$(jq -r '.summary.skipped // 0' docs/data/pipeline-result.json 2>/dev/null || echo 0)
+            DURATION=$(jq -r '.duration // 0' docs/data/pipeline-result.json 2>/dev/null || echo 0)
             DURATION_S=$((DURATION / 1000))
             echo "- **Pipeline**: $SUCCESS/$TOTAL steps succeeded ($FAILED failed, $SKIPPED skipped) in ${DURATION_S}s" >> $GITHUB_STEP_SUMMARY
           fi
