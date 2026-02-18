@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T10:49:15.682Z",
+  "generatedAt": "2026-02-18T11:08:08.324Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 49,
@@ -73,11 +73,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 9,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 92,
-    "issueCount": 10
+    "editorialScore": 84,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -86,9 +86,19 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"Bodø/Glimt vs Inter Milan — Champions League R16 first leg\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Historic\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Two Norwegian\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -98,14 +108,24 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Round 3 – 3rd Al-Beruniy International Chess Tournament | Yakubboev vs Aravindh Standard\" but events.json has 10:10"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 8,
     "critical": 0,
-    "warning": 4,
-    "info": 0
+    "warning": 7,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

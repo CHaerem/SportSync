@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T10:49:15.602Z",
+  "generatedAt": "2026-02-18T11:08:08.222Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -102,7 +102,7 @@
     "present": true,
     "tvkampenReachable": true,
     "matchRate": 0.17,
-    "eventsEnriched": 4,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -115,18 +115,18 @@
   },
   "quotaApiHealth": {
     "available": true,
-    "transitioned": true,
+    "transitioned": false,
     "unavailableSince": null
   },
   "pipelineTimingHealth": {
-    "totalDuration": 248182,
+    "totalDuration": 265707,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 115237,
-        "share": 46
+        "duration": 120397,
+        "share": 45
       }
     ],
     "failedSteps": [
@@ -171,18 +171,13 @@
     },
     {
       "severity": "info",
-      "code": "quota_api_restored",
-      "message": "Quota API is now available — external utilization data flowing"
-    },
-    {
-      "severity": "info",
       "code": "unmapped_leagues",
       "message": "8 tournament(s) lack league theming: Winter Olympics 2026, Azerbaijan Chess Championship 2026 | Men Semifinals, Isle of Wight Masters 2026, Romanian Championships 2026 | Open, CS2 Major Tournaments 2026, šachy.cz Extraliga 2025/2026, German Women's Bundesliga 2025/26, Formula 1 2025 - Race Weekend"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (115s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 45% of total pipeline time (120s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -202,7 +197,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 84/100.",
     "tokenUsage": null
   }
 }
