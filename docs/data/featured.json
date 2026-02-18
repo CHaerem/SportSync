@@ -2,16 +2,11 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodø/Glimt face Inter Milan — Norway's greatest Champions League night"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
+      "text": "Glimt møter gigantene — norsk Champions League-historie skrives i kveld"
     },
     {
       "type": "narrative",
-      "text": "Bodø/Glimt host Inter Milan in the Champions League last-16 — the biggest match in Norwegian club football history. Meanwhile, Klæbo and Norway's relay teams chase Olympic gold on the snow in Milan-Cortina."
+      "text": "Bodø/Glimt tar imot Inter Milan i Champions League-åttendelsfinalen — den største kampen i norsk klubbfotball noensinne. Klæbo og lagkameratene jakter gull i Team Sprint tidlig i dag."
     },
     {
       "type": "event-schedule",
@@ -19,19 +14,16 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Olympics today",
+      "label": "🏅 OL i dag — Milano-Cortina",
       "maxItems": 4,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League — 21:00",
-      "items": [
-        "Arsenal at Wolverhampton Wanderers — Premier League title race, 21:00",
-        "Atlético Madrid at Club Brugge — CL last-16 first leg, 21:00",
-        "Newcastle United at FK Qarabag — CL last-16 first leg, 18:45"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt",
+      "showStandings": false
     },
     {
       "type": "match-preview",
@@ -40,14 +32,23 @@
       "showStandings": true
     },
     {
+      "type": "event-group",
+      "label": "⚽ Champions League i kveld",
+      "items": [
+        "⚽ Newcastle United — FK Qarabag, 18:45",
+        "⚽ Atlético Madrid — Club Brugge, 21:00",
+        "⚽ Bayer Leverkusen — Olympiacos, 21:00"
+      ]
+    },
+    {
       "type": "divider",
-      "text": "This Week"
+      "text": "Denne uken"
     },
     {
       "type": "golf-status",
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T09:23:15.319Z",
+  "generatedAt": "2026-02-18T10:14:12.554Z",
   "provider": "claude-cli"
 }
