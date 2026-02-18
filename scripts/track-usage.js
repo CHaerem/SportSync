@@ -1,15 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, parseSessionUsage } from "./lib/helpers.js";
-import { probeQuota, parseRateLimitHeaders } from "./lib/quota-probe.js";
+import { probeQuota, parseRateLimitHeaders, evaluateQuota } from "./lib/quota-probe.js";
 
 const TRACKING_FILE = "usage-tracking.json";
 const BEFORE_FILE = ".usage-before.json";
 const MS_PER_5H = 5 * 3_600_000;
 const MS_PER_7D = 7 * 86_400_000;
 
-// Gate thresholds (permissive — Max subscription, self-hosted runner)
-const GATE_UTILIZATION_7D = 80;
+// Autopilot-specific frequency guards (complement quota tier system)
 const GATE_MAX_AUTOPILOT_7D = 14;
 const GATE_MAX_RUNS_5H = 10;
 
@@ -95,28 +94,41 @@ export function trackApiStatus(apiAvailable, previousStatus) {
 	};
 }
 
-export function shouldGate(runs, utilization, now = Date.now()) {
-	// Real utilization gate (preferred)
-	if (typeof utilization === "number" && utilization > GATE_UTILIZATION_7D) {
-		return { blocked: true, reason: `7d utilization ${utilization}% > ${GATE_UTILIZATION_7D}%` };
+/**
+ * Determine whether the autopilot should be gated.
+ * Uses the tiered quota system from quota-probe.js for utilization-based decisions,
+ * plus autopilot-specific frequency guards.
+ *
+ * @param {Array} runs — recent run history (from usage-tracking.json)
+ * @param {object|null} evaluation — result from evaluateQuota() (tier, tierName, etc.)
+ * @param {number} now — current timestamp (for testing)
+ * @returns {{ blocked: boolean, reason: string, tier: number, tierName: string }}
+ */
+export function shouldGate(runs, evaluation, now = Date.now()) {
+	const tier = evaluation?.tier ?? 0;
+	const tierName = evaluation?.tierName ?? "green";
+
+	// Quota tier gate — blocks at critical (tier 3)
+	if (evaluation && tier >= 3) {
+		return { blocked: true, reason: `quota ${tierName}: ${evaluation.reason}`, tier, tierName };
 	}
 
-	if (!Array.isArray(runs)) return { blocked: false, reason: "no data" };
+	if (!Array.isArray(runs)) return { blocked: false, reason: "no data", tier, tierName };
 
 	// Autopilot frequency over 7d
 	const autopilotCount = runs.filter((r) => r.context === "autopilot").length;
 	if (autopilotCount >= GATE_MAX_AUTOPILOT_7D) {
-		return { blocked: true, reason: `${autopilotCount} autopilot runs in 7d (max ${GATE_MAX_AUTOPILOT_7D})` };
+		return { blocked: true, reason: `${autopilotCount} autopilot runs in 7d (max ${GATE_MAX_AUTOPILOT_7D})`, tier, tierName };
 	}
 
 	// Burst: too many AI runs in the last 5h
 	const fiveHAgo = now - MS_PER_5H;
 	const recentRuns = runs.filter((r) => new Date(r.timestamp).getTime() > fiveHAgo);
 	if (recentRuns.length >= GATE_MAX_RUNS_5H) {
-		return { blocked: true, reason: `${recentRuns.length} runs in last 5h (max ${GATE_MAX_RUNS_5H})` };
+		return { blocked: true, reason: `${recentRuns.length} runs in last 5h (max ${GATE_MAX_RUNS_5H})`, tier, tierName };
 	}
 
-	return { blocked: false, reason: "ok" };
+	return { blocked: false, reason: "ok", tier, tierName };
 }
 
 // --- API helper ---
@@ -201,6 +213,14 @@ async function report(context) {
 		console.log(`*** Quota API state changed: ${apiStatus.previousState} → ${newState} ***`);
 	}
 
+	// Evaluate quota tier for tracking
+	const quotaEvaluation = usage ? evaluateQuota({
+		fiveHour: usage.five_hour?.utilization ?? null,
+		sevenDay: usage.seven_day?.utilization ?? null,
+		fiveHourReset: null,
+		sevenDayReset: usage.seven_day?.resets_at ?? null,
+	}) : null;
+
 	const tracking = {
 		lastUpdated: now,
 		current: usage ? {
@@ -209,6 +229,7 @@ async function report(context) {
 				utilization: usage.seven_day?.utilization ?? null,
 				resets_at: usage.seven_day?.resets_at ?? null,
 			},
+			evaluation: quotaEvaluation,
 		} : null,
 		quotaApiStatus: apiStatus,
 		internalTokens,
@@ -216,7 +237,8 @@ async function report(context) {
 		budget,
 		sportsyncShare: share,
 		gateConfig: {
-			utilizationThreshold: GATE_UTILIZATION_7D,
+			quotaTiers: "graduated (see quota-probe.js TIERS)",
+			blocksAtTier: 3,
 			maxAutopilot7d: GATE_MAX_AUTOPILOT_7D,
 			maxRuns5h: GATE_MAX_RUNS_5H,
 		},
@@ -237,12 +259,26 @@ async function gate() {
 	const existing = readJsonIfExists(trackingPath);
 	const runs = pruneOldRuns(existing?.runs || []);
 
-	// Try to get real utilization for the gate
-	const usage = await fetchUsage();
-	const util7d = usage?.seven_day?.utilization ?? null;
+	// Probe real quota and evaluate using the tiered system
+	const token = process.env.CLAUDE_CODE_OAUTH_TOKEN;
+	const quota = await probeQuota(token);
+	const evaluation = evaluateQuota(quota);
 
-	const result = shouldGate(runs, util7d);
-	console.log(`Gate check: ${result.reason}${util7d != null ? ` (7d: ${util7d}%)` : ""}`);
+	const result = shouldGate(runs, evaluation);
+
+	// Write quota status for the autopilot to read at startup
+	const statusPath = path.join(dataDir, ".quota-status.json");
+	try {
+		writeJsonPretty(statusPath, {
+			probedAt: new Date().toISOString(),
+			quota,
+			evaluation,
+			gateResult: { blocked: result.blocked, reason: result.reason },
+		});
+	} catch { /* non-fatal — data dir may not exist yet */ }
+
+	const tierInfo = `tier ${evaluation.tier} (${evaluation.tierName})`;
+	console.log(`Gate check: ${result.reason} [${tierInfo}]`);
 	if (result.blocked) {
 		console.log("Gate BLOCKED — backing off to preserve quota");
 		process.exit(1);

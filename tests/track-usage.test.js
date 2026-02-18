@@ -60,21 +60,43 @@ describe("calculateShare", () => {
 	});
 });
 
-describe("shouldGate", () => {
-	it("blocks when 7d utilization exceeds threshold", () => {
-		const result = shouldGate([], 85);
+describe("shouldGate — tiered quota system", () => {
+	// Helper to create evaluation objects
+	const eval_ = (tier, tierName = "green", reason = "ok") => ({ tier, tierName, reason });
+
+	it("blocks at tier 3 (critical)", () => {
+		const result = shouldGate([], eval_(3, "critical", "critical: 5h 92%, 7d 88%"));
 		expect(result.blocked).toBe(true);
-		expect(result.reason).toContain("utilization");
+		expect(result.reason).toContain("critical");
+		expect(result.tier).toBe(3);
+		expect(result.tierName).toBe("critical");
 	});
 
-	it("passes when utilization is at threshold", () => {
-		const result = shouldGate([], 80);
+	it("passes at tier 2 (high) with tier info", () => {
+		const result = shouldGate([], eval_(2, "high", "high: 5h 78%, 7d 72%"));
 		expect(result.blocked).toBe(false);
+		expect(result.tier).toBe(2);
+		expect(result.tierName).toBe("high");
 	});
 
-	it("passes when utilization is null (API unavailable)", () => {
+	it("passes at tier 1 (moderate)", () => {
+		const result = shouldGate([], eval_(1, "moderate"));
+		expect(result.blocked).toBe(false);
+		expect(result.tier).toBe(1);
+	});
+
+	it("passes at tier 0 (green)", () => {
+		const result = shouldGate([], eval_(0, "green"));
+		expect(result.blocked).toBe(false);
+		expect(result.tier).toBe(0);
+		expect(result.tierName).toBe("green");
+	});
+
+	it("passes when evaluation is null (API unavailable, permissive fallback)", () => {
 		const result = shouldGate([], null);
 		expect(result.blocked).toBe(false);
+		expect(result.tier).toBe(0);
+		expect(result.tierName).toBe("green");
 	});
 
 	it("blocks when too many autopilot runs in 7d", () => {
@@ -82,7 +104,7 @@ describe("shouldGate", () => {
 			timestamp: new Date(Date.now() - i * 86_400_000 / 2).toISOString(),
 			context: "autopilot",
 		}));
-		const result = shouldGate(runs, null);
+		const result = shouldGate(runs, eval_(0));
 		expect(result.blocked).toBe(true);
 		expect(result.reason).toContain("autopilot");
 	});
@@ -93,17 +115,17 @@ describe("shouldGate", () => {
 			timestamp: new Date(now - i * 60_000).toISOString(),
 			context: "pipeline",
 		}));
-		const result = shouldGate(runs, null, now);
+		const result = shouldGate(runs, eval_(0), now);
 		expect(result.blocked).toBe(true);
 		expect(result.reason).toContain("5h");
 	});
 
-	it("passes with few runs and no utilization data", () => {
+	it("passes with few runs and green tier", () => {
 		const runs = [
 			{ timestamp: new Date().toISOString(), context: "autopilot" },
 			{ timestamp: new Date().toISOString(), context: "pipeline" },
 		];
-		const result = shouldGate(runs, null, Date.now() + MS_PER_5H + 1000);
+		const result = shouldGate(runs, eval_(0), Date.now() + MS_PER_5H + 1000);
 		expect(result.blocked).toBe(false);
 	});
 
@@ -115,11 +137,31 @@ describe("shouldGate", () => {
 		expect(shouldGate([], null).blocked).toBe(false);
 	});
 
-	it("utilization gate takes priority over run-count checks", () => {
-		// Even with 0 runs, high utilization should block
-		const result = shouldGate([], 95);
+	it("tier 3 blocks even with zero runs (quota takes priority)", () => {
+		const result = shouldGate([], eval_(3, "critical", "critical: 5h 95%, 7d 90%"));
 		expect(result.blocked).toBe(true);
-		expect(result.reason).toContain("utilization");
+		expect(result.reason).toContain("critical");
+	});
+
+	it("frequency guards still apply at green tier", () => {
+		const runs = Array.from({ length: 14 }, (_, i) => ({
+			timestamp: new Date(Date.now() - i * 86_400_000 / 2).toISOString(),
+			context: "autopilot",
+		}));
+		const result = shouldGate(runs, eval_(0, "green"));
+		expect(result.blocked).toBe(true);
+		expect(result.reason).toContain("autopilot");
+		expect(result.tier).toBe(0); // tier is still green even though frequency blocks
+	});
+
+	it("returns tier info in all results (blocked and passed)", () => {
+		const passed = shouldGate([], eval_(1, "moderate"));
+		expect(passed.tier).toBe(1);
+		expect(passed.tierName).toBe("moderate");
+
+		const blocked = shouldGate([], eval_(3, "critical", "critical: 5h 95%"));
+		expect(blocked.tier).toBe(3);
+		expect(blocked.tierName).toBe("critical");
 	});
 });
 

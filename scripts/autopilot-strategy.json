@@ -36,6 +36,45 @@
     "reserve": 10
   },
 
+  "quotaAdaptation": {
+    "_description": "How the autopilot adapts behavior based on quota tier. Read docs/data/.quota-status.json at startup for the current tier and evaluation. The autopilot can evolve these guidelines based on observed outcomes.",
+    "statusFile": "docs/data/.quota-status.json",
+    "tierGuidance": [
+      {
+        "tier": 0,
+        "name": "green",
+        "taskTypes": "all",
+        "maxTasksPerRun": null,
+        "scoutingBudget": "full",
+        "notes": "Full capability. Execute all pending tasks, invest in scouting and meta-learning."
+      },
+      {
+        "tier": 1,
+        "name": "moderate",
+        "taskTypes": "maintenance+feature",
+        "maxTasksPerRun": 4,
+        "scoutingBudget": "reduced",
+        "notes": "Prefer maintenance tasks. Reduce scouting to maintenance-only. Skip explore tasks. Stop earlier to conserve quota."
+      },
+      {
+        "tier": 2,
+        "name": "high",
+        "taskTypes": "maintenance-only",
+        "maxTasksPerRun": 2,
+        "scoutingBudget": "skip",
+        "notes": "Only critical maintenance and repairs. Skip scouting and meta-learning entirely. Minimize turns per task."
+      },
+      {
+        "tier": 3,
+        "name": "critical",
+        "taskTypes": "none",
+        "maxTasksPerRun": 0,
+        "scoutingBudget": "skip",
+        "notes": "Gate blocks the autopilot at this tier. Should never be reached."
+      }
+    ]
+  },
+
   "processNotes": {
     "_description": "Accumulated process knowledge. The autopilot adds notes here about what works and what doesn't.",
     "entries": [
