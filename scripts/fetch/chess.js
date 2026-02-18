@@ -166,6 +166,14 @@ export class ChessFetcher extends BaseFetcher {
 		return super.applyCustomFilters(events);
 	}
 
+	formatResponse(events) {
+		const response = super.formatResponse(events);
+		// Empty chess results are intentional (no Norwegian players found),
+		// not a fetch failure — don't retain stale data
+		if (events.length === 0) response._noRetain = true;
+		return response;
+	}
+
 	loadJsonFile(filepath, fallback = null) {
 		try {
 			const content = fs.readFileSync(filepath, 'utf-8');

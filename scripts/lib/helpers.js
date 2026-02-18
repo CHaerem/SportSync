@@ -113,6 +113,13 @@ export function writeJsonPretty(file, data) {
 export function retainLastGood(targetFile, newData, maxAgeDays = 14) {
 	const exists = readJsonIfExists(targetFile);
 	const newHasEvents = hasEvents(newData);
+	// Skip retention if fetcher explicitly says empty is intentional (not a failure)
+	if (newData?._noRetain) {
+		delete newData._noRetain;
+		if (newData._retained) delete newData._retained;
+		writeJsonPretty(targetFile, newData);
+		return { kept: false, data: newData };
+	}
 	if (!newHasEvents && exists && hasEvents(exists)) {
 		// Check if retained data is too old to keep
 		const retainedAge = exists.lastUpdated
