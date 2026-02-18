@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { parseRateLimitHeaders, evaluateQuota, THRESHOLD_5H, THRESHOLD_7D } from "../scripts/lib/quota-probe.js";
 
 describe("parseRateLimitHeaders", () => {
-	it("parses both 5h and 7d utilization", () => {
+	it("parses both 5h and 7d utilization (converts ratio to percentage)", () => {
 		const headers = {
-			"anthropic-ratelimit-unified-5h-utilization": "42.5",
-			"anthropic-ratelimit-unified-7d-utilization": "15.3",
+			"anthropic-ratelimit-unified-5h-utilization": "0.425",
+			"anthropic-ratelimit-unified-7d-utilization": "0.153",
 			"anthropic-ratelimit-unified-5h-reset": "2026-02-18T15:00:00Z",
 			"anthropic-ratelimit-unified-7d-reset": "2026-02-24T00:00:00Z",
 		};
@@ -17,14 +17,14 @@ describe("parseRateLimitHeaders", () => {
 	});
 
 	it("handles only 5h header present", () => {
-		const headers = { "anthropic-ratelimit-unified-5h-utilization": "60" };
+		const headers = { "anthropic-ratelimit-unified-5h-utilization": "0.60" };
 		const result = parseRateLimitHeaders(headers);
 		expect(result.fiveHour).toBe(60);
 		expect(result.sevenDay).toBeNull();
 	});
 
 	it("handles only 7d header present", () => {
-		const headers = { "anthropic-ratelimit-unified-7d-utilization": "25" };
+		const headers = { "anthropic-ratelimit-unified-7d-utilization": "0.25" };
 		const result = parseRateLimitHeaders(headers);
 		expect(result.fiveHour).toBeNull();
 		expect(result.sevenDay).toBe(25);
@@ -49,28 +49,28 @@ describe("parseRateLimitHeaders", () => {
 		expect(result.sevenDay).toBe(0);
 	});
 
-	it("handles 100% utilization", () => {
+	it("handles 100% utilization (ratio = 1.0)", () => {
 		const headers = {
-			"anthropic-ratelimit-unified-5h-utilization": "100",
-			"anthropic-ratelimit-unified-7d-utilization": "100",
+			"anthropic-ratelimit-unified-5h-utilization": "1.0",
+			"anthropic-ratelimit-unified-7d-utilization": "1.0",
 		};
 		const result = parseRateLimitHeaders(headers);
 		expect(result.fiveHour).toBe(100);
 		expect(result.sevenDay).toBe(100);
 	});
 
-	it("includes raw header values", () => {
+	it("includes raw header values (original ratios)", () => {
 		const headers = {
-			"anthropic-ratelimit-unified-5h-utilization": "42.5",
-			"anthropic-ratelimit-unified-7d-utilization": "15.3",
+			"anthropic-ratelimit-unified-5h-utilization": "0.425",
+			"anthropic-ratelimit-unified-7d-utilization": "0.153",
 		};
 		const result = parseRateLimitHeaders(headers);
-		expect(result.raw["5h-utilization"]).toBe("42.5");
-		expect(result.raw["7d-utilization"]).toBe("15.3");
+		expect(result.raw["5h-utilization"]).toBe("0.425");
+		expect(result.raw["7d-utilization"]).toBe("0.153");
 	});
 
 	it("handles missing reset headers gracefully", () => {
-		const headers = { "anthropic-ratelimit-unified-5h-utilization": "30" };
+		const headers = { "anthropic-ratelimit-unified-5h-utilization": "0.30" };
 		const result = parseRateLimitHeaders(headers);
 		expect(result.fiveHourReset).toBeNull();
 		expect(result.sevenDayReset).toBeNull();

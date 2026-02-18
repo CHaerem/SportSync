@@ -40,9 +40,11 @@ export function parseRateLimitHeaders(headers) {
 
 	if (h5 == null && h7d == null) return null;
 
+	// Headers return ratios (0–1); convert to percentages (0–100)
+	// for consistency with thresholds, shouldGate(), and status page
 	return {
-		fiveHour: h5 != null ? parseFloat(h5) : null,
-		sevenDay: h7d != null ? parseFloat(h7d) : null,
+		fiveHour: h5 != null ? Math.round(parseFloat(h5) * 10000) / 100 : null,
+		sevenDay: h7d != null ? Math.round(parseFloat(h7d) * 10000) / 100 : null,
 		fiveHourReset: headers["anthropic-ratelimit-unified-5h-reset"] || null,
 		sevenDayReset: headers["anthropic-ratelimit-unified-7d-reset"] || null,
 		raw: {
