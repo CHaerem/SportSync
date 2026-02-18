@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-18T18:22:15.352Z",
+  "generatedAt": "2026-02-18T19:26:21.192Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 40,
+    "totalEvents": 39,
     "sports": [
       "olympics",
       "football",
@@ -13,7 +13,6 @@
     "bands": {
       "live": [],
       "today": [
-        "Villarreal at Levante",
         "Arsenal at Wolverhampton Wanderers",
         "Internazionale at Bodo/Glimt",
         "Atlético Madrid at Club Brugge",
@@ -63,10 +62,10 @@
         "Biathlon — Women's 4x6km Relay"
       ]
     },
-    "featuredBlockCount": 10,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 92,
+    "editorialScore": 95,
     "issueCount": 13
   },
   "findings": [
@@ -78,22 +77,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Aspmyra Stadion\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Serie\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bruges\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -102,9 +96,9 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 5,
     "critical": 0,
-    "warning": 6,
+    "warning": 5,
     "info": 0
   },
   "pass": true,

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-18T18:22:15.446Z",
-  "overallScore": 0.9,
+  "generatedAt": "2026-02-18T19:26:21.427Z",
+  "overallScore": 0.89,
   "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (52 min old) but has 1 actionable issue(s) (13 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (0 min old), 13 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -60,15 +60,15 @@
       "details": "no UX report, no UX history, no score data"
     },
     "streamingVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
+      "score": 0.66,
+      "status": "partial",
+      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate declining: 17% → 14% → 11%"
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)",
     "Run evaluate-ux.js to generate UX report",
     "Run UX evaluation 3+ times to build trend data",
-    "Investigate UX issues to raise score above 70 threshold"
+    "Investigate UX issues to raise score above 70 threshold",
+    "Investigate declining streaming match rate — check alias table or tvkampen HTML structure"
   ]
 }

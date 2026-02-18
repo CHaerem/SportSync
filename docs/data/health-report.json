@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-18T18:22:15.406Z",
-  "eventCount": 40,
+  "generatedAt": "2026-02-18T19:26:21.389Z",
+  "eventCount": 39,
   "sportCoverage": {
     "olympics": {
       "count": 7,
-      "previousCount": 8,
-      "delta": -1
+      "previousCount": 7,
+      "delta": 0
     },
     "football": {
-      "count": 29,
-      "previousCount": 30,
+      "count": 28,
+      "previousCount": 29,
       "delta": -1
     },
     "golf": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.92,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -101,9 +101,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.14,
-    "eventsEnriched": 4,
-    "trend": "stable",
+    "matchRate": 0.11,
+    "eventsEnriched": 3,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 0,
+    "fiveHour": 2,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -135,14 +135,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 257520,
+    "totalDuration": 236352,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 118779,
-        "share": 46
+        "duration": 101476,
+        "share": 43
       }
     ],
     "failedSteps": [
@@ -173,7 +173,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 14% (4/29) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 11% (3/28) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 17% → 14% → 11%"
     },
     {
       "severity": "warning",
@@ -193,12 +198,12 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 0%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 2%, 7d: 69%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (119s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 43% of total pipeline time (101s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -223,7 +228,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 89% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }
