@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-17T22:13:55.709Z",
-  "overallScore": 0.98,
-  "loopsClosed": 10,
+  "generatedAt": "2026-02-18T02:10:05.655Z",
+  "overallScore": 1,
+  "loopsClosed": 11,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 6 actionable issue(s) (14 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (4 min old), 15 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -32,7 +32,7 @@
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "29 completed tasks in autopilot log"
+      "details": "34 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -60,7 +60,5 @@
       "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
-  "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
-  ]
+  "nextActions": []
 }
