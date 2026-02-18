@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T14:22:03.294Z",
+  "generatedAt": "2026-02-18T14:34:10.325Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 42,
@@ -81,7 +81,7 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"21:00 — Bodø/Glimt host Internazionale — historic first Champions League home leg for Norwegian football\" which may not match any event"
+      "message": "Featured block references \"21:00 — Bodø/Glimt host Inter Milan — history at Aspmyra\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -91,12 +91,42 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Then\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After Atl\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Simeone\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bruges\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Meanwhile Arsenal\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -107,12 +137,17 @@
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_league_conflation",
+      "message": "Block mixes PL standings language with non-PL team: \"After Atlético were thrashed 3-0 at Rayo on Sunday, Simeone's side need a respon...\""
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 14,
     "critical": 0,
-    "warning": 6,
+    "warning": 13,
     "info": 1
   },
   "pass": true,

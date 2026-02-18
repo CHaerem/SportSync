@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T14:22:03.337Z",
+  "generatedAt": "2026-02-18T14:34:10.329Z",
   "eventCount": 42,
   "sportCoverage": {
     "olympics": {
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -125,24 +125,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 70,
-    "sevenDay": 67,
+    "tier": 2,
+    "fiveHour": 75,
+    "sevenDay": 68,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 1,
+    "stepsSkipped": 2,
     "skippedSteps": [
-      "discover-events"
+      "discover-events",
+      "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 252391,
-    "stepCount": 27,
+    "totalDuration": 184171,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 115140,
-        "share": 46
+        "duration": 89005,
+        "share": 48
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60055,
+        "share": 33
       }
     ],
     "failedSteps": [
@@ -176,11 +182,6 @@
       "message": "Streaming enrichment match rate is 17% (5/30) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
-    },
-    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -191,14 +192,19 @@
       "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 70%, 7d: 67%) — 1 step(s) skipped: discover-events"
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 2 (5h: 75%, 7d: 68%) — 2 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (115s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (89s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 33% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
