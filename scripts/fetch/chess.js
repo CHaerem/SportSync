@@ -78,9 +78,8 @@ export class ChessFetcher extends BaseFetcher {
 				const info = tour.info || {};
 
 				const norwegianPlayers = this.findNorwegianPlayers(tour);
-				const isTopTier = (tour.tier || 0) >= 4;
 
-				if (norwegianPlayers.length === 0 && !isTopTier) continue;
+				if (norwegianPlayers.length === 0) continue;
 
 				// Add upcoming/ongoing rounds
 				const allRounds = rounds.length > 0 ? rounds : (round.id ? [round] : []);
@@ -122,17 +121,20 @@ export class ChessFetcher extends BaseFetcher {
 
 	findNorwegianPlayers(tour) {
 		const norwegianNames = this.config.norwegian?.players || [];
-		// Check name, description, and info.players field
+		// Check name, description, info.players, and round names
 		const searchText = [
 			tour.name || "",
 			tour.description || "",
 			tour.info?.players || "",
+			...(Array.isArray(tour.rounds) ? tour.rounds.map(r => r.name || "") : []),
 		].join(" ").toLowerCase();
 
 		return norwegianNames.filter(player => {
 			const playerLower = player.toLowerCase();
+			if (searchText.includes(playerLower)) return true;
+			// Last name match only for names long enough to avoid false positives
 			const lastName = playerLower.split(" ").pop();
-			return searchText.includes(playerLower) || searchText.includes(lastName);
+			return lastName.length > 5 && searchText.includes(lastName);
 		});
 	}
 
@@ -150,11 +152,17 @@ export class ChessFetcher extends BaseFetcher {
 	}
 
 	applyCustomFilters(events) {
-		// Apply current week filter if configured
+		// Apply current week filter if configured, but give Norwegian-relevant
+		// events a wider window (30 days) so upcoming tournaments with Magnus etc.
+		// surface before the week they happen
 		if (this.config.filters?.currentWeek) {
-			events = EventFilters.filterCurrentWeek(events);
+			const norwegian = events.filter(e => e.norwegian);
+			const generic = events.filter(e => !e.norwegian);
+			const filteredGeneric = EventFilters.filterCurrentWeek(generic);
+			const filteredNorwegian = EventFilters.filterByTimeRange(norwegian, 30);
+			events = [...filteredNorwegian, ...filteredGeneric];
 		}
-		
+
 		return super.applyCustomFilters(events);
 	}
 

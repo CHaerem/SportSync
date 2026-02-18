@@ -444,6 +444,20 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 7a2. Streaming coverage gap — important events with no real streaming info
+	const poorStreaming = events.filter(e =>
+		(e.importance || 0) >= 3 &&
+		(!e.streaming?.length || e.streaming.every(s => s.platform === "Check local listings"))
+	);
+	if (poorStreaming.length > 0) {
+		const leagues = [...new Set(poorStreaming.map(e => e.meta || e.tournament).filter(Boolean))];
+		issues.push({
+			severity: "warning",
+			code: "streaming_coverage_gap",
+			message: `${poorStreaming.length} important event(s) lack streaming info: ${leagues.join(", ")}`,
+		});
+	}
+
 	// 7b. Editorial content duplication detection
 	const { featured = null } = options;
 	if (featured && Array.isArray(featured.blocks)) {

@@ -47,6 +47,21 @@ describe('ChessFetcher', () => {
 			expect(result).toEqual([]);
 		});
 
+		it('does not false-positive match short last names', () => {
+			const tour = { name: 'Military Chess Exhibition' };
+			const result = fetcher.findNorwegianPlayers(tour);
+			expect(result).toEqual([]);
+		});
+
+		it('finds Norwegian players in round names', () => {
+			const tour = {
+				name: 'Super Tournament',
+				rounds: [{ name: 'Carlsen vs Caruana' }]
+			};
+			const result = fetcher.findNorwegianPlayers(tour);
+			expect(result).toContain('Magnus Carlsen');
+		});
+
 		it('is case-insensitive', () => {
 			const tour = { name: 'MAGNUS CARLSEN INVITATIONAL' };
 			const result = fetcher.findNorwegianPlayers(tour);
@@ -208,7 +223,7 @@ describe('ChessFetcher', () => {
 			expect(events).toEqual([]);
 		});
 
-		it('includes top-tier broadcasts even without Norwegian players', async () => {
+		it('skips even elite broadcasts without Norwegian players', async () => {
 			fetcher.apiClient = {
 				fetchJSON: vi.fn().mockResolvedValue({
 					active: [{
@@ -226,7 +241,7 @@ describe('ChessFetcher', () => {
 			};
 
 			const events = await fetcher.fetchLichessBroadcasts({});
-			expect(events.length).toBeGreaterThan(0);
+			expect(events).toEqual([]);
 		});
 
 		it('handles broadcasts with no rounds using tour dates', async () => {

@@ -26,6 +26,21 @@ describe('getNorwegianStreaming()', () => {
 		expect(obos[0].platform).toBe('Discovery+');
 	});
 
+	it('matches Champions League without UEFA prefix', () => {
+		const result = getNorwegianStreaming('football', 'Champions League');
+		expect(result[0].platform).toBe('TV 2 Play');
+	});
+
+	it('matches full UEFA Champions League name', () => {
+		const result = getNorwegianStreaming('football', 'UEFA Champions League 2025-26');
+		expect(result[0].platform).toBe('TV 2 Play');
+	});
+
+	it('matches Europa League without UEFA prefix', () => {
+		const result = getNorwegianStreaming('football', 'Europa League');
+		expect(result[0].platform).toBe('TV 2 Play');
+	});
+
 	it('returns default for unknown football league', () => {
 		const result = getNorwegianStreaming('football', 'Obscure League');
 		expect(result).toHaveLength(1);
@@ -111,6 +126,16 @@ describe('applyNorwegianStreaming()', () => {
 		const event = { sport: 'tennis', league: 'ATP Tour' };
 		const result = applyNorwegianStreaming(event);
 		expect(result.streaming[0].platform).toBe('Discovery+');
+	});
+
+	it('falls back to tournament field when meta has round suffix', () => {
+		const event = {
+			sport: 'football',
+			meta: 'Champions League • 1st Leg',
+			tournament: 'Champions League',
+		};
+		const result = applyNorwegianStreaming(event);
+		expect(result.streaming[0].platform).toBe('TV 2 Play');
 	});
 
 	it('overwrites existing streaming array', () => {

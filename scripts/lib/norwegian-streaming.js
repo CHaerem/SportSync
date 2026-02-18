@@ -123,10 +123,14 @@ export function getNorwegianStreaming(sport, league) {
 	const sportMap = norwegianStreamingMap[sportAliases[sportKey] || sportKey];
 	if (!sportMap) return [];
 	
-	// Try to find exact league match
+	// Try to find league match (bidirectional: league contains key OR key contains league)
 	for (const [key, services] of Object.entries(sportMap)) {
-		if (key !== 'default' && league && league.toLowerCase().includes(key.toLowerCase())) {
-			return services;
+		if (key !== 'default' && league) {
+			const lk = key.toLowerCase();
+			const ll = league.toLowerCase();
+			if (ll.includes(lk) || lk.includes(ll)) {
+				return services;
+			}
 		}
 	}
 	
@@ -139,15 +143,24 @@ export function getNorwegianStreaming(sport, league) {
  */
 export function applyNorwegianStreaming(event) {
 	if (!event) return event;
-	
-	const norwegianServices = getNorwegianStreaming(
-		event.sport,
-		event.meta || event.tournament || event.league
-	);
-	
-	if (norwegianServices.length > 0) {
-		event.streaming = norwegianServices;
+
+	// Try each field — use the first that returns a real match (not default "info" type)
+	const fields = [event.meta, event.tournament, event.league].filter(Boolean);
+	let best = [];
+	for (const field of fields) {
+		const services = getNorwegianStreaming(event.sport, field);
+		if (services.length > 0 && services[0].type !== 'info') {
+			best = services;
+			break;
+		}
+		if (services.length > 0 && best.length === 0) {
+			best = services;
+		}
 	}
-	
+
+	if (best.length > 0) {
+		event.streaming = best;
+	}
+
 	return event;
 }
