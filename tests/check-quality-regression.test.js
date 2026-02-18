@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { detectQualityRegression, detectTrendRegression } from "../scripts/check-quality-regression.js";
+import { detectQualityRegression, detectTrendRegression, detectModelChanges } from "../scripts/check-quality-regression.js";
 
 describe("detectQualityRegression()", () => {
 	it("returns no regression when scores are equal", () => {
@@ -183,5 +183,96 @@ describe("detectTrendRegression()", () => {
 		const result = detectTrendRegression(history);
 		expect(result.hasTrendRegression).toBe(true);
 		expect(result.issues.some(i => i.code === "results_trend_regression")).toBe(true);
+	});
+});
+
+describe("detectModelChanges()", () => {
+	it("detects enrichment model change", () => {
+		const current = { enrichment: { model: "claude-sonnet-4-6" } };
+		const previous = { enrichment: { model: "claude-opus-4-6" } };
+		const changes = detectModelChanges(current, previous);
+		expect(changes).toHaveLength(1);
+		expect(changes[0]).toEqual({ component: "enrichment", from: "claude-opus-4-6", to: "claude-sonnet-4-6" });
+	});
+
+	it("detects featured model change", () => {
+		const current = { featured: { model: "claude-sonnet-4-6" } };
+		const previous = { featured: { model: "default" } };
+		const changes = detectModelChanges(current, previous);
+		expect(changes).toHaveLength(1);
+		expect(changes[0].component).toBe("featured");
+	});
+
+	it("detects changes in both components", () => {
+		const current = { enrichment: { model: "sonnet" }, featured: { model: "sonnet" } };
+		const previous = { enrichment: { model: "opus" }, featured: { model: "opus" } };
+		const changes = detectModelChanges(current, previous);
+		expect(changes).toHaveLength(2);
+	});
+
+	it("returns empty when models are unchanged", () => {
+		const data = { enrichment: { model: "claude-sonnet-4-6" }, featured: { model: "default" } };
+		expect(detectModelChanges(data, data)).toHaveLength(0);
+	});
+
+	it("returns empty when model fields are missing", () => {
+		const current = { enrichment: { score: 80 } };
+		const previous = { enrichment: { score: 90 } };
+		expect(detectModelChanges(current, previous)).toHaveLength(0);
+	});
+
+	it("falls back to quotaModel when model is absent", () => {
+		const current = { enrichment: { quotaModel: "claude-sonnet-4-6" } };
+		const previous = { enrichment: { quotaModel: "claude-opus-4-6" } };
+		const changes = detectModelChanges(current, previous);
+		expect(changes).toHaveLength(1);
+	});
+});
+
+describe("model-change quality correlation", () => {
+	it("flags model_change_quality_drop when model changed AND quality dropped", () => {
+		const previous = {
+			enrichment: { score: 90, model: "claude-opus-4-6" },
+			featured: { score: 85 },
+		};
+		const current = {
+			enrichment: { score: 75, model: "claude-sonnet-4-6" },
+			featured: { score: 85 },
+		};
+		const result = detectQualityRegression(current, previous);
+		const issue = result.issues.find(i => i.code === "model_change_quality_drop");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("enrichment");
+		expect(issue.message).toContain("claude-opus-4-6");
+		expect(issue.message).toContain("claude-sonnet-4-6");
+	});
+
+	it("flags model_change_quality_stable when model changed but quality held", () => {
+		const previous = {
+			enrichment: { score: 90, model: "claude-opus-4-6" },
+		};
+		const current = {
+			enrichment: { score: 88, model: "claude-sonnet-4-6" },
+		};
+		const result = detectQualityRegression(current, previous);
+		const stable = result.issues.find(i => i.code === "model_change_quality_stable");
+		expect(stable).toBeDefined();
+		expect(stable.severity).toBe("info");
+	});
+
+	it("detects quota tier change", () => {
+		const previous = { enrichment: { quotaTier: 0, score: 90 } };
+		const current = { enrichment: { quotaTier: 2, score: 85 } };
+		const result = detectQualityRegression(current, previous);
+		const issue = result.issues.find(i => i.code === "quota_tier_change");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("0");
+		expect(issue.message).toContain("2");
+	});
+
+	it("does not flag tier change when tier is unchanged", () => {
+		const data = { enrichment: { quotaTier: 1, score: 85 } };
+		const result = detectQualityRegression(data, data);
+		expect(result.issues.find(i => i.code === "quota_tier_change")).toBeUndefined();
 	});
 });

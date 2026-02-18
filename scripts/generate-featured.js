@@ -1280,12 +1280,19 @@ async function main() {
 		const featuredTokenUsage = cliUsage
 			? { ...cliUsage, calls: attempts }
 			: featuredLlm ? featuredLlm.getUsage() : { input: 0, output: 0, calls: 0, total: 0 };
+		// Read quota context from env vars (set by run-pipeline.js)
+		const quotaTier = process.env.SPORTSYNC_QUOTA_TIER != null ? Number(process.env.SPORTSYNC_QUOTA_TIER) : null;
+		const quotaModel = process.env.SPORTSYNC_QUOTA_MODEL || null;
+
 		const existingQuality = readJsonIfExists(qualityPath) || {};
 		writeJsonPretty(qualityPath, {
 			...existingQuality,
 			generatedAt: new Date().toISOString(),
 			featured: {
 				provider,
+				model: quotaModel || (provider === "claude-cli" ? "default" : provider),
+				quotaTier,
+				quotaModel,
 				attempts,
 				valid: finalQuality.valid,
 				score: finalQuality.score,
@@ -1339,6 +1346,12 @@ async function main() {
 					itemsChecked: factCheckFindings.itemsChecked,
 					issuesFound: factCheckFindings.issuesFound,
 					provider: factCheckFindings.provider,
+				} : null,
+				quota: quotaTier != null ? {
+					tier: quotaTier,
+					model: quotaModel,
+					enrichmentModel: existingQuality?.enrichment?.model || null,
+					featuredModel: quotaModel || (provider === "claude-cli" ? "default" : provider),
 				} : null,
 			}
 		);

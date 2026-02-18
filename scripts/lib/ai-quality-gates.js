@@ -597,7 +597,7 @@ export function evaluateWatchPlanQuality(watchPlan) {
 	return { score, metrics };
 }
 
-export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity, factCheck } = {}) {
+export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan, { hintsApplied, tokenUsage, results, sanity, factCheck, quota } = {}) {
 	// Expand tokenUsage with discovery and multiDay if present, and compute realPct
 	let expandedTokenUsage = tokenUsage || null;
 	if (expandedTokenUsage) {
@@ -650,6 +650,7 @@ export function buildQualitySnapshot(editorial, enrichment, featured, watchPlan,
 			: null,
 		hintsApplied: hintsApplied || [],
 		tokenUsage: expandedTokenUsage,
+		quota: quota || null,
 	};
 }
 
@@ -879,6 +880,31 @@ export function buildAdaptiveHints(history) {
 		const avg = averages[rule.metric];
 		if (avg !== null && avg < rule.threshold) {
 			hints.push(rule.hint);
+		}
+	}
+
+	// Quota-aware hints: detect if quality has been lower during constrained tiers
+	// This is general — it reads the data pattern rather than hardcoding model names
+	const quotaEntries = recent.filter((e) => e.quota?.tier != null);
+	if (quotaEntries.length >= 2) {
+		const constrainedEntries = quotaEntries.filter((e) => e.quota.tier > 0);
+		const unconstrainedEntries = recent.filter((e) => !e.quota || e.quota.tier === 0);
+		if (constrainedEntries.length >= 2 && unconstrainedEntries.length >= 1) {
+			const constrainedScores = constrainedEntries
+				.map((e) => e.editorial?.score ?? null)
+				.filter((v) => v !== null);
+			const unconstrainedScores = unconstrainedEntries
+				.map((e) => e.editorial?.score ?? null)
+				.filter((v) => v !== null);
+			if (constrainedScores.length > 0 && unconstrainedScores.length > 0) {
+				const cAvg = constrainedScores.reduce((a, b) => a + b, 0) / constrainedScores.length;
+				const uAvg = unconstrainedScores.reduce((a, b) => a + b, 0) / unconstrainedScores.length;
+				const drop = uAvg - cAvg;
+				if (drop > 10) {
+					const model = constrainedEntries[0].quota.model || "downgraded model";
+					hints.push(`CORRECTION: Quality dropped ${Math.round(drop)} points during quota-constrained runs (${model}). Be extra precise with block types, sport diversity, and must-watch coverage.`);
+				}
+			}
 		}
 	}
 

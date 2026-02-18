@@ -14,6 +14,23 @@ import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.j
 
 const dataDir = rootDataPath();
 
+/**
+ * Detect model changes between runs across all AI components.
+ * Returns an array of { component, from, to } for each component where the model changed.
+ */
+export function detectModelChanges(current, previous) {
+	const changes = [];
+	const components = ["enrichment", "featured"];
+	for (const comp of components) {
+		const currentModel = current?.[comp]?.model || current?.[comp]?.quotaModel || null;
+		const prevModel = previous?.[comp]?.model || previous?.[comp]?.quotaModel || null;
+		if (currentModel && prevModel && currentModel !== prevModel) {
+			changes.push({ component: comp, from: prevModel, to: currentModel });
+		}
+	}
+	return changes;
+}
+
 export function detectQualityRegression(current, previous) {
 	const issues = [];
 
@@ -76,6 +93,41 @@ export function detectQualityRegression(current, previous) {
 			severity: "warning",
 			code: "failed_batches_increase",
 			message: `Failed batches increased from ${prevFailed} to ${currentFailed}`,
+		});
+	}
+
+	// Model change correlation — detect if model changed alongside quality regression
+	// This is intentionally general: report the correlation, let the adaptive hints loop self-correct
+	const modelChanges = detectModelChanges(current, previous);
+	for (const mc of modelChanges) {
+		// Only flag if quality also dropped in that component
+		const qualityDrop = mc.component === "enrichment"
+			? (prevEnrichScore !== null && currentEnrichScore !== null && prevEnrichScore - currentEnrichScore > 5)
+			: (prevFeaturedScore !== null && currentFeaturedScore !== null && prevFeaturedScore - currentFeaturedScore > 5);
+		if (qualityDrop) {
+			issues.push({
+				severity: "warning",
+				code: "model_change_quality_drop",
+				message: `${mc.component} model changed (${mc.from} → ${mc.to}) and quality dropped — correlation may indicate model capability gap`,
+			});
+		} else if (mc.from !== mc.to) {
+			// Model changed but quality held — positive signal, log as info
+			issues.push({
+				severity: "info",
+				code: "model_change_quality_stable",
+				message: `${mc.component} model changed (${mc.from} → ${mc.to}) with stable quality — model efficiency improved`,
+			});
+		}
+	}
+
+	// Quota tier change — detect if tier changed (system is adapting to usage patterns)
+	const currentTier = current.enrichment?.quotaTier ?? current.featured?.quotaTier ?? null;
+	const prevTier = previous.enrichment?.quotaTier ?? previous.featured?.quotaTier ?? null;
+	if (currentTier !== null && prevTier !== null && currentTier !== prevTier) {
+		issues.push({
+			severity: "info",
+			code: "quota_tier_change",
+			message: `Quota tier changed from ${prevTier} to ${currentTier} — system adapting to usage patterns`,
 		});
 	}
 

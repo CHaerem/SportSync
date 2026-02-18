@@ -737,6 +737,41 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
+	// 12. Quota-aware health — surface quota tier and its impact on the pipeline
+	const quotaHealth = { tier: null, fiveHour: null, sevenDay: null, model: null, stepsSkipped: 0, skippedSteps: [] };
+	if (pipelineResult?.quota) {
+		const q = pipelineResult.quota;
+		quotaHealth.tier = q.tier;
+		quotaHealth.fiveHour = q.fiveHour;
+		quotaHealth.sevenDay = q.sevenDay;
+		quotaHealth.model = q.model;
+	}
+	// Count steps skipped due to quota (from pipeline-result phases)
+	if (pipelineResult?.phases) {
+		for (const phase of Object.values(pipelineResult.phases)) {
+			if (!phase?.steps) continue;
+			for (const step of phase.steps) {
+				if (step.status === "skipped" && step.reason?.includes("quota tier")) {
+					quotaHealth.stepsSkipped++;
+					quotaHealth.skippedSteps.push(step.name);
+				}
+			}
+		}
+	}
+	if (quotaHealth.tier != null && quotaHealth.tier >= 2) {
+		issues.push({
+			severity: "warning",
+			code: "quota_high_utilization",
+			message: `Quota tier ${quotaHealth.tier} (5h: ${quotaHealth.fiveHour}%, 7d: ${quotaHealth.sevenDay}%) — ${quotaHealth.stepsSkipped} step(s) skipped`,
+		});
+	} else if (quotaHealth.tier != null && quotaHealth.tier >= 1 && quotaHealth.stepsSkipped > 0) {
+		issues.push({
+			severity: "info",
+			code: "quota_moderate_utilization",
+			message: `Quota tier ${quotaHealth.tier} (5h: ${quotaHealth.fiveHour}%, 7d: ${quotaHealth.sevenDay}%) — ${quotaHealth.stepsSkipped} step(s) skipped: ${quotaHealth.skippedSteps.join(", ")}`,
+		});
+	}
+
 	// Pipeline timing anomaly detection
 	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
 
@@ -757,6 +792,7 @@ export function generateHealthReport(options = {}) {
 		streamingHealth,
 		snapshotHealth,
 		quotaApiHealth,
+		quotaHealth,
 		pipelineTimingHealth,
 		unmappedLeagues: [...unmappedTournaments],
 		issues,

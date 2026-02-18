@@ -1190,3 +1190,85 @@ describe("analyzePipelineTiming", () => {
 		expect(report.issues.some(i => i.code === "step_dominant_duration")).toBe(true);
 	});
 });
+
+describe("quota health", () => {
+	it("surfaces quota tier and skipped steps from pipeline result", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				duration: 300000,
+				quota: { fiveHour: 55, sevenDay: 60, tier: 1, maxPriority: 2, model: "claude-sonnet-4-6" },
+				phases: {
+					discover: {
+						steps: [
+							{ name: "discover-events", status: "skipped", duration: 0, reason: "quota tier 1 (max priority 2, step needs 3)" },
+						],
+					},
+					build: {
+						steps: [
+							{ name: "enrich-events", status: "success", duration: 120000 },
+						],
+					},
+				},
+			},
+		});
+		expect(report.quotaHealth).toBeDefined();
+		expect(report.quotaHealth.tier).toBe(1);
+		expect(report.quotaHealth.fiveHour).toBe(55);
+		expect(report.quotaHealth.sevenDay).toBe(60);
+		expect(report.quotaHealth.model).toBe("claude-sonnet-4-6");
+		expect(report.quotaHealth.stepsSkipped).toBe(1);
+		expect(report.quotaHealth.skippedSteps).toContain("discover-events");
+	});
+
+	it("surfaces warning issue for high quota tier (>= 2)", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				duration: 100000,
+				quota: { fiveHour: 80, sevenDay: 75, tier: 2, maxPriority: 1, model: "claude-sonnet-4-6" },
+				phases: {
+					discover: { steps: [{ name: "discover-events", status: "skipped", duration: 0, reason: "quota tier 2 (max priority 1, step needs 3)" }] },
+					generate: { steps: [{ name: "generate-multiday", status: "skipped", duration: 0, reason: "quota tier 2 (max priority 1, step needs 2)" }] },
+				},
+			},
+		});
+		expect(report.quotaHealth.stepsSkipped).toBe(2);
+		expect(report.issues.some(i => i.code === "quota_high_utilization")).toBe(true);
+	});
+
+	it("surfaces info issue for moderate quota tier with skipped steps", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				duration: 200000,
+				quota: { fiveHour: 55, sevenDay: 50, tier: 1, maxPriority: 2, model: "claude-sonnet-4-6" },
+				phases: {
+					discover: { steps: [{ name: "discover-events", status: "skipped", duration: 0, reason: "quota tier 1 (max priority 2, step needs 3)" }] },
+				},
+			},
+		});
+		expect(report.issues.some(i => i.code === "quota_moderate_utilization")).toBe(true);
+	});
+
+	it("does not flag quota when tier is 0 (green)", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				duration: 200000,
+				quota: { fiveHour: 30, sevenDay: 20, tier: 0, maxPriority: 3 },
+				phases: {},
+			},
+		});
+		expect(report.quotaHealth.tier).toBe(0);
+		expect(report.issues.some(i => i.code?.startsWith("quota_"))).toBe(false);
+	});
+
+	it("handles missing quota in pipeline result gracefully", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: { duration: 200000, phases: {} },
+		});
+		expect(report.quotaHealth.tier).toBeNull();
+	});
+});

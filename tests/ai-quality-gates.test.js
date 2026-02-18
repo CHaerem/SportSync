@@ -400,6 +400,17 @@ describe("buildQualitySnapshot()", () => {
 		const snapshot = buildQualitySnapshot(null, null, null, null, {});
 		expect(snapshot.results).toBeNull();
 	});
+
+	it("includes quota context when provided", () => {
+		const quota = { tier: 1, model: "claude-sonnet-4-6", enrichmentModel: "claude-sonnet-4-6", featuredModel: "claude-sonnet-4-6" };
+		const snapshot = buildQualitySnapshot(null, null, null, null, { quota });
+		expect(snapshot.quota).toEqual(quota);
+	});
+
+	it("defaults quota to null when not provided", () => {
+		const snapshot = buildQualitySnapshot(null, null, null, null, {});
+		expect(snapshot.quota).toBeNull();
+	});
 });
 
 describe("buildAdaptiveHints()", () => {
@@ -467,6 +478,34 @@ describe("buildAdaptiveHints()", () => {
 		const history = Array.from({ length: 5 }, () => makeEditorialEntry());
 		const result = buildAdaptiveHints(history);
 		expect(result.hints).toEqual([]);
+	});
+
+	it("generates quota-aware hint when constrained runs have lower quality", () => {
+		const unconstrained = Array.from({ length: 2 }, () => ({
+			...makeEditorialEntry({ score: 85 }),
+			quota: { tier: 0, model: null },
+		}));
+		const constrained = Array.from({ length: 3 }, () => ({
+			...makeEditorialEntry({ score: 60 }),
+			quota: { tier: 1, model: "claude-sonnet-4-6" },
+		}));
+		const history = [...unconstrained, ...constrained];
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("quota-constrained"))).toBe(true);
+	});
+
+	it("does not generate quota hint when quality is similar across tiers", () => {
+		const unconstrained = Array.from({ length: 2 }, () => ({
+			...makeEditorialEntry({ score: 80 }),
+			quota: { tier: 0, model: null },
+		}));
+		const constrained = Array.from({ length: 3 }, () => ({
+			...makeEditorialEntry({ score: 78 }),
+			quota: { tier: 1, model: "claude-sonnet-4-6" },
+		}));
+		const history = [...unconstrained, ...constrained];
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("quota-constrained"))).toBe(false);
 	});
 });
 
