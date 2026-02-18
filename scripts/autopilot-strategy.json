@@ -37,8 +37,9 @@
   },
 
   "quotaAdaptation": {
-    "_description": "How the autopilot adapts behavior based on quota tier. Read docs/data/.quota-status.json at startup for the current tier and evaluation. The autopilot can evolve these guidelines based on observed outcomes.",
+    "_description": "How the autopilot adapts behavior based on quota tier. Read docs/data/.quota-status.json at startup for the current tier and evaluation. Runtime parameters (model, maxTurns, allowedTools) are resolved from runtimeConfigFile merged with the quota tier — see scripts/resolve-autopilot-config.js. The autopilot can evolve these guidelines based on observed outcomes.",
     "statusFile": "docs/data/.quota-status.json",
+    "runtimeConfigFile": "scripts/autopilot-config.json",
     "tierGuidance": [
       {
         "tier": 0,

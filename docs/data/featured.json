@@ -2,11 +2,45 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodø/Glimt host Inter Milan — Norway's greatest club night"
+      "text": "Medal day in Milano-Cortina"
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Girona",
+      "awayTeam": "Barcelona",
+      "_fallbackText": "⚽ FT: Girona 2-1 Barcelona — Pau Cubarsí 59', Thomas Lemar 61'"
     },
     {
       "type": "narrative",
-      "text": "Bodø/Glimt face Internazionale at 21:00 in the Champions League Round of 16 first leg — the biggest match in Norwegian club history. Meanwhile, Klæbo chases gold at home Olympics this morning."
+      "text": "4 must-watch events across football today."
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Bodo/Glimt",
+      "awayTeam": "Internazionale",
+      "showStandings": true,
+      "_fallbackText": "⚽ Bodo/Glimt v Internazionale, 21:00, Champions League — Historic moment for Bodø/Glimt as they host Inter Milan in the Champions League Round of 16 first leg at Aspmyra"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "FK Qarabag",
+      "awayTeam": "Newcastle United",
+      "showStandings": true,
+      "_fallbackText": "⚽ FK Qarabag v Newcastle United, 18:45, Champions League — Newcastle United travel to Baku for a crucial UCL Round of 16 first leg — English side hunting a historic deep run"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Wolverhampton Wanderers",
+      "awayTeam": "Arsenal",
+      "showStandings": true,
+      "_fallbackText": "⚽ Wolverhampton Wanderers v Arsenal, 21:00, Premier League — Arsenal travel to Wolves in a pivotal Premier League clash that could shape the title race and top-four standings"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Club Brugge",
+      "awayTeam": "Atlético Madrid",
+      "showStandings": true,
+      "_fallbackText": "⚽ Club Brugge v Atlético Madrid, 21:00, Champions League — Diego Simeone's Atlético Madrid travel to Brugge in a tightly contested Champions League last-16 first leg"
     },
     {
       "type": "event-schedule",
@@ -14,41 +48,72 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Olympics today",
-      "maxItems": 4,
+      "label": "🏅 Winter Olympics 2026",
+      "maxItems": 6,
       "showFlags": true,
-      "style": "highlight"
+      "style": "highlight",
+      "_fallbackText": "14:45 — Biathlon — Women's 4x6km Relay 🇳🇴 · Thu 10:00 — Nordic Combined — Super Team 🇳🇴 · Fri 14:15 — Biathlon — Men's 15km Mass Start 🇳🇴 · Sat 11:00 — Cross-Country Skiing — Men's 50km Mass Start Classic 🇳🇴 · Sat 14:15 — Biathlon — Women's 12.5km Mass Start 🇳🇴 · Sun 10:00 — Cross-Country Skiing — Women's 30km Mass Start Classic"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt",
-      "showStandings": false
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Arsenal",
-      "awayTeam": "Wolverhampton Wanderers",
-      "showStandings": true
-    },
-    {
-      "type": "event-group",
-      "label": "⚽ Champions League — 21:00",
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
       "items": [
-        "Atlético Madrid at Club Brugge — last-16 first leg, tactical battle expected",
-        "Bayer Leverkusen at Olympiacos — Xabi Alonso's side favourites away",
-        "Newcastle United at FK Qarabag — 18:45, Baku first leg shapes UCL campaign"
-      ]
-    },
-    {
-      "type": "divider",
-      "text": "Looking Ahead"
+        {
+          "text": "18:45 — Newcastle United at FK Qarabag",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Internazionale at Bodo/Glimt",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Atlético Madrid at Club Brugge",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Bayer Leverkusen at Olympiacos",
+          "type": "event"
+        },
+        {
+          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
       "type": "golf-status",
-      "tournament": "pga"
+      "tournament": "pga",
+      "_fallbackText": "⛳ The Genesis Invitational"
+    },
+    {
+      "type": "divider",
+      "text": "This Week"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ Thu 06:00 — The Genesis Invitational"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Osasuna",
+      "awayTeam": "Real Madrid",
+      "showStandings": true,
+      "_fallbackText": "⚽ Sat 18:30 — Real Madrid at Osasuna"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-18T11:55:42.667Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-18T11:51:18.579Z",
+  "provider": "fallback"
 }

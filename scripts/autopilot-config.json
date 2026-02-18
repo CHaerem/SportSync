@@ -1,0 +1,9 @@
+{
+  "_description": "Runtime config for the autopilot workflow. The autopilot can modify this to tune its own parameters. The workflow reads it at startup via resolve-autopilot-config.js.",
+  "_updatedAt": "2026-02-18",
+  "_updatedBy": "human",
+  "model": "claude-opus-4-6",
+  "maxTurns": 300,
+  "maxTurnsPerTier": [300, 200, 100, 0],
+  "allowedTools": "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
+}

@@ -37,6 +37,11 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: node scripts/track-usage.js gate && echo "gate=pass" >> $GITHUB_OUTPUT || echo "gate=skip" >> $GITHUB_OUTPUT
 
+      - name: Resolve autopilot config
+        id: config
+        if: steps.quota.outputs.gate != 'skip'
+        run: node scripts/resolve-autopilot-config.js >> $GITHUB_OUTPUT
+
       - name: Snapshot usage (before autopilot)
         if: steps.quota.outputs.gate != 'skip'
         env:
@@ -49,9 +54,9 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
-            --model claude-opus-4-6
-            --max-turns 300
-            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
+            --model ${{ steps.config.outputs.model || 'claude-opus-4-6' }}
+            --max-turns ${{ steps.config.outputs.max_turns || '300' }}
+            --allowedTools "${{ steps.config.outputs.allowed_tools || 'Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)' }}"
           prompt: |
             You are the SportSync autopilot — a proactive agent responsible for
             advancing the autonomy thesis of this project.
@@ -96,16 +101,22 @@ jobs:
             - A task fails (tests break, merge fails)
             - You run low on turns (save at least 5 turns for housekeeping)
 
-            Turn budget: You have 300 max turns. Read `scripts/autopilot-strategy.json`
+            Turn budget: You have ${{ steps.config.outputs.max_turns || '300' }} max turns. Read `scripts/autopilot-strategy.json`
             for expected turn costs per activity. Track your actual usage and update
             the strategy's `turnBudgets` if your estimates diverge from reality.
-            If you've used >260 turns, skip scouting/meta-learning and stop cleanly.
+            If you've used >85% of your turn budget, skip scouting/meta-learning and stop cleanly.
 
             ## Process autonomy
 
             You control your own process. `scripts/autopilot-strategy.json` is your
             strategy file — read it at startup, follow it during execution, and
-            evolve it based on what you learn. The strategy defines three ship modes:
+            evolve it based on what you learn.
+
+            Runtime config: The workflow reads `scripts/autopilot-config.json` for
+            your model, maxTurns, and allowedTools. You can modify this file to
+            tune your own runtime parameters — changes take effect on the next run.
+
+            The strategy defines three ship modes:
 
             **branch-pr**: Full ceremony (branch → test → PR → merge). Use for
             FEATURE tasks, MEDIUM-risk changes, or anything you're not fully
