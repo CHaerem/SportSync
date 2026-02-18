@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T11:55:44.156Z",
+  "generatedAt": "2026-02-18T12:49:29.206Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 49,
@@ -13,8 +13,6 @@
     ],
     "bands": {
       "live": [
-        "Cross-Country Skiing — Team Sprint Free",
-        "Round 3 – 3rd Al-Beruniy International Chess Tournament | Yakubboev vs Aravindh Standard",
         "Game 2 – Azerbaijan Chess Championship 2026 | Men Semifinals"
       ],
       "today": [
@@ -71,13 +69,16 @@
       "later": [
         "Qatar Airways Australian Grand Prix"
       ],
-      "ended": []
+      "ended": [
+        "Cross-Country Skiing — Team Sprint Free",
+        "Round 3 – 3rd Al-Beruniy International Chess Tournament | Yakubboev vs Aravindh Standard"
+      ]
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 92,
-    "issueCount": 12
+    "issueCount": 11
   },
   "findings": [
     {
@@ -86,26 +87,41 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League Round\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"Champions League\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Meanwhile\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Johannes Høsflot Klæbo\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Glimt Inter Milan\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Game 2 – Azerbaijan Chess Championship 2026 | Men Semifinals\" but events.json has 12:15"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 7,
     "critical": 0,
-    "warning": 4,
-    "info": 0
+    "warning": 6,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

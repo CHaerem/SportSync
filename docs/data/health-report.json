@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T11:55:44.154Z",
+  "generatedAt": "2026-02-18T12:49:29.039Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 57,
       "stale": false
     },
     "esports.json": {
@@ -119,23 +119,24 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 69,
-    "sevenDay": 60,
+    "tier": 2,
+    "fiveHour": 83,
+    "sevenDay": 61,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 1,
+    "stepsSkipped": 2,
     "skippedSteps": [
-      "discover-events"
+      "discover-events",
+      "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 260975,
-    "stepCount": 26,
+    "totalDuration": 254834,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 122045,
+        "duration": 120921,
         "share": 47
       }
     ],
@@ -185,14 +186,14 @@
       "message": "8 tournament(s) lack league theming: Winter Olympics 2026, Azerbaijan Chess Championship 2026 | Men Semifinals, Isle of Wight Masters 2026, Romanian Championships 2026 | Open, CS2 Major Tournaments 2026, šachy.cz Extraliga 2025/2026, German Women's Bundesliga 2025/26, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 69%, 7d: 60%) — 1 step(s) skipped: discover-events"
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 2 (5h: 83%, 7d: 61%) — 2 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (121s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -208,11 +209,16 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+    },
+    {
+      "severity": "info",
+      "code": "olympics_stale_events",
+      "message": "olympics-2026.json: 1/8 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }
