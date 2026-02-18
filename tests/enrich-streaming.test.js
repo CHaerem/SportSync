@@ -1,5 +1,28 @@
 import { describe, it, expect, vi } from "vitest";
 import { enrichStreaming } from "../scripts/enrich-streaming.js";
+import { formatDateKey } from "../scripts/lib/helpers.js";
+
+// Dynamic date helpers — tests must use dates relative to "now"
+// because enrichStreaming fetches today + tomorrow listings
+const NOW = new Date();
+const TODAY = formatDateKey(NOW);
+const TOMORROW = formatDateKey(new Date(NOW.getTime() + 86400000));
+
+/** Build an ISO time string for today at the given UTC hour */
+function todayAtUTC(hour, minute = 0) {
+	return `${TODAY}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00Z`;
+}
+
+/** Build an ISO time string for tomorrow at the given UTC hour */
+function tomorrowAtUTC(hour, minute = 0) {
+	return `${TOMORROW}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00Z`;
+}
+
+/** Convert UTC hour to CET hour string (UTC+1) for tvkampen mock HTML */
+function utcToCET(utcHour) {
+	const cet = (utcHour + 1) % 24;
+	return `${String(cet).padStart(2, "0")}:00`;
+}
 
 // Helper: build realistic tvkampen event block HTML
 function makeEventBlock(id, { home, away, time = "20:00", league = "Premier League", channelClasses = [] } = {}) {
@@ -39,13 +62,13 @@ describe("enrichStreaming", () => {
 
 	it("enriches football events with tvkampen data", async () => {
 		const events = [
-			makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z"),
-			makeEvent("Wolves", "Brighton", "2026-02-17T15:00:00Z"),
+			makeEvent("Arsenal", "Liverpool", todayAtUTC(20)),
+			makeEvent("Wolves", "Brighton", todayAtUTC(15)),
 		];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("1001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["tv2play", "viaplay"] }),
-			makeEventBlock("1002", { home: "Wolves", away: "Brighton", time: "16:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("1001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["tv2play", "viaplay"] }),
+			makeEventBlock("1002", { home: "Wolves", away: "Brighton", time: utcToCET(15), channelClasses: ["viaplay"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {
@@ -70,7 +93,7 @@ describe("enrichStreaming", () => {
 
 	it("preserves existing streaming when tvkampen is unreachable", async () => {
 		const existingStreaming = [{ platform: "Viaplay", url: "https://viaplay.no", type: "streaming" }];
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z", { streaming: existingStreaming })];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20), { streaming: existingStreaming })];
 
 		const mockFetcher = vi.fn().mockRejectedValue(new Error("ECONNREFUSED"));
 
@@ -81,7 +104,7 @@ describe("enrichStreaming", () => {
 	});
 
 	it("handles zero listings gracefully", async () => {
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20))];
 		const mockFetcher = vi.fn().mockResolvedValue("<main><div>No matches</div></main>");
 
 		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
@@ -93,7 +116,7 @@ describe("enrichStreaming", () => {
 
 	it("skips non-football events", async () => {
 		const events = [
-			{ sport: "golf", homeTeam: null, awayTeam: null, time: "2026-02-17T10:00:00Z", tournament: "PGA Tour" },
+			{ sport: "golf", homeTeam: null, awayTeam: null, time: todayAtUTC(10), tournament: "PGA Tour" },
 		];
 		const mockFetcher = vi.fn();
 
@@ -105,7 +128,7 @@ describe("enrichStreaming", () => {
 
 	it("skips football events without homeTeam/awayTeam", async () => {
 		const events = [
-			{ sport: "football", homeTeam: null, awayTeam: null, time: "2026-02-17T10:00:00Z", tournament: "PL" },
+			{ sport: "football", homeTeam: null, awayTeam: null, time: todayAtUTC(10), tournament: "PL" },
 		];
 		const mockFetcher = vi.fn();
 
@@ -116,10 +139,10 @@ describe("enrichStreaming", () => {
 	});
 
 	it("reports unmatched entries in log", async () => {
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20))];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("2001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("2001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["viaplay"] }),
 			makeEventBlock("2002", { home: "Unknown FC", away: "Mystery Utd", time: "14:00", channelClasses: ["tv2play"] }),
 		);
 
@@ -133,17 +156,19 @@ describe("enrichStreaming", () => {
 		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
 
 		expect(log.unmatched.length).toBeGreaterThanOrEqual(1);
-		expect(log.unmatched[0].homeTeam).toBe("Unknown FC");
+		// The unmatched entry should be the one that didn't match any event
+		const unknownEntry = log.unmatched.find(u => u.homeTeam === "Unknown FC");
+		expect(unknownEntry).toBeTruthy();
 	});
 
 	it("tracks match rate in log", async () => {
 		const events = [
-			makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z"),
-			makeEvent("Chelsea", "Newcastle", "2026-02-17T18:00:00Z"),
+			makeEvent("Arsenal", "Liverpool", todayAtUTC(20)),
+			makeEvent("Chelsea", "Newcastle", todayAtUTC(18)),
 		];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("3001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["tv2play"] }),
+			makeEventBlock("3001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["tv2play"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {
@@ -170,10 +195,10 @@ describe("enrichStreaming", () => {
 	});
 
 	it("log contains enrichedEvents details", async () => {
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20))];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("4001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["viaplay", "tv2play"] }),
+			makeEventBlock("4001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["viaplay", "tv2play"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {
@@ -193,19 +218,19 @@ describe("enrichStreaming", () => {
 	});
 
 	it("matches events from both today and tomorrow dates", async () => {
-		const todayEvent = makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z");
-		const tomorrowEvent = makeEvent("Chelsea", "Newcastle", "2026-02-18T15:00:00Z");
+		const todayEvent = makeEvent("Arsenal", "Liverpool", todayAtUTC(20));
+		const tomorrowEvent = makeEvent("Chelsea", "Newcastle", tomorrowAtUTC(15));
 		const events = [todayEvent, tomorrowEvent];
 
 		const todayHtml = makeListingHtml(
-			makeEventBlock("6001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["tv2play"] }),
+			makeEventBlock("6001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["tv2play"] }),
 		);
 		const tomorrowHtml = makeListingHtml(
-			makeEventBlock("6002", { home: "Chelsea", away: "Newcastle", time: "16:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("6002", { home: "Chelsea", away: "Newcastle", time: utcToCET(15), channelClasses: ["viaplay"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {
-			if (url.includes("2026-02-18")) return Promise.resolve(tomorrowHtml);
+			if (url.includes(TOMORROW)) return Promise.resolve(tomorrowHtml);
 			if (url.includes("/date/")) return Promise.resolve(todayHtml);
 			return Promise.resolve("<div></div>");
 		});
@@ -219,10 +244,10 @@ describe("enrichStreaming", () => {
 	});
 
 	it("includes aliasSuggestions and hintsApplied in log", async () => {
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20))];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("7001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("7001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["viaplay"] }),
 			makeEventBlock("7002", { home: "Unknown Team", away: "Mystery FC", time: "14:00", channelClasses: ["tv2play"] }),
 		);
 
@@ -240,10 +265,10 @@ describe("enrichStreaming", () => {
 	});
 
 	it("sets streamingSource and streamingConfidence on enriched events", async () => {
-		const events = [makeEvent("Arsenal", "Liverpool", "2026-02-17T20:00:00Z")];
+		const events = [makeEvent("Arsenal", "Liverpool", todayAtUTC(20))];
 
 		const listingHtml = makeListingHtml(
-			makeEventBlock("5001", { home: "Arsenal", away: "Liverpool", time: "21:00", channelClasses: ["viaplay"] }),
+			makeEventBlock("5001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["viaplay"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {
