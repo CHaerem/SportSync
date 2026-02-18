@@ -2,22 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Glimt møter gigantene — norsk Champions League-historie skrives i kveld"
-    },
-    {
-      "type": "narrative",
-      "text": "Bodø/Glimt tar imot Inter Milan i Champions League-åttendelsfinalen — den største kampen i norsk klubbfotball noensinne. Klæbo og lagkameratene jakter gull i Team Sprint tidlig i dag."
-    },
-    {
-      "type": "event-schedule",
-      "filter": {
-        "sport": "olympics",
-        "window": "today"
-      },
-      "label": "🏅 OL i dag — Milano-Cortina",
-      "maxItems": 4,
-      "showFlags": true,
-      "style": "highlight"
+      "text": "Norway's biggest Champions League night — Bodø/Glimt host Inter Milan"
     },
     {
       "type": "match-preview",
@@ -26,29 +11,48 @@
       "showStandings": false
     },
     {
+      "type": "narrative",
+      "text": "Bodø/Glimt at the Aspmyra — in the Champions League Round of 16. Norwegian football has never been here before. Whatever happens tonight, it already counts."
+    },
+    {
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Olympics today",
+      "maxItems": 4,
+      "showFlags": true,
+      "style": "highlight"
+    },
+    {
+      "type": "narrative",
+      "text": "Klaebo opens at 09:45 in the team sprint, then the women's biathlon relay at 14:45. Two gold medal shots before the football begins."
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League tonight",
+      "items": [
+        "Newcastle United vs FK Qarabag — 18:45, first leg in Baku",
+        "Atlético Madrid vs Club Brugge — 21:00, UCL R16 first leg",
+        "Bayer Leverkusen vs Olympiacos — 21:00, UCL R16 first leg"
+      ]
+    },
+    {
       "type": "match-preview",
       "homeTeam": "Arsenal",
       "awayTeam": "Wolverhampton Wanderers",
       "showStandings": true
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League i kveld",
-      "items": [
-        "⚽ Newcastle United — FK Qarabag, 18:45",
-        "⚽ Atlético Madrid — Club Brugge, 21:00",
-        "⚽ Bayer Leverkusen — Olympiacos, 21:00"
-      ]
-    },
-    {
       "type": "divider",
-      "text": "Denne uken"
+      "text": "Coming up"
     },
     {
       "type": "golf-status",
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T10:14:12.554Z",
+  "generatedAt": "2026-02-18T10:23:02.997Z",
   "provider": "claude-cli"
 }
