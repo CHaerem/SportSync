@@ -1,96 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T02:05:42.219Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 2,
-      "avgScore": 97,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"\udfc5 Biathlon relay — Boe brothers and Laegreid target gold\" which may not match any event; Featured mentions \"Four\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 118937,
-        "output": 2985,
-        "calls": 4,
-        "total": 121922,
-        "costUSD": 0.41889325,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32946,
-        "output": 361,
-        "cacheCreation": 17735,
-        "cacheRead": 15208,
-        "total": 33307,
-        "costUSD": 0.12806575,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33038,
-        "output": 458,
-        "calls": 1,
-        "total": 33496,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 184921,
-        "output": 3804,
-        "calls": 6,
-        "total": 188725,
-        "costUSD": 0.546959,
-        "realPct": 82
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 76.571,
-      "mustWatchCoverage": 0.414,
-      "sportDiversity": 0.702,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T03:12:03.374Z",
     "editorial": {
       "score": 95,
@@ -7576,6 +7485,96 @@
       "sportDiversity": 0.764,
       "enrichmentScore": 100,
       "resultsScore": 80.857
+    }
+  },
+  {
+    "timestamp": "2026-02-18T13:35:40.943Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 121,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 10,
+      "warningCount": 9,
+      "pass": false
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Two Olympic\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"After Galatasaray\" but no matching athlete found in events data; Featured mentions \"Juventus\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results.",
+      "SANITY: Coverage gaps detected: chess: 0 events (was 7)."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 136755,
+        "output": 3553,
+        "calls": 5,
+        "total": 140308,
+        "costUSD": 0.15965000000000001,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 31408,
+        "output": 530,
+        "cacheCreation": 13835,
+        "cacheRead": 17570,
+        "total": 31938,
+        "costUSD": 0.10913175,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 168163,
+        "output": 4083,
+        "calls": 6,
+        "total": 172246,
+        "costUSD": 0.26878175000000004,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 91.286,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.757,
+      "enrichmentScore": 100,
+      "resultsScore": 80.714
     }
   }
 ]

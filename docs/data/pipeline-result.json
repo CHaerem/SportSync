@@ -1,11 +1,11 @@
 {
-  "startedAt": "2026-02-18T13:05:53.302Z",
-  "completedAt": "2026-02-18T13:10:07.479Z",
-  "duration": 254176,
+  "startedAt": "2026-02-18T13:32:32.476Z",
+  "completedAt": "2026-02-18T13:36:44.075Z",
+  "duration": 251598,
   "gate": "pass",
   "quota": {
-    "fiveHour": 35,
-    "sevenDay": 64,
+    "fiveHour": 51,
+    "sevenDay": 66,
     "tier": 1,
     "maxPriority": 2,
     "model": "claude-sonnet-4-6"
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 27163
+          "duration": 31529
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4946
+          "duration": 5042
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8879
+          "duration": 9105
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 472
+          "duration": 299
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 45097
+          "duration": 46233
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 168
+          "duration": 164
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1216
+          "duration": 995
         }
       ]
     },
@@ -77,17 +77,17 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 623
+          "duration": 616
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 5801
+          "duration": 6689
         },
         {
           "name": "enrich-events",
           "status": "success",
-          "duration": 117548
+          "duration": 113704
         }
       ]
     },
@@ -98,22 +98,22 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 19934
+          "duration": 19306
         },
         {
           "name": "generate-multiday",
           "status": "success",
-          "duration": 152
+          "duration": 141
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 171
+          "duration": 172
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 176
+          "duration": 163
         }
       ]
     },
@@ -124,7 +124,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 619
+          "duration": 599
         }
       ]
     },
@@ -135,32 +135,32 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 568
+          "duration": 521
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 476
+          "duration": 414
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 366
+          "duration": 300
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 902
+          "duration": 828
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 508
+          "duration": 357
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60049,
+          "duration": 60068,
           "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
           "errorCategory": "network"
         }
@@ -173,7 +173,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 267
+          "duration": 297
         }
       ]
     },
@@ -184,22 +184,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1094
+          "duration": 1247
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 145
+          "duration": 138
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 77
+          "duration": 68
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 129
+          "duration": 136
         }
       ]
     }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T13:09:06.074Z",
+  "generatedAt": "2026-02-18T13:35:42.450Z",
   "eventCount": 42,
   "sportCoverage": {
     "olympics": {
@@ -120,7 +120,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 27,
+    "fiveHour": 35,
     "sevenDay": 64,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -129,14 +129,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 254314,
+    "totalDuration": 254176,
     "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 122420,
-        "share": 48
+        "duration": 117548,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -170,11 +170,6 @@
       "message": "Streaming enrichment match rate is 17% (5/30) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
-    },
-    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -187,12 +182,12 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 27%, 7d: 64%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 35%, 7d: 64%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (122s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (118s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -217,7 +212,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }
