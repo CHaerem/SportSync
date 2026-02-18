@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T11:08:08.222Z",
+  "generatedAt": "2026-02-18T11:22:21.311Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -119,14 +119,14 @@
     "unavailableSince": null
   },
   "pipelineTimingHealth": {
-    "totalDuration": 265707,
-    "stepCount": 27,
+    "totalDuration": 266572,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 120397,
-        "share": 45
+        "duration": 125042,
+        "share": 47
       }
     ],
     "failedSteps": [
@@ -177,7 +177,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 45% of total pipeline time (120s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (125s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -197,7 +197,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
