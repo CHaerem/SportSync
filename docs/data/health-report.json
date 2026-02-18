@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T16:27:05.570Z",
+  "generatedAt": "2026-02-18T17:29:46.729Z",
   "eventCount": 42,
   "sportCoverage": {
     "olympics": {
@@ -125,22 +125,25 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 2,
+    "fiveHour": 84,
+    "sevenDay": 68,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "generate-multiday"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 272072,
-    "stepCount": 28,
+    "totalDuration": 253553,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 120099,
-        "share": 44
+        "duration": 116733,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -189,9 +192,14 @@
       "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
     },
     {
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 2 (5h: 84%, 7d: 68%) — 2 step(s) skipped"
+    },
+    {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 44% of total pipeline time (120s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (117s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -216,7 +224,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 95/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }
