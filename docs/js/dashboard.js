@@ -2121,88 +2121,95 @@ class Dashboard {
 		return html;
 	}
 
+	/**
+	 * Generic mini-table builder for the consolidated standings section.
+	 * @param {object} opts
+	 * @param {string} opts.title - Table heading
+	 * @param {Array<{label: string}>} opts.columns - Column definitions (excluding #)
+	 * @param {Array} opts.allRows - Full dataset
+	 * @param {number} [opts.topN=5] - Number of top rows to always show
+	 * @param {Function} [opts.isHighlight] - (row) => boolean for highlight styling
+	 * @param {Function} opts.cellValues - (row) => string[] of cell values (excluding position)
+	 * @param {Function} [opts.getPosition] - (row) => number, defaults to row.position
+	 * @param {Function} [opts.extraRows] - (allRows, topRows) => additional rows to include
+	 */
+	_buildMiniTable({ title, columns, allRows, topN = 5, isHighlight, cellValues, getPosition, extraRows }) {
+		const pos = getPosition || (r => r.position);
+		const topRows = allRows.slice(0, topN);
+		const extra = extraRows ? extraRows(allRows, topRows) : [];
+		const rows = [...topRows, ...extra].sort((a, b) => pos(a) - pos(b));
+		if (rows.length === 0) return '';
+
+		const colCount = columns.length + 1;
+		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(title)}</div>`;
+		html += `<table class="exp-mini-table"><thead><tr><th>#</th>${columns.map(c => `<th>${c.label}</th>`).join('')}</tr></thead><tbody>`;
+		let lastPos = 0;
+		for (const row of rows) {
+			const p = pos(row);
+			if (p - lastPos > 1 && lastPos > 0) {
+				html += `<tr class="ellipsis"><td colspan="${colCount}">\u2026</td></tr>`;
+			}
+			const cls = isHighlight?.(row) ? ' class="highlight"' : '';
+			const cells = cellValues(row);
+			html += `<tr${cls}><td>${p}</td>${cells.map(v => `<td>${v}</td>`).join('')}</tr>`;
+			lastPos = p;
+		}
+		html += '</tbody></table></div>';
+		return html;
+	}
+
 	_buildFootballTable(name, table) {
 		const prefs = this.preferences ? this.preferences.getPreferences() : {};
 		const favTeams = prefs.favoriteTeams?.football || [];
 		const favorites = favTeams.map(t => t.toLowerCase());
-		const top5 = table.slice(0, 5);
-		const favRows = table.filter(t =>
-			favorites.some(fav =>
-				t.team.toLowerCase().includes(fav) || fav.includes(t.team.toLowerCase())
-			) && !top5.includes(t)
+		const isFav = (row) => favorites.some(fav =>
+			row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
 		);
-		const rows = [...top5, ...favRows].sort((a, b) => a.position - b.position);
-
-		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(name)}</div>`;
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>Pts</th><th>GD</th></tr></thead><tbody>';
-		let lastPos = 0;
-		for (const row of rows) {
-			if (row.position - lastPos > 1 && lastPos > 0) {
-				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
-			}
-			const isFav = favorites.some(fav =>
-				row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
-			);
-			const cls = isFav ? ' class="highlight"' : '';
-			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
-			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.points}</td><td>${gd}</td></tr>`;
-			lastPos = row.position;
-		}
-		html += '</tbody></table></div>';
-		return html;
+		return this._buildMiniTable({
+			title: name,
+			columns: [{ label: 'Team' }, { label: 'Pts' }, { label: 'GD' }],
+			allRows: table,
+			isHighlight: isFav,
+			cellValues: (row) => [this.esc(row.teamShort), row.points, row.gd > 0 ? `+${row.gd}` : row.gd],
+			extraRows: (all, top) => all.filter(t => isFav(t) && !top.includes(t)),
+		});
 	}
 
 	_buildGolfTable(pga) {
-		const top5 = pga.leaderboard.slice(0, 5);
 		const norwegianNames = ['Hovland', 'Ventura', 'Aberg'];
-		const norRows = pga.leaderboard.filter(p =>
-			norwegianNames.some(n => p.player?.includes(n)) && !top5.includes(p)
-		);
-		const rows = [...top5, ...norRows].sort((a, b) => a.position - b.position);
-
-		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(pga.name || 'Golf Leaderboard')}</div>`;
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Thru</th></tr></thead><tbody>';
-		let lastPos = 0;
-		for (const row of rows) {
-			if (row.position - lastPos > 1 && lastPos > 0) {
-				html += '<tr class="ellipsis"><td colspan="4">\u2026</td></tr>';
-			}
-			const isNor = norwegianNames.some(n => row.player?.includes(n));
-			const cls = isNor ? ' class="highlight"' : '';
-			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.player)}</td><td>${this.esc(row.score)}</td><td>${this.esc(row.thru || '')}</td></tr>`;
-			lastPos = row.position;
-		}
-		html += '</tbody></table></div>';
-		return html;
+		const isNor = (row) => norwegianNames.some(n => row.player?.includes(n));
+		return this._buildMiniTable({
+			title: pga.name || 'Golf Leaderboard',
+			columns: [{ label: 'Player' }, { label: 'Score' }, { label: 'Thru' }],
+			allRows: pga.leaderboard,
+			isHighlight: isNor,
+			cellValues: (row) => [this.esc(row.player), this.esc(row.score), this.esc(row.thru || '')],
+			extraRows: (all, top) => all.filter(p => isNor(p) && !top.includes(p)),
+		});
 	}
 
 	_buildF1Table(drivers) {
-		const top5 = drivers.slice(0, 5);
-		let html = '<div class="standings-table-group"><div class="standings-table-label">F1 Standings</div>';
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Pts</th><th>Wins</th></tr></thead><tbody>';
-		for (const d of top5) {
-			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${d.points}</td><td>${d.wins}</td></tr>`;
-		}
-		html += '</tbody></table></div>';
-		return html;
+		return this._buildMiniTable({
+			title: 'F1 Standings',
+			columns: [{ label: 'Driver' }, { label: 'Pts' }, { label: 'Wins' }],
+			allRows: drivers,
+			cellValues: (d) => [this.esc(d.driver), d.points, d.wins],
+		});
 	}
 
 	_buildTennisTable(atp) {
-		const top5 = atp.slice(0, 5);
-		const ruud = atp.find(p => p.player.toLowerCase().includes('ruud'));
-		const showRuud = ruud && !top5.some(p => p.player === ruud.player);
-
-		let html = '<div class="standings-table-group"><div class="standings-table-label">ATP Rankings</div>';
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Pts</th></tr></thead><tbody>';
-		for (const p of top5) {
-			const cls = p.player.toLowerCase().includes('ruud') ? ' class="highlight"' : '';
-			html += `<tr${cls}><td>${p.position}</td><td>${this.esc(p.player)}</td><td>${p.points}</td></tr>`;
-		}
-		if (showRuud) {
-			html += `<tr class="highlight"><td>${ruud.position}</td><td>${this.esc(ruud.player)}</td><td>${ruud.points}</td></tr>`;
-		}
-		html += '</tbody></table></div>';
-		return html;
+		const isRuud = (p) => p.player.toLowerCase().includes('ruud');
+		return this._buildMiniTable({
+			title: 'ATP Rankings',
+			columns: [{ label: 'Player' }, { label: 'Pts' }],
+			allRows: atp,
+			isHighlight: isRuud,
+			cellValues: (p) => [this.esc(p.player), p.points],
+			extraRows: (all, top) => {
+				const ruud = all.find(p => isRuud(p));
+				return ruud && !top.includes(ruud) ? [ruud] : [];
+			},
+		});
 	}
 
 	renderFootballStandings(event) {
