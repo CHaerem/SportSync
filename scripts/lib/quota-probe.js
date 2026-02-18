@@ -96,7 +96,7 @@ export function probeQuota(token, timeoutMs = 10_000) {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"x-api-key": token,
+					Authorization: `Bearer ${token}`,
 					"anthropic-version": "2023-06-01",
 					"anthropic-beta": "oauth-2025-04-20",
 					"Content-Length": Buffer.byteLength(body),
