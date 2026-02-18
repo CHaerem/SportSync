@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T14:34:10.329Z",
+  "generatedAt": "2026-02-18T15:24:34.493Z",
   "eventCount": 42,
   "sportCoverage": {
     "olympics": {
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 75,
+    "fiveHour": 81,
     "sevenDay": 68,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -136,19 +136,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 184171,
+    "totalDuration": 304655,
     "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 89005,
-        "share": 48
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60055,
-        "share": 33
+        "duration": 114292,
+        "share": 38
       }
     ],
     "failedSteps": [
@@ -182,6 +177,11 @@
       "message": "Streaming enrichment match rate is 17% (5/30) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -194,17 +194,12 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 75%, 7d: 68%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 81%, 7d: 68%) — 2 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (89s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 33% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 38% of total pipeline time (114s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -224,12 +219,12 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/8 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/8 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }
