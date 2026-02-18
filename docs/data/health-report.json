@@ -1,16 +1,11 @@
 {
-  "generatedAt": "2026-02-18T19:26:21.389Z",
-  "eventCount": 39,
+  "generatedAt": "2026-02-18T20:17:47.157Z",
+  "eventCount": 35,
   "sportCoverage": {
     "olympics": {
       "count": 7,
       "previousCount": 7,
       "delta": 0
-    },
-    "football": {
-      "count": 28,
-      "previousCount": 29,
-      "delta": -1
     },
     "golf": {
       "count": 2,
@@ -21,6 +16,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "football": {
+      "count": 24,
+      "previousCount": 28,
+      "delta": -4
     },
     "f1": {
       "count": 1,
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.92,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 17,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -101,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.11,
-    "eventsEnriched": 3,
+    "matchRate": 0,
+    "eventsEnriched": 0,
     "trend": "declining",
     "pendingAliasSuggestions": 0
   },
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 2,
+    "fiveHour": 4,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -135,13 +135,13 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 236352,
+    "totalDuration": 237085,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 101476,
+        "duration": 101316,
         "share": 43
       }
     ],
@@ -173,17 +173,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 11% (3/28) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 0% (0/24) — team alias table may need updates"
     },
     {
       "severity": "warning",
       "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 17% → 14% → 11%"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
+      "message": "Streaming match rate declining over 3 runs: 14% → 11% → 0%"
     },
     {
       "severity": "info",
@@ -198,7 +193,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 2%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 4%, 7d: 69%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
@@ -228,7 +223,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 89% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 95/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 90/100.",
     "tokenUsage": null
   }
 }

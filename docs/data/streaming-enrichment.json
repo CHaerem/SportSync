@@ -1,27 +1,17 @@
 {
-  "generatedAt": "2026-02-18T19:24:15.580Z",
+  "generatedAt": "2026-02-18T20:15:46.216Z",
   "dates": [
     "2026-02-18",
     "2026-02-19"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 25,
-  "matchesAttempted": 28,
-  "matchesSucceeded": 3,
-  "eventsEnriched": 3,
-  "totalEvents": 39,
-  "matchRate": 0.11,
+  "listingsFound": 23,
+  "matchesAttempted": 24,
+  "matchesSucceeded": 0,
+  "eventsEnriched": 0,
+  "totalEvents": 35,
+  "matchRate": 0,
   "unmatched": [
-    {
-      "homeTeam": "Real Madrid Femenino",
-      "awayTeam": "Paris FC",
-      "time": "18:45"
-    },
-    {
-      "homeTeam": "Qarabağ",
-      "awayTeam": "Newcastle",
-      "time": "18:45"
-    },
     {
       "homeTeam": "Levante",
       "awayTeam": "Villarreal",
@@ -33,8 +23,23 @@
       "time": "20:45"
     },
     {
+      "homeTeam": "Wolverhampton",
+      "awayTeam": "Arsenal",
+      "time": "21:00"
+    },
+    {
       "homeTeam": "Arsenal WFC",
       "awayTeam": "OH Leuven",
+      "time": "21:00"
+    },
+    {
+      "homeTeam": "Club Brugge",
+      "awayTeam": "Atlético Madrid",
+      "time": "21:00"
+    },
+    {
+      "homeTeam": "Olympiakos",
+      "awayTeam": "Bayer Leverkusen",
       "time": "21:00"
     },
     {
@@ -106,46 +111,11 @@
       "homeTeam": "Ludogorets",
       "awayTeam": "Ferencvarosi TC",
       "time": "21:00"
-    },
-    {
-      "homeTeam": "Celtic",
-      "awayTeam": "Stuttgart",
-      "time": "21:00"
     }
   ],
-  "enrichedEvents": [
-    {
-      "homeTeam": "Wolverhampton Wanderers",
-      "awayTeam": "Arsenal",
-      "broadcasters": [
-        "Viaplay",
-        "Vsport"
-      ],
-      "confidence": 1
-    },
-    {
-      "homeTeam": "Club Brugge",
-      "awayTeam": "Atlético Madrid",
-      "broadcasters": [
-        "TV 2 Play",
-        "Viaplay",
-        "Eurosport Norge",
-        "MAX"
-      ],
-      "confidence": 1
-    },
-    {
-      "homeTeam": "Olympiacos",
-      "awayTeam": "Bayer Leverkusen",
-      "broadcasters": [
-        "TV 2 Play",
-        "Viaplay",
-        "Eurosport Norge",
-        "MAX"
-      ],
-      "confidence": 0.7
-    }
-  ],
+  "enrichedEvents": [],
   "aliasSuggestions": [],
-  "hintsApplied": []
+  "hintsApplied": [
+    "WARNING: Match rate declining over last 3 runs (17% → 14% → 11%)"
+  ]
 }
