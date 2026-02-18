@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T10:43:23.131Z",
+  "generatedAt": "2026-02-18T10:49:15.602Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -102,7 +102,7 @@
     "present": true,
     "tvkampenReachable": true,
     "matchRate": 0.17,
-    "eventsEnriched": 5,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -114,19 +114,19 @@
     "snapshotCount": 15
   },
   "quotaApiHealth": {
-    "available": false,
-    "transitioned": false,
-    "unavailableSince": "2026-02-16T08:29:25.078Z"
+    "available": true,
+    "transitioned": true,
+    "unavailableSince": null
   },
   "pipelineTimingHealth": {
-    "totalDuration": 257480,
+    "totalDuration": 248182,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 121712,
-        "share": 47
+        "duration": 115237,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -160,14 +160,19 @@
       "message": "Streaming enrichment match rate is 17% (5/30) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
-      "code": "quota_api_unavailable",
-      "message": "Quota API unavailable (upstream scope limitation)"
+      "code": "quota_api_restored",
+      "message": "Quota API is now available — external utilization data flowing"
     },
     {
       "severity": "info",
@@ -177,7 +182,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (115s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -197,7 +202,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }
