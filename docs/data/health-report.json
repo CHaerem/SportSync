@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T21:18:25.644Z",
+  "generatedAt": "2026-02-18T22:19:23.759Z",
   "eventCount": 34,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "olympics": {
       "count": 6,
-      "previousCount": 7,
-      "delta": -1
+      "previousCount": 6,
+      "delta": 0
     },
     "football": {
       "count": 24,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 18,
+    "footballCount": 22,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 6,
+    "fiveHour": 7,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -135,14 +135,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 229382,
+    "totalDuration": 222702,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 97299,
-        "share": 42
+        "duration": 91383,
+        "share": 41
       }
     ],
     "failedSteps": [
@@ -188,12 +188,12 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 6%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 7%, 7d: 69%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 42% of total pipeline time (97s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 41% of total pipeline time (91s) — optimization candidate"
     },
     {
       "severity": "info",

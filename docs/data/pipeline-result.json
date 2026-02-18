@@ -1,10 +1,10 @@
 {
-  "startedAt": "2026-02-18T21:15:44.339Z",
-  "completedAt": "2026-02-18T21:19:27.042Z",
-  "duration": 222702,
+  "startedAt": "2026-02-18T22:12:09.771Z",
+  "completedAt": "2026-02-18T22:20:24.901Z",
+  "duration": 495130,
   "gate": "pass",
   "quota": {
-    "fiveHour": 7,
+    "fiveHour": 0,
     "sevenDay": 69,
     "tier": 1,
     "maxPriority": 2,
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 32451
+          "duration": 30949
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 3528
+          "duration": 4570
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8952
+          "duration": 8948
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 284
+          "duration": 364
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 45312
+          "duration": 45123
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 196
+          "duration": 160
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 886
+          "duration": 898
         }
       ]
     },
@@ -72,7 +72,7 @@
     },
     "build": {
       "name": "build",
-      "status": "success",
+      "status": "partial",
       "steps": [
         {
           "name": "build-events",
@@ -82,12 +82,14 @@
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 3921
+          "duration": 1904
         },
         {
           "name": "enrich-events",
-          "status": "success",
-          "duration": 91383
+          "status": "failed",
+          "duration": 300101,
+          "error": "spawnSync /bin/sh ETIMEDOUT",
+          "errorCategory": "timeout"
         }
       ]
     },
@@ -98,22 +100,22 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 16753
+          "duration": 82616
         },
         {
           "name": "generate-multiday",
           "status": "success",
-          "duration": 143
+          "duration": 144
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 169
+          "duration": 158
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 164
+          "duration": 160
         }
       ]
     },
@@ -124,7 +126,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 582
+          "duration": 608
         }
       ]
     },
@@ -135,39 +137,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 600
+          "duration": 707
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 431
+          "duration": 708
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 432
+          "duration": 435
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 940
+          "duration": 952
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 557
+          "duration": 588
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60029,
+          "duration": 60025,
           "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
           "errorCategory": "network"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 629
+          "duration": 640
         }
       ]
     },
@@ -178,7 +180,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 250
+          "duration": 259
         }
       ]
     },
@@ -189,30 +191,30 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1042
+          "duration": 945
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 167
+          "duration": 142
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 67
+          "duration": 66
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 133
+          "duration": 129
         }
       ]
     }
   },
   "summary": {
     "total": 28,
-    "success": 26,
-    "failed": 1,
+    "success": 25,
+    "failed": 2,
     "skipped": 1
   }
 }
