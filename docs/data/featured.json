@@ -2,7 +2,16 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Norway's Olympic day: Klaebo sprints, Bodø/Glimt shocks Europe"
+      "text": "Norway's biggest Champions League night — Bodø/Glimt host Inter Milan"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Bodo/Glimt",
+      "awayTeam": "Internazionale"
+    },
+    {
+      "type": "narrative",
+      "text": "A landmark moment for Norwegian football. Bodø/Glimt — from the Arctic circle to the Champions League last 16. Inter Milan arrive as heavy favourites, but Aspmyra has its own magic."
     },
     {
       "type": "event-schedule",
@@ -10,18 +19,19 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Olympics today",
-      "maxItems": 4,
+      "label": "🏅 Olympics today — Norway chasing gold",
+      "maxItems": 2,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "narrative",
-      "text": "Klaebo in the Team Sprint Free at 09:45, then Kirkeeide and Tandrevold anchor the biathlon relay at 14:45 — Norway are favourites in both. A historic medals double is on."
-    },
-    {
-      "type": "event-line",
-      "text": "⚽ 21:00 — Bodø/Glimt host Internazionale in a historic UCL first leg at Aspmyra"
+      "type": "event-group",
+      "label": "⚽ Champions League tonight",
+      "items": [
+        "⚽ 18:45 — Newcastle United at FK Qarabag, UCL last-16 first leg",
+        "⚽ 21:00 — Atlético Madrid at Club Brugge, UCL last-16 first leg",
+        "⚽ 21:00 — Bayer Leverkusen at Olympiacos, UCL first leg"
+      ]
     },
     {
       "type": "match-preview",
@@ -31,16 +41,7 @@
     },
     {
       "type": "narrative",
-      "text": "Arsenal lead the PL by 4 points with 57pts. A slip at Molineux hands City a lifeline — Wolves are fighting relegation and have nothing to lose."
-    },
-    {
-      "type": "event-group",
-      "label": "⚽ Champions League — Wednesday first legs",
-      "items": [
-        "Newcastle United vs FK Qarabag — 18:45",
-        "Atlético Madrid vs Club Brugge — 21:00",
-        "Bayer Leverkusen vs Olympiacos — 21:00"
-      ]
+      "text": "Arsenal lead the Premier League by four points. A win at Molineux keeps the title charge on track — after Tuesday's drama (PSG comeback 3-2, Real Madrid past Benfica), the stakes across Europe are high."
     },
     {
       "type": "divider",
@@ -51,6 +52,6 @@
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T07:28:21.536Z",
+  "generatedAt": "2026-02-18T08:20:19.402Z",
   "provider": "claude-cli"
 }

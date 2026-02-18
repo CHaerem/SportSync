@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T07:28:23.047Z",
+  "generatedAt": "2026-02-18T08:20:20.948Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -119,13 +119,13 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 255804,
+    "totalDuration": 260315,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 123753,
+        "duration": 125664,
         "share": 48
       }
     ],
@@ -182,7 +182,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (124s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (126s) — optimization candidate"
     },
     {
       "severity": "info",

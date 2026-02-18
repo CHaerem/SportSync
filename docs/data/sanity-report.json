@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T07:28:23.006Z",
+  "generatedAt": "2026-02-18T08:20:20.894Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 49,
@@ -85,9 +85,14 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"21:00 — Bodø/Glimt host Internazionale in a historic UCL first leg at Aspmyra\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Arctic\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -102,14 +107,19 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Benfica\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 7,
     "critical": 0,
-    "warning": 4,
-    "info": 1
+    "warning": 7,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
