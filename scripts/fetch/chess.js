@@ -78,7 +78,7 @@ export class ChessFetcher extends BaseFetcher {
 				const info = tour.info || {};
 
 				const norwegianPlayers = this.findNorwegianPlayers(tour);
-				const isTopTier = (tour.tier || 0) >= 5;
+				const isTopTier = (tour.tier || 0) >= 4;
 
 				if (norwegianPlayers.length === 0 && !isTopTier) continue;
 
