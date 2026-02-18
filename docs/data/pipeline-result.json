@@ -1,9 +1,15 @@
 {
-  "startedAt": "2026-02-18T15:21:06.663Z",
-  "completedAt": "2026-02-18T15:25:38.736Z",
-  "duration": 272072,
+  "startedAt": "2026-02-18T16:23:53.934Z",
+  "completedAt": "2026-02-18T16:28:07.487Z",
+  "duration": 253553,
   "gate": "pass",
-  "quota": null,
+  "quota": {
+    "fiveHour": 84,
+    "sevenDay": 68,
+    "tier": 2,
+    "maxPriority": 1,
+    "model": "claude-sonnet-4-6"
+  },
   "phases": {
     "fetch": {
       "name": "fetch",
@@ -12,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 31672
+          "duration": 32433
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4506
+          "duration": 4322
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9068
+          "duration": 9012
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 453
+          "duration": 413
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 43206
+          "duration": 47942
         }
       ]
     },
@@ -43,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 199
+          "duration": 175
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 3491
+          "duration": 1041
         }
       ]
     },
@@ -58,8 +64,9 @@
       "steps": [
         {
           "name": "discover-events",
-          "status": "success",
-          "duration": 11865
+          "status": "skipped",
+          "duration": 0,
+          "reason": "quota tier 2 (max priority 1, step needs 3)"
         }
       ]
     },
@@ -70,17 +77,17 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 673
+          "duration": 617
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 6367
+          "duration": 5461
         },
         {
           "name": "enrich-events",
           "status": "success",
-          "duration": 120099
+          "duration": 116733
         }
       ]
     },
@@ -91,22 +98,23 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 16927
+          "duration": 17167
         },
         {
           "name": "generate-multiday",
-          "status": "success",
-          "duration": 146
+          "status": "skipped",
+          "duration": 0,
+          "reason": "quota tier 2 (max priority 1, step needs 2)"
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 179
+          "duration": 175
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 164
+          "duration": 167
         }
       ]
     },
@@ -117,7 +125,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 696
+          "duration": 627
         }
       ]
     },
@@ -128,39 +136,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 709
+          "duration": 752
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 756
+          "duration": 754
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 463
+          "duration": 344
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 957
+          "duration": 1134
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 569
+          "duration": 372
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60068,
+          "duration": 60074,
           "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
           "errorCategory": "network"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 565
+          "duration": 710
         }
       ]
     },
@@ -171,7 +179,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 300
+          "duration": 379
         }
       ]
     },
@@ -182,12 +190,12 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 3860
+          "duration": 1539
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 146
+          "duration": 175
         },
         {
           "name": "update-meta",
@@ -197,15 +205,15 @@
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 128
+          "duration": 133
         }
       ]
     }
   },
   "summary": {
     "total": 28,
-    "success": 27,
+    "success": 25,
     "failed": 1,
-    "skipped": 0
+    "skipped": 2
   }
 }
