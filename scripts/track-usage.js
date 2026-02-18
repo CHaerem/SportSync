@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { fetchJson, readJsonIfExists, writeJsonPretty, rootDataPath, iso, parseSessionUsage } from "./lib/helpers.js";
+import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, parseSessionUsage } from "./lib/helpers.js";
+import { probeQuota, parseRateLimitHeaders } from "./lib/quota-probe.js";
 
-const USAGE_API = "https://api.anthropic.com/api/oauth/usage";
 const TRACKING_FILE = "usage-tracking.json";
 const BEFORE_FILE = ".usage-before.json";
 const MS_PER_5H = 5 * 3_600_000;
@@ -121,23 +121,24 @@ export function shouldGate(runs, utilization, now = Date.now()) {
 
 // --- API helper ---
 
+/**
+ * Probe subscription utilization via a minimal API call.
+ * Reads real 5h/7d utilization from response headers.
+ * Returns { five_hour: { utilization }, seven_day: { utilization, resets_at } } or null.
+ */
 async function fetchUsage() {
 	const token = process.env.CLAUDE_CODE_OAUTH_TOKEN;
 	if (!token) return null;
 	try {
-		const data = await fetchJson(USAGE_API, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"anthropic-beta": "oauth-2025-04-20",
-			},
-		});
-		if (data?.error) {
-			console.error("Usage API error:", data.error.message || JSON.stringify(data.error));
-			return null;
-		}
-		return data;
+		const quota = await probeQuota(token);
+		if (!quota) return null;
+		// Normalize to the shape the rest of track-usage expects
+		return {
+			five_hour: { utilization: quota.fiveHour },
+			seven_day: { utilization: quota.sevenDay, resets_at: quota.sevenDayReset },
+		};
 	} catch (err) {
-		console.error("Failed to fetch usage:", err.message);
+		console.error("Quota probe failed:", err.message);
 		return null;
 	}
 }

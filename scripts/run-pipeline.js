@@ -12,6 +12,7 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { checkQuota as runQuotaProbe } from "./lib/quota-probe.js";
 
 const execAsync = promisify(execCb);
 
@@ -26,6 +27,10 @@ const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
 
 // Track whether event data is unchanged between runs
 let dataUnchanged = false;
+
+// Track whether subscription quota is constrained
+let quotaConstrained = false;
+let quotaStatus = null;
 
 /**
  * Compute MD5 hash of a file's contents.
@@ -78,6 +83,22 @@ export function checkDataUnchanged() {
 		}
 	} catch {
 		console.log("  Events data unchanged but featured.json missing — AI steps will run.");
+	}
+}
+
+/**
+ * Probe subscription quota and set the module-level constraint flag.
+ * Called before AI-heavy phases so the pipeline can skip expensive steps.
+ */
+export async function checkQuotaStatus() {
+	console.log("  Checking subscription quota...");
+	try {
+		const result = await runQuotaProbe();
+		quotaStatus = result.quota;
+		quotaConstrained = result.evaluation.constrained;
+	} catch (err) {
+		console.warn(`  Quota check failed: ${err.message} (permissive fallback)`);
+		quotaConstrained = false;
 	}
 }
 
@@ -155,6 +176,16 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 		};
 	}
 
+	// Check quota-constrained skip
+	if (step.skipOnHighUtilization && quotaConstrained) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "quota constrained",
+		};
+	}
+
 	// Check requirements
 	const { ok, missing } = checkRequirements(step.requires);
 	if (!ok) {
@@ -207,6 +238,16 @@ export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 			status: "skipped",
 			duration: 0,
 			reason: "data unchanged",
+		};
+	}
+
+	// Check quota-constrained skip
+	if (step.skipOnHighUtilization && quotaConstrained) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "quota constrained",
 		};
 	}
 
@@ -294,6 +335,12 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 			continue;
 		}
 
+		// Before first AI phase, probe subscription quota
+		if (phase.name === "discover") {
+			console.log("\n--- Quota check ---");
+			await checkQuotaStatus();
+		}
+
 		console.log(`\n=== Phase: ${phase.name} — ${phase.description} ===`);
 		const result = await runPhase(phase);
 		phases[phase.name] = result;
@@ -339,6 +386,11 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		completedAt: new Date().toISOString(),
 		duration: Date.now() - startMs,
 		gate: gateStatus,
+		quota: quotaStatus ? {
+			fiveHour: quotaStatus.fiveHour,
+			sevenDay: quotaStatus.sevenDay,
+			constrained: quotaConstrained,
+		} : null,
 		phases,
 		summary,
 	};
