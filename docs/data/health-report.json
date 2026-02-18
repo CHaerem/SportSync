@@ -1,15 +1,10 @@
 {
-  "generatedAt": "2026-02-18T12:49:29.039Z",
-  "eventCount": 49,
+  "generatedAt": "2026-02-18T13:01:00.145Z",
+  "eventCount": 42,
   "sportCoverage": {
     "olympics": {
       "count": 8,
       "previousCount": 8,
-      "delta": 0
-    },
-    "chess": {
-      "count": 7,
-      "previousCount": 7,
       "delta": 0
     },
     "football": {
@@ -32,6 +27,11 @@
       "previousCount": 1,
       "delta": 0
     },
+    "chess": {
+      "count": 0,
+      "previousCount": 7,
+      "delta": -7
+    },
     "esports": {
       "count": 0,
       "previousCount": 0,
@@ -45,7 +45,7 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 57,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.93,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -95,7 +95,7 @@
     "stale": false,
     "footballCount": 22,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.05,
+    "recapHeadlineRate": 0,
     "issues": []
   },
   "streamingHealth": {
@@ -119,25 +119,24 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 2,
-    "fiveHour": 83,
-    "sevenDay": 61,
+    "tier": 1,
+    "fiveHour": 27,
+    "sevenDay": 64,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
+    "stepsSkipped": 1,
     "skippedSteps": [
-      "discover-events",
-      "generate-multiday"
+      "discover-events"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 254834,
-    "stepCount": 25,
+    "totalDuration": 254314,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 120921,
-        "share": 47
+        "duration": 122420,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -146,15 +145,15 @@
   },
   "unmappedLeagues": [
     "Winter Olympics 2026",
-    "Azerbaijan Chess Championship 2026 | Men Semifinals",
-    "Isle of Wight Masters 2026",
-    "Romanian Championships 2026 | Open",
     "CS2 Major Tournaments 2026",
-    "šachy.cz Extraliga 2025/2026",
-    "German Women's Bundesliga 2025/26",
     "Formula 1 2025 - Race Weekend"
   ],
   "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "chess: 0 events (was 7)"
+    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -183,17 +182,17 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "8 tournament(s) lack league theming: Winter Olympics 2026, Azerbaijan Chess Championship 2026 | Men Semifinals, Isle of Wight Masters 2026, Romanian Championships 2026 | Open, CS2 Major Tournaments 2026, šachy.cz Extraliga 2025/2026, German Women's Bundesliga 2025/26, Formula 1 2025 - Race Weekend"
+      "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "warning",
-      "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 83%, 7d: 61%) — 2 step(s) skipped"
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 27%, 7d: 64%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (121s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (122s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -216,9 +215,9 @@
       "message": "olympics-2026.json: 1/8 events are in the past — consider pruning"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 92/100.",
+    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }
