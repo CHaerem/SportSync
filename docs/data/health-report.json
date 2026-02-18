@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T11:37:23.694Z",
+  "generatedAt": "2026-02-18T11:55:44.154Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -120,8 +120,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 58,
-    "sevenDay": 59,
+    "fiveHour": 69,
+    "sevenDay": 60,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
     "skippedSteps": [
@@ -129,13 +129,13 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 253353,
+    "totalDuration": 260975,
     "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 118360,
+        "duration": 122045,
         "share": 47
       }
     ],
@@ -187,12 +187,12 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 58%, 7d: 59%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 69%, 7d: 60%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (118s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -212,7 +212,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }

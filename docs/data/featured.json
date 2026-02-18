@@ -2,17 +2,11 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Norway's biggest Champions League night — Glimt host Inter Milan"
+      "text": "Bodø/Glimt host Inter Milan — Norway's greatest club night"
     },
     {
       "type": "narrative",
-      "text": "Bodø/Glimt step onto European football's biggest stage tonight at Aspmyra. Meanwhile, Norway's Olympic gold machine rolls on — Klaebo already in action this morning, biathlon relay this afternoon."
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt",
-      "showStandings": false
+      "text": "Bodø/Glimt face Internazionale at 21:00 in the Champions League Round of 16 first leg — the biggest match in Norwegian club history. Meanwhile, Klæbo chases gold at home Olympics this morning."
     },
     {
       "type": "event-schedule",
@@ -21,29 +15,30 @@
         "window": "today"
       },
       "label": "🏅 Olympics today",
-      "maxItems": 6,
+      "maxItems": 4,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "narrative",
-      "text": "Bad news from the slopes: Sweden took cross-country team sprint gold, Norway off the podium. The biathlon relay at 14:45 is now a must-win for Norwegian pride."
-    },
-    {
-      "type": "event-group",
-      "label": "⚽ Champions League tonight — 21:00",
-      "items": [
-        "⚽ Arsenal at Wolverhampton Wanderers — 21:00 (PL, title race)",
-        "⚽ Newcastle United at FK Qarabag — 18:45 (CL R16 first leg)",
-        "⚽ Atlético Madrid at Club Brugge — 21:00 (CL R16 first leg)",
-        "⚽ Bayer Leverkusen at Olympiacos — 21:00 (CL R16 first leg)"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt",
+      "showStandings": false
     },
     {
       "type": "match-preview",
       "homeTeam": "Arsenal",
       "awayTeam": "Wolverhampton Wanderers",
       "showStandings": true
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League — 21:00",
+      "items": [
+        "Atlético Madrid at Club Brugge — last-16 first leg, tactical battle expected",
+        "Bayer Leverkusen at Olympiacos — Xabi Alonso's side favourites away",
+        "Newcastle United at FK Qarabag — 18:45, Baku first leg shapes UCL campaign"
+      ]
     },
     {
       "type": "divider",
@@ -54,6 +49,6 @@
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T11:37:22.142Z",
+  "generatedAt": "2026-02-18T11:55:42.667Z",
   "provider": "claude-cli"
 }

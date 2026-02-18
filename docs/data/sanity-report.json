@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T11:37:23.678Z",
+  "generatedAt": "2026-02-18T11:55:44.156Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 49,
@@ -73,11 +73,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 9,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 89,
-    "issueCount": 10
+    "editorialScore": 92,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -88,12 +88,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Champions League Round\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -103,13 +98,13 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sweden\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 4,
     "critical": 0,
-    "warning": 5,
+    "warning": 4,
     "info": 0
   },
   "pass": true,
