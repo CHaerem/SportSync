@@ -7,17 +7,8 @@ on:
   schedule:
     - cron: "0 6-22 * * *"
 
-  # Allow manual trigger with runner selection
+  # Allow manual trigger
   workflow_dispatch:
-    inputs:
-      runner:
-        description: 'Runner type'
-        required: false
-        default: 'self-hosted'
-        type: choice
-        options:
-          - self-hosted
-          - ubuntu-latest
 
   # Run on pushes to main branch (for testing)
   push:
@@ -32,14 +23,12 @@ concurrency:
 
 jobs:
   update-data:
-    runs-on: ${{ inputs.runner == 'ubuntu-latest' && 'ubuntu-latest' || fromJSON('["self-hosted","linux","ARM64"]') }}
+    runs-on: [self-hosted, linux, ARM64]
     permissions:
       contents: write
       issues: write
 
     steps:
-      - uses: actions/checkout@v4
-
       - uses: ./.github/actions/setup
 
       - name: Create data directory
