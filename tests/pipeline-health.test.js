@@ -368,9 +368,12 @@ describe("snapshot health checks", () => {
 		expect(report.snapshotHealth.snapshotCount).toBe(15);
 	});
 
-	it("flags empty day snapshots as info", () => {
+	it("flags empty day snapshots within event range as info", () => {
 		const report = generateHealthReport({
-			events: [],
+			events: [
+				{ sport: "football", time: "2026-02-09T15:00:00Z" },
+				{ sport: "football", time: "2026-02-12T15:00:00Z" },
+			],
 			snapshotHealth: {
 				meta: {
 					generatedAt: new Date().toISOString(),
@@ -385,6 +388,25 @@ describe("snapshot health checks", () => {
 		expect(emptySnap).toBeDefined();
 		expect(emptySnap.severity).toBe("info");
 		expect(emptySnap.message).toContain("2");
+	});
+
+	it("does not flag boundary empty snapshots outside event range", () => {
+		const report = generateHealthReport({
+			events: [
+				{ sport: "football", time: "2026-02-15T15:00:00Z" },
+			],
+			snapshotHealth: {
+				meta: {
+					generatedAt: new Date().toISOString(),
+					snapshotCount: 15,
+					perDay: {},
+					emptyDays: ["2026-02-10", "2026-02-24"],
+				},
+			},
+		});
+
+		const emptySnap = report.issues.find(i => i.code === "empty_day_snapshot");
+		expect(emptySnap).toBeUndefined();
 	});
 
 	it("flags stale snapshots as warning", () => {

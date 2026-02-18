@@ -633,12 +633,21 @@ export function generateHealthReport(options = {}) {
 		snapshotHealth.present = true;
 		snapshotHealth.snapshotCount = snapMeta.snapshotCount || 0;
 
-		// Check for empty snapshots
+		// Check for empty snapshots — only flag dates that fall within the event calendar range
+		// (boundary dates before first event or after last event are expected to be empty)
 		const emptySnaps = Array.isArray(snapMeta.emptyDays) ? snapMeta.emptyDays : [];
 		if (emptySnaps.length > 0) {
-			const msg = `${emptySnaps.length} day snapshot(s) have 0 events and 0 results`;
-			snapshotHealth.issues.push(msg);
-			issues.push({ severity: "info", code: "empty_day_snapshot", message: msg });
+			const eventDates = events.filter(e => e.time).map(e => e.time.slice(0, 10)).sort();
+			const earliest = eventDates[0] || "";
+			const latest = eventDates[eventDates.length - 1] || "";
+			const anomalous = emptySnaps.filter(d => d >= earliest && d <= latest);
+			if (anomalous.length > 0) {
+				const msg = `${anomalous.length} day snapshot(s) within event range have 0 events and 0 results`;
+				snapshotHealth.issues.push(msg);
+				issues.push({ severity: "info", code: "empty_day_snapshot", message: msg });
+			} else if (emptySnaps.length > 0) {
+				snapshotHealth.issues.push(`${emptySnaps.length} boundary day snapshot(s) outside event range (expected)`);
+			}
 		}
 
 		// Check for stale snapshots (generatedAt > 4h old)
