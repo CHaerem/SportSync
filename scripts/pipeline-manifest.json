@@ -35,15 +35,15 @@
       "steps": [
         { "name": "build-events", "command": "npm run build:events", "errorPolicy": "continue" },
         { "name": "enrich-streaming", "command": "node scripts/enrich-streaming.js", "errorPolicy": "continue", "timeout": 90000 },
-        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
+        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true }
       ]
     },
     {
       "name": "generate",
       "description": "AI-powered content generation",
       "steps": [
-        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
-        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
+        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true },
+        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true },
         { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" },
         { "name": "generate-insights", "command": "node scripts/generate-insights.js", "errorPolicy": "continue" }
       ]

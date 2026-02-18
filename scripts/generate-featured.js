@@ -501,11 +501,13 @@ Remember:
 }
 
 async function generateWithClaudeCLI(systemPrompt, userPrompt) {
-	const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
-	const tmpFile = path.join(rootDataPath(), ".featured-prompt.tmp");
-	fs.writeFileSync(tmpFile, fullPrompt);
+	const dataDir = rootDataPath();
+	const sysFile = path.join(dataDir, ".featured-system.tmp");
+	const userFile = path.join(dataDir, ".featured-user.tmp");
+	fs.writeFileSync(sysFile, systemPrompt);
+	fs.writeFileSync(userFile, userPrompt);
 	try {
-		let cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 6`;
+		let cmd = `cat "${userFile}" | npx -y @anthropic-ai/claude-code@latest -p --system-prompt-file "${sysFile}" --output-format json --max-turns 6`;
 
 		// Wire MCP tools if .mcp.json exists
 		const mcpConfigPath = path.resolve(process.cwd(), ".mcp.json");
@@ -525,7 +527,8 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 		const parsed = parseCliJsonOutput(output);
 		return { content: parsed.result, usage: { ...parsed.usage, tracked: true, estimated: false } };
 	} finally {
-		try { fs.unlinkSync(tmpFile); } catch {}
+		try { fs.unlinkSync(sysFile); } catch {}
+		try { fs.unlinkSync(userFile); } catch {}
 	}
 }
 

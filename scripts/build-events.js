@@ -45,6 +45,7 @@ function pushEvent(ev, sport, tournament) {
 	if (ev.tags && ev.tags.length > 0) event.tags = ev.tags;
 	if (ev.norwegianRelevance != null) event.norwegianRelevance = ev.norwegianRelevance;
 	if (ev.enrichedAt) event.enrichedAt = ev.enrichedAt;
+	if (ev._enrichHash) event._enrichHash = ev._enrichHash;
 	all.push(event);
 }
 

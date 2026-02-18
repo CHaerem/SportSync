@@ -4,13 +4,14 @@
  * importance scores, summaries, tags, and Norwegian relevance ratings.
  *
  * Auth (checked in order):
- *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI / Opus 4.6 (Max subscription)
- *   2. ANTHROPIC_API_KEY — direct Anthropic API (Opus 4.6)
+ *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI / Sonnet 4.6 (Max subscription)
+ *   2. ANTHROPIC_API_KEY — direct Anthropic API (Sonnet 4.6)
  *   3. OPENAI_API_KEY — direct OpenAI API (gpt-4o-mini)
  */
 
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, parseCliJsonOutput } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
@@ -22,6 +23,26 @@ import {
 
 const BATCH_SIZE = 10;
 const CONFIG_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
+
+/**
+ * Compute a hash of the fields that affect enrichment output.
+ * When these fields haven't changed, re-enriching would produce identical results.
+ */
+export function computeEnrichHash(event) {
+	const relevant = {
+		sport: event.sport,
+		tournament: event.tournament,
+		title: event.title,
+		time: event.time,
+		venue: event.venue,
+		homeTeam: event.homeTeam,
+		awayTeam: event.awayTeam,
+		participants: (event.participants || []).map(p => typeof p === "string" ? p : p.name).sort(),
+		norwegianPlayers: (event.norwegianPlayers || []).map(p => typeof p === "string" ? p : p.name).sort(),
+		status: event.status,
+	};
+	return crypto.createHash("md5").update(JSON.stringify(relevant)).digest("hex");
+}
 
 /**
  * Builds adaptive hints for enrichment based on previous ai-quality.json metrics.
@@ -60,12 +81,14 @@ export function buildEnrichmentHints(qualityData) {
 }
 
 async function completeWithClaudeCLI(systemPrompt, userPrompt) {
-	const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
-	const tmpFile = path.join(rootDataPath(), ".enrich-prompt.tmp");
-	fs.writeFileSync(tmpFile, fullPrompt);
+	const dataDir = rootDataPath();
+	const sysFile = path.join(dataDir, ".enrich-system.tmp");
+	const userFile = path.join(dataDir, ".enrich-user.tmp");
+	fs.writeFileSync(sysFile, systemPrompt);
+	fs.writeFileSync(userFile, userPrompt);
 	try {
 		const output = execSync(
-			`cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json`,
+			`cat "${userFile}" | npx -y @anthropic-ai/claude-code@latest -p --model claude-sonnet-4-6 --system-prompt-file "${sysFile}" --output-format json`,
 			{ encoding: "utf-8", timeout: 120000, maxBuffer: 2 * 1024 * 1024 }
 		);
 		const parsed = parseCliJsonOutput(output);
@@ -80,7 +103,8 @@ async function completeWithClaudeCLI(systemPrompt, userPrompt) {
 		}
 		return { content, usage: { ...parsed.usage, tracked: true, estimated: false } };
 	} finally {
-		try { fs.unlinkSync(tmpFile); } catch {}
+		try { fs.unlinkSync(sysFile); } catch {}
+		try { fs.unlinkSync(userFile); } catch {}
 	}
 }
 
@@ -107,7 +131,7 @@ async function main() {
 			"No LLM available (CLAUDE_CODE_OAUTH_TOKEN, ANTHROPIC_API_KEY, or OPENAI_API_KEY). Applying deterministic enrichment fallback."
 		);
 	} else {
-		console.log(`Using ${useClaudeCLI ? "Claude CLI (Opus 4.6 via Max subscription)" : llm.getProviderName()} for enrichment.`);
+		console.log(`Using ${useClaudeCLI ? "Claude CLI (Sonnet 4.6 via Max subscription)" : llm.getProviderName()} for enrichment.`);
 	}
 
 	// 3. Read user context and build system prompt
@@ -131,11 +155,19 @@ async function main() {
 	let totalCostUSD = 0;
 	let totalCalls = 0;
 
-	// Filter to only events needing enrichment (skip already-enriched)
-	const needsEnrichment = events.filter(e => !e.enrichedAt);
-	const alreadyEnriched = events.length - needsEnrichment.length;
-	if (alreadyEnriched > 0) {
-		console.log(`Skipping ${alreadyEnriched} already-enriched events.`);
+	// Filter to only events needing enrichment (skip already-enriched AND unchanged)
+	const needsEnrichment = events.filter(e => {
+		if (!e.enrichedAt) return true;
+		// Re-enrich if content has changed since last enrichment
+		if (e._enrichHash && e._enrichHash === computeEnrichHash(e)) return false;
+		// No hash stored yet — skip (was enriched before hashing was added)
+		if (!e._enrichHash) return false;
+		return true; // hash mismatch → content changed
+	});
+	const skippedUnchanged = events.filter(e => e.enrichedAt && (!e._enrichHash || e._enrichHash === computeEnrichHash(e))).length;
+	const totalSkipped = events.length - needsEnrichment.length;
+	if (totalSkipped > 0) {
+		console.log(`Skipping ${totalSkipped} events (${skippedUnchanged} unchanged, ${totalSkipped - skippedUnchanged} already-enriched).`);
 	}
 
 	if (llmAvailable && needsEnrichment.length > 0) {
@@ -196,6 +228,7 @@ async function main() {
 					}
 
 					event.enrichedAt = new Date().toISOString();
+					event._enrichHash = computeEnrichHash(event);
 					enrichedCount++;
 				}
 			} catch (err) {
@@ -214,11 +247,13 @@ async function main() {
 		? { input: totalInput, output: totalOutput, calls: totalCalls, total: totalInput + totalOutput, costUSD: totalCostUSD, tracked: true, estimated: false }
 		: llm.getUsage();
 
+	const totalTokens = tokenUsage.total || (tokenUsage.input + tokenUsage.output) || 0;
 	writeJsonPretty(qualityPath, {
 		...existingQuality,
 		generatedAt: new Date().toISOString(),
 		enrichment: {
 			provider: providerName,
+			model: useClaudeCLI ? "claude-sonnet-4-6" : (llm?.config?.model || "unknown"),
 			before: quality.before,
 			after: quality.after,
 			score: quality.score,
@@ -228,6 +263,13 @@ async function main() {
 			aiUpdatedFields: enrichedCount,
 			failedBatches,
 			totalEvents: events.length,
+			skipStats: {
+				total: events.length,
+				unchanged: skippedUnchanged,
+				enriched: needsEnrichment.length,
+				skipRate: events.length > 0 ? Math.round((1 - needsEnrichment.length / events.length) * 100) / 100 : 0,
+			},
+			tokensPerEvent: enrichedCount > 0 ? Math.round(totalTokens / enrichedCount) : 0,
 			hintsApplied: enrichmentHints,
 			tokenUsage,
 		},

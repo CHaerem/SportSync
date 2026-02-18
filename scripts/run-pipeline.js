@@ -8,6 +8,7 @@
 
 import { execSync, exec as execCb } from "child_process";
 import { promisify } from "util";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,7 +21,65 @@ const DATA_DIR = path.join(ROOT, "docs", "data");
 const MANIFEST_PATH = path.join(__dirname, "pipeline-manifest.json");
 const RESULT_PATH = path.join(DATA_DIR, "pipeline-result.json");
 
+const PIPELINE_HASH_PATH = path.join(DATA_DIR, ".pipeline-hash.json");
 const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
+
+// Track whether event data is unchanged between runs
+let dataUnchanged = false;
+
+/**
+ * Compute MD5 hash of a file's contents.
+ */
+function hashFile(filePath) {
+	try {
+		const content = fs.readFileSync(filePath);
+		return crypto.createHash("md5").update(content).digest("hex");
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Check if events.json has changed since last pipeline run.
+ * Also checks if featured.json exists and is recent (< 2h old).
+ * Sets the module-level `dataUnchanged` flag.
+ */
+export function checkDataUnchanged() {
+	const eventsPath = path.join(DATA_DIR, "events.json");
+	const featuredPath = path.join(DATA_DIR, "featured.json");
+	const currentHash = hashFile(eventsPath);
+	if (!currentHash) return; // no events.json yet
+
+	let previousHash = null;
+	try {
+		const stored = JSON.parse(fs.readFileSync(PIPELINE_HASH_PATH, "utf-8"));
+		previousHash = stored.eventsHash;
+	} catch {}
+
+	// Write new hash
+	fs.mkdirSync(DATA_DIR, { recursive: true });
+	fs.writeFileSync(PIPELINE_HASH_PATH, JSON.stringify({ eventsHash: currentHash, updatedAt: new Date().toISOString() }));
+
+	if (currentHash !== previousHash) {
+		console.log("  Events data changed — AI steps will run.");
+		return;
+	}
+
+	// Check if featured.json is fresh (< 2h old)
+	try {
+		const stat = fs.statSync(featuredPath);
+		const ageMs = Date.now() - stat.mtimeMs;
+		const twoHours = 2 * 60 * 60 * 1000;
+		if (ageMs < twoHours) {
+			dataUnchanged = true;
+			console.log(`  Events data unchanged and featured.json is ${Math.round(ageMs / 60000)}min old — AI steps will be skipped.`);
+		} else {
+			console.log("  Events data unchanged but featured.json is stale — AI steps will run.");
+		}
+	} catch {
+		console.log("  Events data unchanged but featured.json missing — AI steps will run.");
+	}
+}
 
 /**
  * Categorize an error message for pattern detection by the autopilot.
@@ -86,6 +145,16 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 	const start = Date.now();
 	const stepTimeout = step.timeout || timeout;
 
+	// Check data-unchanged skip
+	if (step.skipIfDataUnchanged && dataUnchanged) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "data unchanged",
+		};
+	}
+
 	// Check requirements
 	const { ok, missing } = checkRequirements(step.requires);
 	if (!ok) {
@@ -130,6 +199,16 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 	const start = Date.now();
 	const stepTimeout = step.timeout || timeout;
+
+	// Check data-unchanged skip
+	if (step.skipIfDataUnchanged && dataUnchanged) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "data unchanged",
+		};
+	}
 
 	const { ok, missing } = checkRequirements(step.requires);
 	if (!ok) {
@@ -218,6 +297,11 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		console.log(`\n=== Phase: ${phase.name} — ${phase.description} ===`);
 		const result = await runPhase(phase);
 		phases[phase.name] = result;
+
+		// After build phase, check if event data changed to gate AI steps
+		if (phase.name === "build") {
+			checkDataUnchanged();
+		}
 
 		// Log step outcomes
 		for (const step of result.steps) {

@@ -7,7 +7,7 @@
 const PROVIDERS = {
 	anthropic: {
 		url: "https://api.anthropic.com/v1/messages",
-		model: process.env.ANTHROPIC_MODEL || "claude-opus-4-6",
+		model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
 		envKey: "ANTHROPIC_API_KEY",
 		buildRequest(apiKey, systemPrompt, userPrompt) {
 			return {
