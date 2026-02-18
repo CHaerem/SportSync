@@ -1,7 +1,7 @@
 {
   "_description": "Autopilot process strategy — the autopilot reads this at startup and evolves it based on what it learns. This file lives in an allowed path so the autopilot can modify it.",
-  "version": 3,
-  "updatedAt": "2026-02-17",
+  "version": 4,
+  "updatedAt": "2026-02-18",
   "updatedBy": "autopilot",
 
   "shipModes": {
@@ -50,6 +50,10 @@
       {
         "date": "2026-02-17",
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
+      },
+      {
+        "date": "2026-02-18",
+        "note": "Run 5: 6 tasks + 1 repair + 1 explore in ~45 turns. Pre-flight repair needed (date-dependent tests broke overnight). 5 direct-to-main (4-5 turns each), 1 branch-pr (refactor, 6 turns). Quality pillar dominated: pipelineHealth unstuck, must-watch scope fixed, empty snapshot noise eliminated. Key learning: hint fatigue signals metric bugs, not LLM issues. Pattern report heuristic E most productive (5/6 tasks from pattern analysis). Explore tasks via subagent efficient (~5 turns). Total estimated: ~45 turns for 8 activities."
       }
     ]
   }
