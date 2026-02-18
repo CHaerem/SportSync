@@ -1,6 +1,11 @@
 {
   "version": 1,
   "description": "SportSync data pipeline — autopilot can add/remove/reorder steps by editing this file",
+  "quotaPriorities": {
+    "1": "essential — runs unless tier 3 (critical)",
+    "2": "important — skipped at tier 2+ (high utilization)",
+    "3": "nice-to-have — skipped at tier 1+ (moderate utilization)"
+  },
   "phases": [
     {
       "name": "fetch",
@@ -26,7 +31,7 @@
       "name": "discover",
       "description": "LLM-powered event discovery",
       "steps": [
-        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipOnHighUtilization": true }
+        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3 }
       ]
     },
     {
@@ -35,15 +40,15 @@
       "steps": [
         { "name": "build-events", "command": "npm run build:events", "errorPolicy": "continue" },
         { "name": "enrich-streaming", "command": "node scripts/enrich-streaming.js", "errorPolicy": "continue", "timeout": 90000 },
-        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "skipOnHighUtilization": true }
+        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 }
       ]
     },
     {
       "name": "generate",
       "description": "AI-powered content generation",
       "steps": [
-        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "skipOnHighUtilization": true },
-        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "skipOnHighUtilization": true },
+        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 },
+        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2 },
         { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" },
         { "name": "generate-insights", "command": "node scripts/generate-insights.js", "errorPolicy": "continue" }
       ]

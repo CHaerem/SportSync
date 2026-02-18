@@ -28,8 +28,10 @@ const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
 // Track whether event data is unchanged between runs
 let dataUnchanged = false;
 
-// Track whether subscription quota is constrained
-let quotaConstrained = false;
+// Track subscription quota tier (0=green, 1=moderate, 2=high, 3=critical)
+let quotaTier = 0;
+let quotaMaxPriority = 3; // max step priority allowed (3=all, 0=none)
+let quotaModel = null;    // model override (null=use default)
 let quotaStatus = null;
 
 /**
@@ -95,10 +97,20 @@ export async function checkQuotaStatus() {
 	try {
 		const result = await runQuotaProbe();
 		quotaStatus = result.quota;
-		quotaConstrained = result.evaluation.constrained;
+		quotaTier = result.evaluation.tier;
+		quotaMaxPriority = result.evaluation.maxPriority;
+		quotaModel = result.evaluation.model;
+
+		// Set env vars so child processes can read the tier and adapt
+		process.env.SPORTSYNC_QUOTA_TIER = String(quotaTier);
+		if (quotaModel) {
+			process.env.SPORTSYNC_QUOTA_MODEL = quotaModel;
+		}
 	} catch (err) {
 		console.warn(`  Quota check failed: ${err.message} (permissive fallback)`);
-		quotaConstrained = false;
+		quotaTier = 0;
+		quotaMaxPriority = 3;
+		quotaModel = null;
 	}
 }
 
@@ -176,13 +188,14 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 		};
 	}
 
-	// Check quota-constrained skip
-	if (step.skipOnHighUtilization && quotaConstrained) {
+	// Check quota tier — skip if step priority exceeds what the current tier allows
+	const stepPriority = step.quotaPriority || (step.skipOnHighUtilization ? 2 : 0);
+	if (stepPriority > 0 && stepPriority > quotaMaxPriority) {
 		return {
 			name: step.name,
 			status: "skipped",
 			duration: 0,
-			reason: "quota constrained",
+			reason: `quota tier ${quotaTier} (max priority ${quotaMaxPriority}, step needs ${stepPriority})`,
 		};
 	}
 
@@ -241,13 +254,14 @@ export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 		};
 	}
 
-	// Check quota-constrained skip
-	if (step.skipOnHighUtilization && quotaConstrained) {
+	// Check quota tier — skip if step priority exceeds what the current tier allows
+	const stepPriority = step.quotaPriority || (step.skipOnHighUtilization ? 2 : 0);
+	if (stepPriority > 0 && stepPriority > quotaMaxPriority) {
 		return {
 			name: step.name,
 			status: "skipped",
 			duration: 0,
-			reason: "quota constrained",
+			reason: `quota tier ${quotaTier} (max priority ${quotaMaxPriority}, step needs ${stepPriority})`,
 		};
 	}
 
@@ -389,7 +403,9 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		quota: quotaStatus ? {
 			fiveHour: quotaStatus.fiveHour,
 			sevenDay: quotaStatus.sevenDay,
-			constrained: quotaConstrained,
+			tier: quotaTier,
+			maxPriority: quotaMaxPriority,
+			model: quotaModel,
 		} : null,
 		phases,
 		summary,

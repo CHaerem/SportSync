@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseRateLimitHeaders, evaluateQuota, THRESHOLD_5H, THRESHOLD_7D } from "../scripts/lib/quota-probe.js";
+import { parseRateLimitHeaders, evaluateQuota, TIERS } from "../scripts/lib/quota-probe.js";
 
 describe("parseRateLimitHeaders", () => {
 	it("parses both 5h and 7d utilization (converts ratio to percentage)", () => {
@@ -31,8 +31,7 @@ describe("parseRateLimitHeaders", () => {
 	});
 
 	it("returns null when no rate limit headers present", () => {
-		const headers = { "content-type": "application/json" };
-		expect(parseRateLimitHeaders(headers)).toBeNull();
+		expect(parseRateLimitHeaders({ "content-type": "application/json" })).toBeNull();
 	});
 
 	it("returns null for null headers", () => {
@@ -77,70 +76,115 @@ describe("parseRateLimitHeaders", () => {
 	});
 });
 
-describe("evaluateQuota", () => {
-	it("returns unconstrained when both are below threshold", () => {
-		const result = evaluateQuota({ fiveHour: 40, sevenDay: 50 });
-		expect(result.constrained).toBe(false);
-		expect(result.reason).toBe("ok");
-	});
-
-	it("constrains when 5h exceeds threshold", () => {
-		const result = evaluateQuota({ fiveHour: THRESHOLD_5H + 1, sevenDay: 10 });
-		expect(result.constrained).toBe(true);
-		expect(result.reason).toContain("5h");
-		expect(result.reason).toContain(`${THRESHOLD_5H + 1}%`);
-	});
-
-	it("constrains when 7d exceeds threshold", () => {
-		const result = evaluateQuota({ fiveHour: 10, sevenDay: THRESHOLD_7D + 1 });
-		expect(result.constrained).toBe(true);
-		expect(result.reason).toContain("7d");
-	});
-
-	it("does not constrain at exactly threshold", () => {
-		const result = evaluateQuota({ fiveHour: THRESHOLD_5H, sevenDay: THRESHOLD_7D });
+describe("evaluateQuota — tiered response", () => {
+	it("returns tier 0 (green) when both utilizations are low", () => {
+		const result = evaluateQuota({ fiveHour: 20, sevenDay: 30 });
+		expect(result.tier).toBe(0);
+		expect(result.tierName).toBe("green");
+		expect(result.maxPriority).toBe(3);
+		expect(result.model).toBeNull();
 		expect(result.constrained).toBe(false);
 	});
 
-	it("returns unconstrained for null quota (permissive fallback)", () => {
+	it("returns tier 1 (moderate) when utilization exceeds 50%", () => {
+		const result = evaluateQuota({ fiveHour: 55, sevenDay: 40 });
+		expect(result.tier).toBe(1);
+		expect(result.tierName).toBe("moderate");
+		expect(result.maxPriority).toBe(2);
+		expect(result.model).toBe("claude-sonnet-4-6");
+		expect(result.constrained).toBe(true);
+	});
+
+	it("returns tier 1 when 7d exceeds 50% (even if 5h is low)", () => {
+		const result = evaluateQuota({ fiveHour: 20, sevenDay: 55 });
+		expect(result.tier).toBe(1);
+		expect(result.tierName).toBe("moderate");
+	});
+
+	it("returns tier 2 (high) when utilization exceeds 70%", () => {
+		const result = evaluateQuota({ fiveHour: 75, sevenDay: 60 });
+		expect(result.tier).toBe(2);
+		expect(result.tierName).toBe("high");
+		expect(result.maxPriority).toBe(1);
+		expect(result.model).toBe("claude-sonnet-4-6");
+	});
+
+	it("returns tier 3 (critical) when utilization exceeds 85%", () => {
+		const result = evaluateQuota({ fiveHour: 90, sevenDay: 60 });
+		expect(result.tier).toBe(3);
+		expect(result.tierName).toBe("critical");
+		expect(result.maxPriority).toBe(0);
+		expect(result.constrained).toBe(true);
+	});
+
+	it("returns tier 3 when 7d exceeds 85%", () => {
+		const result = evaluateQuota({ fiveHour: 30, sevenDay: 90 });
+		expect(result.tier).toBe(3);
+		expect(result.tierName).toBe("critical");
+	});
+
+	it("returns tier 0 for null quota (permissive fallback)", () => {
 		const result = evaluateQuota(null);
+		expect(result.tier).toBe(0);
 		expect(result.constrained).toBe(false);
 		expect(result.reason).toContain("permissive");
 	});
 
-	it("handles null fiveHour gracefully", () => {
+	it("uses the HIGHER of 5h and 7d to determine tier", () => {
+		// 5h is low (20%) but 7d is high (75%) → tier 2
+		const result = evaluateQuota({ fiveHour: 20, sevenDay: 75 });
+		expect(result.tier).toBe(2);
+	});
+
+	it("handles exactly-at-boundary: 50% is still green", () => {
+		const result = evaluateQuota({ fiveHour: 50, sevenDay: 50 });
+		expect(result.tier).toBe(0);
+		expect(result.tierName).toBe("green");
+	});
+
+	it("handles exactly-at-boundary: 70% is moderate", () => {
+		const result = evaluateQuota({ fiveHour: 70, sevenDay: 70 });
+		expect(result.tier).toBe(1);
+		expect(result.tierName).toBe("moderate");
+	});
+
+	it("handles exactly-at-boundary: 85% is high", () => {
+		const result = evaluateQuota({ fiveHour: 85, sevenDay: 85 });
+		expect(result.tier).toBe(2);
+		expect(result.tierName).toBe("high");
+	});
+
+	it("handles null fiveHour (treats as 0)", () => {
 		const result = evaluateQuota({ fiveHour: null, sevenDay: 30 });
-		expect(result.constrained).toBe(false);
+		expect(result.tier).toBe(0);
 	});
 
-	it("handles null sevenDay gracefully", () => {
+	it("handles null sevenDay (treats as 0)", () => {
 		const result = evaluateQuota({ fiveHour: 30, sevenDay: null });
-		expect(result.constrained).toBe(false);
+		expect(result.tier).toBe(0);
 	});
 
-	it("5h check takes priority over 7d when both exceed", () => {
-		const result = evaluateQuota({ fiveHour: 95, sevenDay: 95 });
-		expect(result.constrained).toBe(true);
-		expect(result.reason).toContain("5h");
-	});
-
-	it("constrains at 100%", () => {
+	it("at 100% both windows, returns critical", () => {
 		const result = evaluateQuota({ fiveHour: 100, sevenDay: 100 });
-		expect(result.constrained).toBe(true);
-	});
-
-	it("does not constrain at 0%", () => {
-		const result = evaluateQuota({ fiveHour: 0, sevenDay: 0 });
-		expect(result.constrained).toBe(false);
+		expect(result.tier).toBe(3);
+		expect(result.tierName).toBe("critical");
 	});
 });
 
-describe("thresholds", () => {
-	it("5h threshold is 80%", () => {
-		expect(THRESHOLD_5H).toBe(80);
+describe("TIERS config", () => {
+	it("has 4 tiers", () => {
+		expect(TIERS).toHaveLength(4);
 	});
 
-	it("7d threshold is 80%", () => {
-		expect(THRESHOLD_7D).toBe(80);
+	it("tier ceilings are monotonically increasing", () => {
+		for (let i = 0; i < TIERS.length - 1; i++) {
+			expect(TIERS[i].ceiling5h).toBeLessThan(TIERS[i + 1].ceiling5h);
+		}
+	});
+
+	it("max priorities are monotonically decreasing", () => {
+		for (let i = 0; i < TIERS.length - 1; i++) {
+			expect(TIERS[i].maxPriority).toBeGreaterThan(TIERS[i + 1].maxPriority);
+		}
 	});
 });
