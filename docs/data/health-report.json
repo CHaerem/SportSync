@@ -1,12 +1,7 @@
 {
-  "generatedAt": "2026-02-18T20:17:47.157Z",
-  "eventCount": 35,
+  "generatedAt": "2026-02-18T21:18:25.644Z",
+  "eventCount": 34,
   "sportCoverage": {
-    "olympics": {
-      "count": 7,
-      "previousCount": 7,
-      "delta": 0
-    },
     "golf": {
       "count": 2,
       "previousCount": 2,
@@ -17,10 +12,15 @@
       "previousCount": 1,
       "delta": 0
     },
+    "olympics": {
+      "count": 6,
+      "previousCount": 7,
+      "delta": -1
+    },
     "football": {
       "count": 24,
-      "previousCount": 28,
-      "delta": -4
+      "previousCount": 24,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 17,
+    "footballCount": 18,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -103,7 +103,7 @@
     "tvkampenReachable": true,
     "matchRate": 0,
     "eventsEnriched": 0,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 4,
+    "fiveHour": 6,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -135,14 +135,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 237085,
+    "totalDuration": 229382,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 101316,
-        "share": 43
+        "duration": 97299,
+        "share": 42
       }
     ],
     "failedSteps": [
@@ -150,8 +150,8 @@
     ]
   },
   "unmappedLeagues": [
-    "Winter Olympics 2026",
     "CS2 Major Tournaments 2026",
+    "Winter Olympics 2026",
     "Formula 1 2025 - Race Weekend"
   ],
   "issues": [
@@ -176,11 +176,6 @@
       "message": "Streaming enrichment match rate is 0% (0/24) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 14% → 11% → 0%"
-    },
-    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -188,17 +183,17 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
+      "message": "3 tournament(s) lack league theming: CS2 Major Tournaments 2026, Winter Olympics 2026, Formula 1 2025 - Race Weekend"
     },
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 4%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 6%, 7d: 69%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 43% of total pipeline time (101s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 42% of total pipeline time (97s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -214,16 +209,11 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
-    },
-    {
-      "severity": "info",
-      "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/7 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

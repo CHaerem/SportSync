@@ -2,22 +2,31 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Norway's women hunt Olympic relay gold in Anterselva today"
+      "text": "Olympics closing sprint: Norway's golden week begins tomorrow"
+    },
+    {
+      "type": "narrative",
+      "text": "Milano-Cortina enters its final stretch with Norway poised for a medal haul. Klaebo, Laegreid, Kirkeeide — the biggest names, the biggest events, starting Thursday."
     },
     {
       "type": "event-schedule",
       "filter": {
         "sport": "olympics",
-        "window": "today"
+        "window": "week"
       },
-      "label": "🏅 Olympics today",
+      "label": "🏅 Olympics this week",
       "maxItems": 6,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "narrative",
-      "text": "Kirkeeide and Tandrevold anchor Norway's relay charge at 14:45 — the last biathlon gold of these Games before the closing ceremony Sunday. After Newcastle's 6-1 demolition of Qarabag in the Champions League today, attention turns fully to the mountains."
+      "type": "match-result",
+      "homeTeam": "FK Qarabag",
+      "awayTeam": "Newcastle United"
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga"
     },
     {
       "type": "divider",
@@ -25,24 +34,18 @@
     },
     {
       "type": "event-group",
-      "label": "🏅 Olympics gold on the line",
+      "label": "⚽ Weekend football",
       "items": [
-        "Thu 10:00 — Nordic Combined Super Team final, Predazzo — Oftebro leads Norway",
-        "Fri 14:15 — Biathlon Men's 15km Mass Start — Laegreid, Christiansen & Uldal",
-        "Sat 11:00 — Cross-Country 50km Classic ★★★ — Klaebo vs the world",
-        "Sat 14:15 — Biathlon Women's Mass Start — Kirkeeide & Tandrevold again",
-        "Sun 10:00 — Cross-Country Women's 30km Classic — Norway's strongest discipline"
+        "Sat 16:00 — Leeds United at Aston Villa (PL, Villa chasing top 4)",
+        "Sat 21:00 — Newcastle United at Manchester City (PL, CL places on the line)",
+        "Sat 18:30 — Real Madrid at Osasuna (La Liga title race)"
       ]
     },
     {
-      "type": "golf-status",
-      "tournament": "pga"
-    },
-    {
-      "type": "narrative",
-      "text": "Hovland heads to Riviera for the Genesis Invitational Thursday — a signature PGA event and a chance to erase the memory of a T58 at Pebble Beach last week."
+      "type": "event-line",
+      "text": "🎮 Thu 10:00 — rain and Roman Imperium Cup V, CS2 regional action from Portugal"
     }
   ],
-  "generatedAt": "2026-02-18T20:17:45.463Z",
+  "generatedAt": "2026-02-18T21:18:24.179Z",
   "provider": "claude-cli"
 }
