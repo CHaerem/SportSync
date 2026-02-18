@@ -1,89 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T00:46:38.543Z",
-    "editorial": {
-      "score": 71,
-      "mustWatchCoverage": 0.25,
-      "sportDiversity": 0.667,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 1,
-      "avgScore": 114,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 9,
-      "warningCount": 9,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Girona\" but no matching athlete found in events data; Featured mentions \"Tricky\" but no matching athlete found in events data; Featured mentions \"Molineux\" but no matching athlete found in events data; Featured mentions \"Gunners\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Leeds United at Aston Villa\" but events.json has 16:00; Featured shows \"21:00\" for \"Villarreal at Levante\" but events.json has 20:00. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 118851,
-        "output": 2957,
-        "calls": 4,
-        "total": 121808,
-        "costUSD": 0.41749875000000003,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33038,
-        "output": 458,
-        "cacheCreation": 17827,
-        "cacheRead": 15208,
-        "total": 33496,
-        "costUSD": 0.13081074999999998,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 151889,
-        "output": 3415,
-        "calls": 5,
-        "total": 155304,
-        "costUSD": 0.5483095,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 77.286,
-      "mustWatchCoverage": 0.414,
-      "sportDiversity": 0.738,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T02:05:42.219Z",
     "editorial": {
       "score": 95,
@@ -7572,6 +7488,94 @@
       "sportDiversity": 0.771,
       "enrichmentScore": 100,
       "resultsScore": 81
+    }
+  },
+  {
+    "timestamp": "2026-02-18T13:09:04.510Z",
+    "editorial": {
+      "score": 92,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
+      "blockCount": 9
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 9,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 119,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"Champions League\" which may not match any event; Featured mentions \"Johannes Høsflot Klæbo\" but no matching athlete found in events data; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Glimt Inter Milan\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Game 2 – Azerbaijan Chess Championship 2026 | Men Semifinals\" but events.json has 12:15. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 136755,
+        "output": 3846,
+        "calls": 5,
+        "total": 140601,
+        "costUSD": 0.16683,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 31304,
+        "output": 547,
+        "cacheCreation": 13731,
+        "cacheRead": 17570,
+        "total": 31851,
+        "costUSD": 0.10888175,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 168059,
+        "output": 4393,
+        "calls": 6,
+        "total": 172452,
+        "costUSD": 0.27571175000000003,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 90.571,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.764,
+      "enrichmentScore": 100,
+      "resultsScore": 80.857
     }
   }
 ]

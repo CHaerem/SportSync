@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T13:00:58.449Z",
+  "generatedAt": "2026-02-18T13:09:04.503Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,29 +9,29 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 15828,
+    "blockCount": 9,
+    "generationMs": 19169,
     "tokenUsage": {
-      "input": 31358,
-      "output": 473,
-      "cacheCreation": 13785,
+      "input": 31304,
+      "output": 547,
+      "cacheCreation": 13731,
       "cacheRead": 17570,
-      "total": 31831,
-      "costUSD": 0.10714425,
+      "total": 31851,
+      "costUSD": 0.10888175,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 92,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.714
+      "tagsCoverage": 0.762
     },
     "after": {
       "totalEvents": 42,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 12,
+    "fallbackFieldsFilled": 10,
     "aiUpdatedFields": 42,
     "failedBatches": 0,
     "totalEvents": 42,
@@ -92,14 +92,14 @@
       "enriched": 42,
       "skipRate": 0
     },
-    "tokensPerEvent": 3349,
+    "tokensPerEvent": 3348,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 136755,
-      "output": 3915,
+      "output": 3846,
       "calls": 5,
-      "total": 140670,
-      "costUSD": 0.48640000000000005,
+      "total": 140601,
+      "costUSD": 0.16683,
       "tracked": true,
       "estimated": false
     }

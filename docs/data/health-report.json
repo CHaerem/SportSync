@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T13:01:00.145Z",
+  "generatedAt": "2026-02-18T13:09:06.074Z",
   "eventCount": 42,
   "sportCoverage": {
     "olympics": {
@@ -29,8 +29,8 @@
     },
     "chess": {
       "count": 0,
-      "previousCount": 7,
-      "delta": -7
+      "previousCount": 0,
+      "delta": null
     },
     "esports": {
       "count": 0,
@@ -150,9 +150,9 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "chess: 0 events (was 7)"
+      "severity": "info",
+      "code": "sport_zero_events",
+      "message": "chess: data file exists but 0 events in events.json"
     },
     {
       "severity": "info",
@@ -215,9 +215,9 @@
       "message": "olympics-2026.json: 1/8 events are in the past — consider pruning"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 95/100.",
+    "text": "Autonomy at 98% with 10/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }

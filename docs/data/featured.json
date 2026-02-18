@@ -2,11 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Klæbo gull, Bodø/Glimt mot Inter — Norge sin dag"
-    },
-    {
-      "type": "narrative",
-      "text": "Johannes Høsflot Klæbo lekte seg til gull nummer fem hjemme i Milano-Cortina. Nå venter Bodø/Glimt Inter Milan i Champions League — historisk kveld for norsk fotball."
+      "text": "Klaebo hunts gold, Glimt host Inter — Norway's biggest day in years"
     },
     {
       "type": "event-schedule",
@@ -14,14 +10,28 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 OL i dag",
+      "label": "🏅 Olympics today",
       "maxItems": 6,
       "showFlags": true,
       "style": "highlight"
     },
     {
-      "type": "event-line",
-      "text": "⚽ Champions League 21:00 — Bodø/Glimt vs Internazionale, historisk hjemmekamp"
+      "type": "narrative",
+      "text": "Two Olympic finals, one historic European night — Bodø/Glimt welcome Inter Milan to Aspmyra at 21:00 in what may be the most watched Norwegian club match ever played."
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Bodo/Glimt",
+      "awayTeam": "Internazionale",
+      "showStandings": false
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League — 21:00",
+      "items": [
+        "⚽ Atlético Madrid at Club Brugge — Simeone's side in form after Rayo humbling, expect defensive battle 21:00",
+        "⚽ Bayer Leverkusen at Olympiacos — Xabi's men heavy favourites in Greek trip 21:00"
+      ]
     },
     {
       "type": "match-preview",
@@ -30,13 +40,8 @@
       "showStandings": true
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League i kveld",
-      "items": [
-        "Newcastle United vs FK Qarabag — 21:00, round of 16 first leg",
-        "Atlético Madrid vs Club Brugge — 21:00, round of 16 first leg",
-        "Bayer Leverkusen vs Olympiacos — 21:00, round of 16 first leg"
-      ]
+      "type": "narrative",
+      "text": "Arsenal lead the table by 4 points and cannot afford slip-ups — Wolves are bottom and desperate. After Galatasaray's 5-2 demolition of Juventus last night, the UCL is delivering."
     },
     {
       "type": "divider",
@@ -47,6 +52,6 @@
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T12:49:27.364Z",
+  "generatedAt": "2026-02-18T13:09:04.485Z",
   "provider": "claude-cli"
 }
