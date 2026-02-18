@@ -239,7 +239,7 @@ describe("evaluatePipelineHealth()", () => {
 			generatedAt: new Date().toISOString(),
 			status: "warning",
 			issues: [
-				{ severity: "warning", code: "stale_data", message: "football.json: data is 400 minutes old" },
+				{ severity: "warning", code: "unknown_regression", message: "Something unexpected happened" },
 			],
 		});
 		const result = evaluatePipelineHealth(dataDir);
@@ -257,6 +257,12 @@ describe("evaluatePipelineHealth()", () => {
 				{ severity: "info", code: "quota_api_unavailable", message: "Quota API unavailable" },
 				{ severity: "warning", code: "sport_zero_events", message: "tennis: 0 events" },
 				{ severity: "warning", code: "sport_zero_events", message: "esports: 0 events" },
+				{ severity: "warning", code: "stale_data", message: "chess.json: stale" },
+				{ severity: "warning", code: "chronic_data_retention", message: "chess: retained" },
+				{ severity: "warning", code: "streaming_low_match_rate", message: "19% match rate" },
+				{ severity: "warning", code: "invisible_events", message: "1 chess event" },
+				{ severity: "warning", code: "low_confidence_config", message: "config low confidence" },
+				{ severity: "warning", code: "component_unresolvable", message: "missing component" },
 			],
 		});
 		const result = evaluatePipelineHealth(dataDir);

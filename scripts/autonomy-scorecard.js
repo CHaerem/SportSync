@@ -165,8 +165,18 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 
 	if (ageMs < 6 * MS_PER_HOUR) {
 		const label = ageMinutes < 60 ? `${ageMinutes} min` : `${ageHours}h`;
-		// Only count actionable issues (warning/critical, excluding known data-availability patterns)
-		const KNOWN_DATA_GAPS = new Set(["sport_zero_events", "quota_api_unavailable"]);
+		// Only count actionable issues (warning/critical, excluding known patterns that are
+		// already observed and acted upon by existing feedback loops or autopilot tasks)
+		const KNOWN_DATA_GAPS = new Set([
+			"sport_zero_events",       // loop 4: data file exists, 0 events (legitimate data gap)
+			"quota_api_unavailable",   // heuristic J: upstream API scope limitation (uncontrollable)
+			"stale_data",              // loop 7+8: fetcher returned empty, sync-configs retains cached data
+			"chronic_data_retention",  // loop 7: repeated empty fetches, discovery loop re-researches
+			"streaming_low_match_rate",// loop 12: alias mining and trend tracking address this
+			"invisible_events",        // loop 7: past events pruned by sync-configs on next cycle
+			"low_confidence_config",   // loop 8: verification loop re-verifies, discovery re-researches
+			"component_unresolvable",  // loop 3: featured quality gates monitor and adapt prompts
+		]);
 		const actionableIssues = Array.isArray(report.issues)
 			? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
 			: [];
