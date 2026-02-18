@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T14:18:34.447Z",
+  "generatedAt": "2026-02-18T14:22:02.941Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,29 +9,29 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 15192,
+    "blockCount": 9,
+    "generationMs": 14128,
     "tokenUsage": {
-      "input": 31311,
-      "output": 436,
-      "cacheCreation": 13738,
-      "cacheRead": 17570,
-      "total": 31747,
-      "costUSD": 0.10615050000000001,
+      "input": 30862,
+      "output": 556,
+      "cacheCreation": 15293,
+      "cacheRead": 15566,
+      "total": 31418,
+      "costUSD": 0.11765224999999999,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 92,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 117,
+      "avgScore": 123,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.81
+      "tagsCoverage": 0.69
     },
     "after": {
       "totalEvents": 42,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 8,
+    "fallbackFieldsFilled": 13,
     "aiUpdatedFields": 42,
     "failedBatches": 0,
     "totalEvents": 42,
@@ -92,14 +92,14 @@
       "enriched": 42,
       "skipRate": 0
     },
-    "tokensPerEvent": 3349,
+    "tokensPerEvent": 3302,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 136755,
-      "output": 3897,
+      "input": 134625,
+      "output": 4079,
       "calls": 5,
-      "total": 140652,
-      "costUSD": 0.16867,
+      "total": 138704,
+      "costUSD": 0.48843625,
       "tracked": true,
       "estimated": false
     }

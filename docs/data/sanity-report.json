@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T14:18:35.861Z",
+  "generatedAt": "2026-02-18T14:22:03.294Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 42,
@@ -66,10 +66,10 @@
         "Cross-Country Skiing — Team Sprint Free"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 9,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
+    "editorialScore": 92,
     "issueCount": 13
   },
   "findings": [
@@ -79,9 +79,29 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"21:00 — Bodø/Glimt host Internazionale — historic first Champions League home leg for Norwegian football\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -90,10 +110,10 @@
     }
   ],
   "summary": {
-    "total": 3,
+    "total": 7,
     "critical": 0,
-    "warning": 3,
-    "info": 0
+    "warning": 6,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

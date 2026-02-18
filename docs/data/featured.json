@@ -2,16 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodø/Glimt host Inter — Norwegian football's greatest night begins"
-    },
-    {
-      "type": "narrative",
-      "text": "Aspmyra hosts a Champions League knockout tie for the first time. Bodø/Glimt vs Internazionale, 21:00 — write this date down."
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Bodo/Glimt",
-      "awayTeam": "Internazionale"
+      "text": "Norway's biggest Olympic day — gold on snow and a Champions League miracle"
     },
     {
       "type": "event-schedule",
@@ -19,10 +10,27 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Olympics today",
+      "label": "🏅 Olympics today — Norway hunts gold",
       "maxItems": 6,
       "showFlags": true,
       "style": "highlight"
+    },
+    {
+      "type": "narrative",
+      "text": "Klæbo leads the team sprint charge at 09:45, then Kirkeeide and Tandrevold anchor the biathlon relay at 14:45. Two finals, two shots at gold — Norway's biggest Olympic day in Milano-Cortina."
+    },
+    {
+      "type": "event-line",
+      "text": "⚽ 21:00 — Bodø/Glimt host Internazionale — historic first Champions League home leg for Norwegian football"
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League — Tonight's ties",
+      "items": [
+        "Atlético Madrid at Club Brugge — 21:00, Simeone's men looking to bounce back after Rayo loss",
+        "Bayer Leverkusen at Olympiacos — 21:00, holders expected to advance from Athens",
+        "Newcastle United at FK Qarabag — 18:45, Magpies heavy favourites in UCL opener"
+      ]
     },
     {
       "type": "match-preview",
@@ -31,13 +39,8 @@
       "showStandings": true
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League tonight",
-      "items": [
-        "Newcastle United at FK Qarabag — 18:45",
-        "Atlético Madrid at Club Brugge — 21:00",
-        "Bayer Leverkusen at Olympiacos — 21:00"
-      ]
+      "type": "narrative",
+      "text": "Arsenal lead the PL by four points over City. A slip at Molineux on the same night as a Champions League distraction would hand the title race wide open."
     },
     {
       "type": "divider",
@@ -48,6 +51,6 @@
       "tournament": "pga"
     }
   ],
-  "generatedAt": "2026-02-18T14:18:34.431Z",
+  "generatedAt": "2026-02-18T14:22:02.937Z",
   "provider": "claude-cli"
 }
