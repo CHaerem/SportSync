@@ -786,6 +786,36 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
+	// 13. UX evaluation health
+	const { uxReport = null, uxHistory = null } = options;
+	const uxHealth = { present: false, score: null, trend: null, issues: 0 };
+	if (uxReport && typeof uxReport.score === "number") {
+		uxHealth.present = true;
+		uxHealth.score = uxReport.score;
+		uxHealth.issues = Array.isArray(uxReport.issues) ? uxReport.issues.length : 0;
+		// Compute trend from history
+		if (Array.isArray(uxHistory) && uxHistory.length >= 3) {
+			const recent = uxHistory.slice(-3).map((e) => e.score);
+			const allFalling = recent.every((s, i) => i === 0 || s < recent[i - 1]);
+			const allRising = recent.every((s, i) => i === 0 || s > recent[i - 1]);
+			uxHealth.trend = allFalling ? "declining" : allRising ? "improving" : "stable";
+		}
+		if (uxReport.score < 60) {
+			issues.push({
+				severity: "warning",
+				code: "ux_score_low",
+				message: `UX evaluation score is ${uxReport.score}/100 (below 60 threshold)`,
+			});
+		}
+		if (uxHealth.trend === "declining") {
+			issues.push({
+				severity: "warning",
+				code: "ux_score_declining",
+				message: "UX evaluation score is declining over 3+ runs",
+			});
+		}
+	}
+
 	// Pipeline timing anomaly detection
 	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
 
@@ -805,6 +835,7 @@ export function generateHealthReport(options = {}) {
 		resultsHealth,
 		streamingHealth,
 		snapshotHealth,
+		uxHealth,
 		quotaApiHealth,
 		quotaHealth,
 		pipelineTimingHealth,
@@ -898,6 +929,10 @@ async function main() {
 	// Read pipeline result for timing anomaly detection
 	const pipelineResult = readJsonIfExists(path.join(dataDir, "pipeline-result.json"));
 
+	// Read UX evaluation data
+	const uxReport = readJsonIfExists(path.join(dataDir, "ux-report.json"));
+	const uxHistory = readJsonIfExists(path.join(dataDir, "ux-history.json"));
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
@@ -914,6 +949,8 @@ async function main() {
 		streamingEnrichment,
 		streamingVerificationHistory,
 		pipelineResult,
+		uxReport,
+		uxHistory,
 	});
 
 	// Generate autonomy scorecard alongside health report

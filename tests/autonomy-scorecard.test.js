@@ -12,6 +12,7 @@ import {
 	evaluateEventDiscovery,
 	evaluateScheduleVerification,
 	evaluateResultsHealth,
+	evaluateUxQuality,
 	evaluateAutonomy,
 	trackTrend,
 	detectRegressions,
@@ -543,6 +544,71 @@ describe("evaluateResultsHealth()", () => {
 	});
 });
 
+// --- Loop 12: UX Quality ---
+
+describe("evaluateUxQuality()", () => {
+	it("scores 0 when no UX data exists", () => {
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("no UX report");
+	});
+
+	it("scores 0.33 when only fresh ux-report.json exists", () => {
+		writeJson(path.join(dataDir, "ux-report.json"), {
+			generatedAt: new Date().toISOString(),
+			score: 50,
+			tier: "dom",
+		});
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(0.33);
+		expect(result.details).toContain("UX report exists and is fresh");
+		expect(result.details).toContain("below 70 threshold");
+	});
+
+	it("scores 0.67 when report is fresh + score >= 70", () => {
+		writeJson(path.join(dataDir, "ux-report.json"), {
+			generatedAt: new Date().toISOString(),
+			score: 85,
+			tier: "dom",
+		});
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(0.67);
+		expect(result.details).toContain("passing");
+	});
+
+	it("scores 1.0 when report fresh + history trend-capable + score passing", () => {
+		writeJson(path.join(dataDir, "ux-report.json"), {
+			generatedAt: new Date().toISOString(),
+			score: 85,
+			tier: "dom",
+		});
+		writeJson(path.join(dataDir, "ux-history.json"), [
+			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
+			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
+			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
+		]);
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+	});
+
+	it("counts stale report as not fresh", () => {
+		const reportPath = path.join(dataDir, "ux-report.json");
+		writeJson(reportPath, {
+			generatedAt: "2026-01-01T00:00:00Z",
+			score: 90,
+			tier: "dom",
+		});
+		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
+		fs.utimesSync(reportPath, sevenHoursAgo, sevenHoursAgo);
+		const result = evaluateUxQuality(dataDir);
+		// Should have score from passing (0.34) but not freshness (0) and no history
+		expect(result.score).toBe(0.34);
+		expect(result.details).toContain("stale");
+	});
+});
+
 // --- Overall evaluation ---
 
 describe("evaluateAutonomy()", () => {
@@ -614,11 +680,18 @@ describe("evaluateAutonomy()", () => {
 				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
 			],
 		});
+		// Loop 12: UX Quality
+		writeJson(path.join(dataDir, "ux-report.json"), { generatedAt: new Date().toISOString(), score: 85, tier: "dom", metrics: {}, issues: [] });
+		writeJson(path.join(dataDir, "ux-history.json"), [
+			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
+			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
+			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
+		]);
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(11);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsClosed).toBe(12);
+		expect(report.loopsTotal).toBe(12);
 		expect(report.nextActions).toHaveLength(0);
 	});
 
@@ -630,18 +703,18 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/11 ≈ 0.18
-		expect(report.overallScore).toBeCloseTo(0.18, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/12 ≈ 0.17
+		expect(report.overallScore).toBeCloseTo(0.17, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsTotal).toBe(12);
 	});
 
 	it("generates nextActions for open loops", () => {
 		// Everything missing
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions.length).toBeGreaterThan(0);
-		// Should suggest actions for all 11 open loops
-		expect(report.nextActions.length).toBeGreaterThanOrEqual(10);
+		// Should suggest actions for all 12 open loops
+		expect(report.nextActions.length).toBeGreaterThanOrEqual(11);
 	});
 
 	it("generates no nextActions when all loops are closed", () => {
@@ -711,6 +784,13 @@ describe("evaluateAutonomy()", () => {
 				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
 			],
 		});
+		// Loop 12: UX Quality
+		writeJson(path.join(dataDir, "ux-report.json"), { generatedAt: new Date().toISOString(), score: 85, tier: "dom", metrics: {}, issues: [] });
+		writeJson(path.join(dataDir, "ux-history.json"), [
+			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
+			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
+			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
+		]);
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.nextActions).toHaveLength(0);
@@ -734,7 +814,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsTotal).toBe(12);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -744,6 +824,7 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.eventDiscovery.status).toBe("open");
 		expect(report.loops.scheduleVerification.status).toBe("open");
 		expect(report.loops.resultsHealth.status).toBe("open");
+		expect(report.loops.uxQuality.status).toBe("open");
 		expect(report.loops.streamingVerification.status).toBe("open");
 	});
 });

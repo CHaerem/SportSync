@@ -441,7 +441,52 @@ export function evaluateSnapshotHealth(dataDir = ROOT) {
 	return makeLoop(score, parts.join(", "));
 }
 
-// Loop 11: Streaming Verification
+// Loop 12: UX Quality
+// observe: ux-report.json -> decide: score threshold + trend -> act: autopilot repairs UI issues
+export function evaluateUxQuality(dataDir = ROOT) {
+	let score = 0;
+	const parts = [];
+
+	// 0.33 if ux-report.json exists and is fresh (< 6h)
+	const reportPath = path.join(dataDir, "ux-report.json");
+	const report = readJsonIfExists(reportPath);
+	const reportAge = fileAgeMsOrNull(reportPath);
+	if (report && reportAge !== null && reportAge < 6 * MS_PER_HOUR) {
+		score += 0.33;
+		parts.push("UX report exists and is fresh");
+	} else if (report) {
+		parts.push("UX report exists but is stale");
+	} else {
+		parts.push("no UX report");
+	}
+
+	// 0.33 if ux-history.json has >= 3 entries (trend-capable)
+	const historyPath = path.join(dataDir, "ux-history.json");
+	const history = readJsonIfExists(historyPath);
+	if (Array.isArray(history) && history.length >= 3) {
+		score += 0.33;
+		parts.push(`${history.length} history entries (trend-capable)`);
+	} else if (Array.isArray(history) && history.length > 0) {
+		parts.push(`only ${history.length} history entry/entries (need >= 3 for trend)`);
+	} else {
+		parts.push("no UX history");
+	}
+
+	// 0.34 if latest score >= 70 (passing quality threshold)
+	if (report && typeof report.score === "number" && report.score >= 70) {
+		score += 0.34;
+		parts.push(`score ${report.score}/100 (passing)`);
+	} else if (report && typeof report.score === "number") {
+		parts.push(`score ${report.score}/100 (below 70 threshold)`);
+	} else {
+		parts.push("no score data");
+	}
+
+	score = Math.round(score * 100) / 100;
+	return makeLoop(score, parts.join(", "));
+}
+
+// Loop 13: Streaming Verification
 // observe: streaming-verification-history.json -> decide: buildStreamingHints -> act: alias suggestions, trend analysis
 export function evaluateStreamingVerification(dataDir = ROOT) {
 	let score = 0;
@@ -593,6 +638,18 @@ function buildNextActions(loops) {
 		}
 	}
 
+	if (loops.uxQuality && loops.uxQuality.score < 1.0) {
+		if (loops.uxQuality.score < 0.33) {
+			actions.push("Run evaluate-ux.js to generate UX report");
+		}
+		if (loops.uxQuality.score < 0.66) {
+			actions.push("Run UX evaluation 3+ times to build trend data");
+		}
+		if (loops.uxQuality.score < 1.0) {
+			actions.push("Investigate UX issues to raise score above 70 threshold");
+		}
+	}
+
 	if (loops.streamingVerification && loops.streamingVerification.score < 1.0) {
 		if (loops.streamingVerification.score < 0.33) {
 			actions.push("Run enrich-streaming.js to generate streaming verification history");
@@ -620,6 +677,7 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
 		resultsHealth: evaluateResultsHealth(dataDir, scriptsDir),
 		snapshotHealth: evaluateSnapshotHealth(dataDir),
+		uxQuality: evaluateUxQuality(dataDir),
 		streamingVerification: evaluateStreamingVerification(dataDir),
 	};
 
