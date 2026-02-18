@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T17:29:45.225Z",
+  "generatedAt": "2026-02-18T18:22:13.871Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,29 +9,29 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 17300,
+    "blockCount": 10,
+    "generationMs": 16559,
     "tokenUsage": {
-      "input": 31222,
-      "output": 493,
-      "cacheCreation": 15724,
-      "cacheRead": 15495,
-      "total": 31715,
-      "costUSD": 0.11895049999999999,
+      "input": 31221,
+      "output": 564,
+      "cacheCreation": 13648,
+      "cacheRead": 17570,
+      "total": 31785,
+      "costUSD": 0.108628,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 92,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 123,
+      "avgScore": 125,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +66,14 @@
     "quotaTier": 1,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 42,
+      "totalEvents": 40,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.714
+      "tagsCoverage": 0.7
     },
     "after": {
-      "totalEvents": 42,
+      "totalEvents": 40,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 12,
-    "aiUpdatedFields": 42,
+    "aiUpdatedFields": 40,
     "failedBatches": 0,
-    "totalEvents": 42,
+    "totalEvents": 40,
     "skipStats": {
-      "total": 42,
+      "total": 40,
       "unchanged": 0,
-      "enriched": 42,
+      "enriched": 40,
       "skipRate": 0
     },
-    "tokensPerEvent": 3360,
+    "tokensPerEvent": 2860,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 136975,
-      "output": 4155,
-      "calls": 5,
-      "total": 141130,
-      "costUSD": 0.49729475,
+      "input": 110524,
+      "output": 3869,
+      "calls": 4,
+      "total": 114393,
+      "costUSD": 0.413453,
       "tracked": true,
       "estimated": false
     }

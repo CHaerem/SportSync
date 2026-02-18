@@ -2,7 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Klæbo, Glimt, og Arsenal — Norges store onsdag"
+      "text": "Bodø/Glimt make history — Norway takes on Inter tonight"
     },
     {
       "type": "event-schedule",
@@ -11,17 +11,23 @@
         "window": "today"
       },
       "label": "🏅 Olympics today",
-      "maxItems": 6,
+      "maxItems": 4,
       "showFlags": true,
       "style": "highlight"
     },
     {
       "type": "narrative",
-      "text": "To norske OL-finaler på én dag: Klæbo og lagkamerater jakter gull i sprint kl. 09:45, mens Kirkeeide og Tandrevold forsvarer Norges biatlon-ære i stafetten kl. 14:45."
+      "text": "Kirkeeide and Tandrevold are medal favourites in the women's biathlon relay — Norway's biggest gold chance of the day at Milano-Cortina."
     },
     {
-      "type": "event-line",
-      "text": "⚽ 21:00 — Bodø/Glimt vs Internazionale, Champions League Last 16 first leg — historisk kveld på Aspmyra"
+      "type": "match-preview",
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt",
+      "showStandings": false
+    },
+    {
+      "type": "narrative",
+      "text": "The most extraordinary fixture in Bodø/Glimt's history. Aspmyra hosts Serie A royalty — first leg, anything is possible."
     },
     {
       "type": "match-preview",
@@ -31,10 +37,10 @@
     },
     {
       "type": "event-group",
-      "label": "⚽ Champions League — 21:00",
+      "label": "⚽ Champions League — also tonight",
       "items": [
-        "Atlético Madrid at Club Brugge — Simeone's side still licking wounds after 3-0 loss to Rayo",
-        "Bayer Leverkusen at Olympiacos — Leverkusen heavy favourites"
+        "Atlético Madrid vs Club Brugge — 21:00, UCL last-16 first leg",
+        "Bayer Leverkusen vs Olympiacos — 21:00"
       ]
     },
     {
@@ -44,8 +50,19 @@
     {
       "type": "golf-status",
       "tournament": "pga"
+    },
+    {
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "week"
+      },
+      "label": "🏅 Olympics — medal days ahead",
+      "maxItems": 5,
+      "showFlags": true,
+      "style": "default"
     }
   ],
-  "generatedAt": "2026-02-18T17:29:45.207Z",
+  "generatedAt": "2026-02-18T18:22:13.855Z",
   "provider": "claude-cli"
 }
