@@ -515,9 +515,11 @@ function componentUtilization(blocks) {
 export function evaluateEditorialQuality(featured, events, options = {}) {
 	const blocks = Array.isArray(featured?.blocks) ? featured.blocks : [];
 	const todayEvents = filterFeaturedWindowEvents(events, options.now);
+	// Must-watch coverage uses today-only scope to match the editorial focus
+	const todayOnly = filterTodayOnlyEvents(events, options.now);
 
 	const metrics = {
-		mustWatchCoverage: roundRatio(mustWatchCoverage(blocks, todayEvents)),
+		mustWatchCoverage: roundRatio(mustWatchCoverage(blocks, todayOnly)),
 		sportDiversity: roundRatio(sportDiversity(blocks, todayEvents)),
 		blockTypeBalance: roundRatio(blockTypeBalance(blocks)),
 		textQuality: roundRatio(textQualityRatio(blocks)),
@@ -561,6 +563,15 @@ function filterFeaturedWindowEvents(events, now) {
 	const todayStart = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
 	const windowEnd = new Date(todayStart.getTime() + 3 * MS_PER_DAY);
 	return events.filter((e) => isEventInWindow(e, todayStart, windowEnd));
+}
+
+/** Filter to today-only events — matches the editorial scope of featured content */
+function filterTodayOnlyEvents(events, now) {
+	if (!Array.isArray(events)) return [];
+	const ref = now || new Date();
+	const todayStart = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
+	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
+	return events.filter((e) => isEventInWindow(e, todayStart, todayEnd));
 }
 
 export function evaluateWatchPlanQuality(watchPlan) {
