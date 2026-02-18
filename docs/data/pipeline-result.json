@@ -1,9 +1,13 @@
 {
-  "startedAt": "2026-02-18T10:19:47.946Z",
-  "completedAt": "2026-02-18T10:24:05.426Z",
-  "duration": 257480,
+  "startedAt": "2026-02-18T10:40:16.418Z",
+  "completedAt": "2026-02-18T10:44:24.601Z",
+  "duration": 248182,
   "gate": "pass",
-  "quota": null,
+  "quota": {
+    "fiveHour": 0.41,
+    "sevenDay": 0.58,
+    "constrained": false
+  },
   "phases": {
     "fetch": {
       "name": "fetch",
@@ -12,27 +16,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 32673
+          "duration": 29106
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4165
+          "duration": 2971
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9028
+          "duration": 9004
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 478
+          "duration": 425
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 48128
+          "duration": 41510
         }
       ]
     },
@@ -43,12 +47,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 163
+          "duration": 158
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 528
+          "duration": 960
         }
       ]
     },
@@ -59,7 +63,7 @@
         {
           "name": "discover-events",
           "status": "success",
-          "duration": 171
+          "duration": 216
         }
       ]
     },
@@ -70,17 +74,17 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 632
+          "duration": 646
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 5490
+          "duration": 6781
         },
         {
           "name": "enrich-events",
           "status": "success",
-          "duration": 121712
+          "duration": 115237
         }
       ]
     },
@@ -91,22 +95,22 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 17915
+          "duration": 18501
         },
         {
           "name": "generate-multiday",
           "status": "success",
-          "duration": 147
+          "duration": 140
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 179
+          "duration": 168
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 171
+          "duration": 165
         }
       ]
     },
@@ -117,7 +121,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 638
+          "duration": 604
         }
       ]
     },
@@ -128,32 +132,32 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 483
+          "duration": 642
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 352
+          "duration": 442
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 340
+          "duration": 493
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 909
+          "duration": 824
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 281
+          "duration": 443
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60074,
+          "duration": 60065,
           "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
           "errorCategory": "network"
         }
@@ -166,7 +170,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 248
+          "duration": 301
         }
       ]
     },
@@ -177,12 +181,12 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 497
+          "duration": 1219
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 158
+          "duration": 137
         },
         {
           "name": "update-meta",
@@ -192,7 +196,7 @@
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 130
+          "duration": 147
         }
       ]
     }

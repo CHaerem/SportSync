@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T10:23:04.460Z",
+  "generatedAt": "2026-02-18T10:43:23.056Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 49,
@@ -73,10 +73,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 9,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 89,
+    "editorialScore": 92,
     "issueCount": 11
   },
   "findings": [
@@ -86,6 +86,36 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 16 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"21:00 — Bodø/Glimt vs Internazionale\" which may not match any event"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Two Norwegian\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Both Norway\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Both\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Historic\" but no matching athlete found in events data"
+    },
+    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Aspmyra\" but no matching athlete found in events data"
@@ -93,19 +123,24 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League Round\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Whatever\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After Rayo\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 11,
     "critical": 0,
-    "warning": 4,
-    "info": 0
+    "warning": 10,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

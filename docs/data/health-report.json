@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T10:23:04.525Z",
+  "generatedAt": "2026-02-18T10:43:23.131Z",
   "eventCount": 49,
   "sportCoverage": {
     "olympics": {
@@ -119,14 +119,14 @@
     "unavailableSince": "2026-02-16T08:29:25.078Z"
   },
   "pipelineTimingHealth": {
-    "totalDuration": 250112,
+    "totalDuration": 257480,
     "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 120106,
-        "share": 48
+        "duration": 121712,
+        "share": 47
       }
     ],
     "failedSteps": [
@@ -160,11 +160,6 @@
       "message": "Streaming enrichment match rate is 17% (5/30) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Arsenal vs Wolverhampton Wanderers has no matching event in events.json"
-    },
-    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -182,7 +177,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 48% of total pipeline time (120s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 47% of total pipeline time (122s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -202,7 +197,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Autonomy at 100% with 11/11 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
   }
 }
