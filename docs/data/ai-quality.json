@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T17:30:40.808Z",
+  "generatedAt": "2026-02-19T18:29:56.895Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 122420,
+    "generationMs": 136792,
     "tokenUsage": {
-      "input": 30479,
-      "output": 7063,
-      "cacheCreation": 14895,
-      "cacheRead": 15581,
-      "total": 37542,
-      "costUSD": 0.27804724999999997,
+      "input": 30485,
+      "output": 8125,
+      "cacheCreation": 12826,
+      "cacheRead": 17656,
+      "total": 38610,
+      "costUSD": 0.2926835,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -67,10 +67,10 @@
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 39,
-      "importanceCoverage": 0.744,
-      "summaryCoverage": 0.744,
-      "relevanceCoverage": 0.744,
-      "tagsCoverage": 0.462
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.667
     },
     "after": {
       "totalEvents": 39,
@@ -82,9 +82,9 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 61,
-    "aiUpdatedFields": 29,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 13,
+    "aiUpdatedFields": 39,
+    "failedBatches": 0,
     "totalEvents": 39,
     "skipStats": {
       "total": 39,
@@ -92,14 +92,16 @@
       "enriched": 39,
       "skipRate": 0
     },
-    "tokensPerEvent": 3389,
-    "hintsApplied": [],
+    "tokensPerEvent": 3418,
+    "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
+    ],
     "tokenUsage": {
-      "input": 83014,
-      "output": 15254,
-      "calls": 3,
-      "total": 98268,
-      "costUSD": 0.6183187499999999,
+      "input": 110994,
+      "output": 22307,
+      "calls": 4,
+      "total": 133301,
+      "costUSD": 0.8797472500000001,
       "tracked": true,
       "estimated": false
     }

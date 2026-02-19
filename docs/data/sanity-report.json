@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T17:30:42.347Z",
+  "generatedAt": "2026-02-19T18:29:58.462Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 39,
@@ -65,7 +65,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 12
   },
   "findings": [
     {
@@ -76,7 +76,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major\" which may not match any event"
+      "message": "Featured block references \"\udfae CS2 IEM Major opens in Portugal — rain starts campaign — Day 1\" which may not match any event"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -95,9 +105,9 @@
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 7,
     "critical": 0,
-    "warning": 4,
+    "warning": 6,
     "info": 1
   },
   "pass": true,

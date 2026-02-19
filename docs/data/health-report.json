@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T17:30:42.454Z",
+  "generatedAt": "2026-02-19T18:29:58.204Z",
   "eventCount": 39,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "olympics": {
       "count": 8,
-      "previousCount": 9,
-      "delta": -1
+      "previousCount": 8,
+      "delta": 0
     },
     "football": {
       "count": 28,
@@ -52,7 +52,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "golf.json": {
@@ -121,7 +121,7 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 23,
+    "fiveHour": 26,
     "sevenDay": 79,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -131,7 +131,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 506329,
+    "totalDuration": 538461,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -139,8 +139,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300010,
-        "share": 59
+        "duration": 300013,
+        "share": 56
       }
     ],
     "failedSteps": [
@@ -186,7 +186,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 23%, 7d: 79%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 26%, 7d: 79%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 59% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 56% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -218,5 +218,9 @@
   "statusSummary": {
     "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [],
+    "hasRegression": false
   }
 }
