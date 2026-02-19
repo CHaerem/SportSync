@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-19T16:28:20.816Z",
-  "eventCount": 40,
+  "generatedAt": "2026-02-19T17:30:42.454Z",
+  "eventCount": 39,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "olympics": {
-      "count": 9,
+      "count": 8,
       "previousCount": 9,
-      "delta": 0
+      "delta": -1
     },
     "football": {
       "count": 28,
@@ -40,15 +40,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
@@ -56,11 +56,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
@@ -73,7 +73,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.92,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 8,
-    "sevenDay": 78,
+    "fiveHour": 23,
+    "sevenDay": 79,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -131,7 +131,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 526285,
+    "totalDuration": 506329,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -139,8 +139,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300006,
-        "share": 57
+        "duration": 300010,
+        "share": 59
       }
     ],
     "failedSteps": [
@@ -186,7 +186,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 8%, 7d: 78%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 23%, 7d: 79%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 57% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 59% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 3/9 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/8 events are in the past — consider pruning"
     }
   ],
   "status": "warning",

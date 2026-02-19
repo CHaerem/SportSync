@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-19T16:28:20.861Z",
+  "generatedAt": "2026-02-19T17:30:42.347Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 40,
+    "totalEvents": 39,
     "sports": [
       "golf",
       "olympics",
@@ -57,14 +57,13 @@
         "Qatar Airways Australian Grand Prix"
       ],
       "ended": [
-        "Curling — Men's Round Robin: Norway vs Canada",
         "Ski Mountaineering — Sprint (Men's & Women's)",
         "Nordic Combined — Team Sprint"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 100,
     "issueCount": 13
   },
@@ -75,14 +74,19 @@
       "message": "\"Qatar Airways Australian Grand Prix\" is 15 days away — may clutter the dashboard"
     },
     {
-      "severity": "critical",
-      "check": "sport_vanished",
-      "message": "cs2: 0 events (was 1)"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae CS2 Major\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Portugal\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -91,11 +95,11 @@
     }
   ],
   "summary": {
-    "total": 4,
-    "critical": 1,
-    "warning": 3,
-    "info": 0
+    "total": 5,
+    "critical": 0,
+    "warning": 4,
+    "info": 1
   },
-  "pass": false,
+  "pass": true,
   "tokenUsage": null
 }
