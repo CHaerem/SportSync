@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T20:18:32.348Z",
+  "generatedAt": "2026-02-19T21:19:05.499Z",
   "eventCount": 37,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "olympics": {
       "count": 6,
-      "previousCount": 7,
-      "delta": -1
+      "previousCount": 6,
+      "delta": 0
     },
     "football": {
       "count": 28,
@@ -40,27 +40,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 15,
-    "sevenDay": 80,
+    "fiveHour": 34,
+    "sevenDay": 82,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -131,20 +131,17 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 518455,
+    "totalDuration": 449726,
     "stepCount": 26,
-    "timeoutHits": [
-      "enrich-events"
-    ],
+    "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300023,
-        "share": 58
+        "duration": 206743,
+        "share": 46
       }
     ],
     "failedSteps": [
-      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -174,11 +171,6 @@
       "message": "Streaming enrichment match rate is 4% (1/28) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Newcastle United vs Manchester City has no matching event in events.json"
-    },
-    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -191,22 +183,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 15%, 7d: 80%) — 2 step(s) skipped"
-    },
-    {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"enrich-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "message": "Quota tier 2 (5h: 34%, 7d: 82%) — 2 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 58% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 46% of total pipeline time (207s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "warning",
@@ -221,7 +208,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 70/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

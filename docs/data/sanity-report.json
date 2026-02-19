@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T20:18:32.295Z",
+  "generatedAt": "2026-02-19T21:19:05.510Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 37,
@@ -62,8 +62,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
-    "issueCount": 12
+    "editorialScore": 100,
+    "issueCount": 13
   },
   "findings": [
     {
@@ -74,17 +74,22 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major Portugal — rain opens campaign\" which may not match any event"
+      "message": "Featured block references \"\udfae CS2 Major Portugal — rain in group stage action today\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Over\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Serie\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Speed Skating Men\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -108,9 +113,9 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 9,
     "critical": 0,
-    "warning": 7,
+    "warning": 8,
     "info": 1
   },
   "pass": true,
