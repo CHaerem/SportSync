@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T12:25:41.993Z",
+  "generatedAt": "2026-02-19T13:40:53.230Z",
   "eventCount": 41,
   "sportCoverage": {
     "golf": {
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
@@ -61,11 +61,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -126,8 +126,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 44,
-    "sevenDay": 76,
+    "fiveHour": 55,
+    "sevenDay": 77,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -136,7 +136,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 549418,
+    "totalDuration": 531724,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -144,8 +144,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300012,
-        "share": 55
+        "duration": 300011,
+        "share": 56
       }
     ],
     "failedSteps": [
@@ -192,7 +192,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 44%, 7d: 76%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 55%, 7d: 77%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -202,7 +202,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 55% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 56% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -217,7 +217,7 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/9 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/9 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
