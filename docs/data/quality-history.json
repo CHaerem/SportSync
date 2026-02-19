@@ -1,71 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T09:25:44.915Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "blockCount": 10
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 10,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 109,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 12,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T09:25:45.436Z",
     "editorial": {
       "score": 92,
@@ -7767,6 +7701,101 @@
       "editorialScore": 93.857,
       "mustWatchCoverage": 0.929,
       "sportDiversity": 0.821,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-19T07:32:30.932Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 6
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 6,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 2,
+      "avgScore": 64,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 2,
+      "warningCount": 2,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 84284,
+        "output": 20435,
+        "calls": 3,
+        "total": 104719,
+        "costUSD": 0.7602245,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 30727,
+        "output": 4868,
+        "cacheCreation": 13068,
+        "cacheRead": 17656,
+        "total": 35595,
+        "costUSD": 0.212646,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 31624,
+        "output": 4788,
+        "calls": 1,
+        "total": 36412,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 146635,
+        "output": 30091,
+        "calls": 5,
+        "total": 176726,
+        "costUSD": 0.9728705,
+        "realPct": 79
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95,
+      "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.857,
       "enrichmentScore": 100,
       "resultsScore": 80
     }

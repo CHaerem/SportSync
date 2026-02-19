@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T07:05:34.219Z",
+  "generatedAt": "2026-02-19T07:32:41.885Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -63,14 +63,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
+    "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 38,
       "importanceCoverage": 0.737,
       "summaryCoverage": 0.737,
       "relevanceCoverage": 0.737,
-      "tagsCoverage": 0.5
+      "tagsCoverage": 0.526
     },
     "after": {
       "totalEvents": 38,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 59,
+    "fallbackFieldsFilled": 58,
     "aiUpdatedFields": 28,
     "failedBatches": 1,
     "totalEvents": 38,
@@ -92,16 +92,17 @@
       "enriched": 38,
       "skipRate": 0
     },
-    "tokensPerEvent": 3740,
+    "tokensPerEvent": 3719,
     "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 84284,
-      "output": 20435,
+      "input": 84368,
+      "output": 19766,
       "calls": 3,
-      "total": 104719,
-      "costUSD": 0.7602245,
+      "total": 104134,
+      "costUSD": 0.7435025,
       "tracked": true,
       "estimated": false
     }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T07:04:47.408Z",
+  "generatedAt": "2026-02-19T07:32:32.298Z",
   "eventCount": 38,
   "sportCoverage": {
     "golf": {
@@ -126,8 +126,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 0,
-    "sevenDay": 69,
+    "fiveHour": 10,
+    "sevenDay": 70,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
     "skippedSteps": [
@@ -135,7 +135,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 541766,
+    "totalDuration": 497774,
     "stepCount": 27,
     "timeoutHits": [
       "enrich-events"
@@ -143,11 +143,12 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 291864,
-        "share": 54
+        "duration": 300090,
+        "share": 60
       }
     ],
     "failedSteps": [
+      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -190,7 +191,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 0%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 10%, 7d: 70%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "warning",
@@ -200,12 +201,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (292s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 60% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
     },
     {
       "severity": "warning",
