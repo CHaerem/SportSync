@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T11:27:28.992Z",
+  "generatedAt": "2026-02-19T12:25:41.957Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 41,
@@ -15,7 +15,6 @@
         "The Genesis Invitational",
         "Magical Kenya Open",
         "Ski Mountaineering — Sprint (Men's & Women's)",
-        "Roman Imperium Cup V",
         "Nordic Combined — Team Sprint"
       ],
       "today": [
@@ -62,14 +61,15 @@
         "Qatar Airways Australian Grand Prix"
       ],
       "ended": [
-        "Curling — Men's Round Robin: Norway vs Canada"
+        "Curling — Men's Round Robin: Norway vs Canada",
+        "Roman Imperium Cup V"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
-    "issueCount": 11
+    "editorialScore": 100,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -80,22 +80,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carragher\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -104,9 +89,9 @@
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 3,
     "critical": 0,
-    "warning": 6,
+    "warning": 3,
     "info": 0
   },
   "pass": true,

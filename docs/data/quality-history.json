@@ -1,80 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T11:56:59.722Z",
-    "editorial": {
-      "score": 88,
-      "mustWatchCoverage": 0.833,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 107,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 13,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured shows \"14:15\" for \"Biathlon — Men's 4x7.5km Relay\" but events.json has 14:30. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 94.286,
-      "mustWatchCoverage": 0.976,
-      "sportDiversity": 0.881,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T11:57:05.469Z",
     "editorial": {
       "score": 88,
@@ -7916,6 +7841,102 @@
         "calls": 7,
         "total": 240064,
         "costUSD": 1.0580915,
+        "realPct": 85
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98.571,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.929,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-19T12:25:40.431Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 58,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 6,
+      "warningCount": 6,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"Carragher\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 139344,
+        "output": 27355,
+        "calls": 5,
+        "total": 166699,
+        "costUSD": 0.7559245,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 30963,
+        "output": 6608,
+        "cacheCreation": 13304,
+        "cacheRead": 17656,
+        "total": 37571,
+        "costUSD": 0.257606,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 31624,
+        "output": 4788,
+        "calls": 1,
+        "total": 36412,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 201931,
+        "output": 38751,
+        "calls": 7,
+        "total": 240682,
+        "costUSD": 1.0135305,
         "realPct": 85
       }
     },
