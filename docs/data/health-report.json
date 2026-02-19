@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T08:06:09.265Z",
+  "generatedAt": "2026-02-19T08:24:41.664Z",
   "eventCount": 41,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "olympics": {
       "count": 9,
-      "previousCount": 6,
-      "delta": 3
+      "previousCount": 9,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -126,8 +126,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 20,
-    "sevenDay": 71,
+    "fiveHour": 35,
+    "sevenDay": 72,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -136,7 +136,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 510276,
+    "totalDuration": 482920,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -144,8 +144,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300086,
-        "share": 59
+        "duration": 300061,
+        "share": 62
       }
     ],
     "failedSteps": [
@@ -192,7 +192,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 20%, 7d: 71%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 35%, 7d: 72%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -202,7 +202,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 59% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 62% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -222,7 +222,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }

@@ -1,32 +1,32 @@
 {
-  "generatedAt": "2026-02-19T08:06:32.347Z",
+  "generatedAt": "2026-02-19T08:24:40.097Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
+    "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 76394,
+    "generationMs": 94093,
     "tokenUsage": {
-      "input": 31624,
-      "output": 4788,
-      "cacheCreation": 16040,
-      "cacheRead": 15581,
-      "total": 36412,
-      "costUSD": 0.2282885,
+      "input": 30989,
+      "output": 4597,
+      "cacheCreation": 13330,
+      "cacheRead": 17656,
+      "total": 35586,
+      "costUSD": 0.2074235,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 80,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 90,
+      "pickCount": 3,
+      "avgScore": 64,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -67,10 +67,10 @@
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 41,
-      "importanceCoverage": 0.756,
-      "summaryCoverage": 0.756,
-      "relevanceCoverage": 0.756,
-      "tagsCoverage": 0.561
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.683
     },
     "after": {
       "totalEvents": 41,
@@ -82,9 +82,9 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 58,
-    "aiUpdatedFields": 31,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 13,
+    "aiUpdatedFields": 41,
+    "failedBatches": 0,
     "totalEvents": 41,
     "skipStats": {
       "total": 41,
@@ -92,17 +92,17 @@
       "enriched": 41,
       "skipRate": 0
     },
-    "tokensPerEvent": 4123,
+    "tokensPerEvent": 3921,
     "hintsApplied": [
       "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 111375,
-      "output": 16424,
-      "calls": 4,
-      "total": 127799,
-      "costUSD": 0.72969175,
+      "input": 139689,
+      "output": 21077,
+      "calls": 5,
+      "total": 160766,
+      "costUSD": 0.599202,
       "tracked": true,
       "estimated": false
     }
