@@ -2,7 +2,18 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodø/Glimt stun Inter — Norway's best European night in years"
+      "text": "Norway's golden hour: speed skating final and Bodo/Glimt's European triumph"
+    },
+    {
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Olympics today",
+      "maxItems": 4,
+      "showFlags": true,
+      "style": "highlight"
     },
     {
       "type": "match-result",
@@ -11,7 +22,7 @@
     },
     {
       "type": "narrative",
-      "text": "A 3-1 over Inter Milan. Bodø/Glimt didn't just win — they dominated one of Serie A's giants. Norwegian football doesn't produce many nights like this."
+      "text": "Bodo/Glimt's 3-1 demolition of Internazionale is one of Norwegian football's finest European nights. In Milano, Kongshaug, Eitrem, and Strand chase 1500m speed skating gold at 16:30."
     },
     {
       "type": "golf-status",
@@ -19,11 +30,7 @@
     },
     {
       "type": "event-line",
-      "text": "🏅 Thu 16:30 — Speed Skating Men's 1500m, Kongshaug & Eitrem on ice in Milano-Cortina"
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 CS2 Major Portugal — rain in group stage action today"
+      "text": "🎮 CS2 Major — rain in group stage action, all day"
     },
     {
       "type": "divider",
@@ -31,14 +38,15 @@
     },
     {
       "type": "event-group",
-      "label": "🏅 Olympics — Norwegian medal targets",
+      "label": "🏅 Olympic finals ahead",
       "items": [
         "Fri 14:15 — Biathlon Men's 15km Mass Start (Laegreid, Christiansen, Uldal)",
-        "Sat 11:00 — Cross-Country Men's 50km Classic (Klaebo's race — the big one)",
-        "Sat 14:15 — Biathlon Women's 12.5km Mass Start (Kirkeeide, Tandrevold)"
+        "Sat 11:00 — XC Skiing Men's 50km Classic (Klaebo, Iversen) ★",
+        "Sat 14:15 — Biathlon Women's 12.5km Mass Start (Kirkeeide, Tandrevold)",
+        "Sun 10:00 — XC Skiing Women's 30km Classic"
       ]
     }
   ],
-  "generatedAt": "2026-02-19T21:19:03.983Z",
+  "generatedAt": "2026-02-19T22:17:29.074Z",
   "provider": "claude-cli"
 }

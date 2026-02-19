@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T21:19:05.510Z",
+  "generatedAt": "2026-02-19T22:17:30.542Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 37,
@@ -62,8 +62,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 13
+    "editorialScore": 85,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -74,37 +74,22 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major Portugal — rain in group stage action today\" which may not match any event"
+      "message": "Featured block references \"\udfae CS2 Major — rain in group stage action\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Serie\" but no matching athlete found in events data"
+      "message": "Featured mentions \"In Milano\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Speed Skating Men\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major Portugal\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -113,9 +98,9 @@
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 6,
     "critical": 0,
-    "warning": 8,
+    "warning": 5,
     "info": 1
   },
   "pass": true,
