@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-18T22:19:23.759Z",
-  "eventCount": 34,
+  "generatedAt": "2026-02-19T06:34:27.062Z",
+  "eventCount": 38,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
+      "count": 28,
       "previousCount": 24,
-      "delta": 0
+      "delta": 4
     },
     "f1": {
       "count": 1,
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
@@ -61,24 +61,24 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.91,
+    "venuePercent": 0.92,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -101,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0,
-    "eventsEnriched": 0,
+    "matchRate": 0.04,
+    "eventsEnriched": 1,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -126,7 +126,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 7,
+    "fiveHour": 0,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -135,17 +135,20 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 222702,
+    "totalDuration": 495130,
     "stepCount": 27,
-    "timeoutHits": [],
+    "timeoutHits": [
+      "enrich-events"
+    ],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 91383,
-        "share": 41
+        "duration": 300101,
+        "share": 61
       }
     ],
     "failedSteps": [
+      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -173,7 +176,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 0% (0/24) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 4% (1/28) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -188,17 +191,22 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 7%, 7d: 69%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 0%, 7d: 69%) — 1 step(s) skipped: discover-events"
+    },
+    {
+      "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"enrich-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 41% of total pipeline time (91s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 61% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
     },
     {
       "severity": "warning",
@@ -213,7 +221,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }

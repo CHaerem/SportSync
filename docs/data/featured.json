@@ -2,7 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodø/Glimt stuns Inter Milan — Norway's greatest club night ever"
+      "text": "Glimt stun Inter. Norway shakes European football to its core."
     },
     {
       "type": "match-result",
@@ -11,37 +11,38 @@
     },
     {
       "type": "narrative",
-      "text": "Bodø dismantled one of European football's elite clubs 3-1 — NRK calls it the best result by a Norwegian club, ever. Arsenal's 2-2 at the bottom club leaves their title lead over City at just 5 points."
+      "text": "3-1 at Aspmyra — Carragher called it a gigantic shock. Bodø/Glimt hold a priceless first-leg lead over Inter Milan. The return at San Siro looms large."
     },
     {
-      "type": "match-result",
-      "homeTeam": "Wolverhampton Wanderers",
-      "awayTeam": "Arsenal"
+      "type": "event-schedule",
+      "filter": {
+        "sport": "olympics",
+        "window": "today"
+      },
+      "label": "🏅 Olympics today",
+      "maxItems": 4,
+      "showFlags": true,
+      "style": "highlight"
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-schedule",
-      "filter": {
-        "sport": "olympics",
-        "window": "week"
-      },
-      "label": "🏅 Olympics this week",
-      "maxItems": 5,
-      "showFlags": true,
-      "style": "highlight"
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 Thu 10:00 — Roman Imperium Cup V — rain opens CS2 campaign"
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "type": "event-group",
+      "label": "🏅 Olympic medal days ahead",
+      "items": [
+        "Fri 14:15 — Biathlon Men's 15km Mass Start — Laegreid leads Norway's charge 🇳🇴",
+        "Sat 11:00 — Cross-Country 50km Classic — Klæbo hunts Olympic gold 🇳🇴",
+        "Sat 14:15 — Biathlon Women's 12.5km Mass Start — Kirkeeide & Tandrevold 🇳🇴",
+        "Sun 10:00 — Cross-Country Women's 30km Classic 🇳🇴"
+      ]
     }
   ],
-  "generatedAt": "2026-02-18T22:19:22.139Z",
+  "generatedAt": "2026-02-19T06:33:28.984Z",
   "provider": "claude-cli"
 }

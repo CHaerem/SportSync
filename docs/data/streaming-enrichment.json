@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-18T22:12:57.688Z",
+  "generatedAt": "2026-02-19T06:27:16.516Z",
   "dates": [
-    "2026-02-18",
-    "2026-02-19"
+    "2026-02-19",
+    "2026-02-20"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 17,
-  "matchesAttempted": 24,
-  "matchesSucceeded": 0,
-  "eventsEnriched": 0,
-  "totalEvents": 34,
-  "matchRate": 0,
+  "listingsFound": 27,
+  "matchesAttempted": 28,
+  "matchesSucceeded": 1,
+  "eventsEnriched": 1,
+  "totalEvents": 38,
+  "matchRate": 0.04,
   "unmatched": [
     {
       "homeTeam": "Juventus",
@@ -96,9 +96,33 @@
       "homeTeam": "Lille",
       "awayTeam": "Røde Stjerne",
       "time": "21:00"
+    },
+    {
+      "homeTeam": "Bochum",
+      "awayTeam": "Nürnberg",
+      "time": "18:30"
+    },
+    {
+      "homeTeam": "Greuther Fürth",
+      "awayTeam": "Arminia Bielefeld",
+      "time": "18:30"
+    },
+    {
+      "homeTeam": "Union Berlin",
+      "awayTeam": "FC Köln",
+      "time": "18:30"
     }
   ],
-  "enrichedEvents": [],
+  "enrichedEvents": [
+    {
+      "homeTeam": "Athletic Club",
+      "awayTeam": "Elche",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 0.7
+    }
+  ],
   "aliasSuggestions": [],
   "hintsApplied": []
 }
