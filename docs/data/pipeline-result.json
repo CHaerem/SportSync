@@ -1,11 +1,11 @@
 {
-  "startedAt": "2026-02-19T06:26:26.825Z",
-  "completedAt": "2026-02-19T06:35:28.592Z",
-  "duration": 541766,
+  "startedAt": "2026-02-19T06:57:30.812Z",
+  "completedAt": "2026-02-19T07:05:48.586Z",
+  "duration": 497774,
   "gate": "pass",
   "quota": {
-    "fiveHour": 0,
-    "sevenDay": 69,
+    "fiveHour": 10,
+    "sevenDay": 70,
     "tier": 1,
     "maxPriority": 2,
     "model": "claude-sonnet-4-6"
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 32714
+          "duration": 30743
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 3594
+          "duration": 3969
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8909
+          "duration": 9077
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 547
+          "duration": 432
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 46643
+          "duration": 43762
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 182
+          "duration": 163
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1255
+          "duration": 946
         }
       ]
     },
@@ -72,22 +72,24 @@
     },
     "build": {
       "name": "build",
-      "status": "success",
+      "status": "partial",
       "steps": [
         {
           "name": "build-events",
           "status": "success",
-          "duration": 625
+          "duration": 620
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 3615
+          "duration": 4415
         },
         {
           "name": "enrich-events",
-          "status": "success",
-          "duration": 291864
+          "status": "failed",
+          "duration": 300090,
+          "error": "spawnSync /bin/sh ETIMEDOUT",
+          "errorCategory": "timeout"
         }
       ]
     },
@@ -98,22 +100,22 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 77172
+          "duration": 83475
         },
         {
           "name": "generate-multiday",
           "status": "success",
-          "duration": 56729
+          "duration": 142
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 171
+          "duration": 223
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 166
+          "duration": 165
         }
       ]
     },
@@ -124,7 +126,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 587
+          "duration": 621
         }
       ]
     },
@@ -135,39 +137,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 527
+          "duration": 673
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 244
+          "duration": 467
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 354
+          "duration": 346
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 953
+          "duration": 917
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 464
+          "duration": 408
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60036,
+          "duration": 60079,
           "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
           "errorCategory": "network"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 629
+          "duration": 581
         }
       ]
     },
@@ -178,7 +180,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 293
+          "duration": 259
         }
       ]
     },
@@ -189,30 +191,30 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 929
+          "duration": 932
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 232
+          "duration": 153
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 135
+          "duration": 72
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 218
+          "duration": 128
         }
       ]
     }
   },
   "summary": {
     "total": 28,
-    "success": 26,
-    "failed": 1,
+    "success": 25,
+    "failed": 2,
     "skipped": 1
   }
 }

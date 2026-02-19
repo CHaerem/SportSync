@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-19T06:34:27.109Z",
-  "overallScore": 0.92,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-19T07:04:47.452Z",
+  "overallScore": 0.9,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "Health report is fresh (0 min old), 11 issue(s) are info/known"
+      "score": 0.75,
+      "status": "partial",
+      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (12 total)"
     },
     "watchPlan": {
       "score": 1,
@@ -66,6 +66,7 @@
     }
   },
   "nextActions": [
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
     "Run evaluate-ux.js to generate UX report",
     "Run UX evaluation 3+ times to build trend data",
     "Investigate UX issues to raise score above 70 threshold"

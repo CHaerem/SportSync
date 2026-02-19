@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T06:34:27.204Z",
+  "generatedAt": "2026-02-19T07:04:47.552Z",
   "patternsDetected": 20,
   "patterns": [
     {
@@ -15,19 +15,19 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "sport_zero_events",
-      "count": 236,
+      "count": 239,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"sport_zero_events\" has fired 236 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"sport_zero_events\" has fired 239 times since 2026-02-13. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "empty_day_snapshot",
-      "count": 77,
+      "count": 78,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"empty_day_snapshot\" has fired 77 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"empty_day_snapshot\" has fired 78 times since 2026-02-15. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -60,10 +60,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 94,
+      "count": 96,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 94 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 96 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -96,54 +96,54 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "unmapped_leagues",
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-17T17:02:40.037Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"unmapped_leagues\" has fired 36 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"unmapped_leagues\" has fired 37 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "step_dominant_duration",
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"step_dominant_duration\" has fired 36 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"step_dominant_duration\" has fired 37 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "pipeline_step_failures",
-      "count": 35,
+      "count": 36,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"pipeline_step_failures\" has fired 35 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"pipeline_step_failures\" has fired 36 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 33,
+      "count": 34,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 33 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 34 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "quota_moderate_utilization",
-      "count": 13,
+      "count": 14,
       "firstSeen": "2026-02-18T11:55:44.259Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z",
-      "suggestion": "Health warning \"quota_moderate_utilization\" has fired 13 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-19T07:04:47.489Z",
+      "suggestion": "Health warning \"quota_moderate_utilization\" has fired 14 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "uxQuality",
       "score": 0,
-      "stagnantRuns": 13,
-      "suggestion": "Feedback loop \"uxQuality\" has been stuck at 0 for 13 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 14,
+      "suggestion": "Feedback loop \"uxQuality\" has been stuck at 0 for 14 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "hint_fatigue",
@@ -190,9 +190,9 @@
       "lastSeen": "2026-02-18T22:19:23.876Z"
     },
     "sport_zero_events": {
-      "count": 236,
+      "count": 239,
       "firstSeen": "2026-02-13T13:38:33.221Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "stale_output": {
       "count": 1,
@@ -200,9 +200,9 @@
       "lastSeen": "2026-02-14T13:07:46.228Z"
     },
     "empty_day_snapshot": {
-      "count": 77,
+      "count": 78,
       "firstSeen": "2026-02-15T12:19:02.564Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "stale_data": {
       "count": 79,
@@ -220,9 +220,9 @@
       "lastSeen": "2026-02-18T10:49:15.683Z"
     },
     "low_confidence_config": {
-      "count": 94,
+      "count": 96,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "chronic_data_retention": {
       "count": 29,
@@ -245,29 +245,29 @@
       "lastSeen": "2026-02-17T20:19:44.225Z"
     },
     "unmapped_leagues": {
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-17T17:02:40.037Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "step_timeout_hit": {
-      "count": 1,
+      "count": 2,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-17T18:29:32.362Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "step_dominant_duration": {
-      "count": 36,
+      "count": 37,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "pipeline_step_failures": {
-      "count": 35,
+      "count": 36,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "streaming_low_match_rate": {
-      "count": 33,
+      "count": 34,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "quota_api_restored": {
       "count": 1,
@@ -275,9 +275,9 @@
       "lastSeen": "2026-02-18T11:08:08.327Z"
     },
     "quota_moderate_utilization": {
-      "count": 13,
+      "count": 14,
       "firstSeen": "2026-02-18T11:55:44.259Z",
-      "lastSeen": "2026-02-19T06:34:27.138Z"
+      "lastSeen": "2026-02-19T07:04:47.489Z"
     },
     "quota_tier_change": {
       "count": 4,
@@ -316,13 +316,13 @@
     "sanityScore": {
       "fires": 19,
       "improved": 9,
-      "unchanged": 3,
-      "worsened": 7,
+      "unchanged": 2,
+      "worsened": 8,
       "effectivenessRate": 0.47
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-19T06:34:27.203Z",
+    "recordedAt": "2026-02-19T07:04:47.551Z",
     "moduleCount": 59,
     "avgModuleSize": 300,
     "pipelineSteps": 28,

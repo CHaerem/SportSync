@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T06:34:27.062Z",
+  "generatedAt": "2026-02-19T07:04:47.408Z",
   "eventCount": 38,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 28,
-      "previousCount": 24,
-      "delta": 4
+      "previousCount": 28,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
@@ -61,19 +61,19 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -135,7 +135,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 495130,
+    "totalDuration": 541766,
     "stepCount": 27,
     "timeoutHits": [
       "enrich-events"
@@ -143,12 +143,11 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300101,
-        "share": 61
+        "duration": 291864,
+        "share": 54
       }
     ],
     "failedSteps": [
-      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -201,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 61% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (292s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "warning",
@@ -221,7 +220,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
