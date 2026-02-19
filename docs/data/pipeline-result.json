@@ -1,11 +1,11 @@
 {
-  "startedAt": "2026-02-19T07:25:03.634Z",
-  "completedAt": "2026-02-19T07:33:33.910Z",
-  "duration": 510276,
+  "startedAt": "2026-02-19T07:59:07.757Z",
+  "completedAt": "2026-02-19T08:07:10.678Z",
+  "duration": 482920,
   "gate": "pass",
   "quota": {
-    "fiveHour": 20,
-    "sevenDay": 71,
+    "fiveHour": 35,
+    "sevenDay": 72,
     "tier": 2,
     "maxPriority": 1,
     "model": "claude-sonnet-4-6"
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 30373
+          "duration": 30780
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4184
+          "duration": 3714
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9052
+          "duration": 8945
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 321
+          "duration": 358
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 45376
+          "duration": 43465
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 181
+          "duration": 202
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 872
+          "duration": 1176
         }
       ]
     },
@@ -77,17 +77,17 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 625
+          "duration": 627
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 3894
+          "duration": 3628
         },
         {
           "name": "enrich-events",
           "status": "failed",
-          "duration": 300086,
+          "duration": 300061,
           "error": "spawnSync /bin/sh ETIMEDOUT",
           "errorCategory": "timeout"
         }
@@ -100,7 +100,7 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 95504
+          "duration": 69910
         },
         {
           "name": "generate-multiday",
@@ -111,12 +111,12 @@
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 166
+          "duration": 356
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 166
+          "duration": 278
         }
       ]
     },
@@ -127,7 +127,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 607
+          "duration": 642
         }
       ]
     },
@@ -138,39 +138,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 705
+          "duration": 692
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 544
+          "duration": 424
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 497
+          "duration": 489
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 1086
+          "duration": 1112
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 425
+          "duration": 486
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60029,
-          "error": "Command failed: node scripts/verify-schedules.js\nESPN cross-country fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"... is not valid JSON\nESPN biathlon fetch failed: Unexpected token '\u001f', \"\u001f�\b\u0000\u0000\u0000\u0000\u0000\u0000�\"",
-          "errorCategory": "network"
+          "duration": 60072,
+          "error": "Command failed: node scripts/verify-schedules.js\n",
+          "errorCategory": "command"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 669
+          "duration": 664
         }
       ]
     },
@@ -181,7 +181,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 256
+          "duration": 266
         }
       ]
     },
@@ -192,22 +192,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1292
+          "duration": 1011
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 145
+          "duration": 160
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 72
+          "duration": 106
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 142
+          "duration": 147
         }
       ]
     }

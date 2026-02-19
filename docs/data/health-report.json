@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-19T07:32:32.298Z",
-  "eventCount": 38,
+  "generatedAt": "2026-02-19T08:06:09.265Z",
+  "eventCount": 41,
   "sportCoverage": {
     "golf": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
     },
+    "olympics": {
+      "count": 9,
+      "previousCount": 6,
+      "delta": 3
+    },
     "cs2": {
       "count": 1,
       "previousCount": 1,
-      "delta": 0
-    },
-    "olympics": {
-      "count": 6,
-      "previousCount": 6,
       "delta": 0
     },
     "football": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.92,
+    "venuePercent": 0.93,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -125,26 +125,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 10,
-    "sevenDay": 70,
+    "tier": 2,
+    "fiveHour": 20,
+    "sevenDay": 71,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 1,
+    "stepsSkipped": 2,
     "skippedSteps": [
-      "discover-events"
+      "discover-events",
+      "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 497774,
-    "stepCount": 27,
+    "totalDuration": 510276,
+    "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
     ],
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300090,
-        "share": 60
+        "duration": 300086,
+        "share": 59
       }
     ],
     "failedSteps": [
@@ -153,8 +154,8 @@
     ]
   },
   "unmappedLeagues": [
-    "CS2 Major Tournaments 2026",
     "Winter Olympics 2026",
+    "CS2 Major Tournaments 2026",
     "Formula 1 2025 - Race Weekend"
   ],
   "issues": [
@@ -186,12 +187,12 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: CS2 Major Tournaments 2026, Winter Olympics 2026, Formula 1 2025 - Race Weekend"
+      "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 10%, 7d: 70%) — 1 step(s) skipped: discover-events"
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 2 (5h: 20%, 7d: 71%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -201,7 +202,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 60% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 59% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -221,7 +222,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
