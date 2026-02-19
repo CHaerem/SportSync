@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-19T19:27:22.289Z",
-  "eventCount": 38,
+  "generatedAt": "2026-02-19T20:18:32.348Z",
+  "eventCount": 37,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -8,8 +8,8 @@
       "delta": 0
     },
     "olympics": {
-      "count": 7,
-      "previousCount": 8,
+      "count": 6,
+      "previousCount": 7,
       "delta": -1
     },
     "football": {
@@ -40,27 +40,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 6,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
@@ -88,7 +88,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 20,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 0,
-    "sevenDay": 79,
+    "fiveHour": 15,
+    "sevenDay": 80,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -131,7 +131,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 556364,
+    "totalDuration": 518455,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -139,8 +139,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300031,
-        "share": 54
+        "duration": 300023,
+        "share": 58
       }
     ],
     "failedSteps": [
@@ -174,6 +174,11 @@
       "message": "Streaming enrichment match rate is 4% (1/28) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Newcastle United vs Manchester City has no matching event in events.json"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
@@ -186,7 +191,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 0%, 7d: 79%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 15%, 7d: 80%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -196,7 +201,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 58% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,12 +216,12 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 2/7 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 1/6 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   }
 }
