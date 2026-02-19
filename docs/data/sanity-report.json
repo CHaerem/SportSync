@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T13:40:53.238Z",
+  "generatedAt": "2026-02-19T14:31:54.332Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 41,
@@ -13,8 +13,7 @@
     "bands": {
       "live": [
         "The Genesis Invitational",
-        "Magical Kenya Open",
-        "Nordic Combined — Team Sprint"
+        "Magical Kenya Open"
       ],
       "today": [
         "Speed Skating — Men's 1500m"
@@ -62,7 +61,8 @@
       "ended": [
         "Curling — Men's Round Robin: Norway vs Canada",
         "Ski Mountaineering — Sprint (Men's & Women's)",
-        "Roman Imperium Cup V"
+        "Roman Imperium Cup V",
+        "Nordic Combined — Team Sprint"
       ]
     },
     "featuredBlockCount": 8,
@@ -80,17 +80,32 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Molineux\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Italian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"14:15\" for \"Curling — Men's Round Robin: Norway vs Canada\" but events.json has 09:05"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"In Milano\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Major Lisbon\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -99,9 +114,9 @@
     }
   ],
   "summary": {
-    "total": 5,
+    "total": 8,
     "critical": 0,
-    "warning": 5,
+    "warning": 8,
     "info": 0
   },
   "pass": true,

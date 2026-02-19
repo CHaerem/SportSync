@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-19T13:40:53.363Z",
-  "overallScore": 0.9,
-  "loopsClosed": 10,
+  "generatedAt": "2026-02-19T14:31:54.365Z",
+  "overallScore": 0.87,
+  "loopsClosed": 9,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -40,9 +40,9 @@
       "details": "discovery log exists, sync-configs exists, configs have been researched"
     },
     "scheduleVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history exists and is fresh, schedule-verifier exists, configs have verification summaries"
+      "score": 0.67,
+      "status": "partial",
+      "details": "verification history exists but is stale, schedule-verifier exists, configs have verification summaries"
     },
     "resultsHealth": {
       "score": 1,
@@ -67,6 +67,7 @@
   },
   "nextActions": [
     "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Run verification to apply verificationSummary to at least one config",
     "Run evaluate-ux.js to generate UX report",
     "Run UX evaluation 3+ times to build trend data",
     "Investigate UX issues to raise score above 70 threshold"
