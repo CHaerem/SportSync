@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-19T18:29:58.204Z",
-  "eventCount": 39,
+  "generatedAt": "2026-02-19T19:27:22.289Z",
+  "eventCount": 38,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "olympics": {
-      "count": 8,
+      "count": 7,
       "previousCount": 8,
-      "delta": 0
+      "delta": -1
     },
     "football": {
       "count": 28,
@@ -52,11 +52,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
@@ -121,7 +121,7 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 26,
+    "fiveHour": 0,
     "sevenDay": 79,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -131,7 +131,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 538461,
+    "totalDuration": 556364,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -139,8 +139,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300013,
-        "share": 56
+        "duration": 300031,
+        "share": 54
       }
     ],
     "failedSteps": [
@@ -186,7 +186,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 26%, 7d: 79%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 0%, 7d: 79%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 56% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 54% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,16 +211,12 @@
     {
       "severity": "info",
       "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 2/8 events are in the past — consider pruning"
+      "message": "olympics-2026.json: 2/7 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
     "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }

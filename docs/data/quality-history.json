@@ -1,79 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T12:13:43.620Z",
-    "editorial": {
-      "score": 88,
-      "mustWatchCoverage": 0.833,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 107,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 2,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 88,
-      "mustWatchCoverage": 0.833,
-      "sportDiversity": 0.667,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T12:13:47.698Z",
     "editorial": {
       "score": 88,
@@ -8084,6 +8010,102 @@
       "editorialScore": 99.286,
       "mustWatchCoverage": 1,
       "sportDiversity": 0.964,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-19T19:27:20.940Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 50,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 7,
+      "warningCount": 6,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 IEM Major opens in Portugal — rain starts campaign — Day 1\" which may not match any event; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Three\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 83108,
+        "output": 15595,
+        "calls": 3,
+        "total": 98703,
+        "costUSD": 0.6320209999999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 30486,
+        "output": 5930,
+        "cacheCreation": 12827,
+        "cacheRead": 17656,
+        "total": 36416,
+        "costUSD": 0.23788974999999998,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 31624,
+        "output": 4788,
+        "calls": 1,
+        "total": 36412,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 145218,
+        "output": 26313,
+        "calls": 5,
+        "total": 171531,
+        "costUSD": 0.86991075,
+        "realPct": 79
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "enrichmentScore": 100,
       "resultsScore": 80
     }

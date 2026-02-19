@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-19T18:29:58.462Z",
+  "generatedAt": "2026-02-19T19:27:22.433Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 39,
+    "totalEvents": 38,
     "sports": [
       "golf",
       "olympics",
@@ -12,8 +12,7 @@
     "bands": {
       "live": [
         "The Genesis Invitational",
-        "Magical Kenya Open",
-        "Speed Skating — Men's 1500m"
+        "Magical Kenya Open"
       ],
       "today": [],
       "tomorrow": [
@@ -57,15 +56,15 @@
         "Qatar Airways Australian Grand Prix"
       ],
       "ended": [
-        "Ski Mountaineering — Sprint (Men's & Women's)",
-        "Nordic Combined — Team Sprint"
+        "Nordic Combined — Team Sprint",
+        "Speed Skating — Men's 1500m"
       ]
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 13
   },
   "findings": [
     {
@@ -76,12 +75,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 IEM Major opens in Portugal — rain starts campaign — Day 1\" which may not match any event"
+      "message": "Featured block references \"\udfae CS2 Major Portugal — rain opens campaign — Day 1 of 4\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Games\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Arctic Circle\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -91,12 +95,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Portugal\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Major Portugal\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -105,9 +109,9 @@
     }
   ],
   "summary": {
-    "total": 7,
+    "total": 8,
     "critical": 0,
-    "warning": 6,
+    "warning": 7,
     "info": 1
   },
   "pass": true,

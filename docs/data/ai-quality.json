@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T18:29:56.895Z",
+  "generatedAt": "2026-02-19T19:27:20.932Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 136792,
+    "generationMs": 99638,
     "tokenUsage": {
-      "input": 30485,
-      "output": 8125,
-      "cacheCreation": 12826,
+      "input": 30486,
+      "output": 5930,
+      "cacheCreation": 12827,
       "cacheRead": 17656,
-      "total": 38610,
-      "costUSD": 0.2926835,
+      "total": 36416,
+      "costUSD": 0.23788974999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -66,14 +66,14 @@
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 39,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 0.667
+      "totalEvents": 38,
+      "importanceCoverage": 0.789,
+      "summaryCoverage": 0.789,
+      "relevanceCoverage": 0.789,
+      "tagsCoverage": 0.526
     },
     "after": {
-      "totalEvents": 39,
+      "totalEvents": 38,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,26 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 13,
-    "aiUpdatedFields": 39,
-    "failedBatches": 0,
-    "totalEvents": 39,
+    "fallbackFieldsFilled": 50,
+    "aiUpdatedFields": 30,
+    "failedBatches": 1,
+    "totalEvents": 38,
     "skipStats": {
-      "total": 39,
+      "total": 38,
       "unchanged": 0,
-      "enriched": 39,
+      "enriched": 38,
       "skipRate": 0
     },
-    "tokensPerEvent": 3418,
-    "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
-    ],
+    "tokensPerEvent": 3290,
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 110994,
-      "output": 22307,
-      "calls": 4,
-      "total": 133301,
-      "costUSD": 0.8797472500000001,
+      "input": 83108,
+      "output": 15595,
+      "calls": 3,
+      "total": 98703,
+      "costUSD": 0.6320209999999999,
       "tracked": true,
       "estimated": false
     }
