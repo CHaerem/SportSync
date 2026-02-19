@@ -2,6 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import https from "https";
+import zlib from "zlib";
 
 export const MS_PER_MINUTE = 60_000;
 export const MS_PER_HOUR = 3_600_000;
@@ -54,9 +55,14 @@ export async function fetchJson(
 	return new Promise((resolve, reject) => {
 		https
 			.get(url, { headers }, (res) => {
+				let stream = res;
+				if (res.headers["content-encoding"] === "gzip") {
+					stream = res.pipe(zlib.createGunzip());
+				}
 				let body = "";
-				res.on("data", (c) => (body += c));
-				res.on("end", async () => {
+				stream.on("data", (c) => (body += c));
+				stream.on("error", (err) => reject(err));
+				stream.on("end", async () => {
 					if (res.statusCode && res.statusCode >= 500 && retries > 0) {
 						await new Promise((r) => setTimeout(r, retryDelay));
 						try {
