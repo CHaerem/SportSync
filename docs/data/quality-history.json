@@ -1,71 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T10:15:33.503Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 53,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 13,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured shows \"14:15\" for \"Biathlon — Men's 4x7.5km Relay\" but events.json has 14:30. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 94.857,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.893,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-17T11:56:59.722Z",
     "editorial": {
       "score": 88,
@@ -7899,6 +7833,102 @@
       "windowSize": 7,
       "editorialScore": 96.429,
       "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.929,
+      "enrichmentScore": 100,
+      "resultsScore": 80
+    }
+  },
+  {
+    "timestamp": "2026-02-19T11:27:27.646Z",
+    "editorial": {
+      "score": 95,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 58,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 80,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 3,
+      "warningCount": 3,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
+      "SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 139344,
+        "output": 25911,
+        "calls": 5,
+        "total": 165255,
+        "costUSD": 0.7795679999999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 30949,
+        "output": 7448,
+        "cacheCreation": 13290,
+        "cacheRead": 17656,
+        "total": 38397,
+        "costUSD": 0.2785235,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 31624,
+        "output": 4788,
+        "calls": 1,
+        "total": 36412,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 201917,
+        "output": 38147,
+        "calls": 7,
+        "total": 240064,
+        "costUSD": 1.0580915,
+        "realPct": 85
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98.571,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.929,
       "enrichmentScore": 100,
       "resultsScore": 80

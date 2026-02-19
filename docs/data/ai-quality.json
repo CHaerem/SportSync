@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T10:26:47.825Z",
+  "generatedAt": "2026-02-19T11:27:27.639Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,25 +9,25 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 99985,
+    "blockCount": 7,
+    "generationMs": 133877,
     "tokenUsage": {
-      "input": 31036,
-      "output": 5709,
-      "cacheCreation": 13377,
+      "input": 30949,
+      "output": 7448,
+      "cacheCreation": 13290,
       "cacheRead": 17656,
-      "total": 36745,
-      "costUSD": 0.23579724999999999,
+      "total": 38397,
+      "costUSD": 0.2785235,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 95,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 53,
+      "pickCount": 1,
+      "avgScore": 58,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.732
+      "tagsCoverage": 0.683
     },
     "after": {
       "totalEvents": 41,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 11,
+    "fallbackFieldsFilled": 13,
     "aiUpdatedFields": 41,
     "failedBatches": 0,
     "totalEvents": 41,
@@ -92,14 +92,14 @@
       "enriched": 41,
       "skipRate": 0
     },
-    "tokensPerEvent": 3976,
+    "tokensPerEvent": 4031,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 139344,
-      "output": 23669,
+      "output": 25911,
       "calls": 5,
-      "total": 163013,
-      "costUSD": 0.6641045,
+      "total": 165255,
+      "costUSD": 0.7795679999999999,
       "tracked": true,
       "estimated": false
     }
