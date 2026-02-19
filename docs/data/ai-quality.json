@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T15:27:31.961Z",
+  "generatedAt": "2026-02-19T16:28:19.369Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 122234,
+    "blockCount": 7,
+    "generationMs": 85340,
     "tokenUsage": {
-      "input": 30915,
-      "output": 7511,
-      "cacheCreation": 13256,
-      "cacheRead": 17656,
-      "total": 38426,
-      "costUSD": 0.280051,
+      "input": 30974,
+      "output": 5136,
+      "cacheCreation": 15390,
+      "cacheRead": 15581,
+      "total": 36110,
+      "costUSD": 0.23302599999999996,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 2,
-      "avgScore": 57,
+      "avgScore": 50,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.7
+      "tagsCoverage": 0.725
     },
     "after": {
       "totalEvents": 40,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 12,
+    "fallbackFieldsFilled": 11,
     "aiUpdatedFields": 40,
     "failedBatches": 0,
     "totalEvents": 40,
@@ -92,14 +92,14 @@
       "enriched": 40,
       "skipRate": 0
     },
-    "tokensPerEvent": 3387,
+    "tokensPerEvent": 3368,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 112572,
-      "output": 22906,
+      "output": 22152,
       "calls": 4,
-      "total": 135478,
-      "costUSD": 0.90052,
+      "total": 134724,
+      "costUSD": 0.8814949999999999,
       "tracked": true,
       "estimated": false
     }

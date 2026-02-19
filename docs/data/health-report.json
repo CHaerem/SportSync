@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T15:27:33.508Z",
+  "generatedAt": "2026-02-19T16:28:20.816Z",
   "eventCount": 40,
   "sportCoverage": {
     "golf": {
@@ -22,11 +22,6 @@
       "previousCount": 1,
       "delta": 0
     },
-    "cs2": {
-      "count": 0,
-      "previousCount": 1,
-      "delta": -1
-    },
     "chess": {
       "count": 0,
       "previousCount": 0,
@@ -45,15 +40,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
@@ -61,11 +56,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -159,11 +154,6 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "cs2: 0 events (was 1)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
@@ -224,9 +214,9 @@
       "message": "olympics-2026.json: 3/9 events are in the past — consider pruning"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
