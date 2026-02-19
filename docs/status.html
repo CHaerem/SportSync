@@ -183,6 +183,27 @@
 		.issue-dot.critical { background: var(--red); }
 		.issue-dot.warning { background: var(--amber); }
 
+		/* --- Ops overview --- */
+		.ops-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 6px 0;
+			font-size: 0.78rem;
+			border-bottom: 1px solid var(--border);
+		}
+		.ops-row:last-child { border-bottom: none; }
+		.ops-dot {
+			width: 8px; height: 8px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+		.ops-dot.green { background: var(--green); }
+		.ops-dot.amber { background: var(--amber); }
+		.ops-dot.red { background: var(--red); }
+		.ops-label { font-weight: 500; min-width: 80px; }
+		.ops-detail { color: var(--muted); font-size: 0.72rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 		/* --- Sparkline --- */
 		.sparkline {
 			display: flex;
@@ -285,6 +306,7 @@
 			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
 		</header>
 
+		<div id="ops"></div>
 		<div id="summary"></div>
 		<div id="autonomy"><div class="loading">Loading...</div></div>
 		<div id="autopilot"></div>
@@ -360,6 +382,78 @@
 			resultsHealth: 'Results Health',
 			snapshotHealth: 'Snapshot Health'
 		};
+
+		function renderOpsOverview(pipelineResult, meta, autopilotLog, health) {
+			const el = document.getElementById('ops');
+			const rows = [];
+
+			// 1. Pipeline status
+			const staleMs = meta?.lastUpdate ? Date.now() - new Date(meta.lastUpdate).getTime() : Infinity;
+			const staleH = staleMs / 3600000;
+			const pSum = pipelineResult?.summary || {};
+			let pDot = 'green', pText = '';
+			if (pipelineResult) {
+				pText = timeAgo(pipelineResult.completedAt || meta?.lastUpdate);
+				if (pSum.total) pText += ' \u00b7 ' + pSum.success + '/' + pSum.total + ' steps';
+				if (pipelineResult.gate === 'fail' || staleH > 4) pDot = 'red';
+				else if ((pSum.failed || 0) > 0 || (pSum.skipped || 0) > 0 || staleH > 2) pDot = 'amber';
+			} else {
+				pText = meta?.lastUpdate ? timeAgo(meta.lastUpdate) : 'No data';
+				pDot = staleH > 4 ? 'red' : staleH > 2 ? 'amber' : 'green';
+			}
+			rows.push({ label: 'Pipeline', dot: pDot, detail: pText });
+
+			// 2. Autopilot status
+			const runs = autopilotLog?.runs || [];
+			const lastRun = runs.length > 0 ? runs[runs.length - 1] : null;
+			let aDot = 'red', aText = 'No runs recorded';
+			if (lastRun) {
+				const daysAgo = Math.floor((Date.now() - new Date(lastRun.date).getTime()) / 86400000);
+				const ok = lastRun.outcome === 'completed' || lastRun.outcome === 'repaired';
+				if (ok && daysAgo <= 1) aDot = 'green';
+				else if (daysAgo <= 3) aDot = 'amber';
+				else aDot = 'red';
+				if (!ok) aDot = 'red';
+				const when = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + 'd ago';
+				aText = when;
+				if (lastRun.task) aText += ' \u00b7 ' + lastRun.task.slice(0, 40) + (lastRun.task.length > 40 ? '\u2026' : '');
+				if (lastRun.pr) aText += ' <a class="log-pr" href="' + REPO_URL + '/pull/' + lastRun.pr + '" target="_blank" rel="noopener">#' + lastRun.pr + '</a>';
+			}
+			rows.push({ label: 'Autopilot', dot: aDot, detail: aText });
+
+			// 3. Dashboard freshness
+			let dDot = 'green', dText = '';
+			if (meta?.lastUpdate) {
+				dText = 'Data ' + timeAgo(meta.lastUpdate);
+				if (staleH > 4) dDot = 'red';
+				else if (staleH > 2) dDot = 'amber';
+			} else {
+				dText = 'No data'; dDot = 'red';
+			}
+			rows.push({ label: 'Dashboard', dot: dDot, detail: dText });
+
+			// 4. Issues
+			const issues = health?.issues || [];
+			const warnings = issues.filter(i => i.severity === 'warning').length;
+			const criticals = issues.filter(i => i.severity === 'critical').length;
+			let iDot = 'green', iText = 'No issues';
+			if (criticals > 0) { iDot = 'red'; iText = criticals + ' critical, ' + warnings + ' warning' + (warnings !== 1 ? 's' : ''); }
+			else if (warnings > 0) { iDot = 'amber'; iText = warnings + ' warning' + (warnings !== 1 ? 's' : ''); }
+			rows.push({ label: 'Issues', dot: iDot, detail: iText });
+
+			const rowsHtml = rows.map(r =>
+				'<div class="ops-row">' +
+				'<span class="ops-dot ' + r.dot + '"></span>' +
+				'<span class="ops-label">' + r.label + '</span>' +
+				'<span class="ops-detail">' + r.detail + '</span>' +
+				'</div>'
+			).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Ops Overview</div>' +
+				rowsHtml +
+				'</div>';
+		}
 
 		function renderSummary(health) {
 			const el = document.getElementById('summary');
@@ -747,8 +841,10 @@
 			fetchJSON('meta.json'),
 			fetchJSON('sanity-report.json'),
 			fetchJSON('usage-tracking.json'),
-			fetchJSON('autonomy-trend.json')
-		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage, autonomyTrend]) => {
+			fetchJSON('autonomy-trend.json'),
+			fetchJSON('pipeline-result.json')
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage, autonomyTrend, pipelineResult]) => {
+			renderOpsOverview(pipelineResult, meta, autopilotLog, health);
 			renderSummary(health);
 			renderAutonomy(autonomy, autonomyTrend);
 			renderAutopilot(autopilotLog);
