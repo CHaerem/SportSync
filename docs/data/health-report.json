@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-19T14:31:54.324Z",
-  "eventCount": 41,
+  "generatedAt": "2026-02-19T15:27:33.508Z",
+  "eventCount": 40,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -12,11 +12,6 @@
       "previousCount": 9,
       "delta": 0
     },
-    "cs2": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "football": {
       "count": 28,
       "previousCount": 28,
@@ -26,6 +21,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "cs2": {
+      "count": 0,
+      "previousCount": 1,
+      "delta": -1
     },
     "chess": {
       "count": 0,
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
@@ -126,8 +126,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 2,
-    "sevenDay": 77,
+    "fiveHour": 8,
+    "sevenDay": 78,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -136,7 +136,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 503231,
+    "totalDuration": 526285,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -144,8 +144,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300060,
-        "share": 60
+        "duration": 300006,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -155,10 +155,14 @@
   },
   "unmappedLeagues": [
     "Winter Olympics 2026",
-    "CS2 Major Tournaments 2026",
     "Formula 1 2025 - Race Weekend"
   ],
   "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "cs2: 0 events (was 1)"
+    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -187,12 +191,12 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: Winter Olympics 2026, CS2 Major Tournaments 2026, Formula 1 2025 - Race Weekend"
+      "message": "2 tournament(s) lack league theming: Winter Olympics 2026, Formula 1 2025 - Race Weekend"
     },
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 2%, 7d: 77%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 8%, 7d: 78%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -202,7 +206,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 60% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 57% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -220,9 +224,9 @@
       "message": "olympics-2026.json: 3/9 events are in the past — consider pruning"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
