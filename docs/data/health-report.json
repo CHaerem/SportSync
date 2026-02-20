@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T14:19:23.574Z",
+  "generatedAt": "2026-02-20T15:18:25.096Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,12 +64,12 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 355,
-      "stale": false
+      "ageMinutes": 414,
+      "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 355,
-      "stale": false
+      "ageMinutes": 414,
+      "stale": true
     }
   },
   "schemaCompleteness": {
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 90,
-    "sevenDay": 93,
+    "fiveHour": 1,
+    "sevenDay": 94,
     "model": null,
     "stepsSkipped": 4,
     "skippedSteps": [
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 122061,
+    "totalDuration": 119225,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 47565,
-        "share": 39
+        "duration": 45687,
+        "share": 38
       },
       {
         "name": "verify-schedules",
-        "duration": 60068,
-        "share": 49
+        "duration": 60029,
+        "share": 50
       }
     ],
     "failedSteps": [
@@ -174,6 +174,16 @@
     },
     {
       "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 414 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 414 minutes old"
+    },
+    {
+      "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 36% (10/28) — team alias table may need updates"
     },
@@ -190,17 +200,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 90%, 7d: 93%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 1%, 7d: 94%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 39% of total pipeline time (48s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (46s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 49% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,11 +221,16 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+    },
+    {
+      "severity": "info",
+      "code": "olympics_stale_events",
+      "message": "olympics-2026.json: 1/5 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
