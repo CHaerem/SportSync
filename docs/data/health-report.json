@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T12:16:25.328Z",
+  "generatedAt": "2026-02-20T13:29:52.033Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 305,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 305,
       "stale": false
     }
   },
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 43,
-    "sevenDay": 89,
+    "fiveHour": 64,
+    "sevenDay": 91,
     "model": null,
     "stepsSkipped": 4,
     "skippedSteps": [
@@ -133,18 +133,18 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 118840,
+    "totalDuration": 118472,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 46361,
+        "duration": 45722,
         "share": 39
       },
       {
         "name": "verify-schedules",
-        "duration": 60067,
+        "duration": 60034,
         "share": 51
       }
     ],
@@ -190,7 +190,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 43%, 7d: 89%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 64%, 7d: 91%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
