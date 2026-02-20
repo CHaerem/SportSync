@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-02-20T10:17:12.436Z",
+  "lastUpdated": "2026-02-20T11:15:54.202Z",
   "current": {
     "fiveHour": {
-      "utilization": 21
+      "utilization": 44
     },
     "sevenDay": {
-      "utilization": 87,
+      "utilization": 89,
       "resets_at": "1771678800"
     },
     "evaluation": {
@@ -14,7 +14,7 @@
       "maxPriority": 0,
       "model": null,
       "constrained": true,
-      "reason": "critical: 5h 21%, 7d 87%",
+      "reason": "critical: 5h 44%, 7d 89%",
       "resetNote": null
     }
   },
@@ -23,7 +23,7 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-20T10:17:13.170Z"
+    "checkedAt": "2026-02-20T11:15:54.890Z"
   },
   "internalTokens": {
     "enrichment": 132756,
@@ -33,17 +33,17 @@
     "runTotal": 205788
   },
   "budget": {
-    "dailyUsed": 3468017,
-    "weeklyUsed": 17457779,
+    "dailyUsed": 3437635,
+    "weeklyUsed": 17663567,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 69,
-    "weeklyPct": 70
+    "weeklyPct": 71
   },
   "sportsyncShare": {
-    "pipelineRuns": 138,
+    "pipelineRuns": 137,
     "autopilotRuns": 0,
-    "totalDurationMs": 31835751
+    "totalDurationMs": 31556004
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,16 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-13T10:24:13.649Z",
-      "context": "pipeline",
-      "durationMs": 180109
-    },
-    {
-      "timestamp": "2026-02-13T10:58:35.422Z",
-      "context": "pipeline",
-      "durationMs": 169932
-    },
     {
       "timestamp": "2026-02-13T11:41:46.070Z",
       "context": "pipeline",
@@ -830,6 +820,12 @@
       "timestamp": "2026-02-20T10:17:12.436Z",
       "context": "pipeline",
       "durationMs": 74502,
+      "tokens": 205788
+    },
+    {
+      "timestamp": "2026-02-20T11:15:54.202Z",
+      "context": "pipeline",
+      "durationMs": 70294,
       "tokens": 205788
     }
   ]
