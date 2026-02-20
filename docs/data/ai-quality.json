@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T06:30:15.455Z",
+  "generatedAt": "2026-02-20T07:30:09.257Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,23 +10,23 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 98544,
+    "generationMs": 89629,
     "tokenUsage": {
-      "input": 30405,
-      "output": 5850,
-      "cacheCreation": 14795,
-      "cacheRead": 15607,
-      "total": 36255,
-      "costUSD": 0.24653724999999999,
+      "input": 31255,
+      "output": 5549,
+      "cacheCreation": 13570,
+      "cacheRead": 17682,
+      "total": 36804,
+      "costUSD": 0.23239349999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 85,
     "metrics": {
-      "mustWatchCoverage": 1,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -40,7 +40,7 @@
     "score": 85,
     "metrics": {
       "pickCount": 2,
-      "avgScore": 47,
+      "avgScore": 83,
       "streamingCoverage": 1,
       "reasonCoverage": 0.5
     }
@@ -67,10 +67,10 @@
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 36,
-      "importanceCoverage": 0.722,
-      "summaryCoverage": 0.722,
-      "relevanceCoverage": 0.722,
-      "tagsCoverage": 0.444
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.611
     },
     "after": {
       "totalEvents": 36,
@@ -82,9 +82,9 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 60,
-    "aiUpdatedFields": 26,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 14,
+    "aiUpdatedFields": 36,
+    "failedBatches": 0,
     "totalEvents": 36,
     "skipStats": {
       "total": 36,
@@ -92,16 +92,16 @@
       "enriched": 36,
       "skipRate": 0
     },
-    "tokensPerEvent": 3724,
+    "tokensPerEvent": 3524,
     "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
     ],
     "tokenUsage": {
-      "input": 82801,
-      "output": 14028,
-      "calls": 3,
-      "total": 96829,
-      "costUSD": 0.5978414999999999,
+      "input": 110592,
+      "output": 16281,
+      "calls": 4,
+      "total": 126873,
+      "costUSD": 0.72384475,
       "tracked": true,
       "estimated": false
     }
