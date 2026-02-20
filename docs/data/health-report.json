@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-20T19:18:48.825Z",
-  "eventCount": 36,
+  "generatedAt": "2026-02-20T20:10:35.259Z",
+  "eventCount": 35,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 28,
+      "count": 27,
       "previousCount": 28,
-      "delta": 0
+      "delta": -1
     },
     "f1": {
       "count": 1,
@@ -64,16 +64,16 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 654,
+      "ageMinutes": 706,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 654,
+      "ageMinutes": 706,
       "stale": true
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.92,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -88,7 +88,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 20,
+    "footballCount": 19,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -96,8 +96,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.36,
-    "eventsEnriched": 10,
+    "matchRate": 0.33,
+    "eventsEnriched": 9,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -121,7 +121,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 13,
+    "fiveHour": 0,
     "sevenDay": 95,
     "model": null,
     "stepsSkipped": 4,
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 118968,
+    "totalDuration": 114321,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 44850,
-        "share": 38
+        "duration": 41222,
+        "share": 36
       },
       {
         "name": "verify-schedules",
-        "duration": 60050,
-        "share": 50
+        "duration": 60076,
+        "share": 53
       }
     ],
     "failedSteps": [
@@ -175,17 +175,17 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 654 minutes old"
+      "message": "featured.json: critical output is 706 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 654 minutes old"
+      "message": "ai-quality.json: critical output is 706 minutes old"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 36% (10/28) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 33% (9/27) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -200,17 +200,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 13%, 7d: 95%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 0%, 7d: 95%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (45s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 36% of total pipeline time (41s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 53% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
