@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T22:17:29.087Z",
+  "generatedAt": "2026-02-20T06:30:15.455Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,23 +10,23 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 81179,
+    "generationMs": 98544,
     "tokenUsage": {
-      "input": 31456,
-      "output": 4412,
-      "cacheCreation": 13797,
-      "cacheRead": 17656,
-      "total": 35868,
-      "costUSD": 0.20596725000000002,
+      "input": 30405,
+      "output": 5850,
+      "cacheCreation": 14795,
+      "cacheRead": 15607,
+      "total": 36255,
+      "costUSD": 0.24653724999999999,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 85,
+    "score": 100,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -40,7 +40,7 @@
     "score": 85,
     "metrics": {
       "pickCount": 2,
-      "avgScore": 79,
+      "avgScore": 47,
       "streamingCoverage": 1,
       "reasonCoverage": 0.5
     }
@@ -66,14 +66,14 @@
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 37,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 0.703
+      "totalEvents": 36,
+      "importanceCoverage": 0.722,
+      "summaryCoverage": 0.722,
+      "relevanceCoverage": 0.722,
+      "tagsCoverage": 0.444
     },
     "after": {
-      "totalEvents": 37,
+      "totalEvents": 36,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,27 +82,26 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 11,
-    "aiUpdatedFields": 37,
-    "failedBatches": 0,
-    "totalEvents": 37,
+    "fallbackFieldsFilled": 60,
+    "aiUpdatedFields": 26,
+    "failedBatches": 1,
+    "totalEvents": 36,
     "skipStats": {
-      "total": 37,
+      "total": 36,
       "unchanged": 0,
-      "enriched": 37,
+      "enriched": 36,
       "skipRate": 0
     },
-    "tokensPerEvent": 3458,
+    "tokensPerEvent": 3724,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input.",
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 110774,
-      "output": 17190,
-      "calls": 4,
-      "total": 127964,
-      "costUSD": 0.7495069999999999,
+      "input": 82801,
+      "output": 14028,
+      "calls": 3,
+      "total": 96829,
+      "costUSD": 0.5978414999999999,
       "tracked": true,
       "estimated": false
     }

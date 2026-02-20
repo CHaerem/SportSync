@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-19T22:17:30.589Z",
-  "eventCount": 37,
+  "generatedAt": "2026-02-20T06:30:16.909Z",
+  "eventCount": 36,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "olympics": {
-      "count": 6,
+      "count": 5,
       "previousCount": 6,
-      "delta": 0
+      "delta": -1
     },
     "football": {
       "count": 28,
@@ -96,15 +96,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.04,
-    "eventsEnriched": 1,
+    "matchRate": 0.36,
+    "eventsEnriched": 10,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 day snapshot(s) within event range have 0 events and 0 results"
+      "2 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 39,
-    "sevenDay": 82,
+    "fiveHour": 46,
+    "sevenDay": 83,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -131,7 +131,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 517598,
+    "totalDuration": 492671,
     "stepCount": 26,
     "timeoutHits": [
       "enrich-events"
@@ -139,12 +139,11 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300052,
-        "share": 58
+        "duration": 294954,
+        "share": 60
       }
     ],
     "failedSteps": [
-      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -171,12 +170,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 4% (1/28) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 36% (10/28) — team alias table may need updates"
     },
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "1 day snapshot(s) within event range have 0 events and 0 results"
+      "message": "2 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -186,7 +185,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 39%, 7d: 82%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 46%, 7d: 83%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -196,27 +195,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 58% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 60% of total pipeline time (295s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
-    },
-    {
-      "severity": "info",
-      "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/6 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

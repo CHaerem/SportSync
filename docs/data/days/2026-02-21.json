@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-21",
-  "generatedAt": "2026-02-19T22:17:29.287Z",
+  "generatedAt": "2026-02-20T06:30:15.648Z",
   "events": {
     "upcoming": [
       {
@@ -57,14 +57,14 @@
         "awayTeam": null,
         "isFavorite": false,
         "importance": 4,
-        "importanceReason": "Elevated PGA Tour invitational; fan favorite Viktor Hovland competing",
-        "summary": "Viktor Hovland headlines one of the PGA Tour's most prestigious invitationals at Riviera — a must-watch for Norwegian golf fans.",
+        "importanceReason": "Viktor Hovland competing in prestigious elevated PGA Tour signature event",
+        "summary": "Viktor Hovland tees it up at the Genesis Invitational at Riviera — one of the PGA Tour's most storied elevated events and essential viewing for Norwegian golf fans tracking their star.",
         "tags": [
           "must-watch",
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-19T22:16:07.106Z",
+        "enrichedAt": "2026-02-20T06:29:45.396Z",
         "_enrichHash": "d859dc98c8a62c947e5fed0f47b278be"
       },
       {
@@ -105,13 +105,13 @@
         "awayTeam": null,
         "isFavorite": false,
         "importance": 2,
-        "importanceReason": "Routine DP World Tour stop; Norwegian Halvorsen in field",
-        "summary": "DP World Tour event in Kenya featuring Norwegian Andreas Halvorsen, but otherwise a lower-tier stop on the calendar.",
+        "importanceReason": "Routine DP World Tour event; Norwegian journeyman in the field",
+        "summary": "Andreas Halvorsen flies the Norwegian flag at the Magical Kenya Open in Nairobi. A lower-tier DP World Tour stop with limited global stakes.",
         "tags": [
           "norwegian-player"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-02-19T22:16:07.106Z",
+        "enrichedAt": "2026-02-20T06:29:45.396Z",
         "_enrichHash": "bd38579445ab1f266f008d99cf10475a"
       },
       {
@@ -146,15 +146,16 @@
         "isFavorite": false,
         "context": "olympics-2026",
         "importance": 5,
-        "importanceReason": "Olympic 50km classic, marquee event; Klaebo chases crowning gold",
-        "summary": "The king of cross-country events: Klaebo and Iversen lead Norway's assault on Olympic 50km classic gold — do not miss.",
+        "importanceReason": "Olympic 50km classic; Klaebo leads Norway in cross-country skiing's crown jewel",
+        "summary": "Johannes Klaebo and Emil Iversen headline Norway's hunt for Olympic glory in the 50km mass start classic — the most prestigious and grueling race in cross-country skiing and an absolute must-watch for any Norwegian viewer.",
         "tags": [
           "must-watch",
           "norwegian-player",
-          "final"
+          "final",
+          "classic-matchup"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.397Z",
         "_enrichHash": "949756da4fb76544fd1d235df3b0b60b"
       },
       {
@@ -168,9 +169,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -182,14 +184,16 @@
         "homeTeam": "Real Sociedad",
         "awayTeam": "Real Oviedo",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 2,
-        "importanceReason": "Mid-table La Liga fixture; no Norwegian players or major stakes",
-        "summary": "Real Sociedad host Real Oviedo in a routine La Liga fixture at the Reale Arena with limited broader significance.",
+        "importanceReason": "Mid-table La Liga clash, no Norwegian players or title implications",
+        "summary": "Real Sociedad host Real Oviedo at the Reale Arena in a routine La Liga fixture. Neither club is involved in title contention or relegation danger.",
         "tags": [
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "bf5b531d350dbf3a112f9597b04ac0e3"
       },
       {
@@ -223,16 +227,16 @@
         "awayTeam": null,
         "isFavorite": false,
         "context": "olympics-2026",
-        "importance": 5,
-        "importanceReason": "Olympic biathlon mass start final; two top Norwegians competing",
-        "summary": "Kirkeeide and Tandrevold carry Norway's medal hopes in the women's biathlon mass start at Anterselva — prime Norwegian viewing.",
+        "importance": 4,
+        "importanceReason": "Olympic women's biathlon mass start; Kirkeeide and Tandrevold medal contenders",
+        "summary": "Maren Kirkeeide and Ingrid Landmark Tandrevold spearhead Norway's bid for Olympic gold in the women's biathlon mass start at Anterselva — expect a fierce fight for the podium.",
         "tags": [
           "must-watch",
           "norwegian-player",
           "final"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "23b983cfb47b4bd29836278e77f834fd"
       },
       {
@@ -247,8 +251,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -260,14 +271,16 @@
         "homeTeam": "Aston Villa",
         "awayTeam": "Leeds United",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 3,
-        "importanceReason": "Premier League fixture; Aston Villa chasing European qualification",
-        "summary": "Aston Villa host promoted Leeds at Villa Park in a Premier League clash with European qualification implications for the hosts.",
+        "importanceReason": "Aston Villa pushing for top-four against promoted Leeds",
+        "summary": "Aston Villa host newly-promoted Leeds at Villa Park, with the hosts needing three points to stay in contention for European qualification.",
         "tags": [
           "top-4-battle"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "10d6bb1c21aeff2224f410a2cea2a3e5"
       },
       {
@@ -282,8 +295,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -295,14 +315,16 @@
         "homeTeam": "Brentford",
         "awayTeam": "Brighton & Hove Albion",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 2,
-        "importanceReason": "Routine Premier League mid-table clash, limited stakes",
-        "summary": "Brighton travel to Brentford in a competitive but low-stakes mid-table Premier League fixture at the Gtech Community Stadium.",
+        "importanceReason": "Routine mid-table Premier League fixture, limited stakes",
+        "summary": "Brighton make the trip to Brentford in a standard Premier League mid-table meeting. Solid football but no major implications at either end of the table.",
         "tags": [
           "watchlist"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "f58822023888ab7023cf55b6ed7e0b9f"
       },
       {
@@ -317,8 +339,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -330,14 +359,17 @@
         "homeTeam": "Chelsea",
         "awayTeam": "Burnley",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 3,
-        "importanceReason": "Chelsea host struggling Burnley at Stamford Bridge; mid-stakes PL clash.",
-        "summary": "Chelsea look to strengthen their top-half credentials against a Burnley side likely battling to survive in the Premier League.",
+        "importanceReason": "Chelsea's top-four push vs relegation-threatened Burnley",
+        "summary": "Chelsea host Burnley at Stamford Bridge in a clash of contrasting ambitions — the Blues chasing top-four while Burnley scrap to avoid the drop.",
         "tags": [
+          "top-4-battle",
           "relegation"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "a9fe57f7130cf51b8da8053cf36ede2a"
       },
       {
@@ -351,9 +383,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -365,14 +398,16 @@
         "homeTeam": "Real Betis",
         "awayTeam": "Rayo Vallecano",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 2,
-        "importanceReason": "Routine La Liga fixture between two mid-table sides.",
-        "summary": "Rayo Vallecano travel to Real Betis in a low-stakes La Liga encounter with little title or relegation urgency for either side.",
+        "importanceReason": "Mid-table La Liga clash, no title or relegation urgency for either side",
+        "summary": "Rayo Vallecano visit Real Betis in a routine La Liga fixture with little at stake beyond mid-table league position.",
         "tags": [
           "watchlist"
         ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "9d1fddda4c37e61a1304b31dced99441"
       },
       {
@@ -387,8 +422,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -400,14 +442,16 @@
         "homeTeam": "West Ham United",
         "awayTeam": "AFC Bournemouth",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 2,
-        "importanceReason": "Premier League mid-table fixture; limited stakes for both sides.",
-        "summary": "Bournemouth make the short trip to West Ham in a solid but routine Premier League fixture at the London Stadium.",
+        "importanceReason": "Routine Premier League fixture between two mid-table clubs",
+        "summary": "Bournemouth visit West Ham in a Premier League mid-table fixture with limited European or relegation implications.",
         "tags": [
           "watchlist"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.107Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "95db0a4d72c3416f87eb58fa639606e4"
       },
       {
@@ -421,9 +465,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -435,15 +480,16 @@
         "homeTeam": "Osasuna",
         "awayTeam": "Real Madrid",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 3,
-        "importanceReason": "Real Madrid away with title race implications; tough trip to Osasuna.",
-        "summary": "Real Madrid face a tricky La Liga away day at Osasuna's El Sadar — a ground where the hosts regularly cause upsets.",
+        "importanceReason": "Real Madrid away trip keeps La Liga title race in focus",
+        "summary": "Real Madrid travel to stubborn Osasuna needing a win to maintain pressure at the top of La Liga.",
         "tags": [
-          "title-race",
-          "upset-potential"
+          "title-race"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.108Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "565d2c402dea7fc94acee36e83d0a78e"
       },
       {
@@ -458,8 +504,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -471,15 +524,18 @@
         "homeTeam": "Manchester City",
         "awayTeam": "Newcastle United",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 4,
-        "importanceReason": "Man City vs Newcastle; high-profile PL clash with title race implications.",
-        "summary": "Manchester City host Newcastle at the Etihad in a Premier League showdown with title race consequences — two ambitious clubs going head-to-head.",
+        "importanceReason": "Norwegian superstar Haaland's City host Newcastle in Premier League title race",
+        "summary": "Erling Haaland's Manchester City host Newcastle in a Premier League title race clash — Norway's biggest sports star in a must-see fixture.",
         "tags": [
           "must-watch",
-          "title-race"
+          "title-race",
+          "norwegian-player"
         ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-02-19T22:16:07.108Z",
+        "norwegianRelevance": 4,
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "5776f8386f2a3fef0ecde2e212f1430d"
       },
       {
@@ -493,9 +549,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -507,14 +564,16 @@
         "homeTeam": "Atlético Madrid",
         "awayTeam": "Espanyol",
         "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
         "importance": 3,
-        "importanceReason": "Atlético Madrid host Espanyol; title race context elevates this La Liga game.",
-        "summary": "Atlético Madrid welcome newly-promoted Espanyol to the Metropolitano, looking to keep pace with La Liga's leaders in a home fixture they must win.",
+        "importanceReason": "Atlético Madrid's top-4 push at home against promoted Espanyol",
+        "summary": "Atlético Madrid look to consolidate their La Liga top-four spot as they host newly-promoted Espanyol at the Metropolitano.",
         "tags": [
-          "title-race"
+          "top-4-battle"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-19T22:16:07.108Z",
+        "enrichedAt": "2026-02-20T06:29:45.398Z",
         "_enrichHash": "da8afe865921672f155cf4506574cf10"
       }
     ],
