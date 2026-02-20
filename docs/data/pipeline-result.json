@@ -1,11 +1,11 @@
 {
-  "startedAt": "2026-02-20T13:28:51.649Z",
-  "completedAt": "2026-02-20T13:30:53.711Z",
-  "duration": 122061,
+  "startedAt": "2026-02-20T14:18:25.568Z",
+  "completedAt": "2026-02-20T14:20:24.793Z",
+  "duration": 119225,
   "gate": "pass",
   "quota": {
-    "fiveHour": 90,
-    "sevenDay": 93,
+    "fiveHour": 1,
+    "sevenDay": 94,
     "tier": 3,
     "maxPriority": 0,
     "model": null
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 32149
+          "duration": 30924
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4621
+          "duration": 4615
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9116
+          "duration": 8891
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 290
+          "duration": 348
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 47565
+          "duration": 45687
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 170
+          "duration": 165
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1083
+          "duration": 1210
         }
       ]
     },
@@ -77,12 +77,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 648
+          "duration": 674
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 7806
+          "duration": 8144
         },
         {
           "name": "enrich-events",
@@ -111,12 +111,12 @@
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 171
+          "duration": 177
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 169
+          "duration": 168
         }
       ]
     },
@@ -127,7 +127,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 601
+          "duration": 612
         }
       ]
     },
@@ -138,39 +138,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 659
+          "duration": 498
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 519
+          "duration": 344
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 531
+          "duration": 328
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 1075
+          "duration": 982
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 539
+          "duration": 313
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60068,
+          "duration": 60029,
           "error": "Command failed: node scripts/verify-schedules.js\n",
           "errorCategory": "command"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 551
+          "duration": 570
         }
       ]
     },
@@ -181,7 +181,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 244
+          "duration": 247
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1456
+          "duration": 884
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 144
+          "duration": 164
         },
         {
           "name": "update-meta",

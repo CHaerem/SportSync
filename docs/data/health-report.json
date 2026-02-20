@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T13:29:52.033Z",
+  "generatedAt": "2026-02-20T14:19:23.574Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 305,
+      "ageMinutes": 355,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 305,
+      "ageMinutes": 355,
       "stale": false
     }
   },
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 64,
-    "sevenDay": 91,
+    "fiveHour": 90,
+    "sevenDay": 93,
     "model": null,
     "stepsSkipped": 4,
     "skippedSteps": [
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 118472,
+    "totalDuration": 122061,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 45722,
+        "duration": 47565,
         "share": 39
       },
       {
         "name": "verify-schedules",
-        "duration": 60034,
-        "share": 51
+        "duration": 60068,
+        "share": 49
       }
     ],
     "failedSteps": [
@@ -190,17 +190,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 64%, 7d: 91%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 90%, 7d: 93%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 39% of total pipeline time (46s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 39% of total pipeline time (48s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 51% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 49% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
