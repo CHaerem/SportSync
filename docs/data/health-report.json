@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T09:18:13.889Z",
+  "generatedAt": "2026-02-20T10:16:12.267Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 54,
+      "ageMinutes": 112,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 54,
+      "ageMinutes": 112,
       "stale": false
     }
   },
@@ -120,31 +120,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 2,
-    "fiveHour": 26,
-    "sevenDay": 85,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
+    "tier": 3,
+    "fiveHour": 3,
+    "sevenDay": 86,
+    "model": null,
+    "stepsSkipped": 4,
     "skippedSteps": [
       "discover-events",
+      "enrich-events",
+      "generate-featured",
       "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 523753,
-    "stepCount": 26,
-    "timeoutHits": [
-      "enrich-events"
-    ],
+    "totalDuration": 115739,
+    "stepCount": 24,
+    "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "enrich-events",
-        "duration": 300035,
-        "share": 57
+        "name": "fetch-results",
+        "duration": 43263,
+        "share": 37
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60019,
+        "share": 52
       }
     ],
     "failedSteps": [
-      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -186,22 +190,22 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 26%, 7d: 85%) — 2 step(s) skipped"
-    },
-    {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"enrich-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "message": "Quota tier 3 (5h: 3%, 7d: 86%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 57% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 37% of total pipeline time (43s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "warning",
@@ -211,7 +215,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
