@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T07:30:09.257Z",
+  "generatedAt": "2026-02-20T08:24:27.064Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,23 +10,23 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 89629,
+    "generationMs": 103137,
     "tokenUsage": {
-      "input": 31255,
-      "output": 5549,
-      "cacheCreation": 13570,
+      "input": 30431,
+      "output": 6189,
+      "cacheCreation": 12746,
       "cacheRead": 17682,
-      "total": 36804,
-      "costUSD": 0.23239349999999998,
+      "total": 36620,
+      "costUSD": 0.24324349999999997,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 85,
+    "score": 100,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -40,7 +40,7 @@
     "score": 85,
     "metrics": {
       "pickCount": 2,
-      "avgScore": 83,
+      "avgScore": 51,
       "streamingCoverage": 1,
       "reasonCoverage": 0.5
     }
@@ -92,16 +92,16 @@
       "enriched": 36,
       "skipRate": 0
     },
-    "tokensPerEvent": 3524,
+    "tokensPerEvent": 3688,
     "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 110592,
-      "output": 16281,
+      "input": 110596,
+      "output": 22160,
       "calls": 4,
-      "total": 126873,
-      "costUSD": 0.72384475,
+      "total": 132756,
+      "costUSD": 0.8708274999999999,
       "tracked": true,
       "estimated": false
     }
