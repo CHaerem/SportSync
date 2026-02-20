@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T17:17:53.897Z",
+  "generatedAt": "2026-02-20T18:17:22.482Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 533,
+      "ageMinutes": 593,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 533,
+      "ageMinutes": 593,
       "stale": true
     }
   },
@@ -121,8 +121,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 11,
-    "sevenDay": 94,
+    "fiveHour": 12,
+    "sevenDay": 95,
     "model": null,
     "stepsSkipped": 4,
     "skippedSteps": [
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 119404,
+    "totalDuration": 116002,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 47524,
-        "share": 40
+        "duration": 43796,
+        "share": 38
       },
       {
         "name": "verify-schedules",
-        "duration": 60065,
-        "share": 50
+        "duration": 60077,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 533 minutes old"
+      "message": "featured.json: critical output is 593 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 533 minutes old"
+      "message": "ai-quality.json: critical output is 593 minutes old"
     },
     {
       "severity": "warning",
@@ -200,17 +200,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 11%, 7d: 94%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 12%, 7d: 95%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 40% of total pipeline time (48s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (44s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -232,9 +232,5 @@
   "statusSummary": {
     "text": "Autonomy at 87% with 9/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }
