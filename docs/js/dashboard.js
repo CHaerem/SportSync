@@ -25,6 +25,7 @@ class Dashboard {
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.recentResults = null; // recent-results.json data
 		this._editorialCoverage = { sports: new Set(), matchKeys: new Set() }; // tracks what editorial components cover
+		this.activeSportFilter = null; // null = all sports; string = sport id filter
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		window._ssPreferences = this.preferences;
 		this.feedback = window.FeedbackManager ? new FeedbackManager() : null;
@@ -33,12 +34,22 @@ class Dashboard {
 
 	async init() {
 		this.bindThemeToggle();
+		this._monitorBrokenImages();
 		await this.loadEvents();
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 		this.startLivePolling();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 		});
+	}
+
+	/** Log broken images so screenshot validator / console monitoring can detect them */
+	_monitorBrokenImages() {
+		document.addEventListener('error', (e) => {
+			if (e.target.tagName === 'IMG') {
+				console.warn('[SportSync] Broken image:', e.target.src, 'class:', e.target.className);
+			}
+		}, true);
 	}
 
 	// --- Session cache ---
@@ -264,38 +275,62 @@ class Dashboard {
 		const el = document.getElementById('day-nav');
 		if (!el) return;
 
+		const today = this._startOfDay(new Date());
 		const viewDate = this._getSelectedDate();
-		const isToday = this._isViewingToday();
 
-		let label;
-		if (isToday) {
-			label = 'Today';
-		} else if (this._isYesterday(viewDate)) {
-			label = 'Yesterday';
-		} else if (this._isTomorrow(viewDate)) {
-			label = 'Tomorrow';
-		} else {
-			label = viewDate.toLocaleDateString('en-US', {
-				weekday: 'short', month: 'short', day: 'numeric',
-				timeZone: 'Europe/Oslo'
-			});
+		// Generate 7-day strip centered on today (3 past + today + 3 future)
+		const days = [];
+		for (let i = -3; i <= 3; i++) {
+			const d = new Date(today);
+			d.setDate(d.getDate() + i);
+			days.push(d);
 		}
 
-		// Format for the hidden date input (YYYY-MM-DD)
+		// Determine which sports have events on each day
+		const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+		let html = '';
+		for (const day of days) {
+			const isT = this._isSameDay(day, today);
+			const isPast = day < today && !isT;
+			const isSelected = this._isSameDay(day, viewDate);
+			const cls = isT ? 'is-today' : isPast ? 'is-past' : '';
+			const selectedCls = (!isT && isSelected) ? ' is-selected' : '';
+
+			// Find events for this day
+			const dayStart = this._startOfDay(day);
+			const dayEnd = new Date(dayStart.getTime() + 86400000);
+			const dayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
+			const sports = [...new Set(dayEvents.map(e => e.sport))];
+
+			// Sport dots
+			const sportVars = {
+				football: 'var(--sport-football)',
+				golf: 'var(--sport-golf)',
+				tennis: 'var(--sport-tennis)',
+				formula1: 'var(--sport-f1)',
+				chess: 'var(--sport-chess)',
+				esports: 'var(--sport-esports)',
+				olympics: 'var(--sport-olympics)',
+			};
+			const dotsHtml = sports.slice(0, 4).map(s =>
+				`<span class="day-dot" style="background:${sportVars[s] || 'var(--muted)'}"></span>`
+			).join('');
+
+			html += `<div class="day-item ${cls}${selectedCls}" data-date="${this._dateKey(day)}">`;
+			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
+			html += `<div class="day-num">${day.getDate()}</div>`;
+			html += `<div class="day-dots">${dotsHtml}</div>`;
+			html += `</div>`;
+		}
+
+		// Hidden date input for date picker
 		const y = viewDate.getFullYear();
 		const m = String(viewDate.getMonth() + 1).padStart(2, '0');
 		const d = String(viewDate.getDate()).padStart(2, '0');
-		const inputValue = `${y}-${m}-${d}`;
+		html += `<input type="date" class="day-nav-date-input" value="${y}-${m}-${d}" tabindex="-1">`;
 
-		el.innerHTML = `
-			<button class="day-nav-arrow" data-dir="-1" aria-label="Previous day">\u2190</button>
-			<button class="day-nav-label" aria-label="Pick a date">
-				${this.esc(label)}
-				<input type="date" class="day-nav-date-input" value="${inputValue}" tabindex="-1">
-			</button>
-			<button class="day-nav-arrow" data-dir="1" aria-label="Next day">\u2192</button>
-		`;
-
+		el.innerHTML = html;
 		this.bindDayNav();
 	}
 
@@ -303,26 +338,37 @@ class Dashboard {
 		const el = document.getElementById('day-nav');
 		if (!el) return;
 
-		// Arrow buttons
-		el.querySelectorAll('.day-nav-arrow').forEach(btn => {
-			btn.addEventListener('click', () => {
-				const dir = parseInt(btn.dataset.dir, 10);
-				const current = this._getSelectedDate();
-				const next = new Date(current);
-				next.setDate(next.getDate() + dir);
-				this.selectedDate = this._isToday(next) ? null : this._startOfDay(next);
+		// Day item clicks
+		el.querySelectorAll('.day-item').forEach(item => {
+			item.addEventListener('click', () => {
+				const dateKey = item.dataset.date;
+				if (!dateKey) return;
+				const [y, m, d] = dateKey.split('-').map(Number);
+				const picked = new Date(y, m - 1, d);
+				this.selectedDate = this._isToday(picked) ? null : this._startOfDay(picked);
 				this.render();
 			});
 		});
 
-		// Label click → open date picker
-		const label = el.querySelector('.day-nav-label');
+		// Long-press on today item → open date picker
+		const todayItem = el.querySelector('.day-item.is-today');
 		const dateInput = el.querySelector('.day-nav-date-input');
-		if (label && dateInput) {
-			label.addEventListener('click', (e) => {
-				if (e.target === dateInput) return;
-				dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+		if (todayItem && dateInput) {
+			let longPressTimer = null;
+			todayItem.addEventListener('mousedown', () => {
+				longPressTimer = setTimeout(() => {
+					dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+				}, 500);
 			});
+			todayItem.addEventListener('mouseup', () => clearTimeout(longPressTimer));
+			todayItem.addEventListener('mouseleave', () => clearTimeout(longPressTimer));
+			todayItem.addEventListener('touchstart', () => {
+				longPressTimer = setTimeout(() => {
+					dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+				}, 500);
+			}, { passive: true });
+			todayItem.addEventListener('touchend', () => clearTimeout(longPressTimer));
+
 			dateInput.addEventListener('change', () => {
 				if (!dateInput.value) return;
 				const [y, m, d] = dateInput.value.split('-').map(Number);
@@ -558,15 +604,14 @@ class Dashboard {
 	// --- Rendering ---
 
 	render() {
+		this.renderMasthead();
 		this.renderDayNav();
-		this.renderDateLine();
+		this.renderSportPills();
 		const isToday = this._isViewingToday();
 
 		if (isToday) {
-			// Today: existing full behavior (live polling, dynamic briefs, etc.)
+			// Today: editorial brief + card feed
 			this.renderEditorial();
-			this.renderWatchPlan();
-			this.renderInsights();
 			this.renderEvents();
 			this.renderNews();
 		} else {
@@ -578,9 +623,10 @@ class Dashboard {
 		}
 
 		this.renderFeedbackPanel();
+		this.renderDateLine();
 
 		// Hide today-centric sections on non-today dates
-		const todayOnlySections = ['watch-plan', 'insights', 'news', 'feedback-panel'];
+		const todayOnlySections = ['news', 'feedback-panel'];
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
@@ -590,12 +636,7 @@ class Dashboard {
 	renderDateLine() {
 		const el = document.getElementById('date-line');
 		if (!el) return;
-		const viewDate = this._getSelectedDate();
-		let text = viewDate.toLocaleDateString('en-US', {
-			weekday: 'long', month: 'long', day: 'numeric',
-			timeZone: 'Europe/Oslo'
-		});
-		let suffix = '';
+		let parts = [];
 		if (this._isViewingToday() && this.meta && this.meta.lastUpdate) {
 			const now = new Date();
 			const updated = new Date(this.meta.lastUpdate);
@@ -605,9 +646,85 @@ class Dashboard {
 			else if (diffMin < 60) ago = `${diffMin}m ago`;
 			else if (diffMin < 1440) ago = `${Math.round(diffMin / 60)}h ago`;
 			else ago = `${Math.round(diffMin / 1440)}d ago`;
-			suffix = `  \u00b7  Updated ${ago}  \u00b7  <a href="data/events.ics" class="cal-link" title="Subscribe to calendar">iCal</a>`;
+			parts.push(`Updated ${ago}`);
+			// Next update estimate (2h cycle)
+			const nextMin = 120 - (diffMin % 120);
+			if (nextMin > 0 && nextMin < 120) {
+				const h = Math.floor(nextMin / 60);
+				const m = nextMin % 60;
+				parts.push(`Next update in ${h > 0 ? h + 'h ' : ''}${m}m`);
+			}
+			parts.push(`<a href="data/events.ics" class="cal-link" title="Subscribe to calendar">iCal</a>`);
 		}
-		el.innerHTML = this.esc(text) + suffix;
+		el.innerHTML = parts.join(' \u00b7 ');
+	}
+
+	// --- Masthead ---
+
+	renderMasthead() {
+		const el = document.getElementById('masthead-meta');
+		if (!el) return;
+		// Count live events
+		const liveCount = Object.values(this.liveScores).filter(s => s.state === 'in').length;
+		const golfLive = this.liveLeaderboard?.state === 'in' ? 1 : 0;
+		const total = liveCount + golfLive;
+		if (total > 0) {
+			el.innerHTML = `<span class="pulse-dot"></span><span>${total} live</span>`;
+		} else {
+			el.innerHTML = '';
+		}
+	}
+
+	// --- Sport pills ---
+
+	renderSportPills() {
+		const el = document.getElementById('sport-pills');
+		if (!el) return;
+
+		// Determine which sports have events on the selected date
+		const viewDate = this._getSelectedDate();
+		const dayStart = this._startOfDay(viewDate);
+		const dayEnd = new Date(dayStart.getTime() + 86400000);
+		const todayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
+		const activeSports = [...new Set(todayEvents.map(e => e.sport))];
+
+		if (typeof SPORT_CONFIG === 'undefined' || activeSports.length <= 1) {
+			el.innerHTML = '';
+			return;
+		}
+
+		const sportVars = {
+			football: 'var(--sport-football)', golf: 'var(--sport-golf)', tennis: 'var(--sport-tennis)',
+			formula1: 'var(--sport-f1)', chess: 'var(--sport-chess)', esports: 'var(--sport-esports)', olympics: 'var(--sport-olympics)',
+		};
+
+		let html = '<div class="pills-scroll">';
+		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="">All</button>`;
+		for (const sportId of activeSports) {
+			const sc = SPORT_CONFIG.find(s => s.id === sportId);
+			if (!sc) continue;
+			const isActive = this.activeSportFilter === sportId;
+			const dotColor = sportVars[sportId] || sc.color;
+			html += `<button class="pill${isActive ? ' active' : ''}" data-sport="${this.esc(sportId)}"><span class="pill-dot" style="background:${dotColor}"></span>${this.esc(sc.name)}</button>`;
+		}
+		html += '</div>';
+		el.innerHTML = html;
+		this.bindSportPills();
+	}
+
+	bindSportPills() {
+		const el = document.getElementById('sport-pills');
+		if (!el) return;
+		el.querySelectorAll('.pill').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const sport = btn.dataset.sport || null;
+				this.activeSportFilter = sport || null;
+				this.renderSportPills();
+				this.renderEditorial();
+				this.renderEvents();
+				this.renderNews();
+			});
+		});
 	}
 
 	// --- Editorial (Block-based layout) ---
@@ -721,34 +838,41 @@ class Dashboard {
 
 		briefEl.style.display = '';
 
-		// Track what editorial components cover — used to deduplicate standalone sections
-		this._editorialCoverage = { sports: new Set(), matchKeys: new Set() };
-		for (const b of blocks) {
-			if (b.type === 'event-schedule' && b.filter?.sport) {
-				this._editorialCoverage.sports.add(b.filter.sport);
-			}
-			if (b.type === 'match-result' && b.homeTeam && b.awayTeam) {
-				this._editorialCoverage.matchKeys.add(`${b.homeTeam.toLowerCase()}:${b.awayTeam.toLowerCase()}`);
-			}
-			if (b.type === 'match-preview' && b.homeTeam && b.awayTeam) {
-				this._editorialCoverage.matchKeys.add(`${b.homeTeam.toLowerCase()}:${b.awayTeam.toLowerCase()}`);
-			}
-		}
-
-		// Split: section blocks go to #featured-sections, all others to #the-brief
+		// Brief blocks: headline + narrative + live lines (event cards handle sections and component blocks)
 		const briefBlocks = blocks.filter(b => b.type !== 'section');
-		const sectionBlocks = blocks.filter(b => b.type === 'section');
+		const briefOnly = briefBlocks.filter(b =>
+			b.type === 'headline' || b.type === 'narrative' || b._live
+		);
+		let briefHtml = briefOnly.map(block => this.renderBlock(block)).join('');
 
-		// Render brief blocks
-		briefEl.innerHTML = briefBlocks.map(block => this.renderBlock(block)).join('');
-
-		// Render section blocks
-		if (sectionBlocks.length > 0) {
-			sectionsEl.innerHTML = sectionBlocks.map(block => this.renderSection(block)).join('');
-			this.bindSectionExpands();
-		} else {
-			sectionsEl.innerHTML = '';
+		// Auto-generate narrative when LLM didn't produce one (fallback provider)
+		const hasNarrative = briefOnly.some(b => b.type === 'narrative');
+		if (!hasNarrative && this._isViewingToday()) {
+			const autoNarrative = this._generateAutoNarrative();
+			if (autoNarrative) {
+				briefHtml += `<p class="brief-narrative">${autoNarrative}</p>`;
+			}
 		}
+
+		// At-a-glance bar with live/event/sport/result counts
+		if (this._isViewingToday()) {
+			const bands = this.categorizeEvents();
+			const liveCount = bands.live.length;
+			const todayCount = bands.today.length + bands.live.length;
+			const sportSet = new Set([...bands.live, ...bands.today].map(e => e.sport));
+			const resultCount = bands.results.length;
+			let glance = '<div class="brief-glance">';
+			if (liveCount > 0) glance += `<span class="glance-item g-live"><span class="g-dot"></span>${liveCount} live</span>`;
+			if (todayCount > 0) glance += `<span class="glance-item">${todayCount} events today</span>`;
+			if (sportSet.size > 1) glance += `<span class="glance-item">${sportSet.size} sports</span>`;
+			if (resultCount > 0) glance += `<span class="glance-item">${resultCount} results</span>`;
+			glance += '</div>';
+			briefHtml += glance;
+		}
+		briefEl.innerHTML = briefHtml;
+
+		// Section blocks no longer rendered — event cards handle sports grouping
+		sectionsEl.innerHTML = '';
 	}
 
 	// Component renderer registry — structured blocks rendered from pre-loaded data
@@ -774,7 +898,7 @@ class Dashboard {
 
 		switch (block.type) {
 			case 'headline':
-				return `<div class="block-headline">${this.renderBriefLine(block.text || '')}</div>`;
+				return `<h1 class="block-headline brief-headline">${this.renderBriefLine(block.text || '')}</h1>`;
 			case 'event-line': {
 				const isLive = block._live || (block.text && (block.text.startsWith('LIVE:') || block.text.startsWith('\u26f3')));
 				const isResult = !isLive && block.text && /\bFT:/.test(block.text);
@@ -793,7 +917,7 @@ class Dashboard {
 				return html;
 			}
 			case 'narrative':
-				return `<div class="block-narrative">${this.renderBriefLine(block.text || '')}</div>`;
+				return `<p class="brief-narrative">${this.renderBriefLine(block.text || '')}</p>`;
 			case 'divider':
 				return `<div class="block-divider">${this.esc(block.text || '')}</div>`;
 			case 'section':
@@ -1287,49 +1411,59 @@ class Dashboard {
 			return;
 		}
 
-		const items = this.rssDigest.items.slice(0, 8);
+		let items = this.rssDigest.items;
+		// Apply sport filter if active
+		if (this.activeSportFilter) {
+			items = items.filter(item => item.sport === this.activeSportFilter);
+		}
+		items = items.slice(0, 8);
 
-		// Group by sport
-		const groups = new Map();
+		if (items.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+
+		// Sport color map
+		const sportColors = {
+			football: 'var(--sport-football)', golf: 'var(--sport-golf)', tennis: 'var(--sport-tennis)',
+			formula1: 'var(--sport-f1)', chess: 'var(--sport-chess)', esports: 'var(--sport-esports)',
+			olympics: 'var(--sport-olympics)',
+		};
+
+		// Build news cards
+		let contentHtml = '<div class="news-grid">';
 		for (const item of items) {
 			const sport = item.sport || 'general';
-			if (!groups.has(sport)) groups.set(sport, []);
-			groups.get(sport).push(item);
-		}
+			const barColor = sportColors[sport] || 'var(--muted)';
+			const source = item.source || '';
+			const title = item.title || '';
+			const link = item.link || '#';
 
-		let contentHtml = '';
-		for (const [sport, sportItems] of groups) {
-			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === sport) : null;
-			const label = sportConfig ? `${sportConfig.emoji} ${sportConfig.name}` : sport;
-			contentHtml += `<div class="news-sport-group">`;
-			contentHtml += `<div class="news-sport-label">${this.esc(label)}</div>`;
-			for (const item of sportItems) {
-				const source = item.source || '';
-				const title = item.title || '';
-				const link = item.link || '#';
-				contentHtml += `<div class="news-item">`;
-				contentHtml += `<span class="news-source">${this.esc(source)}</span>`;
-				contentHtml += `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-link">${this.esc(title)}</a>`;
-				contentHtml += `</div>`;
+			// Relative time
+			let timeAgo = '';
+			if (item.pubDate) {
+				const diff = (Date.now() - new Date(item.pubDate).getTime()) / 60000;
+				if (diff < 60) timeAgo = `${Math.round(diff)}m ago`;
+				else if (diff < 1440) timeAgo = `${Math.round(diff / 60)}h ago`;
+				else timeAgo = `${Math.round(diff / 1440)}d ago`;
 			}
-			contentHtml += `</div>`;
-		}
 
-		let html = `<button class="news-toggle" data-expanded="false" aria-expanded="false">Latest News \u25b8</button>`;
-		html += `<div class="news-content">${contentHtml}</div>`;
+			contentHtml += `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration:none">`;
+			contentHtml += `<div class="news-sport-bar" style="background:${barColor}"></div>`;
+			contentHtml += `<div class="news-body">`;
+			contentHtml += `<div class="news-headline">${this.esc(title)}</div>`;
+			contentHtml += `<div class="news-meta">`;
+			contentHtml += `<span class="news-src-tag">${this.esc(source)}</span>`;
+			if (timeAgo) contentHtml += `<span class="news-time">${this.esc(timeAgo)}</span>`;
+			contentHtml += `</div></div></a>`;
+		}
+		contentHtml += '</div>';
+
+		// Flow label header for news
+		let html = `<div class="flow-label"><span class="flow-text">Headlines</span><span class="flow-line"></span><span class="flow-count">${items.length}</span></div>`;
+		html += contentHtml;
 
 		container.innerHTML = html;
-
-		const toggle = container.querySelector('.news-toggle');
-		const content = container.querySelector('.news-content');
-		if (toggle && content) {
-			toggle.addEventListener('click', () => {
-				const isOpen = content.classList.contains('open');
-				content.classList.toggle('open');
-				toggle.textContent = isOpen ? 'Latest News \u25b8' : 'Latest News \u25be';
-				toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-			});
-		}
 	}
 
 	// --- Temporal band event layout ---
@@ -1380,27 +1514,33 @@ class Dashboard {
 		if (events.length === 0) return '';
 
 		const { cssClass = '', collapsed = false, showDay = false, showDate = false } = options;
-		const bandId = label.toLowerCase().replace(/\s+/g, '-');
+		const isLive = cssClass.includes('live');
+		const countText = String(events.length);
 
 		let html = '';
 
-		if (collapsed) {
-			// Build preview line from first event
-			const first = events[0];
-			const firstSport = SPORT_CONFIG.find(s => s.id === first.sport);
-			const firstEmoji = firstSport ? firstSport.emoji : '';
-			const firstDate = new Date(first.time);
-			const dayStr = firstDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
-			const timeStr = firstDate.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
-			const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
-			const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
+		if (label) {
+			const bandId = label.toLowerCase().replace(/\s+/g, '-');
+			if (collapsed) {
+				const first = events[0];
+				const firstSport = SPORT_CONFIG.find(s => s.id === first.sport);
+				const firstEmoji = firstSport ? firstSport.emoji : '';
+				const firstDate = new Date(first.time);
+				const dayStr = firstDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
+				const timeStr = firstDate.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+				const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
+				const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
 
-			html += `<div class="band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false">${this.esc(label)} \u25b8</div>`;
-			html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
-			html += `<div class="band-content collapsed" data-band-content="${bandId}">`;
+				html += `<div class="flow-label band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span><span class="flow-count">${countText} \u25b8</span></div>`;
+				html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
+				html += `<div class="band-content collapsed" data-band-content="${bandId}">`;
+			} else {
+				html += `<div class="flow-label${isLive ? ' is-live' : ''} band-label ${cssClass}"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span>${events.length > 1 ? `<span class="flow-count">${countText}</span>` : ''}</div>`;
+				html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
+			}
 		} else {
-			html += `<div class="band-label ${cssClass}">${this.esc(label)}</div>`;
-			html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
+			// No label — just a content wrapper
+			html += '<div class="band-content">';
 		}
 
 		// Sort events by sport preference, then chronologically within sport.
@@ -1419,16 +1559,363 @@ class Dashboard {
 			return new Date(a.time) - new Date(b.time);
 		});
 
+		// Group events into visual cards
+		// 1. Football 2+ matches same tournament → matchday card
+		// 2. Same sport 2+ events (e.g. Olympics) → grouped lead card with event list
+		// 3. Single must-watch (importance >= 4) → lead card
+		// 4. Everything else → regular event rows
+		const groups = [];
+		let sportBuf = { sport: null, tournament: null, events: [] };
+
+		const flushBuf = () => {
+			if (sportBuf.events.length === 0) return;
+			const n = sportBuf.events.length;
+			const hasTeams = sportBuf.events[0].homeTeam && sportBuf.events[0].awayTeam;
+			const isCardSport = ['olympics', 'golf'].includes(sportBuf.sport);
+
+			if (sportBuf.sport === 'football' && hasTeams && n >= 3) {
+				// 3+ football matches → matchday card
+				groups.push({ type: 'matchday', tournament: sportBuf.tournament, events: sportBuf.events });
+			} else if (isCardSport && n >= 2) {
+				// 2+ golf/olympics events → grouped card (tournaments, medal sessions)
+				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
+			} else if (n >= 3) {
+				// 3+ same-sport events → grouped card
+				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
+			} else {
+				// Individual rows (lead only for truly special events)
+				for (const e of sportBuf.events) {
+					groups.push({ type: e.importance >= 5 ? 'lead' : 'row', events: [e] });
+				}
+			}
+			sportBuf = { sport: null, tournament: null, events: [] };
+		};
+
 		for (const e of sorted) {
-			const sport = SPORT_CONFIG.find(s => s.id === e.sport) || { emoji: '', name: e.sport, color: '#888' };
-			const league = this.getLeagueStyle(e.tournament);
-			const borderColor = league ? league.color : sport.color;
-			html += `<div class="sport-section compact" style="border-left-color:${borderColor}">`;
-			html += this.renderRow(e, showDay || showDate, showDate, sport.emoji);
-			html += `</div>`;
+			const key = e.sport === 'football' ? `${e.sport}:${e.tournament || ''}` : e.sport;
+			const bufKey = sportBuf.sport === 'football' ? `${sportBuf.sport}:${sportBuf.tournament || ''}` : sportBuf.sport;
+			if (key === bufKey) {
+				sportBuf.events.push(e);
+			} else {
+				flushBuf();
+				sportBuf = { sport: e.sport, tournament: e.tournament || '', events: [e] };
+			}
 		}
+		flushBuf();
+
+		// Render each group — batch adjacent row groups into a single card
+		let rowBatch = [];
+		const flushRows = () => {
+			if (rowBatch.length === 0) return;
+			html += '<div class="event-card">';
+			for (const e of rowBatch) {
+				html += this.renderRow(e, showDay || showDate, showDate);
+			}
+			html += '</div>';
+			rowBatch = [];
+		};
+		for (const group of groups) {
+			if (group.type === 'matchday') {
+				flushRows();
+				html += this.renderMatchdayGroup(group.events, group.tournament, showDay, showDate);
+			} else if (group.type === 'sport-group') {
+				flushRows();
+				html += this.renderSportGroupCard(group.events, group.sport, group.tournament, showDay, showDate);
+			} else if (group.type === 'lead') {
+				flushRows();
+				html += this.renderLeadWrapper(group.events[0], showDay, showDate);
+			} else {
+				for (const e of group.events) {
+					rowBatch.push(e);
+				}
+			}
+		}
+		flushRows();
 
 		html += `</div>`;
+		return html;
+	}
+
+	renderMatchdayGroup(matches, tournament, showDay, showDate) {
+		const sportCfg = SPORT_CONFIG.find(s => s.id === 'football') || { color: '#2d8a4e' };
+		const league = this.getLeagueStyle(tournament);
+		const color = league ? league.color : sportCfg.color;
+
+		// Pick featured match: prioritize Norwegian interest, then highest importance
+		const featured = [...matches].sort((a, b) => {
+			const aNor = (a.norwegian || a.norwegianRelevance >= 4) ? 1 : 0;
+			const bNor = (b.norwegian || b.norwegianRelevance >= 4) ? 1 : 0;
+			if (aNor !== bNor) return bNor - aNor;
+			return (b.importance || 0) - (a.importance || 0);
+		})[0];
+		const others = matches.filter(m => m !== featured);
+
+		// Day context for the card header
+		const firstDate = new Date(featured.time);
+		const today = this._startOfDay(new Date());
+		const tomorrow = new Date(today.getTime() + 86400000);
+		let dayLabel = '';
+		if (this._isSameDay(firstDate, new Date())) {
+			dayLabel = 'Today';
+		} else if (firstDate >= tomorrow && firstDate < new Date(tomorrow.getTime() + 86400000)) {
+			dayLabel = 'Tomorrow';
+		} else {
+			dayLabel = firstDate.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+		}
+
+		const tourLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(tournament) : null;
+		const logoImg = tourLogo ? `<img class="matchday-logo" src="${tourLogo}" alt="" loading="lazy">` : '';
+
+		let html = '<div class="matchday">';
+		html += `<div class="matchday-accent" style="background:${color}"></div>`;
+		html += '<div class="matchday-header">';
+		html += `<span class="matchday-title">${logoImg}${this.esc(tournament)}</span>`;
+		html += `<span class="matchday-count">${this.esc(dayLabel)} \u00b7 ${matches.length} match${matches.length !== 1 ? 'es' : ''}</span>`;
+		html += '</div>';
+
+		// Featured match — prominent display with logos
+		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(featured.homeTeam) : null;
+		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(featured.awayTeam) : null;
+		const fDate = new Date(featured.time);
+		const fTime = fDate.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+		const isNor = featured.norwegian || featured.norwegianRelevance >= 4;
+		const live = this.liveScores[featured.id];
+
+		html += `<div class="md-featured" data-id="${this.esc(featured.id)}" role="button" tabindex="0">`;
+		html += '<div class="md-featured-row">';
+		html += '<div class="md-featured-logos">';
+		if (hLogo) html += `<img class="md-featured-logo" src="${hLogo}" alt="${this.esc(featured.homeTeam)}" loading="lazy">`;
+		if (aLogo) html += `<img class="md-featured-logo" src="${aLogo}" alt="${this.esc(featured.awayTeam)}" loading="lazy">`;
+		html += '</div>';
+		html += '<div class="md-featured-info">';
+		html += `<div class="md-featured-teams">${this.esc(this.shortName(featured.homeTeam))} v ${this.esc(this.shortName(featured.awayTeam))}`;
+		if (isNor) html += ' <span class="md-nor">\ud83c\uddf3\ud83c\uddf4</span>';
+		html += '</div>';
+		if (featured.venue) html += `<div class="md-featured-meta">${this.esc(featured.venue)}</div>`;
+		html += '</div>';
+		if (live && live.state === 'in') {
+			html += `<span class="md-featured-time"><span class="live-dot"></span>${this.esc(live.clock)}</span>`;
+		} else if (live && live.state === 'post') {
+			html += `<span class="md-featured-time"><strong>${live.home} - ${live.away}</strong></span>`;
+		} else {
+			html += `<span class="md-featured-time">${fTime}</span>`;
+		}
+		html += '</div>';
+		if (featured.summary) {
+			html += `<div class="md-featured-context">${this.esc(featured.summary)}</div>`;
+		}
+		if (featured.streaming?.length > 0) {
+			html += '<div class="md-featured-stream">';
+			for (const s of featured.streaming.slice(0, 3)) {
+				const url = s.url || '#';
+				const name = s.platform || s;
+				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
+			}
+			html += '</div>';
+		}
+		// Expanded view for featured match
+		if (this.expandedId === featured.id) {
+			html += this.renderExpanded(featured);
+		}
+		html += '</div>'; // md-featured
+
+		// Other matches — compact rows inside the card
+		if (others.length > 0) {
+			html += '<div class="matchday-list">';
+			for (const m of others) {
+				html += this.renderRow(m, showDay || showDate, showDate);
+			}
+			html += '</div>';
+		}
+
+		html += '</div>'; // matchday
+		return html;
+	}
+
+	renderLeadWrapper(event, showDay, showDate) {
+		const sport = SPORT_CONFIG.find(s => s.id === event.sport) || { color: '#888', name: event.sport, emoji: '' };
+		const color = sport.color;
+		const tourneyText = event.tournament ? ` \u00b7 ${this.esc(event.tournament)}` : '';
+
+		let html = '<div class="lead">';
+		html += `<div class="lead-accent" style="background:${color}"></div>`;
+		html += '<div class="lead-body">';
+		html += `<div class="lead-sport" style="color:${color}">${sport.emoji} ${this.esc(sport.name)}${tourneyText}</div>`;
+		html += this.renderRow(event, showDay || showDate, showDate);
+		if (event.summary) {
+			html += `<div class="lead-lede">${this.esc(event.summary)}</div>`;
+		}
+		if (event.streaming?.length > 0) {
+			html += '<div class="lead-stream">';
+			for (const s of event.streaming.slice(0, 3)) {
+				const url = s.url || '#';
+				const name = s.platform || s;
+				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
+			}
+			html += '</div>';
+		}
+		html += '</div></div>';
+		return html;
+	}
+
+	/** Render a group of same-sport events as a single lead card with event rows inside */
+	renderSportGroupCard(events, sportId, tournament, showDay, showDate) {
+		const sport = SPORT_CONFIG.find(s => s.id === sportId) || { color: '#888', name: sportId, emoji: '' };
+		const color = sport.color;
+		const now = new Date();
+
+		// Pick the most important event for the card's headline
+		const headline = [...events].sort((a, b) => {
+			const aNor = (a.norwegian || a.norwegianRelevance >= 4) ? 1 : 0;
+			const bNor = (b.norwegian || b.norwegianRelevance >= 4) ? 1 : 0;
+			if (aNor !== bNor) return bNor - aNor;
+			return (b.importance || 0) - (a.importance || 0);
+		})[0];
+
+		// Day context — check if events span today (multi-day events like golf tournaments)
+		const today = this._startOfDay(now);
+		const todayEnd = new Date(today.getTime() + 86400000);
+		const tomorrow = todayEnd;
+		const tomorrowEnd = new Date(tomorrow.getTime() + 86400000);
+		const spansToday = events.some(e => {
+			const start = new Date(e.time).getTime();
+			const end = e.endTime ? new Date(e.endTime).getTime() : start;
+			return start < todayEnd.getTime() && end >= today.getTime();
+		});
+		let dayLabel = '';
+		if (spansToday || this._isSameDay(new Date(events[0].time), now)) {
+			dayLabel = 'Today';
+		} else {
+			const firstDate = new Date(events[0].time);
+			if (firstDate >= tomorrow && firstDate < tomorrowEnd) dayLabel = 'Tomorrow';
+			else dayLabel = firstDate.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+		}
+
+		// Tournament logo
+		const tourLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(tournament) : null;
+		const logoImg = tourLogo ? `<img class="lead-tour-logo" src="${tourLogo}" alt="" loading="lazy">` : '';
+
+		let html = '<div class="lead">';
+		html += `<div class="lead-accent" style="background:${color}"></div>`;
+		html += '<div class="lead-body">';
+		html += '<div class="lead-meta">';
+		html += `<span class="lead-sport" style="color:${color}">${logoImg}${sport.emoji} ${this.esc(sport.name)}</span>`;
+		html += `<span class="lead-time">${this.esc(dayLabel)} \u00b7 ${events.length} event${events.length !== 1 ? 's' : ''}</span>`;
+		html += '</div>';
+
+		// Headline title and lede from the most important event
+		if (headline.title) {
+			html += `<div class="lead-title">${this.esc(headline.title)}</div>`;
+		}
+		if (headline.summary) {
+			html += `<div class="lead-lede">${this.esc(headline.summary)}</div>`;
+		}
+
+		// Event rows inside the card
+		for (const e of events) {
+			const date = new Date(e.time);
+			const isNor = e.norwegian || e.norwegianRelevance >= 4;
+			const isMedal = e.tags?.includes('medal-event');
+			// For multi-day events in progress, show "In progress" instead of start time
+			const isMultiDay = e.endTime && new Date(e.endTime) > date;
+			const isInProgress = isMultiDay && date < now && new Date(e.endTime) > now;
+			let timeLabel;
+			if (showDay) {
+				timeLabel = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
+			} else if (isInProgress) {
+				timeLabel = 'Live';
+			} else {
+				timeLabel = date.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+			}
+			// Show individual tournament label if different events have different tournaments
+			const evtTour = e.tournament && e.tournament !== tournament ? ` \u00b7 ${this.esc(e.tournament)}` : '';
+
+			html += `<div class="lead-event" data-id="${this.esc(e.id)}" role="button" tabindex="0">`;
+			html += `<span class="lead-event-time${isInProgress ? ' is-live' : ''}">${timeLabel}</span>`;
+			html += `<span class="lead-event-name">${this.esc(e.title)}${evtTour}</span>`;
+			if (isNor) html += '<span class="lead-event-flag">\ud83c\uddf3\ud83c\uddf4</span>';
+			if (isMedal) html += '<span class="lead-event-badge">Medal</span>';
+			html += '</div>';
+
+			// Expanded view inside card
+			if (this.expandedId === e.id) {
+				html += this.renderExpanded(e);
+			}
+		}
+
+		// Live leaderboard for golf cards
+		if (sportId === 'golf' && this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
+			html += this.renderLiveLeaderboard();
+		}
+
+		// Streaming links from the first event that has them
+		const streamEvent = events.find(e => e.streaming?.length > 0);
+		if (streamEvent) {
+			html += '<div class="lead-stream">';
+			for (const s of streamEvent.streaming.slice(0, 3)) {
+				const url = s.url || '#';
+				const name = s.platform || s;
+				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
+			}
+			html += '</div>';
+		}
+
+		html += '</div></div>';
+		return html;
+	}
+
+	renderLiveLeaderboard() {
+		const lb = this.liveLeaderboard;
+		if (!lb || !lb.players?.length) return '';
+
+		// Norwegian/favorite players for highlighting
+		const norNames = ['hovland', 'aberg', 'ventura', 'olesen', 'flaten'];
+
+		let html = '<div class="lead-lb">';
+		html += '<div class="lead-lb-header">';
+		html += `<span class="lead-lb-title">Leaderboard</span>`;
+		const roundLabel = lb.round || 'Live';
+		html += `<span class="lead-lb-badge"><span class="lead-lb-badge-dot"></span> ${this.esc(roundLabel)}</span>`;
+		html += '</div>';
+
+		// Show top 3 + Norwegian player (if not already in top 3)
+		const top3 = lb.players.slice(0, 3);
+		const norPlayer = lb.players.find(p => {
+			const last = p.player.split(' ').pop().toLowerCase();
+			return norNames.includes(last);
+		});
+		const showPlayers = [...top3];
+		if (norPlayer && !top3.find(p => p.player === norPlayer.player)) {
+			showPlayers.push(norPlayer);
+		}
+
+		for (const p of showPlayers) {
+			const isNor = norNames.includes(p.player.split(' ').pop().toLowerCase());
+			const scoreNum = parseFloat(p.score);
+			const scoreCls = p.score.startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
+
+			// Headshot for golfers
+			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
+			const imgHtml = headshot
+				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy">`
+				: '<span class="lb-img-placeholder">\u26f3</span>';
+
+			html += `<div class="lb-row${isNor ? ' is-you' : ''}">`;
+			html += `<span class="lb-pos">${this.esc(String(p.position))}</span>`;
+			html += imgHtml;
+			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
+			if (isNor) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
+			html += `<span class="lb-score${scoreCls}">${this.esc(p.score)}</span>`;
+			if (p.thru && p.thru !== '-') html += `<span class="lb-thru">F${p.thru === '18' ? '' : p.thru}</span>`;
+			html += '</div>';
+		}
+
+		// Footer with venue
+		if (lb.venue) {
+			html += `<div class="lb-footer">${this.esc(lb.venue)}</div>`;
+		}
+
+		html += '</div>';
 		return html;
 	}
 
@@ -1448,6 +1935,76 @@ class Dashboard {
 		}).join('');
 	}
 
+	/** Auto-generate a brief narrative from today's events when the LLM didn't provide one */
+	_generateAutoNarrative() {
+		const bands = this.categorizeEvents();
+		const todayEvents = [...bands.live, ...bands.today];
+		if (todayEvents.length === 0) return '';
+
+		// Find highlights: Norwegian interest first, then highest importance
+		const highlights = todayEvents
+			.filter(e => e.importance >= 4)
+			.sort((a, b) => {
+				const aNor = (a.norwegian || a.norwegianRelevance >= 4) ? 1 : 0;
+				const bNor = (b.norwegian || b.norwegianRelevance >= 4) ? 1 : 0;
+				if (aNor !== bNor) return bNor - aNor;
+				return (b.importance || 0) - (a.importance || 0);
+			});
+
+		// Build a concise editorial teaser — one sentence per highlight, max 2
+		const parts = [];
+		for (const e of highlights.slice(0, 2)) {
+			if (e.homeTeam && e.awayTeam) {
+				const isNor = e.norwegian || e.norwegianRelevance >= 4;
+				const flag = isNor ? ' \ud83c\uddf3\ud83c\uddf4' : '';
+				parts.push(`<strong>${this.esc(this.shortName(e.homeTeam))} v ${this.esc(this.shortName(e.awayTeam))}</strong>${flag}`);
+			} else if (e.summary) {
+				// Use first sentence of summary, truncate at word boundary
+				let s = e.summary;
+				const dot = s.indexOf('. ');
+				if (dot > 0 && dot < 80) {
+					s = s.slice(0, dot + 1);
+				} else if (s.length > 80) {
+					let cut = s.lastIndexOf(' ', 77);
+					if (cut > 30) {
+						s = s.slice(0, cut).replace(/[\s\u2014\u2013,;:\-]+$/, '') + '\u2026';
+					} else {
+						s = s.slice(0, 77).replace(/[\s\u2014\u2013,;:\-]+$/, '') + '\u2026';
+					}
+				}
+				parts.push(this.esc(s));
+			} else if (e.title) {
+				const sport = SPORT_CONFIG.find(c => c.id === e.sport);
+				parts.push(`${sport?.emoji || ''} ${this.esc(e.title)}`);
+			}
+		}
+
+		if (parts.length === 0) {
+			const sportSet = new Set(todayEvents.map(e => e.sport));
+			return `${todayEvents.length} events across ${sportSet.size} sports today.`;
+		}
+
+		// Add a result teaser if there are recent results
+		const results = this._getRecentMatchResults();
+		if (results.length > 0) {
+			const r = results[0];
+			if (r._resultSport === 'golf') {
+				const winner = (r._golfLeaderboard || [])[0];
+				if (winner) parts.push(`Latest: ${this.esc(winner.player || winner.name)} wins ${this.esc(r._golfTournament || '')}`);
+			} else if (r.homeScore != null) {
+				parts.push(`Latest: ${this.esc(this.shortName(r.homeTeam))} ${r.homeScore}\u2013${r.awayScore} ${this.esc(this.shortName(r.awayTeam))}`);
+			}
+		}
+
+		// Join parts — use '. ' but avoid '…. ' (ellipsis then period)
+		return parts.map((p, i) => {
+			if (i === 0) return p;
+			const prev = parts[i - 1];
+			const sep = prev.endsWith('\u2026') || prev.endsWith('.') ? ' ' : '. ';
+			return sep + p;
+		}).join('');
+	}
+
 	_getEmptySportReason(sportId) {
 		const h = this.healthReport;
 		if (!h) return '';
@@ -1461,6 +2018,172 @@ class Dashboard {
 			return 'off-season or no scheduled events';
 		}
 		return '';
+	}
+
+	/** Get recent match results from recent-results.json for result cards */
+	_getRecentMatchResults() {
+		const now = new Date();
+		const cutoff = new Date(now.getTime() - 72 * 60 * 60 * 1000); // last 72h
+		const results = [];
+
+		// Football results
+		if (this.recentResults?.football?.length) {
+			for (const m of this.recentResults.football) {
+				if (m.homeScore != null && new Date(m.date) >= cutoff) {
+					results.push({ ...m, _resultSport: 'football' });
+				}
+			}
+		}
+
+		// Golf results — only show previous tournament if no current golf events are active
+		const hasActiveGolf = (this.allEvents || []).some(e =>
+			e.sport === 'golf' && e.endTime && new Date(e.endTime) >= now && new Date(e.time) <= now
+		);
+		if (!hasActiveGolf) {
+			const pgaData = this.recentResults?.golf?.pga;
+			if (pgaData?.status === 'final') {
+				const pga = pgaData;
+				const nor = (pga.norwegianPlayers || [])[0] || null;
+				results.push({
+					_resultSport: 'golf',
+					_golfTournament: pga.tournamentName,
+					_golfStatus: pga.status,
+					_golfLeaderboard: (pga.topPlayers || []).slice(0, 3),
+					_golfNorwegian: nor,
+					league: 'PGA Tour',
+					date: pga.lastUpdated || now.toISOString(),
+					homeTeam: pga.tournamentName,
+				});
+			}
+		}
+
+		// Sort: favorites first, then by date (most recent)
+		results.sort((a, b) => {
+			const aFav = a.isFavorite ? 1 : 0;
+			const bFav = b.isFavorite ? 1 : 0;
+			if (aFav !== bFav) return bFav - aFav;
+			return new Date(b.date) - new Date(a.date);
+		});
+		return results.slice(0, 5); // max 5 result items
+	}
+
+	/** Render results section with V3 result cards */
+	_renderResultsSection(matchResults, resultEvents) {
+		let html = '<div class="flow-label band-label results"><span class="flow-text">What you missed</span><span class="flow-line"></span></div>';
+		html += '<div class="band-content">';
+
+		let cardCount = 0;
+		const compactRows = [];
+		for (const m of matchResults) {
+			if (m._resultSport === 'golf') {
+				html += this._renderGolfResultCard(m);
+				cardCount++;
+			} else if (cardCount < 2) {
+				html += this._renderFootballResultCard(m);
+				cardCount++;
+			} else {
+				compactRows.push(m);
+			}
+		}
+
+		// Wrap compact result rows in a card
+		if (compactRows.length > 0) {
+			html += '<div class="event-card">';
+			for (const m of compactRows) {
+				html += this._renderCompactResultRow(m);
+			}
+			html += '</div>';
+		}
+
+		// Event-based results (non-football, like ended tournaments)
+		const eventResults = resultEvents.filter(e => !e._isResult);
+		if (eventResults.length > 0) {
+			html += '<div class="event-card">';
+			for (const e of eventResults) {
+				html += this.renderRow(e, false, false);
+			}
+			html += '</div>';
+		}
+
+		html += '</div>';
+		return html;
+	}
+
+	_renderFootballResultCard(m) {
+		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
+		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
+		const hImg = hLogo ? `<img class="result-team-logo" src="${hLogo}" alt="${this.esc(m.homeTeam)}" loading="lazy">` : '';
+		const aImg = aLogo ? `<img class="result-team-logo" src="${aLogo}" alt="${this.esc(m.awayTeam)}" loading="lazy">` : '';
+		let html = '<div class="result-card">';
+		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
+		html += '<div class="result-body">';
+		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(m.league) : null;
+		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="" loading="lazy">` : '';
+		html += '<div class="result-header">';
+		html += `<span class="result-sport">${leagueImg}${this.esc(m.league || '')}</span>`;
+		html += '<span class="result-ft">FT</span>';
+		html += '</div>';
+		html += '<div class="result-match">';
+		html += `<div class="result-team">${hImg}<span class="result-team-name">${this.esc(this.shortName(m.homeTeam))}</span></div>`;
+		html += `<span class="result-score">${m.homeScore} - ${m.awayScore}</span>`;
+		html += `<div class="result-team">${aImg}<span class="result-team-name">${this.esc(this.shortName(m.awayTeam))}</span></div>`;
+		html += '</div>';
+		if (m.recapHeadline) {
+			html += `<div class="result-summary">${this.esc(m.recapHeadline)}</div>`;
+		}
+		const scorers = (m.goalScorers || []).slice(0, 4);
+		if (scorers.length > 0) {
+			html += `<div class="result-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`;
+		}
+		html += '</div></div>';
+		return html;
+	}
+
+	_renderGolfResultCard(m) {
+		const lb = m._golfLeaderboard || [];
+		const nor = m._golfNorwegian;
+		const isFinal = m._golfStatus === 'final';
+		let html = '<div class="result-card">';
+		html += '<div class="result-accent" style="background:var(--sport-golf)"></div>';
+		html += '<div class="result-body">';
+		html += '<div class="result-header">';
+		html += `<span class="result-sport">PGA Tour</span>`;
+		html += `<span class="result-ft">${isFinal ? 'Final' : 'In progress'}</span>`;
+		html += '</div>';
+		html += `<div class="result-golf-title">${this.esc(m._golfTournament || '')}</div>`;
+		if (lb.length > 0) {
+			html += '<div class="result-golf-lb">';
+			for (let i = 0; i < lb.length; i++) {
+				const p = lb[i];
+				const pName = p.player || p.name || '';
+				const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(pName) : null;
+				const img = headshot ? `<img class="result-golfer-img" src="${headshot}" alt="" loading="lazy">` : `<span class="result-golfer-pos">${p.position || i + 1}</span>`;
+				html += `<div class="result-golfer">${img}<span class="result-golfer-name">${this.esc(pName)}</span><span class="result-golfer-score">${this.esc(p.score || p.totalScore || '')}</span></div>`;
+			}
+			if (nor) {
+				const norName = nor.player || nor.name || '';
+				const norImg = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(norName) : null;
+				const nImg = norImg ? `<img class="result-golfer-img" src="${norImg}" alt="" loading="lazy">` : `<span class="result-golfer-pos">\ud83c\uddf3\ud83c\uddf4</span>`;
+				html += `<div class="result-golfer nor">${nImg}<span class="result-golfer-name">${this.esc(norName)}</span><span class="result-golfer-score">T${nor.position} (${this.esc(nor.score || '')})</span></div>`;
+			}
+			html += '</div>';
+		}
+		html += '</div></div>';
+		return html;
+	}
+
+	_renderCompactResultRow(m) {
+		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
+		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
+		let html = '<div class="result-row">';
+		html += '<div class="result-row-logos">';
+		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="" loading="lazy">`;
+		if (aLogo) html += `<img class="result-row-logo" src="${aLogo}" alt="" loading="lazy">`;
+		html += '</div>';
+		html += `<span class="result-row-teams">${this.esc(this.shortName(m.homeTeam))} v ${this.esc(this.shortName(m.awayTeam))}</span>`;
+		html += `<span class="result-row-score">${m.homeScore} - ${m.awayScore}</span>`;
+		html += '</div>';
+		return html;
 	}
 
 	renderEvents() {
@@ -1506,41 +2229,40 @@ class Dashboard {
 			return;
 		}
 
-		// Today: full 6-band layout
+		// Today: card-first feed — fewer sections, clear purpose per card
 		const bands = this.categorizeEvents();
-
-		// Deduplicate: filter out events already covered by editorial components
-		const cov = this._editorialCoverage;
-		const isEventCovered = (e) => {
-			// Sport-level coverage (e.g. event-schedule for olympics)
-			if (cov.sports.has(e.sport)) return true;
-			// Match-level coverage (match-result or match-preview)
-			if (e.homeTeam && e.awayTeam) {
-				const key = `${e.homeTeam.toLowerCase()}:${e.awayTeam.toLowerCase()}`;
-				if (cov.matchKeys.has(key)) return true;
-			}
-			return false;
-		};
-		const dedupedToday = bands.today.filter(e => !isEventCovered(e));
-		const dedupedResults = bands.results.filter(e => !isEventCovered(e));
-		const dedupedTomorrow = bands.tomorrow.filter(e => !isEventCovered(e));
+		const sf = this.activeSportFilter;
+		const filterBand = (arr) => sf ? arr.filter(e => e.sport === sf) : arr;
 
 		let html = '';
 
-		html += this.renderBand('Live now', bands.live, { cssClass: 'live' });
-		html += this.renderBand('Today', dedupedToday, {});
-		html += this.renderBand('Results', dedupedResults, { cssClass: 'results' });
-		html += this.renderBand('Tomorrow', dedupedTomorrow, { showDay: true });
-		// Merge sparse "This week" + "Later" into "Coming Up" when combined items ≤ 4
-		if (bands.week.length + bands.later.length > 0 && bands.week.length + bands.later.length <= 4) {
-			const comingUp = [...bands.week, ...bands.later].sort((a, b) => new Date(a.time) - new Date(b.time));
-			html += this.renderBand('Coming up', comingUp, { collapsed: comingUp.length > 2, showDate: true });
-		} else {
-			html += this.renderBand('This week', bands.week, { collapsed: true, showDay: true });
-			html += this.renderBand('Later', bands.later, { collapsed: true, showDate: true });
+		// 1. Live events — only show label if there are live events
+		const liveEvents = filterBand(bands.live);
+		if (liveEvents.length > 0) {
+			html += this.renderBand('Happening now', liveEvents, { cssClass: 'live' });
 		}
-		html += this.renderEmptySportNotes(this.allEvents);
-		html += this.renderStandingsSection();
+
+		// 2. Today's events — no flow label (obviously today after the brief)
+		const todayEvents = filterBand(bands.today);
+		if (todayEvents.length > 0) {
+			html += this.renderBand(null, todayEvents, {});
+		}
+
+		// 3. Results — render important results as result cards
+		const resultEvents = filterBand(bands.results);
+		const recentMatches = this._getRecentMatchResults();
+		if (recentMatches.length > 0 || resultEvents.length > 0) {
+			html += this._renderResultsSection(recentMatches, resultEvents);
+		}
+
+		// 4. Coming up — merge tomorrow + week + later into one collapsed section
+		const comingUp = [...filterBand(bands.tomorrow), ...filterBand(bands.week), ...filterBand(bands.later)]
+			.sort((a, b) => new Date(a.time) - new Date(b.time));
+		if (comingUp.length > 0) {
+			html += this.renderBand('Coming up', comingUp, { collapsed: true, showDate: true });
+		}
+
+		// Standings: removed standalone section — standings available in expanded views
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
@@ -1678,12 +2400,17 @@ class Dashboard {
 			}
 		}
 
+		// Sport dot color
+		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
+		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
+
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
 				<div class="row-main">
+					<span class="event-sport-dot" style="background:${dotColor}"></span>
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${emojiPrefix}${titleHtml}</span>${norBadge}${subtitleHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${subtitleHtml}</span>
 				</div>
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
@@ -2113,9 +2840,9 @@ class Dashboard {
 
 		if (tables.length === 0) return '';
 
-		let html = '<div class="inline-standings">';
-		html += '<div class="band-label collapsible" data-band="standings" role="button" tabindex="0" aria-expanded="false">Standings \u25b8</div>';
+		let html = '<div class="flow-label band-label collapsible" data-band="standings" role="button" tabindex="0" aria-expanded="false"><span class="flow-text">Standings</span><span class="flow-line"></span><span style="font-size:0.6rem">\u25b8</span></div>';
 		html += '<div class="band-content collapsed" data-band-content="standings">';
+		html += '<div class="event-card">';
 		html += tables.join('');
 		html += '</div></div>';
 		return html;
@@ -2317,8 +3044,9 @@ class Dashboard {
 		const now = Date.now();
 		return this.allEvents.some(e => {
 			const start = new Date(e.time).getTime();
-			// Event could be live: started up to 4h ago (covers golf rounds, football + extra time)
-			return start <= now && start > now - 4 * 60 * 60 * 1000 &&
+			// For multi-day events (golf), use endTime; for single events, use 4h window
+			const end = e.endTime ? new Date(e.endTime).getTime() : start + 4 * 60 * 60 * 1000;
+			return start <= now && now <= end &&
 				(e.sport === 'football' || e.sport === 'golf');
 		});
 	}
@@ -2456,15 +3184,19 @@ class Dashboard {
 			if (!comp || state === 'pre') return;
 
 			const competitors = comp.competitors || [];
+			const roundDetail = ev?.status?.type?.detail || '';
 			this.liveLeaderboard = {
 				name: ev.name || '',
 				state: state,
+				venue: comp?.venue?.fullName || '',
+				round: roundDetail,
 				players: competitors.slice(0, 15).map((c, idx) => ({
-					position: c.order || (idx + 1),
+					position: c.status?.position?.displayName || c.order || (idx + 1),
 					player: c.athlete?.displayName || c.athlete?.fullName || 'Unknown',
 					score: typeof c.score === 'object' ? (c.score?.displayValue || 'E') : (c.score?.toString() || 'E'),
 					today: c.linescores?.[c.linescores.length - 1]?.displayValue || '-',
 					thru: c.status?.thru?.toString() || '-',
+					flag: c.athlete?.flag?.alt || '',
 				})),
 			};
 		} catch (e) { console.debug('Golf live poll failed:', e.message); }
@@ -2512,8 +3244,8 @@ class Dashboard {
 			// Ignore clicks on interactive elements inside expanded rows
 			if (e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
 
-			// Handle event row expand/collapse
-			const row = e.target.closest('.event-row');
+			// Handle event row expand/collapse (also handles md-featured clicks)
+			const row = e.target.closest('.event-row') || e.target.closest('.md-featured[data-id]') || e.target.closest('.lead-event[data-id]');
 			if (row) {
 				const id = row.dataset.id;
 				const expanding = this.expandedId !== id;

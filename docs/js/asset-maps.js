@@ -275,5 +275,33 @@ function getGolferHeadshot(golferName) {
 	return headshots[normalized] || null;
 }
 
+function getTournamentLogo(name) {
+	if (!name) return null;
+	const n = name.trim().toLowerCase();
+	const logos = {
+		// Football — icon/crest style (no text where possible)
+		'premier league': 'https://r2.thesportsdb.com/images/media/league/badge/gasy9d1737743125.png',
+		'english premier league': 'https://r2.thesportsdb.com/images/media/league/badge/gasy9d1737743125.png',
+		'la liga': 'https://r2.thesportsdb.com/images/media/league/badge/ja4it51687628717.png',
+		'champions league': 'https://crests.football-data.org/CL.png',
+		'uefa champions league': 'https://crests.football-data.org/CL.png',
+		'europa league': 'https://crests.football-data.org/EL.png',
+		'uefa europa league': 'https://crests.football-data.org/EL.png',
+		'conference league': 'https://a.espncdn.com/i/leaguelogos/soccer/500/2321.png',
+		'uefa conference league': 'https://a.espncdn.com/i/leaguelogos/soccer/500/2321.png',
+		// Golf — distinct logos for each tour
+		'pga tour': 'https://a.espncdn.com/i/teamlogos/leagues/500/pgatour.png',
+		'dp world tour': 'https://a.espncdn.com/i/espn/teamlogos/500/european_tour.png',
+		'european tour': 'https://a.espncdn.com/i/espn/teamlogos/500/european_tour.png',
+		// F1
+		'formula 1': 'https://r2.thesportsdb.com/images/media/league/badge/g8cofl1513623681.png',
+		'f1': 'https://r2.thesportsdb.com/images/media/league/badge/g8cofl1513623681.png',
+		// Olympics
+		'winter olympics 2026': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Olympic_rings_without_rims.svg/200px-Olympic_rings_without_rims.svg.png',
+	};
+	return logos[n] || null;
+}
+
 window.getTeamLogo = getTeamLogo;
 window.getGolferHeadshot = getGolferHeadshot;
+window.getTournamentLogo = getTournamentLogo;

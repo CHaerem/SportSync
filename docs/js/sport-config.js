@@ -2,13 +2,13 @@
 // Used by simple-dashboard.js, settings-ui.js, and dashboard-helpers.js
 
 const SPORT_CONFIG = [
-	{ id: 'football', emoji: '⚽', name: 'Football', color: '#22c55e' },
-	{ id: 'golf', emoji: '⛳', name: 'Golf', color: '#f59e0b' },
-	{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#3b82f6' },
-	{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#ef4444', aliases: ['f1'] },
-	{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#6b7280' },
-	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#8b5cf6' },
-	{ id: 'olympics', emoji: '🏅', name: 'Olympics', color: '#0081C8' }
+	{ id: 'football', emoji: '⚽', name: 'Football', color: '#2d8a4e' },
+	{ id: 'golf', emoji: '⛳', name: 'Golf', color: '#c4920a' },
+	{ id: 'tennis', emoji: '🎾', name: 'Tennis', color: '#2563eb' },
+	{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#dc2626', aliases: ['f1'] },
+	{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#57534e' },
+	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#7c3aed' },
+	{ id: 'olympics', emoji: '🏅', name: 'Olympics', color: '#0070b8' }
 ];
 
 // Lookup helpers
