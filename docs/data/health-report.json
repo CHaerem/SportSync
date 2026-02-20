@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T18:17:22.482Z",
+  "generatedAt": "2026-02-20T19:18:48.825Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 593,
+      "ageMinutes": 654,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 593,
+      "ageMinutes": 654,
       "stale": true
     }
   },
@@ -121,7 +121,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 12,
+    "fiveHour": 13,
     "sevenDay": 95,
     "model": null,
     "stepsSkipped": 4,
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 116002,
+    "totalDuration": 118968,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 43796,
+        "duration": 44850,
         "share": 38
       },
       {
         "name": "verify-schedules",
-        "duration": 60077,
-        "share": 52
+        "duration": 60050,
+        "share": 50
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 593 minutes old"
+      "message": "featured.json: critical output is 654 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 593 minutes old"
+      "message": "ai-quality.json: critical output is 654 minutes old"
     },
     {
       "severity": "warning",
@@ -200,17 +200,17 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 12%, 7d: 95%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 13%, 7d: 95%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (44s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (45s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
