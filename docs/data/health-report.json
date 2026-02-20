@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-20T20:10:35.259Z",
-  "eventCount": 35,
+  "generatedAt": "2026-02-20T21:08:31.563Z",
+  "eventCount": 34,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -8,14 +8,14 @@
       "delta": 0
     },
     "olympics": {
-      "count": 5,
+      "count": 4,
       "previousCount": 5,
-      "delta": 0
+      "delta": -1
     },
     "football": {
       "count": 27,
-      "previousCount": 28,
-      "delta": -1
+      "previousCount": 27,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 706,
+      "ageMinutes": 764,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 706,
+      "ageMinutes": 764,
       "stale": true
     }
   },
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 114321,
+    "totalDuration": 120116,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 41222,
-        "share": 36
+        "duration": 46058,
+        "share": 38
       },
       {
         "name": "verify-schedules",
-        "duration": 60076,
-        "share": 53
+        "duration": 60056,
+        "share": 50
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 706 minutes old"
+      "message": "featured.json: critical output is 764 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 706 minutes old"
+      "message": "ai-quality.json: critical output is 764 minutes old"
     },
     {
       "severity": "warning",
@@ -205,12 +205,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 36% of total pipeline time (41s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (46s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 53% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -221,11 +221,6 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
-    },
-    {
-      "severity": "info",
-      "code": "olympics_stale_events",
-      "message": "olympics-2026.json: 1/5 events are in the past — consider pruning"
     }
   ],
   "status": "warning",
