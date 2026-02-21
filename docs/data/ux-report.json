@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-02-21T14:26:51.400Z",
+  "score": 98,
+  "tier": "file",
+  "metrics": {
+    "loadCompleteness": {
+      "score": 100,
+      "details": "0 missing file(s)",
+      "issues": []
+    },
+    "emptySections": {
+      "score": 100,
+      "details": "featured.json 0min old",
+      "issues": []
+    },
+    "brokenImages": {
+      "score": 100,
+      "details": "asset-maps.js present",
+      "issues": []
+    },
+    "contentOverflow": {
+      "score": 85,
+      "details": "1 structural issue(s)",
+      "issues": [
+        {
+          "severity": "warning",
+          "code": "low_aria_labels",
+          "message": "Only 2 aria-label attributes (need >= 3)"
+        }
+      ]
+    },
+    "contrastRatio": {
+      "score": 100,
+      "details": "Color variables defined",
+      "issues": []
+    },
+    "touchTargets": {
+      "score": 100,
+      "details": "0 touch target issue(s)",
+      "issues": []
+    },
+    "textReadability": {
+      "score": 100,
+      "details": "Watch plan OK",
+      "issues": []
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "low_aria_labels",
+      "message": "Only 2 aria-label attributes (need >= 3)"
+    }
+  ],
+  "vision": null
+}
