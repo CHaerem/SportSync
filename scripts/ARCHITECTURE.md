@@ -1,346 +1,214 @@
-# SportSync Data Fetching Architecture
+# SportSync Architecture
 
 ## Overview
 
-SportSync uses a **modular, configuration-driven architecture** for fetching sports data from various APIs. The system is designed to be robust, maintainable, and easily extensible while preparing for future personalization features.
+SportSync uses a **modular, configuration-driven architecture** for fetching sports data from various APIs. The system is designed for robustness, extensibility, and autonomous operation — the multi-agent autopilot can add new fetchers, pipeline steps, and data sources without human intervention.
 
 ## Core Principles
 
-1. **Configuration-Driven**: All sport-specific settings are centralized in configuration files
-2. **Inheritance-Based**: Common functionality is shared through base classes
-3. **Robust Error Handling**: Multiple layers of fallbacks and retries
-4. **Future-Ready**: Architecture supports user personalization without major refactoring
-5. **Backwards Compatible**: Gradual migration system ensures stability
+1. **Configuration-Driven**: Sport-specific settings live in curated configs (`scripts/config/*.json`)
+2. **Inheritance-Based**: Common functionality shared through base classes (`BaseFetcher` → `ESPNAdapter`)
+3. **Robust Error Handling**: Multiple layers of fallbacks, retries, and validation
+4. **Auto-Discovery**: New sport files and configs are automatically picked up by the build pipeline
+5. **Autonomous Operation**: Multi-agent autopilot maintains data, code, and content quality
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Configuration Layer                      │
-│                    (scripts/config/*.js)                     │
-└──────────────────────┬──────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                   Pipeline Runner                         │
+│          (run-pipeline.js reads pipeline-manifest.json)   │
+│                                                          │
+│  9 phases, 21 steps — declarative, autopilot-editable    │
+│  fetch → prepare → discover → build → generate →         │
+│  validate → monitor → personalize → finalize             │
+└──────────────────────┬───────────────────────────────────┘
                        │
-┌──────────────────────▼──────────────────────────────────────┐
-│                       Base Classes                           │
-│  BaseFetcher → ESPNAdapter → Sport-Specific Fetchers        │
-└──────────────────────┬──────────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────┐
+│                    Fetch Layer                             │
+│  football.js | golf.js | tennis.js | f1.js | chess.js    │
+│  esports.js | fotball-no.js                              │
+│  All extend BaseFetcher → ESPNAdapter (where applicable) │
+└──────────────────────┬───────────────────────────────────┘
                        │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  Validation & Utilities                       │
-│   ResponseValidator | APIClient | EventNormalizer | Filters  │
-└──────────────────────┬──────────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────┐
+│               Validation & Utilities                      │
+│  ResponseValidator | APIClient | EventNormalizer          │
+│  Filters | Helpers | LLMClient                           │
+└──────────────────────┬───────────────────────────────────┘
                        │
-┌──────────────────────▼──────────────────────────────────────┐
-│                      Output Layer                            │
-│              Normalized JSON files in docs/data/             │
-└──────────────────────┬──────────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────┐
+│                   Build & Enrich                          │
+│  build-events.js (auto-discovers sport JSONs + configs)  │
+│  enrich-events.js (LLM importance, summaries, tags)      │
+│  generate-featured.js (Claude CLI editorial content)     │
+│  enrich-streaming.js (tvkampen matching)                 │
+└──────────────────────┬───────────────────────────────────┘
                        │
-┌──────────────────────▼──────────────────────────────────────┐
-│                   Monitoring Layer                            │
-│   PipelineHealth | QualityRegression | CoverageGapDetection │
-└──────────────────────────────────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────┐
+│                   Monitoring Layer                         │
+│  pipeline-health.js | check-quality-regression.js        │
+│  detect-coverage-gaps.js | analyze-patterns.js           │
+│  autonomy-scorecard.js | evaluate-ux.js                  │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ## Directory Structure
 
 ```
 scripts/
-├── config/
-│   ├── sports-config.js         # Main configuration for all sports
-│   ├── chess-tournaments.json   # Curated chess tournament data
-│   └── norwegian-chess-players.json
+├── config/                     # Auto-discovered curated event configs
+│   ├── user-context.json       # User preferences (sport weights, favorites)
+│   ├── olympics-2026.json      # Winter Olympics schedule
+│   ├── biathlon-wch-2026.json  # Biathlon World Championships
+│   ├── nordic-ski-wch-2026.json # FIS Nordic Championships
+│   ├── chess-tournaments.json  # Chess tournament schedule
+│   └── archive/                # Expired configs (auto-archived)
 │
 ├── lib/
 │   ├── base-fetcher.js         # Abstract base class for all fetchers
+│   ├── adapters/
+│   │   └── espn-adapter.js     # ESPN API adapter (football, tennis, golf, F1)
 │   ├── api-client.js           # HTTP client with retry & caching
-│   ├── event-normalizer.js     # Ensures consistent event structure
-│   ├── response-validator.js   # API response schema validation (ESPN)
-│   ├── ai-quality-gates.js     # AI enrichment quality gates and fallbacks
+│   ├── event-normalizer.js     # Consistent event structure
+│   ├── response-validator.js   # ESPN response schema validation
+│   ├── ai-quality-gates.js     # AI quality gates, component registry
 │   ├── filters.js              # Reusable filtering functions
-│   ├── helpers.js              # Shared utility functions
-│   └── llm-client.js           # LLM abstraction (Anthropic + OpenAI)
+│   ├── helpers.js              # Shared utilities (fetchJson, isEventInWindow, time constants)
+│   ├── llm-client.js           # LLM abstraction (Anthropic preferred, OpenAI fallback)
+│   ├── schedule-verifier.js    # 5-stage schedule verification engine
+│   ├── tvkampen-scraper.js     # tvkampen.com streaming scraper
+│   ├── streaming-matcher.js    # Fuzzy team/time matching for streaming
+│   ├── broadcaster-urls.js     # Broadcaster name→URL/type mapping
+│   ├── watch-plan.js           # Watch-plan scoring and feedback adjustments
+│   ├── fact-checker.js         # LLM claim verification
+│   ├── ux-heuristics.js        # File-based UX evaluation heuristics
+│   └── enrichment-prompts.js   # Prompts for AI event enrichment
 │
-├── lib/adapters/
-│   └── espn-adapter.js         # ESPN API adapter (used by most sports)
+├── fetch/
+│   ├── index.js                # Orchestrates all fetchers via Promise.allSettled
+│   ├── football.js             # ESPN Premier League + La Liga
+│   ├── golf.js                 # ESPN + PGA Tour tee times/featured groups
+│   ├── tennis.js               # ESPN ATP/WTA
+│   ├── f1.js                   # ESPN Racing F1
+│   ├── chess.js                # Curated + Lichess
+│   ├── esports.js              # HLTV + curated CS2
+│   └── fotball-no.js           # Norwegian OBOS-ligaen (Lyn Oslo)
 │
-└── fetch/
-    ├── index.js                # Main pipeline orchestrator
-    ├── football-refactored.js  # Refactored football fetcher
-    ├── tennis-refactored.js    # Refactored tennis fetcher
-    ├── golf-refactored.js      # Refactored golf fetcher
-    ├── f1-refactored.js        # Refactored F1 fetcher
-    ├── chess-refactored.js     # Refactored chess fetcher
-    ├── esports-refactored.js   # Refactored esports fetcher
-    └── [legacy files]          # Original fetchers (for fallback)
+├── agents/
+│   ├── orchestrator-prompt.md  # Orchestrator system prompt
+│   ├── agent-definitions.json  # Agent specs, ownership, contention rules
+│   └── task-router.js          # Deterministic task → agent routing
+│
+├── pipeline-manifest.json      # Declarative pipeline step definitions
+├── autopilot-strategy.json     # Process strategy (ship modes, turn budgets)
+├── run-pipeline.js             # Pipeline runner (reads manifest, orchestrates)
+├── build-events.js             # Auto-discovers sport JSONs + configs → events.json
+├── enrich-events.js            # LLM enrichment with adaptive hints
+├── generate-featured.js        # Claude CLI editorial content generation
+├── generate-multi-day.js       # Yesterday recap + tomorrow preview
+├── fetch-standings.js          # ESPN standings (PL, La Liga, golf, F1, tennis)
+├── fetch-rss.js                # RSS digest (11 feeds)
+├── fetch-results.js            # ESPN recent results (7-day history)
+├── enrich-streaming.js         # tvkampen streaming enrichment
+├── verify-schedules.js         # Schedule verification orchestrator
+├── evolve-preferences.js       # Engagement → preference evolution
+├── generate-capabilities.js    # Capability registry generator
+├── pipeline-health.js          # Health report + autonomy scorecard
+├── analyze-patterns.js         # Recurring issue pattern detection
+├── evaluate-ux.js              # UX quality evaluation (browser + file-based)
+└── screenshot.js               # Dashboard screenshot (Playwright)
 ```
 
 ## Core Components
 
-### 1. Configuration System (`config/sports-config.js`)
-
-Centralized configuration for all sports:
-
-```javascript
-{
-  football: {
-    sport: "football",
-    enabled: true,
-    sources: [...],      // API endpoints
-    filters: {...},      // Filtering rules
-    norwegian: {...},    // Norwegian focus
-    streaming: [...]     // Streaming platforms
-  }
-}
-```
-
-### 2. Base Fetcher (`lib/base-fetcher.js`)
+### 1. Base Fetcher (`lib/base-fetcher.js`)
 
 Abstract base class providing common functionality:
-
 - **fetch()**: Main entry point
 - **fetchFromAPIs()**: Orchestrates API calls
 - **applyFilters()**: Applies configured filters
 - **normalizeEvents()**: Ensures consistent structure
-- **formatResponse()**: Creates final output format
+- **formatResponse()**: Creates `{ tournaments: [...] }` output
+
+### 2. ESPN Adapter (`lib/adapters/espn-adapter.js`)
+
+Extends BaseFetcher for ESPN-based sports (football, tennis, golf, F1):
+- Handles ESPN scoreboard and schedule endpoints
+- Norwegian player/team detection
+- Tournament-level event creation for sports with empty competition arrays
 
 ### 3. API Client (`lib/api-client.js`)
 
 Robust HTTP client with:
+- Automatic retries with exponential backoff
+- Response caching to reduce API calls
+- Timeout handling (per-request configurable)
+- Error recovery with stale cache fallback
 
-- **Automatic retries** with exponential backoff
-- **Response caching** to reduce API calls
-- **Timeout handling**
-- **Error recovery** with stale cache fallback
+### 4. Pipeline Runner (`run-pipeline.js`)
 
-### 4. Event Normalizer (`lib/event-normalizer.js`)
-
-Ensures all events have consistent structure:
-
-- **Field validation** and sanitization
-- **ID generation** for deduplication
-- **Date normalization** to UTC
-- **Participant extraction**
-
-### 5. Filters (`lib/filters.js`)
-
-Reusable filtering functions:
-
-- **Time-based**: Current week, date range
-- **Team/Player**: Norwegian focus, favorites
-- **League/Tournament**: Specific competitions
-- **Deduplication**: Remove duplicate events
-
-## Sport-Specific Implementations
-
-### ESPN Sports (Football, Tennis, Golf, F1)
-
-All ESPN-based sports extend `ESPNAdapter`:
-
-```javascript
-class FootballFetcher extends ESPNAdapter {
-  constructor() {
-    super(sportsConfig.football);
-  }
-  
-  // Override only sport-specific logic
-  applyCustomFilters(events) { ... }
-}
-```
-
-### Custom Sports (Chess, Esports)
-
-Extend `BaseFetcher` directly for non-ESPN sources:
-
-```javascript
-class ChessFetcher extends BaseFetcher {
-  async fetchFromSource(source) {
-    if (source.api === "curated") { ... }
-    if (source.api === "lichess") { ... }
-  }
-}
-```
+Reads `pipeline-manifest.json` and executes all steps phase by phase:
+- 9 phases: fetch, prepare, discover, build, generate, validate, monitor, personalize, finalize
+- Each step has an error policy (continue/required), env requirements, and timing
+- Writes `pipeline-result.json` with per-step outcomes for observability
+- The autopilot can add/remove/reorder steps by editing the manifest
 
 ## Data Flow
 
-1. **Configuration Loading**: Sport config defines what to fetch
-2. **API Fetching**: Parallel requests to configured endpoints
-3. **Data Transformation**: Convert to normalized event structure
-4. **Filtering**: Apply sport-specific and global filters
-5. **Normalization**: Ensure consistent format and validation
-6. **Output Generation**: Group by tournament, add metadata
+1. **Pipeline runner** reads manifest and orchestrates all phases
+2. **Fetchers** call ESPN, PGA Tour, fotball.no, HLTV APIs in parallel
+3. **Sport JSON files** written to `docs/data/` (`football.json`, `golf.json`, etc.)
+4. **Standings, RSS, results** fetched from ESPN + RSS feeds
+5. **sync-configs.js** prunes expired events, archives old configs, flags empty ones for research
+6. **discover-events.js** invokes Claude CLI + WebSearch to populate flagged configs
+7. **verify-schedules.js** runs 5-stage verification (static → ESPN → RSS → sport data → web)
+8. **build-events.js** auto-discovers sport files + curated configs → merged `events.json`
+9. **enrich-events.js** adds importance (1-5), summaries, tags via LLM
+10. **generate-featured.js** creates editorial content via Claude CLI (narrative + component blocks)
+11. **Pipeline health** checks coverage, freshness, quality; writes health-report.json
+12. **Client-side** loads JSON files, renders dashboard with live ESPN polling every 60s
+
+## Multi-Agent Autopilot
+
+The nightly autopilot uses `.claude/agents/` subagents:
+
+| Agent | Domain | Owned Files |
+|-------|--------|-------------|
+| **data-agent** | Data pipeline | `scripts/fetch/**`, `scripts/config/**`, streaming/verification scripts |
+| **content-agent** | AI content | Enrichment, featured, watch-plan, quality history |
+| **code-agent** | Code health | `scripts/lib/**`, `tests/**`, pipeline manifest |
+| **ux-agent** | Dashboard UX | `docs/index.html`, `docs/js/**`, `docs/sw.js` |
+
+The orchestrator reads system state, routes tasks via `task-router.js`, delegates to subagents in parallel, and handles quality gates + meta-learning. Each subagent has persistent memory in `.claude/agent-memory/`.
 
 ## Error Handling Strategy
 
 ### Multiple Layers of Resilience
 
-1. **Response Validation** (`response-validator.js`):
-   - Schema checks for ESPN responses
-   - Filters invalid items (missing date, competitions) rather than rejecting entire response
-   - Logs warnings for each invalid item
+1. **Response Validation** (`response-validator.js`): Schema checks for ESPN responses, filters invalid items rather than rejecting entire response
+2. **API Level**: Retry failed requests (2 retries, exponential backoff), per-request timeout support
+3. **Pipeline Level**: Continue even if individual sports fail (error policy per step), retain last good data
+4. **Monitoring** (post-build): pipeline-health.js, check-quality-regression.js, detect-coverage-gaps.js, analyze-patterns.js
+5. **Self-Repair**: Autopilot reads health reports and pattern analyses to fix recurring issues
 
-2. **API Level**:
-   - Retry failed requests (2 retries, exponential backoff)
-   - Return empty result set on total failure
+## Adding a New Sport
 
-3. **Pipeline Level**:
-   - Continue even if individual sports fail
-   - Retain last good data if new fetch fails
-   - Log all errors for debugging
+1. Write a fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` to `docs/data/{sport}.json`
+2. Register it in `scripts/fetch/index.js`
+3. Add sport config to `docs/js/sport-config.js` (emoji, color, aliases)
+4. `build-events.js` auto-discovers the sport file — no further registration needed
+5. `pipeline-health.js` auto-monitors freshness
+6. Events auto-display in `dashboard.js`
 
-4. **Monitoring** (post-build):
-   - `pipeline-health.js` — detects sport count drops, stale data, RSS/standings issues
-   - `check-quality-regression.js` — alerts on AI enrichment/featured score drops
-   - `detect-coverage-gaps.js` — finds events mentioned in RSS but missing from pipeline
-   - Creates GitHub issues automatically when critical problems are detected
-
-## Migration Strategy
-
-The system supports gradual migration from legacy to refactored code:
-
-```javascript
-const fetchers = [
-  { 
-    name: "football",
-    refactored: fetchFootballRefactored,  // New
-    legacy: fetchFootballLegacy           // Fallback
-  }
-];
-```
-
-## Future Enhancements
-
-### User Personalization (Phase 2)
-
-The architecture is designed to support:
-
-1. **Local Preferences**: Store user preferences in browser
-2. **Client-Side Filtering**: Filter events based on preferences
-3. **API Key Support**: Use personal API keys for better rates
-4. **Custom Data Sources**: Add user-specific APIs
-
-### Implementation Path
-
-```javascript
-// Future: Load preferences from localStorage
-const userPrefs = PreferencesManager.load();
-
-// Future: Apply user filters client-side
-const filtered = EventFilters.applyUserPreferences(events, userPrefs);
-
-// Future: Fetch with user's API key
-const personalData = await PersonalFetcher.fetch(userPrefs.apiKeys);
-```
-
-## Configuration Reference
-
-### Sport Configuration Schema
-
-```javascript
-{
-  sport: String,           // Sport identifier
-  enabled: Boolean,        // Enable/disable fetching
-  source: String,          // Display name for source
-  sources: [{              // API configurations
-    api: String,           // API type (espn, custom, etc.)
-    type: String,          // Request type
-    // ... API-specific config
-  }],
-  filters: {               // Filtering rules
-    timeRange: Number,     // Days ahead to fetch
-    maxEvents: Number,     // Maximum events to return
-    currentWeek: Boolean,  // Filter to current week
-    custom: Boolean        // Enable custom filters
-  },
-  norwegian: {             // Norwegian focus config
-    teams: [String],       // Norwegian teams
-    players: [String],     // Norwegian players
-    filterMode: String     // exclusive|focused|inclusive
-  },
-  streaming: [{            // Streaming platforms
-    platform: String,
-    url: String,
-    type: String
-  }]
-}
-```
+Or for events without an API: create a JSON config in `scripts/config/`. The discovery pipeline will research and populate it automatically.
 
 ## Testing
 
-975 tests across 43 files (vitest):
+1882 tests across 65 files (vitest):
 
 ```bash
 npm test
 ```
 
-Key test areas: response validation, pipeline health, quality regression, coverage gaps, dashboard structure, event normalization, enrichment, build-events, fetch-standings, fetch-rss, helpers, filters, preferences, Norwegian streaming, and AI quality gates.
-
-## Performance Considerations
-
-- **Parallel Fetching**: All sports fetch concurrently
-- **Caching**: Reduces redundant API calls
-- **Rate Limiting**: 150ms delay between same-API calls
-- **Data Compression**: Events are deduplicated
-- **Selective Fetching**: Only fetch configured sports
-
-## Maintenance Guide
-
-### Adding a New Sport
-
-1. Add configuration to `sports-config.js`
-2. Create fetcher extending appropriate base class
-3. Add to pipeline in `fetch/index.js`
-4. Test with migration helper
-
-### Modifying Filters
-
-1. Update configuration in `sports-config.js`
-2. No code changes needed (configuration-driven)
-
-### Changing API Endpoints
-
-1. Update URL in configuration
-2. Verify response structure matches expectations
-3. Update transformer if needed
-
-## Debugging
-
-### Enable Verbose Logging
-
-```javascript
-// In fetcher
-console.log(`Fetching ${this.config.sport} from ${source.api}`);
-```
-
-### Check Migration Status
-
-```bash
-# See which fetchers are refactored
-node scripts/fetch/index.js | grep "Refactored fetchers"
-```
-
-### Validate Data Structure
-
-```bash
-# Check output structure
-cat docs/data/football.json | jq '.tournaments[0]'
-```
-
-## Best Practices
-
-1. **Always extend base classes** rather than duplicating code
-2. **Use configuration** for sport-specific settings
-3. **Handle errors gracefully** with appropriate fallbacks
-4. **Validate and sanitize** all external data
-5. **Log important events** for debugging
-6. **Test both paths** (refactored and legacy) during migration
-7. **Document API quirks** in sport-specific fetchers
-
-## Support
-
-For issues or questions about the architecture:
-
-1. Check this documentation
-2. Review the configuration in `sports-config.js`
-3. Enable verbose logging for debugging
-4. Test with the migration helper
-5. Fall back to legacy fetchers if needed
+Key test areas: fetchers, response validation, pipeline health, quality regression, coverage gaps, dashboard structure, event normalization, enrichment, build-events, standings, RSS, results, helpers, filters, preferences, streaming, agent infrastructure, and AI quality gates.

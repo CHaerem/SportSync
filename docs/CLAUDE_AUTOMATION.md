@@ -8,23 +8,69 @@ SportSync uses four Claude Code workflows that form a proactive improvement syst
 
 | Workflow | Role | Trigger | Creates PRs? |
 |----------|------|---------|-------------|
-| **Autopilot** | Proactive improvement | Nightly 01:00 UTC | Yes |
+| **Autopilot** | Multi-agent autonomous improvement | Nightly 01:00 UTC | Yes |
 | **Maintenance** | Read-only health check | Weekly Monday 06:00 UTC | No |
 | **Interactive** | On-demand assistance | `@claude` mentions | Yes |
 | **CI Fix** | Failure recovery | Data workflow fails | Yes |
 
 ## 1. Autopilot (`claude-autopilot.yml`) — Primary Workflow
 
-The autopilot autonomously improves the codebase. The roadmap (`AUTOPILOT_ROADMAP.md`) is **self-curated** — the autopilot discovers its own tasks via creative scouting, not just executes human-written ones. It loops through multiple tasks per run.
+The autopilot uses a **multi-agent architecture** to autonomously improve the codebase. The roadmap (`AUTOPILOT_ROADMAP.md`) is **self-curated** — the autopilot discovers its own tasks via creative scouting, not just executes human-written ones.
+
+### Multi-Agent Architecture
+
+The autopilot runs as a 2-job GitHub Actions workflow:
+
+1. **Pre-flight** — shared setup, quota check, baseline tests
+2. **Autopilot** — orchestrator agent with 4 specialized subagents
+
+#### Subagents
+
+Defined in `.claude/agents/` (auto-discovered by `claude-code-action`):
+
+| Agent | Domain | Key Responsibilities |
+|-------|--------|---------------------|
+| **data-agent** | Data pipeline | API fetchers, configs, streaming, verification, coverage gaps |
+| **content-agent** | AI content | Enrichment, featured content, watch plans, quality gates |
+| **code-agent** | Code health | Tests, bug fixes, refactoring, pipeline infrastructure |
+| **ux-agent** | Dashboard UX | HTML/CSS, visual design, component rendering, accessibility |
+
+Each subagent has:
+- **`model: sonnet`** — uses Sonnet for efficient task execution
+- **`memory: project`** — persistent memory in `.claude/agent-memory/` that accumulates domain knowledge across runs
+- **`maxTurns: 60`** — bounded execution per delegation
+- **Focused tools** — only the tools relevant to their domain
+
+#### Orchestrator
+
+The orchestrator (`scripts/agents/orchestrator-prompt.md`) runs on Opus and:
+
+1. **Assesses system state** — reads health-report.json, autonomy-report.json, pattern-report.json, autopilot-log.json
+2. **Routes tasks** — uses `scripts/agents/task-router.js` to classify roadmap tasks by agent domain
+3. **Delegates in parallel** — spawns subagents for independent tasks simultaneously
+4. **Handles contention** — file ownership rules prevent conflicts (e.g., events.json is sequential: data builds, content enriches)
+5. **Runs quality gates** — `npm test`, pipeline health, quality regression checks
+6. **Meta-learning** — updates `autopilot-strategy.json` with per-agent performance metrics
+
+#### File Ownership
+
+| File | Owner (writes) | Readers |
+|------|----------------|---------|
+| `events.json` | Data Agent (build), Content Agent (enrich) | All |
+| `user-context.json` | Orchestrator only | Data, Content |
+| `scripts/config/*.json` | Data Agent only | Content |
+| `AUTOPILOT_ROADMAP.md` | Orchestrator only | All |
+| `autopilot-log.json` | Orchestrator only | All |
 
 ### How It Works
 
-1. **Pre-flight**: Run tests, merge stale PRs, read autopilot-log.json for lessons learned.
-2. **Task loop** (repeats until done/blocked): Pick first `[PENDING]` task → validate constraints → branch → code → test → visual validation (screenshot if UI change) → PR → merge → repeat.
-3. **Scout** (maintenance): Read health-report.json, autonomy-report.json, pattern-report.json. Fix test failures, dead code, TODO/FIXME.
-4. **Scout** (creative): Screenshot the dashboard, read RSS/coverage-gaps/quality data. Propose new features, UX improvements, capability expansions.
-5. **Scout** (heuristics): Apply detection patterns A-H from roadmap. Add new heuristics when discovered.
-6. **Self-improve**: Reflect on run effectiveness, file issues for workflow improvements.
+1. **Pre-flight**: Run tests, check quota, resolve config (model, maxTurns, allowedTools).
+2. **Orchestrator startup**: Load orchestrator prompt, read system state.
+3. **Task routing**: Classify pending tasks by agent domain.
+4. **Parallel delegation**: Spawn subagents for independent tasks.
+5. **Quality gates**: Run tests, pipeline health, quality regression after all work.
+6. **Meta-learning**: Record lessons, evolve strategy, update roadmap.
+7. **Commit and push**: All changes committed directly or via PR.
 
 ### The Roadmap
 
@@ -34,18 +80,24 @@ The autopilot autonomously improves the codebase. The roadmap (`AUTOPILOT_ROADMA
 - `[DONE]` (PR #N) — Completed with link to the PR
 - `[BLOCKED]` reason — Cannot proceed
 
-**Human control**: Reorder tasks to change what gets done next. The autopilot always picks the first `[PENDING]` task it finds.
-
-**Experience-first lane**: Keep an `EXPERIENCE Lane` section near the top of `AUTOPILOT_ROADMAP.md` with user-facing tasks and KPIs (engagement, recommendation quality, enrichment coverage). This ensures autonomous work improves the product experience, not only internal code quality.
+**Human control**: Reorder tasks to change what gets done next.
 
 ### Configuration
 
 - **Schedule**: Nightly at 01:00 UTC + manual `workflow_dispatch`
 - **Task override**: Manual runs accept a `task_override` input to execute a specific task
-- **Timeout**: 30 minutes
-- **Max turns**: 100
-- **Branch prefix**: `claude/improve-`
+- **Domain focus**: Manual runs accept a `single_agent` input to focus on one domain
+- **Timeout**: 120 minutes
+- **Max turns**: 300
+- **Branch prefix**: `claude/`
 - **PR label**: `autopilot`
+
+### Agent Infrastructure
+
+- **Agent definitions**: `scripts/agents/agent-definitions.json` — all agent specs, responsibilities, owned files, contention rules
+- **Task router**: `scripts/agents/task-router.js` — deterministic keyword/filepath scoring to classify tasks
+- **Agent memory**: `.claude/agent-memory/` — persistent memory files auto-curated by Claude Code (200-line MEMORY.md per agent)
+- **Strategy**: `scripts/autopilot-strategy.json` — process playbook with ship modes, turn budgets, per-agent performance data
 
 ## 2. Maintenance (`claude-maintenance.yml`) — Health Monitor
 
@@ -83,35 +135,34 @@ Triggers when the "Update Sports Data" workflow fails. Reads failure logs, diagn
 ## How the Workflows Interrelate
 
 ```
-Autopilot (nightly)          Maintenance (weekly)
-    │                              │
-    ├─ Picks task from roadmap     ├─ Checks repo health
-    ├─ Makes changes               ├─ Flags stale data
-    ├─ Opens PR                    ├─ Verifies roadmap has tasks
-    └─ Scouts new tasks            └─ Creates issues (no PRs)
-                                        │
-                                        ▼
-Interactive (on mention)       CI Fix (on failure)
-    │                              │
-    ├─ Reviews PRs                 ├─ Reads failure logs
-    ├─ Answers questions           ├─ Diagnoses issues
-    └─ Small fixes                 └─ Attempts fix or files issue
+Multi-Agent Autopilot (nightly)      Maintenance (weekly)
+    │                                      │
+    ├─ Orchestrator assesses state         ├─ Checks repo health
+    ├─ Routes tasks to subagents           ├─ Flags stale data
+    ├─ Subagents work in parallel          ├─ Verifies roadmap has tasks
+    ├─ Quality gates + meta-learning       └─ Creates issues (no PRs)
+    └─ 82+ PRs merged autonomously              │
+                                                 ▼
+Interactive (on mention)              CI Fix (on failure)
+    │                                      │
+    ├─ Reviews PRs                         ├─ Reads failure logs
+    ├─ Answers questions                   ├─ Diagnoses issues
+    └─ Small fixes                         └─ Attempts fix or files issue
 ```
 
-The **autopilot** is the proactive engine. The **maintenance** workflow monitors health and keeps the roadmap relevant. **Interactive** and **CI fix** handle reactive needs.
+The **autopilot** is the proactive engine with multi-agent parallelism. The **maintenance** workflow monitors health. **Interactive** and **CI fix** handle reactive needs.
 
 ### Self-Healing Pipeline Integration
 
-The data pipeline (every 2 hours) now generates monitoring artifacts that feed into the autopilot:
+The data pipeline (every 2 hours) generates monitoring artifacts that feed into the autopilot:
 
-- **`health-report.json`** — sport coverage counts, data freshness, RSS/standings health, anomaly detection
-- **`coverage-gaps.json`** — RSS headlines cross-referenced against events to find blind spots
+- **`health-report.json`** — sport coverage, data freshness, anomaly detection
+- **`coverage-gaps.json`** — RSS vs events blind spot detection
 - **`ai-quality.json`** — enrichment and featured content quality scores
+- **`pattern-report.json`** — recurring issue detection with decay
+- **`autonomy-report.json`** — 12/12 feedback loop scores
 
-The autopilot reads these during nightly runs to:
-1. Prioritize repair tasks when `health-report.json` shows critical issues
-2. Create curated configs for high-confidence actionable coverage gaps
-3. File GitHub issues for medium-confidence gaps needing human review
+The autopilot reads these during nightly runs to prioritize repair tasks, create configs for coverage gaps, and evolve its own process strategy.
 
 ## Authentication
 
@@ -125,31 +176,32 @@ Uses a Claude Max subscription via OAuth token:
 
 ### Change Limits (from CLAUDE.md)
 
-- Max 8 files per PR
-- Max 300 lines changed per PR
-- Protected paths are never modified (workflows, package.json, .env, etc.)
+| Tier | Files | Lines | Behavior |
+|------|-------|-------|----------|
+| `[MAINTENANCE]` | 8 | 300 | Single PR or direct-to-main, auto-merge |
+| `[FEATURE]` | 12 | 500 | Single PR, auto-merge |
+| `[EXPLORE]` | 0 | 0 | Read-only investigation |
+
+- Protected paths never modified: `.github/workflows/**`, `package.json`, `.env*`
 - All branches prefixed with `claude/`
-
-### One-PR-at-a-Time Rule
-
-The autopilot checks for open `autopilot`-labeled PRs before starting. If one exists, the run is skipped entirely. This prevents pile-up and ensures human review happens before more changes land.
+- Tests must pass before and after every change
 
 ### Risk Classification
 
 | Risk | Action | Example |
 |------|--------|---------|
-| LOW | Auto-PR | Typo fix, test addition |
-| MEDIUM | PR + review request | Logic change, config update |
+| LOW | Auto-PR or direct-to-main | Typo fix, test addition, config tweak |
+| MEDIUM | PR + review request | Logic change, new pipeline step |
 | HIGH | Skip (issue only) | Workflow change, auth change |
 
 ### Testing
 
-Every automated change runs `npm test` before committing. Failed tests = reverted changes + issue filed.
+Every automated change runs `npm test` (1882 tests) before committing. Failed tests = changes reverted or repaired before shipping.
 
 ## Setup Checklist
 
 - [ ] Run `claude setup-token` and copy the OAuth token
 - [ ] Add `CLAUDE_CODE_OAUTH_TOKEN` as a GitHub repository secret
 - [ ] Verify `AUTOPILOT_ROADMAP.md` exists with PENDING tasks
-- [ ] Verify all four workflows appear in the Actions tab after merge
-- [ ] Optionally create a `claude` GitHub user for assignee triggers
+- [ ] Verify workflows appear in the Actions tab
+- [ ] Verify `.claude/agents/` subagent files exist (data, content, code, ux)

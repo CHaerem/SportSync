@@ -26,11 +26,11 @@ No databases, no servers, no paid APIs, no deployment infrastructure. This const
 
 ### Personalization
 
-The dashboard is personalized based on user interests defined in `scripts/config/user-context.json`. Currently this is semi-manually configured (favorite teams, players, sport preferences, Norwegian focus). The vision is that user preferences evolve over time — informed by usage patterns, feedback signals, and the discovery loop's observations about what content resonates.
+The dashboard is personalized based on user interests defined in `scripts/config/user-context.json`. Sport weights evolve automatically from engagement data — `evolve-preferences.js` reads click patterns and adjusts preferences. Favorite teams and players sync from client-side exports. Watch-plan picks have thumbs-up/down feedback controls that flow back into scoring. The entire personalization loop is closed: observe engagement → adjust preferences → adapt content → measure impact.
 
 ### Self-Improving Codebase
 
-Beyond data and content autonomy, the underlying code structure is itself a target for autonomous improvement. The nightly autopilot (`claude-autopilot.yml`) reads `AUTOPILOT_ROADMAP.md`, picks tasks, creates PRs, runs tests, and merges — then scouts the codebase for new improvement opportunities. Errors and shortcomings should be autonomously identified and fixed without human involvement.
+Beyond data and content autonomy, the underlying code structure is itself a target for autonomous improvement. The nightly autopilot (`claude-autopilot.yml`) uses a **multi-agent architecture**: an orchestrator agent coordinates 4 specialized subagents (data, content, code, UX) that work in parallel. Each subagent has domain-specific knowledge, persistent memory across runs, and focused responsibilities. The orchestrator reads system state, routes tasks, and synthesizes cross-agent learnings. 82+ PRs merged autonomously.
 
 ### Acceleration Thesis
 
@@ -42,9 +42,9 @@ The system doesn't just improve the product — it improves at improving. Three 
 
 The practical implication: early runs should prioritize **velocity** (many small improvements, rapid learning). As the system matures, shift toward **depth** (harder problems, self-discovered features). Eventually, the system reaches **refinement** (optimization, personalization fine-tuning).
 
-### Human-in-the-Loop (Future)
+### Human-in-the-Loop
 
-Some form of lightweight user feedback would complete the vision — allowing the system to learn which recommendations land, which content formats work, and which sports coverage matters most. This could be as simple as thumbs-up/down on watch-plan picks surfaced via `localStorage` feedback signals.
+Lightweight user feedback is implemented: thumbs-up/down on watch-plan picks (stored in localStorage), per-sport click tracking via `PreferencesManager.trackEngagement()`, and engagement data export to the pipeline via GitHub Issues. This feedback flows through `evolve-preferences.js` to adjust sport weights and through `computeFeedbackAdjustments()` to tune watch-plan scoring. The remaining opportunity is richer signal — e.g., tracking which editorial blocks resonate, which events the user actually watches.
 
 ## Change Principles
 
@@ -159,7 +159,7 @@ This is a hybrid static/dynamic application:
 - `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
 - `npm run generate:multiday` - Generate yesterday recap + tomorrow preview briefings
-- `npm test` - Run all tests (vitest, 1499 tests across 55 files)
+- `npm test` - Run all tests (vitest, 1882 tests across 65 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 - `npm run screenshot` - Take a screenshot of the dashboard (needs Playwright)
@@ -280,9 +280,22 @@ scripts/
 
 .github/workflows/
 ├── update-sports-data.yml  # Data pipeline (every 2 hours)
-└── claude-autopilot.yml    # Autonomous improvement agent (nightly)
+└── claude-autopilot.yml    # Multi-agent autopilot (nightly)
 
-tests/                      # 1295 tests across 55 files (vitest)
+.claude/
+├── agents/                 # Subagent definitions (auto-discovered by claude-code-action)
+│   ├── data-agent.md       # Data pipeline specialist
+│   ├── content-agent.md    # AI content specialist
+│   ├── code-agent.md       # Code health specialist
+│   └── ux-agent.md         # Dashboard UX specialist
+└── agent-memory/           # Persistent agent memory (auto-curated across runs)
+
+scripts/agents/
+├── orchestrator-prompt.md  # Orchestrator system prompt
+├── agent-definitions.json  # Agent specs (responsibilities, owned files, contention rules)
+└── task-router.js          # Deterministic task → agent routing
+
+tests/                      # 1882 tests across 65 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
@@ -361,35 +374,33 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 
 | Gap | Description | Difficulty |
 |-----|-------------|------------|
-| **User feedback loop** | Engagement tracking (click counts) flows from client to pipeline via GitHub Issues and `evolve-preferences.js`. Watch-plan picks render in the dashboard. Missing: explicit thumbs-up/down on watch-plan items for richer signal. | Low |
-| **Evolving preferences** | `evolve-preferences.js` reads engagement data and updates `user-context.json` sport weights. Missing: evolving favorite teams/players (currently only sport-level weights evolve). | Low |
-| **Self-expanding capabilities** | Pipeline manifest pattern enables the autopilot to add pipeline steps by editing `scripts/pipeline-manifest.json`. Capability registry (`capabilities.json`) + heuristic K guide strategic decisions. First end-to-end self-discovered feature still pending demonstration. | Medium |
-| **Resilience hardening** | Pipeline manifest captures per-step outcomes in `pipeline-result.json`. Remaining gap: autopilot doesn't yet auto-diagnose and repair failed steps. | Low |
+| **Self-expanding capabilities** | Pipeline manifest pattern works. First self-added pipeline step (insights) demonstrated. Missing: end-to-end "new sport from scratch" — system detects opportunity, creates fetcher, wires it in, serves data. | Medium |
 | **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
-| **Watch-plan feedback** | Watch-plan picks render in the dashboard but there's no mechanism to capture user reactions (thumbs-up/down). Without this signal, personalization can't learn. | Low |
-| **Meta-learning** | The autopilot records knowledge in `AUTOPILOT_ROADMAP.md` Lessons section and evolves its process strategy in `scripts/autopilot-strategy.json`. Remaining gap: strategy evolution is manual/heuristic — no automated correlation between strategy changes and outcome improvements. | Low |
+| **Meta-learning correlation** | The autopilot accumulates knowledge and evolves `autopilot-strategy.json`. Missing: automated correlation between strategy changes and outcome improvements (e.g., "switching to direct-to-main saved X turns"). | Low |
+| **Richer feedback signals** | Thumbs-up/down on watch-plan works. Missing: tracking which editorial blocks resonate, which events the user actually watches, post-event satisfaction. | Low |
 
 ### Roadmap (Prioritized Next Steps)
 
-**Phase 1 — Close the User Feedback Loop**
-1. Render watch-plan picks in dashboard (prerequisite for everything else)
-2. Add thumbs-up/down controls on watch-plan items (persist in localStorage)
-3. Surface feedback signals in pipeline (export counts to `watch-feedback.json`)
-4. Feed engagement data into watch-plan scoring and personalization
+**Phase 1 — Close the User Feedback Loop** — DONE
+- ~~Render watch-plan picks in dashboard~~ — DONE
+- ~~Add thumbs-up/down controls on watch-plan items~~ — DONE (PR #47)
+- ~~Surface feedback signals in pipeline~~ — DONE: engagement data flows via GitHub Issues + localStorage
+- ~~Feed engagement data into watch-plan scoring~~ — DONE: `computeFeedbackAdjustments()` (PR #101)
 
-**Phase 2 — Evolving Preferences**
-5. ~~Track which events the user expands/clicks in localStorage~~ — DONE: `PreferencesManager.trackEngagement()` records per-sport click counts
-6. ~~Build preference evolution logic: observe engagement → adjust `user-context.json` sport weights~~ — DONE: `scripts/evolve-preferences.js` reads engagement from GitHub Issues + local file, computes relative share, updates `user-context.json`
-7. Discovery loop reads updated preferences → adjusts research priorities
+**Phase 2 — Evolving Preferences** — DONE
+- ~~Track engagement per sport~~ — DONE: `PreferencesManager.trackEngagement()`
+- ~~Evolve sport weights from engagement~~ — DONE: `evolve-preferences.js`
+- ~~Evolve favorite teams/players~~ — DONE: syncs from client exports (PR #99)
 
-**Phase 3 — Self-Expanding Capabilities**
-8. ~~Add "opportunity detection" to autopilot scouting~~ — DONE: creative scouting (heuristics F/G/H) reads RSS trends, coverage gaps, dashboard code, and quality data to propose features, UX improvements, and new capabilities
-9. Let autopilot propose AND SHIP capability expansions (new sports, new data sources, new UI features) autonomously — validate with first end-to-end self-discovered feature
-10. Resilience hardening: pipeline manifest captures structured errors — autopilot should auto-diagnose and repair failed steps
+**Phase 3 — Self-Expanding Capabilities** — In Progress
+- ~~Opportunity detection~~ — DONE: creative scouting (heuristics F/G/H)
+- ~~First self-added pipeline step~~ — DONE: `generate-insights.js` (PR #100)
+- Pending: end-to-end self-discovered sport (new fetcher from opportunity → serving data)
+- Pending: auto-diagnose and repair failed pipeline steps
 
 **Phase 4 — Full Autonomy Proof**
-11. End-to-end demonstration: system detects a new major event, creates config, discovers schedule, verifies accuracy, enriches, generates editorial content, serves personalized dashboard — all without human intervention
-12. Document the autonomy architecture as a reference implementation
+- End-to-end demonstration: system detects a new major event, creates config, discovers schedule, verifies accuracy, enriches, generates editorial content, serves personalized dashboard — all without human intervention
+- Document the autonomy architecture as a reference implementation
 
 ## Automation Rules
 
@@ -438,18 +449,32 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 
 ### Autopilot
 
-The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones. All autopilot changes must satisfy the Change Principles above — especially vision alignment and closing the loop.
+The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase using a **multi-agent architecture**. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones. All autopilot changes must satisfy the Change Principles above — especially vision alignment and closing the loop.
+
+#### Multi-Agent Architecture
+
+The autopilot uses an orchestrator + 4 specialized subagents defined in `.claude/agents/`:
+
+| Agent | Domain | Key Responsibilities |
+|-------|--------|---------------------|
+| **data-agent** | Data pipeline | API fetchers, configs, streaming, verification, coverage gaps |
+| **content-agent** | AI content | Enrichment, featured content, watch plans, quality gates |
+| **code-agent** | Code health | Tests, bug fixes, refactoring, pipeline infrastructure |
+| **ux-agent** | Dashboard UX | HTML/CSS, visual design, component rendering, accessibility |
+
+The **orchestrator** (`scripts/agents/orchestrator-prompt.md`) reads system state, routes tasks via `scripts/agents/task-router.js`, delegates to subagents in parallel, and handles quality gates + wrap-up. Each subagent has `memory: project` — persistent memory in `.claude/agent-memory/` that accumulates domain-specific knowledge across runs.
+
+File ownership rules prevent conflicts: `events.json` is sequential (data builds, content enriches), `user-context.json` is orchestrator-only, `scripts/config/*.json` is data-agent-only.
+
+#### Configuration
 
 - **Roadmap**: `AUTOPILOT_ROADMAP.md` is a self-curated task queue — the autopilot adds, prioritizes, and executes tasks
 - **Strategy**: `scripts/autopilot-strategy.json` is the autopilot's process playbook — ship modes, turn budgets, and accumulated process knowledge. The autopilot reads it at startup and evolves it based on what it learns.
+- **Agent definitions**: `scripts/agents/agent-definitions.json` defines all 5 agents with responsibilities, owned files, contention rules, and scouting heuristics
 - **Cadence**: Runs nightly at 01:00 UTC
 - **PR label**: `autopilot`
-- **Multi-task loop**: Works through PENDING tasks continuously until it runs out of turns, tasks, or hits an error
-- **Ship modes**: The autopilot chooses per-task: `branch-pr` (full ceremony, safest), `direct-to-main` (LOW-risk only, fastest), or `batch` (groups compatible tasks). The strategy file guides the choice, but the autopilot can override based on judgement.
-- **Maintenance scouting**: Reads health-report.json, autonomy-report.json, pattern-report.json, sanity-report.json to detect and repair pipeline issues
-- **Creative scouting**: Reads RSS trends, coverage gaps, quality history, and standings data to propose new features, UX improvements, and capability expansions (heuristics F/G/H in roadmap)
-- **Visual validation**: Takes screenshots of the dashboard via Playwright (`scripts/screenshot.js`) before/after UI changes, reads images to verify visual correctness
-- **Self-improving heuristics**: The scouting heuristics section of the roadmap is updated by the autopilot itself when it discovers new detection patterns
-- **Process autonomy**: The autopilot controls its own ship process via `scripts/autopilot-strategy.json` — choosing between branch-pr, direct-to-main, or batch mode per task, and evolving the strategy based on measured outcomes
+- **Ship modes**: The autopilot chooses per-task: `branch-pr` (full ceremony, safest), `direct-to-main` (LOW-risk only, fastest), or `batch` (groups compatible tasks)
+- **Scouting**: Reads health-report.json, autonomy-report.json, pattern-report.json, RSS trends, coverage gaps. Each subagent scouts within its domain if turns allow.
+- **Visual validation**: Takes screenshots of the dashboard via Playwright (`scripts/screenshot.js`) before/after UI changes
 - **Safe stops**: If tests fail or a merge fails, the loop stops — no broken code gets pushed
 - **Human control**: Reorder tasks in the roadmap to change priority. Mark tasks `[BLOCKED]` to skip them.

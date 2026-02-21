@@ -12,7 +12,7 @@ SportSync is a **proof of concept for fully autonomous software systems**. The s
 The thesis: a system built on nothing but **GitHub Actions**, a **Claude Code Max subscription**, and **GitHub Pages** can autonomously:
 
 1. **Maintain its own data** — fetch, enrich, verify, and correct sports information from 6 APIs
-2. **Maintain its own code** — detect bugs and improvement opportunities, then ship fixes via PRs (50+ merged autonomously)
+2. **Maintain its own code** — detect bugs and improvement opportunities, then ship fixes via PRs (82+ merged autonomously)
 3. **Expand its own capabilities** — recognize when new features or data sources would help, and build them (pipeline steps are defined in an editable manifest the autopilot controls)
 4. **Personalize its output** — adapt content to user interests that evolve over time based on engagement signals
 5. **Self-correct quality** — 12 closed feedback loops observe outcomes, decide on corrective actions, and act
@@ -59,25 +59,28 @@ Three automation layers run continuously without human intervention:
 └──────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────┐
-│  AUTOPILOT (nightly at 01:00 UTC)                        │
+│  MULTI-AGENT AUTOPILOT (nightly at 01:00 UTC)            │
 │                                                          │
-│  A Claude agent that reads the codebase, picks tasks     │
-│  from a self-curated roadmap, and ships improvements:    │
+│  An orchestrator agent coordinates 4 specialized         │
+│  subagents that work in parallel:                        │
 │                                                          │
-│  1. Self-repair: fixes broken tests before anything else │
-│  2. Task loop: choose ship mode → implement → test →     │
-│     ship (direct-to-main / PR / batch)                   │
-│  3. Creative scouting: reads data signals, screenshots   │
-│     the dashboard, reasons about gaps in the autonomy    │
-│     vision, and creates new tasks                        │
-│  4. Meta-learning: records what worked, evolves its own  │
-│     process strategy for future runs                     │
+│  ┌────────────┐ ┌─────────────┐ ┌──────────┐ ┌────────┐│
+│  │ data-agent │ │content-agent│ │code-agent│ │ux-agent││
+│  │ APIs,fetch │ │ editorial,  │ │ tests,   │ │ HTML,  ││
+│  │ configs,   │ │ enrichment, │ │ bugs,    │ │ CSS,   ││
+│  │ streaming  │ │ watch-plan  │ │ refactor │ │ a11y   ││
+│  └────────────┘ └─────────────┘ └──────────┘ └────────┘│
 │                                                          │
-│  Controls its own process via autopilot-strategy.json:   │
-│  ship modes, turn budgets, and accumulated process       │
-│  knowledge — all self-evolving based on measured results. │
+│  Each subagent has persistent memory (.claude/agents/)   │
+│  and accumulates domain knowledge across runs.           │
 │                                                          │
-│  80+ PRs completed autonomously.                         │
+│  The orchestrator:                                       │
+│  1. Assesses system state (health, quality, autonomy)    │
+│  2. Routes tasks to the right subagent                   │
+│  3. Delegates work in parallel                           │
+│  4. Runs quality gates and meta-learning after           │
+│                                                          │
+│  82+ PRs completed autonomously.                         │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -91,7 +94,7 @@ The pipeline fetches from ESPN, PGA Tour, fotball.no, HLTV, and 11 RSS feeds eve
 
 ### 2. Self-Maintaining Code
 
-The nightly autopilot reads health reports, quality scores, autonomy metrics, and pattern analyses. It scouts for dead code, missing tests, data-to-UI gaps, and fetcher data waste. When it finds something, it creates a task, branches, implements the fix, runs 1295 tests, and merges — then moves to the next task. It learns from previous runs by analyzing the autopilot log for failure patterns.
+The nightly autopilot uses a multi-agent architecture: an orchestrator delegates to specialized subagents (data, content, code, UX) that work in parallel. Each agent has persistent memory and accumulates domain-specific knowledge. The system scouts for dead code, missing tests, data-to-UI gaps, and fetcher data waste. When it finds something, it routes the task to the right agent, implements the fix, runs 1882 tests, and merges. 82+ PRs merged autonomously across 7 runs.
 
 ### 3. Self-Expanding Capabilities
 
@@ -199,12 +202,16 @@ Early runs prioritize **velocity** (25 seeded tasks, sprint mode). As the system
 
 ## What's Next
 
-The system is autonomous at 12/12 feedback loops, but gaps remain toward the full vision:
+The system is autonomous at **12/12 feedback loops** with a multi-agent architecture proven stable across multiple runs. Most of the original vision gaps are closed:
 
-- **User feedback loop** — engagement tracking flows, but explicit thumbs-up/down on watch-plan picks would give a richer signal
-- **Evolving favorites** — sport-level weights evolve, but favorite teams and players are still manually configured
-- **End-to-end self-expansion** — the autopilot can now add pipeline steps via the manifest, but hasn't yet demonstrated creating a new sport fetcher from a self-discovered opportunity start to finish
-- **Meta-learning** — the system accumulates knowledge and evolves its own process strategy (ship modes, turn budgets), but needs time to compound
+- ~~User feedback loop~~ — **DONE**: thumbs-up/down on watch-plan picks, engagement tracking, feedback flows into scoring
+- ~~Evolving favorites~~ — **DONE**: sport weights and favorite teams/players evolve from engagement data
+- ~~First self-added pipeline step~~ — **DONE**: `generate-insights.js` added by the autopilot (PR #100)
+
+Remaining gaps:
+- **End-to-end self-expansion** — the autopilot can add pipeline steps and create configs, but hasn't yet demonstrated creating a new sport fetcher from a self-discovered opportunity start to finish
+- **Meta-learning correlation** — the system accumulates knowledge and evolves strategy, but lacks automated measurement of whether strategy changes actually improve outcomes
+- **Richer feedback signals** — beyond thumbs-up/down: tracking which editorial blocks resonate, post-event satisfaction
 
 The goal: a system that detects a new major event, creates the config, discovers the schedule, verifies accuracy, enriches the data, generates editorial content, and serves a personalized dashboard — all without human intervention.
 
