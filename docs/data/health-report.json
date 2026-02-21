@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T11:08:36.037Z",
+  "generatedAt": "2026-02-21T12:11:52.595Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -52,7 +52,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1604,
+      "ageMinutes": 1667,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 1604,
+      "ageMinutes": 1667,
       "stale": true
     }
   },
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 120867,
+    "totalDuration": 125755,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 45017,
-        "share": 37
+        "duration": 49125,
+        "share": 39
       },
       {
         "name": "verify-schedules",
-        "duration": 60029,
-        "share": 50
+        "duration": 60087,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 1604 minutes old"
+      "message": "featured.json: critical output is 1667 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 1604 minutes old"
+      "message": "ai-quality.json: critical output is 1667 minutes old"
     },
     {
       "severity": "info",
@@ -200,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 37% of total pipeline time (45s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 39% of total pipeline time (49s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 48% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
