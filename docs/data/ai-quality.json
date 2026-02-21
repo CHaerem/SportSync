@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-21T16:29:31.741Z",
+  "generatedAt": "2026-02-21T17:16:26.408Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 88974,
+    "blockCount": 8,
+    "generationMs": 97232,
     "tokenUsage": {
-      "input": 32255,
-      "output": 5205,
-      "cacheCreation": 14244,
-      "cacheRead": 18008,
-      "total": 37460,
-      "costUSD": 0.228169,
+      "input": 32266,
+      "output": 4911,
+      "cacheCreation": 16330,
+      "cacheRead": 15933,
+      "total": 37177,
+      "costUSD": 0.232819,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 19
+      "footballCount": 22
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -67,10 +67,10 @@
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 54,
-      "importanceCoverage": 0.815,
-      "summaryCoverage": 0.815,
-      "relevanceCoverage": 0.815,
-      "tagsCoverage": 0.648
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 0.852
     },
     "after": {
       "totalEvents": 54,
@@ -82,9 +82,9 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 59,
-    "aiUpdatedFields": 44,
-    "failedBatches": 1,
+    "fallbackFieldsFilled": 8,
+    "aiUpdatedFields": 54,
+    "failedBatches": 0,
     "totalEvents": 54,
     "skipStats": {
       "total": 54,
@@ -92,14 +92,16 @@
       "enriched": 54,
       "skipRate": 0
     },
-    "tokensPerEvent": 3650,
-    "hintsApplied": [],
+    "tokensPerEvent": 3527,
+    "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
+    ],
     "tokenUsage": {
-      "input": 142895,
-      "output": 17693,
-      "calls": 5,
-      "total": 160588,
-      "costUSD": 0.5845419999999999,
+      "input": 172007,
+      "output": 18444,
+      "calls": 6,
+      "total": 190451,
+      "costUSD": 0.96589375,
       "tracked": true,
       "estimated": false
     }

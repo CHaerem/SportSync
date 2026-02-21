@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T16:28:48.876Z",
+  "generatedAt": "2026-02-21T17:16:28.112Z",
   "eventCount": 54,
   "sportCoverage": {
     "golf": {
@@ -50,15 +50,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
@@ -70,7 +70,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
@@ -98,7 +98,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 19,
+    "footballCount": 22,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -129,34 +129,29 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 18,
-    "sevenDay": 8,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 57,
+    "sevenDay": 11,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 1,
+    "skippedSteps": [
+      "discover-events"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 814090,
-    "stepCount": 28,
+    "totalDuration": 489799,
+    "stepCount": 27,
     "timeoutHits": [
-      "discover-events",
       "enrich-events"
     ],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 300005,
-        "share": 37
-      },
-      {
         "name": "enrich-events",
-        "duration": 300011,
-        "share": 37
+        "duration": 300035,
+        "share": 61
       }
     ],
     "failedSteps": [
-      "discover-events",
       "enrich-events",
       "verify-schedules"
     ]
@@ -194,14 +189,14 @@
       "message": "4 tournament(s) lack league theming: Winter Olympics 2026, FIS Nordic World Ski Championships 2026, Biathlon World Championships 2026, Formula 1 2025 - Race Weekend"
     },
     {
-      "severity": "warning",
-      "code": "ux_eval_fallback",
-      "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 57%, 7d: 11%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "code": "ux_eval_fallback",
+      "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "warning",
@@ -211,17 +206,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 37% of total pipeline time (300s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 37% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 61% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "3 pipeline step(s) failed: discover-events, enrich-events, verify-schedules"
+      "message": "2 pipeline step(s) failed: enrich-events, verify-schedules"
     },
     {
       "severity": "warning",
@@ -236,7 +226,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 97% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 97% with 10/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
