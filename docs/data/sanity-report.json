@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-20T22:08:10.692Z",
+  "generatedAt": "2026-02-21T06:17:03.893Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 34,
+    "totalEvents": 36,
     "sports": [
       "golf",
       "olympics",
@@ -14,8 +14,7 @@
         "The Genesis Invitational",
         "Magical Kenya Open"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Cross-Country Skiing — Men's 50km Mass Start Classic",
         "Real Oviedo at Real Sociedad",
         "Biathlon — Women's 12.5km Mass Start",
@@ -28,7 +27,7 @@
         "Newcastle United at Manchester City",
         "Espanyol at Atlético Madrid"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Cross-Country Skiing — Women's 30km Mass Start Classic",
         "Sevilla at Getafe",
         "Wolverhampton Wanderers at Crystal Palace",
@@ -38,7 +37,9 @@
         "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
         "Closing Ceremony",
-        "Valencia at Villarreal",
+        "Valencia at Villarreal"
+      ],
+      "thisWeek": [
         "Manchester United at Everton",
         "Girona at Alavés",
         "Club Brugge at Atlético Madrid",
@@ -48,7 +49,9 @@
         "Borussia Dortmund at Atalanta",
         "Galatasaray at Juventus",
         "AS Monaco at Paris Saint-Germain",
-        "Benfica at Real Madrid"
+        "Benfica at Real Madrid",
+        "Aston Villa at Wolverhampton Wanderers",
+        "Alavés at Levante"
       ],
       "later": [
         "Qatar Airways Australian Grand Prix"
@@ -66,6 +69,11 @@
       "severity": "info",
       "check": "featured_orphan_ref",
       "message": "Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event"
+    },
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 8 hours old"
     },
     {
       "severity": "warning",
@@ -104,9 +112,9 @@
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 9,
     "critical": 0,
-    "warning": 7,
+    "warning": 8,
     "info": 1
   },
   "pass": true,
