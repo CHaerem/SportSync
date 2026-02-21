@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T06:17:03.893Z",
+  "generatedAt": "2026-02-21T07:15:46.260Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 36,
@@ -62,18 +62,13 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 12
   },
   "findings": [
     {
       "severity": "info",
       "check": "featured_orphan_ref",
       "message": "Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event"
-    },
-    {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 8 hours old"
     },
     {
       "severity": "warning",
@@ -112,9 +107,9 @@
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 8,
     "critical": 0,
-    "warning": 8,
+    "warning": 7,
     "info": 1
   },
   "pass": true,
