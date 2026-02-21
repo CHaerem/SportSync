@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-21T19:17:11.703Z",
-  "eventCount": 51,
+  "generatedAt": "2026-02-21T20:19:49.307Z",
+  "eventCount": 49,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -9,13 +9,13 @@
     },
     "olympics": {
       "count": 3,
-      "previousCount": 4,
-      "delta": -1
+      "previousCount": 3,
+      "delta": 0
     },
     "football": {
-      "count": 22,
+      "count": 20,
       "previousCount": 22,
-      "delta": 0
+      "delta": -2
     },
     "nordic": {
       "count": 12,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 12,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 12,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "featured.json": {
@@ -98,7 +98,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 23,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -106,14 +106,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.45,
-    "eventsEnriched": 10,
+    "matchRate": 0.4,
+    "eventsEnriched": 8,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "1 boundary day snapshot(s) outside event range (expected)"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -130,7 +132,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 65,
+    "fiveHour": 69,
     "sevenDay": 12,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 1,
@@ -139,7 +141,7 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 603893,
+    "totalDuration": 500469,
     "stepCount": 27,
     "timeoutHits": [
       "enrich-events"
@@ -147,8 +149,8 @@
     "dominantSteps": [
       {
         "name": "enrich-events",
-        "duration": 300048,
-        "share": 50
+        "duration": 300040,
+        "share": 60
       }
     ],
     "failedSteps": [
@@ -181,7 +183,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 45% (10/22) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 40% (8/20) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -191,7 +193,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 65%, 7d: 12%) — 1 step(s) skipped: discover-events"
+      "message": "Quota tier 1 (5h: 69%, 7d: 12%) — 1 step(s) skipped: discover-events"
     },
     {
       "severity": "warning",
@@ -206,7 +208,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 50% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 60% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",

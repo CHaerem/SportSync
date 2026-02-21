@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-21T19:17:11.836Z",
+  "generatedAt": "2026-02-21T20:19:49.544Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 51,
+    "totalEvents": 49,
     "sports": [
       "golf",
       "olympics",
@@ -16,10 +16,7 @@
         "The Genesis Invitational",
         "Magical Kenya Open"
       ],
-      "today": [
-        "Newcastle United at Manchester City",
-        "Espanyol at Atlético Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "Cross-Country Skiing — Women's 30km Mass Start Classic",
         "Sevilla at Getafe",
@@ -76,11 +73,11 @@
         "Biathlon — Women's 12.5km Mass Start"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 14
   },
   "findings": [
     {
@@ -136,28 +133,33 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grinden Løvås\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sweden\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"With Frida Karlsson\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Frida Karlsson\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"18:45\" for \"Bodo/Glimt at Internazionale\" but events.json has 21:00"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 23 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 14,
+    "total": 15,
     "critical": 0,
-    "warning": 14,
+    "warning": 15,
     "info": 0
   },
   "pass": true,

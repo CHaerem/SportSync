@@ -1,71 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T11:32:50.795Z",
-    "editorial": {
-      "score": 90,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.8,
-      "blockCount": 14
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 90,
-      "blockCount": 14,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 8,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Champions League Round\" but no matching athlete found in events data; Featured mentions \"Arctic\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"Sweden\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 90.143,
-      "mustWatchCoverage": 0.976,
-      "sportDiversity": 0.714,
-      "enrichmentScore": 100,
-      "resultsScore": 81
-    }
-  },
-  {
     "timestamp": "2026-02-18T11:32:50.822Z",
     "editorial": {
       "score": 90,
@@ -7896,6 +7830,94 @@
       "windowSize": 7,
       "editorialScore": 98.143,
       "mustWatchCoverage": 0.964,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T20:19:47.755Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 50,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 23,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 14,
+      "warningCount": 14,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Grinden Løvås\" but no matching athlete found in events data; Featured mentions \"With Frida Karlsson\" but no matching athlete found in events data; Featured shows \"18:45\" for \"Bodo/Glimt at Internazionale\" but events.json has 21:00. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 143940,
+        "output": 25580,
+        "calls": 5,
+        "total": 169520,
+        "costUSD": 1.2544525,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32345,
+        "output": 6566,
+        "cacheCreation": 16409,
+        "cacheRead": 15933,
+        "total": 38911,
+        "costUSD": 0.27468774999999995,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 176285,
+        "output": 32146,
+        "calls": 6,
+        "total": 208431,
+        "costUSD": 1.52914025,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 99.143,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "enrichmentScore": 100,
       "resultsScore": 90

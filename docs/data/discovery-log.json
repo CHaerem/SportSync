@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-16T08:56:05.122Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-16T14:25:15.906Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -356,6 +350,42 @@
         "calls": 3,
         "total": 119221,
         "costUSD": 0.30385025,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-02-21T20:07:50.209Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "biathlon-wch-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 0
+        },
+        {
+          "type": "new-config",
+          "target": "esports-cs2-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        },
+        {
+          "type": "new-config",
+          "target": "nordic-ski-wch-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 194903,
+        "output": 5497,
+        "calls": 3,
+        "total": 200400,
+        "costUSD": 0.5571697499999999,
         "tracked": true,
         "estimated": false
       }

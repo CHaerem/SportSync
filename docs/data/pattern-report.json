@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-21T19:17:11.871Z",
-  "patternsDetected": 18,
+  "generatedAt": "2026-02-21T20:19:49.522Z",
+  "patternsDetected": 19,
   "patterns": [
     {
       "type": "recurring_health_warning",
@@ -42,10 +42,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 149,
+      "count": 150,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 149 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T20:19:49.415Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 150 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -78,10 +78,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "step_timeout_hit",
-      "count": 27,
+      "count": 28,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z",
-      "suggestion": "Health warning \"step_timeout_hit\" has fired 27 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T20:19:49.415Z",
+      "suggestion": "Health warning \"step_timeout_hit\" has fired 28 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -105,10 +105,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 69,
+      "count": 70,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 69 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T20:19:49.415Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 70 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -132,17 +132,17 @@
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 14,
+      "fireCount": 13,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colo",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Majo...\" has fired 14 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Majo...\" has fired 13 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 15,
+      "fireCount": 14,
       "hintText": "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. B",
-      "suggestion": "Hint \"SANITY: Results data had quality issues: All 20 football results have null recap...\" has fired 15 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Results data had quality issues: All 20 football results have null recap...\" has fired 14 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_pipeline_bloat",
@@ -150,6 +150,14 @@
       "pipelineSteps": 28,
       "threshold": 20,
       "suggestion": "Pipeline has 28 steps (threshold: 20). Consider combining steps that always run together."
+    },
+    {
+      "type": "stagnant_loop",
+      "severity": "medium",
+      "loopName": "pipelineHealth",
+      "score": 0.75,
+      "stagnantRuns": 6,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 6 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "architecture_module_proliferation",
@@ -187,9 +195,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "low_confidence_config": {
-      "count": 149,
+      "count": 150,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z"
+      "lastSeen": "2026-02-21T20:19:49.415Z"
     },
     "component_unresolvable": {
       "count": 32,
@@ -207,9 +215,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "step_timeout_hit": {
-      "count": 27,
+      "count": 28,
       "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z"
+      "lastSeen": "2026-02-21T20:19:49.415Z"
     },
     "step_dominant_duration": {
       "count": 96,
@@ -222,9 +230,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 69,
+      "count": 70,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z"
+      "lastSeen": "2026-02-21T20:19:49.415Z"
     },
     "quota_moderate_utilization": {
       "count": 16,
@@ -252,22 +260,22 @@
       "lastSeen": "2026-02-21T14:32:50.572Z"
     },
     "ux_eval_fallback": {
-      "count": 3,
+      "count": 4,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-21T19:17:11.782Z"
+      "lastSeen": "2026-02-21T20:19:49.415Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 19,
       "improved": 2,
-      "unchanged": 15,
-      "worsened": 2,
+      "unchanged": 14,
+      "worsened": 3,
       "effectivenessRate": 0.11
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-21T19:17:11.869Z",
+    "recordedAt": "2026-02-21T20:19:49.521Z",
     "moduleCount": 59,
     "avgModuleSize": 307,
     "pipelineSteps": 28,
@@ -280,5 +288,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "18 patterns detected (17 high, 1 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 47 times since 2026-02-13."
+  "summary": "19 patterns detected (17 high, 2 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 47 times since 2026-02-13."
 }
