@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-21T15:21:03.686Z",
+  "generatedAt": "2026-02-21T15:55:16.081Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 55,
+    "totalEvents": 54,
     "sports": [
       "golf",
       "olympics",
@@ -14,8 +14,7 @@
     "bands": {
       "live": [
         "The Genesis Invitational",
-        "Magical Kenya Open",
-        "Rayo Vallecano at Real Betis"
+        "Magical Kenya Open"
       ],
       "today": [
         "AFC Bournemouth at West Ham United",
@@ -84,7 +83,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 10
+    "issueCount": 11
   },
   "findings": [
     {
@@ -140,12 +139,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Thu Feb\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -155,13 +149,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 20 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 19 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 14,
+    "total": 13,
     "critical": 0,
-    "warning": 14,
+    "warning": 13,
     "info": 0
   },
   "pass": true,

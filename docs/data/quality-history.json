@@ -1,94 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T10:49:14.146Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 11,
-      "warningCount": 10,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Bodø/Glimt vs Internazionale\" which may not match any event; Featured mentions \"Two Norwegian\" but no matching athlete found in events data; Featured mentions \"Klæbo\" but no matching athlete found in events data; Featured mentions \"Both Norway\" but no matching athlete found in events data; Featured mentions \"Both\" but no matching athlete found in events data; Featured mentions \"Historic\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"After Rayo\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4490,
-        "calls": 5,
-        "total": 142418,
-        "costUSD": 0.1839615,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31535,
-        "output": 497,
-        "cacheCreation": 13962,
-        "cacheRead": 17570,
-        "total": 32032,
-        "costUSD": 0.10891050000000002,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204707,
-        "output": 5485,
-        "calls": 7,
-        "total": 210192,
-        "costUSD": 0.292872,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 90.714,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "enrichmentScore": 100,
-      "resultsScore": 81
-    }
-  },
-  {
     "timestamp": "2026-02-18T11:08:06.604Z",
     "editorial": {
       "score": 84,
@@ -7878,6 +7789,94 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 94.714,
+      "mustWatchCoverage": 0.964,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T15:55:14.418Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 59,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 19,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 14,
+      "warningCount": 14,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Trondheim\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 171767,
+        "output": 20070,
+        "calls": 6,
+        "total": 191837,
+        "costUSD": 0.9961542499999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32255,
+        "output": 5205,
+        "cacheCreation": 14244,
+        "cacheRead": 18008,
+        "total": 37460,
+        "costUSD": 0.228169,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 204022,
+        "output": 25275,
+        "calls": 7,
+        "total": 229297,
+        "costUSD": 1.2243232499999999,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.571,
       "mustWatchCoverage": 0.964,
       "sportDiversity": 1,
       "enrichmentScore": 100,

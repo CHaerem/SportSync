@@ -1,37 +1,17 @@
 {
-  "generatedAt": "2026-02-21T15:13:49.019Z",
+  "generatedAt": "2026-02-21T15:48:31.616Z",
   "dates": [
     "2026-02-21",
     "2026-02-22"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 82,
-  "matchesAttempted": 25,
-  "matchesSucceeded": 13,
-  "eventsEnriched": 13,
-  "totalEvents": 55,
-  "matchRate": 0.52,
+  "listingsFound": 78,
+  "matchesAttempted": 24,
+  "matchesSucceeded": 12,
+  "eventsEnriched": 12,
+  "totalEvents": 54,
+  "matchRate": 0.5,
   "unmatched": [
-    {
-      "homeTeam": "Odense BK",
-      "awayTeam": "FC København",
-      "time": "14:00"
-    },
-    {
-      "homeTeam": "Troyes AC",
-      "awayTeam": "Pau",
-      "time": "14:00"
-    },
-    {
-      "homeTeam": "Real Sociedad",
-      "awayTeam": "Real Oviedo",
-      "time": "14:00"
-    },
-    {
-      "homeTeam": "Hamburger SV",
-      "awayTeam": "Werder Bremen",
-      "time": "14:00"
-    },
     {
       "homeTeam": "Juventus",
       "awayTeam": "Como",
@@ -111,17 +91,29 @@
       "homeTeam": "Aldershot Town FC",
       "awayTeam": "Scunthorpe United",
       "time": "16:00"
+    },
+    {
+      "homeTeam": "Altrincham FC",
+      "awayTeam": "Braintree Town",
+      "time": "16:00"
+    },
+    {
+      "homeTeam": "Boreham Wood",
+      "awayTeam": "Forest Green Rovers",
+      "time": "16:00"
+    },
+    {
+      "homeTeam": "Boston United",
+      "awayTeam": "Tamworth FC",
+      "time": "16:00"
+    },
+    {
+      "homeTeam": "Brackley Town",
+      "awayTeam": "Southend",
+      "time": "16:00"
     }
   ],
   "enrichedEvents": [
-    {
-      "homeTeam": "Real Betis",
-      "awayTeam": "Rayo Vallecano",
-      "broadcasters": [
-        "Viaplay"
-      ],
-      "confidence": 1
-    },
     {
       "homeTeam": "West Ham United",
       "awayTeam": "AFC Bournemouth",
@@ -226,5 +218,7 @@
     }
   ],
   "aliasSuggestions": [],
-  "hintsApplied": []
+  "hintsApplied": [
+    "WARNING: Match rate declining over last 3 runs (100% → 57% → 52%)"
+  ]
 }

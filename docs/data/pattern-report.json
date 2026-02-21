@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T15:21:03.853Z",
+  "generatedAt": "2026-02-21T15:55:16.230Z",
   "patternsDetected": 18,
   "patterns": [
     {
@@ -42,19 +42,19 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 144,
+      "count": 145,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-21T15:21:03.781Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 144 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T15:55:16.158Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 145 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "component_unresolvable",
-      "count": 28,
+      "count": 29,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-19T21:19:05.580Z",
-      "suggestion": "Health warning \"component_unresolvable\" has fired 28 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T15:55:16.158Z",
+      "suggestion": "Health warning \"component_unresolvable\" has fired 29 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -123,18 +123,18 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "quota_high_utilization",
-      "count": 45,
+      "count": 46,
       "firstSeen": "2026-02-18T15:24:34.686Z",
-      "lastSeen": "2026-02-21T15:21:03.781Z",
-      "suggestion": "Health warning \"quota_high_utilization\" has fired 45 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-21T15:55:16.158Z",
+      "suggestion": "Health warning \"quota_high_utilization\" has fired 46 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 19,
+      "fireCount": 18,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colo",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Majo...\" has fired 19 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Majo...\" has fired 18 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "hint_fatigue",
@@ -187,14 +187,14 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "low_confidence_config": {
-      "count": 144,
+      "count": 145,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-21T15:21:03.781Z"
+      "lastSeen": "2026-02-21T15:55:16.158Z"
     },
     "component_unresolvable": {
-      "count": 28,
+      "count": 29,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-19T21:19:05.580Z"
+      "lastSeen": "2026-02-21T15:55:16.158Z"
     },
     "olympics_stale_events": {
       "count": 42,
@@ -247,14 +247,14 @@
       "lastSeen": "2026-02-19T16:28:20.955Z"
     },
     "quota_high_utilization": {
-      "count": 45,
+      "count": 46,
       "firstSeen": "2026-02-18T15:24:34.686Z",
-      "lastSeen": "2026-02-21T15:21:03.781Z"
+      "lastSeen": "2026-02-21T15:55:16.158Z"
     },
     "streaming_match_rate_declining": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-18T20:17:47.224Z",
-      "lastSeen": "2026-02-18T21:18:25.761Z"
+      "lastSeen": "2026-02-21T15:55:16.157Z"
     },
     "snapshot_event_mismatch": {
       "count": 3,
@@ -272,7 +272,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-21T15:21:03.852Z",
+    "recordedAt": "2026-02-21T15:55:16.229Z",
     "moduleCount": 59,
     "avgModuleSize": 306,
     "pipelineSteps": 28,
