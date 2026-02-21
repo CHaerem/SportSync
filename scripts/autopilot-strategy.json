@@ -94,6 +94,10 @@
       {
         "date": "2026-02-18",
         "note": "Run 5: 6 tasks + 1 repair + 1 explore in ~45 turns. Pre-flight repair needed (date-dependent tests broke overnight). 5 direct-to-main (4-5 turns each), 1 branch-pr (refactor, 6 turns). Quality pillar dominated: pipelineHealth unstuck, must-watch scope fixed, empty snapshot noise eliminated. Key learning: hint fatigue signals metric bugs, not LLM issues. Pattern report heuristic E most productive (5/6 tasks from pattern analysis). Explore tasks via subagent efficient (~5 turns). Total estimated: ~45 turns for 8 activities."
+      },
+      {
+        "date": "2026-02-21",
+        "note": "Run 6: 7 tasks + 1 pre-flight repair, all direct-to-main. Used multi-agent architecture: 3 parallel subagents handled main tasks while orchestrator managed pre-flight and scouting. Subagents committed directly to main (each ran tests). Quality pillar dominant: 4 fixes unsticking loops, fixing hint fatigue, adding pattern decay. Autonomy 9/12→11/12 (only uxQuality remains open). Key learning: parallel subagents save ~60% time on independent tasks. Pattern decay is essential — without it, resolved issues remain high-severity forever. 4 new tasks scouted. ~20 orchestrator turns + subagent turns."
       }
     ]
   }

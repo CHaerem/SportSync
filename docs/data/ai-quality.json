@@ -1,52 +1,51 @@
 {
-  "generatedAt": "2026-02-20T08:24:27.064Z",
+  "generatedAt": "2026-02-21T14:00:25.189Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "provider": "fallback",
+    "model": "fallback",
+    "quotaTier": null,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 103137,
+    "score": 90,
+    "issues": [
+      "11 blocks exceeds recommended max of 10."
+    ],
+    "blockCount": 11,
+    "generationMs": 7967,
     "tokenUsage": {
-      "input": 30431,
-      "output": 6189,
-      "cacheCreation": 12746,
-      "cacheRead": 17682,
-      "total": 36620,
-      "costUSD": 0.24324349999999997,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 94,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.4,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Block count 11 is outside ideal range (3-8)"
+    ]
   },
   "watchPlan": {
-    "score": 85,
+    "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 51,
+      "pickCount": 3,
+      "avgScore": 79,
       "streamingCoverage": 1,
-      "reasonCoverage": 0.5
+      "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 80,
+    "score": 90,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
@@ -63,14 +62,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": null,
+    "quotaModel": null,
     "before": {
       "totalEvents": 36,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.611
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 36,
@@ -82,39 +81,26 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 14,
-    "aiUpdatedFields": 36,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 36,
     "skipStats": {
       "total": 36,
-      "unchanged": 0,
-      "enriched": 36,
-      "skipRate": 0
+      "unchanged": 36,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 3688,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "tokensPerEvent": 0,
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 110596,
-      "output": 22160,
-      "calls": 4,
-      "total": 132756,
-      "costUSD": 0.8708274999999999,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
-  },
-  "multiDay": {
-    "tokenUsage": {
-      "input": 31624,
-      "output": 4788,
-      "calls": 1,
-      "total": 36412,
-      "tracked": false,
-      "estimated": true
-    },
-    "lastRun": "2026-02-19T06:33:29.172Z"
   }
 }
