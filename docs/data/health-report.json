@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T15:55:16.028Z",
+  "generatedAt": "2026-02-21T16:28:48.876Z",
   "eventCount": 54,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 24,
-      "previousCount": 25,
-      "delta": -1
+      "previousCount": 24,
+      "delta": 0
     },
     "nordic": {
       "count": 12,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 12,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 12,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 12,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -108,7 +108,7 @@
     "tvkampenReachable": true,
     "matchRate": 0.5,
     "eventsEnriched": 12,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -120,7 +120,8 @@
     "present": true,
     "score": 98,
     "trend": "stable",
-    "issues": 1
+    "issues": 1,
+    "tier": "file"
   },
   "quotaApiHealth": {
     "available": true,
@@ -129,14 +130,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 7,
+    "fiveHour": 18,
+    "sevenDay": 8,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 845119,
+    "totalDuration": 814090,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events",
@@ -145,13 +146,13 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300091,
-        "share": 36
+        "duration": 300005,
+        "share": 37
       },
       {
         "name": "enrich-events",
-        "duration": 300096,
-        "share": 36
+        "duration": 300011,
+        "share": 37
       }
     ],
     "failedSteps": [
@@ -184,11 +185,6 @@
     },
     {
       "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 57% → 52% → 50%"
-    },
-    {
-      "severity": "warning",
       "code": "component_unresolvable",
       "message": "match-preview component for Newcastle United vs Manchester City has no matching event in events.json"
     },
@@ -196,6 +192,11 @@
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "4 tournament(s) lack league theming: Winter Olympics 2026, FIS Nordic World Ski Championships 2026, Biathlon World Championships 2026, Formula 1 2025 - Race Weekend"
+    },
+    {
+      "severity": "warning",
+      "code": "ux_eval_fallback",
+      "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "warning",
@@ -210,12 +211,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 37% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 36% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 37% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -235,7 +236,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 97% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
