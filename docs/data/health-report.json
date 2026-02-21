@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T07:15:46.421Z",
+  "generatedAt": "2026-02-21T08:10:22.281Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1371,
+      "ageMinutes": 1426,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 1371,
+      "ageMinutes": 1426,
       "stale": true
     }
   },
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 125485,
+    "totalDuration": 115243,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 41529,
-        "share": 33
+        "duration": 40284,
+        "share": 35
       },
       {
         "name": "verify-schedules",
-        "duration": 60076,
-        "share": 48
+        "duration": 60024,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 1371 minutes old"
+      "message": "featured.json: critical output is 1426 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 1371 minutes old"
+      "message": "ai-quality.json: critical output is 1426 minutes old"
     },
     {
       "severity": "info",
@@ -200,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 33% of total pipeline time (42s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 35% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 48% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",

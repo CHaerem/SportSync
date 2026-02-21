@@ -1,10 +1,10 @@
 {
-  "startedAt": "2026-02-21T07:14:52.235Z",
-  "completedAt": "2026-02-21T07:16:47.478Z",
-  "duration": 115243,
+  "startedAt": "2026-02-21T08:09:28.548Z",
+  "completedAt": "2026-02-21T08:11:23.667Z",
+  "duration": 115118,
   "gate": "pass",
   "quota": {
-    "fiveHour": 0,
+    "fiveHour": 1,
     "sevenDay": 95,
     "tier": 3,
     "maxPriority": 0,
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 27293
+          "duration": 30863
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4063
+          "duration": 4459
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8889
+          "duration": 8875
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 278
+          "duration": 244
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 40284
+          "duration": 39822
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 166
+          "duration": 168
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1156
+          "duration": 1354
         }
       ]
     },
@@ -77,12 +77,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 760
+          "duration": 713
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 9618
+          "duration": 9417
         },
         {
           "name": "enrich-events",
@@ -111,12 +111,12 @@
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 187
+          "duration": 174
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 170
+          "duration": 168
         }
       ]
     },
@@ -127,7 +127,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 595
+          "duration": 592
         }
       ]
     },
@@ -138,39 +138,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 722
+          "duration": 635
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 523
+          "duration": 345
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 503
+          "duration": 456
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 957
+          "duration": 955
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 408
+          "duration": 414
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60024,
+          "duration": 60072,
           "error": "Command failed: node scripts/verify-schedules.js\n",
           "errorCategory": "command"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 607
+          "duration": 520
         }
       ]
     },
@@ -181,7 +181,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 313
+          "duration": 306
         }
       ]
     },
@@ -192,7 +192,7 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 852
+          "duration": 1091
         },
         {
           "name": "generate-capabilities",
@@ -207,7 +207,7 @@
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 134
+          "duration": 133
         }
       ]
     }
