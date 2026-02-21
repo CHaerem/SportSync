@@ -219,9 +219,20 @@ describe("buildResultsHints()", () => {
 		expect(r.hints).toEqual([]);
 	});
 
-	it("emits recap hint when rate is low", () => {
+	it("suppresses recap hint when recapHeadlineRate is the only low metric", () => {
+		// When recapHeadlineRate is low but all other metrics are fine, the hint is
+		// suppressed because 0% headline rate reflects RSS feed content (a data artifact),
+		// not an LLM problem the hint can fix.
 		const history = Array.from({ length: 5 }, () =>
 			makeResultsEntry({ recapHeadlineRate: 0.1 })
+		);
+		const r = buildResultsHints(history);
+		expect(r.hints.some(h => h.includes("recap"))).toBe(false);
+	});
+
+	it("emits recap hint when recapHeadlineRate is low alongside another low metric", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeResultsEntry({ recapHeadlineRate: 0.1, goalScorerCoverage: 0.2 })
 		);
 		const r = buildResultsHints(history);
 		expect(r.hints.some(h => h.includes("recap"))).toBe(true);

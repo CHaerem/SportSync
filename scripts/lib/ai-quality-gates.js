@@ -751,11 +751,14 @@ export function evaluateResultsQuality(recentResults, events, rssDigest, userCon
 	};
 
 	// Weighted score
+	// recapHeadlineRate weight reduced from 15→5: RSS headline matching is unreliable
+	// (RSS feeds are dominated by Olympics/non-football content, making 0% a data artifact,
+	// not an LLM failure). Freed weight redistributed to goalScorerCoverage (20→30).
 	const score = clamp(Math.round(
 		integrityRate * 25 +
 		freshnessScore * 20 +
-		goalScorerCoverage * 20 +
-		recapHeadlineRate * 15 +
+		goalScorerCoverage * 30 +
+		recapHeadlineRate * 5 +
 		favoriteCoverage * 10 +
 		golfScore * 10
 	), 0, 100);
@@ -802,6 +805,15 @@ export function buildResultsHints(history) {
 	for (const rule of RESULTS_HINT_RULES) {
 		const avg = averages[rule.metric];
 		if (avg !== null && avg < rule.threshold) {
+			// Skip the recapHeadlineRate hint when it is the sole low metric.
+			// This metric reflects RSS feed composition (no football recap headlines),
+			// not LLM behaviour — firing the hint creates fatigue without fixing anything.
+			if (rule.metric === "recapHeadlineRate") {
+				const otherRulesAllPass = RESULTS_HINT_RULES
+					.filter(r => r.metric !== "recapHeadlineRate")
+					.every(r => averages[r.metric] === null || averages[r.metric] >= r.threshold);
+				if (otherRulesAllPass) continue;
+			}
 			hints.push(rule.hint);
 		}
 	}
