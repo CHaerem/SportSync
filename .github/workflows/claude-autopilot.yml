@@ -90,6 +90,17 @@ jobs:
 
       - uses: ./.github/actions/setup
 
+      - name: Load orchestrator prompt
+        id: load-prompt
+        run: |
+          # Load the orchestrator prompt and make it available as a step output
+          {
+            echo 'prompt<<ORCHESTRATOR_EOF'
+            cat scripts/agents/orchestrator-prompt.md
+            echo ''
+            echo 'ORCHESTRATOR_EOF'
+          } >> $GITHUB_OUTPUT
+
       - uses: anthropics/claude-code-action@v1
         id: autopilot
         with:
@@ -98,26 +109,18 @@ jobs:
             --model ${{ needs.preflight.outputs.model || 'claude-opus-4-6' }}
             --max-turns ${{ needs.preflight.outputs.max_turns || '300' }}
             --allowedTools "${{ needs.preflight.outputs.allowed_tools || 'Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)' }}"
-          prompt_file: scripts/agents/orchestrator-prompt.md
           prompt: |
+            ${{ steps.load-prompt.outputs.prompt }}
+
+            ---
+
             TASK OVERRIDE: "${{ inputs.task_override }}"
             DOMAIN FOCUS: "${{ inputs.single_agent }}"
             BASELINE TESTS: ${{ needs.preflight.outputs.tests_pass }}
 
-            You have specialized subagents available in .claude/agents/:
-            - data-agent: Data fetching, APIs, configs, streaming, verification
-            - content-agent: AI enrichment, featured content, quality gates
-            - code-agent: Tests, bug fixes, refactoring, pipeline infrastructure
-            - ux-agent: Dashboard UI, CSS, visual design, accessibility
-
-            Execute the full orchestrator workflow:
-            1. Read system state (health, roadmap, strategy, autonomy report)
-            2. If baseline tests failed, prioritize repair
-            3. Route and prioritize tasks from AUTOPILOT_ROADMAP.md
-            4. Delegate tasks to the appropriate subagents
-            5. After subagent work completes, run quality gates
-            6. Update roadmap, autonomy scorecard, and autopilot log
-            7. Commit and push all changes
+            Execute the orchestrator workflow above. You have specialized subagents
+            available in .claude/agents/ (data-agent, content-agent, code-agent, ux-agent).
+            Delegate tasks to the appropriate subagent using the Task tool.
 
             If TASK OVERRIDE is non-empty, execute that single task.
             If DOMAIN FOCUS is set, only work on tasks for that domain.
