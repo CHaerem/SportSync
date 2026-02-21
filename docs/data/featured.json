@@ -2,29 +2,11 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Medal day in Milano-Cortina"
+      "text": "Klæbo: six golds at a single Olympics — a record for the ages"
     },
     {
-      "type": "event-line",
-      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ Magical Kenya Open, 06:00 — DP World Tour"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Real Sociedad",
-      "awayTeam": "Real Oviedo",
-      "showStandings": false,
-      "_fallbackText": "⚽ Real Sociedad v Real Oviedo, 14:00, La Liga — Real Sociedad vs Real Oviedo in La Liga"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Aston Villa",
-      "awayTeam": "Leeds United",
-      "showStandings": false,
-      "_fallbackText": "⚽ Aston Villa v Leeds United, 16:00, Premier League — Aston Villa vs Leeds United in Premier League"
+      "type": "narrative",
+      "text": "Six starts, six golds. Norway's king of the tracks crushed the 50km to complete the most dominant individual performance in Winter Olympics history. Biathlon's women now chase their own medals."
     },
     {
       "type": "event-schedule",
@@ -32,72 +14,40 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Winter Olympics 2026",
-      "maxItems": 6,
+      "label": "🏅 Olympics — final medal day",
+      "maxItems": 4,
       "showFlags": true,
-      "style": "highlight",
-      "_fallbackText": "Sun 10:00 — Cross-Country Skiing — Women's 30km Mass Start Classic · Sun 20:00 — Closing Ceremony"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+      "style": "highlight"
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "tournament": "pga"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Osasuna",
+      "awayTeam": "Real Madrid",
+      "showStandings": false
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Premier League Saturday",
+      "items": [
+        "16:00 — Chelsea vs Burnley — top-four pressure at Stamford Bridge",
+        "16:00 — Aston Villa vs Leeds United",
+        "18:30 — West Ham vs Bournemouth",
+        "21:00 — Manchester City vs Newcastle — European spots on the line"
+      ]
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
-    },
-    {
       "type": "event-line",
-      "text": "🏆 Thu 13:00 — Nordic WCH — Cross-Country Women's Skiathlon 7.5+7.5km"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
+      "text": "⛷️ Thu 13:00 — Nordic WCH opens in Trondheim: Klæbo, Weng and Johaug headline Norway's home crowd"
     }
   ],
-  "generatedAt": "2026-02-21T14:36:57.723Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-21T14:51:43.778Z",
+  "provider": "claude-cli"
 }

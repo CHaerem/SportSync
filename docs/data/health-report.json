@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-21T14:32:50.518Z",
-  "eventCount": 59,
+  "generatedAt": "2026-02-21T14:51:45.383Z",
+  "eventCount": 58,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 29,
+      "count": 28,
       "previousCount": 29,
-      "delta": 0
+      "delta": -1
     },
     "nordic": {
       "count": 12,
@@ -50,35 +50,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 142,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 142,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 142,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 141,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 142,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 142,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -98,7 +98,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 20,
+    "footballCount": 19,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -106,8 +106,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.59,
-    "eventsEnriched": 17,
+    "matchRate": 0.57,
+    "eventsEnriched": 16,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -220,7 +220,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }

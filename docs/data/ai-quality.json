@@ -1,45 +1,46 @@
 {
-  "generatedAt": "2026-02-21T14:36:59.313Z",
+  "generatedAt": "2026-02-21T14:51:43.800Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": null,
-    "quotaModel": null,
+    "provider": "claude-cli",
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 2,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
-    "score": 90,
-    "issues": [
-      "12 blocks exceeds recommended max of 10."
-    ],
-    "blockCount": 12,
-    "generationMs": 3829,
+    "score": 100,
+    "issues": [],
+    "blockCount": 8,
+    "generationMs": 131279,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 32975,
+      "output": 7298,
+      "cacheCreation": 14964,
+      "cacheRead": 18008,
+      "total": 40273,
+      "costUSD": 0.28499399999999997,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 94,
+    "score": 93,
     "metrics": {
-      "mustWatchCoverage": 1,
+      "mustWatchCoverage": 0.75,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.4,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Block count 12 is outside ideal range (3-8)"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 79,
+      "avgScore": 96,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -53,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 20
+      "footballCount": 19
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -62,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": null,
-    "quotaModel": null,
+    "quotaTier": 2,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 59,
+      "totalEvents": 58,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.845
     },
     "after": {
-      "totalEvents": 59,
+      "totalEvents": 58,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -81,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 9,
+    "aiUpdatedFields": 58,
     "failedBatches": 0,
-    "totalEvents": 59,
+    "totalEvents": 58,
     "skipStats": {
-      "total": 59,
-      "unchanged": 59,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 58,
+      "unchanged": 0,
+      "enriched": 58,
+      "skipRate": 0
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 3167,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 171141,
+      "output": 12559,
+      "calls": 6,
+      "total": 183700,
+      "costUSD": 0.99750575,
       "tracked": true,
       "estimated": false
     }

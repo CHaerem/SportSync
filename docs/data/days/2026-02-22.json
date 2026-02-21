@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-22",
-  "generatedAt": "2026-02-21T14:32:46.365Z",
+  "generatedAt": "2026-02-21T14:51:44.013Z",
   "events": {
     "upcoming": [
       {
@@ -55,7 +55,18 @@
         ],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false
+        "isFavorite": false,
+        "importance": 5,
+        "importanceReason": "Premier PGA Tour event with Viktor Hovland competing",
+        "summary": "One of the PGA Tour's most prestigious events at Riviera — Viktor Hovland hunting a marquee win.",
+        "tags": [
+          "must-watch",
+          "major",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "d859dc98c8a62c947e5fed0f47b278be"
       },
       {
         "sport": "golf",
@@ -87,13 +98,22 @@
             "status": null
           }
         ],
-        "totalPlayers": 145,
+        "totalPlayers": 144,
         "link": null,
         "status": null,
         "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false
+        "isFavorite": false,
+        "importance": 2,
+        "importanceReason": "DP World Tour event, Norwegian club-level golfer competing",
+        "summary": "DP World Tour stop in Kenya with Norwegian Andreas Halvorsen in the field — modest stakes.",
+        "tags": [
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 3,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "bd38579445ab1f266f008d99cf10475a"
       },
       {
         "sport": "olympics",
@@ -118,7 +138,19 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "olympics-2026"
+        "context": "olympics-2026",
+        "importance": 5,
+        "importanceReason": "Olympic marquee event; Norway historically dominant in women's 30km.",
+        "summary": "The Women's 30km Mass Start is cross-country skiing's showpiece Olympic final — Norway contends for gold every cycle.",
+        "tags": [
+          "must-watch",
+          "major",
+          "final",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "e29d980c161d9f6184c2473d6d093e04"
       },
       {
         "sport": "football",
@@ -131,9 +163,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -144,7 +177,18 @@
         "featuredGroups": [],
         "homeTeam": "Getafe",
         "awayTeam": "Sevilla",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Routine La Liga fixture between lower-mid-table sides.",
+        "summary": "Low-stakes La Liga clash between Sevilla and Getafe with little title or relegation drama expected.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "a9eccd76821282725ecb8f3518687512"
       },
       {
         "sport": "football",
@@ -158,8 +202,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -170,7 +221,18 @@
         "featuredGroups": [],
         "homeTeam": "Crystal Palace",
         "awayTeam": "Wolverhampton Wanderers",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Lower-half Premier League match, possible relegation stakes.",
+        "summary": "Selhurst Park hosts a bottom-half PL clash; relegation implications could add edge to this encounter.",
+        "tags": [
+          "relegation"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "fdff274ffee1ad19dc9940cfccd0c0e1"
       },
       {
         "sport": "football",
@@ -184,8 +246,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -196,7 +265,19 @@
         "featuredGroups": [],
         "homeTeam": "Nottingham Forest",
         "awayTeam": "Liverpool",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 4,
+        "importanceReason": "Liverpool's title charge tested at resurgent Nottingham Forest.",
+        "summary": "Liverpool must navigate a tricky trip to The City Ground as their title credentials face a real examination.",
+        "tags": [
+          "must-watch",
+          "title-race"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "5416464bf705f45230309a58844859d0"
       },
       {
         "sport": "football",
@@ -210,8 +291,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -222,7 +310,18 @@
         "featuredGroups": [],
         "homeTeam": "Sunderland",
         "awayTeam": "Fulham",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Mid-table Premier League fixture with limited stakes.",
+        "summary": "Sunderland host Fulham in a routine PL clash; neither side in serious title or relegation danger.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "2da4c61fafc4f0ecaacf1b84258a7beb"
       },
       {
         "sport": "football",
@@ -235,9 +334,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -248,7 +348,19 @@
         "featuredGroups": [],
         "homeTeam": "Barcelona",
         "awayTeam": "Levante",
-        "isFavorite": true
+        "isFavorite": true,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 4,
+        "importanceReason": "Favorite team Barcelona at Camp Nou, vital La Liga title-race points.",
+        "summary": "Barcelona host Levante at Camp Nou — a must-win fixture in a tight La Liga title race for fan favorites.",
+        "tags": [
+          "must-watch",
+          "title-race"
+        ],
+        "norwegianRelevance": 3,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "d55714726b63cc8ae48e49ff37586942"
       },
       {
         "sport": "football",
@@ -262,8 +374,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -274,7 +393,22 @@
         "featuredGroups": [],
         "homeTeam": "Tottenham Hotspur",
         "awayTeam": "Arsenal",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 5,
+        "importanceReason": "North London Derby — one of football's fiercest, most unpredictable rivalries.",
+        "summary": "Arsenal travel to Spurs for the North London Derby — always ferocious, always unmissable, and with top-four pride at stake.",
+        "tags": [
+          "must-watch",
+          "rivalry",
+          "derby",
+          "classic-matchup",
+          "top-4-battle"
+        ],
+        "norwegianRelevance": 3,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "b3e00d49f9cb4ba1e76efe176f49651b"
       },
       {
         "sport": "football",
@@ -287,9 +421,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -300,7 +435,18 @@
         "featuredGroups": [],
         "homeTeam": "Celta Vigo",
         "awayTeam": "Mallorca",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Routine La Liga match between two mid-table sides.",
+        "summary": "Mallorca visit Celta Vigo in an unremarkable La Liga fixture with minimal title or relegation implications.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "ccee6c63efc65baaff78f82f6508cfbe"
       },
       {
         "sport": "olympics",
@@ -325,7 +471,18 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "olympics-2026"
+        "context": "olympics-2026",
+        "importance": 4,
+        "importanceReason": "Winter Olympics closing ceremony, once-every-four-years historic conclusion",
+        "summary": "Milan-Cortina 2026 closes in Verona — Norway's medal haul celebrated as the Winter Games end.",
+        "tags": [
+          "must-watch",
+          "major",
+          "final"
+        ],
+        "norwegianRelevance": 4,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "6ddd80dc3356a03d64970b023ca6502c"
       },
       {
         "sport": "football",
@@ -338,9 +495,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -351,7 +509,18 @@
         "featuredGroups": [],
         "homeTeam": "Villarreal",
         "awayTeam": "Valencia",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Routine La Liga mid-table fixture, no title implications",
+        "summary": "Unremarkable La Liga clash between two mid-table Spanish sides with little at stake.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "64ddd3909721a7b6aee8c044ff077af1"
       }
     ],
     "results": []

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-21",
-  "generatedAt": "2026-02-21T14:32:46.363Z",
+  "generatedAt": "2026-02-21T14:51:44.012Z",
   "events": {
     "upcoming": [
       {
@@ -55,7 +55,18 @@
         ],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false
+        "isFavorite": false,
+        "importance": 5,
+        "importanceReason": "Premier PGA Tour event with Viktor Hovland competing",
+        "summary": "One of the PGA Tour's most prestigious events at Riviera — Viktor Hovland hunting a marquee win.",
+        "tags": [
+          "must-watch",
+          "major",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "d859dc98c8a62c947e5fed0f47b278be"
       },
       {
         "sport": "golf",
@@ -87,39 +98,22 @@
             "status": null
           }
         ],
-        "totalPlayers": 145,
+        "totalPlayers": 144,
         "link": null,
         "status": null,
         "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Real Oviedo at Real Sociedad",
-        "time": "2026-02-21T13:00:00.000Z",
-        "endTime": null,
-        "venue": "Reale Arena",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
+        "isFavorite": false,
+        "importance": 2,
+        "importanceReason": "DP World Tour event, Norwegian club-level golfer competing",
+        "summary": "DP World Tour stop in Kenya with Norwegian Andreas Halvorsen in the field — modest stakes.",
+        "tags": [
+          "norwegian-player"
         ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Real Sociedad",
-        "awayTeam": "Real Oviedo",
-        "isFavorite": false
+        "norwegianRelevance": 3,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "bd38579445ab1f266f008d99cf10475a"
       },
       {
         "sport": "football",
@@ -133,8 +127,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -145,7 +146,18 @@
         "featuredGroups": [],
         "homeTeam": "Aston Villa",
         "awayTeam": "Leeds United",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 3,
+        "importanceReason": "Premier League mid-table clash, Leeds promotion angle",
+        "summary": "Leeds visit Villa Park in a solid Premier League fixture with mid-table implications on both sides.",
+        "tags": [
+          "top-4-battle"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "10d6bb1c21aeff2224f410a2cea2a3e5"
       },
       {
         "sport": "football",
@@ -159,8 +171,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -171,7 +190,18 @@
         "featuredGroups": [],
         "homeTeam": "Brentford",
         "awayTeam": "Brighton & Hove Albion",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Routine Premier League fixture, limited title or relegation stakes",
+        "summary": "Brighton vs Brentford is a respectable Premier League matchup but neither side has urgent stakes right now.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "f58822023888ab7023cf55b6ed7e0b9f"
       },
       {
         "sport": "football",
@@ -185,8 +215,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -197,7 +234,19 @@
         "featuredGroups": [],
         "homeTeam": "Chelsea",
         "awayTeam": "Burnley",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 3,
+        "importanceReason": "Chelsea top-four push versus Burnley — meaningful for title race",
+        "summary": "Chelsea need the points in their top-four battle; Burnley will look to cause an upset at Stamford Bridge.",
+        "tags": [
+          "top-4-battle",
+          "upset-potential"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "a9fe57f7130cf51b8da8053cf36ede2a"
       },
       {
         "sport": "football",
@@ -210,9 +259,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -223,7 +273,18 @@
         "featuredGroups": [],
         "homeTeam": "Real Betis",
         "awayTeam": "Rayo Vallecano",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "La Liga mid-table fixture with limited wider implications",
+        "summary": "Rayo Vallecano travel to Real Betis in a La Liga fixture that matters mainly for mid-table comfort.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "9d1fddda4c37e61a1304b31dced99441"
       },
       {
         "sport": "football",
@@ -237,8 +298,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -249,7 +317,18 @@
         "featuredGroups": [],
         "homeTeam": "West Ham United",
         "awayTeam": "AFC Bournemouth",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 2,
+        "importanceReason": "Lower-half Premier League clash, limited stakes",
+        "summary": "Bournemouth visit West Ham in a Premier League fixture where both sides are fighting for mid-table security.",
+        "tags": [
+          "relegation"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "95db0a4d72c3416f87eb58fa639606e4"
       },
       {
         "sport": "football",
@@ -262,9 +341,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -275,7 +355,20 @@
         "featuredGroups": [],
         "homeTeam": "Osasuna",
         "awayTeam": "Real Madrid",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 4,
+        "importanceReason": "Real Madrid title-race away fixture, always high-stakes",
+        "summary": "Real Madrid head to El Sadar where Osasuna are notoriously tough — crucial points in the La Liga title race.",
+        "tags": [
+          "must-watch",
+          "title-race",
+          "upset-potential"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "565d2c402dea7fc94acee36e83d0a78e"
       },
       {
         "sport": "football",
@@ -289,8 +382,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -301,7 +401,18 @@
         "featuredGroups": [],
         "homeTeam": "Manchester City",
         "awayTeam": "Newcastle United",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 3,
+        "importanceReason": "Top-half Premier League clash, both sides chasing European places.",
+        "summary": "Man City host Newcastle in a top-six PL battle; European qualification on the line for both sides.",
+        "tags": [
+          "top-4-battle"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.721Z",
+        "_enrichHash": "5776f8386f2a3fef0ecde2e212f1430d"
       },
       {
         "sport": "football",
@@ -314,9 +425,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -327,7 +439,18 @@
         "featuredGroups": [],
         "homeTeam": "Atlético Madrid",
         "awayTeam": "Espanyol",
-        "isFavorite": false
+        "isFavorite": false,
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1,
+        "importance": 3,
+        "importanceReason": "Atlético Madrid in title race, Espanyol offer little resistance.",
+        "summary": "Atlético look to bank points in La Liga title race against a limited Espanyol side.",
+        "tags": [
+          "title-race"
+        ],
+        "norwegianRelevance": 2,
+        "enrichedAt": "2026-02-21T14:49:31.722Z",
+        "_enrichHash": "da8afe865921672f155cf4506574cf10"
       }
     ],
     "results": [
@@ -361,7 +484,19 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "olympics-2026"
+        "context": "olympics-2026",
+        "importance": 5,
+        "importanceReason": "Olympic 50km classic — marquee Norwegian cross-country event",
+        "summary": "The ultimate Nordic ski race at the Winter Olympics — Klaebo and Iversen lead Norway's gold charge.",
+        "tags": [
+          "must-watch",
+          "final",
+          "norwegian-player",
+          "classic-matchup"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "949756da4fb76544fd1d235df3b0b60b"
       },
       {
         "sport": "olympics",
@@ -393,7 +528,18 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "olympics-2026"
+        "context": "olympics-2026",
+        "importance": 4,
+        "importanceReason": "Olympic biathlon mass start with strong Norwegian contenders",
+        "summary": "Women's biathlon mass start at Milan 2026 — Kirkeeide and Tandrevold among medal favourites for Norway.",
+        "tags": [
+          "must-watch",
+          "final",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-02-21T14:49:31.720Z",
+        "_enrichHash": "23b983cfb47b4bd29836278e77f834fd"
       }
     ]
   },
@@ -539,36 +685,14 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "olympics-biathlon-—-women's-12.5km-mass-start-2026-02-21t14:15:00+01:00",
-        "title": "Biathlon — Women's 12.5km Mass Start",
-        "sport": "olympics",
-        "tournament": "Winter Olympics 2026",
-        "time": "2026-02-21T14:15:00+01:00",
-        "timeLabel": "21 Feb, 14:15",
-        "relativeStart": "Started",
-        "importance": 4,
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "NRK",
-            "type": "tv"
-          }
-        ],
-        "score": 96,
-        "reasons": [
-          "Norwegian interest",
-          "Must-watch"
-        ]
-      },
-      {
         "id": "olympics-cross-country-skiing-—-women's-30km-mass-start-classic-2026-02-22t10:00:00+01:00",
         "title": "Cross-Country Skiing — Women's 30km Mass Start Classic",
         "sport": "olympics",
         "tournament": "Winter Olympics 2026",
         "time": "2026-02-22T10:00:00+01:00",
         "timeLabel": "22 Feb, 10:00",
-        "relativeStart": "In 18h 31m",
-        "importance": 4,
+        "relativeStart": "In 18h 10m",
+        "importance": 5,
         "norwegian": false,
         "streaming": [
           {
@@ -576,20 +700,43 @@
             "type": "tv"
           }
         ],
-        "score": 82,
+        "score": 100,
         "reasons": [
           "Must-watch"
         ]
       },
       {
-        "id": "football-leeds-united-at-aston-villa-2026-02-21t15:00:00.000z",
-        "title": "Leeds United at Aston Villa",
+        "id": "football-real-madrid-at-osasuna-2026-02-21t17:30:00.000z",
+        "title": "Real Madrid at Osasuna",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-02-21T17:30:00.000Z",
+        "timeLabel": "21 Feb, 18:30",
+        "relativeStart": "In 2h 40m",
+        "importance": 4,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 98,
+        "reasons": [
+          "Must-watch"
+        ]
+      },
+      {
+        "id": "football-liverpool-at-nottingham-forest-2026-02-22t14:00:00.000z",
+        "title": "Liverpool at Nottingham Forest",
         "sport": "football",
         "tournament": "Premier League",
-        "time": "2026-02-21T15:00:00.000Z",
-        "timeLabel": "21 Feb, 16:00",
-        "relativeStart": "In 31m",
-        "importance": 2,
+        "time": "2026-02-22T14:00:00.000Z",
+        "timeLabel": "22 Feb, 15:00",
+        "relativeStart": "In 23h 10m",
+        "importance": 4,
         "norwegian": false,
         "streaming": [
           {
@@ -605,48 +752,48 @@
             "source": "tvkampen"
           }
         ],
-        "score": 58,
+        "score": 90,
         "reasons": [
-          "Starting soon"
+          "Must-watch"
         ]
       }
     ],
-    "headline": "Medal day in Milano-Cortina"
+    "headline": "Klæbo: six golds at a single Olympics — a record for the ages"
   },
   "rssHighlights": [
     {
-      "title": "Klæbo fullførte OL-bragden med råsterkt femmilsgull",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18591369"
+      "title": "T.c talks try's signing, moving on from Grim and hallzerk, and Senzu's \"little bit rough English\"",
+      "source": "hltv",
+      "sport": "esports",
+      "link": "https://www.hltv.org/news/43932/tc-talks-trys-signing-moving-on-from-grim-and-hallzerk-and-senzus-little-bit-rough-english"
     },
     {
-      "title": "Norge med OL-rekord i trippelseier: Klæbo sikret sitt sjette gull i taktisk drama",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/ol/ol-2026-milano-cortina_-norge-med-ny-ol-rekord-_-trippelt-norsk-pa-femmila-1.17779819"
-    },
-    {
-      "title": "French Alps 2030 to hold speed skating in Italy or Netherlands",
+      "title": "In Pictures: The best of the Winter Olympics - day by day",
       "source": "bbc-winter",
       "sport": "olympics",
-      "link": "https://www.bbc.com/sport/articles/cd6z281w809o?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.bbc.com/sport/articles/c78v857elp9o?at_medium=RSS&amp;at_campaign=rss"
     },
     {
-      "title": "Sheffield's rival fans working together to break down barriers",
-      "source": "bbc-football",
-      "sport": "football",
-      "link": "https://www.bbc.com/sport/football/articles/cgl5x9kdk8zo?at_medium=RSS&amp;at_campaign=rss"
+      "title": "Drama på standplass før avgjørelsen: – Jeg glapp det",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/ol/ol-2026-milano-cortina_-norsk-skuffelse-i-ol-thriller-_-kirkeeide-skjot-seg-bort-1.17779866"
     },
     {
-      "title": "Mannefall: – Aldri sett maken",
+      "title": "Irritert etter norsk nedtur: – Dust ting å gjøre",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18591444"
+      "link": "https://www.tv2.no/a/18591770"
+    },
+    {
+      "title": "Irritert etter norsk nedtur: – Dust ting å gjøre",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18591770"
     }
   ],
   "meta": {
-    "eventCount": 13,
+    "eventCount": 12,
     "sportsCovered": [
       "golf",
       "olympics",
