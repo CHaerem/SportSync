@@ -1,6 +1,8 @@
 # SportSync Self-Hosted GitHub Actions Runner
 
-Docker-based runner for the data pipeline (`update-sports-data.yml`). Runs on any Docker host (tested on Raspberry Pi 4 ARM64).
+Docker-based runner for the data pipeline (`update-sports-data.yml`) and the nightly autopilot (`claude-autopilot.yml`). Runs on any Docker host (tested on Raspberry Pi 4 ARM64).
+
+The custom Dockerfile installs system dependencies for headless Chromium (Playwright), enabling the UX agent to take dashboard screenshots for visual validation.
 
 ## Setup
 
@@ -51,6 +53,6 @@ docker compose up -d --build
 
 - **Registration tokens expire after 1 hour.** Generate a fresh one right before `docker compose up`.
 - **Runner auto-updates** are enabled. The container handles GitHub runner version upgrades.
-- **Only the data pipeline** runs here. The autopilot (`claude-autopilot.yml`) stays on `ubuntu-latest`.
+- **Both the data pipeline and autopilot** run here. The Dockerfile pre-installs Chromium dependencies for Playwright screenshots.
 - **Fallback**: trigger the workflow manually with `runner: ubuntu-latest` if the Pi is offline.
 - **Offline behavior**: jobs queue for up to 24h, then cancel. The concurrency group prevents pile-up.

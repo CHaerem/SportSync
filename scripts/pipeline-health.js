@@ -792,7 +792,16 @@ export function generateHealthReport(options = {}) {
 	if (uxReport && typeof uxReport.score === "number") {
 		uxHealth.present = true;
 		uxHealth.score = uxReport.score;
+		uxHealth.tier = uxReport.tier || null;
 		uxHealth.issues = Array.isArray(uxReport.issues) ? uxReport.issues.length : 0;
+		// Flag when UX evaluation ran in file-based fallback mode (Playwright broken)
+		if (uxReport.tier === "file") {
+			issues.push({
+				severity: "warning",
+				code: "ux_eval_fallback",
+				message: "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled",
+			});
+		}
 		// Compute trend from history
 		if (Array.isArray(uxHistory) && uxHistory.length >= 3) {
 			const recent = uxHistory.slice(-3).map((e) => e.score);

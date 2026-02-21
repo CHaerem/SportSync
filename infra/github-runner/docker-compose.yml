@@ -1,6 +1,6 @@
 services:
   github-runner:
-    image: myoung34/github-runner:latest
+    build: .
     container_name: sportsync-runner
     restart: unless-stopped
     environment:

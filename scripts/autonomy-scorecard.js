@@ -493,10 +493,17 @@ export function evaluateUxQuality(dataDir = ROOT) {
 		parts.push("no UX history");
 	}
 
-	// 0.34 if latest score >= 70 (passing quality threshold)
+	// 0.17 if latest score >= 70 (passing quality threshold)
+	// 0.17 bonus if tier is "dom" or "vision" (real validation, not file fallback)
 	if (report && typeof report.score === "number" && report.score >= 70) {
-		score += 0.34;
+		score += 0.17;
 		parts.push(`score ${report.score}/100 (passing)`);
+		if (report.tier === "dom" || report.tier === "vision") {
+			score += 0.17;
+			parts.push(`tier: ${report.tier} (real visual validation)`);
+		} else {
+			parts.push(`tier: ${report.tier || "unknown"} (file-based fallback — no visual validation)`);
+		}
 	} else if (report && typeof report.score === "number") {
 		parts.push(`score ${report.score}/100 (below 70 threshold)`);
 	} else {

@@ -22,3 +22,7 @@ runs:
 
     - run: npm ci
       shell: bash
+
+    - name: Install Playwright browser
+      run: npx playwright install chromium || echo "Playwright browser install failed — screenshots unavailable"
+      shell: bash
