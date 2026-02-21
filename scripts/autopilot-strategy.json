@@ -98,6 +98,10 @@
       {
         "date": "2026-02-21",
         "note": "Run 6: 7 tasks + 1 pre-flight repair, all direct-to-main. Used multi-agent architecture: 3 parallel subagents handled main tasks while orchestrator managed pre-flight and scouting. Subagents committed directly to main (each ran tests). Quality pillar dominant: 4 fixes unsticking loops, fixing hint fatigue, adding pattern decay. Autonomy 9/12→11/12 (only uxQuality remains open). Key learning: parallel subagents save ~60% time on independent tasks. Pattern decay is essential — without it, resolved issues remain high-severity forever. 4 new tasks scouted. ~20 orchestrator turns + subagent turns."
+      },
+      {
+        "date": "2026-02-21",
+        "note": "Run 7: 5 tasks, 3 parallel subagents (ux-agent + code-agent + data-agent) + orchestrator. Achieved 12/12 autonomy for the first time. Key milestones: (1) uxQuality loop closed via file-based fallback — silent process.exit(0) in CI is the hardest failure mode to diagnose; (2) fetchJson() timeout fix resolved 76 consecutive verify-schedules failures — no timeout = reliability risk for any HTTP call; (3) info-severity issues now filtered from recurring warning tracker — 359+118 fire accumulation was masking the decay mechanism. Architectural insight: when new sport configs are added, SPORT_CONFIG and day snapshots must be updated atomically to avoid test failures and health warnings. Parallel subagents + orchestrator own-work pattern is now proven stable across 2 runs."
       }
     ]
   }
