@@ -92,6 +92,32 @@ describe("analyzeRecurringHealthWarnings", () => {
 		expect(Object.keys(issueCodeHistory)).toHaveLength(0);
 	});
 
+	it("skips info-severity issues to prevent false recurring warnings", () => {
+		// Info-severity issues like sport_zero_events, empty_day_snapshot should not accumulate
+		const report = {
+			issues: [
+				{ code: "sport_zero_events", severity: "info", message: "chess 0 events" },
+				{ code: "empty_day_snapshot", severity: "info", message: "2 empty snapshots" },
+				{ code: "stale_data", severity: "warning", message: "stale data" },
+			],
+		};
+		const { issueCodeHistory } = analyzeRecurringHealthWarnings(report, {});
+		expect(issueCodeHistory.sport_zero_events).toBeUndefined();
+		expect(issueCodeHistory.empty_day_snapshot).toBeUndefined();
+		expect(issueCodeHistory.stale_data.count).toBe(1);
+	});
+
+	it("allows info-code counts in history to decay naturally (lastSeen not refreshed)", () => {
+		// If a code was previously tracked as warning (high count) but now appears as info,
+		// its lastSeen is not updated → after 3+ days it will decay
+		const staleSeen = new Date(Date.now() - 4 * 86400000).toISOString();
+		const history = { empty_day_snapshot: { count: 118, firstSeen: staleSeen, lastSeen: staleSeen } };
+		const report = { issues: [{ code: "empty_day_snapshot", severity: "info", message: "boundary snap" }] };
+		const { issueCodeHistory } = analyzeRecurringHealthWarnings(report, history);
+		// Count should be halved (decay) since lastSeen is 4 days old and info doesn't refresh it
+		expect(issueCodeHistory.empty_day_snapshot.count).toBe(59);
+	});
+
 	it("decays resolved issues not seen in 3 days by 50%", () => {
 		// Issue with count 20 that hasn't been seen for 4 days → decays to 10
 		const staleSeen = new Date(Date.now() - 4 * 86400000).toISOString();

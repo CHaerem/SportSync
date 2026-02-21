@@ -54,11 +54,13 @@ export function analyzeRecurringHealthWarnings(healthReport, previousHistory = {
 		}
 	}
 
-	// Count current issues
+	// Count current issues (only warning/critical — info-severity issues are expected and
+	// should not accumulate as recurring health warnings; they decay naturally via 3-day cutoff)
 	const issues = healthReport?.issues || [];
 	for (const issue of issues) {
 		const code = issue.code;
 		if (!code) continue;
+		if (issue.severity === "info") continue;
 		if (!history[code]) {
 			history[code] = { count: 0, firstSeen: iso(), lastSeen: iso() };
 		}
