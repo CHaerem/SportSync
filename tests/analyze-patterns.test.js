@@ -28,8 +28,9 @@ describe("analyzeRecurringHealthWarnings", () => {
 	});
 
 	it("accumulates counts from previous history", () => {
+		const recentDate = new Date(Date.now() - 2 * 86400000).toISOString();
 		const history = {
-			stale_data: { count: 4, firstSeen: "2026-02-12T00:00:00Z", lastSeen: "2026-02-12T12:00:00Z" },
+			stale_data: { count: 4, firstSeen: recentDate, lastSeen: recentDate },
 		};
 		const report = { issues: [{ severity: "warning", code: "stale_data", message: "data is old" }] };
 		const { patterns, issueCodeHistory } = analyzeRecurringHealthWarnings(report, history);
@@ -41,8 +42,9 @@ describe("analyzeRecurringHealthWarnings", () => {
 	});
 
 	it("flags high severity at >= 10 occurrences", () => {
+		const recentDate = new Date(Date.now() - 2 * 86400000).toISOString();
 		const history = {
-			rss_low: { count: 9, firstSeen: "2026-02-10T00:00:00Z", lastSeen: "2026-02-12T00:00:00Z" },
+			rss_low: { count: 9, firstSeen: recentDate, lastSeen: recentDate },
 		};
 		const report = { issues: [{ severity: "warning", code: "rss_low", message: "rss low" }] };
 		const { patterns } = analyzeRecurringHealthWarnings(report, history);
@@ -53,8 +55,9 @@ describe("analyzeRecurringHealthWarnings", () => {
 	});
 
 	it("does not flag below threshold", () => {
+		const recentDate = new Date(Date.now() - 2 * 86400000).toISOString();
 		const history = {
-			stale_data: { count: 3, firstSeen: "2026-02-12T00:00:00Z", lastSeen: "2026-02-12T12:00:00Z" },
+			stale_data: { count: 3, firstSeen: recentDate, lastSeen: recentDate },
 		};
 		const report = { issues: [{ severity: "warning", code: "stale_data", message: "data is old" }] };
 		const { patterns } = analyzeRecurringHealthWarnings(report, history);
@@ -87,6 +90,41 @@ describe("analyzeRecurringHealthWarnings", () => {
 		const report = { issues: [{ severity: "warning", message: "no code" }] };
 		const { issueCodeHistory } = analyzeRecurringHealthWarnings(report, {});
 		expect(Object.keys(issueCodeHistory)).toHaveLength(0);
+	});
+
+	it("decays resolved issues not seen in 3 days by 50%", () => {
+		// Issue with count 20 that hasn't been seen for 4 days → decays to 10
+		const staleSeen = new Date(Date.now() - 4 * 86400000).toISOString();
+		const firstSeen = new Date(Date.now() - 6 * 86400000).toISOString();
+		const history = {
+			failed_batches_increase: { count: 20, firstSeen, lastSeen: staleSeen },
+		};
+		const { issueCodeHistory } = analyzeRecurringHealthWarnings({ issues: [] }, history);
+		// Count should be halved to 10
+		expect(issueCodeHistory.failed_batches_increase.count).toBe(10);
+	});
+
+	it("removes decayed entries that fall below threshold of 5", () => {
+		// Issue with count 8 that hasn't been seen for 4 days → decays to 4 → removed
+		const staleSeen = new Date(Date.now() - 4 * 86400000).toISOString();
+		const firstSeen = new Date(Date.now() - 6 * 86400000).toISOString();
+		const history = {
+			resolved_issue: { count: 8, firstSeen, lastSeen: staleSeen },
+		};
+		const { patterns, issueCodeHistory } = analyzeRecurringHealthWarnings({ issues: [] }, history);
+		expect(issueCodeHistory.resolved_issue).toBeUndefined();
+		expect(patterns).toHaveLength(0);
+	});
+
+	it("does not decay active issues seen within 3 days", () => {
+		// Issue seen 2 days ago — within the 3-day window, no decay
+		const recentSeen = new Date(Date.now() - 2 * 86400000).toISOString();
+		const firstSeen = new Date(Date.now() - 5 * 86400000).toISOString();
+		const history = {
+			active_issue: { count: 20, firstSeen, lastSeen: recentSeen },
+		};
+		const { issueCodeHistory } = analyzeRecurringHealthWarnings({ issues: [] }, history);
+		expect(issueCodeHistory.active_issue.count).toBe(20);
 	});
 });
 

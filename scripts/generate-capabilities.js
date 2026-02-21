@@ -30,6 +30,43 @@ const SPORT_CAPABILITIES = {
 };
 
 /**
+ * Detect which sports have standings data in standings.json.
+ * Returns a Set of sport names with detected standings.
+ * This allows dynamically discovered standings (e.g. tennis ATP rankings) to
+ * override the static SPORT_CAPABILITIES table.
+ */
+function detectStandingsFromFile(dataDir) {
+	const detected = new Set();
+	try {
+		const standingsPath = path.join(dataDir, "standings.json");
+		const standings = JSON.parse(fs.readFileSync(standingsPath, "utf-8"));
+		// Football: premierLeague array
+		if (Array.isArray(standings.football?.premierLeague) && standings.football.premierLeague.length > 0) {
+			detected.add("football");
+		}
+		// Golf: pga or dpWorld arrays
+		if (
+			(Array.isArray(standings.golf?.pga) && standings.golf.pga.length > 0) ||
+			(Array.isArray(standings.golf?.dpWorld) && standings.golf.dpWorld.length > 0)
+		) {
+			detected.add("golf");
+		}
+		// Tennis: ATP or WTA rankings
+		if (
+			(Array.isArray(standings.tennis?.atp) && standings.tennis.atp.length > 0) ||
+			(Array.isArray(standings.tennis?.wta) && standings.tennis.wta.length > 0)
+		) {
+			detected.add("tennis");
+		}
+		// F1: drivers array
+		if (Array.isArray(standings.f1?.drivers) && standings.f1.drivers.length > 0) {
+			detected.add("f1");
+		}
+	} catch { /* standings.json missing or invalid — fall back to static caps */ }
+	return detected;
+}
+
+/**
  * Generate the capability registry.
  * @param {object} opts - optional path overrides for testing
  * @returns {object} capabilities object
@@ -57,6 +94,8 @@ export function generateCapabilities(opts = {}) {
 	// Detect sports from data directory
 	const sports = {};
 	const sportFiles = ["football", "golf", "tennis", "f1", "chess", "esports"];
+	// Dynamically detect which sports have standings in standings.json (overrides static caps)
+	const detectedStandings = detectStandingsFromFile(dataDir);
 	for (const sport of sportFiles) {
 		const dataFile = path.join(dataDir, `${sport}.json`);
 		const hasFetcher = fs.existsSync(path.join(fetcherDir, `${sport}.js`));
@@ -76,7 +115,7 @@ export function generateCapabilities(opts = {}) {
 			data: hasData,
 			eventCount,
 			liveScores: caps.liveScores || false,
-			standings: caps.standings || false,
+			standings: caps.standings || detectedStandings.has(sport),
 			results: caps.results || false,
 		};
 	}

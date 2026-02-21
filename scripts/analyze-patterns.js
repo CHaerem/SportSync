@@ -41,6 +41,19 @@ export function analyzeRecurringHealthWarnings(healthReport, previousHistory = {
 		}
 	}
 
+	// Decay resolved issues: if lastSeen is more than 3 days ago, halve the count.
+	// This lets one-time spikes (e.g. failed_batches_increase) fade naturally
+	// once they stop appearing in the health report, without waiting 7 full days.
+	const decayCutoff = now - 3 * MS_PER_DAY;
+	for (const [code, entry] of Object.entries(history)) {
+		if (new Date(entry.lastSeen).getTime() < decayCutoff) {
+			entry.count = Math.floor(entry.count / 2);
+			if (entry.count < 5) {
+				delete history[code];
+			}
+		}
+	}
+
 	// Count current issues
 	const issues = healthReport?.issues || [];
 	for (const issue of issues) {

@@ -204,4 +204,52 @@ describe("generateCapabilities", () => {
 		expect(result.pipelineSteps).toBe(0);
 		expect(result.pipelinePhases).toEqual([]);
 	});
+
+	it("detects tennis standings from standings.json when ATP rankings present", () => {
+		const manifestPath = writeManifest([]);
+		fs.writeFileSync(path.join(FIXTURES_DIR, "fetch", "tennis.js"), "");
+		fs.writeFileSync(
+			path.join(FIXTURES_DIR, "data", "tennis.json"),
+			JSON.stringify({ tournaments: [{ name: "Wimbledon", events: [{ title: "Men's Singles" }] }] })
+		);
+		// Write standings.json with tennis ATP rankings
+		fs.writeFileSync(
+			path.join(FIXTURES_DIR, "data", "standings.json"),
+			JSON.stringify({
+				tennis: {
+					atp: [{ rank: 1, player: "Novak Djokovic", points: 11245 }],
+					wta: [],
+				},
+			})
+		);
+
+		const result = generateCapabilities({
+			dataDir: path.join(FIXTURES_DIR, "data"),
+			manifestPath,
+			fetcherDir: path.join(FIXTURES_DIR, "fetch"),
+			configDir: path.join(FIXTURES_DIR, "config"),
+			roadmapPath: path.join(FIXTURES_DIR, "roadmap.md"),
+		});
+
+		expect(result.sports.tennis.standings).toBe(true);
+		// Tennis should not appear in the "No standings" gap
+		const standingsGap = result.gaps.find((g) => g.includes("No standings") && g.includes("tennis"));
+		expect(standingsGap).toBeUndefined();
+	});
+
+	it("falls back to static caps when standings.json is absent", () => {
+		const manifestPath = writeManifest([]);
+		fs.writeFileSync(path.join(FIXTURES_DIR, "fetch", "tennis.js"), "");
+
+		const result = generateCapabilities({
+			dataDir: path.join(FIXTURES_DIR, "data"),
+			manifestPath,
+			fetcherDir: path.join(FIXTURES_DIR, "fetch"),
+			configDir: path.join(FIXTURES_DIR, "config"),
+			roadmapPath: path.join(FIXTURES_DIR, "roadmap.md"),
+		});
+
+		// Without standings.json, tennis falls back to static cap (false)
+		expect(result.sports.tennis.standings).toBe(false);
+	});
 });
