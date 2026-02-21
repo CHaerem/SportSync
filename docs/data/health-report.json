@@ -1,40 +1,40 @@
 {
-  "generatedAt": "2026-02-21T08:10:22.281Z",
+  "generatedAt": "2026-02-21T09:11:19.378Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
       "count": 2,
-      "previousCount": 2,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "olympics": {
       "count": 4,
-      "previousCount": 4,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "football": {
       "count": 29,
-      "previousCount": 29,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "f1": {
       "count": 1,
-      "previousCount": 1,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "chess": {
       "count": 0,
-      "previousCount": 0,
+      "previousCount": null,
       "delta": null
     },
     "esports": {
       "count": 0,
-      "previousCount": 0,
+      "previousCount": null,
       "delta": null
     },
     "tennis": {
       "count": 0,
-      "previousCount": 0,
+      "previousCount": null,
       "delta": null
     }
   },
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1426,
+      "ageMinutes": 1487,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 1426,
+      "ageMinutes": 1487,
       "stale": true
     }
   },
@@ -121,7 +121,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 0,
+    "fiveHour": 1,
     "sevenDay": 95,
     "model": null,
     "stepsSkipped": 4,
@@ -133,18 +133,18 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 115243,
+    "totalDuration": 115118,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 40284,
+        "duration": 39822,
         "share": 35
       },
       {
         "name": "verify-schedules",
-        "duration": 60024,
+        "duration": 60072,
         "share": 52
       }
     ],
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 1426 minutes old"
+      "message": "featured.json: critical output is 1487 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 1426 minutes old"
+      "message": "ai-quality.json: critical output is 1487 minutes old"
     },
     {
       "severity": "info",
@@ -195,7 +195,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 0%, 7d: 95%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 1%, 7d: 95%) — 4 step(s) skipped"
     },
     {
       "severity": "info",
