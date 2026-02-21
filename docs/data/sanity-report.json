@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-21T14:51:45.552Z",
+  "generatedAt": "2026-02-21T15:21:03.686Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 58,
+    "totalEvents": 55,
     "sports": [
       "golf",
       "olympics",
@@ -14,13 +14,10 @@
     "bands": {
       "live": [
         "The Genesis Invitational",
-        "Magical Kenya Open"
+        "Magical Kenya Open",
+        "Rayo Vallecano at Real Betis"
       ],
       "today": [
-        "Leeds United at Aston Villa",
-        "Brighton & Hove Albion at Brentford",
-        "Burnley at Chelsea",
-        "Rayo Vallecano at Real Betis",
         "AFC Bournemouth at West Ham United",
         "Real Madrid at Osasuna",
         "Newcastle United at Manchester City",
@@ -83,11 +80,11 @@
         "Biathlon — Women's 12.5km Mass Start"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
-    "issueCount": 11
+    "editorialScore": 100,
+    "issueCount": 10
   },
   "findings": [
     {
@@ -143,22 +140,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Trondheim\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Johaug\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Trondheim\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 19 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"s king of the tracks\" vs \"the\" result but no matching data in recent-results.json"
+      "message": "All 20 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {

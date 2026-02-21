@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-21T14:51:45.383Z",
-  "eventCount": 58,
+  "generatedAt": "2026-02-21T15:21:03.621Z",
+  "eventCount": 55,
   "sportCoverage": {
     "golf": {
       "count": 2,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 28,
-      "previousCount": 29,
-      "delta": -1
+      "count": 25,
+      "previousCount": 28,
+      "delta": -3
     },
     "nordic": {
       "count": 12,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 13,
       "stale": false
     },
     "featured.json": {
@@ -98,7 +98,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 19,
+    "footballCount": 20,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -106,9 +106,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.57,
-    "eventsEnriched": 16,
-    "trend": "stable",
+    "matchRate": 0.52,
+    "eventsEnriched": 13,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -128,31 +128,24 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 3,
-    "fiveHour": 1,
-    "sevenDay": 95,
-    "model": null,
-    "stepsSkipped": 4,
+    "tier": 2,
+    "fiveHour": 74,
+    "sevenDay": 6,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
     "skippedSteps": [
       "discover-events",
-      "enrich-events",
-      "generate-featured",
       "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 120942,
-    "stepCount": 24,
+    "totalDuration": 506149,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-results",
-        "duration": 46437,
-        "share": 38
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60040,
+        "name": "enrich-events",
+        "duration": 254793,
         "share": 50
       }
     ],
@@ -183,6 +176,16 @@
       "message": "tennis: data file exists but 0 events in events.json"
     },
     {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 100% → 57% → 52%"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Newcastle United vs Manchester City has no matching event in events.json"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "4 tournament(s) lack league theming: Winter Olympics 2026, FIS Nordic World Ski Championships 2026, Biathlon World Championships 2026, Formula 1 2025 - Race Weekend"
@@ -190,17 +193,12 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 1%, 7d: 95%) — 4 step(s) skipped"
+      "message": "Quota tier 2 (5h: 74%, 7d: 6%) — 2 step(s) skipped"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 38% of total pipeline time (46s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 50% of total pipeline time (255s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -220,7 +218,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 97% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
