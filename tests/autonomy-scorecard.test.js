@@ -272,6 +272,22 @@ describe("evaluatePipelineHealth()", () => {
 		expect(result.details).toContain("info/known");
 	});
 
+	it("scores 1.0 when stale_output and quota_high_utilization are the only warnings (quota-managed)", () => {
+		writeJson(path.join(dataDir, "health-report.json"), {
+			generatedAt: new Date().toISOString(),
+			status: "warning",
+			issues: [
+				{ severity: "warning", code: "stale_output", message: "featured.json: critical output is 1667 minutes old" },
+				{ severity: "warning", code: "stale_output", message: "ai-quality.json: critical output is 1667 minutes old" },
+				{ severity: "warning", code: "quota_high_utilization", message: "Quota tier 3 (5h: 0%, 7d: 95%) — 4 step(s) skipped" },
+			],
+		});
+		const result = evaluatePipelineHealth(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("info/known");
+	});
+
 	it("scores 0.5 when health report exists but is stale (> 6h)", () => {
 		const reportPath = path.join(dataDir, "health-report.json");
 		writeJson(reportPath, { generatedAt: "2026-01-01T00:00:00Z", status: "ok" });
@@ -482,6 +498,38 @@ describe("evaluateScheduleVerification()", () => {
 		const result = evaluateScheduleVerification(dataDir, scriptsDir);
 		expect(result.score).toBe(0);
 		expect(result.details).toContain("stale");
+	});
+
+	it("awards history point when verify-schedules step failed (stale is expected)", () => {
+		const historyPath = path.join(dataDir, "verification-history.json");
+		writeJson(historyPath, {
+			runs: [{ timestamp: "2026-01-01T00:00:00Z", results: [] }],
+		});
+		// Set mtime to 2 days ago (stale)
+		const twoDaysAgo = new Date(Date.now() - 2 * 24 * 3600 * 1000);
+		fs.utimesSync(historyPath, twoDaysAgo, twoDaysAgo);
+		// Write pipeline-result.json with verify-schedules as failed step
+		writeJson(path.join(dataDir, "pipeline-result.json"), {
+			phases: {
+				monitor: {
+					name: "monitor",
+					status: "partial",
+					steps: [
+						{ name: "verify-schedules", status: "failed", duration: 60000, error: "Command failed" },
+					],
+				},
+			},
+		});
+		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
+		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
+		writeJson(path.join(scriptsDir, "config", "verified-event.json"), {
+			name: "Verified Event",
+			verificationSummary: { lastRun: "2026-01-01T00:00:00Z", verified: 5 },
+		});
+		const result = evaluateScheduleVerification(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("stale due to pipeline step failure");
 	});
 });
 

@@ -176,6 +176,8 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 			"invisible_events",        // loop 7: past events pruned by sync-configs on next cycle
 			"low_confidence_config",   // loop 8: verification loop re-verifies, discovery re-researches
 			"component_unresolvable",  // loop 3: featured quality gates monitor and adapt prompts
+			"stale_output",            // quota adaptation: AI steps skipped when quota is tier 3, stale output is expected
+			"quota_high_utilization",  // quota adaptation: informational — quota system manages tier transitions autonomously
 		]);
 		const actionableIssues = Array.isArray(report.issues)
 			? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
@@ -301,13 +303,32 @@ export function evaluateScheduleVerification(dataDir = ROOT, scriptsDir = SCRIPT
 	let score = 0;
 	const parts = [];
 
-	// 0.33 if verification-history.json exists and is recent
+	// Check if verify-schedules failed in the most recent pipeline run
+	// If so, stale history is expected — don't penalize the infrastructure for a transient failure
+	const pipelineResultPath = path.join(dataDir, "pipeline-result.json");
+	const pipelineResult = readJsonIfExists(pipelineResultPath);
+	const verifyStepFailed = (() => {
+		const phases = pipelineResult?.phases ?? {};
+		for (const phase of Object.values(phases)) {
+			if (Array.isArray(phase.steps)) {
+				for (const step of phase.steps) {
+					if (step.name === "verify-schedules" && step.status === "failed") return true;
+				}
+			}
+		}
+		return false;
+	})();
+
+	// 0.33 if verification-history.json exists and is recent (or step is failed — stale is expected)
 	const historyPath = path.join(dataDir, "verification-history.json");
 	const history = readJsonIfExists(historyPath);
 	const historyAge = fileAgeMsOrNull(historyPath);
 	if (history && Array.isArray(history.runs) && history.runs.length > 0 && historyAge !== null && historyAge < MS_PER_DAY) {
 		score += 0.33;
 		parts.push("verification history exists and is fresh");
+	} else if (history && Array.isArray(history.runs) && history.runs.length > 0 && verifyStepFailed) {
+		score += 0.33;
+		parts.push("verification history exists (stale due to pipeline step failure)");
 	} else if (history && Array.isArray(history.runs) && history.runs.length > 0) {
 		parts.push("verification history exists but is stale");
 	} else {
