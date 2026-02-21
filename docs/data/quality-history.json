@@ -1,2065 +1,5 @@
 [
   {
-    "timestamp": "2026-02-17T12:45:37.121Z",
-    "editorial": {
-      "score": 96,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "blockCount": 7
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 115,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 8,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Girona\" but no matching athlete found in events data; Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"Gunners\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 96,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T12:45:37.887Z",
-    "editorial": {
-      "score": 96,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "blockCount": 7
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 115,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 8,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"After Barcelona\" but no matching athlete found in events data; Featured mentions \"Girona\" but no matching athlete found in events data; Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"Gunners\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 96,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T12:50:26.864Z",
-    "editorial": {
-      "score": 68,
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.667,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 3,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119198,
-        "output": 3222,
-        "calls": 4,
-        "total": 122420,
-        "costUSD": 0.41716525,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 138407,
-        "output": 758,
-        "cacheCreation": 20900,
-        "cacheRead": 117485,
-        "total": 139165,
-        "costUSD": 0.2137505,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 257605,
-        "output": 3980,
-        "calls": 5,
-        "total": 261585,
-        "costUSD": 0.63091575,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 92,
-      "mustWatchCoverage": 0.755,
-      "sportDiversity": 0.952,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T13:21:16.465Z",
-    "editorial": {
-      "score": 68,
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119962,
-        "output": 3400,
-        "calls": 4,
-        "total": 123362,
-        "costUSD": 0.42669700000000005,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33798,
-        "output": 581,
-        "cacheCreation": 18587,
-        "cacheRead": 15208,
-        "total": 34379,
-        "costUSD": 0.13873075,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 153760,
-        "output": 3981,
-        "calls": 5,
-        "total": 157741,
-        "costUSD": 0.56542775,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 88,
-      "mustWatchCoverage": 0.653,
-      "sportDiversity": 0.905,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T13:58:00.702Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 121,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119990,
-        "output": 3536,
-        "calls": 4,
-        "total": 123526,
-        "costUSD": 0.42993625,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33867,
-        "output": 308,
-        "cacheCreation": 18656,
-        "cacheRead": 15208,
-        "total": 34175,
-        "costUSD": 0.132377,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 153857,
-        "output": 3844,
-        "calls": 5,
-        "total": 157701,
-        "costUSD": 0.56231325,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 87.571,
-      "mustWatchCoverage": 0.673,
-      "sportDiversity": 0.857,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T14:29:36.803Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 117,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 3,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119874,
-        "output": 3207,
-        "calls": 4,
-        "total": 123081,
-        "costUSD": 0.42064925000000003,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 103096,
-        "output": 991,
-        "cacheCreation": 19842,
-        "cacheRead": 83238,
-        "total": 104087,
-        "costUSD": 0.1931495,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 222970,
-        "output": 4198,
-        "calls": 5,
-        "total": 227168,
-        "costUSD": 0.6137987500000001,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 87.143,
-      "mustWatchCoverage": 0.694,
-      "sportDiversity": 0.81,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T14:51:00.250Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 111,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 2,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119842,
-        "output": 3117,
-        "calls": 4,
-        "total": 122959,
-        "costUSD": 0.41855225000000007,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33653,
-        "output": 343,
-        "cacheCreation": 18442,
-        "cacheRead": 15208,
-        "total": 33996,
-        "costUSD": 0.1319995,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 153495,
-        "output": 3460,
-        "calls": 5,
-        "total": 156955,
-        "costUSD": 0.5505517500000001,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 86.714,
-      "mustWatchCoverage": 0.714,
-      "sportDiversity": 0.762,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T15:21:39.556Z",
-    "editorial": {
-      "score": 68,
-      "mustWatchCoverage": 0.143,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 117,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"The Boe\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 119825,
-        "output": 3193,
-        "calls": 4,
-        "total": 123018,
-        "costUSD": 0.42037775,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33729,
-        "output": 356,
-        "cacheCreation": 18518,
-        "cacheRead": 15208,
-        "total": 34085,
-        "costUSD": 0.1325945,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 153554,
-        "output": 3549,
-        "calls": 5,
-        "total": 157103,
-        "costUSD": 0.55297225,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 82.714,
-      "mustWatchCoverage": 0.612,
-      "sportDiversity": 0.715,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T16:12:55.428Z",
-    "editorial": {
-      "score": 62,
-      "mustWatchCoverage": 0.167,
-      "sportDiversity": 0.333,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 117,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"After Oftebro\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 150127,
-        "output": 4201,
-        "calls": 5,
-        "total": 154328,
-        "costUSD": 0.5281009999999999,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33700,
-        "output": 448,
-        "cacheCreation": 18489,
-        "cacheRead": 15208,
-        "total": 34148,
-        "costUSD": 0.13493324999999998,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 183827,
-        "output": 4649,
-        "calls": 6,
-        "total": 188476,
-        "costUSD": 0.6630342499999999,
-        "realPct": 100
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 77.857,
-      "mustWatchCoverage": 0.514,
-      "sportDiversity": 0.619,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T16:30:29.946Z",
-    "editorial": {
-      "score": 68,
-      "mustWatchCoverage": 0.167,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 7,
-      "warningCount": 7,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 150267,
-        "output": 4096,
-        "calls": 5,
-        "total": 154363,
-        "costUSD": 0.526212,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33722,
-        "output": 425,
-        "cacheCreation": 18511,
-        "cacheRead": 15208,
-        "total": 34147,
-        "costUSD": 0.13455075,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 217689,
-        "output": 4969,
-        "calls": 7,
-        "total": 222658,
-        "costUSD": 0.66076275,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 77.857,
-      "mustWatchCoverage": 0.517,
-      "sportDiversity": 0.619,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T16:47:31.218Z",
-    "editorial": {
-      "score": 86,
-      "mustWatchCoverage": 0.75,
-      "sportDiversity": 0.667,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 150187,
-        "output": 4126,
-        "calls": 5,
-        "total": 154313,
-        "costUSD": 0.52607,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33665,
-        "output": 385,
-        "cacheCreation": 18454,
-        "cacheRead": 15208,
-        "total": 34050,
-        "costUSD": 0.13316450000000002,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 217552,
-        "output": 4959,
-        "calls": 7,
-        "total": 222511,
-        "costUSD": 0.6592345000000001,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 80.429,
-      "mustWatchCoverage": 0.604,
-      "sportDiversity": 0.619,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T17:02:38.506Z",
-    "editorial": {
-      "score": 68,
-      "mustWatchCoverage": 0.364,
-      "sportDiversity": 0.333,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 115,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 2,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 149982,
-        "output": 3964,
-        "calls": 5,
-        "total": 153946,
-        "costUSD": 0.52077375,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 67469,
-        "output": 793,
-        "cacheCreation": 18651,
-        "cacheRead": 48808,
-        "total": 68262,
-        "costUSD": 0.16349475000000002,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 251151,
-        "output": 5205,
-        "calls": 7,
-        "total": 256356,
-        "costUSD": 0.6842685000000001,
-        "realPct": 87
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 76.857,
-      "mustWatchCoverage": 0.513,
-      "sportDiversity": 0.572,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T18:29:30.617Z",
-    "editorial": {
-      "score": 85,
-      "mustWatchCoverage": 0.818,
-      "sportDiversity": 0.667,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 9,
-      "warningCount": 9,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Three Norwegian\" but no matching athlete found in events data; Featured mentions \"High\" but no matching athlete found in events data; Featured mentions \"Montilivi\" but no matching athlete found in events data; Featured mentions \"Meanwhile Arsenal\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 150118,
-        "output": 3926,
-        "calls": 5,
-        "total": 154044,
-        "costUSD": 0.5297339999999999,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33729,
-        "output": 483,
-        "cacheCreation": 18518,
-        "cacheRead": 15208,
-        "total": 34212,
-        "costUSD": 0.1359095,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 217547,
-        "output": 4857,
-        "calls": 7,
-        "total": 222404,
-        "costUSD": 0.6656434999999999,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 75.714,
-      "mustWatchCoverage": 0.487,
-      "sportDiversity": 0.572,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T20:02:43.836Z",
-    "editorial": {
-      "score": 90,
-      "mustWatchCoverage": 0.889,
-      "sportDiversity": 0.667,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 106,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 20,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 3,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Montilivi\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 150915,
-        "output": 3807,
-        "calls": 5,
-        "total": 154722,
-        "costUSD": 0.523069,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34015,
-        "output": 567,
-        "cacheCreation": 18517,
-        "cacheRead": 15495,
-        "total": 34582,
-        "costUSD": 0.13819175,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 218630,
-        "output": 4822,
-        "calls": 7,
-        "total": 223452,
-        "costUSD": 0.6612607500000001,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 75.286,
-      "mustWatchCoverage": 0.471,
-      "sportDiversity": 0.572,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T20:19:42.611Z",
-    "editorial": {
-      "score": 86,
-      "mustWatchCoverage": 0.7,
-      "sportDiversity": 0.75,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 106,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 19,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix.",
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 121793,
-        "output": 3788,
-        "calls": 4,
-        "total": 125581,
-        "costUSD": 0.44078075,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34126,
-        "output": 469,
-        "cacheCreation": 18628,
-        "cacheRead": 15495,
-        "total": 34595,
-        "costUSD": 0.1365055,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 189619,
-        "output": 4705,
-        "calls": 6,
-        "total": 194324,
-        "costUSD": 0.57728625,
-        "realPct": 82
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 77.857,
-      "mustWatchCoverage": 0.551,
-      "sportDiversity": 0.583,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T20:51:28.112Z",
-    "editorial": {
-      "score": 82,
-      "mustWatchCoverage": 0.889,
-      "sportDiversity": 0.25,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 106,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 19,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 3,
-      "warningCount": 3,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Cortina\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 19 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 122901,
-        "output": 2977,
-        "calls": 4,
-        "total": 125878,
-        "costUSD": 0.426934,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34331,
-        "output": 445,
-        "cacheCreation": 18833,
-        "cacheRead": 15495,
-        "total": 34776,
-        "costUSD": 0.13717675,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 190932,
-        "output": 3870,
-        "calls": 6,
-        "total": 194802,
-        "costUSD": 0.56411075,
-        "realPct": 82
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 80.714,
-      "mustWatchCoverage": 0.654,
-      "sportDiversity": 0.572,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-17T22:13:54.193Z",
-    "editorial": {
-      "score": 80,
-      "mustWatchCoverage": 0.667,
-      "sportDiversity": 0.5,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 112,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 19 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 122808,
-        "output": 3178,
-        "calls": 4,
-        "total": 125986,
-        "costUSD": 0.44039475000000006,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34372,
-        "output": 441,
-        "cacheCreation": 18874,
-        "cacheRead": 15495,
-        "total": 34813,
-        "costUSD": 0.137118,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 190880,
-        "output": 4067,
-        "calls": 6,
-        "total": 194947,
-        "costUSD": 0.57751275,
-        "realPct": 82
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 82.429,
-      "mustWatchCoverage": 0.725,
-      "sportDiversity": 0.548,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
-    "timestamp": "2026-02-18T02:09:48.353Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 112,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 157303,
-        "output": 4301,
-        "calls": 5,
-        "total": 161604,
-        "costUSD": 0.56767,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35244,
-        "output": 498,
-        "cacheCreation": 19746,
-        "cacheRead": 15495,
-        "total": 35742,
-        "costUSD": 0.14419300000000002,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 33700,
-        "output": 448,
-        "calls": 1,
-        "total": 34148,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 226247,
-        "output": 5247,
-        "calls": 7,
-        "total": 231494,
-        "costUSD": 0.711863,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 83.286,
-      "mustWatchCoverage": 0.761,
-      "sportDiversity": 0.538,
-      "enrichmentScore": 100,
-      "resultsScore": 80.143
-    }
-  },
-  {
-    "timestamp": "2026-02-18T06:34:50.893Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 125,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Internazionale at Bodø/Glimt — UCL last 16\" which may not match any event; Featured mentions \"Block\" but no matching athlete found in events data; Featured mentions \"Historic\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 157273,
-        "output": 4279,
-        "calls": 5,
-        "total": 161552,
-        "costUSD": 0.5670605,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35148,
-        "output": 447,
-        "cacheCreation": 19650,
-        "cacheRead": 15495,
-        "total": 35595,
-        "costUSD": 0.142518,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 227665,
-        "output": 5224,
-        "calls": 7,
-        "total": 232889,
-        "costUSD": 0.7095785,
-        "realPct": 85
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 86.714,
-      "mustWatchCoverage": 0.852,
-      "sportDiversity": 0.576,
-      "enrichmentScore": 100,
-      "resultsScore": 80.286
-    }
-  },
-  {
-    "timestamp": "2026-02-18T06:56:34.333Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 127,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"While Klaebo\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4735,
-        "calls": 5,
-        "total": 142663,
-        "costUSD": 0.5187930000000001,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31445,
-        "output": 466,
-        "cacheCreation": 15947,
-        "cacheRead": 15495,
-        "total": 31911,
-        "costUSD": 0.11964925,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204617,
-        "output": 5699,
-        "calls": 7,
-        "total": 210316,
-        "costUSD": 0.6384422500000001,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 87.714,
-      "mustWatchCoverage": 0.878,
-      "sportDiversity": 0.567,
-      "enrichmentScore": 100,
-      "resultsScore": 80.429
-    }
-  },
-  {
-    "timestamp": "2026-02-18T07:28:21.559Z",
-    "editorial": {
-      "score": 89,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 127,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 6,
-      "warningCount": 6,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"The Norwegian\" but no matching athlete found in events data; Featured mentions \"Champions League Round\" but no matching athlete found in events data; Featured mentions \"Galatasaray\" but no matching athlete found in events data; Featured mentions \"Juventus\" but no matching athlete found in events data; Featured mentions \"Europe\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4574,
-        "calls": 5,
-        "total": 142502,
-        "costUSD": 0.18611650000000002,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31452,
-        "output": 529,
-        "cacheCreation": 13879,
-        "cacheRead": 17570,
-        "total": 31981,
-        "costUSD": 0.10936175,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204624,
-        "output": 5601,
-        "calls": 7,
-        "total": 210225,
-        "costUSD": 0.29547825,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 87.571,
-      "mustWatchCoverage": 0.894,
-      "sportDiversity": 0.557,
-      "enrichmentScore": 100,
-      "resultsScore": 80.571
-    }
-  },
-  {
-    "timestamp": "2026-02-18T08:20:19.426Z",
-    "editorial": {
-      "score": 89,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 130,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Bodø/Glimt host Internazionale in a historic UCL first leg at Aspmyra\" which may not match any event; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Molineux\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4321,
-        "calls": 5,
-        "total": 142249,
-        "costUSD": 0.17928149999999998,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31440,
-        "output": 558,
-        "cacheCreation": 13867,
-        "cacheRead": 17570,
-        "total": 31998,
-        "costUSD": 0.10982175000000001,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204612,
-        "output": 5377,
-        "calls": 7,
-        "total": 209989,
-        "costUSD": 0.28910325,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 88,
-      "mustWatchCoverage": 0.937,
-      "sportDiversity": 0.536,
-      "enrichmentScore": 100,
-      "resultsScore": 80.714
-    }
-  },
-  {
-    "timestamp": "2026-02-18T09:23:15.342Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 125,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 7,
-      "warningCount": 7,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Arctic\" but no matching athlete found in events data; Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Molineux\" but no matching athlete found in events data; Featured mentions \"Benfica\" but no matching athlete found in events data; Featured mentions \"Europe\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4771,
-        "calls": 5,
-        "total": 142699,
-        "costUSD": 0.520078,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31435,
-        "output": 471,
-        "cacheCreation": 15937,
-        "cacheRead": 15495,
-        "total": 31906,
-        "costUSD": 0.11950675,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204607,
-        "output": 5740,
-        "calls": 7,
-        "total": 210347,
-        "costUSD": 0.63958475,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 89.429,
-      "mustWatchCoverage": 0.952,
-      "sportDiversity": 0.586,
-      "enrichmentScore": 100,
-      "resultsScore": 80.857
-    }
-  },
-  {
-    "timestamp": "2026-02-18T10:14:12.583Z",
-    "editorial": {
-      "score": 92,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Meanwhile\" but no matching athlete found in events data; Featured mentions \"Klæbo\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4213,
-        "calls": 5,
-        "total": 142141,
-        "costUSD": 0.17695149999999998,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31328,
-        "output": 497,
-        "cacheCreation": 13755,
-        "cacheRead": 17570,
-        "total": 31825,
-        "costUSD": 0.10753175000000001,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 204500,
-        "output": 5208,
-        "calls": 7,
-        "total": 209708,
-        "costUSD": 0.28448324999999997,
-        "realPct": 83
-      }
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 91.143,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
-      "enrichmentScore": 100,
-      "resultsScore": 81
-    }
-  },
-  {
     "timestamp": "2026-02-18T10:23:03.020Z",
     "editorial": {
       "score": 89,
@@ -8260,6 +6200,1638 @@
     "featured": {
       "score": 90,
       "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:23:19.678Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:23:42.544Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:24:00.585Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:24:11.415Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": null,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:24:28.763Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:24:56.997Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:26:44.539Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:27:16.563Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:27:17.907Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:27:34.896Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:27:55.180Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:28:13.606Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:28:22.769Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:28:56.813Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:28:57.613Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:29:12.319Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:29:13.714Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:29:33.764Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 11
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 90,
+      "blockCount": 11,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:33:51.527Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 58,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:34:07.490Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 58,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:34:23.539Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 58,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:36:24.390Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:36:36.207Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 79,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 20,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 8,
+      "warningCount": 7,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major ongoing — rain carrying Norwegian colours\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Laegreid\" but no matching athlete found in events data; Featured mentions \"Christiansen\" but no matching athlete found in events data; Featured mentions \"Games\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 20 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T14:36:57.762Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
       "provider": "fallback",
       "valid": true
     },
