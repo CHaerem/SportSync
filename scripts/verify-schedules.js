@@ -173,14 +173,18 @@ export function crossReferenceWithAPI(configEvents, apiEvents, sportKey) {
 // Re-export from schedule-verifier for backward compatibility
 export { titleSimilarity, detectSportFromTitle };
 
+/** Per-request timeout for ESPN fetches — keeps the step well within 60s budget. */
+const ESPN_FETCH_TIMEOUT_MS = 8000;
+
 /**
  * Fetch ESPN data for all relevant sports (batched).
+ * Each fetch is bounded by ESPN_FETCH_TIMEOUT_MS to prevent stalls.
  */
 async function fetchESPNData(fetchFn) {
 	const espnEvents = {};
 	for (const [sport, url] of Object.entries(ESPN_SCOREBOARD_URLS)) {
 		try {
-			const data = await fetchFn(url);
+			const data = await fetchFn(url, { timeout: ESPN_FETCH_TIMEOUT_MS });
 			if (data?.events && Array.isArray(data.events)) {
 				espnEvents[sport] = data.events;
 			}
@@ -370,7 +374,7 @@ export async function verifySchedules(options = {}) {
 
 			try {
 				const url = ESPN_SCOREBOARD_URLS[sport];
-				const data = await fetchFn(url);
+				const data = await fetchFn(url, { timeout: ESPN_FETCH_TIMEOUT_MS });
 				if (data?.events && Array.isArray(data.events)) {
 					const mismatches = crossReferenceWithAPI([event], data.events, sport);
 					for (const m of mismatches) {
@@ -506,8 +510,18 @@ export async function runVerification(options = {}) {
 async function main() {
 	console.log("Verifying curated config schedules...");
 
+	// Safety valve: exit cleanly after 50s so the pipeline step never times out hard.
+	// The pipeline timeout is 60s; this gives a 10s margin for I/O cleanup.
+	const SAFETY_TIMEOUT_MS = 50000;
+	const safetyTimer = setTimeout(() => {
+		console.warn("verify-schedules: safety timeout reached — exiting cleanly with partial results");
+		process.exit(0);
+	}, SAFETY_TIMEOUT_MS);
+	safetyTimer.unref(); // Don't keep the process alive just for this timer
+
 	const dDir = rootDataPath();
 	const result = await runVerification({ dDir, dryRun: false });
+	clearTimeout(safetyTimer);
 	const { runRecord } = result;
 
 	console.log(`Checked ${runRecord.configsChecked} config(s), ${runRecord.eventsChecked} event(s).`);

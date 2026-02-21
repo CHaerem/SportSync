@@ -49,11 +49,21 @@ export function normalizeToUTC(dateString) {
 
 export async function fetchJson(
 	url,
-	{ headers = {}, retries = 2, retryDelay = 500 } = {}
+	{ headers = {}, retries = 2, retryDelay = 500, timeout = 0 } = {}
 ) {
 	headers["User-Agent"] = headers["User-Agent"] || "SportSync/1.0";
 	return new Promise((resolve, reject) => {
-		https
+		let settled = false;
+		let timeoutId = null;
+
+		function settle(fn, value) {
+			if (settled) return;
+			settled = true;
+			if (timeoutId) clearTimeout(timeoutId);
+			fn(value);
+		}
+
+		const req = https
 			.get(url, { headers }, (res) => {
 				let stream = res;
 				if (res.headers["content-encoding"] === "gzip") {
@@ -61,27 +71,28 @@ export async function fetchJson(
 				}
 				let body = "";
 				stream.on("data", (c) => (body += c));
-				stream.on("error", (err) => reject(err));
+				stream.on("error", (err) => settle(reject, err));
 				stream.on("end", async () => {
 					if (res.statusCode && res.statusCode >= 500 && retries > 0) {
 						await new Promise((r) => setTimeout(r, retryDelay));
 						try {
-							resolve(
+							settle(resolve,
 								await fetchJson(url, {
 									headers,
 									retries: retries - 1,
 									retryDelay: retryDelay * 2,
+									timeout,
 								})
 							);
 						} catch (e) {
-							reject(e);
+							settle(reject, e);
 						}
 						return;
 					}
 					try {
-						resolve(JSON.parse(body));
+						settle(resolve, JSON.parse(body));
 					} catch (e) {
-						reject(e);
+						settle(reject, e);
 					}
 				});
 			})
@@ -89,18 +100,26 @@ export async function fetchJson(
 				if (retries > 0) {
 					await new Promise((r) => setTimeout(r, retryDelay));
 					try {
-						resolve(
+						settle(resolve,
 							await fetchJson(url, {
 								headers,
 								retries: retries - 1,
 								retryDelay: retryDelay * 2,
+								timeout,
 							})
 						);
 					} catch (e) {
-						reject(e);
+						settle(reject, e);
 					}
-				} else reject(err);
+				} else settle(reject, err);
 			});
+
+		if (timeout > 0) {
+			timeoutId = setTimeout(() => {
+				req.destroy();
+				settle(reject, new Error(`Request timed out after ${timeout}ms: ${url}`));
+			}, timeout);
+		}
 	});
 }
 
