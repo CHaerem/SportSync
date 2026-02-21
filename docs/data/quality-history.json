@@ -1,90 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T11:32:49.800Z",
-    "editorial": {
-      "score": 90,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.8,
-      "blockCount": 14
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 90,
-      "blockCount": 14,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 8,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Champions League Round\" but no matching athlete found in events data; Featured mentions \"Arctic\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"Sweden\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 137928,
-        "output": 4177,
-        "calls": 5,
-        "total": 142105,
-        "costUSD": 0.17588150000000002,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35244,
-        "output": 498,
-        "calls": 1,
-        "total": 35742,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 173172,
-        "output": 4675,
-        "calls": 6,
-        "total": 177847,
-        "costUSD": 0.17588150000000002,
-        "realPct": 80
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 90.286,
-      "mustWatchCoverage": 0.976,
-      "sportDiversity": 0.657,
-      "enrichmentScore": 100,
-      "resultsScore": 81
-    }
-  },
-  {
     "timestamp": "2026-02-18T11:32:50.524Z",
     "editorial": {
       "score": 90,
@@ -7863,6 +7778,89 @@
         "calls": 7,
         "total": 227628,
         "costUSD": 1.1987127499999999,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97.286,
+      "mustWatchCoverage": 0.964,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T18:18:51.684Z",
+    "editorial": {
+      "score": 94,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 12
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 90,
+      "blockCount": 12,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 59,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 17,
+      "warningCount": 16,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfae CS2 Major — rain deep in the Portugal bracket\" which may not match any event; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data; Featured mentions \"Trondheim\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 171485,
+        "output": 23559,
+        "calls": 6,
+        "total": 195044,
+        "costUSD": 1.37608,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 171485,
+        "output": 23559,
+        "calls": 6,
+        "total": 195044,
+        "costUSD": 1.37608,
         "realPct": 100
       }
     },
