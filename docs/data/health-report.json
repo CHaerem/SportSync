@@ -1,40 +1,40 @@
 {
-  "generatedAt": "2026-02-21T09:11:19.378Z",
+  "generatedAt": "2026-02-21T10:08:45.655Z",
   "eventCount": 36,
   "sportCoverage": {
     "golf": {
       "count": 2,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 2,
+      "delta": 0
     },
     "olympics": {
       "count": 4,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 4,
+      "delta": 0
     },
     "football": {
       "count": 29,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 29,
+      "delta": 0
     },
     "f1": {
       "count": 1,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 1,
+      "delta": 0
     },
     "chess": {
       "count": 0,
-      "previousCount": null,
+      "previousCount": 0,
       "delta": null
     },
     "esports": {
       "count": 0,
-      "previousCount": null,
+      "previousCount": 0,
       "delta": null
     },
     "tennis": {
       "count": 0,
-      "previousCount": null,
+      "previousCount": 0,
       "delta": null
     }
   },
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1487,
+      "ageMinutes": 1544,
       "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 1487,
+      "ageMinutes": 1544,
       "stale": true
     }
   },
@@ -133,19 +133,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 115118,
+    "totalDuration": 121217,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 39822,
-        "share": 35
+        "duration": 44175,
+        "share": 36
       },
       {
         "name": "verify-schedules",
-        "duration": 60072,
-        "share": 52
+        "duration": 60083,
+        "share": 50
       }
     ],
     "failedSteps": [
@@ -175,12 +175,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 1487 minutes old"
+      "message": "featured.json: critical output is 1544 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 1487 minutes old"
+      "message": "ai-quality.json: critical output is 1544 minutes old"
     },
     {
       "severity": "info",
@@ -200,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 35% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 36% of total pipeline time (44s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
