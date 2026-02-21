@@ -1,0 +1,339 @@
+{
+  "_description": "Multi-agent architecture for SportSync autonomous operations. Each agent specializes in a domain and owns specific files, metrics, and scouting heuristics.",
+  "version": 1,
+  "agents": {
+    "data": {
+      "name": "Data Agent",
+      "mission": "Keep all data sources fresh, accurate, and complete. Own the fetch→build→verify pipeline.",
+      "responsibilities": [
+        "Monitor API health and data freshness (ESPN, fotball.no, PGA Tour, RSS)",
+        "Fix broken fetchers, add new data sources, maintain curated configs",
+        "Run streaming enrichment (tvkampen scraping + matching)",
+        "Schedule verification (5-stage verifier chain)",
+        "Event discovery (Claude CLI + WebSearch for configs flagged needsResearch)",
+        "Config sync (prune expired, archive old, flag empty)",
+        "Detect and resolve coverage gaps"
+      ],
+      "ownedPipelinePhases": ["fetch", "prepare", "discover", "build.build-events", "build.enrich-streaming"],
+      "inputs": [
+        "docs/data/health-report.json",
+        "docs/data/coverage-gaps.json",
+        "docs/data/streaming-verification-history.json",
+        "docs/data/verification-history.json",
+        "docs/data/rss-digest.json",
+        "docs/data/pattern-report.json",
+        "docs/data/sanity-report.json",
+        "scripts/config/user-context.json"
+      ],
+      "outputs": [
+        "docs/data/football.json",
+        "docs/data/golf.json",
+        "docs/data/tennis.json",
+        "docs/data/f1.json",
+        "docs/data/chess.json",
+        "docs/data/esports.json",
+        "docs/data/events.json",
+        "docs/data/standings.json",
+        "docs/data/rss-digest.json",
+        "docs/data/recent-results.json",
+        "docs/data/streaming-enrichment.json",
+        "docs/data/verification-history.json",
+        "docs/data/coverage-gaps.json"
+      ],
+      "ownedFiles": [
+        "scripts/fetch/**",
+        "scripts/fetch-standings.js",
+        "scripts/fetch-rss.js",
+        "scripts/fetch-results.js",
+        "scripts/sync-configs.js",
+        "scripts/discover-events.js",
+        "scripts/build-events.js",
+        "scripts/enrich-streaming.js",
+        "scripts/verify-schedules.js",
+        "scripts/merge-open-data.js",
+        "scripts/detect-coverage-gaps.js",
+        "scripts/config/*.json",
+        "scripts/lib/tvkampen-scraper.js",
+        "scripts/lib/streaming-matcher.js",
+        "scripts/lib/schedule-verifier.js",
+        "scripts/lib/base-fetcher.js",
+        "scripts/lib/api-client.js",
+        "scripts/lib/response-validator.js",
+        "scripts/lib/event-normalizer.js",
+        "scripts/lib/broadcaster-urls.js"
+      ],
+      "memoryFile": ".claude/agent-memory/data-agent/MEMORY.md",
+      "scoutingHeuristics": ["A", "C", "D", "F"],
+      "qualityMetrics": [
+        "data freshness scores",
+        "API success rates",
+        "config coverage",
+        "streaming match rate",
+        "verification accuracy"
+      ],
+      "branchPrefix": "claude/data-"
+    },
+    "content": {
+      "name": "Content Agent",
+      "mission": "Generate compelling, accurate, personalized editorial content. Own the AI enrichment and featured content pipeline.",
+      "responsibilities": [
+        "AI enrichment of events (importance, summaries, tags, Norwegian relevance)",
+        "Featured content generation (editorial briefs with component blocks)",
+        "Multi-day briefing orchestration (yesterday recap + tomorrow preview)",
+        "Watch plan generation (scoring, picks, streaming info)",
+        "Fact verification of generated content",
+        "Quality gate evaluation (editorial score, block balance, text quality)",
+        "Adaptive hint management (quality-history → prompt injection)"
+      ],
+      "ownedPipelinePhases": ["build.enrich-events", "generate"],
+      "inputs": [
+        "docs/data/events.json",
+        "docs/data/standings.json",
+        "docs/data/rss-digest.json",
+        "docs/data/recent-results.json",
+        "docs/data/quality-history.json",
+        "docs/data/fact-check-history.json",
+        "scripts/config/user-context.json",
+        "scripts/config/*.json"
+      ],
+      "outputs": [
+        "docs/data/events.json",
+        "docs/data/featured.json",
+        "docs/data/featured-*.json",
+        "docs/data/watch-plan.json",
+        "docs/data/ai-quality.json",
+        "docs/data/quality-history.json",
+        "docs/data/fact-check-history.json"
+      ],
+      "ownedFiles": [
+        "scripts/enrich-events.js",
+        "scripts/generate-featured.js",
+        "scripts/generate-multi-day.js",
+        "scripts/generate-insights.js",
+        "scripts/check-quality-regression.js",
+        "scripts/lib/enrichment-prompts.js",
+        "scripts/lib/ai-quality-gates.js",
+        "scripts/lib/llm-client.js"
+      ],
+      "memoryFile": ".claude/agent-memory/content-agent/MEMORY.md",
+      "scoutingHeuristics": ["B"],
+      "qualityMetrics": [
+        "editorial score",
+        "enrichment coverage",
+        "fact-check pass rate",
+        "watch-plan accuracy",
+        "component utilization"
+      ],
+      "branchPrefix": "claude/content-"
+    },
+    "code": {
+      "name": "Code Agent",
+      "mission": "Maintain code quality, fix bugs, add tests, refactor. Own the codebase health.",
+      "responsibilities": [
+        "Fix test failures and regressions",
+        "Add missing tests for uncovered code paths",
+        "Refactor code for maintainability",
+        "Fix bugs surfaced by health reports and pattern analysis",
+        "Implement small improvements from roadmap tasks",
+        "Dead code detection and removal",
+        "Pipeline step additions/modifications via pipeline-manifest.json"
+      ],
+      "ownedPipelinePhases": [],
+      "inputs": [
+        "docs/data/health-report.json",
+        "docs/data/pattern-report.json",
+        "docs/data/autonomy-report.json",
+        "docs/data/autopilot-log.json",
+        "AUTOPILOT_ROADMAP.md",
+        "scripts/autopilot-strategy.json"
+      ],
+      "outputs": [
+        "scripts/**",
+        "tests/**",
+        "scripts/pipeline-manifest.json",
+        "scripts/autopilot-strategy.json",
+        "AUTOPILOT_ROADMAP.md",
+        "docs/data/autopilot-log.json"
+      ],
+      "ownedFiles": [
+        "scripts/lib/helpers.js",
+        "scripts/lib/filters.js",
+        "scripts/validate-events.js",
+        "scripts/build-ics.js",
+        "scripts/pipeline-health.js",
+        "scripts/autonomy-scorecard.js",
+        "scripts/analyze-patterns.js",
+        "scripts/ai-sanity-check.js",
+        "scripts/run-pipeline.js",
+        "scripts/generate-capabilities.js",
+        "scripts/pre-commit-gate.js",
+        "scripts/pipeline-manifest.json",
+        "scripts/autopilot-strategy.json",
+        "tests/**"
+      ],
+      "memoryFile": ".claude/agent-memory/code-agent/MEMORY.md",
+      "scoutingHeuristics": ["E", "H"],
+      "qualityMetrics": [
+        "test pass rate",
+        "code health score",
+        "task completion rate",
+        "turns-per-task efficiency"
+      ],
+      "branchPrefix": "claude/code-"
+    },
+    "ux": {
+      "name": "UX Agent",
+      "mission": "Own the dashboard user experience — visual design, interactions, client-side performance, and accessibility.",
+      "responsibilities": [
+        "Visual validation via screenshots (before/after comparisons)",
+        "Dashboard render improvements (layout, hierarchy, responsiveness)",
+        "Component template refinement (match-result, match-preview, golf-status)",
+        "Dark mode consistency",
+        "Client-side performance (load time, polling efficiency)",
+        "Accessibility improvements",
+        "New UI features (sport filters, improved navigation)",
+        "Process user feedback on UX issues"
+      ],
+      "ownedPipelinePhases": [],
+      "inputs": [
+        "docs/data/health-report.json",
+        "docs/data/featured.json",
+        "docs/data/events.json",
+        "docs/data/watch-plan.json",
+        "docs/data/ux-report.json",
+        "docs/data/ux-history.json"
+      ],
+      "outputs": [
+        "docs/index.html",
+        "docs/js/dashboard.js",
+        "docs/js/asset-maps.js",
+        "docs/js/sport-config.js",
+        "docs/js/preferences-manager.js",
+        "docs/sw.js"
+      ],
+      "ownedFiles": [
+        "docs/index.html",
+        "docs/js/**",
+        "docs/css/**",
+        "docs/sw.js",
+        "scripts/screenshot.js",
+        "scripts/evaluate-ux.js"
+      ],
+      "memoryFile": ".claude/agent-memory/ux-agent/MEMORY.md",
+      "scoutingHeuristics": ["B", "G"],
+      "qualityMetrics": [
+        "visual consistency",
+        "broken image count",
+        "page load time",
+        "accessibility score",
+        "UX evaluation score"
+      ],
+      "branchPrefix": "claude/ux-"
+    },
+    "orchestrator": {
+      "name": "Orchestrator Agent",
+      "mission": "Coordinate all agents, own quality oversight, manage the autonomy scorecard, and drive strategic vision advancement.",
+      "responsibilities": [
+        "Run quality gates and health monitoring across all domains",
+        "Evaluate which agent should handle each task",
+        "Balance work across the five autonomy pillars",
+        "Manage the roadmap: prioritize tasks, assign to agents, track completion",
+        "Cross-agent learning: synthesize insights from all agent memories",
+        "Autonomy scorecard maintenance (12 feedback loops)",
+        "Preference evolution (engagement → user-context.json updates)",
+        "Resolve contention when multiple agents need the same file",
+        "Strategic planning: identify highest-leverage improvements"
+      ],
+      "ownedPipelinePhases": ["validate", "monitor", "personalize", "finalize"],
+      "inputs": [
+        ".claude/agent-memory/data-agent/MEMORY.md",
+        ".claude/agent-memory/content-agent/MEMORY.md",
+        ".claude/agent-memory/code-agent/MEMORY.md",
+        ".claude/agent-memory/ux-agent/MEMORY.md",
+        "docs/data/health-report.json",
+        "docs/data/autonomy-report.json",
+        "docs/data/ai-quality.json",
+        "docs/data/pipeline-result.json",
+        "docs/data/autopilot-log.json",
+        "docs/data/capabilities.json",
+        "docs/data/engagement-data.json",
+        "AUTOPILOT_ROADMAP.md"
+      ],
+      "outputs": [
+        "docs/data/health-report.json",
+        "docs/data/autonomy-report.json",
+        "docs/data/capabilities.json",
+        "docs/data/preference-evolution.json",
+        "scripts/config/user-context.json",
+        "AUTOPILOT_ROADMAP.md",
+        "docs/data/autopilot-log.json"
+      ],
+      "ownedFiles": [
+        "scripts/evolve-preferences.js",
+        "scripts/track-usage.js",
+        "scripts/resolve-autopilot-config.js",
+        "scripts/agents/**"
+      ],
+      "memoryFile": ".claude/agent-memory/orchestrator/MEMORY.md",
+      "scoutingHeuristics": ["I", "J", "K"],
+      "qualityMetrics": [
+        "autonomy score",
+        "pillar balance",
+        "agent performance",
+        "task throughput",
+        "cross-agent learning rate"
+      ],
+      "branchPrefix": "claude/orchestrate-"
+    }
+  },
+  "contention": {
+    "_description": "Files with multiple agent readers/writers. Defines ownership rules.",
+    "rules": [
+      {
+        "file": "docs/data/events.json",
+        "owner": ["data", "content"],
+        "resolution": "Sequential: Data Agent builds first, Content Agent enriches after"
+      },
+      {
+        "file": "docs/data/ai-quality.json",
+        "owner": ["content", "orchestrator"],
+        "resolution": "Merge by key: featured, editorial, enrichment, results"
+      },
+      {
+        "file": "docs/data/health-report.json",
+        "owner": ["orchestrator"],
+        "resolution": "Orchestrator writes after all agents finish"
+      },
+      {
+        "file": "scripts/config/user-context.json",
+        "owner": ["orchestrator"],
+        "resolution": "Single writer prevents conflicts"
+      },
+      {
+        "file": "scripts/config/*.json",
+        "owner": ["data"],
+        "resolution": "Data Agent owns all config mutations"
+      },
+      {
+        "file": "AUTOPILOT_ROADMAP.md",
+        "owner": ["orchestrator"],
+        "resolution": "Orchestrator consolidates all task updates"
+      },
+      {
+        "file": "docs/data/autopilot-log.json",
+        "owner": ["orchestrator"],
+        "resolution": "Agents return log entries; Orchestrator merges"
+      }
+    ]
+  },
+  "coordination": {
+    "memoryPattern": ".claude/agent-memory/{agent}/MEMORY.md",
+    "subagentDir": ".claude/agents/",
+    "executionModel": "single-session",
+    "executionOrder": [
+      { "phase": "assess", "agent": "orchestrator", "description": "Read system state, classify tasks" },
+      { "phase": "delegate", "agent": "orchestrator", "description": "Delegate tasks to subagents via Task tool" },
+      { "phase": "wrap-up", "agent": "orchestrator", "description": "Run gates, update roadmap, commit" }
+    ]
+  }
+}
