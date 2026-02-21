@@ -2,29 +2,7 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Medal day in Milano-Cortina"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ Magical Kenya Open, 06:00 — DP World Tour"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Manchester City",
-      "awayTeam": "Newcastle United",
-      "showStandings": false,
-      "_fallbackText": "⚽ Manchester City v Newcastle United, 21:00, Premier League"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Espanyol",
-      "showStandings": false,
-      "_fallbackText": "⚽ Atlético Madrid v Espanyol, 21:00, La Liga"
+      "text": "Final Olympic gold on the line as Milano-Cortina signs off"
     },
     {
       "type": "event-schedule",
@@ -32,72 +10,34 @@
         "sport": "olympics",
         "window": "today"
       },
-      "label": "🏅 Winter Olympics 2026",
-      "maxItems": 6,
+      "label": "🏅 Olympics today",
+      "maxItems": 4,
       "showFlags": true,
-      "style": "highlight",
-      "_fallbackText": "Sun 10:00 — Cross-Country Skiing — Women's 30km Mass Start Classic · Sun 20:00 — Closing Ceremony"
+      "style": "highlight"
     },
     {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+      "type": "narrative",
+      "text": "Klæbo and Grinden Løvås carry Norway's flag in tomorrow's closing ceremony. With Frida Karlsson sick and withdrawn from the 30km, Norway enters Sunday's femmila as clear gold favourites — a perfect closing chapter."
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Manchester City",
+      "awayTeam": "Newcastle United",
+      "showStandings": true
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "tournament": "pga"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Getafe",
-      "awayTeam": "Sevilla",
-      "showStandings": false,
-      "_fallbackText": "⚽ Sun 14:00 — Sevilla at Getafe"
-    },
-    {
       "type": "event-line",
-      "text": "🏆 Thu 13:00 — Nordic WCH — Cross-Country Women's Skiathlon 7.5+7.5km"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
+      "text": "⚽ Tue 18:45 — Bodø/Glimt at Internazionale, defending their stunning 3-1 first-leg lead in Milan"
     }
   ],
-  "generatedAt": "2026-02-21T18:18:51.641Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-21T19:17:09.998Z",
+  "provider": "claude-cli"
 }

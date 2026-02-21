@@ -1,71 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T11:32:50.524Z",
-    "editorial": {
-      "score": 90,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.8,
-      "blockCount": 14
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 90,
-      "blockCount": 14,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 119,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 81,
-      "recapHeadlineRate": 0.045,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 8,
-      "warningCount": 8,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Inter Milan\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Champions League Round\" but no matching athlete found in events data; Featured mentions \"Arctic\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"Sweden\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 90,
-      "mustWatchCoverage": 0.976,
-      "sportDiversity": 0.686,
-      "enrichmentScore": 100,
-      "resultsScore": 81
-    }
-  },
-  {
     "timestamp": "2026-02-18T11:32:50.795Z",
     "editorial": {
       "score": 90,
@@ -7873,6 +7807,94 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 97.286,
+      "mustWatchCoverage": 0.964,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-21T19:17:10.031Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 59,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 22,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 13,
+      "warningCount": 13,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured shows \"13:00\" for \"Cross-Country Skiing — Men's 50km Mass Start Classic\" but events.json has 11:00; Featured shows \"14:30\" for \"Biathlon — Women's 12.5km Mass Start\" but events.json has 14:15. Verify all claims against provided data.",
+      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 171319,
+        "output": 23276,
+        "calls": 6,
+        "total": 194595,
+        "costUSD": 1.3630627499999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32336,
+        "output": 4702,
+        "cacheCreation": 14325,
+        "cacheRead": 18008,
+        "total": 37038,
+        "costUSD": 0.21610025,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 203655,
+        "output": 27978,
+        "calls": 7,
+        "total": 231633,
+        "costUSD": 1.5791629999999999,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98.143,
       "mustWatchCoverage": 0.964,
       "sportDiversity": 1,
       "enrichmentScore": 100,
