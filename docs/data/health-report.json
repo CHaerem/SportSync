@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T08:22:22.557Z",
+  "generatedAt": "2026-02-22T09:22:55.127Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 12,
       "stale": false
     },
     "tennis.json": {
@@ -125,14 +125,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 13,
-    "sevenDay": 19,
+    "fiveHour": 27,
+    "sevenDay": 20,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 887331,
+    "totalDuration": 836782,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events",
@@ -141,13 +141,13 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300026,
-        "share": 34
+        "duration": 300038,
+        "share": 36
       },
       {
         "name": "enrich-events",
-        "duration": 300025,
-        "share": 34
+        "duration": 300028,
+        "share": 36
       }
     ],
     "failedSteps": [
@@ -180,6 +180,11 @@
     },
     {
       "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Liverpool vs Nottingham Forest has no matching event in events.json"
+    },
+    {
+      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
@@ -196,12 +201,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 34% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 36% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,7 +216,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
