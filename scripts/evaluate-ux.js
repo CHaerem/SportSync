@@ -11,8 +11,9 @@
  *   docs/data/ux-history.json  — trend history (last 30 entries)
  *
  * Usage:
- *   node scripts/evaluate-ux.js            # DOM heuristics only
- *   node scripts/evaluate-ux.js --vision   # + LLM vision analysis
+ *   node scripts/evaluate-ux.js            # DOM heuristics only (0 LLM tokens)
+ *   node scripts/evaluate-ux.js --audit    # + LLM content audit (data-vs-render gap detection)
+ *   node scripts/evaluate-ux.js --vision   # + LLM content audit + screenshot vision analysis
  *
  * Exit code 0 always — UX evaluation is best-effort, never blocks.
  */
@@ -26,6 +27,7 @@ import { computeTrend } from "./lib/ux-heuristics.js";
 
 const args = process.argv.slice(2);
 const useVision = args.includes("--vision");
+const useAudit = args.includes("--audit") || useVision;
 const dataDir = rootDataPath();
 const docsDir = path.resolve(process.cwd(), "docs");
 
@@ -647,7 +649,8 @@ async function main() {
 		};
 
 		// Content audit: LLM compares rendered DOM against data (autonomous gap detection)
-		if (results.content) {
+		// Only runs with --audit or --vision flag to avoid LLM cost on every 2h pipeline run
+		if (useAudit && results.content) {
 			console.log("Running LLM content audit...");
 			const audit = await runContentAudit(results.content);
 			if (audit) {
