@@ -838,11 +838,8 @@ class Dashboard {
 
 		briefEl.style.display = '';
 
-		// Brief blocks: headline + narrative + live lines (event cards handle sections and component blocks)
-		const briefBlocks = blocks.filter(b => b.type !== 'section');
-		const briefOnly = briefBlocks.filter(b =>
-			b.type === 'headline' || b.type === 'narrative' || b._live
-		);
+		// Brief blocks: all non-section blocks (component blocks render inline in the editorial brief)
+		const briefOnly = blocks.filter(b => b.type !== 'section');
 		let briefHtml = briefOnly.map(block => this.renderBlock(block)).join('');
 
 		// Auto-generate narrative when LLM didn't produce one (fallback provider)
@@ -1556,6 +1553,10 @@ class Dashboard {
 			const aPri = (sportClicks[a.sport] || 0) + (SPORT_WEIGHT[a.sport] || 0) * 0.1;
 			const bPri = (sportClicks[b.sport] || 0) + (SPORT_WEIGHT[b.sport] || 0) * 0.1;
 			if (aPri !== bPri) return bPri - aPri;
+			// Group football by tournament so matchday cards form correctly
+			if (a.sport === 'football' && b.sport === 'football' && a.tournament !== b.tournament) {
+				return (a.tournament || '').localeCompare(b.tournament || '');
+			}
 			return new Date(a.time) - new Date(b.time);
 		});
 
