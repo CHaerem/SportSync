@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-22T17:14:17.343Z",
+  "generatedAt": "2026-02-22T18:17:41.287Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 38,
+    "totalEvents": 37,
     "sports": [
       "golf",
       "cs2",
@@ -12,11 +12,9 @@
     ],
     "bands": {
       "live": [
-        "The Genesis Invitational",
-        "PGL Cluj-Napoca 2026 - Grand Final"
+        "The Genesis Invitational"
       ],
       "today": [
-        "Mallorca at Celta Vigo",
         "Valencia at Villarreal"
       ],
       "tomorrow": [
@@ -59,13 +57,15 @@
         "Biathlon WCH — Men's 15km Mass Start",
         "Biathlon WCH — Women's 12.5km Mass Start"
       ],
-      "ended": []
+      "ended": [
+        "PGL Cluj-Napoca 2026 - Grand Final"
+      ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 11,
     "briefPresent": true,
-    "pipelineStatus": "critical",
-    "editorialScore": 70,
-    "issueCount": 12
+    "pipelineStatus": "warning",
+    "editorialScore": 94,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -104,47 +104,17 @@
       "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
     },
     {
-      "severity": "critical",
-      "check": "sport_vanished",
-      "message": "nordic: 0 events (was 12)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Canada\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"American\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Winter Olympics\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
-    },
-    {
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"usa\" vs \"canada\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 14,
-    "critical": 1,
-    "warning": 13,
+    "total": 8,
+    "critical": 0,
+    "warning": 8,
     "info": 0
   },
-  "pass": false,
+  "pass": true,
   "tokenUsage": null
 }

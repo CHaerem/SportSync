@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T17:14:17.350Z",
-  "eventCount": 38,
+  "generatedAt": "2026-02-22T18:17:41.345Z",
+  "eventCount": 37,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,14 +13,14 @@
       "delta": 0
     },
     "football": {
-      "count": 23,
-      "previousCount": 24,
+      "count": 22,
+      "previousCount": 23,
       "delta": -1
     },
     "biathlon": {
       "count": 11,
-      "previousCount": 6,
-      "delta": 5
+      "previousCount": 11,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -101,9 +101,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.17,
-    "eventsEnriched": 4,
-    "trend": "stable",
+    "matchRate": 0.14,
+    "eventsEnriched": 3,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -127,27 +127,24 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 37,
-    "sevenDay": 28,
+    "fiveHour": 4,
+    "sevenDay": 29,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 528525,
+    "totalDuration": 410213,
     "stepCount": 28,
-    "timeoutHits": [
-      "discover-events"
-    ],
+    "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300102,
-        "share": 57
+        "duration": 180287,
+        "share": 44
       }
     ],
     "failedSteps": [
-      "discover-events",
       "verify-schedules"
     ]
   },
@@ -173,7 +170,17 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 17% (4/23) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 14% (3/22) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 24% → 17% → 14%"
+    },
+    {
+      "severity": "warning",
+      "code": "editorial_unsorted_events",
+      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
     },
     {
       "severity": "info",
@@ -191,19 +198,14 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
-    },
-    {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 57% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 44% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "warning",
@@ -213,7 +215,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 70/100.",
+    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 94/100.",
     "tokenUsage": null
   }
 }

@@ -2,39 +2,89 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "USA end 46-year wait with Olympic ice hockey gold in overtime"
-    },
-    {
-      "type": "narrative",
-      "text": "USA beat Canada in overtime to win men's ice hockey gold — the first American triumph in 46 years. The Winter Olympics close on the ultimate high note."
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 16:00 — PGL Cluj-Napoca CS2 Grand Final. Two teams, one trophy, the biggest stage in CS2."
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "text": "Barcelona 3-0 Levante"
     },
     {
       "type": "match-result",
-      "homeTeam": "Nottingham Forest",
-      "awayTeam": "Liverpool"
+      "homeTeam": "Barcelona",
+      "awayTeam": "Levante",
+      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
+    },
+    {
+      "type": "event-line",
+      "text": "🎮 PGL Cluj-Napoca 2026 - Grand Final, 16:00 — CS2 Major Tournaments 2026"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Villarreal",
+      "awayTeam": "Valencia",
+      "showStandings": true,
+      "_fallbackText": "⚽ Villarreal v Valencia, 21:00, La Liga — Regional Valencian derby at Villarreal's ground — Valencia may be fighting relegation while Villarreal target top half"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
+          "type": "event"
+        },
+        {
+          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Galatasaray at Juventus",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ The Genesis Invitational"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "narrative",
-      "text": "Bodø/Glimt travel to Inter Milan on Tuesday carrying a 3-1 first-leg lead. Norway's greatest ever Champions League night is 90 minutes from reality."
+      "type": "match-preview",
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Club Brugge",
+      "showStandings": true,
+      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
+      "type": "event-line",
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
     }
   ],
-  "generatedAt": "2026-02-22T17:14:15.530Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-22T18:17:39.466Z",
+  "provider": "fallback"
 }

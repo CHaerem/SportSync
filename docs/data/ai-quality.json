@@ -1,50 +1,47 @@
 {
-  "generatedAt": "2026-02-22T17:14:15.546Z",
+  "generatedAt": "2026-02-22T18:17:39.481Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "default",
+    "provider": "fallback",
+    "model": "fallback",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 112027,
+    "score": 90,
+    "issues": [
+      "11 blocks exceeds recommended max of 10."
+    ],
+    "blockCount": 11,
+    "generationMs": 180141,
     "tokenUsage": {
-      "input": 32472,
-      "output": 6022,
-      "cacheCreation": 16536,
-      "cacheRead": 15933,
-      "total": 38494,
-      "costUSD": 0.2618815,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 70,
+    "score": 94,
     "metrics": {
-      "mustWatchCoverage": 0,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.4,
       "componentUtilization": 1
     },
     "issues": [
-      "Only 0% of must-watch events covered in blocks"
+      "Block count 11 is outside ideal range (3-8)"
     ]
   },
   "watchPlan": {
-    "score": 85,
+    "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 64,
+      "pickCount": 1,
+      "avgScore": 76,
       "streamingCoverage": 1,
-      "reasonCoverage": 0.5
+      "reasonCoverage": 1
     }
   },
   "results": {
@@ -68,14 +65,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 38,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 38,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -87,10 +84,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 38,
+    "totalEvents": 37,
     "skipStats": {
-      "total": 38,
-      "unchanged": 38,
+      "total": 37,
+      "unchanged": 37,
       "enriched": 0,
       "skipRate": 1
     },
@@ -118,7 +115,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-22T17:09:16.277Z",
+    "lastRun": "2026-02-22T18:11:31.486Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
