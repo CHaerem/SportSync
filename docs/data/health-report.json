@@ -1,21 +1,16 @@
 {
-  "generatedAt": "2026-02-22T01:55:56.866Z",
-  "eventCount": 48,
+  "generatedAt": "2026-02-22T02:19:58.253Z",
+  "eventCount": 55,
   "sportCoverage": {
     "golf": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
     },
-    "olympics": {
-      "count": 2,
-      "previousCount": 2,
-      "delta": 0
-    },
     "football": {
-      "count": 20,
+      "count": 29,
       "previousCount": 20,
-      "delta": 0
+      "delta": 9
     },
     "nordic": {
       "count": 12,
@@ -31,6 +26,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "olympics": {
+      "count": 0,
+      "previousCount": 2,
+      "delta": -2
     },
     "chess": {
       "count": 0,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 14,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 14,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 14,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 228,
+      "ageMinutes": 13,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 13,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 14,
       "stale": false
     },
     "featured.json": {
@@ -83,7 +83,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -106,17 +106,14 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.4,
-    "eventsEnriched": 8,
+    "matchRate": 0.34,
+    "eventsEnriched": 10,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -163,13 +160,13 @@
       "verify-schedules"
     ]
   },
-  "unmappedLeagues": [
-    "Winter Olympics 2026",
-    "FIS Nordic World Ski Championships 2026",
-    "Biathlon World Championships 2026",
-    "Formula 1 2025 - Race Weekend"
-  ],
+  "unmappedLeagues": [],
   "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "olympics: 0 events (was 2)"
+    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -188,17 +185,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 40% (8/20) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "4 tournament(s) lack league theming: Winter Olympics 2026, FIS Nordic World Ski Championships 2026, Biathlon World Championships 2026, Formula 1 2025 - Race Weekend"
+      "message": "Streaming enrichment match rate is 34% (10/29) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -231,13 +218,9 @@
       "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }
