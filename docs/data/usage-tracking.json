@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-02-22T09:23:55.439Z",
+  "lastUpdated": "2026-02-22T10:16:30.410Z",
   "current": {
     "fiveHour": {
-      "utilization": 57
+      "utilization": 71
     },
     "sevenDay": {
-      "utilization": 23,
+      "utilization": 24,
       "resets_at": "1772283600"
     },
     "evaluation": {
-      "tier": 1,
-      "tierName": "moderate",
-      "maxPriority": 2,
+      "tier": 2,
+      "tierName": "high",
+      "maxPriority": 1,
       "model": "claude-sonnet-4-6",
       "constrained": true,
-      "reason": "moderate: 5h 57%, 7d 23%",
+      "reason": "high: 5h 71%, 7d 24%",
       "resetNote": null
     }
   },
@@ -23,18 +23,18 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-22T09:23:56.116Z"
+    "checkedAt": "2026-02-22T10:16:31.133Z"
   },
   "internalTokens": {
-    "enrichment": 191476,
-    "featured": 38001,
+    "enrichment": 195350,
+    "featured": 39661,
     "discovery": 0,
     "multiDay": 0,
-    "runTotal": 229477
+    "runTotal": 235011
   },
   "budget": {
-    "dailyUsed": 3637393,
-    "weeklyUsed": 24387780,
+    "dailyUsed": 3666616,
+    "weeklyUsed": 24622791,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 73,
@@ -43,7 +43,7 @@
   "sportsyncShare": {
     "pipelineRuns": 133,
     "autopilotRuns": 0,
-    "totalDurationMs": 38046623
+    "totalDurationMs": 38425143
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,11 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-15T10:14:08.659Z",
-      "context": "pipeline",
-      "durationMs": 121749
-    },
     {
       "timestamp": "2026-02-15T10:20:57.261Z",
       "context": "pipeline",
@@ -839,6 +834,12 @@
       "context": "pipeline",
       "durationMs": 771661,
       "tokens": 229477
+    },
+    {
+      "timestamp": "2026-02-22T10:16:30.410Z",
+      "context": "pipeline",
+      "durationMs": 500269,
+      "tokens": 235011
     }
   ]
 }

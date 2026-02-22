@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T09:22:55.365Z",
+  "generatedAt": "2026-02-22T10:15:30.378Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 55,
@@ -82,7 +82,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 10
+    "issueCount": 11
   },
   "findings": [
     {
@@ -123,39 +123,44 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major final day in Portugal — rain representing Norway\" which may not match any event"
+      "message": "Featured block references \"\udfae CS2 Grand Final — rain competing on the biggest stage — Today\" which may not match any event"
+    },
+    {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"Bodø/Glimt host Internazionale in the Champions League — Tue\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Yesterday Real Madrid\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Osasuna\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Portugal\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sørloth\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Grand Final\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"who\" vs \"newcastle\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 13,
+    "total": 14,
     "critical": 0,
     "warning": 12,
-    "info": 1
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
