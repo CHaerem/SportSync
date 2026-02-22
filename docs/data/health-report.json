@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T10:51:59.084Z",
+  "generatedAt": "2026-02-22T11:13:15.441Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 25,
+      "ageMinutes": 46,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 25,
+      "ageMinutes": 46,
       "stale": false
     }
   },
@@ -125,31 +125,28 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 86,
+    "fiveHour": 87,
     "sevenDay": 25,
     "model": null,
-    "stepsSkipped": 4,
+    "stepsSkipped": 1,
     "skippedSteps": [
-      "discover-events",
-      "enrich-events",
-      "generate-featured",
-      "generate-multiday"
+      "discover-events"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 121098,
+    "totalDuration": 116111,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 48167,
-        "share": 40
+        "duration": 43082,
+        "share": 37
       },
       {
         "name": "verify-schedules",
-        "duration": 60079,
-        "share": 50
+        "duration": 60014,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -181,7 +178,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 86%, 7d: 25%) — 4 step(s) skipped"
+      "message": "Quota tier 3 (5h: 87%, 7d: 25%) — 1 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -191,12 +188,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 40% of total pipeline time (48s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 37% of total pipeline time (43s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 52% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
