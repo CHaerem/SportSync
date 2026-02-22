@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T07:32:08.390Z",
+  "generatedAt": "2026-02-22T08:22:21.035Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 171673,
+    "generationMs": 122215,
     "tokenUsage": {
-      "input": 32107,
-      "output": 9862,
-      "cacheCreation": 16171,
+      "input": 32085,
+      "output": 7111,
+      "cacheCreation": 16149,
       "cacheRead": 15933,
-      "total": 41969,
-      "costUSD": 0.35560024999999995,
+      "total": 39196,
+      "costUSD": 0.28668775,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 80,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 53,
+      "avgScore": 55,
       "streamingCoverage": 1,
       "reasonCoverage": 0.333
     }
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.836
+      "tagsCoverage": 0.764
     },
     "after": {
       "totalEvents": 55,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 9,
+    "fallbackFieldsFilled": 13,
     "aiUpdatedFields": 55,
     "failedBatches": 0,
     "totalEvents": 55,
@@ -92,16 +92,14 @@
       "enriched": 55,
       "skipRate": 0
     },
-    "tokensPerEvent": 3502,
-    "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
-    ],
+    "tokensPerEvent": 3583,
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 173025,
-      "output": 19565,
+      "input": 172785,
+      "output": 24287,
       "calls": 6,
-      "total": 192590,
-      "costUSD": 1.09703075,
+      "total": 197072,
+      "costUSD": 1.2093659999999997,
       "tracked": true,
       "estimated": false
     }

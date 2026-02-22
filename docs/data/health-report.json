@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T07:32:10.210Z",
+  "generatedAt": "2026-02-22T08:22:22.557Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
@@ -45,19 +45,19 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 13,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 13,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 13,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 12,
       "stale": false
     },
     "golf.json": {
@@ -65,7 +65,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 13,
       "stale": false
     },
     "featured.json": {
@@ -125,14 +125,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 18,
+    "fiveHour": 13,
+    "sevenDay": 19,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 801508,
+    "totalDuration": 887331,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events",
@@ -141,13 +141,13 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300052,
-        "share": 37
+        "duration": 300026,
+        "share": 34
       },
       {
         "name": "enrich-events",
-        "duration": 300059,
-        "share": 37
+        "duration": 300025,
+        "share": 34
       }
     ],
     "failedSteps": [
@@ -196,12 +196,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 37% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 37% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 34% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",

@@ -1,94 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T17:29:45.232Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 123,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 5,
-      "warningCount": 5,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Then\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 136975,
-        "output": 4155,
-        "calls": 5,
-        "total": 141130,
-        "costUSD": 0.49729475,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31222,
-        "output": 493,
-        "cacheCreation": 15724,
-        "cacheRead": 15495,
-        "total": 31715,
-        "costUSD": 0.11895049999999999,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 168197,
-        "output": 4648,
-        "calls": 6,
-        "total": 172845,
-        "costUSD": 0.61624525,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 1,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 92.857,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-18T18:22:13.879Z",
     "editorial": {
       "score": 92,
@@ -7786,6 +7697,93 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 95.714,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-22T08:22:21.042Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 55,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 12,
+      "warningCount": 10,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"Levante vs Barcelona\" which may not match any event; Featured block references \"\udfbf Thu — Nordic World Ski Championships open in Trondheim — Klæbo and Johaug lead Norway's charge\" which may not match any event; Featured mentions \"Trondheim\" but no matching athlete found in events data; Featured mentions \"Johaug\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 172785,
+        "output": 24287,
+        "calls": 6,
+        "total": 197072,
+        "costUSD": 1.2093659999999997,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32085,
+        "output": 7111,
+        "cacheCreation": 16149,
+        "cacheRead": 15933,
+        "total": 39196,
+        "costUSD": 0.28668775,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 204870,
+        "output": 31398,
+        "calls": 7,
+        "total": 236268,
+        "costUSD": 1.4960537499999997,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 96.571,
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "enrichmentScore": 100,
