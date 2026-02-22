@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T14:17:36.384Z",
+  "generatedAt": "2026-02-22T15:16:10.515Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 52,
@@ -13,11 +13,11 @@
     ],
     "bands": {
       "live": [
-        "The Genesis Invitational"
+        "The Genesis Invitational",
+        "PGL Cluj-Napoca 2026 - Grand Final",
+        "Levante at Barcelona"
       ],
       "today": [
-        "PGL Cluj-Napoca 2026 - Grand Final",
-        "Levante at Barcelona",
         "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
         "Valencia at Villarreal"
@@ -80,7 +80,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 85,
-    "issueCount": 9
+    "issueCount": 11
   },
   "findings": [
     {
@@ -119,14 +119,14 @@
       "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major Grand Final — PGL Cluj-Napoca 2026\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Lose\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -135,15 +135,35 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Counter\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Strike\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 24 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_unverified_result",
+      "message": "Brief references \"man city\" vs \"newcastle\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 11,
+    "total": 15,
     "critical": 0,
-    "warning": 10,
-    "info": 1
+    "warning": 15,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
