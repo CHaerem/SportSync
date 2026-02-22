@@ -272,6 +272,22 @@ describe("evaluatePipelineHealth()", () => {
 		expect(result.details).toContain("info/known");
 	});
 
+	it("scores 1.0 when ux_eval_fallback and step_timeout_hit are the only warnings", () => {
+		writeJson(path.join(dataDir, "health-report.json"), {
+			generatedAt: new Date().toISOString(),
+			status: "warning",
+			issues: [
+				{ severity: "warning", code: "ux_eval_fallback", message: "UX evaluation ran in file-based fallback mode" },
+				{ severity: "warning", code: "step_timeout_hit", message: "discover-events hit timeout" },
+				{ severity: "warning", code: "step_timeout_hit", message: "enrich-events hit timeout" },
+			],
+		});
+		const result = evaluatePipelineHealth(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("info/known");
+	});
+
 	it("scores 1.0 when stale_output and quota_high_utilization are the only warnings (quota-managed)", () => {
 		writeJson(path.join(dataDir, "health-report.json"), {
 			generatedAt: new Date().toISOString(),
@@ -639,6 +655,40 @@ describe("evaluateUxQuality()", () => {
 		const result = evaluateUxQuality(dataDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
+	});
+
+	it("scores 1.0 with file-based fallback when score >= 90", () => {
+		writeJson(path.join(dataDir, "ux-report.json"), {
+			generatedAt: new Date().toISOString(),
+			score: 98,
+			tier: "file",
+		});
+		writeJson(path.join(dataDir, "ux-history.json"), [
+			{ generatedAt: "2026-02-14T00:00:00Z", score: 95 },
+			{ generatedAt: "2026-02-15T00:00:00Z", score: 96 },
+			{ generatedAt: "2026-02-16T00:00:00Z", score: 98 },
+		]);
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("file-based fallback with high score");
+	});
+
+	it("scores 0.83 with file-based fallback when score < 90", () => {
+		writeJson(path.join(dataDir, "ux-report.json"), {
+			generatedAt: new Date().toISOString(),
+			score: 75,
+			tier: "file",
+		});
+		writeJson(path.join(dataDir, "ux-history.json"), [
+			{ generatedAt: "2026-02-14T00:00:00Z", score: 70 },
+			{ generatedAt: "2026-02-15T00:00:00Z", score: 72 },
+			{ generatedAt: "2026-02-16T00:00:00Z", score: 75 },
+		]);
+		const result = evaluateUxQuality(dataDir);
+		expect(result.score).toBe(0.83);
+		expect(result.details).toContain("file-based fallback");
+		expect(result.details).not.toContain("high score");
 	});
 
 	it("counts stale report as not fresh", () => {
