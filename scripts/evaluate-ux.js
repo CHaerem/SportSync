@@ -187,6 +187,50 @@ const { chromium } = require('playwright');
 		return { score: Math.round(ws), metrics, issues: allIssues };
 	});
 
+	// Extract rendered content for content audit
+	const content = await page.evaluate(() => {
+		const brief = document.querySelector('#the-brief');
+		const briefText = brief ? brief.textContent.trim().slice(0, 3000) : '';
+
+		// What component blocks actually rendered
+		const renderedBlocks = [];
+		for (const el of (brief ? brief.querySelectorAll('[class*="block-"]') : [])) {
+			const classes = [...el.classList].filter(c => c.startsWith('block-'));
+			renderedBlocks.push({ type: classes.join(' '), text: el.textContent.trim().slice(0, 150) });
+		}
+
+		// Event card groupings — matchday cards with tournament labels
+		const matchdays = [];
+		for (const md of document.querySelectorAll('.matchday')) {
+			const title = (md.querySelector('.matchday-title') || {}).textContent || '';
+			const matches = [];
+			for (const row of md.querySelectorAll('.md-compact-row, .md-featured')) {
+				matches.push(row.textContent.trim().slice(0, 80));
+			}
+			matchdays.push({ tournament: title.trim(), matches });
+		}
+
+		// Sport group cards
+		const sportGroups = [];
+		for (const sg of document.querySelectorAll('.sport-group-card')) {
+			const label = (sg.querySelector('.sg-header') || {}).textContent || '';
+			const items = [];
+			for (const row of sg.querySelectorAll('.sg-row, .event-row')) {
+				items.push(row.textContent.trim().slice(0, 80));
+			}
+			sportGroups.push({ label: label.trim(), items });
+		}
+
+		// Individual event rows
+		const eventRows = [];
+		for (const row of document.querySelectorAll('.event-row')) {
+			eventRows.push(row.textContent.trim().slice(0, 100));
+		}
+
+		return { briefText, renderedBlocks, matchdays, sportGroups, eventRows: eventRows.slice(0, 30) };
+	});
+	results.content = content;
+
 	${useVision ? `
 	// Take screenshot for vision analysis
 	const screenshotPath = ${JSON.stringify(path.join(dataDir, "ux-screenshot.png"))};
@@ -282,6 +326,114 @@ async function runVisionAnalysis(screenshotPath) {
 		return null;
 	} catch (err) {
 		console.warn("Vision analysis failed:", err.message);
+		return null;
+	}
+}
+
+/**
+ * Content audit — LLM compares rendered DOM content against data that should be displayed.
+ * The LLM autonomously identifies gaps, incorrect groupings, and missing content.
+ * No hardcoded rules — the LLM reasons about what's wrong.
+ *
+ * @param {object} domContent - extracted from Playwright { briefText, renderedBlocks, matchdays, sportGroups, eventRows }
+ * @returns {Promise<object|null>} { issues: [], score: 0-100 } or null if LLM unavailable
+ */
+async function runContentAudit(domContent) {
+	if (!domContent) return null;
+	try {
+		const { LLMClient } = await import("./lib/llm-client.js");
+		const llm = new LLMClient();
+		if (!llm.isAvailable()) {
+			console.log("No LLM API key — skipping content audit");
+			return null;
+		}
+
+		// Build data context: what SHOULD be on the dashboard
+		const configDir = path.resolve(process.cwd(), "scripts", "config");
+		const featured = readJsonIfExists(path.join(dataDir, "featured.json"));
+		const userContext = readJsonIfExists(path.join(configDir, "user-context.json"));
+		const events = readJsonIfExists(path.join(dataDir, "events.json"));
+		const standings = readJsonIfExists(path.join(dataDir, "standings.json"));
+
+		// Summarize today's key events
+		const now = new Date();
+		const todayStart = new Date(now);
+		todayStart.setHours(0, 0, 0, 0);
+		const todayEnd = new Date(todayStart.getTime() + 86400000);
+		const todayEvents = (events || []).filter((e) => {
+			const t = new Date(e.time);
+			const end = e.endTime ? new Date(e.endTime) : t;
+			return t < todayEnd && end >= todayStart;
+		});
+
+		const dataContext = {
+			featuredBlocks: (featured?.blocks || []).map((b) => ({
+				type: b.type,
+				...(b.homeTeam ? { homeTeam: b.homeTeam, awayTeam: b.awayTeam } : {}),
+				...(b.tournament ? { tournament: b.tournament } : {}),
+				...(b.text ? { text: b.text.slice(0, 120) } : {}),
+				...(b._fallbackText ? { fallback: b._fallbackText.slice(0, 120) } : {}),
+				...(b.label ? { label: b.label } : {}),
+			})),
+			favorites: {
+				teams: userContext?.favoriteTeams || [],
+				players: userContext?.favoritePlayers || [],
+			},
+			todayKeyEvents: todayEvents
+				.filter((e) => e.isFavorite || (e.importance && e.importance >= 4))
+				.map((e) => ({
+					sport: e.sport,
+					tournament: e.tournament,
+					title: e.title,
+					importance: e.importance,
+					isFavorite: e.isFavorite,
+				})),
+			availableData: {
+				hasStandings: !!standings?.football,
+				hasGolfLeaderboard: !!standings?.golf?.pga?.leaderboard?.length,
+				hasDpWorldLeaderboard: !!standings?.golf?.dpWorld?.leaderboard?.length,
+				todayEventCount: todayEvents.length,
+				todaySports: [...new Set(todayEvents.map((e) => e.sport))],
+			},
+		};
+
+		const prompt = `You are auditing a sports dashboard for content completeness. Compare what's actually rendered in the browser against the data that should be displayed.
+
+## Data that SHOULD be displayed:
+${JSON.stringify(dataContext, null, 2)}
+
+## What's ACTUALLY rendered:
+Brief section text: ${JSON.stringify(domContent.briefText.slice(0, 2000))}
+Component blocks in brief: ${JSON.stringify(domContent.renderedBlocks)}
+Matchday card groupings: ${JSON.stringify(domContent.matchdays)}
+Sport group cards: ${JSON.stringify(domContent.sportGroups)}
+Event rows (sample): ${JSON.stringify(domContent.eventRows.slice(0, 15))}
+
+## Your task:
+Look at the data and the rendered output. Identify any issues where:
+- Featured content blocks exist in the data but nothing corresponding appears in the rendered output
+- A user's favorite team or player has an event today but isn't prominently shown
+- Events appear grouped under the wrong tournament or league heading
+- Data is available (leaderboards, standings, match previews) but missing from the display
+- The editorial brief is missing important context that the data supports
+
+Only report genuine issues — if something looks intentionally omitted (e.g., low-importance events), don't flag it.
+Respond ONLY in valid JSON: { "issues": [{ "severity": "warning" or "critical", "code": "string", "message": "specific description" }], "score": 0-100 }`;
+
+		const response = await llm.complete(
+			"You are a dashboard content auditor. Respond only in valid JSON.",
+			prompt,
+		);
+
+		try {
+			return JSON.parse(response);
+		} catch {
+			const match = response.match(/```(?:json)?\s*([\s\S]*?)```/);
+			if (match) return JSON.parse(match[1].trim());
+			return null;
+		}
+	} catch (err) {
+		console.warn("Content audit failed:", err.message);
 		return null;
 	}
 }
@@ -491,9 +643,28 @@ async function main() {
 			metrics: results.metrics,
 			issues: results.issues,
 			vision: null,
+			contentAudit: null,
 		};
 
-		// Tier 2: Vision analysis
+		// Content audit: LLM compares rendered DOM against data (autonomous gap detection)
+		if (results.content) {
+			console.log("Running LLM content audit...");
+			const audit = await runContentAudit(results.content);
+			if (audit) {
+				report.contentAudit = audit;
+				report.tier = "audit";
+				// Merge audit issues into the main issues list
+				if (Array.isArray(audit.issues)) {
+					report.issues.push(...audit.issues);
+					console.log(`Content audit: ${audit.score}/100, ${audit.issues.length} issue(s) found`);
+					for (const issue of audit.issues) {
+						console.log(`  [${issue.severity}] ${issue.code}: ${issue.message}`);
+					}
+				}
+			}
+		}
+
+		// Tier 3: Vision analysis (screenshot-based)
 		if (useVision && results.screenshotPath) {
 			console.log("Running LLM vision analysis...");
 			const vision = await runVisionAnalysis(results.screenshotPath);
