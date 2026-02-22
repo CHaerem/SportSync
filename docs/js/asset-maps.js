@@ -291,8 +291,8 @@ function getTournamentLogo(name) {
 		'uefa conference league': 'https://a.espncdn.com/i/leaguelogos/soccer/500/2321.png',
 		// Golf — distinct logos for each tour
 		'pga tour': 'https://a.espncdn.com/i/teamlogos/leagues/500/pgatour.png',
-		'dp world tour': 'https://upload.wikimedia.org/wikipedia/en/thumb/1/15/DP_World_Tour_logo.svg/200px-DP_World_Tour_logo.svg.png',
-		'european tour': 'https://upload.wikimedia.org/wikipedia/en/thumb/1/15/DP_World_Tour_logo.svg/200px-DP_World_Tour_logo.svg.png',
+		'dp world tour': 'https://a.espncdn.com/i/espn/teamlogos/500/european_tour.png',
+		'european tour': 'https://a.espncdn.com/i/espn/teamlogos/500/european_tour.png',
 		// F1
 		'formula 1': 'https://r2.thesportsdb.com/images/media/league/badge/g8cofl1513623681.png',
 		'f1': 'https://r2.thesportsdb.com/images/media/league/badge/g8cofl1513623681.png',
