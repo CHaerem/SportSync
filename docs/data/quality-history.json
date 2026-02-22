@@ -1,94 +1,5 @@
 [
   {
-    "timestamp": "2026-02-18T16:27:04.019Z",
-    "editorial": {
-      "score": 95,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 123,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 80,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 22,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 4,
-      "warningCount": 4,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: Few recap headlines available — focus on scorelines and goal scorers rather than recap narratives.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Medal\" but no matching athlete found in events data; Featured mentions \"Aspmyra\" but no matching athlete found in events data. Verify all claims against provided data.",
-      "SANITY: Results data had quality issues: All 22 football results have null recapHeadline — RSS matching may be broken. Be cautious referencing results."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 136975,
-        "output": 4081,
-        "calls": 5,
-        "total": 141056,
-        "costUSD": 0.49530975,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 31140,
-        "output": 484,
-        "cacheCreation": 15642,
-        "cacheRead": 15495,
-        "total": 31624,
-        "costUSD": 0.11793300000000001,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 168115,
-        "output": 4565,
-        "calls": 6,
-        "total": 172680,
-        "costUSD": 0.61324275,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 2,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 92.857,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.75,
-      "enrichmentScore": 100,
-      "resultsScore": 80
-    }
-  },
-  {
     "timestamp": "2026-02-18T17:29:45.232Z",
     "editorial": {
       "score": 95,
@@ -7787,6 +7698,94 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 94.857,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-22T07:32:08.398Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 53,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 20,
+      "warningCount": 18,
+      "pass": false
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Haaland\" but no matching athlete found in events data; Featured mentions \"Three\" but no matching athlete found in events data; Featured mentions \"Spurs\" but no matching athlete found in events data; Featured mentions \"Gunners\" but no matching athlete found in events data; Featured mentions \"Major\" but no matching athlete found in events data; Featured mentions \"Portugal\" but no matching athlete found in events data; Featured mentions \"Trondheim\" but no matching athlete found in events data; Featured mentions \"Johaug\" but no matching athlete found in events data. Verify all claims against provided data.",
+      "SANITY: Coverage gaps detected: olympics: 0 events (was 2)."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 173025,
+        "output": 19565,
+        "calls": 6,
+        "total": 192590,
+        "costUSD": 1.09703075,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 32107,
+        "output": 9862,
+        "cacheCreation": 16171,
+        "cacheRead": 15933,
+        "total": 41969,
+        "costUSD": 0.35560024999999995,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 205132,
+        "output": 29427,
+        "calls": 7,
+        "total": 234559,
+        "costUSD": 1.452631,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.714,
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "enrichmentScore": 100,

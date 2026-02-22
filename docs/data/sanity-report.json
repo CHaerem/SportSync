@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T06:31:31.338Z",
+  "generatedAt": "2026-02-22T07:32:09.963Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 55,
@@ -80,9 +80,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 11
+    "issueCount": 10
   },
   "findings": [
     {
@@ -123,47 +123,12 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Major — rain's final shot at the title in Portugal\" which may not match any event"
+      "message": "Featured block references \"Levante vs Barcelona\" which may not match any event"
     },
     {
-      "severity": "critical",
-      "check": "sport_vanished",
-      "message": "olympics: 0 events (was 2)"
-    },
-    {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 8 hours old"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Portugal\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfbf Thu — Nordic World Ski Championships open in Trondheim — Klæbo and Johaug lead Norway's charge\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -179,19 +144,14 @@
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"haaland assisted as city\" vs \"newcastle\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 20,
-    "critical": 1,
-    "warning": 18,
-    "info": 1
+    "total": 12,
+    "critical": 0,
+    "warning": 10,
+    "info": 2
   },
-  "pass": false,
+  "pass": true,
   "tokenUsage": null
 }
