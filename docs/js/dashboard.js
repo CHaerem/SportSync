@@ -1577,8 +1577,8 @@ class Dashboard {
 			if (sportBuf.sport === 'football' && hasTeams && n >= 3) {
 				// 3+ football matches → matchday card
 				groups.push({ type: 'matchday', tournament: sportBuf.tournament, events: sportBuf.events });
-			} else if (isCardSport && n >= 2) {
-				// 2+ golf/olympics events → grouped card (tournaments, medal sessions)
+			} else if (isCardSport && n >= 1) {
+				// Golf/olympics events → card per tournament (each tournament is a multi-day event)
 				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
 			} else if (n >= 3) {
 				// 3+ same-sport events → grouped card
@@ -1593,8 +1593,10 @@ class Dashboard {
 		};
 
 		for (const e of sorted) {
-			const key = e.sport === 'football' ? `${e.sport}:${e.tournament || ''}` : e.sport;
-			const bufKey = sportBuf.sport === 'football' ? `${sportBuf.sport}:${sportBuf.tournament || ''}` : sportBuf.sport;
+			const perTournament = e.sport === 'football' || e.sport === 'golf';
+			const key = perTournament ? `${e.sport}:${e.tournament || ''}` : e.sport;
+			const bufPerTournament = sportBuf.sport === 'football' || sportBuf.sport === 'golf';
+			const bufKey = bufPerTournament ? `${sportBuf.sport}:${sportBuf.tournament || ''}` : sportBuf.sport;
 			if (key === bufKey) {
 				sportBuf.events.push(e);
 			} else {
@@ -1844,9 +1846,13 @@ class Dashboard {
 			}
 		}
 
-		// Live leaderboard for golf cards
-		if (sportId === 'golf' && this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
-			html += this.renderLiveLeaderboard();
+		// Leaderboard for golf cards — live polling first, standings fallback
+		if (sportId === 'golf') {
+			if (this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
+				html += this.renderLiveLeaderboard();
+			} else if (this.standings?.golf) {
+				html += this.renderStandingsLeaderboard(tournament);
+			}
 		}
 
 		// Streaming links from the first event that has them
@@ -1914,6 +1920,54 @@ class Dashboard {
 		// Footer with venue
 		if (lb.venue) {
 			html += `<div class="lb-footer">${this.esc(lb.venue)}</div>`;
+		}
+
+		html += '</div>';
+		return html;
+	}
+
+	/** Render leaderboard from standings.json data for a golf tournament card */
+	renderStandingsLeaderboard(tournament) {
+		const tourKey = (tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
+		const tour = this.standings.golf[tourKey];
+		if (!tour?.leaderboard?.length) return '';
+
+		const norNames = ['hovland', 'aberg', 'ventura', 'olesen', 'halvorsen', 'flaten'];
+		const statusLabel = tour.status === 'in_progress' ? 'In Progress' : (tour.status || '');
+
+		let html = '<div class="lead-lb">';
+		html += '<div class="lead-lb-header">';
+		html += '<span class="lead-lb-title">Leaderboard</span>';
+		if (statusLabel) html += `<span class="lead-lb-badge">${this.esc(statusLabel)}</span>`;
+		html += '</div>';
+
+		// Show top 3 + Norwegian player (if not already in top 3)
+		const top3 = tour.leaderboard.slice(0, 3);
+		const norPlayer = tour.leaderboard.find(p => {
+			const last = p.player.split(' ').pop().toLowerCase();
+			return norNames.includes(last);
+		});
+		const showPlayers = [...top3];
+		if (norPlayer && !top3.find(p => p.player === norPlayer.player)) {
+			showPlayers.push(norPlayer);
+		}
+
+		for (const p of showPlayers) {
+			const isNor = norNames.includes(p.player.split(' ').pop().toLowerCase());
+			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
+			const imgHtml = headshot
+				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy">`
+				: '<span class="lb-img-placeholder">\u26f3</span>';
+			const scoreNum = parseFloat(p.score || '0');
+			const scoreCls = (p.score || '').startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
+
+			html += `<div class="lb-row${isNor ? ' is-you' : ''}">`;
+			html += `<span class="lb-pos">${this.esc(String(p.position))}</span>`;
+			html += imgHtml;
+			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
+			if (isNor) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
+			html += `<span class="lb-score${scoreCls}">${this.esc(p.score || 'E')}</span>`;
+			html += '</div>';
 		}
 
 		html += '</div>';
