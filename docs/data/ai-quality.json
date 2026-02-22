@@ -1,44 +1,35 @@
 {
-  "generatedAt": "2026-02-22T20:14:22.976Z",
+  "generatedAt": "2026-02-22T21:14:47.367Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "default",
+    "provider": "fallback",
+    "model": "fallback",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"🎮 Sun 16:00 — PGL Cluj-Napoca CS2 Major Grand Fin...\""
-    ],
-    "blockCount": 8,
-    "generationMs": 156338,
+    "score": 100,
+    "issues": [],
+    "blockCount": 9,
+    "generationMs": 180118,
     "tokenUsage": {
-      "input": 32571,
-      "output": 10017,
-      "cacheCreation": 14560,
-      "cacheRead": 18008,
-      "total": 42588,
-      "costUSD": 0.350444,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 67,
+    "score": 97,
     "metrics": {
-      "mustWatchCoverage": 0,
+      "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 0.8,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
-    "issues": [
-      "Only 0% of must-watch events covered in blocks"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 70,
@@ -70,14 +61,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 36,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 36,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -87,25 +78,25 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 2,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 36,
+    "totalEvents": 35,
     "skipStats": {
-      "total": 36,
-      "unchanged": 34,
-      "enriched": 2,
-      "skipRate": 0.94
+      "total": 35,
+      "unchanged": 35,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 14535,
+    "tokensPerEvent": 0,
     "hintsApplied": [
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 27688,
-      "output": 1382,
-      "calls": 1,
-      "total": 29070,
-      "costUSD": 0.1159815,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
@@ -120,7 +111,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-22T20:08:07.134Z",
+    "lastRun": "2026-02-22T21:08:40.133Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1

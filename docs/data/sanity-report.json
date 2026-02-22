@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-22T20:14:24.673Z",
+  "generatedAt": "2026-02-22T21:14:49.063Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 36,
+    "totalEvents": 35,
     "sports": [
       "golf",
-      "cs2",
       "football",
+      "cs2",
       "biathlon",
       "f1"
     ],
@@ -54,15 +54,14 @@
         "Biathlon WCH — Women's 12.5km Mass Start"
       ],
       "ended": [
-        "The Genesis Invitational",
-        "PGL Cluj-Napoca 2026 - Grand Final"
+        "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 9,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 67,
-    "issueCount": 12
+    "editorialScore": 97,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -102,39 +101,14 @@
     },
     {
       "severity": "warning",
-      "check": "low_editorial_quality",
-      "message": "Editorial quality score is 67/100 (below threshold)"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major Grand Final\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"History\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Anfield\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 13,
+    "total": 8,
     "critical": 0,
-    "warning": 13,
+    "warning": 8,
     "info": 0
   },
   "pass": true,

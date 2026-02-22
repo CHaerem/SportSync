@@ -2,44 +2,78 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Arsenal demolish Spurs 4-1 — Gunners five points clear at the summit"
+      "text": "Barcelona 3-0 Levante"
     },
     {
       "type": "match-result",
-      "homeTeam": "Tottenham Hotspur",
-      "awayTeam": "Arsenal"
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "homeTeam": "Barcelona",
+      "awayTeam": "Levante",
+      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
     },
     {
       "type": "event-line",
-      "text": "🎮 Sun 16:00 — PGL Cluj-Napoca CS2 Major Grand Final — two teams battle for the most prestigious title in CS2"
+      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
+          "type": "event"
+        },
+        {
+          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Galatasaray at Juventus",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ The Genesis Invitational"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "narrative",
-      "text": "Norway's greatest Champions League night approaches. Bodo/Glimt travel to San Siro on Tuesday with a 3-1 first-leg lead. History is within touching distance."
-    },
-    {
-      "type": "event-group",
-      "label": "⚽ Champions League — Second Legs",
-      "items": [
-        "⚽ Tue 21:00 — Bodo/Glimt at Internazionale (3-1 lead) ★",
-        "⚽ Tue 18:45 — Club Brugge at Atlético Madrid (level on agg)",
-        "⚽ Wed 21:00 — Monaco at PSG (PSG lead 3-2)",
-        "⚽ Wed 21:00 — Benfica at Real Madrid"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Club Brugge",
+      "showStandings": true,
+      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
     },
     {
       "type": "event-line",
-      "text": "⚽ Sat 16:00 — West Ham at Liverpool — Anfield title-race showdown"
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
     }
   ],
-  "generatedAt": "2026-02-22T20:14:22.962Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-22T21:14:47.344Z",
+  "provider": "fallback"
 }

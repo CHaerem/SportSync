@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-22T20:14:24.556Z",
-  "eventCount": 36,
+  "generatedAt": "2026-02-22T21:14:48.880Z",
+  "eventCount": 35,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "cs2": {
-      "count": 2,
-      "previousCount": 2,
-      "delta": 0
-    },
     "football": {
       "count": 21,
-      "previousCount": 22,
+      "previousCount": 21,
+      "delta": 0
+    },
+    "cs2": {
+      "count": 1,
+      "previousCount": 2,
       "delta": -1
     },
     "biathlon": {
@@ -57,7 +57,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
@@ -115,9 +115,9 @@
   },
   "uxHealth": {
     "present": true,
-    "score": 98,
+    "score": 97,
     "trend": "stable",
-    "issues": 1,
+    "issues": 2,
     "tier": "file"
   },
   "quotaApiHealth": {
@@ -127,26 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 14,
+    "fiveHour": 18,
     "sevenDay": 30,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 390198,
+    "totalDuration": 488507,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 132263,
-        "share": 34
+        "duration": 180300,
+        "share": 37
       },
       {
         "name": "generate-featured",
-        "duration": 143972,
-        "share": 37
+        "duration": 157115,
+        "share": 32
       }
     ],
     "failedSteps": [
@@ -178,6 +178,11 @@
       "message": "Streaming enrichment match rate is 10% (2/21) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "editorial_unsorted_events",
+      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) within event range have 0 events and 0 results"
@@ -195,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (132s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 37% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 37% of total pipeline time (144s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 32% of total pipeline time (157s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -215,7 +220,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 96% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 67/100.",
+    "text": "Autonomy at 96% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T20:14:24.703Z",
-  "patternsDetected": 20,
+  "generatedAt": "2026-02-22T21:14:49.074Z",
+  "patternsDetected": 19,
   "patterns": [
     {
       "type": "recurring_health_warning",
@@ -42,10 +42,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 159,
+      "count": 160,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 159 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T21:14:48.956Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 160 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -105,10 +105,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 90,
+      "count": 91,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 90 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T21:14:48.956Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 91 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -123,10 +123,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "ux_eval_fallback",
-      "count": 24,
+      "count": 25,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z",
-      "suggestion": "Health warning \"ux_eval_fallback\" has fired 24 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T21:14:48.956Z",
+      "suggestion": "Health warning \"ux_eval_fallback\" has fired 25 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "architecture_pipeline_bloat",
@@ -147,28 +147,19 @@
     {
       "type": "quality_decline",
       "severity": "medium",
-      "metric": "editorialScore",
-      "earlyAvg": 98,
-      "lateAvg": 79,
-      "drop": 19,
-      "suggestion": "Editorial quality score dropped from 98 to 79 (19 point decline). Investigate recent prompt or data changes."
-    },
-    {
-      "type": "quality_decline",
-      "severity": "medium",
       "metric": "mustWatchCoverage",
-      "earlyAvg": 0.92,
-      "lateAvg": 0.33,
-      "drop": 0.58,
-      "suggestion": "Must-watch coverage dropped from 92% to 33%. Featured content is missing high-importance events."
+      "earlyAvg": 0.83,
+      "lateAvg": 0.42,
+      "drop": 0.42,
+      "suggestion": "Must-watch coverage dropped from 83% to 42%. Featured content is missing high-importance events."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 8,
+      "fireCount": 7,
       "hintText": "SANITY: Previous brief had content issues: Featured shows \"13:00\" for \"Cross-Country Skiing — Women's 30km Mass Start Cl",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured shows \"13:00\" for \"Cross-Cou...\" has fired 8 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured shows \"13:00\" for \"Cross-Cou...\" has fired 7 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -206,9 +197,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "low_confidence_config": {
-      "count": 159,
+      "count": 160,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z"
+      "lastSeen": "2026-02-22T21:14:48.956Z"
     },
     "component_unresolvable": {
       "count": 34,
@@ -241,9 +232,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 90,
+      "count": 91,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z"
+      "lastSeen": "2026-02-22T21:14:48.956Z"
     },
     "sport_dropped": {
       "count": 4,
@@ -266,9 +257,9 @@
       "lastSeen": "2026-02-21T14:32:50.572Z"
     },
     "ux_eval_fallback": {
-      "count": 24,
+      "count": 25,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-22T20:14:24.636Z"
+      "lastSeen": "2026-02-22T21:14:48.956Z"
     },
     "model_change_quality_drop": {
       "count": 1,
@@ -285,20 +276,20 @@
     "sanityScore": {
       "fires": 18,
       "improved": 6,
-      "unchanged": 7,
-      "worsened": 5,
+      "unchanged": 6,
+      "worsened": 6,
       "effectivenessRate": 0.33
     },
     "mustWatchCoverage": {
-      "fires": 2,
-      "improved": 0,
+      "fires": 3,
+      "improved": 1,
       "unchanged": 1,
       "worsened": 1,
-      "effectivenessRate": 0
+      "effectivenessRate": 0.33
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-22T20:14:24.702Z",
+    "recordedAt": "2026-02-22T21:14:49.069Z",
     "moduleCount": 59,
     "avgModuleSize": 311,
     "pipelineSteps": 28,
@@ -311,5 +302,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "20 patterns detected (15 high, 5 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 47 times since 2026-02-13."
+  "summary": "19 patterns detected (15 high, 4 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 47 times since 2026-02-13."
 }
