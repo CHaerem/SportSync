@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-22T10:27:11.646Z",
+  "generatedAt": "2026-02-22T13:28:42.783Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": 0,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 121986,
+    "generationMs": 137721,
     "tokenUsage": {
-      "input": 33015,
-      "output": 6959,
-      "cacheCreation": 33012,
-      "cacheRead": 0,
-      "total": 39974,
-      "costUSD": 0.38031499999999996,
+      "input": 32972,
+      "output": 8622,
+      "cacheCreation": 17036,
+      "cacheRead": 15933,
+      "total": 41594,
+      "costUSD": 0.3300065,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 107,
+      "avgScore": 114,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 24
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -63,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
-      "totalEvents": 54,
+      "totalEvents": 53,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 54,
+      "totalEvents": 53,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 54,
+    "totalEvents": 53,
     "skipStats": {
-      "total": 54,
-      "unchanged": 54,
+      "total": 53,
+      "unchanged": 53,
       "enriched": 0,
       "skipRate": 1
     },

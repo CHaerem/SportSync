@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-22T12:17:15.584Z",
-  "eventCount": 55,
+  "generatedAt": "2026-02-22T13:28:44.646Z",
+  "eventCount": 53,
   "sportCoverage": {
     "golf": {
-      "count": 2,
+      "count": 1,
       "previousCount": 2,
-      "delta": 0
+      "delta": -1
     },
     "football": {
-      "count": 29,
+      "count": 28,
       "previousCount": 29,
-      "delta": 0
+      "delta": -1
     },
     "nordic": {
       "count": 12,
@@ -45,40 +45,40 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 110,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 110,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 25,
+    "footballCount": 24,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -101,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.34,
-    "eventsEnriched": 10,
+    "matchRate": 0.32,
+    "eventsEnriched": 9,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -125,14 +125,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 25,
+    "fiveHour": 12,
+    "sevenDay": 26,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 419494,
+    "totalDuration": 428100,
     "stepCount": 25,
     "timeoutHits": [
       "discover-events"
@@ -140,8 +140,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300052,
-        "share": 72
+        "duration": 300084,
+        "share": 70
       }
     ],
     "failedSteps": [
@@ -169,7 +169,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 34% (10/29) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 32% (9/28) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -184,17 +184,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 72% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 70% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+    },
+    {
+      "severity": "warning",
+      "code": "low_confidence_config",
+      "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
