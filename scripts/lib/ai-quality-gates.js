@@ -840,9 +840,32 @@ export function buildSanityHints(sanityReport) {
 
 	const hints = [];
 
-	// Group findings by check code prefix
-	const featured = findings.filter(f => f.check?.startsWith("featured_"));
-	const result = findings.filter(f => f.check?.startsWith("result_"));
+	// Group findings by check code prefix.
+	// Apply targeted suppressions for known data-artifact findings that cause hint fatigue
+	// without being actionable by the LLM.
+
+	// Suppress esports/CS2 orphan-ref findings: esports data is stale (HLTV API returns 2022
+	// data), so featured content may reference esports events not in events.json. The LLM
+	// cannot fix stale source data — telling it to "verify claims against provided data" is
+	// a no-op that fires the hint every run without improvement.
+	const ESPORTS_RE = /\b(cs2|esports|counter.strike|major|hltv)\b/i;
+	const featured = findings.filter(f => {
+		if (f.check !== "featured_orphan_ref") return f.check?.startsWith("featured_");
+		// Suppress esports/CS2 orphan refs — stale HLTV data, not an LLM error
+		return !ESPORTS_RE.test(f.message);
+	});
+
+	// Suppress result_all_recaps_null when it is the only result_ finding.
+	// This finding fires when all football results have null recapHeadline — a data
+	// availability artifact (RSS feeds are dominated by Olympics/non-football content),
+	// not an LLM quality issue. Firing the hint repeatedly hasn't improved sanityScore
+	// because the LLM can't fix missing RSS headline data.
+	const allResultFindings = findings.filter(f => f.check?.startsWith("result_"));
+	const isOnlyNullRecaps =
+		allResultFindings.length > 0 &&
+		allResultFindings.every(f => f.check === "result_all_recaps_null");
+	const result = isOnlyNullRecaps ? [] : allResultFindings;
+
 	const coverage = findings.filter(f => f.check === "sport_vanished" || f.check === "standings_without_events");
 	const actionable = findings.filter(f => f.actionable === true);
 

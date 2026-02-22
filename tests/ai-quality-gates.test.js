@@ -578,6 +578,84 @@ describe("buildSanityHints()", () => {
 		expect(result.hints).toHaveLength(1);
 		expect(result.hints[0]).toContain("Coverage gaps detected");
 	});
+
+	it("suppresses CS2/esports orphan-ref hint — stale HLTV data, not LLM error", () => {
+		// Esports data is from 2022 (HLTV stale). Featured may reference CS2 Major not in
+		// events.json. Telling the LLM to "verify claims" can't fix absent source data.
+		const report = {
+			pass: true,
+			summary: { total: 1, warning: 1 },
+			findings: [
+				{ severity: "warning", check: "featured_orphan_ref", message: 'Featured block references "CS2 Major ongoing — rain carrying Norwegian colo"' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(0);
+		expect(result.findingCount).toBe(1); // finding still counted, just not emitted as hint
+	});
+
+	it("still emits hint for non-esports orphan refs", () => {
+		const report = {
+			pass: true,
+			summary: { total: 1, warning: 1 },
+			findings: [
+				{ severity: "warning", check: "featured_orphan_ref", message: 'Featured block references "Carlsen vs Nepomniachtchi" which may not match any event' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("content issues");
+	});
+
+	it("suppresses result_all_recaps_null when it is the sole result_ finding", () => {
+		// RSS feeds during Olympics lack football recap headlines — this is a data
+		// availability issue, not an LLM quality issue. The hint fires every run but
+		// can never improve because the LLM can't fix missing RSS data.
+		const report = {
+			pass: true,
+			summary: { total: 1, warning: 1 },
+			findings: [
+				{ severity: "warning", check: "result_all_recaps_null", message: "All 20 football results have null recapHeadline — RSS matching may be broken" },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(0);
+		expect(result.findingCount).toBe(1); // finding still counted, just not emitted as hint
+	});
+
+	it("still emits result hint when other result_ findings are also present", () => {
+		// When genuine data issues (future dates, extreme scores) co-exist with null recaps,
+		// the hint should still fire to alert the LLM about the real problems.
+		const report = {
+			pass: true,
+			summary: { total: 2, warning: 2 },
+			findings: [
+				{ severity: "warning", check: "result_all_recaps_null", message: "All 20 football results have null recapHeadline — RSS matching may be broken" },
+				{ severity: "warning", check: "result_future_date", message: "Result has future date" },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("Results data had quality issues");
+		expect(result.hints[0]).toContain("Result has future date");
+	});
+
+	it("suppresses esports orphan ref but still emits other featured hints", () => {
+		// CS2 orphan ref is suppressed, but a real featured issue should still fire
+		const report = {
+			pass: true,
+			summary: { total: 2, warning: 2 },
+			findings: [
+				{ severity: "warning", check: "featured_orphan_ref", message: 'Featured block references "CS2 Major" which may not match any event' },
+				{ severity: "warning", check: "featured_time_mismatch", message: 'Featured shows "13:00" for "Match" but events.json has 21:00' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("content issues");
+		expect(result.hints[0]).toContain("13:00");
+		expect(result.hints[0]).not.toContain("CS2");
+	});
 });
 
 describe("buildQualitySnapshot() with sanity", () => {
