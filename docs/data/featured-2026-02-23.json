@@ -2,48 +2,21 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Medal day in Milano-Cortina"
-    },
-    {
-      "type": "narrative",
-      "text": "4 must-watch events across golf and football today."
+      "text": "2 events across 1 sport today"
     },
     {
       "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
+      "homeTeam": "Everton",
+      "awayTeam": "Manchester United",
       "showStandings": true,
-      "_fallbackText": "⚽ Barcelona v Levante, 16:15, La Liga — Barcelona host Levante at Camp Nou — expect a dominant display from the Catalans as they push on in the La Liga title race"
+      "_fallbackText": "⚽ Everton v Manchester United, 21:00, Premier League — Manchester United travel to Everton's new Hill Dickinson Stadium in a Premier League clash where both sides need points"
     },
     {
       "type": "match-preview",
-      "homeTeam": "Tottenham Hotspur",
-      "awayTeam": "Arsenal",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tottenham Hotspur v Arsenal, 17:30, Premier League — One of football's fiercest derbies: Arsenal visit Spurs with top-four ambitions and deep-seated bragging rights on the line"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Nottingham Forest",
-      "awayTeam": "Liverpool",
-      "showStandings": true,
-      "_fallbackText": "⚽ Nottingham Forest v Liverpool, 15:00, Premier League — Liverpool must navigate a hostile City Ground against a strong Nottingham Forest side in a match with real title race weight"
-    },
-    {
-      "type": "event-schedule",
-      "filter": {
-        "sport": "olympics",
-        "window": "today"
-      },
-      "label": "🏅 Winter Olympics 2026",
-      "maxItems": 6,
-      "showFlags": true,
-      "style": "highlight",
-      "_fallbackText": "10:00 — Cross-Country Skiing — Women's 30km Mass Start Classic · 20:00 — Closing Ceremony"
+      "homeTeam": "Alavés",
+      "awayTeam": "Girona",
+      "showStandings": false,
+      "_fallbackText": "⚽ Alavés v Girona, 21:00, La Liga — Routine La Liga fixture between Girona and Alavés with minimal title or relegation implications for either side"
     },
     {
       "type": "section",
@@ -81,6 +54,21 @@
       "expandItems": []
     },
     {
+      "type": "section",
+      "id": "nordic-ski-wch-2026",
+      "title": "FIS Nordic World Ski Championships 2026",
+      "emoji": "🏆",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Sun 12:00 — Nordic WCH — Cross-Country Sprint Classic Qualification and Finals 🇳🇴",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
       "type": "golf-status",
       "tournament": "pga",
       "_fallbackText": "⛳ The Genesis Invitational"
@@ -105,6 +93,10 @@
       "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
     }
   ],
-  "generatedAt": "2026-02-22T02:02:27.913Z",
-  "provider": "fallback"
+  "_meta": {
+    "date": "2026-02-23",
+    "mode": "preview",
+    "generatedAt": "2026-02-22T01:43:01.892Z",
+    "eventFingerprint": "4222b5213b1d"
+  }
 }

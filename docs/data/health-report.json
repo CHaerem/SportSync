@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T22:20:32.788Z",
+  "generatedAt": "2026-02-22T01:55:56.866Z",
   "eventCount": 48,
   "sportCoverage": {
     "golf": {
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 229,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 229,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 229,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 228,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 229,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 229,
       "stale": false
     },
     "featured.json": {
@@ -114,7 +114,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -132,14 +133,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 13,
-    "sevenDay": 14,
+    "fiveHour": 28,
+    "sevenDay": 15,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 881766,
+    "totalDuration": 874845,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events",
@@ -148,18 +149,17 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300004,
+        "duration": 300044,
         "share": 34
       },
       {
         "name": "enrich-events",
-        "duration": 300029,
-        "share": 34
+        "duration": 277361,
+        "share": 32
       }
     ],
     "failedSteps": [
       "discover-events",
-      "enrich-events",
       "verify-schedules"
     ]
   },
@@ -191,6 +191,11 @@
       "message": "Streaming enrichment match rate is 40% (8/20) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "4 tournament(s) lack league theming: Winter Olympics 2026, FIS Nordic World Ski Championships 2026, Biathlon World Championships 2026, Formula 1 2025 - Race Weekend"
@@ -218,22 +223,21 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-events\" used 34% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"enrich-events\" used 32% of total pipeline time (277s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "3 pipeline step(s) failed: discover-events, enrich-events, verify-schedules"
-    },
-    {
-      "severity": "warning",
-      "code": "low_confidence_config",
-      "message": "Config olympics-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 97% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 94/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [],
+    "hasRegression": false
   }
 }

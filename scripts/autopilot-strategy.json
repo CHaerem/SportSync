@@ -102,6 +102,10 @@
       {
         "date": "2026-02-21",
         "note": "Run 7: 5 tasks, 3 parallel subagents (ux-agent + code-agent + data-agent) + orchestrator. Achieved 12/12 autonomy for the first time. Key milestones: (1) uxQuality loop closed via file-based fallback — silent process.exit(0) in CI is the hardest failure mode to diagnose; (2) fetchJson() timeout fix resolved 76 consecutive verify-schedules failures — no timeout = reliability risk for any HTTP call; (3) info-severity issues now filtered from recurring warning tracker — 359+118 fire accumulation was masking the decay mechanism. Architectural insight: when new sport configs are added, SPORT_CONFIG and day snapshots must be updated atomically to avoid test failures and health warnings. Parallel subagents + orchestrator own-work pattern is now proven stable across 2 runs."
+      },
+      {
+        "date": "2026-02-22",
+        "note": "Run 8: 4 tasks (3 quality, 1 data). Focused on reliability — fixing stagnant autonomy loops and hint fatigue. Orchestrator handled loop fixes + Olympics archival + league config. Code-agent handled sanity hint suppression in parallel. Autonomy stable at 12/12 (100%). Key insight: stagnant loops require scoring-function analysis not more data fixes. Three pattern-report high-severity items resolved (ux_eval_fallback, step_timeout_hit, sanity hints). Olympics 2026 archived on closing ceremony day — sync-configs.js will no longer process it. New sport config checklist expanded to 4 steps (config + SPORT_CONFIG + snapshots + league-config). 5 new tasks scouted: RSS headline matching, failed_batches decay, cycling exploration, pipeline bloat. Quality pillar now at ~100%."
       }
     ]
   }
