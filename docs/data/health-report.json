@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T15:16:10.259Z",
-  "eventCount": 52,
+  "generatedAt": "2026-02-22T16:14:17.551Z",
+  "eventCount": 34,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,24 +13,24 @@
       "delta": 0
     },
     "football": {
-      "count": 25,
+      "count": 24,
       "previousCount": 25,
-      "delta": 0
-    },
-    "nordic": {
-      "count": 12,
-      "previousCount": 12,
-      "delta": 0
+      "delta": -1
     },
     "biathlon": {
-      "count": 11,
+      "count": 6,
       "previousCount": 11,
-      "delta": 0
+      "delta": -5
     },
     "f1": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "nordic": {
+      "count": 0,
+      "previousCount": 12,
+      "delta": -12
     },
     "chess": {
       "count": 0,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 6,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
@@ -83,7 +83,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.94,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -98,7 +98,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 25,
+    "footballCount": 27,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -106,14 +106,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.24,
-    "eventsEnriched": 6,
+    "matchRate": 0.21,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "2 day snapshot(s) within event range have 0 events and 0 results"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -130,14 +132,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 29,
-    "sevenDay": 27,
+    "fiveHour": 37,
+    "sevenDay": 28,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 517206,
+    "totalDuration": 528525,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events"
@@ -145,11 +147,12 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 279933,
-        "share": 54
+        "duration": 300102,
+        "share": 57
       }
     ],
     "failedSteps": [
+      "discover-events",
       "verify-schedules"
     ]
   },
@@ -157,6 +160,11 @@
     "CS2 Major Tournaments 2026"
   ],
   "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "nordic: 0 events (was 12)"
+    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -175,7 +183,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 24% (6/25) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 21% (5/24) — team alias table may need updates"
+    },
+    {
+      "severity": "info",
+      "code": "empty_day_snapshot",
+      "message": "2 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -195,12 +208,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 54% of total pipeline time (280s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 57% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     },
     {
       "severity": "warning",
@@ -208,9 +221,9 @@
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }
