@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-22T21:14:48.925Z",
-  "overallScore": 0.96,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-22T22:11:40.945Z",
+  "overallScore": 0.94,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -12,7 +12,7 @@
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (1 applied)"
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "Health report is fresh (1h old), 11 issue(s) are info/known"
+      "score": 0.75,
+      "status": "partial",
+      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (13 total)"
     },
     "watchPlan": {
       "score": 0.5,
@@ -66,6 +66,7 @@
     }
   },
   "nextActions": [
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
     "Ensure watch plan picks include both reasons and streaming arrays"
   ]
 }

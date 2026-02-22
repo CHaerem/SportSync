@@ -2,57 +2,25 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 3-0 Levante"
+      "text": "Arsenal humiliate Spurs 4-1 — Ødegaard delivers, five-point lead"
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Tottenham Hotspur",
+      "awayTeam": "Arsenal"
+    },
+    {
+      "type": "narrative",
+      "text": "Arsenal extend to 61 points, five clear of City. Liverpool's 1-0 at Forest keeps the hunt alive — but today belonged entirely to the Gunners and a clinical Ødegaard."
     },
     {
       "type": "match-result",
       "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+      "awayTeam": "Levante"
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "tournament": "pga"
     },
     {
       "type": "divider",
@@ -60,20 +28,19 @@
     },
     {
       "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt"
     },
     {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
+      "type": "event-group",
+      "label": "⚽ Champions League — Tue & Wed",
+      "items": [
+        "⚽ Tue 18:45 — Club Brugge at Atlético Madrid (agg. all square)",
+        "⚽ Wed 21:00 — AS Monaco at PSG (PSG lead 3-2, French derby)",
+        "⚽ Wed 21:00 — Benfica at Real Madrid"
+      ]
     }
   ],
-  "generatedAt": "2026-02-22T21:14:47.344Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-22T22:11:39.250Z",
+  "provider": "claude-cli"
 }
