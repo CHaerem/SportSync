@@ -1,24 +1,21 @@
 {
-  "generatedAt": "2026-02-22T15:16:10.515Z",
+  "generatedAt": "2026-02-22T17:14:17.343Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 52,
+    "totalEvents": 38,
     "sports": [
       "golf",
       "cs2",
       "football",
-      "nordic",
       "biathlon",
       "f1"
     ],
     "bands": {
       "live": [
         "The Genesis Invitational",
-        "PGL Cluj-Napoca 2026 - Grand Final",
-        "Levante at Barcelona"
+        "PGL Cluj-Napoca 2026 - Grand Final"
       ],
       "today": [
-        "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
         "Valencia at Villarreal"
       ],
@@ -35,8 +32,6 @@
         "Galatasaray at Juventus",
         "AS Monaco at Paris Saint-Germain",
         "Benfica at Real Madrid",
-        "Nordic WCH — Cross-Country Women's Skiathlon 7.5+7.5km",
-        "Nordic WCH — Cross-Country Men's Skiathlon 15+15km",
         "ESL Pro League Season 23 - Stage 1 (Online)",
         "Aston Villa at Wolverhampton Wanderers",
         "Alavés at Levante",
@@ -45,27 +40,17 @@
         "Brentford at Burnley",
         "West Ham United at Liverpool",
         "Everton at Newcastle United",
-        "Nordic WCH — Ski Jumping Men's Normal Hill Individual",
         "Villarreal at Barcelona",
         "Manchester City at Leeds United",
         "Real Sociedad at Mallorca",
-        "Atlético Madrid at Real Oviedo",
-        "Nordic WCH — Cross-Country Sprint Classic Qualification and Finals"
+        "Atlético Madrid at Real Oviedo"
       ],
       "later": [
-        "Nordic WCH — Nordic Combined Men's Gundersen Normal Hill/10km",
-        "Nordic WCH — Cross-Country Women's 10km Freestyle",
-        "Nordic WCH — Cross-Country Men's 15km Freestyle",
         "Biathlon WCH — Mixed Relay",
         "Qatar Airways Australian Grand Prix",
-        "Nordic WCH — Cross-Country Team Sprint Freestyle",
         "Biathlon WCH — Women's 7.5km Sprint",
-        "Nordic WCH — Cross-Country Women's Relay 4x5km",
         "Biathlon WCH — Men's 20km Individual",
-        "Nordic WCH — Cross-Country Men's Relay 4x10km",
-        "Nordic WCH — Cross-Country Women's 30km Mass Start Classic",
         "Biathlon WCH — Men's 10km Sprint",
-        "Nordic WCH — Cross-Country Men's 50km Mass Start Classic",
         "Biathlon WCH — Women's 15km Individual",
         "Biathlon WCH — Men's 12.5km Pursuit",
         "Biathlon WCH — Women's 10km Pursuit",
@@ -78,9 +63,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 85,
-    "issueCount": 11
+    "pipelineStatus": "critical",
+    "editorialScore": 70,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -119,52 +104,47 @@
       "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
+      "severity": "critical",
+      "check": "sport_vanished",
+      "message": "nordic: 0 events (was 12)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Lose\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Canada\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major Grand Final\" but no matching athlete found in events data"
+      "message": "Featured mentions \"American\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Counter\" but no matching athlete found in events data"
+      "message": "Featured mentions \"The Winter Olympics\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Strike\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Inter Milan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     },
     {
       "severity": "warning",
       "check": "brief_unverified_result",
-      "message": "Brief references \"man city\" vs \"newcastle\" result but no matching data in recent-results.json"
+      "message": "Brief references \"usa\" vs \"canada\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 15,
-    "critical": 0,
-    "warning": 15,
+    "total": 14,
+    "critical": 1,
+    "warning": 13,
     "info": 0
   },
-  "pass": true,
+  "pass": false,
   "tokenUsage": null
 }

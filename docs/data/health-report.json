@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T16:14:17.551Z",
-  "eventCount": 34,
+  "generatedAt": "2026-02-22T17:14:17.350Z",
+  "eventCount": 38,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,24 +13,19 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
-      "previousCount": 25,
+      "count": 23,
+      "previousCount": 24,
       "delta": -1
     },
     "biathlon": {
-      "count": 6,
-      "previousCount": 11,
-      "delta": -5
+      "count": 11,
+      "previousCount": 6,
+      "delta": 5
     },
     "f1": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
-    },
-    "nordic": {
-      "count": 0,
-      "previousCount": 12,
-      "delta": -12
     },
     "chess": {
       "count": 0,
@@ -83,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -106,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.21,
-    "eventsEnriched": 5,
+    "matchRate": 0.17,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -161,11 +156,6 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "nordic: 0 events (was 12)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
@@ -183,7 +173,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 21% (5/24) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 17% (4/23) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -221,9 +211,9 @@
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   }
 }
