@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T18:17:41.287Z",
+  "generatedAt": "2026-02-22T19:15:57.152Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 37,
@@ -61,11 +61,11 @@
         "PGL Cluj-Napoca 2026 - Grand Final"
       ]
     },
-    "featuredBlockCount": 11,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 94,
-    "issueCount": 11
+    "editorialScore": 70,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -105,14 +105,34 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Lane\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Guardiola\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Napoca Major Grand Final\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 8,
+    "total": 12,
     "critical": 0,
-    "warning": 8,
+    "warning": 12,
     "info": 0
   },
   "pass": true,

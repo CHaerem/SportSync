@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-17T02:03:48.687Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-17T03:09:56.909Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -644,6 +638,28 @@
         "calls": 1,
         "total": 0,
         "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-02-22T19:11:12.585Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "biathlon-wch-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 0
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 113321,
+        "output": 2836,
+        "calls": 1,
+        "total": 116157,
+        "costUSD": 0.36696124999999996,
         "tracked": true,
         "estimated": false
       }

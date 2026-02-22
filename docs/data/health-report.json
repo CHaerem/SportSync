@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T18:17:41.345Z",
+  "generatedAt": "2026-02-22T19:15:57.081Z",
   "eventCount": 37,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 22,
-      "previousCount": 23,
-      "delta": -1
+      "previousCount": 22,
+      "delta": 0
     },
     "biathlon": {
       "count": 11,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 27,
+    "footballCount": 28,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -103,7 +103,7 @@
     "tvkampenReachable": true,
     "matchRate": 0.14,
     "eventsEnriched": 3,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -127,21 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 4,
+    "fiveHour": 9,
     "sevenDay": 29,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 410213,
+    "totalDuration": 475701,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 180287,
-        "share": 44
+        "duration": 180284,
+        "share": 38
+      },
+      {
+        "name": "generate-featured",
+        "duration": 180953,
+        "share": 38
       }
     ],
     "failedSteps": [
@@ -174,13 +179,8 @@
     },
     {
       "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 24% → 17% → 14%"
-    },
-    {
-      "severity": "warning",
-      "code": "editorial_unsorted_events",
-      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
+      "code": "component_unresolvable",
+      "message": "match-preview component for Internazionale vs Bodø/Glimt has no matching event in events.json"
     },
     {
       "severity": "info",
@@ -200,7 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 44% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 38% of total pipeline time (180s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"generate-featured\" used 38% of total pipeline time (181s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -215,7 +220,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   }
 }

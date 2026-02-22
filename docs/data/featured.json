@@ -2,68 +2,24 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 3-0 Levante"
+      "text": "Ødegaard pulls the strings as Arsenal demolish Spurs 4-1"
     },
     {
       "type": "match-result",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
+      "homeTeam": "Tottenham Hotspur",
+      "awayTeam": "Arsenal"
     },
     {
-      "type": "event-line",
-      "text": "⛳ The Genesis Invitational, 06:00 — PGA Tour"
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 PGL Cluj-Napoca 2026 - Grand Final, 16:00 — CS2 Major Tournaments 2026"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Villarreal",
-      "awayTeam": "Valencia",
-      "showStandings": true,
-      "_fallbackText": "⚽ Villarreal v Valencia, 21:00, La Liga — Regional Valencian derby at Villarreal's ground — Valencia may be fighting relegation while Villarreal target top half"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+      "type": "narrative",
+      "text": "Arsenal blast 5 points clear of Manchester City. After Ødegaard's masterclass at the Lane, Guardiola's men can only watch — Arsenal are in command of this title race."
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "tournament": "pga"
+    },
+    {
+      "type": "event-line",
+      "text": "🎮 16:00 — PGL Cluj-Napoca Major Grand Final — CS2's biggest trophy decided today"
     },
     {
       "type": "divider",
@@ -71,20 +27,21 @@
     },
     {
       "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodø/Glimt",
+      "showStandings": false
     },
     {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 14:30 — Biathlon WCH — Mixed Relay"
+      "type": "event-group",
+      "label": "🏆 Must-Watch: Champions League + PL",
+      "items": [
+        "⚽ Tue 21:00 — Club Brugge at Atlético Madrid (all square — winner takes all)",
+        "⚽ Wed 21:00 — Monaco at PSG (PSG lead 3-2 — French derby on a knife-edge)",
+        "⚽ Wed 21:00 — Benfica vs Real Madrid (holders face elimination in Lisbon)",
+        "⚽ Sat 16:00 — West Ham at Liverpool (Anfield, title race heat stays on)"
+      ]
     }
   ],
-  "generatedAt": "2026-02-22T18:17:39.466Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-22T19:15:55.417Z",
+  "provider": "claude-cli"
 }
