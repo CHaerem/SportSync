@@ -31,15 +31,21 @@
       "name": "discover",
       "description": "LLM-powered event discovery",
       "steps": [
-        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3 }
+        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true }
       ]
     },
     {
       "name": "build",
-      "description": "Aggregate and enrich events",
+      "description": "Aggregate events from all sources",
       "steps": [
         { "name": "build-events", "command": "npm run build:events", "errorPolicy": "continue" },
-        { "name": "enrich-streaming", "command": "node scripts/enrich-streaming.js", "errorPolicy": "continue", "timeout": 90000 },
+        { "name": "enrich-streaming", "command": "node scripts/enrich-streaming.js", "errorPolicy": "continue", "timeout": 90000 }
+      ]
+    },
+    {
+      "name": "enrich",
+      "description": "AI enrichment of events",
+      "steps": [
         { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 }
       ]
     },

@@ -72,12 +72,12 @@ export function checkDataUnchanged() {
 		return;
 	}
 
-	// Check if featured.json is fresh (< 2h old)
+	// Check if featured.json is fresh (< 4h old)
 	try {
 		const stat = fs.statSync(featuredPath);
 		const ageMs = Date.now() - stat.mtimeMs;
-		const twoHours = 2 * 60 * 60 * 1000;
-		if (ageMs < twoHours) {
+		const freshnessThreshold = 4 * 60 * 60 * 1000;
+		if (ageMs < freshnessThreshold) {
 			dataUnchanged = true;
 			console.log(`  Events data unchanged and featured.json is ${Math.round(ageMs / 60000)}min old — AI steps will be skipped.`);
 		} else {

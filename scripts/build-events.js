@@ -75,6 +75,45 @@ if (fs.existsSync(configDir)) {
 		});
 	}
 }
+// Read previous events.json to carry forward enrichment data
+const previousEventsPath = path.join(dataDir, "events.json");
+const previousEvents = readJsonIfExists(previousEventsPath);
+const enrichmentMap = new Map();
+if (Array.isArray(previousEvents)) {
+	for (const prev of previousEvents) {
+		if (prev.enrichedAt) {
+			const key = `${prev.sport}|${prev.tournament}|${prev.title}|${prev.time}`;
+			enrichmentMap.set(key, {
+				importance: prev.importance,
+				importanceReason: prev.importanceReason,
+				summary: prev.summary,
+				tags: prev.tags,
+				norwegianRelevance: prev.norwegianRelevance,
+				enrichedAt: prev.enrichedAt,
+				_enrichHash: prev._enrichHash,
+			});
+		}
+	}
+	if (enrichmentMap.size > 0) {
+		console.log(`Carrying forward enrichment for ${enrichmentMap.size} events from previous build.`);
+	}
+}
+
+// Merge enrichment into new events
+for (const event of all) {
+	const key = `${event.sport}|${event.tournament}|${event.title}|${event.time}`;
+	const prev = enrichmentMap.get(key);
+	if (prev && !event.enrichedAt) {
+		if (prev.importance != null) event.importance = prev.importance;
+		if (prev.importanceReason) event.importanceReason = prev.importanceReason;
+		if (prev.summary) event.summary = prev.summary;
+		if (prev.tags?.length > 0) event.tags = prev.tags;
+		if (prev.norwegianRelevance != null) event.norwegianRelevance = prev.norwegianRelevance;
+		if (prev.enrichedAt) event.enrichedAt = prev.enrichedAt;
+		if (prev._enrichHash) event._enrichHash = prev._enrichHash;
+	}
+}
+
 // Keep events from the last 14 days + upcoming (for day navigator history)
 const now = Date.now() - 14 * MS_PER_DAY;
 const future = all.filter((e) => {
