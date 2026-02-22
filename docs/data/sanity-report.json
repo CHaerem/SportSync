@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-22T10:15:30.378Z",
+  "generatedAt": "2026-02-22T10:27:13.366Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 55,
+    "totalEvents": 54,
     "sports": [
       "golf",
       "football",
@@ -12,8 +12,7 @@
     ],
     "bands": {
       "live": [
-        "The Genesis Invitational",
-        "Magical Kenya Open"
+        "The Genesis Invitational"
       ],
       "today": [
         "Sevilla at Getafe",
@@ -81,7 +80,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
+    "editorialScore": 93,
     "issueCount": 11
   },
   "findings": [
@@ -121,34 +120,14 @@
       "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 Grand Final — rain competing on the biggest stage — Today\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"Bodø/Glimt host Internazionale in the Champions League — Tue\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Yesterday Real Madrid\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Osasuna\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sørloth\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grand Final\" but no matching athlete found in events data"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -157,10 +136,10 @@
     }
   ],
   "summary": {
-    "total": 14,
+    "total": 10,
     "critical": 0,
-    "warning": 12,
-    "info": 2
+    "warning": 10,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
