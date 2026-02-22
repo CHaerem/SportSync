@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-02-22T10:48:57.202Z",
+  "generatedAt": "2026-02-22T10:51:59.084Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
       "count": 2,
-      "previousCount": 1,
-      "delta": 1
+      "previousCount": 2,
+      "delta": 0
     },
     "football": {
       "count": 29,
@@ -69,11 +69,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 22,
+      "ageMinutes": 25,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 22,
+      "ageMinutes": 25,
       "stale": false
     }
   },
@@ -124,24 +124,31 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 2,
-    "fiveHour": 77,
-    "sevenDay": 24,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
+    "tier": 3,
+    "fiveHour": 86,
+    "sevenDay": 25,
+    "model": null,
+    "stepsSkipped": 4,
     "skippedSteps": [
       "discover-events",
+      "enrich-events",
+      "generate-featured",
       "generate-multiday"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 245923,
-    "stepCount": 26,
+    "totalDuration": 121098,
+    "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 122774,
+        "name": "fetch-results",
+        "duration": 48167,
+        "share": 40
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60079,
         "share": 50
       }
     ],
@@ -174,7 +181,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 77%, 7d: 24%) — 2 step(s) skipped"
+      "message": "Quota tier 3 (5h: 86%, 7d: 25%) — 4 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -184,7 +191,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 50% of total pipeline time (123s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 40% of total pipeline time (48s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",

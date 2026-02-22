@@ -1,10 +1,10 @@
 {
-  "startedAt": "2026-02-22T10:47:58.024Z",
-  "completedAt": "2026-02-22T10:49:59.122Z",
-  "duration": 121098,
+  "startedAt": "2026-02-22T10:51:04.416Z",
+  "completedAt": "2026-02-22T10:53:00.528Z",
+  "duration": 116111,
   "gate": "pass",
   "quota": {
-    "fiveHour": 86,
+    "fiveHour": 87,
     "sevenDay": 25,
     "tier": 3,
     "maxPriority": 0,
@@ -18,27 +18,27 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 30734
+          "duration": 27513
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4938
+          "duration": 4561
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8849
+          "duration": 9068
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 435
+          "duration": 432
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 48167
+          "duration": 43082
         }
       ]
     },
@@ -49,12 +49,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 206
+          "duration": 190
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1074
+          "duration": 802
         }
       ]
     },
@@ -77,12 +77,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 702
+          "duration": 642
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 6992
+          "duration": 7803
         }
       ]
     },
@@ -94,7 +94,7 @@
           "name": "enrich-events",
           "status": "skipped",
           "duration": 0,
-          "reason": "quota tier 3 (max priority 0, step needs 1)"
+          "reason": "data unchanged"
         }
       ]
     },
@@ -106,23 +106,23 @@
           "name": "generate-featured",
           "status": "skipped",
           "duration": 0,
-          "reason": "quota tier 3 (max priority 0, step needs 1)"
+          "reason": "data unchanged"
         },
         {
           "name": "generate-multiday",
           "status": "skipped",
           "duration": 0,
-          "reason": "quota tier 3 (max priority 0, step needs 2)"
+          "reason": "data unchanged"
         },
         {
           "name": "build-snapshots",
           "status": "success",
-          "duration": 171
+          "duration": 191
         },
         {
           "name": "generate-insights",
           "status": "success",
-          "duration": 172
+          "duration": 171
         }
       ]
     },
@@ -133,7 +133,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 612
+          "duration": 600
         }
       ]
     },
@@ -144,39 +144,39 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 536
+          "duration": 655
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 531
+          "duration": 364
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 470
+          "duration": 353
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 1059
+          "duration": 1024
         },
         {
           "name": "ai-sanity-check",
           "status": "success",
-          "duration": 570
+          "duration": 393
         },
         {
           "name": "verify-schedules",
           "status": "failed",
-          "duration": 60079,
+          "duration": 60014,
           "error": "Command failed: node scripts/verify-schedules.js\n",
           "errorCategory": "command"
         },
         {
           "name": "evaluate-ux",
           "status": "success",
-          "duration": 2257
+          "duration": 2290
         }
       ]
     },
@@ -187,7 +187,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 364
+          "duration": 259
         }
       ]
     },
@@ -198,22 +198,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1411
+          "duration": 1235
         },
         {
           "name": "generate-capabilities",
           "status": "success",
-          "duration": 152
+          "duration": 148
         },
         {
           "name": "update-meta",
           "status": "success",
-          "duration": 69
+          "duration": 70
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 134
+          "duration": 133
         }
       ]
     }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T10:48:57.346Z",
+  "generatedAt": "2026-02-22T10:51:59.245Z",
   "patternsDetected": 17,
   "patterns": [
     {
@@ -105,28 +105,28 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 80,
+      "count": 81,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-22T10:48:57.279Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 80 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T10:51:59.184Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 81 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "quota_high_utilization",
-      "count": 46,
+      "count": 47,
       "firstSeen": "2026-02-18T15:24:34.686Z",
-      "lastSeen": "2026-02-21T15:55:16.158Z",
-      "suggestion": "Health warning \"quota_high_utilization\" has fired 46 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T10:51:59.184Z",
+      "suggestion": "Health warning \"quota_high_utilization\" has fired 47 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "ux_eval_fallback",
-      "count": 14,
+      "count": 15,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-22T10:48:57.279Z",
-      "suggestion": "Health warning \"ux_eval_fallback\" has fired 14 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-22T10:51:59.184Z",
+      "suggestion": "Health warning \"ux_eval_fallback\" has fired 15 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "hint_fatigue",
@@ -214,9 +214,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 80,
+      "count": 81,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-22T10:48:57.279Z"
+      "lastSeen": "2026-02-22T10:51:59.184Z"
     },
     "sport_dropped": {
       "count": 3,
@@ -224,9 +224,9 @@
       "lastSeen": "2026-02-22T06:31:31.299Z"
     },
     "quota_high_utilization": {
-      "count": 46,
+      "count": 47,
       "firstSeen": "2026-02-18T15:24:34.686Z",
-      "lastSeen": "2026-02-21T15:55:16.158Z"
+      "lastSeen": "2026-02-22T10:51:59.184Z"
     },
     "streaming_match_rate_declining": {
       "count": 4,
@@ -239,9 +239,9 @@
       "lastSeen": "2026-02-21T14:32:50.572Z"
     },
     "ux_eval_fallback": {
-      "count": 14,
+      "count": 15,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-22T10:48:57.279Z"
+      "lastSeen": "2026-02-22T10:51:59.184Z"
     }
   },
   "interventionEffectiveness": {
@@ -254,7 +254,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-22T10:48:57.345Z",
+    "recordedAt": "2026-02-22T10:51:59.245Z",
     "moduleCount": 59,
     "avgModuleSize": 311,
     "pipelineSteps": 28,
@@ -264,7 +264,7 @@
   },
   "architectureDelta": {
     "moduleCount": 0,
-    "avgModuleSize": 3,
+    "avgModuleSize": 0,
     "pipelineSteps": 0
   },
   "summary": "17 patterns detected (16 high, 1 medium). Top priority: recurring_health_warning — Health warning \"failed_batches_increase\" has fired 47 times since 2026-02-13."
