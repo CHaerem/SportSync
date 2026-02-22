@@ -1,11 +1,10 @@
 {
-  "generatedAt": "2026-02-21T22:20:33.034Z",
+  "generatedAt": "2026-02-22T06:31:31.338Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 48,
+    "totalEvents": 55,
     "sports": [
       "golf",
-      "olympics",
       "football",
       "nordic",
       "biathlon",
@@ -16,9 +15,7 @@
         "The Genesis Invitational",
         "Magical Kenya Open"
       ],
-      "today": [],
-      "tomorrow": [
-        "Cross-Country Skiing — Women's 30km Mass Start Classic",
+      "today": [
         "Sevilla at Getafe",
         "Wolverhampton Wanderers at Crystal Palace",
         "Liverpool at Nottingham Forest",
@@ -26,12 +23,13 @@
         "Levante at Barcelona",
         "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
-        "Closing Ceremony",
         "Valencia at Villarreal"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Manchester United at Everton",
-        "Girona at Alavés",
+        "Girona at Alavés"
+      ],
+      "thisWeek": [
         "Club Brugge at Atlético Madrid",
         "Olympiacos at Bayer Leverkusen",
         "Bodo/Glimt at Internazionale",
@@ -44,10 +42,19 @@
         "Nordic WCH — Cross-Country Men's Skiathlon 15+15km",
         "Aston Villa at Wolverhampton Wanderers",
         "Alavés at Levante",
-        "Nordic WCH — Ski Jumping Men's Normal Hill Individual"
+        "Sunderland at AFC Bournemouth",
+        "Athletic Club at Rayo Vallecano",
+        "Brentford at Burnley",
+        "West Ham United at Liverpool",
+        "Everton at Newcastle United",
+        "Nordic WCH — Ski Jumping Men's Normal Hill Individual",
+        "Villarreal at Barcelona",
+        "Manchester City at Leeds United",
+        "Real Sociedad at Mallorca",
+        "Atlético Madrid at Real Oviedo",
+        "Nordic WCH — Cross-Country Sprint Classic Qualification and Finals"
       ],
       "later": [
-        "Nordic WCH — Cross-Country Sprint Classic Qualification and Finals",
         "Nordic WCH — Nordic Combined Men's Gundersen Normal Hill/10km",
         "Nordic WCH — Cross-Country Women's 10km Freestyle",
         "Nordic WCH — Cross-Country Men's 15km Freestyle",
@@ -71,80 +78,120 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 10,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 97,
-    "issueCount": 13
+    "pipelineStatus": "critical",
+    "editorialScore": 100,
+    "issueCount": 11
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Nordic WCH — Cross-Country Women's 30km Mass Start Classic\" is 15 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Women's 15km Individual\" is 15 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Biathlon WCH — Men's 10km Sprint\" is 15 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Men's 12.5km Pursuit\" is 16 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Nordic WCH — Cross-Country Men's 50km Mass Start Classic\" is 15 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Women's 10km Pursuit\" is 16 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Biathlon WCH — Women's 15km Individual\" is 16 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Men's Relay 4x7.5km\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Biathlon WCH — Men's 12.5km Pursuit\" is 17 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Women's Relay 4x6km\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Biathlon WCH — Women's 10km Pursuit\" is 17 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Men's 15km Mass Start\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Biathlon WCH — Men's Relay 4x7.5km\" is 19 days away — may clutter the dashboard"
+      "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae CS2 Major — rain's final shot at the title in Portugal\" which may not match any event"
+    },
+    {
+      "severity": "critical",
+      "check": "sport_vanished",
+      "message": "olympics: 0 events (was 2)"
     },
     {
       "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"Biathlon WCH — Women's Relay 4x6km\" is 20 days away — may clutter the dashboard"
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 8 hours old"
     },
     {
       "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"Biathlon WCH — Men's 15km Mass Start\" is 21 days away — may clutter the dashboard"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 22 days away — may clutter the dashboard"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"13:00\" for \"Cross-Country Skiing — Women's 30km Mass Start Classic\" but events.json has 10:00"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Portugal\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Trondheim\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Johaug\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_unverified_result",
+      "message": "Brief references \"haaland assisted as city\" vs \"newcastle\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 12,
-    "critical": 0,
-    "warning": 12,
-    "info": 0
+    "total": 20,
+    "critical": 1,
+    "warning": 18,
+    "info": 1
   },
-  "pass": true,
+  "pass": false,
   "tokenUsage": null
 }

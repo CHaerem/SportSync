@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-23",
-  "generatedAt": "2026-02-21T22:20:31.558Z",
+  "generatedAt": "2026-02-22T06:31:30.068Z",
   "events": {
     "upcoming": [
       {
@@ -16,8 +16,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -29,15 +36,8 @@
         "homeTeam": "Everton",
         "awayTeam": "Manchester United",
         "isFavorite": false,
-        "importance": 3,
-        "importanceReason": "Premier League fixture at Everton's new stadium, both clubs chasing points",
-        "summary": "Manchester United travel to Everton's new Hill Dickinson Stadium in a Premier League clash where both sides need points.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-21T22:17:30.285Z",
-        "_enrichHash": "3ab924add1c8bad0b577c3f8faafd0fb"
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -50,9 +50,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -64,15 +65,8 @@
         "homeTeam": "Alavés",
         "awayTeam": "Girona",
         "isFavorite": false,
-        "importance": 1,
-        "importanceReason": "Low-stakes La Liga encounter between mid-table clubs",
-        "summary": "Routine La Liga fixture between Girona and Alavés with minimal title or relegation implications for either side.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-21T22:17:30.285Z",
-        "_enrichHash": "e05087869a51a8c081aed97f72378c6a"
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []

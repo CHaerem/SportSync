@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T02:19:58.253Z",
+  "generatedAt": "2026-02-22T06:31:31.220Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 29,
-      "previousCount": 20,
-      "delta": 9
+      "previousCount": 29,
+      "delta": 0
     },
     "nordic": {
       "count": 12,
@@ -26,11 +26,6 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
-    },
-    "olympics": {
-      "count": 0,
-      "previousCount": 2,
-      "delta": -2
     },
     "chess": {
       "count": 0,
@@ -50,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 12,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 12,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 12,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 12,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 12,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 14,
+      "ageMinutes": 12,
       "stale": false
     },
     "featured.json": {
@@ -163,11 +158,6 @@
   "unmappedLeagues": [],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "olympics: 0 events (was 2)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
@@ -218,9 +208,9 @@
       "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is critical with 1 critical, 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

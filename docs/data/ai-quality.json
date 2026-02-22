@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T02:19:56.554Z",
+  "generatedAt": "2026-02-22T06:32:23.257Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -67,10 +67,10 @@
     "quotaModel": null,
     "before": {
       "totalEvents": 55,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 0.782
+      "importanceCoverage": 0.818,
+      "summaryCoverage": 0.818,
+      "relevanceCoverage": 0.818,
+      "tagsCoverage": 0.673
     },
     "after": {
       "totalEvents": 55,
@@ -82,9 +82,9 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 12,
-    "aiUpdatedFields": 55,
-    "failedBatches": 0,
+    "fallbackFieldsFilled": 58,
+    "aiUpdatedFields": 45,
+    "failedBatches": 1,
     "totalEvents": 55,
     "skipStats": {
       "total": 55,
@@ -92,14 +92,14 @@
       "enriched": 55,
       "skipRate": 0
     },
-    "tokensPerEvent": 3615,
+    "tokensPerEvent": 3657,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 172785,
-      "output": 26029,
-      "calls": 6,
-      "total": 198814,
-      "costUSD": 1.3494355,
+      "input": 143921,
+      "output": 20638,
+      "calls": 5,
+      "total": 164559,
+      "costUSD": 1.03426425,
       "tracked": true,
       "estimated": false
     }
