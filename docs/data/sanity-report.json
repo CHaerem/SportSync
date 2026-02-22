@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-02-22T13:28:44.464Z",
+  "generatedAt": "2026-02-22T14:17:36.384Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 53,
+    "totalEvents": 52,
     "sports": [
       "golf",
+      "cs2",
       "football",
       "nordic",
       "biathlon",
@@ -15,9 +16,7 @@
         "The Genesis Invitational"
       ],
       "today": [
-        "Wolverhampton Wanderers at Crystal Palace",
-        "Liverpool at Nottingham Forest",
-        "Fulham at Sunderland",
+        "PGL Cluj-Napoca 2026 - Grand Final",
         "Levante at Barcelona",
         "Arsenal at Tottenham Hotspur",
         "Mallorca at Celta Vigo",
@@ -38,6 +37,7 @@
         "Benfica at Real Madrid",
         "Nordic WCH — Cross-Country Women's Skiathlon 7.5+7.5km",
         "Nordic WCH — Cross-Country Men's Skiathlon 15+15km",
+        "ESL Pro League Season 23 - Stage 1 (Online)",
         "Aston Villa at Wolverhampton Wanderers",
         "Alavés at Levante",
         "Sunderland at AFC Bournemouth",
@@ -79,8 +79,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
-    "issueCount": 8
+    "editorialScore": 85,
+    "issueCount": 9
   },
   "findings": [
     {
@@ -119,9 +119,19 @@
       "message": "\"Biathlon WCH — Women's 12.5km Mass Start\" is 21 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae CS2 Major Grand Final — PGL Cluj-Napoca 2026\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Osasuna\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Major Grand Final\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -130,10 +140,10 @@
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 11,
     "critical": 0,
-    "warning": 9,
-    "info": 0
+    "warning": 10,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

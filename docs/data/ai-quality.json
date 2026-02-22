@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T13:28:42.783Z",
+  "generatedAt": "2026-02-22T14:17:34.772Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,23 +10,23 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 137721,
+    "generationMs": 84246,
     "tokenUsage": {
-      "input": 32972,
-      "output": 8622,
-      "cacheCreation": 17036,
-      "cacheRead": 15933,
-      "total": 41594,
-      "costUSD": 0.3300065,
+      "input": 33076,
+      "output": 5093,
+      "cacheCreation": 15065,
+      "cacheRead": 18008,
+      "total": 38169,
+      "costUSD": 0.23050025000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 85,
     "metrics": {
-      "mustWatchCoverage": 0.75,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 114,
+      "avgScore": 111,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 53,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 53,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,25 +83,40 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 2,
     "failedBatches": 0,
-    "totalEvents": 53,
+    "totalEvents": 52,
     "skipStats": {
-      "total": 53,
-      "unchanged": 53,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 52,
+      "unchanged": 50,
+      "enriched": 2,
+      "skipRate": 0.96
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 14448,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 27550,
+      "output": 1346,
+      "calls": 1,
+      "total": 28896,
+      "costUSD": 0.114219,
       "tracked": true,
       "estimated": false
     }
+  },
+  "discovery": {
+    "tokenUsage": {
+      "input": 113426,
+      "output": 2769,
+      "calls": 2,
+      "total": 116195,
+      "costUSD": 0.272873,
+      "tracked": true,
+      "estimated": false
+    },
+    "lastRun": "2026-02-22T14:10:48.110Z",
+    "tasksExecuted": 2,
+    "succeeded": 1,
+    "failed": 1
   }
 }

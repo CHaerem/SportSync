@@ -1,16 +1,21 @@
 {
-  "generatedAt": "2026-02-22T13:28:44.646Z",
-  "eventCount": 53,
+  "generatedAt": "2026-02-22T14:17:36.542Z",
+  "eventCount": 52,
   "sportCoverage": {
     "golf": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
+    },
+    "cs2": {
+      "count": 2,
+      "previousCount": null,
+      "delta": null
     },
     "football": {
-      "count": 28,
-      "previousCount": 29,
-      "delta": -1
+      "count": 25,
+      "previousCount": 28,
+      "delta": -3
     },
     "nordic": {
       "count": 12,
@@ -57,11 +62,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
@@ -101,9 +106,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.32,
-    "eventsEnriched": 9,
-    "trend": "stable",
+    "matchRate": 0.24,
+    "eventsEnriched": 6,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -125,23 +130,23 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 12,
-    "sevenDay": 26,
+    "fiveHour": 19,
+    "sevenDay": 27,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 428100,
-    "stepCount": 25,
+    "totalDuration": 558436,
+    "stepCount": 28,
     "timeoutHits": [
       "discover-events"
     ],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300084,
-        "share": 70
+        "duration": 300026,
+        "share": 54
       }
     ],
     "failedSteps": [
@@ -149,7 +154,9 @@
       "verify-schedules"
     ]
   },
-  "unmappedLeagues": [],
+  "unmappedLeagues": [
+    "CS2 Major Tournaments 2026"
+  ],
   "issues": [
     {
       "severity": "info",
@@ -169,7 +176,17 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 32% (9/28) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 24% (6/25) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 34% → 32% → 24%"
+    },
+    {
+      "severity": "info",
+      "code": "unmapped_leagues",
+      "message": "1 tournament(s) lack league theming: CS2 Major Tournaments 2026"
     },
     {
       "severity": "warning",
@@ -184,7 +201,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 70% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 54% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -199,7 +216,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 97% with 11/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
   }
 }
