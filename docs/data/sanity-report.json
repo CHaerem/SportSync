@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-22T19:15:57.152Z",
+  "generatedAt": "2026-02-22T20:14:24.673Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 37,
+    "totalEvents": 36,
     "sports": [
       "golf",
       "cs2",
@@ -11,12 +11,8 @@
       "f1"
     ],
     "bands": {
-      "live": [
-        "The Genesis Invitational"
-      ],
-      "today": [
-        "Valencia at Villarreal"
-      ],
+      "live": [],
+      "today": [],
       "tomorrow": [
         "Manchester United at Everton",
         "Girona at Alavés"
@@ -58,13 +54,14 @@
         "Biathlon WCH — Women's 12.5km Mass Start"
       ],
       "ended": [
+        "The Genesis Invitational",
         "PGL Cluj-Napoca 2026 - Grand Final"
       ]
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
+    "editorialScore": 67,
     "issueCount": 12
   },
   "findings": [
@@ -105,23 +102,28 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After\" but no matching athlete found in events data"
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 67/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Lane\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Major Grand Final\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Guardiola\" but no matching athlete found in events data"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Napoca Major Grand Final\" but no matching athlete found in events data"
+      "message": "Featured mentions \"History\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Anfield\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -130,9 +132,9 @@
     }
   ],
   "summary": {
-    "total": 12,
+    "total": 13,
     "critical": 0,
-    "warning": 12,
+    "warning": 13,
     "info": 0
   },
   "pass": true,

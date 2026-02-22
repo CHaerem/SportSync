@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-22",
-  "generatedAt": "2026-02-22T19:15:55.774Z",
+  "generatedAt": "2026-02-22T20:14:23.322Z",
   "events": {
-    "upcoming": [
+    "upcoming": [],
+    "results": [
       {
         "sport": "golf",
         "tournament": "PGA Tour",
@@ -60,50 +61,9 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-22T19:13:31.478Z",
+        "enrichedAt": "2026-02-22T20:11:45.872Z",
         "_enrichHash": "d859dc98c8a62c947e5fed0f47b278be"
       },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Valencia at Villarreal",
-        "time": "2026-02-22T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadio de la Cerámica",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Villarreal",
-        "awayTeam": "Valencia",
-        "isFavorite": false,
-        "importance": 3,
-        "importanceReason": "Valencian Community derby with potential relegation stakes for Valencia",
-        "summary": "Regional Valencian derby at Villarreal's ground — Valencia may be fighting relegation while Villarreal target top half.",
-        "tags": [
-          "derby",
-          "relegation"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-22T19:13:31.478Z",
-        "_enrichHash": "64ddd3909721a7b6aee8c044ff077af1",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      }
-    ],
-    "results": [
       {
         "sport": "cs2",
         "tournament": "CS2 Major Tournaments 2026",
@@ -137,7 +97,7 @@
           "final"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-02-22T19:13:31.478Z",
+        "enrichedAt": "2026-02-22T20:11:45.872Z",
         "_enrichHash": "4d67501ff8b49de6328c7187ce0b5e1e"
       }
     ]
@@ -171,6 +131,30 @@
       ],
       "recapHeadline": null,
       "isFavorite": true
+    },
+    {
+      "homeTeam": "Celta Vigo",
+      "awayTeam": "Mallorca",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-02-22T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Balaidos",
+      "goalScorers": [
+        {
+          "player": "Iago Aspas",
+          "team": "Celta Vigo",
+          "minute": "85'"
+        },
+        {
+          "player": "Iago Aspas",
+          "team": "Celta Vigo",
+          "minute": "90'+5'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
     },
     {
       "homeTeam": "Tottenham Hotspur",
@@ -368,36 +352,36 @@
           {
             "position": 1,
             "player": "Jacob Bridgeman",
-            "score": "-19",
-            "today": "-",
+            "score": "-21",
+            "today": "-2",
             "thru": "-"
           },
           {
             "position": 2,
-            "player": "Rory McIlroy",
-            "score": "-13",
-            "today": "-",
+            "player": "Kurt Kitayama",
+            "score": "-14",
+            "today": "-4",
             "thru": "-"
           },
           {
             "position": 3,
             "player": "Aldrich Potgieter",
-            "score": "-12",
-            "today": "-",
+            "score": "-14",
+            "today": "-2",
             "thru": "-"
           },
           {
             "position": 4,
-            "player": "Aaron Rai",
-            "score": "-11",
-            "today": "-",
+            "player": "Rory McIlroy",
+            "score": "-14",
+            "today": "-1",
             "thru": "-"
           },
           {
             "position": 5,
             "player": "Jake Knapp",
-            "score": "-10",
-            "today": "-2",
+            "score": "-12",
+            "today": "-4",
             "thru": "-"
           }
         ]
@@ -444,14 +428,41 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-valencia-at-villarreal-2026-02-22t20:00:00.000z",
-        "title": "Valencia at Villarreal",
+        "id": "football-manchester-united-at-everton-2026-02-23t20:00:00.000z",
+        "title": "Manchester United at Everton",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-02-23T20:00:00.000Z",
+        "timeLabel": "23 Feb, 21:00",
+        "relativeStart": "In 23h 48m",
+        "importance": 2,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 44,
+        "reasons": []
+      },
+      {
+        "id": "football-girona-at-alavés-2026-02-23t20:00:00.000z",
+        "title": "Girona at Alavés",
         "sport": "football",
         "tournament": "La Liga",
-        "time": "2026-02-22T20:00:00.000Z",
-        "timeLabel": "22 Feb, 21:00",
-        "relativeStart": "In 46m",
-        "importance": 3,
+        "time": "2026-02-23T20:00:00.000Z",
+        "timeLabel": "23 Feb, 21:00",
+        "relativeStart": "In 23h 48m",
+        "importance": 1,
         "norwegian": false,
         "streaming": [
           {
@@ -461,15 +472,31 @@
             "source": "tvkampen"
           }
         ],
-        "score": 76,
-        "reasons": [
-          "Starting soon"
-        ]
+        "score": 26,
+        "reasons": []
       }
     ],
-    "headline": "Ødegaard pulls the strings as Arsenal demolish Spurs 4-1"
+    "headline": "Arsenal demolish Spurs 4-1 — Gunners five points clear at the summit"
   },
   "rssHighlights": [
+    {
+      "title": "Viktor Hovland med positiv avslutning i California",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/viktor-hovland-med-positiv-avslutning-i-california-1.17780871"
+    },
+    {
+      "title": "Messi kan bli straffet for dårlig oppførsel etter stygt tap",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/messi-kan-bli-straffet-for-darlig-oppforsel-etter-stygt-tap-1.17780860"
+    },
+    {
+      "title": "Antonsen satte norsk rekord i Polen – Guttormsen vant stav",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/antonsen-satte-norsk-rekord-i-polen-_-guttormsen-vant-stav-1.17780824"
+    },
     {
       "title": "Utmattet Klæbo avslører: Ett grep reddet OL",
       "source": "nrk-sport",
@@ -481,32 +508,13 @@
       "source": "nrk-sport",
       "sport": "general",
       "link": "https://www.nrk.no/sport/odegaard-malgjevande-da-arsenal-knuste-rivalen-1.17780712"
-    },
-    {
-      "title": "Absurde scener da Arsenal ydmyket Spurs: – Skandale",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18594193"
-    },
-    {
-      "title": "Absurde scener da Arsenal ydmyket Spurs: – Skandale",
-      "source": "tv2-fotball",
-      "sport": "football",
-      "link": "https://www.tv2.no/a/18594193"
-    },
-    {
-      "title": "NRK: Norske OL-stjerner bekrefter romanse",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18594304"
     }
   ],
   "meta": {
-    "eventCount": 3,
+    "eventCount": 2,
     "sportsCovered": [
       "golf",
-      "cs2",
-      "football"
+      "cs2"
     ],
     "hasResults": true,
     "hasStandings": true

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T19:15:57.081Z",
-  "eventCount": 37,
+  "generatedAt": "2026-02-22T20:14:24.556Z",
+  "eventCount": 36,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 22,
+      "count": 21,
       "previousCount": 22,
-      "delta": 0
+      "delta": -1
     },
     "biathlon": {
       "count": 11,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.94,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -101,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.14,
-    "eventsEnriched": 3,
+    "matchRate": 0.1,
+    "eventsEnriched": 2,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -127,26 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 9,
-    "sevenDay": 29,
+    "fiveHour": 14,
+    "sevenDay": 30,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 475701,
+    "totalDuration": 390198,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 180284,
-        "share": 38
+        "duration": 132263,
+        "share": 34
       },
       {
         "name": "generate-featured",
-        "duration": 180953,
-        "share": 38
+        "duration": 143972,
+        "share": 37
       }
     ],
     "failedSteps": [
@@ -175,12 +175,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 14% (3/22) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Internazionale vs Bodø/Glimt has no matching event in events.json"
+      "message": "Streaming enrichment match rate is 10% (2/21) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -200,12 +195,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 38% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (132s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 38% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 37% of total pipeline time (144s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -220,7 +215,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 70/100.",
+    "text": "Autonomy at 96% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 67/100.",
     "tokenUsage": null
   }
 }

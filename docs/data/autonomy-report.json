@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T19:15:57.221Z",
-  "overallScore": 0.98,
+  "generatedAt": "2026-02-22T20:14:24.608Z",
+  "overallScore": 0.96,
   "loopsClosed": 11,
   "loopsTotal": 12,
   "loops": {
@@ -12,7 +12,7 @@
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (0 applied)"
+      "details": "Enrichment hints tracked (1 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -20,14 +20,14 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 2 actionable issue(s) (13 total)"
-    },
-    "watchPlan": {
       "score": 1,
       "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
+    },
+    "watchPlan": {
+      "score": 0.5,
+      "status": "partial",
+      "details": "2 picks but missing reasons data"
     },
     "codeHealth": {
       "score": 1,
@@ -57,7 +57,7 @@
     "uxQuality": {
       "score": 1,
       "status": "closed",
-      "details": "UX report exists and is fresh, 28 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
+      "details": "UX report exists and is fresh, 29 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
     },
     "streamingVerification": {
       "score": 1,
@@ -66,6 +66,6 @@
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
+    "Ensure watch plan picks include both reasons and streaming arrays"
   ]
 }
