@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T20:19:24.317Z",
+  "generatedAt": "2026-02-23T21:23:38.840Z",
   "eventCount": 41,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 27,
-      "previousCount": 29,
-      "delta": -2
+      "previousCount": 27,
+      "delta": 0
     },
     "cs2": {
       "count": 1,
@@ -50,15 +50,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
@@ -66,11 +66,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1332,
+      "ageMinutes": 1396,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 4,
-    "sevenDay": 35,
+    "fiveHour": 5,
+    "sevenDay": 36,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 207168,
+    "totalDuration": 243663,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 86484,
-        "share": 42
+        "duration": 125675,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -176,17 +176,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1332 minutes old"
+      "message": "golf.json: data is 1396 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 16 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 17 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 15% (4/27) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "editorial_unsorted_events",
+      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
     },
     {
       "severity": "warning",
@@ -211,7 +216,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 42% of total pipeline time (86s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 52% of total pipeline time (126s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -226,7 +231,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }
