@@ -546,6 +546,66 @@ describe("matchRssHeadline()", () => {
 		const result = matchRssHeadline("Arsenal FC", "Liverpool FC", items);
 		expect(result).toBe("Arsenal beat Liverpool in PL clash");
 	});
+
+	// --- Short-form / Norwegian alias fallback ---
+
+	it("matches 'City' as short form for Manchester City", () => {
+		const items = [{ title: "City slo Liverpool 3-0" }];
+		const result = matchRssHeadline("Manchester City", "Liverpool", items);
+		expect(result).toBe("City slo Liverpool 3-0");
+	});
+
+	it("matches 'United' as short form for Manchester United", () => {
+		const items = [{ title: "Arsenal slår United hjemme" }];
+		const result = matchRssHeadline("Arsenal", "Manchester United", items);
+		expect(result).toBe("Arsenal slår United hjemme");
+	});
+
+	it("matches 'Man City' alias for Manchester City", () => {
+		const items = [{ title: "Man City og Arsenal uavgjort" }];
+		const result = matchRssHeadline("Manchester City", "Arsenal", items);
+		expect(result).toBe("Man City og Arsenal uavgjort");
+	});
+
+	it("matches 'Spurs' alias for Tottenham Hotspur", () => {
+		const items = [{ title: "Chelsea beats Spurs in derby" }];
+		const result = matchRssHeadline("Chelsea", "Tottenham Hotspur", items);
+		expect(result).toBe("Chelsea beats Spurs in derby");
+	});
+
+	it("does NOT match 'City' inside 'Electricity' (word-boundary guard)", () => {
+		const items = [{ title: "Electricity supplier signs deal with Liverpool" }];
+		const result = matchRssHeadline("Manchester City", "Liverpool", items);
+		// 'City' is not present as standalone word, so should fall through to null
+		expect(result).toBeNull();
+	});
+
+	it("does NOT match 'United' inside 'United Kingdom' when no away team present", () => {
+		const items = [{ title: "United Kingdom team wins gold, Arsenal absent" }];
+		// 'United' would word-match but 'arsenal' is also in headline — this SHOULD match
+		// because both home and away short-forms hit. Verify the intended non-spurious case:
+		const result = matchRssHeadline("Manchester United", "Chelsea", items);
+		// 'Chelsea' is absent from the headline — should return null
+		expect(result).toBeNull();
+	});
+
+	it("matches last-word fallback for a team not in explicit alias map", () => {
+		// "Nottingham Forest" → last word "forest" is already in explicit map, but
+		// test that a team with no explicit map entry still uses last-word fallback
+		const items = [{ title: "Brighton slo Palace borte" }];
+		// "Crystal Palace" → last word "palace"; "Brighton & Hove Albion" → alias "brighton"
+		const result = matchRssHeadline("Brighton & Hove Albion", "Crystal Palace", items);
+		expect(result).toBe("Brighton slo Palace borte");
+	});
+
+	it("returns first matching headline when multiple headlines match", () => {
+		const items = [
+			{ title: "Preview: City vs Liverpool" },
+			{ title: "City beat Liverpool 2-0" },
+		];
+		const result = matchRssHeadline("Manchester City", "Liverpool", items);
+		expect(result).toBe("Preview: City vs Liverpool");
+	});
 });
 
 describe("mergeFootballResults()", () => {

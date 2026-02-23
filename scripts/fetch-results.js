@@ -553,6 +553,67 @@ export function mergeF1Results(existing, fresh, retainDays = 30) {
 	return Array.from(map.values());
 }
 
+/**
+ * Norwegian/common short-form aliases for PL and La Liga teams.
+ * Norwegian RSS sources (NRK, TV2) use shortened team names, so we map
+ * full ESPN display names to the short forms likely seen in headlines.
+ * Keys are lowercase full names; values are arrays of short-form aliases.
+ */
+const TEAM_SHORT_FORMS = {
+	"manchester city": ["city", "man city"],
+	"manchester united": ["united", "man united", "man utd"],
+	"tottenham hotspur": ["spurs", "tottenham"],
+	"newcastle united": ["newcastle"],
+	"west ham united": ["west ham"],
+	"wolverhampton wanderers": ["wolves", "wolverhampton"],
+	"nottingham forest": ["forest"],
+	"brighton & hove albion": ["brighton"],
+	"sheffield united": ["sheffield"],
+	"aston villa": ["villa"],
+	"atlético madrid": ["atletico", "atlético"],
+	"real madrid": ["madrid", "real"],
+	"athletic club": ["athletic bilbao", "bilbao"],
+	"real sociedad": ["sociedad"],
+	"real betis": ["betis"],
+	"rayo vallecano": ["rayo"],
+	"deportivo alavés": ["alaves", "alavés"],
+};
+
+/**
+ * Build a set of candidate short-form names for a team.
+ * Includes: last word, FC-stripped version, and explicit alias list.
+ */
+function teamShortForms(teamName) {
+	const lower = teamName.toLowerCase().replace(/ fc$| afc$| cf$| fk$/i, "").trim();
+	const candidates = new Set([lower]);
+
+	// Last word (e.g. "Manchester City" → "city")
+	const lastWord = lower.split(/\s+/).pop();
+	if (lastWord && lastWord.length > 2) {
+		candidates.add(lastWord);
+	}
+
+	// Explicit alias map
+	const aliases = TEAM_SHORT_FORMS[lower] || TEAM_SHORT_FORMS[teamName.toLowerCase()];
+	if (aliases) {
+		for (const alias of aliases) candidates.add(alias);
+	}
+
+	return candidates;
+}
+
+/**
+ * Test whether a candidate term appears in a headline at a word boundary.
+ * Uses \b-style matching: term must not be immediately preceded or followed
+ * by a letter, to avoid "City" matching "Electricity" or "Unity".
+ */
+function termMatchesHeadline(term, headline) {
+	// Escape regex metacharacters in the term
+	const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const re = new RegExp(`(?<![a-zA-ZÀ-ÖØ-öø-ÿ])${escaped}(?![a-zA-ZÀ-ÖØ-öø-ÿ])`, "i");
+	return re.test(headline);
+}
+
 export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
 	if (!homeTeam || !awayTeam || !Array.isArray(rssItems)) return null;
 
@@ -561,13 +622,27 @@ export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
 
 	for (const item of rssItems) {
 		const title = (item.title || "").toLowerCase();
+
+		// Primary match: full team names
 		if (title.includes(home) && title.includes(away)) {
 			return item.title;
 		}
-		// Try short names (drop FC/AFC suffixes)
+
+		// Secondary match: FC/AFC-stripped names
 		const homeShort = home.replace(/ fc$| afc$| cf$| fk$/i, "").trim();
 		const awayShort = away.replace(/ fc$| afc$| cf$| fk$/i, "").trim();
 		if (homeShort.length > 2 && awayShort.length > 2 && title.includes(homeShort) && title.includes(awayShort)) {
+			return item.title;
+		}
+
+		// Tertiary match: short-form aliases with word-boundary guards
+		// Only triggers when both primary and secondary fail (avoids ambiguous single-word matches)
+		const homeForms = teamShortForms(homeTeam);
+		const awayForms = teamShortForms(awayTeam);
+
+		const homeHit = [...homeForms].some(f => termMatchesHeadline(f, item.title));
+		const awayHit = [...awayForms].some(f => termMatchesHeadline(f, item.title));
+		if (homeHit && awayHit) {
 			return item.title;
 		}
 	}
