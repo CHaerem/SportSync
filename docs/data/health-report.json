@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T09:26:25.321Z",
+  "generatedAt": "2026-02-23T10:24:56.641Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -62,11 +62,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 679,
+      "ageMinutes": 738,
       "stale": true
     },
     "tennis.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 9,
+    "fiveHour": 10,
     "sevenDay": 33,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 298585,
+    "totalDuration": 268811,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 180920,
-        "share": 61
+        "duration": 150088,
+        "share": 56
       }
     ],
     "failedSteps": [
@@ -176,12 +176,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 679 minutes old"
+      "message": "golf.json: data is 738 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 5 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 6 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 61% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 56% of total pipeline time (150s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -226,7 +226,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
