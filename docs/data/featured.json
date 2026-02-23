@@ -2,15 +2,11 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodo/Glimt's San Siro miracle is 24 hours away"
+      "text": "Bodø/Glimt head to San Siro — Norwegian football holds its breath"
     },
     {
       "type": "narrative",
-      "text": "A 3-1 first-leg lead travels to San Siro on Tuesday night. Norwegian football has never been this close to this stage — Inter need to engineer a historic comeback."
-    },
-    {
-      "type": "divider",
-      "text": "This Week"
+      "text": "Barcelona demolished Levante 3-0 on Sunday; Arsenal destroyed Spurs 4-1. A quiet Monday gives way to a Champions League week that could define Norwegian football forever."
     },
     {
       "type": "match-preview",
@@ -18,20 +14,31 @@
       "awayTeam": "Bodo/Glimt"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge"
+      "type": "event-group",
+      "label": "🏆 Champions League this week",
+      "items": [
+        "⚽ Tue 18:45 — Atlético Madrid vs Club Brugge — all square, Atlético must win at home",
+        "⚽ Wed 21:00 — PSG vs Monaco — French derby on a knife-edge, 3-2 on aggregate",
+        "⚽ Wed 21:00 — Real Madrid vs Benfica — holders guard a narrow lead at the Bernabéu"
+      ]
     },
     {
-      "type": "event-group",
-      "label": "⚽ Also this week",
-      "items": [
-        "Wed 21:00 — PSG vs Monaco — 3-2 on agg, French derby on the edge",
-        "Wed 21:00 — Real Madrid vs Benfica — Bernabéu squeezed, narrow lead to defend",
-        "Sat 16:15 — Barcelona vs Villarreal — La Liga title race at Camp Nou"
-      ]
+      "type": "divider",
+      "text": "This Saturday"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Liverpool",
+      "awayTeam": "West Ham United",
+      "showStandings": true
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Villarreal",
+      "showStandings": true
     }
   ],
-  "generatedAt": "2026-02-23T17:31:20.077Z",
+  "generatedAt": "2026-02-23T18:28:03.988Z",
   "provider": "claude-cli"
 }
