@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T22:11:40.902Z",
+  "generatedAt": "2026-02-23T01:59:22.048Z",
   "eventCount": 30,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "biathlon": {
       "count": 6,
-      "previousCount": 11,
-      "delta": -5
+      "previousCount": 6,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 232,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 232,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 232,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 232,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -109,7 +109,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results"
+      "2 day snapshot(s) within event range have 0 events and 0 results",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -127,26 +128,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 30,
+    "fiveHour": 5,
+    "sevenDay": 31,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 471294,
+    "totalDuration": 341847,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 180271,
-        "share": 38
-      },
-      {
-        "name": "generate-featured",
-        "duration": 180943,
-        "share": 38
+        "duration": 112022,
+        "share": 33
       }
     ],
     "failedSteps": [
@@ -178,9 +174,24 @@
       "message": "Streaming enrichment match rate is 10% (2/21) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "editorial_unsorted_events",
+      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
+    },
+    {
+      "severity": "warning",
+      "code": "invisible_events",
+      "message": "1 event(s) won't appear on dashboard (golf)"
+    },
+    {
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) within event range have 0 events and 0 results"
+    },
+    {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "info",
@@ -195,12 +206,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 38% of total pipeline time (180s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 38% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 33% of total pipeline time (112s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,11 +217,26 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+    },
+    {
+      "severity": "warning",
+      "code": "model_change_quality_drop",
+      "message": "featured model changed (default → fallback) and quality dropped — correlation may indicate model capability gap"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 94% with 10/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 70/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 94/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [
+      {
+        "severity": "warning",
+        "code": "model_change_quality_drop",
+        "message": "featured model changed (default → fallback) and quality dropped — correlation may indicate model capability gap"
+      }
+    ],
+    "hasRegression": true
   }
 }

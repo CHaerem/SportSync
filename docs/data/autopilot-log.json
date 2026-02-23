@@ -735,6 +735,66 @@
       "lesson": "When adding curated configs for new sports, also add league-config.json entries to prevent unmapped_leagues warnings.",
       "scouted": 5,
       "meta_insight": "New sport config checklist expanded: (1) create config, (2) add sport to SPORT_CONFIG, (3) rebuild day snapshots, (4) add league-config.json entries. Dashboard-structure test catches #2, pattern-report catches #4."
+    },
+    {
+      "date": "2026-02-23",
+      "task": "Fix watchPlan reasons gap (loop 5: 0.5→1.0)",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "quality",
+      "details": "Added 'Must-watch event' reason for importance ≥4 and 'Preferred sport' reason for high/medium sport preference in scoreEventForWatchPlan(). Watch plan picks now always have visible reasons. 6 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 5,
+      "lesson": "Score contributors without matching reasons make the watch plan appear broken. Every +score should have a +reason.",
+      "scouted": 0,
+      "meta_insight": "watchPlan loop was stuck at 0.5 not because of missing functionality but because score factors like importance and sport preference silently contributed points without visible reasons."
+    },
+    {
+      "date": "2026-02-23",
+      "task": "Fix mustWatchCoverage 0% (golf-status block invisible)",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "quality",
+      "details": "golf-status component blocks were not recognized as covering golf events in mustWatchCoverage metric. Added golf-status block recognition alongside match-result/match-preview. Also added 0/0 guard (returns 1.0 when no must-watch events exist). 2 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 5,
+      "lesson": "Each component block type needs explicit coverage recognition in quality metrics. New block types silently break coverage metrics.",
+      "scouted": 0,
+      "meta_insight": "mustWatchCoverage was a recurring hint fatigue target (5 fires) because the metric didn't know about golf-status blocks. Pattern: when hint fatigue fires, check if the metric sees all data paths."
+    },
+    {
+      "date": "2026-02-23",
+      "task": "Improve RSS headline matching with Norwegian short-forms",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "data",
+      "details": "Added 3-tier matching to matchRssHeadline(): (1) full name, (2) FC-stripped, (3) short-form aliases + last-word fallback with word-boundary regex. TEAM_SHORT_FORMS map covers PL and La Liga teams. Nordic character-aware boundaries prevent false positives. 8 new tests.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 8,
+      "lesson": "Norwegian RSS uses team short-forms (City, United, Spurs). Word-boundary regex with Nordic characters (À-ÖØ-öø-ÿ) prevents false positives like 'City' matching 'Electricity'.",
+      "scouted": 0,
+      "meta_insight": "recapHeadlineRate has been 0% for weeks because full-name matching fails on Norwegian RSS. Short-form matching should lift this to 40-60%. Combined with the recapHeadlineRate weight reduction (Run 6), the results quality loop is now better calibrated."
+    },
+    {
+      "date": "2026-02-23",
+      "task": "Evaluate pipeline bloat (28 steps, threshold 20)",
+      "outcome": "explored",
+      "shipMode": "explore",
+      "pr": null,
+      "pillar": "code",
+      "details": "EXPLORE: 28 steps across 10 phases. 3 LOW-risk consolidation candidates: (1) merge generate-multiday+build-snapshots+generate-insights into post-generate (-2 steps), (2) merge generate-capabilities+update-meta (-1 step), (3) move merge-data to correct phase. Max reduction: 28→25. Threshold of 20 is too aggressive for 12 feedback loops — recommend raising to 30.",
+      "tests_passed": true,
+      "files_changed": 0,
+      "turns_used": 4,
+      "lesson": "Pipeline step count correlates with feedback loop count. The 'bloat' threshold should scale with system complexity, not stay fixed.",
+      "scouted": 4,
+      "meta_insight": "The dominant pipeline cost is 2 AI steps (discover + generate: 60% of wall time). Consolidating 9 sub-second steps saves step count but not duration. The real optimization is AI step efficiency, not step consolidation."
     }
   ]
 }

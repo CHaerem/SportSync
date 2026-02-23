@@ -267,13 +267,22 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~90% | 2026-02-22 | Olympics 2026 archived, biathlon/nordic WCH configs active |
-| 2. Code | ~87% | 2026-02-22 | 1861 tests across 64 files, sanityScore hint fatigue suppressed |
+| 1. Data | ~92% | 2026-02-23 | RSS headline matching improved, Olympics archived, biathlon/nordic WCH active |
+| 2. Code | ~87% | 2026-02-23 | 1882 tests across 64 files, pipeline bloat evaluated |
 | 3. Capabilities | ~70% | 2026-02-21 | Tennis standings dynamic detection, pipeline manifest, 5 inline standings widgets |
-| 4. Personalization | ~58% | 2026-02-17 | For You editorial block, contextual empty-sport notes, watch-plan feedback loop, sport weights evolve |
-| 5. Quality | ~100% | 2026-02-22 | 12/12 loops closed, pipelineHealth + uxQuality unstuck, sanity hint fatigue fixed |
+| 4. Personalization | ~60% | 2026-02-23 | watchPlan reasons fixed, For You block, watch-plan feedback loop, sport weights evolve |
+| 5. Quality | ~100% | 2026-02-23 | watchPlan + mustWatchCoverage fixed, 12/12 loops expected on next pipeline run |
 
 ### Run History Insights
+
+**Run 2026-02-23 (Run 9):** 3 tasks completed + 1 EXPLORE + 4 new tasks scouted. All direct-to-main.
+- watchPlan reasons fix: 5 turns (code-agent). Added "Must-watch event" + "Preferred sport" reasons. Loop 0.5→1.0.
+- mustWatchCoverage fix: 5 turns (content-agent). golf-status blocks weren't recognized as covering golf events. 0/0 guard added.
+- RSS headline matching: 8 turns (data-agent). 3-tier matching with Norwegian short-forms. PL/La Liga team aliases. Nordic word-boundary regex.
+- Pipeline bloat EXPLORE: 4 turns (code-agent). 28→25 possible, threshold should be 30 not 20. AI steps dominate (60%), not step count.
+- **Key insight**: watchPlan at 0.5 wasn't broken functionality — the scoring worked, but reasons weren't populated for 2 of 6 score factors (importance base, sport preference). Every +score should have a corresponding +reason.
+- **Pillar focus**: Quality (2 loop fixes), Data (1 RSS matching), Code (1 EXPLORE). Personalization advances indirectly via watchPlan.
+- **Autonomy score**: Expected 12/12 (100%) on next pipeline run — both fixed loops should evaluate to 1.0.
 
 **Run 2026-02-22 (Run 8):** 4 tasks completed + 5 new tasks scouted. All direct-to-main.
 - pipelineHealth loop fix: 5 turns. Added `ux_eval_fallback` + `step_timeout_hit` to KNOWN_DATA_GAPS. Loop 0.75→1.0.
@@ -937,7 +946,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Evaluate architecture_pipeline_bloat (28 steps, threshold 20)** — Pattern report flags pipeline bloat. Review `scripts/pipeline-manifest.json` for steps that always run together or have trivial logic that could be combined. Focus on steps under 1 second that share data dependencies.
+- [DONE] (explored, run 2026-02-23) **Evaluate architecture_pipeline_bloat (28 steps, threshold 20)** — Findings: 3 LOW-risk consolidations possible (post-generate wrapper, finalize merge, merge-data phase fix) → 28→25 steps. Threshold too aggressive for 12 feedback loops — should be 30. Dominant cost is 2 AI steps (60% of wall time), not step count. Created concrete MAINTENANCE tasks below.
 
 ---
 
@@ -953,13 +962,35 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### MEDIUM Priority
 
-- [PENDING] [MAINTENANCE] **Improve RSS headline matching with Norwegian short-forms** — `matchRssHeadline()` in `fetch-results.js` only matches full team names. Norwegian RSS uses shortened forms ("City", "Arsenal"). Adding last-word fallback matching could lift match rate from 0% to 40-60%. Files: `scripts/fetch-results.js`.
+- [DONE] (direct, run 2026-02-23) **Improve RSS headline matching with Norwegian short-forms** — Added 3-tier matching: full name → FC-stripped → short-form aliases + last-word fallback with Nordic word-boundary regex. TEAM_SHORT_FORMS map covers PL and La Liga teams. 8 new tests.
 
-- [PENDING] [EXPLORE] **Investigate `failed_batches_increase` pattern (47 fires, last seen Feb 20)** — May be quota-related (batch enrichment failing at tier 2/3). If it stopped firing when quota usage dropped, add to KNOWN_DATA_GAPS. If persistent, diagnose root cause.
+- [DONE] (explored, run 2026-02-23) **Investigate `failed_batches_increase` pattern (47 fires, last seen Feb 20)** — Last seen Feb 20, not firing since. With 3-day decay logic (added Run 6), this entry will auto-decay: 47 fires → halved every pipeline run without occurrence → reaches threshold (5) and auto-removes in ~5 cycles. No code change needed.
 
 ### LOW Priority
 
 - [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. ProCyclingStats and firstcycling.com have data but no public APIs. Norwegian cyclists are minor presences. Low priority unless user engagement data shows cycling interest.
+
+---
+
+## Scouted Tasks (2026-02-23)
+
+### HIGH Priority
+
+- [DONE] (direct, run 2026-02-23) **Fix watchPlan reasons gap** — Added "Must-watch event" and "Preferred sport" reasons to scoreEventForWatchPlan(). Closes watchPlan loop (0.5→1.0). 6 new tests.
+
+- [DONE] (direct, run 2026-02-23) **Fix mustWatchCoverage 0% (golf-status block invisible)** — golf-status component blocks were not recognized in coverage metric. Added golf-status→golf sport mapping. Also added 0/0 guard. 2 new tests.
+
+### MEDIUM Priority
+
+- [PENDING] [MAINTENANCE] **Consolidate post-generate pipeline steps** — Merge `generate-multiday`, `build-snapshots`, and `generate-insights` into a single `post-generate` wrapper step. All three are sub-200ms, same phase, no AI calls, no external dependencies. Reduces pipeline step count by 2 (28→26). Files: `scripts/pipeline-manifest.json`, new `scripts/post-generate.js`. Preserves `quotaPriority` flag from `generate-multiday`.
+
+- [PENDING] [MAINTENANCE] **Merge generate-capabilities + update-meta finalize steps** — `update-meta` is inline JS in pipeline-manifest.json, not a proper script. Merge with `generate-capabilities` into a single `finalize-outputs` step. Keep `pre-commit-gate` separate (uses process.exit(1)). Reduces step count by 1. Files: `scripts/pipeline-manifest.json`, `scripts/generate-capabilities.js`.
+
+- [PENDING] [MAINTENANCE] **Raise pipeline bloat threshold from 20 to 30** — The architecture_pipeline_bloat pattern fires at 20 steps but 28 steps are appropriate for 12 feedback loops. Raising to 30 suppresses the false positive while still catching genuine bloat. File: `scripts/analyze-patterns.js`.
+
+### LOW Priority
+
+- [PENDING] [EXPLORE] **Investigate athletics/track-and-field coverage** — RSS shows Norwegian athletes in athletics (Guttormsen pole vault, Antonsen 800m). No coverage in dashboard. Check if Diamond League, World Athletics, or other sources have free APIs or if curated configs for major meets (WA Tour, European Championships) would suffice. Norwegian athletes: Sondre Guttormsen, Jakob Ingebrigtsen, Karsten Warholm.
 
 ---
 

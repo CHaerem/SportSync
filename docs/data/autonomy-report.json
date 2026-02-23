@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-22T22:11:40.945Z",
-  "overallScore": 0.94,
-  "loopsClosed": 10,
+  "generatedAt": "2026-02-23T01:59:22.081Z",
+  "overallScore": 1,
+  "loopsClosed": 12,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -20,14 +20,14 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (13 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (4h old), 11 issue(s) are info/known"
     },
     "watchPlan": {
-      "score": 0.5,
-      "status": "partial",
-      "details": "2 picks but missing reasons data"
+      "score": 1,
+      "status": "closed",
+      "details": "2 picks with reasons (2 with streaming)"
     },
     "codeHealth": {
       "score": 1,
@@ -65,8 +65,5 @@
       "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
-  "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)",
-    "Ensure watch plan picks include both reasons and streaming arrays"
-  ]
+  "nextActions": []
 }

@@ -106,6 +106,10 @@
       {
         "date": "2026-02-22",
         "note": "Run 8: 4 tasks (3 quality, 1 data). Focused on reliability — fixing stagnant autonomy loops and hint fatigue. Orchestrator handled loop fixes + Olympics archival + league config. Code-agent handled sanity hint suppression in parallel. Autonomy stable at 12/12 (100%). Key insight: stagnant loops require scoring-function analysis not more data fixes. Three pattern-report high-severity items resolved (ux_eval_fallback, step_timeout_hit, sanity hints). Olympics 2026 archived on closing ceremony day — sync-configs.js will no longer process it. New sport config checklist expanded to 4 steps (config + SPORT_CONFIG + snapshots + league-config). 5 new tasks scouted: RSS headline matching, failed_batches decay, cycling exploration, pipeline bloat. Quality pillar now at ~100%."
+      },
+      {
+        "date": "2026-02-23",
+        "note": "Run 9: 3 tasks + 1 EXPLORE, all parallel subagents (code-agent + content-agent + data-agent). Three tasks fixing autonomy loop gaps: (1) watchPlan reasons — score factors without matching reason strings made picks appear broken (0.5→1.0); (2) mustWatchCoverage — golf-status blocks weren't recognized as covering golf events, plus 0/0 guard; (3) RSS headline matching — 3-tier matching with Norwegian short-forms for PL/La Liga teams. EXPLORE: pipeline bloat (28 steps) is appropriate for 12 loops, threshold should be 30. Key insight: when autonomy loops are stuck, investigate if the loop's evaluation criteria match the actual data paths — watchPlan scored picks but didn't see reasons because 2 of 6 score factors had no reason string. RSS short-form matching should lift recapHeadlineRate from 0% for the first time. 4 new tasks scouted. Parallel 3-agent delegation continues to work well."
       }
     ]
   }
