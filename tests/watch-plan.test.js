@@ -24,6 +24,96 @@ describe("scoreEventForWatchPlan()", () => {
 		expect(score.score).toBeGreaterThan(70);
 		expect(score.reasons).toContain("Favorite team");
 	});
+
+	it("adds Must-watch event reason for importance >= 4", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "football",
+			title: "Champions League Final",
+			time: "2026-02-10T20:00:00Z",
+			importance: 5,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {});
+		expect(result.reasons).toContain("Must-watch event");
+	});
+
+	it("does not add Must-watch event reason for importance < 4", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "football",
+			title: "Regular Match",
+			time: "2026-02-10T20:00:00Z",
+			importance: 3,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {});
+		expect(result.reasons).not.toContain("Must-watch event");
+	});
+
+	it("adds Preferred sport reason for high sport preference", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "golf",
+			title: "PGA Championship",
+			time: "2026-02-10T20:00:00Z",
+			importance: 2,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {
+			sportPreferences: { golf: "high" },
+		});
+		expect(result.reasons).toContain("Preferred sport");
+	});
+
+	it("adds Preferred sport reason for medium sport preference", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "tennis",
+			title: "Wimbledon",
+			time: "2026-02-10T20:00:00Z",
+			importance: 2,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {
+			sportPreferences: { tennis: "medium" },
+		});
+		expect(result.reasons).toContain("Preferred sport");
+	});
+
+	it("does not add Preferred sport reason for low sport preference", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "esports",
+			title: "CS2 Major",
+			time: "2026-02-10T20:00:00Z",
+			importance: 2,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {
+			sportPreferences: { esports: "low" },
+		});
+		expect(result.reasons).not.toContain("Preferred sport");
+	});
+
+	it("does not add Preferred sport reason when sport preference is absent", () => {
+		const now = new Date("2026-02-10T18:00:00Z");
+		const event = {
+			sport: "chess",
+			title: "World Chess Championship",
+			time: "2026-02-10T20:00:00Z",
+			importance: 3,
+			norwegian: false,
+			tags: [],
+		};
+		const result = scoreEventForWatchPlan(event, now, {});
+		expect(result.reasons).not.toContain("Preferred sport");
+	});
 });
 
 describe("buildWatchPlan()", () => {

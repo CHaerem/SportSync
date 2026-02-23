@@ -91,6 +91,8 @@ export function scoreEventForWatchPlan(event, now, userContext = {}) {
 	let score = importance * 18;
 	const reasons = [];
 
+	if (importance >= 4) reasons.push("Must-watch event");
+
 	if (event.norwegian) {
 		score += 14;
 		reasons.push("Norwegian interest");
@@ -126,7 +128,9 @@ export function scoreEventForWatchPlan(event, now, userContext = {}) {
 		reasons.push("Must-watch");
 	}
 
-	score += getSportPreferenceWeight(event, userContext);
+	const prefWeight = getSportPreferenceWeight(event, userContext);
+	score += prefWeight;
+	if (prefWeight > 0) reasons.push("Preferred sport");
 
 	// Apply watch feedback adjustment (per-sport boost/penalty from user thumbs)
 	const feedbackAdj = userContext?._feedbackAdjustments?.[event.sport];
