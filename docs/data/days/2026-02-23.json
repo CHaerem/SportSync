@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-23",
-  "generatedAt": "2026-02-22T22:11:39.642Z",
+  "generatedAt": "2026-02-23T02:12:01.461Z",
   "events": {
     "upcoming": [
       {
@@ -43,7 +43,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-02-22T22:10:06.533Z",
+        "enrichedAt": "2026-02-23T02:09:51.254Z",
         "_enrichHash": "3ab924add1c8bad0b577c3f8faafd0fb",
         "streamingSource": "tvkampen",
         "streamingConfidence": 1
@@ -81,7 +81,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-22T22:10:06.533Z",
+        "enrichedAt": "2026-02-23T02:09:51.254Z",
         "_enrichHash": "e05087869a51a8c081aed97f72378c6a",
         "streamingSource": "tvkampen",
         "streamingConfidence": 1
@@ -90,15 +90,239 @@
     "results": []
   },
   "matchResults": [],
-  "standings": null,
-  "watchPlan": null,
-  "rssHighlights": null,
+  "standings": {
+    "premierLeague": [
+      {
+        "position": 1,
+        "team": "Arsenal",
+        "teamShort": "ARS",
+        "played": 28,
+        "won": 18,
+        "drawn": 7,
+        "lost": 3,
+        "gd": 35,
+        "points": 61
+      },
+      {
+        "position": 2,
+        "team": "Manchester City",
+        "teamShort": "MNC",
+        "played": 27,
+        "won": 17,
+        "drawn": 5,
+        "lost": 5,
+        "gd": 31,
+        "points": 56
+      },
+      {
+        "position": 3,
+        "team": "Aston Villa",
+        "teamShort": "AVL",
+        "played": 27,
+        "won": 15,
+        "drawn": 6,
+        "lost": 6,
+        "gd": 10,
+        "points": 51
+      },
+      {
+        "position": 4,
+        "team": "Chelsea",
+        "teamShort": "CHE",
+        "played": 27,
+        "won": 12,
+        "drawn": 9,
+        "lost": 6,
+        "gd": 17,
+        "points": 45
+      },
+      {
+        "position": 5,
+        "team": "Manchester United",
+        "teamShort": "MAN",
+        "played": 26,
+        "won": 12,
+        "drawn": 9,
+        "lost": 5,
+        "gd": 10,
+        "points": 45
+      }
+    ],
+    "golf": {
+      "pga": {
+        "name": "The Genesis Invitational",
+        "leaderboard": [
+          {
+            "position": 1,
+            "player": "Jacob Bridgeman",
+            "score": "-18",
+            "today": "+1",
+            "thru": "-"
+          },
+          {
+            "position": 2,
+            "player": "Kurt Kitayama",
+            "score": "-17",
+            "today": "-7",
+            "thru": "-"
+          },
+          {
+            "position": 3,
+            "player": "Rory McIlroy",
+            "score": "-17",
+            "today": "-4",
+            "thru": "-"
+          },
+          {
+            "position": 4,
+            "player": "Adam Scott",
+            "score": "-16",
+            "today": "-8",
+            "thru": "-"
+          },
+          {
+            "position": 5,
+            "player": "Aldrich Potgieter",
+            "score": "-15",
+            "today": "-3",
+            "thru": "-"
+          }
+        ]
+      }
+    },
+    "f1": [
+      {
+        "position": 0,
+        "driver": "Fernando Alonso",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Lewis Hamilton",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Nico Hülkenberg",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Sergio Pérez",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Valtteri Bottas",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      }
+    ]
+  },
+  "watchPlan": {
+    "picks": [
+      {
+        "id": "football-manchester-united-at-everton-2026-02-23t20:00:00.000z",
+        "title": "Manchester United at Everton",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-02-23T20:00:00.000Z",
+        "timeLabel": "23 Feb, 21:00",
+        "relativeStart": "In 17h 50m",
+        "importance": 2,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 44,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-girona-at-alavés-2026-02-23t20:00:00.000z",
+        "title": "Girona at Alavés",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-02-23T20:00:00.000Z",
+        "timeLabel": "23 Feb, 21:00",
+        "relativeStart": "In 17h 50m",
+        "importance": 1,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 26,
+        "reasons": [
+          "Preferred sport"
+        ]
+      }
+    ],
+    "headline": "Bodo/Glimt one game from Champions League immortality"
+  },
+  "rssHighlights": [
+    {
+      "title": "Milan-Cortina 2026 closes with ceremony in Verona",
+      "source": "bbc-winter",
+      "sport": "olympics",
+      "link": "https://www.bbc.com/sport/articles/cgl5z5xg303o?at_medium=RSS&amp;at_campaign=rss"
+    },
+    {
+      "title": "Milan tapte på San Siro – ti poengs luke for Inter",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/milan-tapte-pa-san-siro-_-ti-poengs-luke-for-inter-1.17780935"
+    },
+    {
+      "title": "Milan tapte på San Siro – ti poengs luke for Inter",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/milan-tapte-pa-san-siro-_-ti-poengs-luke-for-inter-1.17780927"
+    },
+    {
+      "title": "Relive best moments from the 2026 Winter Olympics",
+      "source": "bbc-winter",
+      "sport": "olympics",
+      "link": "https://www.bbc.com/sport/videos/cg5nz417nero?at_medium=RSS&amp;at_campaign=rss"
+    },
+    {
+      "title": "Viktor Hovland med positiv avslutning i California",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/viktor-hovland-med-positiv-avslutning-i-california-1.17780871"
+    }
+  ],
   "meta": {
     "eventCount": 2,
     "sportsCovered": [
       "football"
     ],
     "hasResults": false,
-    "hasStandings": false
+    "hasStandings": true
   }
 }

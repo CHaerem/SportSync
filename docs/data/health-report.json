@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-23T01:59:22.048Z",
-  "eventCount": 30,
+  "generatedAt": "2026-02-23T02:12:02.652Z",
+  "eventCount": 38,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 21,
+      "count": 29,
       "previousCount": 21,
-      "delta": 0
+      "delta": 8
     },
     "cs2": {
       "count": 1,
@@ -45,40 +45,40 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 6,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 6,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 245,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -95,22 +95,21 @@
     "stale": false,
     "footballCount": 29,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.03,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.1,
-    "eventsEnriched": 2,
+    "matchRate": 0.21,
+    "eventsEnriched": 6,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results",
-      "1 expected day snapshot(s) missing"
+      "2 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -171,12 +170,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 10% (2/21) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "editorial_unsorted_events",
-      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
+      "message": "Streaming enrichment match rate is 21% (6/29) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -187,11 +181,6 @@
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) within event range have 0 events and 0 results"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "info",
@@ -217,26 +206,11 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
-    },
-    {
-      "severity": "warning",
-      "code": "model_change_quality_drop",
-      "message": "featured model changed (default → fallback) and quality dropped — correlation may indicate model capability gap"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [
-      {
-        "severity": "warning",
-        "code": "model_change_quality_drop",
-        "message": "featured model changed (default → fallback) and quality dropped — correlation may indicate model capability gap"
-      }
-    ],
-    "hasRegression": true
   }
 }

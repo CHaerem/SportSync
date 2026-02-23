@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-22T22:11:42.901Z",
-  "score": 97,
+  "generatedAt": "2026-02-23T02:12:04.616Z",
+  "score": 98,
   "tier": "file",
   "metrics": {
     "loadCompleteness": {
@@ -40,15 +40,9 @@
       "issues": []
     },
     "textReadability": {
-      "score": 80,
-      "details": "2 picks have no reasons",
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "picks_no_reasons",
-          "message": "2 picks have no reasons"
-        }
-      ]
+      "score": 100,
+      "details": "Watch plan OK",
+      "issues": []
     }
   },
   "issues": [
@@ -56,11 +50,6 @@
       "severity": "warning",
       "code": "low_aria_labels",
       "message": "Only 2 aria-label attributes (need >= 3)"
-    },
-    {
-      "severity": "warning",
-      "code": "picks_no_reasons",
-      "message": "2 picks have no reasons"
     }
   ],
   "vision": null

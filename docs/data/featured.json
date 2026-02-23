@@ -2,102 +2,16 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 3-0 Levante"
+      "text": "Bodo/Glimt one game from Champions League immortality"
     },
     {
       "type": "match-result",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
+      "homeTeam": "Tottenham Hotspur",
+      "awayTeam": "Arsenal"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Everton",
-      "awayTeam": "Manchester United",
-      "showStandings": false,
-      "_fallbackText": "⚽ Everton v Manchester United, 21:00, Premier League — United and Everton meet in an unremarkable PL clash — neither side fighting for anything significant this week"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Alavés",
-      "awayTeam": "Girona",
-      "showStandings": false,
-      "_fallbackText": "⚽ Alavés v Girona, 21:00, La Liga — Girona visit Alavés in a routine La Liga game with little to separate two average sides"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "section",
-      "id": "biathlon-wch-2026",
-      "title": "Biathlon World Championships 2026",
-      "emoji": "🏆",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti) 🇳🇴",
-          "type": "event"
-        },
-        {
-          "text": "Fri 16:10 — Biathlon World Cup — Men's 20km Individual (Kontiolahti) 🇳🇴",
-          "type": "event"
-        },
-        {
-          "text": "Sat 12:40 — Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti) 🇳🇴",
-          "type": "event"
-        },
-        {
-          "text": "Sat 14:40 — Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti) 🇳🇴",
-          "type": "event"
-        },
-        {
-          "text": "Sun 12:30 — Biathlon World Cup — Women's Relay 4×6km (Kontiolahti) 🇳🇴",
-          "type": "event"
-        },
-        {
-          "text": "Sun 15:55 — Biathlon World Cup — Men's 15km Mass Start (Kontiolahti) 🇳🇴",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "type": "narrative",
+      "text": "Arsenal's 4-1 demolition of Tottenham puts them five points clear at the top. Barcelona cruised 3-0 in La Liga. Norwegian sport has one focus now: Bodo/Glimt at San Siro — 3-1 up, one night from history."
     },
     {
       "type": "divider",
@@ -105,20 +19,19 @@
     },
     {
       "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt"
     },
     {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
+      "type": "event-group",
+      "label": "⚽ CL second legs to watch",
+      "items": [
+        "⚽ Tue 18:45 — Club Brugge at Atlético Madrid — all square after leg one, total knockout",
+        "⚽ Wed 21:00 — Monaco at PSG — 3-2 to PSG, one away goal flips this French derby",
+        "⚽ Wed 21:00 — Benfica at Real Madrid — Real's narrow lead, Estádio da Luz under pressure"
+      ]
     }
   ],
-  "generatedAt": "2026-02-23T02:03:12.008Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-23T02:12:01.105Z",
+  "provider": "claude-cli"
 }
