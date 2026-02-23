@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T10:24:56.641Z",
+  "generatedAt": "2026-02-23T11:22:01.897Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -62,11 +62,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 738,
+      "ageMinutes": 795,
       "stale": true
     },
     "tennis.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 10,
-    "sevenDay": 33,
+    "fiveHour": 13,
+    "sevenDay": 34,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 268811,
+    "totalDuration": 221351,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 150088,
-        "share": 56
+        "duration": 107125,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -176,12 +176,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 738 minutes old"
+      "message": "golf.json: data is 795 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 6 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 7 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 56% of total pipeline time (150s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 48% of total pipeline time (107s) — optimization candidate"
     },
     {
       "severity": "info",
