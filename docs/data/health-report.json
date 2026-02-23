@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T15:24:26.755Z",
+  "generatedAt": "2026-02-23T16:26:10.040Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -66,7 +66,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1037,
+      "ageMinutes": 1099,
       "stale": true
     },
     "tennis.json": {
@@ -131,22 +131,22 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 8,
+    "sevenDay": 35,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 236333,
+    "totalDuration": 301326,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 104099,
-        "share": 44
+        "duration": 180977,
+        "share": 60
       }
     ],
     "failedSteps": [
@@ -176,22 +176,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1037 minutes old"
+      "message": "golf.json: data is 1099 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 11 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 12 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 21% (6/29) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "editorial_unsorted_events",
-      "message": "This Week event-lines are not in chronological order — fallback generator needs sort fix"
     },
     {
       "severity": "warning",
@@ -216,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (104s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 60% of total pipeline time (181s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -231,7 +226,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
