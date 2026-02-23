@@ -1,39 +1,40 @@
 {
-  "generatedAt": "2026-02-23T08:22:06.283Z",
+  "generatedAt": "2026-02-23T09:26:23.618Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
+    "provider": "claude-cli",
+    "model": "default",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 90,
-    "issues": [
-      "11 blocks exceeds recommended max of 10."
-    ],
-    "blockCount": 11,
-    "generationMs": 180125,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 149317,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 32745,
+      "output": 8873,
+      "cacheCreation": 32742,
+      "cacheRead": 0,
+      "total": 41618,
+      "costUSD": 0.4264775,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 94,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.4,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Block count 11 is outside ideal range (3-8)"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,

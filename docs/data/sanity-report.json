@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T08:22:08.059Z",
+  "generatedAt": "2026-02-23T09:26:25.174Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 43,
@@ -67,17 +67,63 @@
         "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 11,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 94,
+    "editorialScore": 100,
     "issueCount": 14
   },
-  "findings": [],
+  "findings": [
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"The Olympic\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Verona\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Even Klopp\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"If Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+    }
+  ],
   "summary": {
-    "total": 0,
+    "total": 9,
     "critical": 0,
-    "warning": 0,
+    "warning": 9,
     "info": 0
   },
   "pass": true,

@@ -1,120 +1,40 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Barcelona 3-0 Levante"
+      "type": "narrative",
+      "text": "The Olympic flame went out in Verona last night. Norway leaves Milan-Cortina draped in gold — now all eyes shift to San Siro, where Bodo/Glimt arrive Tuesday with a 3-1 lead."
     },
     {
-      "type": "match-result",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Everton",
-      "awayTeam": "Manchester United",
-      "showStandings": false,
-      "_fallbackText": "⚽ Everton v Manchester United, 21:00, Premier League — United and Everton meet in an unremarkable PL clash — neither side fighting for anything significant this week"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Alavés",
-      "awayTeam": "Girona",
-      "showStandings": false,
-      "_fallbackText": "⚽ Alavés v Girona, 21:00, La Liga — Girona visit Alavés in a routine La Liga game with little to separate two average sides"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "section",
-      "id": "relive-best-moments-from-the-2026-winter",
-      "title": "Olympics 2026",
-      "emoji": "🏆",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Wed 09:00 — 2026 Paralympics - Wheelchair Curling Mixed Doubles",
-          "type": "event"
-        },
-        {
-          "text": "Fri 20:00 — 2026 Paralympic Winter Games - Opening Ceremony",
-          "type": "event"
-        },
-        {
-          "text": "Sat 10:00 — 2026 Paralympics - Para Alpine Skiing",
-          "type": "event"
-        },
-        {
-          "text": "Sun 10:00 — 2026 Paralympics - Para Biathlon",
-          "type": "event"
-        },
-        {
-          "text": "Mon 10:00 — 2026 Paralympics - Para Cross-Country Skiing",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "type": "event-line",
+      "text": "⚽ Mon 21:00 — Manchester United vs Everton, Premier League — United sit 5th, chasing Europe"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
+      "type": "headline",
+      "text": "Bodo/Glimt at San Siro — Norway's greatest Champions League night"
+    },
+    {
       "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt"
     },
     {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+      "type": "narrative",
+      "text": "Three goals up from the first leg. Even Klopp is stunned: \"Hva er det de holder på med?\" If Glimt hold at San Siro on Tuesday, it's the greatest night in Norwegian club football history."
     },
     {
-      "type": "event-line",
-      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
+      "type": "event-group",
+      "label": "⚽ Champions League — also this week",
+      "items": [
+        "Atlético Madrid vs Club Brugge, Tue 18:45 — all square after leg 1 ★4",
+        "AS Monaco vs PSG, Wed 21:00 — PSG lead 3-2, French derby very much alive ★4",
+        "Benfica vs Real Madrid, Wed 21:00 — Madrid's narrow lead under serious pressure ★4"
+      ]
     }
   ],
-  "generatedAt": "2026-02-23T08:22:06.269Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-23T09:26:23.605Z",
+  "provider": "claude-cli"
 }
