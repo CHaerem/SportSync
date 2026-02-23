@@ -1,32 +1,37 @@
 {
-  "generatedAt": "2026-02-23T21:23:37.139Z",
+  "generatedAt": "2026-02-23T22:21:18.379Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
+    "provider": "claude-cli",
+    "model": "default",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 9,
-    "generationMs": 180158,
+    "blockCount": 6,
+    "generationMs": 110436,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 32707,
+      "output": 6648,
+      "cacheCreation": 16771,
+      "cacheRead": 15933,
+      "total": 39355,
+      "costUSD": 0.27900025,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 97,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
     "issues": []
@@ -46,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.036,
+      "recapHeadlineRate": 0.033,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 28
+      "footballCount": 30
     },
     "issues": [
-      "Only 4% of results have recap headlines"
+      "Only 3% of results have recap headlines"
     ]
   },
   "enrichment": {

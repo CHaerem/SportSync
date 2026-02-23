@@ -2,105 +2,41 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 3-0 Levante"
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "section",
-      "id": "relive-best-moments-from-the-2026-winter",
-      "title": "Olympics 2026",
-      "emoji": "🏆",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Wed 09:00 — 2026 Paralympics - Wheelchair Curling Mixed Doubles",
-          "type": "event"
-        },
-        {
-          "text": "Fri 20:00 — 2026 Paralympic Winter Games - Opening Ceremony",
-          "type": "event"
-        },
-        {
-          "text": "Sat 10:00 — 2026 Paralympics - Para Alpine Skiing",
-          "type": "event"
-        },
-        {
-          "text": "Sun 10:00 — 2026 Paralympics - Para Biathlon",
-          "type": "event"
-        },
-        {
-          "text": "Mon 10:00 — 2026 Paralympics - Para Cross-Country Skiing",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
-    },
-    {
-      "type": "divider",
-      "text": "This Week"
+      "text": "Bodo/Glimt. San Siro. Norway's greatest night awaits."
     },
     {
       "type": "match-preview",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt"
     },
     {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+      "type": "narrative",
+      "text": "Bodø/Glimt carry a 3-1 first-leg lead to San Siro — no Norwegian club has ever reached the Champions League quarter-finals. Knutsen's side are one solid night away from the history books."
     },
     {
-      "type": "event-line",
-      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
+      "type": "event-group",
+      "label": "Also Tuesday — Champions League",
+      "items": [
+        "⚽ 18:45 — Atlético Madrid vs Club Brugge, all square on aggregate [★4]",
+        "⚽ 21:00 — Bayer Leverkusen vs Olympiacos, Leverkusen heavy favourites at BayArena",
+        "⚽ 21:00 — Newcastle United vs FK Qarabag, dead rubber (6-1 up)"
+      ]
+    },
+    {
+      "type": "divider",
+      "text": "Wednesday"
+    },
+    {
+      "type": "event-group",
+      "label": "Champions League — Wednesday night",
+      "items": [
+        "⚽ 21:00 — PSG vs Monaco, French derby on a knife-edge — Monaco one away goal from level [★4]",
+        "⚽ 21:00 — Real Madrid vs Benfica, narrow aggregate lead, expect a tense San Siro sequel [★4]",
+        "⚽ 18:45 — Atalanta vs Borussia Dortmund, Atalanta need two to level",
+        "⚽ 21:00 — Juventus vs Galatasaray, Juve in control — needs a historic collapse to go wrong"
+      ]
     }
   ],
-  "generatedAt": "2026-02-23T21:23:37.125Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-23T22:21:18.365Z",
+  "provider": "claude-cli"
 }
