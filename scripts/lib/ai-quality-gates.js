@@ -418,6 +418,8 @@ function mustWatchCoverage(blocks, events) {
 	const coveredSports = new Set(
 		blocks.filter(b => b.type === "event-schedule" && b.filter?.sport).map(b => b.filter.sport)
 	);
+	// golf-status blocks cover all golf events (they render the live leaderboard)
+	if (blocks.some(b => b.type === "golf-status")) coveredSports.add("golf");
 	const coveredTeams = new Set();
 	for (const b of blocks) {
 		if ((b.type === "match-result" || b.type === "match-preview") && b.homeTeam) {

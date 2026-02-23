@@ -323,6 +323,39 @@ describe("evaluateEditorialQuality()", () => {
 		const result = evaluateEditorialQuality(featured, events, { now });
 		expect(result.metrics.quietDayCompliance).toBeLessThan(1);
 	});
+
+	it("counts golf-status block as covering golf must-watch events", () => {
+		// This is the production pattern: golf tournament with no homeTeam/awayTeam,
+		// covered by a golf-status component block (not text or event-schedule)
+		const events = [
+			{ sport: "golf", title: "The Genesis Invitational", importance: 4, time: "2026-02-12T05:00:00Z", endTime: "2026-02-12T20:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Golf highlight today" },
+				{ type: "golf-status", tournament: "pga" },
+				{ type: "narrative", text: "Viktor Hovland in contention at Riviera." },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("returns mustWatchCoverage 1 when today has no importance ≥4 events", () => {
+		// Zero must-watch events today = nothing to miss = coverage is 1 by definition
+		const events = [
+			{ sport: "football", title: "Routine Match", importance: 2, time: "2026-02-12T20:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Quiet day in sports" },
+				{ type: "event-line", text: "⚽ Routine Match, 21:00" },
+				{ type: "divider", text: "Coming up" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
 });
 
 describe("evaluateWatchPlanQuality()", () => {
