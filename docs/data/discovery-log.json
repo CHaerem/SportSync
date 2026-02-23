@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-17T08:51:57.685Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-17T09:24:30.167Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -724,6 +718,28 @@
         "calls": 1,
         "total": 0,
         "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-02-23T06:30:03.754Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "olympics-tournament-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 5
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 100880,
+        "output": 3856,
+        "calls": 1,
+        "total": 104736,
+        "costUSD": 0.35241925,
         "tracked": true,
         "estimated": false
       }

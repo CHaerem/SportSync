@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-02-23T02:12:02.770Z",
+  "generatedAt": "2026-02-23T06:34:52.515Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 38,
+    "totalEvents": 43,
     "sports": [
       "golf",
       "football",
       "cs2",
+      "relive",
       "biathlon",
       "f1"
     ],
@@ -49,25 +50,35 @@
         "Celta Vigo at Girona"
       ],
       "later": [
+        "2026 Paralympics - Wheelchair Curling Mixed Doubles",
         "Biathlon World Cup — Women's 15km Individual (Kontiolahti)",
         "Qatar Airways Australian Grand Prix",
         "Biathlon World Cup — Men's 20km Individual (Kontiolahti)",
+        "2026 Paralympic Winter Games - Opening Ceremony",
+        "2026 Paralympics - Para Alpine Skiing",
         "Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti)",
         "Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti)",
+        "2026 Paralympics - Para Biathlon",
         "Biathlon World Cup — Women's Relay 4×6km (Kontiolahti)",
-        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)"
+        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)",
+        "2026 Paralympics - Para Cross-Country Skiing"
       ],
       "ended": [
         "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 15
+    "issueCount": 11
   },
   "findings": [
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 4 hours old"
+    },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
@@ -75,15 +86,35 @@
     },
     {
       "severity": "warning",
-      "check": "brief_league_conflation",
-      "message": "Block mixes PL standings language with non-PL team: \"Arsenal's 4-1 demolition of Tottenham puts them five points clear at the top. Ba...\""
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Even Klopp\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"2026 Paralympic Winter Games - Opening Ceremony\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"2026 Paralympics - Para Alpine Skiing\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"2026 Paralympics - Para Biathlon\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"2026 Paralympics - Para Cross-Country Skiing\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 2,
+    "total": 7,
     "critical": 0,
-    "warning": 2,
-    "info": 0
+    "warning": 3,
+    "info": 4
   },
   "pass": true,
   "tokenUsage": null

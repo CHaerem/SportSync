@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-23T02:12:02.702Z",
-  "overallScore": 0.98,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-23T06:34:52.676Z",
+  "overallScore": 1,
+  "loopsClosed": 12,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (7 min old) but has 3 actionable issue(s) (14 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (0 min old), 11 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -57,7 +57,7 @@
     "uxQuality": {
       "score": 1,
       "status": "closed",
-      "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 97/100 (passing), tier: file (file-based fallback with high score — acceptable)"
+      "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
     },
     "streamingVerification": {
       "score": 1,
@@ -65,7 +65,5 @@
       "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
-  "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
-  ]
+  "nextActions": []
 }
