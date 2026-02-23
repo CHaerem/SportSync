@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T16:26:10.040Z",
+  "generatedAt": "2026-02-23T17:31:21.786Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -66,7 +66,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1099,
+      "ageMinutes": 1164,
       "stale": true
     },
     "tennis.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 8,
+    "fiveHour": 9,
     "sevenDay": 35,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 301326,
+    "totalDuration": 283086,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 180977,
-        "share": 60
+        "duration": 162035,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -176,12 +176,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1099 minutes old"
+      "message": "golf.json: data is 1164 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 12 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 13 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 60% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 57% of total pipeline time (162s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -226,7 +226,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
