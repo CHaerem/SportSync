@@ -2,42 +2,119 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodo/Glimt 90 minutes from Norwegian football immortality at San Siro"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
-    },
-    {
-      "type": "narrative",
-      "text": "A 3-1 lead from Bodø is a luxury — but San Siro tests every nerve. A draw sends the Arctic club to the CL quarter-finals. Norwegian football's biggest night is 24 hours away."
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Tottenham Hotspur",
-      "awayTeam": "Arsenal"
+      "text": "Barcelona 3-0 Levante"
     },
     {
       "type": "match-result",
       "homeTeam": "Barcelona",
-      "awayTeam": "Levante"
+      "awayTeam": "Levante",
+      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Everton",
+      "awayTeam": "Manchester United",
+      "showStandings": false,
+      "_fallbackText": "⚽ Everton v Manchester United, 21:00, Premier League — United and Everton meet in an unremarkable PL clash — neither side fighting for anything significant this week"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Alavés",
+      "awayTeam": "Girona",
+      "showStandings": false,
+      "_fallbackText": "⚽ Alavés v Girona, 21:00, La Liga — Girona visit Alavés in a routine La Liga game with little to separate two average sides"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Tue 18:45 — Club Brugge at Atlético Madrid",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Olympiacos at Bayer Leverkusen",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Bodo/Glimt at Internazionale",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — FK Qarabag at Newcastle United",
+          "type": "event"
+        },
+        {
+          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Galatasaray at Juventus",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "relive-best-moments-from-the-2026-winter",
+      "title": "Olympics 2026",
+      "emoji": "🏆",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Wed 09:00 — 2026 Paralympics - Wheelchair Curling Mixed Doubles",
+          "type": "event"
+        },
+        {
+          "text": "Fri 20:00 — 2026 Paralympic Winter Games - Opening Ceremony",
+          "type": "event"
+        },
+        {
+          "text": "Sat 10:00 — 2026 Paralympics - Para Alpine Skiing",
+          "type": "event"
+        },
+        {
+          "text": "Sun 10:00 — 2026 Paralympics - Para Biathlon",
+          "type": "event"
+        },
+        {
+          "text": "Mon 10:00 — 2026 Paralympics - Para Cross-Country Skiing",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ The Genesis Invitational"
     },
     {
       "type": "divider",
-      "text": "Champions League — This Week"
+      "text": "This Week"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Tuesday & Wednesday second legs",
-      "items": [
-        "⚽ Tue 18:45 — Club Brugge vs Atlético Madrid — all square, must-win for Atlético at home",
-        "⚽ Tue 21:00 — Olympiacos vs Bayer Leverkusen — Leverkusen heavy favourites at the BayArena",
-        "⚽ Wed 21:00 — Monaco vs PSG — PSG lead 3-2, French derby decider on a knife's edge",
-        "⚽ Wed 21:00 — Benfica vs Real Madrid — Benfica need to overturn Madrid's slim advantage"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Club Brugge",
+      "showStandings": true,
+      "_fallbackText": "⚽ Tue 18:45 — Club Brugge at Atlético Madrid"
+    },
+    {
+      "type": "event-line",
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
     }
   ],
-  "generatedAt": "2026-02-23T14:25:54.523Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-23T15:24:25.107Z",
+  "provider": "fallback"
 }
