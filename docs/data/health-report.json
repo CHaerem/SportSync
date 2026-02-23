@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T18:28:05.557Z",
+  "generatedAt": "2026-02-23T19:30:34.870Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -50,15 +50,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
@@ -66,11 +66,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1221,
+      "ageMinutes": 1283,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 2,
     "sevenDay": 35,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 285204,
+    "totalDuration": 233624,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 157225,
-        "share": 55
+        "duration": 105745,
+        "share": 45
       }
     ],
     "failedSteps": [
@@ -176,12 +176,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1221 minutes old"
+      "message": "golf.json: data is 1283 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 14 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 15 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (157s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (106s) — optimization candidate"
     },
     {
       "severity": "info",
