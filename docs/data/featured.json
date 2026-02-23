@@ -2,11 +2,12 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Glimt carry 3-1 lead to San Siro — Norway holds its breath"
+      "text": "Glimt carry Norway's dream to San Siro — history awaits"
     },
     {
-      "type": "narrative",
-      "text": "Even Jürgen Klopp is asking \"What are they doing?\" Tomorrow night in Milan, Bodø/Glimt defend a stunning 3-1 first-leg lead against Internazionale. Norway's greatest-ever Champions League result is 90 minutes away."
+      "type": "match-result",
+      "homeTeam": "Tottenham Hotspur",
+      "awayTeam": "Arsenal"
     },
     {
       "type": "match-result",
@@ -14,9 +15,8 @@
       "awayTeam": "Levante"
     },
     {
-      "type": "match-result",
-      "homeTeam": "Tottenham Hotspur",
-      "awayTeam": "Arsenal"
+      "type": "narrative",
+      "text": "Arsenal are 5 points clear at the top after humiliating Spurs 4-1. Barcelona cruise 3-0. Tonight's PL and La Liga slate is forgettable — save everything for Tuesday."
     },
     {
       "type": "divider",
@@ -25,19 +25,28 @@
     {
       "type": "match-preview",
       "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt",
+      "awayTeam": "Bodø/Glimt",
       "showStandings": false
     },
     {
       "type": "event-group",
-      "label": "⚽ Champions League — also this week",
+      "label": "⚽ Champions League — Tuesday",
       "items": [
-        "Club Brugge at Atlético Madrid — Tue 18:45, all square after first leg ★",
-        "AS Monaco at PSG — Wed 21:00, PSG lead 3-2 in French derby ★",
-        "Benfica at Real Madrid — Wed 21:00, Real clinging to narrow aggregate lead ★"
+        "18:45 — Atlético Madrid vs Club Brugge — all square, must-win for Atleti",
+        "21:00 — Bayer Leverkusen vs Olympiacos — Leverkusen heavy favourites",
+        "21:00 — Newcastle United vs FK Qarabag — 6-1 on aggregate, dead rubber"
+      ]
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Champions League — Wednesday",
+      "items": [
+        "18:45 — Atalanta vs Borussia Dortmund — Atalanta need two goals to overturn 2-0 deficit",
+        "21:00 — AS Monaco vs PSG — PSG lead 3-2, French derby far from settled",
+        "21:00 — Benfica vs Real Madrid — narrow Madrid lead, tense night at Estádio da Luz"
       ]
     }
   ],
-  "generatedAt": "2026-02-23T11:22:00.284Z",
+  "generatedAt": "2026-02-23T12:21:02.711Z",
   "provider": "claude-cli"
 }

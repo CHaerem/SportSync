@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T11:22:01.897Z",
+  "generatedAt": "2026-02-23T12:21:04.306Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -66,7 +66,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 795,
+      "ageMinutes": 854,
       "stale": true
     },
     "tennis.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 13,
+    "fiveHour": 18,
     "sevenDay": 34,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 221351,
+    "totalDuration": 242588,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 107125,
-        "share": 48
+        "duration": 123028,
+        "share": 51
       }
     ],
     "failedSteps": [
@@ -176,17 +176,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 795 minutes old"
+      "message": "golf.json: data is 854 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 7 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 8 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 21% (6/29) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Internazionale vs Bodø/Glimt has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -211,7 +216,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 48% of total pipeline time (107s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 51% of total pipeline time (123s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -226,7 +231,11 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [],
+    "hasRegression": false
   }
 }
