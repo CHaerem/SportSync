@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T19:30:33.321Z",
+  "generatedAt": "2026-02-23T20:19:22.828Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 85664,
+    "blockCount": 7,
+    "generationMs": 124872,
     "tokenUsage": {
-      "input": 32784,
-      "output": 4862,
-      "cacheCreation": 32781,
-      "cacheRead": 0,
-      "total": 37646,
-      "costUSD": 0.32644625,
+      "input": 32800,
+      "output": 7930,
+      "cacheCreation": 16864,
+      "cacheRead": 15933,
+      "total": 40730,
+      "costUSD": 0.31163149999999995,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 63,
+      "avgScore": 87,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.034,
+      "recapHeadlineRate": 0.036,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 29
+      "footballCount": 28
     },
     "issues": [
-      "Only 3% of results have recap headlines"
+      "Only 4% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 43,
+      "totalEvents": 41,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 43,
+      "totalEvents": 41,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 43,
+    "totalEvents": 41,
     "skipStats": {
-      "total": 43,
-      "unchanged": 43,
+      "total": 41,
+      "unchanged": 41,
       "enriched": 0,
       "skipRate": 1
     },

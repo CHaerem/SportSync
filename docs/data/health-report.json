@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-23T19:30:34.870Z",
-  "eventCount": 43,
+  "generatedAt": "2026-02-23T20:19:24.317Z",
+  "eventCount": 41,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 29,
+      "count": 27,
       "previousCount": 29,
-      "delta": 0
+      "delta": -2
     },
     "cs2": {
       "count": 1,
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1283,
+      "ageMinutes": 1332,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -98,23 +98,23 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 29,
+    "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.03,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.21,
-    "eventsEnriched": 6,
+    "matchRate": 0.15,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results"
+      "3 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 2,
+    "fiveHour": 4,
     "sevenDay": 35,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 233624,
+    "totalDuration": 207168,
     "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 105745,
-        "share": 45
+        "duration": 86484,
+        "share": 42
       }
     ],
     "failedSteps": [
@@ -176,17 +176,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1283 minutes old"
+      "message": "golf.json: data is 1332 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 15 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 16 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 21% (6/29) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 15% (4/27) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "2 day snapshot(s) within event range have 0 events and 0 results"
+      "message": "3 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -211,7 +211,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (106s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 42% of total pipeline time (86s) — optimization candidate"
     },
     {
       "severity": "info",
