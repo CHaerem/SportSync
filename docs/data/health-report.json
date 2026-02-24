@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T20:15:41.495Z",
+  "generatedAt": "2026-02-24T21:15:59.336Z",
   "eventCount": 39,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 24,
-      "previousCount": 27,
-      "delta": -3
+      "previousCount": 24,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
@@ -65,7 +65,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 27,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 1,
     "sevenDay": 43,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 203912,
+    "totalDuration": 215017,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 88714,
-        "share": 44
+        "duration": 104172,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -191,7 +191,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (89s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 48% of total pipeline time (104s) — optimization candidate"
     },
     {
       "severity": "info",
