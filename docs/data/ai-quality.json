@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T11:36:36.166Z",
+  "generatedAt": "2026-02-24T11:46:25.454Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 173264,
+    "blockCount": 8,
+    "generationMs": 88089,
     "tokenUsage": {
-      "input": 33369,
-      "output": 10431,
-      "cacheCreation": 33366,
-      "cacheRead": 0,
-      "total": 43800,
-      "costUSD": 0.46932749999999995,
+      "input": 33454,
+      "output": 4547,
+      "cacheCreation": 14987,
+      "cacheRead": 18464,
+      "total": 38001,
+      "costUSD": 0.21659075,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 87,
+      "avgScore": 101,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 42,
+      "totalEvents": 43,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 42,
+      "totalEvents": 43,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 5,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
-    "totalEvents": 42,
+    "totalEvents": 43,
     "skipStats": {
-      "total": 42,
-      "unchanged": 37,
-      "enriched": 5,
-      "skipRate": 0.88
+      "total": 43,
+      "unchanged": 42,
+      "enriched": 1,
+      "skipRate": 0.98
     },
-    "tokensPerEvent": 5802,
+    "tokensPerEvent": 28187,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 28648,
-      "output": 364,
+      "input": 28094,
+      "output": 93,
       "calls": 1,
-      "total": 29012,
-      "costUSD": 0.08900475000000001,
+      "total": 28187,
+      "costUSD": 0.07876725,
       "tracked": true,
       "estimated": false
     }
@@ -118,5 +118,16 @@
     "tasksExecuted": 1,
     "succeeded": 1,
     "failed": 0
+  },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 33454,
+      "output": 4547,
+      "calls": 1,
+      "total": 38001,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-02-24T11:46:25.737Z"
   }
 }

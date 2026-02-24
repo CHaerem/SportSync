@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-24T11:36:37.999Z",
+  "generatedAt": "2026-02-24T11:47:46.317Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 42,
+    "totalEvents": 43,
     "sports": [
       "golf",
-      "football",
       "esports",
+      "football",
       "biathlon",
       "f1",
       "olympics"
@@ -14,6 +14,7 @@
     "bands": {
       "live": [],
       "today": [
+        "DraculaN Season 5 - 100 Thieves vs MANA",
         "Club Brugge at Atlético Madrid",
         "Olympiacos at Bayer Leverkusen",
         "Bodo/Glimt at Internazionale",
@@ -66,49 +67,24 @@
         "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 13
   },
   "findings": [
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Paralympic Winter Games 2026 — Opening Ceremony\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Paralympic Winter Games 2026 — Para Alpine Skiing\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Paralympic Winter Games 2026 — Para Biathlon & Cross-Country\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing\" marked norwegian=true but has no norwegianPlayers"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 6,
+    "total": 1,
     "critical": 0,
     "warning": 1,
-    "info": 5
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null

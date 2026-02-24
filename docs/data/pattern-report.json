@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T11:36:38.038Z",
+  "generatedAt": "2026-02-24T11:47:46.666Z",
   "patternsDetected": 23,
   "patterns": [
     {
@@ -33,10 +33,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 193,
+      "count": 194,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 193 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 194 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -87,10 +87,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 124,
+      "count": 125,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 124 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 125 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -105,45 +105,45 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "ux_eval_fallback",
-      "count": 58,
+      "count": 59,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"ux_eval_fallback\" has fired 58 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"ux_eval_fallback\" has fired 59 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "invisible_events",
-      "count": 31,
+      "count": 32,
       "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"invisible_events\" has fired 31 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"invisible_events\" has fired 32 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "stale_data",
-      "count": 29,
+      "count": 30,
       "firstSeen": "2026-02-23T07:31:15.404Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"stale_data\" has fired 29 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"stale_data\" has fired 30 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "chronic_data_retention",
-      "count": 28,
+      "count": 29,
       "firstSeen": "2026-02-23T08:22:08.134Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z",
-      "suggestion": "Health warning \"chronic_data_retention\" has fired 28 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T11:47:46.602Z",
+      "suggestion": "Health warning \"chronic_data_retention\" has fired 29 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 12,
+      "fireCount": 11,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no matching athlete found in events data; Fe",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no m...\" has fired 12 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no m...\" has fired 11 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
@@ -234,9 +234,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "low_confidence_config": {
-      "count": 193,
+      "count": 194,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     },
     "component_unresolvable": {
       "count": 35,
@@ -264,9 +264,9 @@
       "lastSeen": "2026-02-21T12:11:52.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 124,
+      "count": 125,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -289,9 +289,9 @@
       "lastSeen": "2026-02-21T14:32:50.572Z"
     },
     "ux_eval_fallback": {
-      "count": 58,
+      "count": 59,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     },
     "model_change_quality_drop": {
       "count": 5,
@@ -304,9 +304,9 @@
       "lastSeen": "2026-02-24T02:03:31.876Z"
     },
     "invisible_events": {
-      "count": 31,
+      "count": 32,
       "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     },
     "missing_snapshot": {
       "count": 5,
@@ -314,27 +314,32 @@
       "lastSeen": "2026-02-24T02:13:06.153Z"
     },
     "stale_data": {
-      "count": 29,
+      "count": 30,
       "firstSeen": "2026-02-23T07:31:15.404Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     },
     "chronic_data_retention": {
-      "count": 28,
+      "count": 29,
       "firstSeen": "2026-02-23T08:22:08.134Z",
-      "lastSeen": "2026-02-24T11:36:37.960Z"
+      "lastSeen": "2026-02-24T11:47:46.602Z"
+    },
+    "norwegian_tagging_anomaly": {
+      "count": 1,
+      "firstSeen": "2026-02-24T11:47:46.602Z",
+      "lastSeen": "2026-02-24T11:47:46.602Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
       "improved": 2,
-      "unchanged": 15,
-      "worsened": 1,
+      "unchanged": 14,
+      "worsened": 2,
       "effectivenessRate": 0.11
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-24T11:36:38.037Z",
+    "recordedAt": "2026-02-24T11:47:46.665Z",
     "moduleCount": 60,
     "avgModuleSize": 311,
     "pipelineSteps": 25,

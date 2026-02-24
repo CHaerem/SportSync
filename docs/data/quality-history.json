@@ -1,92 +1,5 @@
 [
   {
-    "timestamp": "2026-02-22T10:27:11.653Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 0.75,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 107,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 25,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 14,
-      "warningCount": 12,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"Bodø/Glimt host Internazionale in the Champions League — Tue\" which may not match any event; Featured mentions \"Yesterday Real Madrid\" but no matching athlete found in events data; Featured mentions \"Osasuna\" but no matching athlete found in events data; Featured mentions \"Sørloth\" but no matching athlete found in events data; Featured mentions \"Grand Final\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33015,
-        "output": 6959,
-        "cacheCreation": 33012,
-        "cacheRead": 0,
-        "total": 39974,
-        "costUSD": 0.38031499999999996,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 33015,
-        "output": 6959,
-        "calls": 1,
-        "total": 39974,
-        "costUSD": 0.38031499999999996,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 2,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 98.143,
-      "mustWatchCoverage": 0.964,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-22T13:28:42.791Z",
     "editorial": {
       "score": 93,
@@ -7596,6 +7509,101 @@
         "calls": 3,
         "total": 221079,
         "costUSD": 0.852279,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 99.143,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-24T11:46:25.461Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 101,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.033,
+      "goalScorerCoverage": 1,
+      "footballCount": 30,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 6,
+      "warningCount": 1,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Europe\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 28094,
+        "output": 93,
+        "calls": 1,
+        "total": 28187,
+        "costUSD": 0.07876725,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 33454,
+        "output": 4547,
+        "cacheCreation": 14987,
+        "cacheRead": 18464,
+        "total": 38001,
+        "costUSD": 0.21659075,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 145266,
+        "output": 3001,
+        "calls": 1,
+        "total": 148267,
+        "costUSD": 0.29394675000000003,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": null,
+      "total": {
+        "input": 206814,
+        "output": 7641,
+        "calls": 3,
+        "total": 214455,
+        "costUSD": 0.58930475,
         "realPct": 100
       }
     },

@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-24T11:36:37.800Z",
-  "eventCount": 42,
+  "generatedAt": "2026-02-24T11:47:46.438Z",
+  "eventCount": 43,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
+    "esports": {
+      "count": 2,
+      "previousCount": 1,
+      "delta": 1
+    },
     "football": {
       "count": 28,
       "previousCount": 28,
-      "delta": 0
-    },
-    "esports": {
-      "count": 1,
-      "previousCount": 1,
       "delta": 0
     },
     "biathlon": {
@@ -29,8 +29,8 @@
     },
     "olympics": {
       "count": 5,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 5,
+      "delta": 0
     },
     "chess": {
       "count": 0,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2249,
+      "ageMinutes": 2260,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -109,7 +109,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results"
+      "1 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -127,21 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 30,
+    "fiveHour": 39,
     "sevenDay": 41,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 387451,
+    "totalDuration": 445778,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 180246,
-        "share": 47
+        "duration": 135065,
+        "share": 30
+      },
+      {
+        "name": "generate-featured",
+        "duration": 174058,
+        "share": 39
       }
     ],
     "failedSteps": [
@@ -166,22 +171,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2249 minutes old"
+      "message": "golf.json: data is 2260 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 27 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 28 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "norwegian_tagging_anomaly",
-      "message": "olympics: 5/5 events tagged Norwegian but only 0 have Norwegian players — likely false positives in name matching"
     },
     {
       "severity": "warning",
@@ -191,7 +191,7 @@
     {
       "severity": "info",
       "code": "empty_day_snapshot",
-      "message": "2 day snapshot(s) within event range have 0 events and 0 results"
+      "message": "1 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -206,7 +206,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 47% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 30% of total pipeline time (135s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"generate-featured\" used 39% of total pipeline time (174s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -221,7 +226,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
