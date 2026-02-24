@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T15:26:03.641Z",
+  "generatedAt": "2026-02-24T16:29:37.470Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2479,
+      "ageMinutes": 2542,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -87,7 +87,7 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": true,
+    "pgaGolf": false,
     "f1Drivers": true
   },
   "resultsHealth": {
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 2,
     "sevenDay": 42,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 249774,
+    "totalDuration": 211687,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 122567,
-        "share": 49
+        "duration": 92791,
+        "share": 44
       }
     ],
     "failedSteps": [
@@ -166,12 +166,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2479 minutes old"
+      "message": "golf.json: data is 2542 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 32 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 33 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "standings_empty",
+      "message": "pgaGolf standings data is empty"
     },
     {
       "severity": "warning",
@@ -201,7 +206,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 49% of total pipeline time (123s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (93s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -216,7 +221,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
