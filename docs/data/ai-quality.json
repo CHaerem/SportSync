@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T19:26:14.296Z",
+  "generatedAt": "2026-02-24T20:15:39.794Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 87900,
+    "generationMs": 103404,
     "tokenUsage": {
-      "input": 33408,
-      "output": 5458,
-      "cacheCreation": 14941,
+      "input": 33286,
+      "output": 6593,
+      "cacheCreation": 14819,
       "cacheRead": 18464,
-      "total": 38866,
-      "costUSD": 0.23907825,
+      "total": 39879,
+      "costUSD": 0.26669075,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 87,
+      "avgScore": 81,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.034,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 29
+      "footballCount": 28
     },
     "issues": [
-      "Only 3% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 42,
+      "totalEvents": 39,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 42,
+      "totalEvents": 39,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 42,
+    "totalEvents": 39,
     "skipStats": {
-      "total": 42,
-      "unchanged": 42,
+      "total": 39,
+      "unchanged": 39,
       "enriched": 0,
       "skipRate": 1
     },

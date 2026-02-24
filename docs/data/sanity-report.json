@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-24T19:26:16.294Z",
+  "generatedAt": "2026-02-24T20:15:41.727Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 42,
+    "totalEvents": 39,
     "sports": [
       "esports",
       "football",
@@ -15,11 +15,7 @@
       "live": [
         "DraculaN Season 5 - 100 Thieves vs MANA"
       ],
-      "today": [
-        "Olympiacos at Bayer Leverkusen",
-        "Bodo/Glimt at Internazionale",
-        "FK Qarabag at Newcastle United"
-      ],
+      "today": [],
       "tomorrow": [
         "Borussia Dortmund at Atalanta",
         "Galatasaray at Juventus",
@@ -70,13 +66,29 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 11
+    "issueCount": 10
   },
-  "findings": [],
+  "findings": [
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Alexander Sørloth\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
+    }
+  ],
   "summary": {
-    "total": 0,
+    "total": 3,
     "critical": 0,
-    "warning": 0,
+    "warning": 3,
     "info": 0
   },
   "pass": true,

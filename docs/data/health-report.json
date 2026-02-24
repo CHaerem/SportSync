@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-24T19:26:16.144Z",
-  "eventCount": 42,
+  "generatedAt": "2026-02-24T20:15:41.495Z",
+  "eventCount": 39,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 27,
+      "count": 24,
       "previousCount": 27,
-      "delta": 0
+      "delta": -3
     },
     "golf": {
       "count": 1,
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
@@ -65,7 +65,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -93,16 +93,16 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 29,
+    "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.03,
+    "recapHeadlineRate": 0,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.26,
-    "eventsEnriched": 7,
+    "matchRate": 0.17,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 7,
+    "fiveHour": 0,
     "sevenDay": 43,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 225490,
+    "totalDuration": 203912,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 105869,
-        "share": 47
+        "duration": 88714,
+        "share": 44
       }
     ],
     "failedSteps": [
@@ -166,7 +166,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 26% (7/27) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 17% (4/24) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -191,7 +191,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 47% of total pipeline time (106s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (89s) — optimization candidate"
     },
     {
       "severity": "info",
