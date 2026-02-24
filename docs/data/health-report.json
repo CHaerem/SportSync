@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-24T02:04:11.334Z",
-  "eventCount": 41,
+  "generatedAt": "2026-02-24T02:13:06.043Z",
+  "eventCount": 42,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 27,
+      "count": 28,
       "previousCount": 27,
-      "delta": 0
+      "delta": 1
     },
     "esports": {
       "count": 1,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1677,
+      "ageMinutes": 1686,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -101,16 +101,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.15,
-    "eventsEnriched": 4,
+    "matchRate": 0.29,
+    "eventsEnriched": 8,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results",
-      "1 expected day snapshot(s) missing"
+      "2 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -167,17 +166,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1677 minutes old"
+      "message": "golf.json: data is 1686 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 18 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 19 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 15% (4/27) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -188,11 +187,6 @@
       "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) within event range have 0 events and 0 results"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "info",
@@ -222,7 +216,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 94/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

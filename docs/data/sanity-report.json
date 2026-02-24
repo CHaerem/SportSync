@@ -1,30 +1,31 @@
 {
-  "generatedAt": "2026-02-23T22:21:20.109Z",
+  "generatedAt": "2026-02-24T02:13:06.297Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 41,
+    "totalEvents": 42,
     "sports": [
       "golf",
       "football",
-      "cs2",
-      "relive",
+      "esports",
+      "olympics",
       "biathlon",
       "f1"
     ],
     "bands": {
       "live": [],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Club Brugge at Atlético Madrid",
         "Olympiacos at Bayer Leverkusen",
         "Bodo/Glimt at Internazionale",
         "FK Qarabag at Newcastle United"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Borussia Dortmund at Atalanta",
         "Galatasaray at Juventus",
         "AS Monaco at Paris Saint-Germain",
-        "Benfica at Real Madrid",
+        "Benfica at Real Madrid"
+      ],
+      "thisWeek": [
         "ESL Pro League Season 23 - Stage 1 (Online)",
         "Aston Villa at Wolverhampton Wanderers",
         "Alavés at Levante",
@@ -44,7 +45,8 @@
         "Osasuna at Valencia",
         "Chelsea at Arsenal",
         "Sevilla at Real Betis",
-        "Celta Vigo at Girona"
+        "Celta Vigo at Girona",
+        "Getafe at Real Madrid"
       ],
       "later": [
         "2026 Paralympics - Wheelchair Curling Mixed Doubles",
@@ -64,11 +66,11 @@
         "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 15
+    "issueCount": 12
   },
   "findings": [
     {
@@ -79,7 +81,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Knutsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Finland\" but no matching athlete found in events data"
     }
   ],
   "summary": {

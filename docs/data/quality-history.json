@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-22T01:55:39.306Z",
-    "editorial": {
-      "score": 94,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 13
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 90,
-      "blockCount": 13,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 105,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 25,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 12,
-      "warningCount": 12,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured shows \"13:00\" for \"Cross-Country Skiing — Women's 30km Mass Start Classic\" but events.json has 10:00. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 94,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-22T02:01:58.683Z",
     "editorial": {
       "score": 94,
@@ -7522,6 +7457,93 @@
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "enrichmentScore": null,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-24T02:13:04.424Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 87,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.033,
+      "goalScorerCoverage": 1,
+      "footballCount": 30,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 2,
+      "warningCount": 2,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Knutsen\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 28063,
+        "output": 646,
+        "calls": 1,
+        "total": 28709,
+        "costUSD": 0.19154000000000002,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 33334,
+        "output": 6750,
+        "cacheCreation": 16942,
+        "cacheRead": 16389,
+        "total": 40084,
+        "costUSD": 0.28284699999999996,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 61397,
+        "output": 7396,
+        "calls": 2,
+        "total": 68793,
+        "costUSD": 0.474387,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94.857,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
       "resultsScore": 90
     }
   }
