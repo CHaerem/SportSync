@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T11:47:46.438Z",
+  "generatedAt": "2026-02-24T12:20:51.022Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "esports": {
       "count": 2,
-      "previousCount": 1,
-      "delta": 1
+      "previousCount": 2,
+      "delta": 0
     },
     "football": {
       "count": 28,
@@ -45,35 +45,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2260,
+      "ageMinutes": 2294,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -127,28 +127,17 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 39,
-    "sevenDay": 41,
+    "fiveHour": 44,
+    "sevenDay": 42,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 445778,
+    "totalDuration": 297564,
     "stepCount": 25,
     "timeoutHits": [],
-    "dominantSteps": [
-      {
-        "name": "discover-events",
-        "duration": 135065,
-        "share": 30
-      },
-      {
-        "name": "generate-featured",
-        "duration": 174058,
-        "share": 39
-      }
-    ],
+    "dominantSteps": [],
     "failedSteps": [
       "verify-schedules"
     ]
@@ -171,12 +160,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2260 minutes old"
+      "message": "golf.json: data is 2294 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 28 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 29 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -205,16 +194,6 @@
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 30% of total pipeline time (135s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 39% of total pipeline time (174s) — optimization candidate"
-    },
-    {
-      "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
     },
@@ -226,7 +205,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
