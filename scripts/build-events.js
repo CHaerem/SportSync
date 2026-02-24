@@ -66,7 +66,7 @@ if (fs.existsSync(configDir)) {
 	for (const file of configFiles) {
 		const config = readJsonIfExists(path.join(configDir, file));
 		if (!config || !Array.isArray(config.events)) continue;
-		const sport = config.context?.split("-")[0] || file.replace(".json", "").split("-")[0];
+		const sport = config.sport || config.context?.split("-")[0] || file.replace(".json", "").split("-")[0];
 		const tournamentName = config.name || file.replace(".json", "");
 		console.log(`  Curated config: ${file} → ${config.events.length} events (sport: ${sport})`);
 		config.events.forEach((ev) => {
