@@ -1,14 +1,15 @@
 {
-  "generatedAt": "2026-02-24T11:24:40.874Z",
+  "generatedAt": "2026-02-24T11:36:37.999Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 37,
+    "totalEvents": 42,
     "sports": [
       "golf",
       "football",
       "esports",
       "biathlon",
-      "f1"
+      "f1",
+      "olympics"
     ],
     "bands": {
       "live": [],
@@ -51,10 +52,15 @@
         "Biathlon World Cup — Women's 15km Individual (Kontiolahti)",
         "Qatar Airways Australian Grand Prix",
         "Biathlon World Cup — Men's 20km Individual (Kontiolahti)",
+        "Paralympic Winter Games 2026 — Opening Ceremony",
+        "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events",
         "Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti)",
         "Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti)",
+        "Paralympic Winter Games 2026 — Para Alpine Skiing",
         "Biathlon World Cup — Women's Relay 4×6km (Kontiolahti)",
-        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)"
+        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)",
+        "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country",
+        "Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing"
       ],
       "ended": [
         "The Genesis Invitational"
@@ -62,28 +68,48 @@
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 12
   },
   "findings": [
     {
-      "severity": "critical",
-      "check": "sport_vanished",
-      "message": "olympics: 0 events (was 5)"
-    },
-    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Paralympic Winter Games 2026 — Opening Ceremony\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Paralympic Winter Games 2026 — Para Alpine Skiing\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Paralympic Winter Games 2026 — Para Biathlon & Cross-Country\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 2,
-    "critical": 1,
+    "total": 6,
+    "critical": 0,
     "warning": 1,
-    "info": 0
+    "info": 5
   },
-  "pass": false,
+  "pass": true,
   "tokenUsage": null
 }
