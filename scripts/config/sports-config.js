@@ -158,12 +158,19 @@ export const sportsConfig = {
 	esports: {
 		sport: "esports",
 		enabled: true,
-		source: "HLTV community API",
+		source: "Liquipedia API",
 		sources: [
 			{
-				api: "hltv",
-				type: "community",
-				url: "https://hltv-api.vercel.app/api/matches.json"
+				api: "liquipedia",
+				type: "wiki",
+				url: "https://liquipedia.net/counterstrike/api.php",
+				params: {
+					action: "parse",
+					page: "Liquipedia:Matches",
+					format: "json",
+					prop: "text"
+				},
+				attribution: "Data from Liquipedia (CC-BY-SA 3.0)"
 			},
 			{
 				api: "fallback",
