@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T06:27:55.108Z",
+  "generatedAt": "2026-02-24T07:27:46.589Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 42,
@@ -75,13 +75,13 @@
   "findings": [
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Stats\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Survive\" but no matching athlete found in events data"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     }
   ],
   "summary": {
