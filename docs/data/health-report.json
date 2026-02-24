@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T11:14:09.010Z",
+  "generatedAt": "2026-02-24T11:24:40.682Z",
   "eventCount": 37,
   "sportCoverage": {
     "golf": {
@@ -26,11 +26,6 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
-    },
-    "olympics": {
-      "count": 0,
-      "previousCount": 5,
-      "delta": -5
     },
     "chess": {
       "count": 0,
@@ -61,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2227,
+      "ageMinutes": 2237,
       "stale": true
     },
     "tennis.json": {
@@ -153,11 +148,6 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "olympics: 0 events (was 5)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
@@ -170,7 +160,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2227 minutes old"
+      "message": "golf.json: data is 2237 minutes old"
     },
     {
       "severity": "warning",
@@ -218,9 +208,9 @@
       "message": "Config esports-cs2-2026.json has low verification confidence (0.5) with upcoming events — schedule may be inaccurate"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
