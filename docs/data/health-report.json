@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-02-24T11:02:35.777Z",
-  "eventCount": 42,
+  "generatedAt": "2026-02-24T11:07:31.360Z",
+  "eventCount": 51,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
+    "esports": {
+      "count": 10,
+      "previousCount": 1,
+      "delta": 9
+    },
     "football": {
       "count": 28,
       "previousCount": 28,
-      "delta": 0
-    },
-    "esports": {
-      "count": 1,
-      "previousCount": 1,
       "delta": 0
     },
     "olympics": {
@@ -57,11 +57,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2215,
+      "ageMinutes": 2220,
       "stale": true
     },
     "tennis.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -149,8 +149,11 @@
     ]
   },
   "unmappedLeagues": [
+    "Parken Championship #1 - Playoffs",
     "CS2 Major Tournaments 2026",
-    "Olympics 2026"
+    "Olympics 2026",
+    "BLAST Open Spring 2026 - Group A",
+    "BLAST Open Spring 2026 - Group B"
   ],
   "issues": [
     {
@@ -166,7 +169,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2215 minutes old"
+      "message": "golf.json: data is 2220 minutes old"
     },
     {
       "severity": "warning",
@@ -177,11 +180,6 @@
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Internazionale vs Bodø/Glimt has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -196,7 +194,7 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
+      "message": "5 tournament(s) lack league theming: Parken Championship #1 - Playoffs, CS2 Major Tournaments 2026, Olympics 2026, BLAST Open Spring 2026 - Group A, BLAST Open Spring 2026 - Group B"
     },
     {
       "severity": "warning",
@@ -221,7 +219,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
     "tokenUsage": null
   }
 }
