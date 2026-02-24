@@ -1,100 +1,5 @@
 [
   {
-    "timestamp": "2026-02-22T17:14:15.553Z",
-    "editorial": {
-      "score": 70,
-      "mustWatchCoverage": 0,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 2,
-      "avgScore": 64,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 27,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 15,
-      "warningCount": 15,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Man City\" but no matching athlete found in events data; Featured mentions \"Lose\" but no matching athlete found in events data; Featured mentions \"Major Grand Final\" but no matching athlete found in events data; Featured mentions \"Counter\" but no matching athlete found in events data; Featured mentions \"Strike\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32472,
-        "output": 6022,
-        "cacheCreation": 16536,
-        "cacheRead": 15933,
-        "total": 38494,
-        "costUSD": 0.2618815,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 1,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": null,
-      "total": {
-        "input": 32472,
-        "output": 6022,
-        "calls": 2,
-        "total": 38494,
-        "costUSD": 0.2618815,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 89.429,
-      "mustWatchCoverage": 0.643,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-22T18:17:39.488Z",
     "editorial": {
       "score": 94,
@@ -7633,6 +7538,108 @@
         "calls": 3,
         "total": 227268,
         "costUSD": 0.6916805,
+        "realPct": 83
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-24T15:26:01.897Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 95,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.033,
+      "goalScorerCoverage": 1,
+      "footballCount": 30,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 3,
+      "warningCount": 3,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Arctic\" but no matching athlete found in events data; Featured mentions \"Meazza\" but no matching athlete found in events data; Featured mentions \"Europe\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 33472,
+        "output": 5367,
+        "cacheCreation": 33469,
+        "cacheRead": 0,
+        "total": 38839,
+        "costUSD": 0.34337125,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 145266,
+        "output": 3001,
+        "calls": 1,
+        "total": 148267,
+        "costUSD": 0.29394675000000003,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 33454,
+        "output": 4547,
+        "calls": 1,
+        "total": 38001,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 212192,
+        "output": 12915,
+        "calls": 3,
+        "total": 225107,
+        "costUSD": 0.637318,
         "realPct": 83
       }
     },
