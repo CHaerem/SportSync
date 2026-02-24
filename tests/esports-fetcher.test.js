@@ -12,12 +12,12 @@ function buildMockMatchHtml({ team1 = 'FaZe', team2 = 'NAVI', timestamp, tournam
 		   <span class="match-info-header-scoreholder-score">${score2}</span>`
 		: '';
 	return `<div class="match-info">
-		<span class="match-info-countdown"><span class="timer-object" data-timestamp="${ts}"></span></span>
-		<span class="name" style="text-overflow:ellipsis"><a href="/counterstrike/${team1}">${team1}</a></span>
-		<span class="name" style="text-overflow:ellipsis"><a href="/counterstrike/${team2}">${team2}</a></span>
-		<span class="match-info-header-scoreholder-lower">(${format})</span>
+		<span class="timer-object" data-timestamp="${ts}"></span>
+		<span class="name"><a href="/counterstrike/${team1}">${team1}</a></span>
+		<span class="name"><a href="/counterstrike/${team2}">${team2}</a></span>
+		<div class="match-info-tournament-name"><a href="/tournament">${tournament}</a></div>
+		<div class="match-info-header-scoreholder-lower">${format}</div>
 		${scoreHtml}
-		<span class="match-info-tournament-name"><a href="/tournament"><span>${tournament}</span></a></span>
 	</div>`;
 }
 
@@ -202,21 +202,27 @@ describe('EsportsFetcher', () => {
 		};
 
 		it('returns empty array on API error', async () => {
-			fetcher.fetchGzipJSON = vi.fn().mockRejectedValue(new Error('Network error'));
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockRejectedValue(new Error('Network error'))
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result).toEqual([]);
 		});
 
 		it('returns empty array when response has no parse.text', async () => {
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({ error: 'invalid' });
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({ error: 'invalid' })
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result).toEqual([]);
 		});
 
 		it('returns empty array when HTML is not a string', async () => {
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({ parse: { text: 12345 } });
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({ parse: { text: 12345 } })
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result).toEqual([]);
@@ -228,9 +234,11 @@ describe('EsportsFetcher', () => {
 				{ team1: 'FaZe', team2: 'NAVI', timestamp: futureTs, tournament: 'IEM Katowice' }
 			]);
 
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({
-				parse: { text: { '*': html } }
-			});
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({
+					parse: { text: { '*': html } }
+				})
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result.length).toBe(1);
@@ -246,9 +254,11 @@ describe('EsportsFetcher', () => {
 				{ team1: 'RandomA', team2: 'RandomB', timestamp: futureTs, tournament: 'Small Cup' }
 			]);
 
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({
-				parse: { text: { '*': html } }
-			});
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({
+					parse: { text: { '*': html } }
+				})
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			// NAVI + G2 are focus teams, IEM is major; RandomA vs RandomB in Small Cup is neither
@@ -262,9 +272,11 @@ describe('EsportsFetcher', () => {
 				{ team1: '100 Thieves', team2: 'FaZe', timestamp: futureTs, tournament: 'BLAST Premier' }
 			]);
 
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({
-				parse: { text: { '*': html } }
-			});
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({
+					parse: { text: { '*': html } }
+				})
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result.length).toBe(1);
@@ -281,9 +293,11 @@ describe('EsportsFetcher', () => {
 			}));
 			const html = buildMockLiquipediaHtml(matchConfigs);
 
-			fetcher.fetchGzipJSON = vi.fn().mockResolvedValue({
-				parse: { text: { '*': html } }
-			});
+			fetcher.apiClient = {
+				fetchJSON: vi.fn().mockResolvedValue({
+					parse: { text: { '*': html } }
+				})
+			};
 
 			const result = await fetcher.fetchLiquipedia(source);
 			expect(result.length).toBeLessThanOrEqual(10);

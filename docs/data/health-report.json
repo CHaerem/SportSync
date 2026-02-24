@@ -1,25 +1,20 @@
 {
-  "generatedAt": "2026-02-24T11:07:31.360Z",
-  "eventCount": 51,
+  "generatedAt": "2026-02-24T11:14:09.010Z",
+  "eventCount": 37,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "esports": {
-      "count": 10,
-      "previousCount": 1,
-      "delta": 9
-    },
     "football": {
       "count": 28,
       "previousCount": 28,
       "delta": 0
     },
-    "olympics": {
-      "count": 5,
-      "previousCount": 5,
+    "esports": {
+      "count": 1,
+      "previousCount": 1,
       "delta": 0
     },
     "biathlon": {
@@ -31,6 +26,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "olympics": {
+      "count": 0,
+      "previousCount": 5,
+      "delta": -5
     },
     "chess": {
       "count": 0,
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2220,
+      "ageMinutes": 2227,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
@@ -78,7 +78,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 4,
-    "sevenDay": 39,
+    "fiveHour": 19,
+    "sevenDay": 40,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 201247,
+    "totalDuration": 223802,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 79848,
-        "share": 40
+        "duration": 100956,
+        "share": 45
       }
     ],
     "failedSteps": [
@@ -149,13 +149,14 @@
     ]
   },
   "unmappedLeagues": [
-    "Parken Championship #1 - Playoffs",
-    "CS2 Major Tournaments 2026",
-    "Olympics 2026",
-    "BLAST Open Spring 2026 - Group A",
-    "BLAST Open Spring 2026 - Group B"
+    "CS2 Major Tournaments 2026"
   ],
   "issues": [
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "olympics: 0 events (was 5)"
+    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -169,12 +170,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2220 minutes old"
+      "message": "golf.json: data is 2227 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 25 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 26 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -194,7 +195,7 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "5 tournament(s) lack league theming: Parken Championship #1 - Playoffs, CS2 Major Tournaments 2026, Olympics 2026, BLAST Open Spring 2026 - Group A, BLAST Open Spring 2026 - Group B"
+      "message": "1 tournament(s) lack league theming: CS2 Major Tournaments 2026"
     },
     {
       "severity": "warning",
@@ -204,7 +205,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (80s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (101s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -217,9 +218,9 @@
       "message": "Config esports-cs2-2026.json has low verification confidence (0.5) with upcoming events — schedule may be inaccurate"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

@@ -1,20 +1,18 @@
 {
-  "generatedAt": "2026-02-24T11:07:31.524Z",
+  "generatedAt": "2026-02-24T11:02:35.868Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 51,
+    "totalEvents": 42,
     "sports": [
       "golf",
-      "esports",
       "football",
+      "esports",
       "olympics",
       "biathlon",
       "f1"
     ],
     "bands": {
-      "live": [
-        "SINNERS vs GL"
-      ],
+      "live": [],
       "today": [
         "Club Brugge at Atlético Madrid",
         "Olympiacos at Bayer Leverkusen",
@@ -62,15 +60,7 @@
         "2026 Paralympics - Para Biathlon",
         "Biathlon World Cup — Women's Relay 4×6km (Kontiolahti)",
         "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)",
-        "2026 Paralympics - Para Cross-Country Skiing",
-        "Falcons vs NRG",
-        "B8 vs NAVI",
-        "FaZe vs Aurora",
-        "TYLOO vs FURIA",
-        "PV vs NIP",
-        "Liquid vs Spirit",
-        "MOUZ vs MongolZ",
-        "9z vs Vitality"
+        "2026 Paralympics - Para Cross-Country Skiing"
       ],
       "ended": [
         "The Genesis Invitational"
@@ -79,60 +69,20 @@
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 90,
+    "editorialScore": 100,
     "issueCount": 12
   },
   "findings": [
     {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"Falcons vs NRG\" is 22 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"B8 vs NAVI\" is 22 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"FaZe vs Aurora\" is 22 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"TYLOO vs FURIA\" is 22 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"PV vs NIP\" is 23 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"Liquid vs Spirit\" is 23 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"MOUZ vs MongolZ\" is 23 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"9z vs Vitality\" is 23 days away — may clutter the dashboard"
-    },
-    {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"21:00 — Bayer Leverkusen vs Olympiacos\" which may not match any event"
+      "message": "Featured block references \"21:00 — Bayer Leverkusen vs Olympiacos — heavy favorites at home\" which may not match any event"
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 1,
     "critical": 0,
-    "warning": 8,
+    "warning": 0,
     "info": 1
   },
   "pass": true,
