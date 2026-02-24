@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-24T17:28:38.820Z",
+  "generatedAt": "2026-02-24T18:27:00.697Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 43,
+    "totalEvents": 42,
     "sports": [
       "esports",
       "football",
@@ -16,7 +16,6 @@
         "DraculaN Season 5 - 100 Thieves vs MANA"
       ],
       "today": [
-        "Club Brugge at Atlético Madrid",
         "Olympiacos at Bayer Leverkusen",
         "Bodo/Glimt at Internazionale",
         "FK Qarabag at Newcastle United"
@@ -71,24 +70,19 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 13
+    "issueCount": 10
   },
   "findings": [
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Hold\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Camp Nou\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 2,
+    "total": 1,
     "critical": 0,
-    "warning": 2,
+    "warning": 1,
     "info": 0
   },
   "pass": true,

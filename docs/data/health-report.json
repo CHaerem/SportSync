@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-24T17:28:39.106Z",
-  "eventCount": 43,
+  "generatedAt": "2026-02-24T18:27:00.861Z",
+  "eventCount": 42,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 28,
+      "count": 27,
       "previousCount": 28,
-      "delta": 0
+      "delta": -1
     },
     "golf": {
       "count": 1,
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
@@ -65,7 +65,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -93,7 +93,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 30,
+    "footballCount": 29,
     "validationPassRate": 1,
     "recapHeadlineRate": 0.03,
     "issues": []
@@ -101,8 +101,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.29,
-    "eventsEnriched": 8,
+    "matchRate": 0.26,
+    "eventsEnriched": 7,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -127,21 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 4,
-    "sevenDay": 42,
+    "fiveHour": 5,
+    "sevenDay": 43,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 268435,
+    "totalDuration": 195180,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 147476,
-        "share": 55
+        "duration": 72900,
+        "share": 37
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60051,
+        "share": 31
       }
     ],
     "failedSteps": [
@@ -166,7 +171,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 26% (7/27) — team alias table may need updates"
     },
     {
       "severity": "info",
@@ -191,7 +196,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (147s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 37% of total pipeline time (73s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -206,7 +216,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
