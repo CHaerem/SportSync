@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T07:27:46.772Z",
+  "generatedAt": "2026-02-24T08:20:51.527Z",
   "eventCount": 42,
   "sportCoverage": {
     "golf": {
@@ -61,7 +61,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2000,
+      "ageMinutes": 2054,
       "stale": true
     },
     "tennis.json": {
@@ -127,26 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 4,
     "sevenDay": 37,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 196484,
+    "totalDuration": 221412,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 79037,
-        "share": 40
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60059,
-        "share": 31
+        "duration": 102085,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -171,12 +166,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2000 minutes old"
+      "message": "golf.json: data is 2054 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 21 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 22 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -206,12 +201,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (79s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 46% of total pipeline time (102s) — optimization candidate"
     },
     {
       "severity": "info",
