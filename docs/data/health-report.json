@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T12:20:51.022Z",
+  "generatedAt": "2026-02-24T13:36:25.768Z",
   "eventCount": 43,
   "sportCoverage": {
     "golf": {
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
@@ -61,11 +61,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2294,
+      "ageMinutes": 2369,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -127,17 +127,23 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 44,
+    "fiveHour": 46,
     "sevenDay": 42,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 297564,
+    "totalDuration": 208763,
     "stepCount": 25,
     "timeoutHits": [],
-    "dominantSteps": [],
+    "dominantSteps": [
+      {
+        "name": "generate-featured",
+        "duration": 85128,
+        "share": 41
+      }
+    ],
     "failedSteps": [
       "verify-schedules"
     ]
@@ -160,12 +166,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2294 minutes old"
+      "message": "golf.json: data is 2369 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 29 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 30 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -191,6 +197,11 @@
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"generate-featured\" used 41% of total pipeline time (85s) — optimization candidate"
     },
     {
       "severity": "info",
