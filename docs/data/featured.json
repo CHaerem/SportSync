@@ -2,133 +2,36 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 3-0 Levante"
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Levante",
-      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
+      "text": "San Siro awaits: Bodo/Glimt 90 minutes from Norwegian football immortality"
     },
     {
       "type": "match-preview",
       "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt",
-      "showStandings": true,
-      "_fallbackText": "⚽ Internazionale v Bodo/Glimt, 21:00, Champions League — Bodo/Glimt carry a stunning 3-1 lead to San Siro — Norway's greatest ever Champions League night is within reach"
+      "awayTeam": "Bodo/Glimt"
+    },
+    {
+      "type": "narrative",
+      "text": "New numbers show Glimt rank among Europe's elite — only two clubs globally hold better stats. The 3-1 first-leg lead was earned, not lucky. Tonight, San Siro witnesses the Arctic."
     },
     {
       "type": "match-preview",
       "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge",
-      "showStandings": true,
-      "_fallbackText": "⚽ Atlético Madrid v Club Brugge, 18:45, Champions League — All square after the first leg — Atlético must win at home against a resilient Club Brugge to advance"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Bayer Leverkusen",
-      "awayTeam": "Olympiacos",
-      "showStandings": true,
-      "_fallbackText": "⚽ Bayer Leverkusen v Olympiacos, 21:00, Champions League — Leverkusen are strong favourites to advance but Olympiacos have nothing to lose at the BayArena"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Newcastle United",
-      "awayTeam": "FK Qarabag",
-      "showStandings": false,
-      "_fallbackText": "⚽ Newcastle United v FK Qarabag, 21:00, Champions League — Newcastle are virtually through — a 6-1 aggregate lead makes this second leg a near-meaningless dead rubber"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "18:45 — Club Brugge at Atlético Madrid",
-          "type": "event"
-        },
-        {
-          "text": "21:00 — Olympiacos at Bayer Leverkusen",
-          "type": "event"
-        },
-        {
-          "text": "21:00 — Bodo/Glimt at Internazionale",
-          "type": "event"
-        },
-        {
-          "text": "21:00 — FK Qarabag at Newcastle United",
-          "type": "event"
-        },
-        {
-          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Galatasaray at Juventus",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "section",
-      "id": "relive-best-moments-from-the-2026-winter",
-      "title": "Olympics 2026",
-      "emoji": "🏅",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Wed 09:00 — 2026 Paralympics - Wheelchair Curling Mixed Doubles",
-          "type": "event"
-        },
-        {
-          "text": "Fri 20:00 — 2026 Paralympic Winter Games - Opening Ceremony",
-          "type": "event"
-        },
-        {
-          "text": "Sat 10:00 — 2026 Paralympics - Para Alpine Skiing",
-          "type": "event"
-        },
-        {
-          "text": "Sun 10:00 — 2026 Paralympics - Para Biathlon",
-          "type": "event"
-        },
-        {
-          "text": "Mon 10:00 — 2026 Paralympics - Para Cross-Country Skiing",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ The Genesis Invitational"
+      "awayTeam": "Club Brugge"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Paris Saint-Germain",
-      "awayTeam": "AS Monaco",
-      "showStandings": true,
-      "_fallbackText": "⚽ Wed 21:00 — AS Monaco at Paris Saint-Germain"
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
+      "type": "event-group",
+      "label": "⚽ Wednesday — Champions League Last 16",
+      "items": [
+        "Monaco at PSG 21:00 — PSG lead 3-2, one away goal turns this French derby",
+        "Benfica at Real Madrid 21:00 — Bernabéu on a knife's edge, narrow aggregate lead",
+        "Dortmund at Atalanta 18:45 — Atalanta need two at home to level the tie"
+      ]
     }
   ],
-  "generatedAt": "2026-02-24T09:26:15.476Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-24T10:23:23.016Z",
+  "provider": "claude-cli"
 }
