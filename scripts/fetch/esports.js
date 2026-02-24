@@ -1,5 +1,3 @@
-import https from "https";
-import { createGunzip } from "zlib";
 import { BaseFetcher } from "../lib/base-fetcher.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
@@ -43,8 +41,8 @@ export function parseLiquipediaMatches(html) {
 			if (name && name !== "TBD") teamNames.push(name);
 		}
 
-		// Extract tournament name (handles nested <a><span>Text</span></a> structure)
-		const tournamentMatch = block.match(/class="match-info-tournament-name"[^>]*>(?:<a[^>]*>)?(?:<span[^>]*>)?([^<]+)/);
+		// Extract tournament name
+		const tournamentMatch = block.match(/class="match-info-tournament-name"[^>]*>(?:<a[^>]*>)?([^<]+)/);
 		const tournament = tournamentMatch ? tournamentMatch[1].trim() : "CS2 Match";
 
 		// Extract format (Bo1, Bo3, Bo5)
@@ -89,46 +87,6 @@ export class EsportsFetcher extends BaseFetcher {
 		return [];
 	}
 
-	/**
-	 * Fetch JSON from a URL with gzip support (required by Liquipedia API).
-	 * Returns parsed JSON or null on error.
-	 */
-	fetchGzipJSON(url) {
-		return new Promise((resolve, reject) => {
-			const request = https.get(url, {
-				headers: {
-					"User-Agent": "SportSync/2.0 (https://github.com/CHaerem/SportSync; sports dashboard; 1 req/2h)",
-					"Accept-Encoding": "gzip",
-					"Accept": "application/json"
-				}
-			}, (response) => {
-				const stream = response.headers["content-encoding"] === "gzip"
-					? response.pipe(createGunzip())
-					: response;
-
-				let body = "";
-				stream.on("data", chunk => body += chunk);
-				stream.on("end", () => {
-					if (response.statusCode >= 400) {
-						reject(new Error(`HTTP ${response.statusCode}: ${body.substring(0, 200)}`));
-						return;
-					}
-					try {
-						resolve(JSON.parse(body));
-					} catch (e) {
-						reject(new Error(`Invalid JSON from Liquipedia: ${body.substring(0, 100)}`));
-					}
-				});
-				stream.on("error", reject);
-			});
-			request.on("error", reject);
-			request.setTimeout(15000, () => {
-				request.destroy();
-				reject(new Error("Liquipedia request timeout"));
-			});
-		});
-	}
-
 	async fetchLiquipedia(source) {
 		const matches = [];
 
@@ -137,7 +95,13 @@ export class EsportsFetcher extends BaseFetcher {
 			const url = `${source.url}?${params.toString()}`;
 			console.log("Fetching Liquipedia CS2 matches from:", url);
 
-			const data = await this.fetchGzipJSON(url);
+			const data = await this.apiClient.fetchJSON(url, {
+				headers: {
+					"User-Agent": "SportSync/2.0 (https://github.com; sports dashboard; 1 req/2h)",
+					"Accept": "application/json"
+				},
+				retries: 1
+			});
 
 			if (!data?.parse?.text) {
 				console.warn("Liquipedia API did not return expected structure");

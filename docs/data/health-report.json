@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T10:23:24.780Z",
+  "generatedAt": "2026-02-24T11:02:35.777Z",
   "eventCount": 42,
   "sportCoverage": {
     "golf": {
@@ -45,15 +45,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
@@ -61,11 +61,11 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2176,
+      "ageMinutes": 2215,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 2,
-    "sevenDay": 38,
+    "fiveHour": 4,
+    "sevenDay": 39,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 299386,
+    "totalDuration": 201247,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 180888,
-        "share": 60
+        "duration": 79848,
+        "share": 40
       }
     ],
     "failedSteps": [
@@ -166,17 +166,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2176 minutes old"
+      "message": "golf.json: data is 2215 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 24 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 25 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Internazionale vs Bodø/Glimt has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -201,7 +206,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 60% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (80s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,12 +216,12 @@
     {
       "severity": "warning",
       "code": "low_confidence_config",
-      "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+      "message": "Config esports-cs2-2026.json has low verification confidence (0.5) with upcoming events — schedule may be inaccurate"
     }
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

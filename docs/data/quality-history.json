@@ -1,92 +1,5 @@
 [
   {
-    "timestamp": "2026-02-22T08:22:21.042Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 55,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 25,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 12,
-      "warningCount": 10,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"Levante vs Barcelona\" which may not match any event; Featured block references \"\udfbf Thu — Nordic World Ski Championships open in Trondheim — Klæbo and Johaug lead Norway's charge\" which may not match any event; Featured mentions \"Trondheim\" but no matching athlete found in events data; Featured mentions \"Johaug\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 172785,
-        "output": 24287,
-        "calls": 6,
-        "total": 197072,
-        "costUSD": 1.2093659999999997,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32085,
-        "output": 7111,
-        "cacheCreation": 16149,
-        "cacheRead": 15933,
-        "total": 39196,
-        "costUSD": 0.28668775,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 204870,
-        "output": 31398,
-        "calls": 7,
-        "total": 236268,
-        "costUSD": 1.4960537499999997,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 96.571,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-22T09:22:53.569Z",
     "editorial": {
       "score": 100,
@@ -7591,6 +7504,93 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 98.286,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-24T11:02:34.044Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 87,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.033,
+      "goalScorerCoverage": 1,
+      "footballCount": 30,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 4,
+      "warningCount": 4,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Europe\" but no matching athlete found in events data; Featured mentions \"Tonight\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Arctic\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 33358,
+        "output": 6465,
+        "cacheCreation": 14891,
+        "cacheRead": 18464,
+        "total": 39823,
+        "costUSD": 0.26394075,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 33358,
+        "output": 6465,
+        "calls": 1,
+        "total": 39823,
+        "costUSD": 0.26394075,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 99.143,
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "enrichmentScore": 100,
