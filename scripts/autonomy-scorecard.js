@@ -180,6 +180,7 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 			"quota_high_utilization",  // quota adaptation: informational — quota system manages tier transitions autonomously
 			"ux_eval_fallback",        // infrastructure: Playwright unavailable in CI, file-based fallback is acceptable
 			"step_timeout_hit",        // quota adaptation: AI steps (discover/enrich) hit timeouts when quota-limited
+			"missing_snapshot",        // loop 9: snapshot rebuilt every pipeline cycle, transient gap
 		]);
 		const actionableIssues = Array.isArray(report.issues)
 			? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
