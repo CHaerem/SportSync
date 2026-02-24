@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-02-24T18:27:01.028Z",
+  "generatedAt": "2026-02-24T19:26:16.305Z",
   "patternsDetected": 16,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "low_confidence_config",
-      "count": 201,
+      "count": 202,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 201 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T19:26:16.225Z",
+      "suggestion": "Health warning \"low_confidence_config\" has fired 202 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -33,10 +33,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_low_match_rate",
-      "count": 132,
+      "count": 133,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 132 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T19:26:16.225Z",
+      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 133 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -51,10 +51,10 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "ux_eval_fallback",
-      "count": 66,
+      "count": 67,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z",
-      "suggestion": "Health warning \"ux_eval_fallback\" has fired 66 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-24T19:26:16.225Z",
+      "suggestion": "Health warning \"ux_eval_fallback\" has fired 67 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -157,9 +157,9 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 201,
+      "count": 202,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z"
+      "lastSeen": "2026-02-24T19:26:16.225Z"
     },
     "component_unresolvable": {
       "count": 35,
@@ -172,9 +172,9 @@
       "lastSeen": "2026-02-22T18:17:41.460Z"
     },
     "streaming_low_match_rate": {
-      "count": 132,
+      "count": 133,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z"
+      "lastSeen": "2026-02-24T19:26:16.225Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -192,9 +192,9 @@
       "lastSeen": "2026-02-22T19:15:57.249Z"
     },
     "ux_eval_fallback": {
-      "count": 66,
+      "count": 67,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T18:27:00.963Z"
+      "lastSeen": "2026-02-24T19:26:16.225Z"
     },
     "model_change_quality_drop": {
       "count": 5,
@@ -240,14 +240,14 @@
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
-      "improved": 5,
-      "unchanged": 8,
+      "improved": 6,
+      "unchanged": 7,
       "worsened": 5,
-      "effectivenessRate": 0.28
+      "effectivenessRate": 0.33
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-24T18:27:01.027Z",
+    "recordedAt": "2026-02-24T19:26:16.305Z",
     "moduleCount": 60,
     "avgModuleSize": 311,
     "pipelineSteps": 25,
@@ -260,5 +260,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "16 patterns detected (9 high, 7 medium). Top priority: recurring_health_warning — Health warning \"low_confidence_config\" has fired 201 times since 2026-02-17."
+  "summary": "16 patterns detected (9 high, 7 medium). Top priority: recurring_health_warning — Health warning \"low_confidence_config\" has fired 202 times since 2026-02-17."
 }
