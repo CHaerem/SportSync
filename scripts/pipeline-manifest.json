@@ -54,9 +54,7 @@
       "description": "AI-powered content generation",
       "steps": [
         { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 },
-        { "name": "generate-multiday", "command": "node scripts/generate-multi-day.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2 },
-        { "name": "build-snapshots", "command": "node scripts/build-day-snapshots.js", "errorPolicy": "continue" },
-        { "name": "generate-insights", "command": "node scripts/generate-insights.js", "errorPolicy": "continue" }
+        { "name": "post-generate", "command": "node scripts/post-generate.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2 }
       ]
     },
     {
@@ -92,8 +90,7 @@
       "description": "Usage reporting, capability registry, meta, gate",
       "steps": [
         { "name": "usage-report", "command": "node scripts/track-usage.js report pipeline", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
-        { "name": "generate-capabilities", "command": "node scripts/generate-capabilities.js", "errorPolicy": "continue" },
-        { "name": "update-meta", "command": "node -e \"const fs=require('fs');const p=require('path');const d=p.join(process.cwd(),'docs','data','meta.json');const now=new Date();const next=new Date(now.getTime()+2*3600000+600000);fs.writeFileSync(d,JSON.stringify({lastUpdate:now.toISOString(),nextUpdate:next.toISOString(),timezone:'Europe/Oslo',openSources:true},null,2))\"", "errorPolicy": "continue" },
+        { "name": "finalize-outputs", "command": "node scripts/generate-capabilities.js", "errorPolicy": "continue" },
         { "name": "pre-commit-gate", "command": "node scripts/pre-commit-gate.js", "errorPolicy": "continue" }
       ]
     }

@@ -4,6 +4,9 @@
  * Capability registry generator — inspects the pipeline manifest, data files,
  * and fetchers to produce docs/data/capabilities.json.
  *
+ * Also writes docs/data/meta.json (lastUpdate / nextUpdate timestamps) so
+ * that the client can display pipeline freshness without a separate step.
+ *
  * The autopilot reads this during scouting to identify system gaps and
  * decide what to build next.
  */
@@ -206,8 +209,36 @@ export function generateCapabilities(opts = {}) {
 	return capabilities;
 }
 
+/**
+ * Write docs/data/meta.json with pipeline freshness timestamps.
+ * Called after generateCapabilities() in the CLI entry point so both
+ * outputs are produced in a single pipeline step.
+ *
+ * @param {string} [dataDir] - Override for docs/data directory (for testing)
+ */
+export function updateMeta(dataDir) {
+	const dir = dataDir || DATA_DIR;
+	const now = new Date();
+	// Next update: 2 hours + 10-minute buffer (matches workflow schedule)
+	const next = new Date(now.getTime() + 2 * 3600000 + 600000);
+	const meta = {
+		lastUpdate: now.toISOString(),
+		nextUpdate: next.toISOString(),
+		timezone: "Europe/Oslo",
+		openSources: true,
+	};
+	try {
+		fs.mkdirSync(dir, { recursive: true });
+		fs.writeFileSync(path.join(dir, "meta.json"), JSON.stringify(meta, null, 2));
+		console.log(`Meta written: lastUpdate=${now.toISOString()}`);
+	} catch (err) {
+		console.error("Failed to write meta.json:", err.message);
+	}
+}
+
 // CLI entry point
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
 if (isMain) {
 	generateCapabilities();
+	updateMeta();
 }
