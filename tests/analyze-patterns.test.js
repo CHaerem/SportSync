@@ -851,9 +851,9 @@ describe("detectArchitecturalFitness", () => {
 	it("detects pipeline bloat", () => {
 		const manifest = {
 			phases: [
-				{ name: "fetch", steps: Array(8).fill({ name: "s", command: "echo" }) },
-				{ name: "build", steps: Array(7).fill({ name: "s", command: "echo" }) },
-				{ name: "monitor", steps: Array(6).fill({ name: "s", command: "echo" }) },
+				{ name: "fetch", steps: Array(11).fill({ name: "s", command: "echo" }) },
+				{ name: "build", steps: Array(10).fill({ name: "s", command: "echo" }) },
+				{ name: "monitor", steps: Array(10).fill({ name: "s", command: "echo" }) },
 			],
 		};
 		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });
@@ -864,15 +864,15 @@ describe("detectArchitecturalFitness", () => {
 		});
 		const bloat = result.patterns.find(p => p.type === "architecture_pipeline_bloat");
 		expect(bloat).toBeDefined();
-		expect(bloat.pipelineSteps).toBe(21);
+		expect(bloat.pipelineSteps).toBe(31);
 		expect(bloat.severity).toBe("medium");
 	});
 
-	it("flags high severity for pipeline above 25 steps", () => {
+	it("flags high severity for pipeline above 35 steps", () => {
 		const manifest = {
 			phases: [
-				{ name: "a", steps: Array(13).fill({ name: "s", command: "echo" }) },
-				{ name: "b", steps: Array(13).fill({ name: "s", command: "echo" }) },
+				{ name: "a", steps: Array(18).fill({ name: "s", command: "echo" }) },
+				{ name: "b", steps: Array(18).fill({ name: "s", command: "echo" }) },
 			],
 		};
 		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });

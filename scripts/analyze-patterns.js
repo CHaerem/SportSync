@@ -580,8 +580,8 @@ export function detectArchitecturalFitness({ projectRoot, pipelineManifest, base
 		moduleCountWarn: overrides.moduleCountWarn ?? 50,
 		moduleCountHigh: overrides.moduleCountHigh ?? 65,
 		smallModuleRatioWarn: overrides.smallModuleRatioWarn ?? 0.25,
-		pipelineStepsWarn: overrides.pipelineStepsWarn ?? 20,
-		pipelineStepsHigh: overrides.pipelineStepsHigh ?? 25,
+		pipelineStepsWarn: overrides.pipelineStepsWarn ?? 30,
+		pipelineStepsHigh: overrides.pipelineStepsHigh ?? 35,
 		testCoverageWarn: overrides.testCoverageWarn ?? 0.5,
 		orphanScriptsWarn: overrides.orphanScriptsWarn ?? 3,
 	};
