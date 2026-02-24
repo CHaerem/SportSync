@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T08:20:51.585Z",
+  "generatedAt": "2026-02-24T09:26:17.343Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 42,
@@ -66,28 +66,17 @@
         "The Genesis Invitational"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 13,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
+    "editorialScore": 94,
     "issueCount": 13
   },
-  "findings": [
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
-    }
-  ],
+  "findings": [],
   "summary": {
-    "total": 2,
+    "total": 0,
     "critical": 0,
-    "warning": 2,
+    "warning": 0,
     "info": 0
   },
   "pass": true,
