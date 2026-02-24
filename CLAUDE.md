@@ -18,7 +18,7 @@ A system built on nothing but GitHub Actions, a Claude Code Max subscription, an
 ### Zero Infrastructure Constraint
 
 The entire system runs on exactly three services:
-- **GitHub Actions** — compute (every 2h data pipeline + nightly autopilot)
+- **GitHub Actions** — compute (hourly data pipeline + nightly autopilot)
 - **Claude Code Max** — AI backbone (CLAUDE_CODE_OAUTH_TOKEN for discovery, enrichment, featured content, and autonomous code changes)
 - **GitHub Pages** — hosting (static files, zero backend)
 
@@ -99,13 +99,13 @@ The system has three acceleration vectors:
 
 ## Project Overview
 
-SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Twelve closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, streaming data, and personalization. Hosted on GitHub Pages, updated every 2 hours via GitHub Actions, with client-side live score polling from ESPN.
+SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Twelve closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, streaming data, and personalization. Hosted on GitHub Pages, updated hourly via GitHub Actions, with client-side live score polling from ESPN.
 
 ## Architecture
 
 This is a hybrid static/dynamic application:
 - **Static Frontend**: Pure HTML/CSS/JS hosted on GitHub Pages
-- **Automated Data Fetching**: GitHub Actions fetch fresh API data every 2 hours
+- **Automated Data Fetching**: GitHub Actions fetch fresh API data every hour (06-22 UTC)
 - **AI Enrichment**: LLM adds importance scores, summaries, and tags to each event
 - **AI Featured Content**: Claude CLI generates editorial briefs using narrative + component blocks each build
 - **Component Template System**: Structured blocks (match-result, match-preview, event-schedule, golf-status) reference live data; client renders with logos, scores, times from pre-loaded JSON
@@ -131,7 +131,7 @@ This is a hybrid static/dynamic application:
 ### Data Flow
 
 0. **Pipeline runner** (`scripts/run-pipeline.js`) reads `scripts/pipeline-manifest.json` and orchestrates all steps phase by phase. Writes `docs/data/pipeline-result.json` with per-step outcomes, timing, and gate status.
-1. **GitHub Actions** run every 2 hours, invoking the pipeline runner
+1. **GitHub Actions** run every hour (06-22 UTC), invoking the pipeline runner
 2. **API calls** to ESPN and fotball.no
 3. **JSON files** are generated and committed to `docs/data/`
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
@@ -167,7 +167,7 @@ This is a hybrid static/dynamic application:
 ## GitHub Actions Workflow
 
 The **update-sports-data.yml** workflow:
-- **Trigger**: Every 2 hours + manual dispatch
+- **Trigger**: Every hour (06-22 UTC) + manual dispatch
 - **Fetches**: Football, Golf, Tennis, F1, Chess, Esports data from APIs
 - **Fetches**: Standings (ESPN PL/golf/F1), RSS news digest (11 feeds), and recent results (football + golf)
 - **Builds**: events.json (with auto-discovered curated configs from `scripts/config/`)
@@ -279,7 +279,7 @@ scripts/
 └── screenshot.js           # Dashboard screenshot for visual validation (Playwright)
 
 .github/workflows/
-├── update-sports-data.yml  # Data pipeline (every 2 hours)
+├── update-sports-data.yml  # Data pipeline (hourly, 06-22 UTC)
 └── claude-autopilot.yml    # Multi-agent autopilot (nightly)
 
 .claude/
@@ -354,7 +354,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 
 | Layer | Status | Details |
 |-------|--------|---------|
-| **Data fetching** | Autonomous | 6 sport APIs + fotball.no, every 2h |
+| **Data fetching** | Autonomous | 6 sport APIs + fotball.no, hourly |
 | **Event discovery** | Autonomous | Claude CLI + WebSearch finds events, athletes, schedules |
 | **Schedule verification** | Autonomous | 5-stage verifier chain with accuracy feedback loop (Loop 8) |
 | **AI enrichment** | Autonomous | Importance, summaries, tags with adaptive quality hints |

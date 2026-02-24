@@ -219,8 +219,8 @@ export function generateCapabilities(opts = {}) {
 export function updateMeta(dataDir) {
 	const dir = dataDir || DATA_DIR;
 	const now = new Date();
-	// Next update: 2 hours + 10-minute buffer (matches workflow schedule)
-	const next = new Date(now.getTime() + 2 * 3600000 + 600000);
+	// Next update: 1 hour + 10-minute buffer (matches workflow schedule)
+	const next = new Date(now.getTime() + 1 * 3600000 + 600000);
 	const meta = {
 		lastUpdate: now.toISOString(),
 		nextUpdate: next.toISOString(),

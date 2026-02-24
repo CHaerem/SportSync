@@ -154,7 +154,7 @@ The **autopilot** is the proactive engine with multi-agent parallelism. The **ma
 
 ### Self-Healing Pipeline Integration
 
-The data pipeline (every 2 hours) generates monitoring artifacts that feed into the autopilot:
+The data pipeline (hourly, 06-22 UTC) generates monitoring artifacts that feed into the autopilot:
 
 - **`health-report.json`** — sport coverage, data freshness, anomaly detection
 - **`coverage-gaps.json`** — RSS vs events blind spot detection

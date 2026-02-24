@@ -647,9 +647,9 @@ class Dashboard {
 			else if (diffMin < 1440) ago = `${Math.round(diffMin / 60)}h ago`;
 			else ago = `${Math.round(diffMin / 1440)}d ago`;
 			parts.push(`Updated ${ago}`);
-			// Next update estimate (2h cycle)
-			const nextMin = 120 - (diffMin % 120);
-			if (nextMin > 0 && nextMin < 120) {
+			// Next update estimate (1h cycle, 06-22 UTC)
+			const nextMin = 60 - (diffMin % 60);
+			if (nextMin > 0 && nextMin < 60) {
 				const h = Math.floor(nextMin / 60);
 				const m = nextMin % 60;
 				parts.push(`Next update in ${h > 0 ? h + 'h ' : ''}${m}m`);
