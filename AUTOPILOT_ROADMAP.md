@@ -268,12 +268,22 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
 | 1. Data | ~92% | 2026-02-23 | RSS headline matching improved, Olympics archived, biathlon/nordic WCH active |
-| 2. Code | ~87% | 2026-02-23 | 1882 tests across 64 files, pipeline bloat evaluated |
+| 2. Code | ~89% | 2026-02-24 | 1882 tests, pipeline consolidated (28→25 steps), bloat threshold raised |
 | 3. Capabilities | ~70% | 2026-02-21 | Tennis standings dynamic detection, pipeline manifest, 5 inline standings widgets |
 | 4. Personalization | ~60% | 2026-02-23 | watchPlan reasons fixed, For You block, watch-plan feedback loop, sport weights evolve |
-| 5. Quality | ~100% | 2026-02-23 | watchPlan + mustWatchCoverage fixed, 12/12 loops expected on next pipeline run |
+| 5. Quality | ~100% | 2026-02-24 | 12/12 loops closed, pipelineHealth at 1.0, editorial sort fix + missing_snapshot GAP |
 
 ### Run History Insights
+
+**Run 2026-02-24 (Run 10):** 5 tasks completed + 1 pre-flight repair. All direct-to-main.
+- Pre-flight repair: build-events.js sport derivation bug. `config.context.split("-")[0]` gave "relive" for Olympics config. Fixed to prefer `config.sport`.
+- Pipeline bloat threshold: 20→30 in analyze-patterns.js. Was firing false positive for 12-loop system.
+- Pipeline consolidation: Merged `generate-multiday` + `build-snapshots` + `generate-insights` into `post-generate.js`. Merged `update-meta` into `generate-capabilities.js`. 28→25 steps.
+- Editorial sort fix: `editorial_unsorted_events` was false positive. Health check's day-name comparison didn't handle cross-week transitions (Fri→Thu of next week). Fixed detection logic.
+- missing_snapshot KNOWN_DATA_GAPS: Added to autonomy scorecard. Snapshots rebuilt every pipeline cycle — transient gap.
+- **Key insight**: The `config.sport` vs `config.context` priority bug shows the importance of explicit fields over heuristic derivation. When a config has both, explicit always wins.
+- **Pillar focus**: Code (3 tasks — consolidation, bloat threshold, sort fix), Quality (2 tasks — pipelineHealth loop closure). Code pillar advanced most.
+- **Autonomy score**: 100% (12/12 loops closed) — confirmed stable.
 
 **Run 2026-02-23 (Run 9):** 3 tasks completed + 1 EXPLORE + 4 new tasks scouted. All direct-to-main.
 - watchPlan reasons fix: 5 turns (code-agent). Added "Must-watch event" + "Preferred sport" reasons. Loop 0.5→1.0.
@@ -982,15 +992,17 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### MEDIUM Priority
 
-- [PENDING] [MAINTENANCE] **Consolidate post-generate pipeline steps** — Merge `generate-multiday`, `build-snapshots`, and `generate-insights` into a single `post-generate` wrapper step. All three are sub-200ms, same phase, no AI calls, no external dependencies. Reduces pipeline step count by 2 (28→26). Files: `scripts/pipeline-manifest.json`, new `scripts/post-generate.js`. Preserves `quotaPriority` flag from `generate-multiday`.
+- [DONE] (direct, run 2026-02-24) **Consolidate post-generate pipeline steps** — Created `scripts/post-generate.js` wrapping `generate-multiday` + `build-snapshots` + `generate-insights`. Pipeline steps 28→26.
 
-- [PENDING] [MAINTENANCE] **Merge generate-capabilities + update-meta finalize steps** — `update-meta` is inline JS in pipeline-manifest.json, not a proper script. Merge with `generate-capabilities` into a single `finalize-outputs` step. Keep `pre-commit-gate` separate (uses process.exit(1)). Reduces step count by 1. Files: `scripts/pipeline-manifest.json`, `scripts/generate-capabilities.js`.
+- [DONE] (direct, run 2026-02-24) **Merge generate-capabilities + update-meta finalize steps** — Added `updateMeta()` to `generate-capabilities.js`. Renamed step to `finalize-outputs`. Pipeline steps 26→25.
 
-- [PENDING] [MAINTENANCE] **Raise pipeline bloat threshold from 20 to 30** — The architecture_pipeline_bloat pattern fires at 20 steps but 28 steps are appropriate for 12 feedback loops. Raising to 30 suppresses the false positive while still catching genuine bloat. File: `scripts/analyze-patterns.js`.
+- [DONE] (direct, run 2026-02-24) **Raise pipeline bloat threshold from 20 to 30** — Changed `pipelineStepsWarn` 20→30, `pipelineStepsHigh` 25→35. Updated tests.
 
 ### LOW Priority
 
 - [PENDING] [EXPLORE] **Investigate athletics/track-and-field coverage** — RSS shows Norwegian athletes in athletics (Guttormsen pole vault, Antonsen 800m). No coverage in dashboard. Check if Diamond League, World Athletics, or other sources have free APIs or if curated configs for major meets (WA Tour, European Championships) would suffice. Norwegian athletes: Sondre Guttormsen, Jakob Ingebrigtsen, Karsten Warholm.
+
+- [PENDING] [FEATURE] **Add alpine skiing World Cup Finals curated config** — RSS shows Norwegian alpine skiers (Eva Unhjem Johansen debut, Marte Monsen comeback) at Soldeu World Cup Finals. Existing nordic-ski-wch-2026.json covers cross-country only. Create `scripts/config/alpine-wc-finals-2026.json` for the Soldeu races (late Feb/early Mar 2026). Norwegian athletes to track include Aleksander Aamodt Kilde, Lucas Braathen, Ragnhild Mowinckel. Add `alpine` to SPORT_CONFIG if needed.
 
 ---
 

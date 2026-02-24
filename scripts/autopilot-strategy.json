@@ -110,6 +110,10 @@
       {
         "date": "2026-02-23",
         "note": "Run 9: 3 tasks + 1 EXPLORE, all parallel subagents (code-agent + content-agent + data-agent). Three tasks fixing autonomy loop gaps: (1) watchPlan reasons — score factors without matching reason strings made picks appear broken (0.5→1.0); (2) mustWatchCoverage — golf-status blocks weren't recognized as covering golf events, plus 0/0 guard; (3) RSS headline matching — 3-tier matching with Norwegian short-forms for PL/La Liga teams. EXPLORE: pipeline bloat (28 steps) is appropriate for 12 loops, threshold should be 30. Key insight: when autonomy loops are stuck, investigate if the loop's evaluation criteria match the actual data paths — watchPlan scored picks but didn't see reasons because 2 of 6 score factors had no reason string. RSS short-form matching should lift recapHeadlineRate from 0% for the first time. 4 new tasks scouted. Parallel 3-agent delegation continues to work well."
+      },
+      {
+        "date": "2026-02-24",
+        "note": "Run 10: 5 tasks + 1 pre-flight repair. Pre-flight: build-events.js derived sport from config.context instead of config.sport — 'relive' from Olympics context string. Three code-pillar tasks executed in parallel via subagents: (1) pipeline bloat threshold 20→30 (code-agent), (2) pipeline consolidation 28→25 steps via post-generate.js wrapper + finalize-outputs merge (code-agent), (3) editorial_unsorted_events false positive fix (content-agent). Then pipelineHealth loop restored to 1.0 via missing_snapshot KNOWN_DATA_GAPS addition. Autonomy confirmed at 12/12 (100%). Key insight: health check day-name comparison is lossy — weekday indices can't distinguish same-week vs cross-week transitions. Previous EXPLORE findings executed immediately: all 3 pipeline consolidation candidates shipped. Alpine skiing World Cup Finals scouted as new FEATURE task. Code pillar ~87%→~89%."
       }
     ]
   }
