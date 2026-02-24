@@ -2,42 +2,137 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Glimt charge into San Siro — Norway's greatest CL night beckons"
+      "text": "Barcelona 3-0 Levante"
     },
     {
-      "type": "narrative",
-      "text": "By some metrics, Bodo/Glimt rank among the world's top clubs right now. A 3-1 lead to San Siro tonight: Norwegian football history is 90 minutes away."
+      "type": "match-result",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Levante",
+      "_fallbackText": "⚽ FT: Barcelona 3-0 Levante — Marc Bernal 4', Frenkie de Jong 32'"
     },
     {
       "type": "match-preview",
       "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
+      "awayTeam": "Bodo/Glimt",
+      "showStandings": true,
+      "_fallbackText": "⚽ Internazionale v Bodo/Glimt, 21:00, Champions League — Bodo/Glimt carry a stunning 3-1 lead to San Siro — Norway's greatest ever Champions League night is within reach"
     },
     {
       "type": "match-preview",
       "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge"
+      "awayTeam": "Club Brugge",
+      "showStandings": true,
+      "_fallbackText": "⚽ Atlético Madrid v Club Brugge, 18:45, Champions League — All square after the first leg — Atlético must win at home against a resilient Club Brugge to advance"
     },
     {
       "type": "match-preview",
       "homeTeam": "Bayer Leverkusen",
-      "awayTeam": "Olympiacos"
+      "awayTeam": "Olympiacos",
+      "showStandings": true,
+      "_fallbackText": "⚽ Bayer Leverkusen v Olympiacos, 21:00, Champions League — Leverkusen are strong favourites to advance but Olympiacos have nothing to lose at the BayArena"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Newcastle United",
+      "awayTeam": "FK Qarabag",
+      "showStandings": false,
+      "_fallbackText": "⚽ Newcastle United v FK Qarabag, 21:00, Champions League — Newcastle are virtually through — a 6-1 aggregate lead makes this second leg a near-meaningless dead rubber"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "18:45 — Club Brugge at Atlético Madrid",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Olympiacos at Bayer Leverkusen",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Bodo/Glimt at Internazionale",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — FK Qarabag at Newcastle United",
+          "type": "event"
+        },
+        {
+          "text": "Wed 18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Galatasaray at Juventus",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "biathlon-wch-2026",
+      "title": "Biathlon World Championships 2026",
+      "emoji": "🏆",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Fri 16:10 — Biathlon World Cup — Men's 20km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 12:40 — Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 14:40 — Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 12:30 — Biathlon World Cup — Women's Relay 4×6km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 15:55 — Biathlon World Cup — Men's 15km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ The Genesis Invitational"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League Wednesday",
-      "items": [
-        "⚽ Wed 18:45 — Atalanta vs Borussia Dortmund — Atalanta need two at home to level, Dortmund lead 2-0",
-        "⚽ Wed 21:00 — PSG vs Monaco — French derby, PSG ahead 3-2 but Monaco very much alive",
-        "⚽ Wed 21:00 — Real Madrid vs Benfica — narrow lead, Bernabéu braced for a tense night",
-        "⚽ Wed 21:00 — Juventus vs Galatasaray — Galatasaray in control, Juve need four goals"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Paris Saint-Germain",
+      "awayTeam": "AS Monaco",
+      "showStandings": true,
+      "_fallbackText": "⚽ Wed 21:00 — AS Monaco at Paris Saint-Germain"
+    },
+    {
+      "type": "event-line",
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
     }
   ],
-  "generatedAt": "2026-02-24T11:24:39.048Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-24T11:29:19.988Z",
+  "provider": "fallback"
 }
