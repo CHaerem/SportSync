@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-02-24T16:30:37.611Z",
+  "lastUpdated": "2026-02-24T17:29:39.088Z",
   "current": {
     "fiveHour": {
-      "utilization": 6
+      "utilization": 7
     },
     "sevenDay": {
       "utilization": 43,
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-24T16:30:38.909Z"
+    "checkedAt": "2026-02-24T17:29:39.837Z"
   },
   "internalTokens": {
-    "enrichment": 0,
-    "featured": 43120,
+    "enrichment": 28177,
+    "featured": 37772,
     "discovery": 148267,
     "multiDay": 38001,
-    "runTotal": 229388
+    "runTotal": 252217
   },
   "budget": {
-    "dailyUsed": 2737329,
-    "weeklyUsed": 24459916,
+    "dailyUsed": 2989546,
+    "weeklyUsed": 24010608,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 55,
-    "weeklyPct": 98
+    "dailyPct": 60,
+    "weeklyPct": 96
   },
   "sportsyncShare": {
-    "pipelineRuns": 141,
+    "pipelineRuns": 139,
     "autopilotRuns": 0,
-    "totalDurationMs": 41746798
+    "totalDurationMs": 40753098
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,24 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-17T16:35:32.962Z",
-      "context": "pipeline",
-      "durationMs": 438813,
-      "tokens": 222658
-    },
-    {
-      "timestamp": "2026-02-17T16:52:34.249Z",
-      "context": "pipeline",
-      "durationMs": 457974,
-      "tokens": 222511
-    },
-    {
-      "timestamp": "2026-02-17T17:03:40.126Z",
-      "context": "pipeline",
-      "durationMs": 254535,
-      "tokens": 256356
-    },
     {
       "timestamp": "2026-02-17T18:30:32.345Z",
       "context": "pipeline",
@@ -897,6 +879,12 @@
       "context": "pipeline",
       "durationMs": 219825,
       "tokens": 229388
+    },
+    {
+      "timestamp": "2026-02-24T17:29:39.088Z",
+      "context": "pipeline",
+      "durationMs": 157622,
+      "tokens": 252217
     }
   ]
 }

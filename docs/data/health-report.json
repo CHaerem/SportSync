@@ -1,12 +1,7 @@
 {
-  "generatedAt": "2026-02-24T16:29:37.470Z",
+  "generatedAt": "2026-02-24T17:28:39.106Z",
   "eventCount": 43,
   "sportCoverage": {
-    "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "esports": {
       "count": 2,
       "previousCount": 2,
@@ -15,6 +10,11 @@
     "football": {
       "count": 28,
       "previousCount": 28,
+      "delta": 0
+    },
+    "golf": {
+      "count": 1,
+      "previousCount": 1,
       "delta": 0
     },
     "biathlon": {
@@ -45,27 +45,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2542,
-      "stale": true
+      "ageMinutes": 2,
+      "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -87,7 +87,7 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": false,
+    "pgaGolf": true,
     "f1Drivers": true
   },
   "resultsHealth": {
@@ -127,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 2,
+    "fiveHour": 4,
     "sevenDay": 42,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 211687,
+    "totalDuration": 268435,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 92791,
-        "share": 44
+        "duration": 147476,
+        "share": 55
       }
     ],
     "failedSteps": [
@@ -165,28 +165,13 @@
     },
     {
       "severity": "warning",
-      "code": "stale_data",
-      "message": "golf.json: data is 2542 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "golf: data retained 33 consecutive times (since 2026-02-23) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "standings_empty",
-      "message": "pgaGolf standings data is empty"
-    },
-    {
-      "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 29% (8/28) — team alias table may need updates"
     },
     {
-      "severity": "warning",
-      "code": "invisible_events",
-      "message": "1 event(s) won't appear on dashboard (golf)"
+      "severity": "info",
+      "code": "empty_day",
+      "message": "2026-02-19: no events or results for day navigator"
     },
     {
       "severity": "info",
@@ -206,7 +191,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (93s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (147s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -221,7 +206,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
