@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T14:27:02.706Z",
+  "generatedAt": "2026-02-25T15:27:19.537Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 52,
@@ -125,16 +125,6 @@
       "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 25 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"Atalanta vs Borussia Dortmund\" which may not match any event"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
-    },
-    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
@@ -146,15 +136,40 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"French\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Prestianni\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bernab\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 30 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 13,
+    "total": 16,
     "critical": 0,
-    "warning": 12,
-    "info": 1
+    "warning": 16,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
