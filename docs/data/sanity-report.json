@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T16:32:05.673Z",
+  "generatedAt": "2026-02-25T17:29:44.945Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 52,
@@ -80,7 +80,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 87,
+    "editorialScore": 100,
     "issueCount": 10
   },
   "findings": [
@@ -137,22 +137,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Prestianni\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Anfield\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Camp Nou\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Florida\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -161,9 +151,9 @@
     }
   ],
   "summary": {
-    "total": 15,
+    "total": 13,
     "critical": 0,
-    "warning": 15,
+    "warning": 13,
     "info": 0
   },
   "pass": true,
