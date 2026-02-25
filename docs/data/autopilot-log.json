@@ -870,6 +870,21 @@
       "lesson": "Pipeline step count correlates with feedback loop count. The 'bloat' threshold should scale with system complexity, not stay fixed.",
       "scouted": 4,
       "meta_insight": "The dominant pipeline cost is 2 AI steps (discover + generate: 60% of wall time). Consolidating 9 sub-second steps saves step count but not duration. The real optimization is AI step efficiency, not step consolidation."
+    },
+    {
+      "date": "2026-02-25",
+      "task": "Add alpine skiing WC Finals config + fix pattern report false positives",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "capabilities+quality",
+      "details": "Run 11: 2 tasks via parallel subagents + orchestrator cleanup. (1) data-agent: alpine-wc-finals-2026.json config (8 races, Soldeu, 8 Norwegian athletes) + SPORT_CONFIG + league-config. (2) code-agent: KNOWN_MANAGED_CODES filter in analyze-patterns.js — 9 high-severity false-positive patterns from managed health codes now suppressed while preserving history tracking. Orchestrator: removed 2 duplicate cycling EXPLORE tasks, scouted ice hockey as new sport opportunity.",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 25,
+      "lesson": "Pattern report and autonomy scorecard should use the same managed-code list. When analyze-patterns.js accumulates warnings for codes that autonomy-scorecard already considers 'known', it generates noise that masks genuine new patterns.",
+      "scouted": 1,
+      "meta_insight": "Ice hockey (EHL/GET-ligaen) appears in Norwegian RSS with strong engagement potential but has zero coverage. This is the first sport detected by RSS scouting that has genuine Norwegian cultural relevance beyond niche interest."
     }
   ]
 }

@@ -2,45 +2,117 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Tidenes skrell: Bodø/Glimt dump Inter Milan out of the Champions League"
+      "text": "Champions League: Paris Saint-Germain v AS Monaco"
     },
     {
-      "type": "match-result",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
+      "type": "match-preview",
+      "homeTeam": "Paris Saint-Germain",
+      "awayTeam": "AS Monaco",
+      "showStandings": true,
+      "_fallbackText": "⚽ Paris Saint-Germain v AS Monaco, 21:00, Champions League — PSG lead 3-2 but Monaco are very much in this French derby — one away goal and the tie is level"
     },
     {
-      "type": "narrative",
-      "text": "Norwegian football rewrote history: Glimt's 2-1 win at San Siro — 'noe av det mest absurde' per NRK — sends the Arctic club into the CL round of 16. Sørloth's hat-trick for Atlético made it a night of Norwegian brilliance."
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Club Brugge"
+      "type": "match-preview",
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Benfica",
+      "showStandings": true,
+      "_fallbackText": "⚽ Real Madrid v Benfica, 21:00, Champions League — Real Madrid's narrow lead is all that stands between Benfica and the next round — expect a tense night"
     },
     {
       "type": "event-line",
-      "text": "🎮 13:00 — rain (Håvard Nygaard) in action: 100 Thieves vs MANA, DraculaN Season 5"
+      "text": "🎮 DraculaN Season 5 - 100 Thieves vs MANA, 13:00 — CS2 Major Tournaments 2026"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Atalanta",
+      "awayTeam": "Borussia Dortmund",
+      "showStandings": true,
+      "_fallbackText": "⚽ Atalanta v Borussia Dortmund, 18:45, Champions League — Atalanta need two goals at home to level the tie; Dortmund are heavy favourites to progress on their 2-0 aggregate lead"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Galatasaray at Juventus",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — AS Monaco at Paris Saint-Germain",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Benfica at Real Madrid",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "biathlon-wch-2026",
+      "title": "Biathlon World Championships 2026",
+      "emoji": "🏆",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Fri 16:10 — Biathlon World Cup — Men's 20km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 12:40 — Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 14:40 — Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 12:30 — Biathlon World Cup — Women's Relay 4×6km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 15:55 — Biathlon World Cup — Men's 15km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Champions League — Wednesday",
-      "items": [
-        "18:45 — Atalanta vs Dortmund — Germans 2-0 up, Bergamo need a miracle",
-        "21:00 — PSG vs Monaco — Knife-edge derby, PSG lead 3-2",
-        "21:00 — Real Madrid vs Benfica — Madrid's narrow aggregate lead under pressure",
-        "21:00 — Juventus vs Galatasaray — Juve need four goals for the turnaround"
-      ]
+      "type": "event-line",
+      "text": "⛳ Thu 06:00 — Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "event-line",
-      "text": "⛷️ Thu — Biathlon WC Kontiolahti opens: Bø, Røiseland lead Norwegian charge"
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
     }
   ],
-  "generatedAt": "2026-02-24T22:14:29.181Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-25T02:01:38.807Z",
+  "provider": "fallback"
 }

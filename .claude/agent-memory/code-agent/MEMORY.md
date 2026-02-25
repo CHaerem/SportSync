@@ -12,9 +12,11 @@ When health warnings are observed and managed by autonomous systems, add their c
 ### scheduleVerification loop logic
 `evaluateScheduleVerification()` checks `pipeline-result.json` phases for `verify-schedules` step failures. If the step failed, stale history is excused (awarded 0.33 points anyway). This prevents transient pipeline failures from permanently dragging down the loop score.
 
+### KNOWN_MANAGED_CODES in analyze-patterns.js
+The pattern report has a parallel list `KNOWN_MANAGED_CODES` in `analyzeRecurringHealthWarnings()`. These codes are tracked in `issueCodeHistory` for observability but NOT surfaced as actionable `recurring_health_warning` patterns. Must be kept in sync with `KNOWN_DATA_GAPS` in `autonomy-scorecard.js`. When adding a managed code to either list, add it to both.
+
 ### Pre-existing flaky tests
 - `tests/generate-multi-day.test.js` line 128 — "exports buildRecapSystemPrompt..." times out at 5000ms.
-- `tests/analyze-patterns.test.js` — "accumulates counts / flags high severity" tests fail count assertion.
 - `tests/evaluate-ux.test.js` — `process.exit` unexpectedly called error.
 All are pre-existing issues, not caused by code agent changes.
 

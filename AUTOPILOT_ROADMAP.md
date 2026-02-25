@@ -1002,7 +1002,19 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 - [PENDING] [EXPLORE] **Investigate athletics/track-and-field coverage** — RSS shows Norwegian athletes in athletics (Guttormsen pole vault, Antonsen 800m). No coverage in dashboard. Check if Diamond League, World Athletics, or other sources have free APIs or if curated configs for major meets (WA Tour, European Championships) would suffice. Norwegian athletes: Sondre Guttormsen, Jakob Ingebrigtsen, Karsten Warholm.
 
-- [PENDING] [FEATURE] **Add alpine skiing World Cup Finals curated config** — RSS shows Norwegian alpine skiers (Eva Unhjem Johansen debut, Marte Monsen comeback) at Soldeu World Cup Finals. Existing nordic-ski-wch-2026.json covers cross-country only. Create `scripts/config/alpine-wc-finals-2026.json` for the Soldeu races (late Feb/early Mar 2026). Norwegian athletes to track include Aleksander Aamodt Kilde, Lucas Braathen, Ragnhild Mowinckel. Add `alpine` to SPORT_CONFIG if needed.
+- [DONE] (direct, run 2026-02-25) **Add alpine skiing World Cup Finals curated config** — Created `scripts/config/alpine-wc-finals-2026.json` with 8 races (Super-G, GS, Downhill, Slalom for men+women) at Soldeu, Andorra (Mar 19-22). Added `alpine` to SPORT_CONFIG (emoji: ski, color: #0369a1) and league-config entry. 8 Norwegian athletes tracked: Kristoffersen, Mowinckel, Kilde, Haugan, McGrath, Stjernesund, Nestvold-Haugen, Braathen. Discovery loop will verify exact FIS schedule.
+
+---
+
+## Scouted Tasks (2026-02-25)
+
+### HIGH Priority
+
+- [DONE] (direct, run 2026-02-25) **Fix false-positive high-severity patterns from managed health codes** — `analyze-patterns.js` was flagging 9 high-severity patterns for codes already in KNOWN_DATA_GAPS (invisible_events, stale_data, chronic_data_retention, streaming_low_match_rate, etc.). Added KNOWN_MANAGED_CODES filter (13 codes) mirroring autonomy-scorecard.js. Codes still tracked in history for observability. 4 test updates.
+
+### MEDIUM Priority
+
+- [PENDING] [EXPLORE] **Investigate Norwegian ice hockey data sources** — RSS covers EHL/GET-ligaen (Storhamar heading for league title, Stjernen secured playoff spot). Ice hockey has strong Norwegian interest but zero dashboard coverage. Check if ESPN covers Norwegian hockey league, or if eliteserien.no / hockey.no have APIs. Evaluate if a curated config for playoffs would suffice initially. Norwegian teams: Storhamar, Vålerenga, Stjernen, Sparta.
 
 ---
 

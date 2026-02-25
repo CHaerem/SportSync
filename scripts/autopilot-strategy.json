@@ -114,6 +114,10 @@
       {
         "date": "2026-02-24",
         "note": "Run 10: 5 tasks + 1 pre-flight repair. Pre-flight: build-events.js derived sport from config.context instead of config.sport — 'relive' from Olympics context string. Three code-pillar tasks executed in parallel via subagents: (1) pipeline bloat threshold 20→30 (code-agent), (2) pipeline consolidation 28→25 steps via post-generate.js wrapper + finalize-outputs merge (code-agent), (3) editorial_unsorted_events false positive fix (content-agent). Then pipelineHealth loop restored to 1.0 via missing_snapshot KNOWN_DATA_GAPS addition. Autonomy confirmed at 12/12 (100%). Key insight: health check day-name comparison is lossy — weekday indices can't distinguish same-week vs cross-week transitions. Previous EXPLORE findings executed immediately: all 3 pipeline consolidation candidates shipped. Alpine skiing World Cup Finals scouted as new FEATURE task. Code pillar ~87%→~89%."
+      },
+      {
+        "date": "2026-02-25",
+        "note": "Run 11: 2 tasks via 2 parallel subagents (data-agent + code-agent) + orchestrator scouting. (1) FEATURE: alpine skiing WC Finals config — new sport added end-to-end in one subagent pass (config + SPORT_CONFIG + league-config, 3/4 checklist items). (2) MAINTENANCE: KNOWN_MANAGED_CODES filter in analyze-patterns.js — silences 9 false-positive high-severity patterns from managed health codes. Orchestrator: removed 2 duplicate cycling EXPLORE roadmap entries, scouted Norwegian ice hockey (EHL) as new coverage opportunity. Key insight: pattern-report and autonomy-scorecard need synchronized managed-code lists — when analyze-patterns accumulates warnings for codes autonomy-scorecard already suppresses, it generates persistent noise that masks genuine new patterns. Capabilities pillar advanced with 8th sport (alpine skiing). 1904 tests pass."
       }
     ]
   }
