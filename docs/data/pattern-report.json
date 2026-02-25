@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-25T18:29:32.704Z",
-  "patternsDetected": 9,
+  "generatedAt": "2026-02-25T19:27:38.993Z",
+  "patternsDetected": 8,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_coverage_gap",
-      "count": 14,
+      "count": 15,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T18:29:32.638Z",
-      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 14 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-25T19:27:38.926Z",
+      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 15 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 14,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 14 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 15,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 15 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "recurring_health_warning",
@@ -27,15 +27,6 @@
       "firstSeen": "2026-02-18T13:09:06.147Z",
       "lastSeen": "2026-02-24T11:24:40.763Z",
       "suggestion": "Health warning \"sport_dropped\" has fired 7 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "medium",
-      "issueCode": "streaming_match_rate_declining",
-      "count": 6,
-      "firstSeen": "2026-02-18T20:17:47.224Z",
-      "lastSeen": "2026-02-22T19:15:57.249Z",
-      "suggestion": "Health warning \"streaming_match_rate_declining\" has fired 6 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -59,9 +50,9 @@
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 6,
+      "fireCount": 5,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featu",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 6 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 5 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -92,9 +83,9 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 220,
+      "count": 221,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-25T18:29:32.638Z"
+      "lastSeen": "2026-02-25T19:27:38.926Z"
     },
     "component_unresolvable": {
       "count": 35,
@@ -102,29 +93,24 @@
       "lastSeen": "2026-02-23T13:36:12.942Z"
     },
     "step_timeout_hit": {
-      "count": 25,
+      "count": 12,
       "firstSeen": "2026-02-17T18:29:32.362Z",
       "lastSeen": "2026-02-22T18:17:41.460Z"
     },
     "streaming_low_match_rate": {
-      "count": 151,
+      "count": 152,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-25T18:29:32.638Z"
+      "lastSeen": "2026-02-25T19:27:38.926Z"
     },
     "sport_dropped": {
       "count": 7,
       "firstSeen": "2026-02-18T13:09:06.147Z",
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
-    "streaming_match_rate_declining": {
-      "count": 6,
-      "firstSeen": "2026-02-18T20:17:47.224Z",
-      "lastSeen": "2026-02-22T19:15:57.249Z"
-    },
     "ux_eval_fallback": {
-      "count": 85,
+      "count": 86,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-25T18:29:32.638Z"
+      "lastSeen": "2026-02-25T19:27:38.926Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -167,18 +153,18 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 14,
+      "count": 15,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T18:29:32.638Z"
+      "lastSeen": "2026-02-25T19:27:38.926Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
-      "improved": 5,
-      "unchanged": 8,
+      "improved": 6,
+      "unchanged": 7,
       "worsened": 5,
-      "effectivenessRate": 0.28
+      "effectivenessRate": 0.33
     },
     "unknown": {
       "fires": 1,
@@ -189,7 +175,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-25T18:29:32.704Z",
+    "recordedAt": "2026-02-25T19:27:38.992Z",
     "moduleCount": 60,
     "avgModuleSize": 314,
     "pipelineSteps": 25,
@@ -202,5 +188,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "9 patterns detected (2 high, 7 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 14 times since 2026-02-25."
+  "summary": "8 patterns detected (2 high, 6 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 15 times since 2026-02-25."
 }

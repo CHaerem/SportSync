@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T18:29:32.509Z",
+  "generatedAt": "2026-02-25T19:27:38.754Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 51,
@@ -76,10 +76,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
+    "editorialScore": 87,
     "issueCount": 10
   },
   "findings": [
@@ -126,23 +126,28 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Mbapp\" but no matching athlete found in events data"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Prestianni\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 11,
+    "total": 12,
     "critical": 0,
-    "warning": 11,
+    "warning": 12,
     "info": 0
   },
   "pass": true,
