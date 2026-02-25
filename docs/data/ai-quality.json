@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-25T21:16:24.656Z",
+  "generatedAt": "2026-02-25T22:12:34.586Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 108605,
+    "generationMs": 83556,
     "tokenUsage": {
-      "input": 34049,
-      "output": 6069,
-      "cacheCreation": 17677,
-      "cacheRead": 16369,
-      "total": 40118,
-      "costUSD": 0.27040575,
+      "input": 34098,
+      "output": 4766,
+      "cacheCreation": 34095,
+      "cacheRead": 0,
+      "total": 38864,
+      "costUSD": 0.33225875,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -51,20 +51,20 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.04,
+      "recapHeadlineRate": 0.074,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 27
     },
     "issues": [
-      "Only 4% of results have recap headlines"
+      "Only 7% of results have recap headlines"
     ]
   },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 48,
       "importanceCoverage": 1,
