@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T20:56:32.998Z",
+  "generatedAt": "2026-02-25T21:30:36.057Z",
   "featured": {
     "provider": "fallback",
     "model": "fallback",
@@ -9,7 +9,7 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 9,
+    "blockCount": 10,
     "generationMs": 11,
     "tokenUsage": {
       "input": 0,
@@ -55,20 +55,31 @@
       "Only 0% of results have recap headlines"
     ]
   },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 0,
+      "output": 0,
+      "calls": 1,
+      "total": 0,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-02-25T21:30:16.272Z"
+  },
   "enrichment": {
     "provider": "none",
     "model": "unknown",
     "quotaTier": null,
     "quotaModel": null,
     "before": {
-      "totalEvents": 48,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1,
-      "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "totalEvents": 51,
+      "importanceCoverage": 0.922,
+      "summaryCoverage": 0.922,
+      "relevanceCoverage": 0.922,
+      "tagsCoverage": 0.922
     },
     "after": {
-      "totalEvents": 48,
+      "totalEvents": 51,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -77,15 +88,15 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
+    "fallbackFieldsFilled": 20,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 48,
+    "totalEvents": 51,
     "skipStats": {
-      "total": 48,
-      "unchanged": 48,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 51,
+      "unchanged": 47,
+      "enriched": 4,
+      "skipRate": 0.92
     },
     "tokensPerEvent": 0,
     "hintsApplied": [],
