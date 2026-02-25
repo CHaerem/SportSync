@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import fs from "fs";
+import path from "path";
 import { computeTrend } from "../scripts/lib/ux-heuristics.js";
 
 describe("computeTrend()", () => {
@@ -58,5 +60,39 @@ describe("computeTrend()", () => {
 	it("handles null/undefined input", () => {
 		expect(computeTrend(null)).toBe("insufficient");
 		expect(computeTrend(undefined)).toBe("insufficient");
+	});
+});
+
+describe("briefFormatting heuristic registration", () => {
+	it("ux-heuristics.js includes briefFormatting in metrics and weights", () => {
+		const src = fs.readFileSync(
+			path.resolve(process.cwd(), "scripts/lib/ux-heuristics.js"),
+			"utf-8"
+		);
+		expect(src).toContain("checkBriefFormatting");
+		expect(src).toContain("briefFormatting: checkBriefFormatting()");
+		expect(src).toContain("briefFormatting: 0.05");
+	});
+
+	it("evaluate-ux.js includes briefFormatting in inline metrics and weights", () => {
+		const src = fs.readFileSync(
+			path.resolve(process.cwd(), "scripts/evaluate-ux.js"),
+			"utf-8"
+		);
+		expect(src).toContain("checkBriefFormatting");
+		expect(src).toContain("briefFormatting: checkBriefFormatting()");
+		expect(src).toContain("briefFormatting: 0.05");
+	});
+
+	it("weights sum to approximately 1.0 in ux-heuristics.js", () => {
+		const src = fs.readFileSync(
+			path.resolve(process.cwd(), "scripts/lib/ux-heuristics.js"),
+			"utf-8"
+		);
+		const weightBlock = src.match(/const weights = \{([^}]+)\}/);
+		expect(weightBlock).not.toBeNull();
+		const nums = weightBlock[1].match(/[\d.]+/g).map(Number);
+		const sum = nums.reduce((a, b) => a + b, 0);
+		expect(sum).toBeCloseTo(1.0, 2);
 	});
 });

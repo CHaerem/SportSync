@@ -10,6 +10,24 @@ function isEventInWindow(event, windowStart, windowEnd) {
 	return start < we && end >= ws;
 }
 
+/** Norwegian clubs that appear in European competitions (ESPN naming) */
+const NORWEGIAN_CLUBS = [
+	"bodo/glimt", "bodø/glimt", "molde", "rosenborg", "viking",
+	"brann", "lillestrøm", "lillestrom", "tromsø", "tromso",
+	"vålerenga", "valerenga", "sarpsborg", "odd", "lyn",
+];
+const UEFA_COMPETITION_CODES = ["uefa.champions", "uefa.europa", "uefa.europa.conf"];
+
+/** Check if a football result involves a Norwegian club in a UEFA competition */
+function isNoteworthyNorwegianResult(match) {
+	const home = (match.homeTeam || "").toLowerCase();
+	const away = (match.awayTeam || "").toLowerCase();
+	const isNorwegian = NORWEGIAN_CLUBS.some(club => home.includes(club) || away.includes(club));
+	if (!isNorwegian) return false;
+	const code = (match.leagueCode || "").toLowerCase();
+	return UEFA_COMPETITION_CODES.some(comp => code.includes(comp));
+}
+
 class Dashboard {
 	constructor() {
 		this.allEvents = [];
@@ -786,7 +804,8 @@ class Dashboard {
 			blocks = lines.map(line => ({ type: 'event-line', text: line }));
 		}
 
-		// Client-side result surfacing: if no result lines in blocks but we have favorite results
+		// Client-side result surfacing: if no result lines in blocks but we have noteworthy results
+		// Surfaces both favorite team results AND Norwegian clubs in UEFA competitions
 		if (this.recentResults?.football?.length > 0) {
 			const hasResultLine = blocks.some(b => b.type === 'event-line' && /\bFT:/.test(b.text || ''))
 				|| blocks.some(b => b.type === 'match-result');
@@ -794,7 +813,7 @@ class Dashboard {
 				const now = new Date();
 				const cutoff = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
 				const favResults = this.recentResults.football
-					.filter(m => m.isFavorite && new Date(m.date) >= cutoff)
+					.filter(m => (m.isFavorite || isNoteworthyNorwegianResult(m)) && new Date(m.date) >= cutoff)
 					.sort((a, b) => new Date(b.date) - new Date(a.date))
 					.slice(0, 2);
 				if (favResults.length > 0) {
@@ -843,8 +862,13 @@ class Dashboard {
 		let briefHtml = briefOnly.map(block => this.renderBlock(block)).join('');
 
 		// Auto-generate narrative when LLM didn't produce one (fallback provider)
+		// Skip if brief already has match-preview/result blocks — they ARE the narrative
 		const hasNarrative = briefOnly.some(b => b.type === 'narrative');
-		if (!hasNarrative && this._isViewingToday()) {
+		const hasComponentBlocks = briefOnly.some(b =>
+			b.type === 'match-preview' || b.type === 'match-result'
+			|| (b.type === 'event-line' && /\bFT:/.test(b.text || b._fallbackText || ''))
+		);
+		if (!hasNarrative && !hasComponentBlocks && this._isViewingToday()) {
 			const autoNarrative = this._generateAutoNarrative();
 			if (autoNarrative) {
 				briefHtml += `<p class="brief-narrative">${autoNarrative}</p>`;
@@ -868,7 +892,8 @@ class Dashboard {
 		}
 		briefEl.innerHTML = briefHtml;
 
-		// Section blocks no longer rendered — event cards handle sports grouping
+		// Featured sections: skip for today (match-previews + event cards already cover them)
+		// For date-specific briefings, sections are rendered in renderEditorial(dateBriefing)
 		sectionsEl.innerHTML = '';
 	}
 
@@ -994,10 +1019,28 @@ class Dashboard {
 			}
 		}
 
-		const relHtml = rel ? ` <span class="row-rel">${this.esc(rel)}</span>` : '';
-		const tourCtx = event.tournament ? `, ${this.esc(event.tournament)}` : '';
+		const relHtml = rel ? `<span class="preview-rel">${this.esc(rel)}</span>` : '';
+		const tourCtx = event.tournament ? `<span class="preview-ctx">${this.esc(event.tournament)}</span>` : '';
 
-		return `<div class="block-event-line editorial-line block-match-preview">⚽ ${hImg}${this.esc(this.shortName(event.homeTeam))} v ${aImg}${this.esc(this.shortName(event.awayTeam))}, ${this.esc(timeStr)}${relHtml}${tourCtx}${standingsHtml}</div>`;
+		// Extract editorial context from _fallbackText (text after " — " beyond team/time info)
+		let editorialHtml = '';
+		if (block._fallbackText) {
+			const parts = block._fallbackText.split(' — ');
+			// Editorial context is after the first " — " (skip "Team v Team, HH:MM, Tournament")
+			if (parts.length >= 2) {
+				const editorial = parts.slice(1).join(' — ').trim();
+				// Only show if it's actual editorial (not just team names or short fragments)
+				const lowerEd = editorial.toLowerCase();
+				const hasTeamNames = lowerEd.includes(block.homeTeam?.toLowerCase()) || lowerEd.includes(block.awayTeam?.toLowerCase());
+				const isJustTeams = hasTeamNames && editorial.length < 40;
+				const isEditorial = editorial.length > 20 && !isJustTeams;
+				if (isEditorial) {
+					editorialHtml = `<div class="preview-editorial">${this.esc(editorial)}</div>`;
+				}
+			}
+		}
+
+		return `<div class="block-event-line editorial-line block-match-preview"><span class="preview-main">⚽ ${hImg}${this.esc(this.shortName(event.homeTeam))} v ${aImg}${this.esc(this.shortName(event.awayTeam))}, ${this.esc(timeStr)}</span>${relHtml}${tourCtx}${standingsHtml}${editorialHtml}</div>`;
 	}
 
 	/** event-schedule component: renders filtered events from allEvents as a card */
@@ -1427,32 +1470,23 @@ class Dashboard {
 			olympics: 'var(--sport-olympics)',
 		};
 
+		// Show 3 items by default, rest behind "show more"
+		const visibleCount = 3;
+		const visibleItems = items.slice(0, visibleCount);
+		const hiddenItems = items.slice(visibleCount);
+
 		// Build news cards
 		let contentHtml = '<div class="news-grid">';
-		for (const item of items) {
-			const sport = item.sport || 'general';
-			const barColor = sportColors[sport] || 'var(--muted)';
-			const source = item.source || '';
-			const title = item.title || '';
-			const link = item.link || '#';
-
-			// Relative time
-			let timeAgo = '';
-			if (item.pubDate) {
-				const diff = (Date.now() - new Date(item.pubDate).getTime()) / 60000;
-				if (diff < 60) timeAgo = `${Math.round(diff)}m ago`;
-				else if (diff < 1440) timeAgo = `${Math.round(diff / 60)}h ago`;
-				else timeAgo = `${Math.round(diff / 1440)}d ago`;
+		for (const item of visibleItems) {
+			contentHtml += this._renderNewsCard(item, sportColors);
+		}
+		if (hiddenItems.length > 0) {
+			contentHtml += '<div class="news-more-items">';
+			for (const item of hiddenItems) {
+				contentHtml += this._renderNewsCard(item, sportColors);
 			}
-
-			contentHtml += `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration:none">`;
-			contentHtml += `<div class="news-sport-bar" style="background:${barColor}"></div>`;
-			contentHtml += `<div class="news-body">`;
-			contentHtml += `<div class="news-headline">${this.esc(title)}</div>`;
-			contentHtml += `<div class="news-meta">`;
-			contentHtml += `<span class="news-src-tag">${this.esc(source)}</span>`;
-			if (timeAgo) contentHtml += `<span class="news-time">${this.esc(timeAgo)}</span>`;
-			contentHtml += `</div></div></a>`;
+			contentHtml += '</div>';
+			contentHtml += `<button class="news-show-more">${hiddenItems.length} more headlines</button>`;
 		}
 		contentHtml += '</div>';
 
@@ -1461,6 +1495,46 @@ class Dashboard {
 		html += contentHtml;
 
 		container.innerHTML = html;
+
+		// Bind show-more toggle
+		const showMore = container.querySelector('.news-show-more');
+		if (showMore) {
+			showMore.addEventListener('click', () => {
+				const hidden = container.querySelector('.news-more-items');
+				if (hidden) {
+					const isHidden = hidden.classList.toggle('open');
+					showMore.textContent = isHidden
+						? 'Show less'
+						: `${hiddenItems.length} more headlines`;
+				}
+			});
+		}
+	}
+
+	_renderNewsCard(item, sportColors) {
+		const sport = item.sport || 'general';
+		const barColor = sportColors[sport] || 'var(--muted)';
+		const source = item.source || '';
+		const title = item.title || '';
+		const link = item.link || '#';
+
+		let timeAgo = '';
+		if (item.pubDate) {
+			const diff = (Date.now() - new Date(item.pubDate).getTime()) / 60000;
+			if (diff < 60) timeAgo = `${Math.round(diff)}m ago`;
+			else if (diff < 1440) timeAgo = `${Math.round(diff / 60)}h ago`;
+			else timeAgo = `${Math.round(diff / 1440)}d ago`;
+		}
+
+		let html = `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration:none">`;
+		html += `<div class="news-sport-bar" style="background:${barColor}"></div>`;
+		html += `<div class="news-body">`;
+		html += `<div class="news-headline">${this.esc(title)}</div>`;
+		html += `<div class="news-meta">`;
+		html += `<span class="news-src-tag">${this.esc(source)}</span>`;
+		if (timeAgo) html += `<span class="news-time">${this.esc(timeAgo)}</span>`;
+		html += `</div></div></a>`;
+		return html;
 	}
 
 	// --- Temporal band event layout ---

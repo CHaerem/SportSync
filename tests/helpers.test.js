@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput, parseSessionUsage } from "../scripts/lib/helpers.js";
+import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput, parseSessionUsage, isNorwegianClubResult, isNoteworthyNorwegianResult, NORWEGIAN_CLUBS, UEFA_COMPETITIONS } from "../scripts/lib/helpers.js";
 
 describe("iso()", () => {
 	it("returns valid ISO string for current time", () => {
@@ -273,5 +273,75 @@ describe("parseSessionUsage()", () => {
 		} finally {
 			fs.rmSync(testProjectDir, { recursive: true, force: true });
 		}
+	});
+});
+
+describe("Norwegian club helpers", () => {
+	describe("isNorwegianClubResult()", () => {
+		it("detects Norwegian home team", () => {
+			expect(isNorwegianClubResult({ homeTeam: "Bodo/Glimt", awayTeam: "Inter" })).toBe(true);
+		});
+
+		it("detects Norwegian away team", () => {
+			expect(isNorwegianClubResult({ homeTeam: "Inter", awayTeam: "Molde" })).toBe(true);
+		});
+
+		it("is case-insensitive", () => {
+			expect(isNorwegianClubResult({ homeTeam: "ROSENBORG", awayTeam: "Celtic" })).toBe(true);
+		});
+
+		it("returns false for non-Norwegian teams", () => {
+			expect(isNorwegianClubResult({ homeTeam: "Arsenal", awayTeam: "Liverpool" })).toBe(false);
+		});
+
+		it("handles missing team names", () => {
+			expect(isNorwegianClubResult({})).toBe(false);
+			expect(isNorwegianClubResult({ homeTeam: null })).toBe(false);
+		});
+	});
+
+	describe("isNoteworthyNorwegianResult()", () => {
+		it("returns true for Norwegian club in Champions League", () => {
+			expect(isNoteworthyNorwegianResult({
+				homeTeam: "Inter", awayTeam: "Bodo/Glimt", leagueCode: "uefa.champions",
+			})).toBe(true);
+		});
+
+		it("returns true for Norwegian club in Europa League", () => {
+			expect(isNoteworthyNorwegianResult({
+				homeTeam: "Molde", awayTeam: "Ajax", leagueCode: "uefa.europa",
+			})).toBe(true);
+		});
+
+		it("returns true for Norwegian club in Conference League", () => {
+			expect(isNoteworthyNorwegianResult({
+				homeTeam: "Bodø/Glimt", awayTeam: "Roma", leagueCode: "uefa.europa.conf",
+			})).toBe(true);
+		});
+
+		it("returns false for Norwegian club in domestic league", () => {
+			expect(isNoteworthyNorwegianResult({
+				homeTeam: "Rosenborg", awayTeam: "Molde", leagueCode: "nor.1",
+			})).toBe(false);
+		});
+
+		it("returns false for non-Norwegian club in UEFA", () => {
+			expect(isNoteworthyNorwegianResult({
+				homeTeam: "Arsenal", awayTeam: "PSG", leagueCode: "uefa.champions",
+			})).toBe(false);
+		});
+	});
+
+	it("NORWEGIAN_CLUBS list covers key teams", () => {
+		expect(NORWEGIAN_CLUBS).toContain("bodo/glimt");
+		expect(NORWEGIAN_CLUBS).toContain("rosenborg");
+		expect(NORWEGIAN_CLUBS).toContain("lyn");
+		expect(NORWEGIAN_CLUBS.length).toBeGreaterThanOrEqual(10);
+	});
+
+	it("UEFA_COMPETITIONS covers all three tiers", () => {
+		expect(UEFA_COMPETITIONS).toContain("uefa.champions");
+		expect(UEFA_COMPETITIONS).toContain("uefa.europa");
+		expect(UEFA_COMPETITIONS).toContain("uefa.europa.conf");
 	});
 });

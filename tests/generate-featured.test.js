@@ -302,6 +302,23 @@ describe("buildFallbackHeadline()", () => {
 		expect(headline).toContain("Barcelona");
 	});
 
+	it("returns Norwegian club UEFA result as headline", () => {
+		const now = new Date();
+		const events = [
+			{ sport: "football", title: "Some match", time: futureTime() },
+		];
+		const recentResults = {
+			football: [{
+				homeTeam: "Internazionale", awayTeam: "Bodo/Glimt", homeScore: 1, awayScore: 2,
+				date: new Date(now.getTime() - 6 * 3600000).toISOString(),
+				leagueCode: "uefa.champions",
+				isFavorite: false,
+			}],
+		};
+		const headline = buildFallbackHeadline(events, now, recentResults, null);
+		expect(headline).toContain("Bodo/Glimt");
+	});
+
 	it("returns must-watch event headline when no results", () => {
 		const events = [
 			{ sport: "football", title: "Arsenal vs Liverpool", time: futureTime(), homeTeam: "Arsenal", awayTeam: "Liverpool", importance: 5, tournament: "Premier League" },
@@ -353,12 +370,42 @@ describe("buildFallbackResultLines()", () => {
 		expect(blocks[0]._fallbackText).toContain("Beltrán");
 	});
 
-	it("skips non-favorite results", () => {
+	it("skips non-favorite non-Norwegian results", () => {
 		const now = new Date();
 		const results = {
 			football: [{
 				homeTeam: "Arsenal", awayTeam: "Liverpool", homeScore: 1, awayScore: 0,
 				date: new Date(now.getTime() - 6 * 3600000).toISOString(),
+				leagueCode: "eng.1",
+				isFavorite: false,
+			}],
+		};
+		expect(buildFallbackResultLines(results, now)).toEqual([]);
+	});
+
+	it("includes Norwegian club results in UEFA competitions", () => {
+		const now = new Date();
+		const results = {
+			football: [{
+				homeTeam: "Internazionale", awayTeam: "Bodo/Glimt", homeScore: 1, awayScore: 2,
+				date: new Date(now.getTime() - 6 * 3600000).toISOString(),
+				leagueCode: "uefa.champions",
+				isFavorite: false,
+			}],
+		};
+		const blocks = buildFallbackResultLines(results, now);
+		expect(blocks.length).toBe(1);
+		expect(blocks[0].type).toBe("match-result");
+		expect(blocks[0]._fallbackText).toContain("Bodo/Glimt");
+	});
+
+	it("skips Norwegian club results in domestic leagues", () => {
+		const now = new Date();
+		const results = {
+			football: [{
+				homeTeam: "Rosenborg", awayTeam: "Molde", homeScore: 2, awayScore: 1,
+				date: new Date(now.getTime() - 6 * 3600000).toISOString(),
+				leagueCode: "nor.1",
 				isFavorite: false,
 			}],
 		};

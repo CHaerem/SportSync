@@ -16,7 +16,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey, parseCliJsonOutput } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow, MS_PER_DAY, formatDateKey, parseCliJsonOutput, isNorwegianClubResult, UEFA_COMPETITIONS } from "./lib/helpers.js";
 import { LLMClient } from "./lib/llm-client.js";
 import { validateFeaturedContent, evaluateEditorialQuality, evaluateWatchPlanQuality, buildQualitySnapshot, buildAdaptiveHints, evaluateResultsQuality, buildResultsHints, buildSanityHints, computeRollingAverages } from "./lib/ai-quality-gates.js";
 import { buildWatchPlan, computeFeedbackAdjustments } from "./lib/watch-plan.js";
@@ -614,11 +614,40 @@ function sportEmoji(sport) {
 	return map[sport] || "🏆";
 }
 
-function generateFallbackThisWeek(events, now, sectionSports = []) {
+/** Guess the sport of a fallback section from its emoji, id, or title. */
+function guessSectionSport(section) {
+	const emojiMap = { "⚽": "football", "⛳": "golf", "🎾": "tennis", "🏎️": "formula1", "♟️": "chess", "🎮": "esports", "🏅": "olympics" };
+	if (section.emoji && emojiMap[section.emoji]) return emojiMap[section.emoji];
+	const text = `${section.id || ""} ${section.title || ""}`.toLowerCase();
+	// Specific sports first (before football's broad "champion" pattern)
+	if (/biathlon/.test(text)) return "biathlon";
+	if (/nordic|cross.country/.test(text)) return "nordic";
+	if (/alpine|ski/.test(text)) return "alpine";
+	if (/olympic/.test(text)) return "olympics";
+	if (/golf|pga|masters/.test(text)) return "golf";
+	if (/tennis|grand slam|atp|wta/.test(text)) return "tennis";
+	if (/f1|formula/.test(text)) return "formula1";
+	if (/chess/.test(text)) return "chess";
+	if (/esport|cs2|counter/.test(text)) return "esports";
+	if (/football|champions?\sleague|premier|la\sliga|europa/.test(text)) return "football";
+	return "unknown";
+}
+
+function generateFallbackThisWeek(events, now, sectionSports = [], { followedSports, favoriteOrgs } = {}) {
 	const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 	const upcoming = events
 		.filter((event) => new Date(event.time) >= todayEnd)
 		.filter((event) => !sectionSports.includes(event.sport))
+		.filter((event) => {
+			// Filter to followed sports if preferences exist
+			if (followedSports && followedSports.size > 0 && !followedSports.has(event.sport)) return false;
+			// For esports, only include events involving favorite orgs
+			if (event.sport === "esports" && favoriteOrgs && favoriteOrgs.length > 0) {
+				const title = (event.title || "").toLowerCase();
+				return favoriteOrgs.some(org => title.includes(org));
+			}
+			return true;
+		})
 		.sort((a, b) => new Date(a.time) - new Date(b.time));
 
 	const parts = [];
@@ -677,8 +706,8 @@ export function buildFallbackHeadline(events, now, recentResults, standings, sec
 		return "Medal day in Milano-Cortina";
 	}
 
-	// Check for recent favorite team results (last 48h)
-	const favResults = getFavoriteResults(recentResults, now);
+	// Check for recent noteworthy results — favorites + Norwegian clubs in UEFA (last 48h)
+	const favResults = getNoteworthyResults(recentResults, now);
 	if (favResults.length > 0) {
 		const r = favResults[0];
 		const winner = r.homeScore > r.awayScore ? r.homeTeam : r.homeScore < r.awayScore ? r.awayTeam : null;
@@ -731,7 +760,7 @@ export function buildFallbackNarrative(events, now, recentResults, standings, se
 	}
 
 	// Major result narrative: upset or high-scoring game
-	const favResults = getFavoriteResults(recentResults, now);
+	const favResults = getNoteworthyResults(recentResults, now);
 	if (favResults.length > 0) {
 		const r = favResults[0];
 		const totalGoals = (r.homeScore || 0) + (r.awayScore || 0);
@@ -751,22 +780,35 @@ export function buildFallbackNarrative(events, now, recentResults, standings, se
 }
 
 /**
- * Get recent results for favorite teams within the last 48h.
+ * Get recent noteworthy results within the last 48h.
+ * Includes favorite team results AND Norwegian club results in UEFA competitions.
+ * This ensures big Norwegian results (e.g. Bodø/Glimt in CL) surface even
+ * when the fallback provider is used and the team isn't a user favorite.
  */
-function getFavoriteResults(recentResults, now) {
+function getNoteworthyResults(recentResults, now) {
 	if (!recentResults?.football?.length) return [];
 	const cutoff = new Date(now.getTime() - 2 * MS_PER_DAY);
 	return recentResults.football
-		.filter((m) => m.isFavorite && new Date(m.date) >= cutoff)
+		.filter((m) => {
+			if (new Date(m.date) < cutoff) return false;
+			if (m.isFavorite) return true;
+			// Norwegian clubs in UEFA competitions are always noteworthy
+			if (isNorwegianClubResult(m)) {
+				const code = (m.leagueCode || "").toLowerCase();
+				return UEFA_COMPETITIONS.some(comp => code.includes(comp));
+			}
+			return false;
+		})
 		.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 /**
- * Build event-line blocks for recent favorite team results.
+ * Build event-line blocks for recent noteworthy results.
+ * Includes favorites and Norwegian clubs in UEFA competitions.
  * Max 2 result lines from the last 48h.
  */
 export function buildFallbackResultLines(recentResults, now) {
-	const favResults = getFavoriteResults(recentResults, now);
+	const favResults = getNoteworthyResults(recentResults, now);
 	if (favResults.length === 0) return [];
 
 	return favResults.slice(0, 2).map((r) => {
@@ -784,11 +826,21 @@ export function buildFallbackResultLines(recentResults, now) {
 	});
 }
 
-export function buildFallbackFeatured(events, now, { recentResults, standings, rssDigest } = {}) {
+export function buildFallbackFeatured(events, now, { recentResults, standings, rssDigest, userContext } = {}) {
 	const blocks = [];
+	const prefs = userContext?.sportPreferences || {};
+	const followedSports = new Set(Object.keys(prefs));
+	const favoriteOrgs = (userContext?.favoriteEsportsOrgs || []).map(o => o.toLowerCase());
 
-	// Sections for major events (compute early so we can dedupe event-lines)
-	const sections = buildFallbackSections(events, now);
+	// Sections for major events — filtered to sports the user follows
+	const allSections = buildFallbackSections(events, now);
+	const sections = followedSports.size > 0
+		? allSections.filter((s) => {
+			// Map section sport from its events or id — keep if user follows it
+			const sectionSport = s._sport || guessSectionSport(s);
+			return followedSports.has(sectionSport) || sectionSport === "olympics";
+		})
+		: allSections;
 	const sectionSports = sections.map((s) => {
 		if (/olympic/i.test(s.id || s.title)) return "olympics";
 		return null;
@@ -800,7 +852,7 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 		blocks.push({ type: "headline", text: headline });
 	}
 
-	// Recent favorite results as match-result component blocks (last 48h)
+	// Recent noteworthy results as match-result component blocks (last 48h)
 	const resultBlocks = buildFallbackResultLines(recentResults, now);
 	for (const block of resultBlocks) {
 		blocks.push(block);
@@ -813,7 +865,8 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 	}
 
 	// Today event lines — football events become match-preview components, others stay as text
-	const todayBlocks = generateFallbackTodayBlocks(events, now, sectionSports);
+	// Esports filtered to events involving favorite orgs only
+	const todayBlocks = generateFallbackTodayBlocks(events, now, sectionSports, favoriteOrgs);
 	for (const block of todayBlocks) {
 		blocks.push(block);
 	}
@@ -858,8 +911,8 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 		});
 	}
 
-	// This week — football events become match-preview components
-	const thisWeekItems = generateFallbackThisWeek(events, now, sectionSports);
+	// This week — football events become match-preview components, filtered by preferences
+	const thisWeekItems = generateFallbackThisWeek(events, now, sectionSports, { followedSports, favoriteOrgs });
 	if (thisWeekItems.length > 0) {
 		blocks.push({ type: "divider", text: "This Week" });
 		for (const item of thisWeekItems) {
@@ -877,13 +930,21 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 /**
  * Generate today's event blocks — football as match-preview components, others as text event-lines.
  */
-function generateFallbackTodayBlocks(events, now, sectionSports = []) {
+function generateFallbackTodayBlocks(events, now, sectionSports = [], favoriteOrgs = []) {
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const todayEnd = new Date(todayStart.getTime() + MS_PER_DAY);
 
 	const todayEvents = events
 		.filter((e) => isEventInWindow(e, todayStart, todayEnd))
-		.filter((e) => !sectionSports.includes(e.sport));
+		.filter((e) => !sectionSports.includes(e.sport))
+		.filter((e) => {
+			// For esports, only include events involving favorite orgs
+			if (e.sport === "esports" && favoriteOrgs.length > 0) {
+				const title = (e.title || "").toLowerCase();
+				return favoriteOrgs.some(org => title.includes(org));
+			}
+			return true;
+		});
 
 	if (todayEvents.length === 0) return [];
 
@@ -1222,7 +1283,7 @@ async function main() {
 	if (!featured) {
 		console.log("Using deterministic fallback for featured content.");
 		provider = "fallback";
-		featured = buildFallbackFeatured(events, now, { recentResults, standings, rssDigest });
+		featured = buildFallbackFeatured(events, now, { recentResults, standings, rssDigest, userContext });
 		qualityResult = validateFeaturedContent(featured, { events });
 		featured = qualityResult.normalized;
 	}
