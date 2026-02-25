@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-02-25T08:22:29.323Z",
+  "generatedAt": "2026-02-25T09:25:02.436Z",
   "patternsDetected": 7,
   "patterns": [
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 17,
+      "fireCount": 16,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featu",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 17 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 16 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
@@ -75,9 +75,9 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 209,
+      "count": 210,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-25T08:22:29.256Z"
+      "lastSeen": "2026-02-25T09:25:02.356Z"
     },
     "component_unresolvable": {
       "count": 35,
@@ -90,9 +90,9 @@
       "lastSeen": "2026-02-22T18:17:41.460Z"
     },
     "streaming_low_match_rate": {
-      "count": 140,
+      "count": 141,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-25T08:22:29.255Z"
+      "lastSeen": "2026-02-25T09:25:02.356Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -110,9 +110,9 @@
       "lastSeen": "2026-02-22T19:15:57.249Z"
     },
     "ux_eval_fallback": {
-      "count": 74,
+      "count": 75,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-25T08:22:29.255Z"
+      "lastSeen": "2026-02-25T09:25:02.356Z"
     },
     "model_change_quality_drop": {
       "count": 5,
@@ -155,9 +155,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 3,
+      "count": 4,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T08:22:29.255Z"
+      "lastSeen": "2026-02-25T09:25:02.356Z"
     }
   },
   "interventionEffectiveness": {
@@ -170,7 +170,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-25T08:22:29.323Z",
+    "recordedAt": "2026-02-25T09:25:02.435Z",
     "moduleCount": 60,
     "avgModuleSize": 312,
     "pipelineSteps": 25,
