@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T07:28:18.568Z",
+  "generatedAt": "2026-02-25T08:22:29.156Z",
   "eventCount": 52,
   "sportCoverage": {
     "esports": {
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 1,
     "sevenDay": 44,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 216265,
+    "totalDuration": 230245,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 99802,
-        "share": 46
+        "duration": 119498,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 46% of total pipeline time (100s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 52% of total pipeline time (119s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -211,7 +211,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 87/100.",
     "tokenUsage": null
   }
 }
