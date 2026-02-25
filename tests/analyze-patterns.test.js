@@ -29,16 +29,18 @@ describe("analyzeRecurringHealthWarnings", () => {
 
 	it("accumulates counts from previous history", () => {
 		const recentDate = new Date(Date.now() - 2 * 86400000).toISOString();
+		// Use a non-managed code (rss_low) — managed codes like stale_data are tracked in
+		// history but not surfaced as actionable patterns (they're handled by feedback loops)
 		const history = {
-			stale_data: { count: 4, firstSeen: recentDate, lastSeen: recentDate },
+			rss_low: { count: 4, firstSeen: recentDate, lastSeen: recentDate },
 		};
-		const report = { issues: [{ severity: "warning", code: "stale_data", message: "data is old" }] };
+		const report = { issues: [{ severity: "warning", code: "rss_low", message: "rss is low" }] };
 		const { patterns, issueCodeHistory } = analyzeRecurringHealthWarnings(report, history);
 
-		expect(issueCodeHistory.stale_data.count).toBe(5);
+		expect(issueCodeHistory.rss_low.count).toBe(5);
 		expect(patterns).toHaveLength(1);
 		expect(patterns[0].severity).toBe("medium");
-		expect(patterns[0].issueCode).toBe("stale_data");
+		expect(patterns[0].issueCode).toBe("rss_low");
 	});
 
 	it("flags high severity at >= 10 occurrences", () => {
@@ -56,10 +58,11 @@ describe("analyzeRecurringHealthWarnings", () => {
 
 	it("does not flag below threshold", () => {
 		const recentDate = new Date(Date.now() - 2 * 86400000).toISOString();
+		// Use a non-managed code to test the threshold logic in isolation
 		const history = {
-			stale_data: { count: 3, firstSeen: recentDate, lastSeen: recentDate },
+			rss_low: { count: 3, firstSeen: recentDate, lastSeen: recentDate },
 		};
-		const report = { issues: [{ severity: "warning", code: "stale_data", message: "data is old" }] };
+		const report = { issues: [{ severity: "warning", code: "rss_low", message: "rss is low" }] };
 		const { patterns } = analyzeRecurringHealthWarnings(report, history);
 		expect(patterns).toHaveLength(0);
 	});
@@ -151,6 +154,29 @@ describe("analyzeRecurringHealthWarnings", () => {
 		};
 		const { issueCodeHistory } = analyzeRecurringHealthWarnings({ issues: [] }, history);
 		expect(issueCodeHistory.active_issue.count).toBe(20);
+	});
+
+	it("tracks managed codes in history but does not surface them as actionable patterns", () => {
+		// Managed codes (stale_data, invisible_events, etc.) are handled by feedback loops.
+		// They should still accumulate in issueCodeHistory for observability, but should NOT
+		// appear as actionable recurring_health_warning patterns.
+		const recentDate = new Date(Date.now() - 1 * 86400000).toISOString();
+		const managedCodes = ["stale_data", "invisible_events", "chronic_data_retention",
+			"low_confidence_config", "ux_eval_fallback", "component_unresolvable"];
+		const history = {};
+		for (const code of managedCodes) {
+			history[code] = { count: 20, firstSeen: recentDate, lastSeen: recentDate };
+		}
+		const issues = managedCodes.map(code => ({ severity: "warning", code, message: "managed" }));
+		const { patterns, issueCodeHistory } = analyzeRecurringHealthWarnings({ issues }, history);
+
+		// History still tracks all codes for observability
+		for (const code of managedCodes) {
+			expect(issueCodeHistory[code]).toBeDefined();
+			expect(issueCodeHistory[code].count).toBeGreaterThan(0);
+		}
+		// But no actionable patterns are generated for managed codes
+		expect(patterns).toHaveLength(0);
 	});
 });
 
@@ -727,8 +753,9 @@ describe("analyzePatterns", () => {
 		fs.writeFileSync(path.join(tmpDir, "health-report.json"), JSON.stringify(healthReport));
 
 		const report = analyzePatterns({ dataDir: tmpDir });
+		// stale_data is a KNOWN_MANAGED_CODE — tracked in history but not surfaced as an actionable pattern
 		expect(report.issueCodeHistory.stale_data.count).toBe(5);
-		expect(report.patternsDetected).toBeGreaterThanOrEqual(1);
+		expect(report.patterns.some((p) => p.issueCode === "stale_data")).toBe(false);
 	});
 
 	it("generates meaningful summary", () => {

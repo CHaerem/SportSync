@@ -25,8 +25,35 @@ import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY } from
 const HISTORY_MAX_AGE_DAYS = 7;
 
 /**
+ * Health warning codes that are already observed and acted upon by existing feedback loops
+ * or autonomous infrastructure (quota adaptation, sync-configs pruning, etc.).
+ * These codes are still tracked in issueCodeHistory for observability, but they should NOT
+ * surface as actionable recurring_health_warning patterns — doing so would pollute the pattern
+ * report with noise and mask genuine unmanaged issues.
+ *
+ * Mirror of KNOWN_DATA_GAPS in autonomy-scorecard.js — keep in sync when adding new codes.
+ */
+const KNOWN_MANAGED_CODES = new Set([
+	"sport_zero_events",        // loop 4: data file exists, 0 events (legitimate data gap)
+	"quota_api_unavailable",    // heuristic J: upstream API scope limitation (uncontrollable)
+	"stale_data",               // loop 7+8: fetcher returned empty, sync-configs retains cached data
+	"chronic_data_retention",   // loop 7: repeated empty fetches, discovery loop re-researches
+	"streaming_low_match_rate", // loop 12: alias mining and trend tracking address this
+	"invisible_events",         // loop 7: past events pruned by sync-configs on next cycle
+	"low_confidence_config",    // loop 8: verification loop re-verifies, discovery re-researches
+	"component_unresolvable",   // loop 3: featured quality gates monitor and adapt prompts
+	"stale_output",             // quota adaptation: AI steps skipped when quota is tier 3
+	"quota_high_utilization",   // quota adaptation: informational — quota system manages tier transitions
+	"ux_eval_fallback",         // infrastructure: Playwright unavailable in CI, file-based fallback is acceptable
+	"step_timeout_hit",         // quota adaptation: AI steps hit timeouts when quota-limited
+	"missing_snapshot",         // loop 9: snapshot rebuilt every pipeline cycle, transient gap
+]);
+
+/**
  * Detector 1: Recurring Health Warnings
  * Counts same issue.code across runs. Flags at >= 5 (medium), >= 10 (high).
+ * Codes in KNOWN_MANAGED_CODES are still tracked in history for observability,
+ * but are not surfaced as actionable patterns since they're handled by feedback loops.
  */
 export function analyzeRecurringHealthWarnings(healthReport, previousHistory = {}) {
 	const patterns = [];
@@ -68,8 +95,10 @@ export function analyzeRecurringHealthWarnings(healthReport, previousHistory = {
 		history[code].lastSeen = iso();
 	}
 
-	// Flag patterns
+	// Flag patterns — skip codes that are already managed by feedback loops or infrastructure.
+	// These are expected operational noise; surfacing them as patterns adds no actionable signal.
 	for (const [code, entry] of Object.entries(history)) {
+		if (KNOWN_MANAGED_CODES.has(code)) continue;
 		if (entry.count >= 5) {
 			const severity = entry.count >= 10 ? "high" : "medium";
 			patterns.push({
