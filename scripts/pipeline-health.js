@@ -981,12 +981,23 @@ async function main() {
 			const age = Date.now() - new Date(r.timestamp).getTime();
 			return age < 24 * 60 * 60 * 1000;
 		});
+		const failedRepairs = recentRuns.filter(r => r.action?.startsWith("repair-") && !r.success);
 		const successRate = recentRuns.length > 0
 			? Math.round(recentRuns.filter(r => r.success).length / recentRuns.length * 100)
 			: null;
 		console.log(`Recipe scrapers: ${active.length} active, ${broken.length} need repair, 24h success rate: ${successRate ?? "N/A"}%`);
 		if (broken.length > 0) {
 			console.log(`  Broken recipes: ${broken.map(r => r.id).join(", ")}`);
+		}
+		// Escalate: recipes with many failures that self-repair couldn't fix
+		// The autopilot reads health-report.json and will notice these as issues needing investigation
+		for (const entry of active) {
+			if (entry.consecutiveFailures >= 6) {
+				console.log(`  ESCALATE: Recipe "${entry.id}" has ${entry.consecutiveFailures} consecutive failures — self-repair exhausted, needs autopilot investigation (alternative source? page permanently changed?)`);
+			}
+		}
+		if (failedRepairs.length >= 2) {
+			console.log(`  WARNING: ${failedRepairs.length} recipe repair attempts failed in last 24h — LLM-based repair may be insufficient`);
 		}
 	}
 
