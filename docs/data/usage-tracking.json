@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-02-25T10:25:36.879Z",
+  "lastUpdated": "2026-02-25T11:23:41.858Z",
   "current": {
     "fiveHour": {
-      "utilization": 15
+      "utilization": 3
     },
     "sevenDay": {
       "utilization": 45,
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-25T10:25:37.795Z"
+    "checkedAt": "2026-02-25T11:23:42.589Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 40578,
+    "featured": 42177,
     "discovery": 0,
     "multiDay": 0,
-    "runTotal": 40578
+    "runTotal": 42177
   },
   "budget": {
-    "dailyUsed": 3380128,
-    "weeklyUsed": 22696594,
+    "dailyUsed": 3382482,
+    "weeklyUsed": 21899104,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 68,
-    "weeklyPct": 91
+    "weeklyPct": 88
   },
   "sportsyncShare": {
-    "pipelineRuns": 137,
+    "pipelineRuns": 134,
     "autopilotRuns": 0,
-    "totalDurationMs": 40269718
+    "totalDurationMs": 39630677
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,30 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-18T10:44:23.150Z",
-      "context": "pipeline",
-      "durationMs": 204073,
-      "tokens": 209536
-    },
-    {
-      "timestamp": "2026-02-18T10:50:15.760Z",
-      "context": "pipeline",
-      "durationMs": 215873,
-      "tokens": 210192
-    },
-    {
-      "timestamp": "2026-02-18T11:09:08.368Z",
-      "context": "pipeline",
-      "durationMs": 214122,
-      "tokens": 210063
-    },
-    {
-      "timestamp": "2026-02-18T11:23:21.482Z",
-      "context": "pipeline",
-      "durationMs": 204624,
-      "tokens": 209876
-    },
     {
       "timestamp": "2026-02-18T11:38:23.803Z",
       "context": "pipeline",
@@ -873,6 +849,12 @@
       "context": "pipeline",
       "durationMs": 180148,
       "tokens": 40578
+    },
+    {
+      "timestamp": "2026-02-25T11:23:41.858Z",
+      "context": "pipeline",
+      "durationMs": 199651,
+      "tokens": 42177
     }
   ]
 }
