@@ -95,7 +95,42 @@ export function findResearchTasks(configs, coverageGaps, now = new Date()) {
 		}
 	}
 
-	// Priority 4: coverage gaps with medium+ confidence that have no matching config
+	// Priority 4: active tournaments needing bracket refresh (esports configs with tournaments array)
+	for (const { filename, config } of configs) {
+		if (!Array.isArray(config.tournaments)) continue;
+		for (const t of config.tournaments) {
+			if (!t.bracket || !t.startDate || !t.endDate) continue;
+			const start = new Date(t.startDate);
+			const end = new Date(t.endDate);
+			// Only refresh brackets for tournaments currently active or starting within 2 days
+			const refreshWindow = new Date(now.getTime() - 2 * MS_PER_DAY);
+			if (end < refreshWindow || start > new Date(now.getTime() + 2 * MS_PER_DAY)) continue;
+			const lastResearched = config.lastResearched ? new Date(config.lastResearched) : null;
+			// Smart schedule: 1h refresh on match days (focus team match within ±6h), 2h otherwise
+			const focusTeam = (t.focusTeam || "").toLowerCase();
+			const SIX_HOURS = 6 * 60 * 60 * 1000;
+			const isMatchDay = focusTeam && (config.events || []).some(ev => {
+				if (!ev.time) return false;
+				const evTime = new Date(ev.time).getTime();
+				const title = (ev.title || "").toLowerCase();
+				return title.includes(focusTeam) && Math.abs(now.getTime() - evTime) < SIX_HOURS;
+			});
+			const bracketRefreshMs = isMatchDay ? 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
+			if (lastResearched && now.getTime() - lastResearched.getTime() < bracketRefreshMs) continue;
+			if (!tasks.some((x) => x.filename === filename)) {
+				tasks.push({
+					type: "refresh-bracket",
+					priority: 4,
+					filename,
+					config,
+					tournament: t,
+					reason: `Active tournament bracket refresh: ${t.name}`,
+				});
+			}
+		}
+	}
+
+	// Priority 5: coverage gaps with medium+ confidence that have no matching config
 	if (coverageGaps?.gaps) {
 		const configNames = new Set(configs.map((c) => c.config.context || c.config.name?.toLowerCase()));
 		for (const gap of coverageGaps.gaps) {
@@ -152,6 +187,47 @@ Return ONLY the JSON object, no markdown fences.`;
 		? JSON.stringify(task.config, null, 2)
 		: JSON.stringify(task.gap || {}, null, 2);
 
+	if (task.type === "refresh-bracket") {
+		const t = task.tournament;
+		const focusTeam = t.focusTeam || task.config.norwegianTeams?.[0] || "";
+		return `You are a sports research assistant. Your job is to find accurate, current tournament bracket data.
+
+TASK: Refresh bracket for "${t.name}" (esports/CS2)
+FOCUS TEAM: ${focusTeam}
+CURRENT BRACKET: ${JSON.stringify(t.bracket, null, 2)}
+
+INSTRUCTIONS:
+1. Search HLTV, Liquipedia, or dust2.us for the latest bracket results for "${t.name}"
+2. Focus on matches involving ${focusTeam} — find their current position and upcoming opponents
+3. Update completed matches with winners and scores
+4. Fill in TBD slots where teams have been determined
+5. Update the focusTeamPath with latest results and next match info
+6. Return ONLY valid JSON matching this schema:
+{
+  "bracket": {
+    "groups": { ... },
+    "playoffs": {
+      "format": "Double Elimination (Bo3)",
+      "upperBracket": [{ "round": "Round 1", "matches": [{ "team1": "...", "team2": "...", "score": "2-0", "winner": "...", "status": "completed|live|scheduled|pending" }] }],
+      "lowerBracket": [{ "round": "Round 1", "matches": [...] }],
+      "grandFinal": { "matches": [...] }
+    },
+    "focusTeamPath": {
+      "team": "${focusTeam}",
+      "status": "Current stage description",
+      "completed": [{ "stage": "...", "opponent": "...", "result": "W 13-3", "map": "Ancient" }],
+      "current": { "stage": "...", "opponent": "...", "format": "Bo3", "status": "live|scheduled" },
+      "ifWin": "Description of next match if they win",
+      "ifLose": "Description of what happens if they lose"
+    }
+  }
+}
+7. For match status use: "completed" (done), "live" (in progress), "scheduled" (time set), "pending" (TBD)
+8. Include scores as "2-0", "13-6", "FF" (forfeit), etc.
+
+Return ONLY the JSON object, no markdown fences.`;
+	}
+
 	const sportHint = task.config?.sport || task.gap?.sport || "unknown";
 	const nameHint = task.config?.name || task.gap?.matchedPattern || "Unknown Event";
 
@@ -162,6 +238,56 @@ Return ONLY the JSON object, no markdown fences.`;
 	const accuracySection = Array.isArray(verificationHints) && verificationHints.length > 0
 		? `\n\nACCURACY CORRECTIONS:\n${verificationHints.join("\n")}`
 		: "";
+
+	// Esports-specific schema includes bracket data, format, stage, and result
+	const isEsports = sportHint === "esports" || sportHint === "cs2";
+	const focusTeams = task.config?.norwegianTeams || userContext?.favoriteEsportsOrgs || [];
+	const esportsBracketSchema = isEsports ? `
+  "tournaments": [
+    {
+      "id": "tournament-id",
+      "name": "Tournament Name",
+      "organizer": "Org Name",
+      "tier": "S-Tier/A-Tier/B-Tier",
+      "venue": "Venue, City, Country",
+      "prizePool": "$100,000 USD",
+      "startDate": "2026-06-10",
+      "endDate": "2026-06-20",
+      "teams": 16,
+      "format": "GSL Groups → Double Elimination Playoffs",
+      "focusTeam": "${focusTeams[0] || ""}",
+      "focusTeamRoster": ["player1", "player2"],
+      "coach": "Coach Name",
+      "bracket": {
+        "groups": { "A": { "name": "Group A", "format": "GSL (Bo1)", "matches": [...], "result": { "1st": "...", "2nd": "..." } } },
+        "playoffs": {
+          "format": "Double Elimination (Bo3)",
+          "upperBracket": [{ "round": "Round 1", "matches": [{ "team1": "...", "team2": "...", "score": "2-0", "winner": "...", "status": "completed" }] }],
+          "lowerBracket": [...],
+          "grandFinal": { "matches": [...] }
+        },
+        "focusTeamPath": {
+          "team": "${focusTeams[0] || ""}",
+          "status": "Current bracket position",
+          "completed": [{ "stage": "...", "opponent": "...", "result": "W 13-3", "map": "Ancient" }],
+          "current": { "stage": "...", "opponent": "...", "format": "Bo3", "status": "scheduled" },
+          "ifWin": "Next match description",
+          "ifLose": "Elimination or lower bracket"
+        }
+      }
+    }
+  ],` : "";
+
+	const esportsEventFields = isEsports ? `
+      "format": "Bo1|Bo3|Bo5",
+      "stage": "Group B - Opening Match|Upper Bracket - Round 1|etc.",
+      "result": { "winner": "Team A", "score": "2-0", "maps": [{ "map": "Ancient", "team1Score": 13, "team2Score": 6 }] },` : "";
+
+	const esportsFocusInstructions = isEsports && focusTeams.length > 0 ? `
+8. FOCUS: Only include matches involving ${focusTeams.join(" or ")} — these are the user's favorite teams
+9. For each match include format (Bo1/Bo3/Bo5), stage, and result if completed
+10. If the tournament uses brackets (upper/lower, double elimination), include full bracket data in the tournaments array
+11. Search HLTV.org, Liquipedia, and dust2.us for accurate bracket and result data` : "";
 
 	return `You are a sports research assistant. Your job is to find accurate, current schedule data.
 
@@ -180,9 +306,9 @@ INSTRUCTIONS:
       "venue": "Venue name",
       "norwegian": true,
       "norwegianPlayers": [{"name": "Player Name"}],
-      "streaming": [{"platform": "NRK", "type": "tv"}]
+      "streaming": [{"platform": "NRK", "type": "tv"}],${esportsEventFields}
     }
-  ],
+  ],${esportsBracketSchema}
   "norwegianAthletes": ["Name 1", "Name 2"],
   "location": "City, Country",
   "startDate": "2026-06-10",
@@ -191,7 +317,7 @@ INSTRUCTIONS:
 4. Use ISO 8601 times with timezone offset (e.g., 2026-06-15T21:00:00+02:00)
 5. Only include events in the window ${windowStr} (skip far-future events)
 6. For athletes, verify current nationality and retirement status
-7. For streaming, check if NRK, TV2, Eurosport, or Viaplay broadcast this event in Norway
+7. For streaming, check if NRK, TV2, Eurosport, or Viaplay broadcast this event in Norway${esportsFocusInstructions}
 
 Return ONLY the JSON object, no markdown fences.${accuracySection}`;
 }
@@ -285,9 +411,29 @@ export function applyDiscovery(config, result, now = new Date()) {
 		updated.endDate = result.endDate;
 	}
 
+	// Merge tournament bracket data
+	if (Array.isArray(result.tournaments) && result.tournaments.length > 0) {
+		updated.tournaments = result.tournaments;
+	}
+
 	updated.lastResearched = iso(now);
 	updated.autoGenerated = true;
 
+	return updated;
+}
+
+/**
+ * Apply bracket refresh results to a tournament in the config.
+ */
+export function applyBracketRefresh(config, tournamentId, bracketResult, now = new Date()) {
+	const updated = { ...config };
+	if (!Array.isArray(updated.tournaments)) return updated;
+	const t = updated.tournaments.find((x) => x.id === tournamentId);
+	if (!t) return updated;
+	if (bracketResult.bracket) {
+		t.bracket = bracketResult.bracket;
+	}
+	updated.lastResearched = iso(now);
 	return updated;
 }
 
@@ -427,6 +573,17 @@ export async function runDiscovery({ configDir, dataDir, now } = {}) {
 				taskLog.outcome = "success";
 				taskLog.eventsFound = result.events?.length || 0;
 				console.log(`  Populated ${task.filename} with ${taskLog.eventsFound} events`);
+			} else if (task.type === "refresh-bracket" && task.filename && task.tournament) {
+				// Refresh bracket data for an active tournament
+				const configPath = path.join(cfgDir, task.filename);
+				const currentConfig = readJsonIfExists(configPath);
+				if (currentConfig && result.bracket) {
+					const refreshed = applyBracketRefresh(currentConfig, task.tournament.id, result, timestamp);
+					writeJsonPretty(configPath, refreshed);
+					taskLog.outcome = "success";
+					taskLog.bracketUpdated = true;
+					console.log(`  Updated bracket for ${task.tournament.name} in ${task.filename}`);
+				}
 			} else if (task.type === "coverage-gap") {
 				// Create new config from coverage gap research
 				const gap = task.gap;

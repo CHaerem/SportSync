@@ -6,7 +6,7 @@ import { EventFilters } from "../lib/filters.js";
 // Top-tier CS2 events to always include for general coverage
 const MAJOR_CS2_PATTERNS = [
 	/major/i, /iem/i, /esl pro/i, /blast/i, /world cup/i,
-	/pgl/i, /dreamhack/i, /champions/i, /pro league/i
+	/pgl/i, /dreamhack/i, /champions/i, /pro league/i, /draculan/i
 ];
 
 function isMajorEvent(name) {

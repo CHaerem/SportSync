@@ -12,52 +12,195 @@
   "norwegianTeams": [
     "100 Thieves"
   ],
-  "notes": "Norwegian focus: rain (Håvard Nygaard) on 100 Thieves. Liquipedia API provides live match data — discovery loop supplements with major event schedules.",
+  "notes": "Norwegian focus: rain (Håvard Nygaard) on 100 Thieves. Liquipedia API provides live match data — discovery loop supplements with major event schedules. Bracket data auto-refreshed by discovery loop.",
   "events": [
     {
       "title": "DraculaN Season 5 - 100 Thieves vs MANA",
-      "time": "2026-02-24T14:00:00+02:00",
-      "endTime": "2026-02-28T23:00:00+02:00",
+      "time": "2026-02-24T13:00:00+02:00",
       "venue": "Bucharest, Romania",
+      "tournament": "DraculaN Season 5",
+      "format": "Bo1",
+      "stage": "Group B - Opening Match",
       "norwegian": true,
-      "norwegianPlayers": [
-        {
-          "name": "rain (Håvard Nygaard)"
-        }
-      ],
-      "streaming": [
-        {
-          "platform": "Twitch",
-          "type": "stream"
-        }
-      ]
+      "norwegianPlayers": [{ "name": "rain (Håvard Nygaard)" }],
+      "streaming": [{ "platform": "Twitch", "type": "stream" }],
+      "result": { "team1Score": 13, "team2Score": 3, "map": "Ancient", "winner": "100 Thieves" }
+    },
+    {
+      "title": "DraculaN Season 5 - 100 Thieves vs Brute",
+      "time": "2026-02-24T16:00:00+02:00",
+      "venue": "Bucharest, Romania",
+      "tournament": "DraculaN Season 5",
+      "format": "Bo1",
+      "stage": "Group B - Winners Match",
+      "norwegian": true,
+      "norwegianPlayers": [{ "name": "rain (Håvard Nygaard)" }],
+      "streaming": [{ "platform": "Twitch", "type": "stream" }],
+      "result": { "team1Score": 13, "team2Score": 8, "map": "Dust2", "winner": "100 Thieves" }
+    },
+    {
+      "title": "DraculaN Season 5 - ENCE vs 100 Thieves",
+      "time": "2026-02-25T13:00:00+02:00",
+      "venue": "Bucharest, Romania",
+      "tournament": "DraculaN Season 5",
+      "format": "Bo3",
+      "stage": "Upper Bracket - Round 1",
+      "norwegian": true,
+      "norwegianPlayers": [{ "name": "rain (Håvard Nygaard)" }],
+      "streaming": [{ "platform": "Twitch", "type": "stream" }],
+      "result": {
+        "winner": "ENCE",
+        "score": "2-0",
+        "maps": [
+          { "map": "Ancient", "team1Score": 13, "team2Score": 6, "picker": "100 Thieves" },
+          { "map": "Anubis", "team1Score": 13, "team2Score": 8, "picker": "ENCE" }
+        ]
+      }
+    },
+    {
+      "title": "DraculaN Season 5 - aimclub vs 100 Thieves",
+      "time": "2026-02-25T19:00:00+02:00",
+      "venue": "Bucharest, Romania",
+      "tournament": "DraculaN Season 5",
+      "format": "Bo3",
+      "stage": "Lower Bracket - Round 1",
+      "norwegian": true,
+      "norwegianPlayers": [{ "name": "rain (Håvard Nygaard)" }],
+      "streaming": [{ "platform": "Twitch", "type": "stream" }]
     },
     {
       "title": "ESL Pro League Season 23 - Stage 1 (Online)",
       "time": "2026-02-27T16:00:00+01:00",
       "venue": "Online",
       "norwegian": true,
-      "norwegianPlayers": [
-        {
-          "name": "rain (Håvard Nygaard)"
+      "norwegianPlayers": [{ "name": "rain (Håvard Nygaard)" }],
+      "streaming": [{ "platform": "Twitch (ESLCS)", "type": "stream" }]
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "draculan-s5",
+      "name": "DraculaN Season 5",
+      "organizer": "Digital Crusade",
+      "tier": "B-Tier (Valve Tier 2)",
+      "venue": "Nexus Gamers Pub, Bucharest, Romania",
+      "prizePool": "$15,000 USD",
+      "startDate": "2026-02-24",
+      "endDate": "2026-02-28",
+      "teams": 24,
+      "format": "GSL Groups → Double Elimination Playoffs",
+      "focusTeam": "100 Thieves",
+      "focusTeamRoster": ["dev1ce", "rain", "Ag1l", "sirah", "poiii"],
+      "coach": "gla1ve",
+      "bracket": {
+        "groups": {
+          "B": {
+            "name": "Group B",
+            "format": "GSL (Bo1)",
+            "matches": [
+              { "round": "Opening", "team1": "100 Thieves", "team2": "MANA", "score": "13-3", "map": "Ancient", "winner": "100 Thieves" },
+              { "round": "Winners", "team1": "100 Thieves", "team2": "Brute", "score": "13-8", "map": "Dust2", "winner": "100 Thieves" }
+            ],
+            "result": { "1st": "100 Thieves", "2nd": "aimclub" }
+          }
+        },
+        "playoffs": {
+          "format": "Double Elimination (Bo3)",
+          "upperBracket": [
+            {
+              "round": "Round 1",
+              "matches": [
+                { "team1": "ENCE", "team2": "100 Thieves", "score": "2-0", "winner": "ENCE", "status": "completed" },
+                { "team1": "HEROIC", "team2": "INFINITE", "status": "scheduled" },
+                { "team1": "ASTRAL", "team2": "Apogee", "status": "scheduled" },
+                { "team1": "CYBERSHOKE", "team2": "aimclub", "status": "scheduled" },
+                { "team1": "Oramond", "team2": "Eternal Fire", "status": "scheduled" },
+                { "team1": "FlyQuest", "team2": "HYPERSPIRIT", "status": "scheduled" },
+                { "team1": "BESTIA", "team2": "MANA", "status": "scheduled" },
+                { "team1": "Nexus", "team2": "GenOne", "winner": "Nexus", "score": "FF", "status": "completed" }
+              ]
+            },
+            {
+              "round": "Quarterfinals",
+              "matches": [
+                { "team1": "ENCE", "team2": "TBD", "status": "pending" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" },
+                { "team1": "Nexus", "team2": "TBD", "status": "pending" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            },
+            {
+              "round": "Semifinal",
+              "matches": [
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            },
+            {
+              "round": "Final",
+              "matches": [
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            }
+          ],
+          "lowerBracket": [
+            {
+              "round": "Round 1",
+              "matches": [
+                { "team1": "aimclub", "team2": "100 Thieves", "status": "live", "note": "100T dropped from upper bracket after 0-2 loss to ENCE" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            },
+            {
+              "round": "Round 2",
+              "matches": [
+                { "team1": "TBD", "team2": "TBD", "status": "pending" },
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            },
+            {
+              "round": "Round 3",
+              "matches": [
+                { "team1": "TBD", "team2": "TBD", "status": "pending" }
+              ]
+            },
+            {
+              "round": "Final",
+              "matches": [
+                { "team1": "TBD", "team2": "TBD", "status": "pending", "note": "Winner faces Upper Bracket winner in Grand Final" }
+              ]
+            }
+          ],
+          "grandFinal": {
+            "matches": [
+              { "team1": "TBD (Upper)", "team2": "TBD (Lower)", "status": "pending", "note": "Upper bracket team has 1 map advantage" }
+            ]
+          }
+        },
+        "focusTeamPath": {
+          "team": "100 Thieves",
+          "status": "Lower Bracket Round 1",
+          "completed": [
+            { "stage": "Group B Opening", "opponent": "MANA", "result": "W 13-3", "map": "Ancient" },
+            { "stage": "Group B Winners", "opponent": "Brute", "result": "W 13-8", "map": "Dust2" },
+            { "stage": "Upper Bracket R1", "opponent": "ENCE", "result": "L 0-2", "maps": "Ancient 6-13, Anubis 8-13" }
+          ],
+          "current": { "stage": "Lower Bracket R1", "opponent": "aimclub", "format": "Bo3", "status": "live" },
+          "ifWin": "Lower Bracket Round 2 (vs loser of another UB R1 match)",
+          "ifLose": "Eliminated (9th-12th place)"
         }
-      ],
-      "streaming": [
-        {
-          "platform": "Twitch (ESLCS)",
-          "type": "stream"
-        }
-      ]
+      }
     }
   ],
   "location": "Bucharest / Online",
-  "lastResearched": "2026-02-24T12:00:00.000Z",
+  "lastResearched": "2026-02-25T18:00:00.000Z",
   "verificationSummary": {
-    "lastRun": "2026-02-24T12:00:00.000Z",
-    "eventsChecked": 0,
-    "verified": 0,
-    "plausible": 0,
+    "lastRun": "2026-02-25T18:00:00.000Z",
+    "eventsChecked": 4,
+    "verified": 3,
+    "plausible": 1,
     "unverified": 0,
-    "overallConfidence": 0.5
+    "overallConfidence": 0.85
   }
 }

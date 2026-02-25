@@ -20,7 +20,7 @@ const all = [];
 function pushEvent(ev, sport, tournament) {
 	const event = {
 		sport,
-		tournament: tournament,
+		tournament: ev.tournament || tournament,
 		title: ev.title,
 		time: ev.time,
 		endTime: ev.endTime || null,
@@ -38,6 +38,10 @@ function pushEvent(ev, sport, tournament) {
 		awayTeam: ev.awayTeam || null,
 		isFavorite: ev.isFavorite || false,
 	};
+	// Esports match metadata: format (Bo1/Bo3), stage, result
+	if (ev.format) event.format = ev.format;
+	if (ev.stage) event.stage = ev.stage;
+	if (ev.result) event.result = ev.result;
 	if (ev.context) event.context = ev.context;
 	if (ev.importance != null) event.importance = ev.importance;
 	if (ev.importanceReason) event.importanceReason = ev.importanceReason;
@@ -127,3 +131,37 @@ fs.writeFileSync(
 	JSON.stringify(future, null, 2)
 );
 console.log(`Aggregated ${future.length} future events (filtered ${all.length - future.length} past) into events.json`);
+
+// 5. Extract tournament bracket data from curated configs and write to brackets.json
+const brackets = {};
+if (fs.existsSync(configDir)) {
+	const configFiles = fs.readdirSync(configDir).filter((f) => f.endsWith(".json"));
+	for (const file of configFiles) {
+		const config = readJsonIfExists(path.join(configDir, file));
+		if (!config?.tournaments) continue;
+		for (const t of config.tournaments) {
+			if (t.bracket && t.id) {
+				brackets[t.id] = {
+					name: t.name,
+					venue: t.venue,
+					startDate: t.startDate,
+					endDate: t.endDate,
+					format: t.format,
+					tier: t.tier,
+					prizePool: t.prizePool,
+					focusTeam: t.focusTeam,
+					focusTeamRoster: t.focusTeamRoster,
+					coach: t.coach,
+					bracket: t.bracket,
+				};
+			}
+		}
+	}
+}
+if (Object.keys(brackets).length > 0) {
+	fs.writeFileSync(
+		path.join(dataDir, "brackets.json"),
+		JSON.stringify(brackets, null, 2)
+	);
+	console.log(`Wrote ${Object.keys(brackets).length} tournament bracket(s) to brackets.json`);
+}

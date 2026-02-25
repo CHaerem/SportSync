@@ -267,11 +267,11 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~92% | 2026-02-23 | RSS headline matching improved, Olympics archived, biathlon/nordic WCH active |
-| 2. Code | ~89% | 2026-02-24 | 1882 tests, pipeline consolidated (28→25 steps), bloat threshold raised |
-| 3. Capabilities | ~70% | 2026-02-21 | Tennis standings dynamic detection, pipeline manifest, 5 inline standings widgets |
+| 1. Data | ~95% | 2026-02-25 | Learned scraper system (Liquipedia CS2 recipe), smart bracket refresh, esports staleness addressed |
+| 2. Code | ~91% | 2026-02-25 | 2076 tests across 66 files, recipe-scraper engine + 126 tests, pipeline consolidated (28→25 steps) |
+| 3. Capabilities | ~78% | 2026-02-25 | Learned scraper = auto-diagnose + repair failed data sources (Phase 3 milestone), generic extraction recipes |
 | 4. Personalization | ~60% | 2026-02-23 | watchPlan reasons fixed, For You block, watch-plan feedback loop, sport weights evolve |
-| 5. Quality | ~100% | 2026-02-24 | 12/12 loops closed, pipelineHealth at 1.0, editorial sort fix + missing_snapshot GAP |
+| 5. Quality | ~100% | 2026-02-25 | 13/13 loops closed (learned scraper = Loop 13), pipelineHealth at 1.0, recipe health monitoring |
 
 ### Run History Insights
 
@@ -368,7 +368,7 @@ Seeded tasks for rapid early-stage improvement. Organized by pillar. The autopil
 
 4. [DONE] (already implemented) **Add results tracking for F1** — `fetchF1Results()`, `validateF1Result()`, and `mergeF1Results()` already exist in `scripts/fetch-results.js` with race/sprint result tracking and 30-day retention.
 
-5. [PENDING] [FEATURE] **Fix esports data staleness** — HLTV community API returns data from 2022. Options: (a) expand curated config `esports-cs2-2026.json` with current tournament data, (b) add HLTV web scraping as fallback, or (c) switch to Liquipedia API. Investigate and implement best option.
+5. [DONE] (manual session) **Fix esports data staleness** — HLTV community API returns stale 2022 data. Addressed with learned scraper system: Liquipedia CS2 matches recipe (`liquipedia-cs2-matches.json`) extracts upcoming matches at zero LLM cost. CS2 tournament brackets discovered via smart refresh (1h match day / 2h default). Remaining: PandaScore free API (1000 req/hr) could replace LLM bracket refresh entirely.
 
 6. [DONE] (PR #96) **Resolve recurring health warnings** — Demoted `sport_zero_events` from `warning` to `info` when data is fresh. Only warns when data is also stale (>6h). Stops 88+ recurring false alarms for tennis/esports.
 
@@ -916,7 +916,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. ProCyclingStats and firstcycling.com have data but no public APIs. Norwegian cyclists are minor presences. Low priority unless user engagement data shows cycling interest.
+- [DONE] (explored, run 2026-02-17) **Investigate cycling data sources** — Duplicate of Foundation task #8. ProCyclingStats and firstcycling.com have data but no public APIs. Norwegian cyclists are minor presences. Low priority unless user engagement data shows cycling interest.
 
 ## Scouted Tasks (2026-02-18)
 
@@ -978,7 +978,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. ProCyclingStats and firstcycling.com have data but no public APIs. Norwegian cyclists are minor presences. Low priority unless user engagement data shows cycling interest.
+- [DONE] (explored, run 2026-02-17) **Investigate cycling data sources** — Duplicate of Foundation task #8. See findings there.
 
 ---
 

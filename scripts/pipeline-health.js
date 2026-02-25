@@ -928,6 +928,25 @@ async function main() {
 		"ai-quality.json": readJsonIfExists(path.join(dataDir, "ai-quality.json")),
 	};
 
+	// Check tournament bracket freshness (active tournaments need frequent updates)
+	const bracketsData = readJsonIfExists(path.join(dataDir, "brackets.json"));
+	if (bracketsData) {
+		for (const [id, t] of Object.entries(bracketsData)) {
+			if (!t.startDate || !t.endDate) continue;
+			const start = new Date(t.startDate);
+			const end = new Date(t.endDate);
+			const now = new Date();
+			if (now >= start && now <= end) {
+				// Active tournament — flag if bracket data might be stale
+				const hasPendingMatches = JSON.stringify(t.bracket).includes('"status":"pending"') ||
+					JSON.stringify(t.bracket).includes('"status":"live"');
+				if (hasPendingMatches) {
+					console.log(`Active tournament bracket: ${t.name} (${id}) — has pending/live matches`);
+				}
+			}
+		}
+	}
+
 	// Read day snapshot metadata
 	const snapMeta = readJsonIfExists(path.join(dataDir, "days", "_meta.json"));
 
@@ -950,6 +969,37 @@ async function main() {
 	// Read UX evaluation data
 	const uxReport = readJsonIfExists(path.join(dataDir, "ux-report.json"));
 	const uxHistory = readJsonIfExists(path.join(dataDir, "ux-history.json"));
+
+	// Read recipe scraper health
+	const recipeRegistryPath = path.join(process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config"), "recipes", "_registry.json");
+	const recipeRegistry = readJsonIfExists(recipeRegistryPath);
+	const scraperHistory = readJsonIfExists(path.join(dataDir, "scraper-history.json"));
+	if (recipeRegistry?.recipes?.length) {
+		const active = recipeRegistry.recipes.filter(r => r.active);
+		const broken = active.filter(r => r.needsRepair);
+		const recentRuns = (scraperHistory?.runs || []).filter(r => {
+			const age = Date.now() - new Date(r.timestamp).getTime();
+			return age < 24 * 60 * 60 * 1000;
+		});
+		const failedRepairs = recentRuns.filter(r => r.action?.startsWith("repair-") && !r.success);
+		const successRate = recentRuns.length > 0
+			? Math.round(recentRuns.filter(r => r.success).length / recentRuns.length * 100)
+			: null;
+		console.log(`Recipe scrapers: ${active.length} active, ${broken.length} need repair, 24h success rate: ${successRate ?? "N/A"}%`);
+		if (broken.length > 0) {
+			console.log(`  Broken recipes: ${broken.map(r => r.id).join(", ")}`);
+		}
+		// Escalate: recipes with many failures that self-repair couldn't fix
+		// The autopilot reads health-report.json and will notice these as issues needing investigation
+		for (const entry of active) {
+			if (entry.consecutiveFailures >= 6) {
+				console.log(`  ESCALATE: Recipe "${entry.id}" has ${entry.consecutiveFailures} consecutive failures — self-repair exhausted, needs autopilot investigation (alternative source? page permanently changed?)`);
+			}
+		}
+		if (failedRepairs.length >= 2) {
+			console.log(`  WARNING: ${failedRepairs.length} recipe repair attempts failed in last 24h — LLM-based repair may be insufficient`);
+		}
+	}
 
 	const report = generateHealthReport({
 		events: eventsData,

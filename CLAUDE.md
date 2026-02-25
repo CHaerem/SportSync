@@ -99,7 +99,7 @@ The system has three acceleration vectors:
 
 ## Project Overview
 
-SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Twelve closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, streaming data, and personalization. Hosted on GitHub Pages, updated hourly via GitHub Actions, with client-side live score polling from ESPN.
+SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics with a Norwegian perspective. Thirteen closed feedback loops ensure the system self-corrects quality, coverage, content accuracy, code health, streaming data, data extraction, and personalization. Hosted on GitHub Pages, updated hourly via GitHub Actions, with client-side live score polling from ESPN.
 
 ## Architecture
 
@@ -114,6 +114,7 @@ This is a hybrid static/dynamic application:
 - **Live Score Polling**: Client-side ESPN polling every 60s for football scores and golf leaderboards
 - **Curated Event Configs**: `scripts/config/*.json` files auto-discovered by build pipeline
 - **Autonomous Discovery**: Config maintenance (prune, archive) + LLM-powered event/athlete discovery via Claude CLI + WebSearch
+- **Learned Scraper (Recipes)**: LLM learns page extraction patterns once → saves as JSON recipe → subsequent runs execute mechanically (zero LLM cost) → self-repairs when page structure changes
 - **Pipeline Manifest**: Declarative `scripts/pipeline-manifest.json` defines all pipeline steps — the autopilot can add/remove/reorder steps without touching the workflow file
 - **Capability Registry**: `scripts/generate-capabilities.js` auto-generates `docs/data/capabilities.json` — the autopilot reads this to identify system gaps
 - **No Backend**: Serverless architecture using only GitHub infrastructure
@@ -137,18 +138,20 @@ This is a hybrid static/dynamic application:
 4. **`fetch-standings.js`** fetches PL table, golf leaderboards, F1 driver standings from ESPN
 5. **`fetch-rss.js`** fetches 11 RSS feeds (NRK, TV2, BBC, ESPN, Autosport, ChessBase, HLTV)
 6. **`fetch-results.js`** fetches completed match scores (PL, La Liga) and golf leaderboard positions from ESPN, merges with existing history (7-day retention), tags favorites from `user-context.json`, matches RSS recap headlines → `recent-results.json`
-7. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
-8. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
-9. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
-10. **`build-events.js`** auto-discovers sport files from `docs/data/*.json` by convention (any file with `{ tournaments: [...] }`) and curated configs from `scripts/config/*.json`, merges all into `events.json`
-11. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
-12. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (narrative + component blocks). Component blocks (`match-result`, `match-preview`, `event-schedule`, `golf-status`) reference structured data; client renders with logos/scores/times. Fallback produces components with `_fallbackText` for graceful degradation. Supports date-specific modes via `SPORTSYNC_FEATURED_DATE` + `SPORTSYNC_FEATURED_MODE` (live/recap/preview)
-13. **`generate-multi-day.js`** orchestrates yesterday's recap and tomorrow's preview as `featured-{YYYY-MM-DD}.json`. Idempotent (skips existing recaps, regenerates stale previews). Cleans up briefings >7 days old
-14. **`pipeline-health.js`** checks sport coverage (auto-discovered), data freshness, critical output freshness (featured.json, ai-quality.json), RSS/standings/results health → generates `health-report.json`
-15. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
-16. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
-17. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band. **Component blocks** (`match-result`, `match-preview`, `event-schedule`, `golf-status`) resolve against pre-loaded data for logos, scores, times, and standings — falling back to `_fallbackText` when data is unavailable. **Day navigator** lets users browse past/future days, async-loads `featured-{date}.json` for date-specific briefings
-18. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
+7. **`run-recipes.js`** executes learned extraction recipes (zero LLM cost) — fetches URLs, applies saved regex patterns, maps to events, updates health stats → results written to target configs via `_recipeId` tagging
+8. **`sync-configs.js`** prunes expired events, archives old configs, flags empty auto-generated configs as `needsResearch`
+9. **`discover-events.js`** uses Claude CLI + WebSearch to research and populate flagged configs with real schedules and Norwegian athletes
+10. **`verify-schedules.js`** runs 5-stage verification (static → ESPN → RSS → sport data → web re-check), writes `verification-history.json`, injects accuracy hints back into discovery
+11. **`learn-recipe.js`** finds broken recipes (high consecutive failures), attempts zero-cost pattern mutations first, then LLM-powered re-learning (budget-limited: max 2 repairs per run)
+12. **`build-events.js`** auto-discovers sport files from `docs/data/*.json` by convention (any file with `{ tournaments: [...] }`) and curated configs from `scripts/config/*.json`, merges all into `events.json`
+13. **`enrich-events.js`** uses LLM to add importance (1-5), summaries, tags, and Norwegian relevance to each event
+14. **`generate-featured.js`** calls Claude CLI with events + standings + RSS + recent results + curated configs → generates `featured.json` (narrative + component blocks). Component blocks (`match-result`, `match-preview`, `event-schedule`, `golf-status`) reference structured data; client renders with logos/scores/times. Fallback produces components with `_fallbackText` for graceful degradation. Supports date-specific modes via `SPORTSYNC_FEATURED_DATE` + `SPORTSYNC_FEATURED_MODE` (live/recap/preview)
+15. **`generate-multi-day.js`** orchestrates yesterday's recap and tomorrow's preview as `featured-{YYYY-MM-DD}.json`. Idempotent (skips existing recaps, regenerates stale previews). Cleans up briefings >7 days old
+16. **`pipeline-health.js`** checks sport coverage (auto-discovered), data freshness, critical output freshness (featured.json, ai-quality.json), RSS/standings/results health, recipe scraper health → generates `health-report.json`
+17. **`check-quality-regression.js`** compares AI quality scores against previous commit → alerts on regressions
+18. **`detect-coverage-gaps.js`** cross-references RSS headlines against events → generates `coverage-gaps.json`
+19. **Client-side** loads `events.json` + `featured.json` + `standings.json` + `recent-results.json`, renders editorial dashboard with collapsible results band. **Component blocks** (`match-result`, `match-preview`, `event-schedule`, `golf-status`) resolve against pre-loaded data for logos, scores, times, and standings — falling back to `_fallbackText` when data is unavailable. **Day navigator** lets users browse past/future days, async-loads `featured-{date}.json` for date-specific briefings
+20. **Live polling** fetches ESPN football scores and golf leaderboard every 60s, updates DOM inline
 
 ## Development Commands
 
@@ -159,7 +162,7 @@ This is a hybrid static/dynamic application:
 - `npm run fetch:results` - Fetch recent match results from ESPN (football + golf)
 - `npm run generate:featured` - Generate featured.json with Claude CLI (needs CLAUDE_CODE_OAUTH_TOKEN, or ANTHROPIC_API_KEY, or OPENAI_API_KEY)
 - `npm run generate:multiday` - Generate yesterday recap + tomorrow preview briefings
-- `npm test` - Run all tests (vitest, 1882 tests across 65 files)
+- `npm test` - Run all tests (vitest, 2076 tests across 66 files)
 - `npm run validate:data` - Check data integrity
 - `npm run build:calendar` - Create .ics calendar export
 - `npm run screenshot` - Take a screenshot of the dashboard (needs Playwright)
@@ -227,6 +230,7 @@ docs/
     ├── preference-evolution.json # Preference evolution history (sport weight adjustments)
     ├── streaming-enrichment.json # Streaming enrichment log (tvkampen match rate, enriched events)
     ├── streaming-verification-history.json # Streaming verification history (match rate trends, alias suggestions)
+    ├── scraper-history.json # Recipe scraper execution history (last 200 runs)
     ├── events.ics          # Calendar export
     ├── football.json       # Per-sport source files
     ├── golf.json / tennis.json / f1.json / chess.json / esports.json
@@ -238,6 +242,9 @@ scripts/
 ├── fetch/                  # Modular API fetchers (one per sport)
 ├── config/                 # Auto-discovered curated event configs
 │   ├── archive/            # Expired configs (auto-archived by sync-configs.js)
+│   ├── recipes/            # Learned extraction recipes (JSON)
+│   │   ├── _registry.json  # Recipe registry — active recipes with health metadata
+│   │   └── liquipedia-cs2-matches.json  # CS2 match extraction from Liquipedia
 │   ├── olympics-2026.json  # Winter Olympics 2026 schedule
 │   ├── user-context.json   # User preferences + dynamicAthletes config
 │   ├── chess-tournaments.json
@@ -250,6 +257,7 @@ scripts/
 │   ├── response-validator.js # API response validation (ESPN)
 │   ├── ai-quality-gates.js # AI enrichment quality gates and fallbacks
 │   ├── schedule-verifier.js # Schedule verification engine (5 verifiers, confidence scoring, hints)
+│   ├── recipe-scraper.js   # Learned scraper engine (fetch, extract, transform, validate, health)
 │   ├── base-fetcher.js     # Base class for sport fetchers
 │   ├── api-client.js       # HTTP client wrapper
 │   ├── norwegian-streaming.js # Norwegian streaming info
@@ -271,6 +279,8 @@ scripts/
 ├── detect-coverage-gaps.js # RSS vs events coverage gap detection
 ├── merge-open-data.js      # Merges open source + primary data
 ├── verify-schedules.js     # Schedule verification orchestrator → verification-history.json
+├── run-recipes.js          # Recipe runner — executes learned extraction recipes (zero LLM cost)
+├── learn-recipe.js         # Recipe learner — LLM-powered learning + self-repair of extraction recipes
 ├── evolve-preferences.js   # Preference evolution engine → preference-evolution.json
 ├── enrich-streaming.js     # tvkampen streaming enrichment → streaming-enrichment.json + verification history
 ├── run-pipeline.js         # Pipeline runner — reads manifest, orchestrates all phases
@@ -298,7 +308,7 @@ scripts/agents/
 ├── agent-definitions.json  # Agent specs (responsibilities, owned files, contention rules)
 └── task-router.js          # Deterministic task → agent routing
 
-tests/                      # 1882 tests across 65 files (vitest)
+tests/                      # 2076 tests across 66 files (vitest)
 AUTOPILOT_ROADMAP.md        # Prioritized task queue for autopilot
 ```
 
@@ -350,6 +360,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 - **10th feedback loop**: `fact-checker.js` verifies featured content claims against source data → `fact-check-history.json`
 - **11th feedback loop**: `evolve-preferences.js` reads engagement data (GitHub Issues + local file) → computes sport weights from click patterns → updates `user-context.json` → enrichment/featured/watch-plan adapt → `preference-evolution.json` tracks history
 - **12th feedback loop**: `enrich-streaming.js` mines alias suggestions from unmatched tvkampen entries → `streaming-verification-history.json` tracks match rate trends → `buildStreamingHints()` feeds corrections back → `pipeline-health.js` surfaces declining rates and pending alias suggestions for autopilot repair
+- **13th feedback loop**: `run-recipes.js` executes learned extraction recipes mechanically (zero LLM) → tracks health (consecutiveFailures, successRate, avgResultCount) → `pipeline-health.js` escalates persistently broken recipes → `learn-recipe.js` attempts self-repair (pattern mutations → LLM re-learning) → autopilot investigates via health report if repair fails
 - **Autonomy scorecard**: `autonomy-scorecard.js` tracks feedback loops → `autonomy-report.json`
 
 ## Current State vs. Vision
@@ -370,16 +381,17 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Fact verification** | Autonomous | LLM-powered claim verification against source data (Loop 10) |
 | **Preference evolution** | Autonomous | Engagement signals flow back to pipeline, sport weights evolve (Loop 11) |
 | **Streaming verification** | Autonomous | tvkampen match rate tracked, alias mining, trend analysis (Loop 12) |
-| **Autonomy tracking** | Autonomous | 12/12 feedback loops closed, scored by autonomy-scorecard.js |
+| **Learned scraper** | Autonomous | LLM learns extraction once → zero-cost hourly runs → self-repairs on breakage (Loop 13) |
+| **Autonomy tracking** | Autonomous | 13/13 feedback loops closed, scored by autonomy-scorecard.js |
 
-**Autonomy score: 100% (12/12 loops closed)**
+**Autonomy score: 100% (13/13 loops closed)**
 
 ### What's Missing (Gap to Vision)
 
 | Gap | Description | Difficulty |
 |-----|-------------|------------|
-| **Self-expanding capabilities** | Pipeline manifest pattern works. First self-added pipeline step (insights) demonstrated. Missing: end-to-end "new sport from scratch" — system detects opportunity, creates fetcher, wires it in, serves data. | Medium |
-| **Esports data** | HLTV API returns stale 2022 data. The discovery loop creates curated configs but the primary data source is dead. Needs a new data source or full reliance on curated configs. | Low |
+| **Self-expanding capabilities** | Pipeline manifest pattern works. First self-added pipeline step (insights) demonstrated. Learned scraper system enables zero-cost data extraction from new sources. Missing: end-to-end "new sport from scratch" — system detects opportunity, creates fetcher, wires it in, serves data. | Medium |
+| **Esports data** | HLTV API returns stale 2022 data. Partially addressed: learned scraper recipe extracts CS2 matches from Liquipedia (zero LLM cost). Tournament brackets use smart refresh (1h match day / 2h default). Full bracket data still requires LLM or a dedicated API (PandaScore free tier is an option). | Low |
 | **Meta-learning correlation** | The autopilot accumulates knowledge and evolves `autopilot-strategy.json`. Missing: automated correlation between strategy changes and outcome improvements (e.g., "switching to direct-to-main saved X turns"). | Low |
 | **Richer feedback signals** | Thumbs-up/down on watch-plan works. Missing: tracking which editorial blocks resonate, which events the user actually watches, post-event satisfaction. | Low |
 
@@ -399,8 +411,8 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 **Phase 3 — Self-Expanding Capabilities** — In Progress
 - ~~Opportunity detection~~ — DONE: creative scouting (heuristics F/G/H)
 - ~~First self-added pipeline step~~ — DONE: `generate-insights.js` (PR #100)
+- ~~Auto-diagnose and repair failed data sources~~ — DONE: learned scraper system (`recipe-scraper.js`, `learn-recipe.js`) — LLM learns extraction patterns once, mechanical execution thereafter, 4-level self-repair escalation (mechanical → mutation → LLM → autopilot)
 - Pending: end-to-end self-discovered sport (new fetcher from opportunity → serving data)
-- Pending: auto-diagnose and repair failed pipeline steps
 
 **Phase 4 — Full Autonomy Proof**
 - End-to-end demonstration: system detects a new major event, creates config, discovers schedule, verifies accuracy, enriches, generates editorial content, serves personalized dashboard — all without human intervention

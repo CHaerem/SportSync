@@ -16,7 +16,8 @@
         { "name": "fetch-standings", "command": "node scripts/fetch-standings.js", "errorPolicy": "continue" },
         { "name": "fetch-rss", "command": "node scripts/fetch-rss.js", "errorPolicy": "continue" },
         { "name": "merge-data", "command": "node scripts/merge-open-data.js", "errorPolicy": "continue" },
-        { "name": "fetch-results", "command": "node scripts/fetch-results.js", "errorPolicy": "continue" }
+        { "name": "fetch-results", "command": "node scripts/fetch-results.js", "errorPolicy": "continue" },
+        { "name": "run-recipes", "command": "node scripts/run-recipes.js", "errorPolicy": "continue" }
       ]
     },
     {
@@ -31,7 +32,8 @@
       "name": "discover",
       "description": "LLM-powered event discovery",
       "steps": [
-        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true }
+        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true },
+        { "name": "learn-recipes", "command": "node scripts/learn-recipe.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true }
       ]
     },
     {
