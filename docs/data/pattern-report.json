@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-25T19:27:38.993Z",
-  "patternsDetected": 8,
+  "generatedAt": "2026-02-25T20:16:40.771Z",
+  "patternsDetected": 7,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_coverage_gap",
-      "count": 15,
+      "count": 16,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T19:27:38.926Z",
-      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 15 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-25T20:16:40.673Z",
+      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 16 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 15,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 15 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 16,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 16 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "recurring_health_warning",
@@ -45,14 +45,6 @@
       "firstSeen": "2026-02-22T19:15:57.249Z",
       "lastSeen": "2026-02-24T02:03:31.876Z",
       "suggestion": "Health warning \"editorial_unsorted_events\" has fired 7 times since 2026-02-22. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "hint_fatigue",
-      "severity": "medium",
-      "hintKey": "sanityScore",
-      "fireCount": 5,
-      "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featu",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 5 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -83,24 +75,24 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 221,
+      "count": 222,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-25T19:27:38.926Z"
+      "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "component_unresolvable": {
-      "count": 35,
+      "count": 36,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-23T13:36:12.942Z"
+      "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "step_timeout_hit": {
-      "count": 12,
+      "count": 6,
       "firstSeen": "2026-02-17T18:29:32.362Z",
       "lastSeen": "2026-02-22T18:17:41.460Z"
     },
     "streaming_low_match_rate": {
-      "count": 152,
+      "count": 153,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-25T19:27:38.926Z"
+      "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -108,9 +100,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 86,
+      "count": 87,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-25T19:27:38.926Z"
+      "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -153,17 +145,17 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 15,
+      "count": 16,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T19:27:38.926Z"
+      "lastSeen": "2026-02-25T20:16:40.673Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
       "improved": 6,
-      "unchanged": 7,
-      "worsened": 5,
+      "unchanged": 6,
+      "worsened": 6,
       "effectivenessRate": 0.33
     },
     "unknown": {
@@ -175,7 +167,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-25T19:27:38.992Z",
+    "recordedAt": "2026-02-25T20:16:40.770Z",
     "moduleCount": 60,
     "avgModuleSize": 314,
     "pipelineSteps": 25,
@@ -188,5 +180,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "8 patterns detected (2 high, 6 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 15 times since 2026-02-25."
+  "summary": "7 patterns detected (2 high, 5 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 16 times since 2026-02-25."
 }

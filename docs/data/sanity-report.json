@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-25T19:27:38.754Z",
+  "generatedAt": "2026-02-25T20:16:40.674Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 51,
+    "totalEvents": 48,
     "sports": [
       "esports",
-      "football",
       "golf",
+      "football",
       "biathlon",
       "f1",
       "olympics",
@@ -16,11 +16,7 @@
       "live": [
         "DraculaN Season 5 - 100 Thieves vs MANA"
       ],
-      "today": [
-        "Galatasaray at Juventus",
-        "AS Monaco at Paris Saint-Germain",
-        "Benfica at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "Cognizant Classic in The Palm Beaches"
       ],
@@ -76,11 +72,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 87,
-    "issueCount": 10
+    "issueCount": 11
   },
   "findings": [
     {
@@ -126,22 +122,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Emirates\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {

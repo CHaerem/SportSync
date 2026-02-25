@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T19:27:37.047Z",
+  "generatedAt": "2026-02-25T20:16:38.966Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 78962,
+    "blockCount": 8,
+    "generationMs": 142493,
     "tokenUsage": {
-      "input": 33988,
-      "output": 4388,
-      "cacheCreation": 15541,
+      "input": 33925,
+      "output": 7815,
+      "cacheCreation": 15478,
       "cacheRead": 18444,
-      "total": 38376,
-      "costUSD": 0.21606825000000002,
+      "total": 41740,
+      "costUSD": 0.30134950000000005,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 95,
+      "pickCount": 1,
+      "avgScore": 76,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 28
+      "footballCount": 25
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 51,
+      "totalEvents": 48,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 51,
+      "totalEvents": 48,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 51,
+    "totalEvents": 48,
     "skipStats": {
-      "total": 51,
-      "unchanged": 51,
+      "total": 48,
+      "unchanged": 48,
       "enriched": 0,
       "skipRate": 1
     },
