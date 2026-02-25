@@ -970,6 +970,26 @@ async function main() {
 	const uxReport = readJsonIfExists(path.join(dataDir, "ux-report.json"));
 	const uxHistory = readJsonIfExists(path.join(dataDir, "ux-history.json"));
 
+	// Read recipe scraper health
+	const recipeRegistryPath = path.join(process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config"), "recipes", "_registry.json");
+	const recipeRegistry = readJsonIfExists(recipeRegistryPath);
+	const scraperHistory = readJsonIfExists(path.join(dataDir, "scraper-history.json"));
+	if (recipeRegistry?.recipes?.length) {
+		const active = recipeRegistry.recipes.filter(r => r.active);
+		const broken = active.filter(r => r.needsRepair);
+		const recentRuns = (scraperHistory?.runs || []).filter(r => {
+			const age = Date.now() - new Date(r.timestamp).getTime();
+			return age < 24 * 60 * 60 * 1000;
+		});
+		const successRate = recentRuns.length > 0
+			? Math.round(recentRuns.filter(r => r.success).length / recentRuns.length * 100)
+			: null;
+		console.log(`Recipe scrapers: ${active.length} active, ${broken.length} need repair, 24h success rate: ${successRate ?? "N/A"}%`);
+		if (broken.length > 0) {
+			console.log(`  Broken recipes: ${broken.map(r => r.id).join(", ")}`);
+		}
+	}
+
 	const report = generateHealthReport({
 		events: eventsData,
 		standings,
