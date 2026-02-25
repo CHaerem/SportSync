@@ -10,7 +10,8 @@ const SPORT_CONFIG = [
 	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#7c3aed' },
 	{ id: 'olympics', emoji: '🏅', name: 'Olympics', color: '#0070b8' },
 	{ id: 'biathlon', emoji: '🎿', name: 'Biathlon', color: '#1d4ed8' },
-	{ id: 'nordic', emoji: '⛷️', name: 'Nordic Skiing', color: '#0f766e' }
+	{ id: 'nordic', emoji: '⛷️', name: 'Nordic Skiing', color: '#0f766e' },
+	{ id: 'alpine', emoji: '🎿', name: 'Alpine Skiing', color: '#0369a1' }
 ];
 
 // Lookup helpers
