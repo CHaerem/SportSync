@@ -224,6 +224,50 @@ export async function runUxHeuristics(page) {
 			return { score, details: `${longLines} long text line(s)`, issues: readIssues };
 		}
 
+		// 8. Brief formatting — orphaned text fragments and section dominance
+		function checkBriefFormatting() {
+			const fmtIssues = [];
+			let problems = 0;
+
+			// Check for orphaned punctuation-leading text in brief lines
+			const briefLines = document.querySelectorAll('#the-brief .block-event-line, #the-brief .block-match-preview');
+			for (const el of briefLines) {
+				// Walk direct child text nodes for orphaned fragments like ", Champions League"
+				for (const node of el.childNodes) {
+					if (node.nodeType === 3) { // text node
+						const text = node.textContent.trim();
+						if (text.length > 0 && text.length < 20 && /^[,;·–—]/.test(text)) {
+							problems++;
+							if (problems <= 3) {
+								fmtIssues.push({
+									severity: 'warning',
+									code: 'orphaned_brief_text',
+									message: `Orphaned text fragment in brief: "${text.slice(0, 30)}"`,
+								});
+							}
+						}
+					}
+				}
+			}
+
+			// Check if headlines section dominates the briefing
+			const brief = document.querySelector('#the-brief');
+			const news = document.querySelector('#news');
+			if (brief && news && brief.offsetHeight > 0 && news.offsetHeight > 0) {
+				if (news.offsetHeight > brief.offsetHeight * 2) {
+					problems++;
+					fmtIssues.push({
+						severity: 'info',
+						code: 'headlines_dominate',
+						message: `Headlines section (${news.offsetHeight}px) is >2x taller than briefing (${brief.offsetHeight}px)`,
+					});
+				}
+			}
+
+			const score = Math.max(0, 100 - problems * 20);
+			return { score, details: `${problems} formatting issue(s)`, issues: fmtIssues };
+		}
+
 		// Run all heuristics
 		const metrics = {
 			emptySections: checkEmptySections(),
@@ -233,6 +277,7 @@ export async function runUxHeuristics(page) {
 			touchTargets: checkTouchTargets(),
 			loadCompleteness: checkLoadCompleteness(),
 			textReadability: checkTextReadability(),
+			briefFormatting: checkBriefFormatting(),
 		};
 
 		// Weighted average
@@ -242,8 +287,9 @@ export async function runUxHeuristics(page) {
 			brokenImages: 0.15,
 			contentOverflow: 0.15,
 			contrastRatio: 0.10,
-			touchTargets: 0.10,
+			touchTargets: 0.05,
 			textReadability: 0.05,
+			briefFormatting: 0.05,
 		};
 
 		let weightedSum = 0;

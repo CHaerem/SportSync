@@ -8,6 +8,38 @@ export const MS_PER_MINUTE = 60_000;
 export const MS_PER_HOUR = 3_600_000;
 export const MS_PER_DAY = 86_400_000;
 
+/** Norwegian football clubs that appear in European competitions (ESPN naming) */
+export const NORWEGIAN_CLUBS = [
+	"bodo/glimt", "bodø/glimt", "molde", "rosenborg", "viking",
+	"brann", "lillestrøm", "lillestrom", "tromsø", "tromso",
+	"vålerenga", "valerenga", "sarpsborg", "odd", "lyn",
+];
+
+/** UEFA competition league codes where Norwegian club results are noteworthy */
+export const UEFA_COMPETITIONS = [
+	"uefa.champions", "uefa.europa", "uefa.europa.conf",
+];
+
+/**
+ * Check if a football result involves a Norwegian club.
+ * Matches team names against NORWEGIAN_CLUBS (case-insensitive, substring match).
+ */
+export function isNorwegianClubResult(result) {
+	const home = (result.homeTeam || "").toLowerCase();
+	const away = (result.awayTeam || "").toLowerCase();
+	return NORWEGIAN_CLUBS.some(club => home.includes(club) || away.includes(club));
+}
+
+/**
+ * Check if a result is noteworthy for a Norwegian-focused dashboard.
+ * A result is noteworthy if it involves a Norwegian club in a UEFA competition.
+ */
+export function isNoteworthyNorwegianResult(result) {
+	if (!isNorwegianClubResult(result)) return false;
+	const code = (result.leagueCode || "").toLowerCase();
+	return UEFA_COMPETITIONS.some(comp => code.includes(comp));
+}
+
 export function iso(d = Date.now()) {
 	return new Date(d).toISOString();
 }

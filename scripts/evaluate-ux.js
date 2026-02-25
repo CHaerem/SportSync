@@ -177,13 +177,24 @@ const { chromium } = require('playwright');
 			return { score: Math.max(0, 100 - Math.min(long * 5, 20)), details: long + " long text line(s)", issues: ri };
 		}
 
+		function checkBriefFormatting() {
+			let problems = 0; const fi = [];
+			for (const el of document.querySelectorAll("#the-brief .block-event-line, #the-brief .block-match-preview")) {
+				for (const node of el.childNodes) {
+					if (node.nodeType === 3) { const t = node.textContent.trim(); if (t.length > 0 && t.length < 20 && /^[,;·–—]/.test(t)) { problems++; if (problems <= 3) fi.push({ severity: "warning", code: "orphaned_brief_text", message: "Orphaned text: " + t.slice(0, 30) }); } }
+				}
+			}
+			const brief = document.querySelector("#the-brief"); const news = document.querySelector("#news");
+			if (brief && news && brief.offsetHeight > 0 && news.offsetHeight > 0 && news.offsetHeight > brief.offsetHeight * 2) { problems++; fi.push({ severity: "info", code: "headlines_dominate", message: "Headlines " + news.offsetHeight + "px > 2x brief " + brief.offsetHeight + "px" }); }
+			return { score: Math.max(0, 100 - problems * 20), details: problems + " formatting issue(s)", issues: fi };
+		}
 		const metrics = {
 			emptySections: checkEmptySections(), brokenImages: checkBrokenImages(),
 			contentOverflow: checkContentOverflow(), contrastRatio: checkContrastRatio(),
 			touchTargets: checkTouchTargets(), loadCompleteness: checkLoadCompleteness(),
-			textReadability: checkTextReadability(),
+			textReadability: checkTextReadability(), briefFormatting: checkBriefFormatting(),
 		};
-		const weights = { loadCompleteness: 0.25, emptySections: 0.20, brokenImages: 0.15, contentOverflow: 0.15, contrastRatio: 0.10, touchTargets: 0.10, textReadability: 0.05 };
+		const weights = { loadCompleteness: 0.25, emptySections: 0.20, brokenImages: 0.15, contentOverflow: 0.15, contrastRatio: 0.10, touchTargets: 0.05, textReadability: 0.05, briefFormatting: 0.05 };
 		let ws = 0; const allIssues = [];
 		for (const [k, m] of Object.entries(metrics)) { ws += m.score * (weights[k] || 0); allIssues.push(...m.issues); }
 		return { score: Math.round(ws), metrics, issues: allIssues };
