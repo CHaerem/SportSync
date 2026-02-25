@@ -1,5 +1,5 @@
 // SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v32';
+const CACHE_NAME = 'sportsync-v33';
 const DATA_FILES = [
     '/SportSync/data/events.json',
     '/SportSync/data/featured.json',
@@ -22,6 +22,12 @@ self.addEventListener('install', (event) => {
                 '/SportSync/',
                 '/SportSync/index.html',
                 '/SportSync/status.html',
+                '/SportSync/manifest.webmanifest',
+                '/SportSync/favicon.png',
+                '/SportSync/icons/icon-180x180.png',
+                '/SportSync/icons/icon-192x192.png',
+                '/SportSync/icons/icon-512x512.png',
+                '/SportSync/icons/icon.svg',
                 '/SportSync/js/sport-config.js',
                 '/SportSync/js/asset-maps.js',
                 '/SportSync/js/preferences-manager.js',
