@@ -104,7 +104,7 @@ SportSync covers football, golf, tennis, Formula 1, chess, esports, and Olympics
 ## Architecture
 
 This is a hybrid static/dynamic application:
-- **Static Frontend**: Pure HTML/CSS/JS hosted on GitHub Pages
+- **Static Frontend**: Pure HTML/CSS/JS hosted on GitHub Pages (installable as PWA on iOS/Android)
 - **Automated Data Fetching**: GitHub Actions fetch fresh API data every hour (06-22 UTC)
 - **AI Enrichment**: LLM adds importance scores, summaries, and tags to each event
 - **AI Featured Content**: Claude CLI generates editorial briefs using narrative + component blocks each build
@@ -202,7 +202,10 @@ The **update-sports-data.yml** workflow:
 ```
 docs/
 ├── index.html              # Dashboard (HTML + embedded CSS, 480px max-width)
+├── manifest.webmanifest    # PWA manifest (standalone, icons, theme)
+├── favicon.png             # Browser tab favicon
 ├── sw.js                   # Service worker for caching
+├── icons/                  # PWA icons (180, 192, 512px PNG + SVG)
 ├── js/
 │   ├── dashboard.js        # Dashboard controller (brief, sections, standings, live polling)
 │   ├── asset-maps.js       # Team logos + golfer headshot URLs
@@ -307,6 +310,7 @@ When filtering events by time, **always** use `isEventInWindow(event, windowStar
 ## Development Notes
 
 - **No build process** - pure static files with embedded CSS
+- **PWA** - installable on iPhone/Android home screen, standalone mode with safe-area insets, offline-capable via service worker
 - **Modern JavaScript** - ES6+ features, async/await patterns
 - **Norwegian focus** - Europe/Oslo timezone, Norwegian teams prioritized
 - **Error resilience** - Multiple fallback layers for robust operation
