@@ -1,290 +1,5 @@
 [
   {
-    "timestamp": "2026-02-23T17:31:20.098Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 2,
-      "avgScore": 43,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.034,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 2,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Spurs\" but no matching athlete found in events data; Featured mentions \"Biathlon World Cup Kontiolahti\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32788,
-        "output": 8888,
-        "cacheCreation": 32785,
-        "cacheRead": 0,
-        "total": 41676,
-        "costUSD": 0.42712125,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 100880,
-        "output": 3856,
-        "calls": 1,
-        "total": 104736,
-        "costUSD": 0.35241925,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": null,
-      "total": {
-        "input": 133668,
-        "output": 12744,
-        "calls": 2,
-        "total": 146412,
-        "costUSD": 0.7795405,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 99.143,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
-    "timestamp": "2026-02-23T18:28:04.008Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 63,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.034,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 1,
-      "warningCount": 1,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32756,
-        "output": 6709,
-        "cacheCreation": 14745,
-        "cacheRead": 18008,
-        "total": 39465,
-        "costUSD": 0.26890024999999995,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 100880,
-        "output": 3856,
-        "calls": 1,
-        "total": 104736,
-        "costUSD": 0.35241925,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": null,
-      "total": {
-        "input": 133636,
-        "output": 10565,
-        "calls": 2,
-        "total": 144201,
-        "costUSD": 0.6213195,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 99.143,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
-    "timestamp": "2026-02-23T19:30:33.328Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 63,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.034,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 1,
-      "warningCount": 1,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Spurs\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 32784,
-        "output": 4862,
-        "cacheCreation": 32781,
-        "cacheRead": 0,
-        "total": 37646,
-        "costUSD": 0.32644625,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 100880,
-        "output": 3856,
-        "calls": 1,
-        "total": 104736,
-        "costUSD": 0.35241925,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": null,
-      "total": {
-        "input": 133664,
-        "output": 8718,
-        "calls": 2,
-        "total": 142382,
-        "costUSD": 0.6788655,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 99.143,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-23T20:19:22.835Z",
     "editorial": {
       "score": 100,
@@ -7743,6 +7458,201 @@
   },
   {
     "timestamp": "2026-02-25T22:04:44.396Z",
+    "editorial": {
+      "score": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 10
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 100,
+      "blockCount": 10,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 76,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 12,
+      "warningCount": 12,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Emirates\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-25T22:08:59.632Z",
+    "editorial": {
+      "score": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 10
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 100,
+      "blockCount": 10,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 76,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 12,
+      "warningCount": 12,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Emirates\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-25T22:09:30.411Z",
+    "editorial": {
+      "score": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 10
+    },
+    "enrichment": null,
+    "featured": {
+      "score": 100,
+      "blockCount": 10,
+      "provider": "fallback",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 76,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 12,
+      "warningCount": 12,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Emirates\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": null,
+      "featured": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "realPct": 0
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-25T22:09:36.359Z",
     "editorial": {
       "score": 97,
       "mustWatchCoverage": 1,
