@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-24T22:14:30.918Z",
-  "eventCount": 39,
+  "generatedAt": "2026-02-25T02:09:44.601Z",
+  "eventCount": 52,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
+      "count": 29,
       "previousCount": 24,
-      "delta": 0
+      "delta": 5
     },
     "golf": {
       "count": 1,
@@ -32,6 +32,11 @@
       "previousCount": 5,
       "delta": 0
     },
+    "alpine": {
+      "count": 8,
+      "previousCount": null,
+      "delta": null
+    },
     "chess": {
       "count": 0,
       "previousCount": 0,
@@ -45,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -78,7 +83,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -101,7 +106,7 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.17,
+    "matchRate": 0.14,
     "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
@@ -127,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 2,
+    "fiveHour": 4,
     "sevenDay": 43,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 201551,
+    "totalDuration": 238494,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 83565,
-        "share": 41
+        "duration": 111740,
+        "share": 47
       }
     ],
     "failedSteps": [
@@ -166,12 +171,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 17% (4/24) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 14% (4/29) — team alias table may need updates"
     },
     {
-      "severity": "info",
-      "code": "empty_day",
-      "message": "2026-02-19: no events or results for day navigator"
+      "severity": "warning",
+      "code": "streaming_coverage_gap",
+      "message": "1 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate"
     },
     {
       "severity": "info",
@@ -191,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 41% of total pipeline time (84s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 47% of total pipeline time (112s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -206,7 +211,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }

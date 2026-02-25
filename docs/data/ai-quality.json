@@ -1,39 +1,40 @@
 {
-  "generatedAt": "2026-02-25T02:01:45.776Z",
+  "generatedAt": "2026-02-25T02:09:42.659Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": null,
+    "provider": "claude-cli",
+    "model": "default",
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 90,
-    "issues": [
-      "12 blocks exceeds recommended max of 10."
-    ],
-    "blockCount": 12,
-    "generationMs": 3718,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 121455,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 33997,
+      "output": 6879,
+      "cacheCreation": 33994,
+      "cacheRead": 0,
+      "total": 40876,
+      "costUSD": 0.3844525,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 94,
+    "score": 93,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.4,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Block count 12 is outside ideal range (3-8)"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -62,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 39,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.981
     },
     "after": {
-      "totalEvents": 39,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -81,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 1,
+    "aiUpdatedFields": 13,
     "failedBatches": 0,
-    "totalEvents": 39,
+    "totalEvents": 52,
     "skipStats": {
-      "total": 39,
+      "total": 52,
       "unchanged": 39,
-      "enriched": 0,
-      "skipRate": 1
+      "enriched": 13,
+      "skipRate": 0.75
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 4905,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 58252,
+      "output": 5509,
+      "calls": 2,
+      "total": 63761,
+      "costUSD": 0.5017925,
       "tracked": true,
       "estimated": false
     }

@@ -1,87 +1,14 @@
 {
-  "generatedAt": "2026-02-24T22:14:31.054Z",
-  "patternsDetected": 16,
+  "generatedAt": "2026-02-25T02:09:44.882Z",
+  "patternsDetected": 7,
   "patterns": [
     {
-      "type": "recurring_health_warning",
+      "type": "hint_fatigue",
       "severity": "high",
-      "issueCode": "low_confidence_config",
-      "count": 205,
-      "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z",
-      "suggestion": "Health warning \"low_confidence_config\" has fired 205 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "component_unresolvable",
-      "count": 35,
-      "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-23T13:36:12.942Z",
-      "suggestion": "Health warning \"component_unresolvable\" has fired 35 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "step_timeout_hit",
-      "count": 51,
-      "firstSeen": "2026-02-17T18:29:32.362Z",
-      "lastSeen": "2026-02-22T18:17:41.460Z",
-      "suggestion": "Health warning \"step_timeout_hit\" has fired 51 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "streaming_low_match_rate",
-      "count": 136,
-      "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z",
-      "suggestion": "Health warning \"streaming_low_match_rate\" has fired 136 times since 2026-02-17. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "quota_high_utilization",
-      "count": 49,
-      "firstSeen": "2026-02-18T15:24:34.686Z",
-      "lastSeen": "2026-02-22T12:17:15.661Z",
-      "suggestion": "Health warning \"quota_high_utilization\" has fired 49 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "ux_eval_fallback",
-      "count": 70,
-      "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z",
-      "suggestion": "Health warning \"ux_eval_fallback\" has fired 70 times since 2026-02-21. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "invisible_events",
-      "count": 38,
-      "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-02-24T17:28:39.206Z",
-      "suggestion": "Health warning \"invisible_events\" has fired 38 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "stale_data",
-      "count": 36,
-      "firstSeen": "2026-02-23T07:31:15.404Z",
-      "lastSeen": "2026-02-24T17:28:39.206Z",
-      "suggestion": "Health warning \"stale_data\" has fired 36 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "chronic_data_retention",
-      "count": 35,
-      "firstSeen": "2026-02-23T08:22:08.134Z",
-      "lastSeen": "2026-02-24T17:28:39.206Z",
-      "suggestion": "Health warning \"chronic_data_retention\" has fired 35 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
+      "hintKey": "sanityScore",
+      "fireCount": 20,
+      "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matching athlete found in events data; Featu",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc...\" has fired 20 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
@@ -120,15 +47,6 @@
       "suggestion": "Health warning \"editorial_unsorted_events\" has fired 7 times since 2026-02-22. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
-      "type": "recurring_health_warning",
-      "severity": "medium",
-      "issueCode": "missing_snapshot",
-      "count": 5,
-      "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-02-24T02:13:06.153Z",
-      "suggestion": "Health warning \"missing_snapshot\" has fired 5 times since 2026-02-23. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
       "type": "architecture_module_proliferation",
       "severity": "medium",
       "moduleCount": 60,
@@ -157,9 +75,9 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 205,
+      "count": 206,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z"
+      "lastSeen": "2026-02-25T02:09:44.737Z"
     },
     "component_unresolvable": {
       "count": 35,
@@ -172,9 +90,9 @@
       "lastSeen": "2026-02-22T18:17:41.460Z"
     },
     "streaming_low_match_rate": {
-      "count": 136,
+      "count": 137,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z"
+      "lastSeen": "2026-02-25T02:09:44.737Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -192,9 +110,9 @@
       "lastSeen": "2026-02-22T19:15:57.249Z"
     },
     "ux_eval_fallback": {
-      "count": 70,
+      "count": 71,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-24T22:14:30.988Z"
+      "lastSeen": "2026-02-25T02:09:44.737Z"
     },
     "model_change_quality_drop": {
       "count": 5,
@@ -239,17 +157,17 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 17,
-      "improved": 8,
-      "unchanged": 4,
-      "worsened": 5,
-      "effectivenessRate": 0.47
+      "fires": 19,
+      "improved": 0,
+      "unchanged": 19,
+      "worsened": 0,
+      "effectivenessRate": 0
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-24T22:14:31.053Z",
+    "recordedAt": "2026-02-25T02:09:44.882Z",
     "moduleCount": 60,
-    "avgModuleSize": 311,
+    "avgModuleSize": 312,
     "pipelineSteps": 25,
     "testCoverageRatio": 1.07,
     "smallModuleRatio": 0.02,
@@ -257,8 +175,8 @@
   },
   "architectureDelta": {
     "moduleCount": 0,
-    "avgModuleSize": 0,
+    "avgModuleSize": 1,
     "pipelineSteps": 0
   },
-  "summary": "16 patterns detected (9 high, 7 medium). Top priority: recurring_health_warning — Health warning \"low_confidence_config\" has fired 205 times since 2026-02-17."
+  "summary": "7 patterns detected (1 high, 6 medium). Top priority: hint_fatigue — Hint \"SANITY: Previous brief had content issues: Featured mentions \"Glimt\" but no matc."
 }
