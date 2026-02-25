@@ -106,8 +106,8 @@ export function findResearchTasks(configs, coverageGaps, now = new Date()) {
 			const refreshWindow = new Date(now.getTime() - 2 * MS_PER_DAY);
 			if (end < refreshWindow || start > new Date(now.getTime() + 2 * MS_PER_DAY)) continue;
 			const lastResearched = config.lastResearched ? new Date(config.lastResearched) : null;
-			// Refresh bracket every 4 hours during active tournaments
-			const bracketRefreshMs = 4 * 60 * 60 * 1000;
+			// Refresh bracket every hour — matches pipeline cadence
+			const bracketRefreshMs = 60 * 60 * 1000;
 			if (lastResearched && now.getTime() - lastResearched.getTime() < bracketRefreshMs) continue;
 			if (!tasks.some((x) => x.filename === filename)) {
 				tasks.push({
