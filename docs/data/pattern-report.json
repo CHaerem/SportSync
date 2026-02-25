@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-25T22:12:36.365Z",
+  "generatedAt": "2026-02-25T22:20:43.341Z",
   "patternsDetected": 7,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "streaming_coverage_gap",
-      "count": 18,
+      "count": 19,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T22:12:36.288Z",
-      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 18 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-25T22:20:43.256Z",
+      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 19 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 18,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 18 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 19,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 19 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "recurring_health_warning",
@@ -49,15 +49,15 @@
     {
       "type": "architecture_module_proliferation",
       "severity": "medium",
-      "moduleCount": 60,
+      "moduleCount": 63,
       "threshold": 50,
       "breakdown": {
-        "scripts": 33,
-        "lib": 19,
+        "scripts": 35,
+        "lib": 20,
         "fetch": 8
       },
       "inlineCandidates": [],
-      "suggestion": "60 modules exceed threshold of 50. Review scripts/ for consolidation opportunities."
+      "suggestion": "63 modules exceed threshold of 50. Review scripts/ for consolidation opportunities."
     },
     {
       "type": "architecture_orphan_scripts",
@@ -75,9 +75,9 @@
   ],
   "issueCodeHistory": {
     "low_confidence_config": {
-      "count": 224,
+      "count": 225,
       "firstSeen": "2026-02-17T12:27:55.020Z",
-      "lastSeen": "2026-02-25T22:12:36.288Z"
+      "lastSeen": "2026-02-25T22:20:43.256Z"
     },
     "component_unresolvable": {
       "count": 36,
@@ -85,9 +85,9 @@
       "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 155,
+      "count": 156,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-25T22:12:36.288Z"
+      "lastSeen": "2026-02-25T22:20:43.256Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -95,9 +95,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 89,
+      "count": 90,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-25T22:12:36.288Z"
+      "lastSeen": "2026-02-25T22:20:43.256Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -140,18 +140,18 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 18,
+      "count": 19,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T22:12:36.288Z"
+      "lastSeen": "2026-02-25T22:20:43.256Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
-      "improved": 6,
+      "improved": 5,
       "unchanged": 8,
-      "worsened": 4,
-      "effectivenessRate": 0.33
+      "worsened": 5,
+      "effectivenessRate": 0.28
     },
     "unknown": {
       "fires": 1,
@@ -162,18 +162,18 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-25T22:12:36.364Z",
-    "moduleCount": 60,
-    "avgModuleSize": 314,
-    "pipelineSteps": 25,
-    "testCoverageRatio": 1.07,
+    "recordedAt": "2026-02-25T22:20:43.340Z",
+    "moduleCount": 63,
+    "avgModuleSize": 320,
+    "pipelineSteps": 27,
+    "testCoverageRatio": 1.05,
     "smallModuleRatio": 0.02,
     "thresholdOverrides": {}
   },
   "architectureDelta": {
-    "moduleCount": 0,
-    "avgModuleSize": 0,
-    "pipelineSteps": 0
+    "moduleCount": 3,
+    "avgModuleSize": 6,
+    "pipelineSteps": 2
   },
-  "summary": "7 patterns detected (2 high, 5 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 18 times since 2026-02-25."
+  "summary": "7 patterns detected (2 high, 5 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 19 times since 2026-02-25."
 }
