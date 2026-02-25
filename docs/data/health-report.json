@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T15:27:19.525Z",
+  "generatedAt": "2026-02-25T15:46:52.821Z",
   "eventCount": 52,
   "sportCoverage": {
     "esports": {
@@ -62,11 +62,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -132,21 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 37,
-    "sevenDay": 48,
+    "fiveHour": 42,
+    "sevenDay": 49,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 200527,
+    "totalDuration": 255914,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 95331,
-        "share": 48
+        "duration": 146522,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -196,7 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 48% of total pipeline time (95s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 57% of total pipeline time (147s) — optimization candidate"
     },
     {
       "severity": "info",
