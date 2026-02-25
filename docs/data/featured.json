@@ -2,21 +2,99 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "CL night: PSG's French derby and Madrid's slender lead on the line"
-    },
-    {
-      "type": "narrative",
-      "text": "Bodø/Glimt stunned Internazionale 2-1 in Milan on Tuesday — Norwegian football at its European peak. Now PSG guard a 3-2 aggregate lead against Monaco, and Madrid defend their slim advantage over Benfica."
+      "text": "Champions League: Paris Saint-Germain v AS Monaco"
     },
     {
       "type": "match-preview",
       "homeTeam": "Paris Saint-Germain",
-      "awayTeam": "AS Monaco"
+      "awayTeam": "AS Monaco",
+      "showStandings": true,
+      "_fallbackText": "⚽ Paris Saint-Germain v AS Monaco, 21:00, Champions League — PSG lead 3-2 but Monaco are very much in this French derby — one away goal and the tie is level"
     },
     {
       "type": "match-preview",
       "homeTeam": "Real Madrid",
-      "awayTeam": "Benfica"
+      "awayTeam": "Benfica",
+      "showStandings": true,
+      "_fallbackText": "⚽ Real Madrid v Benfica, 21:00, Champions League — Real Madrid's narrow lead is all that stands between Benfica and the next round — expect a tense night"
+    },
+    {
+      "type": "event-line",
+      "text": "🎮 DraculaN Season 5 - 100 Thieves vs MANA, 13:00 — CS2 Major Tournaments 2026"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Atalanta",
+      "awayTeam": "Borussia Dortmund",
+      "showStandings": true,
+      "_fallbackText": "⚽ Atalanta v Borussia Dortmund, 18:45, Champions League — Atalanta need two goals at home to level the tie; Dortmund are heavy favourites to progress on their 2-0 aggregate lead"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "18:45 — Borussia Dortmund at Atalanta",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Galatasaray at Juventus",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — AS Monaco at Paris Saint-Germain",
+          "type": "event"
+        },
+        {
+          "text": "21:00 — Benfica at Real Madrid",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "biathlon-wch-2026",
+      "title": "Biathlon World Championships 2026",
+      "emoji": "🏆",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Fri 16:10 — Biathlon World Cup — Men's 20km Individual (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 12:40 — Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sat 14:40 — Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 12:30 — Biathlon World Cup — Women's Relay 4×6km (Kontiolahti) 🇳🇴",
+          "type": "event"
+        },
+        {
+          "text": "Sun 15:55 — Biathlon World Cup — Men's 15km Mass Start (Kontiolahti) 🇳🇴",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
@@ -24,13 +102,17 @@
     },
     {
       "type": "event-line",
-      "text": "⚽ Sat 16:00 — West Ham at Liverpool — PL title race, Liverpool under pressure"
+      "text": "⛳ Thu 06:00 — Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "event-line",
-      "text": "⚽ Sat 16:15 — Villarreal at Barcelona — La Liga title race for your favourites"
+      "text": "🎮 Fri 16:00 — ESL Pro League Season 23 - Stage 1 (Online)"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Thu 16:05 — Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
     }
   ],
-  "generatedAt": "2026-02-25T11:22:40.002Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-25T12:22:16.807Z",
+  "provider": "fallback"
 }
