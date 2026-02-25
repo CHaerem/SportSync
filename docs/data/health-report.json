@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-25T20:16:40.578Z",
+  "generatedAt": "2026-02-25T21:16:26.563Z",
   "eventCount": 48,
   "sportCoverage": {
     "esports": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 25,
-      "previousCount": 28,
-      "delta": -3
+      "previousCount": 25,
+      "delta": 0
     },
     "biathlon": {
       "count": 6,
@@ -62,11 +62,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
@@ -100,7 +100,7 @@
     "stale": false,
     "footballCount": 25,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
@@ -132,26 +132,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 5,
+    "fiveHour": 6,
     "sevenDay": 49,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 191161,
+    "totalDuration": 250057,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 79772,
-        "share": 42
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60072,
-        "share": 31
+        "duration": 143287,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -201,12 +196,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 42% of total pipeline time (80s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 57% of total pipeline time (143s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -221,7 +211,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 87/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
