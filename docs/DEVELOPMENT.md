@@ -69,7 +69,10 @@ SportSync/
 │   │   ├── sport-config.js       # Sport metadata (9 sports incl. Olympics, biathlon, nordic)
 │   │   └── preferences-manager.js # Favorites + engagement tracking (localStorage)
 │   ├── data/            # Auto-generated JSON data
-│   └── sw.js            # Service worker
+│   ├── icons/           # PWA icons (180, 192, 512px PNG + SVG)
+│   ├── manifest.webmanifest  # PWA manifest (standalone, icons, theme)
+│   ├── favicon.png      # Browser tab favicon
+│   └── sw.js            # Service worker (caches static assets + PWA resources)
 │
 ├── scripts/             # Data pipeline + agents
 │   ├── config/          # Auto-discovered curated event configs
@@ -113,7 +116,7 @@ SportSync/
 4. Click-to-expand shows venue, logos, inline standings, streaming, favorites
 5. Live polling: ESPN football scores + golf leaderboard every 60s
 6. Day navigator: browse past recaps and future previews
-7. Service worker caches static assets
+7. Service worker caches static assets, manifest, and icons for offline PWA support
 
 ## Adding New Features
 
@@ -245,5 +248,6 @@ cat docs/data/autonomy-report.json | node -e "process.stdin.on('data',d=>console
 - 5-stage schedule verification
 - Streaming enrichment (tvkampen scraping + fuzzy matching)
 - User preferences, favorites, dark mode (localStorage)
+- PWA support — installable on iPhone/Android, standalone mode, safe-area insets, offline-capable
 - 82+ PRs merged autonomously
 - 1882 tests across 65 files
