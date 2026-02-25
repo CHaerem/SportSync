@@ -817,6 +817,92 @@
 		.dark .exp-medal-badge { color: #fbbf24; background: rgba(251,191,36,0.15); }
 		.exp-multiday { font-size: 0.7rem; color: var(--muted); margin-bottom: 8px; }
 
+		/* Esports match details */
+		.exp-esports-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+		.exp-esports-stage {
+			font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+			color: #7c3aed; background: rgba(124,58,237,0.1); border-radius: 4px; padding: 2px 8px;
+		}
+		.dark .exp-esports-stage { color: #a78bfa; background: rgba(167,139,250,0.15); }
+		.exp-esports-format {
+			font-size: 0.62rem; font-weight: 500; color: var(--muted);
+			border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px;
+		}
+		.exp-esports-result { margin-bottom: 12px; }
+		.exp-esports-series-score { font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; }
+		.exp-esports-maps { display: flex; flex-direction: column; gap: 3px; }
+		.exp-esports-map { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; }
+		.exp-esports-map-name { color: var(--muted); min-width: 120px; }
+		.exp-esports-map-score { font-weight: 600; font-variant-numeric: tabular-nums; }
+		.exp-esports-bo1-result { font-size: 0.78rem; font-weight: 500; color: var(--fg); }
+
+		/* Tournament bracket */
+		.exp-bracket { margin: 12px 0; border-top: 1px solid var(--border); padding-top: 12px; }
+		.exp-bracket-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+		.exp-bracket-title { font-size: 0.78rem; font-weight: 600; }
+		.exp-bracket-tier { font-size: 0.58rem; color: var(--muted); }
+		.exp-bracket-prize { font-size: 0.65rem; color: var(--muted); margin-bottom: 8px; }
+		.exp-bracket-roster { font-size: 0.68rem; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+		.exp-bracket-roster-label { font-weight: 600; color: var(--fg); }
+
+		/* Focus team path */
+		.exp-bracket-path { margin-bottom: 12px; }
+		.exp-bracket-path-title {
+			font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+			color: var(--muted); margin-bottom: 6px;
+		}
+		.exp-bracket-match {
+			display: flex; align-items: center; gap: 8px; padding: 4px 8px; margin-bottom: 3px;
+			border-radius: 4px; font-size: 0.72rem; background: var(--bg-card);
+			border-left: 3px solid var(--border);
+		}
+		.exp-bracket-match.win { border-left-color: #16a34a; }
+		.exp-bracket-match.loss { border-left-color: #dc2626; }
+		.exp-bracket-match.current { border-left-color: #7c3aed; background: rgba(124,58,237,0.06); }
+		.dark .exp-bracket-match.current { background: rgba(167,139,250,0.08); }
+		.exp-bracket-match-stage { font-size: 0.6rem; color: var(--muted); min-width: 90px; }
+		.exp-bracket-match-vs { flex: 1; }
+		.exp-bracket-match-result { font-weight: 600; font-variant-numeric: tabular-nums; }
+		.exp-bracket-match-result { font-size: 0.68rem; }
+		.exp-bracket-match-status { font-size: 0.62rem; font-weight: 600; }
+		.exp-bracket-match-status.live { color: #dc2626; animation: livePulse 2s ease-in-out infinite; }
+
+		/* What-if scenarios */
+		.exp-bracket-scenarios { margin-top: 8px; }
+		.exp-bracket-scenario {
+			font-size: 0.68rem; padding: 3px 8px; margin-bottom: 2px; border-radius: 4px;
+		}
+		.exp-bracket-scenario.win { color: #16a34a; background: rgba(22,163,74,0.08); }
+		.exp-bracket-scenario.loss { color: #dc2626; background: rgba(220,38,38,0.08); }
+		.dark .exp-bracket-scenario.win { color: #4ade80; background: rgba(74,222,128,0.1); }
+		.dark .exp-bracket-scenario.loss { color: #f87171; background: rgba(248,113,113,0.1); }
+
+		/* Bracket grid */
+		.exp-bracket-grid { margin-top: 10px; }
+		.exp-bracket-section { margin-bottom: 10px; }
+		.exp-bracket-section-title {
+			font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+			color: #7c3aed; margin-bottom: 6px;
+		}
+		.dark .exp-bracket-section-title { color: #a78bfa; }
+		.exp-bracket-round { margin-bottom: 8px; }
+		.exp-bracket-round-name { font-size: 0.58rem; color: var(--muted); margin-bottom: 3px; font-weight: 500; }
+		.exp-bracket-cell {
+			display: flex; align-items: center; gap: 4px; padding: 3px 6px; margin-bottom: 2px;
+			font-size: 0.68rem; border-radius: 3px; background: var(--bg-card);
+			border: 1px solid var(--border);
+		}
+		.exp-bracket-cell.focus { border-color: #7c3aed; background: rgba(124,58,237,0.06); }
+		.dark .exp-bracket-cell.focus { border-color: #a78bfa; background: rgba(167,139,250,0.08); }
+		.exp-bracket-cell.completed { opacity: 0.85; }
+		.exp-bracket-cell.live { border-color: #dc2626; }
+		.exp-bracket-cell.grand-final { border-color: #c4920a; }
+		.exp-bracket-team { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+		.exp-bracket-team.winner { font-weight: 600; }
+		.exp-bracket-vs { color: var(--muted); font-size: 0.58rem; flex-shrink: 0; }
+		.exp-bracket-score { font-weight: 600; font-variant-numeric: tabular-nums; flex-shrink: 0; margin-left: 4px; }
+		.exp-bracket-note { font-size: 0.58rem; color: var(--muted); display: block; width: 100%; margin-top: 2px; }
+
 		/* === Featured sections === */
 		#featured-sections { padding: 0 16px; margin-bottom: 8px; }
 		.featured-section {
@@ -1009,6 +1095,10 @@
 			#the-brief { padding-left: 16px; padding-right: 16px; }
 			.row-expanded { padding-left: 16px; }
 			.exp-teams { gap: 12px; }
+			.exp-bracket-cell { font-size: 0.62rem; padding: 2px 4px; }
+			.exp-bracket-match { padding: 3px 6px; font-size: 0.68rem; }
+			.exp-bracket-match-stage { min-width: 70px; font-size: 0.56rem; }
+			.exp-esports-map-name { min-width: 90px; }
 		}
 	</style>
 </head>

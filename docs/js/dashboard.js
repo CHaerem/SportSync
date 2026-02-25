@@ -42,6 +42,7 @@ class Dashboard {
 		this._liveVisible = true;
 		this.selectedDate = null; // null = today; Date object = start-of-day for other dates
 		this.recentResults = null; // recent-results.json data
+		this.brackets = null; // tournament bracket data (esports etc.)
 		this._editorialCoverage = { sports: new Set(), matchKeys: new Set() }; // tracks what editorial components cover
 		this.activeSportFilter = null; // null = all sports; string = sport id filter
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
@@ -118,7 +119,7 @@ class Dashboard {
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp, leagueConfigResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp, leagueConfigResp, bracketsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
@@ -128,7 +129,8 @@ class Dashboard {
 				fetch('data/recent-results.json?t=' + Date.now()).catch(() => null),
 				fetch('data/insights.json?t=' + Date.now()).catch(() => null),
 				fetch('data/health-report.json?t=' + Date.now()).catch(() => null),
-				fetch('data/league-config.json?t=' + Date.now()).catch(() => null)
+				fetch('data/league-config.json?t=' + Date.now()).catch(() => null),
+				fetch('data/brackets.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -156,6 +158,9 @@ class Dashboard {
 					tags: Array.isArray(ev.tags) ? ev.tags : [],
 					norwegianRelevance: typeof ev.norwegianRelevance === 'number' ? ev.norwegianRelevance : null,
 				importanceReason: ev.importanceReason || null,
+				format: ev.format || null,
+				stage: ev.stage || null,
+				result: ev.result || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 
@@ -193,6 +198,10 @@ class Dashboard {
 
 			if (leagueConfigResp && leagueConfigResp.ok) {
 				try { this.leagueConfig = await leagueConfigResp.json(); } catch { this.leagueConfig = null; }
+			}
+
+			if (bracketsResp && bracketsResp.ok) {
+				try { this.brackets = await bracketsResp.json(); } catch { this.brackets = null; }
 			}
 
 			this._cacheSet('events', this.allEvents);
@@ -2733,6 +2742,11 @@ class Dashboard {
 			content += '</div>';
 		}
 
+		// Esports: match result, stage info, and tournament bracket
+		if (event.sport === 'esports') {
+			content += this.renderEsportsDetails(event);
+		}
+
 		// Non-golf: Norwegian athletes (Olympics, esports, etc.)
 		if (event.sport !== 'golf' && event.norwegianPlayers?.length > 0) {
 			const isOlympics = event.context === 'olympics-2026';
@@ -2843,6 +2857,234 @@ class Dashboard {
 		}
 		html += '</div>';
 		return html;
+	}
+
+	// --- Esports details (CS2 bracket, results) ---
+
+	renderEsportsDetails(event) {
+		let html = '';
+
+		// Stage + format badge
+		if (event.stage || event.format) {
+			html += '<div class="exp-esports-meta">';
+			if (event.stage) html += `<span class="exp-esports-stage">${this.esc(event.stage)}</span>`;
+			if (event.format) html += `<span class="exp-esports-format">${this.esc(event.format)}</span>`;
+			html += '</div>';
+		}
+
+		// Match result
+		if (event.result) {
+			html += this._renderEsportsResult(event);
+		}
+
+		// Tournament bracket (find matching bracket from brackets.json)
+		const bracket = this._findBracketForEvent(event);
+		if (bracket) {
+			html += this._renderTournamentBracket(bracket, event);
+		}
+
+		return html;
+	}
+
+	_renderEsportsResult(event) {
+		const r = event.result;
+		if (!r) return '';
+		let html = '<div class="exp-esports-result">';
+
+		if (r.maps && r.maps.length > 0) {
+			// Bo3/Bo5 with map details
+			const teams = event.title.replace(/^.*? - /, '').split(' vs ');
+			const t1 = teams[0]?.trim() || 'Team 1';
+			const t2 = teams[1]?.trim() || 'Team 2';
+			html += `<div class="exp-esports-series-score">${this.esc(r.winner || '')} wins ${this.esc(r.score || '')}</div>`;
+			html += '<div class="exp-esports-maps">';
+			for (const map of r.maps) {
+				const pickerLabel = map.picker ? ` (${this.esc(map.picker)}'s pick)` : '';
+				html += `<div class="exp-esports-map">`;
+				html += `<span class="exp-esports-map-name">${this.esc(map.map)}${pickerLabel}</span>`;
+				html += `<span class="exp-esports-map-score">${map.team1Score}-${map.team2Score}</span>`;
+				html += `</div>`;
+			}
+			html += '</div>';
+		} else if (r.winner) {
+			// Bo1 result
+			const scoreText = r.team1Score != null ? ` ${r.team1Score}-${r.team2Score}` : '';
+			const mapText = r.map ? ` on ${r.map}` : '';
+			html += `<div class="exp-esports-bo1-result">${this.esc(r.winner)} wins${scoreText}${mapText}</div>`;
+		}
+
+		html += '</div>';
+		return html;
+	}
+
+	_findBracketForEvent(event) {
+		if (!this.brackets) return null;
+		const title = (event.title || '').toLowerCase();
+		const tournament = (event.tournament || '').toLowerCase();
+		const stage = (event.stage || '').toLowerCase();
+		for (const [id, data] of Object.entries(this.brackets)) {
+			if (!data.name) continue;
+			const bracketName = data.name.toLowerCase();
+			// Match if bracket name appears in event title, tournament, or stage
+			// Also match first word of bracket name (e.g. "draculan" from "DraculaN Season 5")
+			const firstWord = bracketName.split(' ')[0];
+			if (title.includes(bracketName) || title.includes(firstWord) ||
+				tournament.includes(bracketName) || tournament.includes(firstWord) ||
+				stage.includes(bracketName)) {
+				return data;
+			}
+		}
+		return null;
+	}
+
+	_renderTournamentBracket(bracketData, event) {
+		const b = bracketData.bracket;
+		if (!b?.playoffs) return '';
+		const focusTeam = bracketData.focusTeam || '';
+		const path = b.focusTeamPath;
+
+		let html = '<div class="exp-bracket">';
+
+		// Tournament header
+		html += '<div class="exp-bracket-header">';
+		html += `<span class="exp-bracket-title">${this.esc(bracketData.name)}</span>`;
+		if (bracketData.tier) html += `<span class="exp-bracket-tier">${this.esc(bracketData.tier)}</span>`;
+		html += '</div>';
+		if (bracketData.prizePool) {
+			html += `<div class="exp-bracket-prize">${this.esc(bracketData.prizePool)}</div>`;
+		}
+
+		// Roster
+		if (bracketData.focusTeamRoster) {
+			html += '<div class="exp-bracket-roster">';
+			html += `<span class="exp-bracket-roster-label">${this.esc(focusTeam)} roster:</span> `;
+			html += this.esc(bracketData.focusTeamRoster.join(', '));
+			if (bracketData.coach) html += ` (coach: ${this.esc(bracketData.coach)})`;
+			html += '</div>';
+		}
+
+		// Focus team path — compact journey summary
+		if (path) {
+			html += '<div class="exp-bracket-path">';
+			html += `<div class="exp-bracket-path-title">${this.esc(focusTeam)} Tournament Path</div>`;
+
+			// Completed matches
+			if (path.completed?.length > 0) {
+				for (const m of path.completed) {
+					const isWin = m.result.startsWith('W');
+					html += `<div class="exp-bracket-match ${isWin ? 'win' : 'loss'}">`;
+					html += `<span class="exp-bracket-match-stage">${this.esc(m.stage)}</span>`;
+					html += `<span class="exp-bracket-match-vs">vs ${this.esc(m.opponent)}</span>`;
+					html += `<span class="exp-bracket-match-result">${this.esc(m.result)}</span>`;
+					html += '</div>';
+				}
+			}
+
+			// Current match
+			if (path.current) {
+				const c = path.current;
+				html += `<div class="exp-bracket-match current">`;
+				html += `<span class="exp-bracket-match-stage">${this.esc(c.stage)}</span>`;
+				html += `<span class="exp-bracket-match-vs">vs ${this.esc(c.opponent)}</span>`;
+				const statusLabel = c.status === 'live' ? 'LIVE' : (c.format || 'Upcoming');
+				html += `<span class="exp-bracket-match-status ${c.status === 'live' ? 'live' : ''}">${this.esc(statusLabel)}</span>`;
+				html += '</div>';
+			}
+
+			// What-if scenarios
+			if (path.ifWin || path.ifLose) {
+				html += '<div class="exp-bracket-scenarios">';
+				if (path.ifWin) {
+					html += `<div class="exp-bracket-scenario win">If win: ${this.esc(path.ifWin)}</div>`;
+				}
+				if (path.ifLose) {
+					html += `<div class="exp-bracket-scenario loss">If lose: ${this.esc(path.ifLose)}</div>`;
+				}
+				html += '</div>';
+			}
+
+			html += '</div>';
+		}
+
+		// Compact bracket grid: Upper and Lower bracket rounds
+		html += this._renderBracketGrid(b.playoffs, focusTeam);
+
+		html += '</div>';
+		return html;
+	}
+
+	_renderBracketGrid(playoffs, focusTeam) {
+		let html = '<div class="exp-bracket-grid">';
+
+		// Upper bracket
+		if (playoffs.upperBracket?.length > 0) {
+			html += '<div class="exp-bracket-section">';
+			html += '<div class="exp-bracket-section-title">Upper Bracket</div>';
+			for (const round of playoffs.upperBracket) {
+				html += `<div class="exp-bracket-round">`;
+				html += `<div class="exp-bracket-round-name">${this.esc(round.round)}</div>`;
+				for (const m of round.matches) {
+					const hasFocus = this._matchInvolves(m, focusTeam);
+					const statusCls = m.status === 'completed' ? 'completed' : (m.status === 'live' ? 'live' : '');
+					html += `<div class="exp-bracket-cell ${statusCls}${hasFocus ? ' focus' : ''}">`;
+					html += `<span class="exp-bracket-team${m.winner === m.team1 ? ' winner' : ''}">${this.esc(m.team1 || 'TBD')}</span>`;
+					html += '<span class="exp-bracket-vs">v</span>';
+					html += `<span class="exp-bracket-team${m.winner === m.team2 ? ' winner' : ''}">${this.esc(m.team2 || 'TBD')}</span>`;
+					if (m.score) html += `<span class="exp-bracket-score">${this.esc(m.score)}</span>`;
+					html += '</div>';
+				}
+				html += '</div>';
+			}
+			html += '</div>';
+		}
+
+		// Lower bracket
+		if (playoffs.lowerBracket?.length > 0) {
+			html += '<div class="exp-bracket-section">';
+			html += '<div class="exp-bracket-section-title">Lower Bracket</div>';
+			for (const round of playoffs.lowerBracket) {
+				html += `<div class="exp-bracket-round">`;
+				html += `<div class="exp-bracket-round-name">${this.esc(round.round)}</div>`;
+				for (const m of round.matches) {
+					const hasFocus = this._matchInvolves(m, focusTeam);
+					const statusCls = m.status === 'completed' ? 'completed' : (m.status === 'live' ? 'live' : '');
+					html += `<div class="exp-bracket-cell ${statusCls}${hasFocus ? ' focus' : ''}">`;
+					html += `<span class="exp-bracket-team${m.winner === m.team1 ? ' winner' : ''}">${this.esc(m.team1 || 'TBD')}</span>`;
+					html += '<span class="exp-bracket-vs">v</span>';
+					html += `<span class="exp-bracket-team${m.winner === m.team2 ? ' winner' : ''}">${this.esc(m.team2 || 'TBD')}</span>`;
+					if (m.score) html += `<span class="exp-bracket-score">${this.esc(m.score)}</span>`;
+					if (m.note) html += `<span class="exp-bracket-note">${this.esc(m.note)}</span>`;
+					html += '</div>';
+				}
+				html += '</div>';
+			}
+			html += '</div>';
+		}
+
+		// Grand Final
+		if (playoffs.grandFinal?.matches?.length > 0) {
+			html += '<div class="exp-bracket-section">';
+			html += '<div class="exp-bracket-section-title">Grand Final</div>';
+			for (const m of playoffs.grandFinal.matches) {
+				html += `<div class="exp-bracket-cell grand-final">`;
+				html += `<span class="exp-bracket-team">${this.esc(m.team1 || 'TBD')}</span>`;
+				html += '<span class="exp-bracket-vs">v</span>';
+				html += `<span class="exp-bracket-team">${this.esc(m.team2 || 'TBD')}</span>`;
+				if (m.note) html += `<span class="exp-bracket-note">${this.esc(m.note)}</span>`;
+				html += '</div>';
+			}
+			html += '</div>';
+		}
+
+		html += '</div>';
+		return html;
+	}
+
+	_matchInvolves(match, teamName) {
+		if (!teamName) return false;
+		const t = teamName.toLowerCase();
+		return (match.team1 || '').toLowerCase().includes(t) ||
+			(match.team2 || '').toLowerCase().includes(t);
 	}
 
 	// --- Match details (football) ---

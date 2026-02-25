@@ -928,6 +928,25 @@ async function main() {
 		"ai-quality.json": readJsonIfExists(path.join(dataDir, "ai-quality.json")),
 	};
 
+	// Check tournament bracket freshness (active tournaments need frequent updates)
+	const bracketsData = readJsonIfExists(path.join(dataDir, "brackets.json"));
+	if (bracketsData) {
+		for (const [id, t] of Object.entries(bracketsData)) {
+			if (!t.startDate || !t.endDate) continue;
+			const start = new Date(t.startDate);
+			const end = new Date(t.endDate);
+			const now = new Date();
+			if (now >= start && now <= end) {
+				// Active tournament — flag if bracket data might be stale
+				const hasPendingMatches = JSON.stringify(t.bracket).includes('"status":"pending"') ||
+					JSON.stringify(t.bracket).includes('"status":"live"');
+				if (hasPendingMatches) {
+					console.log(`Active tournament bracket: ${t.name} (${id}) — has pending/live matches`);
+				}
+			}
+		}
+	}
+
 	// Read day snapshot metadata
 	const snapMeta = readJsonIfExists(path.join(dataDir, "days", "_meta.json"));
 
