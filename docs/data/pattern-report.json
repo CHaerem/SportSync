@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T14:27:17.725Z",
+  "generatedAt": "2026-02-26T14:54:54.199Z",
   "patternsDetected": 6,
   "patterns": [
     {
@@ -34,8 +34,8 @@
       "severity": "medium",
       "loopName": "watchPlan",
       "score": 0,
-      "stagnantRuns": 8,
-      "suggestion": "Feedback loop \"watchPlan\" has been stuck at 0 for 8 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 9,
+      "suggestion": "Feedback loop \"watchPlan\" has been stuck at 0 for 9 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "hint_fatigue",
@@ -71,9 +71,9 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 168,
+      "count": 169,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T14:27:17.650Z"
+      "lastSeen": "2026-02-26T14:54:54.104Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -81,9 +81,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 102,
+      "count": 103,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T14:27:17.650Z"
+      "lastSeen": "2026-02-26T14:54:54.104Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -126,9 +126,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 26,
+      "count": 27,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-26T14:27:17.650Z"
+      "lastSeen": "2026-02-26T14:54:54.104Z"
     },
     "snapshot_event_mismatch": {
       "count": 8,
@@ -138,15 +138,15 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 10,
-      "improved": 0,
+      "fires": 11,
+      "improved": 1,
       "unchanged": 9,
       "worsened": 1,
-      "effectivenessRate": 0
+      "effectivenessRate": 0.09
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T14:27:17.724Z",
+    "recordedAt": "2026-02-26T14:54:54.198Z",
     "moduleCount": 63,
     "avgModuleSize": 322,
     "pipelineSteps": 27,

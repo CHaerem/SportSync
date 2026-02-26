@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T14:27:17.459Z",
+  "generatedAt": "2026-02-26T14:54:54.299Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -77,7 +77,7 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
@@ -127,13 +127,33 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Emirates\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Atalanta\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Dortmund\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Benfica\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 13,
     "critical": 0,
-    "warning": 9,
+    "warning": 13,
     "info": 0
   },
   "pass": true,
