@@ -1,28 +1,33 @@
 {
-  "generatedAt": "2026-02-26T08:08:26.398Z",
+  "generatedAt": "2026-02-26T10:37:28.017Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": null,
-    "quotaModel": null,
+    "provider": "claude-cli",
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 2,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 848,
+    "generationMs": 82149,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 34594,
+      "output": 4519,
+      "cacheCreation": 34591,
+      "cacheRead": 0,
+      "total": 39113,
+      "costUSD": 0.32918375,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 93,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -46,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.071,
+      "recapHeadlineRate": 0.036,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
       "footballCount": 28
     },
     "issues": [
-      "Only 7% of results have recap headlines"
+      "Only 4% of results have recap headlines"
     ]
   },
   "multiDay": {
@@ -69,14 +74,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": null,
-    "quotaModel": null,
+    "quotaTier": 2,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 53,
-      "importanceCoverage": 0.981,
-      "summaryCoverage": 0.981,
-      "relevanceCoverage": 0.981,
-      "tagsCoverage": 0.981
+      "importanceCoverage": 1,
+      "summaryCoverage": 1,
+      "relevanceCoverage": 1,
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 53,
@@ -88,18 +93,20 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 5,
+    "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
-    "failedBatches": 1,
+    "failedBatches": 0,
     "totalEvents": 53,
     "skipStats": {
       "total": 53,
-      "unchanged": 52,
-      "enriched": 1,
-      "skipRate": 0.98
+      "unchanged": 53,
+      "enriched": 0,
+      "skipRate": 1
     },
     "tokensPerEvent": 0,
-    "hintsApplied": [],
+    "hintsApplied": [
+      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
