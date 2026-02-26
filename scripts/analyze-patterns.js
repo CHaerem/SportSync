@@ -39,6 +39,7 @@ const KNOWN_MANAGED_CODES = new Set([
 	"stale_data",               // loop 7+8: fetcher returned empty, sync-configs retains cached data
 	"chronic_data_retention",   // loop 7: repeated empty fetches, discovery loop re-researches
 	"streaming_low_match_rate", // loop 12: alias mining and trend tracking address this
+	"streaming_coverage_gap",   // loop 12: streaming verification tracks coverage gaps through match rate trends and alias mining
 	"invisible_events",         // loop 7: past events pruned by sync-configs on next cycle
 	"low_confidence_config",    // loop 8: verification loop re-verifies, discovery re-researches
 	"component_unresolvable",   // loop 3: featured quality gates monitor and adapt prompts
@@ -47,6 +48,7 @@ const KNOWN_MANAGED_CODES = new Set([
 	"ux_eval_fallback",         // infrastructure: Playwright unavailable in CI, file-based fallback is acceptable
 	"step_timeout_hit",         // quota adaptation: AI steps hit timeouts when quota-limited
 	"missing_snapshot",         // loop 9: snapshot rebuilt every pipeline cycle, transient gap
+	"model_change_quality_drop",// loop 1+2: adaptive hints manage quality recovery after model changes; quality loops monitor and self-correct
 ]);
 
 /**
@@ -598,9 +600,17 @@ export function detectArchitecturalFitness({ projectRoot, pipelineManifest, base
 	}
 
 	// lib and fetch modules are referenced via imports, not pipeline — only check top-level scripts
+	// Some scripts are called from GitHub Actions workflows or post-generate.js (not directly
+	// from pipeline-manifest or package.json), so they appear as orphans even though they're active.
+	const ORPHAN_EXCEPTIONS = new Set([
+		"run-pipeline.js",         // entry point: called from GitHub Actions workflow (update-sports-data.yml)
+		"build-day-snapshots.js",  // called from post-generate.js which orchestrates post-generation steps
+		"generate-insights.js",    // called from post-generate.js; owned by code-agent (agent-definitions.json)
+		"retro-generate.js",       // manual utility: retro-generates featured briefings for past days
+	]);
 	const topLevelScripts = allModules.filter(m => m.dir === "scripts");
 	const orphans = topLevelScripts
-		.filter(m => !referencedScripts.has(m.file))
+		.filter(m => !referencedScripts.has(m.file) && !ORPHAN_EXCEPTIONS.has(m.file))
 		.map(m => m.file);
 
 	// --- Apply thresholds (with overrides from baseline) ---
