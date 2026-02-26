@@ -12,7 +12,7 @@
     },
     "directToMain": {
       "description": "Commit directly to main after tests pass. Cheapest (~3 turns overhead).",
-      "useWhen": "LOW-risk MAINTENANCE tasks under 100 lines: test additions, config tweaks, dead code removal, documentation updates, adding guards or validation",
+      "useWhen": "LOW-risk MAINTENANCE tasks under 100 lines: test additions, config tweaks, dead code removal, documentation updates, adding guards or validation. NEVER for docs/index.html or docs/js/** — these must always use branch-pr to prevent conflicts with manual sessions.",
       "safeguards": "Must pass npm test before AND after commit. If post-commit test fails, immediately revert with git revert HEAD."
     },
     "batch": {

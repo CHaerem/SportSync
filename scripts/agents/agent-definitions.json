@@ -323,6 +323,16 @@
         "file": "docs/data/autopilot-log.json",
         "owner": ["orchestrator"],
         "resolution": "Agents return log entries; Orchestrator merges"
+      },
+      {
+        "file": "docs/index.html",
+        "owner": ["ux"],
+        "resolution": "Always use branch-pr ship mode. Never direct-to-main — manual sessions may have concurrent edits."
+      },
+      {
+        "file": "docs/js/**",
+        "owner": ["ux"],
+        "resolution": "Always use branch-pr ship mode. Never direct-to-main — manual sessions may have concurrent edits."
       }
     ]
   },

@@ -466,6 +466,27 @@ These rules govern automated Claude Code operations via GitHub Actions (`claude-
 - All automated branches must use the prefix `claude/`
 - Autopilot branches use the prefix `claude/improve-`
 
+### Parallel Work Safety
+
+Three concurrent processes modify files: the hourly data pipeline, the nightly autopilot, and manual Claude Code sessions. These rules prevent them from silently overwriting each other's work.
+
+**File domains:**
+
+| Domain | Owner | Commit method |
+|--------|-------|--------------|
+| `docs/data/**`, `scripts/config/**` | Data pipeline | Direct to main (hourly) |
+| `docs/index.html`, `docs/js/**`, `docs/css/**` | UX agent / manual sessions | Branch PR only (never direct-to-main) |
+| `scripts/**` (excluding config/) | Code agent / manual sessions | Branch PR for non-trivial changes |
+| `tests/**` | Code agent / manual sessions | Direct-to-main for test-only changes |
+
+**Pipeline commit scope:** The hourly pipeline ONLY commits `docs/data/` and `scripts/config/`. The pre-commit gate (`scripts/pre-commit-gate.js`) verifies this — if non-pipeline files are staged, the gate fails.
+
+**Autopilot frontend rules:** All UX agent changes to `docs/index.html` and `docs/js/**` must use `branch-pr` ship mode, never `directToMain`. This is enforced by contention rules in `scripts/agents/agent-definitions.json` and by the `directToMain.useWhen` restriction in `scripts/autopilot-strategy.json`.
+
+**Manual session safety:** Always `git pull --rebase` before pushing when the pipeline or autopilot may have run concurrently. Use worktrees (`/worktree` command in Claude Code) for independent parallel sessions.
+
+**Detection:** If the pipeline accidentally stages non-data files (e.g., due to a soft-reset during push retry), the pre-commit gate catches it and blocks the commit. The gate result is logged in `docs/data/pipeline-result.json`.
+
 ### Autopilot
 
 The autopilot workflow (`claude-autopilot.yml`) autonomously improves the codebase using a **multi-agent architecture**. The roadmap is **self-curated** — the autopilot discovers its own tasks, not just executes human-written ones. All autopilot changes must satisfy the Change Principles above — especially vision alignment and closing the loop.

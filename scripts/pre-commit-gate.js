@@ -1,7 +1,32 @@
 import path from "path";
+import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath } from "./lib/helpers.js";
 
 const MIN_EVENTS = 5;
+
+/** Paths the data pipeline is allowed to commit (glob prefixes). */
+const PIPELINE_ALLOWED_PREFIXES = [
+	"docs/data/",
+	"scripts/config/",
+];
+
+/**
+ * Check that staged files only touch pipeline-allowed paths.
+ * Prevents the soft-reset retry from accidentally committing stale
+ * versions of frontend or script files.
+ * @param {string[]} stagedFiles - list of staged file paths from git
+ * @returns {{ pass: boolean, violations: string[] }}
+ */
+export function evaluateCommitSafety(stagedFiles) {
+	const violations = [];
+	for (const file of stagedFiles) {
+		const allowed = PIPELINE_ALLOWED_PREFIXES.some(prefix => file.startsWith(prefix));
+		if (!allowed) {
+			violations.push(file);
+		}
+	}
+	return { pass: violations.length === 0, violations };
+}
 
 /**
  * Evaluate whether the pipeline output is safe to commit.
@@ -36,13 +61,32 @@ if (isMain) {
 
 	const result = evaluateGate(events, healthReport);
 
-	if (result.pass) {
+	// Commit safety: verify staged files are within pipeline-allowed paths
+	let safetyResult = { pass: true, violations: [] };
+	try {
+		const staged = execSync("git diff --staged --name-only", { encoding: "utf-8" })
+			.trim()
+			.split("\n")
+			.filter(Boolean);
+		if (staged.length > 0) {
+			safetyResult = evaluateCommitSafety(staged);
+		}
+	} catch {
+		// git not available (e.g., test environment) — skip safety check
+	}
+
+	const allPass = result.pass && safetyResult.pass;
+
+	if (allPass) {
 		console.log("Pre-commit gate: PASS");
 		process.exit(0);
 	} else {
 		console.error("Pre-commit gate: FAIL");
 		for (const r of result.reasons) {
 			console.error(`  - ${r}`);
+		}
+		for (const v of safetyResult.violations) {
+			console.error(`  - Non-pipeline file staged: ${v}`);
 		}
 		process.exit(1);
 	}
