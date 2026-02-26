@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-26T09:23:09.585Z",
-  "patternsDetected": 3,
+  "generatedAt": "2026-02-26T10:22:24.904Z",
+  "patternsDetected": 4,
   "patterns": [
     {
       "type": "recurring_health_warning",
@@ -19,6 +19,14 @@
       "firstSeen": "2026-02-22T19:15:57.249Z",
       "lastSeen": "2026-02-24T02:03:31.876Z",
       "suggestion": "Health warning \"editorial_unsorted_events\" has fired 7 times since 2026-02-22. Investigate and fix the root cause rather than letting it keep firing."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "sanityScore",
+      "fireCount": 7,
+      "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\" which may not match any event; Featured",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\"...\" has fired 7 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -46,9 +54,9 @@
       "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 163,
+      "count": 164,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T09:23:09.483Z"
+      "lastSeen": "2026-02-26T10:22:24.826Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -56,9 +64,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 97,
+      "count": 98,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T09:23:09.484Z"
+      "lastSeen": "2026-02-26T10:22:24.826Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -112,19 +120,12 @@
     }
   },
   "interventionEffectiveness": {
-    "unknown": {
-      "fires": 1,
-      "improved": 0,
-      "unchanged": 1,
-      "worsened": 0,
-      "effectivenessRate": 0
-    },
     "sanityScore": {
       "fires": 19,
-      "improved": 3,
+      "improved": 2,
       "unchanged": 12,
-      "worsened": 4,
-      "effectivenessRate": 0.16
+      "worsened": 5,
+      "effectivenessRate": 0.11
     },
     "mustWatchCoverage": {
       "fires": 4,
@@ -135,7 +136,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T09:23:09.584Z",
+    "recordedAt": "2026-02-26T10:22:24.903Z",
     "moduleCount": 63,
     "avgModuleSize": 320,
     "pipelineSteps": 27,
@@ -148,5 +149,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "3 patterns detected (3 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."
+  "summary": "4 patterns detected (4 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."
 }
