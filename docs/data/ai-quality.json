@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-26T21:16:24.860Z",
+  "generatedAt": "2026-02-26T22:14:23.675Z",
   "featured": {
-    "provider": "claude-cli",
+    "provider": "fallback",
     "model": "claude-sonnet-4-6",
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
@@ -9,25 +9,20 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 80429,
+    "blockCount": 7,
+    "generationMs": 180075,
     "tokenUsage": {
-      "input": 35293,
-      "output": 4477,
-      "cacheCreation": 35290,
-      "cacheRead": 0,
-      "total": 39770,
-      "costUSD": 0.33250250000000003,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,

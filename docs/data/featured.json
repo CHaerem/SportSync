@@ -2,41 +2,64 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Bodo/Glimt conquer San Siro in Norwegian football's greatest European night"
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Internazionale",
-      "awayTeam": "Bodo/Glimt"
-    },
-    {
-      "type": "narrative",
-      "text": "A dramatic CL night: Atalanta crushed Dortmund 4-1, Real Madrid edged Benfica, PSG shared spoils with Monaco. But Bodø/Glimt's 2-1 victory at San Siro is the result Norway will be talking about all week."
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "text": "2 events across 2 sports today"
     },
     {
       "type": "event-line",
-      "text": "🎿 Thu 16:05 — Biathlon Women's 15km Individual, Kontiolahti — Tandrevold, Røiseland & Kirkeeide"
+      "text": "⛳ Cognizant Classic in The Palm Beaches, 06:00 — PGA Tour"
+    },
+    {
+      "type": "section",
+      "id": "relive-best-moments-from-the-2026-winter",
+      "title": "Olympics 2026",
+      "emoji": "🏅",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Fri 20:00 — Paralympic Winter Games 2026 — Opening Ceremony",
+          "type": "event"
+        },
+        {
+          "text": "Sat 10:00 — Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events",
+          "type": "event"
+        },
+        {
+          "text": "Sun 10:00 — Paralympic Winter Games 2026 — Para Alpine Skiing",
+          "type": "event"
+        },
+        {
+          "text": "Mon 10:00 — Paralympic Winter Games 2026 — Para Biathlon & Cross-Country",
+          "type": "event"
+        },
+        {
+          "text": "Tue 10:00 — Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
-      "text": "This Weekend"
+      "text": "This Week"
     },
     {
       "type": "match-preview",
-      "homeTeam": "Arsenal",
-      "awayTeam": "Chelsea",
-      "showStandings": true
+      "homeTeam": "Liverpool",
+      "awayTeam": "West Ham United",
+      "showStandings": true,
+      "_fallbackText": "⚽ Sat 16:00 — West Ham United at Liverpool"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Villarreal"
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-26T21:16:24.842Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-26T22:14:23.659Z",
+  "provider": "fallback"
 }

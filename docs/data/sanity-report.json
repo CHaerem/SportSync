@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T21:16:26.149Z",
+  "generatedAt": "2026-02-26T22:14:24.767Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -77,10 +77,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
+    "editorialScore": 100,
     "issueCount": 15
   },
   "findings": [
@@ -125,44 +125,9 @@
       "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 24 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Atalanta\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Dortmund\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Benfica\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Monaco\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"But Bod\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Biathlon Women\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -171,10 +136,10 @@
     }
   ],
   "summary": {
-    "total": 17,
+    "total": 10,
     "critical": 0,
-    "warning": 17,
-    "info": 0
+    "warning": 9,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null

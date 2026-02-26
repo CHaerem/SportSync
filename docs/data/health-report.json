@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T21:16:26.056Z",
+  "generatedAt": "2026-02-26T22:14:24.872Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -50,27 +50,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -115,7 +115,7 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 374 minutes old (stale > 240m)"
+      "Day snapshots are 432 minutes old (stale > 240m)"
     ],
     "snapshotCount": 15
   },
@@ -136,26 +136,27 @@
     "fiveHour": 15,
     "sevenDay": 73,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
+    "stepsSkipped": 3,
     "skippedSteps": [
       "discover-events",
-      "learn-recipes"
+      "learn-recipes",
+      "post-generate"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 106930,
-    "stepCount": 22,
+    "totalDuration": 190792,
+    "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-results",
-        "duration": 36692,
-        "share": 34
+        "name": "generate-featured",
+        "duration": 81286,
+        "share": 43
       },
       {
         "name": "verify-schedules",
-        "duration": 60061,
-        "share": 56
+        "duration": 60047,
+        "share": 31
       }
     ],
     "failedSteps": [
@@ -177,7 +178,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 21,
+        "consecutiveFailures": 22,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -211,7 +212,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 374 minutes old (stale > 240m)"
+      "message": "Day snapshots are 432 minutes old (stale > 240m)"
     },
     {
       "severity": "info",
@@ -221,7 +222,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 15%, 7d: 73%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 15%, 7d: 73%) — 3 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -231,12 +232,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 34% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 43% of total pipeline time (81s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 56% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -256,7 +257,7 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 21 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 22 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
@@ -266,7 +267,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-26T21:16:26.224Z",
+    "computedAt": "2026-02-26T22:14:25.035Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -282,9 +283,9 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.1,
+        "score": 0.11,
         "reasons": [
-          "21 consecutive failures"
+          "22 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -295,7 +296,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
