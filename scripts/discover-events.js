@@ -24,6 +24,7 @@ import { readJsonIfExists, writeJsonPretty, rootDataPath, iso, MS_PER_DAY, parse
 import { buildVerificationHints } from "./lib/schedule-verifier.js";
 import { factCheck, buildFactCheckHints, appendFactCheckHistory } from "./lib/fact-checker.js";
 import { LLMClient } from "./lib/llm-client.js";
+import { urgencyToRefreshInterval } from "./lib/refresh-urgency.js";
 
 const MAX_TASKS_PER_RUN = 3;
 const ATHLETE_REFRESH_DAYS = 7;
@@ -35,7 +36,7 @@ const defaultConfigDir = path.resolve(process.cwd(), "scripts", "config");
  * Find configs and gaps that need research.
  * Returns a prioritized task list (max MAX_TASKS_PER_RUN).
  */
-export function findResearchTasks(configs, coverageGaps, now = new Date()) {
+export function findResearchTasks(configs, coverageGaps, now = new Date(), _urgencyDataOverride = null) {
 	const tasks = [];
 
 	// Priority 1: configs with needsResearch flag
@@ -96,6 +97,11 @@ export function findResearchTasks(configs, coverageGaps, now = new Date()) {
 	}
 
 	// Priority 4: active tournaments needing bracket refresh (esports configs with tournaments array)
+	// Refresh interval is driven by urgency scoring (refresh-urgency.json) when available,
+	// with a fallback to match-day heuristic (1h match day, 2h otherwise)
+	const urgencyData = _urgencyDataOverride || readJsonIfExists(
+		path.join(process.env.SPORTSYNC_DATA_DIR || rootDataPath(), "refresh-urgency.json")
+	);
 	for (const { filename, config } of configs) {
 		if (!Array.isArray(config.tournaments)) continue;
 		for (const t of config.tournaments) {
@@ -106,26 +112,48 @@ export function findResearchTasks(configs, coverageGaps, now = new Date()) {
 			const refreshWindow = new Date(now.getTime() - 2 * MS_PER_DAY);
 			if (end < refreshWindow || start > new Date(now.getTime() + 2 * MS_PER_DAY)) continue;
 			const lastResearched = config.lastResearched ? new Date(config.lastResearched) : null;
-			// Smart schedule: 1h refresh on match days (focus team match within ±6h), 2h otherwise
-			const focusTeam = (t.focusTeam || "").toLowerCase();
-			const SIX_HOURS = 6 * 60 * 60 * 1000;
-			const isMatchDay = focusTeam && (config.events || []).some(ev => {
-				if (!ev.time) return false;
-				const evTime = new Date(ev.time).getTime();
-				const title = (ev.title || "").toLowerCase();
-				return title.includes(focusTeam) && Math.abs(now.getTime() - evTime) < SIX_HOURS;
-			});
-			const bracketRefreshMs = isMatchDay ? 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
+
+			// Urgency-aware refresh interval: use urgency score if available, else match-day heuristic
+			let bracketRefreshMs;
+			let urgencyScore = null;
+			const urgencyTarget = urgencyData?.targets?.find(u =>
+				u.id.includes(filename) || u.id.includes(t.id)
+			);
+			if (urgencyTarget) {
+				bracketRefreshMs = urgencyToRefreshInterval(urgencyTarget.score);
+				urgencyScore = urgencyTarget.score;
+			} else {
+				// Fallback: 1h on match days, 2h otherwise
+				const focusTeam = (t.focusTeam || "").toLowerCase();
+				const SIX_HOURS = 6 * 60 * 60 * 1000;
+				const isMatchDay = focusTeam && (config.events || []).some(ev => {
+					if (!ev.time) return false;
+					const evTime = new Date(ev.time).getTime();
+					const title = (ev.title || "").toLowerCase();
+					return title.includes(focusTeam) && Math.abs(now.getTime() - evTime) < SIX_HOURS;
+				});
+				bracketRefreshMs = isMatchDay ? 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
+			}
+
 			if (lastResearched && now.getTime() - lastResearched.getTime() < bracketRefreshMs) continue;
 			if (!tasks.some((x) => x.filename === filename)) {
-				tasks.push({
+				const taskEntry = {
 					type: "refresh-bracket",
 					priority: 4,
 					filename,
 					config,
 					tournament: t,
 					reason: `Active tournament bracket refresh: ${t.name}`,
-				});
+				};
+				// Boost priority for high-urgency targets
+				if (urgencyScore !== null && urgencyScore >= 0.6) {
+					taskEntry.priority = 1;
+					taskEntry.reason += ` [urgency ${urgencyScore}]`;
+				} else if (urgencyScore !== null && urgencyScore >= 0.3) {
+					taskEntry.priority = 2;
+					taskEntry.reason += ` [urgency ${urgencyScore}]`;
+				}
+				tasks.push(taskEntry);
 			}
 		}
 	}

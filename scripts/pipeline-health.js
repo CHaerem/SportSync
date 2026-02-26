@@ -13,6 +13,7 @@ import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from "./lib/helpers.js";
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { analyzePatterns } from "./analyze-patterns.js";
+import { extractBracketMatches, buildRefreshTargets, computeAllUrgencies } from "./lib/refresh-urgency.js";
 import { LLMClient } from "./lib/llm-client.js";
 
 const dataDir = rootDataPath();
@@ -150,6 +151,8 @@ export function generateHealthReport(options = {}) {
 		sportFiles = {},
 		pipelineResult = null,
 		brackets = null,
+		recipeRegistry = null,
+		scraperHistory = null,
 	} = options;
 
 	const issues = [];
@@ -838,8 +841,8 @@ export function generateHealthReport(options = {}) {
 	// Pipeline timing anomaly detection
 	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
 
-	// Bracket health: detect active tournaments with no visible events
-	const bracketHealth = { active: 0, orphaned: 0 };
+	// Bracket health: detect active tournaments with no visible events + bracket staleness
+	const bracketHealth = { active: 0, orphaned: 0, staleMatches: 0, staleTournaments: [] };
 	if (brackets) {
 		const nowMs = Date.now();
 		for (const [id, t] of Object.entries(brackets)) {
@@ -865,7 +868,88 @@ export function generateHealthReport(options = {}) {
 					message: `Active tournament "${t.name}" (${id}) has bracket data but no matching events — bracket invisible on dashboard`,
 				});
 			}
+
+			// Bracket staleness: detect matches past scheduled time still showing "scheduled"
+			const allMatches = extractBracketMatches(t.bracket);
+			let staleCount = 0;
+			for (const match of allMatches) {
+				if (match.status === "scheduled" && match.scheduledTime) {
+					const matchTime = new Date(match.scheduledTime).getTime();
+					if (matchTime < nowMs - 2 * 60 * 60 * 1000) {
+						staleCount++;
+					}
+				}
+			}
+			if (staleCount > 0) {
+				bracketHealth.staleMatches += staleCount;
+				bracketHealth.staleTournaments.push(id);
+				issues.push({
+					severity: "warning",
+					code: "bracket_stale_matches",
+					message: `Tournament "${t.name}" (${id}) has ${staleCount} stale match(es) — bracket data needs refresh`,
+				});
+			}
 		}
+	}
+
+	// Quota-skip cross-reference: warn when time-critical steps are skipped
+	if (quotaHealth.skippedSteps.includes("discover-events") &&
+		bracketHealth.staleMatches > 0) {
+		issues.push({
+			severity: "warning",
+			code: "quota_skip_time_critical",
+			message: `discover-events was quota-skipped but ${bracketHealth.staleMatches} bracket match(es) in ${bracketHealth.staleTournaments.length} tournament(s) need refresh`,
+		});
+	}
+
+	// 15. Recipe scraper health — surface persistent failures as issues
+	const recipeHealth = { active: 0, broken: 0, recentSuccessRate: null, recipes: [] };
+	if (recipeRegistry?.recipes?.length) {
+		const active = recipeRegistry.recipes.filter(r => r.active);
+		recipeHealth.active = active.length;
+
+		const recentRuns = (scraperHistory?.runs || []).filter(r => {
+			const age = Date.now() - new Date(r.timestamp).getTime();
+			return age < 24 * 60 * 60 * 1000;
+		});
+		recipeHealth.recentSuccessRate = recentRuns.length > 0
+			? Math.round(recentRuns.filter(r => r.success).length / recentRuns.length * 100)
+			: null;
+
+		for (const entry of active) {
+			recipeHealth.recipes.push({
+				id: entry.id,
+				consecutiveFailures: entry.consecutiveFailures || 0,
+				needsRepair: entry.needsRepair || false,
+				lastSuccess: entry.lastSuccess,
+			});
+
+			if (entry.consecutiveFailures >= 6) {
+				recipeHealth.broken++;
+				issues.push({
+					severity: "warning",
+					code: "recipe_persistent_failure",
+					message: `Recipe "${entry.id}" has ${entry.consecutiveFailures} consecutive failures — data source may be permanently unavailable`,
+				});
+			}
+		}
+
+		const failedRepairs = recentRuns.filter(r => r.action?.startsWith("repair-") && !r.success);
+		if (failedRepairs.length >= 2) {
+			issues.push({
+				severity: "warning",
+				code: "recipe_repair_exhausted",
+				message: `${failedRepairs.length} recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient`,
+			});
+		}
+	}
+	// Also warn if learn-recipes was skipped while recipes are broken
+	if (quotaHealth.skippedSteps.includes("learn-recipes") && recipeHealth.broken > 0) {
+		issues.push({
+			severity: "warning",
+			code: "quota_skip_time_critical",
+			message: `learn-recipes was quota-skipped but ${recipeHealth.broken} recipe(s) need repair — data source going dark`,
+		});
 	}
 
 	// Determine overall status
@@ -889,6 +973,7 @@ export function generateHealthReport(options = {}) {
 		quotaHealth,
 		pipelineTimingHealth,
 		bracketHealth,
+		recipeHealth,
 		unmappedLeagues: [...unmappedTournaments],
 		issues,
 		status,
@@ -1002,35 +1087,14 @@ async function main() {
 	const uxReport = readJsonIfExists(path.join(dataDir, "ux-report.json"));
 	const uxHistory = readJsonIfExists(path.join(dataDir, "ux-history.json"));
 
-	// Read recipe scraper health
+	// Read recipe scraper health (passed into generateHealthReport for structured issue reporting)
 	const recipeRegistryPath = path.join(process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config"), "recipes", "_registry.json");
 	const recipeRegistry = readJsonIfExists(recipeRegistryPath);
 	const scraperHistory = readJsonIfExists(path.join(dataDir, "scraper-history.json"));
 	if (recipeRegistry?.recipes?.length) {
 		const active = recipeRegistry.recipes.filter(r => r.active);
 		const broken = active.filter(r => r.needsRepair);
-		const recentRuns = (scraperHistory?.runs || []).filter(r => {
-			const age = Date.now() - new Date(r.timestamp).getTime();
-			return age < 24 * 60 * 60 * 1000;
-		});
-		const failedRepairs = recentRuns.filter(r => r.action?.startsWith("repair-") && !r.success);
-		const successRate = recentRuns.length > 0
-			? Math.round(recentRuns.filter(r => r.success).length / recentRuns.length * 100)
-			: null;
-		console.log(`Recipe scrapers: ${active.length} active, ${broken.length} need repair, 24h success rate: ${successRate ?? "N/A"}%`);
-		if (broken.length > 0) {
-			console.log(`  Broken recipes: ${broken.map(r => r.id).join(", ")}`);
-		}
-		// Escalate: recipes with many failures that self-repair couldn't fix
-		// The autopilot reads health-report.json and will notice these as issues needing investigation
-		for (const entry of active) {
-			if (entry.consecutiveFailures >= 6) {
-				console.log(`  ESCALATE: Recipe "${entry.id}" has ${entry.consecutiveFailures} consecutive failures — self-repair exhausted, needs autopilot investigation (alternative source? page permanently changed?)`);
-			}
-		}
-		if (failedRepairs.length >= 2) {
-			console.log(`  WARNING: ${failedRepairs.length} recipe repair attempts failed in last 24h — LLM-based repair may be insufficient`);
-		}
+		console.log(`Recipe scrapers: ${active.length} active, ${broken.length} need repair`);
 	}
 
 	const report = generateHealthReport({
@@ -1052,6 +1116,8 @@ async function main() {
 		brackets: bracketsData,
 		uxReport,
 		uxHistory,
+		recipeRegistry,
+		scraperHistory,
 	});
 
 	// Generate autonomy scorecard alongside health report
@@ -1125,6 +1191,47 @@ async function main() {
 			}
 		}
 	}
+
+	// Compute refresh urgency for observability and pipeline consumption
+	const configs = [];
+	if (fs.existsSync(configDir)) {
+		for (const file of fs.readdirSync(configDir).filter(f => f.endsWith(".json") && f !== "user-context.json")) {
+			const cfg = readJsonIfExists(path.join(configDir, file));
+			if (cfg) configs.push({ filename: file, config: cfg });
+		}
+	}
+	const userContext = readJsonIfExists(path.join(configDir, "user-context.json"));
+	const targets = buildRefreshTargets({
+		configs,
+		brackets: bracketsData,
+		recipeRegistry,
+		userContext,
+	});
+	const urgencies = computeAllUrgencies(targets);
+	report.refreshUrgency = {
+		computedAt: new Date().toISOString(),
+		targets: urgencies,
+		highestUrgency: urgencies[0]?.score || 0,
+		urgentTargets: urgencies.filter(u => u.score >= 0.3).length,
+	};
+	writeJsonPretty(path.join(dataDir, "refresh-urgency.json"), report.refreshUrgency);
+	if (urgencies.length > 0) {
+		console.log(`Refresh urgency: highest ${urgencies[0].score} (${urgencies[0].id}), ${report.refreshUrgency.urgentTargets} urgent target(s)`);
+	}
+
+	// Track urgency history for effectiveness measurement
+	const urgencyHistoryPath = path.join(dataDir, "refresh-urgency-history.json");
+	const urgencyHistory = readJsonIfExists(urgencyHistoryPath) || { runs: [] };
+	urgencyHistory.runs.push({
+		timestamp: new Date().toISOString(),
+		highestUrgency: urgencies[0]?.score || 0,
+		urgentCount: report.refreshUrgency.urgentTargets,
+		quotaTier: pipelineResult?.quota?.tier ?? null,
+		discoverSkipped: report.quotaHealth?.skippedSteps?.includes("discover-events") || false,
+		bracketStaleMatches: report.bracketHealth?.staleMatches || 0,
+	});
+	while (urgencyHistory.runs.length > 200) urgencyHistory.runs.shift();
+	writeJsonPretty(urgencyHistoryPath, urgencyHistory);
 
 	// Status summary — deterministic fallback only (LLM summary moved to separate step to avoid timeout)
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));

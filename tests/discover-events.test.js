@@ -391,3 +391,140 @@ describe("syncEventPlayers()", () => {
 		expect(config.events[0].norwegian).toBe(false);
 	});
 });
+
+// --- Urgency-aware bracket refresh ---
+
+describe("findResearchTasks — urgency-aware bracket refresh", () => {
+	it("finds bracket refresh tasks for active tournaments", () => {
+		const now = new Date("2026-02-26T12:00:00Z");
+		const configs = [{
+			filename: "esports-cs2-2026.json",
+			config: {
+				name: "CS2",
+				lastResearched: "2026-02-24T10:00:00Z", // 2+ days ago, definitely stale
+				tournaments: [{
+					id: "draculan-s5",
+					startDate: "2026-02-24",
+					endDate: "2026-02-28",
+					focusTeam: "100 Thieves",
+					bracket: { playoffs: { upperBracket: [] } },
+				}],
+				events: [],
+			},
+		}];
+		const tasks = findResearchTasks(configs, null, now);
+		expect(tasks.some(t => t.type === "refresh-bracket")).toBe(true);
+	});
+
+	it("skips bracket refresh when lastResearched is recent (no urgency data)", () => {
+		const now = new Date("2026-02-26T12:00:00Z");
+		const configs = [{
+			filename: "esports-cs2-2026.json",
+			config: {
+				name: "CS2",
+				lastResearched: "2026-02-26T11:30:00Z", // 30 min ago
+				tournaments: [{
+					id: "draculan-s5",
+					startDate: "2026-02-24",
+					endDate: "2026-02-28",
+					focusTeam: "100 Thieves",
+					bracket: { playoffs: { upperBracket: [] } },
+				}],
+				events: [],
+			},
+		}];
+		const tasks = findResearchTasks(configs, null, now);
+		expect(tasks.some(t => t.type === "refresh-bracket")).toBe(false);
+	});
+
+	it("boosts bracket refresh priority for high-urgency targets", () => {
+		const now = new Date("2026-02-26T12:00:00Z");
+		const configs = [{
+			filename: "esports-cs2-2026.json",
+			config: {
+				name: "CS2",
+				lastResearched: "2026-02-26T10:00:00Z", // 2h ago
+				tournaments: [{
+					id: "draculan-s5",
+					startDate: "2026-02-24",
+					endDate: "2026-02-28",
+					bracket: { playoffs: { upperBracket: [] } },
+				}],
+				events: [],
+			},
+		}];
+		const urgencyData = {
+			targets: [{
+				id: "config:esports-cs2-2026.json:draculan-s5",
+				score: 0.7,
+				suggestedQuotaPriority: 1,
+			}],
+		};
+		const tasks = findResearchTasks(configs, null, now, urgencyData);
+		const bracketTask = tasks.find(t => t.type === "refresh-bracket");
+		expect(bracketTask).toBeDefined();
+		expect(bracketTask.priority).toBe(1); // boosted from 4 to 1
+		expect(bracketTask.reason).toContain("urgency");
+	});
+
+	it("uses urgency-based refresh interval when urgency data available", () => {
+		const now = new Date("2026-02-26T12:00:00Z");
+		const configs = [{
+			filename: "esports-cs2-2026.json",
+			config: {
+				name: "CS2",
+				lastResearched: "2026-02-26T09:00:00Z", // 3h ago
+				tournaments: [{
+					id: "draculan-s5",
+					startDate: "2026-02-24",
+					endDate: "2026-02-28",
+					bracket: { playoffs: { upperBracket: [] } },
+				}],
+				events: [],
+			},
+		}];
+		// Low urgency (0.1) → 12h refresh interval → 3h ago is NOT stale enough → skip
+		const lowUrgency = {
+			targets: [{
+				id: "config:esports-cs2-2026.json:draculan-s5",
+				score: 0.1,
+			}],
+		};
+		const lowTasks = findResearchTasks(configs, null, now, lowUrgency);
+		expect(lowTasks.some(t => t.type === "refresh-bracket")).toBe(false);
+
+		// High urgency (0.7) → 1h refresh interval → 3h ago IS stale → refresh
+		const highUrgency = {
+			targets: [{
+				id: "config:esports-cs2-2026.json:draculan-s5",
+				score: 0.7,
+			}],
+		};
+		const highTasks = findResearchTasks(configs, null, now, highUrgency);
+		expect(highTasks.some(t => t.type === "refresh-bracket")).toBe(true);
+	});
+
+	it("falls back to match-day heuristic when no urgency data", () => {
+		const now = new Date("2026-02-26T12:00:00Z");
+		const configs = [{
+			filename: "esports-cs2-2026.json",
+			config: {
+				name: "CS2",
+				lastResearched: "2026-02-26T10:30:00Z", // 1.5h ago
+				tournaments: [{
+					id: "draculan-s5",
+					startDate: "2026-02-24",
+					endDate: "2026-02-28",
+					focusTeam: "Team A",
+					bracket: { playoffs: { upperBracket: [] } },
+				}],
+				// Match day: team A playing within 6 hours → 1h interval → 1.5h ago is stale
+				events: [
+					{ title: "Team A vs Team B", time: "2026-02-26T14:00:00Z" },
+				],
+			},
+		}];
+		const tasks = findResearchTasks(configs, null, now, null);
+		expect(tasks.some(t => t.type === "refresh-bracket")).toBe(true);
+	});
+});

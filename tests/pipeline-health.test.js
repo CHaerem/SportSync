@@ -1353,4 +1353,226 @@ describe("bracketHealth — orphaned bracket detection", () => {
 		expect(report.bracketHealth.active).toBe(0);
 		expect(report.bracketHealth.orphaned).toBe(0);
 	});
+
+	it("detects stale matches in active tournament bracket", () => {
+		const today = new Date().toISOString().split("T")[0];
+		const futureEnd = new Date(Date.now() + 3 * 86_400_000).toISOString().split("T")[0];
+		const pastTime = new Date(Date.now() - 4 * 3_600_000).toISOString(); // 4h ago
+
+		const report = generateHealthReport({
+			events: makeEvents({ esports: 2 }),
+			brackets: {
+				"test-tournament": {
+					name: "Test Tournament",
+					startDate: today,
+					endDate: futureEnd,
+					bracket: {
+						playoffs: {
+							upperBracket: [{
+								round: "R1",
+								matches: [
+									{ team1: "A", team2: "B", status: "scheduled", scheduledTime: pastTime },
+									{ team1: "C", team2: "D", status: "completed" },
+								],
+							}],
+						},
+					},
+				},
+			},
+		});
+
+		expect(report.bracketHealth.staleMatches).toBe(1);
+		expect(report.bracketHealth.staleTournaments).toContain("test-tournament");
+		const issue = report.issues.find(i => i.code === "bracket_stale_matches");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("Test Tournament");
+		expect(issue.message).toContain("1 stale match");
+	});
+
+	it("does not flag recent scheduled matches as stale", () => {
+		const today = new Date().toISOString().split("T")[0];
+		const futureEnd = new Date(Date.now() + 3 * 86_400_000).toISOString().split("T")[0];
+		const futureTime = new Date(Date.now() + 2 * 3_600_000).toISOString(); // 2h from now
+
+		const report = generateHealthReport({
+			events: makeEvents({ esports: 2 }),
+			brackets: {
+				"active-tournament": {
+					name: "Active",
+					startDate: today,
+					endDate: futureEnd,
+					bracket: {
+						playoffs: {
+							upperBracket: [{
+								round: "R1",
+								matches: [
+									{ status: "scheduled", scheduledTime: futureTime },
+								],
+							}],
+						},
+					},
+				},
+			},
+		});
+
+		expect(report.bracketHealth.staleMatches).toBe(0);
+		expect(report.bracketHealth.staleTournaments).toHaveLength(0);
+	});
+});
+
+describe("recipe health in report", () => {
+	it("surfaces recipe persistent failure as issue", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recipeRegistry: {
+				recipes: [{
+					id: "liquipedia-cs2-matches",
+					active: true,
+					consecutiveFailures: 13,
+					needsRepair: true,
+					lastSuccess: null,
+				}],
+			},
+		});
+		expect(report.recipeHealth.active).toBe(1);
+		expect(report.recipeHealth.broken).toBe(1);
+		const issue = report.issues.find(i => i.code === "recipe_persistent_failure");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("liquipedia-cs2-matches");
+		expect(issue.message).toContain("13 consecutive failures");
+	});
+
+	it("does not flag recipes with fewer than 6 consecutive failures", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recipeRegistry: {
+				recipes: [{
+					id: "some-recipe",
+					active: true,
+					consecutiveFailures: 5,
+					needsRepair: true,
+				}],
+			},
+		});
+		expect(report.recipeHealth.active).toBe(1);
+		expect(report.recipeHealth.broken).toBe(0);
+		expect(report.issues.find(i => i.code === "recipe_persistent_failure")).toBeUndefined();
+	});
+
+	it("returns empty recipeHealth when no registry provided", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+		expect(report.recipeHealth.active).toBe(0);
+		expect(report.recipeHealth.broken).toBe(0);
+		expect(report.recipeHealth.recipes).toHaveLength(0);
+	});
+
+	it("detects recipe repair exhaustion", () => {
+		const now = Date.now();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recipeRegistry: { recipes: [{ id: "r1", active: true, consecutiveFailures: 3 }] },
+			scraperHistory: {
+				runs: [
+					{ timestamp: new Date(now - 3600000).toISOString(), action: "repair-mutation", success: false },
+					{ timestamp: new Date(now - 1800000).toISOString(), action: "repair-llm", success: false },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "recipe_repair_exhausted");
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("2 recipe repair attempts failed");
+	});
+
+	it("skips inactive recipes", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recipeRegistry: {
+				recipes: [
+					{ id: "active", active: true, consecutiveFailures: 8 },
+					{ id: "inactive", active: false, consecutiveFailures: 20 },
+				],
+			},
+		});
+		expect(report.recipeHealth.active).toBe(1);
+		expect(report.recipeHealth.recipes).toHaveLength(1);
+	});
+});
+
+describe("quota-skip time-critical warnings", () => {
+	it("warns when discover-events skipped with stale brackets", () => {
+		const today = new Date().toISOString().split("T")[0];
+		const futureEnd = new Date(Date.now() + 3 * 86_400_000).toISOString().split("T")[0];
+		const pastTime = new Date(Date.now() - 4 * 3_600_000).toISOString();
+
+		const report = generateHealthReport({
+			events: makeEvents({ esports: 2 }),
+			brackets: {
+				"stale-bracket": {
+					name: "Stale",
+					startDate: today,
+					endDate: futureEnd,
+					bracket: {
+						playoffs: {
+							upperBracket: [{
+								round: "R1",
+								matches: [{ status: "scheduled", scheduledTime: pastTime }],
+							}],
+						},
+					},
+				},
+			},
+			pipelineResult: {
+				quota: { tier: 2, maxPriority: 1, fiveHour: 78, sevenDay: 70 },
+				phases: {
+					discover: {
+						steps: [{ name: "discover-events", status: "skipped", reason: "quota tier 2 (max priority 1, step needs 3)" }],
+					},
+				},
+			},
+		});
+
+		const issue = report.issues.find(i => i.code === "quota_skip_time_critical" && i.message.includes("discover-events"));
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("bracket match");
+	});
+
+	it("warns when learn-recipes skipped with broken recipes", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			recipeRegistry: {
+				recipes: [{ id: "broken-recipe", active: true, consecutiveFailures: 10 }],
+			},
+			pipelineResult: {
+				quota: { tier: 2, maxPriority: 1 },
+				phases: {
+					discover: {
+						steps: [{ name: "learn-recipes", status: "skipped", reason: "quota tier 2 (max priority 1, step needs 3)" }],
+					},
+				},
+			},
+		});
+
+		const issue = report.issues.find(i => i.code === "quota_skip_time_critical" && i.message.includes("learn-recipes"));
+		expect(issue).toBeDefined();
+		expect(issue.message).toContain("recipe(s) need repair");
+	});
+
+	it("does not warn about quota-skip when no stale brackets or broken recipes", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			pipelineResult: {
+				quota: { tier: 2, maxPriority: 1 },
+				phases: {
+					discover: {
+						steps: [{ name: "discover-events", status: "skipped", reason: "quota tier 2" }],
+					},
+				},
+			},
+		});
+
+		const issue = report.issues.find(i => i.code === "quota_skip_time_critical");
+		expect(issue).toBeUndefined();
+	});
 });

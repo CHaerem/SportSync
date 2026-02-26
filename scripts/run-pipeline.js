@@ -353,6 +353,22 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		if (phase.name === "discover") {
 			console.log("\n--- Quota check ---");
 			await checkQuotaStatus();
+
+			// Dynamic urgency boost: if refresh-urgency.json shows high-urgency targets,
+			// allow discover-events even at higher quota tiers
+			try {
+				const urgencyPath = path.join(DATA_DIR, "refresh-urgency.json");
+				if (fs.existsSync(urgencyPath)) {
+					const urgencyData = JSON.parse(fs.readFileSync(urgencyPath, "utf-8"));
+					if (urgencyData?.highestUrgency >= 0.6 && quotaTier <= 2 && quotaMaxPriority < 3) {
+						const boostedTo = Math.min(3, quotaMaxPriority + 1);
+						console.log(`  Urgency boost: highest urgency ${urgencyData.highestUrgency} → maxPriority ${quotaMaxPriority} → ${boostedTo}`);
+						quotaMaxPriority = boostedTo;
+					}
+				}
+			} catch {
+				// No urgency data yet (first run) — use default quota priority
+			}
 		}
 
 		console.log(`\n=== Phase: ${phase.name} — ${phase.description} ===`);
