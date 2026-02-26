@@ -1641,18 +1641,19 @@ class Dashboard {
 			const aPri = (sportClicks[a.sport] || 0) + (SPORT_WEIGHT[a.sport] || 0) * 0.1;
 			const bPri = (sportClicks[b.sport] || 0) + (SPORT_WEIGHT[b.sport] || 0) * 0.1;
 			if (aPri !== bPri) return bPri - aPri;
-			// Group football by tournament so matchday cards form correctly
-			if (a.sport === 'football' && b.sport === 'football' && a.tournament !== b.tournament) {
+			// Group same-sport events by tournament so cards form correctly
+			if (a.sport === b.sport && a.tournament !== b.tournament) {
 				return (a.tournament || '').localeCompare(b.tournament || '');
 			}
 			return new Date(a.time) - new Date(b.time);
 		});
 
 		// Group events into visual cards
-		// 1. Football 2+ matches same tournament → matchday card
-		// 2. Same sport 2+ events (e.g. Olympics) → grouped lead card with event list
-		// 3. Single must-watch (importance >= 4) → lead card
-		// 4. Everything else → regular event rows
+		// 1. Football 2+ matches same tournament → matchday card (with featured match)
+		// 2. Golf/Olympics 1+ events → sport-group card
+		// 3. Any sport 2+ events same tournament → sport-group card
+		// 4. Single importance 5 → lead card
+		// 5. Everything else → regular event rows
 		const groups = [];
 		let sportBuf = { sport: null, tournament: null, events: [] };
 
@@ -1662,14 +1663,14 @@ class Dashboard {
 			const hasTeams = sportBuf.events[0].homeTeam && sportBuf.events[0].awayTeam;
 			const isCardSport = ['olympics', 'golf'].includes(sportBuf.sport);
 
-			if (sportBuf.sport === 'football' && hasTeams && n >= 3) {
-				// 3+ football matches → matchday card
+			if (sportBuf.sport === 'football' && hasTeams && n >= 2) {
+				// 2+ football matches → matchday card
 				groups.push({ type: 'matchday', tournament: sportBuf.tournament, events: sportBuf.events });
 			} else if (isCardSport && n >= 1) {
 				// Golf/olympics events → card per tournament (each tournament is a multi-day event)
 				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
-			} else if (n >= 3) {
-				// 3+ same-sport events → grouped card
+			} else if (n >= 2) {
+				// 2+ same-tournament events → grouped card
 				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
 			} else {
 				// Individual rows (lead only for truly special events)
@@ -1681,10 +1682,10 @@ class Dashboard {
 		};
 
 		for (const e of sorted) {
-			const perTournament = e.sport === 'football' || e.sport === 'golf';
-			const key = perTournament ? `${e.sport}:${e.tournament || ''}` : e.sport;
-			const bufPerTournament = sportBuf.sport === 'football' || sportBuf.sport === 'golf';
-			const bufKey = bufPerTournament ? `${sportBuf.sport}:${sportBuf.tournament || ''}` : sportBuf.sport;
+			const perTournament = !!e.tournament;
+			const key = perTournament ? `${e.sport}:${e.tournament}` : e.sport;
+			const bufPerTournament = !!sportBuf.tournament;
+			const bufKey = bufPerTournament ? `${sportBuf.sport}:${sportBuf.tournament}` : sportBuf.sport;
 			if (key === bufKey) {
 				sportBuf.events.push(e);
 			} else {
