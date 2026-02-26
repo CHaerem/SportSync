@@ -3031,12 +3031,20 @@ class Dashboard {
 
 	_renderBracketGrid(playoffs, focusTeam) {
 		let html = '<div class="bk-grid">';
-		if (playoffs.upperBracket?.length > 0) {
-			html += '<div class="bk-sec"><div class="bk-sec-label">Upper Bracket</div>';
-			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
-			html += '</div>';
+
+		// Single elimination: playoffs.rounds = [{round, matches}, ...]
+		if (playoffs.rounds?.length > 0) {
+			html += this._renderBracketTree(playoffs.rounds, focusTeam);
 		}
-		if (playoffs.lowerBracket?.length > 0) {
+
+		// Double elimination: upper/lower/grand final
+		const hasLower = playoffs.lowerBracket?.length > 0;
+		if (playoffs.upperBracket?.length > 0) {
+			if (hasLower) html += '<div class="bk-sec"><div class="bk-sec-label">Upper Bracket</div>';
+			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
+			if (hasLower) html += '</div>';
+		}
+		if (hasLower) {
 			html += '<div class="bk-sec"><div class="bk-sec-label">Lower Bracket</div>';
 			html += this._renderBracketTree(playoffs.lowerBracket, focusTeam);
 			html += '</div>';
@@ -3046,6 +3054,7 @@ class Dashboard {
 			html += this._renderBracketTree([{ matches: playoffs.grandFinal.matches }], focusTeam);
 			html += '</div>';
 		}
+
 		html += '</div>';
 		return html;
 	}
@@ -3066,6 +3075,7 @@ class Dashboard {
 			if (s.includes('final') && !s.includes('quarter') && !s.includes('semi')) return 'Final';
 			if (s.includes('semi')) return 'SF';
 			if (s.includes('quarter')) return 'QF';
+			if (s.includes('round of')) return 'R' + s.replace(/\D/g, '');
 			return r.replace(/round\s*/i, 'R');
 		};
 
