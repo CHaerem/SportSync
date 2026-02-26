@@ -62,12 +62,14 @@ const mockGolfResponse = {
 		competitions: [{
 			competitors: [
 				{
+					id: "9780",
 					order: 1,
 					athlete: { displayName: "Scottie Scheffler" },
 					score: "-12",
 					linescores: [{ displayValue: "-4" }],
 				},
 				{
+					id: "3470",
 					order: 2,
 					athlete: { displayName: "Rory McIlroy" },
 					score: "-10",
@@ -168,6 +170,7 @@ describe("fetchGolfLeaderboard()", () => {
 			score: "-12",
 			today: "-4",
 			thru: "-",
+			headshot: "https://a.espncdn.com/i/headshots/golf/players/full/9780.png",
 		});
 	});
 

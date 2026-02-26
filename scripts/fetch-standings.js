@@ -88,6 +88,7 @@ export async function fetchGolfLeaderboard() {
 					score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
 					today: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
 					thru: c.status?.thru?.toString() || "-",
+					headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
 				})),
 			};
 		} catch (err) {

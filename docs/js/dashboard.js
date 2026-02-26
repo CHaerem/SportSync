@@ -2004,10 +2004,11 @@ class Dashboard {
 			const scoreNum = parseFloat(p.score);
 			const scoreCls = p.score.startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
 
-			// Headshot for golfers
-			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
+			// Headshot: prefer ESPN CDN from data, fall back to manual map
+			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
 			const imgHtml = headshot
-				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy">`
+				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
+				  + '<span class="lb-img-placeholder" style="display:none">\u26f3</span>'
 				: '<span class="lb-img-placeholder">\u26f3</span>';
 
 			html += `<div class="lb-row${isNor ? ' is-you' : ''}">`;
@@ -2057,9 +2058,10 @@ class Dashboard {
 
 		for (const p of showPlayers) {
 			const isNor = norNames.includes(p.player.split(' ').pop().toLowerCase());
-			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
+			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
 			const imgHtml = headshot
-				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy">`
+				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
+				  + '<span class="lb-img-placeholder" style="display:none">\u26f3</span>'
 				: '<span class="lb-img-placeholder">\u26f3</span>';
 			const scoreNum = parseFloat(p.score || '0');
 			const scoreCls = (p.score || '').startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
@@ -3767,12 +3769,20 @@ class Dashboard {
 		const tour = this.standings.golf[tourKey];
 		if (!tour?.leaderboard?.length) return '';
 
+		const playerCell = (p) => {
+			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
+			const img = headshot
+				? `<img class="lb-tbl-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none'">`
+				: '';
+			return `${img}${this.esc(p.player)}`;
+		};
+
 		let html = `<div class="exp-standings"><div class="exp-standings-header">${this.esc(tour.name || 'Leaderboard')}</div>`;
 		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Today</th><th>Thru</th></tr></thead><tbody>';
 
 		const top5 = tour.leaderboard.slice(0, 5);
 		for (const p of top5) {
-			html += `<tr><td>${p.position || '-'}</td><td>${this.esc(p.player)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
+			html += `<tr><td>${p.position || '-'}</td><td>${playerCell(p)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
 		}
 
 		// Check if any Norwegian player is on the leaderboard beyond top 5
@@ -3784,7 +3794,7 @@ class Dashboard {
 			if (norOnBoard.length > 0) {
 				html += '<tr class="ellipsis"><td colspan="5">\u2026</td></tr>';
 				for (const p of norOnBoard) {
-					html += `<tr class="highlight"><td>${p.position || '-'}</td><td>${this.esc(p.player)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
+					html += `<tr class="highlight"><td>${p.position || '-'}</td><td>${playerCell(p)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
 				}
 			}
 		}
@@ -3976,6 +3986,7 @@ class Dashboard {
 					today: c.linescores?.[c.linescores.length - 1]?.displayValue || '-',
 					thru: c.status?.thru?.toString() || '-',
 					flag: c.athlete?.flag?.alt || '',
+					headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
 				})),
 			};
 		} catch (e) { console.debug('Golf live poll failed:', e.message); }
