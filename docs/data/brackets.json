@@ -55,38 +55,51 @@
                 "team1": "ENCE",
                 "team2": "100 Thieves",
                 "score": "2-0",
+                "maps": "Ancient 13-6, Anubis 13-8",
                 "winner": "ENCE",
                 "status": "completed"
               },
               {
                 "team1": "HEROIC",
                 "team2": "INFINITE",
-                "status": "scheduled"
+                "score": "2-0",
+                "winner": "HEROIC",
+                "status": "completed"
               },
               {
                 "team1": "ASTRAL",
                 "team2": "Apogee",
-                "status": "scheduled"
+                "score": "2-0",
+                "winner": "ASTRAL",
+                "status": "completed"
               },
               {
                 "team1": "CYBERSHOKE",
                 "team2": "aimclub",
-                "status": "scheduled"
+                "score": "2-0",
+                "winner": "CYBERSHOKE",
+                "status": "completed"
               },
               {
-                "team1": "Oramond",
-                "team2": "Eternal Fire",
-                "status": "scheduled"
+                "team1": "Eternal Fire",
+                "team2": "Oramond",
+                "score": "2-0",
+                "winner": "Eternal Fire",
+                "status": "completed"
               },
               {
                 "team1": "FlyQuest",
                 "team2": "HYPERSPIRIT",
-                "status": "scheduled"
+                "score": "2-0",
+                "winner": "FlyQuest",
+                "status": "completed"
               },
               {
-                "team1": "BESTIA",
-                "team2": "MANA",
-                "status": "scheduled"
+                "team1": "MANA",
+                "team2": "BESTIA",
+                "score": "2-0",
+                "winner": "MANA",
+                "status": "completed"
               },
               {
                 "team1": "Nexus",
@@ -99,32 +112,42 @@
           },
           {
             "round": "Quarterfinals",
+            "scheduledTime": "2026-02-26T11:00:00Z",
             "matches": [
               {
-                "team1": "ENCE",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "HEROIC",
+                "team2": "ASTRAL",
+                "status": "scheduled",
+                "scheduledTime": "2026-02-26T11:00:00Z"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "CYBERSHOKE",
+                "team2": "ENCE",
+                "status": "scheduled",
+                "scheduledTime": "2026-02-26T11:00:00Z"
+              },
+              {
+                "team1": "Eternal Fire",
+                "team2": "MANA",
+                "status": "scheduled",
+                "scheduledTime": "2026-02-26T11:00:00Z"
               },
               {
                 "team1": "Nexus",
-                "team2": "TBD",
-                "status": "pending"
-              },
-              {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team2": "FlyQuest",
+                "status": "scheduled",
+                "scheduledTime": "2026-02-26T11:00:00Z"
               }
             ]
           },
           {
             "round": "Semifinal",
             "matches": [
+              {
+                "team1": "TBD",
+                "team2": "TBD",
+                "status": "pending"
+              },
               {
                 "team1": "TBD",
                 "team2": "TBD",
@@ -148,35 +171,43 @@
             "round": "Round 1",
             "matches": [
               {
-                "team1": "aimclub",
-                "team2": "100 Thieves",
-                "status": "live",
-                "note": "100T dropped from upper bracket after 0-2 loss to ENCE"
+                "team1": "100 Thieves",
+                "team2": "aimclub",
+                "score": "2-0",
+                "maps": "Ancient 13-4, Inferno 13-5",
+                "winner": "100 Thieves",
+                "status": "completed"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "INFINITE",
+                "team2": "Apogee",
+                "status": "scheduled"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "Oramond",
+                "team2": "HYPERSPIRIT",
+                "status": "scheduled"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "BESTIA",
+                "team2": "GenOne",
+                "score": "FF",
+                "winner": "BESTIA",
+                "status": "completed",
+                "note": "GenOne withdrew from tournament"
               }
             ]
           },
           {
             "round": "Round 2",
+            "note": "LB R1 winners vs UB QF losers",
             "matches": [
               {
-                "team1": "TBD",
+                "team1": "100 Thieves",
                 "team2": "TBD",
-                "status": "pending"
+                "status": "scheduled",
+                "scheduledTime": "2026-02-26T14:00:00Z",
+                "note": "vs loser of Eternal Fire/MANA"
               },
               {
                 "team1": "TBD",
@@ -220,7 +251,7 @@
       },
       "focusTeamPath": {
         "team": "100 Thieves",
-        "status": "Lower Bracket Round 1",
+        "status": "Lower Bracket Round 2",
         "completed": [
           {
             "stage": "Group B Opening",
@@ -239,18 +270,25 @@
             "opponent": "ENCE",
             "result": "L 0-2",
             "maps": "Ancient 6-13, Anubis 8-13"
+          },
+          {
+            "stage": "Lower Bracket R1",
+            "opponent": "aimclub",
+            "result": "W 2-0",
+            "maps": "Ancient 13-4, Inferno 13-5"
           }
         ],
         "current": {
-          "stage": "Lower Bracket R1",
-          "opponent": "aimclub",
+          "stage": "Lower Bracket R2",
+          "opponent": "Loser of Eternal Fire vs MANA",
           "format": "Bo3",
-          "status": "live"
+          "scheduledTime": "2026-02-26T14:00:00Z",
+          "status": "scheduled"
         },
-        "ifWin": "Lower Bracket Round 2 (vs loser of another UB R1 match)",
-        "ifLose": "Eliminated (9th-12th place)"
+        "ifWin": "Lower Bracket Round 3",
+        "ifLose": "Eliminated (7th-8th place)"
       }
     },
-    "_lastUpdated": "2026-02-25T18:00:00.000Z"
+    "_lastUpdated": "2026-02-26T10:00:00.000Z"
   }
 }
