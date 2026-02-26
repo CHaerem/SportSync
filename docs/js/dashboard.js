@@ -1936,48 +1936,15 @@ class Dashboard {
 			}
 		}
 
-		// Esports: compact bracket summary (next match for focus team)
-		if (sportId === 'esports' && this.brackets) {
+		// Bracket path — any sport with bracket/playoff data (esports, football CL, etc.)
+		if (this.brackets) {
 			const bracketEvent = events[0];
 			const bracket = this._findBracketForEvent(bracketEvent);
 			if (bracket) {
 				const b = bracket.bracket || bracket;
 				const focus = bracket.focusTeam || b.focusTeam;
-				// Find the next upcoming match for the focus team
-				const allRounds = [...(b.playoffs?.upperBracket || []), ...(b.playoffs?.lowerBracket || []), ...(b.playoffs?.rounds || [])];
-				let nextMatch = null;
-				for (const round of allRounds) {
-					for (const m of (round.matches || [])) {
-						if (!m.winner && this._matchInvolves(m, focus)) {
-							nextMatch = { round: round.round, ...m };
-							break;
-						}
-					}
-					if (nextMatch) break;
-				}
-				// Grand final check
-				if (!nextMatch && b.playoffs?.grandFinal?.length > 0) {
-					for (const round of b.playoffs.grandFinal) {
-						for (const m of (round.matches || [])) {
-							if (!m.winner && this._matchInvolves(m, focus)) {
-								nextMatch = { round: round.round, ...m };
-								break;
-							}
-						}
-						if (nextMatch) break;
-					}
-				}
-				if (nextMatch && focus) {
-					const opp = (nextMatch.team1 === focus ? nextMatch.team2 : nextMatch.team1) || 'TBD';
-					const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
-					const focusLogo = getLogo(focus);
-					const oppLogo = getLogo(opp);
-					const fImg = focusLogo ? `<img class="result-row-logo" src="${focusLogo}" alt="" loading="lazy">` : '';
-					const oImg = oppLogo ? `<img class="result-row-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
-					html += '<div class="lead-bracket-next">';
-					html += `<span class="lead-bracket-label">Next: ${this.esc(nextMatch.round)}</span>`;
-					html += `<span class="lead-bracket-matchup">${fImg} ${this.esc(focus)} vs ${oImg} ${this.esc(opp)}</span>`;
-					html += '</div>';
+				if (focus) {
+					html += this._renderBracketPath(b, focus);
 				}
 			}
 		}
@@ -3055,6 +3022,99 @@ class Dashboard {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Render a compact bracket path for any tournament with playoff data.
+	 * Shows all remaining rounds from the focus team's current position to the final.
+	 * Generic — works for double elimination (UB/LB/GF), single elimination, or any format.
+	 */
+	_renderBracketPath(b, focus) {
+		const playoffs = b.playoffs;
+		if (!playoffs) return '';
+		const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
+
+		// Collect all rounds in bracket order, tagged by section
+		const allRounds = [];
+		const addSection = (rounds, section) => {
+			if (!rounds?.length) return;
+			for (const r of rounds) allRounds.push({ ...r, _section: section });
+		};
+		addSection(playoffs.upperBracket, 'UB');
+		addSection(playoffs.lowerBracket, 'LB');
+		// Grand final can be an array of rounds or a single round object
+		if (Array.isArray(playoffs.grandFinal)) {
+			addSection(playoffs.grandFinal, 'GF');
+		} else if (playoffs.grandFinal?.matches) {
+			addSection([{ round: 'Grand Final', ...playoffs.grandFinal }], 'GF');
+		}
+		addSection(playoffs.rounds, ''); // single elimination
+
+		// Walk all rounds to find where the focus team currently is
+		let currentSection = null;
+		let lastKnownRoundIdx = -1;
+		for (let i = 0; i < allRounds.length; i++) {
+			const round = allRounds[i];
+			for (const m of (round.matches || [])) {
+				if (this._matchInvolves(m, focus)) {
+					currentSection = round._section;
+					lastKnownRoundIdx = i;
+				}
+			}
+		}
+
+		if (lastKnownRoundIdx === -1) return '';
+
+		// Build the remaining path: upcoming rounds from current position to final
+		const path = [];
+		let isFirst = true;
+		for (let i = lastKnownRoundIdx; i < allRounds.length; i++) {
+			const round = allRounds[i];
+			// Include rounds from the current section or the grand final / single-elim
+			const isReachable = round._section === currentSection || round._section === 'GF' || round._section === '';
+			if (!isReachable) continue;
+
+			// Find the match involving focus (or TBD placeholder in future rounds)
+			const focusMatch = round.matches?.find(m => this._matchInvolves(m, focus));
+			const tbdMatch = round.matches?.find(m => !m.winner);
+
+			const m = focusMatch || tbdMatch;
+			if (!m) continue;
+			if (m.winner && focusMatch) continue; // already completed
+
+			const opp = focusMatch
+				? ((m.team1 === focus ? m.team2 : m.team1) || 'TBD')
+				: 'TBD';
+			path.push({
+				round: round.round,
+				opponent: opp,
+				time: m.scheduledTime || null,
+				isNext: isFirst
+			});
+			isFirst = false;
+		}
+
+		if (path.length === 0) return '';
+
+		let html = '<div class="lead-bracket-path">';
+		html += '<div class="lead-bracket-path-header">Tournament path</div>';
+		for (const step of path) {
+			const oppLogo = getLogo(step.opponent);
+			const oppImg = oppLogo ? `<img class="bpath-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
+			let timeStr = '';
+			if (step.time) {
+				const d = new Date(step.time);
+				timeStr = d.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+			}
+			const cls = step.isNext ? ' bpath-step-next' : '';
+			html += `<div class="bpath-step${cls}">`;
+			html += `<span class="bpath-round">${this.esc(step.round)}</span>`;
+			html += `<span class="bpath-opp">${oppImg} vs ${this.esc(step.opponent)}</span>`;
+			if (timeStr) html += `<span class="bpath-time">${timeStr}</span>`;
+			html += '</div>';
+		}
+		html += '</div>';
+		return html;
 	}
 
 	_renderTournamentBracket(bracketData, event) {
