@@ -214,7 +214,20 @@ function getTeamLogo(teamName) {
 		'Fredrikstad': 'https://media.api-sports.io/football/teams/440.png',
 		'Fredrikstad FK': 'https://media.api-sports.io/football/teams/440.png',
 		'Aalesund': 'https://media.api-sports.io/football/teams/2091.png',
-		'Aalesunds FK': 'https://media.api-sports.io/football/teams/2091.png'
+		'Aalesunds FK': 'https://media.api-sports.io/football/teams/2091.png',
+
+		// CS2 Esports
+		'100 Thieves': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/100-thieves/100-thieves-logo.png',
+		'ENCE': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/ence/ence-logo.png',
+		'HEROIC': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/heroic/heroic-logo.png',
+		'CYBERSHOKE': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/cybershoke/cybershoke-logo.png',
+		'Eternal Fire': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/eternal-fire/eternal-fire-logo.png',
+		'FlyQuest': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/flyquest/flyquest-logo.png',
+		'BESTIA': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/bestia/bestia-logo.png',
+		'Nexus': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/nexus/nexus-logo.png',
+		'INFINITE': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/infinite/infinite-logo.png',
+		'GenOne': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/genone/genone-logo.png',
+		'Brute': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/brute/brute-logo.png'
 	};
 
 	return logos[normalized] || null;
