@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T15:02:42.743Z",
+  "generatedAt": "2026-02-26T15:23:06.728Z",
   "patternsDetected": 5,
   "patterns": [
     {
@@ -63,9 +63,9 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 170,
+      "count": 171,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T15:02:42.671Z"
+      "lastSeen": "2026-02-26T15:23:06.655Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -73,9 +73,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 104,
+      "count": 105,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T15:02:42.671Z"
+      "lastSeen": "2026-02-26T15:23:06.655Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -118,9 +118,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 28,
+      "count": 29,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-26T15:02:42.671Z"
+      "lastSeen": "2026-02-26T15:23:06.655Z"
     },
     "snapshot_event_mismatch": {
       "count": 8,
@@ -130,15 +130,15 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 12,
-      "improved": 1,
+      "fires": 13,
+      "improved": 2,
       "unchanged": 9,
       "worsened": 2,
-      "effectivenessRate": 0.08
+      "effectivenessRate": 0.15
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T15:02:42.742Z",
+    "recordedAt": "2026-02-26T15:23:06.728Z",
     "moduleCount": 63,
     "avgModuleSize": 322,
     "pipelineSteps": 27,

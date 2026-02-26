@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T15:02:42.584Z",
+  "generatedAt": "2026-02-26T15:23:06.585Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -120,9 +120,9 @@
   },
   "uxHealth": {
     "present": true,
-    "score": 96,
+    "score": 98,
     "trend": "stable",
-    "issues": 2,
+    "issues": 1,
     "tier": "file"
   },
   "quotaApiHealth": {
@@ -132,7 +132,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 66,
+    "fiveHour": 70,
     "sevenDay": 69,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -142,14 +142,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 250418,
+    "totalDuration": 188653,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 142173,
-        "share": 57
+        "duration": 78206,
+        "share": 41
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60067,
+        "share": 32
       }
     ],
     "failedSteps": [
@@ -193,7 +198,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 66%, 7d: 69%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 70%, 7d: 69%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -203,7 +208,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 57% of total pipeline time (142s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 41% of total pipeline time (78s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
