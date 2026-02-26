@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-26T06:29:17.766Z",
-  "overallScore": 0.98,
+  "generatedAt": "2026-02-26T07:28:17.369Z",
+  "overallScore": 0.92,
   "loopsClosed": 11,
   "loopsTotal": 12,
   "loops": {
@@ -20,14 +20,14 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 3 actionable issue(s) (14 total)"
-    },
-    "watchPlan": {
       "score": 1,
       "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "details": "Health report is fresh (0 min old), 8 issue(s) are info/known"
+    },
+    "watchPlan": {
+      "score": 0,
+      "status": "open",
+      "details": "No watch plan data or no picks"
     },
     "codeHealth": {
       "score": 1,
@@ -66,6 +66,6 @@
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
+    "Run watch plan generation to create watch-plan.json with picks"
   ]
 }

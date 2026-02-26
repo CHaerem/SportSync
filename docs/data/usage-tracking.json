@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-02-26T06:30:17.679Z",
+  "lastUpdated": "2026-02-26T07:29:17.315Z",
   "current": {
     "fiveHour": {
-      "utilization": 2
+      "utilization": 4
     },
     "sevenDay": {
       "utilization": 56,
@@ -14,7 +14,7 @@
       "maxPriority": 2,
       "model": "claude-sonnet-4-6",
       "constrained": true,
-      "reason": "moderate: 5h 2%, 7d 56%",
+      "reason": "moderate: 5h 4%, 7d 56%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-26T06:30:18.379Z"
+    "checkedAt": "2026-02-26T07:29:17.958Z"
   },
   "internalTokens": {
-    "enrichment": 32688,
-    "featured": 41351,
+    "enrichment": 0,
+    "featured": 42275,
     "discovery": 0,
     "multiDay": 0,
-    "runTotal": 74039
+    "runTotal": 42275
   },
   "budget": {
-    "dailyUsed": 840744,
-    "weeklyUsed": 19595070,
+    "dailyUsed": 843718,
+    "weeklyUsed": 19256252,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 17,
-    "weeklyPct": 78
+    "weeklyPct": 77
   },
   "sportsyncShare": {
-    "pipelineRuns": 131,
+    "pipelineRuns": 130,
     "autopilotRuns": 0,
-    "totalDurationMs": 38658808
+    "totalDurationMs": 37921782
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,18 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-19T06:35:27.194Z",
-      "context": "pipeline",
-      "durationMs": 492250,
-      "tokens": 203550
-    },
-    {
-      "timestamp": "2026-02-19T07:05:47.420Z",
-      "context": "pipeline",
-      "durationMs": 451687,
-      "tokens": 177543
-    },
     {
       "timestamp": "2026-02-19T07:33:32.393Z",
       "context": "pipeline",
@@ -837,6 +825,12 @@
       "context": "pipeline",
       "durationMs": 241135,
       "tokens": 74039
+    },
+    {
+      "timestamp": "2026-02-26T07:29:17.315Z",
+      "context": "pipeline",
+      "durationMs": 206911,
+      "tokens": 42275
     }
   ]
 }
