@@ -1,95 +1,5 @@
 [
   {
-    "timestamp": "2026-02-23T21:23:37.145Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.036,
-      "goalScorerCoverage": 1,
-      "footballCount": 28,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 3,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"\udfbf Thu–Sun — Biathlon World Cup Kontiolahti — Bø\" which may not match any event; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Biathlon World Cup Kontiolahti\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": {
-        "input": 100880,
-        "output": 3856,
-        "calls": 1,
-        "total": 104736,
-        "costUSD": 0.35241925,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": null,
-      "total": {
-        "input": 100880,
-        "output": 3856,
-        "calls": 1,
-        "total": 104736,
-        "costUSD": 0.35241925,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "fallback"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 98.714,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-23T22:21:18.386Z",
     "editorial": {
       "score": 100,
@@ -7734,6 +7644,93 @@
         "calls": 1,
         "total": 42275,
         "costUSD": 0.40544,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.905,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-26T08:21:14.986Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 0,
+      "avgScore": 0,
+      "streamingCoverage": 0
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.071,
+      "goalScorerCoverage": 1,
+      "footballCount": 28,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 11,
+      "warningCount": 11,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Sørloth\" but no matching athlete found in events data; Featured mentions \"Club Brugge\" but no matching athlete found in events data; Featured mentions \"Champions League\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 34752,
+        "output": 7555,
+        "cacheCreation": 18380,
+        "cacheRead": 16369,
+        "total": 42307,
+        "costUSD": 0.3119495,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": null,
+      "total": {
+        "input": 34752,
+        "output": 7555,
+        "calls": 1,
+        "total": 42307,
+        "costUSD": 0.3119495,
         "realPct": 100
       }
     },

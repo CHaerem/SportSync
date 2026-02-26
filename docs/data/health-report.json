@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T07:28:17.293Z",
+  "generatedAt": "2026-02-26T08:21:16.674Z",
   "eventCount": 52,
   "sportCoverage": {
     "golf": {
@@ -120,9 +120,9 @@
   },
   "uxHealth": {
     "present": true,
-    "score": 98,
+    "score": 96,
     "trend": "stable",
-    "issues": 1,
+    "issues": 2,
     "tier": "file"
   },
   "quotaApiHealth": {
@@ -132,7 +132,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 0,
+    "fiveHour": 2,
     "sevenDay": 56,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -142,14 +142,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 280412,
+    "totalDuration": 248250,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 117221,
-        "share": 42
+        "duration": 137766,
+        "share": 55
       }
     ],
     "failedSteps": [
@@ -184,7 +184,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 0%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 2%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -194,7 +194,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 42% of total pipeline time (117s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (138s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -204,7 +204,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
