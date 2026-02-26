@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T15:32:31.019Z",
+  "generatedAt": "2026-02-26T16:23:12.371Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -50,35 +50,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false
     }
   },
@@ -132,7 +132,7 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 78,
+    "fiveHour": 82,
     "sevenDay": 70,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 3,
@@ -143,19 +143,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 192261,
+    "totalDuration": 253454,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 78596,
-        "share": 41
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60028,
-        "share": 31
+        "duration": 139130,
+        "share": 55
       }
     ],
     "failedSteps": [
@@ -199,7 +194,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 78%, 7d: 70%) — 3 step(s) skipped"
+      "message": "Quota tier 2 (5h: 82%, 7d: 70%) — 3 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -209,12 +204,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 41% of total pipeline time (79s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (139s) — optimization candidate"
     },
     {
       "severity": "info",
