@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-26T12:23:00.162Z",
-  "overallScore": 0.9,
-  "loopsClosed": 10,
+  "generatedAt": "2026-02-26T13:29:31.387Z",
+  "overallScore": 0.92,
+  "loopsClosed": 11,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints fired 96 times"
+      "details": "100 entries, hints fired 82 times"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 0.75,
-      "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 5 actionable issue(s) (16 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (0 min old), 10 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 0,
@@ -66,7 +66,6 @@
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)",
     "Run watch plan generation to create watch-plan.json with picks"
   ]
 }

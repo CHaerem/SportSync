@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-02-26T12:24:00.065Z",
+  "lastUpdated": "2026-02-26T13:30:31.288Z",
   "current": {
     "fiveHour": {
-      "utilization": 10
+      "utilization": 37
     },
     "sevenDay": {
-      "utilization": 64,
+      "utilization": 67,
       "resets_at": "1772283600"
     },
     "evaluation": {
@@ -14,7 +14,7 @@
       "maxPriority": 2,
       "model": "claude-sonnet-4-6",
       "constrained": true,
-      "reason": "moderate: 5h 10%, 7d 64%",
+      "reason": "moderate: 5h 37%, 7d 67%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-26T12:24:00.715Z"
+    "checkedAt": "2026-02-26T13:30:32.608Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 40911,
+    "featured": 40947,
     "discovery": 0,
-    "multiDay": 40911,
-    "runTotal": 81822
+    "multiDay": 0,
+    "runTotal": 40947
   },
   "budget": {
-    "dailyUsed": 835272,
-    "weeklyUsed": 18136267,
+    "dailyUsed": 876219,
+    "weeklyUsed": 17936532,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 17,
-    "weeklyPct": 73
+    "dailyPct": 18,
+    "weeklyPct": 72
   },
   "sportsyncShare": {
     "pipelineRuns": 128,
     "autopilotRuns": 0,
-    "totalDurationMs": 35911191
+    "totalDurationMs": 35606323
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,12 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-19T12:26:41.999Z",
-      "context": "pipeline",
-      "durationMs": 484479,
-      "tokens": 240682
-    },
     {
       "timestamp": "2026-02-19T13:41:53.432Z",
       "context": "pipeline",
@@ -819,6 +813,12 @@
       "context": "pipeline",
       "durationMs": 267010,
       "tokens": 81822
+    },
+    {
+      "timestamp": "2026-02-26T13:30:31.288Z",
+      "context": "pipeline",
+      "durationMs": 179611,
+      "tokens": 40947
     }
   ]
 }

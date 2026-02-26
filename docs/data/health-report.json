@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T12:23:00.063Z",
+  "generatedAt": "2026-02-26T13:29:31.345Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -50,35 +50,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -132,8 +132,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 66,
-    "sevenDay": 61,
+    "fiveHour": 6,
+    "sevenDay": 64,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -142,14 +142,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 206708,
+    "totalDuration": 311850,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 92221,
-        "share": 45
+        "duration": 122909,
+        "share": 39
       }
     ],
     "failedSteps": [
@@ -193,7 +193,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 66%, 7d: 61%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 6%, 7d: 64%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -203,7 +203,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (92s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 39% of total pipeline time (123s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -213,7 +213,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
