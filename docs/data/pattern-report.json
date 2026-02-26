@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T15:23:06.728Z",
+  "generatedAt": "2026-02-26T15:32:31.132Z",
   "patternsDetected": 5,
   "patterns": [
     {
@@ -63,9 +63,9 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 171,
+      "count": 172,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T15:23:06.655Z"
+      "lastSeen": "2026-02-26T15:32:31.077Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -73,9 +73,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 105,
+      "count": 106,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T15:23:06.655Z"
+      "lastSeen": "2026-02-26T15:32:31.077Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -118,9 +118,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 29,
+      "count": 30,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-26T15:23:06.655Z"
+      "lastSeen": "2026-02-26T15:32:31.077Z"
     },
     "snapshot_event_mismatch": {
       "count": 8,
@@ -130,17 +130,17 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 13,
+      "fires": 14,
       "improved": 2,
       "unchanged": 9,
-      "worsened": 2,
-      "effectivenessRate": 0.15
+      "worsened": 3,
+      "effectivenessRate": 0.14
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T15:23:06.728Z",
+    "recordedAt": "2026-02-26T15:32:31.131Z",
     "moduleCount": 63,
-    "avgModuleSize": 322,
+    "avgModuleSize": 323,
     "pipelineSteps": 27,
     "testCoverageRatio": 1.05,
     "smallModuleRatio": 0.02,
@@ -148,7 +148,7 @@
   },
   "architectureDelta": {
     "moduleCount": 0,
-    "avgModuleSize": 0,
+    "avgModuleSize": 1,
     "pipelineSteps": 0
   },
   "summary": "5 patterns detected (5 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."

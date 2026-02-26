@@ -77,9 +77,6 @@ jobs:
               git fetch origin main
               # Reset to remote main, keeping our data as uncommitted changes
               git reset --soft origin/main
-              # Prevent staging leak: restore all non-pipeline files to match HEAD
-              # Only docs/data/ and scripts/config/ should differ after soft reset
-              git checkout HEAD -- docs/index.html docs/js/ docs/css/ docs/sw.js tests/ scripts/*.js scripts/lib/ scripts/fetch/ scripts/agents/ CLAUDE.md AUTOPILOT_ROADMAP.md 2>/dev/null || true
               # Re-stage our data files (fully regenerated each run, always authoritative)
               if [ "${{ steps.pipeline.outputs.gate }}" = "fail" ]; then
                 git add docs/data/health-report.json docs/data/coverage-gaps.json docs/data/ai-quality.json 2>/dev/null || true

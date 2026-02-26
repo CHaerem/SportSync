@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T15:23:06.832Z",
+  "generatedAt": "2026-02-26T15:32:30.840Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -77,7 +77,7 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
@@ -126,34 +126,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Internazionale\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Emirates\" but no matching athlete found in events data"
+      "check": "result_all_recaps_null",
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 13,
+    "total": 9,
     "critical": 0,
-    "warning": 13,
+    "warning": 9,
     "info": 0
   },
   "pass": true,
