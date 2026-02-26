@@ -1577,7 +1577,8 @@ class Dashboard {
 			} else if (isEventInWindow(e, todayStart, tomorrowStart)) {
 				// Active today (includes multi-day events that started before today)
 				const hoursAgo = (now - t) / (1000 * 60 * 60);
-				if (t >= todayStart && hoursAgo > 3) {
+				const hasEndInFuture = e.endTime && new Date(e.endTime) > now;
+				if (t >= todayStart && hoursAgo > 3 && !hasEndInFuture) {
 					bands.results.push(e); // Single-day event, likely finished
 				} else {
 					bands.today.push(e);
@@ -2319,13 +2320,31 @@ class Dashboard {
 	_renderCompactResultRow(m) {
 		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
-		let html = '<div class="result-row">';
+		let html = '<div class="result-row" role="button" tabindex="0">';
+		html += '<div class="result-row-main">';
 		html += '<div class="result-row-logos">';
 		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="" loading="lazy">`;
 		if (aLogo) html += `<img class="result-row-logo" src="${aLogo}" alt="" loading="lazy">`;
 		html += '</div>';
 		html += `<span class="result-row-teams">${this.esc(this.shortName(m.homeTeam))} v ${this.esc(this.shortName(m.awayTeam))}</span>`;
 		html += `<span class="result-row-score">${m.homeScore} - ${m.awayScore}</span>`;
+		html += '</div>';
+		// Expandable details
+		const scorers = (m.goalScorers || []).slice(0, 6);
+		const hasDetails = scorers.length > 0 || m.recapHeadline || m.venue;
+		if (hasDetails) {
+			html += '<div class="result-row-details">';
+			if (m.recapHeadline) {
+				html += `<div class="result-row-recap">${this.esc(m.recapHeadline)}</div>`;
+			}
+			if (scorers.length > 0) {
+				html += `<div class="result-row-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`;
+			}
+			if (m.venue) {
+				html += `<div class="result-row-venue">${this.esc(m.venue)}</div>`;
+			}
+			html += '</div>';
+		}
 		html += '</div>';
 		return html;
 	}
@@ -3697,6 +3716,13 @@ class Dashboard {
 
 			// Ignore clicks on interactive elements inside expanded rows
 			if (e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
+
+			// Handle result row expand/collapse
+			const resultRow = e.target.closest('.result-row');
+			if (resultRow && resultRow.querySelector('.result-row-details')) {
+				resultRow.classList.toggle('expanded');
+				return;
+			}
 
 			// Handle event row expand/collapse (also handles md-featured clicks)
 			const row = e.target.closest('.event-row') || e.target.closest('.md-featured[data-id]') || e.target.closest('.lead-event[data-id]');
