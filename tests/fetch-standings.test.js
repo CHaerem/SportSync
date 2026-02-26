@@ -172,6 +172,10 @@ describe("fetchGolfLeaderboard()", () => {
 			thru: "-",
 			headshot: "https://a.espncdn.com/i/headshots/golf/players/full/9780.png",
 		});
+		expect(result.pga.headshots).toEqual({
+			"Scottie Scheffler": "https://a.espncdn.com/i/headshots/golf/players/full/9780.png",
+			"Rory McIlroy": "https://a.espncdn.com/i/headshots/golf/players/full/3470.png",
+		});
 	});
 
 	it("handles missing event gracefully", async () => {

@@ -76,6 +76,13 @@ export async function fetchGolfLeaderboard() {
 			const competitors = competition?.competitors || [];
 			const statusType = event.status?.type?.name || "unknown";
 
+			// Build name→headshot map for ALL competitors (enables Norwegian player lookup beyond top 15)
+			const headshots = {};
+			for (const c of competitors) {
+				const name = c.athlete?.displayName || c.athlete?.fullName;
+				if (name && c.id) headshots[name] = `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png`;
+			}
+
 			result[tour.key] = {
 				name: event.name || null,
 				status: statusType === "STATUS_IN_PROGRESS" ? "in_progress"
@@ -90,6 +97,7 @@ export async function fetchGolfLeaderboard() {
 					thru: c.status?.thru?.toString() || "-",
 					headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
 				})),
+				headshots,
 			};
 		} catch (err) {
 			console.warn(`Golf ${tour.key} leaderboard fetch failed:`, err.message);

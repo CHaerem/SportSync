@@ -2570,9 +2570,12 @@ class Dashboard {
 				title = `${this.shortName(event.homeTeam)} v ${this.shortName(event.awayTeam)}`;
 			}
 		} else if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
-			const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(event.norwegianPlayers[0].name) : null;
+			const norName = event.norwegianPlayers[0].name;
+			const rowTourKey = (event.tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
+			const rowHsMap = this.liveLeaderboard?.headshots || this.standings?.golf?.[rowTourKey]?.headshots || {};
+			const headshot = rowHsMap[norName] || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(norName) : null);
 			if (headshot) {
-				iconHtml = `<img src="${headshot}" alt="${this.esc(event.norwegianPlayers[0].name)}" class="row-headshot" loading="lazy">`;
+				iconHtml = `<img src="${headshot}" alt="${this.esc(norName)}" class="row-headshot" loading="lazy">`;
 			}
 		}
 
@@ -2804,13 +2807,16 @@ class Dashboard {
 
 		// Golf: Norwegian players with headshots
 		if (event.sport === 'golf' && event.norwegianPlayers && event.norwegianPlayers.length > 0) {
+			// Look up headshots from full competitor map (covers players beyond top 15)
+			const tourKey = (event.tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
+			const hsMap = this.liveLeaderboard?.headshots || this.standings?.golf?.[tourKey]?.headshots || {};
 			content += '<div class="exp-golfers">';
 			event.norwegianPlayers.forEach(player => {
-				const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(player.name) : null;
+				const headshot = hsMap[player.name] || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(player.name) : null);
 				const teeTime = player.teeTime || '';
 				content += `<div class="exp-golfer">
 					<div class="exp-golfer-info">
-						${headshot ? `<img src="${headshot}" alt="${this.esc(player.name)}" class="exp-headshot" loading="lazy">` : '<span class="exp-headshot-placeholder">\u26f3</span>'}
+						${headshot ? `<img src="${headshot}" alt="${this.esc(player.name)}" class="exp-headshot" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''"><span class="exp-headshot-placeholder" style="display:none">\u26f3</span>` : '<span class="exp-headshot-placeholder">\u26f3</span>'}
 						<span>${this.esc(player.name)}</span>
 					</div>
 					${teeTime ? `<span class="exp-tee-time">${this.esc(teeTime)}</span>` : ''}
@@ -3974,11 +3980,18 @@ class Dashboard {
 
 			const competitors = comp.competitors || [];
 			const roundDetail = ev?.status?.type?.detail || '';
+			// Build name→headshot map for ALL competitors (enables Norwegian player lookup beyond top 15)
+			const headshots = {};
+			for (const c of competitors) {
+				const name = c.athlete?.displayName || c.athlete?.fullName;
+				if (name && c.id) headshots[name] = `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png`;
+			}
 			this.liveLeaderboard = {
 				name: ev.name || '',
 				state: state,
 				venue: comp?.venue?.fullName || '',
 				round: roundDetail,
+				headshots,
 				players: competitors.slice(0, 15).map((c, idx) => ({
 					position: c.status?.position?.displayName || c.order || (idx + 1),
 					player: c.athlete?.displayName || c.athlete?.fullName || 'Unknown',
