@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-26T14:54:56.095Z",
-  "score": 96,
+  "generatedAt": "2026-02-26T15:02:44.493Z",
+  "score": 98,
   "tier": "file",
   "metrics": {
     "loadCompleteness": {
@@ -40,15 +40,9 @@
       "issues": []
     },
     "textReadability": {
-      "score": 70,
-      "details": "watch-plan.json has no picks",
-      "issues": [
-        {
-          "severity": "info",
-          "code": "empty_watch_plan",
-          "message": "watch-plan.json has no picks"
-        }
-      ]
+      "score": 100,
+      "details": "Watch plan OK",
+      "issues": []
     }
   },
   "issues": [
@@ -56,11 +50,6 @@
       "severity": "warning",
       "code": "low_aria_labels",
       "message": "Only 2 aria-label attributes (need >= 3)"
-    },
-    {
-      "severity": "info",
-      "code": "empty_watch_plan",
-      "message": "watch-plan.json has no picks"
     }
   ],
   "vision": null

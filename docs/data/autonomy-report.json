@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-26T14:54:54.086Z",
-  "overallScore": 0.92,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-26T15:02:42.659Z",
+  "overallScore": 1,
+  "loopsClosed": 12,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -22,12 +22,12 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (28 min old), 9 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 9 issue(s) are info/known"
     },
     "watchPlan": {
-      "score": 0,
-      "status": "open",
-      "details": "No watch plan data or no picks"
+      "score": 1,
+      "status": "closed",
+      "details": "1 picks with reasons (1 with streaming)"
     },
     "codeHealth": {
       "score": 1,
@@ -65,7 +65,5 @@
       "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
     }
   },
-  "nextActions": [
-    "Run watch plan generation to create watch-plan.json with picks"
-  ]
+  "nextActions": []
 }

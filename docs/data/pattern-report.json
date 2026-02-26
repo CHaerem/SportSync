@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-26T14:54:54.199Z",
-  "patternsDetected": 6,
+  "generatedAt": "2026-02-26T15:02:42.743Z",
+  "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
@@ -28,14 +28,6 @@
       "firstSeen": "2026-02-26T06:29:17.803Z",
       "lastSeen": "2026-02-26T12:23:00.181Z",
       "suggestion": "Health warning \"snapshot_event_mismatch\" has fired 8 times since 2026-02-26. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "stagnant_loop",
-      "severity": "medium",
-      "loopName": "watchPlan",
-      "score": 0,
-      "stagnantRuns": 9,
-      "suggestion": "Feedback loop \"watchPlan\" has been stuck at 0 for 9 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "hint_fatigue",
@@ -71,9 +63,9 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 169,
+      "count": 170,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T14:54:54.104Z"
+      "lastSeen": "2026-02-26T15:02:42.671Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -81,9 +73,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 103,
+      "count": 104,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T14:54:54.104Z"
+      "lastSeen": "2026-02-26T15:02:42.671Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -126,9 +118,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 27,
+      "count": 28,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-26T14:54:54.104Z"
+      "lastSeen": "2026-02-26T15:02:42.671Z"
     },
     "snapshot_event_mismatch": {
       "count": 8,
@@ -138,15 +130,15 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 11,
+      "fires": 12,
       "improved": 1,
       "unchanged": 9,
-      "worsened": 1,
-      "effectivenessRate": 0.09
+      "worsened": 2,
+      "effectivenessRate": 0.08
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T14:54:54.198Z",
+    "recordedAt": "2026-02-26T15:02:42.742Z",
     "moduleCount": 63,
     "avgModuleSize": 322,
     "pipelineSteps": 27,
@@ -159,5 +151,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "6 patterns detected (6 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."
+  "summary": "5 patterns detected (5 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."
 }
