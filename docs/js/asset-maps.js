@@ -227,7 +227,14 @@ function getTeamLogo(teamName) {
 		'Nexus': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/nexus/nexus-logo.png',
 		'INFINITE': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/infinite/infinite-logo.png',
 		'GenOne': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/genone/genone-logo.png',
-		'Brute': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/brute/brute-logo.png'
+		'Brute': 'https://raw.githubusercontent.com/lootmarket/esport-team-logos/master/csgo/brute/brute-logo.png',
+		'ASTRAL': 'https://files.bo3.gg/uploads/team/21062/image/webp-85ab7e3965b75e845d531ac6c096fbdb.webp',
+		'MANA': 'https://files.bo3.gg/uploads/team/18688/image/webp-4854ddaa385cd7e81b03d4adafd438d6.webp',
+		'aimclub': 'https://files.bo3.gg/uploads/team/10014/image/webp-24dab649d975d1c5afb792867c9538db.webp',
+		'Apogee': 'https://files.bo3.gg/uploads/team/11101/image/webp-31317f85a872f9a1913120d2fba707be.webp',
+		'Betclic Apogee': 'https://files.bo3.gg/uploads/team/11101/image/webp-31317f85a872f9a1913120d2fba707be.webp',
+		'Oramond': 'https://files.bo3.gg/uploads/team/21684/image/webp-7b5c49619ce5aa5963f212d7581f38d1.webp',
+		'HYPERSPIRIT': 'https://files.bo3.gg/uploads/team/9651/image/webp-f17d0a6e364b9a2ade1641ae95e1932c.webp'
 	};
 
 	return logos[normalized] || null;

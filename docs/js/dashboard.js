@@ -3033,6 +3033,9 @@ class Dashboard {
 		const playoffs = b.playoffs;
 		if (!playoffs) return '';
 		const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
+		const focusLogo = getLogo(focus);
+		const focusImg = focusLogo ? `<img class="bpath-logo" src="${focusLogo}" alt="" loading="lazy">` : '';
+		const ftp = b.focusTeamPath; // pre-built path summary if available
 
 		// Collect all rounds in bracket order, tagged by section
 		const allRounds = [];
@@ -3042,7 +3045,6 @@ class Dashboard {
 		};
 		addSection(playoffs.upperBracket, 'UB');
 		addSection(playoffs.lowerBracket, 'LB');
-		// Grand final can be an array of rounds or a single round object
 		if (Array.isArray(playoffs.grandFinal)) {
 			addSection(playoffs.grandFinal, 'GF');
 		} else if (playoffs.grandFinal?.matches) {
@@ -3050,69 +3052,187 @@ class Dashboard {
 		}
 		addSection(playoffs.rounds, ''); // single elimination
 
-		// Walk all rounds to find where the focus team currently is
+		// Walk all rounds — categorize focus team matches
+		const completed = [];
 		let currentSection = null;
 		let lastKnownRoundIdx = -1;
+		let nextMatch = null;
 		for (let i = 0; i < allRounds.length; i++) {
 			const round = allRounds[i];
 			for (const m of (round.matches || [])) {
-				if (this._matchInvolves(m, focus)) {
-					currentSection = round._section;
-					lastKnownRoundIdx = i;
+				if (!this._matchInvolves(m, focus)) continue;
+				currentSection = round._section;
+				lastKnownRoundIdx = i;
+				if (m.winner || m.status === 'completed') {
+					const won = m.winner === focus;
+					const opp = m.team1 === focus ? m.team2 : m.team1;
+					completed.push({
+						round: round.round, section: round._section,
+						opponent: opp, won, score: m.score, maps: m.maps,
+						status: m.status
+					});
+				} else if (!nextMatch) {
+					const opp = (m.team1 === focus ? m.team2 : m.team1) || 'TBD';
+					nextMatch = {
+						round: round.round, section: round._section,
+						opponent: opp, time: m.scheduledTime || round.scheduledTime,
+						status: m.status, note: m.note
+					};
 				}
 			}
 		}
 
-		if (lastKnownRoundIdx === -1) return '';
-
-		// Build the remaining path: upcoming rounds from current position to final
-		const path = [];
-		let isFirst = true;
-		for (let i = lastKnownRoundIdx; i < allRounds.length; i++) {
-			const round = allRounds[i];
-			// Include rounds from the current section or the grand final / single-elim
-			const isReachable = round._section === currentSection || round._section === 'GF' || round._section === '';
-			if (!isReachable) continue;
-
-			// Find the match involving focus (or TBD placeholder in future rounds)
-			const focusMatch = round.matches?.find(m => this._matchInvolves(m, focus));
-			const tbdMatch = round.matches?.find(m => !m.winner);
-
-			const m = focusMatch || tbdMatch;
-			if (!m) continue;
-			if (m.winner && focusMatch) continue; // already completed
-
-			const opp = focusMatch
-				? ((m.team1 === focus ? m.team2 : m.team1) || 'TBD')
-				: 'TBD';
-			path.push({
-				round: round.round,
-				opponent: opp,
-				time: m.scheduledTime || null,
-				isNext: isFirst
-			});
-			isFirst = false;
+		// Double-elimination: prefix round names with UB/LB for clarity
+		const isDoubleElim = playoffs.upperBracket?.length && playoffs.lowerBracket?.length;
+		if (isDoubleElim) {
+			for (const c of completed) {
+				if (c.section === 'UB') c.round = 'UB ' + c.round;
+				else if (c.section === 'LB') c.round = 'LB ' + c.round;
+			}
+			if (nextMatch?.section === 'UB') nextMatch.round = 'UB ' + nextMatch.round;
+			else if (nextMatch?.section === 'LB') nextMatch.round = 'LB ' + nextMatch.round;
 		}
 
-		if (path.length === 0) return '';
+		// Merge focusTeamPath.completed — includes group stage matches not in playoffs
+		if (ftp?.completed?.length) {
+			if (completed.length === 0) {
+				// No bracket walk results — use focusTeamPath entirely
+				for (const c of ftp.completed) {
+					const won = c.result?.startsWith('W');
+					completed.push({
+						round: c.stage, opponent: c.opponent, won,
+						score: c.result?.replace(/^[WL] /, ''),
+						maps: c.maps || (c.map ? `${c.map} ${c.result?.replace(/^[WL] /, '')}` : null)
+					});
+				}
+			} else {
+				// Merge: prepend group stage / pre-playoff matches, enrich map details
+				const prePlayoff = [];
+				for (const f of ftp.completed) {
+					const isInBracket = completed.some(c => c.opponent === f.opponent);
+					if (!isInBracket) {
+						const won = f.result?.startsWith('W');
+						prePlayoff.push({
+							round: f.stage, opponent: f.opponent, won,
+							score: f.result?.replace(/^[WL] /, ''),
+							maps: f.maps || (f.map ? `${f.map} ${f.result?.replace(/^[WL] /, '')}` : null)
+						});
+					}
+				}
+				completed.unshift(...prePlayoff);
+				// Enrich map details from focusTeamPath
+				for (const c of completed) {
+					if (c.maps) continue;
+					const ftpMatch = ftp.completed.find(f => f.opponent === c.opponent);
+					if (ftpMatch?.maps) c.maps = ftpMatch.maps;
+					else if (ftpMatch?.map) c.maps = `${ftpMatch.map} ${ftpMatch.result?.replace(/^[WL] /, '')}`;
+				}
+			}
+		}
 
+		// If no nextMatch from bracket walk, check focusTeamPath.current
+		if (!nextMatch && ftp?.current) {
+			nextMatch = {
+				round: ftp.current.stage,
+				opponent: ftp.current.opponent,
+				time: ftp.current.scheduledTime,
+				status: ftp.current.status,
+				format: ftp.current.format
+			};
+		}
+
+		// Build remaining path to final (future rounds after next match)
+		const futurePath = [];
+		if (lastKnownRoundIdx >= 0) {
+			let skippedNext = false;
+			for (let i = lastKnownRoundIdx; i < allRounds.length; i++) {
+				const round = allRounds[i];
+				const isReachable = round._section === currentSection || round._section === 'GF' || round._section === '';
+				if (!isReachable) continue;
+				const focusMatch = round.matches?.find(m => this._matchInvolves(m, focus));
+				const tbdMatch = round.matches?.find(m => !m.winner && m.status !== 'completed');
+				const m = focusMatch || tbdMatch;
+				if (!m) continue;
+				if (m.winner || m.status === 'completed') continue;
+				if (!skippedNext) { skippedNext = true; continue; } // skip the nextMatch
+				const prefix = isDoubleElim && round._section === 'UB' ? 'UB '
+				: isDoubleElim && round._section === 'LB' ? 'LB ' : '';
+			futurePath.push({
+					round: prefix + round.round,
+					time: m.scheduledTime || round.scheduledTime
+				});
+			}
+		}
+
+		if (completed.length === 0 && !nextMatch && futurePath.length === 0) return '';
+
+		// === Render ===
 		let html = '<div class="lead-bracket-path">';
-		html += '<div class="lead-bracket-path-header">Tournament path</div>';
-		for (const step of path) {
-			const oppLogo = getLogo(step.opponent);
+		html += `<div class="lead-bracket-path-header">${focusImg}<span>Tournament path \u00b7 ${this.esc(focus)}</span></div>`;
+
+		// Completed results
+		if (completed.length > 0) {
+			for (const c of completed) {
+				const oppLogo = getLogo(c.opponent);
+				const oppImg = oppLogo ? `<img class="bpath-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
+				const badge = c.won ? '<span class="bpath-badge bpath-win">W</span>' : '<span class="bpath-badge bpath-loss">L</span>';
+				html += `<div class="bpath-step bpath-completed">`;
+				html += `<span class="bpath-round">${this.esc(c.round || '')}</span>`;
+				html += `<span class="bpath-opp">${badge} ${oppImg} ${this.esc(c.opponent || '')}</span>`;
+				html += `<span class="bpath-score">${this.esc(c.score || '')}</span>`;
+				html += '</div>';
+				if (c.maps) {
+					html += `<div class="bpath-maps">${this.esc(c.maps)}</div>`;
+				}
+			}
+		}
+
+		// Next / current match (highlighted)
+		if (nextMatch) {
+			const oppLogo = getLogo(nextMatch.opponent);
 			const oppImg = oppLogo ? `<img class="bpath-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
 			let timeStr = '';
-			if (step.time) {
-				const d = new Date(step.time);
+			let dayStr = '';
+			if (nextMatch.time) {
+				const d = new Date(nextMatch.time);
+				const now = new Date();
 				timeStr = d.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+				if (!this._isSameDay(d, now)) {
+					dayStr = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ';
+				}
 			}
-			const cls = step.isNext ? ' bpath-step-next' : '';
-			html += `<div class="bpath-step${cls}">`;
-			html += `<span class="bpath-round">${this.esc(step.round)}</span>`;
-			html += `<span class="bpath-opp">${oppImg} vs ${this.esc(step.opponent)}</span>`;
-			if (timeStr) html += `<span class="bpath-time">${timeStr}</span>`;
+			const format = nextMatch.format ? ` \u00b7 ${this.esc(nextMatch.format)}` : '';
+			html += `<div class="bpath-step bpath-next">`;
+			html += `<span class="bpath-round">${this.esc(nextMatch.round || 'Next')}</span>`;
+			html += `<span class="bpath-opp">\u25b6 ${oppImg} vs ${this.esc(nextMatch.opponent)}</span>`;
+			if (timeStr) html += `<span class="bpath-time">${dayStr}${timeStr}${format}</span>`;
 			html += '</div>';
 		}
+
+		// Future path to final
+		for (const step of futurePath) {
+			let timeStr = '';
+			let dayStr = '';
+			if (step.time) {
+				const d = new Date(step.time);
+				const now = new Date();
+				timeStr = d.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
+				if (!this._isSameDay(d, now)) {
+					dayStr = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ';
+				}
+			}
+			html += `<div class="bpath-step bpath-future">`;
+			html += `<span class="bpath-round">${this.esc(step.round)}</span>`;
+			html += `<span class="bpath-opp">TBD</span>`;
+			if (timeStr) html += `<span class="bpath-time">${dayStr}${timeStr}</span>`;
+			html += '</div>';
+		}
+
+		// Elimination info from focusTeamPath
+		if (ftp?.ifLose) {
+			html += `<div class="bpath-elim">If eliminated: ${this.esc(ftp.ifLose)}</div>`;
+		}
+
 		html += '</div>';
 		return html;
 	}

@@ -446,6 +446,7 @@
 		.lead-bracket-path-header {
 			font-size: 0.62rem; color: var(--muted); text-transform: uppercase;
 			letter-spacing: 0.05em; font-weight: 600; margin-bottom: 6px;
+			display: flex; align-items: center; gap: 5px;
 		}
 		.bpath-step {
 			display: flex; align-items: center; gap: 8px;
@@ -453,11 +454,34 @@
 			font-size: 0.72rem; color: var(--fg-2);
 		}
 		.bpath-step:last-child { border-bottom: none; }
-		.bpath-step-next { font-weight: 600; color: var(--fg); }
 		.bpath-round { font-size: 0.62rem; color: var(--muted); min-width: 70px; flex-shrink: 0; }
 		.bpath-opp { flex: 1; display: flex; align-items: center; gap: 4px; }
 		.bpath-logo { width: 16px; height: 16px; object-fit: contain; }
-		.bpath-time { font-size: 0.62rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+		.bpath-time { font-size: 0.62rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+		.bpath-score { font-size: 0.68rem; color: var(--fg-2); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+		.bpath-completed { opacity: 0.7; }
+		.bpath-badge {
+			display: inline-flex; align-items: center; justify-content: center;
+			width: 16px; height: 16px; border-radius: 3px;
+			font-size: 0.56rem; font-weight: 700; color: #fff; flex-shrink: 0;
+		}
+		.bpath-win { background: #22c55e; }
+		.bpath-loss { background: #ef4444; }
+		.bpath-maps {
+			font-size: 0.6rem; color: var(--muted); padding: 0 0 4px 86px;
+			font-style: italic;
+		}
+		.bpath-next {
+			font-weight: 600; color: var(--fg);
+			background: rgba(99,102,241,0.06); border-radius: 4px;
+			padding: 6px 4px; margin: 2px -4px;
+		}
+		.dark .bpath-next { background: rgba(99,102,241,0.12); }
+		.bpath-future { opacity: 0.5; }
+		.bpath-elim {
+			font-size: 0.58rem; color: var(--muted); margin-top: 4px;
+			font-style: italic; padding-left: 78px;
+		}
 		.lead-stream {
 			display: flex; gap: 6px; margin-top: 10px;
 		}
@@ -1216,7 +1240,7 @@
 	</div>
 
 	<script src="js/sport-config.js?v=2026022007"></script>
-	<script src="js/asset-maps.js?v=2026022007"></script>
+	<script src="js/asset-maps.js?v=2026022601"></script>
 	<script src="js/preferences-manager.js?v=2026022007"></script>
 	<script src="js/feedback-manager.js?v=2026022007"></script>
 	<script src="js/dashboard.js?v=2026022501"></script>
