@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T10:37:28.017Z",
+  "generatedAt": "2026-02-26T11:21:44.044Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 82149,
+    "generationMs": 88201,
     "tokenUsage": {
       "input": 34594,
-      "output": 4519,
+      "output": 4900,
       "cacheCreation": 34591,
       "cacheRead": 0,
-      "total": 39113,
-      "costUSD": 0.32918375,
+      "total": 39494,
+      "costUSD": 0.33870875,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -104,9 +104,7 @@
       "skipRate": 1
     },
     "tokensPerEvent": 0,
-    "hintsApplied": [
-      "CORRECTION: Previous enrichment had batch failures. Return exactly the same number of events in the response array as in the input."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,

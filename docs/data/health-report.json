@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T10:37:29.083Z",
+  "generatedAt": "2026-02-26T11:21:45.196Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -191,6 +191,11 @@
       "message": "1 important event(s) lack streaming info: CS2 Major Tournaments 2026"
     },
     {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-result component for Internazionale vs Bodø/Glimt has no matching data in recent-results.json"
+    },
+    {
       "severity": "critical",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-02-24: 0 events but events.json has 1"
@@ -243,7 +248,7 @@
   ],
   "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is critical with 5 critical, 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 90% with 10/12 feedback loops closed. Pipeline is critical with 5 critical, 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
