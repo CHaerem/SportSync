@@ -1,33 +1,28 @@
 {
-  "generatedAt": "2026-02-26T12:21:43.587Z",
+  "generatedAt": "2026-02-26T12:32:17.024Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "provider": "fallback",
+    "model": "fallback",
+    "quotaTier": null,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 122117,
+    "generationMs": 835,
     "tokenUsage": {
-      "input": 34820,
-      "output": 6091,
-      "cacheCreation": 34817,
-      "cacheRead": 0,
-      "total": 40911,
-      "costUSD": 0.36989625,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -60,22 +55,11 @@
       "Only 4% of results have recap headlines"
     ]
   },
-  "multiDay": {
-    "tokenUsage": {
-      "input": 34820,
-      "output": 6091,
-      "calls": 1,
-      "total": 40911,
-      "tracked": false,
-      "estimated": true
-    },
-    "lastRun": "2026-02-26T12:21:43.875Z"
-  },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": null,
+    "quotaModel": null,
     "before": {
       "totalEvents": 53,
       "importanceCoverage": 1,

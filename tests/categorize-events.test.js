@@ -113,6 +113,46 @@ describe("categorizeEvents()", () => {
 		expect(bands.today).toHaveLength(0);
 	});
 
+	it("keeps multi-day event in today band even when started >3h ago (endTime is future)", () => {
+		// Regression test: golf tournaments that started today but run multiple days
+		// must NOT be classified as results just because they started >3h ago.
+		vi.useFakeTimers();
+		// Current time: Thursday 20:00 UTC
+		vi.setSystemTime(new Date("2026-02-13T20:00:00Z"));
+
+		const multiDayEvent = {
+			sport: "golf",
+			title: "Genesis Invitational",
+			// Started today at 13:00 — 7 hours ago
+			time: "2026-02-13T13:00:00Z",
+			// Ends in 3 days
+			endTime: "2026-02-16T23:59:00Z",
+		};
+
+		const bands = categorize([multiDayEvent]);
+		expect(bands.today).toHaveLength(1);
+		expect(bands.results).toHaveLength(0);
+		expect(bands.today[0].title).toBe("Genesis Invitational");
+	});
+
+	it("sends single-day event started today >3h ago with no endTime to results", () => {
+		// Counterpart to the multi-day test: a football match that started today
+		// more than 3h ago and has NO endTime should be treated as finished.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date("2026-02-13T20:00:00Z"));
+
+		const singleDayEvent = {
+			sport: "football",
+			title: "Arsenal v Man City",
+			// Started today at 13:00 — 7 hours ago, no endTime
+			time: "2026-02-13T13:00:00Z",
+		};
+
+		const bands = categorize([singleDayEvent]);
+		expect(bands.results).toHaveLength(1);
+		expect(bands.today).toHaveLength(0);
+	});
+
 	it("puts tomorrow event into tomorrow band", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date("2026-02-13T12:00:00Z"));
