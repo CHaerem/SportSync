@@ -3022,141 +3022,68 @@ class Dashboard {
 			html += '</div>';
 		}
 
-		// Compact bracket grid: Upper and Lower bracket rounds
-		html += this._renderBracketGrid(b.playoffs, focusTeam);
+		// Scheduled matches list — upcoming matches from the bracket
+		html += this._renderBracketSchedule(b.playoffs, focusTeam);
 
 		html += '</div>';
 		return html;
 	}
 
-	_renderBracketGrid(playoffs, focusTeam) {
-		let html = '<div class="exp-bracket-grid">';
-
-		if (playoffs.upperBracket?.length > 0) {
-			html += '<div class="bk-section"><div class="bk-label">Upper Bracket</div>';
-			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
-			html += '</div>';
+	_renderBracketSchedule(playoffs, focusTeam) {
+		// Collect all scheduled/live matches from the bracket
+		const scheduled = [];
+		const sources = [
+			...(playoffs.upperBracket || []),
+			...(playoffs.lowerBracket || []),
+			...(playoffs.grandFinal ? [{ matches: playoffs.grandFinal.matches, _gf: true }] : [])
+		];
+		for (const round of sources) {
+			for (const m of (round.matches || [])) {
+				if (m.status === 'scheduled' || m.status === 'live') {
+					const t1 = m.team1 || 'TBD';
+					const t2 = m.team2 || 'TBD';
+					if (t1 === 'TBD' && t2 === 'TBD') continue;
+					scheduled.push({ ...m, _round: round.round || (round._gf ? 'Grand Final' : '') });
+				}
+			}
 		}
+		if (scheduled.length === 0) return '';
 
-		if (playoffs.lowerBracket?.length > 0) {
-			html += '<div class="bk-section"><div class="bk-label">Lower Bracket</div>';
-			html += this._renderBracketTree(playoffs.lowerBracket, focusTeam);
-			html += '</div>';
-		}
+		// Sort by time, then by round
+		scheduled.sort((a, b) => {
+			if (a.scheduledTime && b.scheduledTime) return new Date(a.scheduledTime) - new Date(b.scheduledTime);
+			if (a.scheduledTime) return -1;
+			if (b.scheduledTime) return 1;
+			return 0;
+		});
 
-		if (playoffs.grandFinal?.matches?.length > 0) {
-			html += '<div class="bk-section"><div class="bk-label gf">Grand Final</div>';
-			html += this._renderBracketTree([{ matches: playoffs.grandFinal.matches }], focusTeam);
-			html += '</div>';
-		}
-
-		html += '</div>';
-		return html;
-	}
-
-	_renderBracketTree(rounds, focusTeam) {
-		// Trim trailing fully-TBD rounds
-		const vis = [...rounds];
-		while (vis.length > 1) {
-			const last = vis[vis.length - 1];
-			if (last.matches.every(m => (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD')) {
-				vis.pop();
-			} else break;
-		}
-		if (vis.length === 0) return '';
-
-		// Short round names for headers
-		const shortName = (r) => {
+		const shortRound = (r) => {
 			if (!r) return '';
 			const s = r.toLowerCase();
+			if (s.includes('grand')) return 'GF';
 			if (s.includes('final') && !s.includes('quarter') && !s.includes('semi')) return 'Final';
 			if (s.includes('semi')) return 'SF';
 			if (s.includes('quarter')) return 'QF';
 			return r.replace(/round\s*/i, 'R');
 		};
 
-		let html = '<div class="bk-tree">';
-		for (let i = 0; i < vis.length; i++) {
-			const round = vis[i];
-			const next = vis[i + 1];
-			const isLastCol = !next;
-
-			// Round column with header
-			html += '<div class="bk-rcol">';
-			html += `<div class="bk-rh">${this.esc(shortName(round.round))}</div>`;
-			html += '<div class="bk-slots">';
-			let tbdCount = 0;
-			for (const m of round.matches) {
-				const mTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
-				if (mTbd && isLastCol && round.matches.length > 2) {
-					tbdCount++;
-				} else {
-					html += this._renderMatchCard(m, focusTeam);
-				}
+		let html = '<div class="exp-bracket-schedule">';
+		html += '<div class="exp-bracket-path-title">Upcoming Matches</div>';
+		for (const m of scheduled) {
+			const hasFocus = this._matchInvolves(m, focusTeam);
+			const isLive = m.status === 'live';
+			let timeStr = '';
+			if (m.scheduledTime) {
+				const d = new Date(m.scheduledTime);
+				if (!isNaN(d)) timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
 			}
-			if (tbdCount > 0) {
-				html += `<div class="bk-tbd-count">+${tbdCount} TBD</div>`;
-			}
-			html += '</div></div>';
-
-			// Connector column between rounds (with spacer for header alignment)
-			if (next) {
-				const lc = round.matches.length;
-				const rc = next.matches.length;
-				if (lc > 1 && rc === Math.ceil(lc / 2)) {
-					html += '<div class="bk-conn"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
-					for (let p = 0; p < rc; p++) html += '<div class="bk-cp"><div class="bk-cpin"></div></div>';
-					html += '</div></div>';
-				} else if (lc === rc) {
-					html += '<div class="bk-conn solo"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
-					for (let p = 0; p < lc; p++) html += '<div class="bk-cp"></div>';
-					html += '</div></div>';
-				} else {
-					html += '<div class="bk-conn none"></div>';
-				}
-			}
+			const cls = ['exp-bracket-sched-row', hasFocus ? 'focus' : '', isLive ? 'live' : ''].filter(Boolean).join(' ');
+			html += `<div class="${cls}">`;
+			html += `<span class="exp-bracket-sched-time">${isLive ? 'LIVE' : this.esc(timeStr)}</span>`;
+			html += `<span class="exp-bracket-sched-teams">${this.esc(m.team1 || 'TBD')} vs ${this.esc(m.team2 || 'TBD')}</span>`;
+			html += `<span class="exp-bracket-sched-round">${this.esc(shortRound(m._round))}</span>`;
+			html += '</div>';
 		}
-		html += '</div>';
-		return html;
-	}
-
-	_renderMatchCard(m, focusTeam) {
-		const hasFocus = this._matchInvolves(m, focusTeam);
-		const isLive = m.status === 'live';
-		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
-		const hasWinner = !!m.winner;
-
-		let s1 = '', s2 = '';
-		if (m.score && m.score !== 'FF') {
-			const p = m.score.split('-');
-			if (p.length === 2) { s1 = p[0].trim(); s2 = p[1].trim(); }
-		} else if (m.score === 'FF') {
-			s1 = m.winner === m.team1 ? 'W' : '-';
-			s2 = m.winner === m.team2 ? 'W' : '-';
-		}
-
-		const cls = ['bk-m', hasFocus ? 'f' : '', isLive ? 'live' : '', isTbd ? 'tbd' : ''].filter(Boolean).join(' ');
-		const t1w = m.winner === m.team1;
-		const t2w = m.winner === m.team2;
-		const t1l = hasWinner && !t1w;
-		const t2l = hasWinner && !t2w;
-		const t1f = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
-		const t2f = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
-
-		// Format scheduled time
-		let timeStr = '';
-		if (m.scheduledTime && !hasWinner && m.status !== 'live') {
-			const d = new Date(m.scheduledTime);
-			if (!isNaN(d)) {
-				timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
-			}
-		}
-
-		let html = `<div class="${cls}">`;
-		if (isLive) html += '<span class="bk-live"></span>';
-		html += `<div class="bk-t${t1w ? ' w' : ''}${t1l ? ' l' : ''}${t1f ? ' ft' : ''}"><span>${this.esc(m.team1 || 'TBD')}</span><span class="bk-s">${this.esc(s1)}</span></div>`;
-		html += `<div class="bk-t${t2w ? ' w' : ''}${t2l ? ' l' : ''}${t2f ? ' ft' : ''}"><span>${this.esc(m.team2 || 'TBD')}</span><span class="bk-s">${this.esc(s2)}</span></div>`;
-		if (timeStr) html += `<div class="bk-time">${timeStr}</div>`;
 		html += '</div>';
 		return html;
 	}
