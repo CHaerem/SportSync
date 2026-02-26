@@ -3351,13 +3351,34 @@ class Dashboard {
 	}
 
 	_renderBracketTree(rounds, focusTeam) {
+		// Show all rounds through to the final — TBD rounds display scheduled
+		// times and potential teams derived from previous round matchups
 		const vis = [...rounds];
-		while (vis.length > 1) {
-			const last = vis[vis.length - 1];
-			if (last.matches.every(m => (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD')) vis.pop();
-			else break;
-		}
 		if (!vis.length) return '';
+
+		// Pre-process: propagate round-level scheduledTime to matches,
+		// and compute potential team names for TBD slots
+		for (let i = 0; i < vis.length; i++) {
+			const round = vis[i];
+			const prev = vis[i - 1];
+			for (let j = 0; j < round.matches.length; j++) {
+				const m = round.matches[j];
+				// Propagate round scheduledTime to matches that lack one
+				if (!m.scheduledTime && round.scheduledTime) m._roundTime = round.scheduledTime;
+				// Derive potential teams from the previous round for TBD slots
+				if (prev && (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD') {
+					const prevPairSize = Math.ceil(prev.matches.length / round.matches.length);
+					const startIdx = j * prevPairSize;
+					const feeders = prev.matches.slice(startIdx, startIdx + prevPairSize);
+					if (feeders.length >= 2) {
+						m._pot1 = feeders[0].winner || this._potLabel(feeders[0]);
+						m._pot2 = feeders[1].winner || this._potLabel(feeders[1]);
+					} else if (feeders.length === 1) {
+						m._pot1 = feeders[0].winner || this._potLabel(feeders[0]);
+					}
+				}
+			}
+		}
 
 		const shortName = (r) => {
 			if (!r) return '';
@@ -3374,20 +3395,13 @@ class Dashboard {
 		for (let i = 0; i < vis.length; i++) {
 			const round = vis[i];
 			const next = vis[i + 1];
-			const isLast = !next;
 
 			html += '<div class="bk-round">';
 			html += `<div class="bk-rh">${this.esc(shortName(round.round))}</div>`;
 			html += '<div class="bk-slots">';
-			let tbdCount = 0;
 			for (const m of round.matches) {
-				if ((m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD' && isLast && round.matches.length > 2) {
-					tbdCount++;
-				} else {
-					html += this._renderBracketCard(m, focusTeam);
-				}
+				html += this._renderBracketCard(m, focusTeam);
 			}
-			if (tbdCount) html += `<div class="bk-tbd-ph">+${tbdCount} TBD</div>`;
 			html += '</div></div>';
 
 			if (next) {
@@ -3407,6 +3421,14 @@ class Dashboard {
 		return html;
 	}
 
+	/** Compact label for a pending match (e.g., "HEROIC/ASTRAL") */
+	_potLabel(m) {
+		const t1 = m.team1 || 'TBD';
+		const t2 = m.team2 || 'TBD';
+		if (t1 === 'TBD' && t2 === 'TBD') return 'TBD';
+		return `${t1}/${t2}`;
+	}
+
 	_renderBracketCard(m, focusTeam) {
 		const hasFocus = this._matchInvolves(m, focusTeam);
 		const isLive = m.status === 'live';
@@ -3424,9 +3446,14 @@ class Dashboard {
 		}
 
 		let timeStr = '';
-		if (m.scheduledTime && !hasWinner && !isLive) {
-			const d = new Date(m.scheduledTime);
-			if (!isNaN(d)) timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+		if ((m.scheduledTime || m._roundTime) && !hasWinner && !isLive) {
+			const d = new Date(m.scheduledTime || m._roundTime);
+			if (!isNaN(d)) {
+				const now = new Date();
+				const sameDay = d.toDateString() === now.toDateString();
+				const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+				timeStr = sameDay ? time : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ' + time;
+			}
 		}
 
 		const cls = ['bk-m', hasFocus ? 'focus' : '', isLive ? 'live' : '', isTbd ? 'tbd' : ''].filter(Boolean).join(' ');
@@ -3439,14 +3466,22 @@ class Dashboard {
 			return url ? `<img src="${url}" alt="" class="bk-logo" loading="lazy">` : '';
 		};
 
+		// For TBD matches with potential teams from bracket structure
+		const isTbd1 = !m.team1 || m.team1 === 'TBD';
+		const isTbd2 = !m.team2 || m.team2 === 'TBD';
+		const dispT1 = isTbd1 && m._pot1 ? `W: ${m._pot1}` : (m.team1 || 'TBD');
+		const dispT2 = isTbd2 && m._pot2 ? `W: ${m._pot2}` : (m.team2 || 'TBD');
+		const isPot1 = isTbd1 && m._pot1;
+		const isPot2 = isTbd2 && m._pot2;
+
 		let html = `<div class="${cls}">`;
-		html += `<div class="bk-t${t1w ? ' w' : ''}${hasWinner && !t1w ? ' l' : ''}${t1f ? ' ft' : ''}">`;
+		html += `<div class="bk-t${t1w ? ' w' : ''}${hasWinner && !t1w ? ' l' : ''}${t1f ? ' ft' : ''}${isPot1 ? ' pot' : ''}">`;
 		html += logoHtml(m.team1);
-		html += `<span class="bk-name">${this.esc(m.team1 || 'TBD')}</span>`;
+		html += `<span class="bk-name">${this.esc(dispT1)}</span>`;
 		html += `<span class="bk-sc">${this.esc(s1)}</span></div>`;
-		html += `<div class="bk-t${t2w ? ' w' : ''}${hasWinner && !t2w ? ' l' : ''}${t2f ? ' ft' : ''}">`;
+		html += `<div class="bk-t${t2w ? ' w' : ''}${hasWinner && !t2w ? ' l' : ''}${t2f ? ' ft' : ''}${isPot2 ? ' pot' : ''}">`;
 		html += logoHtml(m.team2);
-		html += `<span class="bk-name">${this.esc(m.team2 || 'TBD')}</span>`;
+		html += `<span class="bk-name">${this.esc(dispT2)}</span>`;
 		html += `<span class="bk-sc">${this.esc(s2)}</span></div>`;
 		if (timeStr) html += `<div class="bk-time">${timeStr}</div>`;
 		html += '</div>';
