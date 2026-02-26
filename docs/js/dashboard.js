@@ -597,7 +597,7 @@ class Dashboard {
 			.map(([sport, count]) => `${count} ${sportLabels[sport] || sport}`)
 			.join(', ');
 
-		let html = '<div class="brief-label">Brief</div>';
+		let html = '';
 
 		// Summary line
 		if (events.length > 0) {
@@ -780,7 +780,7 @@ class Dashboard {
 				: (mode === 'preview' && this._isTomorrow(viewDate)) ? "Tomorrow's Preview"
 				: null;
 
-			let html = `<div class="brief-label">${this.esc(modeLabel || 'Brief')}</div>`;
+			let html = modeLabel ? `<div class="briefing-mode-label">${this.esc(modeLabel)}</div>` : '';
 			html += blocks.filter(b => b.type !== 'section').map(block => this.renderBlock(block)).join('');
 			briefEl.innerHTML = html;
 			briefEl.style.display = '';
@@ -873,8 +873,7 @@ class Dashboard {
 
 		// Brief blocks: all non-section blocks (component blocks render inline in the editorial brief)
 		const briefOnly = blocks.filter(b => b.type !== 'section');
-		let briefHtml = '<div class="brief-label">Today\'s Brief</div>';
-		briefHtml += briefOnly.map(block => this.renderBlock(block)).join('');
+		let briefHtml = briefOnly.map(block => this.renderBlock(block)).join('');
 
 		// Auto-generate narrative when LLM didn't produce one (fallback provider)
 		// Skip if brief already has match-preview/result blocks — they ARE the narrative

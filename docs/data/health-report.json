@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T13:36:54.927Z",
+  "generatedAt": "2026-02-26T14:27:17.592Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -132,8 +132,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 35,
-    "sevenDay": 66,
+    "fiveHour": 37,
+    "sevenDay": 67,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -142,14 +142,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 229823,
+    "totalDuration": 266356,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 110432,
-        "share": 48
+        "duration": 154914,
+        "share": 58
       }
     ],
     "failedSteps": [
@@ -193,7 +193,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 35%, 7d: 66%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 37%, 7d: 67%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -203,7 +203,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 48% of total pipeline time (110s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 58% of total pipeline time (155s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -213,7 +213,7 @@
   ],
   "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
