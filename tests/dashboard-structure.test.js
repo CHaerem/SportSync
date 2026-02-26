@@ -155,7 +155,7 @@ describe("dashboard.js key classes used in CSS", () => {
 		"day-nav-label",
 		"day-nav-date-input",
 		"date-empty",
-		"briefing-mode-label",
+		"brief-label",
 		"exp-athletes",
 		"exp-athletes-header",
 		"exp-athlete",

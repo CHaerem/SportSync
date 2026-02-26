@@ -243,12 +243,21 @@
 
 		/* === Brief === */
 		#the-brief {
-			padding: 4px 20px 24px;
-			border-bottom: 2px solid var(--border);
+			padding: 16px 20px 0;
+			margin: 0 0 4px;
+			background: var(--bg-warm);
 			font-size: 0.84rem;
 			color: var(--fg);
 			line-height: 1.7;
 			font-weight: 400;
+		}
+		.brief-label {
+			font-size: 0.5rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--accent);
+			margin-bottom: 10px;
 		}
 		.brief-headline {
 			font-size: 1.65rem;
@@ -256,7 +265,9 @@
 			line-height: 1.15;
 			letter-spacing: -0.03em;
 			color: var(--fg);
-			margin-bottom: 10px;
+			margin-bottom: 12px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid var(--border-light);
 		}
 		.brief-narrative {
 			font-size: 0.84rem;
@@ -268,7 +279,9 @@
 		.brief-glance {
 			display: flex;
 			gap: 16px;
-			margin-top: 14px;
+			margin-top: 16px;
+			padding: 10px 0 14px;
+			border-top: 1px solid var(--border-light);
 			flex-wrap: wrap;
 		}
 		.glance-item {
@@ -348,6 +361,20 @@
 		.block-schedule-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 4px; }
 		.block-schedule-item { font-size: 0.75rem; color: var(--muted); padding: 1px 0; line-height: 1.5; }
 		.block-schedule-more { font-size: 0.65rem; color: var(--muted); opacity: 0.7; margin-top: 2px; }
+
+		/* Scoped overrides: embedded cards on warm editorial background */
+		#the-brief .block-match-result {
+			margin: 10px 0 12px;
+			border: 1px solid var(--border-light);
+		}
+		#the-brief .block-event-schedule {
+			border: 1px solid var(--border-light);
+		}
+		#the-brief .block-divider {
+			margin: 16px 0 6px;
+			padding-top: 12px;
+			border-top-color: var(--border);
+		}
 
 		/* === Pills === */
 		#sport-pills {
@@ -1161,10 +1188,7 @@
 		.fb-section-label { font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
 
 		/* === Briefing mode label === */
-		.briefing-mode-label {
-			font-size: 0.55rem; font-weight: 600; text-transform: uppercase;
-			letter-spacing: 0.12em; color: var(--accent); margin-bottom: 8px;
-		}
+		/* briefing-mode-label replaced by .brief-label in Brief section */
 
 		/* === Status bar === */
 		#date-line {
@@ -1244,7 +1268,7 @@
 	<script src="js/asset-maps.js?v=2026022601"></script>
 	<script src="js/preferences-manager.js?v=2026022007"></script>
 	<script src="js/feedback-manager.js?v=2026022007"></script>
-	<script src="js/dashboard.js?v=2026022602"></script>
+	<script src="js/dashboard.js?v=2026022603"></script>
 
 	<script>
 		if ('serviceWorker' in navigator) {
