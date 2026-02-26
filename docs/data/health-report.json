@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T17:50:52.310Z",
+  "generatedAt": "2026-02-26T18:20:12.040Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -74,11 +74,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 138,
+      "ageMinutes": 168,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 138,
+      "ageMinutes": 168,
       "stale": false
     }
   },
@@ -132,8 +132,8 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 0,
-    "sevenDay": 71,
+    "fiveHour": 12,
+    "sevenDay": 72,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -142,19 +142,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 112105,
+    "totalDuration": 108442,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 40485,
-        "share": 36
+        "duration": 37890,
+        "share": 35
       },
       {
         "name": "verify-schedules",
-        "duration": 60019,
-        "share": 54
+        "duration": 60068,
+        "share": 55
       }
     ],
     "failedSteps": [
@@ -176,7 +176,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 17,
+        "consecutiveFailures": 18,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -215,7 +215,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 0%, 7d: 71%) — 2 step(s) skipped"
+      "message": "Quota tier 2 (5h: 12%, 7d: 72%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -225,12 +225,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 36% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 35% of total pipeline time (38s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 54% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 55% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -250,7 +250,7 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 17 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 18 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
@@ -260,7 +260,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-26T17:50:52.480Z",
+    "computedAt": "2026-02-26T18:20:12.232Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -278,7 +278,7 @@
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.1,
         "reasons": [
-          "17 consecutive failures"
+          "18 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -289,7 +289,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
