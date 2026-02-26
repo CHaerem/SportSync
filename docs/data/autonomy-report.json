@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-26T20:14:27.330Z",
-  "overallScore": 0.98,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-26T21:16:26.117Z",
+  "overallScore": 0.95,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints fired 83 times"
+      "details": "100 entries, hints fired 82 times"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -27,7 +27,7 @@
     "watchPlan": {
       "score": 1,
       "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "details": "3 picks with reasons (3 with streaming)"
     },
     "codeHealth": {
       "score": 1,
@@ -50,9 +50,9 @@
       "details": "fetcher exists, results data is fresh, pipeline monitors results health"
     },
     "snapshotHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
+      "score": 0.66,
+      "status": "partial",
+      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are stale"
     },
     "uxQuality": {
       "score": 1,
@@ -66,6 +66,7 @@
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Run pipeline more frequently to keep snapshots fresh (< 6h)"
   ]
 }

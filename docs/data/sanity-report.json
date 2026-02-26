@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T20:14:27.205Z",
+  "generatedAt": "2026-02-26T21:16:26.149Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -126,14 +126,54 @@
     },
     {
       "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Atalanta\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Dortmund\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Benfica\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Monaco\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"But Bod\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Biathlon Women\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 9,
+    "total": 17,
     "critical": 0,
-    "warning": 9,
+    "warning": 17,
     "info": 0
   },
   "pass": true,
