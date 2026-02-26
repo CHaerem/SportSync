@@ -1272,3 +1272,85 @@ describe("quota health", () => {
 		expect(report.quotaHealth.tier).toBeNull();
 	});
 });
+
+// --- Bracket health: orphaned bracket detection ---
+
+describe("bracketHealth — orphaned bracket detection", () => {
+	it("detects orphaned bracket with no matching events", () => {
+		const today = new Date().toISOString().split("T")[0];
+		const futureEnd = new Date(Date.now() + 3 * 24 * 3600000).toISOString().split("T")[0];
+
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			brackets: {
+				"test-bracket": {
+					name: "Test Tournament S5",
+					startDate: today,
+					endDate: futureEnd,
+					bracket: { playoffs: { upperBracket: [] } },
+				},
+			},
+		});
+
+		expect(report.bracketHealth.active).toBe(1);
+		expect(report.bracketHealth.orphaned).toBe(1);
+		expect(report.issues.some((i) => i.code === "orphaned_bracket")).toBe(true);
+	});
+
+	it("no orphaned bracket warning when matching event exists", () => {
+		const today = new Date().toISOString().split("T")[0];
+		const futureEnd = new Date(Date.now() + 3 * 24 * 3600000).toISOString().split("T")[0];
+
+		const events = [
+			...makeEvents({ football: 5 }),
+			{
+				sport: "esports",
+				title: "Test Tournament S5",
+				time: new Date().toISOString(),
+				tournament: "CS2 Tournaments",
+			},
+		];
+
+		const report = generateHealthReport({
+			events,
+			brackets: {
+				"test-bracket": {
+					name: "Test Tournament S5",
+					startDate: today,
+					endDate: futureEnd,
+					bracket: { playoffs: { upperBracket: [] } },
+				},
+			},
+		});
+
+		expect(report.bracketHealth.active).toBe(1);
+		expect(report.bracketHealth.orphaned).toBe(0);
+		expect(report.issues.some((i) => i.code === "orphaned_bracket")).toBe(false);
+	});
+
+	it("ignores expired brackets", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			brackets: {
+				"old-bracket": {
+					name: "Old Tournament",
+					startDate: "2026-01-01",
+					endDate: "2026-01-05",
+					bracket: { playoffs: { upperBracket: [] } },
+				},
+			},
+		});
+
+		expect(report.bracketHealth.active).toBe(0);
+		expect(report.bracketHealth.orphaned).toBe(0);
+	});
+
+	it("returns zero counts when no brackets provided", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+		});
+
+		expect(report.bracketHealth.active).toBe(0);
+		expect(report.bracketHealth.orphaned).toBe(0);
+	});
+});

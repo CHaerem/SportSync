@@ -100,6 +100,7 @@ class Dashboard {
 		const cachedRssDigest = this._cacheGet('rssDigest', STATIC_TTL);
 		const cachedRecentResults = this._cacheGet('recentResults', STATIC_TTL);
 		const cachedLeagueConfig = this._cacheGet('leagueConfig', STATIC_TTL);
+		const cachedBrackets = this._cacheGet('brackets', STATIC_TTL);
 
 		// Always fetch meta.json for freshness display (tiny, not cached)
 		fetch('data/meta.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
@@ -114,6 +115,7 @@ class Dashboard {
 			this.rssDigest = cachedRssDigest;
 			this.recentResults = cachedRecentResults;
 			this.leagueConfig = cachedLeagueConfig;
+			this.brackets = cachedBrackets;
 			this.render();
 			return;
 		}
@@ -161,6 +163,8 @@ class Dashboard {
 				format: ev.format || null,
 				stage: ev.stage || null,
 				result: ev.result || null,
+				_isTournament: ev._isTournament || false,
+				_bracketId: ev._bracketId || null,
 				}))
 				.sort((a, b) => new Date(a.time) - new Date(b.time));
 
@@ -211,6 +215,7 @@ class Dashboard {
 			this._cacheSet('rssDigest', this.rssDigest);
 			this._cacheSet('recentResults', this.recentResults);
 			this._cacheSet('leagueConfig', this.leagueConfig);
+			this._cacheSet('brackets', this.brackets);
 
 			this.render();
 		} catch (err) {
@@ -2919,6 +2924,10 @@ class Dashboard {
 
 	_findBracketForEvent(event) {
 		if (!this.brackets) return null;
+		// Direct match via _bracketId (synthesized tournament events)
+		if (event._bracketId && this.brackets[event._bracketId]) {
+			return this.brackets[event._bracketId];
+		}
 		const title = (event.title || '').toLowerCase();
 		const tournament = (event.tournament || '').toLowerCase();
 		const stage = (event.stage || '').toLowerCase();
@@ -2952,6 +2961,13 @@ class Dashboard {
 		html += '</div>';
 		if (bracketData.prizePool) {
 			html += `<div class="exp-bracket-prize">${this.esc(bracketData.prizePool)}</div>`;
+		}
+		// Staleness indicator
+		if (bracketData._lastUpdated) {
+			const hoursAgo = Math.round((Date.now() - new Date(bracketData._lastUpdated).getTime()) / 3600000);
+			if (hoursAgo >= 4) {
+				html += `<div class="exp-bracket-stale">Bracket data from ${hoursAgo}h ago</div>`;
+			}
 		}
 
 		// Roster

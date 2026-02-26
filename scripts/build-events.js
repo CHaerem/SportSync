@@ -50,6 +50,12 @@ function pushEvent(ev, sport, tournament) {
 	if (ev.norwegianRelevance != null) event.norwegianRelevance = ev.norwegianRelevance;
 	if (ev.enrichedAt) event.enrichedAt = ev.enrichedAt;
 	if (ev._enrichHash) event._enrichHash = ev._enrichHash;
+	// Tournament-level fields (synthesized from bracket data)
+	if (ev._isTournament) event._isTournament = ev._isTournament;
+	if (ev._bracketId) event._bracketId = ev._bracketId;
+	if (ev.focusTeam) event.focusTeam = ev.focusTeam;
+	if (ev.tier) event.tier = ev.tier;
+	if (ev.prizePool) event.prizePool = ev.prizePool;
 	all.push(event);
 }
 
@@ -77,6 +83,51 @@ if (fs.existsSync(configDir)) {
 			if (config.context && !ev.context) ev.context = config.context;
 			pushEvent(ev, sport, tournamentName);
 		});
+
+		// 2b. Synthesize tournament-level events from config.tournaments[]
+		// When individual match events have been pruned but the tournament is still active,
+		// this ensures a visible event exists for the bracket visualization to attach to.
+		if (Array.isArray(config.tournaments)) {
+			const MS_PER_HOUR = 60 * 60 * 1000;
+			for (const t of config.tournaments) {
+				if (!t.startDate || !t.endDate || !t.name) continue;
+				const startDate = new Date(t.startDate + "T00:00:00Z");
+				const endDate = new Date(t.endDate + "T23:59:59Z");
+				// Skip tournaments that ended more than 6 hours ago
+				if (endDate.getTime() < Date.now() - 6 * MS_PER_HOUR) continue;
+				// Check if any existing event already covers this tournament
+				const tNameLower = t.name.toLowerCase();
+				const tFirstWord = tNameLower.split(" ")[0];
+				const alreadyCovered = all.some((ev) => {
+					if (ev.sport !== sport) return false;
+					const title = (ev.title || "").toLowerCase();
+					const evTournament = (ev.tournament || "").toLowerCase();
+					return title.includes(tNameLower) || title.includes(tFirstWord) ||
+						evTournament.includes(tNameLower) || evTournament.includes(tFirstWord);
+				});
+				if (alreadyCovered) continue;
+				// Synthesize a tournament-level event
+				const synthesized = {
+					title: t.name,
+					time: startDate.toISOString(),
+					endTime: endDate.toISOString(),
+					venue: t.venue || null,
+					norwegian: !!(config.norwegianTeams?.length || config.norwegianAthletes?.length),
+					norwegianPlayers: (config.norwegianAthletes || []).map((name) =>
+						typeof name === "string" ? { name } : name
+					),
+					streaming: [],
+					_isTournament: true,
+					_bracketId: t.id || null,
+					focusTeam: t.focusTeam || null,
+					tier: t.tier || null,
+					prizePool: t.prizePool || null,
+				};
+				if (config.context) synthesized.context = config.context;
+				pushEvent(synthesized, sport, tournamentName);
+				console.log(`    Synthesized tournament event: ${t.name} (${t.startDate} to ${t.endDate})`);
+			}
+		}
 	}
 }
 // Read previous events.json to carry forward enrichment data
@@ -153,6 +204,7 @@ if (fs.existsSync(configDir)) {
 					focusTeamRoster: t.focusTeamRoster,
 					coach: t.coach,
 					bracket: t.bracket,
+					_lastUpdated: config.lastResearched || null,
 				};
 			}
 		}

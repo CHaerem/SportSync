@@ -149,6 +149,7 @@ export function generateHealthReport(options = {}) {
 		previousReport = null,
 		sportFiles = {},
 		pipelineResult = null,
+		brackets = null,
 	} = options;
 
 	const issues = [];
@@ -837,6 +838,36 @@ export function generateHealthReport(options = {}) {
 	// Pipeline timing anomaly detection
 	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
 
+	// Bracket health: detect active tournaments with no visible events
+	const bracketHealth = { active: 0, orphaned: 0 };
+	if (brackets) {
+		const nowMs = Date.now();
+		for (const [id, t] of Object.entries(brackets)) {
+			if (!t.startDate || !t.endDate) continue;
+			const start = new Date(t.startDate).getTime();
+			const end = new Date(t.endDate + "T23:59:59Z").getTime();
+			const isActive = nowMs >= start && nowMs <= end + 6 * 60 * 60 * 1000;
+			if (!isActive) continue;
+			bracketHealth.active++;
+			const tNameLower = (t.name || "").toLowerCase();
+			const tFirstWord = tNameLower.split(" ")[0];
+			const hasMatchingEvent = events.some((ev) => {
+				const title = (ev.title || "").toLowerCase();
+				const tournament = (ev.tournament || "").toLowerCase();
+				return title.includes(tNameLower) || title.includes(tFirstWord) ||
+					tournament.includes(tNameLower) || tournament.includes(tFirstWord);
+			});
+			if (!hasMatchingEvent) {
+				bracketHealth.orphaned++;
+				issues.push({
+					severity: "warning",
+					code: "orphaned_bracket",
+					message: `Active tournament "${t.name}" (${id}) has bracket data but no matching events — bracket invisible on dashboard`,
+				});
+			}
+		}
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -857,6 +888,7 @@ export function generateHealthReport(options = {}) {
 		quotaApiHealth,
 		quotaHealth,
 		pipelineTimingHealth,
+		bracketHealth,
 		unmappedLeagues: [...unmappedTournaments],
 		issues,
 		status,
@@ -1017,6 +1049,7 @@ async function main() {
 		streamingEnrichment,
 		streamingVerificationHistory,
 		pipelineResult,
+		brackets: bracketsData,
 		uxReport,
 		uxHistory,
 	});

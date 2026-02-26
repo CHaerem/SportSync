@@ -139,8 +139,15 @@ export function syncConfigs({ configDir, archiveDir, now } = {}) {
 				}
 			}
 
-			// 4. Flag needsResearch
-			if (shouldResearch(config) && !config.needsResearch) {
+			// 4. Flag needsResearch — but NOT if config has active tournaments
+			// (tournaments with bracket data generate synthesized events in build-events)
+			const hasActiveTournaments = Array.isArray(config.tournaments) &&
+				config.tournaments.some((t) => {
+					if (!t.startDate || !t.endDate) return false;
+					const end = new Date(t.endDate + "T23:59:59Z");
+					return end >= new Date(timestamp.getTime() - 6 * MS_PER_HOUR);
+				});
+			if (shouldResearch(config) && !config.needsResearch && !hasActiveTournaments) {
 				config.needsResearch = true;
 				modified = true;
 				result.flagged.push(file);
