@@ -118,6 +118,10 @@
       {
         "date": "2026-02-25",
         "note": "Run 11: 2 tasks via 2 parallel subagents (data-agent + code-agent) + orchestrator scouting. (1) FEATURE: alpine skiing WC Finals config — new sport added end-to-end in one subagent pass (config + SPORT_CONFIG + league-config, 3/4 checklist items). (2) MAINTENANCE: KNOWN_MANAGED_CODES filter in analyze-patterns.js — silences 9 false-positive high-severity patterns from managed health codes. Orchestrator: removed 2 duplicate cycling EXPLORE roadmap entries, scouted Norwegian ice hockey (EHL) as new coverage opportunity. Key insight: pattern-report and autonomy-scorecard need synchronized managed-code lists — when analyze-patterns accumulates warnings for codes autonomy-scorecard already suppresses, it generates persistent noise that masks genuine new patterns. Capabilities pillar advanced with 8th sport (alpine skiing). 1904 tests pass."
+      },
+      {
+        "date": "2026-02-26",
+        "note": "Run 12: 2 tasks (code-agent direct-to-main + data-agent EXPLORE) in parallel. (1) MAINTENANCE: added streaming_coverage_gap to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES, model_change_quality_drop to KNOWN_MANAGED_CODES, ORPHAN_EXCEPTIONS for 4 active utility scripts — pipelineHealth loop unstuck 0.75→1.0, autonomy confirmed 12/12 (100%). (2) EXPLORE: Norwegian ice hockey — ESPN doesn't cover GET-ligaen, curated config approach viable for 2026 playoffs. New [FEATURE] task created. Key insight: streaming_coverage_gap is a downstream effect of streaming_low_match_rate (already in KNOWN_DATA_GAPS); once you recognize the parent-child relationship, the fix is obvious. Orphan exceptions needed for scripts that are entry points (run-pipeline.js) or called from post-generate.js rather than pipeline-manifest. Pattern decay will clear stagnant_loop pattern after next pipeline run writes pipelineHealth=1.0 to trend. 2076 tests pass."
       }
     ]
   }

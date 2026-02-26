@@ -1014,7 +1014,15 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### MEDIUM Priority
 
-- [PENDING] [EXPLORE] **Investigate Norwegian ice hockey data sources** — RSS covers EHL/GET-ligaen (Storhamar heading for league title, Stjernen secured playoff spot). Ice hockey has strong Norwegian interest but zero dashboard coverage. Check if ESPN covers Norwegian hockey league, or if eliteserien.no / hockey.no have APIs. Evaluate if a curated config for playoffs would suffice initially. Norwegian teams: Storhamar, Vålerenga, Stjernen, Sparta.
+- [PENDING] [FEATURE] **Add Norwegian ice hockey (GET-ligaen) playoff coverage** — Create curated config for 2026 playoffs (Mar-Apr). Teams: Storhamar, Vålerenga, Stjernen, Sparta. Use curated JSON format (see biathlon-wch-2026.json). Add `icehockey` to SPORT_CONFIG (emoji: 🏒, color: #0c4a6e) and league-config entry. Discovery loop should verify exact bracket schedule. ~60 lines, 3 files. Serves capabilities pillar.
+
+- [DONE] [EXPLORE] **Investigate Norwegian ice hockey data sources** — RSS covers EHL/GET-ligaen (Storhamar heading for league title, Stjernen secured playoff spot). Ice hockey has strong Norwegian interest but zero dashboard coverage. Check if ESPN covers Norwegian hockey league, or if eliteserien.no / hockey.no have APIs. Evaluate if a curated config for playoffs would suffice initially. Norwegian teams: Storhamar, Vålerenga, Stjernen, Sparta.
+  - **Findings (2026-02-26):**
+  - **Option A (ESPN fetcher): NOT VIABLE.** ESPN's public hockey API covers NHL (`nhl`), NCAA college hockey, and major international tournaments. It does not cover GET-ligaen (Norwegian Eliteserien on ice) or any domestic European ice hockey leagues. Confirmed by reviewing `scripts/config/sports-config.js` ESPN league slugs — no `nor.*` hockey equivalent exists.
+  - **Option B (hockey.no / GET-ligaen.no): NOT VIABLE as free API.** These sites have live score web UIs but no documented public REST APIs. Web scraping would be fragile and require ongoing maintenance — same conclusion as IBU biathlon in task #8.
+  - **Option C (Livehockey.net / SHL API spillover): LOW feasibility.** No free public API exists that covers Norwegian domestic hockey. International hockey APIs (HockeyDB, EliteProspects) cover player stats and career data, not match schedules.
+  - **Option D (Curated config): RECOMMENDED.** The playoff format is predictable: 6 teams, quarterfinals (best-of-5), semifinals (best-of-5), final (best-of-7). Playoffs start ~March 4, 2026 (regular season ends early March). This maps perfectly to the biathlon/alpine curated config pattern. Discovery loop (`discover-events.js`) can populate exact dates/times via WebSearch. No API needed.
+  - **Conclusion:** Curated config is the practical path. ~60 lines in one new JSON file + 3 lines in SPORT_CONFIG + 1 league-config entry. Discovery loop will research actual bracket matchups once regular season ends (~March 3). Storhamar is the heavy favorite (multiple-time champions). Vålerenga, Stjernen, and Sparta are perennial playoff teams. VIF Ishockey (Vålerenga) has highest urban reach (Oslo). NRK/Viaplay broadcast most matches. Estimated implementation: 1 autopilot sub-task, ~6 turns direct-to-main.
 
 ---
 

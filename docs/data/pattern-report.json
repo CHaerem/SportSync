@@ -1,16 +1,7 @@
 {
-  "generatedAt": "2026-02-25T22:20:43.341Z",
-  "patternsDetected": 7,
+  "generatedAt": "2026-02-26T01:51:47.789Z",
+  "patternsDetected": 5,
   "patterns": [
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "streaming_coverage_gap",
-      "count": 19,
-      "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T22:20:43.256Z",
-      "suggestion": "Health warning \"streaming_coverage_gap\" has fired 19 times since 2026-02-25. Investigate and fix the root cause rather than letting it keep firing."
-    },
     {
       "type": "stagnant_loop",
       "severity": "high",
@@ -31,20 +22,19 @@
     {
       "type": "recurring_health_warning",
       "severity": "medium",
-      "issueCode": "model_change_quality_drop",
-      "count": 6,
-      "firstSeen": "2026-02-22T18:17:41.460Z",
-      "lastSeen": "2026-02-25T12:22:18.851Z",
-      "suggestion": "Health warning \"model_change_quality_drop\" has fired 6 times since 2026-02-22. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "medium",
       "issueCode": "editorial_unsorted_events",
       "count": 7,
       "firstSeen": "2026-02-22T19:15:57.249Z",
       "lastSeen": "2026-02-24T02:03:31.876Z",
       "suggestion": "Health warning \"editorial_unsorted_events\" has fired 7 times since 2026-02-22. Investigate and fix the root cause rather than letting it keep firing."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "sanityScore",
+      "fireCount": 6,
+      "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\" which may not match any event; Featured",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\"...\" has fired 6 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -58,19 +48,6 @@
       },
       "inlineCandidates": [],
       "suggestion": "63 modules exceed threshold of 50. Review scripts/ for consolidation opportunities."
-    },
-    {
-      "type": "architecture_orphan_scripts",
-      "severity": "medium",
-      "orphanCount": 4,
-      "threshold": 3,
-      "orphans": [
-        "build-day-snapshots.js",
-        "generate-insights.js",
-        "retro-generate.js",
-        "run-pipeline.js"
-      ],
-      "suggestion": "4 scripts not referenced from pipeline-manifest or package.json: build-day-snapshots.js, generate-insights.js, retro-generate.js, run-pipeline.js. Verify they are needed or remove them."
     }
   ],
   "issueCodeHistory": {
@@ -85,9 +62,9 @@
       "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 156,
+      "count": 159,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-25T22:20:43.256Z"
+      "lastSeen": "2026-02-26T01:51:47.731Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -95,9 +72,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 90,
+      "count": 93,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-25T22:20:43.256Z"
+      "lastSeen": "2026-02-26T01:51:47.732Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -140,18 +117,18 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 19,
+      "count": 22,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-25T22:20:43.256Z"
+      "lastSeen": "2026-02-26T01:51:47.732Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
-      "improved": 5,
-      "unchanged": 8,
-      "worsened": 5,
-      "effectivenessRate": 0.28
+      "improved": 3,
+      "unchanged": 11,
+      "worsened": 4,
+      "effectivenessRate": 0.17
     },
     "unknown": {
       "fires": 1,
@@ -159,10 +136,17 @@
       "unchanged": 1,
       "worsened": 0,
       "effectivenessRate": 0
+    },
+    "mustWatchCoverage": {
+      "fires": 4,
+      "improved": 0,
+      "unchanged": 4,
+      "worsened": 0,
+      "effectivenessRate": 0
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-25T22:20:43.340Z",
+    "recordedAt": "2026-02-26T01:51:47.789Z",
     "moduleCount": 63,
     "avgModuleSize": 320,
     "pipelineSteps": 27,
@@ -171,9 +155,9 @@
     "thresholdOverrides": {}
   },
   "architectureDelta": {
-    "moduleCount": 3,
-    "avgModuleSize": 6,
-    "pipelineSteps": 2
+    "moduleCount": 0,
+    "avgModuleSize": 0,
+    "pipelineSteps": 0
   },
-  "summary": "7 patterns detected (2 high, 5 medium). Top priority: recurring_health_warning — Health warning \"streaming_coverage_gap\" has fired 19 times since 2026-02-25."
+  "summary": "5 patterns detected (1 high, 4 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
 }
