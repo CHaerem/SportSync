@@ -3022,42 +3022,44 @@ class Dashboard {
 			html += '</div>';
 		}
 
-		// Scheduled matches list — upcoming matches from the bracket
-		html += this._renderBracketSchedule(b.playoffs, focusTeam);
+		// Visual bracket tree
+		html += this._renderBracketGrid(b.playoffs, focusTeam);
 
 		html += '</div>';
 		return html;
 	}
 
-	_renderBracketSchedule(playoffs, focusTeam) {
-		// Collect all scheduled/live matches from the bracket
-		const scheduled = [];
-		const sources = [
-			...(playoffs.upperBracket || []),
-			...(playoffs.lowerBracket || []),
-			...(playoffs.grandFinal ? [{ matches: playoffs.grandFinal.matches, _gf: true }] : [])
-		];
-		for (const round of sources) {
-			for (const m of (round.matches || [])) {
-				if (m.status === 'scheduled' || m.status === 'live') {
-					const t1 = m.team1 || 'TBD';
-					const t2 = m.team2 || 'TBD';
-					if (t1 === 'TBD' && t2 === 'TBD') continue;
-					scheduled.push({ ...m, _round: round.round || (round._gf ? 'Grand Final' : '') });
-				}
-			}
+	_renderBracketGrid(playoffs, focusTeam) {
+		let html = '<div class="bk-grid">';
+		if (playoffs.upperBracket?.length > 0) {
+			html += '<div class="bk-sec"><div class="bk-sec-label">Upper Bracket</div>';
+			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
+			html += '</div>';
 		}
-		if (scheduled.length === 0) return '';
+		if (playoffs.lowerBracket?.length > 0) {
+			html += '<div class="bk-sec"><div class="bk-sec-label">Lower Bracket</div>';
+			html += this._renderBracketTree(playoffs.lowerBracket, focusTeam);
+			html += '</div>';
+		}
+		if (playoffs.grandFinal?.matches?.length > 0) {
+			html += '<div class="bk-sec"><div class="bk-sec-label">Grand Final</div>';
+			html += this._renderBracketTree([{ matches: playoffs.grandFinal.matches }], focusTeam);
+			html += '</div>';
+		}
+		html += '</div>';
+		return html;
+	}
 
-		// Sort by time, then by round
-		scheduled.sort((a, b) => {
-			if (a.scheduledTime && b.scheduledTime) return new Date(a.scheduledTime) - new Date(b.scheduledTime);
-			if (a.scheduledTime) return -1;
-			if (b.scheduledTime) return 1;
-			return 0;
-		});
+	_renderBracketTree(rounds, focusTeam) {
+		const vis = [...rounds];
+		while (vis.length > 1) {
+			const last = vis[vis.length - 1];
+			if (last.matches.every(m => (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD')) vis.pop();
+			else break;
+		}
+		if (!vis.length) return '';
 
-		const shortRound = (r) => {
+		const shortName = (r) => {
 			if (!r) return '';
 			const s = r.toLowerCase();
 			if (s.includes('grand')) return 'GF';
@@ -3067,23 +3069,85 @@ class Dashboard {
 			return r.replace(/round\s*/i, 'R');
 		};
 
-		let html = '<div class="exp-bracket-schedule">';
-		html += '<div class="exp-bracket-path-title">Upcoming Matches</div>';
-		for (const m of scheduled) {
-			const hasFocus = this._matchInvolves(m, focusTeam);
-			const isLive = m.status === 'live';
-			let timeStr = '';
-			if (m.scheduledTime) {
-				const d = new Date(m.scheduledTime);
-				if (!isNaN(d)) timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+		let html = '<div class="bk-tree">';
+		for (let i = 0; i < vis.length; i++) {
+			const round = vis[i];
+			const next = vis[i + 1];
+			const isLast = !next;
+
+			html += '<div class="bk-round">';
+			html += `<div class="bk-rh">${this.esc(shortName(round.round))}</div>`;
+			html += '<div class="bk-slots">';
+			let tbdCount = 0;
+			for (const m of round.matches) {
+				if ((m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD' && isLast && round.matches.length > 2) {
+					tbdCount++;
+				} else {
+					html += this._renderBracketCard(m, focusTeam);
+				}
 			}
-			const cls = ['exp-bracket-sched-row', hasFocus ? 'focus' : '', isLive ? 'live' : ''].filter(Boolean).join(' ');
-			html += `<div class="${cls}">`;
-			html += `<span class="exp-bracket-sched-time">${isLive ? 'LIVE' : this.esc(timeStr)}</span>`;
-			html += `<span class="exp-bracket-sched-teams">${this.esc(m.team1 || 'TBD')} vs ${this.esc(m.team2 || 'TBD')}</span>`;
-			html += `<span class="exp-bracket-sched-round">${this.esc(shortRound(m._round))}</span>`;
-			html += '</div>';
+			if (tbdCount) html += `<div class="bk-tbd-ph">+${tbdCount} TBD</div>`;
+			html += '</div></div>';
+
+			if (next) {
+				const lc = round.matches.length, rc = next.matches.length;
+				if (lc > 1 && rc === Math.ceil(lc / 2)) {
+					html += '<div class="bk-conn"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
+					for (let p = 0; p < rc; p++) html += '<div class="bk-cp"><div class="bk-cpin"></div></div>';
+					html += '</div></div>';
+				} else if (lc === rc) {
+					html += '<div class="bk-conn solo"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
+					for (let p = 0; p < lc; p++) html += '<div class="bk-cp"></div>';
+					html += '</div></div>';
+				}
+			}
 		}
+		html += '</div>';
+		return html;
+	}
+
+	_renderBracketCard(m, focusTeam) {
+		const hasFocus = this._matchInvolves(m, focusTeam);
+		const isLive = m.status === 'live';
+		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
+		const hasWinner = !!m.winner;
+		const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
+
+		let s1 = '', s2 = '';
+		if (m.score && m.score !== 'FF') {
+			const p = m.score.split('-');
+			if (p.length === 2) { s1 = p[0].trim(); s2 = p[1].trim(); }
+		} else if (m.score === 'FF') {
+			s1 = m.winner === m.team1 ? 'W' : '-';
+			s2 = m.winner === m.team2 ? 'W' : '-';
+		}
+
+		let timeStr = '';
+		if (m.scheduledTime && !hasWinner && !isLive) {
+			const d = new Date(m.scheduledTime);
+			if (!isNaN(d)) timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+		}
+
+		const cls = ['bk-m', hasFocus ? 'focus' : '', isLive ? 'live' : '', isTbd ? 'tbd' : ''].filter(Boolean).join(' ');
+		const t1w = m.winner === m.team1, t2w = m.winner === m.team2;
+		const t1f = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
+		const t2f = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
+
+		const logoHtml = (name) => {
+			const url = getLogo(name);
+			return url ? `<img src="${url}" alt="" class="bk-logo" loading="lazy">` : '';
+		};
+
+		let html = `<div class="${cls}">`;
+		html += `<div class="bk-t${t1w ? ' w' : ''}${hasWinner && !t1w ? ' l' : ''}${t1f ? ' ft' : ''}">`;
+		html += logoHtml(m.team1);
+		html += `<span class="bk-name">${this.esc(m.team1 || 'TBD')}</span>`;
+		html += `<span class="bk-sc">${this.esc(s1)}</span></div>`;
+		html += `<div class="bk-t${t2w ? ' w' : ''}${hasWinner && !t2w ? ' l' : ''}${t2f ? ' ft' : ''}">`;
+		html += logoHtml(m.team2);
+		html += `<span class="bk-name">${this.esc(m.team2 || 'TBD')}</span>`;
+		html += `<span class="bk-sc">${this.esc(s2)}</span></div>`;
+		if (timeStr) html += `<div class="bk-time">${timeStr}</div>`;
 		html += '</div>';
 		return html;
 	}

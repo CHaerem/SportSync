@@ -878,19 +878,74 @@
 		.dark .exp-bracket-scenario.win { color: #4ade80; background: rgba(74,222,128,0.1); }
 		.dark .exp-bracket-scenario.loss { color: #f87171; background: rgba(248,113,113,0.1); }
 
-		/* Scheduled matches list */
-		.exp-bracket-schedule { margin-top: 10px; }
-		.exp-bracket-sched-row {
-			display: flex; align-items: center; gap: 8px; padding: 4px 8px; margin-bottom: 3px;
-			border-radius: 4px; font-size: 0.72rem; background: var(--bg-card);
-			border-left: 3px solid var(--border);
+		/* Bracket tree */
+		.bk-grid { margin-top: 12px; }
+		.bk-sec { margin-bottom: 10px; }
+		.bk-sec:last-child { margin-bottom: 0; }
+		.bk-sec-label {
+			font-size: 0.5rem; font-weight: 700; text-transform: uppercase;
+			letter-spacing: 0.08em; color: var(--muted); margin: 0 0 4px;
 		}
-		.exp-bracket-sched-row.focus { border-left-color: #7c3aed; background: rgba(124,58,237,0.06); }
-		.dark .exp-bracket-sched-row.focus { background: rgba(167,139,250,0.08); }
-		.exp-bracket-sched-row.live { border-left-color: #dc2626; }
-		.exp-bracket-sched-time { font-size: 0.62rem; color: var(--muted); min-width: 36px; font-variant-numeric: tabular-nums; }
-		.exp-bracket-sched-teams { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-		.exp-bracket-sched-round { font-size: 0.58rem; color: var(--muted); white-space: nowrap; }
+		.bk-tree { display: flex; overflow-x: auto; gap: 0; padding: 2px 0; }
+		.bk-round { flex-shrink: 0; display: flex; flex-direction: column; }
+		.bk-rh {
+			font-size: 0.44rem; font-weight: 600; text-transform: uppercase;
+			letter-spacing: 0.05em; color: var(--muted); text-align: center;
+			padding-bottom: 3px; white-space: nowrap;
+		}
+		.bk-slots {
+			display: flex; flex-direction: column;
+			justify-content: space-around; flex: 1;
+			gap: 2px; padding: 1px 0;
+		}
+		.bk-m {
+			width: 110px; border-radius: 4px; overflow: hidden;
+			background: var(--bg-card); border: 1px solid var(--border);
+		}
+		.bk-m.focus { border-color: #7c3aed; }
+		.dark .bk-m.focus { border-color: #a78bfa; }
+		.bk-m.live { border-color: #dc2626; }
+		.bk-m.tbd { opacity: 0.2; border-style: dashed; }
+		.bk-t {
+			display: flex; align-items: center; gap: 4px;
+			padding: 3px 5px; font-size: 0.58rem; white-space: nowrap; overflow: hidden;
+		}
+		.bk-t + .bk-t { border-top: 1px solid var(--border); }
+		.bk-logo { width: 12px; height: 12px; object-fit: contain; flex-shrink: 0; border-radius: 2px; }
+		.bk-name { flex: 1; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+		.bk-sc { font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0; min-width: 10px; text-align: right; }
+		.bk-t.w { font-weight: 600; }
+		.bk-t.w .bk-sc { color: #16a34a; }
+		.dark .bk-t.w .bk-sc { color: #4ade80; }
+		.bk-t.l { opacity: 0.4; }
+		.bk-t.ft .bk-name { color: #7c3aed; font-weight: 600; }
+		.dark .bk-t.ft .bk-name { color: #a78bfa; }
+		.bk-time {
+			font-size: 0.42rem; text-align: center; color: var(--muted);
+			border-top: 1px solid var(--border); padding: 1px 0;
+		}
+		/* Connectors */
+		.bk-conn { display: flex; flex-direction: column; width: 14px; flex-shrink: 0; }
+		.bk-conn .bk-rh { visibility: hidden; }
+		.bk-conn-body { display: flex; flex-direction: column; flex: 1; padding: 1px 0; }
+		.bk-cp { flex: 1; position: relative; min-height: 6px; }
+		.bk-cpin {
+			position: absolute; top: 25%; bottom: 25%; left: 0; right: 50%;
+			border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+			border-right: 1px solid var(--border);
+		}
+		.bk-cp::after {
+			content: ''; position: absolute; top: 50%; left: 50%; right: 0;
+			border-top: 1px solid var(--border);
+		}
+		.bk-conn.solo .bk-cpin { display: none; }
+		.bk-conn.solo .bk-cp::after { left: 0; }
+		.bk-tbd-ph { font-size: 0.44rem; color: var(--muted); opacity: 0.4; text-align: center; padding: 3px 0; }
+		@media (max-width: 480px) {
+			.bk-m { width: 94px; }
+			.bk-t { padding: 2px 4px; font-size: 0.52rem; }
+			.bk-logo { width: 10px; height: 10px; }
+		}
 
 		/* === Featured sections === */
 		#featured-sections { padding: 0 16px; margin-bottom: 8px; }
