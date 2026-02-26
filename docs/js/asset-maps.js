@@ -311,6 +311,7 @@ function getTournamentLogo(name) {
 		'f1': 'https://r2.thesportsdb.com/images/media/league/badge/g8cofl1513623681.png',
 		// Olympics
 		'winter olympics 2026': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Olympic_rings_without_rims.svg/200px-Olympic_rings_without_rims.svg.png',
+		// Esports — CS2 (no reliable free logo source yet)
 	};
 	return logos[n] || null;
 }

@@ -1662,13 +1662,13 @@ class Dashboard {
 			if (sportBuf.events.length === 0) return;
 			const n = sportBuf.events.length;
 			const hasTeams = sportBuf.events[0].homeTeam && sportBuf.events[0].awayTeam;
-			const isCardSport = ['olympics', 'golf'].includes(sportBuf.sport);
+			const isCardSport = ['olympics', 'golf', 'esports'].includes(sportBuf.sport);
 
 			if (sportBuf.sport === 'football' && hasTeams && n >= 2) {
 				// 2+ football matches → matchday card
 				groups.push({ type: 'matchday', tournament: sportBuf.tournament, events: sportBuf.events });
 			} else if (isCardSport && n >= 1) {
-				// Golf/olympics events → card per tournament (each tournament is a multi-day event)
+				// Golf/olympics/esports events → card per tournament (rich data worth showing)
 				groups.push({ type: 'sport-group', sport: sportBuf.sport, tournament: sportBuf.tournament, events: sportBuf.events });
 			} else if (n >= 2) {
 				// 2+ same-tournament events → grouped card
@@ -1933,6 +1933,52 @@ class Dashboard {
 			// Expanded view inside card
 			if (this.expandedId === e.id) {
 				html += this.renderExpanded(e);
+			}
+		}
+
+		// Esports: compact bracket summary (next match for focus team)
+		if (sportId === 'esports' && this.brackets) {
+			const bracketEvent = events[0];
+			const bracket = this._findBracketForEvent(bracketEvent);
+			if (bracket) {
+				const b = bracket.bracket || bracket;
+				const focus = bracket.focusTeam || b.focusTeam;
+				// Find the next upcoming match for the focus team
+				const allRounds = [...(b.playoffs?.upperBracket || []), ...(b.playoffs?.lowerBracket || []), ...(b.playoffs?.rounds || [])];
+				let nextMatch = null;
+				for (const round of allRounds) {
+					for (const m of (round.matches || [])) {
+						if (!m.winner && this._matchInvolves(m, focus)) {
+							nextMatch = { round: round.round, ...m };
+							break;
+						}
+					}
+					if (nextMatch) break;
+				}
+				// Grand final check
+				if (!nextMatch && b.playoffs?.grandFinal?.length > 0) {
+					for (const round of b.playoffs.grandFinal) {
+						for (const m of (round.matches || [])) {
+							if (!m.winner && this._matchInvolves(m, focus)) {
+								nextMatch = { round: round.round, ...m };
+								break;
+							}
+						}
+						if (nextMatch) break;
+					}
+				}
+				if (nextMatch && focus) {
+					const opp = (nextMatch.team1 === focus ? nextMatch.team2 : nextMatch.team1) || 'TBD';
+					const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
+					const focusLogo = getLogo(focus);
+					const oppLogo = getLogo(opp);
+					const fImg = focusLogo ? `<img class="result-row-logo" src="${focusLogo}" alt="" loading="lazy">` : '';
+					const oImg = oppLogo ? `<img class="result-row-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
+					html += '<div class="lead-bracket-next">';
+					html += `<span class="lead-bracket-label">Next: ${this.esc(nextMatch.round)}</span>`;
+					html += `<span class="lead-bracket-matchup">${fImg} ${this.esc(focus)} vs ${oImg} ${this.esc(opp)}</span>`;
+					html += '</div>';
+				}
 			}
 		}
 
