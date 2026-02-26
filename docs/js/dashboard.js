@@ -3143,10 +3143,20 @@ class Dashboard {
 		const t1f = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
 		const t2f = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
 
+		// Format scheduled time
+		let timeStr = '';
+		if (m.scheduledTime && !hasWinner && m.status !== 'live') {
+			const d = new Date(m.scheduledTime);
+			if (!isNaN(d)) {
+				timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+			}
+		}
+
 		let html = `<div class="${cls}">`;
 		if (isLive) html += '<span class="bk-live"></span>';
 		html += `<div class="bk-t${t1w ? ' w' : ''}${t1l ? ' l' : ''}${t1f ? ' ft' : ''}"><span>${this.esc(m.team1 || 'TBD')}</span><span class="bk-s">${this.esc(s1)}</span></div>`;
 		html += `<div class="bk-t${t2w ? ' w' : ''}${t2l ? ' l' : ''}${t2f ? ' ft' : ''}"><span>${this.esc(m.team2 || 'TBD')}</span><span class="bk-s">${this.esc(s2)}</span></div>`;
+		if (timeStr) html += `<div class="bk-time">${timeStr}</div>`;
 		html += '</div>';
 		return html;
 	}
