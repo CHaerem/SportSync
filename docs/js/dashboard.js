@@ -2216,38 +2216,27 @@ class Dashboard {
 		let html = '<div class="flow-label band-label results"><span class="flow-text">What you missed</span><span class="flow-line"></span></div>';
 		html += '<div class="band-content">';
 
-		// Group match results by tournament
-		const groups = [];
-		let buf = { league: null, sport: null, matches: [] };
-		const flushBuf = () => {
-			if (buf.matches.length === 0) return;
-			groups.push({ league: buf.league, sport: buf.sport, matches: [...buf.matches] });
-			buf = { league: null, sport: null, matches: [] };
-		};
+		let cardCount = 0;
+		const compactRows = [];
 		for (const m of matchResults) {
-			const key = m.league || m._resultSport || 'other';
-			if (key === (buf.league || buf.sport || 'other')) {
-				buf.matches.push(m);
+			if (m._resultSport === 'golf') {
+				html += this._renderGolfResultCard(m);
+				cardCount++;
+			} else if (cardCount < 2) {
+				html += this._renderFootballResultCard(m);
+				cardCount++;
 			} else {
-				flushBuf();
-				buf = { league: m.league, sport: m._resultSport, matches: [m] };
+				compactRows.push(m);
 			}
 		}
-		flushBuf();
 
-		for (const group of groups) {
-			if (group.sport === 'golf') {
-				// Golf results rendered individually
-				for (const m of group.matches) {
-					html += this._renderGolfResultCard(m);
-				}
-			} else if (group.matches.length >= 2) {
-				// 2+ same-tournament results → grouped card with featured + compact rows
-				html += this._renderGroupedResultCard(group.league, group.matches);
-			} else {
-				// Single result → individual card
-				html += this._renderFootballResultCard(group.matches[0]);
+		// Wrap compact result rows in a card
+		if (compactRows.length > 0) {
+			html += '<div class="event-card">';
+			for (const m of compactRows) {
+				html += this._renderCompactResultRow(m);
 			}
+			html += '</div>';
 		}
 
 		// Event-based results (non-football, like ended tournaments)
@@ -2261,44 +2250,6 @@ class Dashboard {
 		}
 
 		html += '</div>';
-		return html;
-	}
-
-	_renderGroupedResultCard(league, matches) {
-		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(league) : null;
-		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="" loading="lazy">` : '';
-		let html = '<div class="result-card">';
-		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
-		html += '<div class="result-body">';
-		html += '<div class="result-header">';
-		html += `<span class="result-sport">${leagueImg}${this.esc(league || '')}</span>`;
-		html += `<span class="result-ft">${matches.length} results</span>`;
-		html += '</div>';
-		// Featured: first match with full detail
-		const feat = matches[0];
-		const fhLogo = typeof getTeamLogo === 'function' ? getTeamLogo(feat.homeTeam) : null;
-		const faLogo = typeof getTeamLogo === 'function' ? getTeamLogo(feat.awayTeam) : null;
-		const fhImg = fhLogo ? `<img class="result-team-logo" src="${fhLogo}" alt="${this.esc(feat.homeTeam)}" loading="lazy">` : '';
-		const faImg = faLogo ? `<img class="result-team-logo" src="${faLogo}" alt="${this.esc(feat.awayTeam)}" loading="lazy">` : '';
-		html += '<div class="result-match">';
-		html += `<div class="result-team">${fhImg}<span class="result-team-name">${this.esc(this.shortName(feat.homeTeam))}</span></div>`;
-		html += `<span class="result-score">${feat.homeScore} - ${feat.awayScore}</span>`;
-		html += `<div class="result-team">${faImg}<span class="result-team-name">${this.esc(this.shortName(feat.awayTeam))}</span></div>`;
-		html += '</div>';
-		if (feat.recapHeadline) {
-			html += `<div class="result-summary">${this.esc(feat.recapHeadline)}</div>`;
-		}
-		const scorers = (feat.goalScorers || []).slice(0, 4);
-		if (scorers.length > 0) {
-			html += `<div class="result-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`;
-		}
-		// Remaining matches as compact rows
-		if (matches.length > 1) {
-			for (let i = 1; i < matches.length; i++) {
-				html += this._renderCompactResultRow(matches[i]);
-			}
-		}
-		html += '</div></div>';
 		return html;
 	}
 

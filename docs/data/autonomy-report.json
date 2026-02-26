@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-26T08:10:27.320Z",
-  "overallScore": 0.92,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-26T12:23:00.162Z",
+  "overallScore": 0.9,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints fired 97 times"
+      "details": "100 entries, hints fired 96 times"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "Health report is fresh (26 min old), 8 issue(s) are info/known"
+      "score": 0.75,
+      "status": "partial",
+      "details": "Health report is fresh (0 min old) but has 5 actionable issue(s) (16 total)"
     },
     "watchPlan": {
       "score": 0,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history exists (stale due to pipeline step failure), schedule-verifier exists, configs have verification summaries"
+      "details": "verification history exists and is fresh, schedule-verifier exists, configs have verification summaries"
     },
     "resultsHealth": {
       "score": 1,
@@ -66,6 +66,7 @@
     }
   },
   "nextActions": [
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
     "Run watch plan generation to create watch-plan.json with picks"
   ]
 }
