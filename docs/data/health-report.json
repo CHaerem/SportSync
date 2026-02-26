@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-26T10:22:24.747Z",
-  "eventCount": 52,
+  "generatedAt": "2026-02-26T08:10:27.315Z",
+  "eventCount": 53,
   "sportCoverage": {
-    "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "esports": {
+      "count": 2,
+      "previousCount": 1,
+      "delta": 1
+    },
+    "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
@@ -50,41 +50,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 45,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     }
   },
   "schemaCompleteness": {
     "venuePercent": 0.96,
-    "streamingPercent": 1
+    "streamingPercent": 0.98
   },
   "rssFeedHealth": {
     "itemCount": 30,
@@ -100,7 +100,7 @@
     "stale": false,
     "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.04,
+    "recapHeadlineRate": 0.07,
     "issues": []
   },
   "streamingHealth": {
@@ -114,7 +114,13 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-02-24: 0 events but events.json has 1",
+      "Snapshot 2026-02-25: 0 events but events.json has 1",
+      "Snapshot 2026-02-26: 1 events but events.json has 2",
+      "Snapshot 2026-02-27: 4 events but events.json has 5",
+      "Snapshot 2026-02-28: 10 events but events.json has 11",
+      "Snapshot 2026-03-01: 9 events but events.json has 10"
     ],
     "snapshotCount": 15
   },
@@ -132,8 +138,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 56,
-    "sevenDay": 60,
+    "fiveHour": 2,
+    "sevenDay": 56,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -142,19 +148,23 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 206661,
+    "totalDuration": 248250,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 96744,
-        "share": 47
+        "duration": 137766,
+        "share": 55
       }
     ],
     "failedSteps": [
       "verify-schedules"
     ]
+  },
+  "bracketHealth": {
+    "active": 1,
+    "orphaned": 0
   },
   "unmappedLeagues": [
     "CS2 Major Tournaments 2026",
@@ -177,6 +187,41 @@
       "message": "Streaming enrichment match rate is 7% (2/30) — team alias table may need updates"
     },
     {
+      "severity": "warning",
+      "code": "streaming_coverage_gap",
+      "message": "1 important event(s) lack streaming info: CS2 Major Tournaments 2026"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-24: 0 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-25: 0 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-26: 1 events but events.json has 2"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-27: 4 events but events.json has 5"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-28: 10 events but events.json has 11"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-01: 9 events but events.json has 10"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
@@ -184,7 +229,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 56%, 7d: 60%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 2%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -194,7 +239,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 47% of total pipeline time (97s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (138s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -202,9 +247,9 @@
       "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "statusSummary": {
-    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 92% with 11/12 feedback loops closed. Pipeline is critical with 6 critical, 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
