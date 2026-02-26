@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T01:51:47.789Z",
+  "generatedAt": "2026-02-26T06:29:17.878Z",
   "patternsDetected": 5,
   "patterns": [
     {
@@ -7,8 +7,8 @@
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 19,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 19 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 20,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 20 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "recurring_health_warning",
@@ -32,9 +32,9 @@
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 6,
+      "fireCount": 7,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\" which may not match any event; Featured",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\"...\" has fired 6 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfae Tonight\"...\" has fired 7 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -62,9 +62,9 @@
       "lastSeen": "2026-02-25T20:16:40.673Z"
     },
     "streaming_low_match_rate": {
-      "count": 159,
+      "count": 160,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-26T01:51:47.731Z"
+      "lastSeen": "2026-02-26T06:29:17.803Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -72,9 +72,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 93,
+      "count": 94,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-26T01:51:47.732Z"
+      "lastSeen": "2026-02-26T06:29:17.803Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -92,9 +92,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "missing_snapshot": {
-      "count": 5,
+      "count": 6,
       "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-02-24T02:13:06.153Z"
+      "lastSeen": "2026-02-26T06:29:17.803Z"
     },
     "stale_data": {
       "count": 36,
@@ -120,6 +120,11 @@
       "count": 22,
       "firstSeen": "2026-02-25T06:30:55.327Z",
       "lastSeen": "2026-02-26T01:51:47.732Z"
+    },
+    "snapshot_event_mismatch": {
+      "count": 3,
+      "firstSeen": "2026-02-26T06:29:17.803Z",
+      "lastSeen": "2026-02-26T06:29:17.803Z"
     }
   },
   "interventionEffectiveness": {
@@ -146,7 +151,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-26T01:51:47.789Z",
+    "recordedAt": "2026-02-26T06:29:17.877Z",
     "moduleCount": 63,
     "avgModuleSize": 320,
     "pipelineSteps": 27,

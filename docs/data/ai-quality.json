@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-26T01:58:02.180Z",
+  "generatedAt": "2026-02-26T06:29:15.853Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
+    "quotaTier": 1,
     "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 107056,
+    "blockCount": 7,
+    "generationMs": 116414,
     "tokenUsage": {
-      "input": 34842,
-      "output": 5975,
-      "cacheCreation": 34839,
-      "cacheRead": 0,
-      "total": 40817,
-      "costUSD": 0.36713375000000004,
+      "input": 34808,
+      "output": 6543,
+      "cacheCreation": 18436,
+      "cacheRead": 16369,
+      "total": 41351,
+      "costUSD": 0.2869995,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 84,
+      "avgScore": 76,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,14 +63,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
+    "quotaTier": 1,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.981
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 52,
@@ -82,7 +82,7 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 1,
+    "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 6,
     "failedBatches": 0,
     "totalEvents": 52,
@@ -92,14 +92,14 @@
       "enriched": 6,
       "skipRate": 0.88
     },
-    "tokensPerEvent": 5377,
+    "tokensPerEvent": 5448,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 29754,
-      "output": 2505,
+      "output": 2934,
       "calls": 1,
-      "total": 32259,
-      "costUSD": 0.24858375,
+      "total": 32688,
+      "costUSD": 0.25930875,
       "tracked": true,
       "estimated": false
     }

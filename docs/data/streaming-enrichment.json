@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-25T22:18:30.941Z",
+  "generatedAt": "2026-02-26T06:26:18.421Z",
   "dates": [
-    "2026-02-25",
-    "2026-02-26"
+    "2026-02-26",
+    "2026-02-27"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 16,
-  "matchesAttempted": 25,
-  "matchesSucceeded": 0,
-  "eventsEnriched": 0,
-  "totalEvents": 48,
-  "matchRate": 0,
+  "listingsFound": 33,
+  "matchesAttempted": 30,
+  "matchesSucceeded": 2,
+  "eventsEnriched": 2,
+  "totalEvents": 52,
+  "matchRate": 0.07,
   "unmatched": [
     {
       "homeTeam": "Samsunspor",
@@ -91,9 +91,47 @@
       "homeTeam": "Nottingham Forest",
       "awayTeam": "Fenerbahce",
       "time": "21:00"
+    },
+    {
+      "homeTeam": "Rosenborg",
+      "awayTeam": "Vålerenga",
+      "time": "14:00"
+    },
+    {
+      "homeTeam": "Lillestrøm",
+      "awayTeam": "Tromsø",
+      "time": "17:00"
+    },
+    {
+      "homeTeam": "Hobro IK",
+      "awayTeam": "HB Køge",
+      "time": "18:00"
+    },
+    {
+      "homeTeam": "Fortuna Düsseldorf",
+      "awayTeam": "Bochum",
+      "time": "18:30"
     }
   ],
-  "enrichedEvents": [],
+  "enrichedEvents": [
+    {
+      "homeTeam": "Wolverhampton Wanderers",
+      "awayTeam": "Aston Villa",
+      "broadcasters": [
+        "Viaplay",
+        "Vsport"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Levante",
+      "awayTeam": "Alavés",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    }
+  ],
   "aliasSuggestions": [],
   "hintsApplied": []
 }

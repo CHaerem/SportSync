@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T01:58:03.240Z",
+  "generatedAt": "2026-02-26T06:29:17.697Z",
   "eventCount": 52,
   "sportCoverage": {
     "golf": {
@@ -9,13 +9,13 @@
     },
     "esports": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "football": {
       "count": 30,
-      "previousCount": 25,
-      "delta": 5
+      "previousCount": 30,
+      "delta": 0
     },
     "biathlon": {
       "count": 6,
@@ -50,15 +50,15 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
@@ -70,7 +70,7 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
@@ -114,11 +114,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 day snapshot(s) within event range have 0 events and 0 results",
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-02-25: 1 events but events.json has 0",
-      "Snapshot 2026-03-03: 5 events but events.json has 4",
-      "Snapshot 2026-03-04: 0 events but events.json has 6"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -182,31 +178,6 @@
     },
     {
       "severity": "info",
-      "code": "empty_day_snapshot",
-      "message": "1 day snapshot(s) within event range have 0 events and 0 results"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-25: 1 events but events.json has 0"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-03: 5 events but events.json has 4"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-04: 0 events but events.json has 6"
-    },
-    {
-      "severity": "info",
       "code": "unmapped_leagues",
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
     },
@@ -231,9 +202,9 @@
       "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 3 critical, 3 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }

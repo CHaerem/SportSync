@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-27",
-  "generatedAt": "2026-02-25T22:20:42.032Z",
+  "generatedAt": "2026-02-26T06:29:16.308Z",
   "events": {
     "upcoming": [
       {
@@ -83,7 +83,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-02-25T22:18:45.609Z",
+        "enrichedAt": "2026-02-26T06:27:18.644Z",
         "_enrichHash": "edea3533e1aa830c84f4d5e438bd6981"
       },
       {
@@ -121,7 +121,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-25T22:18:45.609Z"
+        "enrichedAt": "2026-02-26T06:27:18.644Z"
       },
       {
         "sport": "football",
@@ -135,8 +135,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -155,8 +162,10 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-25T22:18:45.609Z",
-        "_enrichHash": "e1bb8864f5fc23390b68d7712c00f2e2"
+        "enrichedAt": "2026-02-26T06:27:18.644Z",
+        "_enrichHash": "e1bb8864f5fc23390b68d7712c00f2e2",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -169,9 +178,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -190,8 +200,10 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-02-25T22:18:45.609Z",
-        "_enrichHash": "85ffb29a05cb89f3459711f5d5223fcc"
+        "enrichedAt": "2026-02-26T06:27:18.645Z",
+        "_enrichHash": "85ffb29a05cb89f3459711f5d5223fcc",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
