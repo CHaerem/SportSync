@@ -3032,64 +3032,158 @@ class Dashboard {
 	_renderBracketGrid(playoffs, focusTeam) {
 		let html = '<div class="exp-bracket-grid">';
 
-		// Upper bracket
+		// Collect all sections with their rounds
+		const sections = [];
 		if (playoffs.upperBracket?.length > 0) {
-			html += '<div class="exp-bracket-section">';
-			html += '<div class="exp-bracket-section-title">Upper Bracket</div>';
-			for (const round of playoffs.upperBracket) {
-				html += `<div class="exp-bracket-round">`;
-				html += `<div class="exp-bracket-round-name">${this.esc(round.round)}</div>`;
-				for (const m of round.matches) {
-					const hasFocus = this._matchInvolves(m, focusTeam);
-					const statusCls = m.status === 'completed' ? 'completed' : (m.status === 'live' ? 'live' : '');
-					html += `<div class="exp-bracket-cell ${statusCls}${hasFocus ? ' focus' : ''}">`;
-					html += `<span class="exp-bracket-team${m.winner === m.team1 ? ' winner' : ''}">${this.esc(m.team1 || 'TBD')}</span>`;
-					html += '<span class="exp-bracket-vs">v</span>';
-					html += `<span class="exp-bracket-team${m.winner === m.team2 ? ' winner' : ''}">${this.esc(m.team2 || 'TBD')}</span>`;
-					if (m.score) html += `<span class="exp-bracket-score">${this.esc(m.score)}</span>`;
-					html += '</div>';
-				}
-				html += '</div>';
-			}
-			html += '</div>';
+			sections.push({ key: 'ub', label: 'Upper Bracket', rounds: playoffs.upperBracket });
 		}
-
-		// Lower bracket
 		if (playoffs.lowerBracket?.length > 0) {
-			html += '<div class="exp-bracket-section">';
-			html += '<div class="exp-bracket-section-title">Lower Bracket</div>';
-			for (const round of playoffs.lowerBracket) {
-				html += `<div class="exp-bracket-round">`;
-				html += `<div class="exp-bracket-round-name">${this.esc(round.round)}</div>`;
-				for (const m of round.matches) {
-					const hasFocus = this._matchInvolves(m, focusTeam);
-					const statusCls = m.status === 'completed' ? 'completed' : (m.status === 'live' ? 'live' : '');
-					html += `<div class="exp-bracket-cell ${statusCls}${hasFocus ? ' focus' : ''}">`;
-					html += `<span class="exp-bracket-team${m.winner === m.team1 ? ' winner' : ''}">${this.esc(m.team1 || 'TBD')}</span>`;
-					html += '<span class="exp-bracket-vs">v</span>';
-					html += `<span class="exp-bracket-team${m.winner === m.team2 ? ' winner' : ''}">${this.esc(m.team2 || 'TBD')}</span>`;
-					if (m.score) html += `<span class="exp-bracket-score">${this.esc(m.score)}</span>`;
-					if (m.note) html += `<span class="exp-bracket-note">${this.esc(m.note)}</span>`;
-					html += '</div>';
+			sections.push({ key: 'lb', label: 'Lower Bracket', rounds: playoffs.lowerBracket });
+		}
+		if (playoffs.grandFinal?.matches?.length > 0) {
+			sections.push({ key: 'gf', label: 'Grand Final', rounds: [{ round: 'Grand Final', matches: playoffs.grandFinal.matches }] });
+		}
+
+		// Find which section/round has the focus team's current match (live or first upcoming)
+		let activeSection = sections[0]?.key || 'ub';
+		let activeRound = 0;
+		for (const sec of sections) {
+			for (let ri = 0; ri < sec.rounds.length; ri++) {
+				for (const m of sec.rounds[ri].matches) {
+					if (this._matchInvolves(m, focusTeam) && (m.status === 'live' || m.status === 'scheduled')) {
+						activeSection = sec.key;
+						activeRound = ri;
+						break;
+					}
+				}
+			}
+		}
+
+		// Section tabs
+		html += '<div class="bk-section-tabs">';
+		for (const sec of sections) {
+			const isActive = sec.key === activeSection;
+			const cls = sec.key === 'gf' ? ' gf' : '';
+			html += `<button class="bk-section-tab${isActive ? ' active' : ''}${cls}" data-bk-section="${sec.key}" onclick="event.stopPropagation();window._bkSwitchSection(this)">${this.esc(sec.label)}</button>`;
+		}
+		html += '</div>';
+
+		// Render each section
+		for (const sec of sections) {
+			const isActiveSection = sec.key === activeSection;
+			html += `<div class="bk-section" data-bk-section="${sec.key}" style="${isActiveSection ? '' : 'display:none'}">`;
+
+			// Round tabs (if more than 1 round)
+			if (sec.rounds.length > 1) {
+				html += '<div class="bk-round-tabs">';
+				for (let ri = 0; ri < sec.rounds.length; ri++) {
+					const r = sec.rounds[ri];
+					const isActiveR = isActiveSection ? ri === activeRound : ri === 0;
+					// Count completed/live/total for badge
+					const liveCount = r.matches.filter(m => m.status === 'live').length;
+					const hasAction = liveCount > 0 || r.matches.some(m => m.status === 'completed' && m.winner);
+					html += `<button class="bk-round-tab${isActiveR ? ' active' : ''}${liveCount > 0 ? ' has-live' : ''}" data-bk-round="${ri}" data-bk-section="${sec.key}" onclick="event.stopPropagation();window._bkSwitchRound(this)">${this.esc(r.round)}${liveCount > 0 ? '<span class="bk-live-dot"></span>' : ''}</button>`;
 				}
 				html += '</div>';
 			}
+
+			// Round content panels
+			for (let ri = 0; ri < sec.rounds.length; ri++) {
+				const r = sec.rounds[ri];
+				const isVisible = sec.rounds.length === 1 || (isActiveSection ? ri === activeRound : ri === 0);
+				html += `<div class="bk-round-panel" data-bk-round="${ri}" data-bk-section="${sec.key}" style="${isVisible ? '' : 'display:none'}">`;
+
+				// Match cards (FotMob style: two rows per match)
+				for (const m of r.matches) {
+					html += this._renderMatchCard(m, focusTeam, sec.key === 'gf');
+				}
+				html += '</div>';
+			}
+
 			html += '</div>';
 		}
 
-		// Grand Final
-		if (playoffs.grandFinal?.matches?.length > 0) {
-			html += '<div class="exp-bracket-section">';
-			html += '<div class="exp-bracket-section-title">Grand Final</div>';
-			for (const m of playoffs.grandFinal.matches) {
-				html += `<div class="exp-bracket-cell grand-final">`;
-				html += `<span class="exp-bracket-team">${this.esc(m.team1 || 'TBD')}</span>`;
-				html += '<span class="exp-bracket-vs">v</span>';
-				html += `<span class="exp-bracket-team">${this.esc(m.team2 || 'TBD')}</span>`;
-				if (m.note) html += `<span class="exp-bracket-note">${this.esc(m.note)}</span>`;
-				html += '</div>';
-			}
-			html += '</div>';
+		html += '</div>';
+
+		// Install tab-switching handlers (global, idempotent)
+		if (!window._bkSwitchSection) {
+			window._bkSwitchSection = function(btn) {
+				const grid = btn.closest('.exp-bracket-grid');
+				const key = btn.dataset.bkSection;
+				grid.querySelectorAll('.bk-section-tab').forEach(t => t.classList.toggle('active', t.dataset.bkSection === key));
+				grid.querySelectorAll('.bk-section').forEach(s => s.style.display = s.dataset.bkSection === key ? '' : 'none');
+			};
+			window._bkSwitchRound = function(btn) {
+				const grid = btn.closest('.exp-bracket-grid');
+				const key = btn.dataset.bkSection;
+				const ri = btn.dataset.bkRound;
+				grid.querySelectorAll(`.bk-round-tab[data-bk-section="${key}"]`).forEach(t => t.classList.toggle('active', t.dataset.bkRound === ri));
+				grid.querySelectorAll(`.bk-round-panel[data-bk-section="${key}"]`).forEach(p => p.style.display = p.dataset.bkRound === ri ? '' : 'none');
+			};
+		}
+
+		return html;
+	}
+
+	_renderMatchCard(m, focusTeam, isGrandFinal) {
+		const hasFocus = this._matchInvolves(m, focusTeam);
+		const isLive = m.status === 'live';
+		const isCompleted = m.status === 'completed';
+		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
+
+		// Split score: "2-0" → ["2","0"], "13-3" → ["13","3"]
+		let score1 = '', score2 = '';
+		if (m.score && m.score !== 'FF') {
+			const parts = m.score.split('-');
+			if (parts.length === 2) { score1 = parts[0].trim(); score2 = parts[1].trim(); }
+			else { score1 = m.score; score2 = ''; }
+		} else if (m.score === 'FF') {
+			score1 = m.winner === m.team1 ? 'FF' : '';
+			score2 = m.winner === m.team2 ? 'FF' : '';
+		}
+
+		// Status label
+		let statusLabel = '';
+		if (isCompleted) statusLabel = 'FT';
+		else if (isLive) statusLabel = 'LIVE';
+
+		const cardCls = [
+			'bk-card',
+			hasFocus ? 'focus' : '',
+			isLive ? 'live' : '',
+			isCompleted ? 'completed' : '',
+			isGrandFinal ? 'grand-final' : '',
+			isTbd ? 'tbd' : '',
+		].filter(Boolean).join(' ');
+
+		let html = `<div class="${cardCls}">`;
+
+		// Status badge (top-right)
+		if (statusLabel) {
+			html += `<span class="bk-status${isLive ? ' live' : ''}">${statusLabel}</span>`;
+		}
+
+		// Team 1 row
+		const t1Winner = m.winner && m.winner === m.team1;
+		const t1Loser = m.winner && m.winner !== m.team1;
+		const t1Focus = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
+		html += `<div class="bk-team-row${t1Winner ? ' winner' : ''}${t1Loser ? ' loser' : ''}${t1Focus ? ' focus-team' : ''}">`;
+		html += `<span class="bk-team-name">${this.esc(m.team1 || 'TBD')}</span>`;
+		html += `<span class="bk-team-score">${this.esc(score1)}</span>`;
+		html += '</div>';
+
+		// Team 2 row
+		const t2Winner = m.winner && m.winner === m.team2;
+		const t2Loser = m.winner && m.winner !== m.team2;
+		const t2Focus = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
+		html += `<div class="bk-team-row${t2Winner ? ' winner' : ''}${t2Loser ? ' loser' : ''}${t2Focus ? ' focus-team' : ''}">`;
+		html += `<span class="bk-team-name">${this.esc(m.team2 || 'TBD')}</span>`;
+		html += `<span class="bk-team-score">${this.esc(score2)}</span>`;
+		html += '</div>';
+
+		// Note (below card)
+		if (m.note) {
+			html += `<div class="bk-note">${this.esc(m.note)}</div>`;
 		}
 
 		html += '</div>';
