@@ -879,43 +879,62 @@
 		.dark .exp-bracket-scenario.loss { color: #f87171; background: rgba(248,113,113,0.1); }
 
 		/* Bracket grid — minimal FotMob tree */
+		/* === Bracket tree === */
 		.exp-bracket-grid { margin-top: 10px; }
+		.bk-section { margin-bottom: 10px; }
+		.bk-section:last-child { margin-bottom: 0; }
 		.bk-label {
-			font-size: 0.54rem; font-weight: 700; text-transform: uppercase;
-			letter-spacing: 0.08em; color: var(--muted); margin: 10px 0 4px; padding-top: 8px;
-			border-top: 1px solid var(--border);
+			font-size: 0.5rem; font-weight: 700; text-transform: uppercase;
+			letter-spacing: 0.08em; color: var(--muted); margin: 0 0 4px;
 		}
-		.bk-label:first-child { border-top: none; margin-top: 0; padding-top: 0; }
 		.bk-label.gf { color: #b8860b; }
 		.dark .bk-label.gf { color: #daa520; }
-		.bk-round { margin-bottom: 6px; }
-		.bk-round-name { font-size: 0.5rem; color: var(--muted); margin-bottom: 2px; }
-		.bk-tbd-placeholder { font-size: 0.5rem; color: var(--muted); opacity: 0.4; padding: 1px 0; }
-		.bk-pairs { display: flex; flex-direction: column; gap: 4px; }
-		.bk-pair { display: flex; gap: 6px; }
+		.bk-tree { display: flex; overflow-x: auto; }
+		.bk-rcol { flex-shrink: 0; display: flex; flex-direction: column; }
+		.bk-slots {
+			display: flex; flex-direction: column;
+			justify-content: space-around; flex: 1;
+			min-height: 28px; padding: 4px 0;
+		}
 		.bk-m {
-			flex: 1; border-radius: 6px; overflow: hidden; background: var(--bg-card);
-			border: 1px solid var(--border); position: relative;
+			width: 90px; border-radius: 4px; overflow: hidden;
+			background: var(--bg-card); border: 1px solid var(--border); position: relative;
 		}
 		.bk-m.f { border-color: #7c3aed; }
 		.dark .bk-m.f { border-color: #a78bfa; }
 		.bk-m.live { border-color: #dc2626; }
-		.bk-m.tbd { opacity: 0.35; }
+		.bk-m.tbd { opacity: 0.3; }
 		.bk-t {
 			display: flex; justify-content: space-between; align-items: center;
-			padding: 3px 8px; font-size: 0.65rem;
+			padding: 2px 6px; font-size: 0.58rem; white-space: nowrap; overflow: hidden;
 		}
 		.bk-t + .bk-t { border-top: 1px solid var(--border); }
+		.bk-t span:first-child { overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
 		.bk-t.w { font-weight: 700; }
 		.bk-t.w .bk-s { color: #16a34a; }
 		.dark .bk-t.w .bk-s { color: #4ade80; }
 		.bk-t.ft span:first-child { color: #7c3aed; }
 		.dark .bk-t.ft span:first-child { color: #a78bfa; }
-		.bk-s { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 14px; text-align: right; }
+		.bk-s { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 12px; text-align: right; flex-shrink: 0; }
 		.bk-live {
-			position: absolute; top: 4px; right: 4px; width: 5px; height: 5px;
+			position: absolute; top: 3px; right: 3px; width: 5px; height: 5px;
 			border-radius: 50%; background: #dc2626; animation: livePulse 2s ease-in-out infinite;
 		}
+		.bk-conn { display: flex; flex-direction: column; width: 14px; flex-shrink: 0; padding: 4px 0; }
+		.bk-cp { flex: 1; position: relative; min-height: 8px; }
+		.bk-cpin {
+			position: absolute; top: 25%; bottom: 25%; left: 0; right: 50%;
+			border-top: 1px solid var(--muted); border-bottom: 1px solid var(--muted);
+			border-right: 1px solid var(--muted);
+		}
+		.bk-cp::after {
+			content: ''; position: absolute; top: 50%; left: 50%; right: 0;
+			border-top: 1px solid var(--muted);
+		}
+		.bk-conn.solo .bk-cpin { display: none; }
+		.bk-conn.solo .bk-cp::after { left: 0; }
+		.bk-conn.none { width: 6px; }
+		.bk-tbd-placeholder { font-size: 0.5rem; color: var(--muted); opacity: 0.4; padding: 1px 0; }
 
 		/* === Featured sections === */
 		#featured-sections { padding: 0 16px; margin-bottom: 8px; }
@@ -1111,7 +1130,8 @@
 			.exp-teams { gap: 12px; }
 			.exp-bracket-match { padding: 3px 6px; font-size: 0.68rem; }
 			.exp-bracket-match-stage { min-width: 70px; font-size: 0.56rem; }
-			.bk-t { padding: 2px 6px; font-size: 0.6rem; }
+			.bk-m { width: 78px; }
+			.bk-t { padding: 2px 4px; font-size: 0.52rem; }
 			.exp-esports-map-name { min-width: 90px; }
 		}
 	</style>

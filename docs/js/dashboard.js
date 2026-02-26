@@ -3032,53 +3032,70 @@ class Dashboard {
 	_renderBracketGrid(playoffs, focusTeam) {
 		let html = '<div class="exp-bracket-grid">';
 
-		// Upper bracket
 		if (playoffs.upperBracket?.length > 0) {
-			html += '<div class="bk-label">Upper Bracket</div>';
-			for (const round of playoffs.upperBracket) {
-				html += this._renderBracketRound(round, focusTeam);
-			}
+			html += '<div class="bk-section"><div class="bk-label">Upper Bracket</div>';
+			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
+			html += '</div>';
 		}
 
-		// Lower bracket
 		if (playoffs.lowerBracket?.length > 0) {
-			html += '<div class="bk-label">Lower Bracket</div>';
-			for (const round of playoffs.lowerBracket) {
-				html += this._renderBracketRound(round, focusTeam);
-			}
+			html += '<div class="bk-section"><div class="bk-label">Lower Bracket</div>';
+			html += this._renderBracketTree(playoffs.lowerBracket, focusTeam);
+			html += '</div>';
 		}
 
-		// Grand Final
 		if (playoffs.grandFinal?.matches?.length > 0) {
-			html += '<div class="bk-label gf">Grand Final</div>';
-			html += this._renderBracketRound({ round: null, matches: playoffs.grandFinal.matches }, focusTeam);
+			html += '<div class="bk-section"><div class="bk-label gf">Grand Final</div>';
+			html += this._renderBracketTree([{ matches: playoffs.grandFinal.matches }], focusTeam);
+			html += '</div>';
 		}
 
 		html += '</div>';
 		return html;
 	}
 
-	_renderBracketRound(round, focusTeam) {
-		const allTbd = round.matches.every(m => (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD');
-		let html = '<div class="bk-round">';
-		if (round.round) {
-			html += `<div class="bk-round-name">${this.esc(round.round)}</div>`;
+	_renderBracketTree(rounds, focusTeam) {
+		// Trim trailing fully-TBD rounds
+		const vis = [...rounds];
+		while (vis.length > 1) {
+			const last = vis[vis.length - 1];
+			if (last.matches.every(m => (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD')) {
+				vis.pop();
+			} else break;
 		}
-		if (allTbd) {
-			// Collapse fully-TBD rounds to a single muted line
-			html += `<div class="bk-tbd-placeholder">${round.matches.length} match${round.matches.length > 1 ? 'es' : ''} TBD</div>`;
-		} else {
-			// Pair matches 2-per-row
-			html += '<div class="bk-pairs">';
-			for (let i = 0; i < round.matches.length; i += 2) {
-				html += '<div class="bk-pair">';
-				html += this._renderMatchCard(round.matches[i], focusTeam);
-				if (round.matches[i + 1]) {
-					html += this._renderMatchCard(round.matches[i + 1], focusTeam);
-				}
-				html += '</div>';
+		if (vis.length === 0) return '';
+
+		let html = '<div class="bk-tree">';
+		for (let i = 0; i < vis.length; i++) {
+			const round = vis[i];
+			const next = vis[i + 1];
+
+			// Round column
+			html += '<div class="bk-rcol"><div class="bk-slots">';
+			for (const m of round.matches) {
+				html += this._renderMatchCard(m, focusTeam);
 			}
-			html += '</div>';
+			html += '</div></div>';
+
+			// Connector column between rounds
+			if (next) {
+				const lc = round.matches.length;
+				const rc = next.matches.length;
+				if (lc > 1 && rc === Math.ceil(lc / 2)) {
+					// Standard bracket: N matches → N/2 (pairs merge)
+					html += '<div class="bk-conn">';
+					for (let p = 0; p < rc; p++) html += '<div class="bk-cp"><div class="bk-cpin"></div></div>';
+					html += '</div>';
+				} else if (lc === rc) {
+					// 1:1 pass-through
+					html += '<div class="bk-conn solo">';
+					for (let p = 0; p < lc; p++) html += '<div class="bk-cp"></div>';
+					html += '</div>';
+				} else {
+					// Irregular transition — gap only, no lines
+					html += '<div class="bk-conn none"></div>';
+				}
+			}
 		}
 		html += '</div>';
 		return html;
@@ -3089,7 +3106,6 @@ class Dashboard {
 		const isLive = m.status === 'live';
 		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
 
-		// Split score
 		let s1 = '', s2 = '';
 		if (m.score && m.score !== 'FF') {
 			const p = m.score.split('-');
