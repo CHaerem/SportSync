@@ -3065,34 +3065,53 @@ class Dashboard {
 		}
 		if (vis.length === 0) return '';
 
+		// Short round names for headers
+		const shortName = (r) => {
+			if (!r) return '';
+			const s = r.toLowerCase();
+			if (s.includes('final') && !s.includes('quarter') && !s.includes('semi')) return 'Final';
+			if (s.includes('semi')) return 'SF';
+			if (s.includes('quarter')) return 'QF';
+			return r.replace(/round\s*/i, 'R');
+		};
+
 		let html = '<div class="bk-tree">';
 		for (let i = 0; i < vis.length; i++) {
 			const round = vis[i];
 			const next = vis[i + 1];
+			const isLastCol = !next;
 
-			// Round column
-			html += '<div class="bk-rcol"><div class="bk-slots">';
+			// Round column with header
+			html += '<div class="bk-rcol">';
+			html += `<div class="bk-rh">${this.esc(shortName(round.round))}</div>`;
+			html += '<div class="bk-slots">';
+			let tbdCount = 0;
 			for (const m of round.matches) {
-				html += this._renderMatchCard(m, focusTeam);
+				const mTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
+				if (mTbd && isLastCol && round.matches.length > 2) {
+					tbdCount++;
+				} else {
+					html += this._renderMatchCard(m, focusTeam);
+				}
+			}
+			if (tbdCount > 0) {
+				html += `<div class="bk-tbd-count">+${tbdCount} TBD</div>`;
 			}
 			html += '</div></div>';
 
-			// Connector column between rounds
+			// Connector column between rounds (with spacer for header alignment)
 			if (next) {
 				const lc = round.matches.length;
 				const rc = next.matches.length;
 				if (lc > 1 && rc === Math.ceil(lc / 2)) {
-					// Standard bracket: N matches → N/2 (pairs merge)
-					html += '<div class="bk-conn">';
+					html += '<div class="bk-conn"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
 					for (let p = 0; p < rc; p++) html += '<div class="bk-cp"><div class="bk-cpin"></div></div>';
-					html += '</div>';
+					html += '</div></div>';
 				} else if (lc === rc) {
-					// 1:1 pass-through
-					html += '<div class="bk-conn solo">';
+					html += '<div class="bk-conn solo"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
 					for (let p = 0; p < lc; p++) html += '<div class="bk-cp"></div>';
-					html += '</div>';
+					html += '</div></div>';
 				} else {
-					// Irregular transition — gap only, no lines
 					html += '<div class="bk-conn none"></div>';
 				}
 			}
@@ -3105,6 +3124,7 @@ class Dashboard {
 		const hasFocus = this._matchInvolves(m, focusTeam);
 		const isLive = m.status === 'live';
 		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
+		const hasWinner = !!m.winner;
 
 		let s1 = '', s2 = '';
 		if (m.score && m.score !== 'FF') {
@@ -3118,13 +3138,15 @@ class Dashboard {
 		const cls = ['bk-m', hasFocus ? 'f' : '', isLive ? 'live' : '', isTbd ? 'tbd' : ''].filter(Boolean).join(' ');
 		const t1w = m.winner === m.team1;
 		const t2w = m.winner === m.team2;
+		const t1l = hasWinner && !t1w;
+		const t2l = hasWinner && !t2w;
 		const t1f = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
 		const t2f = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
 
 		let html = `<div class="${cls}">`;
 		if (isLive) html += '<span class="bk-live"></span>';
-		html += `<div class="bk-t${t1w ? ' w' : ''}${t1f ? ' ft' : ''}"><span>${this.esc(m.team1 || 'TBD')}</span><span class="bk-s">${this.esc(s1)}</span></div>`;
-		html += `<div class="bk-t${t2w ? ' w' : ''}${t2f ? ' ft' : ''}"><span>${this.esc(m.team2 || 'TBD')}</span><span class="bk-s">${this.esc(s2)}</span></div>`;
+		html += `<div class="bk-t${t1w ? ' w' : ''}${t1l ? ' l' : ''}${t1f ? ' ft' : ''}"><span>${this.esc(m.team1 || 'TBD')}</span><span class="bk-s">${this.esc(s1)}</span></div>`;
+		html += `<div class="bk-t${t2w ? ' w' : ''}${t2l ? ' l' : ''}${t2f ? ' ft' : ''}"><span>${this.esc(m.team2 || 'TBD')}</span><span class="bk-s">${this.esc(s2)}</span></div>`;
 		html += '</div>';
 		return html;
 	}
