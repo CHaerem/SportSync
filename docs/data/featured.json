@@ -2,47 +2,43 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "5 events across 3 sports today"
+      "text": "Glimt shock Inter at San Siro — Sporting await in the last 16"
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Internazionale",
+      "awayTeam": "Bodo/Glimt"
+    },
+    {
+      "type": "narrative",
+      "text": "An astonishing result in Milan gives Bodø/Glimt their biggest European night. The reward: Sporting CP in the next round — and 200,000 new followers watching their journey."
     },
     {
       "type": "event-line",
-      "text": "⛳ Cognizant Classic in The Palm Beaches, 06:00 — PGA Tour"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Wolverhampton Wanderers",
-      "awayTeam": "Aston Villa",
-      "showStandings": false,
-      "_fallbackText": "⚽ Wolverhampton Wanderers v Aston Villa, 21:00, Premier League — Aston Villa visit Wolves in a routine Premier League mid-table clash with no Norwegian players involved"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Levante",
-      "awayTeam": "Alavés",
-      "showStandings": false,
-      "_fallbackText": "⚽ Levante v Alavés, 21:00, La Liga — Alavés travel to Levante in a low-profile La Liga fixture with minimal title or relegation implications"
+      "text": "🎿 16:10 — Bø brothers & Lægreid in Men's 20km Individual, Kontiolahti"
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
-    },
-    {
-      "type": "divider",
-      "text": "This Week"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Liverpool",
-      "awayTeam": "West Ham United",
-      "showStandings": true,
-      "_fallbackText": "⚽ Sat 16:00 — West Ham United at Liverpool"
+      "tournament": "pga"
     },
     {
       "type": "event-line",
-      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
+      "text": "🏅 20:00 — Paralympic Winter Games 2026 Opening Ceremony, Milano"
+    },
+    {
+      "type": "divider",
+      "text": "This Weekend"
+    },
+    {
+      "type": "event-group",
+      "label": "⚽ Must-watch fixtures",
+      "items": [
+        "Sat 16:00 — West Ham at Liverpool (PL title race) ★4",
+        "Sat 16:15 — Villarreal at Barcelona (La Liga) ★4",
+        "Sun 17:30 — Chelsea at Arsenal (London derby) ★5"
+      ]
     }
   ],
-  "generatedAt": "2026-02-27T11:27:13.138Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-27T11:46:22.958Z",
+  "provider": "claude-cli"
 }

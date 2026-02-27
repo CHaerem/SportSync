@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-27T11:27:15.548Z",
-  "patternsDetected": 5,
+  "generatedAt": "2026-02-27T11:46:25.130Z",
+  "patternsDetected": 6,
   "patterns": [
     {
       "type": "stagnant_loop",
       "severity": "high",
       "loopName": "pipelineHealth",
       "score": 0.75,
-      "stagnantRuns": 11,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 11 consecutive runs. It needs intervention to progress toward 1.0."
+      "stagnantRuns": 12,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 12 consecutive runs. It needs intervention to progress toward 1.0."
     },
     {
       "type": "recurring_health_warning",
       "severity": "medium",
       "issueCode": "norwegian_tagging_anomaly",
-      "count": 7,
+      "count": 8,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T11:27:15.472Z",
-      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 7 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-27T11:46:24.837Z",
+      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 8 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -29,12 +29,21 @@
       "suggestion": "Health warning \"snapshot_event_mismatch\" has fired 9 times since 2026-02-26. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
+      "type": "recurring_health_warning",
+      "severity": "medium",
+      "issueCode": "recipe_repair_exhausted",
+      "count": 5,
+      "firstSeen": "2026-02-27T08:26:58.303Z",
+      "lastSeen": "2026-02-27T11:46:24.837Z",
+      "suggestion": "Health warning \"recipe_repair_exhausted\" has fired 5 times since 2026-02-27. Investigate and fix the root cause rather than letting it keep firing."
+    },
+    {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 6,
+      "fireCount": 5,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no matching athlete found in events data; Feat",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no mat...\" has fired 6 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no mat...\" has fired 5 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -62,14 +71,14 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 186,
+      "count": 187,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-27T11:27:15.472Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "ux_eval_fallback": {
-      "count": 120,
+      "count": 121,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-27T11:27:15.473Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -97,9 +106,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "norwegian_tagging_anomaly": {
-      "count": 7,
+      "count": 8,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T11:27:15.472Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "standings_empty": {
       "count": 1,
@@ -107,9 +116,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 44,
+      "count": 45,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-27T11:27:15.472Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -122,14 +131,14 @@
       "lastSeen": "2026-02-27T07:33:15.962Z"
     },
     "bracket_stale_matches": {
-      "count": 11,
+      "count": 12,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T11:27:15.473Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "quota_skip_time_critical": {
-      "count": 15,
+      "count": 16,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T11:27:15.473Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     },
     "recipe_persistent_failure": {
       "count": 8,
@@ -147,9 +156,9 @@
       "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "recipe_repair_exhausted": {
-      "count": 4,
+      "count": 5,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T11:27:15.473Z"
+      "lastSeen": "2026-02-27T11:46:24.837Z"
     }
   },
   "interventionEffectiveness": {
@@ -162,7 +171,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-27T11:27:15.548Z",
+    "recordedAt": "2026-02-27T11:46:25.128Z",
     "moduleCount": 64,
     "avgModuleSize": 324,
     "pipelineSteps": 27,
@@ -175,5 +184,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "5 patterns detected (1 high, 4 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
+  "summary": "6 patterns detected (1 high, 5 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
 }
