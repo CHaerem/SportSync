@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T13:28:57.886Z",
+  "generatedAt": "2026-02-27T14:18:17.308Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 73,
+      "ageMinutes": 122,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 73,
+      "ageMinutes": 122,
       "stale": false
     }
   },
@@ -135,8 +135,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 86,
-    "sevenDay": 12,
+    "fiveHour": 90,
+    "sevenDay": 13,
     "model": null,
     "stepsSkipped": 5,
     "skippedSteps": [
@@ -148,18 +148,18 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 105922,
+    "totalDuration": 106011,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 32891,
-        "share": 31
+        "duration": 34809,
+        "share": 33
       },
       {
         "name": "verify-schedules",
-        "duration": 60067,
+        "duration": 60073,
         "share": 57
       }
     ],
@@ -170,7 +170,7 @@
   "bracketHealth": {
     "active": 1,
     "orphaned": 0,
-    "staleMatches": 4,
+    "staleMatches": 5,
     "staleTournaments": [
       "draculan-s5"
     ]
@@ -182,7 +182,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 7,
+        "consecutiveFailures": 8,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -236,7 +236,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 86%, 7d: 12%) — 5 step(s) skipped"
+      "message": "Quota tier 3 (5h: 90%, 7d: 13%) — 5 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -246,7 +246,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 31% of total pipeline time (33s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 33% of total pipeline time (35s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -261,17 +261,17 @@
     {
       "severity": "warning",
       "code": "bracket_stale_matches",
-      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 4 stale match(es) — bracket data needs refresh"
+      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 5 stale match(es) — bracket data needs refresh"
     },
     {
       "severity": "warning",
       "code": "quota_skip_time_critical",
-      "message": "discover-events was quota-skipped but 4 bracket match(es) in 1 tournament(s) need refresh"
+      "message": "discover-events was quota-skipped but 5 bracket match(es) in 1 tournament(s) need refresh"
     },
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 7 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 8 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
@@ -291,32 +291,33 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T13:28:58.040Z",
+    "computedAt": "2026-02-27T14:18:17.463Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.55,
+        "score": 0.75,
         "reasons": [
           "overdue by 200%",
+          "1 match(es) within 2h",
           "focus team involved",
-          "4 stale match(es)"
+          "5 stale match(es)"
         ],
-        "suggestedQuotaPriority": 2,
-        "suggestedRefreshIntervalMs": 7200000,
-        "suggestedStalenessThresholdMinutes": 180
+        "suggestedQuotaPriority": 1,
+        "suggestedRefreshIntervalMs": 3600000,
+        "suggestedStalenessThresholdMinutes": 60
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.1,
         "reasons": [
-          "7 consecutive failures"
+          "8 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.55,
+    "highestUrgency": 0.75,
     "urgentTargets": 1
   },
   "statusSummary": {
