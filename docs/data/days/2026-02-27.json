@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-27",
-  "generatedAt": "2026-02-27T21:20:02.750Z",
+  "generatedAt": "2026-02-27T22:17:23.768Z",
   "events": {
     "upcoming": [
       {
@@ -39,7 +39,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-02-27T21:18:06.116Z"
+        "enrichedAt": "2026-02-27T22:14:35.580Z"
       },
       {
         "sport": "golf",
@@ -120,13 +120,62 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-02-27T21:18:06.117Z",
+        "enrichedAt": "2026-02-27T22:14:35.580Z",
         "_enrichHash": "edea3533e1aa830c84f4d5e438bd6981"
       }
     ],
     "results": []
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Wolverhampton Wanderers",
+      "awayTeam": "Aston Villa",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-02-27T20:00Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Molineux Stadium",
+      "goalScorers": [
+        {
+          "player": "João Gomes",
+          "team": "Wolverhampton Wanderers",
+          "minute": "61'"
+        },
+        {
+          "player": "Rodrigo Gomes",
+          "team": "Wolverhampton Wanderers",
+          "minute": "90'+8'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Levante",
+      "awayTeam": "Alavés",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-02-27T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadi Ciutat de València",
+      "goalScorers": [
+        {
+          "player": "Carlos Espí",
+          "team": "Levante",
+          "minute": "88'"
+        },
+        {
+          "player": "Carlos Espí",
+          "team": "Levante",
+          "minute": "90'+7'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -155,11 +204,11 @@
         "position": 3,
         "team": "Aston Villa",
         "teamShort": "AVL",
-        "played": 27,
+        "played": 28,
         "won": 15,
         "drawn": 6,
-        "lost": 6,
-        "gd": 10,
+        "lost": 7,
+        "gd": 8,
         "points": 51
       },
       {
@@ -193,22 +242,13 @@
             "position": 1,
             "positionDisplay": null,
             "player": "Austin Smotherman",
-            "score": "-10",
+            "score": "-12",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11056.png"
           },
           {
             "position": 2,
-            "positionDisplay": null,
-            "player": "Nico Echavarria",
-            "score": "-9",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4408316.png"
-          },
-          {
-            "position": 3,
             "positionDisplay": null,
             "player": "Taylor Moore",
             "score": "-8",
@@ -217,13 +257,22 @@
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10664.png"
           },
           {
-            "position": 4,
+            "position": 3,
             "positionDisplay": null,
             "player": "A.J. Ewart",
             "score": "-7",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5075652.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Nico Echavarria",
+            "score": "-7",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4408316.png"
           },
           {
             "position": 5,
@@ -284,7 +333,7 @@
         "tournament": "La Liga",
         "time": "2026-02-28T15:15:00.000Z",
         "timeLabel": "28 Feb, 16:15",
-        "relativeStart": "In 17h 57m",
+        "relativeStart": "In 17h",
         "importance": 4,
         "norwegian": false,
         "streaming": [
@@ -308,7 +357,7 @@
         "tournament": "Premier League",
         "time": "2026-02-28T15:00:00.000Z",
         "timeLabel": "28 Feb, 16:00",
-        "relativeStart": "In 17h 42m",
+        "relativeStart": "In 16h 45m",
         "importance": 4,
         "norwegian": false,
         "streaming": [
@@ -338,7 +387,7 @@
         "tournament": "Premier League",
         "time": "2026-02-28T15:00:00.000Z",
         "timeLabel": "28 Feb, 16:00",
-        "relativeStart": "In 17h 42m",
+        "relativeStart": "In 16h 45m",
         "importance": 3,
         "norwegian": false,
         "streaming": [
@@ -361,9 +410,15 @@
         ]
       }
     ],
-    "headline": "⛷️ Fri 16:10 — Bø leads Norway in 20km Individual, Kontiolahti"
+    "headline": "Bø leads Norway's 20km charge as Arsenal breathe after Villa stumble"
   },
   "rssHighlights": [
+    {
+      "title": "Tabelljumboen med overraskende seier",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/tabelljumboen-med-overraskende-seier-1.17788806"
+    },
     {
       "title": "Norge vant sin andre kvalifiseringskamp",
       "source": "nrk-sport",
@@ -387,12 +442,6 @@
       "source": "nrk-sport",
       "sport": "general",
       "link": "https://www.nrk.no/sport/ujevn-reitan-runde-i-florida-_-ventura-kan-misse-cuten-1.17788754"
-    },
-    {
-      "title": "Tennis: Kjær utslått i Sveits",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/tennis_-kjaer-utslatt-i-sveits-1.17788742"
     }
   ],
   "meta": {
@@ -401,7 +450,7 @@
       "esports",
       "golf"
     ],
-    "hasResults": false,
+    "hasResults": true,
     "hasStandings": true
   }
 }

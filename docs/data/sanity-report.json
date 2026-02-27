@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T21:20:04.090Z",
+  "generatedAt": "2026-02-27T22:17:25.332Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -89,11 +89,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
-    "briefPresent": false,
+    "featuredBlockCount": 8,
+    "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 14
+    "issueCount": 16
   },
   "findings": [
     {
@@ -169,12 +169,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"West Ham Saturday\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Emirates\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Blues\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -238,14 +248,19 @@
     },
     {
       "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 29,
+    "total": 32,
     "critical": 0,
-    "warning": 17,
+    "warning": 20,
     "info": 12
   },
   "pass": true,
