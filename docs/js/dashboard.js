@@ -3322,8 +3322,12 @@ class Dashboard {
 			html += '</div>';
 		}
 
-		// Visual bracket tree
-		html += this._renderBracketGrid(b.playoffs, focusTeam);
+		// Visual bracket tree — only show full grid when there's no focus team path.
+		// When a focus team exists, the compact journey summary above is the primary view
+		// (personalization: show what matters to the user, not the whole tournament).
+		if (!path) {
+			html += this._renderBracketGrid(b.playoffs, focusTeam);
+		}
 
 		html += '</div>';
 		return html;
