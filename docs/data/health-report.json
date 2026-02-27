@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T06:34:33.580Z",
+  "generatedAt": "2026-02-27T07:33:15.896Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 11,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 11,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 11,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 10,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 10,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 13,
+      "ageMinutes": 11,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -134,29 +134,28 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 2,
+    "tier": 0,
     "fiveHour": 0,
-    "sevenDay": 73,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 3,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes",
-      "post-generate"
-    ]
+    "sevenDay": 0,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 291396,
-    "stepCount": 24,
-    "timeoutHits": [],
+    "totalDuration": 840618,
+    "stepCount": 27,
+    "timeoutHits": [
+      "discover-events"
+    ],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 180873,
-        "share": 62
+        "name": "discover-events",
+        "duration": 300091,
+        "share": 36
       }
     ],
     "failedSteps": [
+      "discover-events",
       "verify-schedules"
     ]
   },
@@ -175,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 23,
+        "consecutiveFailures": 24,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -218,23 +217,23 @@
     },
     {
       "severity": "warning",
-      "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 0%, 7d: 73%) — 3 step(s) skipped"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
+      "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+    },
+    {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 62% of total pipeline time (181s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     },
     {
       "severity": "warning",
@@ -243,23 +242,18 @@
     },
     {
       "severity": "warning",
-      "code": "quota_skip_time_critical",
-      "message": "discover-events was quota-skipped but 5 bracket match(es) in 1 tournament(s) need refresh"
-    },
-    {
-      "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 23 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 24 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
-      "code": "quota_skip_time_critical",
-      "message": "learn-recipes was quota-skipped but 1 recipe(s) need repair — data source going dark"
+      "code": "recipe_repair_exhausted",
+      "message": "2 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T06:34:33.784Z",
+    "computedAt": "2026-02-27T07:33:16.059Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -277,7 +271,7 @@
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.12,
         "reasons": [
-          "23 consecutive failures"
+          "24 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -288,7 +282,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

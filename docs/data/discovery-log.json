@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-23T13:34:14.930Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-23T14:24:00.917Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -328,6 +322,35 @@
     },
     {
       "timestamp": "2026-02-27T06:22:06.666Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "icehockey-getligaen-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        },
+        {
+          "type": "refresh-bracket",
+          "target": "esports-cs2-2026.json",
+          "reason": "Active tournament bracket refresh: DraculaN Season 5",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-02-27T07:23:12.199Z",
       "tasks": [
         {
           "type": "new-config",
