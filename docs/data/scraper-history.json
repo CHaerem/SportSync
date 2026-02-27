@@ -499,6 +499,24 @@
         "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
       ],
       "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T21:09:42.540Z",
+      "success": false,
+      "resultCount": 0,
+      "durationMs": 431,
+      "issues": [
+        "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
+      ],
+      "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T21:17:58.975Z",
+      "action": "repair-llm",
+      "success": false,
+      "reason": "Invalid recipe returned by LLM"
     }
   ]
 }
