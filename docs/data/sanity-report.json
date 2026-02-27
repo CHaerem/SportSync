@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T19:28:01.204Z",
+  "generatedAt": "2026-02-27T20:14:16.200Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -18,10 +18,7 @@
         "DraculaN Season 5",
         "Cognizant Classic in The Palm Beaches"
       ],
-      "today": [
-        "Aston Villa at Wolverhampton Wanderers",
-        "Alavés at Levante"
-      ],
+      "today": [],
       "tomorrow": [
         "Sunderland at AFC Bournemouth",
         "Athletic Club at Rayo Vallecano",
@@ -46,8 +43,10 @@
         "Brentford at AFC Bournemouth",
         "Burnley at Everton",
         "Sunderland at Leeds United",
+        "Atlético Madrid at Barcelona",
         "Liverpool at Wolverhampton Wanderers",
         "GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)",
+        "Real Oviedo at Rayo Vallecano",
         "Chelsea at Aston Villa",
         "Arsenal at Brighton & Hove Albion",
         "West Ham United at Fulham",
@@ -94,7 +93,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 14
+    "issueCount": 16
   },
   "findings": [
     {
@@ -168,31 +167,6 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 44 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
@@ -260,13 +234,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 33,
+    "total": 28,
     "critical": 0,
-    "warning": 21,
+    "warning": 16,
     "info": 12
   },
   "pass": true,

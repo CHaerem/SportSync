@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-27T19:27:59.358Z",
+  "generatedAt": "2026-02-27T20:14:14.200Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 155001,
+    "generationMs": 158159,
     "tokenUsage": {
-      "input": 35921,
-      "output": 9221,
-      "cacheCreation": 19549,
-      "cacheRead": 16369,
-      "total": 45142,
-      "costUSD": 0.36090575,
+      "input": 35944,
+      "output": 9987,
+      "cacheCreation": 17497,
+      "cacheRead": 18444,
+      "total": 45931,
+      "costUSD": 0.36826824999999996,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 28
+      "footballCount": 27
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -63,14 +63,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 64,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.984
     },
     "after": {
       "totalEvents": 64,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 1,
+    "aiUpdatedFields": 2,
     "failedBatches": 0,
     "totalEvents": 64,
     "skipStats": {
       "total": 64,
-      "unchanged": 64,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 62,
+      "enriched": 2,
+      "skipRate": 0.97
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 15694,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 30197,
+      "output": 1191,
+      "calls": 1,
+      "total": 31388,
+      "costUSD": 0.12438075000000001,
       "tracked": true,
       "estimated": false
     }
