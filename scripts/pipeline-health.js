@@ -11,6 +11,7 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { readJsonIfExists, rootDataPath, writeJsonPretty, isEventInWindow } from "./lib/helpers.js";
+import { loadUserContext } from "./lib/focus-team-filter.js";
 import { evaluateAutonomy, trackTrend, detectRegressions } from "./autonomy-scorecard.js";
 import { analyzePatterns } from "./analyze-patterns.js";
 import { extractBracketMatches, buildRefreshTargets, computeAllUrgencies } from "./lib/refresh-urgency.js";
@@ -952,6 +953,39 @@ export function generateHealthReport(options = {}) {
 		});
 	}
 
+	// Focus-team health: check if favorite esports orgs have future events
+	const focusTeamHealth = { teams: [], hasCoverage: true };
+	const userContext = loadUserContext();
+	const favoriteEsportsOrgs = userContext?.favoriteEsportsOrgs || [];
+	if (favoriteEsportsOrgs.length > 0) {
+		const futureDate = new Date(Date.now() + 30 * 86400000);
+		for (const team of favoriteEsportsOrgs) {
+			const teamLower = team.toLowerCase();
+			const teamEvents = events.filter((e) => {
+				if (!e.sport?.toLowerCase().includes("esport")) return false;
+				const title = (e.title || "").toLowerCase();
+				const focusTeam = (e.focusTeam || "").toLowerCase();
+				return title.includes(teamLower) || focusTeam.includes(teamLower);
+			});
+			const futureEvents = teamEvents.filter((e) =>
+				e.time && new Date(e.time).getTime() > Date.now()
+			);
+			focusTeamHealth.teams.push({
+				name: team,
+				totalEvents: teamEvents.length,
+				futureEvents: futureEvents.length,
+			});
+			if (futureEvents.length === 0) {
+				focusTeamHealth.hasCoverage = false;
+				issues.push({
+					severity: "info",
+					code: "focus_team_no_events",
+					message: `${team}: no future esports events — discover-tournaments should run`,
+				});
+			}
+		}
+	}
+
 	// Determine overall status
 	const hasCritical = issues.some((i) => i.severity === "critical");
 	const hasWarning = issues.some((i) => i.severity === "warning");
@@ -974,6 +1008,7 @@ export function generateHealthReport(options = {}) {
 		pipelineTimingHealth,
 		bracketHealth,
 		recipeHealth,
+		focusTeamHealth,
 		unmappedLeagues: [...unmappedTournaments],
 		issues,
 		status,
