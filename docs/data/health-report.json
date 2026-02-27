@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-02-27T11:46:24.729Z",
+  "generatedAt": "2026-02-27T12:16:12.548Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -55,27 +55,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -135,14 +135,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 13,
-    "sevenDay": 7,
+    "fiveHour": 37,
+    "sevenDay": 9,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 771746,
+    "totalDuration": 628477,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,8 +150,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300100,
-        "share": 39
+        "duration": 300099,
+        "share": 48
       }
     ],
     "failedSteps": [
@@ -170,11 +170,11 @@
   "recipeHealth": {
     "active": 1,
     "broken": 0,
-    "recentSuccessRate": 4,
+    "recentSuccessRate": 3,
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 4,
+        "consecutiveFailures": 5,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -228,7 +228,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 39% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 48% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -248,31 +248,30 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T11:46:25.165Z",
+    "computedAt": "2026-02-27T12:16:12.759Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.75,
+        "score": 0.55,
         "reasons": [
           "overdue by 200%",
-          "2 match(es) within 2h",
           "focus team involved",
           "4 stale match(es)"
         ],
-        "suggestedQuotaPriority": 1,
-        "suggestedRefreshIntervalMs": 3600000,
-        "suggestedStalenessThresholdMinutes": 60
+        "suggestedQuotaPriority": 2,
+        "suggestedRefreshIntervalMs": 7200000,
+        "suggestedStalenessThresholdMinutes": 180
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.02,
+        "score": 0.01,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.75,
+    "highestUrgency": 0.55,
     "urgentTargets": 1
   },
   "statusSummary": {
