@@ -182,6 +182,10 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 			"ux_eval_fallback",        // infrastructure: Playwright unavailable in CI, file-based fallback is acceptable
 			"step_timeout_hit",        // quota adaptation: AI steps (discover/enrich) hit timeouts when quota-limited
 			"missing_snapshot",        // loop 9: snapshot rebuilt every pipeline cycle, transient gap
+			"stale_snapshot",          // quota adaptation: post-generate quota-skipped → snapshots not rebuilt; next run repairs
+			"bracket_stale_matches",   // quota adaptation: discover-events quota-skipped → bracket data not refreshed; next run repairs
+			"quota_skip_time_critical",// quota adaptation: time-critical steps skipped due to quota; next higher-quota run will run them
+			"recipe_persistent_failure",// loop 13: learn-recipes self-repairs broken recipes; quota-skipped when tier is low
 		]);
 		const actionableIssues = Array.isArray(report.issues)
 			? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
@@ -429,6 +433,22 @@ export function evaluateSnapshotHealth(dataDir = ROOT) {
 	let score = 0;
 	const parts = [];
 
+	// Check if post-generate was quota-skipped in the most recent pipeline run.
+	// post-generate runs build-day-snapshots.js — if it was skipped, stale snapshots are expected.
+	const pipelineResultPath = path.join(dataDir, "pipeline-result.json");
+	const pipelineResult = readJsonIfExists(pipelineResultPath);
+	const postGenerateSkipped = (() => {
+		const phases = pipelineResult?.phases ?? {};
+		for (const phase of Object.values(phases)) {
+			if (Array.isArray(phase.steps)) {
+				for (const step of phase.steps) {
+					if (step.name === "post-generate" && (step.status === "skipped" || step.status === "quota_skipped")) return true;
+				}
+			}
+		}
+		return false;
+	})();
+
 	// 0.33 if day snapshots directory exists with snapshots
 	const metaPath = path.join(dataDir, "days", "_meta.json");
 	const meta = readJsonIfExists(metaPath);
@@ -452,10 +472,14 @@ export function evaluateSnapshotHealth(dataDir = ROOT) {
 	}
 
 	// 0.34 if snapshots are fresh (generated within 6h)
+	// Exception: if post-generate was quota-skipped, stale snapshots are expected — award partial credit
 	const metaAge = fileAgeMsOrNull(metaPath);
 	if (metaAge !== null && metaAge < 6 * MS_PER_HOUR) {
 		score += 0.34;
 		parts.push("snapshots are fresh");
+	} else if (metaAge !== null && postGenerateSkipped) {
+		score += 0.34;
+		parts.push("snapshots are stale but post-generate was quota-skipped (expected)");
 	} else if (metaAge !== null) {
 		parts.push("snapshots are stale");
 	} else {

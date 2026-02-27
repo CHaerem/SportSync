@@ -49,6 +49,10 @@ const KNOWN_MANAGED_CODES = new Set([
 	"step_timeout_hit",         // quota adaptation: AI steps hit timeouts when quota-limited
 	"missing_snapshot",         // loop 9: snapshot rebuilt every pipeline cycle, transient gap
 	"model_change_quality_drop",// loop 1+2: adaptive hints manage quality recovery after model changes; quality loops monitor and self-correct
+	"stale_snapshot",           // quota adaptation: post-generate quota-skipped → snapshots not rebuilt; next run repairs
+	"bracket_stale_matches",    // quota adaptation: discover-events quota-skipped → bracket data not refreshed; next run repairs
+	"quota_skip_time_critical", // quota adaptation: time-critical steps skipped due to quota; next higher-quota run will run them
+	"recipe_persistent_failure",// loop 13: learn-recipes self-repairs broken recipes; quota-skipped when tier is low
 ]);
 
 /**
