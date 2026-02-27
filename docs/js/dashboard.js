@@ -1118,11 +1118,10 @@ class Dashboard {
 
 		const name = tour.name || (tourKey === 'pga' ? 'PGA Tour' : 'DP World Tour');
 
-		// Find Norwegian player on leaderboard
-		const norPlayer = tour.leaderboard.find(p => {
-			const last = p.player.split(' ').pop().toLowerCase();
-			return ['hovland', 'aberg', 'ventura', 'olesen'].includes(last);
-		});
+		// Find tracked (Norwegian) player — data-driven via tracked flag from pipeline
+		const trackedNames = this._getTrackedGolferNames();
+		const norPlayer = tour.leaderboard.find(p => p.tracked)
+			|| (tour.trackedPlayers || [])[0];
 
 		const headshot = norPlayer && typeof getGolferHeadshot === 'function'
 			? getGolferHeadshot(norPlayer.player) : null;
@@ -1237,11 +1236,12 @@ class Dashboard {
 			}
 		}
 
-		// Live golf leaderboard
+		// Live golf leaderboard — use tracked names from standings data
 		if (this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
-			const norPlayer = this.liveLeaderboard.players.slice(0, 15).find(p => {
+			const trackedNames = this._getTrackedGolferNames();
+			const norPlayer = this.liveLeaderboard.players.find(p => {
 				const last = p.player.split(' ').pop().toLowerCase();
-				return ['hovland', 'aberg', 'ventura', 'olesen'].includes(last);
+				return trackedNames.has(last);
 			});
 
 			const name = this.liveLeaderboard.name || 'PGA Tour';
@@ -1975,12 +1975,29 @@ class Dashboard {
 		return html;
 	}
 
+	/** Get tracked player last names from standings data (data-driven, not hardcoded).
+	 *  Falls back to names from leaderboard entries with tracked flag. */
+	_getTrackedGolferNames() {
+		const names = new Set();
+		const tours = this.standings?.golf || {};
+		for (const tourKey of Object.keys(tours)) {
+			const tour = tours[tourKey];
+			for (const p of (tour.leaderboard || [])) {
+				if (p.tracked) names.add(p.player.split(' ').pop().toLowerCase());
+			}
+			for (const p of (tour.trackedPlayers || [])) {
+				names.add(p.player.split(' ').pop().toLowerCase());
+			}
+		}
+		return names;
+	}
+
 	renderLiveLeaderboard() {
 		const lb = this.liveLeaderboard;
 		if (!lb || !lb.players?.length) return '';
 
-		// Norwegian/favorite players for highlighting
-		const norNames = ['hovland', 'aberg', 'ventura', 'olesen', 'flaten'];
+		// Tracked player names derived from standings data (norwegian-golfers.json pipeline)
+		const trackedNames = this._getTrackedGolferNames();
 
 		let html = '<div class="lead-lb">';
 		html += '<div class="lead-lb-header">';
@@ -1989,19 +2006,16 @@ class Dashboard {
 		html += `<span class="lead-lb-badge"><span class="lead-lb-badge-dot"></span> ${this.esc(roundLabel)}</span>`;
 		html += '</div>';
 
-		// Show top 3 + Norwegian player (if not already in top 3)
+		// Show top 3 + tracked players (Norwegian golfers) from anywhere in the field
 		const top3 = lb.players.slice(0, 3);
-		const norPlayer = lb.players.find(p => {
+		const trackedInField = lb.players.filter(p => {
 			const last = p.player.split(' ').pop().toLowerCase();
-			return norNames.includes(last);
+			return trackedNames.has(last) && !top3.includes(p);
 		});
-		const showPlayers = [...top3];
-		if (norPlayer && !top3.find(p => p.player === norPlayer.player)) {
-			showPlayers.push(norPlayer);
-		}
+		const showPlayers = [...top3, ...trackedInField];
 
 		for (const p of showPlayers) {
-			const isNor = norNames.includes(p.player.split(' ').pop().toLowerCase());
+			const isTracked = trackedNames.has(p.player.split(' ').pop().toLowerCase());
 			const scoreNum = parseFloat(p.score);
 			const scoreCls = p.score.startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
 
@@ -2012,11 +2026,11 @@ class Dashboard {
 				  + '<span class="lb-img-placeholder" style="display:none">\u26f3</span>'
 				: '<span class="lb-img-placeholder">\u26f3</span>';
 
-			html += `<div class="lb-row${isNor ? ' is-you' : ''}">`;
+			html += `<div class="lb-row${isTracked ? ' is-you' : ''}">`;
 			html += `<span class="lb-pos">${this.esc(String(p.position))}</span>`;
 			html += imgHtml;
 			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
-			if (isNor) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
+			if (isTracked) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
 			html += `<span class="lb-score${scoreCls}">${this.esc(p.score)}</span>`;
 			if (p.thru && p.thru !== '-') html += `<span class="lb-thru">F${p.thru === '18' ? '' : p.thru}</span>`;
 			html += '</div>';
@@ -2031,13 +2045,14 @@ class Dashboard {
 		return html;
 	}
 
-	/** Render leaderboard from standings.json data for a golf tournament card */
+	/** Render leaderboard from standings.json data for a golf tournament card.
+	 *  Uses data-driven tracked flags from norwegian-golfers.json (via fetch-standings.js)
+	 *  instead of hardcoded name lists — new players added to the config are auto-surfaced. */
 	renderStandingsLeaderboard(tournament) {
 		const tourKey = (tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
 		const tour = this.standings.golf[tourKey];
 		if (!tour?.leaderboard?.length) return '';
 
-		const norNames = ['hovland', 'aberg', 'ventura', 'olesen', 'halvorsen', 'flaten'];
 		const statusLabel = tour.status === 'in_progress' ? 'In Progress' : (tour.status || '');
 
 		let html = '<div class="lead-lb">';
@@ -2046,19 +2061,17 @@ class Dashboard {
 		if (statusLabel) html += `<span class="lead-lb-badge">${this.esc(statusLabel)}</span>`;
 		html += '</div>';
 
-		// Show top 3 + Norwegian player (if not already in top 3)
+		// Show top 3 + all tracked players (Norwegian golfers) regardless of position.
+		// Tracked players are flagged by the pipeline using norwegian-golfers.json —
+		// no hardcoded names needed. When a new Norwegian golfer is discovered,
+		// they automatically appear here.
 		const top3 = tour.leaderboard.slice(0, 3);
-		const norPlayer = tour.leaderboard.find(p => {
-			const last = p.player.split(' ').pop().toLowerCase();
-			return norNames.includes(last);
-		});
-		const showPlayers = [...top3];
-		if (norPlayer && !top3.find(p => p.player === norPlayer.player)) {
-			showPlayers.push(norPlayer);
-		}
+		const trackedInLeaderboard = tour.leaderboard.filter(p => p.tracked && !top3.includes(p));
+		const trackedOutside = tour.trackedPlayers || [];
+		const showPlayers = [...top3, ...trackedInLeaderboard, ...trackedOutside];
 
 		for (const p of showPlayers) {
-			const isNor = norNames.includes(p.player.split(' ').pop().toLowerCase());
+			const isTracked = !!p.tracked;
 			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
 			const imgHtml = headshot
 				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
@@ -2066,12 +2079,13 @@ class Dashboard {
 				: '<span class="lb-img-placeholder">\u26f3</span>';
 			const scoreNum = parseFloat(p.score || '0');
 			const scoreCls = (p.score || '').startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
+			const posDisplay = p.positionDisplay || String(p.position);
 
-			html += `<div class="lb-row${isNor ? ' is-you' : ''}">`;
-			html += `<span class="lb-pos">${this.esc(String(p.position))}</span>`;
+			html += `<div class="lb-row${isTracked ? ' is-you' : ''}">`;
+			html += `<span class="lb-pos">${this.esc(posDisplay)}</span>`;
 			html += imgHtml;
 			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
-			if (isNor) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
+			if (isTracked) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
 			html += `<span class="lb-score${scoreCls}">${this.esc(p.score || 'E')}</span>`;
 			html += '</div>';
 		}

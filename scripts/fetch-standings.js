@@ -9,7 +9,8 @@
  */
 
 import path from "path";
-import { fetchJson, iso, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import fs from "fs";
+import { fetchJson, iso, rootDataPath, readJsonIfExists, writeJsonPretty } from "./lib/helpers.js";
 import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-validator.js";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/v2/sports";
@@ -54,11 +55,55 @@ export async function fetchLaLigaStandings() {
 	return parseFootballStandings(data, "laLiga");
 }
 
+/**
+ * Load tracked golfers from norwegian-golfers.json config.
+ * Returns a Map<tourKey, Set<lowercaseName>> for fast lookup.
+ * Falls back gracefully if config is missing.
+ */
+function loadTrackedGolfers() {
+	const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+	const golfers = readJsonIfExists(path.join(configDir, "norwegian-golfers.json"));
+	const byTour = new Map();
+	if (!Array.isArray(golfers)) return byTour;
+	for (const g of golfers) {
+		const names = [g.name, ...(g.aliases || [])].map(n => n.toLowerCase());
+		for (const tour of g.tours || []) {
+			if (!byTour.has(tour)) byTour.set(tour, []);
+			byTour.get(tour).push({ fullName: g.name, patterns: names });
+		}
+	}
+	return byTour;
+}
+
+/**
+ * Check if a competitor matches any tracked player for this tour.
+ */
+function isTrackedPlayer(competitorName, tourTracked) {
+	if (!tourTracked || !competitorName) return false;
+	const lower = competitorName.toLowerCase();
+	return tourTracked.some(t => t.patterns.some(p => lower.includes(p)));
+}
+
+function mapCompetitor(c, idx) {
+	return {
+		position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
+		positionDisplay: c.status?.position?.displayName || null,
+		player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
+		score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
+		today: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
+		thru: c.status?.thru?.toString() || "-",
+		headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
+	};
+}
+
 export async function fetchGolfLeaderboard() {
 	const tours = [
 		{ key: "pga", url: `${ESPN_SITE}/golf/pga/scoreboard` },
 		{ key: "dpWorld", url: `${ESPN_SITE}/golf/eur/scoreboard` },
 	];
+
+	// Load tracked players once — auto-discovered from norwegian-golfers.json
+	const trackedByTour = loadTrackedGolfers();
 
 	const result = {};
 	for (const tour of tours) {
@@ -68,7 +113,7 @@ export async function fetchGolfLeaderboard() {
 			for (const w of vGolf.warnings) console.warn(w);
 			const event = vGolf.events[0] || data?.events?.[0];
 			if (!event) {
-				result[tour.key] = { name: null, status: "no_event", leaderboard: [] };
+				result[tour.key] = { name: null, status: "no_event", leaderboard: [], trackedPlayers: [] };
 				continue;
 			}
 
@@ -83,25 +128,47 @@ export async function fetchGolfLeaderboard() {
 				if (name && c.id) headshots[name] = `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png`;
 			}
 
+			// Top 15 for general leaderboard
+			const tourTracked = trackedByTour.get(tour.key) || [];
+			const leaderboard = competitors.slice(0, 15).map((c, idx) => {
+				const entry = mapCompetitor(c, idx);
+				if (isTrackedPlayer(entry.player, tourTracked)) entry.tracked = true;
+				return entry;
+			});
+
+			// Always include tracked players (Norwegian golfers) regardless of position.
+			// This uses norwegian-golfers.json — when the discovery loop adds new players,
+			// they automatically get surfaced here without code changes.
+			const leaderboardNames = new Set(leaderboard.map(e => e.player.toLowerCase()));
+			const trackedPlayers = [];
+			for (let i = 0; i < competitors.length; i++) {
+				const c = competitors[i];
+				const name = c.athlete?.displayName || c.athlete?.fullName || "";
+				if (leaderboardNames.has(name.toLowerCase())) continue; // already in top 15
+				if (isTrackedPlayer(name, tourTracked)) {
+					const entry = mapCompetitor(c, i);
+					entry.tracked = true; // flag for dashboard to highlight
+					trackedPlayers.push(entry);
+				}
+			}
+
+			if (trackedPlayers.length > 0) {
+				console.log(`  Golf ${tour.key}: ${trackedPlayers.length} tracked player(s) outside top 15: ${trackedPlayers.map(p => `${p.player} (${p.positionDisplay || p.position})`).join(", ")}`);
+			}
+
 			result[tour.key] = {
 				name: event.name || null,
 				status: statusType === "STATUS_IN_PROGRESS" ? "in_progress"
 					: statusType === "STATUS_SCHEDULED" ? "scheduled"
 					: statusType === "STATUS_FINAL" ? "final"
 					: statusType,
-				leaderboard: competitors.slice(0, 15).map((c, idx) => ({
-					position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
-					player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
-					score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
-					today: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
-					thru: c.status?.thru?.toString() || "-",
-					headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
-				})),
+				leaderboard,
+				trackedPlayers,
 				headshots,
 			};
 		} catch (err) {
 			console.warn(`Golf ${tour.key} leaderboard fetch failed:`, err.message);
-			result[tour.key] = { name: null, status: "error", leaderboard: [] };
+			result[tour.key] = { name: null, status: "error", leaderboard: [], trackedPlayers: [] };
 		}
 	}
 	return result;

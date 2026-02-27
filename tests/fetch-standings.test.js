@@ -166,12 +166,14 @@ describe("fetchGolfLeaderboard()", () => {
 		expect(result.pga.leaderboard).toHaveLength(2);
 		expect(result.pga.leaderboard[0]).toEqual({
 			position: 1,
+			positionDisplay: null,
 			player: "Scottie Scheffler",
 			score: "-12",
 			today: "-4",
 			thru: "-",
 			headshot: "https://a.espncdn.com/i/headshots/golf/players/full/9780.png",
 		});
+		expect(result.pga.trackedPlayers).toEqual([]);
 		expect(result.pga.headshots).toEqual({
 			"Scottie Scheffler": "https://a.espncdn.com/i/headshots/golf/players/full/9780.png",
 			"Rory McIlroy": "https://a.espncdn.com/i/headshots/golf/players/full/3470.png",
@@ -183,6 +185,7 @@ describe("fetchGolfLeaderboard()", () => {
 		const result = await fetchGolfLeaderboard();
 		expect(result.pga.status).toBe("no_event");
 		expect(result.pga.leaderboard).toEqual([]);
+		expect(result.pga.trackedPlayers).toEqual([]);
 	});
 
 	it("handles fetch errors gracefully", async () => {
@@ -190,6 +193,80 @@ describe("fetchGolfLeaderboard()", () => {
 		const result = await fetchGolfLeaderboard();
 		expect(result.pga.status).toBe("error");
 		expect(result.dpWorld.status).toBe("error");
+	});
+
+	it("includes tracked Norwegian players outside top 15", async () => {
+		// Build a competitor list with a Norwegian player at position 25
+		const competitors = [];
+		for (let i = 1; i <= 25; i++) {
+			const isVentura = i === 25;
+			competitors.push({
+				id: String(1000 + i),
+				order: i,
+				athlete: { displayName: isVentura ? "Kris Ventura" : `Player ${i}` },
+				score: isVentura ? "E" : `-${25 - i}`,
+				status: { position: { displayName: isVentura ? "T25" : String(i) } },
+				linescores: [{ displayValue: "-" }],
+			});
+		}
+		fetchJson.mockResolvedValue({
+			events: [{
+				name: "Test Tournament",
+				status: { type: { name: "STATUS_IN_PROGRESS" } },
+				competitions: [{ competitors }],
+			}],
+		});
+
+		const result = await fetchGolfLeaderboard();
+
+		// Top 15 should not include Ventura
+		expect(result.pga.leaderboard).toHaveLength(15);
+		expect(result.pga.leaderboard.find(p => p.player === "Kris Ventura")).toBeUndefined();
+
+		// But trackedPlayers should include Ventura
+		expect(result.pga.trackedPlayers.length).toBeGreaterThanOrEqual(1);
+		const ventura = result.pga.trackedPlayers.find(p => p.player === "Kris Ventura");
+		expect(ventura).toBeDefined();
+		expect(ventura.tracked).toBe(true);
+		expect(ventura.score).toBe("E");
+		expect(ventura.positionDisplay).toBe("T25");
+	});
+
+	it("marks tracked players within top 15 with tracked flag", async () => {
+		const competitors = [
+			{
+				id: "123",
+				order: 1,
+				athlete: { displayName: "Kristoffer Reitan" },
+				score: "-4",
+				status: { position: { displayName: "T3" } },
+				linescores: [{ displayValue: "67" }],
+			},
+			{
+				id: "456",
+				order: 2,
+				athlete: { displayName: "Some Player" },
+				score: "-3",
+				linescores: [{ displayValue: "68" }],
+			},
+		];
+		fetchJson.mockResolvedValue({
+			events: [{
+				name: "Test Tournament",
+				status: { type: { name: "STATUS_IN_PROGRESS" } },
+				competitions: [{ competitors }],
+			}],
+		});
+
+		const result = await fetchGolfLeaderboard();
+		const reitan = result.pga.leaderboard.find(p => p.player === "Kristoffer Reitan");
+		expect(reitan).toBeDefined();
+		expect(reitan.tracked).toBe(true);
+		expect(reitan.positionDisplay).toBe("T3");
+
+		// Non-tracked player should not have tracked flag
+		const other = result.pga.leaderboard.find(p => p.player === "Some Player");
+		expect(other.tracked).toBeUndefined();
 	});
 });
 
