@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-26T22:14:24.872Z",
-  "eventCount": 53,
+  "generatedAt": "2026-02-27T02:06:44.736Z",
+  "eventCount": 65,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -16,6 +16,11 @@
       "count": 30,
       "previousCount": 30,
       "delta": 0
+    },
+    "icehockey": {
+      "count": 12,
+      "previousCount": null,
+      "delta": null
     },
     "biathlon": {
       "count": 6,
@@ -62,7 +67,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
@@ -83,7 +88,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.97,
     "streamingPercent": 0.98
   },
   "rssFeedHealth": {
@@ -106,8 +111,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.07,
-    "eventsEnriched": 2,
+    "matchRate": 0.37,
+    "eventsEnriched": 11,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -115,7 +120,9 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 432 minutes old (stale > 240m)"
+      "Day snapshots are 664 minutes old (stale > 240m)",
+      "1 expected day snapshot(s) missing",
+      "Snapshot 2026-03-05: 1 events but events.json has 4"
     ],
     "snapshotCount": 15
   },
@@ -133,7 +140,7 @@
   },
   "quotaHealth": {
     "tier": 2,
-    "fiveHour": 15,
+    "fiveHour": 0,
     "sevenDay": 73,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 3,
@@ -144,19 +151,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 190792,
+    "totalDuration": 291396,
     "stepCount": 24,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 81286,
-        "share": 43
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60047,
-        "share": 31
+        "duration": 180873,
+        "share": 62
       }
     ],
     "failedSteps": [
@@ -178,7 +180,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 22,
+        "consecutiveFailures": 23,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -202,7 +204,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 7% (2/30) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 37% (11/30) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "norwegian_tagging_anomaly",
+      "message": "icehockey: 12/12 events tagged Norwegian but only 0 have Norwegian players — likely false positives in name matching"
     },
     {
       "severity": "warning",
@@ -212,7 +219,17 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 432 minutes old (stale > 240m)"
+      "message": "Day snapshots are 664 minutes old (stale > 240m)"
+    },
+    {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-05: 1 events but events.json has 4"
     },
     {
       "severity": "info",
@@ -222,7 +239,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 15%, 7d: 73%) — 3 step(s) skipped"
+      "message": "Quota tier 2 (5h: 0%, 7d: 73%) — 3 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -232,12 +249,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 43% of total pipeline time (81s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 62% of total pipeline time (181s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -257,7 +269,7 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 22 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 23 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
@@ -265,9 +277,9 @@
       "message": "learn-recipes was quota-skipped but 1 recipe(s) need repair — data source going dark"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-02-26T22:14:25.035Z",
+    "computedAt": "2026-02-27T02:06:44.900Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -285,7 +297,7 @@
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.11,
         "reasons": [
-          "22 consecutive failures"
+          "23 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -296,7 +308,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 11 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

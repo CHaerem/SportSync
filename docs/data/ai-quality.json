@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-26T22:14:23.675Z",
+  "generatedAt": "2026-02-27T02:06:43.680Z",
   "featured": {
-    "provider": "fallback",
+    "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
@@ -9,13 +9,18 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 180075,
+    "blockCount": 8,
+    "generationMs": 140802,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 35899,
+      "output": 8203,
+      "cacheCreation": 19527,
+      "cacheRead": 16369,
+      "total": 44102,
+      "costUSD": 0.33531825,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
@@ -61,14 +66,14 @@
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 53,
+      "totalEvents": 65,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.985
     },
     "after": {
-      "totalEvents": 53,
+      "totalEvents": 65,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -77,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 1,
+    "aiUpdatedFields": 13,
     "failedBatches": 0,
-    "totalEvents": 53,
+    "totalEvents": 65,
     "skipStats": {
-      "total": 53,
-      "unchanged": 53,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 65,
+      "unchanged": 52,
+      "enriched": 13,
+      "skipRate": 0.8
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 4966,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 61583,
+      "output": 2977,
+      "calls": 2,
+      "total": 64560,
+      "costUSD": 0.45931124999999995,
       "tracked": true,
       "estimated": false
     }
