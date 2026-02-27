@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T10:19:05.047Z",
+  "generatedAt": "2026-02-27T11:13:47.634Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -55,27 +55,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 11,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 11,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 11,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 10,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 10,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 11,
       "stale": false
     },
     "featured.json": {
@@ -135,7 +135,7 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 59,
+    "fiveHour": 60,
     "sevenDay": 5,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
@@ -145,14 +145,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 206635,
+    "totalDuration": 255213,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 91999,
-        "share": 45
+        "duration": 144376,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -162,7 +162,7 @@
   "bracketHealth": {
     "active": 1,
     "orphaned": 0,
-    "staleMatches": 5,
+    "staleMatches": 4,
     "staleTournaments": [
       "draculan-s5"
     ]
@@ -174,8 +174,8 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 2,
-        "needsRepair": false,
+        "consecutiveFailures": 3,
+        "needsRepair": true,
         "lastSuccess": null
       }
     ]
@@ -218,7 +218,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 59%, 7d: 5%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 60%, 7d: 5%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -228,7 +228,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (92s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 57% of total pipeline time (144s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -238,31 +238,31 @@
     {
       "severity": "warning",
       "code": "bracket_stale_matches",
-      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 5 stale match(es) — bracket data needs refresh"
+      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 4 stale match(es) — bracket data needs refresh"
     },
     {
       "severity": "warning",
       "code": "quota_skip_time_critical",
-      "message": "discover-events was quota-skipped but 5 bracket match(es) in 1 tournament(s) need refresh"
+      "message": "discover-events was quota-skipped but 4 bracket match(es) in 1 tournament(s) need refresh"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "2 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "3 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T10:19:05.232Z",
+    "computedAt": "2026-02-27T11:13:47.798Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
         "score": 0.75,
         "reasons": [
           "overdue by 200%",
-          "1 match(es) within 2h",
+          "2 match(es) within 2h",
           "focus team involved",
-          "5 stale match(es)"
+          "4 stale match(es)"
         ],
         "suggestedQuotaPriority": 1,
         "suggestedRefreshIntervalMs": 3600000,
@@ -270,7 +270,7 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.01,
+        "score": 0.02,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,

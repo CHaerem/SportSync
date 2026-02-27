@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-27T10:19:03.298Z",
+  "generatedAt": "2026-02-27T11:13:45.698Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": 0,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 143589,
+    "generationMs": 110886,
     "tokenUsage": {
-      "input": 35969,
-      "output": 7840,
-      "cacheCreation": 17522,
-      "cacheRead": 18444,
-      "total": 43809,
-      "costUSD": 0.3147495,
+      "input": 36041,
+      "output": 5963,
+      "cacheCreation": 19669,
+      "cacheRead": 16369,
+      "total": 42004,
+      "costUSD": 0.28020575000000003,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -63,8 +63,8 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
       "totalEvents": 65,
       "importanceCoverage": 1,
@@ -114,7 +114,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-27T08:16:46.240Z",
+    "lastRun": "2026-02-27T11:03:44.523Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2

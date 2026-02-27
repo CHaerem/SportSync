@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T10:19:05.177Z",
+  "generatedAt": "2026-02-27T11:13:47.554Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 65,
@@ -95,7 +95,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 12
+    "issueCount": 15
   },
   "findings": [
     {
@@ -176,22 +176,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Individual Kontiolahti\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -265,9 +250,9 @@
     }
   ],
   "summary": {
-    "total": 33,
+    "total": 30,
     "critical": 0,
-    "warning": 21,
+    "warning": 18,
     "info": 12
   },
   "pass": true,
