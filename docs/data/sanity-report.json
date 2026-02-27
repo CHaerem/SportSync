@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T16:25:27.011Z",
+  "generatedAt": "2026-02-27T17:24:50.696Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -90,7 +90,7 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
@@ -168,39 +168,9 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 44 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfbf Biathlon WC — Men's 20km Individual — JT Bø\" which may not match any event"
-    },
-    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Seven\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Days\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Austin Smotherman\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -264,20 +234,15 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 35,
+    "total": 28,
     "critical": 0,
-    "warning": 22,
-    "info": 13
+    "warning": 16,
+    "info": 12
   },
   "pass": true,
   "tokenUsage": null
