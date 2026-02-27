@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-24T19:26:14.303Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.034,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 1,
-      "warningCount": 1,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33408,
-        "output": 5458,
-        "cacheCreation": 14941,
-        "cacheRead": 18464,
-        "total": 38866,
-        "costUSD": 0.23907825,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 145266,
-        "output": 3001,
-        "calls": 1,
-        "total": 148267,
-        "costUSD": 0.29394675000000003,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 33454,
-        "output": 4547,
-        "calls": 1,
-        "total": 38001,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 212128,
-        "output": 13006,
-        "calls": 3,
-        "total": 225134,
-        "costUSD": 0.5330250000000001,
-        "realPct": 83
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.857,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-24T20:15:39.800Z",
     "editorial": {
       "score": 93,
@@ -7650,6 +7548,108 @@
       "model": "claude-sonnet-4-6",
       "enrichmentModel": "claude-sonnet-4-6",
       "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.905,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-27T16:25:25.125Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 87,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 28,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 30,
+      "warningCount": 18,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Sporting\" but no matching athlete found in events data; Featured mentions \"Meanwhile\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 35900,
+        "output": 8425,
+        "cacheCreation": 35897,
+        "cacheRead": 0,
+        "total": 44325,
+        "costUSD": 0.43499625,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 35887,
+        "output": 6776,
+        "calls": 1,
+        "total": 42663,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 71787,
+        "output": 15201,
+        "calls": 4,
+        "total": 86988,
+        "costUSD": 0.43499625,
+        "realPct": 51
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
     },
     "rollingAverage": {
       "windowSize": 7,

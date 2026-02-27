@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T15:18:18.421Z",
+  "generatedAt": "2026-02-27T16:25:26.830Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 11,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 182,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 182,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -135,7 +135,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 93,
+    "fiveHour": 95,
     "sevenDay": 13,
     "model": null,
     "stepsSkipped": 2,
@@ -145,18 +145,18 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 109209,
+    "totalDuration": 110054,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-results",
-        "duration": 36796,
+        "duration": 37108,
         "share": 34
       },
       {
         "name": "verify-schedules",
-        "duration": 60083,
+        "duration": 60074,
         "share": 55
       }
     ],
@@ -179,7 +179,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 9,
+        "consecutiveFailures": 10,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -233,7 +233,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 93%, 7d: 13%) — 2 step(s) skipped"
+      "message": "Quota tier 3 (5h: 95%, 7d: 13%) — 2 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -268,12 +268,12 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 9 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 10 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "4 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "5 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "warning",
@@ -288,7 +288,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T15:18:18.569Z",
+    "computedAt": "2026-02-27T16:25:27.109Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -305,9 +305,9 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.1,
+        "score": 0.12,
         "reasons": [
-          "9 consecutive failures"
+          "10 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,

@@ -416,6 +416,24 @@
         "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
       ],
       "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T16:13:57.313Z",
+      "success": false,
+      "resultCount": 0,
+      "durationMs": 595,
+      "issues": [
+        "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
+      ],
+      "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T16:22:38.603Z",
+      "action": "repair-llm",
+      "success": false,
+      "reason": "spawnSync /bin/sh ETIMEDOUT"
     }
   ]
 }

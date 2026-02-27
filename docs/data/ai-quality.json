@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-27T12:16:11.385Z",
+  "generatedAt": "2026-02-27T16:25:25.119Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": 0,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 150651,
+    "generationMs": 156784,
     "tokenUsage": {
-      "input": 35925,
-      "output": 8783,
-      "cacheCreation": 19553,
-      "cacheRead": 16369,
-      "total": 44708,
-      "costUSD": 0.34998074999999995,
+      "input": 35900,
+      "output": 8425,
+      "cacheCreation": 35897,
+      "cacheRead": 0,
+      "total": 44325,
+      "costUSD": 0.43499625,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 35,
+      "pickCount": 3,
+      "avgScore": 87,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,8 +63,8 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
       "totalEvents": 64,
       "importanceCoverage": 1,
@@ -114,7 +114,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-27T11:37:36.999Z",
+    "lastRun": "2026-02-27T16:14:37.971Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2
