@@ -470,6 +470,24 @@
       "action": "repair-llm",
       "success": false,
       "reason": "spawnSync /bin/sh ETIMEDOUT"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T19:16:26.360Z",
+      "success": false,
+      "resultCount": 0,
+      "durationMs": 654,
+      "issues": [
+        "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
+      ],
+      "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T19:25:15.404Z",
+      "action": "repair-llm",
+      "success": false,
+      "reason": "spawnSync /bin/sh ETIMEDOUT"
     }
   ]
 }

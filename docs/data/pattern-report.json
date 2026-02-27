@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-02-27T18:25:27.637Z",
+  "generatedAt": "2026-02-27T19:28:01.380Z",
   "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "norwegian_tagging_anomaly",
-      "count": 16,
+      "count": 17,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z",
-      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 16 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-27T19:28:01.298Z",
+      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 17 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "recipe_repair_exhausted",
-      "count": 13,
+      "count": 14,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z",
-      "suggestion": "Health warning \"recipe_repair_exhausted\" has fired 13 times since 2026-02-27. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-27T19:28:01.298Z",
+      "suggestion": "Health warning \"recipe_repair_exhausted\" has fired 14 times since 2026-02-27. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -63,14 +63,14 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 195,
+      "count": 196,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "ux_eval_fallback": {
-      "count": 129,
+      "count": 130,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -78,7 +78,7 @@
       "lastSeen": "2026-02-25T12:22:18.851Z"
     },
     "invisible_events": {
-      "count": 19,
+      "count": 9,
       "firstSeen": "2026-02-23T02:12:02.733Z",
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
@@ -88,24 +88,24 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "stale_data": {
-      "count": 18,
+      "count": 9,
       "firstSeen": "2026-02-23T07:31:15.404Z",
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "chronic_data_retention": {
-      "count": 17,
+      "count": 8,
       "firstSeen": "2026-02-23T08:22:08.134Z",
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "norwegian_tagging_anomaly": {
-      "count": 16,
+      "count": 17,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "streaming_coverage_gap": {
-      "count": 53,
+      "count": 54,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -118,9 +118,9 @@
       "lastSeen": "2026-02-27T17:24:50.863Z"
     },
     "bracket_stale_matches": {
-      "count": 20,
+      "count": 21,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "quota_skip_time_critical": {
       "count": 26,
@@ -128,9 +128,9 @@
       "lastSeen": "2026-02-27T17:24:50.863Z"
     },
     "recipe_persistent_failure": {
-      "count": 14,
+      "count": 15,
       "firstSeen": "2026-02-26T18:20:12.118Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "stale_snapshot": {
       "count": 4,
@@ -138,27 +138,27 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "step_timeout_hit": {
-      "count": 6,
+      "count": 7,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     },
     "recipe_repair_exhausted": {
-      "count": 13,
+      "count": 14,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T18:25:27.579Z"
+      "lastSeen": "2026-02-27T19:28:01.298Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 18,
       "improved": 4,
-      "unchanged": 10,
-      "worsened": 4,
+      "unchanged": 11,
+      "worsened": 3,
       "effectivenessRate": 0.22
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-27T18:25:27.637Z",
+    "recordedAt": "2026-02-27T19:28:01.380Z",
     "moduleCount": 65,
     "avgModuleSize": 326,
     "pipelineSteps": 27,
@@ -171,5 +171,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "5 patterns detected (3 high, 2 medium). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 16 times since 2026-02-24."
+  "summary": "5 patterns detected (3 high, 2 medium). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 17 times since 2026-02-24."
 }

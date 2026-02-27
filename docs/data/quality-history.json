@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-24T22:14:29.202Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 81,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 30,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 2,
-      "warningCount": 2,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"French\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 33369,
-        "output": 7097,
-        "cacheCreation": 16977,
-        "cacheRead": 16389,
-        "total": 40466,
-        "costUSD": 0.29174075,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 145266,
-        "output": 3001,
-        "calls": 1,
-        "total": 148267,
-        "costUSD": 0.29394675000000003,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 33454,
-        "output": 4547,
-        "calls": 1,
-        "total": 38001,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 212089,
-        "output": 14645,
-        "calls": 3,
-        "total": 226734,
-        "costUSD": 0.5856875,
-        "realPct": 83
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 94,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.715,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-25T01:47:45.003Z",
     "editorial": {
       "score": 94,
@@ -7658,6 +7556,108 @@
       "editorialScore": 99,
       "mustWatchCoverage": 1,
       "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-27T19:27:59.365Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 87,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 28,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 32,
+      "warningCount": 20,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but no matching athlete found in events data; Featured mentions \"After Bod\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"Internazionale\" but no matching athlete found in events data; Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 35921,
+        "output": 9221,
+        "cacheCreation": 19549,
+        "cacheRead": 16369,
+        "total": 45142,
+        "costUSD": 0.36090575,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 35887,
+        "output": 6776,
+        "calls": 1,
+        "total": 42663,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 71808,
+        "output": 15997,
+        "calls": 4,
+        "total": 87805,
+        "costUSD": 0.36090575,
+        "realPct": 51
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "enrichmentScore": 100,
       "resultsScore": 90
     }

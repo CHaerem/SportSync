@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T18:25:27.405Z",
+  "generatedAt": "2026-02-27T19:28:01.204Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -170,12 +170,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Bod\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -185,7 +190,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Internazionale\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -259,9 +264,9 @@
     }
   ],
   "summary": {
-    "total": 32,
+    "total": 33,
     "critical": 0,
-    "warning": 20,
+    "warning": 21,
     "info": 12
   },
   "pass": true,
