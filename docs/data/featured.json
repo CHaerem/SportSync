@@ -2,64 +2,43 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "2 events across 2 sports today"
-    },
-    {
-      "type": "event-line",
-      "text": "⛳ Cognizant Classic in The Palm Beaches, 06:00 — PGA Tour"
-    },
-    {
-      "type": "section",
-      "id": "relive-best-moments-from-the-2026-winter",
-      "title": "Olympics 2026",
-      "emoji": "🏅",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Fri 20:00 — Paralympic Winter Games 2026 — Opening Ceremony",
-          "type": "event"
-        },
-        {
-          "text": "Sat 10:00 — Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events",
-          "type": "event"
-        },
-        {
-          "text": "Sun 10:00 — Paralympic Winter Games 2026 — Para Alpine Skiing",
-          "type": "event"
-        },
-        {
-          "text": "Mon 10:00 — Paralympic Winter Games 2026 — Para Biathlon & Cross-Country",
-          "type": "event"
-        },
-        {
-          "text": "Tue 10:00 — Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
+      "text": "Reitan charging in Palm Beach — Norway's golden week rolls on"
     },
     {
       "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
+      "tournament": "pga"
+    },
+    {
+      "type": "narrative",
+      "text": "NRK confirms Reitan is in the lead pack in Florida. Three days after Bodo/Glimt stunned Inter at San Siro, Norwegian sport is having a week to remember."
+    },
+    {
+      "type": "event-line",
+      "text": "🏅 Paralympic Winter Games 2026 — Opening Ceremony, Milan, 20:00"
     },
     {
       "type": "divider",
-      "text": "This Week"
+      "text": "This Weekend"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Arsenal",
+      "awayTeam": "Chelsea",
+      "showStandings": true
     },
     {
       "type": "match-preview",
       "homeTeam": "Liverpool",
       "awayTeam": "West Ham United",
-      "showStandings": true,
-      "_fallbackText": "⚽ Sat 16:00 — West Ham United at Liverpool"
+      "showStandings": true
     },
     {
-      "type": "event-line",
-      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
+      "type": "match-preview",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Villarreal",
+      "showStandings": false
     }
   ],
-  "generatedAt": "2026-02-26T22:14:23.659Z",
-  "provider": "fallback"
+  "generatedAt": "2026-02-27T06:33:05.200Z",
+  "provider": "claude-cli"
 }

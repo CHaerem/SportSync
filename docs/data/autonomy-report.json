@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-26T22:14:24.936Z",
-  "overallScore": 0.95,
-  "loopsClosed": 10,
+  "generatedAt": "2026-02-27T06:34:33.639Z",
+  "overallScore": 0.98,
+  "loopsClosed": 11,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 0.75,
       "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 5 actionable issue(s) (15 total)"
+      "details": "Health report is fresh (0 min old) but has 2 actionable issue(s) (19 total)"
     },
     "watchPlan": {
       "score": 1,
@@ -32,7 +32,7 @@
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "56 completed tasks in autopilot log"
+      "details": "57 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -50,9 +50,9 @@
       "details": "fetcher exists, results data is fresh, pipeline monitors results health"
     },
     "snapshotHealth": {
-      "score": 0.66,
-      "status": "partial",
-      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are stale"
+      "score": 1,
+      "status": "closed",
+      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
     },
     "uxQuality": {
       "score": 1,
@@ -66,7 +66,6 @@
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)",
-    "Run pipeline more frequently to keep snapshots fresh (< 6h)"
+    "Run pipeline more frequently to keep health report fresh (< 6h)"
   ]
 }

@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-02-26T22:14:24.767Z",
+  "generatedAt": "2026-02-27T06:34:33.672Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 53,
+    "totalEvents": 65,
     "sports": [
       "esports",
       "golf",
       "football",
+      "icehockey",
       "biathlon",
       "f1",
       "olympics",
@@ -17,13 +18,12 @@
         "DraculaN Season 5",
         "Cognizant Classic in The Palm Beaches"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "ESL Pro League Season 23 - Stage 1 (Online)",
         "Aston Villa at Wolverhampton Wanderers",
         "Alavés at Levante"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Sunderland at AFC Bournemouth",
         "Athletic Club at Rayo Vallecano",
         "Brentford at Burnley",
@@ -32,7 +32,9 @@
         "Villarreal at Barcelona",
         "Manchester City at Leeds United",
         "Real Sociedad at Mallorca",
-        "Atlético Madrid at Real Oviedo",
+        "Atlético Madrid at Real Oviedo"
+      ],
+      "thisWeek": [
         "Espanyol at Elche",
         "Nottingham Forest at Brighton & Hove Albion",
         "Tottenham Hotspur at Fulham",
@@ -46,88 +48,215 @@
         "Burnley at Everton",
         "Sunderland at Leeds United",
         "Liverpool at Wolverhampton Wanderers",
-        "Real Oviedo at Rayo Vallecano",
+        "GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)",
         "Chelsea at Aston Villa",
         "Arsenal at Brighton & Hove Albion",
         "West Ham United at Fulham",
         "Nottingham Forest at Manchester City",
         "Manchester United at Newcastle United",
-        "Biathlon World Cup — Women's 15km Individual (Kontiolahti)"
-      ],
-      "later": [
+        "Biathlon World Cup — Women's 15km Individual (Kontiolahti)",
+        "GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 1)",
+        "GET-ligaen Quarterfinal — Stjernen vs #4 (Game 1)",
+        "Crystal Palace at Tottenham Hotspur",
         "Qatar Airways Australian Grand Prix",
         "Biathlon World Cup — Men's 20km Individual (Kontiolahti)",
-        "Paralympic Winter Games 2026 — Opening Ceremony",
+        "GET-ligaen Quarterfinal — Sparta vs #3 (Game 1)",
+        "GET-ligaen Quarterfinal — Storhamar vs #6 (Game 2)",
+        "Paralympic Winter Games 2026 — Opening Ceremony"
+      ],
+      "later": [
         "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events",
         "Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti)",
         "Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti)",
+        "GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 2)",
         "Paralympic Winter Games 2026 — Para Alpine Skiing",
         "Biathlon World Cup — Women's Relay 4×6km (Kontiolahti)",
         "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)",
         "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country",
         "Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing",
+        "GET-ligaen Semifinal — TBD vs TBD (Game 1)",
         "Alpine World Cup Finals — Men's Super-G (Soldeu)",
         "Alpine World Cup Finals — Women's Super-G (Soldeu)",
+        "GET-ligaen Semifinal — TBD vs TBD (Game 2)",
         "Alpine World Cup Finals — Men's Giant Slalom (Soldeu)",
         "Alpine World Cup Finals — Women's Giant Slalom (Soldeu)",
         "Alpine World Cup Finals — Men's Downhill (Soldeu)",
         "Alpine World Cup Finals — Women's Downhill (Soldeu)",
         "Alpine World Cup Finals — Men's Slalom (Soldeu)",
-        "Alpine World Cup Finals — Women's Slalom (Soldeu)"
+        "Alpine World Cup Finals — Women's Slalom (Soldeu)",
+        "GET-ligaen Final — TBD vs TBD (Game 1)",
+        "GET-ligaen Final — TBD vs TBD (Game 2)",
+        "GET-ligaen Final — TBD vs TBD (Game 4)",
+        "GET-ligaen Final — TBD vs TBD (Game 7, if needed)"
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 15
+    "issueCount": 19
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Super-G (Soldeu)\" is 21 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 1)\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Super-G (Soldeu)\" is 21 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Super-G (Soldeu)\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Giant Slalom (Soldeu)\" is 22 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Super-G (Soldeu)\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Giant Slalom (Soldeu)\" is 22 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 2)\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Downhill (Soldeu)\" is 23 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Giant Slalom (Soldeu)\" is 21 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Downhill (Soldeu)\" is 23 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Giant Slalom (Soldeu)\" is 21 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Slalom (Soldeu)\" is 24 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Downhill (Soldeu)\" is 22 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 24 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Downhill (Soldeu)\" is 22 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"Alpine World Cup Finals — Men's Slalom (Soldeu)\" is 23 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 23 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 1)\" is 32 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 2)\" is 34 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 4)\" is 37 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 44 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 8 hours old"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Florida\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"San Siro\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Stjernen vs #4 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Sparta vs #3 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Storhamar vs #6 (Game 2)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 2)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 2)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 1)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 2)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 4)\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" marked norwegian=true but has no norwegianPlayers"
     },
     {
       "severity": "warning",
@@ -136,10 +265,10 @@
     }
   ],
   "summary": {
-    "total": 10,
+    "total": 33,
     "critical": 0,
-    "warning": 9,
-    "info": 1
+    "warning": 21,
+    "info": 12
   },
   "pass": true,
   "tokenUsage": null

@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-02-27T02:06:43.680Z",
+  "generatedAt": "2026-02-27T06:33:05.218Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": 0,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 140802,
+    "generationMs": 128800,
     "tokenUsage": {
-      "input": 35899,
-      "output": 8203,
-      "cacheCreation": 19527,
+      "input": 35887,
+      "output": 6776,
+      "cacheCreation": 19515,
       "cacheRead": 16369,
-      "total": 44102,
-      "costUSD": 0.33531825,
+      "total": 42663,
+      "costUSD": 0.29956825,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -63,8 +63,8 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
       "totalEvents": 65,
       "importanceCoverage": 1,
@@ -92,16 +92,42 @@
       "enriched": 13,
       "skipRate": 0.8
     },
-    "tokensPerEvent": 4966,
+    "tokensPerEvent": 4845,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 61583,
-      "output": 2977,
+      "input": 61761,
+      "output": 1226,
       "calls": 2,
-      "total": 64560,
-      "costUSD": 0.45931124999999995,
+      "total": 62987,
+      "costUSD": 0.22298875,
       "tracked": true,
       "estimated": false
     }
+  },
+  "discovery": {
+    "tokenUsage": {
+      "input": 0,
+      "output": 0,
+      "calls": 2,
+      "total": 0,
+      "costUSD": 0,
+      "tracked": true,
+      "estimated": false
+    },
+    "lastRun": "2026-02-27T06:22:06.666Z",
+    "tasksExecuted": 2,
+    "succeeded": 0,
+    "failed": 2
+  },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 35887,
+      "output": 6776,
+      "calls": 1,
+      "total": 42663,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-02-27T06:33:05.522Z"
   }
 }

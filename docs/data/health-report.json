@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T02:06:44.736Z",
+  "generatedAt": "2026-02-27T06:34:33.580Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -19,8 +19,8 @@
     },
     "icehockey": {
       "count": 12,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 12,
+      "delta": 0
     },
     "biathlon": {
       "count": 6,
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 13,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -118,12 +118,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 664 minutes old (stale > 240m)",
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-03-05: 1 events but events.json has 4"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -217,21 +212,6 @@
       "message": "1 important event(s) lack streaming info: CS2 Major Tournaments 2026"
     },
     {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 664 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-05: 1 events but events.json has 4"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
@@ -277,9 +257,9 @@
       "message": "learn-recipes was quota-skipped but 1 recipe(s) need repair — data source going dark"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T02:06:44.900Z",
+    "computedAt": "2026-02-27T06:34:33.784Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -295,7 +275,7 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.11,
+        "score": 0.12,
         "reasons": [
           "23 consecutive failures"
         ],
@@ -308,7 +288,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 11 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
