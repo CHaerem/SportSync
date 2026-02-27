@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T08:26:58.219Z",
+  "generatedAt": "2026-02-27T09:20:08.978Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -55,27 +55,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 11,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -134,15 +134,15 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 16,
-    "sevenDay": 1,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 706487,
+    "totalDuration": 719251,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,7 +150,7 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300099,
+        "duration": 300098,
         "share": 42
       }
     ],
@@ -174,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 0,
+        "consecutiveFailures": 1,
         "needsRepair": false,
         "lastSuccess": null
       }
@@ -248,7 +248,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T08:26:58.392Z",
+    "computedAt": "2026-02-27T09:20:09.151Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -264,7 +264,7 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.02,
+        "score": 0,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -275,7 +275,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
