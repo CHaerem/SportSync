@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T09:20:09.245Z",
+  "generatedAt": "2026-02-27T10:19:05.177Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 65,
@@ -91,10 +91,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
+    "editorialScore": 93,
     "issueCount": 12
   },
   "findings": [
@@ -171,12 +171,27 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Milano\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cortina\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Individual Kontiolahti\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -240,14 +255,19 @@
     },
     {
       "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 29,
+    "total": 33,
     "critical": 0,
-    "warning": 17,
+    "warning": 21,
     "info": 12
   },
   "pass": true,

@@ -1,7 +1,15 @@
 {
-  "generatedAt": "2026-02-27T09:20:09.137Z",
+  "generatedAt": "2026-02-27T10:19:05.221Z",
   "patternsDetected": 6,
   "patterns": [
+    {
+      "type": "stagnant_loop",
+      "severity": "high",
+      "loopName": "pipelineHealth",
+      "score": 0.75,
+      "stagnantRuns": 10,
+      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 10 consecutive runs. It needs intervention to progress toward 1.0."
+    },
     {
       "type": "recurring_health_warning",
       "severity": "medium",
@@ -15,10 +23,10 @@
       "type": "recurring_health_warning",
       "severity": "medium",
       "issueCode": "norwegian_tagging_anomaly",
-      "count": 5,
+      "count": 6,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z",
-      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 5 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-27T10:19:05.125Z",
+      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 6 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "recurring_health_warning",
@@ -30,20 +38,12 @@
       "suggestion": "Health warning \"snapshot_event_mismatch\" has fired 9 times since 2026-02-26. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
-      "type": "stagnant_loop",
-      "severity": "medium",
-      "loopName": "pipelineHealth",
-      "score": 0.75,
-      "stagnantRuns": 9,
-      "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 9 consecutive runs. It needs intervention to progress toward 1.0."
-    },
-    {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 8,
+      "fireCount": 7,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no matching athlete found in events data; Feat",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no mat...\" has fired 8 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Meazza\" but no mat...\" has fired 7 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -71,9 +71,9 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 184,
+      "count": 185,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "sport_dropped": {
       "count": 7,
@@ -81,9 +81,9 @@
       "lastSeen": "2026-02-24T11:24:40.763Z"
     },
     "ux_eval_fallback": {
-      "count": 118,
+      "count": 119,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -111,9 +111,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "norwegian_tagging_anomaly": {
-      "count": 5,
+      "count": 6,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "standings_empty": {
       "count": 1,
@@ -121,9 +121,9 @@
       "lastSeen": "2026-02-24T17:28:39.206Z"
     },
     "streaming_coverage_gap": {
-      "count": 42,
+      "count": 43,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -136,9 +136,9 @@
       "lastSeen": "2026-02-27T07:33:15.962Z"
     },
     "bracket_stale_matches": {
-      "count": 9,
+      "count": 10,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "quota_skip_time_critical": {
       "count": 14,
@@ -156,14 +156,14 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "step_timeout_hit": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     },
     "recipe_repair_exhausted": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T09:20:09.056Z"
+      "lastSeen": "2026-02-27T10:19:05.125Z"
     }
   },
   "interventionEffectiveness": {
@@ -176,7 +176,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-27T09:20:09.136Z",
+    "recordedAt": "2026-02-27T10:19:05.221Z",
     "moduleCount": 64,
     "avgModuleSize": 324,
     "pipelineSteps": 27,
@@ -189,5 +189,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "6 patterns detected (6 medium). Top priority: recurring_health_warning — Health warning \"sport_dropped\" has fired 7 times since 2026-02-18."
+  "summary": "6 patterns detected (1 high, 5 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
 }
