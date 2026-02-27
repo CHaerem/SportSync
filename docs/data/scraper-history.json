@@ -277,6 +277,32 @@
       "action": "repair-llm",
       "success": false,
       "reason": "spawnSync /bin/sh ETIMEDOUT"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T08:16:00.839Z",
+      "success": false,
+      "resultCount": 0,
+      "durationMs": 422,
+      "issues": [
+        "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
+      ],
+      "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-27T08:24:40.814Z",
+      "action": "repair-llm",
+      "success": true,
+      "version": 2,
+      "tokenUsage": {
+        "input": 144884,
+        "output": 3844,
+        "cacheCreation": 22402,
+        "cacheRead": 122476,
+        "total": 148728,
+        "costUSD": 1.02648375
+      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T07:33:15.896Z",
+  "generatedAt": "2026-02-27T08:26:58.219Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -67,11 +67,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 11,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 11,
       "stale": false
     },
     "tennis.json": {
@@ -135,14 +135,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 0,
+    "fiveHour": 16,
+    "sevenDay": 1,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 840618,
+    "totalDuration": 706487,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,8 +150,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300091,
-        "share": 36
+        "duration": 300099,
+        "share": 42
       }
     ],
     "failedSteps": [
@@ -169,13 +169,13 @@
   },
   "recipeHealth": {
     "active": 1,
-    "broken": 1,
-    "recentSuccessRate": 0,
+    "broken": 0,
+    "recentSuccessRate": 4,
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 24,
-        "needsRepair": true,
+        "consecutiveFailures": 0,
+        "needsRepair": false,
         "lastSuccess": null
       }
     ]
@@ -228,7 +228,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 42% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -242,18 +242,13 @@
     },
     {
       "severity": "warning",
-      "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 24 consecutive failures — data source may be permanently unavailable"
-    },
-    {
-      "severity": "warning",
       "code": "recipe_repair_exhausted",
       "message": "2 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T07:33:16.059Z",
+    "computedAt": "2026-02-27T08:26:58.392Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -269,10 +264,8 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.12,
-        "reasons": [
-          "24 consecutive failures"
-        ],
+        "score": 0.02,
+        "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
@@ -282,7 +275,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
