@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-27T11:13:47.782Z",
-  "patternsDetected": 6,
+  "generatedAt": "2026-02-27T11:27:15.548Z",
+  "patternsDetected": 5,
   "patterns": [
     {
       "type": "stagnant_loop",
@@ -13,19 +13,10 @@
     {
       "type": "recurring_health_warning",
       "severity": "medium",
-      "issueCode": "sport_dropped",
-      "count": 7,
-      "firstSeen": "2026-02-18T13:09:06.147Z",
-      "lastSeen": "2026-02-24T11:24:40.763Z",
-      "suggestion": "Health warning \"sport_dropped\" has fired 7 times since 2026-02-18. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "medium",
       "issueCode": "norwegian_tagging_anomaly",
       "count": 7,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z",
+      "lastSeen": "2026-02-27T11:27:15.472Z",
       "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 7 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
@@ -73,17 +64,12 @@
     "streaming_low_match_rate": {
       "count": 186,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
-    },
-    "sport_dropped": {
-      "count": 7,
-      "firstSeen": "2026-02-18T13:09:06.147Z",
-      "lastSeen": "2026-02-24T11:24:40.763Z"
+      "lastSeen": "2026-02-27T11:27:15.472Z"
     },
     "ux_eval_fallback": {
       "count": 120,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.473Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -113,7 +99,7 @@
     "norwegian_tagging_anomaly": {
       "count": 7,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.472Z"
     },
     "standings_empty": {
       "count": 1,
@@ -123,7 +109,7 @@
     "streaming_coverage_gap": {
       "count": 44,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.472Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -138,12 +124,12 @@
     "bracket_stale_matches": {
       "count": 11,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.473Z"
     },
     "quota_skip_time_critical": {
       "count": 15,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.473Z"
     },
     "recipe_persistent_failure": {
       "count": 8,
@@ -163,7 +149,7 @@
     "recipe_repair_exhausted": {
       "count": 4,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T11:13:47.704Z"
+      "lastSeen": "2026-02-27T11:27:15.473Z"
     }
   },
   "interventionEffectiveness": {
@@ -176,7 +162,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-27T11:13:47.782Z",
+    "recordedAt": "2026-02-27T11:27:15.548Z",
     "moduleCount": 64,
     "avgModuleSize": 324,
     "pipelineSteps": 27,
@@ -189,5 +175,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "6 patterns detected (1 high, 5 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
+  "summary": "5 patterns detected (1 high, 4 medium). Top priority: stagnant_loop — Feedback loop \"pipelineHealth\" has been stuck at 0."
 }

@@ -2,43 +2,47 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Glimt conquered San Siro — now Norway wants the whole Champions League"
-    },
-    {
-      "type": "narrative",
-      "text": "Tuesday's 2-1 at Inter added 200,000 followers overnight. The CL draw looms and Glimt's own star warns rivals: nobody wants to face us. Norwegian football has never stood taller."
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "text": "5 events across 3 sports today"
     },
     {
       "type": "event-line",
-      "text": "🎿 Fri 16:10 — Biathlon Men's 20km Individual (Kontiolahti): Bø and Lægreid hunting big points"
+      "text": "⛳ Cognizant Classic in The Palm Beaches, 06:00 — PGA Tour"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Wolverhampton Wanderers",
+      "awayTeam": "Aston Villa",
+      "showStandings": false,
+      "_fallbackText": "⚽ Wolverhampton Wanderers v Aston Villa, 21:00, Premier League — Aston Villa visit Wolves in a routine Premier League mid-table clash with no Norwegian players involved"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Levante",
+      "awayTeam": "Alavés",
+      "showStandings": false,
+      "_fallbackText": "⚽ Levante v Alavés, 21:00, La Liga — Alavés travel to Levante in a low-profile La Liga fixture with minimal title or relegation implications"
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
-      "text": "This Weekend"
+      "text": "This Week"
     },
     {
       "type": "match-preview",
       "homeTeam": "Liverpool",
       "awayTeam": "West Ham United",
-      "showStandings": true
+      "showStandings": true,
+      "_fallbackText": "⚽ Sat 16:00 — West Ham United at Liverpool"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Villarreal",
-      "showStandings": false
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Arsenal",
-      "awayTeam": "Chelsea",
-      "showStandings": true
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-27T11:13:45.683Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-27T11:27:13.138Z",
+  "provider": "fallback"
 }

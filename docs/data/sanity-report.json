@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T11:13:47.554Z",
+  "generatedAt": "2026-02-27T11:27:15.277Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 65,
@@ -94,8 +94,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
-    "issueCount": 15
+    "editorialScore": 100,
+    "issueCount": 13
   },
   "findings": [
     {
@@ -169,14 +169,9 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 44 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Biathlon Men\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
       "severity": "info",
@@ -240,20 +235,15 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 30,
+    "total": 28,
     "critical": 0,
-    "warning": 18,
-    "info": 12
+    "warning": 15,
+    "info": 13
   },
   "pass": true,
   "tokenUsage": null

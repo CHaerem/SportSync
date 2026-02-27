@@ -7564,11 +7564,11 @@
     }
   },
   {
-    "timestamp": "2026-02-27T11:13:45.705Z",
+    "timestamp": "2026-02-27T11:27:13.164Z",
     "editorial": {
-      "score": 93,
+      "score": 100,
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockCount": 8
     },
     "enrichment": {
@@ -7579,7 +7579,7 @@
     "featured": {
       "score": 100,
       "blockCount": 8,
-      "provider": "claude-cli",
+      "provider": "fallback",
       "valid": true
     },
     "watchPlan": {
@@ -7614,15 +7614,10 @@
         "estimated": false
       },
       "featured": {
-        "input": 36041,
-        "output": 5963,
-        "cacheCreation": 19669,
-        "cacheRead": 16369,
-        "total": 42004,
-        "costUSD": 0.28020575000000003,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0
       },
       "discovery": {
         "input": 0,
@@ -7642,25 +7637,25 @@
         "estimated": true
       },
       "total": {
-        "input": 71928,
-        "output": 12739,
-        "calls": 4,
-        "total": 84667,
-        "costUSD": 0.28020575000000003,
-        "realPct": 50
+        "input": 35887,
+        "output": 6776,
+        "calls": 3,
+        "total": 42663,
+        "costUSD": 0,
+        "realPct": 0
       }
     },
     "quota": {
       "tier": 0,
       "model": null,
       "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
+      "featuredModel": "fallback"
     },
     "rollingAverage": {
       "windowSize": 7,
-      "editorialScore": 97,
+      "editorialScore": 98,
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.857,
+      "sportDiversity": 0.905,
       "enrichmentScore": 100,
       "resultsScore": 90
     }
