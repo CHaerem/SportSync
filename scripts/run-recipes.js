@@ -20,6 +20,7 @@ import {
 	executeRecipe,
 	needsRepair,
 } from "./lib/recipe-scraper.js";
+import { filterEventsByFocusTeam, loadUserContext } from "./lib/focus-team-filter.js";
 
 const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 const recipesDir = path.join(configDir, "recipes");
@@ -134,16 +135,23 @@ function applyRecipeResults(recipe, events) {
 		_recipeId: recipe.id,
 	}));
 
+	// Focus-team filtering: only keep events involving focus teams (esports only)
+	const userContext = loadUserContext();
+	const { filtered: focusFiltered, removedCount } = filterEventsByFocusTeam(taggedEvents, config, userContext);
+	if (removedCount > 0) {
+		console.log(`    → Focus-team filter: kept ${focusFiltered.length}, removed ${removedCount} non-focus-team events`);
+	}
+
 	// Remove old recipe-sourced events, keep manually added ones
 	const existingEvents = (config.events || []).filter(
 		(ev) => ev._recipeId !== recipe.id
 	);
 
-	config.events = [...existingEvents, ...taggedEvents];
+	config.events = [...existingEvents, ...focusFiltered];
 	config.lastRecipeRun = new Date().toISOString();
 	writeJsonPretty(configPath, config);
 
-	console.log(`    → Applied ${taggedEvents.length} events to ${recipe.metadata.configRef}`);
+	console.log(`    → Applied ${focusFiltered.length} events to ${recipe.metadata.configRef}`);
 }
 
 main().catch((err) => {

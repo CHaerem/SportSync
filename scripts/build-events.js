@@ -2,8 +2,10 @@
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY } from "./lib/helpers.js";
+import { filterEventsByFocusTeam, loadUserContext } from "./lib/focus-team-filter.js";
 
 const dataDir = rootDataPath();
+const userContext = loadUserContext();
 
 // Auto-discover sport files by convention: any JSON with a { tournaments: [...] } structure
 const dataFiles = fs.readdirSync(dataDir).filter(f => f.endsWith('.json'));
@@ -78,8 +80,14 @@ if (fs.existsSync(configDir)) {
 		if (!config || !Array.isArray(config.events)) continue;
 		const sport = config.sport || config.context?.split("-")[0] || file.replace(".json", "").split("-")[0];
 		const tournamentName = config.name || file.replace(".json", "");
-		console.log(`  Curated config: ${file} → ${config.events.length} events (sport: ${sport})`);
-		config.events.forEach((ev) => {
+		// Focus-team filter: only keep events involving focus teams (esports only)
+		const { filtered: configEvents, removedCount: focusRemoved } = filterEventsByFocusTeam(config.events, config, userContext);
+		if (focusRemoved > 0) {
+			console.log(`  Curated config: ${file} → ${config.events.length} events, focus-team filtered to ${configEvents.length} (sport: ${sport})`);
+		} else {
+			console.log(`  Curated config: ${file} → ${config.events.length} events (sport: ${sport})`);
+		}
+		configEvents.forEach((ev) => {
 			if (config.context && !ev.context) ev.context = config.context;
 			pushEvent(ev, sport, tournamentName);
 		});
