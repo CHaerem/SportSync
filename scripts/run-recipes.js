@@ -85,6 +85,16 @@ async function main() {
 			}
 		} else {
 			failCount++;
+
+			// Auto-quarantine: disable recipes with sustained failures (20+)
+			// so the pipeline stops wasting time on permanently dead sources.
+			// The health report surfaces this for the autopilot to investigate alternatives.
+			if (entry.consecutiveFailures >= 20 && !entry.lastSuccess) {
+				entry.active = false;
+				entry.needsRepair = false;
+				entry.deactivatedReason = `Auto-quarantined: ${entry.consecutiveFailures} consecutive failures with no prior success — source likely permanently unavailable`;
+				console.log(`  ⛔ Auto-quarantined recipe "${entry.id}" after ${entry.consecutiveFailures} consecutive failures`);
+			}
 		}
 
 		// Log to history
