@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T01:58:44.841Z",
+  "generatedAt": "2026-02-28T02:20:36.748Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 11,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 11,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 11,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 231,
+      "ageMinutes": 10,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 231,
+      "ageMinutes": 10,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 231,
+      "ageMinutes": 10,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -111,17 +111,14 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.3,
-    "eventsEnriched": 9,
+    "matchRate": 0.57,
+    "eventsEnriched": 17,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -177,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 16,
+        "consecutiveFailures": 17,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -210,18 +207,8 @@
     },
     {
       "severity": "warning",
-      "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 30% (9/30) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
       "code": "streaming_coverage_gap",
-      "message": "2 important event(s) lack streaming info: CS2 Major Tournaments 2026, Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
+      "message": "1 important event(s) lack streaming info: CS2 Major Tournaments 2026"
     },
     {
       "severity": "info",
@@ -256,12 +243,12 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 16 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 17 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "10 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "11 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -271,7 +258,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T01:58:44.934Z",
+    "computedAt": "2026-02-28T02:20:36.961Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -287,21 +274,20 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.4,
+        "score": 0.12,
         "reasons": [
-          "overdue by 200%",
-          "16 consecutive failures"
+          "17 consecutive failures"
         ],
-        "suggestedQuotaPriority": 2,
-        "suggestedRefreshIntervalMs": 7200000,
-        "suggestedStalenessThresholdMinutes": 180
+        "suggestedQuotaPriority": 3,
+        "suggestedRefreshIntervalMs": 43200000,
+        "suggestedStalenessThresholdMinutes": 360
       }
     ],
     "highestUrgency": 0.55,
-    "urgentTargets": 2
+    "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
