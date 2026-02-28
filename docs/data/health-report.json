@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-28T17:07:09.784Z",
-  "eventCount": 61,
+  "generatedAt": "2026-02-28T18:18:18.714Z",
+  "eventCount": 59,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 26,
+      "count": 24,
       "previousCount": 26,
-      "delta": 0
+      "delta": -2
     },
     "icehockey": {
       "count": 12,
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 9,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 9,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -103,24 +103,22 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 29,
+    "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.42,
-    "eventsEnriched": 11,
+    "matchRate": 0.38,
+    "eventsEnriched": 9,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Snapshot 2026-02-28: 10 events but events.json has 6"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -144,19 +142,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 50417,
+    "totalDuration": 50076,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29274,
-        "share": 58
+        "duration": 27757,
+        "share": 55
       },
       {
         "name": "fetch-results",
-        "duration": 38521,
-        "share": 76
+        "duration": 36262,
+        "share": 72
       }
     ],
     "failedSteps": []
@@ -208,27 +206,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 42% (11/26) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 38% (9/24) — team alias table may need updates"
     },
     {
       "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Barcelona vs Villarreal has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Liverpool vs West Ham United has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Newcastle United vs Everton has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-28: 10 events but events.json has 6"
+      "code": "streaming_coverage_gap",
+      "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
     },
     {
       "severity": "info",
@@ -243,12 +226,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (36s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -258,7 +241,7 @@
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "11 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "10 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -268,14 +251,13 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T17:07:09.924Z",
+    "computedAt": "2026-02-28T18:18:18.856Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.56,
+        "score": 0.42,
         "reasons": [
-          "overdue by 106%",
-          "1 match(es) within 2h",
+          "overdue by 165%",
           "focus team involved",
           "1 stale match(es)"
         ],
@@ -284,7 +266,7 @@
         "suggestedStalenessThresholdMinutes": 180
       }
     ],
-    "highestUrgency": 0.56,
+    "highestUrgency": 0.42,
     "urgentTargets": 1
   },
   "engagementHealth": {
@@ -296,7 +278,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 78/100.",
     "tokenUsage": null
   }
 }
