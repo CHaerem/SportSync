@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-28T13:19:55.319Z",
-  "eventCount": 64,
+  "generatedAt": "2026-02-28T13:44:57.392Z",
+  "eventCount": 65,
   "sportCoverage": {
-    "esports": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "esports": {
+      "count": 2,
+      "previousCount": 1,
+      "delta": 1
     },
     "football": {
       "count": 30,
@@ -71,7 +71,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -79,17 +79,17 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 132,
+      "ageMinutes": 157,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 132,
+      "ageMinutes": 157,
       "stale": false
     }
   },
   "schemaCompleteness": {
     "venuePercent": 0.97,
-    "streamingPercent": 0.98
+    "streamingPercent": 1
   },
   "rssFeedHealth": {
     "itemCount": 30,
@@ -119,7 +119,11 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-02-28: 11 events but events.json has 9",
+      "Snapshot 2026-02-24: 1 events but events.json has 0",
+      "Snapshot 2026-02-25: 1 events but events.json has 0",
+      "Snapshot 2026-02-26: 2 events but events.json has 1",
+      "Snapshot 2026-02-27: 2 events but events.json has 1",
+      "Snapshot 2026-02-28: 11 events but events.json has 10",
       "Snapshot 2026-03-03: 4 events but events.json has 5",
       "Snapshot 2026-03-04: 7 events but events.json has 8"
     ],
@@ -175,17 +179,10 @@
     "staleTournaments": []
   },
   "recipeHealth": {
-    "active": 1,
-    "broken": 1,
+    "active": 0,
+    "broken": 0,
     "recentSuccessRate": 0,
-    "recipes": [
-      {
-        "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 26,
-        "needsRepair": true,
-        "lastSuccess": null
-      }
-    ]
+    "recipes": []
   },
   "focusTeamHealth": {
     "teams": [
@@ -198,7 +195,7 @@
     "hasCoverage": false
   },
   "unmappedLeagues": [
-    "CS2 Major Tournaments 2026",
+    "DraculaN Season 5",
     "Olympics 2026"
   ],
   "issues": [
@@ -213,14 +210,29 @@
       "message": "tennis: data file exists but 0 events in events.json"
     },
     {
-      "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "1 important event(s) lack streaming info: CS2 Major Tournaments 2026"
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-24: 1 events but events.json has 0"
     },
     {
       "severity": "critical",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-28: 11 events but events.json has 9"
+      "message": "Snapshot 2026-02-25: 1 events but events.json has 0"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-26: 2 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-27: 2 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-28: 11 events but events.json has 10"
     },
     {
       "severity": "critical",
@@ -235,7 +247,7 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
+      "message": "2 tournament(s) lack league theming: DraculaN Season 5, Olympics 2026"
     },
     {
       "severity": "warning",
@@ -259,11 +271,6 @@
     },
     {
       "severity": "warning",
-      "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 26 consecutive failures — data source may be permanently unavailable"
-    },
-    {
-      "severity": "warning",
       "code": "recipe_repair_exhausted",
       "message": "12 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
@@ -275,34 +282,24 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T13:19:55.456Z",
+    "computedAt": "2026-02-28T13:44:57.531Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.12,
+        "score": 0.14,
         "reasons": [
           "focus team involved"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
-      },
-      {
-        "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.1,
-        "reasons": [
-          "26 consecutive failures"
-        ],
-        "suggestedQuotaPriority": 3,
-        "suggestedRefreshIntervalMs": 43200000,
-        "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.12,
+    "highestUrgency": 0.14,
     "urgentTargets": 0
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 3 critical, 4 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is critical with 7 critical, 2 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
