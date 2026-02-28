@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-02-28",
+      "task": "Fix pipelineHealth stagnation + sanityScore hint fatigue + EXPLORE athletics + fix date-dependent tests",
+      "outcome": "completed",
+      "pr": null,
+      "details": "Run 14: 3 code fixes + 1 EXPLORE + 1 pre-existing test repair. (1) MAINTENANCE direct-to-main: fixed norwegian_tagging_anomaly by adding tagRate < 1.0 exemption for domestic Norwegian leagues (GET-ligaen). Added recipe_repair_exhausted to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES. Together these should restore pipelineHealth 0.75→1.0. (2) MAINTENANCE direct-to-main: fixed sanityScore hint fatigue — added 13 stadium/venue names to skip list + inVenues guard in ai-sanity-check.js. (3) EXPLORE: athletics/track-and-field — no free API exists (ESPN, World Athletics, Diamond League confirmed). Curated config approach recommended. WA Indoor Championships Mar 20-22 (Torun) is urgent. Created [FEATURE] task for athletics sport coverage. (4) Fixed 3 pre-existing date-dependent test failures in bracket-support and discover-events — root cause was disk-resident urgency data overriding test expectations; fix: pass empty urgency override.",
+      "tests_passed": true,
+      "files_changed": 8,
+      "turns_used": 18,
+      "lesson": "norwegian_tagging_anomaly was a false positive for domestic Norwegian leagues: when tagRate === 1.0, all events are Norwegian by league design, not name-matching errors. The fix (tagRate < 1.0 exemption) is more precise than KNOWN_DATA_GAPS suppression — it lets the check still catch genuine anomalies in mixed leagues. Date-dependent test pattern had a new variant: disk-resident urgency data (refresh-urgency.json) leaking into tests that expected the heuristic fallback path. The fix is deterministic: pass { targets: [] } to isolate from disk state.",
+      "scouted": 1
+    },
+    {
       "date": "2026-02-27",
       "task": "Fix autonomy regression + Add Norwegian ice hockey [FEATURE]",
       "outcome": "completed",

@@ -1,24 +1,15 @@
 {
-  "generatedAt": "2026-02-27T22:17:25.282Z",
+  "generatedAt": "2026-02-28T01:58:44.927Z",
   "patternsDetected": 5,
   "patterns": [
     {
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "norwegian_tagging_anomaly",
-      "count": 20,
+      "count": 21,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z",
-      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 20 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
-    },
-    {
-      "type": "recurring_health_warning",
-      "severity": "high",
-      "issueCode": "recipe_repair_exhausted",
-      "count": 17,
-      "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z",
-      "suggestion": "Health warning \"recipe_repair_exhausted\" has fired 17 times since 2026-02-27. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-28T01:58:44.887Z",
+      "suggestion": "Health warning \"norwegian_tagging_anomaly\" has fired 21 times since 2026-02-24. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "stagnant_loop",
@@ -27,6 +18,14 @@
       "score": 0.75,
       "stagnantRuns": 20,
       "suggestion": "Feedback loop \"pipelineHealth\" has been stuck at 0.75 for 20 consecutive runs. It needs intervention to progress toward 1.0."
+    },
+    {
+      "type": "hint_fatigue",
+      "severity": "high",
+      "hintKey": "sanityScore",
+      "fireCount": 15,
+      "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but no matching athlete found in events data",
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but ...\" has fired 15 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
@@ -63,14 +62,14 @@
       "lastSeen": "2026-02-26T12:23:00.181Z"
     },
     "streaming_low_match_rate": {
-      "count": 199,
+      "count": 200,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "ux_eval_fallback": {
-      "count": 133,
+      "count": 134,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -83,14 +82,14 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "norwegian_tagging_anomaly": {
-      "count": 20,
+      "count": 21,
       "firstSeen": "2026-02-24T11:47:46.602Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "streaming_coverage_gap": {
-      "count": 57,
+      "count": 58,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -103,9 +102,9 @@
       "lastSeen": "2026-02-27T17:24:50.863Z"
     },
     "bracket_stale_matches": {
-      "count": 24,
+      "count": 25,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "quota_skip_time_critical": {
       "count": 28,
@@ -113,9 +112,9 @@
       "lastSeen": "2026-02-27T22:17:25.162Z"
     },
     "recipe_persistent_failure": {
-      "count": 18,
+      "count": 19,
       "firstSeen": "2026-02-26T18:20:12.118Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "stale_snapshot": {
       "count": 4,
@@ -123,27 +122,27 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "step_timeout_hit": {
-      "count": 9,
+      "count": 10,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T21:20:04.063Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "recipe_repair_exhausted": {
-      "count": 17,
+      "count": 18,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-27T22:17:25.162Z"
+      "lastSeen": "2026-02-28T01:58:44.887Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 18,
-      "improved": 3,
-      "unchanged": 13,
-      "worsened": 2,
-      "effectivenessRate": 0.17
+      "fires": 19,
+      "improved": 0,
+      "unchanged": 19,
+      "worsened": 0,
+      "effectivenessRate": 0
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-27T22:17:25.282Z",
+    "recordedAt": "2026-02-28T01:58:44.927Z",
     "moduleCount": 65,
     "avgModuleSize": 326,
     "pipelineSteps": 27,
@@ -156,5 +155,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "5 patterns detected (3 high, 2 medium). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 20 times since 2026-02-24."
+  "summary": "5 patterns detected (3 high, 2 medium). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 21 times since 2026-02-24."
 }

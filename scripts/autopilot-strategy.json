@@ -126,6 +126,10 @@
       {
         "date": "2026-02-27",
         "note": "Run 13: 2 tasks via 2 parallel subagents (code-agent + data-agent). (1) MAINTENANCE direct-to-main: 4 new quota-managed codes to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES + made snapshotHealth quota-aware. autonomy 10/12→12/12 (100%). (2) FEATURE branch-pr (PR #117): GET-ligaen ice hockey playoff config + icehockey sport (9th sport). Tests: 2148. Key insight: quota tier 2 skipping post-generate/discover-events/learn-recipes creates a burst of new warning codes that must be added to KNOWN_DATA_GAPS. The snapshotHealth loop needs the same quota-awareness pattern that scheduleVerification already uses. Parallel subagents continue to be efficient — both tasks completed in ~25 total turns."
+      },
+      {
+        "date": "2026-02-28",
+        "note": "Run 14: 3 maintenance fixes (code-agent batch) + 1 EXPLORE (data-agent) + 1 pre-existing test repair (code-agent), all parallel. Code fix > KNOWN_DATA_GAPS suppression when the health check has a real logic gap — norwegian_tagging_anomaly was fixable by adding tagRate < 1.0, which is more precise and preserves the check for genuinely anomalous sports. EXPLORE→FEATURE pipeline continues to work: athletics investigation → concrete [FEATURE] task with full schedule data (Diamond League 14 meetings extracted). New date-dependent test variant discovered: disk-resident data files (refresh-urgency.json) affecting test outcomes. Fix is deterministic override, not fake timers. Tests: 2180. Autonomy: should reach 12/12 once pipeline runs with fixed health check."
       }
     ]
   }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T22:17:25.051Z",
+  "generatedAt": "2026-02-28T01:58:44.841Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 232,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 232,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 232,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 231,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 231,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 231,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     }
   },
@@ -119,7 +119,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -137,14 +138,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 18,
+    "fiveHour": 16,
+    "sevenDay": 19,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 683421,
+    "totalDuration": 673901,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -152,8 +153,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300066,
-        "share": 44
+        "duration": 300035,
+        "share": 45
       }
     ],
     "failedSteps": [
@@ -214,13 +215,13 @@
     },
     {
       "severity": "warning",
-      "code": "norwegian_tagging_anomaly",
-      "message": "icehockey: 12/12 events tagged Norwegian but only 0 have Norwegian players — likely false positives in name matching"
+      "code": "streaming_coverage_gap",
+      "message": "2 important event(s) lack streaming info: CS2 Major Tournaments 2026, Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate"
     },
     {
       "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "2 important event(s) lack streaming info: CS2 Major Tournaments 2026, Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate"
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "info",
@@ -240,7 +241,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 44% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 45% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -270,7 +271,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-27T22:17:25.301Z",
+    "computedAt": "2026-02-28T01:58:44.934Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -286,20 +287,21 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.12,
+        "score": 0.4,
         "reasons": [
+          "overdue by 200%",
           "16 consecutive failures"
         ],
-        "suggestedQuotaPriority": 3,
-        "suggestedRefreshIntervalMs": 43200000,
-        "suggestedStalenessThresholdMinutes": 360
+        "suggestedQuotaPriority": 2,
+        "suggestedRefreshIntervalMs": 7200000,
+        "suggestedStalenessThresholdMinutes": 180
       }
     ],
     "highestUrgency": 0.55,
-    "urgentTargets": 1
+    "urgentTargets": 2
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }

@@ -873,8 +873,6 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. Check if CyclingArchives, UCI, or procyclingstats.com have free APIs or scrapable data. Norwegian cyclists (e.g., Markus Hoelgaard) could be tracked. Create `[FEATURE]` task if viable API found.
-
 ### Data Quality (Not Code Fixable)
 
 - [BLOCKED] data availability — Stale golf/chess data: ESPN golf and chess endpoints sometimes return stale data (649-884 minutes old). This is an API timing issue, not a code bug. Pipeline-health.js monitors freshness and alerts.
@@ -1007,8 +1005,6 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Investigate athletics/track-and-field coverage** — RSS shows Norwegian athletes in athletics (Guttormsen pole vault, Antonsen 800m). No coverage in dashboard. Check if Diamond League, World Athletics, or other sources have free APIs or if curated configs for major meets (WA Tour, European Championships) would suffice. Norwegian athletes: Sondre Guttormsen, Jakob Ingebrigtsen, Karsten Warholm.
-
 - [DONE] (direct, run 2026-02-25) **Add alpine skiing World Cup Finals curated config** — Created `scripts/config/alpine-wc-finals-2026.json` with 8 races (Super-G, GS, Downhill, Slalom for men+women) at Soldeu, Andorra (Mar 19-22). Added `alpine` to SPORT_CONFIG (emoji: ski, color: #0369a1) and league-config entry. 8 Norwegian athletes tracked: Kristoffersen, Mowinckel, Kilde, Haugan, McGrath, Stjernesund, Nestvold-Haugen, Braathen. Discovery loop will verify exact FIS schedule.
 
 ---
@@ -1037,15 +1033,23 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### HIGH Priority
 
-- [PENDING] [MAINTENANCE] **Investigate sanityScore hint fatigue (9 fires, 20% effectiveness)** — Pattern report shows `sanityScore` hint firing 9 times for "Featured mentions 'Meazza' but no matching athlete". 'Meazza' is a stadium name (San Siro), not an athlete. The AI sanity checker is interpreting venue names as athlete references. Investigate `scripts/ai-sanity-check.js` — add a venue/stadium suppression list or improve entity detection to distinguish venues from people. This is a false positive similar to the CS2 orphan-ref issue fixed in Run 8.
+- [DONE] (direct, run 2026-02-28) **Fix sanityScore hint fatigue — venue false positives** — Added 13 stadium/venue names (Meazza, Bernabeu, Anfield, Wembley, etc.) to skip list in `ai-sanity-check.js` check #9. Also added `inVenues` guard: names appearing in event venue strings are excluded from unknown-athlete flagging. Two-layer fix prevents both known and dynamic venue names from being flagged as athletes.
 
 ### MEDIUM Priority
 
-- [PENDING] [EXPLORE] **Investigate athletics/track-and-field coverage** — RSS shows Norwegian athletes in athletics (Guttormsen pole vault, Antonsen 800m). No coverage in dashboard. Check if Diamond League, World Athletics, or other sources have free APIs or if curated configs for major meets (WA Tour, European Championships) would suffice. Norwegian athletes: Sondre Guttormsen, Jakob Ingebrigtsen, Karsten Warholm.
+- [DONE] [EXPLORE] **Investigate athletics/track-and-field coverage** — No free API exists (ESPN, World Athletics, Diamond League all confirmed). Curated config approach is viable (same pattern as biathlon, ice hockey, alpine). Diamond League 2026 schedule extracted: 14 meetings May–Sep, Oslo Bislett Games Jun 28. WA Indoor Championships: Mar 20–22, Torun, Poland (3 weeks away — urgent). Norwegian athletes: Jakob Ingebrigtsen (1500/5000m), Karsten Warholm (400mH), Sondre Guttormsen (pole vault), Amalie Iuel (400mH). European Athletics Championships 2026 in Birmingham (~Aug). **Conclusion:** [FEATURE] task created below.
 
 ### LOW Priority
 
 - [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. Check if CyclingArchives, UCI, or procyclingstats.com have free APIs or scrapable data. Norwegian cyclists (e.g., Markus Hoelgaard) could be tracked. Create `[FEATURE]` task if viable API found.
+
+---
+
+## Scouted Tasks (2026-02-28)
+
+### HIGH Priority
+
+- [PENDING] [FEATURE] **Add athletics/track-and-field sport coverage** — Add Norwegian athletics to the dashboard via curated configs. No API exists — use curated config approach (same as biathlon, ice hockey, alpine). Create `scripts/config/athletics-2026.json` with: (1) WA Indoor Championships (Torun, Poland, Mar 20–22) — URGENT, 3 weeks away; (2) Diamond League 2026 series (14 meetings, May–Sep), Oslo Bislett Games (Jun 28) flagged `norwegian: true`; (3) European Athletics Championships 2026 (Birmingham, ~Aug — verify exact dates); (4) norwegianAthletes: [Jakob Ingebrigtsen, Karsten Warholm, Sondre Guttormsen, Amalie Iuel]. Add `athletics` to `sport-config.js` (emoji: runner, color: orange/red). Add `dynamicAthletes.athletics` to `user-context.json`. Risk: LOW.
 
 ---
 
