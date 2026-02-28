@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T13:44:57.392Z",
+  "generatedAt": "2026-02-28T14:09:35.422Z",
   "eventCount": 65,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "esports": {
       "count": 2,
-      "previousCount": 1,
-      "delta": 1
+      "previousCount": 2,
+      "delta": 0
     },
     "football": {
       "count": 30,
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 9,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 157,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 157,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -118,15 +118,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Snapshot 2026-02-24: 1 events but events.json has 0",
-      "Snapshot 2026-02-25: 1 events but events.json has 0",
-      "Snapshot 2026-02-26: 2 events but events.json has 1",
-      "Snapshot 2026-02-27: 2 events but events.json has 1",
-      "Snapshot 2026-02-28: 11 events but events.json has 10",
-      "Snapshot 2026-03-03: 4 events but events.json has 5",
-      "Snapshot 2026-03-04: 7 events but events.json has 8"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -210,39 +202,9 @@
       "message": "tennis: data file exists but 0 events in events.json"
     },
     {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-24: 1 events but events.json has 0"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-25: 1 events but events.json has 0"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-26: 2 events but events.json has 1"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-27: 2 events but events.json has 1"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-28: 11 events but events.json has 10"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-03: 4 events but events.json has 5"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-04: 7 events but events.json has 8"
+      "severity": "warning",
+      "code": "streaming_coverage_gap",
+      "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
     },
     {
       "severity": "info",
@@ -280,13 +242,13 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T13:44:57.531Z",
+    "computedAt": "2026-02-28T14:09:35.626Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.14,
+        "score": 0.16,
         "reasons": [
           "focus team involved"
         ],
@@ -295,11 +257,11 @@
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.14,
+    "highestUrgency": 0.16,
     "urgentTargets": 0
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is critical with 7 critical, 2 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 3 warning issue(s). Editorial quality score is 86/100.",
     "tokenUsage": null
   }
 }

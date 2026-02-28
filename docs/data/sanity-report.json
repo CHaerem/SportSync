@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-02-28T11:07:41.791Z",
+  "generatedAt": "2026-02-28T14:09:35.228Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 64,
+    "totalEvents": 65,
     "sports": [
-      "esports",
       "golf",
+      "esports",
       "football",
       "icehockey",
       "biathlon",
@@ -15,16 +15,15 @@
     ],
     "bands": {
       "live": [
-        "DraculaN Season 5",
-        "Cognizant Classic in The Palm Beaches"
+        "Cognizant Classic in The Palm Beaches",
+        "FlyQuest vs 100 Thieves"
       ],
       "today": [
-        "Sunderland at AFC Bournemouth",
-        "Athletic Club at Rayo Vallecano",
         "Brentford at Burnley",
         "West Ham United at Liverpool",
         "Everton at Newcastle United",
         "Villarreal at Barcelona",
+        "HEROIC vs TBD (Consolidation Final winner)",
         "Manchester City at Leeds United",
         "Real Sociedad at Mallorca",
         "Atlético Madrid at Real Oviedo"
@@ -44,6 +43,7 @@
         "Brentford at AFC Bournemouth",
         "Burnley at Everton",
         "Sunderland at Leeds United",
+        "Atlético Madrid at Barcelona",
         "Liverpool at Wolverhampton Wanderers",
         "GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)",
         "Real Oviedo at Rayo Vallecano",
@@ -51,6 +51,7 @@
         "Arsenal at Brighton & Hove Albion",
         "West Ham United at Fulham",
         "Nottingham Forest at Manchester City",
+        "Athletic Club at Real Sociedad",
         "Manchester United at Newcastle United",
         "Biathlon World Cup — Women's 15km Individual (Kontiolahti)",
         "GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 1)",
@@ -90,11 +91,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 93,
-    "issueCount": 12
+    "pipelineStatus": "critical",
+    "editorialScore": 86,
+    "issueCount": 16
   },
   "findings": [
     {
@@ -170,7 +171,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"At Camp Nou\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Internazionale\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"FlyQuest vs 100 Thieves\" marked norwegian=true but has no norwegianPlayers"
     },
     {
       "severity": "info",
@@ -235,14 +251,14 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 31,
     "critical": 0,
-    "warning": 16,
-    "info": 12
+    "warning": 18,
+    "info": 13
   },
   "pass": true,
   "tokenUsage": null

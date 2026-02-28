@@ -1938,37 +1938,18 @@ class Dashboard {
 		}
 
 
-		// Golf: Norwegian player status — live score when on course, tee time when upcoming
+		// Golf: Norwegian player tee times on the card (most useful at-a-glance info)
 		if (sportId === 'golf') {
-			const norPlayers = events.flatMap(e => (e.norwegianPlayers || []));
+			const norPlayers = events.flatMap(e => (e.norwegianPlayers || []).filter(p => p.teeTime));
 			if (norPlayers.length > 0) {
-				const lb = this.liveLeaderboard;
-				const isLive = lb && (lb.state === 'in' || lb.state === 'post');
-				const lbPlayers = isLive ? lb.players || [] : [];
-				const trackedNames = this._getTrackedGolferNames();
-				let hasContent = false;
-				let content = '<div class="lead-tee-times">';
+				html += '<div class="lead-tee-times">';
 				for (const p of norPlayers) {
-					// Check live leaderboard for this player
-					const lastName = p.name.split(' ').pop().toLowerCase();
-					const livePlayer = lbPlayers.find(lp => lp.player.toLowerCase().includes(lastName));
-					if (livePlayer) {
-						content += `<div class="lead-tee-time">`;
-						content += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
-						content += `<span class="lead-tee-clock">${this.esc(livePlayer.position)} (${this.esc(livePlayer.score)}) thru ${this.esc(livePlayer.thru)}</span>`;
-						content += `</div>`;
-						hasContent = true;
-					} else if (!isLive && p.teeTime) {
-						// No live data — show tee time
-						content += `<div class="lead-tee-time">`;
-						content += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
-						content += `<span class="lead-tee-clock">${this.esc(p.teeTime)}</span>`;
-						content += `</div>`;
-						hasContent = true;
-					}
+					html += `<div class="lead-tee-time">`;
+					html += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
+					html += `<span class="lead-tee-clock">${this.esc(p.teeTime)}</span>`;
+					html += `</div>`;
 				}
-				content += '</div>';
-				if (hasContent) html += content;
+				html += '</div>';
 			}
 		}
 
