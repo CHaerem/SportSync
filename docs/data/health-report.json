@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-28T14:29:12.302Z",
-  "eventCount": 65,
+  "generatedAt": "2026-02-28T15:07:41.188Z",
+  "eventCount": 62,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 30,
+      "count": 27,
       "previousCount": 30,
-      "delta": 0
+      "delta": -3
     },
     "icehockey": {
       "count": 12,
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 1,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 52,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 52,
       "stale": false
     }
   },
@@ -103,7 +103,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 27,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -111,14 +111,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.5,
-    "eventsEnriched": 15,
+    "matchRate": 0.15,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-02-28: 10 events but events.json has 7"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -135,14 +137,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 18,
-    "sevenDay": 31,
+    "fiveHour": 42,
+    "sevenDay": 33,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 608302,
+    "totalDuration": 521690,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,8 +152,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300095,
-        "share": 49
+        "duration": 300082,
+        "share": 58
       }
     ],
     "failedSteps": [
@@ -167,8 +169,10 @@
   "bracketHealth": {
     "active": 1,
     "orphaned": 0,
-    "staleMatches": 0,
-    "staleTournaments": []
+    "staleMatches": 1,
+    "staleTournaments": [
+      "draculan-s5"
+    ]
   },
   "recipeHealth": {
     "active": 0,
@@ -203,8 +207,23 @@
     },
     {
       "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
+      "code": "streaming_low_match_rate",
+      "message": "Streaming enrichment match rate is 15% (4/27) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Liverpool vs West Ham United has no matching event in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Newcastle United vs Everton has no matching event in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-02-28: 10 events but events.json has 7"
     },
     {
       "severity": "info",
@@ -224,12 +243,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 49% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 58% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+    },
+    {
+      "severity": "warning",
+      "code": "bracket_stale_matches",
+      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 1 stale match(es) — bracket data needs refresh"
     },
     {
       "severity": "warning",
@@ -244,24 +268,26 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T14:29:12.450Z",
+    "computedAt": "2026-02-28T15:07:41.350Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.17,
+        "score": 0.26,
         "reasons": [
-          "focus team involved"
+          "overdue by 6%",
+          "focus team involved",
+          "1 stale match(es)"
         ],
         "suggestedQuotaPriority": 3,
-        "suggestedRefreshIntervalMs": 43200000,
+        "suggestedRefreshIntervalMs": 21600000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.17,
+    "highestUrgency": 0.26,
     "urgentTargets": 0
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }
