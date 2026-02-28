@@ -112,61 +112,65 @@
           },
           {
             "round": "Quarterfinals",
-            "scheduledTime": "2026-02-26T11:00:00Z",
             "matches": [
               {
                 "team1": "HEROIC",
                 "team2": "ASTRAL",
-                "status": "scheduled",
-                "scheduledTime": "2026-02-26T11:00:00Z"
+                "score": "2-0",
+                "winner": "HEROIC",
+                "status": "completed"
               },
               {
-                "team1": "CYBERSHOKE",
-                "team2": "ENCE",
-                "status": "scheduled",
-                "scheduledTime": "2026-02-26T11:00:00Z"
+                "team1": "ENCE",
+                "team2": "CYBERSHOKE",
+                "score": "2-0",
+                "winner": "ENCE",
+                "status": "completed"
               },
               {
                 "team1": "Eternal Fire",
                 "team2": "MANA",
-                "status": "scheduled",
-                "scheduledTime": "2026-02-26T11:00:00Z"
+                "score": "2-0",
+                "winner": "Eternal Fire",
+                "status": "completed"
               },
               {
-                "team1": "Nexus",
-                "team2": "FlyQuest",
-                "status": "scheduled",
-                "scheduledTime": "2026-02-26T11:00:00Z"
+                "team1": "FlyQuest",
+                "team2": "Nexus",
+                "score": "2-0",
+                "winner": "FlyQuest",
+                "status": "completed"
               }
             ]
           },
           {
             "round": "Semifinal",
-            "scheduledTime": "2026-02-26T17:00:00Z",
             "matches": [
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending",
-                "scheduledTime": "2026-02-26T17:00:00Z"
+                "team1": "HEROIC",
+                "team2": "ENCE",
+                "score": "2-0",
+                "winner": "HEROIC",
+                "status": "completed"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending",
-                "scheduledTime": "2026-02-26T17:00:00Z"
+                "team1": "FlyQuest",
+                "team2": "Eternal Fire",
+                "score": "2-0",
+                "winner": "FlyQuest",
+                "status": "completed"
               }
             ]
           },
           {
             "round": "Final",
-            "scheduledTime": "2026-02-27T16:00:00Z",
             "matches": [
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending",
-                "scheduledTime": "2026-02-27T16:00:00Z"
+                "team1": "HEROIC",
+                "team2": "FlyQuest",
+                "score": "2-0",
+                "winner": "HEROIC",
+                "status": "completed"
               }
             ]
           }
@@ -186,12 +190,14 @@
               {
                 "team1": "INFINITE",
                 "team2": "Apogee",
-                "status": "scheduled"
+                "status": "completed",
+                "winner": "INFINITE"
               },
               {
                 "team1": "Oramond",
                 "team2": "HYPERSPIRIT",
-                "status": "scheduled"
+                "status": "completed",
+                "winner": "Oramond"
               },
               {
                 "team1": "BESTIA",
@@ -208,61 +214,76 @@
             "note": "LB R1 winners vs UB QF losers",
             "matches": [
               {
-                "team1": "CYBERSHOKE",
-                "team2": "100 Thieves",
-                "status": "scheduled",
-                "scheduledTime": "2026-02-27T12:00:00Z",
-                "note": "LB R2 — vs CYBERSHOKE (UB QF loser)"
+                "team1": "100 Thieves",
+                "team2": "MANA",
+                "score": "2-0",
+                "winner": "100 Thieves",
+                "status": "completed"
               },
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending"
+                "team1": "100 Thieves",
+                "team2": "Betclic",
+                "score": "2-0",
+                "winner": "100 Thieves",
+                "status": "completed"
               }
             ]
           },
           {
             "round": "Round 3",
-            "scheduledTime": "2026-02-26T17:00:00Z",
             "matches": [
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending",
-                "scheduledTime": "2026-02-26T17:00:00Z"
+                "team1": "100 Thieves",
+                "team2": "CYBERSHOKE",
+                "score": "2-0",
+                "winner": "100 Thieves",
+                "status": "completed"
               }
             ]
           },
           {
-            "round": "Final",
-            "scheduledTime": "2026-02-27T12:00:00Z",
+            "round": "Round 4",
             "matches": [
               {
-                "team1": "TBD",
-                "team2": "TBD",
-                "status": "pending",
-                "scheduledTime": "2026-02-27T12:00:00Z",
-                "note": "Winner faces Upper Bracket winner in Grand Final"
+                "team1": "100 Thieves",
+                "team2": "Eternal Fire",
+                "score": "2-0",
+                "maps": "Inferno 13-11, Dust2 13-9",
+                "winner": "100 Thieves",
+                "status": "completed"
+              }
+            ]
+          },
+          {
+            "round": "Consolidation Final",
+            "scheduledTime": "2026-02-28T13:00:00Z",
+            "matches": [
+              {
+                "team1": "FlyQuest",
+                "team2": "100 Thieves",
+                "status": "scheduled",
+                "scheduledTime": "2026-02-28T13:00:00Z",
+                "note": "Winner faces HEROIC in Grand Final"
               }
             ]
           }
         ],
         "grandFinal": {
-          "scheduledTime": "2026-02-27T17:30:00Z",
+          "scheduledTime": "2026-02-28T17:30:00Z",
           "matches": [
             {
-              "team1": "TBD (Upper)",
-              "team2": "TBD (Lower)",
-              "status": "pending",
-              "scheduledTime": "2026-02-27T17:30:00Z",
-              "note": "Upper bracket team has 1 map advantage"
+              "team1": "HEROIC",
+              "team2": "TBD (Consolidation Final winner)",
+              "status": "scheduled",
+              "scheduledTime": "2026-02-28T17:30:00Z",
+              "note": "HEROIC has 1 map advantage"
             }
           ]
         }
       },
       "focusTeamPath": {
         "team": "100 Thieves",
-        "status": "Lower Bracket Round 2",
+        "status": "Consolidation Final",
         "completed": [
           {
             "stage": "Group B Opening",
@@ -287,19 +308,40 @@
             "opponent": "aimclub",
             "result": "W 2-0",
             "maps": "Ancient 13-4, Inferno 13-5"
+          },
+          {
+            "stage": "Lower Bracket R2",
+            "opponent": "MANA",
+            "result": "W 2-0"
+          },
+          {
+            "stage": "Lower Bracket R2",
+            "opponent": "Betclic",
+            "result": "W 2-0"
+          },
+          {
+            "stage": "Lower Bracket R3",
+            "opponent": "CYBERSHOKE",
+            "result": "W 2-0"
+          },
+          {
+            "stage": "Lower Bracket R4",
+            "opponent": "Eternal Fire",
+            "result": "W 2-0",
+            "maps": "Inferno 13-11, Dust2 13-9"
           }
         ],
         "current": {
-          "stage": "Lower Bracket R2",
-          "opponent": "CYBERSHOKE",
+          "stage": "Consolidation Final",
+          "opponent": "FlyQuest",
           "format": "Bo3",
-          "scheduledTime": "2026-02-27T12:00:00Z",
+          "scheduledTime": "2026-02-28T13:00:00Z",
           "status": "scheduled"
         },
-        "ifWin": "Lower Bracket Round 3",
-        "ifLose": "Eliminated (7th-8th place)"
+        "ifWin": "Grand Final vs HEROIC (HEROIC has 1 map advantage)",
+        "ifLose": "Eliminated (3rd place, ~$2,500)"
       }
     },
-    "_lastUpdated": "2026-02-26T10:00:00.000Z"
+    "_lastUpdated": "2026-02-28T13:00:00.000Z"
   }
 }
