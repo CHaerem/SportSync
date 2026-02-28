@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T11:45:48.596Z",
+  "generatedAt": "2026-02-28T12:11:35.509Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 38,
+      "ageMinutes": 64,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 38,
+      "ageMinutes": 64,
       "stale": false
     }
   },
@@ -134,35 +134,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 64,
-    "sevenDay": 29,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 190410,
-    "stepCount": 25,
+    "totalDuration": 55941,
+    "stepCount": 20,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 75489,
-        "share": 40
+        "name": "fetch-sports",
+        "duration": 27682,
+        "share": 49
       },
       {
-        "name": "verify-schedules",
-        "duration": 60027,
-        "share": 32
+        "name": "fetch-results",
+        "duration": 39712,
+        "share": 71
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "bracketHealth": {
     "active": 1,
@@ -179,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 24,
+        "consecutiveFailures": 25,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -221,11 +216,6 @@
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Olympics 2026"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 64%, 7d: 29%) — 2 step(s) skipped: discover-events, learn-recipes"
-    },
-    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -233,17 +223,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (75s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -252,23 +237,13 @@
     },
     {
       "severity": "warning",
-      "code": "quota_skip_time_critical",
-      "message": "discover-events was quota-skipped but 5 bracket match(es) in 1 tournament(s) need refresh"
-    },
-    {
-      "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 24 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 25 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
       "message": "12 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
-    },
-    {
-      "severity": "warning",
-      "code": "quota_skip_time_critical",
-      "message": "learn-recipes was quota-skipped but 1 recipe(s) need repair — data source going dark"
     },
     {
       "severity": "info",
@@ -278,7 +253,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T11:45:48.730Z",
+    "computedAt": "2026-02-28T12:11:35.663Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -296,7 +271,7 @@
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.1,
         "reasons": [
-          "24 consecutive failures"
+          "25 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -307,7 +282,7 @@
     "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
