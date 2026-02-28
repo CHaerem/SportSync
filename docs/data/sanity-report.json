@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T09:18:37.504Z",
+  "generatedAt": "2026-02-28T10:17:22.372Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -90,11 +90,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 13
+    "issueCount": 12
   },
   "findings": [
     {
@@ -168,16 +168,6 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 43 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Every\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"GET-ligaen Quarterfinal — Storhamar vs #6 (Game 1)\" marked norwegian=true but has no norwegianPlayers"
@@ -239,14 +229,19 @@
     },
     {
       "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"18:30\" for \"Villarreal at Barcelona\" but events.json has 16:15"
+    },
+    {
+      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 29,
+    "total": 28,
     "critical": 0,
-    "warning": 17,
+    "warning": 16,
     "info": 12
   },
   "pass": true,

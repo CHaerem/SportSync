@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-02-28T09:19:37.399Z",
+  "lastUpdated": "2026-02-28T10:18:22.456Z",
   "current": {
     "fiveHour": {
-      "utilization": 46
+      "utilization": 64
     },
     "sevenDay": {
-      "utilization": 27,
+      "utilization": 29,
       "resets_at": "1772776800"
     },
     "evaluation": {
-      "tier": 0,
-      "tierName": "green",
-      "maxPriority": 3,
-      "model": null,
-      "constrained": false,
-      "reason": "ok",
+      "tier": 1,
+      "tierName": "moderate",
+      "maxPriority": 2,
+      "model": "claude-sonnet-4-6",
+      "constrained": true,
+      "reason": "moderate: 5h 64%, 7d 29%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-28T09:19:38.062Z"
+    "checkedAt": "2026-02-28T10:18:23.276Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 41971,
+    "featured": 41418,
     "discovery": 0,
     "multiDay": 0,
-    "runTotal": 41971
+    "runTotal": 41418
   },
   "budget": {
-    "dailyUsed": 1528976,
-    "weeklyUsed": 14285791,
+    "dailyUsed": 1486838,
+    "weeklyUsed": 14121421,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 31,
-    "weeklyPct": 57
+    "dailyPct": 30,
+    "weeklyPct": 56
   },
   "sportsyncShare": {
     "pipelineRuns": 136,
     "autopilotRuns": 0,
-    "totalDurationMs": 42791787
+    "totalDurationMs": 43373725
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,12 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-21T10:09:45.691Z",
-      "context": "pipeline",
-      "durationMs": 73758,
-      "tokens": 205788
-    },
     {
       "timestamp": "2026-02-21T11:09:36.049Z",
       "context": "pipeline",
@@ -867,6 +861,12 @@
       "context": "pipeline",
       "durationMs": 620005,
       "tokens": 41971
+    },
+    {
+      "timestamp": "2026-02-28T10:18:22.456Z",
+      "context": "pipeline",
+      "durationMs": 655696,
+      "tokens": 41418
     }
   ]
 }

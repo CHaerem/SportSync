@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T09:18:37.461Z",
+  "generatedAt": "2026-02-28T10:17:22.548Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -67,7 +67,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "stale": false
     },
     "golf.json": {
@@ -135,14 +135,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 17,
-    "sevenDay": 25,
+    "fiveHour": 28,
+    "sevenDay": 26,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 773054,
+    "totalDuration": 655764,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,8 +150,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300082,
-        "share": 39
+        "duration": 300103,
+        "share": 46
       }
     ],
     "failedSteps": [
@@ -174,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 21,
+        "consecutiveFailures": 22,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -228,7 +228,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 39% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 46% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -243,12 +243,12 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 21 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 22 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "13 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "14 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -258,7 +258,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T09:18:37.666Z",
+    "computedAt": "2026-02-28T10:17:22.701Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -276,7 +276,7 @@
         "id": "recipe:liquipedia-cs2-matches",
         "score": 0.12,
         "reasons": [
-          "21 consecutive failures"
+          "22 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
