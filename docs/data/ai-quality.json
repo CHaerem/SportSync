@@ -1,37 +1,32 @@
 {
-  "generatedAt": "2026-02-28T02:20:34.948Z",
+  "generatedAt": "2026-02-28T06:22:50.071Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "default",
+    "provider": "fallback",
+    "model": "fallback",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 91548,
+    "blockCount": 9,
+    "generationMs": 180167,
     "tokenUsage": {
-      "input": 36022,
-      "output": 5403,
-      "cacheCreation": 36019,
-      "cacheRead": 0,
-      "total": 41425,
-      "costUSD": 0.36020874999999997,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 97,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -83,23 +78,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 64,
     "skipStats": {
       "total": 64,
-      "unchanged": 63,
-      "enriched": 1,
-      "skipRate": 0.98
+      "unchanged": 64,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 30248,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 30129,
-      "output": 119,
-      "calls": 1,
-      "total": 30248,
-      "costUSD": 0.09715575,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
@@ -114,7 +109,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-28T02:10:38.957Z",
+    "lastRun": "2026-02-28T06:12:26.820Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2

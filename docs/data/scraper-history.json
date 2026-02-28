@@ -553,6 +553,24 @@
       "action": "repair-llm",
       "success": false,
       "reason": "spawnSync /bin/sh ETIMEDOUT"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-28T06:11:48.715Z",
+      "success": false,
+      "resultCount": 0,
+      "durationMs": 497,
+      "issues": [
+        "HTTP 406 from https://liquipedia.net/counterstrike/api.php?action=parse&page=Liquipedia%3AMatches&format=json&prop=text"
+      ],
+      "diagnosis": "fetch-error"
+    },
+    {
+      "recipeId": "liquipedia-cs2-matches",
+      "timestamp": "2026-02-28T06:19:40.972Z",
+      "action": "repair-llm",
+      "success": false,
+      "reason": "Invalid recipe returned by LLM"
     }
   ]
 }
