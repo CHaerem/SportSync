@@ -1,93 +1,5 @@
 [
   {
-    "timestamp": "2026-02-25T17:29:42.899Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 91,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 30,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 15,
-      "warningCount": 15,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "CORRECTION: Recent outputs were too focused on one sport. Include events from at least 2 different sports when available.",
-      "SANITY: Previous brief had content issues: Featured mentions \"Bodo\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"San Siro\" but no matching athlete found in events data; Featured mentions \"Prestianni\" but no matching athlete found in events data; Featured mentions \"Anfield\" but no matching athlete found in events data; Featured mentions \"Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34108,
-        "output": 8718,
-        "cacheCreation": 15661,
-        "cacheRead": 18444,
-        "total": 42826,
-        "costUSD": 0.32506825,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 34108,
-        "output": 8718,
-        "calls": 1,
-        "total": 42826,
-        "costUSD": 0.32506825,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 89.857,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.524,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-25T18:29:30.742Z",
     "editorial": {
       "score": 100,
@@ -7555,11 +7467,11 @@
     }
   },
   {
-    "timestamp": "2026-02-28T14:19:49.943Z",
+    "timestamp": "2026-02-28T14:09:33.514Z",
     "editorial": {
-      "score": 85,
-      "mustWatchCoverage": 0.5,
-      "sportDiversity": 1,
+      "score": 86,
+      "mustWatchCoverage": 0.75,
+      "sportDiversity": 0.667,
       "blockCount": 8
     },
     "enrichment": {
@@ -7597,20 +7509,20 @@
     "tokenUsage": {
       "enrichment": {
         "input": 30622,
-        "output": 2774,
+        "output": 2761,
         "calls": 1,
-        "total": 33396,
-        "costUSD": 0.16665225,
+        "total": 33383,
+        "costUSD": 0.16632725,
         "tracked": true,
         "estimated": false
       },
       "featured": {
-        "input": 36062,
-        "output": 6006,
-        "cacheCreation": 36059,
+        "input": 36082,
+        "output": 7953,
+        "cacheCreation": 36079,
         "cacheRead": 0,
-        "total": 42068,
-        "costUSD": 0.37553375,
+        "total": 44035,
+        "costUSD": 0.42433374999999995,
         "tracked": true,
         "estimated": false,
         "calls": 1
@@ -7626,11 +7538,11 @@
       },
       "multiDay": null,
       "total": {
-        "input": 66684,
-        "output": 8780,
+        "input": 66704,
+        "output": 10714,
         "calls": 4,
-        "total": 75464,
-        "costUSD": 0.5421860000000001,
+        "total": 77418,
+        "costUSD": 0.590661,
         "realPct": 100
       }
     },
@@ -7642,9 +7554,104 @@
     },
     "rollingAverage": {
       "windowSize": 7,
-      "editorialScore": 93,
+      "editorialScore": 93.143,
+      "mustWatchCoverage": 0.964,
+      "sportDiversity": 0.762,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-28T14:29:10.351Z",
+    "editorial": {
+      "score": 93,
+      "mustWatchCoverage": 0.75,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 112,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 28,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 31,
+      "warningCount": 18,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Bodo\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"Internazionale\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 36137,
+        "output": 5755,
+        "cacheCreation": 19772,
+        "cacheRead": 16362,
+        "total": 41892,
+        "costUSD": 0.275646,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": null,
+      "total": {
+        "input": 36137,
+        "output": 5755,
+        "calls": 3,
+        "total": 41892,
+        "costUSD": 0.275646,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 92.571,
       "mustWatchCoverage": 0.929,
-      "sportDiversity": 0.81,
+      "sportDiversity": 0.762,
       "enrichmentScore": 100,
       "resultsScore": 90
     }

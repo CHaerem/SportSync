@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-02-28T14:20:51.929Z",
+  "lastUpdated": "2026-02-28T14:30:12.128Z",
   "current": {
     "fiveHour": {
-      "utilization": 42
+      "utilization": 54
     },
     "sevenDay": {
-      "utilization": 33,
+      "utilization": 34,
       "resets_at": "1772776800"
     },
     "evaluation": {
-      "tier": 0,
-      "tierName": "green",
-      "maxPriority": 3,
-      "model": null,
-      "constrained": false,
-      "reason": "ok",
+      "tier": 1,
+      "tierName": "moderate",
+      "maxPriority": 2,
+      "model": "claude-sonnet-4-6",
+      "constrained": true,
+      "reason": "moderate: 5h 54%, 7d 34%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-28T14:20:52.539Z"
+    "checkedAt": "2026-02-28T14:30:13.700Z"
   },
   "internalTokens": {
-    "enrichment": 33396,
-    "featured": 42068,
+    "enrichment": 0,
+    "featured": 41892,
     "discovery": 0,
     "multiDay": 0,
-    "runTotal": 75464
+    "runTotal": 41892
   },
   "budget": {
-    "dailyUsed": 1119143,
-    "weeklyUsed": 13905513,
+    "dailyUsed": 1162989,
+    "weeklyUsed": 13949359,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 22,
+    "dailyPct": 23,
     "weeklyPct": 56
   },
   "sportsyncShare": {
-    "pipelineRuns": 138,
+    "pipelineRuns": 139,
     "autopilotRuns": 0,
-    "totalDurationMs": 43939401
+    "totalDurationMs": 44455979
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -875,10 +875,16 @@
       "tokens": 40068
     },
     {
-      "timestamp": "2026-02-28T14:20:51.929Z",
+      "timestamp": "2026-02-28T14:10:35.305Z",
       "context": "pipeline",
-      "durationMs": 538468,
-      "tokens": 75464
+      "durationMs": 575287,
+      "tokens": 77418
+    },
+    {
+      "timestamp": "2026-02-28T14:30:12.128Z",
+      "context": "pipeline",
+      "durationMs": 479759,
+      "tokens": 41892
     }
   ]
 }
