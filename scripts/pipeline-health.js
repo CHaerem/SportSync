@@ -709,6 +709,9 @@ export function generateHealthReport(options = {}) {
 		}
 
 		// Check for event count mismatch (inconsistency)
+		// Severity: "warning" — count mismatches are expected when events are added/removed
+		// between snapshot creation and the current build. Only flag as critical if the
+		// mismatch is large (>50% difference), suggesting data corruption.
 		if (snapMeta.perDay && events.length > 0) {
 			for (const [dateKey, dayInfo] of Object.entries(snapMeta.perDay)) {
 				const dayStart = new Date(dateKey + "T00:00:00");
@@ -717,7 +720,10 @@ export function generateHealthReport(options = {}) {
 				if (dayInfo.eventCount !== expectedCount) {
 					const msg = `Snapshot ${dateKey}: ${dayInfo.eventCount} events but events.json has ${expectedCount}`;
 					snapshotHealth.issues.push(msg);
-					issues.push({ severity: "critical", code: "snapshot_event_mismatch", message: msg });
+					const maxCount = Math.max(dayInfo.eventCount, expectedCount, 1);
+					const diff = Math.abs(dayInfo.eventCount - expectedCount);
+					const severity = diff / maxCount > 0.5 ? "critical" : "warning";
+					issues.push({ severity, code: "snapshot_event_mismatch", message: msg });
 				}
 			}
 		}
