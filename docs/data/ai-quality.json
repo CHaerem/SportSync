@@ -1,37 +1,32 @@
 {
-  "generatedAt": "2026-02-28T07:22:14.003Z",
+  "generatedAt": "2026-02-28T08:20:22.037Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "default",
+    "provider": "fallback",
+    "model": "fallback",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 121237,
+    "blockCount": 9,
+    "generationMs": 180147,
     "tokenUsage": {
-      "input": 35984,
-      "output": 6978,
-      "cacheCreation": 19619,
-      "cacheRead": 16362,
-      "total": 42962,
-      "costUSD": 0.30526475,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 97,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -114,7 +109,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-28T07:12:03.374Z",
+    "lastRun": "2026-02-28T08:09:10.134Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2
