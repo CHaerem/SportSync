@@ -1938,6 +1938,21 @@ class Dashboard {
 		}
 
 
+		// Golf: Norwegian player tee times on the card (most useful at-a-glance info)
+		if (sportId === 'golf') {
+			const norPlayers = events.flatMap(e => (e.norwegianPlayers || []).filter(p => p.teeTime));
+			if (norPlayers.length > 0) {
+				html += '<div class="lead-tee-times">';
+				for (const p of norPlayers) {
+					html += `<div class="lead-tee-time">`;
+					html += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
+					html += `<span class="lead-tee-clock">${this.esc(p.teeTime)}</span>`;
+					html += `</div>`;
+				}
+				html += '</div>';
+			}
+		}
+
 		// Leaderboard for golf cards — live polling first, standings fallback
 		if (sportId === 'golf') {
 			if (this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
