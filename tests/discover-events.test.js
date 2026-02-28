@@ -524,7 +524,7 @@ describe("findResearchTasks — urgency-aware bracket refresh", () => {
 				],
 			},
 		}];
-		const tasks = findResearchTasks(configs, null, now, null);
+		const tasks = findResearchTasks(configs, null, now, { targets: [] });
 		expect(tasks.some(t => t.type === "refresh-bracket")).toBe(true);
 	});
 });

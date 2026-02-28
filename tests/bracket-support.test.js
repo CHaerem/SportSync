@@ -306,7 +306,7 @@ describe("findResearchTasks() — refresh-bracket", () => {
 			},
 		];
 
-		const tasks = findResearchTasks(configs, null, now);
+		const tasks = findResearchTasks(configs, null, now, { targets: [] });
 		const bracketTask = tasks.find((t) => t.type === "refresh-bracket");
 		expect(bracketTask).toBeDefined();
 		expect(bracketTask.priority).toBe(4);
@@ -378,7 +378,7 @@ describe("findResearchTasks() — refresh-bracket", () => {
 			},
 		];
 
-		const tasks = findResearchTasks(configs, null, now);
+		const tasks = findResearchTasks(configs, null, now, { targets: [] });
 		const bracketTask = tasks.find((t) => t.type === "refresh-bracket");
 		// Should trigger because 1.5h > 1h match-day threshold
 		expect(bracketTask).toBeDefined();
