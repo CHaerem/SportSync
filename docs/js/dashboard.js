@@ -1937,18 +1937,6 @@ class Dashboard {
 			}
 		}
 
-		// Bracket path — any sport with bracket/playoff data (esports, football CL, etc.)
-		if (this.brackets) {
-			const bracketEvent = events[0];
-			const bracket = this._findBracketForEvent(bracketEvent);
-			if (bracket) {
-				const b = bracket.bracket || bracket;
-				const focus = bracket.focusTeam || b.focusTeam;
-				if (focus) {
-					html += this._renderBracketPath(b, focus);
-				}
-			}
-		}
 
 		// Leaderboard for golf cards — live polling first, standings fallback
 		if (sportId === 'golf') {
@@ -3284,61 +3272,7 @@ class Dashboard {
 			}
 		}
 
-		// Roster
-		if (bracketData.focusTeamRoster) {
-			html += '<div class="exp-bracket-roster">';
-			html += `<span class="exp-bracket-roster-label">${this.esc(focusTeam)} roster:</span> `;
-			html += this.esc(bracketData.focusTeamRoster.join(', '));
-			if (bracketData.coach) html += ` (coach: ${this.esc(bracketData.coach)})`;
-			html += '</div>';
-		}
-
-		// Focus team path — compact journey summary
-		if (path) {
-			html += '<div class="exp-bracket-path">';
-			html += `<div class="exp-bracket-path-title">${this.esc(focusTeam)} Tournament Path</div>`;
-
-			// Completed matches
-			if (path.completed?.length > 0) {
-				for (const m of path.completed) {
-					const isWin = m.result.startsWith('W');
-					html += `<div class="exp-bracket-match ${isWin ? 'win' : 'loss'}">`;
-					html += `<span class="exp-bracket-match-stage">${this.esc(m.stage)}</span>`;
-					html += `<span class="exp-bracket-match-vs">vs ${this.esc(m.opponent)}</span>`;
-					html += `<span class="exp-bracket-match-result">${this.esc(m.result)}</span>`;
-					html += '</div>';
-				}
-			}
-
-			// Current match
-			if (path.current) {
-				const c = path.current;
-				html += `<div class="exp-bracket-match current">`;
-				html += `<span class="exp-bracket-match-stage">${this.esc(c.stage)}</span>`;
-				html += `<span class="exp-bracket-match-vs">vs ${this.esc(c.opponent)}</span>`;
-				const statusLabel = c.status === 'live' ? 'LIVE' : (c.format || 'Upcoming');
-				html += `<span class="exp-bracket-match-status ${c.status === 'live' ? 'live' : ''}">${this.esc(statusLabel)}</span>`;
-				html += '</div>';
-			}
-
-			// What-if scenarios
-			if (path.ifWin || path.ifLose) {
-				html += '<div class="exp-bracket-scenarios">';
-				if (path.ifWin) {
-					html += `<div class="exp-bracket-scenario win">If win: ${this.esc(path.ifWin)}</div>`;
-				}
-				if (path.ifLose) {
-					html += `<div class="exp-bracket-scenario loss">If lose: ${this.esc(path.ifLose)}</div>`;
-				}
-				html += '</div>';
-			}
-
-			html += '</div>';
-		}
-
-		// Visual bracket tree — always show the full grid so users can see
-		// all rounds and progressions. The focus team path above provides
-		// personalized context; the grid below provides the complete picture.
+		// Visual bracket tree — show the full grid with all rounds and progressions.
 		html += this._renderBracketGrid(b.playoffs, focusTeam);
 
 		html += '</div>';
