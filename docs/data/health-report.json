@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T13:18:26.862Z",
+  "generatedAt": "2026-02-28T13:19:55.319Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -71,7 +71,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 131,
+      "ageMinutes": 132,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 131,
+      "ageMinutes": 132,
       "stale": false
     }
   },
@@ -171,10 +171,8 @@
   "bracketHealth": {
     "active": 1,
     "orphaned": 0,
-    "staleMatches": 5,
-    "staleTournaments": [
-      "draculan-s5"
-    ]
+    "staleMatches": 0,
+    "staleTournaments": []
   },
   "recipeHealth": {
     "active": 1,
@@ -261,11 +259,6 @@
     },
     {
       "severity": "warning",
-      "code": "bracket_stale_matches",
-      "message": "Tournament \"DraculaN Season 5\" (draculan-s5) has 5 stale match(es) — bracket data needs refresh"
-    },
-    {
-      "severity": "warning",
       "code": "recipe_persistent_failure",
       "message": "Recipe \"liquipedia-cs2-matches\" has 26 consecutive failures — data source may be permanently unavailable"
     },
@@ -282,19 +275,17 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T13:18:26.999Z",
+    "computedAt": "2026-02-28T13:19:55.456Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.55,
+        "score": 0.12,
         "reasons": [
-          "overdue by 200%",
-          "focus team involved",
-          "5 stale match(es)"
+          "focus team involved"
         ],
-        "suggestedQuotaPriority": 2,
-        "suggestedRefreshIntervalMs": 7200000,
-        "suggestedStalenessThresholdMinutes": 180
+        "suggestedQuotaPriority": 3,
+        "suggestedRefreshIntervalMs": 43200000,
+        "suggestedStalenessThresholdMinutes": 360
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
@@ -307,11 +298,11 @@
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.55,
-    "urgentTargets": 1
+    "highestUrgency": 0.12,
+    "urgentTargets": 0
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 3 critical, 5 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 3 critical, 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
