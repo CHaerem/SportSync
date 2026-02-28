@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T06:22:52.151Z",
+  "generatedAt": "2026-02-28T07:22:16.017Z",
   "patternsDetected": 4,
   "patterns": [
     {
@@ -15,9 +15,9 @@
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 19,
+      "fireCount": 18,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but no matching athlete found in events data",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but ...\" has fired 19 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but ...\" has fired 18 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "recurring_health_warning",
@@ -59,9 +59,9 @@
       "lastSeen": "2026-02-28T02:20:36.865Z"
     },
     "ux_eval_fallback": {
-      "count": 136,
+      "count": 137,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-28T06:22:52.072Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     },
     "model_change_quality_drop": {
       "count": 6,
@@ -79,9 +79,9 @@
       "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "streaming_coverage_gap": {
-      "count": 60,
+      "count": 61,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-28T06:22:52.072Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     },
     "snapshot_event_mismatch": {
       "count": 9,
@@ -94,9 +94,9 @@
       "lastSeen": "2026-02-27T17:24:50.863Z"
     },
     "bracket_stale_matches": {
-      "count": 27,
+      "count": 28,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-28T06:22:52.073Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     },
     "quota_skip_time_critical": {
       "count": 28,
@@ -104,9 +104,9 @@
       "lastSeen": "2026-02-27T22:17:25.162Z"
     },
     "recipe_persistent_failure": {
-      "count": 21,
+      "count": 22,
       "firstSeen": "2026-02-26T18:20:12.118Z",
-      "lastSeen": "2026-02-28T06:22:52.073Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     },
     "stale_snapshot": {
       "count": 4,
@@ -114,14 +114,14 @@
       "lastSeen": "2026-02-27T06:34:33.655Z"
     },
     "step_timeout_hit": {
-      "count": 12,
+      "count": 13,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-28T06:22:52.073Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     },
     "recipe_repair_exhausted": {
-      "count": 20,
+      "count": 21,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-28T06:22:52.073Z"
+      "lastSeen": "2026-02-28T07:22:15.919Z"
     }
   },
   "interventionEffectiveness": {
@@ -134,7 +134,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-28T06:22:52.150Z",
+    "recordedAt": "2026-02-28T07:22:16.015Z",
     "moduleCount": 65,
     "avgModuleSize": 326,
     "pipelineSteps": 27,
