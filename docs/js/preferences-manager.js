@@ -264,6 +264,7 @@ class PreferencesManager {
 			sportPreferences,
 			engagement,
 			watchFeedback: this.getAllWatchFeedback(),
+			telemetry: this.getTelemetry(),
 		};
 	}
 
@@ -283,6 +284,79 @@ class PreferencesManager {
 
 	getEngagement() {
 		return this.preferences.engagement || {};
+	}
+
+	// --- Telemetry tracking ---
+
+	_ensureTelemetry() {
+		if (!this.preferences.telemetry) {
+			this.preferences.telemetry = {
+				blocks: {},
+				sessions: { count: 0, totalMinutes: 0, lastStart: null },
+				peakHours: {},
+				dayNav: { past: 0, future: 0, today: 0 },
+				watchPlanClicks: { total: 0, byKey: {} },
+				features: {}
+			};
+		}
+		return this.preferences.telemetry;
+	}
+
+	trackBlockEngagement(blockType) {
+		if (!blockType?.trim()) return;
+		const t = this._ensureTelemetry();
+		t.blocks[blockType] = (t.blocks[blockType] || 0) + 1;
+		this.savePreferences();
+	}
+
+	trackSessionStart() {
+		const t = this._ensureTelemetry();
+		t.sessions.count++;
+		t.sessions.lastStart = new Date().toISOString();
+		const hour = String(new Date().getHours()).padStart(2, '0');
+		t.peakHours[hour] = (t.peakHours[hour] || 0) + 1;
+		this.savePreferences();
+	}
+
+	trackSessionEnd() {
+		const t = this._ensureTelemetry();
+		if (t.sessions.lastStart) {
+			const elapsed = (Date.now() - new Date(t.sessions.lastStart).getTime()) / 60000;
+			if (elapsed > 0 && elapsed < 480) {
+				t.sessions.totalMinutes = Math.round((t.sessions.totalMinutes + elapsed) * 10) / 10;
+			}
+		}
+		this.savePreferences();
+	}
+
+	trackDayNavigation(direction) {
+		if (!direction) return;
+		const t = this._ensureTelemetry();
+		if (direction in t.dayNav) {
+			t.dayNav[direction]++;
+			this.savePreferences();
+		}
+	}
+
+	trackWatchPlanClick(pickKey) {
+		if (!pickKey) return;
+		const t = this._ensureTelemetry();
+		if (!t.watchPlanClicks.byKey[pickKey]) {
+			t.watchPlanClicks.byKey[pickKey] = true;
+			t.watchPlanClicks.total++;
+			this.savePreferences();
+		}
+	}
+
+	trackFeatureUse(feature) {
+		if (!feature?.trim()) return;
+		const t = this._ensureTelemetry();
+		t.features[feature] = (t.features[feature] || 0) + 1;
+		this.savePreferences();
+	}
+
+	getTelemetry() {
+		return this.preferences.telemetry || null;
 	}
 
 	// Watch-plan feedback — thumbs-up/down on picks

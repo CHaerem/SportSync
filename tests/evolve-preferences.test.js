@@ -174,6 +174,13 @@ describe("parseEngagementFromIssueBody()", () => {
 		expect(parseEngagementFromIssueBody(null)).toBeNull();
 		expect(parseEngagementFromIssueBody(undefined)).toBeNull();
 	});
+
+	it("parses engagement from engagement-sync issue format", () => {
+		const body = `## SportSync Engagement Sync\n\n_Last synced: 2026-02-28T12:00:00Z_\n\n### Data (for pipeline)\n\n\`\`\`json\n{"backendPreferences":{"engagement":{"football":{"clicks":25,"lastClick":"2026-02-28T11:00:00Z"},"golf":{"clicks":10,"lastClick":"2026-02-27T09:00:00Z"}}},"telemetry":{"blocks":{"match-result":5}},"syncedAt":"2026-02-28T12:00:00Z"}\n\`\`\`\n`;
+		const result = parseEngagementFromIssueBody(body);
+		expect(result.football.clicks).toBe(25);
+		expect(result.golf.clicks).toBe(10);
+	});
 });
 
 // ============================================================

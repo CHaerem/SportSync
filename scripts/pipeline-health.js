@@ -1302,6 +1302,29 @@ async function main() {
 	while (urgencyHistory.runs.length > 200) urgencyHistory.runs.shift();
 	writeJsonPretty(urgencyHistoryPath, urgencyHistory);
 
+	// Engagement health
+	const engagementInsights = readJsonIfExists(path.join(dataDir, "engagement-insights.json"));
+	report.engagementHealth = { status: "no-data" };
+	if (engagementInsights?.generatedAt) {
+		const insightsAge = Date.now() - new Date(engagementInsights.generatedAt).getTime();
+		const sevenDays = 7 * 24 * 60 * 60 * 1000;
+		report.engagementHealth = {
+			status: insightsAge > sevenDays ? "stale" : "ok",
+			ageHours: Math.round(insightsAge / 3600000),
+			avgSessionMinutes: engagementInsights.avgSessionMinutes || 0,
+			preferredBlocks: engagementInsights.preferredBlocks || [],
+			hintCount: engagementInsights.contentHints?.length || 0,
+			source: engagementInsights.source || "unknown",
+		};
+		if (insightsAge > sevenDays) {
+			report.issues.push({
+				severity: "warning",
+				message: `Engagement insights stale (${Math.round(insightsAge / sevenDays)}+ days) — sync may be broken`,
+				category: "engagement",
+			});
+		}
+	}
+
 	// Status summary — deterministic fallback only (LLM summary moved to separate step to avoid timeout)
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
 	const summary = buildFallbackSummary(report, autonomyReport, quality);

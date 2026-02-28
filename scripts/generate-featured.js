@@ -1208,9 +1208,11 @@ async function main() {
 		const factCheckHistoryPath = path.join(dataDir, "fact-check-history.json");
 		const factCheckHistory = readJsonIfExists(factCheckHistoryPath) || [];
 		const { hints: factCheckHintsFromHistory } = buildFactCheckHints(factCheckHistory);
-		allHints = [...adaptiveHints, ...resultsHints, ...sanityHints, ...factCheckHintsFromHistory];
+		const engagementInsights = readJsonIfExists(path.join(dataDir, "engagement-insights.json"));
+		const engagementHints = engagementInsights?.contentHints || [];
+		allHints = [...adaptiveHints, ...resultsHints, ...sanityHints, ...factCheckHintsFromHistory, ...engagementHints];
 		if (allHints.length > 0) {
-			console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity)`);
+			console.log(`Adaptive hints active: ${allHints.length} correction(s) (${adaptiveHints.length} editorial, ${resultsHints.length} results, ${sanityHints.length} sanity, ${engagementHints.length} engagement)`);
 			for (const hint of allHints) console.log(`  → ${hint.slice(0, 80)}`);
 			baseUserPrompt += `\n\nADAPTIVE CORRECTIONS (based on recent quality scores):\n${allHints.map((h) => `- ${h}`).join("\n")}`;
 		}

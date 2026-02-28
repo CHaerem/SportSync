@@ -48,6 +48,8 @@ class Dashboard {
 		this.preferences = window.PreferencesManager ? new PreferencesManager() : null;
 		window._ssPreferences = this.preferences;
 		this.feedback = window.FeedbackManager ? new FeedbackManager() : null;
+		this.githubSync = window.GitHubSync ? new GitHubSync() : null;
+		if (this.preferences) this.preferences.trackSessionStart();
 		this.init();
 	}
 
@@ -57,8 +59,13 @@ class Dashboard {
 		await this.loadEvents();
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 		this.startLivePolling();
+		if (this.githubSync) this.githubSync.startAutoSync();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
+			if (document.hidden && this.preferences) this.preferences.trackSessionEnd();
+		});
+		window.addEventListener('beforeunload', () => {
+			if (this.preferences) this.preferences.trackSessionEnd();
 		});
 	}
 
@@ -377,7 +384,12 @@ class Dashboard {
 				if (!dateKey) return;
 				const [y, m, d] = dateKey.split('-').map(Number);
 				const picked = new Date(y, m - 1, d);
-				this.selectedDate = this._isToday(picked) ? null : this._startOfDay(picked);
+				const isToday = this._isToday(picked);
+				this.selectedDate = isToday ? null : this._startOfDay(picked);
+				if (this.preferences) {
+					const dir = isToday ? 'today' : picked < this._startOfDay(new Date()) ? 'past' : 'future';
+					this.preferences.trackDayNavigation(dir);
+				}
 				this.render();
 			});
 		});
@@ -2678,10 +2690,42 @@ class Dashboard {
 		if (!el || !this.feedback) return;
 
 		const count = this.feedback.pendingCount();
+		const sync = this.githubSync;
+		const connected = sync?.isConnected();
+
+		// GitHub connection status
+		let ghHtml = '';
+		if (connected) {
+			const user = sync.getUser();
+			const lastSync = sync.getLastSync();
+			const ago = lastSync ? this._timeAgo(new Date(lastSync)) : 'never';
+			ghHtml = `<div class="gh-status">
+				<span class="gh-dot connected"></span>
+				${user.avatar ? `<img src="${user.avatar}" class="gh-avatar" alt="">` : ''}
+				<span class="gh-user">${this.esc(user.login)}</span>
+				<span class="gh-sync-time">synced ${ago}</span>
+				<button class="gh-disconnect" id="gh-disconnect-btn">Disconnect</button>
+			</div>`;
+		} else {
+			ghHtml = `<div class="gh-status">
+				<span class="gh-dot"></span>
+				<button class="gh-connect-btn" id="gh-connect-toggle">Sign in with GitHub</button>
+			</div>
+			<div class="gh-setup" id="gh-setup" style="display:none">
+				<div class="fb-hint">Create a <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=SportSync+Sync" target="_blank" rel="noopener">personal access token</a> with public_repo scope</div>
+				<div class="fb-panel-row">
+					<input type="password" id="gh-token-input" placeholder="Paste token here..." autocomplete="off">
+					<button id="gh-token-btn">Connect</button>
+				</div>
+				<div id="gh-error" class="fb-hint" style="color:var(--accent,#c00);display:none"></div>
+			</div>`;
+		}
 
 		el.innerHTML = `
-			<button class="fb-toggle" aria-expanded="false">Send feedback${count > 0 ? ` (${count})` : ''} \u25b8</button>
+			<button class="fb-toggle" aria-expanded="false">Feedback & sync${count > 0 ? ` (${count})` : ''} \u25b8</button>
 			<div class="fb-panel-content" style="display:none">
+				${ghHtml}
+				<div class="fb-section-label" style="margin-top:12px">Suggestions & reports</div>
 				<div class="fb-panel-row">
 					<input type="text" id="fb-suggest-input" placeholder="Suggest a sport, event, or feature..." maxlength="200">
 					<button id="fb-suggest-btn">Add</button>
@@ -2689,12 +2733,13 @@ class Dashboard {
 				${count > 0 ? `<div class="fb-pending">${count} pending item${count > 1 ? 's' : ''}</div>` : ''}
 				<div class="fb-panel-row">
 					<button class="fb-submit" id="fb-submit-btn">
-						Send feedback via GitHub
+						${connected ? 'Submit feedback' : 'Send feedback via GitHub'}
 					</button>
 				</div>
 			</div>
 		`;
 
+		// Toggle panel
 		el.querySelector('.fb-toggle')?.addEventListener('click', () => {
 			const content = el.querySelector('.fb-panel-content');
 			const toggle = el.querySelector('.fb-toggle');
@@ -2703,10 +2748,40 @@ class Dashboard {
 			content.style.display = isOpen ? 'none' : 'block';
 			toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 			toggle.textContent = isOpen
-				? `Send feedback${count > 0 ? ` (${count})` : ''} \u25b8`
-				: `Send feedback${count > 0 ? ` (${count})` : ''} \u25be`;
+				? `Feedback & sync${count > 0 ? ` (${count})` : ''} \u25b8`
+				: `Feedback & sync${count > 0 ? ` (${count})` : ''} \u25be`;
 		});
 
+		// GitHub connect/disconnect
+		document.getElementById('gh-connect-toggle')?.addEventListener('click', () => {
+			const setup = document.getElementById('gh-setup');
+			if (setup) setup.style.display = setup.style.display === 'none' ? 'block' : 'none';
+		});
+
+		document.getElementById('gh-token-btn')?.addEventListener('click', async () => {
+			const input = document.getElementById('gh-token-input');
+			const errEl = document.getElementById('gh-error');
+			if (!input?.value?.trim() || !sync) return;
+			try {
+				const btn = document.getElementById('gh-token-btn');
+				if (btn) btn.textContent = '...';
+				await sync.connect(input.value.trim());
+				sync.startAutoSync();
+				this.renderFeedbackPanel();
+			} catch (err) {
+				if (errEl) {
+					errEl.textContent = err.message || 'Connection failed';
+					errEl.style.display = 'block';
+				}
+			}
+		});
+
+		document.getElementById('gh-disconnect-btn')?.addEventListener('click', () => {
+			if (sync) sync.disconnect();
+			this.renderFeedbackPanel();
+		});
+
+		// Suggest input
 		document.getElementById('fb-suggest-btn')?.addEventListener('click', () => {
 			const input = document.getElementById('fb-suggest-input');
 			if (input?.value?.trim()) {
@@ -2722,11 +2797,34 @@ class Dashboard {
 			}
 		});
 
-		document.getElementById('fb-submit-btn')?.addEventListener('click', () => {
-			this.feedback.submit();
-			this.renderFeedbackPanel();
-			this.renderEvents();
+		// Submit feedback
+		document.getElementById('fb-submit-btn')?.addEventListener('click', async () => {
+			if (connected && sync) {
+				const data = this.feedback.data || { reports: [], suggestions: [] };
+				const btn = document.getElementById('fb-submit-btn');
+				if (btn) btn.textContent = 'Submitting...';
+				try {
+					await sync.submitFeedback(data.reports, data.suggestions);
+					this.feedback.clear();
+					this.renderFeedbackPanel();
+					this.renderEvents();
+				} catch {
+					if (btn) btn.textContent = 'Failed — try again';
+				}
+			} else {
+				this.feedback.submit();
+				this.renderFeedbackPanel();
+				this.renderEvents();
+			}
 		});
+	}
+
+	_timeAgo(date) {
+		const s = Math.floor((Date.now() - date.getTime()) / 1000);
+		if (s < 60) return 'just now';
+		if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+		if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+		return `${Math.floor(s / 86400)}d ago`;
 	}
 
 	bindFeedbackButtons() {
@@ -3815,10 +3913,14 @@ class Dashboard {
 	async pollLiveScores() {
 		if (!this._liveVisible || !this.hasLiveEvents()) return;
 		try {
+			const prevCount = Object.keys(this.liveScores).length;
 			await Promise.all([
 				this.pollFootballScores(),
 				this.pollGolfScores(),
 			]);
+			if (Object.keys(this.liveScores).length > prevCount && this.preferences) {
+				this.preferences.trackFeatureUse('liveScores');
+			}
 			// Full re-render so events move between bands (today → live → results)
 			this.render();
 		} catch (err) {
@@ -4010,6 +4112,19 @@ class Dashboard {
 				return;
 			}
 
+			// Track editorial block engagement
+			if (this.preferences) {
+				const block = e.target.closest('.block-match-result, .block-match-preview, .block-golf-status, .block-event-schedule');
+				if (block) {
+					const cls = block.className;
+					const type = cls.includes('match-result') ? 'match-result'
+						: cls.includes('match-preview') ? 'match-preview'
+						: cls.includes('golf-status') ? 'golf-status'
+						: cls.includes('event-schedule') ? 'event-schedule' : null;
+					if (type) this.preferences.trackBlockEngagement(type);
+				}
+			}
+
 			// Ignore clicks on interactive elements inside expanded rows
 			if (e.target.closest('.exp-stream-badge') || e.target.closest('.exp-link')) return;
 
@@ -4058,6 +4173,13 @@ class Dashboard {
 				if (!content) return;
 				const isCollapsed = content.classList.contains('collapsed');
 				content.classList.toggle('collapsed');
+
+				// Track feature usage on expand
+				if (isCollapsed && this.preferences) {
+					const featureMap = { standings: 'standings', results: 'resultsBand' };
+					const feature = featureMap[bandId] || (bandId.includes('bracket') ? 'brackets' : null);
+					if (feature) this.preferences.trackFeatureUse(feature);
+				}
 
 				// Toggle preview visibility
 				if (preview) {

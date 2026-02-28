@@ -84,7 +84,8 @@
       "name": "personalize",
       "description": "Evolve user preferences from engagement data",
       "steps": [
-        { "name": "evolve-preferences", "command": "node scripts/evolve-preferences.js", "errorPolicy": "continue" }
+        { "name": "evolve-preferences", "command": "node scripts/evolve-preferences.js", "errorPolicy": "continue" },
+        { "name": "analyze-engagement", "command": "node scripts/analyze-engagement.js", "description": "Analyze engagement telemetry into content hints", "errorPolicy": "continue" }
       ]
     },
     {

@@ -1191,6 +1191,16 @@
 		.fb-pending { font-size: 0.62rem; color: var(--muted); margin-bottom: 6px; }
 		.fb-hint { font-size: 0.58rem; color: var(--muted); opacity: 0.6; margin-top: 2px; }
 		.fb-section-label { font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+		.gh-status { display: flex; align-items: center; gap: 6px; font-size: 0.68rem; }
+		.gh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+		.gh-dot.connected { background: #2da44e; }
+		.gh-avatar { width: 18px; height: 18px; border-radius: 50%; }
+		.gh-user { font-weight: 500; }
+		.gh-sync-time { color: var(--muted); font-size: 0.58rem; }
+		.gh-disconnect, .gh-connect-btn { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; font-size: 0.62rem; padding: 0; text-decoration: underline; opacity: 0.7; margin-left: auto; }
+		.gh-disconnect:hover, .gh-connect-btn:hover { opacity: 1; }
+		.gh-setup { margin-top: 8px; }
+		.gh-setup a { color: var(--fg); }
 
 		/* === Briefing mode label === */
 		/* briefing-mode-label replaced by .brief-label in Brief section */
@@ -1271,9 +1281,10 @@
 
 	<script src="js/sport-config.js?v=2026022007"></script>
 	<script src="js/asset-maps.js?v=2026022601"></script>
-	<script src="js/preferences-manager.js?v=2026022007"></script>
+	<script src="js/preferences-manager.js?v=2026022801"></script>
 	<script src="js/feedback-manager.js?v=2026022007"></script>
-	<script src="js/dashboard.js?v=2026022604"></script>
+	<script src="js/github-sync.js?v=2026022801"></script>
+	<script src="js/dashboard.js?v=2026022801"></script>
 
 	<script>
 		if ('serviceWorker' in navigator) {

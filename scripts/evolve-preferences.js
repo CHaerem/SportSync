@@ -244,7 +244,7 @@ export async function readFromIssues() {
 
 	try {
 		const output = execSync(
-			'gh issue list --label user-feedback --state all --json body --limit 10',
+			'gh issue list --label user-feedback,engagement-sync --state all --json body --limit 10',
 			{ encoding: "utf-8", timeout: 15000 }
 		);
 		const issues = JSON.parse(output);

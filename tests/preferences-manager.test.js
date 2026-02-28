@@ -251,6 +251,117 @@ describe("PreferencesManager", () => {
 		});
 	});
 
+	describe("telemetry tracking", () => {
+		it("trackBlockEngagement increments block counts", () => {
+			pm.trackBlockEngagement("match-result");
+			pm.trackBlockEngagement("match-result");
+			pm.trackBlockEngagement("golf-status");
+			const t = pm.getTelemetry();
+			expect(t.blocks["match-result"]).toBe(2);
+			expect(t.blocks["golf-status"]).toBe(1);
+		});
+
+		it("trackBlockEngagement ignores empty input", () => {
+			pm.trackBlockEngagement("");
+			pm.trackBlockEngagement(null);
+			expect(pm.getTelemetry()).toBeNull();
+		});
+
+		it("trackSessionStart records count, timestamp, and peak hour", () => {
+			pm.trackSessionStart();
+			const t = pm.getTelemetry();
+			expect(t.sessions.count).toBe(1);
+			expect(t.sessions.lastStart).toBeTruthy();
+			const hour = String(new Date().getHours()).padStart(2, "0");
+			expect(t.peakHours[hour]).toBe(1);
+		});
+
+		it("trackSessionEnd calculates elapsed time", () => {
+			// Set lastStart to 5 minutes ago
+			pm._ensureTelemetry();
+			pm.preferences.telemetry.sessions.lastStart = new Date(Date.now() - 5 * 60000).toISOString();
+			pm.trackSessionEnd();
+			const t = pm.getTelemetry();
+			expect(t.sessions.totalMinutes).toBeGreaterThan(4);
+			expect(t.sessions.totalMinutes).toBeLessThan(6);
+		});
+
+		it("trackSessionEnd ignores very long sessions (>8h)", () => {
+			pm._ensureTelemetry();
+			pm.preferences.telemetry.sessions.lastStart = new Date(Date.now() - 10 * 3600000).toISOString();
+			pm.trackSessionEnd();
+			expect(pm.getTelemetry().sessions.totalMinutes).toBe(0);
+		});
+
+		it("trackDayNavigation increments direction counts", () => {
+			pm.trackDayNavigation("past");
+			pm.trackDayNavigation("past");
+			pm.trackDayNavigation("future");
+			pm.trackDayNavigation("today");
+			const t = pm.getTelemetry();
+			expect(t.dayNav.past).toBe(2);
+			expect(t.dayNav.future).toBe(1);
+			expect(t.dayNav.today).toBe(1);
+		});
+
+		it("trackDayNavigation ignores invalid directions", () => {
+			pm.trackDayNavigation("sideways");
+			pm.trackDayNavigation(null);
+			const t = pm.getTelemetry();
+			expect(t.dayNav.past).toBe(0);
+		});
+
+		it("trackWatchPlanClick tracks unique clicks", () => {
+			pm.trackWatchPlanClick("arsenal_chelsea_20260301");
+			pm.trackWatchPlanClick("arsenal_chelsea_20260301"); // duplicate
+			pm.trackWatchPlanClick("liverpool_city_20260301");
+			const t = pm.getTelemetry();
+			expect(t.watchPlanClicks.total).toBe(2);
+			expect(t.watchPlanClicks.byKey["arsenal_chelsea_20260301"]).toBe(true);
+		});
+
+		it("trackWatchPlanClick ignores empty key", () => {
+			pm.trackWatchPlanClick(null);
+			pm.trackWatchPlanClick("");
+			expect(pm.getTelemetry()).toBeNull();
+		});
+
+		it("trackFeatureUse increments feature counts", () => {
+			pm.trackFeatureUse("standings");
+			pm.trackFeatureUse("standings");
+			pm.trackFeatureUse("brackets");
+			const t = pm.getTelemetry();
+			expect(t.features.standings).toBe(2);
+			expect(t.features.brackets).toBe(1);
+		});
+
+		it("trackFeatureUse ignores empty input", () => {
+			pm.trackFeatureUse("");
+			pm.trackFeatureUse(null);
+			expect(pm.getTelemetry()).toBeNull();
+		});
+
+		it("getTelemetry returns null when no telemetry exists", () => {
+			// Fresh PM without any telemetry calls
+			const fresh = new PreferencesManager();
+			expect(fresh.getTelemetry()).toBeNull();
+		});
+
+		it("exportForBackend includes telemetry", () => {
+			pm.trackBlockEngagement("match-result");
+			pm.trackSessionStart();
+			const exported = pm.exportForBackend();
+			expect(exported.telemetry).toBeTruthy();
+			expect(exported.telemetry.blocks["match-result"]).toBe(1);
+			expect(exported.telemetry.sessions.count).toBe(1);
+		});
+
+		it("exportForBackend has null telemetry when none tracked", () => {
+			const exported = pm.exportForBackend();
+			expect(exported.telemetry).toBeNull();
+		});
+	});
+
 	describe("reset()", () => {
 		it("clears localStorage and restores defaults", () => {
 			pm.toggleFavoriteSport("chess");
