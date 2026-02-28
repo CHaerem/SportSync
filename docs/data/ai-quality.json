@@ -1,32 +1,37 @@
 {
-  "generatedAt": "2026-02-28T08:20:22.037Z",
+  "generatedAt": "2026-02-28T09:18:35.598Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
+    "provider": "claude-cli",
+    "model": "default",
     "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 9,
-    "generationMs": 180147,
+    "blockCount": 7,
+    "generationMs": 114087,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 36012,
+      "output": 5959,
+      "cacheCreation": 19647,
+      "cacheRead": 16362,
+      "total": 41971,
+      "costUSD": 0.27996475,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 97,
+    "score": 93,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
     "issues": []
@@ -35,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 87,
+      "avgScore": 95,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -109,7 +114,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-02-28T08:09:10.134Z",
+    "lastRun": "2026-02-28T09:09:18.240Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T08:20:23.820Z",
+  "generatedAt": "2026-02-28T09:18:37.504Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 64,
@@ -90,11 +90,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 9,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 97,
-    "issueCount": 12
+    "editorialScore": 93,
+    "issueCount": 13
   },
   "findings": [
     {
@@ -168,9 +168,14 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 43 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Every\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -239,10 +244,10 @@
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 29,
     "critical": 0,
-    "warning": 15,
-    "info": 13
+    "warning": 17,
+    "info": 12
   },
   "pass": true,
   "tokenUsage": null
