@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-28T20:07:47.629Z",
-  "overallScore": 0.98,
-  "loopsClosed": 11,
+  "generatedAt": "2026-02-28T21:06:51.415Z",
+  "overallScore": 0.95,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 0.75,
       "status": "partial",
-      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (13 total)"
+      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (12 total)"
     },
     "watchPlan": {
       "score": 1,
@@ -60,12 +60,13 @@
       "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
     },
     "streamingVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
+      "score": 0.66,
+      "status": "partial",
+      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate declining: 38% → 35% → 0%"
     }
   },
   "nextActions": [
-    "Run pipeline more frequently to keep health report fresh (< 6h)"
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Investigate declining streaming match rate — check alias table or tvkampen HTML structure"
   ]
 }

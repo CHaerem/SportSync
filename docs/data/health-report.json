@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T20:07:47.584Z",
+  "generatedAt": "2026-02-28T21:06:51.353Z",
   "eventCount": 57,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 23,
-      "previousCount": 24,
-      "delta": -1
+      "previousCount": 23,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -71,7 +71,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 170,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 170,
       "stale": false
     }
   },
@@ -111,9 +111,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.35,
-    "eventsEnriched": 8,
-    "trend": "stable",
+    "matchRate": 0,
+    "eventsEnriched": 0,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -144,19 +144,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 47956,
+    "totalDuration": 44144,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25427,
-        "share": 53
+        "duration": 27507,
+        "share": 62
       },
       {
         "name": "fetch-results",
-        "duration": 35923,
-        "share": 75
+        "duration": 31652,
+        "share": 72
       }
     ],
     "failedSteps": []
@@ -208,7 +208,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 35% (8/23) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 0% (0/23) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 38% → 35% → 0%"
     },
     {
       "severity": "warning",
@@ -233,12 +238,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 62% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (36s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -258,7 +263,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T20:07:47.719Z",
+    "computedAt": "2026-02-28T21:06:51.524Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -285,7 +290,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 78/100.",
+    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 78/100.",
     "tokenUsage": null
   }
 }
