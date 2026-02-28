@@ -723,16 +723,28 @@ describe("quota API health check", () => {
 });
 
 describe("Norwegian tagging anomaly detection", () => {
-	it("flags sport where all events are tagged norwegian without players", () => {
+	it("flags sport where most (but not all) events are tagged norwegian without players", () => {
+		// 9/10 events tagged = partial tagging → likely false positives in name matching
 		const events = [];
-		for (let i = 0; i < 5; i++) {
-			events.push({ sport: "tennis", title: `Tennis match ${i}`, time: new Date().toISOString(), norwegian: true });
+		for (let i = 0; i < 10; i++) {
+			events.push({ sport: "tennis", title: `Tennis match ${i}`, time: new Date().toISOString(), norwegian: i < 9 });
 		}
 		const report = generateHealthReport({ events });
 		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
 		expect(anomaly).toBeDefined();
 		expect(anomaly.message).toContain("tennis");
 		expect(anomaly.message).toContain("false positives");
+	});
+
+	it("does not flag when all events are tagged norwegian (domestic league like GET-ligaen)", () => {
+		// 100% tagging = domestic Norwegian league — expected behavior, not false positives
+		const events = [];
+		for (let i = 0; i < 5; i++) {
+			events.push({ sport: "icehockey", title: `GET-ligaen match ${i}`, time: new Date().toISOString(), norwegian: true });
+		}
+		const report = generateHealthReport({ events });
+		const anomaly = report.issues.find(i => i.code === "norwegian_tagging_anomaly");
+		expect(anomaly).toBeUndefined();
 	});
 
 	it("does not flag when events have norwegianPlayers listed", () => {

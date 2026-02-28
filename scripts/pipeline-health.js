@@ -439,8 +439,11 @@ export function generateHealthReport(options = {}) {
 	for (const [sport, stats] of Object.entries(norwegianBySport)) {
 		if (stats.total < 3) continue; // too few events to judge
 		const tagRate = stats.tagged / stats.total;
-		// Anomaly: >80% tagged Norwegian but <20% have actual Norwegian players listed
-		if (tagRate > 0.8 && stats.tagged > 2 && stats.withPlayers / stats.tagged < 0.2) {
+		// Anomaly: >80% tagged Norwegian but <20% have actual Norwegian players listed.
+		// Exempt tagRate === 1.0 (all events tagged): indicates a domestic Norwegian league
+		// (e.g., GET-ligaen ice hockey) where tagging is at the league level, not per player.
+		// Only flag when SOME events are tagged (0.8 < tagRate < 1.0), suggesting false positives.
+		if (tagRate > 0.8 && tagRate < 1.0 && stats.tagged > 2 && stats.withPlayers / stats.tagged < 0.2) {
 			issues.push({
 				severity: "warning",
 				code: "norwegian_tagging_anomaly",

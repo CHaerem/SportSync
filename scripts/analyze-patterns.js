@@ -53,6 +53,7 @@ const KNOWN_MANAGED_CODES = new Set([
 	"bracket_stale_matches",    // quota adaptation: discover-events quota-skipped → bracket data not refreshed; next run repairs
 	"quota_skip_time_critical", // quota adaptation: time-critical steps skipped due to quota; next higher-quota run will run them
 	"recipe_persistent_failure",// loop 13: learn-recipes self-repairs broken recipes; quota-skipped when tier is low
+	"recipe_repair_exhausted",  // loop 13: recipe self-repair has exhaustion fallback; autopilot investigates via health report
 ]);
 
 /**

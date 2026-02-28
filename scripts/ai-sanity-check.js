@@ -167,15 +167,17 @@ function runDeterministicChecks(data) {
 			let match;
 			while ((match = namePattern.exec(block.text)) !== null) {
 				const name = match[1];
-				// Skip common non-name words
-				if (["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today"].includes(name)) continue;
+				// Skip common non-name words and known stadium/venue names
+				if (["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today", "Meazza", "Bernabeu", "Bernabéu", "Anfield", "Wembley", "Emirates", "Etihad", "Stamford", "Allianz", "Maradona", "Olimpico", "Mestalla", "Soldeu"].includes(name)) continue;
 				// Check if this name appears in event titles or norwegianPlayers
 				const nameLower = name.toLowerCase();
 				const inEvents = events.some(e =>
 					e.title?.toLowerCase().includes(nameLower) ||
 					(Array.isArray(e.norwegianPlayers) && e.norwegianPlayers.some(p => p.name?.toLowerCase().includes(nameLower)))
 				);
-				if (!inEvents && allNorwegianPlayers.size > 0) {
+				// Also check event venues — stadium names should not be flagged as unknown athletes
+				const inVenues = events.some(e => e.venue?.toLowerCase().includes(nameLower));
+				if (!inEvents && !inVenues && allNorwegianPlayers.size > 0) {
 					// Only flag if we have norwegianPlayers data to compare against
 					const couldBeAthlete = allNorwegianPlayers.size > 0 &&
 						!events.some(e => e.tournament?.toLowerCase().includes(nameLower));
