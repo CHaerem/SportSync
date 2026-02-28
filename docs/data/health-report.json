@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T16:08:22.791Z",
+  "generatedAt": "2026-02-28T16:23:10.312Z",
   "eventCount": 61,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 26,
-      "previousCount": 27,
-      "delta": -1
+      "previousCount": 26,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 127,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 127,
       "stale": false
     }
   },
@@ -144,24 +144,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 64623,
+    "totalDuration": 47449,
     "stepCount": 20,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28833,
-        "share": 45
+        "duration": 28751,
+        "share": 61
       },
       {
         "name": "fetch-results",
-        "duration": 36488,
-        "share": 56
-      },
-      {
-        "name": "enrich-streaming",
-        "duration": 22057,
-        "share": 34
+        "duration": 34583,
+        "share": 73
       }
     ],
     "failedSteps": []
@@ -248,17 +243,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 45% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 61% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 56% of total pipeline time (36s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-streaming\" used 34% of total pipeline time (22s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (35s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -268,7 +258,7 @@
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "12 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "11 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -278,13 +268,13 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T16:08:22.951Z",
+    "computedAt": "2026-02-28T16:23:10.465Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.51,
+        "score": 0.52,
         "reasons": [
-          "overdue by 57%",
+          "overdue by 69%",
           "1 match(es) within 2h",
           "focus team involved",
           "1 stale match(es)"
@@ -294,8 +284,11 @@
         "suggestedStalenessThresholdMinutes": 180
       }
     ],
-    "highestUrgency": 0.51,
+    "highestUrgency": 0.52,
     "urgentTargets": 1
+  },
+  "engagementHealth": {
+    "status": "no-data"
   },
   "statusSummary": {
     "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
