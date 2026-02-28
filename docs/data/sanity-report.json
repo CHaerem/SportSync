@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T14:09:35.228Z",
+  "generatedAt": "2026-02-28T14:19:51.943Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 65,
@@ -94,7 +94,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "critical",
-    "editorialScore": 86,
+    "editorialScore": 85,
     "issueCount": 16
   },
   "findings": [
@@ -171,17 +171,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bodo\" but no matching athlete found in events data"
+      "message": "Featured mentions \"First\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Internazionale\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Grand Final\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -255,9 +250,9 @@
     }
   ],
   "summary": {
-    "total": 31,
+    "total": 30,
     "critical": 0,
-    "warning": 18,
+    "warning": 17,
     "info": 13
   },
   "pass": true,

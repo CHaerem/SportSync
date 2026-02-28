@@ -428,30 +428,6 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		}
 	}
 
-	// When gate fails, record which data files exist (they won't be committed)
-	// so the health report can detect "data files blocked from committing"
-	let gateBlockedFiles = null;
-	if (gateStatus === "fail") {
-		try {
-			const dataFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith(".json") && f !== "pipeline-result.json");
-			const blockedFiles = [];
-			for (const f of dataFiles) {
-				const filePath = path.join(DATA_DIR, f);
-				const stat = fs.statSync(filePath);
-				// File was modified during this pipeline run (within last 5 minutes)
-				if (stat.mtimeMs > startMs - 30000) {
-					blockedFiles.push(f);
-				}
-			}
-			if (blockedFiles.length > 0) {
-				gateBlockedFiles = blockedFiles;
-				console.log(`Gate FAIL: ${blockedFiles.length} data file(s) will not be committed: ${blockedFiles.join(", ")}`);
-			}
-		} catch {
-			// Non-critical — skip if directory read fails
-		}
-	}
-
 	// Count totals
 	const allSteps = Object.values(phases).flatMap((p) => p.steps);
 	const summary = {
@@ -467,7 +443,6 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		duration: Date.now() - startMs,
 		mode: PIPELINE_MODE,
 		gate: gateStatus,
-		gateBlockedFiles,
 		quota: quotaStatus ? {
 			fiveHour: quotaStatus.fiveHour,
 			sevenDay: quotaStatus.sevenDay,

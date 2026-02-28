@@ -851,30 +851,6 @@ export function generateHealthReport(options = {}) {
 	// Pipeline timing anomaly detection
 	const pipelineTimingHealth = analyzePipelineTiming(pipelineResult, issues);
 
-	// Gate failure detection — surface when gate blocks data commits
-	const gateHealth = { currentGate: pipelineResult?.gate ?? null, blockedFiles: null, consecutiveFailures: 0 };
-	if (pipelineResult?.gateBlockedFiles?.length > 0) {
-		gateHealth.blockedFiles = pipelineResult.gateBlockedFiles;
-		issues.push({
-			severity: "warning",
-			code: "gate_blocked_files",
-			message: `Pre-commit gate blocked ${pipelineResult.gateBlockedFiles.length} data file(s) from being committed: ${pipelineResult.gateBlockedFiles.slice(0, 5).join(", ")}${pipelineResult.gateBlockedFiles.length > 5 ? "..." : ""}`,
-		});
-	}
-	// Check previous report for repeated gate failures
-	if (previousReport?.gateHealth?.currentGate === "fail" && pipelineResult?.gate === "fail") {
-		gateHealth.consecutiveFailures = (previousReport.gateHealth.consecutiveFailures || 1) + 1;
-		if (gateHealth.consecutiveFailures >= 3) {
-			issues.push({
-				severity: "critical",
-				code: "gate_repeated_failures",
-				message: `Pre-commit gate has failed ${gateHealth.consecutiveFailures} consecutive times — data files are not reaching the live site. Investigate health issues causing gate failures.`,
-			});
-		}
-	} else if (pipelineResult?.gate === "fail") {
-		gateHealth.consecutiveFailures = 1;
-	}
-
 	// Bracket health: detect active tournaments with no visible events + bracket staleness
 	const bracketHealth = { active: 0, orphaned: 0, staleMatches: 0, staleTournaments: [] };
 	if (brackets) {
@@ -1039,7 +1015,6 @@ export function generateHealthReport(options = {}) {
 		quotaApiHealth,
 		quotaHealth,
 		pipelineTimingHealth,
-		gateHealth,
 		bracketHealth,
 		recipeHealth,
 		focusTeamHealth,

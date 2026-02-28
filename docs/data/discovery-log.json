@@ -718,14 +718,14 @@
       }
     },
     {
-      "timestamp": "2026-02-28T14:01:00.914Z",
+      "timestamp": "2026-02-28T14:11:54.279Z",
       "tasks": [
         {
           "type": "new-config",
           "target": "icehockey-getligaen-2026.json",
           "reason": "needsResearch flag set",
           "outcome": "failed",
-          "error": "Could not parse JSON from discovery result"
+          "error": "spawnSync /bin/sh ETIMEDOUT"
         },
         {
           "type": "new-config",
@@ -737,11 +737,11 @@
       ],
       "skipped": null,
       "tokenUsage": {
-        "input": 335598,
-        "output": 2025,
+        "input": 0,
+        "output": 0,
         "calls": 2,
-        "total": 337623,
-        "costUSD": 0.7451802500000001,
+        "total": 0,
+        "costUSD": 0,
         "tracked": true,
         "estimated": false
       }
