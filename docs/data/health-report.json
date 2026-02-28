@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-28T15:07:41.188Z",
-  "eventCount": 62,
+  "generatedAt": "2026-02-28T16:08:22.791Z",
+  "eventCount": 61,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 27,
-      "previousCount": 30,
-      "delta": -3
+      "count": 26,
+      "previousCount": 27,
+      "delta": -1
     },
     "icehockey": {
       "count": 12,
@@ -67,11 +67,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -79,11 +79,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 112,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 112,
       "stale": false
     }
   },
@@ -103,7 +103,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 27,
+    "footballCount": 26,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -111,15 +111,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.15,
-    "eventsEnriched": 4,
+    "matchRate": 0.42,
+    "eventsEnriched": 11,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-02-28: 10 events but events.json has 7"
+      "Snapshot 2026-02-28: 10 events but events.json has 6"
     ],
     "snapshotCount": 15
   },
@@ -136,30 +136,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 42,
-    "sevenDay": 33,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 521690,
-    "stepCount": 27,
-    "timeoutHits": [
-      "discover-events"
-    ],
+    "totalDuration": 64623,
+    "stepCount": 20,
+    "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 300082,
-        "share": 58
+        "name": "fetch-sports",
+        "duration": 28833,
+        "share": 45
+      },
+      {
+        "name": "fetch-results",
+        "duration": 36488,
+        "share": 56
+      },
+      {
+        "name": "enrich-streaming",
+        "duration": 22057,
+        "share": 34
       }
     ],
-    "failedSteps": [
-      "discover-events",
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -208,7 +213,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 15% (4/27) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 42% (11/26) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Barcelona vs Villarreal has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -223,7 +233,7 @@
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-28: 10 events but events.json has 7"
+      "message": "Snapshot 2026-02-28: 10 events but events.json has 6"
     },
     {
       "severity": "info",
@@ -236,19 +246,19 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-sports\" used 45% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 58% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 56% of total pipeline time (36s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"enrich-streaming\" used 34% of total pipeline time (22s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -268,26 +278,27 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T15:07:41.350Z",
+    "computedAt": "2026-02-28T16:08:22.951Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
-        "score": 0.26,
+        "score": 0.51,
         "reasons": [
-          "overdue by 6%",
+          "overdue by 57%",
+          "1 match(es) within 2h",
           "focus team involved",
           "1 stale match(es)"
         ],
-        "suggestedQuotaPriority": 3,
-        "suggestedRefreshIntervalMs": 21600000,
-        "suggestedStalenessThresholdMinutes": 360
+        "suggestedQuotaPriority": 2,
+        "suggestedRefreshIntervalMs": 7200000,
+        "suggestedStalenessThresholdMinutes": 180
       }
     ],
-    "highestUrgency": 0.26,
-    "urgentTargets": 0
+    "highestUrgency": 0.51,
+    "urgentTargets": 1
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }

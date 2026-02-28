@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-02-28T15:07:43.472Z",
+  "lastUpdated": "2026-02-28T16:08:25.080Z",
   "current": {
     "fiveHour": {
-      "utilization": 62
+      "utilization": 70
     },
     "sevenDay": {
-      "utilization": 34,
+      "utilization": 35,
       "resets_at": "1772776800"
     },
     "evaluation": {
@@ -14,7 +14,7 @@
       "maxPriority": 2,
       "model": "claude-sonnet-4-6",
       "constrained": true,
-      "reason": "moderate: 5h 62%, 7d 34%",
+      "reason": "moderate: 5h 70%, 7d 35%",
       "resetNote": null
     }
   },
@@ -23,7 +23,7 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-28T15:07:44.172Z"
+    "checkedAt": "2026-02-28T16:08:25.853Z"
   },
   "internalTokens": {
     "enrichment": 0,
@@ -33,17 +33,17 @@
     "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 1162989,
-    "weeklyUsed": 13725386,
+    "dailyUsed": 1075618,
+    "weeklyUsed": 13260777,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 23,
-    "weeklyPct": 55
+    "dailyPct": 22,
+    "weeklyPct": 53
   },
   "sportsyncShare": {
-    "pipelineRuns": 139,
+    "pipelineRuns": 138,
     "autopilotRuns": 0,
-    "totalDurationMs": 44021885
+    "totalDurationMs": 42468976
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,18 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-21T15:22:03.721Z",
-      "context": "pipeline",
-      "durationMs": 797428,
-      "tokens": 235312
-    },
-    {
-      "timestamp": "2026-02-21T15:56:16.239Z",
-      "context": "pipeline",
-      "durationMs": 766216,
-      "tokens": 229297
-    },
     {
       "timestamp": "2026-02-21T16:29:48.850Z",
       "context": "pipeline",
@@ -884,6 +872,12 @@
       "timestamp": "2026-02-28T15:07:43.472Z",
       "context": "pipeline",
       "durationMs": 25969,
+      "tokens": 0
+    },
+    {
+      "timestamp": "2026-02-28T16:08:25.080Z",
+      "context": "pipeline",
+      "durationMs": 10735,
       "tokens": 0
     }
   ]
