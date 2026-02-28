@@ -158,24 +158,13 @@ export const sportsConfig = {
 	esports: {
 		sport: "esports",
 		enabled: true,
-		source: "Liquipedia API",
+		source: "Curated configs + Discovery loop",
 		sources: [
 			{
-				api: "liquipedia",
-				type: "wiki",
-				url: "https://liquipedia.net/counterstrike/api.php",
-				params: {
-					action: "parse",
-					page: "Liquipedia:Matches",
-					format: "json",
-					prop: "text"
-				},
-				attribution: "Data from Liquipedia (CC-BY-SA 3.0)"
-			},
-			{
-				api: "fallback",
-				type: "manual",
-				enabled: true
+				api: "curated-configs",
+				type: "local",
+				enabled: true,
+				note: "Reads scheduled matches from bracket data in scripts/config/esports-*.json"
 			}
 		],
 		filters: {

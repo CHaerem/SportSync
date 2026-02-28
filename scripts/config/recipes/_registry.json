@@ -5,12 +5,13 @@
     {
       "id": "liquipedia-cs2-matches",
       "file": "liquipedia-cs2-matches.json",
-      "active": true,
+      "active": false,
       "sport": "esports",
       "lastRun": "2026-02-28T12:10:50.101Z",
       "lastSuccess": null,
       "consecutiveFailures": 25,
-      "needsRepair": true
+      "needsRepair": false,
+      "deactivatedReason": "Liquipedia permanently blocks automated API access with CAPTCHAs and rate limiting. CS2 data now sourced via curated configs + discovery loop."
     }
   ]
 }

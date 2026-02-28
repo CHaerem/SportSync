@@ -192,6 +192,13 @@ describe('EsportsFetcher', () => {
 			expect(fetcher.fetchLiquipedia).toHaveBeenCalledWith(source);
 			expect(result).toEqual([{ title: 'test' }]);
 		});
+
+		it('routes curated-configs source to fetchFromCuratedConfigs', async () => {
+			fetcher.fetchFromCuratedConfigs = vi.fn().mockResolvedValue([{ title: 'bracket match' }]);
+			const result = await fetcher.fetchFromSource({ api: 'curated-configs' });
+			expect(fetcher.fetchFromCuratedConfigs).toHaveBeenCalled();
+			expect(result).toEqual([{ title: 'bracket match' }]);
+		});
 	});
 
 	describe('fetchLiquipedia()', () => {
@@ -442,14 +449,106 @@ describe('EsportsFetcher', () => {
 	});
 
 	describe('formatResponse()', () => {
-		it('includes Liquipedia attribution in response', () => {
-			const response = fetcher.formatResponse([]);
-			expect(response.attribution).toBe('Data from Liquipedia (CC-BY-SA 3.0)');
-		});
-
 		it('includes source label', () => {
 			const response = fetcher.formatResponse([]);
-			expect(response.source).toBe('Liquipedia API');
+			expect(response.source).toBe('Curated configs + Discovery loop');
+		});
+	});
+
+	describe('_extractBracketMatches()', () => {
+		it('extracts scheduled matches from bracket playoffs', () => {
+			const futureTime = new Date(Date.now() + 86400000).toISOString();
+			const bracket = {
+				playoffs: {
+					upperBracket: [
+						{
+							round: 'Semifinal',
+							matches: [
+								{ team1: 'HEROIC', team2: 'ENCE', status: 'scheduled', scheduledTime: futureTime }
+							]
+						}
+					]
+				}
+			};
+
+			const matches = fetcher._extractBracketMatches(bracket, 'Test Tournament');
+			expect(matches.length).toBe(1);
+			expect(matches[0].title).toBe('HEROIC vs ENCE');
+			expect(matches[0].tournament).toBe('Test Tournament');
+			expect(matches[0].status).toBe('scheduled');
+		});
+
+		it('extracts grand final matches', () => {
+			const futureTime = new Date(Date.now() + 86400000).toISOString();
+			const bracket = {
+				playoffs: {
+					grandFinal: {
+						round: 'Grand Final',
+						scheduledTime: futureTime,
+						matches: [
+							{ team1: 'HEROIC', team2: '100 Thieves', status: 'scheduled', scheduledTime: futureTime }
+						]
+					}
+				}
+			};
+
+			const matches = fetcher._extractBracketMatches(bracket, 'DraculaN');
+			expect(matches.length).toBe(1);
+			expect(matches[0].stage).toBe('Grand Final');
+		});
+
+		it('skips TBD vs TBD matches', () => {
+			const bracket = {
+				playoffs: {
+					upperBracket: [{
+						round: 'R1',
+						matches: [
+							{ team1: 'TBD', team2: 'TBD', status: 'scheduled' }
+						]
+					}]
+				}
+			};
+
+			const matches = fetcher._extractBracketMatches(bracket, 'Test');
+			expect(matches.length).toBe(0);
+		});
+
+		it('detects Norwegian team interest', () => {
+			const futureTime = new Date(Date.now() + 86400000).toISOString();
+			const bracket = {
+				playoffs: {
+					lowerBracket: [{
+						round: 'R1',
+						matches: [
+							{ team1: '100 Thieves', team2: 'ENCE', status: 'scheduled', scheduledTime: futureTime }
+						]
+					}]
+				}
+			};
+
+			const matches = fetcher._extractBracketMatches(bracket, 'Test');
+			expect(matches[0].norwegian).toBe(true);
+		});
+
+		it('extracts group stage matches', () => {
+			const futureTime = new Date(Date.now() + 86400000).toISOString();
+			const bracket = {
+				groups: {
+					A: {
+						matches: [
+							{ team1: 'TeamA', team2: 'TeamB', status: 'scheduled', scheduledTime: futureTime }
+						]
+					}
+				}
+			};
+
+			const matches = fetcher._extractBracketMatches(bracket, 'Test');
+			expect(matches.length).toBe(1);
+			expect(matches[0].stage).toBe('Group A');
+		});
+
+		it('returns empty for empty bracket', () => {
+			expect(fetcher._extractBracketMatches({}, 'Test')).toEqual([]);
 		});
 	});
 });

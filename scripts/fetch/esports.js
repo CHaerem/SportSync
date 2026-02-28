@@ -1,7 +1,10 @@
+import fs from "fs";
+import path from "path";
 import { BaseFetcher } from "../lib/base-fetcher.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
 import { EventFilters } from "../lib/filters.js";
+import { readJsonIfExists } from "../lib/helpers.js";
 
 // Top-tier CS2 events to always include for general coverage
 const MAJOR_CS2_PATTERNS = [
@@ -77,7 +80,9 @@ export class EsportsFetcher extends BaseFetcher {
 	}
 
 	async fetchFromSource(source) {
-		if (source.api === "liquipedia") {
+		if (source.api === "curated-configs") {
+			return await this.fetchFromCuratedConfigs();
+		} else if (source.api === "liquipedia") {
 			return await this.fetchLiquipedia(source);
 		} else if (source.api === "hltv") {
 			return await this.fetchHLTV(source);
@@ -85,6 +90,117 @@ export class EsportsFetcher extends BaseFetcher {
 			return await this.fetchFallbackMatches();
 		}
 		return [];
+	}
+
+	/**
+	 * Extract upcoming/scheduled matches from curated config bracket data.
+	 * The discovery loop (Claude CLI + WebSearch) maintains these configs,
+	 * so we get fresh match data without needing external APIs.
+	 */
+	async fetchFromCuratedConfigs() {
+		const configDir = path.resolve(process.cwd(), "scripts", "config");
+		if (!fs.existsSync(configDir)) return [];
+
+		const matches = [];
+		const configFiles = fs.readdirSync(configDir).filter(f => f.startsWith("esports-") && f.endsWith(".json"));
+
+		for (const file of configFiles) {
+			const config = readJsonIfExists(path.join(configDir, file));
+			if (!config?.tournaments) continue;
+
+			for (const tournament of config.tournaments) {
+				if (!tournament.bracket) continue;
+				const tName = tournament.name || file.replace(".json", "");
+
+				// Extract matches from all bracket sections
+				const bracketMatches = this._extractBracketMatches(tournament.bracket, tName);
+				matches.push(...bracketMatches);
+			}
+		}
+
+		console.log(`Extracted ${matches.length} matches from curated configs`);
+		return matches;
+	}
+
+	/**
+	 * Recursively extract matches from bracket data structure.
+	 * Handles: groups, playoffs (upper/lower bracket), grandFinal.
+	 */
+	_extractBracketMatches(bracket, tournamentName) {
+		const matches = [];
+		const now = Date.now();
+		const MS_PER_DAY = 86400000;
+		const windowStart = now - 1 * MS_PER_DAY;  // Include recent (1 day ago)
+		const windowEnd = now + 14 * MS_PER_DAY;    // Up to 14 days ahead
+
+		// Helper to process a round's matches
+		const processRound = (round, stage) => {
+			if (!round?.matches) return;
+			for (const match of round.matches) {
+				if (!match.team1 || !match.team2) continue;
+				if (match.team1 === "TBD" && match.team2 === "TBD") continue;
+
+				// Determine time — use scheduledTime, or the round's scheduledTime
+				const timeStr = match.scheduledTime || round.scheduledTime;
+				const matchTime = timeStr ? new Date(timeStr).getTime() : null;
+
+				// Skip matches outside our window (if we know the time)
+				if (matchTime && (matchTime < windowStart || matchTime > windowEnd)) continue;
+
+				const isScheduled = match.status === "scheduled" || !match.winner;
+				const isCompleted = match.status === "completed" || !!match.winner;
+
+				// For completed matches without a time, skip (they're historical)
+				if (isCompleted && !matchTime) continue;
+
+				const roundName = round.round || stage || "";
+				matches.push({
+					title: `${match.team1} vs ${match.team2}`,
+					time: timeStr ? new Date(timeStr).toISOString() : new Date().toISOString(),
+					venue: "Online",
+					tournament: tournamentName,
+					format: match.score ? null : "Bo3",
+					stage: roundName,
+					result: isCompleted ? { winner: match.winner, score: match.score } : null,
+					status: isCompleted ? "completed" : "scheduled",
+					norwegian: this.isNorwegianTeamFromNames(match.team1, match.team2),
+					meta: `${tournamentName} - ${roundName}`
+				});
+			}
+		};
+
+		// Groups
+		if (bracket.groups) {
+			for (const [groupId, group] of Object.entries(bracket.groups)) {
+				processRound({ matches: group.matches, round: `Group ${groupId}` }, `Group ${groupId}`);
+			}
+		}
+
+		// Playoffs
+		if (bracket.playoffs) {
+			const playoffs = bracket.playoffs;
+
+			// Upper bracket rounds
+			if (Array.isArray(playoffs.upperBracket)) {
+				for (const round of playoffs.upperBracket) {
+					processRound(round, `UB ${round.round || ""}`);
+				}
+			}
+
+			// Lower bracket rounds
+			if (Array.isArray(playoffs.lowerBracket)) {
+				for (const round of playoffs.lowerBracket) {
+					processRound(round, `LB ${round.round || ""}`);
+				}
+			}
+
+			// Grand final
+			if (playoffs.grandFinal) {
+				processRound({ ...playoffs.grandFinal, round: playoffs.grandFinal.round || "Grand Final" }, "Grand Final");
+			}
+		}
+
+		return matches;
 	}
 
 	async fetchLiquipedia(source) {
@@ -287,13 +403,7 @@ export class EsportsFetcher extends BaseFetcher {
 	}
 
 	formatResponse(events) {
-		const response = super.formatResponse(events);
-		// Include Liquipedia attribution
-		const liquipediaSource = this.config.sources?.find(s => s.api === "liquipedia");
-		if (liquipediaSource?.attribution) {
-			response.attribution = liquipediaSource.attribution;
-		}
-		return response;
+		return super.formatResponse(events);
 	}
 }
 
