@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T10:17:22.548Z",
+  "generatedAt": "2026-02-28T11:07:42.018Z",
   "eventCount": 64,
   "sportCoverage": {
     "esports": {
@@ -55,27 +55,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 10,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -135,14 +135,14 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 28,
-    "sevenDay": 26,
+    "fiveHour": 46,
+    "sevenDay": 27,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 655764,
+    "totalDuration": 691428,
     "stepCount": 27,
     "timeoutHits": [
       "discover-events"
@@ -150,8 +150,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300103,
-        "share": 46
+        "duration": 300102,
+        "share": 43
       }
     ],
     "failedSteps": [
@@ -174,7 +174,7 @@
     "recipes": [
       {
         "id": "liquipedia-cs2-matches",
-        "consecutiveFailures": 22,
+        "consecutiveFailures": 23,
         "needsRepair": true,
         "lastSuccess": null
       }
@@ -228,7 +228,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 46% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 43% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -243,7 +243,7 @@
     {
       "severity": "warning",
       "code": "recipe_persistent_failure",
-      "message": "Recipe \"liquipedia-cs2-matches\" has 22 consecutive failures — data source may be permanently unavailable"
+      "message": "Recipe \"liquipedia-cs2-matches\" has 23 consecutive failures — data source may be permanently unavailable"
     },
     {
       "severity": "warning",
@@ -258,7 +258,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T10:17:22.701Z",
+    "computedAt": "2026-02-28T11:07:42.193Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -274,9 +274,9 @@
       },
       {
         "id": "recipe:liquipedia-cs2-matches",
-        "score": 0.12,
+        "score": 0.1,
         "reasons": [
-          "22 consecutive failures"
+          "23 consecutive failures"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
