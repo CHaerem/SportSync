@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-02-28",
-  "generatedAt": "2026-02-28T18:18:17.212Z",
+  "generatedAt": "2026-02-28T22:13:48.783Z",
   "events": {
     "upcoming": [
       {
@@ -69,9 +69,11 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-02-28T18:15:33.639Z",
+        "enrichedAt": "2026-02-28T22:12:06.423Z",
         "_enrichHash": "edea3533e1aa830c84f4d5e438bd6981"
-      },
+      }
+    ],
+    "results": [
       {
         "sport": "esports",
         "tournament": "DraculaN Season 5",
@@ -105,90 +107,8 @@
           "final"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-02-28T18:15:33.639Z",
+        "enrichedAt": "2026-02-28T22:12:06.424Z",
         "_enrichHash": "10113502e87520c7c094846598b26827"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Atlético Madrid at Real Oviedo",
-        "time": "2026-02-28T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadio Carlos Tartiere",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Real Oviedo",
-        "awayTeam": "Atlético Madrid",
-        "isFavorite": false,
-        "importance": 3,
-        "importanceReason": "Atlético Madrid heavily favored but potential for Oviedo home upset",
-        "summary": "Atlético Madrid visit Real Oviedo in La Liga — strong favorites, but Oviedo's home crowd could make this competitive.",
-        "tags": [
-          "upset-potential"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-02-28T18:15:33.640Z",
-        "_enrichHash": "9e81dfcbe1a5375f35c6f8ca0c17262c",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      }
-    ],
-    "results": [
-      {
-        "sport": "esports",
-        "tournament": "DraculaN Season 5",
-        "title": "FlyQuest vs 100 Thieves",
-        "time": "2026-02-28T13:00:00.000Z",
-        "endTime": null,
-        "venue": "Online",
-        "meta": "DraculaN Season 5 - Consolidation Final",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Twitch",
-            "url": "https://twitch.tv/esworldcup",
-            "type": "twitch"
-          },
-          {
-            "platform": "YouTube",
-            "url": "https://youtube.com/@EsportsWorldCup",
-            "type": "youtube"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "100 Thieves (Norwegian rain) in do-or-die Consolidation Final",
-        "summary": "100 Thieves, featuring Norwegian star rain, must beat FlyQuest to survive and reach the DraculaN Season 5 Grand Final.",
-        "tags": [
-          "must-watch",
-          "final",
-          "norwegian-player"
-        ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-02-28T18:15:33.639Z",
-        "_enrichHash": "e92953b9f4ac05816c74194132931253"
       }
     ]
   },
@@ -231,6 +151,63 @@
       ],
       "recapHeadline": null,
       "isFavorite": true
+    },
+    {
+      "homeTeam": "Real Oviedo",
+      "awayTeam": "Atlético Madrid",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-02-28T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio Carlos Tartiere",
+      "goalScorers": [
+        {
+          "player": "Julián Álvarez",
+          "team": "Atlético Madrid",
+          "minute": "90'+4'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Leeds United",
+      "awayTeam": "Manchester City",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-02-28T17:30Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Elland Road",
+      "goalScorers": [
+        {
+          "player": "Antoine Semenyo",
+          "team": "Manchester City",
+          "minute": "45'+2'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Mallorca",
+      "awayTeam": "Real Sociedad",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-02-28T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadi Mallorca Son Moix",
+      "goalScorers": [
+        {
+          "player": "Carlos Soler",
+          "team": "Real Sociedad",
+          "minute": "36'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
     },
     {
       "homeTeam": "Burnley",
@@ -278,7 +255,7 @@
           "minute": "90'+3'"
         }
       ],
-      "recapHeadline": null,
+      "recapHeadline": "Ajers Brentford nær kjempekollaps – slo Burnley i overtidsdrama",
       "isFavorite": false
     },
     {
@@ -435,12 +412,12 @@
         "position": 2,
         "team": "Manchester City",
         "teamShort": "MNC",
-        "played": 27,
-        "won": 17,
+        "played": 28,
+        "won": 18,
         "drawn": 5,
         "lost": 5,
-        "gd": 31,
-        "points": 56
+        "gd": 32,
+        "points": 59
       },
       {
         "position": 3,
@@ -483,26 +460,26 @@
           {
             "position": 1,
             "positionDisplay": null,
-            "player": "Taylor Moore",
-            "score": "-12",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10664.png"
-          },
-          {
-            "position": 2,
-            "positionDisplay": null,
             "player": "Shane Lowry",
-            "score": "-11",
+            "score": "-13",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4587.png"
           },
           {
+            "position": 2,
+            "positionDisplay": null,
+            "player": "Austin Smotherman",
+            "score": "-13",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11056.png"
+          },
+          {
             "position": 3,
             "positionDisplay": null,
             "player": "Nico Echavarria",
-            "score": "-11",
+            "score": "-12",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4408316.png"
@@ -510,20 +487,20 @@
           {
             "position": 4,
             "positionDisplay": null,
-            "player": "Austin Smotherman",
-            "score": "-11",
+            "player": "Taylor Moore",
+            "score": "-12",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11056.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10664.png"
           },
           {
             "position": 5,
             "positionDisplay": null,
-            "player": "Ricky Castillo",
-            "score": "-10",
+            "player": "Jimmy Stanger",
+            "score": "-11",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4691931.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10990.png"
           }
         ]
       }
@@ -575,7 +552,7 @@
         "tournament": "Premier League",
         "time": "2026-03-01T16:30:00.000Z",
         "timeLabel": "1 Mar, 17:30",
-        "relativeStart": "In 22h 14m",
+        "relativeStart": "In 18h 18m",
         "importance": 5,
         "norwegian": false,
         "streaming": [
@@ -605,7 +582,7 @@
         "tournament": "La Liga",
         "time": "2026-03-01T17:30:00.000Z",
         "timeLabel": "1 Mar, 18:30",
-        "relativeStart": "In 23h 14m",
+        "relativeStart": "In 19h 18m",
         "importance": 4,
         "norwegian": false,
         "streaming": [
@@ -623,69 +600,74 @@
         ]
       },
       {
-        "id": "esports-heroic-vs-tbd-(consolidation-final-winner)-2026-02-28t17:30:00.000z",
-        "title": "HEROIC vs TBD (Consolidation Final winner)",
-        "sport": "esports",
-        "tournament": "DraculaN Season 5",
-        "time": "2026-02-28T17:30:00.000Z",
-        "timeLabel": "28 Feb, 18:30",
-        "relativeStart": "Started",
-        "importance": 4,
+        "id": "football-nottingham-forest-at-brighton-&-hove-albion-2026-03-01t14:00:00.000z",
+        "title": "Nottingham Forest at Brighton & Hove Albion",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-03-01T14:00:00.000Z",
+        "timeLabel": "1 Mar, 15:00",
+        "relativeStart": "In 15h 48m",
+        "importance": 3,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Twitch",
-            "url": "https://twitch.tv",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
-        "score": 85,
+        "score": 62,
         "reasons": [
-          "Must-watch event",
-          "Must-watch"
+          "Preferred sport"
         ]
       }
     ],
-    "headline": "Yamal's hat trick fires Barcelona — now rain fights for the Grand Final"
+    "headline": "Yamal's first hat-trick headlines a goal-drenched Saturday"
   },
   "rssHighlights": [
     {
-      "title": "Lamine Yamal med karrierens første hat trick",
+      "title": "Målløs Sørloth da Atlético Madrid tok viktige poeng",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/lamine-yamal-med-karrierens-forste-hat-trick-1.17789444"
+      "link": "https://www.nrk.no/sport/mallos-sorloth-da-atletico-madrid-tok-viktige-poeng-1.17789522"
     },
     {
-      "title": "Liverpool herjet på Anfield: Drømmeomgang senket West Ham",
+      "title": "Bayern München best i vill toppkamp: Tok langt steg mot seriegull",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/liverpool-herjet-pa-anfield_-drommeomgang-senket-west-ham-1.17789413"
+      "link": "https://www.nrk.no/sport/bayern-munchen-best-i-vill-toppkamp_-tok-langt-steg-mot-seriegull-1.17789449"
     },
     {
-      "title": "Målbonanza på Anfield - Liverpool tok viktige poeng",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18613396"
-    },
-    {
-      "title": "Skadet Haaland mister Manchester City-kamp: – Han er utrolig lei seg",
+      "title": "Guardiola om Haaland-skade: – Erlings kvaliteter er uerstattelige",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/skadet-haaland-mister-manchester-city-kamp_-_-han-er-utrolig-lei-seg-1.17789448"
+      "link": "https://www.nrk.no/sport/guardiola-om-haaland-skade_-_-erlings-kvaliteter-er-uerstattelige-1.17789469"
     },
     {
-      "title": "Klæbo fortset storforma i nye VM-løyper",
+      "title": "Storhamar raknet i toppkampen – slik spilles NM-kvartfinalene",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/klaebo-fortset-storforma-i-nye-vm-loyper-1.17789440"
+      "link": "https://www.nrk.no/sport/storhamar-raknet-i-toppkampen-_-slik-spilles-nm-kvartfinalene-1.17789519"
+    },
+    {
+      "title": "Ajers Brentford nær kjempekollaps – slo Burnley i overtidsdrama",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/ajers-brentford-naer-kjempekollaps-_-slo-burnley-i-overtidsdrama-1.17789476"
     }
   ],
   "meta": {
-    "eventCount": 4,
+    "eventCount": 2,
     "sportsCovered": [
       "golf",
-      "esports",
-      "football"
+      "esports"
     ],
     "hasResults": true,
     "hasStandings": true

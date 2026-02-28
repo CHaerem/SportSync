@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T21:06:51.511Z",
+  "generatedAt": "2026-02-28T22:13:50.280Z",
   "patternsDetected": 4,
   "patterns": [
     {
@@ -15,18 +15,18 @@
       "type": "recurring_health_warning",
       "severity": "high",
       "issueCode": "snapshot_event_mismatch",
-      "count": 22,
+      "count": 23,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-02-28T21:06:51.435Z",
-      "suggestion": "Health warning \"snapshot_event_mismatch\" has fired 22 times since 2026-02-26. Investigate and fix the root cause rather than letting it keep firing."
+      "lastSeen": "2026-02-28T22:13:50.129Z",
+      "suggestion": "Health warning \"snapshot_event_mismatch\" has fired 23 times since 2026-02-26. Investigate and fix the root cause rather than letting it keep firing."
     },
     {
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 19,
+      "fireCount": 18,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data.",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 19 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 18 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -54,14 +54,14 @@
       "lastSeen": "2026-02-28T18:18:18.786Z"
     },
     "streaming_low_match_rate": {
-      "count": 208,
+      "count": 209,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-02-28T21:06:51.435Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     },
     "ux_eval_fallback": {
-      "count": 153,
+      "count": 154,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-02-28T21:06:51.435Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     },
     "missing_snapshot": {
       "count": 8,
@@ -74,14 +74,14 @@
       "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "streaming_coverage_gap": {
-      "count": 72,
+      "count": 73,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-02-28T21:06:51.435Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     },
     "snapshot_event_mismatch": {
-      "count": 22,
+      "count": 23,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-02-28T21:06:51.435Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     },
     "quota_high_utilization": {
       "count": 15,
@@ -89,9 +89,9 @@
       "lastSeen": "2026-02-27T17:24:50.863Z"
     },
     "bracket_stale_matches": {
-      "count": 41,
+      "count": 42,
       "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-02-28T21:06:51.436Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     },
     "quota_skip_time_critical": {
       "count": 30,
@@ -114,22 +114,27 @@
       "lastSeen": "2026-02-28T20:07:47.648Z"
     },
     "recipe_repair_exhausted": {
-      "count": 37,
+      "count": 38,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-02-28T21:06:51.436Z"
+      "lastSeen": "2026-02-28T22:13:50.129Z"
+    },
+    "streaming_match_rate_declining": {
+      "count": 1,
+      "firstSeen": "2026-02-28T22:13:50.129Z",
+      "lastSeen": "2026-02-28T22:13:50.129Z"
     }
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 19,
+      "fires": 18,
       "improved": 0,
-      "unchanged": 19,
+      "unchanged": 18,
       "worsened": 0,
       "effectivenessRate": 0
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-02-28T21:06:51.510Z",
+    "recordedAt": "2026-02-28T22:13:50.279Z",
     "moduleCount": 66,
     "avgModuleSize": 328,
     "pipelineSteps": 28,

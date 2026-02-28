@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T21:06:51.353Z",
+  "generatedAt": "2026-02-28T22:13:50.025Z",
   "eventCount": 57,
   "sportCoverage": {
     "golf": {
@@ -55,35 +55,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -103,7 +103,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 29,
     "validationPassRate": 1,
     "recapHeadlineRate": 0.07,
     "issues": []
@@ -111,15 +111,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0,
-    "eventsEnriched": 0,
-    "trend": "declining",
+    "matchRate": 0.35,
+    "eventsEnriched": 8,
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-02-28: 4 events but events.json has 2"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -144,19 +144,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 44144,
+    "totalDuration": 55214,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27507,
-        "share": 62
+        "duration": 27848,
+        "share": 50
       },
       {
         "name": "fetch-results",
-        "duration": 31652,
-        "share": 72
+        "duration": 36048,
+        "share": 65
       }
     ],
     "failedSteps": []
@@ -208,22 +208,12 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 0% (0/23) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 38% → 35% → 0%"
+      "message": "Streaming enrichment match rate is 35% (8/23) — team alias table may need updates"
     },
     {
       "severity": "warning",
       "code": "streaming_coverage_gap",
       "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-02-28: 4 events but events.json has 2"
     },
     {
       "severity": "info",
@@ -238,12 +228,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 62% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 65% of total pipeline time (36s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -253,7 +243,7 @@
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "8 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "7 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -263,7 +253,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-02-28T21:06:51.524Z",
+    "computedAt": "2026-02-28T22:13:50.291Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:draculan-s5",
@@ -290,7 +280,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 78/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 5 warning issue(s). Editorial quality score is 70/100.",
     "tokenUsage": null
   }
 }

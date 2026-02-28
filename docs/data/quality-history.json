@@ -1,92 +1,5 @@
 [
   {
-    "timestamp": "2026-02-26T13:36:52.771Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 0,
-      "avgScore": 0,
-      "streamingCoverage": 0
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0.036,
-      "goalScorerCoverage": 1,
-      "footballCount": 28,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 13,
-      "warningCount": 13,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Champions League\" but no matching athlete found in events data; Featured mentions \"Atalanta\" but no matching athlete found in events data; Featured mentions \"Dortmund\" but no matching athlete found in events data; Featured mentions \"Juventus\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 34930,
-        "output": 7925,
-        "cacheCreation": 34927,
-        "cacheRead": 0,
-        "total": 42855,
-        "costUSD": 0.41643375,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 34930,
-        "output": 7925,
-        "calls": 1,
-        "total": 42855,
-        "costUSD": 0.41643375,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 1,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-26T14:27:15.724Z",
     "editorial": {
       "score": 93,
@@ -7454,6 +7367,108 @@
       "windowSize": 7,
       "editorialScore": 94.286,
       "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-02-28T22:13:48.255Z",
+    "editorial": {
+      "score": 70,
+      "mustWatchCoverage": 0,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 87,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.069,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 28,
+      "warningCount": 15,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Haaland\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 36130,
+        "output": 5409,
+        "cacheCreation": 19765,
+        "cacheRead": 16362,
+        "total": 41539,
+        "costUSD": 0.26695225,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 36096,
+        "output": 5118,
+        "calls": 1,
+        "total": 41214,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 72226,
+        "output": 10527,
+        "calls": 4,
+        "total": 82753,
+        "costUSD": 0.26695225,
+        "realPct": 50
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 90.429,
+      "mustWatchCoverage": 0.786,
       "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 90
