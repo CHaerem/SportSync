@@ -35,11 +35,25 @@ jobs:
       - name: Create data directory
         run: mkdir -p docs/data
 
+      - name: Determine pipeline mode
+        id: mode
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "06" ] || [ "$HOUR" = "10" ] || [ "$HOUR" = "14" ] || [ "$HOUR" = "18" ] || [ "$HOUR" = "22" ]; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+          else
+            echo "mode=data-only" >> $GITHUB_OUTPUT
+          fi
+          echo "Pipeline mode: $(grep mode $GITHUB_OUTPUT | cut -d= -f2)"
+
       - name: Run data pipeline
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PIPELINE_MODE: ${{ steps.mode.outputs.mode }}
         run: node scripts/run-pipeline.js || true
 
       - name: Read pipeline result

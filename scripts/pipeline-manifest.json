@@ -32,8 +32,8 @@
       "name": "discover",
       "description": "LLM-powered event discovery",
       "steps": [
-        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true },
-        { "name": "learn-recipes", "command": "node scripts/learn-recipe.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true }
+        { "name": "discover-events", "command": "node scripts/discover-events.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true, "llm": true },
+        { "name": "learn-recipes", "command": "node scripts/learn-recipe.js", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "quotaPriority": 3, "skipIfDataUnchanged": true, "llm": true }
       ]
     },
     {
@@ -48,15 +48,15 @@
       "name": "enrich",
       "description": "AI enrichment of events",
       "steps": [
-        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 }
+        { "name": "enrich-events", "command": "npm run enrich", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1, "llm": true }
       ]
     },
     {
       "name": "generate",
       "description": "AI-powered content generation",
       "steps": [
-        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1 },
-        { "name": "post-generate", "command": "node scripts/post-generate.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2 }
+        { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1, "llm": true },
+        { "name": "post-generate", "command": "node scripts/post-generate.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2, "llm": true }
       ]
     },
     {
@@ -75,8 +75,8 @@
         { "name": "quality-regression", "command": "node scripts/check-quality-regression.js", "errorPolicy": "continue" },
         { "name": "coverage-gaps", "command": "node scripts/detect-coverage-gaps.js", "errorPolicy": "continue" },
         { "name": "build-calendar", "command": "npm run build:calendar", "errorPolicy": "continue" },
-        { "name": "ai-sanity-check", "command": "node scripts/ai-sanity-check.js", "errorPolicy": "continue" },
-        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue", "timeout": 60000 },
+        { "name": "ai-sanity-check", "command": "node scripts/ai-sanity-check.js", "errorPolicy": "continue", "quotaPriority": 2, "llm": true },
+        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue", "timeout": 60000, "quotaPriority": 2, "llm": true },
         { "name": "evaluate-ux", "command": "node scripts/evaluate-ux.js", "errorPolicy": "continue" }
       ]
     },

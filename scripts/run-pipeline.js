@@ -25,6 +25,10 @@ const RESULT_PATH = path.join(DATA_DIR, "pipeline-result.json");
 const PIPELINE_HASH_PATH = path.join(DATA_DIR, ".pipeline-hash.json");
 const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
 
+// Pipeline mode: "full" (default) runs everything, "data-only" skips LLM steps
+const PIPELINE_MODE = process.env.PIPELINE_MODE || "full";
+const isDataOnly = PIPELINE_MODE === "data-only";
+
 // Track whether event data is unchanged between runs
 let dataUnchanged = false;
 
@@ -178,6 +182,16 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 	const start = Date.now();
 	const stepTimeout = step.timeout || timeout;
 
+	// Check data-only mode — skip LLM steps
+	if (isDataOnly && step.llm) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "data-only mode",
+		};
+	}
+
 	// Check data-unchanged skip
 	if (step.skipIfDataUnchanged && dataUnchanged) {
 		return {
@@ -243,6 +257,16 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 	const start = Date.now();
 	const stepTimeout = step.timeout || timeout;
+
+	// Check data-only mode — skip LLM steps
+	if (isDataOnly && step.llm) {
+		return {
+			name: step.name,
+			status: "skipped",
+			duration: 0,
+			reason: "data-only mode",
+		};
+	}
 
 	// Check data-unchanged skip
 	if (step.skipIfDataUnchanged && dataUnchanged) {
@@ -343,14 +367,16 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 	let aborted = false;
 	let gateStatus = "pass";
 
+	console.log(`Pipeline mode: ${PIPELINE_MODE}${isDataOnly ? " (LLM steps will be skipped)" : ""}`);
+
 	for (const phase of manifest.phases) {
 		if (aborted) {
 			phases[phase.name] = { name: phase.name, status: "skipped", steps: [] };
 			continue;
 		}
 
-		// Before first AI phase, probe subscription quota
-		if (phase.name === "discover") {
+		// Before first AI phase, probe subscription quota (skip in data-only mode)
+		if (phase.name === "discover" && !isDataOnly) {
 			console.log("\n--- Quota check ---");
 			await checkQuotaStatus();
 
@@ -415,6 +441,7 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		startedAt,
 		completedAt: new Date().toISOString(),
 		duration: Date.now() - startMs,
+		mode: PIPELINE_MODE,
 		gate: gateStatus,
 		quota: quotaStatus ? {
 			fiveHour: quotaStatus.fiveHour,
