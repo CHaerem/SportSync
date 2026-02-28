@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-02-28T16:23:12.833Z",
+  "lastUpdated": "2026-02-28T17:07:12.325Z",
   "current": {
     "fiveHour": {
-      "utilization": 71
+      "utilization": 0
     },
     "sevenDay": {
       "utilization": 35,
       "resets_at": "1772776800"
     },
     "evaluation": {
-      "tier": 2,
-      "tierName": "high",
-      "maxPriority": 1,
-      "model": "claude-sonnet-4-6",
-      "constrained": true,
-      "reason": "high: 5h 71%, 7d 35%",
+      "tier": 0,
+      "tierName": "green",
+      "maxPriority": 3,
+      "model": null,
+      "constrained": false,
+      "reason": "ok",
       "resetNote": null
     }
   },
@@ -23,7 +23,7 @@
     "since": "2026-02-18T10:44:24.232Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-02-28T16:23:13.567Z"
+    "checkedAt": "2026-02-28T17:07:13.004Z"
   },
   "internalTokens": {
     "enrichment": 0,
@@ -33,17 +33,17 @@
     "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 1075618,
-    "weeklyUsed": 13260777,
+    "dailyUsed": 988630,
+    "weeklyUsed": 13062729,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 22,
-    "weeklyPct": 53
+    "dailyPct": 20,
+    "weeklyPct": 52
   },
   "sportsyncShare": {
     "pipelineRuns": 139,
     "autopilotRuns": 0,
-    "totalDurationMs": 42478809
+    "totalDurationMs": 42048353
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,12 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-21T16:29:48.850Z",
-      "context": "pipeline",
-      "durationMs": 442233,
-      "tokens": 198048
-    },
     {
       "timestamp": "2026-02-21T17:17:28.091Z",
       "context": "pipeline",
@@ -884,6 +878,12 @@
       "timestamp": "2026-02-28T16:23:12.833Z",
       "context": "pipeline",
       "durationMs": 9833,
+      "tokens": 0
+    },
+    {
+      "timestamp": "2026-02-28T17:07:12.325Z",
+      "context": "pipeline",
+      "durationMs": 11777,
       "tokens": 0
     }
   ]
