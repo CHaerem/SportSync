@@ -2,46 +2,54 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona, Liverpool, and the CS2 Grand Final — Saturday delivers everything"
+      "text": "Premier League: Liverpool v West Ham United"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Villarreal",
+      "showStandings": true,
+      "_fallbackText": "⚽ Barcelona v Villarreal, 16:15, La Liga — Barcelona host Villarreal at Camp Nou — your favorite team in a La Liga fixture with title race implications on the line"
     },
     {
       "type": "match-preview",
       "homeTeam": "Liverpool",
       "awayTeam": "West Ham United",
-      "showStandings": true
+      "showStandings": true,
+      "_fallbackText": "⚽ Liverpool v West Ham United, 16:00, Premier League — West Ham visit Anfield in a key Premier League title-race game for Liverpool — high-stakes, top-quality matchup"
+    },
+    {
+      "type": "event-line",
+      "text": "⛳ Cognizant Classic in The Palm Beaches, 06:00 — PGA Tour"
     },
     {
       "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Villarreal"
-    },
-    {
-      "type": "narrative",
-      "text": "Atlético Madrid also play tonight at Oviedo while Real Madrid wait until Monday at home. A clinical Barcelona win here applies maximum pressure — this could be a La Liga turning point."
-    },
-    {
-      "type": "event-group",
-      "label": "🎮 DraculaN Season 5 — Grand Final Day",
-      "items": [
-        "🎮 14:00 — FlyQuest vs 100 Thieves — elimination: only the winner advances to the Final",
-        "🎮 18:30 — HEROIC vs Grand Final winner — championship decider"
-      ]
+      "homeTeam": "Newcastle United",
+      "awayTeam": "Everton",
+      "showStandings": true,
+      "_fallbackText": "⚽ Newcastle United v Everton, 16:00, Premier League — Newcastle host Everton at St"
     },
     {
       "type": "golf-status",
-      "tournament": "pga"
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
-      "text": "Sunday"
+      "text": "This Week"
     },
     {
       "type": "match-preview",
       "homeTeam": "Arsenal",
       "awayTeam": "Chelsea",
-      "showStandings": true
+      "showStandings": true,
+      "_fallbackText": "⚽ Sun 17:30 — Chelsea at Arsenal"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     }
   ],
-  "generatedAt": "2026-02-28T14:29:10.326Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-02-28T14:16:05.782Z",
+  "provider": "fallback"
 }

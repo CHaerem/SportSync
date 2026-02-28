@@ -1037,7 +1037,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### MEDIUM Priority
 
-- [DONE] [EXPLORE] **Investigate athletics/track-and-field coverage** — No free API exists (ESPN, World Athletics, Diamond League all confirmed). Curated config approach is viable (same pattern as biathlon, ice hockey, alpine). Diamond League 2026 schedule extracted: 14 meetings May–Sep, Oslo Bislett Games Jun 28. WA Indoor Championships: Mar 20–22, Torun, Poland (3 weeks away — urgent). Norwegian athletes: Jakob Ingebrigtsen (1500/5000m), Karsten Warholm (400mH), Sondre Guttormsen (pole vault), Amalie Iuel (400mH). European Athletics Championships 2026 in Birmingham (~Aug). **Conclusion:** [FEATURE] task created below.
+- [DONE] [EXPLORE] **Investigate athletics/track-and-field coverage** — Explored but user not interested in athletics coverage. No action needed.
 
 ### LOW Priority
 
@@ -1049,7 +1049,7 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### HIGH Priority
 
-- [PENDING] [FEATURE] **Add athletics/track-and-field sport coverage** — Add Norwegian athletics to the dashboard via curated configs. No API exists — use curated config approach (same as biathlon, ice hockey, alpine). Create `scripts/config/athletics-2026.json` with: (1) WA Indoor Championships (Torun, Poland, Mar 20–22) — URGENT, 3 weeks away; (2) Diamond League 2026 series (14 meetings, May–Sep), Oslo Bislett Games (Jun 28) flagged `norwegian: true`; (3) European Athletics Championships 2026 (Birmingham, ~Aug — verify exact dates); (4) norwegianAthletes: [Jakob Ingebrigtsen, Karsten Warholm, Sondre Guttormsen, Amalie Iuel]. Add `athletics` to `sport-config.js` (emoji: runner, color: orange/red). Add `dynamicAthletes.athletics` to `user-context.json`. Risk: LOW.
+(none)
 
 ---
 
