@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T08:10:31.225Z",
+  "generatedAt": "2026-03-01T09:11:04.929Z",
   "eventCount": 63,
   "sportCoverage": {
     "golf": {
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 604,
+      "ageMinutes": 665,
       "stale": true
     },
     "f1.json": {
@@ -84,11 +84,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 103,
+      "ageMinutes": 164,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 103,
+      "ageMinutes": 164,
       "stale": false
     }
   },
@@ -147,18 +147,18 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49562,
+    "totalDuration": 51415,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28586,
-        "share": 58
+        "duration": 29472,
+        "share": 57
       },
       {
         "name": "fetch-results",
-        "duration": 36745,
+        "duration": 37817,
         "share": 74
       }
     ],
@@ -209,12 +209,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 604 minutes old"
+      "message": "esports.json: data is 665 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 3 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 4 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -244,17 +244,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (38s) — optimization candidate"
     },
     {
       "severity": "warning",
       "code": "recipe_repair_exhausted",
-      "message": "3 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "2 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
     },
     {
       "severity": "info",
@@ -264,7 +264,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T08:10:31.352Z",
+    "computedAt": "2026-03-01T09:11:05.079Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
