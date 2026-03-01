@@ -1041,7 +1041,72 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### LOW Priority
 
-- [PENDING] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. Check if CyclingArchives, UCI, or procyclingstats.com have free APIs or scrapable data. Norwegian cyclists (e.g., Markus Hoelgaard) could be tracked. Create `[FEATURE]` task if viable API found.
+- [DONE] [EXPLORE] **Investigate cycling data sources** — RSS occasionally mentions cycling events. Findings (2026-03-01):
+
+  **RSS signal (confirmed):** NRK published a cycling article during the current RSS window: "Nederlandsk 'brosteinsmonster' vant i Belgia – Abrahamsen viste muskler" — Omloop Het Nieuwsblad 2026, with Jonas Abrahamsen (Norwegian, Uno-X Mobility) placing high. This confirms that Norwegian cycling is appearing in our RSS feeds but has no dashboard coverage.
+
+  **Data source evaluation:**
+
+  - **ESPN Public API**: ESPN has no cycling endpoint in their public sports API. Their public scoreboard/schedule API covers football, golf, F1, tennis, and US sports. No `/cycling` or `/road-cycling` endpoint exists. NOT VIABLE as an API fetcher.
+
+  - **UCI (Union Cycliste Internationale)**: No public REST API. The UCI website (uci.org) renders results client-side. No documented public data endpoint. NOT VIABLE.
+
+  - **ProCyclingStats (procyclingstats.com)**: Comprehensive cycling data site — race results, startlists, rider profiles, rankings. No public API. Structured HTML that could be scraped, but fragile and requires ongoing maintenance. VIABLE as a learned scraper recipe (like Liquipedia CS2), but high complexity.
+
+  - **FirstCycling (firstcycling.com)**: Similar to ProCyclingStats — comprehensive data, no API. Structured HTML scraping possible. VIABLE as recipe, same caveats.
+
+  - **CyclingArchives.com**: Historical results archive. No API. NOT VIABLE for live/upcoming schedules.
+
+  - **Curated config approach**: Best match for SportSync's architecture. Spring Classics calendar is well-known, stable, and Wikipedia/official sites have reliable dates months in advance. Discovery loop can populate Norwegian athletes via WebSearch.
+
+  **Norwegian cyclists (confirmed presences in World Tour / ProTeam):**
+
+  - **Jonas Abrahamsen** (Uno-X Mobility) — Norwegian climber/puncheur, confirmed active in 2026 classics season. Appeared in NRK RSS article about Omloop Het Nieuwsblad today.
+  - **Markus Hoelgaard** (Uno-X Mobility) — brother of Tobias, a sprinter/classics specialist
+  - **Tobias Hoelgaard** (Q36.5 Pro Cycling) — Norwegian sprinter, former Intermarché rider
+  - **Sven Erik Bystrøm** (UAE Team Emirates) — experienced World Tour rider, all-around classics type
+  - **Andreas Leknessund** (dsm-firmenich PostNL) — stage race specialist, GC potential
+  - **Søren Wærenskjold** (Uno-X Mobility) — powerful sprinter, likely TdF stage contender
+  - **Uno-X Mobility Pro Cycling Team** — Norwegian-registered team with World Tour card since 2024, multiple Norwegian riders, strong spring classics presence
+
+  **Key events to cover (2026 calendar, with Norwegian interest):**
+
+  URGENT (March-April 2026, classical spring season):
+  - **Strade Bianche** — ~March 7, Siena, Italy (World Tour)
+  - **Tirreno-Adriatico** — ~March 11-17, Italy (World Tour stage race)
+  - **Milan-San Remo** — ~March 22, Italy (World Tour monument — biggest single-day)
+  - **Tour of Flanders (Ronde)** — ~April 6, Belgium (World Tour monument)
+  - **Paris-Roubaix** — ~April 12, France (World Tour monument — "Hell of the North")
+  - **Amstel Gold Race** — ~April 19, Netherlands
+
+  LATER (Norwegian home races):
+  - **Tour of Norway (Uno-X Hjemover)** — May 2026 (Norwegian national stage race, major Norwegian fan event)
+  - **Arctic Race of Norway** — August 2026 (UCI ProSeries, Norwegian Arctic stage race)
+
+  MAJOR EVENTS:
+  - **Tour de France 2026** — June 27 – July 19, France (biggest cycling event globally)
+  - **UCI Road World Championships 2026** — September 2026, Kigali, Rwanda
+
+  **Implementation recommendation:**
+
+  **Option A — Curated config only (RECOMMENDED, LOW effort):** Create `scripts/config/cycling-classics-2026.json` covering Spring Classics (March-April), `scripts/config/cycling-grand-tours-2026.json` for TdF/Giro/Vuelta. Discovery loop populates Norwegian athletes. No new fetcher needed. Same pattern as biathlon-wch-2026.json and alpine-wc-finals-2026.json.
+
+  - Pros: ~80 lines, ships in one autopilot sub-task, fully autonomous via discovery loop
+  - Cons: Approximate start times (not exact stage times), no live scores
+
+  **Option B — Learned scraper recipe (MEDIUM effort):** Write a Liquipedia-style recipe for ProCyclingStats to extract startlists. Zero LLM cost after initial learning. Exact rider rosters, Norwegian athlete detection.
+
+  - Pros: Automated rider data, more accurate than manual curation
+  - Cons: Scraping fragility, ~4-6 hours build time, requires recipe-scraper infrastructure working reliably
+
+  **Option C — ESPN fetcher (NOT VIABLE):** No ESPN cycling endpoint exists.
+
+  **Conclusion:** Cycling IS viable via curated configs. The RSS signal (NRK covering Abrahamsen in Omloop today) confirms user interest. Norwegian cyclists — especially the Uno-X Mobility team — are competitive in Spring Classics. The Spring Classics season (March-April) is the MOST urgent window. A curated config covering Milan-San Remo, Tour of Flanders, and Paris-Roubaix should be created before March 22 (Milan-San Remo). A follow-up config for Tour of Norway (May) and TdF (June) can follow.
+
+  **New tasks created:**
+
+  - `[FEATURE]` Add cycling Spring Classics 2026 curated config (see below, HIGH priority)
+  - `[FEATURE]` Add cycling grand tours + Norwegian races 2026 config (see below, MEDIUM priority)
 
 ---
 
@@ -1050,6 +1115,18 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 ### HIGH Priority
 
 (none)
+
+---
+
+## Scouted Tasks (2026-03-01)
+
+### HIGH Priority
+
+- [DONE] (PR #118) [FEATURE] **Add cycling Spring Classics 2026 curated config** — Created `scripts/config/cycling-classics-2026.json` with 9 Spring Classics races (Strade Bianche through Liège-Bastogne-Liège), added cycling to SPORT_CONFIG and league-config. 7 Norwegian riders tracked (Abrahamsen, Bystrøm, Leknessund, Wærenskjold, Hoelgaard brothers, Hagen). 10th sport for the dashboard.
+
+### MEDIUM Priority
+
+- [PENDING] [FEATURE] **Add cycling grand tours + Norwegian races 2026 config** — After Spring Classics config ships, create `scripts/config/cycling-grand-tours-2026.json` covering: Tour de France 2026 (June 27 – July 19), Tour of Norway (May 2026), Arctic Race of Norway (August 2026), UCI Road World Championships (September 2026, Kigali). Focus on Uno-X Mobility team (Norwegian team) results and stage wins. Same pattern as classics config. Depends on: Spring Classics config task above.
 
 ---
 

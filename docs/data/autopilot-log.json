@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-01",
+      "task": "Fix snapshot_event_mismatch + EXPLORE cycling + FEATURE cycling Spring Classics + fix capabilities.json",
+      "outcome": "completed",
+      "pr": 118,
+      "details": "Run 15: 3 fixes + 1 EXPLORE + 1 FEATURE. (1) MAINTENANCE direct-to-main: added snapshot_event_mismatch to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES — restores pipelineHealth 0.75→1.0 and autonomy 11/12→12/12. (2) EXPLORE: cycling data sources — ESPN has no cycling API, curated config approach recommended. Identified 7 Norwegian riders (Abrahamsen, Bystrøm, Leknessund, Wærenskjold, Hoelgaard brothers, Hagen). Spring Classics season started (Omloop Het Nieuwsblad Feb 28). (3) FEATURE branch-pr (PR #118): cycling-classics-2026.json with 9 Spring Classics races, cycling added as 10th sport (SPORT_CONFIG + league-config). (4) MAINTENANCE direct-to-main: fixed capabilities.json — auto-discovers sports from events.json (was hardcoded 6, now shows all 10), fixed feedbackLoops count (loopsTotal not loopCount, 0→12). Multi-agent: code-agent + data-agent ran in parallel for tasks 1+2, then data-agent handled task 3.",
+      "tests_passed": true,
+      "files_changed": 7,
+      "turns_used": 20,
+      "lesson": "capabilities.json had 2 bugs hiding system state from scouting: (1) hardcoded sport list missed 4 config-only sports — auto-discovery from events.json closes the loop permanently, (2) feedbackLoops read wrong field (loopCount vs loopsTotal), showing 0/12 loops. Both bugs meant the autopilot's introspection system was blind to half its own capabilities. Fix: always derive system state from actual data files, not hardcoded lists.",
+      "scouted": 2
+    },
+    {
       "date": "2026-02-28",
       "task": "Fix pipelineHealth stagnation + sanityScore hint fatigue + EXPLORE athletics + fix date-dependent tests",
       "outcome": "completed",
