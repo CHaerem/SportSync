@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-01T13:19:40.265Z",
-  "eventCount": 62,
+  "generatedAt": "2026-03-01T14:15:32.315Z",
+  "eventCount": 59,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 26,
-      "previousCount": 27,
-      "delta": -1
+      "count": 23,
+      "previousCount": 26,
+      "delta": -3
     },
     "icehockey": {
       "count": 12,
@@ -60,36 +60,36 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 913,
+      "ageMinutes": 969,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 8,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 412,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 412,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -108,25 +108,22 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 25,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.07,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.31,
-    "eventsEnriched": 8,
-    "trend": "stable",
+    "matchRate": 0.22,
+    "eventsEnriched": 5,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 412 minutes old (stale > 240m)",
-      "Snapshot 2026-03-01: 9 events but events.json has 8"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -150,19 +147,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51978,
+    "totalDuration": 56141,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29983,
-        "share": 58
+        "duration": 29882,
+        "share": 53
       },
       {
         "name": "fetch-results",
-        "duration": 38988,
-        "share": 75
+        "duration": 42416,
+        "share": 76
       }
     ],
     "failedSteps": []
@@ -212,27 +209,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 913 minutes old"
+      "message": "esports.json: data is 969 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 8 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 412 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 412 minutes old"
+      "message": "esports: data retained 9 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 31% (8/26) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 22% (5/23) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 33% → 31% → 22%"
     },
     {
       "severity": "warning",
@@ -243,16 +235,6 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (esports)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 412 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-01: 9 events but events.json has 8"
     },
     {
       "severity": "info",
@@ -267,12 +249,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (42s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -282,7 +264,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T13:19:40.397Z",
+    "computedAt": "2026-03-01T14:15:32.460Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -296,7 +278,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 10 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 97% with 11/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

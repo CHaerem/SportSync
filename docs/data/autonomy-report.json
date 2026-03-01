@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-01T13:19:40.310Z",
-  "overallScore": 1,
-  "loopsClosed": 12,
+  "generatedAt": "2026-03-01T14:15:32.366Z",
+  "overallScore": 0.97,
+  "loopsClosed": 11,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -12,7 +12,7 @@
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (1 applied)"
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 13 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 16 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -52,7 +52,7 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are stale but post-generate was quota-skipped (expected)"
+      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
     },
     "uxQuality": {
       "score": 1,
@@ -60,10 +60,12 @@
       "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
     },
     "streamingVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
+      "score": 0.66,
+      "status": "partial",
+      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate declining: 33% → 31% → 22%"
     }
   },
-  "nextActions": []
+  "nextActions": [
+    "Investigate declining streaming match rate — check alias table or tvkampen HTML structure"
+  ]
 }

@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-01T10:13:10.552Z",
+  "generatedAt": "2026-03-01T14:15:32.239Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 63,
+    "totalEvents": 59,
     "sports": [
       "golf",
       "esports",
@@ -19,10 +19,6 @@
         "Cognizant Classic in The Palm Beaches"
       ],
       "today": [
-        "Espanyol at Elche",
-        "Nottingham Forest at Brighton & Hove Albion",
-        "Tottenham Hotspur at Fulham",
-        "Crystal Palace at Manchester United",
         "Osasuna at Valencia",
         "Chelsea at Arsenal",
         "Sevilla at Real Betis",
@@ -91,11 +87,11 @@
         "HEROIC vs TBD (Consolidation Final winner)"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 16
   },
   "findings": [
     {
@@ -169,9 +165,29 @@
       "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 42 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"18:30 — El Gran Derbi: Sevilla host Real Betis in La Liga's most ferocious local rivalry\" which may not match any event"
+    },
+    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Klæbo\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"But Sunday\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"El Gran Derbi\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -235,15 +251,20 @@
     },
     {
       "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"18:30\" for \"Qatar Airways Australian Grand Prix\" but events.json has 02:30"
+    },
+    {
+      "severity": "warning",
       "check": "brief_unverified_result",
-      "message": "Brief references \"arsenal lead city by 2 points after city\" vs \"leeds\" result but no matching data in recent-results.json"
+      "message": "Brief references \"arsenal lead man city by 2 points after liverpool\" vs \"west\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 33,
     "critical": 0,
-    "warning": 16,
-    "info": 12
+    "warning": 20,
+    "info": 13
   },
   "pass": true,
   "tokenUsage": null
