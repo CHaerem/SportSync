@@ -183,8 +183,13 @@ async function report(context) {
 	const usage = await fetchUsage();
 
 	// Read internal token data from ai-quality.json
-	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
-	const internalTokens = aggregateInternalTokens(quality);
+	// In data-only mode, LLM steps are skipped — ai-quality.json has stale values
+	const pipelineResult = readJsonIfExists(path.join(dataDir, "pipeline-result.json"));
+	const isDataOnlyRun = pipelineResult?.mode === "data-only";
+	const quality = isDataOnlyRun ? null : readJsonIfExists(path.join(dataDir, "ai-quality.json"));
+	const internalTokens = isDataOnlyRun
+		? { enrichment: 0, featured: 0, discovery: 0, multiDay: 0, runTotal: 0 }
+		: aggregateInternalTokens(quality);
 
 	// Parse autopilot session tokens if SESSION_ID is set
 	const sessionId = process.env.SESSION_ID;
