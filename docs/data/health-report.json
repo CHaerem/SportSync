@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T20:07:58.122Z",
+  "generatedAt": "2026-03-01T21:08:00.598Z",
   "eventCount": 55,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 19,
-      "previousCount": 20,
-      "delta": -1
+      "previousCount": 19,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1322,
+      "ageMinutes": 1382,
       "stale": true
     },
     "f1.json": {
@@ -84,11 +84,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 171,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 171,
       "stale": false
     }
   },
@@ -149,19 +149,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52223,
+    "totalDuration": 51609,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27203,
-        "share": 52
+        "duration": 29714,
+        "share": 58
       },
       {
         "name": "fetch-results",
-        "duration": 40306,
-        "share": 77
+        "duration": 39432,
+        "share": 76
       }
     ],
     "failedSteps": []
@@ -211,12 +211,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1322 minutes old"
+      "message": "esports.json: data is 1382 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 15 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 16 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -256,12 +256,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (27s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (39s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -271,7 +271,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T20:07:58.250Z",
+    "computedAt": "2026-03-01T21:08:00.726Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
