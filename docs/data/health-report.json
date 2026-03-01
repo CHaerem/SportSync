@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T06:27:45.721Z",
+  "generatedAt": "2026-03-01T07:17:43.207Z",
   "eventCount": 63,
   "sportCoverage": {
     "golf": {
@@ -39,8 +39,8 @@
     },
     "cycling": {
       "count": 2,
-      "previousCount": 9,
-      "delta": -7
+      "previousCount": 2,
+      "delta": 0
     },
     "alpine": {
       "count": 8,
@@ -60,35 +60,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 501,
+      "ageMinutes": 551,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 50,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 50,
       "stale": false
     }
   },
@@ -141,13 +141,13 @@
   "quotaHealth": {
     "tier": 0,
     "fiveHour": 0,
-    "sevenDay": 36,
+    "sevenDay": 38,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 512498,
+    "totalDuration": 597918,
     "stepCount": 28,
     "timeoutHits": [
       "discover-events"
@@ -155,8 +155,8 @@
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300045,
-        "share": 59
+        "duration": 300102,
+        "share": 50
       }
     ],
     "failedSteps": [
@@ -197,11 +197,6 @@
   ],
   "issues": [
     {
-      "severity": "warning",
-      "code": "sport_count_drop",
-      "message": "cycling: 2 events (was 9, -78%)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
@@ -214,7 +209,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 501 minutes old"
+      "message": "esports.json: data is 551 minutes old"
     },
     {
       "severity": "warning",
@@ -249,7 +244,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 59% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 50% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -269,21 +264,21 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T06:27:45.905Z",
+    "computedAt": "2026-03-01T07:17:43.347Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 8,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
