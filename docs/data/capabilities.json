@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-01T02:01:06.299Z",
+  "generatedAt": "2026-03-01T06:28:47.945Z",
   "sports": {
     "football": {
       "fetcher": true,
       "data": true,
-      "eventCount": 23,
+      "eventCount": 27,
       "liveScores": true,
       "standings": true,
       "results": true
@@ -73,6 +73,14 @@
       "standings": false,
       "results": false
     },
+    "cycling": {
+      "fetcher": false,
+      "data": false,
+      "eventCount": 2,
+      "liveScores": false,
+      "standings": false,
+      "results": false
+    },
     "alpine": {
       "fetcher": false,
       "data": false,
@@ -97,7 +105,7 @@
   ],
   "feedbackLoops": 12,
   "scoutingHeuristics": 13,
-  "curatedConfigs": 8,
+  "curatedConfigs": 9,
   "gaps": [
     "No live scores for tennis, f1, chess, esports",
     "No standings for tennis, chess, esports",

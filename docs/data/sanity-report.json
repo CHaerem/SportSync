@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-28T22:13:50.148Z",
+  "generatedAt": "2026-03-01T06:27:45.824Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 57,
+    "totalEvents": 63,
     "sports": [
       "golf",
       "esports",
@@ -11,14 +11,14 @@
       "biathlon",
       "f1",
       "olympics",
+      "cycling",
       "alpine"
     ],
     "bands": {
       "live": [
         "Cognizant Classic in The Palm Beaches"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Espanyol at Elche",
         "Nottingham Forest at Brighton & Hove Albion",
         "Tottenham Hotspur at Fulham",
@@ -28,8 +28,10 @@
         "Sevilla at Real Betis",
         "Celta Vigo at Girona"
       ],
+      "tomorrow": [
+        "Getafe at Real Madrid"
+      ],
       "thisWeek": [
-        "Getafe at Real Madrid",
         "Brentford at AFC Bournemouth",
         "Burnley at Everton",
         "Sunderland at Leeds United",
@@ -54,15 +56,21 @@
         "Paralympic Winter Games 2026 — Opening Ceremony",
         "Real Madrid at Celta Vigo",
         "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country Opening Events",
+        "Strade Bianche 2026",
         "Biathlon World Cup — Women's 12.5km Mass Start (Kontiolahti)",
+        "Mallorca at Osasuna",
         "Biathlon World Cup — Men's Relay 4×7.5km (Kontiolahti)",
-        "GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 2)"
-      ],
-      "later": [
+        "Girona at Levante",
+        "GET-ligaen Quarterfinal — Vålerenga vs #5 (Game 2)",
+        "Real Sociedad at Atlético Madrid",
+        "Barcelona at Athletic Club",
         "Paralympic Winter Games 2026 — Para Alpine Skiing",
         "Biathlon World Cup — Women's Relay 4×6km (Kontiolahti)",
-        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)",
+        "Biathlon World Cup — Men's 15km Mass Start (Kontiolahti)"
+      ],
+      "later": [
         "Paralympic Winter Games 2026 — Para Biathlon & Cross-Country",
+        "Tirreno-Adriatico 2026",
         "Paralympic Winter Games 2026 — Para Snowboard & Alpine Skiing",
         "GET-ligaen Semifinal — TBD vs TBD (Game 1)",
         "Alpine World Cup Finals — Men's Super-G (Soldeu)",
@@ -85,85 +93,90 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 70,
-    "issueCount": 13
+    "pipelineStatus": "critical",
+    "editorialScore": 100,
+    "issueCount": 15
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 1)\" is 17 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 1)\" is 16 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Super-G (Soldeu)\" is 19 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Super-G (Soldeu)\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Super-G (Soldeu)\" is 19 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Super-G (Soldeu)\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 2)\" is 19 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Semifinal — TBD vs TBD (Game 2)\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Giant Slalom (Soldeu)\" is 20 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Giant Slalom (Soldeu)\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Giant Slalom (Soldeu)\" is 20 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Giant Slalom (Soldeu)\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Downhill (Soldeu)\" is 21 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Downhill (Soldeu)\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Downhill (Soldeu)\" is 21 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Downhill (Soldeu)\" is 20 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Men's Slalom (Soldeu)\" is 22 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Men's Slalom (Soldeu)\" is 21 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 22 days away — may clutter the dashboard"
+      "message": "\"Alpine World Cup Finals — Women's Slalom (Soldeu)\" is 21 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Final — TBD vs TBD (Game 1)\" is 31 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 1)\" is 30 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Final — TBD vs TBD (Game 2)\" is 33 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 2)\" is 32 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Final — TBD vs TBD (Game 4)\" is 36 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 4)\" is 35 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 43 days away — may clutter the dashboard"
+      "message": "\"GET-ligaen Final — TBD vs TBD (Game 7, if needed)\" is 42 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 4 hours old"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grand Final\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -227,14 +240,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"18:30\" for \"Qatar Airways Australian Grand Prix\" but events.json has 02:30"
+      "check": "brief_unverified_result",
+      "message": "Brief references \"arsenal lead city by 2 points after city\" vs \"leeds\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 29,
     "critical": 0,
-    "warning": 16,
+    "warning": 17,
     "info": 12
   },
   "pass": true,
