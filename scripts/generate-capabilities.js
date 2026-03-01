@@ -94,9 +94,17 @@ export function generateCapabilities(opts = {}) {
 		// Manifest not found or invalid
 	}
 
-	// Detect sports from data directory
+	// Detect sports from data directory — auto-discover from events.json + fetcher files
 	const sports = {};
-	const sportFiles = ["football", "golf", "tennis", "f1", "chess", "esports"];
+	const sportFiles = new Set(["football", "golf", "tennis", "f1", "chess", "esports"]);
+	// Read events.json once — used for sport discovery and config-only event counts
+	let allEvents = [];
+	try {
+		allEvents = JSON.parse(fs.readFileSync(path.join(dataDir, "events.json"), "utf-8"));
+		for (const evt of allEvents) {
+			if (evt.sport) sportFiles.add(evt.sport);
+		}
+	} catch { /* events.json missing or invalid */ }
 	// Dynamically detect which sports have standings in standings.json (overrides static caps)
 	const detectedStandings = detectStandingsFromFile(dataDir);
 	for (const sport of sportFiles) {
@@ -111,6 +119,10 @@ export function generateCapabilities(opts = {}) {
 					eventCount = data.tournaments.reduce((sum, t) => sum + (t.events?.length || 0), 0);
 				}
 			} catch { /* ignore parse errors */ }
+		}
+		// For config-only sports without a data file, count events from events.json
+		if (!hasData && allEvents.length > 0) {
+			eventCount = allEvents.filter(e => e.sport === sport).length;
 		}
 		const caps = SPORT_CAPABILITIES[sport] || {};
 		sports[sport] = {
@@ -134,7 +146,7 @@ export function generateCapabilities(opts = {}) {
 	let feedbackLoops = 0;
 	const autonomyReport = readJsonIfExists(path.join(dataDir, "autonomy-report.json"));
 	if (autonomyReport) {
-		feedbackLoops = autonomyReport.loopCount || autonomyReport.loops?.length || 0;
+		feedbackLoops = autonomyReport.loopsTotal || Object.keys(autonomyReport.loops || {}).length || 0;
 	}
 
 	// Count scouting heuristics from roadmap
