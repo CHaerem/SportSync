@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T18:17:09.873Z",
+  "generatedAt": "2026-03-01T19:09:17.996Z",
   "eventCount": 56,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 20,
-      "previousCount": 21,
-      "delta": -1
+      "previousCount": 20,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -60,35 +60,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1211,
+      "ageMinutes": 1263,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 52,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 52,
       "stale": false
     }
   },
@@ -108,9 +108,9 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 27,
+    "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.04,
+    "recapHeadlineRate": 0.07,
     "issues": []
   },
   "streamingHealth": {
@@ -118,7 +118,7 @@
     "tvkampenReachable": true,
     "matchRate": 0.1,
     "eventsEnriched": 2,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -139,30 +139,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 42,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51997,
-    "stepCount": 21,
-    "timeoutHits": [],
+    "totalDuration": 546947,
+    "stepCount": 28,
+    "timeoutHits": [
+      "discover-events"
+    ],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28183,
-        "share": 54
-      },
-      {
-        "name": "fetch-results",
-        "duration": 37904,
-        "share": 73
+        "name": "discover-events",
+        "duration": 300099,
+        "share": 55
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "discover-events",
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -209,22 +209,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1211 minutes old"
+      "message": "esports.json: data is 1263 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 13 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 14 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 10% (2/20) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 18% → 14% → 10%"
     },
     {
       "severity": "warning",
@@ -252,14 +247,19 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (28s) — optimization candidate"
+      "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (38s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 55% of total pipeline time (300s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     },
     {
       "severity": "info",
@@ -269,7 +269,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T18:17:10.050Z",
+    "computedAt": "2026-03-01T19:09:18.129Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -283,7 +283,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 95% with 10/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
