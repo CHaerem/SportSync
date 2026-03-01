@@ -1,37 +1,17 @@
 {
-  "generatedAt": "2026-03-01T17:09:04.825Z",
+  "generatedAt": "2026-03-01T18:14:45.511Z",
   "dates": [
     "2026-03-01",
     "2026-03-02"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 21,
-  "matchesAttempted": 21,
-  "matchesSucceeded": 3,
-  "eventsEnriched": 3,
-  "totalEvents": 57,
-  "matchRate": 0.14,
+  "listingsFound": 17,
+  "matchesAttempted": 20,
+  "matchesSucceeded": 2,
+  "eventsEnriched": 2,
+  "totalEvents": 56,
+  "matchRate": 0.1,
   "unmatched": [
-    {
-      "homeTeam": "Valencia",
-      "awayTeam": "Osasuna",
-      "time": "16:15"
-    },
-    {
-      "homeTeam": "FC København",
-      "awayTeam": "Randers",
-      "time": "17:00"
-    },
-    {
-      "homeTeam": "FC Fredericia",
-      "awayTeam": "Silkeborg IF",
-      "time": "17:00"
-    },
-    {
-      "homeTeam": "Vejle BK",
-      "awayTeam": "Aarhus GF",
-      "time": "17:00"
-    },
     {
       "homeTeam": "Lille",
       "awayTeam": "Nantes",
@@ -65,6 +45,11 @@
     {
       "homeTeam": "Sporting Charleroi",
       "awayTeam": "Club Brugge",
+      "time": "18:30"
+    },
+    {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Sevilla",
       "time": "18:30"
     },
     {
@@ -105,14 +90,6 @@
   ],
   "enrichedEvents": [
     {
-      "homeTeam": "Real Betis",
-      "awayTeam": "Sevilla",
-      "broadcasters": [
-        "Viaplay"
-      ],
-      "confidence": 1
-    },
-    {
       "homeTeam": "Girona",
       "awayTeam": "Celta Vigo",
       "broadcasters": [
@@ -130,5 +107,7 @@
     }
   ],
   "aliasSuggestions": [],
-  "hintsApplied": []
+  "hintsApplied": [
+    "WARNING: Match rate declining over last 3 runs (22% → 18% → 14%)"
+  ]
 }

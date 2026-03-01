@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T17:09:13.529Z",
+  "generatedAt": "2026-03-01T18:17:10.042Z",
   "patternsDetected": 3,
   "patterns": [
     {
@@ -15,9 +15,9 @@
       "type": "hint_fatigue",
       "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 16,
+      "fireCount": 15,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data.",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 16 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 15 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     },
     {
       "type": "architecture_module_proliferation",
@@ -35,19 +35,19 @@
   ],
   "issueCodeHistory": {
     "component_unresolvable": {
-      "count": 48,
+      "count": 49,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-02-28T18:18:18.786Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "streaming_low_match_rate": {
-      "count": 221,
+      "count": 222,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "ux_eval_fallback": {
-      "count": 166,
+      "count": 167,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "missing_snapshot": {
       "count": 9,
@@ -60,14 +60,14 @@
       "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "streaming_coverage_gap": {
-      "count": 85,
+      "count": 86,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "snapshot_event_mismatch": {
-      "count": 26,
+      "count": 27,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "quota_high_utilization": {
       "count": 15,
@@ -105,14 +105,14 @@
       "lastSeen": "2026-03-01T10:13:10.684Z"
     },
     "streaming_match_rate_declining": {
-      "count": 2,
+      "count": 3,
       "firstSeen": "2026-02-28T22:13:50.129Z",
-      "lastSeen": "2026-03-01T15:07:51.569Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "invisible_events": {
-      "count": 12,
+      "count": 13,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "sport_count_drop": {
       "count": 1,
@@ -120,14 +120,14 @@
       "lastSeen": "2026-03-01T07:17:43.272Z"
     },
     "stale_data": {
-      "count": 11,
+      "count": 12,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "chronic_data_retention": {
-      "count": 9,
+      "count": 10,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-01T17:09:13.468Z"
+      "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "stale_output": {
       "count": 2,
@@ -145,7 +145,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-03-01T17:09:13.529Z",
+    "recordedAt": "2026-03-01T18:17:10.041Z",
     "moduleCount": 66,
     "avgModuleSize": 328,
     "pipelineSteps": 28,

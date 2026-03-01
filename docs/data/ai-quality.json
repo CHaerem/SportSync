@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T14:24:57.737Z",
+  "generatedAt": "2026-03-01T18:17:08.011Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 114917,
+    "generationMs": 134364,
     "tokenUsage": {
-      "input": 36415,
-      "output": 5999,
-      "cacheCreation": 0,
-      "cacheRead": 36412,
-      "total": 42414,
-      "costUSD": 0.16819599999999998,
+      "input": 36549,
+      "output": 7403,
+      "cacheCreation": 36546,
+      "cacheRead": 0,
+      "total": 43952,
+      "costUSD": 0.4135025,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 91,
+      "pickCount": 1,
+      "avgScore": 58,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,10 +51,10 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.04,
+      "recapHeadlineRate": 0.037,
       "favoriteCoverage": 0.5,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 27
     },
     "issues": [
       "Only 4% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 59,
+      "totalEvents": 56,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 59,
+      "totalEvents": 56,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 59,
+    "totalEvents": 56,
     "skipStats": {
-      "total": 59,
-      "unchanged": 59,
+      "total": 56,
+      "unchanged": 56,
       "enriched": 0,
       "skipRate": 1
     },
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-01T14:17:55.180Z",
+    "lastRun": "2026-03-01T18:09:44.604Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2
