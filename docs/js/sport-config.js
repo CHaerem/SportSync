@@ -12,7 +12,8 @@ const SPORT_CONFIG = [
 	{ id: 'biathlon', emoji: '🎿', name: 'Biathlon', color: '#1d4ed8' },
 	{ id: 'nordic', emoji: '⛷️', name: 'Nordic Skiing', color: '#0f766e' },
 	{ id: 'alpine', emoji: '🎿', name: 'Alpine Skiing', color: '#0369a1' },
-	{ id: 'icehockey', emoji: '🏒', name: 'Ice Hockey', color: '#0c4a6e', aliases: ['hockey', 'ice hockey', 'getligaen', 'get-ligaen'] }
+	{ id: 'icehockey', emoji: '🏒', name: 'Ice Hockey', color: '#0c4a6e', aliases: ['hockey', 'ice hockey', 'getligaen', 'get-ligaen'] },
+	{ id: 'cycling', emoji: '🚴', name: 'Cycling', color: '#b45309', aliases: ['cycling', 'road cycling', 'classics', 'tour'] }
 ];
 
 // Lookup helpers
