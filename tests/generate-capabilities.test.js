@@ -91,7 +91,7 @@ describe("generateCapabilities", () => {
 		const manifestPath = writeManifest([]);
 		fs.writeFileSync(
 			path.join(FIXTURES_DIR, "data", "autonomy-report.json"),
-			JSON.stringify({ loopCount: 11, loops: [] })
+			JSON.stringify({ loopsTotal: 11, loops: {} })
 		);
 
 		const result = generateCapabilities({
