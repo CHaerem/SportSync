@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-24T13:34:18.596Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-24T14:26:21.306Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -809,6 +803,35 @@
         "calls": 3,
         "total": 251802,
         "costUSD": 0.5784795,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-03-01T10:08:01.974Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "esports-cs2-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        },
+        {
+          "type": "new-config",
+          "target": "icehockey-getligaen-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
         "tracked": true,
         "estimated": false
       }

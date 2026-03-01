@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T06:27:45.824Z",
+  "generatedAt": "2026-03-01T10:13:10.552Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 63,
@@ -93,9 +93,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 15
+    "issueCount": 13
   },
   "findings": [
     {
@@ -170,11 +170,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
     },
@@ -245,9 +240,9 @@
     }
   ],
   "summary": {
-    "total": 29,
+    "total": 28,
     "critical": 0,
-    "warning": 17,
+    "warning": 16,
     "info": 12
   },
   "pass": true,

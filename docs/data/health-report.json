@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-01T09:11:04.929Z",
+  "generatedAt": "2026-03-01T10:13:10.601Z",
   "eventCount": 63,
   "sportCoverage": {
     "golf": {
@@ -60,35 +60,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 665,
+      "ageMinutes": 727,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 164,
+      "ageMinutes": 226,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 164,
+      "ageMinutes": 226,
       "stale": false
     }
   },
@@ -147,19 +147,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51415,
+    "totalDuration": 54378,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29472,
-        "share": 57
+        "duration": 27574,
+        "share": 51
       },
       {
         "name": "fetch-results",
-        "duration": 37817,
-        "share": 74
+        "duration": 41173,
+        "share": 76
       }
     ],
     "failedSteps": []
@@ -209,12 +209,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 665 minutes old"
+      "message": "esports.json: data is 727 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 4 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 5 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -244,17 +244,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (38s) — optimization candidate"
-    },
-    {
-      "severity": "warning",
-      "code": "recipe_repair_exhausted",
-      "message": "2 recipe repair attempts failed in last 24h — LLM-based self-repair may be insufficient"
+      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (41s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -264,7 +259,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T09:11:05.079Z",
+    "computedAt": "2026-03-01T10:13:10.785Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -278,7 +273,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
