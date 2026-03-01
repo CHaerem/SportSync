@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-01T16:08:44.979Z",
-  "eventCount": 58,
+  "generatedAt": "2026-03-01T17:09:13.398Z",
+  "eventCount": 57,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,8 +13,8 @@
       "delta": 0
     },
     "football": {
-      "count": 22,
-      "previousCount": 23,
+      "count": 21,
+      "previousCount": 22,
       "delta": -1
     },
     "icehockey": {
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1082,
+      "ageMinutes": 1143,
       "stale": true
     },
     "f1.json": {
@@ -84,16 +84,16 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 104,
+      "ageMinutes": 164,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 104,
+      "ageMinutes": 164,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.97,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -108,23 +108,23 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 27,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.18,
-    "eventsEnriched": 4,
-    "trend": "stable",
+    "matchRate": 0.14,
+    "eventsEnriched": 3,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-03-01: 5 events but events.json has 4"
+      "Snapshot 2026-03-01: 5 events but events.json has 3"
     ],
     "snapshotCount": 15
   },
@@ -149,19 +149,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49821,
+    "totalDuration": 52107,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28602,
-        "share": 57
+        "duration": 26894,
+        "share": 52
       },
       {
         "name": "fetch-results",
-        "duration": 37353,
-        "share": 75
+        "duration": 39868,
+        "share": 77
       }
     ],
     "failedSteps": []
@@ -211,22 +211,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1082 minutes old"
+      "message": "esports.json: data is 1143 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 11 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 12 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 18% (4/22) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 14% (3/21) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 22% → 18% → 14%"
     },
     {
       "severity": "warning",
       "code": "streaming_coverage_gap",
       "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Arsenal vs Chelsea has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -236,7 +246,7 @@
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-01: 5 events but events.json has 4"
+      "message": "Snapshot 2026-03-01: 5 events but events.json has 3"
     },
     {
       "severity": "info",
@@ -251,12 +261,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -266,7 +276,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-01T16:08:45.127Z",
+    "computedAt": "2026-03-01T17:09:13.537Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -280,7 +290,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 97% with 11/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
