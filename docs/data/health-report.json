@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T11:18:06.055Z",
+  "generatedAt": "2026-03-02T12:16:23.348Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2232,
+      "ageMinutes": 2290,
       "stale": true
     },
     "f1.json": {
@@ -76,7 +76,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 791,
+      "ageMinutes": 849,
       "stale": true
     },
     "tennis.json": {
@@ -84,11 +84,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 286,
+      "ageMinutes": 345,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 286,
+      "ageMinutes": 345,
       "stale": false
     }
   },
@@ -124,7 +124,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 286 minutes old (stale > 240m)"
+      "Day snapshots are 344 minutes old (stale > 240m)"
     ],
     "snapshotCount": 15
   },
@@ -141,30 +141,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 45,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 410346,
-    "stepCount": 25,
-    "timeoutHits": [
-      "discover-events"
-    ],
+    "totalDuration": 55751,
+    "stepCount": 21,
+    "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 300102,
-        "share": 73
+        "name": "fetch-sports",
+        "duration": 27263,
+        "share": 49
+      },
+      {
+        "name": "fetch-results",
+        "duration": 42064,
+        "share": 75
       }
     ],
-    "failedSteps": [
-      "discover-events",
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -211,22 +211,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 2232 minutes old"
+      "message": "esports.json: data is 2290 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 791 minutes old"
+      "message": "golf.json: data is 849 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 24 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 25 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 7 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 8 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -246,7 +246,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 286 minutes old (stale > 240m)"
+      "message": "Day snapshots are 344 minutes old (stale > 240m)"
     },
     {
       "severity": "info",
@@ -259,19 +259,14 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 73% of total pipeline time (300s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (42s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -281,7 +276,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T11:18:06.204Z",
+    "computedAt": "2026-03-02T12:16:23.476Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -295,7 +290,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 10 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
