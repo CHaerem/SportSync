@@ -247,7 +247,7 @@ Return ONLY valid JSON, no markdown fences:
 		const tmpFile = path.join(dataDir, ".verify-prompt.tmp");
 		fs.writeFileSync(tmpFile, prompt);
 		try {
-			const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 4 --allowedTools "WebSearch" "WebFetch"`;
+			const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --model claude-sonnet-4-6 --output-format json --max-turns 4 --allowedTools "WebSearch" "WebFetch"`;
 			const output = execSync(cmd, {
 				encoding: "utf-8",
 				timeout: 120000,

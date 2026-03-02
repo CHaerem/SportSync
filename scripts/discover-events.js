@@ -561,7 +561,7 @@ async function discoverWithClaudeCLI(prompt) {
 	const tmpFile = path.join(dataDir, ".discovery-prompt.tmp");
 	fs.writeFileSync(tmpFile, prompt);
 	try {
-		const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --output-format json --max-turns 8 --allowedTools "WebSearch" "WebFetch"`;
+		const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --model claude-sonnet-4-6 --output-format json --max-turns 8 --allowedTools "WebSearch" "WebFetch"`;
 		const output = execSync(cmd, {
 			encoding: "utf-8",
 			timeout: 180000,

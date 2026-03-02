@@ -507,9 +507,9 @@ async function generateWithClaudeCLI(systemPrompt, userPrompt) {
 	fs.writeFileSync(sysFile, systemPrompt);
 	fs.writeFileSync(userFile, userPrompt);
 	try {
-		// Downgrade model when quota tier signals conservation
-		const quotaModel = process.env.SPORTSYNC_QUOTA_MODEL;
-		const modelFlag = quotaModel ? ` --model ${quotaModel}` : "";
+		// Use Sonnet by default for cost efficiency; quota tier or env can override
+		const quotaModel = process.env.SPORTSYNC_QUOTA_MODEL || "claude-sonnet-4-6";
+		const modelFlag = ` --model ${quotaModel}`;
 		let cmd = `cat "${userFile}" | npx -y @anthropic-ai/claude-code@latest -p --system-prompt-file "${sysFile}"${modelFlag} --output-format json --max-turns 6`;
 
 		// Wire MCP tools if .mcp.json exists

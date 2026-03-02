@@ -12,7 +12,7 @@ function makeQuota(tier, tierName, model = null) {
 // Helper to build a config object
 function makeConfig(overrides = {}) {
 	return {
-		model: "claude-opus-4-6",
+		model: "claude-sonnet-4-6",
 		maxTurns: 300,
 		maxTurnsPerTier: [300, 200, 100, 0],
 		allowedTools: "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)",
@@ -24,7 +24,7 @@ describe("resolveAutopilotConfig", () => {
 	describe("happy path", () => {
 		it("returns config values at tier 0 (green) with no quota override", () => {
 			const result = resolveAutopilotConfig(makeConfig(), makeQuota(0, "green"));
-			expect(result.model).toBe("claude-opus-4-6");
+			expect(result.model).toBe("claude-sonnet-4-6");
 			expect(result.maxTurns).toBe(300);
 			expect(result.allowedTools).toContain("Read,Write,Edit");
 		});
@@ -80,7 +80,7 @@ describe("resolveAutopilotConfig", () => {
 
 		it("returns defaults when quota is null", () => {
 			const result = resolveAutopilotConfig(makeConfig(), null);
-			expect(result.model).toBe("claude-opus-4-6");
+			expect(result.model).toBe("claude-sonnet-4-6");
 			expect(result.maxTurns).toBe(300); // tier 0 from maxTurnsPerTier
 		});
 

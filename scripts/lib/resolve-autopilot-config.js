@@ -15,7 +15,7 @@
  */
 
 export const DEFAULTS = {
-	model: "claude-opus-4-6",
+	model: "claude-sonnet-4-6",
 	maxTurns: 300,
 	allowedTools: "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)",
 };
