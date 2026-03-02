@@ -371,6 +371,36 @@ describe("runSanityCheck()", () => {
 		}
 	});
 
+	it("does not flag venue names as unknown athletes (Camp Nou, Old Trafford, etc.)", async () => {
+		readJsonIfExists.mockImplementation((filePath) => {
+			if (filePath.includes("events.json")) return [
+				{
+					title: "XC Men",
+					sport: "olympics",
+					time: new Date(Date.now() + 3600000).toISOString(),
+					norwegian: true,
+					norwegianPlayers: [{ name: "Klaebo" }],
+				},
+			];
+			if (filePath.includes("featured.json")) return {
+				blocks: [
+					// "Camp Nou" and "At Camp Nou" are venues, not athletes — should NOT be flagged
+					{ type: "narrative", text: "Barcelona secured a win at Camp Nou with a late goal." },
+					{ type: "event-line", text: "At Camp Nou, the match kicks off at 21:00." },
+					// "Old Trafford" contains "Old" which is a VENUE_WORD — should NOT be flagged
+					{ type: "narrative", text: "United host their rivals at Old Trafford." },
+				],
+			};
+			return null;
+		});
+		const report = await runSanityCheck();
+		const venueFlags = report.findings.filter(f => f.check === "featured_unknown_athlete");
+		// None of the venue names should be flagged as unknown athletes
+		expect(venueFlags.filter(f => f.message.toLowerCase().includes("camp"))).toHaveLength(0);
+		expect(venueFlags.filter(f => f.message.toLowerCase().includes("nou"))).toHaveLength(0);
+		expect(venueFlags.filter(f => f.message.toLowerCase().includes("trafford"))).toHaveLength(0);
+	});
+
 	it("detects featured athlete not in events data", async () => {
 		readJsonIfExists.mockImplementation((filePath) => {
 			if (filePath.includes("events.json")) return [

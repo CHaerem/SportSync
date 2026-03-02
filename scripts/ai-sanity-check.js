@@ -159,6 +159,15 @@ function runDeterministicChecks(data) {
 			}
 		}
 
+		// Words that are not athlete names — exact-phrase exclusions (single words and known
+		// multi-word phrases captured as a whole by the regex)
+		const NON_ATHLETE_WORDS = new Set(["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today", "Meazza", "Bernabeu", "Bernabéu", "Anfield", "Wembley", "Emirates", "Etihad", "Stamford", "Allianz", "Maradona", "Olimpico", "Mestalla", "Soldeu"]);
+		// Individual words that appear in venue/stadium names — used to exclude multi-word
+		// venue phrases like "Camp Nou", "At Camp Nou", "Old Trafford", "San Siro", etc.
+		// When ANY word in a multi-word capitalized match is in this set, skip the whole phrase.
+		// This prevents venue names from triggering the "unknown athlete" check.
+		const VENUE_WORDS = new Set(["Camp", "Nou", "Trafford", "Old", "Siro", "San", "Estadio", "Arena", "Stadium", "Park", "Bridge", "Road", "Lane", "Parc", "Princes", "Signal", "Iduna", "Metropolitano", "Civitas", "Dragao", "Luz", "Ramon", "Calderon", "Vicente", "Morumbi", "Azteca", "Luzhniki", "Guimaraes"]);
+
 		for (const block of featured.blocks) {
 			if (!block.text) continue;
 			if (block.type !== "narrative" && block.type !== "event-line") continue;
@@ -167,8 +176,13 @@ function runDeterministicChecks(data) {
 			let match;
 			while ((match = namePattern.exec(block.text)) !== null) {
 				const name = match[1];
-				// Skip common non-name words and known stadium/venue names
-				if (["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today", "Meazza", "Bernabeu", "Bernabéu", "Anfield", "Wembley", "Emirates", "Etihad", "Stamford", "Allianz", "Maradona", "Olimpico", "Mestalla", "Soldeu"].includes(name)) continue;
+				// Skip if the full phrase is a known non-athlete word/phrase
+				if (NON_ATHLETE_WORDS.has(name)) continue;
+				// Skip if ANY word in the multi-word match is a known venue word.
+				// This handles phrases like "Camp Nou", "At Camp Nou", "Old Trafford"
+				// that the full-phrase check misses (since the list only has single words).
+				const nameWords = name.split(/\s+/);
+				if (nameWords.some(w => VENUE_WORDS.has(w))) continue;
 				// Check if this name appears in event titles or norwegianPlayers
 				const nameLower = name.toLowerCase();
 				const inEvents = events.some(e =>
