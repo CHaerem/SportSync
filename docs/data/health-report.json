@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T02:19:08.172Z",
+  "generatedAt": "2026-03-02T06:32:11.856Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 23,
-      "previousCount": 19,
-      "delta": 4
+      "previousCount": 23,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -60,36 +60,36 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1693,
+      "ageMinutes": 1946,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 8,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 252,
-      "stale": false
+      "ageMinutes": 505,
+      "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 482,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 482,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -123,12 +123,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 482 minutes old (stale > 240m)",
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-03-01: 2 events but events.json has 1",
-      "Snapshot 2026-03-08: 3 events but events.json has 7"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -214,22 +209,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1693 minutes old"
+      "message": "esports.json: data is 1946 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "golf.json: data is 505 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
       "message": "esports: data retained 18 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 482 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 482 minutes old"
     },
     {
       "severity": "warning",
@@ -245,26 +235,6 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "2 event(s) won't appear on dashboard (golf, esports)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 482 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-01: 2 events but events.json has 1"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-08: 3 events but events.json has 7"
     },
     {
       "severity": "info",
@@ -297,23 +267,23 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T02:19:08.293Z",
+    "computedAt": "2026-03-02T06:32:12.042Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 8,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 12 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

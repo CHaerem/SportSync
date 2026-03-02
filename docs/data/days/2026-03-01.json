@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-01",
-  "generatedAt": "2026-03-01T18:17:08.463Z",
+  "generatedAt": "2026-03-02T06:32:10.525Z",
   "events": {
-    "upcoming": [
+    "upcoming": [],
+    "results": [
       {
         "sport": "golf",
         "tournament": "PGA Tour",
@@ -65,51 +66,104 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-01T18:14:52.690Z",
+        "enrichedAt": "2026-03-02T06:29:40.395Z",
         "_enrichHash": "edea3533e1aa830c84f4d5e438bd6981"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Celta Vigo at Girona",
-        "time": "2026-03-01T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadi Montilivi",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Girona",
-        "awayTeam": "Celta Vigo",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table La Liga match; Girona no longer a title contender.",
-        "summary": "Celta Vigo visit Girona in a low-stakes La Liga encounter between two mid-table sides.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-01T18:14:52.691Z",
-        "_enrichHash": "5b174c0d51ba8432edd8d2e5594801f2",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
-    ],
-    "results": []
+    ]
   },
   "matchResults": [
+    {
+      "homeTeam": "Girona",
+      "awayTeam": "Celta Vigo",
+      "homeScore": 1,
+      "awayScore": 2,
+      "date": "2026-03-01T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadi Montilivi",
+      "goalScorers": [
+        {
+          "player": "Vladyslav Vanat",
+          "team": "Girona",
+          "minute": "35'"
+        },
+        {
+          "player": "Ferran Jutglà",
+          "team": "Celta Vigo",
+          "minute": "58'"
+        },
+        {
+          "player": "Vitor Reis ",
+          "team": "Celta Vigo",
+          "minute": "70'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Sevilla",
+      "homeScore": 2,
+      "awayScore": 2,
+      "date": "2026-03-01T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio La Cartuja",
+      "goalScorers": [
+        {
+          "player": "Antony ",
+          "team": "Real Betis",
+          "minute": "16'"
+        },
+        {
+          "player": "Álvaro Fidalgo",
+          "team": "Real Betis",
+          "minute": "37'"
+        },
+        {
+          "player": "Alexis Sánchez",
+          "team": "Sevilla",
+          "minute": "62'"
+        },
+        {
+          "player": "Isaac Romero",
+          "team": "Sevilla",
+          "minute": "85'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Arsenal",
+      "awayTeam": "Chelsea",
+      "homeScore": 2,
+      "awayScore": 1,
+      "date": "2026-03-01T16:30Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Emirates Stadium",
+      "goalScorers": [
+        {
+          "player": "William Saliba",
+          "team": "Arsenal",
+          "minute": "21'"
+        },
+        {
+          "player": "Piero Hincapié",
+          "team": "Chelsea",
+          "minute": "45'+2'"
+        },
+        {
+          "player": "Jurriën Timber",
+          "team": "Arsenal",
+          "minute": "66'"
+        }
+      ],
+      "recapHeadline": "Martin Ødegaard ikke med i Arsenal-troppen mot Chelsea: – Vil ikke risikere noe",
+      "isFavorite": false
+    },
     {
       "homeTeam": "Valencia",
       "awayTeam": "Osasuna",
@@ -179,7 +233,7 @@
           "minute": "34'"
         },
         {
-          "player": "Richarlison ",
+          "player": "Richarlison",
           "team": "Tottenham Hotspur",
           "minute": "66'"
         }
@@ -257,12 +311,12 @@
         "position": 1,
         "team": "Arsenal",
         "teamShort": "ARS",
-        "played": 28,
-        "won": 18,
+        "played": 29,
+        "won": 19,
         "drawn": 7,
         "lost": 3,
-        "gd": 35,
-        "points": 61
+        "gd": 36,
+        "points": 64
       },
       {
         "position": 2,
@@ -316,47 +370,47 @@
           {
             "position": 1,
             "positionDisplay": null,
-            "player": "Shane Lowry",
-            "score": "-13",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4587.png"
-          },
-          {
-            "position": 2,
-            "positionDisplay": null,
-            "player": "Austin Smotherman",
-            "score": "-13",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11056.png"
-          },
-          {
-            "position": 3,
-            "positionDisplay": null,
             "player": "Nico Echavarria",
-            "score": "-12",
-            "today": "-",
+            "score": "-17",
+            "today": "-5",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4408316.png"
           },
           {
-            "position": 4,
+            "position": 2,
             "positionDisplay": null,
             "player": "Taylor Moore",
-            "score": "-12",
-            "today": "-",
+            "score": "-15",
+            "today": "-3",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10664.png"
           },
           {
+            "position": 3,
+            "positionDisplay": null,
+            "player": "Shane Lowry",
+            "score": "-15",
+            "today": "-2",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4587.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Austin Smotherman",
+            "score": "-15",
+            "today": "-2",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11056.png"
+          },
+          {
             "position": 5,
             "positionDisplay": null,
-            "player": "Jimmy Stanger",
-            "score": "-11",
-            "today": "-",
+            "player": "Ricky Castillo",
+            "score": "-13",
+            "today": "-3",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10990.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4691931.png"
           }
         ]
       }
@@ -399,72 +453,43 @@
       }
     ]
   },
-  "watchPlan": {
-    "picks": [
-      {
-        "id": "football-celta-vigo-at-girona-2026-03-01t20:00:00.000z",
-        "title": "Celta Vigo at Girona",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-01T20:00:00.000Z",
-        "timeLabel": "1 Mar, 21:00",
-        "relativeStart": "In 1h 45m",
-        "importance": 2,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 58,
-        "reasons": [
-          "Starting soon",
-          "Preferred sport"
-        ]
-      }
-    ],
-    "headline": "Weng soars in Falun — first win in four years, Tottenham's crisis deepens"
-  },
+  "watchPlan": null,
   "rssHighlights": [
     {
-      "title": "Utsagnet sjokkerte: – Vi var desperate",
-      "source": "tv2-fotball",
-      "sport": "football",
-      "link": "https://www.tv2.no/a/18595429"
-    },
-    {
-      "title": "Kjempefiasko for FC København – havnet i nedrykkskvalifisering",
+      "title": "Formel 1-stjerna advarer fansen etter nye regler: – Ingen kommer til å forstå det",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/kjempefiasko-for-fc-kobenhavn-_-havnet-i-nedrykkskvalifisering-1.17790316"
+      "link": "https://www.nrk.no/sport/regleendringer-splitter-_nye_-formel-1_-_-ingen-av-fansen-kommer-til-a-forsta-det-1.17790414"
     },
     {
-      "title": "Glimt får mesterligahjelp – serieåpningen utsettes",
+      "title": "Hjemmetap for Zuccarello og Wild",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/glimt-far-mesterligahjelp-_-serieapningen-utsettes-1.17790242"
+      "link": "https://www.nrk.no/sport/hjemmetap-for-zuccarello-og-wild-1.17790529"
     },
     {
-      "title": "Dansk superstjerne i Midtøsten: – Skikkelig redd",
+      "title": "– Måtte pakke ned tre år av livet mitt på to dager",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18616073"
+      "link": "https://www.tv2.no/a/18580633"
     },
     {
-      "title": "Thorstvedt med perlemål mot Champions League-lag",
+      "title": "– Måtte pakke ned tre år av livet mitt på to dager",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18580633"
+    },
+    {
+      "title": "Reitan-opptur i Florida – gjorde sin beste PGA-turnering",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/thorstvedt-med-perlemal-mot-champions-league-lag-1.17790240"
+      "link": "https://www.nrk.no/sport/reitan-opptur-i-florida-_-gjorde-sin-beste-pga-turnering-1.17790387"
     }
   ],
   "meta": {
-    "eventCount": 2,
+    "eventCount": 1,
     "sportsCovered": [
-      "golf",
-      "football"
+      "golf"
     ],
     "hasResults": true,
     "hasStandings": true
