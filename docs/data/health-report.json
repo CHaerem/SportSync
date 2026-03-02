@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-02T02:15:16.196Z",
-  "eventCount": 55,
+  "generatedAt": "2026-03-02T02:19:08.172Z",
+  "eventCount": 59,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 19,
+      "count": 23,
       "previousCount": 19,
-      "delta": 0
+      "delta": 4
     },
     "icehockey": {
       "count": 12,
@@ -60,40 +60,40 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 248,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1689,
+      "ageMinutes": 1693,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 248,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 248,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 248,
+      "ageMinutes": 252,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 248,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
-      "stale": false
+      "ageMinutes": 482,
+      "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
-      "stale": false
+      "ageMinutes": 482,
+      "stale": true
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.97,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -116,17 +116,18 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.05,
-    "eventsEnriched": 1,
+    "matchRate": 0.26,
+    "eventsEnriched": 6,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 478 minutes old (stale > 240m)",
+      "Day snapshots are 482 minutes old (stale > 240m)",
       "1 expected day snapshot(s) missing",
-      "Snapshot 2026-03-01: 2 events but events.json has 1"
+      "Snapshot 2026-03-01: 2 events but events.json has 1",
+      "Snapshot 2026-03-08: 3 events but events.json has 7"
     ],
     "snapshotCount": 15
   },
@@ -213,22 +214,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1689 minutes old"
+      "message": "esports.json: data is 1693 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 17 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 18 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 482 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 482 minutes old"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 5% (1/19) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 26% (6/23) — team alias table may need updates"
     },
     {
       "severity": "warning",
       "code": "streaming_coverage_gap",
-      "message": "2 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Atlético Madrid lead 4-0 on aggregate, Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
+      "message": "1 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
     },
     {
       "severity": "warning",
@@ -238,7 +249,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 478 minutes old (stale > 240m)"
+      "message": "Day snapshots are 482 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -249,6 +260,11 @@
       "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-03-01: 2 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-08: 3 events but events.json has 7"
     },
     {
       "severity": "info",
@@ -281,9 +297,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T02:15:16.310Z",
+    "computedAt": "2026-03-02T02:19:08.293Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -297,7 +313,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is warning with 10 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 12 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
