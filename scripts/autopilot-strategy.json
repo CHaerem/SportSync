@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-02",
+        "note": "Run 16: 3 tasks via 3 parallel subagents (code-agent + content-agent + data-agent). All subagents shared same worktree — code-agent and content-agent committed to different branches (feature branch and main). Cherry-pick needed to move code-agent's fix from feature branch to main. Lesson: parallel subagents that need different ship modes (direct-to-main vs branch-pr) should use worktree isolation or run sequentially. The FEATURE task (cycling grand tours) completed fastest (~10 min), MAINTENANCE tasks took ~14-28 min due to full test suite runs. Scouting found 2 new EXPLORE tasks from RSS analysis (IndyCar + ski jumping). Total orchestrator turns: ~18."
+      },
+      {
         "date": "2026-02-18",
         "note": "Run 5: 6 tasks + 1 repair + 1 explore in ~45 turns. Pre-flight repair needed (date-dependent tests broke overnight). 5 direct-to-main (4-5 turns each), 1 branch-pr (refactor, 6 turns). Quality pillar dominated: pipelineHealth unstuck, must-watch scope fixed, empty snapshot noise eliminated. Key learning: hint fatigue signals metric bugs, not LLM issues. Pattern report heuristic E most productive (5/6 tasks from pattern analysis). Explore tasks via subagent efficient (~5 turns). Total estimated: ~45 turns for 8 activities."
       },

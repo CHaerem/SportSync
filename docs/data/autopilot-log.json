@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-02",
+      "task": "Fix editorial_unsorted_events + sanityScore hint fatigue + FEATURE cycling grand tours",
+      "outcome": "completed",
+      "pr": 119,
+      "details": "Run 16: 2 MAINTENANCE direct-to-main + 1 FEATURE branch-pr (PR #119). (1) MAINTENANCE: editorial_unsorted_events health check used too-narrow cross-week transition logic (only allowed Fri/Sat/Sun→exactly 1 day earlier). Replaced with single-wrap-allowed model — first day-index decrease is treated as valid week boundary, second triggers error. Fixes Sun→Mon and Fri→Mon transitions. pipelineHealth 0.75→1.0, autonomy 11/12→12/12. (2) MAINTENANCE: sanityScore hint fatigue (18 fires, 0% effectiveness). Root cause: featured_unknown_athlete regex matched venue names (Camp Nou, Old Trafford) as potential athlete names. Added VENUE_WORDS exclusion set. (3) FEATURE: cycling-grand-tours-2026.json with 6 events (Giro, Tour of Norway, TdF, Arctic Race, Vuelta, UCI Worlds Kigali). 10 Norwegian riders tracked. Multi-agent: 3 parallel subagents (code-agent, content-agent, data-agent). Scouting: Dennis Hauger IndyCar debut + Johann Forfang ski jumping podium → 2 new EXPLORE tasks.",
+      "tests_passed": true,
+      "files_changed": 5,
+      "turns_used": 18,
+      "lesson": "Day-of-week comparison is inherently lossy for cross-week sorting. The single-wrap model (allow exactly one decrease, flag two) is the correct abstraction because a 7-day 'This Week' window can cross at most one week boundary. Also: venue-name false positives in sanity checks stem from multi-word regex matching — individual-word exclusion sets (VENUE_WORDS) are more robust than phrase-level matching because they handle arbitrary prepositions ('At Camp Nou', 'to Old Trafford').",
+      "scouted": 2
+    },
+    {
       "date": "2026-03-01",
       "task": "Fix snapshot_event_mismatch + EXPLORE cycling + FEATURE cycling Spring Classics + fix capabilities.json",
       "outcome": "completed",

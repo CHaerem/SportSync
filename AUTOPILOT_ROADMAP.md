@@ -1126,7 +1126,11 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 ### MEDIUM Priority
 
-- [PENDING] [FEATURE] **Add cycling grand tours + Norwegian races 2026 config** — After Spring Classics config ships, create `scripts/config/cycling-grand-tours-2026.json` covering: Tour de France 2026 (June 27 – July 19), Tour of Norway (May 2026), Arctic Race of Norway (August 2026), UCI Road World Championships (September 2026, Kigali). Focus on Uno-X Mobility team (Norwegian team) results and stage wins. Same pattern as classics config. Depends on: Spring Classics config task above.
+- [DONE] (PR #119) [FEATURE] **Add cycling grand tours + Norwegian races 2026 config** — Created `scripts/config/cycling-grand-tours-2026.json` with 6 events: Giro d'Italia, Tour of Norway, Tour de France, Arctic Race of Norway, Vuelta a España, UCI Road Worlds (Kigali). 10 Norwegian riders tracked (Johannessen, Abrahamsen, Wærenskjold, Kristoff, Leknessund, etc.). Events marked `needsResearch: true` for discovery loop verification.
+
+- [PENDING] [EXPLORE] **IndyCar coverage for Dennis Hauger** — Norwegian driver debuted in IndyCar (top 10 in St. Petersburg). ESPN has IndyCar coverage. Could add as curated config or extend motorsport coverage. RSS signals: NRK + TV2 headlines.
+
+- [PENDING] [EXPLORE] **Ski jumping coverage for Johann Forfang** — First Norwegian World Cup podium this season (3rd in Kulm). No ski jumping tracking. Could add curated config for remaining World Cup rounds and FIS events.
 
 ---
 
