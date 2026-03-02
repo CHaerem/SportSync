@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T21:13:55.646Z",
+  "generatedAt": "2026-03-02T22:17:52.252Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -60,36 +60,36 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2828,
+      "ageMinutes": 2892,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1387,
+      "ageMinutes": 1451,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 405,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 405,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -108,7 +108,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 27,
+    "footballCount": 28,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -124,8 +124,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 405 minutes old (stale > 240m)",
-      "Snapshot 2026-03-02: 1 events but events.json has 0"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -208,12 +207,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 2828 minutes old"
+      "message": "esports.json: data is 2892 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1387 minutes old"
+      "message": "golf.json: data is 1451 minutes old"
     },
     {
       "severity": "warning",
@@ -224,16 +223,6 @@
       "severity": "warning",
       "code": "chronic_data_retention",
       "message": "golf: data retained 16 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 405 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 405 minutes old"
     },
     {
       "severity": "warning",
@@ -249,16 +238,6 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "2 event(s) won't appear on dashboard (golf, esports)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 405 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-02: 1 events but events.json has 0"
     },
     {
       "severity": "info",
@@ -291,23 +270,23 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T21:13:55.766Z",
+    "computedAt": "2026-03-02T22:17:52.397Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 11 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

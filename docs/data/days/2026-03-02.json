@@ -1,51 +1,32 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-02",
-  "generatedAt": "2026-03-02T14:28:44.418Z",
+  "generatedAt": "2026-03-02T22:17:51.000Z",
   "events": {
-    "upcoming": [
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Getafe at Real Madrid",
-        "time": "2026-03-02T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Santiago Bernabéu",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Real Madrid",
-        "awayTeam": "Getafe",
-        "isFavorite": false,
-        "importance": 3,
-        "importanceReason": "Real Madrid title contenders host modest Getafe at Bernabéu.",
-        "summary": "Routine La Liga home fixture for Real Madrid against mid-table Getafe; title race position adds context but Getafe rarely trouble top sides.",
-        "tags": [
-          "title-race"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-02T14:26:50.999Z",
-        "_enrichHash": "480d989f8bc6525b2d1d712d33112777",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      }
-    ],
+    "upcoming": [],
     "results": []
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Getafe",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-03-02T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Santiago Bernabéu",
+      "goalScorers": [
+        {
+          "player": "Martín Satriano",
+          "team": "Getafe",
+          "minute": "39'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -197,13 +178,37 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-getafe-at-real-madrid-2026-03-02t20:00:00.000z",
-        "title": "Getafe at Real Madrid",
+        "id": "football-atlético-madrid-at-barcelona-2026-03-03t20:00:00.000z",
+        "title": "Atlético Madrid at Barcelona",
         "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-02T20:00:00.000Z",
-        "timeLabel": "2 Mar, 21:00",
-        "relativeStart": "In 5h 33m",
+        "tournament": "Copa del Rey",
+        "time": "2026-03-03T20:00:00.000Z",
+        "timeLabel": "3 Mar, 21:00",
+        "relativeStart": "In 21h 44m",
+        "importance": 3,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Disneyplus",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 80,
+        "reasons": [
+          "Favorite team",
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-sunderland-at-leeds-united-2026-03-03t19:30:00.000z",
+        "title": "Sunderland at Leeds United",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-03-03T19:30:00.000Z",
+        "timeLabel": "3 Mar, 20:30",
+        "relativeStart": "In 21h 14m",
         "importance": 3,
         "norwegian": false,
         "streaming": [
@@ -212,54 +217,87 @@
             "url": "https://viaplay.no/sport/fotball/",
             "type": "streaming",
             "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
-        "score": 70,
+        "score": 62,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-liverpool-at-wolverhampton-wanderers-2026-03-03t20:15:00.000z",
+        "title": "Liverpool at Wolverhampton Wanderers",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-03-03T20:15:00.000Z",
+        "timeLabel": "3 Mar, 21:15",
+        "relativeStart": "In 21h 59m",
+        "importance": 3,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 62,
         "reasons": [
           "Preferred sport"
         ]
       }
     ],
-    "headline": "Arsenal five clear — Arteta's side beat Chelsea to tighten title grip"
+    "headline": "Real Madrid stunned by Getafe — and Barcelona's Copa mountain looms"
   },
   "rssHighlights": [
     {
-      "title": "Skyting: Ungt norsk stjerneskudd tok EM-gull – vant også laggull",
+      "title": "Sjokktap for Real Madrid – ga Barcelona luke",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/skyting_-ungt-norsk-stjerneskudd-tok-em-gull-_-vant-ogsa-laggull-1.17791482"
+      "link": "https://www.nrk.no/sport/sjokktap-for-real-madrid-_-ga-barcelona-luke-1.17791925"
     },
     {
-      "title": "TV 2 erfarer: Nærmer seg Molde",
+      "title": "Captain Semenyo and go big in defence - FPL team of week",
+      "source": "bbc-football",
+      "sport": "football",
+      "link": "https://www.bbc.com/sport/football/articles/c9v0xy1vyz4o?at_medium=RSS&amp;at_campaign=rss"
+    },
+    {
+      "title": "Urovekkende Aursnes-bilder: Byttet ut med skade",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18619116"
+      "link": "https://www.tv2.no/a/18620140"
     },
     {
-      "title": "Italiensk OL-dronning avslutter sesongen etter skadetrøbbel",
+      "title": "Urovekkende Aursnes-bilder: Byttet ut med skade",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18620140"
+    },
+    {
+      "title": "Vebjørn Hoff klar for Molde",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/italiensk-ol-dronning-avslutter-sesongen-etter-skadetrobbel-1.17791477"
-    },
-    {
-      "title": "What happens when at the Winter Paralympics?",
-      "source": "bbc-winter",
-      "sport": "olympics",
-      "link": "https://www.bbc.com/sport/articles/czr0643d8gmo?at_medium=RSS&amp;at_campaign=rss"
-    },
-    {
-      "title": "What do I need to know about the 2026 Winter Paralympics?",
-      "source": "bbc-winter",
-      "sport": "olympics",
-      "link": "https://www.bbc.com/sport/articles/c78vx9dznnno?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.nrk.no/sport/vebjorn-hoff-klar-for-molde-1.17791862"
     }
   ],
   "meta": {
-    "eventCount": 1,
-    "sportsCovered": [
-      "football"
-    ],
-    "hasResults": false,
+    "eventCount": 0,
+    "sportsCovered": [],
+    "hasResults": true,
     "hasStandings": true
   }
 }

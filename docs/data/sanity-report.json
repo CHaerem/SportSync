@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-02T18:23:22.083Z",
+  "generatedAt": "2026-03-02T22:17:52.227Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 60,
+    "totalEvents": 59,
     "sports": [
       "golf",
       "esports",
@@ -17,9 +17,7 @@
     ],
     "bands": {
       "live": [],
-      "today": [
-        "Getafe at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "Brentford at AFC Bournemouth",
         "Burnley at Everton",
@@ -88,11 +86,11 @@
         "HEROIC vs TBD (Consolidation Final winner)"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 18
   },
   "findings": [
     {
@@ -173,12 +171,22 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"Real Madrid vs Getafe\" which may not match any event"
+      "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Arteta\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Tomorrow\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"El Derbi Vasco\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Melbourne\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -248,13 +256,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 29 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 28 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 31,
+    "total": 33,
     "critical": 0,
-    "warning": 17,
+    "warning": 19,
     "info": 14
   },
   "pass": true,
