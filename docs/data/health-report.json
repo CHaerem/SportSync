@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-02T13:30:19.913Z",
-  "eventCount": 59,
+  "generatedAt": "2026-03-02T14:28:45.716Z",
+  "eventCount": 60,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -48,9 +48,9 @@
       "delta": 0
     },
     "chess": {
-      "count": 0,
+      "count": 1,
       "previousCount": 0,
-      "delta": null
+      "delta": 1
     },
     "tennis": {
       "count": 0,
@@ -60,40 +60,40 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2364,
+      "ageMinutes": 2422,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 8,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 923,
+      "ageMinutes": 982,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 418,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 418,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.97,
+    "venuePercent": 0.95,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -123,9 +123,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 418 minutes old (stale > 240m)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -149,19 +147,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52586,
+    "totalDuration": 52295,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29562,
-        "share": 56
+        "duration": 28941,
+        "share": 55
       },
       {
         "name": "fetch-results",
-        "duration": 41119,
-        "share": 78
+        "duration": 38911,
+        "share": 74
       }
     ],
     "failedSteps": []
@@ -195,14 +193,10 @@
   },
   "unmappedLeagues": [
     "DraculaN Season 5",
-    "Olympics 2026"
+    "Olympics 2026",
+    "FIDE Candidates Tournament 2026"
   ],
   "issues": [
-    {
-      "severity": "info",
-      "code": "sport_zero_events",
-      "message": "chess: data file exists but 0 events in events.json"
-    },
     {
       "severity": "info",
       "code": "sport_zero_events",
@@ -211,32 +205,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 2364 minutes old"
+      "message": "esports.json: data is 2422 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 923 minutes old"
+      "message": "golf.json: data is 982 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 26 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 27 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 9 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 418 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 418 minutes old"
+      "message": "golf: data retained 10 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -254,14 +238,9 @@
       "message": "2 event(s) won't appear on dashboard (golf, esports)"
     },
     {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 418 minutes old (stale > 240m)"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: DraculaN Season 5, Olympics 2026"
+      "message": "3 tournament(s) lack league theming: DraculaN Season 5, Olympics 2026, FIDE Candidates Tournament 2026"
     },
     {
       "severity": "warning",
@@ -271,12 +250,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (41s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (39s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -286,7 +265,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T13:30:20.051Z",
+    "computedAt": "2026-03-02T14:28:45.843Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -300,7 +279,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 11 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
