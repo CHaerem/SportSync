@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T06:32:11.856Z",
+  "generatedAt": "2026-03-02T07:06:26.528Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -60,35 +60,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1946,
+      "ageMinutes": 1980,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 505,
+      "ageMinutes": 539,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 9,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 35,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 35,
       "stale": false
     }
   },
@@ -140,23 +140,23 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 9,
-    "sevenDay": 43,
+    "fiveHour": 1,
+    "sevenDay": 44,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 407274,
-    "stepCount": 25,
+    "totalDuration": 579366,
+    "stepCount": 28,
     "timeoutHits": [
       "discover-events"
     ],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 300102,
-        "share": 74
+        "duration": 300070,
+        "share": 52
       }
     ],
     "failedSteps": [
@@ -209,17 +209,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 1946 minutes old"
+      "message": "esports.json: data is 1980 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 505 minutes old"
+      "message": "golf.json: data is 539 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 18 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 19 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -254,7 +254,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 74% of total pipeline time (300s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 52% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -269,14 +269,14 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T06:32:12.042Z",
+    "computedAt": "2026-03-02T07:06:26.666Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 8,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
