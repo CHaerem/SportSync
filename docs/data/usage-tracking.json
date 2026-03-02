@@ -1,23 +1,40 @@
 {
-  "lastUpdated": "2026-03-02T18:24:22.433Z",
-  "current": null,
+  "lastUpdated": "2026-03-02T19:19:04.819Z",
+  "current": {
+    "fiveHour": {
+      "utilization": 0
+    },
+    "sevenDay": {
+      "utilization": 49,
+      "resets_at": "1772776800"
+    },
+    "evaluation": {
+      "tier": 0,
+      "tierName": "green",
+      "maxPriority": 3,
+      "model": null,
+      "constrained": false,
+      "reason": "ok",
+      "resetNote": null
+    }
+  },
   "quotaApiStatus": {
-    "available": false,
-    "since": "2026-03-02T18:24:32.305Z",
-    "previousState": "available",
+    "available": true,
+    "since": "2026-03-02T19:19:08.481Z",
+    "previousState": "unavailable",
     "transitioned": true,
-    "checkedAt": "2026-03-02T18:24:32.305Z"
+    "checkedAt": "2026-03-02T19:19:08.481Z"
   },
   "internalTokens": {
-    "enrichment": 0,
-    "featured": 0,
+    "enrichment": 34401,
+    "featured": 43060,
     "discovery": 0,
-    "multiDay": 0,
-    "runTotal": 0
+    "multiDay": 43913,
+    "runTotal": 121374
   },
   "budget": {
-    "dailyUsed": 782698,
-    "weeklyUsed": 11265592,
+    "dailyUsed": 815787,
+    "weeklyUsed": 11242765,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 16,
@@ -26,7 +43,7 @@
   "sportsyncShare": {
     "pipelineRuns": 137,
     "autopilotRuns": 0,
-    "totalDurationMs": 32002898
+    "totalDurationMs": 31831191
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -35,12 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-23T18:29:05.662Z",
-      "context": "pipeline",
-      "durationMs": 182168,
-      "tokens": 144201
-    },
     {
       "timestamp": "2026-02-23T19:31:35.089Z",
       "context": "pipeline",
@@ -856,6 +867,12 @@
       "context": "pipeline",
       "durationMs": 374508,
       "tokens": 0
+    },
+    {
+      "timestamp": "2026-03-02T19:19:04.819Z",
+      "context": "pipeline",
+      "durationMs": 10461,
+      "tokens": 121374
     }
   ]
 }
