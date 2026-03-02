@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T20:12:23.714Z",
+  "generatedAt": "2026-03-02T21:13:55.646Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "football": {
       "count": 22,
-      "previousCount": 23,
-      "delta": -1
+      "previousCount": 22,
+      "delta": 0
     },
     "icehockey": {
       "count": 12,
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2766,
+      "ageMinutes": 2828,
       "stale": true
     },
     "f1.json": {
@@ -76,7 +76,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1325,
+      "ageMinutes": 1387,
       "stale": true
     },
     "tennis.json": {
@@ -84,12 +84,12 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 344,
-      "stale": false
+      "ageMinutes": 405,
+      "stale": true
     },
     "ai-quality.json": {
-      "ageMinutes": 344,
-      "stale": false
+      "ageMinutes": 405,
+      "stale": true
     }
   },
   "schemaCompleteness": {
@@ -124,7 +124,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 344 minutes old (stale > 240m)",
+      "Day snapshots are 405 minutes old (stale > 240m)",
       "Snapshot 2026-03-02: 1 events but events.json has 0"
     ],
     "snapshotCount": 15
@@ -208,12 +208,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 2766 minutes old"
+      "message": "esports.json: data is 2828 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1325 minutes old"
+      "message": "golf.json: data is 1387 minutes old"
     },
     {
       "severity": "warning",
@@ -224,6 +224,16 @@
       "severity": "warning",
       "code": "chronic_data_retention",
       "message": "golf: data retained 16 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 405 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 405 minutes old"
     },
     {
       "severity": "warning",
@@ -243,7 +253,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 344 minutes old (stale > 240m)"
+      "message": "Day snapshots are 405 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
@@ -283,21 +293,21 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T20:12:23.834Z",
+    "computedAt": "2026-03-02T21:13:55.766Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 9 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 1 critical, 11 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
