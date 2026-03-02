@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T06:32:11.930Z",
+  "generatedAt": "2026-03-02T10:25:41.190Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 59,
@@ -88,9 +88,9 @@
     },
     "featuredBlockCount": 6,
     "briefPresent": false,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 19
+    "issueCount": 14
   },
   "findings": [
     {
@@ -170,11 +170,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Florida\" but no matching athlete found in events data"
     },
@@ -245,9 +240,9 @@
     }
   ],
   "summary": {
-    "total": 30,
+    "total": 29,
     "critical": 0,
-    "warning": 17,
+    "warning": 16,
     "info": 13
   },
   "pass": true,
