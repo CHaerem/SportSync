@@ -868,15 +868,18 @@ describe("editorial no narrative detection", () => {
 });
 
 describe("editorial unsorted events detection", () => {
-	it("flags when This Week events are not chronological", () => {
+	it("flags when This Week events wrap twice (genuinely out of order)", () => {
 		const report = generateHealthReport({
 			events: makeEvents({ football: 5 }),
 			featured: {
 				provider: "fallback",
 				blocks: [
 					{ type: "divider", text: "This Week" },
-					{ type: "event-line", text: "⚽ Fri 20:00 — Match A" },
-					{ type: "event-line", text: "🎮 Wed 10:00 — Match B" },
+					{ type: "event-line", text: "⚽ Wed 10:00 — Match A" },
+					{ type: "event-line", text: "🎮 Fri 20:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Mon 12:00 — Match C" },
+					{ type: "event-line", text: "🎾 Thu 15:00 — Match D" },
+					{ type: "event-line", text: "♟️ Mon 09:00 — Match E" },
 				],
 			},
 		});
@@ -900,6 +903,81 @@ describe("editorial unsorted events detection", () => {
 		});
 		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
 		expect(issue).toBeUndefined();
+	});
+
+	it("does not flag Sun to Mon (valid week wrap)", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Sat 15:00 — Match A" },
+					{ type: "event-line", text: "🎮 Sun 18:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Mon 10:00 — Match C" },
+					{ type: "event-line", text: "🎾 Tue 14:00 — Match D" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeUndefined();
+	});
+
+	it("does not flag Fri to Mon (valid week wrap)", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Thu 19:00 — Match A" },
+					{ type: "event-line", text: "🎮 Fri 20:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Mon 12:00 — Match C" },
+					{ type: "event-line", text: "🎾 Wed 15:00 — Match D" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeUndefined();
+	});
+
+	it("does not flag single wrap Mon Wed Fri Mon Tue sequence", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Mon 10:00 — Match A" },
+					{ type: "event-line", text: "🎮 Wed 12:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Fri 14:00 — Match C" },
+					{ type: "event-line", text: "🎾 Mon 16:00 — Match D" },
+					{ type: "event-line", text: "♟️ Tue 18:00 — Match E" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeUndefined();
+	});
+
+	it("flags double wrap Mon Wed Mon Fri Mon (genuinely out of order)", () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			featured: {
+				provider: "fallback",
+				blocks: [
+					{ type: "divider", text: "This Week" },
+					{ type: "event-line", text: "⚽ Mon 10:00 — Match A" },
+					{ type: "event-line", text: "🎮 Wed 12:00 — Match B" },
+					{ type: "event-line", text: "🏎️ Mon 14:00 — Match C" },
+					{ type: "event-line", text: "🎾 Fri 16:00 — Match D" },
+					{ type: "event-line", text: "♟️ Mon 18:00 — Match E" },
+				],
+			},
+		});
+		const issue = report.issues.find(i => i.code === "editorial_unsorted_events");
+		expect(issue).toBeDefined();
+		expect(issue.severity).toBe("warning");
 	});
 });
 

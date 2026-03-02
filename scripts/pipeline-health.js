@@ -510,10 +510,10 @@ export function generateHealthReport(options = {}) {
 	}
 
 	// 7d. Editorial chronological order — "This Week" event-lines should be time-sorted
-	// Note: the generator sorts by actual event dates, so cross-week transitions (e.g., Fri → next Thu)
-	// are valid. We allow a decrease of exactly 1 day when the previous day was Fri/Sat/Sun, since
-	// that pattern reflects a genuine week boundary. Larger decreases (e.g., Fri → Wed) indicate a
-	// real sort failure and should be flagged.
+	// Note: the generator sorts by actual event dates, so cross-week transitions (e.g., Sun → Mon)
+	// are valid. "This Week" spans 7 days, so at most one week boundary can appear in the list.
+	// We allow exactly one decreasing day transition (week wrap). A second decrease means genuinely
+	// out-of-order events and should be flagged.
 	if (featured && Array.isArray(featured.blocks)) {
 		const dividerIdx = featured.blocks.findIndex((b) => b.type === "divider");
 		if (dividerIdx >= 0) {
@@ -521,15 +521,17 @@ export function generateHealthReport(options = {}) {
 			const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 			let prevDayIdx = -1;
 			let outOfOrder = false;
+			let hasWrapped = false;
 			for (const line of afterDivider) {
 				const dayMatch = (line.text || "").match(/\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/);
 				if (dayMatch) {
 					const idx = dayOrder.indexOf(dayMatch[1]);
 					if (idx < prevDayIdx) {
-						// Allow cross-week transition: Fri/Sat/Sun → exactly one day earlier
-						// (e.g., Fri → next-week Thu is valid; Fri → Wed in same week is not)
-						const isCrossWeekTransition = prevDayIdx >= 4 && (prevDayIdx - idx) === 1;
-						if (!isCrossWeekTransition) { outOfOrder = true; break; }
+						if (!hasWrapped) {
+							hasWrapped = true; // First wrap is OK — valid week boundary
+						} else {
+							outOfOrder = true; break; // Second wrap = genuinely out of order
+						}
 					}
 					prevDayIdx = idx;
 				}
