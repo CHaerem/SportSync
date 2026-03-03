@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T19:19:58.988Z",
-  "eventCount": 37,
+  "generatedAt": "2026-03-03T20:11:55.635Z",
+  "eventCount": 33,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 23,
+      "count": 19,
       "previousCount": 23,
-      "delta": 0
+      "delta": -4
     },
     "golf": {
       "count": 2,
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4154,
+      "ageMinutes": 4206,
       "stale": true
     },
     "f1.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -64,16 +64,16 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 110,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 110,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.89,
+    "venuePercent": 0.88,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -88,7 +88,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 27,
+    "footballCount": 24,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -96,15 +96,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.52,
-    "eventsEnriched": 12,
+    "matchRate": 0.42,
+    "eventsEnriched": 8,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-03-03: 5 events but events.json has 1"
     ],
     "snapshotCount": 15
   },
@@ -121,30 +122,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 6,
-    "sevenDay": 58,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 312848,
-    "stepCount": 26,
+    "totalDuration": 54137,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 102036,
-        "share": 33
+        "name": "fetch-sports",
+        "duration": 27993,
+        "share": 52
+      },
+      {
+        "name": "fetch-results",
+        "duration": 39773,
+        "share": 73
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -186,12 +187,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4154 minutes old"
+      "message": "esports.json: data is 4206 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 45 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 46 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_low_match_rate",
+      "message": "Streaming enrichment match rate is 42% (8/19) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Barcelona vs Atlético Madrid has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -204,14 +215,14 @@
       "message": "2026-02-26: no events or results for day navigator"
     },
     {
-      "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026"
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-03: 5 events but events.json has 1"
     },
     {
       "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 6%, 7d: 58%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "code": "unmapped_leagues",
+      "message": "2 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026"
     },
     {
       "severity": "warning",
@@ -221,12 +232,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 33% of total pipeline time (102s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -234,9 +245,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T19:19:59.109Z",
+    "computedAt": "2026-03-03T20:11:55.772Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -250,7 +261,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is critical with 1 critical, 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
