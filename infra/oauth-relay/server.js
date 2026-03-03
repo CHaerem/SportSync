@@ -7,6 +7,7 @@ const https = require('https');
 const PORT = process.env.PORT || 3847;
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const PUBLIC_URL = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://chaerem.github.io';
 
 function cors(res) {
@@ -66,7 +67,7 @@ const server = http.createServer(async (req, res) => {
 
 	if (url.pathname === '/auth') {
 		if (!CLIENT_ID) return json(res, 500, { error: 'OAuth not configured' });
-		const redirectUri = `${url.origin}/callback`;
+		const redirectUri = `${PUBLIC_URL}/callback`;
 		const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=public_repo`;
 		res.writeHead(302, { Location: authUrl });
 		return res.end();
