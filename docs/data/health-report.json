@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T14:31:29.784Z",
+  "generatedAt": "2026-03-03T15:21:34.581Z",
   "eventCount": 35,
   "sportCoverage": {
     "golf": {
@@ -32,26 +32,6 @@
       "previousCount": 1,
       "delta": 0
     },
-    "icehockey": {
-      "count": 0,
-      "previousCount": 12,
-      "delta": -12
-    },
-    "biathlon": {
-      "count": 0,
-      "previousCount": 6,
-      "delta": -6
-    },
-    "olympics": {
-      "count": 0,
-      "previousCount": 5,
-      "delta": -5
-    },
-    "alpine": {
-      "count": 0,
-      "previousCount": 8,
-      "delta": -8
-    },
     "tennis": {
       "count": 0,
       "previousCount": 0,
@@ -60,35 +40,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3865,
+      "ageMinutes": 3915,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2424,
+      "ageMinutes": 2475,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 72,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 72,
       "stale": false
     }
   },
@@ -123,7 +103,15 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-03-04: 8 events but events.json has 7",
+      "Snapshot 2026-03-05: 4 events but events.json has 1",
+      "Snapshot 2026-03-06: 6 events but events.json has 2",
+      "Snapshot 2026-03-07: 9 events but events.json has 5",
+      "Snapshot 2026-03-08: 7 events but events.json has 4",
+      "Snapshot 2026-03-09: 3 events but events.json has 2",
+      "Snapshot 2026-03-10: 2 events but events.json has 1"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -196,26 +184,6 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "icehockey: 0 events (was 12)"
-    },
-    {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "biathlon: 0 events (was 6)"
-    },
-    {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "olympics: 0 events (was 5)"
-    },
-    {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "alpine: 0 events (was 8)"
-    },
-    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
@@ -223,12 +191,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 3865 minutes old"
+      "message": "esports.json: data is 3915 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2424 minutes old"
+      "message": "golf.json: data is 2475 minutes old"
     },
     {
       "severity": "warning",
@@ -244,6 +212,41 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "2 event(s) won't appear on dashboard (golf, esports)"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-04: 8 events but events.json has 7"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-05: 4 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-06: 6 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-07: 9 events but events.json has 5"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-08: 7 events but events.json has 4"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-09: 3 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-10: 2 events but events.json has 1"
     },
     {
       "severity": "info",
@@ -278,21 +281,21 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T14:31:29.948Z",
+    "computedAt": "2026-03-03T15:21:34.709Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 0,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 4 critical, 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 98% with 11/12 feedback loops closed. Pipeline is critical with 2 critical, 11 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }
