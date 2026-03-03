@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-03T06:28:24.174Z",
+  "generatedAt": "2026-03-03T14:22:17.027Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 107172,
+    "blockCount": 8,
+    "generationMs": 116647,
     "tokenUsage": {
-      "input": 37324,
-      "output": 6160,
-      "cacheCreation": 20959,
-      "cacheRead": 16362,
-      "total": 43484,
-      "costUSD": 0.29318974999999997,
+      "input": 37272,
+      "output": 6928,
+      "cacheCreation": 37269,
+      "cacheRead": 0,
+      "total": 44200,
+      "costUSD": 0.40614624999999993,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 68,
+      "avgScore": 76,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,14 +63,14 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 66,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.985
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 66,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 1,
-    "aiUpdatedFields": 7,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 66,
     "skipStats": {
       "total": 66,
-      "unchanged": 59,
-      "enriched": 7,
-      "skipRate": 0.89
+      "unchanged": 66,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 4603,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 31690,
-      "output": 529,
-      "calls": 1,
-      "total": 32219,
-      "costUSD": 0.11720225,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
