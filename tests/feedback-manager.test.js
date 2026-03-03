@@ -183,6 +183,14 @@ describe("FeedbackManager", () => {
 			expect(url).toContain('"sport":"Cycling"');
 			expect(url).toContain('"event":"Tour de France"');
 		});
+
+		it("renders human-readable text in buildIssueURL (not undefined)", () => {
+			fm.requestSport("Handball", "World Championship", "Norway focus");
+			const url = decodeURL(fm.buildIssueURL());
+			expect(url).toContain("**Sport request:** Handball");
+			expect(url).toContain("World Championship");
+			expect(url).not.toContain("- undefined");
+		});
 	});
 
 	describe("pendingCount()", () => {

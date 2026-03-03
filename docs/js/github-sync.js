@@ -209,7 +209,13 @@ class GitHubSync {
 		}
 		if (suggestions?.length) {
 			body += '### Suggestions\n\n';
-			for (const s of suggestions) body += `- ${typeof s === 'string' ? s : s.text}\n`;
+			for (const s of suggestions) {
+				if (s.type === 'sport-request') {
+					body += `- **Sport request:** ${s.sport}${s.event ? ` — ${s.event}` : ''}${s.note ? ` (${s.note})` : ''}\n`;
+				} else {
+					body += `- ${typeof s === 'string' ? s : s.text}\n`;
+				}
+			}
 			body += '\n';
 		}
 

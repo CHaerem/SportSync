@@ -129,7 +129,11 @@ class FeedbackManager {
 		if (suggestions.length > 0) {
 			body += '### Suggestions\n\n';
 			for (const s of suggestions) {
-				body += `- ${s.text}\n`;
+				if (s.type === 'sport-request') {
+					body += `- **Sport request:** ${s.sport}${s.event ? ` — ${s.event}` : ''}${s.note ? ` (${s.note})` : ''}\n`;
+				} else {
+					body += `- ${s.text}\n`;
+				}
 			}
 			body += '\n';
 		}
