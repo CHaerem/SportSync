@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T22:17:52.252Z",
+  "generatedAt": "2026-03-03T01:52:20.308Z",
   "eventCount": 59,
   "sportCoverage": {
     "golf": {
@@ -60,27 +60,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 222,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2892,
+      "ageMinutes": 3106,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 222,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 222,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1451,
+      "ageMinutes": 1665,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 222,
       "stale": false
     },
     "featured.json": {
@@ -124,7 +124,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -137,34 +138,34 @@
   },
   "quotaApiHealth": {
     "available": true,
-    "transitioned": true,
+    "transitioned": false,
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 49,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 53608,
-    "stepCount": 21,
-    "timeoutHits": [],
+    "totalDuration": 529622,
+    "stepCount": 28,
+    "timeoutHits": [
+      "discover-events"
+    ],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 27556,
-        "share": 51
-      },
-      {
-        "name": "fetch-results",
-        "duration": 37949,
-        "share": 71
+        "name": "discover-events",
+        "duration": 300084,
+        "share": 57
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "discover-events",
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -193,11 +194,7 @@
     ],
     "hasCoverage": false
   },
-  "unmappedLeagues": [
-    "DraculaN Season 5",
-    "Olympics 2026",
-    "FIDE Candidates Tournament 2026"
-  ],
+  "unmappedLeagues": [],
   "issues": [
     {
       "severity": "info",
@@ -207,12 +204,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 2892 minutes old"
+      "message": "esports.json: data is 3106 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1451 minutes old"
+      "message": "golf.json: data is 1665 minutes old"
     },
     {
       "severity": "warning",
@@ -240,14 +237,9 @@
       "message": "2 event(s) won't appear on dashboard (golf, esports)"
     },
     {
-      "severity": "info",
-      "code": "quota_api_restored",
-      "message": "Quota API is now available — external utilization data flowing"
-    },
-    {
-      "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: DraculaN Season 5, Olympics 2026, FIDE Candidates Tournament 2026"
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -255,38 +247,58 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (28s) — optimization candidate"
+      "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (38s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 57% of total pipeline time (300s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     },
     {
       "severity": "info",
       "code": "focus_team_no_events",
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
+    },
+    {
+      "severity": "info",
+      "code": "model_change_quality_stable",
+      "message": "featured model changed (default → fallback) with stable quality — model efficiency improved"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-02T22:17:52.397Z",
+    "computedAt": "2026-03-03T01:52:20.409Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 10 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [
+      {
+        "severity": "info",
+        "code": "model_change_quality_stable",
+        "message": "featured model changed (default → fallback) with stable quality — model efficiency improved"
+      }
+    ],
+    "hasRegression": true
   }
 }

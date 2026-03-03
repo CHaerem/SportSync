@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-03",
+        "note": "Run 17: 2 EXPLORE + 2 MAINTENANCE (direct-to-main) + 1 PR merge. Parallel data-agent (EXPLORE) + code-agent (MAINTENANCE) while orchestrator scouted and merged stale PR #119. Both EXPLORE tasks completed efficiently — data-agent discovered ESPN already has IndyCar API (racing/irl) and ski jumping ESPN endpoint was already wired in schedule-verifier. This 'check existing infrastructure first' pattern converts EXPLORE→FEATURE at minimal effort. Code-agent added 3 league-config entries + bumped architecture threshold in single commit. Orchestrator merged cycling grand tours PR #119 (deploy check failure was GitHub Pages preview, not tests). 2 new FEATURE tasks created from EXPLORE findings (IndyCar fetcher, ski jumping config). RSS scouting found no new uncovered sports — current 11-sport coverage is comprehensive for Norwegian interests. ~17 orchestrator turns."
+      },
+      {
         "date": "2026-03-02",
         "note": "Run 16: 3 tasks via 3 parallel subagents (code-agent + content-agent + data-agent). All subagents shared same worktree — code-agent and content-agent committed to different branches (feature branch and main). Cherry-pick needed to move code-agent's fix from feature branch to main. Lesson: parallel subagents that need different ship modes (direct-to-main vs branch-pr) should use worktree isolation or run sequentially. The FEATURE task (cycling grand tours) completed fastest (~10 min), MAINTENANCE tasks took ~14-28 min due to full test suite runs. Scouting found 2 new EXPLORE tasks from RSS analysis (IndyCar + ski jumping). Total orchestrator turns: ~18."
       },

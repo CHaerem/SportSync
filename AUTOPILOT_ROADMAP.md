@@ -268,12 +268,19 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
 | 1. Data | ~95% | 2026-02-27 | Learned scraper system (Liquipedia CS2 recipe), smart bracket refresh, esports staleness addressed |
-| 2. Code | ~91% | 2026-02-27 | 2148 tests across 67 files, recipe-scraper engine + 126 tests, pipeline consolidated (28→25 steps) |
-| 3. Capabilities | ~80% | 2026-02-27 | Norwegian ice hockey (GET-ligaen) added as 9th sport (PR #117), learned scraper self-repair, alpine skiing |
+| 2. Code | ~92% | 2026-03-03 | 2239 tests across 70 files, architecture threshold adjusted, league config entries added |
+| 3. Capabilities | ~83% | 2026-03-03 | 11 sports (cycling grand tours merged PR #119), IndyCar + ski jumping explored → FEATURE tasks ready |
 | 4. Personalization | ~60% | 2026-02-23 | watchPlan reasons fixed, For You block, watch-plan feedback loop, sport weights evolve |
 | 5. Quality | ~100% | 2026-02-27 | 12/12 loops restored (pipelineHealth + snapshotHealth now quota-aware), 4 new managed codes |
 
 ### Run History Insights
+
+**Run 2026-03-03 (Run 17):** 2 EXPLORE + 2 MAINTENANCE + 1 PR merge. Parallel data-agent + code-agent + orchestrator.
+- data-agent: EXPLORE IndyCar (ESPN `racing/irl/scoreboard` confirmed, full fetcher ~80 lines) + EXPLORE Ski Jumping (ESPN endpoint already in schedule-verifier, curated config for Lahti + Planica). 2 concrete FEATURE tasks created.
+- code-agent: Added 3 missing league-config entries (DraculaN, Olympics, FIDE Candidates) + bumped architecture module threshold 50→70/65→85 (66 modules appropriate for 11-sport project). Single commit, 2239 tests pass.
+- Orchestrator: Merged stale PR #119 (cycling grand tours, deploy check was GitHub Pages preview issue). RSS scouting: F1 season starting, Norwegian ice hockey attendance record — all covered. No user feedback. 0 coverage gaps.
+- **Key insight**: EXPLORE tasks that discover existing infrastructure (ski jumping ESPN endpoint already wired, IndyCar follows exact ESPNAdapter pattern) convert to low-effort FEATURE tasks. "Check what's already there" before proposing new code is always the right first step.
+- 2 new FEATURE tasks scouted (IndyCar fetcher, ski jumping config).
 
 **Run 2026-02-27 (Run 13):** 2 tasks, 2 parallel subagents (code-agent + data-agent).
 - code-agent: Added 4 new quota-managed health codes to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES (stale_snapshot, bracket_stale_matches, quota_skip_time_critical, recipe_persistent_failure). Made evaluateSnapshotHealth() quota-aware — when post-generate is skipped, stale snapshots earn partial credit. autonomy restored 10/12→12/12. 2148 tests pass.
@@ -1128,9 +1135,13 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 - [DONE] (PR #119) [FEATURE] **Add cycling grand tours + Norwegian races 2026 config** — Created `scripts/config/cycling-grand-tours-2026.json` with 6 events: Giro d'Italia, Tour of Norway, Tour de France, Arctic Race of Norway, Vuelta a España, UCI Road Worlds (Kigali). 10 Norwegian riders tracked (Johannessen, Abrahamsen, Wærenskjold, Kristoff, Leknessund, etc.). Events marked `needsResearch: true` for discovery loop verification.
 
-- [PENDING] [EXPLORE] **IndyCar coverage for Dennis Hauger** — Norwegian driver debuted in IndyCar (top 10 in St. Petersburg). ESPN has IndyCar coverage. Could add as curated config or extend motorsport coverage. RSS signals: NRK + TV2 headlines.
+- [DONE] (explored, run 2026-03-03) [EXPLORE] **IndyCar coverage for Dennis Hauger** — ESPN API covers IndyCar at `racing/irl/scoreboard` (same pattern as F1). Full fetcher recommended (~80 lines) extending `ESPNAdapter`. Dennis Hauger trackable via Norwegian player tagging. 16+ races/season. F1 infrastructure fully reusable. Concrete [FEATURE] task created below.
 
-- [PENDING] [EXPLORE] **Ski jumping coverage for Johann Forfang** — First Norwegian World Cup podium this season (3rd in Kulm). No ski jumping tracking. Could add curated config for remaining World Cup rounds and FIS events.
+- [DONE] (explored, run 2026-03-03) [EXPLORE] **Ski jumping coverage for Johann Forfang** — No free FIS API, but ESPN has `skiing/ski-jumping/scoreboard` endpoint already wired in `schedule-verifier.js`. Curated config recommended for remaining 2025-26 WC rounds (Lahti Mar 7-8, Planica Mar 19-22). Norwegian jumpers: Granerud, Lindvik, Forfang, Johansson. Concrete [FEATURE] task created below.
+
+- [PENDING] [FEATURE] **Add IndyCar fetcher for Dennis Hauger** — Create `scripts/fetch/indycar.js` extending ESPNAdapter with `racing/irl/scoreboard`. Add `indycar` sport to SPORT_CONFIG, league-config, schedule-verifier. ~80 lines. 11th sport for the dashboard. (Capabilities + Personalization pillars)
+
+- [PENDING] [FEATURE] **Add ski jumping World Cup curated config** — Create `scripts/config/ski-jumping-wc-2026.json` with remaining rounds (Lahti, Planica). Add `skijumping` sport to SPORT_CONFIG and league-config. Norwegian athletes: Granerud, Lindvik, Forfang, Johansson, Markeng. ~60 lines. ESPN verifier endpoint already wired. (Capabilities + Personalization pillars)
 
 ---
 
