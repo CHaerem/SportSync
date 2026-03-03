@@ -23,6 +23,7 @@ self.addEventListener('install', (event) => {
                 '/SportSync/',
                 '/SportSync/index.html',
                 '/SportSync/status.html',
+                '/SportSync/autonomy.html',
                 '/SportSync/preferences.html',
                 '/SportSync/manifest.webmanifest',
                 '/SportSync/favicon.png',

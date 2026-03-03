@@ -71,9 +71,9 @@ describe("sw.js cache paths", () => {
 	});
 });
 
-describe("index.html links to status page", () => {
-	it("contains a link to status.html", () => {
-		expect(indexHtml).toContain('href="status.html"');
+describe("index.html links to autonomy page", () => {
+	it("contains a link to autonomy.html", () => {
+		expect(indexHtml).toContain('href="autonomy.html"');
 	});
 });
 

@@ -44,7 +44,7 @@ The practical implication: early runs should prioritize **velocity** (many small
 
 ### Human-in-the-Loop
 
-Lightweight user feedback is implemented: thumbs-up/down on watch-plan picks (stored in localStorage), per-sport click tracking via `PreferencesManager.trackEngagement()`, and engagement data export to the pipeline via GitHub Issues. This feedback flows through `evolve-preferences.js` to adjust sport weights and through `computeFeedbackAdjustments()` to tune watch-plan scoring. The remaining opportunity is richer signal — e.g., tracking which editorial blocks resonate, which events the user actually watches.
+Lightweight user feedback is implemented: thumbs-up/down on watch-plan picks (stored in localStorage), per-sport click tracking via `PreferencesManager.trackEngagement()`, and engagement data export to the pipeline via GitHub Issues. This feedback flows through `evolve-preferences.js` to adjust sport weights and through `computeFeedbackAdjustments()` to tune watch-plan scoring. The **Autonomy page** (`docs/autonomy.html`) is the primary control surface for steering the system — users can view all 13 feedback loops, inspect pipeline runs, edit the autopilot roadmap (add/block/reorder tasks), and tune strategy turn budgets. Roadmap and strategy edits commit directly via GitHub Contents API. The remaining opportunity is richer signal — e.g., tracking which editorial blocks resonate, which events the user actually watches.
 
 ## Change Principles
 
@@ -123,6 +123,7 @@ This is a hybrid static/dynamic application:
 ### Key Components
 
 - **docs/index.html** - Main dashboard with ultra-minimal embedded CSS (480px max-width)
+- **docs/autonomy.html** - Autonomy control center: feedback loops, pipeline runs, roadmap editor, strategy editor, run history. 3-tab navigation: Dashboard | Autonomy | Preferences
 - **docs/js/dashboard.js** - Dashboard controller (~3900 lines): blocks, events, recent results, standings, live polling, day navigator, tournament brackets
 - **docs/js/asset-maps.js** - Team logo and golfer headshot URL mappings (football, esports CS2); fallback for ESPN CDN auto-headshots
 - **docs/js/sport-config.js** - Sport metadata (emoji, color, aliases for 10 sports)
@@ -206,6 +207,9 @@ The **update-sports-data.yml** workflow:
 ```
 docs/
 ├── index.html              # Dashboard (HTML + embedded CSS, 480px max-width)
+├── autonomy.html           # Autonomy control center (loops, pipeline, roadmap, strategy, runs)
+├── preferences.html        # User preferences (sports, favorites, feedback, GitHub sync)
+├── status.html             # Legacy system status (redirects to autonomy.html)
 ├── manifest.webmanifest    # PWA manifest (standalone, icons, theme)
 ├── favicon.png             # Browser tab favicon
 ├── sw.js                   # Service worker for caching
@@ -386,6 +390,7 @@ SportSync aspires to zero manual configuration. The discovery pipeline:
 | **Streaming verification** | Autonomous | tvkampen match rate tracked, alias mining, trend analysis (Loop 12) |
 | **Learned scraper** | Autonomous | LLM learns extraction once → zero-cost hourly runs → self-repairs on breakage (Loop 13) |
 | **Autonomy tracking** | Autonomous | 13/13 feedback loops closed, scored by autonomy-scorecard.js |
+| **Human steering** | Available | Autonomy page: view loops, edit roadmap, tune strategy via `autonomy.html` |
 
 **Autonomy score: 100% (13/13 loops closed)**
 

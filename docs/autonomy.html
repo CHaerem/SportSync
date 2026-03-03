@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+	<meta name="description" content="SportSync autonomy control center — feedback loops, pipeline runs, roadmap, strategy.">
+	<meta name="theme-color" content="#d97757">
+	<title>SportSync — Autonomy</title>
+	<style>
+		:root {
+			--bg: #faf9f5;
+			--bg-secondary: #f0efe8;
+			--fg: #3d3929;
+			--muted: #8b8580;
+			--border: #e8e5dc;
+			--border-strong: #3d3929;
+			--accent: #d97757;
+			--radius: 12px;
+			--max-w: 480px;
+			--font: system-ui, -apple-system, sans-serif;
+			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+			--green: #2ecc71;
+			--amber: #f39c12;
+			--red: #e74c3c;
+		}
+		.dark {
+			--bg: #1a1816;
+			--bg-secondary: #242220;
+			--fg: #faf9f5;
+			--muted: #9a958e;
+			--border: #2d2a26;
+			--border-strong: #faf9f5;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+		}
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+
+		body {
+			font-family: var(--font);
+			background: var(--bg);
+			color: var(--fg);
+			line-height: 1.6;
+			font-size: 15px;
+			font-weight: 400;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.wrap {
+			max-width: var(--max-w);
+			margin: 0 auto;
+			padding: 40px 24px 60px;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+		}
+		header h1 {
+			font-family: var(--font-serif);
+			font-size: 1.15rem;
+			font-weight: 400;
+			letter-spacing: -0.01em;
+			color: var(--fg);
+		}
+		header h1 a {
+			color: var(--fg);
+			text-decoration: none;
+		}
+		header h1 a:hover { color: var(--accent); }
+		#themeToggle {
+			background: none;
+			border: none;
+			font-size: 1rem;
+			cursor: pointer;
+			padding: 12px;
+			line-height: 1;
+			opacity: 0.5;
+			transition: opacity 0.15s;
+		}
+		#themeToggle:hover { opacity: 0.8; }
+
+		/* --- Tab bar --- */
+		.tab-bar {
+			display: flex;
+			gap: 0;
+			margin-bottom: 24px;
+			border-bottom: 1px solid var(--border);
+		}
+		.tab-link {
+			font-size: 0.72rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			text-decoration: none;
+			padding: 12px 16px 14px;
+			border-bottom: 2px solid transparent;
+			transition: color 0.15s, border-color 0.15s;
+		}
+		.tab-link:hover { color: var(--fg); }
+		.tab-link.active {
+			color: var(--accent);
+			border-bottom-color: var(--accent);
+		}
+
+		/* --- Cards --- */
+		.card {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 18px 20px;
+			margin-bottom: 16px;
+			box-shadow: var(--shadow);
+		}
+		.card-header {
+			font-size: 0.65rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 12px;
+		}
+
+		/* --- Hero score --- */
+		.hero {
+			text-align: center;
+			padding: 24px 20px 20px;
+		}
+		.hero-score {
+			font-size: 3rem;
+			font-weight: 300;
+			line-height: 1;
+			letter-spacing: -0.02em;
+		}
+		.hero-loops {
+			font-size: 0.82rem;
+			color: var(--muted);
+			margin-top: 4px;
+		}
+		.hero-status {
+			font-size: 0.72rem;
+			color: var(--muted);
+			margin-top: 8px;
+			font-style: italic;
+		}
+
+		/* --- Loop cards --- */
+		.loops-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+		.loop-card {
+			border: 1px solid var(--border);
+			border-left: 3px solid var(--green);
+			border-radius: 8px;
+			padding: 10px 12px;
+			font-size: 0.72rem;
+		}
+		.loop-card.partial { border-left-color: var(--amber); }
+		.loop-card.open { border-left-color: var(--red); }
+		.loop-card-head {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 4px;
+		}
+		.loop-card-name {
+			font-weight: 600;
+			font-size: 0.72rem;
+		}
+		.loop-card-score {
+			font-weight: 500;
+			font-variant-numeric: tabular-nums;
+			font-size: 0.68rem;
+			color: var(--muted);
+		}
+		.loop-card-phases {
+			display: flex;
+			gap: 6px;
+			font-size: 0.6rem;
+			color: var(--muted);
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			margin-bottom: 4px;
+		}
+		.loop-card-phases span {
+			padding: 1px 6px;
+			background: var(--bg);
+			border-radius: 4px;
+		}
+		.loop-card-detail {
+			font-size: 0.65rem;
+			color: var(--muted);
+			font-style: italic;
+		}
+
+		/* --- Pipeline --- */
+		.pipeline-meta {
+			display: flex;
+			justify-content: space-between;
+			font-size: 0.72rem;
+			margin-bottom: 10px;
+		}
+		.pipeline-meta .pm-label { color: var(--muted); }
+		.pipeline-meta .pm-value { font-weight: 500; font-variant-numeric: tabular-nums; }
+		.pipeline-bar {
+			display: flex;
+			height: 20px;
+			border-radius: 6px;
+			overflow: hidden;
+			margin-bottom: 10px;
+			gap: 1px;
+		}
+		.pipeline-bar-seg {
+			height: 100%;
+			min-width: 4px;
+			cursor: pointer;
+			transition: opacity 0.15s;
+			position: relative;
+		}
+		.pipeline-bar-seg:hover { opacity: 0.8; }
+		.pipeline-bar-seg.success { background: var(--green); }
+		.pipeline-bar-seg.skipped { background: var(--border); }
+		.pipeline-bar-seg.failed { background: var(--red); }
+		.phase-detail {
+			display: none;
+			margin-top: 8px;
+			border-top: 1px solid var(--border);
+			padding-top: 8px;
+		}
+		.phase-detail.open { display: block; }
+		.step-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 3px 0;
+			font-size: 0.68rem;
+		}
+		.step-name { color: var(--fg); }
+		.step-status {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+		.step-status.success { color: var(--green); }
+		.step-status.skipped { color: var(--muted); }
+		.step-status.failed { color: var(--red); }
+		.step-dur {
+			font-size: 0.6rem;
+			color: var(--muted);
+			font-variant-numeric: tabular-nums;
+			min-width: 40px;
+			text-align: right;
+		}
+
+		/* --- Roadmap --- */
+		.roadmap-actions {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 12px;
+		}
+		.rm-btn {
+			font: inherit;
+			font-size: 0.68rem;
+			padding: 10px 14px;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			background: var(--bg);
+			color: var(--fg);
+			cursor: pointer;
+			transition: border-color 0.15s;
+		}
+		.rm-btn:hover { border-color: var(--muted); }
+		.rm-btn:disabled { opacity: 0.4; cursor: default; }
+		.rm-btn.primary {
+			background: var(--fg);
+			color: var(--bg);
+			font-weight: 500;
+		}
+		.rm-btn.primary:hover { opacity: 0.85; }
+		.rm-btn.primary:disabled { opacity: 0.4; }
+		.rm-group-label {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			margin: 12px 0 6px;
+		}
+		.rm-task {
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			padding: 8px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.72rem;
+		}
+		.rm-task:last-child { border-bottom: none; }
+		.rm-task-body { flex: 1; min-width: 0; }
+		.rm-task-title { font-weight: 500; word-break: break-word; }
+		.rm-task-desc {
+			font-size: 0.65rem;
+			color: var(--muted);
+			margin-top: 2px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+		.rm-badge {
+			display: inline-block;
+			font-size: 0.55rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			padding: 2px 8px;
+			border-radius: 8px;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+		.rm-badge.pending { background: rgba(46,204,113,0.15); color: var(--green); }
+		.rm-badge.blocked { background: rgba(231,76,60,0.15); color: var(--red); }
+		.rm-badge.done { background: var(--bg); color: var(--muted); }
+		.rm-tier {
+			display: inline-block;
+			font-size: 0.55rem;
+			font-weight: 600;
+			padding: 1px 6px;
+			border-radius: 6px;
+			background: var(--bg);
+			border: 1px solid var(--border);
+			color: var(--muted);
+			margin-left: 4px;
+		}
+		.rm-task-actions {
+			display: flex;
+			gap: 4px;
+			flex-shrink: 0;
+		}
+		.rm-task-btn {
+			background: none;
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.65rem;
+			padding: 6px 8px;
+			color: var(--muted);
+			line-height: 1;
+			min-width: 28px;
+			min-height: 28px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.rm-task-btn:hover { color: var(--fg); border-color: var(--muted); }
+		.rm-add-form {
+			display: none;
+			padding: 12px 0;
+			border-bottom: 1px solid var(--border);
+		}
+		.rm-add-form.open { display: block; }
+		.rm-add-form input, .rm-add-form textarea, .rm-add-form select {
+			font: inherit;
+			font-size: 0.72rem;
+			padding: 8px 10px;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			background: var(--bg);
+			color: var(--fg);
+			width: 100%;
+			margin-bottom: 8px;
+		}
+		.rm-add-form textarea { resize: vertical; min-height: 50px; }
+		.rm-connect-msg {
+			font-size: 0.72rem;
+			color: var(--muted);
+			text-align: center;
+			padding: 16px 0;
+		}
+		.rm-connect-msg a { color: var(--accent); }
+
+		/* --- Strategy --- */
+		.strat-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 6px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.72rem;
+		}
+		.strat-row:last-child { border-bottom: none; }
+		.strat-label { color: var(--fg); font-weight: 500; }
+		.strat-input {
+			font: inherit;
+			font-size: 0.72rem;
+			width: 60px;
+			padding: 6px 8px;
+			text-align: center;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			background: var(--bg);
+			color: var(--fg);
+			font-variant-numeric: tabular-nums;
+		}
+		.strat-input:disabled {
+			opacity: 0.5;
+			cursor: default;
+		}
+		.strat-sub {
+			font-size: 0.6rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			margin: 10px 0 4px;
+		}
+		.strat-ship {
+			font-size: 0.68rem;
+			padding: 6px 0;
+			border-bottom: 1px solid var(--border);
+		}
+		.strat-ship:last-child { border-bottom: none; }
+		.strat-ship-name { font-weight: 500; }
+		.strat-ship-desc { color: var(--muted); font-size: 0.62rem; }
+		.strat-note {
+			font-size: 0.65rem;
+			color: var(--muted);
+			padding: 4px 0;
+			border-bottom: 1px solid var(--border);
+		}
+		.strat-note:last-child { border-bottom: none; }
+		.strat-note-date { font-weight: 500; color: var(--fg); }
+
+		/* --- Run history --- */
+		.run-item {
+			padding: 8px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.72rem;
+		}
+		.run-item:last-child { border-bottom: none; }
+		.run-head {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			cursor: pointer;
+			min-height: 44px;
+		}
+		.run-task { font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.run-outcome {
+			font-size: 0.55rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			padding: 2px 8px;
+			border-radius: 8px;
+			flex-shrink: 0;
+			margin-left: 8px;
+		}
+		.run-outcome.completed { background: rgba(46,204,113,0.15); color: var(--green); }
+		.run-outcome.failed { background: rgba(231,76,60,0.15); color: var(--red); }
+		.run-outcome.skipped { background: var(--bg); color: var(--muted); }
+		.run-meta {
+			font-size: 0.62rem;
+			color: var(--muted);
+			margin-top: 2px;
+		}
+		.run-meta a { color: var(--accent); text-decoration: none; }
+		.run-meta a:hover { opacity: 0.7; }
+		.run-detail {
+			display: none;
+			font-size: 0.65rem;
+			color: var(--muted);
+			margin-top: 6px;
+			padding: 6px 0;
+			border-top: 1px solid var(--border);
+		}
+		.run-detail.open { display: block; }
+		.run-lesson {
+			font-style: italic;
+			margin-top: 4px;
+		}
+
+		/* --- Empty & loading --- */
+		.empty-state {
+			font-size: 0.72rem;
+			color: var(--muted);
+			font-style: italic;
+			padding: 4px 0;
+		}
+		.loading {
+			text-align: center;
+			padding: 48px 0;
+			color: var(--muted);
+			font-size: 0.8rem;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				transition-duration: 0.01ms !important;
+			}
+		}
+
+		@media (min-width: 420px) {
+			.loops-grid { grid-template-columns: 1fr 1fr; }
+		}
+
+		@media (max-width: 380px) {
+			.wrap { padding: 24px 16px 40px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<header>
+			<h1><a href="./">SportSync</a></h1>
+			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
+		</header>
+
+		<nav class="tab-bar">
+			<a href="./" class="tab-link">Dashboard</a>
+			<a href="autonomy.html" class="tab-link active">Autonomy</a>
+			<a href="preferences.html" class="tab-link">Preferences</a>
+		</nav>
+
+		<div id="hero"><div class="loading">Loading...</div></div>
+		<div id="loops"></div>
+		<div id="pipeline"></div>
+		<div id="roadmap"></div>
+		<div id="strategy"></div>
+		<div id="runs"></div>
+	</div>
+
+	<script src="js/github-sync.js?v=2026030302"></script>
+	<script src="js/preferences-manager.js?v=2026030302"></script>
+
+	<script>
+		// Theme toggle
+		(function() {
+			const saved = localStorage.getItem('theme');
+			if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+			document.getElementById('themeToggle').addEventListener('click', () => {
+				const isDark = document.documentElement.classList.toggle('dark');
+				localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			});
+		})();
+
+		// Track engagement for the autonomy page
+		try {
+			const pm = new PreferencesManager();
+			pm.trackEngagement('autonomy');
+		} catch { /* ignore */ }
+
+		const REPO_OWNER = 'CHaerem';
+		const REPO_NAME = 'SportSync';
+		const REPO_URL = 'https://github.com/' + REPO_OWNER + '/' + REPO_NAME;
+		const RAW_BASE = 'https://raw.githubusercontent.com/' + REPO_OWNER + '/' + REPO_NAME + '/main/';
+
+		const sync = new GitHubSync();
+
+		// --- Loop metadata ---
+		const LOOP_META = {
+			featuredQuality: { name: 'Featured Quality', observe: 'quality-history.json', decide: 'buildAdaptiveHints()', act: 'Prompt injection' },
+			enrichmentQuality: { name: 'Enrichment Quality', observe: 'ai-quality.json', decide: 'buildEnrichmentHints()', act: 'Prompt injection' },
+			coverageGaps: { name: 'Coverage Gaps', observe: 'coverage-gaps.json', decide: 'resolve-coverage-gaps.js', act: 'Auto-config creation' },
+			pipelineHealth: { name: 'Pipeline Health', observe: 'health-report.json', decide: 'Autopilot reads', act: 'Repair tasks' },
+			watchPlan: { name: 'Watch Plan', observe: 'watch-plan.json', decide: 'Scoring engine', act: 'Picks with reasons' },
+			codeHealth: { name: 'Code Health', observe: 'Autopilot scouting', decide: 'AUTOPILOT_ROADMAP.md', act: 'PRs' },
+			eventDiscovery: { name: 'Event Discovery', observe: 'discovery-log.json', decide: 'sync-configs.js', act: 'Populate configs' },
+			scheduleVerification: { name: 'Schedule Verification', observe: 'verification-history.json', decide: 'buildVerificationHints()', act: 'Discovery prompt' },
+			resultsHealth: { name: 'Results Health', observe: 'recent-results.json', decide: 'Pipeline health check', act: 'Health report' },
+			snapshotHealth: { name: 'Snapshot Health', observe: 'Day snapshots', decide: 'Pipeline monitor', act: 'Health alerts' },
+			uxQuality: { name: 'UX Quality', observe: 'UX report', decide: 'Score evaluation', act: 'UX improvements' },
+			streamingVerification: { name: 'Streaming Verification', observe: 'verification-history.json', decide: 'Trend analysis', act: 'Alias mining' },
+			learnedScraper: { name: 'Learned Scraper', observe: 'Scraper health', decide: 'Failure detection', act: 'Self-repair' }
+		};
+
+		// --- Helpers ---
+		function esc(s) {
+			const d = document.createElement('div');
+			d.textContent = s;
+			return d.innerHTML;
+		}
+
+		async function fetchJSON(file) {
+			try {
+				const r = await fetch('data/' + file, { cache: 'no-cache' });
+				if (!r.ok) return null;
+				return r.json();
+			} catch { return null; }
+		}
+
+		async function fetchRaw(path) {
+			try {
+				const r = await fetch(RAW_BASE + path, { cache: 'no-cache' });
+				if (!r.ok) return null;
+				return r.text();
+			} catch { return null; }
+		}
+
+		function timeAgo(iso) {
+			if (!iso) return 'unknown';
+			const diff = Date.now() - new Date(iso).getTime();
+			const mins = Math.floor(diff / 60000);
+			if (mins < 1) return 'just now';
+			if (mins < 60) return mins + 'm ago';
+			const hrs = Math.floor(mins / 60);
+			if (hrs < 24) return hrs + 'h ago';
+			return Math.floor(hrs / 24) + 'd ago';
+		}
+
+		function fmtDuration(ms) {
+			if (!ms) return '0s';
+			if (ms < 1000) return ms + 'ms';
+			const secs = Math.round(ms / 1000);
+			if (secs < 60) return secs + 's';
+			const mins = Math.floor(secs / 60);
+			return mins + 'm ' + (secs % 60) + 's';
+		}
+
+		// === Section 1: Hero ===
+		function renderHero(autonomy, health) {
+			const el = document.getElementById('hero');
+			if (!autonomy) {
+				el.innerHTML = '<div class="card hero"><div class="hero-score">--</div><div class="hero-loops">No autonomy data</div></div>';
+				return;
+			}
+
+			const pct = Math.round(autonomy.overallScore * 100);
+			const loopsClosed = autonomy.loopsClosed || 0;
+			const loopsTotal = autonomy.loopsTotal || 0;
+
+			let statusText = '';
+			const raw = health?.statusSummary;
+			statusText = typeof raw === 'string' ? raw : (raw?.text || '');
+
+			el.innerHTML = '<div class="card hero">' +
+				'<div class="hero-score">' + pct + '%</div>' +
+				'<div class="hero-loops">' + loopsClosed + '/' + loopsTotal + ' feedback loops closed</div>' +
+				(statusText ? '<div class="hero-status">' + esc(statusText) + '</div>' : '') +
+				'</div>';
+		}
+
+		// === Section 2: Feedback Loops ===
+		function renderLoops(autonomy) {
+			const el = document.getElementById('loops');
+			if (!autonomy || !autonomy.loops) {
+				el.innerHTML = '';
+				return;
+			}
+
+			const cards = Object.entries(autonomy.loops).map(function([key, loop]) {
+				const meta = LOOP_META[key] || { name: key, observe: '?', decide: '?', act: '?' };
+				const cls = loop.status === 'closed' ? '' : loop.status === 'partial' ? ' partial' : ' open';
+				const scoreText = loop.score != null ? loop.score.toFixed(1) : '--';
+
+				return '<div class="loop-card' + cls + '">' +
+					'<div class="loop-card-head">' +
+						'<span class="loop-card-name">' + esc(meta.name) + '</span>' +
+						'<span class="loop-card-score">' + scoreText + '</span>' +
+					'</div>' +
+					'<div class="loop-card-phases">' +
+						'<span>' + esc(meta.observe) + '</span>' +
+						'<span>' + esc(meta.decide) + '</span>' +
+						'<span>' + esc(meta.act) + '</span>' +
+					'</div>' +
+					(loop.details ? '<div class="loop-card-detail">' + esc(loop.details) + '</div>' : '') +
+					'</div>';
+			}).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Feedback Loops</div>' +
+				'<div class="loops-grid">' + cards + '</div>' +
+				'</div>';
+		}
+
+		// === Section 3: Pipeline Runs ===
+		function renderPipeline(pipelineResult) {
+			const el = document.getElementById('pipeline');
+			if (!pipelineResult) {
+				el.innerHTML = '';
+				return;
+			}
+
+			const summary = pipelineResult.summary || {};
+			const phases = pipelineResult.phases || {};
+
+			// Meta row
+			const metaHtml = '<div class="pipeline-meta">' +
+				'<div><span class="pm-label">Duration </span><span class="pm-value">' + fmtDuration(pipelineResult.duration) + '</span></div>' +
+				'<div><span class="pm-label">Mode </span><span class="pm-value">' + (pipelineResult.mode || 'full') + '</span></div>' +
+				'<div><span class="pm-label">Gate </span><span class="pm-value" style="color:' + (pipelineResult.gate === 'pass' ? 'var(--green)' : 'var(--red)') + '">' + (pipelineResult.gate || '--') + '</span></div>' +
+				'</div>';
+
+			// Time label
+			const timeLabel = pipelineResult.completedAt ? '<div style="font-size:0.62rem;color:var(--muted);margin-bottom:8px">' + timeAgo(pipelineResult.completedAt) + '</div>' : '';
+
+			// Phase bar segments
+			const phaseKeys = Object.keys(phases);
+			const totalDur = phaseKeys.reduce(function(sum, k) {
+				var pSteps = phases[k].steps || [];
+				return sum + pSteps.reduce(function(s, st) { return s + (st.duration || 0); }, 0);
+			}, 0) || 1;
+
+			let barHtml = '';
+			let detailHtml = '';
+
+			phaseKeys.forEach(function(key, idx) {
+				const phase = phases[key];
+				const steps = phase.steps || [];
+				const phaseDur = steps.reduce(function(s, st) { return s + (st.duration || 0); }, 0);
+				const pct = Math.max(2, (phaseDur / totalDur) * 100);
+				const cls = phase.status === 'success' ? 'success' : phase.status === 'failed' ? 'failed' : 'skipped';
+
+				barHtml += '<div class="pipeline-bar-seg ' + cls + '" style="flex:' + pct + '" data-phase="' + idx + '" title="' + esc(phase.name) + ': ' + fmtDuration(phaseDur) + '"></div>';
+
+				const stepRows = steps.map(function(st) {
+					const sCls = st.status === 'success' ? 'success' : st.status === 'failed' ? 'failed' : 'skipped';
+					const reason = st.reason ? ' (' + esc(st.reason) + ')' : '';
+					return '<div class="step-row">' +
+						'<span class="step-name">' + esc(st.name) + reason + '</span>' +
+						'<span class="step-dur">' + fmtDuration(st.duration) + '</span>' +
+						'<span class="step-status ' + sCls + '">' + st.status + '</span>' +
+						'</div>';
+				}).join('');
+
+				detailHtml += '<div class="phase-detail" id="phase-detail-' + idx + '">' +
+					'<div style="font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:4px">' + esc(phase.name) + '</div>' +
+					stepRows +
+					'</div>';
+			});
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Pipeline Run</div>' +
+				timeLabel +
+				metaHtml +
+				'<div class="pipeline-bar">' + barHtml + '</div>' +
+				'<div style="font-size:0.6rem;color:var(--muted);margin-bottom:4px">' + summary.success + '/' + summary.total + ' steps passed' + (summary.skipped ? ', ' + summary.skipped + ' skipped' : '') + '</div>' +
+				detailHtml +
+				'</div>';
+
+			// Click to expand phase details
+			el.querySelectorAll('.pipeline-bar-seg').forEach(function(seg) {
+				seg.addEventListener('click', function() {
+					const phaseIdx = seg.dataset.phase;
+					const detail = document.getElementById('phase-detail-' + phaseIdx);
+					if (detail) {
+						// Close others
+						el.querySelectorAll('.phase-detail').forEach(function(d) {
+							if (d !== detail) d.classList.remove('open');
+						});
+						detail.classList.toggle('open');
+					}
+				});
+			});
+		}
+
+		// === Section 4: Roadmap ===
+		const TASK_RE = /^- \[(PENDING|DONE|BLOCKED[^\]]*)\]\s*(?:\(([^)]+)\)\s*)?(?:\[(MAINTENANCE|FEATURE|EXPLORE)\]\s*)?(?:\*\*(.+?)\*\*)?(?:\s*[—\-]\s*(.*))?$/;
+
+		function parseRoadmap(md) {
+			const lines = md.split('\n');
+			const chunks = [];
+			const tasks = [];
+
+			let passthroughBuf = [];
+
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i];
+				const m = line.match(TASK_RE);
+				if (m) {
+					if (passthroughBuf.length) {
+						chunks.push({ type: 'passthrough', lines: passthroughBuf });
+						passthroughBuf = [];
+					}
+					const statusRaw = m[1];
+					let status = 'pending';
+					let blockReason = '';
+					if (statusRaw === 'DONE') status = 'done';
+					else if (statusRaw.startsWith('BLOCKED')) {
+						status = 'blocked';
+						blockReason = statusRaw.replace('BLOCKED', '').replace(/^\s*/, '');
+					}
+					const task = {
+						status: status,
+						pr: m[2] || '',
+						tier: m[3] || '',
+						title: m[4] || '',
+						description: m[5] || '',
+						blockReason: blockReason,
+						_index: tasks.length
+					};
+					tasks.push(task);
+					chunks.push({ type: 'task', taskIndex: task._index });
+				} else {
+					passthroughBuf.push(line);
+				}
+			}
+			if (passthroughBuf.length) {
+				chunks.push({ type: 'passthrough', lines: passthroughBuf });
+			}
+
+			return { chunks: chunks, tasks: tasks };
+		}
+
+		function serializeRoadmap(parsed) {
+			let out = '';
+			for (const chunk of parsed.chunks) {
+				if (chunk.type === 'passthrough') {
+					out += chunk.lines.join('\n') + '\n';
+				} else {
+					const task = parsed.tasks[chunk.taskIndex];
+					let statusTag = 'PENDING';
+					if (task.status === 'done') statusTag = 'DONE';
+					else if (task.status === 'blocked') statusTag = 'BLOCKED' + (task.blockReason ? ' ' + task.blockReason : '');
+
+					let line = '- [' + statusTag + ']';
+					if (task.pr) line += ' (' + task.pr + ')';
+					if (task.tier) line += ' [' + task.tier + ']';
+					if (task.title) line += ' **' + task.title + '**';
+					if (task.description) line += ' \u2014 ' + task.description;
+					out += line + '\n';
+				}
+			}
+			return out;
+		}
+
+		let roadmapParsed = null;
+		let roadmapSha = null;
+		let roadmapDirty = false;
+
+		async function renderRoadmap() {
+			const el = document.getElementById('roadmap');
+			const md = await fetchRaw('AUTOPILOT_ROADMAP.md');
+			if (!md) {
+				el.innerHTML = '<div class="card"><div class="card-header">Autopilot Roadmap</div><div class="empty-state">Could not load roadmap</div></div>';
+				return;
+			}
+
+			roadmapParsed = parseRoadmap(md);
+			roadmapDirty = false;
+			const tasks = roadmapParsed.tasks;
+			const connected = sync.isConnected();
+
+			// If connected, fetch SHA for writing
+			if (connected) {
+				try {
+					const token = sync._config.token;
+					const resp = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/AUTOPILOT_ROADMAP.md', {
+						headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' }
+					});
+					if (resp.ok) {
+						const data = await resp.json();
+						roadmapSha = data.sha;
+					}
+				} catch { /* read-only fallback */ }
+			}
+
+			const pending = tasks.filter(function(t) { return t.status === 'pending'; });
+			const blocked = tasks.filter(function(t) { return t.status === 'blocked'; });
+			const done = tasks.filter(function(t) { return t.status === 'done'; }).slice(-10).reverse();
+
+			function renderTask(task, showActions) {
+				const badgeCls = task.status === 'pending' ? 'pending' : task.status === 'blocked' ? 'blocked' : 'done';
+				const badgeLabel = task.status === 'blocked' ? 'Blocked' : task.status === 'done' ? 'Done' : 'Pending';
+				const tierTag = task.tier ? '<span class="rm-tier">' + esc(task.tier) + '</span>' : '';
+				const prTag = task.pr ? '<span style="font-size:0.6rem;color:var(--muted);margin-left:4px">' + esc(task.pr) + '</span>' : '';
+
+				let actionsHtml = '';
+				if (showActions && connected) {
+					if (task.status === 'pending') {
+						actionsHtml = '<div class="rm-task-actions">' +
+							'<button class="rm-task-btn" data-action="up" data-idx="' + task._index + '" title="Move up">&#9650;</button>' +
+							'<button class="rm-task-btn" data-action="down" data-idx="' + task._index + '" title="Move down">&#9660;</button>' +
+							'<button class="rm-task-btn" data-action="block" data-idx="' + task._index + '" title="Block">&#10007;</button>' +
+							'</div>';
+					} else if (task.status === 'blocked') {
+						actionsHtml = '<div class="rm-task-actions">' +
+							'<button class="rm-task-btn" data-action="unblock" data-idx="' + task._index + '" title="Unblock">&#10003;</button>' +
+							'</div>';
+					}
+				}
+
+				return '<div class="rm-task">' +
+					'<span class="rm-badge ' + badgeCls + '">' + badgeLabel + '</span>' +
+					'<div class="rm-task-body">' +
+						'<div class="rm-task-title">' + esc(task.title) + tierTag + prTag + '</div>' +
+						(task.description ? '<div class="rm-task-desc">' + esc(task.description) + '</div>' : '') +
+					'</div>' +
+					actionsHtml +
+					'</div>';
+			}
+
+			let addFormHtml = '';
+			let actionsBar = '';
+			if (connected) {
+				addFormHtml = '<div class="rm-add-form" id="rm-add-form">' +
+					'<input type="text" id="rm-add-title" placeholder="Task title" maxlength="200">' +
+					'<textarea id="rm-add-desc" placeholder="Description (optional)" maxlength="500"></textarea>' +
+					'<select id="rm-add-tier">' +
+						'<option value="MAINTENANCE">Maintenance</option>' +
+						'<option value="FEATURE">Feature</option>' +
+						'<option value="EXPLORE">Explore</option>' +
+					'</select>' +
+					'<div style="display:flex;gap:8px">' +
+						'<button class="rm-btn" id="rm-add-cancel">Cancel</button>' +
+						'<button class="rm-btn primary" id="rm-add-confirm">Add Task</button>' +
+					'</div>' +
+					'</div>';
+
+				actionsBar = '<div class="roadmap-actions">' +
+					'<button class="rm-btn" id="rm-add-btn">Add Task</button>' +
+					'<button class="rm-btn primary" id="rm-save-btn" disabled>Save Changes</button>' +
+					'</div>';
+			}
+
+			const connectMsg = !connected ? '<div class="rm-connect-msg"><a href="preferences.html">Connect GitHub</a> to edit the roadmap</div>' : '';
+
+			let html = '<div class="card">' +
+				'<div class="card-header">Autopilot Roadmap</div>' +
+				connectMsg +
+				actionsBar +
+				addFormHtml;
+
+			if (pending.length) {
+				html += '<div class="rm-group-label">Pending (' + pending.length + ')</div>';
+				html += pending.map(function(t) { return renderTask(t, true); }).join('');
+			}
+			if (blocked.length) {
+				html += '<div class="rm-group-label">Blocked (' + blocked.length + ')</div>';
+				html += blocked.map(function(t) { return renderTask(t, true); }).join('');
+			}
+			if (done.length) {
+				html += '<div class="rm-group-label">Recent Done (' + done.length + ')</div>';
+				html += done.map(function(t) { return renderTask(t, false); }).join('');
+			}
+			if (!pending.length && !blocked.length && !done.length) {
+				html += '<div class="empty-state">No tasks found</div>';
+			}
+
+			html += '</div>';
+			el.innerHTML = html;
+
+			// Bind events
+			if (connected) {
+				bindRoadmapEvents(el);
+			}
+		}
+
+		function bindRoadmapEvents(el) {
+			// Add task form
+			var addBtn = document.getElementById('rm-add-btn');
+			var addForm = document.getElementById('rm-add-form');
+			if (addBtn) addBtn.addEventListener('click', function() { addForm.classList.toggle('open'); });
+
+			var cancelBtn = document.getElementById('rm-add-cancel');
+			if (cancelBtn) cancelBtn.addEventListener('click', function() { addForm.classList.remove('open'); });
+
+			var confirmBtn = document.getElementById('rm-add-confirm');
+			if (confirmBtn) confirmBtn.addEventListener('click', function() {
+				var title = document.getElementById('rm-add-title').value.trim();
+				if (!title) return;
+				var desc = document.getElementById('rm-add-desc').value.trim();
+				var tier = document.getElementById('rm-add-tier').value;
+
+				// Find the first pending task's chunk index, insert before it
+				var newTask = {
+					status: 'pending',
+					pr: '',
+					tier: tier,
+					title: title,
+					description: desc,
+					blockReason: '',
+					_index: roadmapParsed.tasks.length
+				};
+				roadmapParsed.tasks.push(newTask);
+
+				// Find position: insert before first task chunk
+				var insertIdx = roadmapParsed.chunks.length;
+				for (var i = 0; i < roadmapParsed.chunks.length; i++) {
+					if (roadmapParsed.chunks[i].type === 'task') {
+						var t = roadmapParsed.tasks[roadmapParsed.chunks[i].taskIndex];
+						if (t.status === 'pending') {
+							insertIdx = i;
+							break;
+						}
+					}
+				}
+				roadmapParsed.chunks.splice(insertIdx, 0, { type: 'task', taskIndex: newTask._index });
+				markDirty();
+				refreshRoadmapView();
+				addForm.classList.remove('open');
+				document.getElementById('rm-add-title').value = '';
+				document.getElementById('rm-add-desc').value = '';
+			});
+
+			// Task action buttons
+			el.querySelectorAll('.rm-task-btn').forEach(function(btn) {
+				btn.addEventListener('click', function() {
+					var action = btn.dataset.action;
+					var idx = parseInt(btn.dataset.idx, 10);
+					var task = roadmapParsed.tasks[idx];
+					if (!task) return;
+
+					if (action === 'block') {
+						task.status = 'blocked';
+						task.blockReason = '';
+						markDirty();
+						refreshRoadmapView();
+					} else if (action === 'unblock') {
+						task.status = 'pending';
+						task.blockReason = '';
+						markDirty();
+						refreshRoadmapView();
+					} else if (action === 'up' || action === 'down') {
+						// Find this task's chunk index
+						var chunkIdx = -1;
+						for (var i = 0; i < roadmapParsed.chunks.length; i++) {
+							if (roadmapParsed.chunks[i].type === 'task' && roadmapParsed.chunks[i].taskIndex === idx) {
+								chunkIdx = i;
+								break;
+							}
+						}
+						if (chunkIdx < 0) return;
+
+						// Find adjacent task chunk
+						var dir = action === 'up' ? -1 : 1;
+						var targetIdx = chunkIdx + dir;
+						while (targetIdx >= 0 && targetIdx < roadmapParsed.chunks.length) {
+							if (roadmapParsed.chunks[targetIdx].type === 'task') {
+								var targetTask = roadmapParsed.tasks[roadmapParsed.chunks[targetIdx].taskIndex];
+								if (targetTask.status === 'pending') break;
+							}
+							targetIdx += dir;
+						}
+						if (targetIdx >= 0 && targetIdx < roadmapParsed.chunks.length && roadmapParsed.chunks[targetIdx].type === 'task') {
+							// Swap
+							var tmp = roadmapParsed.chunks[chunkIdx];
+							roadmapParsed.chunks[chunkIdx] = roadmapParsed.chunks[targetIdx];
+							roadmapParsed.chunks[targetIdx] = tmp;
+							markDirty();
+							refreshRoadmapView();
+						}
+					}
+				});
+			});
+
+			// Save button
+			var saveBtn = document.getElementById('rm-save-btn');
+			if (saveBtn) saveBtn.addEventListener('click', saveRoadmap);
+		}
+
+		function markDirty() {
+			roadmapDirty = true;
+			var saveBtn = document.getElementById('rm-save-btn');
+			if (saveBtn) saveBtn.disabled = false;
+		}
+
+		function refreshRoadmapView() {
+			// Re-render just the task list without re-fetching
+			renderRoadmap();
+		}
+
+		async function saveRoadmap() {
+			if (!roadmapParsed || !roadmapSha) return;
+			var saveBtn = document.getElementById('rm-save-btn');
+			if (saveBtn) saveBtn.textContent = 'Saving...';
+
+			var content = serializeRoadmap(roadmapParsed);
+			try {
+				var token = sync._config.token;
+				var resp = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/AUTOPILOT_ROADMAP.md', {
+					method: 'PUT',
+					headers: {
+						Authorization: 'Bearer ' + token,
+						'Content-Type': 'application/json',
+						Accept: 'application/vnd.github+json'
+					},
+					body: JSON.stringify({
+						message: 'Update roadmap from Autonomy dashboard',
+						content: btoa(unescape(encodeURIComponent(content))),
+						sha: roadmapSha
+					})
+				});
+				if (!resp.ok) throw new Error('Save failed: ' + resp.status);
+				var data = await resp.json();
+				roadmapSha = data.content.sha;
+				roadmapDirty = false;
+				if (saveBtn) {
+					saveBtn.textContent = 'Saved';
+					saveBtn.disabled = true;
+					setTimeout(function() { saveBtn.textContent = 'Save Changes'; }, 2000);
+				}
+			} catch (err) {
+				if (saveBtn) saveBtn.textContent = 'Failed - retry';
+			}
+		}
+
+		// === Section 5: Strategy ===
+		let strategyData = null;
+		let strategySha = null;
+
+		async function renderStrategy() {
+			const el = document.getElementById('strategy');
+			const raw = await fetchRaw('scripts/autopilot-strategy.json');
+			if (!raw) {
+				el.innerHTML = '';
+				return;
+			}
+
+			try {
+				strategyData = JSON.parse(raw);
+			} catch {
+				el.innerHTML = '<div class="card"><div class="card-header">Autopilot Strategy</div><div class="empty-state">Invalid JSON</div></div>';
+				return;
+			}
+
+			const connected = sync.isConnected();
+
+			// Fetch SHA for writing
+			if (connected) {
+				try {
+					const token = sync._config.token;
+					const resp = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/scripts/autopilot-strategy.json', {
+						headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' }
+					});
+					if (resp.ok) {
+						const data = await resp.json();
+						strategySha = data.sha;
+					}
+				} catch { /* read-only fallback */ }
+			}
+
+			const budgets = strategyData.turnBudgets?.perTask || {};
+			const disabledAttr = connected ? '' : ' disabled';
+
+			// Turn budgets
+			let budgetRows = '';
+			const budgetLabels = {
+				maintenanceDirect: 'Maintenance (direct)',
+				maintenanceBranchPr: 'Maintenance (PR)',
+				feature: 'Feature',
+				explore: 'Explore'
+			};
+			for (const [key, label] of Object.entries(budgetLabels)) {
+				budgetRows += '<div class="strat-row">' +
+					'<span class="strat-label">' + label + '</span>' +
+					'<input type="number" class="strat-input" data-key="' + key + '" value="' + (budgets[key] || 0) + '" min="1" max="50"' + disabledAttr + '>' +
+					'</div>';
+			}
+
+			// Extra budgets
+			const extraBudgets = {
+				preflight: strategyData.turnBudgets?.preflight,
+				scouting: strategyData.turnBudgets?.scouting,
+				metaLearning: strategyData.turnBudgets?.metaLearning,
+				reserve: strategyData.turnBudgets?.reserve
+			};
+			let extraRows = '';
+			for (const [key, val] of Object.entries(extraBudgets)) {
+				const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, function(c) { return c.toUpperCase(); });
+				extraRows += '<div class="strat-row">' +
+					'<span class="strat-label">' + label + '</span>' +
+					'<input type="number" class="strat-input" data-extra="' + key + '" value="' + (val || 0) + '" min="0" max="50"' + disabledAttr + '>' +
+					'</div>';
+			}
+
+			// Ship modes (read-only)
+			const shipModes = strategyData.shipModes || {};
+			let shipHtml = '';
+			for (const [key, mode] of Object.entries(shipModes)) {
+				if (key === '_description') continue;
+				shipHtml += '<div class="strat-ship">' +
+					'<div class="strat-ship-name">' + esc(key) + '</div>' +
+					'<div class="strat-ship-desc">' + esc(mode.description || '') + '</div>' +
+					'</div>';
+			}
+
+			// Process notes (read-only, last 5)
+			const notes = (strategyData.processNotes?.entries || []).slice(-5).reverse();
+			let notesHtml = notes.map(function(n) {
+				return '<div class="strat-note">' +
+					'<span class="strat-note-date">' + esc(n.date) + '</span> ' +
+					esc((n.note || '').slice(0, 200)) + ((n.note || '').length > 200 ? '...' : '') +
+					'</div>';
+			}).join('');
+
+			const connectMsg = !connected ? '<div class="rm-connect-msg"><a href="preferences.html">Connect GitHub</a> to edit strategy</div>' : '';
+			const saveBtn = connected ? '<button class="rm-btn primary" id="strat-save-btn" disabled style="margin-top:12px;width:100%">Save Changes</button>' : '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Autopilot Strategy</div>' +
+				connectMsg +
+				'<div class="strat-sub">Per-task turn budgets</div>' +
+				budgetRows +
+				'<div class="strat-sub">Other budgets</div>' +
+				extraRows +
+				saveBtn +
+				'<div class="strat-sub">Ship modes</div>' +
+				shipHtml +
+				'<div class="strat-sub">Process notes (recent)</div>' +
+				(notesHtml || '<div class="empty-state">No notes</div>') +
+				'</div>';
+
+			// Bind change listeners
+			if (connected) {
+				el.querySelectorAll('.strat-input').forEach(function(input) {
+					input.addEventListener('change', function() {
+						var stratSaveBtn = document.getElementById('strat-save-btn');
+						if (stratSaveBtn) stratSaveBtn.disabled = false;
+					});
+				});
+
+				var stratSaveBtn = document.getElementById('strat-save-btn');
+				if (stratSaveBtn) stratSaveBtn.addEventListener('click', saveStrategy);
+			}
+		}
+
+		async function saveStrategy() {
+			if (!strategyData || !strategySha) return;
+			var saveBtn = document.getElementById('strat-save-btn');
+			if (saveBtn) saveBtn.textContent = 'Saving...';
+
+			// Read values from inputs
+			var el = document.getElementById('strategy');
+			el.querySelectorAll('.strat-input[data-key]').forEach(function(input) {
+				var key = input.dataset.key;
+				var val = parseInt(input.value, 10);
+				if (!isNaN(val) && strategyData.turnBudgets?.perTask) {
+					strategyData.turnBudgets.perTask[key] = val;
+				}
+			});
+			el.querySelectorAll('.strat-input[data-extra]').forEach(function(input) {
+				var key = input.dataset.extra;
+				var val = parseInt(input.value, 10);
+				if (!isNaN(val) && strategyData.turnBudgets) {
+					strategyData.turnBudgets[key] = val;
+				}
+			});
+
+			var content = JSON.stringify(strategyData, null, 2) + '\n';
+			try {
+				var token = sync._config.token;
+				var resp = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/scripts/autopilot-strategy.json', {
+					method: 'PUT',
+					headers: {
+						Authorization: 'Bearer ' + token,
+						'Content-Type': 'application/json',
+						Accept: 'application/vnd.github+json'
+					},
+					body: JSON.stringify({
+						message: 'Update strategy from Autonomy dashboard',
+						content: btoa(unescape(encodeURIComponent(content))),
+						sha: strategySha
+					})
+				});
+				if (!resp.ok) throw new Error('Save failed: ' + resp.status);
+				var data = await resp.json();
+				strategySha = data.content.sha;
+				if (saveBtn) {
+					saveBtn.textContent = 'Saved';
+					saveBtn.disabled = true;
+					setTimeout(function() { saveBtn.textContent = 'Save Changes'; }, 2000);
+				}
+			} catch (err) {
+				if (saveBtn) saveBtn.textContent = 'Failed - retry';
+			}
+		}
+
+		// === Section 6: Run History ===
+		function renderRuns(autopilotLog) {
+			const el = document.getElementById('runs');
+			if (!autopilotLog || !autopilotLog.runs || !autopilotLog.runs.length) {
+				el.innerHTML = '<div class="card"><div class="card-header">Run History</div><div class="empty-state">No runs recorded</div></div>';
+				return;
+			}
+
+			const last10 = autopilotLog.runs.slice(-10).reverse();
+
+			const items = last10.map(function(run, idx) {
+				const outcomeCls = run.outcome === 'completed' ? 'completed' : run.outcome === 'failed' ? 'failed' : 'skipped';
+				const prLink = run.pr ? '<a href="' + REPO_URL + '/pull/' + run.pr + '" target="_blank" rel="noopener">#' + run.pr + '</a>' : '';
+				const turns = run.turns_used ? run.turns_used + ' turns' : '';
+				const files = run.files_changed ? run.files_changed + ' files' : '';
+				const metaParts = [run.date, prLink, turns, files].filter(Boolean);
+
+				let detailHtml = '';
+				if (run.details || run.lesson) {
+					detailHtml = '<div class="run-detail" id="run-detail-' + idx + '">';
+					if (run.details) detailHtml += '<div>' + esc(run.details) + '</div>';
+					if (run.lesson) detailHtml += '<div class="run-lesson">' + esc(run.lesson) + '</div>';
+					detailHtml += '</div>';
+				}
+
+				return '<div class="run-item">' +
+					'<div class="run-head" data-run="' + idx + '">' +
+						'<span class="run-task">' + esc((run.task || '').slice(0, 60)) + '</span>' +
+						'<span class="run-outcome ' + outcomeCls + '">' + esc(run.outcome || 'unknown') + '</span>' +
+					'</div>' +
+					'<div class="run-meta">' + metaParts.join(' &middot; ') + '</div>' +
+					detailHtml +
+					'</div>';
+			}).join('');
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">Run History</div>' +
+				items +
+				'</div>';
+
+			// Expand/collapse
+			el.querySelectorAll('.run-head').forEach(function(head) {
+				head.addEventListener('click', function() {
+					const detail = document.getElementById('run-detail-' + head.dataset.run);
+					if (detail) detail.classList.toggle('open');
+				});
+			});
+		}
+
+		// === Init ===
+		Promise.all([
+			fetchJSON('autonomy-report.json'),
+			fetchJSON('health-report.json'),
+			fetchJSON('pipeline-result.json'),
+			fetchJSON('autopilot-log.json')
+		]).then(function([autonomy, health, pipelineResult, autopilotLog]) {
+			renderHero(autonomy, health);
+			renderLoops(autonomy);
+			renderPipeline(pipelineResult);
+			renderRuns(autopilotLog);
+		});
+
+		// Roadmap and strategy fetch raw from GitHub (async)
+		renderRoadmap();
+		renderStrategy();
+	</script>
+</body>
+</html>
