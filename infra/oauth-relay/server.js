@@ -123,7 +123,13 @@ const server = http.createServer(async (req, res) => {
 				const html = `<!DOCTYPE html>
 <html><head><title>SportSync</title><meta name="viewport" content="width=device-width"></head>
 <body style="font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:80vh;text-align:center">
-<div><p style="font-size:1.2em">Connected!</p><p style="color:#666">Return to SportSync — it will pick up your session automatically.</p></div>
+<div><p style="font-size:1.2em" id="msg">Connected!</p><p style="color:#666" id="hint"></p></div>
+<script>
+try { window.close(); } catch(e) {}
+setTimeout(function() {
+  if (!window.closed) document.getElementById('hint').textContent = 'You can close this tab and return to SportSync.';
+}, 500);
+</script>
 </body></html>`;
 				res.writeHead(200, { 'Content-Type': 'text/html' });
 				return res.end(html);
