@@ -205,12 +205,15 @@ describe("sport mapping completeness", () => {
 				m[1].match(/'(\w+)'/g)?.map((a) => a.replace(/'/g, "")) || [],
 		);
 		const knownSports = new Set([...idMatches, ...aliasMatches]);
+		// Sports removed from SPORT_CONFIG but may linger in events.json
+		// until the next pipeline rebuild cleans them out
+		const removedSports = new Set(['olympics', 'biathlon', 'nordic', 'alpine', 'icehockey']);
 		// Normalization map (mirrors dashboard.js line 107)
 		const normalize = (s) =>
 			s === "f1" ? "formula1" : s === "cs2" ? "esports" : s;
 		const unmapped = [
 			...new Set(events.map((e) => e.sport)),
-		].filter((s) => !knownSports.has(normalize(s)));
+		].filter((s) => !knownSports.has(normalize(s)) && !removedSports.has(normalize(s)));
 		expect(unmapped, `Unmapped sports: ${unmapped.join(", ")}`).toEqual(
 			[],
 		);

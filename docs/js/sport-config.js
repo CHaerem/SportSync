@@ -8,11 +8,6 @@ const SPORT_CONFIG = [
 	{ id: 'formula1', emoji: '🏎️', name: 'F1', color: '#dc2626', aliases: ['f1'] },
 	{ id: 'chess', emoji: '♟️', name: 'Chess', color: '#57534e' },
 	{ id: 'esports', emoji: '🎮', name: 'Esports', color: '#7c3aed' },
-	{ id: 'olympics', emoji: '🏅', name: 'Olympics', color: '#0070b8' },
-	{ id: 'biathlon', emoji: '🎿', name: 'Biathlon', color: '#1d4ed8' },
-	{ id: 'nordic', emoji: '⛷️', name: 'Nordic Skiing', color: '#0f766e' },
-	{ id: 'alpine', emoji: '🎿', name: 'Alpine Skiing', color: '#0369a1' },
-	{ id: 'icehockey', emoji: '🏒', name: 'Ice Hockey', color: '#0c4a6e', aliases: ['hockey', 'ice hockey', 'getligaen', 'get-ligaen'] },
 	{ id: 'cycling', emoji: '🚴', name: 'Cycling', color: '#b45309', aliases: ['cycling', 'road cycling', 'classics', 'tour'] }
 ];
 
