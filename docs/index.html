@@ -89,11 +89,45 @@
 			}
 		}
 
-		@media all and (display-mode: standalone) {
-			/* overscroll-behavior-y: contain removed — allows native pull-to-refresh in PWA */
+		/* === Pull-to-refresh indicator (standalone PWA only) === */
+		#ptr-indicator {
+			position: absolute;
+			top: 0; left: 0; right: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 0;
+			overflow: visible;
+			pointer-events: none;
+			z-index: 100;
+		}
+		#ptr-indicator .ptr-icon {
+			width: 32px; height: 32px;
+			border-radius: 50%;
+			background: var(--bg-card);
+			box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.85rem;
+			opacity: 0;
+			transform: translateY(-40px) rotate(0deg);
+			transition: opacity 0.15s, transform 0.15s;
+		}
+		#ptr-indicator.pulling .ptr-icon {
+			opacity: 1;
+		}
+		#ptr-indicator.refreshing .ptr-icon {
+			opacity: 1;
+			animation: ptr-spin 0.8s linear infinite;
+		}
+		@keyframes ptr-spin {
+			from { transform: translateY(0) rotate(0deg); }
+			to { transform: translateY(0) rotate(360deg); }
 		}
 
 		.page {
+			position: relative;
 			max-width: var(--max-w);
 			margin: 0 auto;
 			padding-bottom: 80px;
@@ -163,7 +197,7 @@
 			border: none;
 			font-size: 1rem;
 			cursor: pointer;
-			padding: 4px;
+			padding: 12px;
 			line-height: 1;
 			opacity: 0.5;
 			transition: opacity 0.15s;
@@ -401,7 +435,7 @@
 		.pills-scroll::-webkit-scrollbar { display: none; }
 		.pill {
 			flex-shrink: 0;
-			padding: 5px 13px;
+			padding: 9px 13px;
 			border-radius: 100px;
 			border: 1.5px solid var(--border);
 			background: transparent;
@@ -448,7 +482,7 @@
 		}
 		.lead-event {
 			display: flex; align-items: center; gap: 10px;
-			padding: 9px 0; border-top: 1px solid var(--border-light);
+			padding: 13px 0; border-top: 1px solid var(--border-light);
 			font-size: 0.76rem; cursor: pointer;
 		}
 		.lead-event:hover { background: var(--bg-warm); margin: 0 -8px; padding: 9px 8px; border-radius: 6px; }
@@ -517,7 +551,7 @@
 		}
 		.stream-link {
 			font-size: 0.58rem; color: var(--muted); border: 1px solid var(--border);
-			border-radius: 20px; padding: 4px 12px; text-decoration: none; font-weight: 500;
+			border-radius: 20px; padding: 8px 14px; text-decoration: none; font-weight: 500;
 			transition: all 0.15s;
 		}
 		.stream-link:hover { border-color: var(--accent); color: var(--accent); }
@@ -655,7 +689,7 @@
 		.result-row:last-child { border-bottom: none; }
 		.result-row-main {
 			display: flex; align-items: center; gap: 10px;
-			padding: 10px 0;
+			padding: 12px 0;
 		}
 		.result-row-logos { display: flex; gap: 3px; flex-shrink: 0; }
 		.result-row-logo { width: 20px; height: 20px; object-fit: contain; }
@@ -853,14 +887,14 @@
 		.exp-streaming { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
 		.exp-stream-badge {
 			font-size: 0.58rem; color: var(--muted); border: 1px solid var(--border);
-			border-radius: 20px; padding: 4px 12px; text-decoration: none; font-weight: 500;
+			border-radius: 20px; padding: 8px 14px; text-decoration: none; font-weight: 500;
 			display: inline-block; transition: all 0.15s;
 		}
 		.exp-stream-badge:hover { border-color: var(--accent); color: var(--accent); }
 		.exp-fav-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 		.exp-fav-btn {
 			background: none; border: 1px solid var(--border); border-radius: 20px;
-			padding: 4px 12px; font-size: 0.58rem; color: var(--muted); cursor: pointer;
+			padding: 8px 14px; font-size: 0.58rem; color: var(--muted); cursor: pointer;
 			font-weight: 500; transition: all 0.15s;
 		}
 		.exp-fav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -1052,7 +1086,7 @@
 		.feat-item.text { color: var(--muted); }
 		.feat-expand {
 			background: none; border: none; color: var(--accent); font-size: 0.68rem;
-			cursor: pointer; margin-top: 10px; padding: 0; font-weight: 400; transition: opacity 0.15s;
+			cursor: pointer; margin-top: 10px; padding: 10px 0; font-weight: 400; transition: opacity 0.15s;
 		}
 		.feat-expand:hover { opacity: 0.7; }
 		.feat-expand-content { display: none; }
@@ -1088,11 +1122,11 @@
 		.pick-feedback { display: flex; gap: 4px; margin-top: 4px; }
 		.pick-fb-btn {
 			background: none; border: 1px solid transparent; border-radius: 4px;
-			color: var(--muted); cursor: pointer; font-size: 0.55rem; padding: 1px 6px; line-height: 1.4; opacity: 0.4;
+			color: var(--muted); cursor: pointer; font-size: 0.68rem; padding: 8px 10px; line-height: 1.4; opacity: 0.4;
 		}
 		.pick-fb-btn:hover { opacity: 0.8; border-color: var(--border); }
 		.pick-fb-btn.active { opacity: 1; color: var(--accent); border-color: var(--accent); }
-		.watch-plan-more { background: none; border: none; color: var(--accent); font-size: 0.68rem; cursor: pointer; margin-top: 8px; padding: 0; font-weight: 400; transition: opacity 0.15s; }
+		.watch-plan-more { background: none; border: none; color: var(--accent); font-size: 0.68rem; cursor: pointer; margin-top: 8px; padding: 10px 0; font-weight: 400; transition: opacity 0.15s; }
 		.watch-plan-more:hover { opacity: 0.7; }
 		.watch-plan-collapsed { font-size: 0.72rem; color: var(--muted); padding: 8px 4px; border-top: 1px solid var(--border-light); }
 		.watch-plan-collapsed-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
@@ -1129,7 +1163,7 @@
 		.news-more-items.open { display: contents; }
 		.news-show-more {
 			background: none; border: none; color: var(--muted); font-size: 0.62rem;
-			cursor: pointer; padding: 6px 0 2px; font-family: var(--font); font-weight: 500;
+			cursor: pointer; padding: 10px 0; font-family: var(--font); font-weight: 500;
 			transition: color 0.15s;
 		}
 		.news-show-more:hover { color: var(--accent); }
@@ -1170,7 +1204,7 @@
 
 		/* === Feedback === */
 		.fb-row { display: flex; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
-		.fb-btn { background: none; border: 1px solid transparent; cursor: pointer; font-size: 0.58rem; padding: 2px 8px; opacity: 0.35; border-radius: 3px; line-height: 1.4; color: var(--muted); margin-left: auto; }
+		.fb-btn { background: none; border: 1px solid transparent; cursor: pointer; font-size: 0.58rem; padding: 8px 10px; opacity: 0.35; border-radius: 3px; line-height: 1.4; color: var(--muted); margin-left: auto; }
 		.fb-btn:hover { opacity: 0.7; border-color: var(--border); }
 		.fb-btn.active { opacity: 0.6; }
 
@@ -1218,12 +1252,12 @@
 </head>
 <body>
 	<div class="page">
+		<div id="ptr-indicator"><span class="ptr-icon">&#x21bb;</span></div>
 		<div class="masthead">
 			<div class="logo">Sport<span class="logo-sync">Sync</span></div>
 			<div class="masthead-right">
 				<div class="masthead-meta" id="masthead-meta"></div>
-				<button id="refreshBtn" aria-label="Refresh" style="display:none;background:none;border:none;font-size:1rem;cursor:pointer;padding:4px;line-height:1;opacity:0.5;transition:opacity 0.15s" title="Refresh data">&#x21bb;</button>
-				<a href="status.html" class="status-link" title="System status" aria-label="System status" style="width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block;opacity:0.6;transition:opacity 0.15s"></a>
+				<a href="status.html" class="status-link" title="System status" aria-label="System status" style="width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block;opacity:0.6;transition:opacity 0.15s;padding:10px;margin:-10px"></a>
 				<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
 			</div>
 		</div>

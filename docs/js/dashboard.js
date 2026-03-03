@@ -56,7 +56,7 @@ class Dashboard {
 	async init() {
 		this.bindThemeToggle();
 		this._monitorBrokenImages();
-		this._initRefreshButton();
+		this._initPullToRefresh();
 		// Request persistent storage to prevent auto-eviction of preferences
 		if (navigator.storage?.persist) {
 			navigator.storage.persist().catch(() => {});
@@ -4073,19 +4073,66 @@ class Dashboard {
 		});
 	}
 
-	_initRefreshButton() {
-		const btn = document.getElementById('refreshBtn');
-		if (!btn) return;
-		// Show refresh button in standalone PWA mode (no browser refresh available)
+	_initPullToRefresh() {
 		const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-		if (isStandalone) {
-			btn.style.display = '';
-			btn.addEventListener('click', () => {
+		if (!isStandalone) return;
+
+		const indicator = document.getElementById('ptr-indicator');
+		if (!indicator) return;
+		const icon = indicator.querySelector('.ptr-icon');
+
+		let startY = 0;
+		let pulling = false;
+		let pullDist = 0;
+		const threshold = 60;
+		const maxPull = 80;
+
+		window.addEventListener('touchstart', (e) => {
+			if (window.scrollY === 0 && e.touches.length === 1) {
+				startY = e.touches[0].clientY;
+				pulling = true;
+				pullDist = 0;
+			}
+		}, { passive: true });
+
+		window.addEventListener('touchmove', (e) => {
+			if (!pulling) return;
+			const dist = e.touches[0].clientY - startY;
+			if (dist <= 0 || window.scrollY > 0) {
+				pulling = false;
+				pullDist = 0;
+				indicator.classList.remove('pulling');
+				if (icon) icon.style.transform = '';
+				return;
+			}
+			e.preventDefault();
+			pullDist = Math.min(dist, maxPull);
+			const progress = pullDist / maxPull;
+			indicator.classList.add('pulling');
+			if (icon) {
+				const translateY = progress * maxPull - 40;
+				const rotation = progress * 360;
+				icon.style.transform = `translateY(${translateY}px) rotate(${rotation}deg)`;
+			}
+		}, { passive: false });
+
+		window.addEventListener('touchend', () => {
+			if (!pulling && !indicator.classList.contains('pulling')) return;
+			pulling = false;
+
+			if (pullDist >= threshold) {
+				indicator.classList.remove('pulling');
+				indicator.classList.add('refreshing');
+				if (icon) icon.style.transform = '';
 				['events','featured','standings','watchPlan','rssDigest','recentResults','leagueConfig','brackets']
 					.forEach(k => sessionStorage.removeItem('ss_' + k));
-				window.location.reload();
-			});
-		}
+				setTimeout(() => window.location.reload(), 200);
+			} else {
+				indicator.classList.remove('pulling');
+				if (icon) icon.style.transform = '';
+			}
+			pullDist = 0;
+		}, { passive: true });
 	}
 
 	bindThemeToggle() {
