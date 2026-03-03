@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-03-03T19:19:59.100Z",
+  "generatedAt": "2026-03-03T22:11:44.901Z",
   "patternsDetected": 0,
   "patterns": [],
   "issueCodeHistory": {
     "component_unresolvable": {
-      "count": 49,
+      "count": 51,
       "firstSeen": "2026-02-17T14:51:01.631Z",
-      "lastSeen": "2026-03-01T18:17:09.976Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "streaming_low_match_rate": {
-      "count": 244,
+      "count": 245,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-03-03T01:58:09.136Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "ux_eval_fallback": {
-      "count": 200,
+      "count": 201,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-03T19:19:59.043Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "missing_snapshot": {
       "count": 12,
@@ -29,9 +29,9 @@
       "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "snapshot_event_mismatch": {
-      "count": 44,
+      "count": 45,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-03T18:22:53.841Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "bracket_stale_matches": {
       "count": 43,
@@ -59,9 +59,9 @@
       "lastSeen": "2026-03-01T19:09:18.054Z"
     },
     "invisible_events": {
-      "count": 46,
+      "count": 47,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-03T19:19:59.043Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "sport_count_drop": {
       "count": 1,
@@ -69,14 +69,14 @@
       "lastSeen": "2026-03-01T07:17:43.272Z"
     },
     "stale_data": {
-      "count": 71,
+      "count": 72,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-03T19:19:59.043Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "chronic_data_retention": {
-      "count": 67,
+      "count": 68,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-03T19:19:59.043Z"
+      "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "stale_output": {
       "count": 10,
@@ -92,14 +92,14 @@
   "interventionEffectiveness": {
     "sanityScore": {
       "fires": 12,
-      "improved": 0,
-      "unchanged": 12,
+      "improved": 1,
+      "unchanged": 11,
       "worsened": 0,
-      "effectivenessRate": 0
+      "effectivenessRate": 0.08
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-03-03T19:19:59.100Z",
+    "recordedAt": "2026-03-03T22:11:44.901Z",
     "moduleCount": 66,
     "avgModuleSize": 328,
     "pipelineSteps": 28,

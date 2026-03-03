@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T21:13:15.368Z",
+  "generatedAt": "2026-03-03T22:11:44.770Z",
   "eventCount": 32,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 18,
-      "previousCount": 19,
-      "delta": -1
+      "previousCount": 18,
+      "delta": 0
     },
     "golf": {
       "count": 2,
@@ -40,35 +40,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4267,
+      "ageMinutes": 4325,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 0,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -88,7 +88,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 24,
+    "footballCount": 28,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -104,8 +104,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-03-03: 5 events but events.json has 0"
+      "2 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -187,7 +186,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4267 minutes old"
+      "message": "esports.json: data is 4325 minutes old"
     },
     {
       "severity": "warning",
@@ -201,16 +200,6 @@
     },
     {
       "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Barcelona vs Atlético Madrid has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "component_unresolvable",
-      "message": "match-preview component for Wolverhampton Wanderers vs Liverpool has no matching event in events.json"
-    },
-    {
-      "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (esports)"
     },
@@ -218,11 +207,6 @@
       "severity": "info",
       "code": "empty_day",
       "message": "2026-02-26: no events or results for day navigator"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-03: 5 events but events.json has 0"
     },
     {
       "severity": "info",
@@ -250,23 +234,23 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T21:13:15.478Z",
+    "computedAt": "2026-03-03T22:11:44.909Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
