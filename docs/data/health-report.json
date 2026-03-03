@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T14:22:18.821Z",
-  "eventCount": 66,
+  "generatedAt": "2026-03-03T14:31:29.784Z",
+  "eventCount": 35,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -17,32 +17,12 @@
       "previousCount": 23,
       "delta": 0
     },
-    "icehockey": {
-      "count": 12,
-      "previousCount": 12,
-      "delta": 0
-    },
-    "biathlon": {
-      "count": 6,
-      "previousCount": 6,
-      "delta": 0
-    },
     "f1": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "olympics": {
-      "count": 5,
-      "previousCount": 5,
-      "delta": 0
-    },
     "cycling": {
-      "count": 8,
-      "previousCount": 8,
-      "delta": 0
-    },
-    "alpine": {
       "count": 8,
       "previousCount": 8,
       "delta": 0
@@ -51,6 +31,26 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "icehockey": {
+      "count": 0,
+      "previousCount": 12,
+      "delta": -12
+    },
+    "biathlon": {
+      "count": 0,
+      "previousCount": 6,
+      "delta": -6
+    },
+    "olympics": {
+      "count": 0,
+      "previousCount": 5,
+      "delta": -5
+    },
+    "alpine": {
+      "count": 0,
+      "previousCount": 8,
+      "delta": -8
     },
     "tennis": {
       "count": 0,
@@ -64,7 +64,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3856,
+      "ageMinutes": 3865,
       "stale": true
     },
     "f1.json": {
@@ -72,11 +72,11 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2415,
+      "ageMinutes": 2424,
       "stale": true
     },
     "tennis.json": {
@@ -93,7 +93,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -139,30 +139,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 23,
+    "sevenDay": 56,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 56430,
-    "stepCount": 21,
+    "totalDuration": 236595,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28826,
-        "share": 51
-      },
-      {
-        "name": "fetch-results",
-        "duration": 41058,
-        "share": 73
+        "name": "generate-featured",
+        "duration": 117407,
+        "share": 50
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -196,6 +196,26 @@
   ],
   "issues": [
     {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "icehockey: 0 events (was 12)"
+    },
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "biathlon: 0 events (was 6)"
+    },
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "olympics: 0 events (was 5)"
+    },
+    {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "alpine: 0 events (was 8)"
+    },
+    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "tennis: data file exists but 0 events in events.json"
@@ -203,22 +223,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 3856 minutes old"
+      "message": "esports.json: data is 3865 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2415 minutes old"
+      "message": "golf.json: data is 2424 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 43 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 44 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 26 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 27 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -231,6 +251,11 @@
       "message": "1 tournament(s) lack league theming: Cycling Grand Tours & Norwegian Races 2026"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 23%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -238,12 +263,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 50% of total pipeline time (117s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (41s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -251,23 +276,23 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T14:22:18.954Z",
+    "computedAt": "2026-03-03T14:31:29.948Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 0,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 6 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is critical with 4 critical, 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

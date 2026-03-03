@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T14:22:17.027Z",
+  "generatedAt": "2026-03-03T14:31:10.493Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,24 +10,24 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 116647,
+    "generationMs": 120246,
     "tokenUsage": {
-      "input": 37272,
-      "output": 6928,
-      "cacheCreation": 37269,
-      "cacheRead": 0,
-      "total": 44200,
-      "costUSD": 0.40614624999999993,
+      "input": 35704,
+      "output": 7610,
+      "cacheCreation": 17264,
+      "cacheRead": 18437,
+      "total": 43314,
+      "costUSD": 0.3073835,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -46,13 +46,13 @@
     }
   },
   "results": {
-    "score": 90,
+    "score": 88,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
       "recapHeadlineRate": 0,
-      "favoriteCoverage": 0.5,
+      "favoriteCoverage": 0.333,
       "golfPresent": 1,
       "footballCount": 28
     },
@@ -66,14 +66,14 @@
     "quotaTier": 1,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 66,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 66,
+      "totalEvents": 35,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 66,
+    "totalEvents": 35,
     "skipStats": {
-      "total": 66,
-      "unchanged": 66,
+      "total": 35,
+      "unchanged": 35,
       "enriched": 0,
       "skipRate": 1
     },
@@ -106,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 37324,
-      "output": 6160,
+      "input": 35704,
+      "output": 7610,
       "calls": 1,
-      "total": 43484,
+      "total": 43314,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-03T06:28:24.459Z"
+    "lastRun": "2026-03-03T14:31:10.837Z"
   },
   "discovery": {
     "tokenUsage": {
