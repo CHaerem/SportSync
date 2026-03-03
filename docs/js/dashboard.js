@@ -56,6 +56,7 @@ class Dashboard {
 	async init() {
 		this.bindThemeToggle();
 		this._monitorBrokenImages();
+		this._initRefreshButton();
 		// Request persistent storage to prevent auto-eviction of preferences
 		if (navigator.storage?.persist) {
 			navigator.storage.persist().catch(() => {});
@@ -4070,6 +4071,21 @@ class Dashboard {
 				);
 			});
 		});
+	}
+
+	_initRefreshButton() {
+		const btn = document.getElementById('refreshBtn');
+		if (!btn) return;
+		// Show refresh button in standalone PWA mode (no browser refresh available)
+		const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+		if (isStandalone) {
+			btn.style.display = '';
+			btn.addEventListener('click', () => {
+				['events','featured','standings','watchPlan','rssDigest','recentResults','leagueConfig','brackets']
+					.forEach(k => sessionStorage.removeItem('ss_' + k));
+				window.location.reload();
+			});
+		}
 	}
 
 	bindThemeToggle() {

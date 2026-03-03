@@ -106,13 +106,28 @@ describe("OAuth Relay Server", () => {
 			});
 			expect(res.status).toBe(302);
 			expect(res.headers.location).toContain("&state=");
-			// Decode the state to verify it contains the redirect URL
 			const loc = new URL(res.headers.location);
-			const state = loc.searchParams.get("state");
+			const state = decodeURIComponent(loc.searchParams.get("state"));
+			// redirect_to is URL-encoded as the state value
 			expect(decodeURIComponent(state)).toBe(redirectTo);
 		});
 
-		it("omits state when no redirect_to provided", async () => {
+		it("passes session as state with session: prefix", async () => {
+			const url = new URL("/auth?session=abc123", baseUrl);
+			const res = await new Promise((resolve) => {
+				const req = http.request(url, { method: "GET" }, (res) => {
+					resolve({ status: res.statusCode, headers: res.headers });
+					res.resume();
+				});
+				req.end();
+			});
+			expect(res.status).toBe(302);
+			const loc = new URL(res.headers.location);
+			const state = decodeURIComponent(loc.searchParams.get("state"));
+			expect(state).toBe("session:abc123");
+		});
+
+		it("omits state when no redirect_to or session provided", async () => {
 			const url = new URL("/auth", baseUrl);
 			const res = await new Promise((resolve) => {
 				const req = http.request(url, { method: "GET" }, (res) => {
@@ -130,6 +145,25 @@ describe("OAuth Relay Server", () => {
 			const res = await request("/callback");
 			expect(res.status).toBe(400);
 			expect(res.json()).toEqual({ error: "Missing code parameter" });
+		});
+	});
+
+	describe("GET /token", () => {
+		it("returns 400 when session is missing", async () => {
+			const res = await request("/token");
+			expect(res.status).toBe(400);
+			expect(res.json()).toEqual({ error: "Missing session parameter" });
+		});
+
+		it("returns 404 with pending:true when no token stored", async () => {
+			const res = await request("/token?session=nonexistent");
+			expect(res.status).toBe(404);
+			expect(res.json()).toEqual({ pending: true });
+		});
+
+		it("includes CORS headers on token endpoint", async () => {
+			const res = await request("/token?session=test");
+			expect(res.headers["access-control-allow-origin"]).toBe("https://chaerem.github.io");
 		});
 	});
 

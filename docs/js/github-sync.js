@@ -76,17 +76,41 @@ class GitHubSync {
 
 	/**
 	 * Connect via OAuth.
-	 * In standalone PWA mode: redirects the current page to the relay (redirect flow).
+	 * In standalone PWA mode: opens in-app browser + polls relay for token (session flow).
 	 * In browser mode: opens a popup and waits for postMessage (popup flow).
 	 * @returns {Promise<{user: object, restored: boolean, restoreReason?: string, keys?: string[]}>}
 	 */
 	async connect() {
-		// Standalone PWA: full-page redirect (popups don't work in standalone mode)
+		// Standalone PWA: session-polling flow
+		// iOS/Android in-app browser doesn't share localStorage with the PWA,
+		// so we use a server-side session: open OAuth in new window, poll /token endpoint
 		if (this._isStandalone()) {
-			const returnUrl = window.location.href.split('#')[0];
-			window.location.href = `${this.OAUTH_RELAY}/auth?redirect_to=${encodeURIComponent(returnUrl)}`;
-			// Navigation will happen — return a never-resolving promise to prevent UI updates
-			return new Promise(() => {});
+			const sessionId = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
+			window.open(`${this.OAUTH_RELAY}/auth?session=${sessionId}`, '_blank');
+
+			const token = await new Promise((resolve, reject) => {
+				let attempts = 0;
+				const poll = setInterval(async () => {
+					attempts++;
+					if (attempts > 150) { // 5 minutes timeout
+						clearInterval(poll);
+						reject(new Error('Sign-in timed out — please try again'));
+						return;
+					}
+					try {
+						const resp = await fetch(`${this.OAUTH_RELAY}/token?session=${sessionId}`);
+						if (resp.ok) {
+							const data = await resp.json();
+							if (data.token) {
+								clearInterval(poll);
+								resolve(data.token);
+							}
+						}
+					} catch { /* network error, keep polling */ }
+				}, 2000);
+			});
+
+			return this.connectWithToken(token);
 		}
 
 		// Browser: popup flow

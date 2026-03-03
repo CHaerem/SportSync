@@ -449,7 +449,7 @@ describe("GitHubSync _isStandalone", () => {
 	});
 });
 
-describe("GitHubSync connect standalone redirect", () => {
+describe("GitHubSync connect standalone session-polling", () => {
 	let sync;
 
 	beforeEach(() => {
@@ -459,18 +459,16 @@ describe("GitHubSync connect standalone redirect", () => {
 		window._ssPreferences = new PreferencesManager();
 	});
 
-	it("redirects to OAuth relay in standalone mode", () => {
+	it("opens OAuth relay with session param in standalone mode", () => {
 		window.matchMedia = vi.fn(() => ({ matches: true }));
-		const originalHref = window.location?.href || 'https://chaerem.github.io/SportSync/preferences.html';
+		window.open = vi.fn();
+		// Start connect but don't await (it will poll forever without a mocked response)
+		sync.connect().catch(() => {}); // ignore timeout
 
-		// Mock location
-		const locationMock = { href: originalHref, pathname: '/SportSync/preferences.html', search: '' };
-		Object.defineProperty(window, 'location', { value: locationMock, writable: true, configurable: true });
-
-		sync.connect(); // fire-and-forget (returns never-resolving promise)
-
-		expect(locationMock.href).toContain('/auth?redirect_to=');
-		expect(locationMock.href).toContain(encodeURIComponent('https://chaerem.github.io/SportSync/preferences.html'));
+		expect(window.open).toHaveBeenCalledTimes(1);
+		const openUrl = window.open.mock.calls[0][0];
+		expect(openUrl).toContain('/auth?session=');
+		expect(window.open.mock.calls[0][1]).toBe('_blank');
 	});
 });
 
