@@ -80,7 +80,6 @@ describe("OAuth Relay Server", () => {
 
 	describe("GET /auth", () => {
 		it("redirects to GitHub OAuth authorize page", async () => {
-			// http.request follows redirects by default, but we can check the status
 			const url = new URL("/auth", baseUrl);
 			const res = await new Promise((resolve) => {
 				const req = http.request(url, { method: "GET" }, (res) => {
@@ -93,6 +92,36 @@ describe("OAuth Relay Server", () => {
 			expect(res.headers.location).toContain("github.com/login/oauth/authorize");
 			expect(res.headers.location).toContain("client_id=test_client_id");
 			expect(res.headers.location).toContain("scope=public_repo");
+		});
+
+		it("passes redirect_to as state parameter", async () => {
+			const redirectTo = "https://chaerem.github.io/SportSync/preferences.html";
+			const url = new URL(`/auth?redirect_to=${encodeURIComponent(redirectTo)}`, baseUrl);
+			const res = await new Promise((resolve) => {
+				const req = http.request(url, { method: "GET" }, (res) => {
+					resolve({ status: res.statusCode, headers: res.headers });
+					res.resume();
+				});
+				req.end();
+			});
+			expect(res.status).toBe(302);
+			expect(res.headers.location).toContain("&state=");
+			// Decode the state to verify it contains the redirect URL
+			const loc = new URL(res.headers.location);
+			const state = loc.searchParams.get("state");
+			expect(decodeURIComponent(state)).toBe(redirectTo);
+		});
+
+		it("omits state when no redirect_to provided", async () => {
+			const url = new URL("/auth", baseUrl);
+			const res = await new Promise((resolve) => {
+				const req = http.request(url, { method: "GET" }, (res) => {
+					resolve({ status: res.statusCode, headers: res.headers });
+					res.resume();
+				});
+				req.end();
+			});
+			expect(res.headers.location).not.toContain("&state=");
 		});
 	});
 

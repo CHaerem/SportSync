@@ -290,6 +290,9 @@ describe("GitHubSync connect (OAuth popup flow)", () => {
 		fetch.mockReset();
 		window.addEventListener.mockClear();
 		window.removeEventListener.mockClear();
+		// Mock non-standalone mode so popup flow is used
+		window.matchMedia = vi.fn(() => ({ matches: false }));
+		window.navigator.standalone = undefined;
 		sync = new GitHubSync();
 		window._ssPreferences = new PreferencesManager();
 	});
@@ -347,6 +350,127 @@ describe("GitHubSync connect (OAuth popup flow)", () => {
 		expect(sync._config.token).toBe("gho_abc123");
 		expect(result.restored).toBe(false);
 		expect(result.restoreReason).toBe("no-sync-issue");
+	});
+});
+
+describe("GitHubSync connectWithToken", () => {
+	let sync;
+
+	beforeEach(() => {
+		localStorageMock.clear();
+		localStorageMock.getItem.mockClear();
+		localStorageMock.setItem.mockClear();
+		fetch.mockReset();
+		sync = new GitHubSync();
+		window._ssPreferences = new PreferencesManager();
+	});
+
+	it("validates token and stores user info", async () => {
+		fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({ login: "tokenuser", avatar_url: "https://example.com/a.png" }),
+		});
+		// restoreFromSync: no sync issue
+		fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => [],
+		});
+
+		const result = await sync.connectWithToken("gho_test_token");
+		expect(sync.isConnected()).toBe(true);
+		expect(sync._config.token).toBe("gho_test_token");
+		expect(result.user.login).toBe("tokenuser");
+		expect(result.user.avatar).toBe("https://example.com/a.png");
+	});
+
+	it("throws on invalid token", async () => {
+		fetch.mockResolvedValueOnce({
+			ok: false,
+			status: 401,
+			text: async () => "Unauthorized",
+		});
+
+		await expect(sync.connectWithToken("bad_token")).rejects.toThrow("Invalid token from OAuth");
+		expect(sync.isConnected()).toBe(false);
+	});
+
+	it("auto-restores preferences after connecting", async () => {
+		const prefs = {
+			favoriteTeams: { football: ["Lyn"] },
+			sportPreferences: { football: "high" },
+		};
+
+		// Validate token
+		fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({ login: "user2", avatar_url: "" }),
+		});
+		// Find sync issue
+		fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => [{ number: 55 }],
+		});
+		// Fetch issue body
+		fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({ body: makeSyncIssueBody({ preferences: prefs }) }),
+		});
+
+		const result = await sync.connectWithToken("gho_restore_test");
+		expect(result.restored).toBe(true);
+		expect(result.keys).toContain("favoriteTeams");
+		expect(window._ssPreferences.preferences.favoriteTeams.football).toEqual(["Lyn"]);
+	});
+});
+
+describe("GitHubSync _isStandalone", () => {
+	let sync;
+
+	beforeEach(() => {
+		localStorageMock.clear();
+		sync = new GitHubSync();
+	});
+
+	it("returns false in normal browser", () => {
+		window.matchMedia = vi.fn(() => ({ matches: false }));
+		window.navigator.standalone = undefined;
+		expect(sync._isStandalone()).toBe(false);
+	});
+
+	it("returns true when display-mode is standalone", () => {
+		window.matchMedia = vi.fn(() => ({ matches: true }));
+		expect(sync._isStandalone()).toBe(true);
+	});
+
+	it("returns true when navigator.standalone is true (iOS)", () => {
+		window.matchMedia = vi.fn(() => ({ matches: false }));
+		window.navigator.standalone = true;
+		expect(sync._isStandalone()).toBe(true);
+	});
+});
+
+describe("GitHubSync connect standalone redirect", () => {
+	let sync;
+
+	beforeEach(() => {
+		localStorageMock.clear();
+		fetch.mockReset();
+		sync = new GitHubSync();
+		window._ssPreferences = new PreferencesManager();
+	});
+
+	it("redirects to OAuth relay in standalone mode", () => {
+		window.matchMedia = vi.fn(() => ({ matches: true }));
+		const originalHref = window.location?.href || 'https://chaerem.github.io/SportSync/preferences.html';
+
+		// Mock location
+		const locationMock = { href: originalHref, pathname: '/SportSync/preferences.html', search: '' };
+		Object.defineProperty(window, 'location', { value: locationMock, writable: true, configurable: true });
+
+		sync.connect(); // fire-and-forget (returns never-resolving promise)
+
+		expect(locationMock.href).toContain('/auth?redirect_to=');
+		expect(locationMock.href).toContain(encodeURIComponent('https://chaerem.github.io/SportSync/preferences.html'));
 	});
 });
 

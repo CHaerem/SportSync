@@ -60,6 +60,14 @@ class Dashboard {
 		if (navigator.storage?.persist) {
 			navigator.storage.persist().catch(() => {});
 		}
+		// On page reload (e.g. pull-to-refresh), clear session cache so fresh data is fetched
+		try {
+			const navEntry = performance.getEntriesByType?.('navigation')?.[0];
+			if (navEntry?.type === 'reload') {
+				['events','featured','standings','watchPlan','rssDigest','recentResults','leagueConfig','brackets']
+					.forEach(k => sessionStorage.removeItem('ss_' + k));
+			}
+		} catch { /* ignore — performance API not available */ }
 		await this.loadEvents();
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 		this.startLivePolling();

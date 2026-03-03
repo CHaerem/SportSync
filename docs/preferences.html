@@ -629,6 +629,37 @@
 			});
 		}
 
+		// Handle OAuth redirect flow (standalone PWA returns here with token in hash)
+		async function handleOAuthRedirect() {
+			const hash = location.hash;
+			const tokenMatch = hash.match(/sportsync-token=([^&]+)/);
+			if (!tokenMatch) return false;
+
+			const token = tokenMatch[1];
+			// Clear token from URL (security: don't leave it in address bar / history)
+			history.replaceState(null, '', location.pathname + location.search);
+
+			try {
+				const result = await sync.connectWithToken(token);
+				sync.startAutoSync();
+				renderGitHub();
+				if (result.restored) {
+					renderSports();
+					renderFavorites();
+					const successEl = document.getElementById('gh-success');
+					if (successEl) {
+						successEl.textContent = 'Preferences restored from last sync';
+						successEl.style.display = 'block';
+						setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+					}
+				}
+				return true;
+			} catch (err) {
+				console.warn('[OAuth redirect] failed:', err.message);
+				return false;
+			}
+		}
+
 		// Render all sections
 		renderGitHub();
 		renderSports();
@@ -637,10 +668,12 @@
 		renderEngagement();
 		renderFeedback();
 
-		// Start auto-sync if connected
-		if (sync.isConnected()) {
-			sync.startAutoSync();
-		}
+		// Check for OAuth redirect token, then start auto-sync
+		handleOAuthRedirect().then((handled) => {
+			if (!handled && sync.isConnected()) {
+				sync.startAutoSync();
+			}
+		});
 	</script>
 </body>
 </html>

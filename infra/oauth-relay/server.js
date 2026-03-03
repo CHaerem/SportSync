@@ -68,7 +68,10 @@ const server = http.createServer(async (req, res) => {
 	if (url.pathname === '/auth') {
 		if (!CLIENT_ID) return json(res, 500, { error: 'OAuth not configured' });
 		const redirectUri = `${PUBLIC_URL}/callback`;
-		const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=public_repo`;
+		const redirectTo = url.searchParams.get('redirect_to') || '';
+		const state = redirectTo ? encodeURIComponent(redirectTo) : '';
+		let authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=public_repo`;
+		if (state) authUrl += `&state=${state}`;
 		res.writeHead(302, { Location: authUrl });
 		return res.end();
 	}
@@ -83,7 +86,19 @@ const server = http.createServer(async (req, res) => {
 				return json(res, 400, { error: tokenData.error_description || tokenData.error });
 			}
 			const token = tokenData.access_token;
-			// Render a page that sends the token back to the opener via postMessage
+
+			// If state contains a redirect URL (PWA standalone flow), redirect back with token in hash
+			const state = url.searchParams.get('state');
+			if (state) {
+				const redirectTo = decodeURIComponent(state);
+				// Append token as hash fragment (never sent to server, stays client-side)
+				const separator = redirectTo.includes('#') ? '&' : '#';
+				const redirectUrl = `${redirectTo}${separator}sportsync-token=${token}`;
+				res.writeHead(302, { Location: redirectUrl });
+				return res.end();
+			}
+
+			// Popup flow: send token back to opener via postMessage
 			const html = `<!DOCTYPE html>
 <html><head><title>SportSync</title></head>
 <body><p>Connecting...</p>

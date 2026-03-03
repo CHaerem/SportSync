@@ -41,12 +41,55 @@ class GitHubSync {
 	}
 
 	/**
-	 * Connect via OAuth popup flow.
-	 * Opens the relay's /auth endpoint in a popup, waits for the token via postMessage.
-	 * Then validates the token, stores it, and auto-restores preferences from the latest sync issue.
+	 * Detect if running as an installed PWA (standalone mode).
+	 */
+	_isStandalone() {
+		return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+	}
+
+	/**
+	 * Validate a token, store credentials, and auto-restore preferences.
+	 * Shared by both the popup flow and the redirect flow.
+	 * @param {string} token - GitHub OAuth access token
+	 * @returns {Promise<{user: object, restored: boolean, restoreReason?: string, keys?: string[]}>}
+	 */
+	async connectWithToken(token) {
+		const resp = await fetch(`${this.API}/user`, {
+			headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+		});
+		if (!resp.ok) throw new Error('Invalid token from OAuth');
+		const userData = await resp.json();
+
+		this._config.token = token;
+		this._config.user = { login: userData.login, avatar: userData.avatar_url };
+		this._save();
+
+		const restoreResult = await this.restoreFromSync();
+
+		return {
+			user: this._config.user,
+			restored: restoreResult.restored,
+			restoreReason: restoreResult.reason,
+			keys: restoreResult.keys
+		};
+	}
+
+	/**
+	 * Connect via OAuth.
+	 * In standalone PWA mode: redirects the current page to the relay (redirect flow).
+	 * In browser mode: opens a popup and waits for postMessage (popup flow).
 	 * @returns {Promise<{user: object, restored: boolean, restoreReason?: string, keys?: string[]}>}
 	 */
 	async connect() {
+		// Standalone PWA: full-page redirect (popups don't work in standalone mode)
+		if (this._isStandalone()) {
+			const returnUrl = window.location.href.split('#')[0];
+			window.location.href = `${this.OAUTH_RELAY}/auth?redirect_to=${encodeURIComponent(returnUrl)}`;
+			// Navigation will happen — return a never-resolving promise to prevent UI updates
+			return new Promise(() => {});
+		}
+
+		// Browser: popup flow
 		const popup = window.open(
 			`${this.OAUTH_RELAY}/auth`,
 			'sportsync-oauth',
@@ -77,26 +120,7 @@ class GitHubSync {
 			}, 500);
 		});
 
-		// Validate token against GitHub API
-		const resp = await fetch(`${this.API}/user`, {
-			headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
-		});
-		if (!resp.ok) throw new Error('Invalid token from OAuth');
-		const userData = await resp.json();
-
-		this._config.token = token;
-		this._config.user = { login: userData.login, avatar: userData.avatar_url };
-		this._save();
-
-		// Auto-restore preferences from latest sync issue
-		const restoreResult = await this.restoreFromSync();
-
-		return {
-			user: this._config.user,
-			restored: restoreResult.restored,
-			restoreReason: restoreResult.reason,
-			keys: restoreResult.keys
-		};
+		return this.connectWithToken(token);
 	}
 
 	/**
