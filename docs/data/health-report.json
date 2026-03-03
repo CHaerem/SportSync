@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T16:20:15.000Z",
-  "eventCount": 35,
+  "generatedAt": "2026-03-03T17:20:20.051Z",
+  "eventCount": 37,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "golf": {
-      "count": 1,
+      "count": 2,
       "previousCount": 1,
-      "delta": 0
+      "delta": 1
     },
     "f1": {
       "count": 1,
@@ -28,9 +28,9 @@
       "delta": 0
     },
     "chess": {
-      "count": 1,
+      "count": 2,
       "previousCount": 1,
-      "delta": 0
+      "delta": 1
     },
     "tennis": {
       "count": 0,
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3974,
+      "ageMinutes": 4034,
       "stale": true
     },
     "f1.json": {
@@ -64,16 +64,16 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 131,
+      "ageMinutes": 191,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 131,
+      "ageMinutes": 191,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.91,
+    "venuePercent": 0.89,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -109,10 +109,10 @@
       "Snapshot 2026-02-28: 2 events but events.json has 1",
       "Snapshot 2026-03-01: 1 events but events.json has 0",
       "Snapshot 2026-03-04: 8 events but events.json has 7",
-      "Snapshot 2026-03-05: 4 events but events.json has 2",
-      "Snapshot 2026-03-06: 6 events but events.json has 3",
-      "Snapshot 2026-03-07: 9 events but events.json has 6",
-      "Snapshot 2026-03-08: 7 events but events.json has 5",
+      "Snapshot 2026-03-05: 4 events but events.json has 3",
+      "Snapshot 2026-03-06: 6 events but events.json has 4",
+      "Snapshot 2026-03-07: 9 events but events.json has 7",
+      "Snapshot 2026-03-08: 7 events but events.json has 6",
       "Snapshot 2026-03-09: 3 events but events.json has 2",
       "Snapshot 2026-03-10: 2 events but events.json has 1"
     ],
@@ -184,6 +184,7 @@
     "hasCoverage": false
   },
   "unmappedLeagues": [
+    "Grenke Chess Festival 2026: Freestyle Open A",
     "Cycling Grand Tours & Norwegian Races 2026"
   ],
   "issues": [
@@ -195,7 +196,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 3974 minutes old"
+      "message": "esports.json: data is 4034 minutes old"
     },
     {
       "severity": "warning",
@@ -240,22 +241,22 @@
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-05: 4 events but events.json has 2"
+      "message": "Snapshot 2026-03-05: 4 events but events.json has 3"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-06: 6 events but events.json has 3"
+      "message": "Snapshot 2026-03-06: 6 events but events.json has 4"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-07: 9 events but events.json has 6"
+      "message": "Snapshot 2026-03-07: 9 events but events.json has 7"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-08: 7 events but events.json has 5"
+      "message": "Snapshot 2026-03-08: 7 events but events.json has 6"
     },
     {
       "severity": "warning",
@@ -270,7 +271,7 @@
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "1 tournament(s) lack league theming: Cycling Grand Tours & Norwegian Races 2026"
+      "message": "2 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026"
     },
     {
       "severity": "info",
@@ -300,14 +301,14 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T16:20:15.116Z",
+    "computedAt": "2026-03-03T17:20:20.163Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
