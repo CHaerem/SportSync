@@ -819,31 +819,31 @@ describe("detectArchitecturalFitness", () => {
 	});
 
 	it("detects module proliferation at warn threshold", () => {
-		// Create 51 modules (over default 50 threshold)
+		// Create 72 modules (over default 70 threshold)
 		const scripts = {};
-		for (let i = 0; i < 35; i++) scripts[`script${i}.js`] = 60;
+		for (let i = 0; i < 50; i++) scripts[`script${i}.js`] = 60;
 		createFiles(path.join(tmpRoot, "scripts"), scripts);
 		const libs = {};
-		for (let i = 0; i < 12; i++) libs[`lib${i}.js`] = 80;
+		for (let i = 0; i < 15; i++) libs[`lib${i}.js`] = 80;
 		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
 		const fetchers = {};
-		for (let i = 0; i < 5; i++) fetchers[`fetch${i}.js`] = 100;
+		for (let i = 0; i < 7; i++) fetchers[`fetch${i}.js`] = 100;
 		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
 
 		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
 		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
 		expect(prolif).toBeDefined();
 		expect(prolif.severity).toBe("medium");
-		expect(prolif.moduleCount).toBe(52);
-		expect(prolif.breakdown).toEqual({ scripts: 35, lib: 12, fetch: 5 });
+		expect(prolif.moduleCount).toBe(72);
+		expect(prolif.breakdown).toEqual({ scripts: 50, lib: 15, fetch: 7 });
 	});
 
-	it("flags high severity above 65 modules", () => {
+	it("flags high severity above 85 modules", () => {
 		const scripts = {};
-		for (let i = 0; i < 50; i++) scripts[`s${i}.js`] = 60;
+		for (let i = 0; i < 65; i++) scripts[`s${i}.js`] = 60;
 		createFiles(path.join(tmpRoot, "scripts"), scripts);
 		const libs = {};
-		for (let i = 0; i < 16; i++) libs[`l${i}.js`] = 80;
+		for (let i = 0; i < 21; i++) libs[`l${i}.js`] = 80;
 		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
 
 		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
@@ -989,9 +989,9 @@ describe("detectArchitecturalFitness", () => {
 	});
 
 	it("suggests inline candidates from small lib modules", () => {
-		// Create 51 modules to trigger proliferation
+		// Create 72 modules to trigger proliferation (over default 70 threshold)
 		const scripts = {};
-		for (let i = 0; i < 40; i++) scripts[`s${i}.js`] = 60;
+		for (let i = 0; i < 55; i++) scripts[`s${i}.js`] = 60;
 		createFiles(path.join(tmpRoot, "scripts"), scripts);
 		// Small lib modules should appear as inline candidates
 		createFiles(path.join(tmpRoot, "scripts", "lib"), {
@@ -1000,7 +1000,7 @@ describe("detectArchitecturalFitness", () => {
 			"big-lib.js": 200,
 		});
 		const fetchers = {};
-		for (let i = 0; i < 9; i++) fetchers[`f${i}.js`] = 80;
+		for (let i = 0; i < 14; i++) fetchers[`f${i}.js`] = 80;
 		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
 
 		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });

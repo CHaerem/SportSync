@@ -622,8 +622,8 @@ export function detectArchitecturalFitness({ projectRoot, pipelineManifest, base
 	// --- Apply thresholds (with overrides from baseline) ---
 	const overrides = baseline?.thresholdOverrides || {};
 	const thresholds = {
-		moduleCountWarn: overrides.moduleCountWarn ?? 50,
-		moduleCountHigh: overrides.moduleCountHigh ?? 65,
+		moduleCountWarn: overrides.moduleCountWarn ?? 70,
+		moduleCountHigh: overrides.moduleCountHigh ?? 85,
 		smallModuleRatioWarn: overrides.smallModuleRatioWarn ?? 0.25,
 		pipelineStepsWarn: overrides.pipelineStepsWarn ?? 30,
 		pipelineStepsHigh: overrides.pipelineStepsHigh ?? 35,
