@@ -136,21 +136,10 @@
 		.gh-btn:hover { background: var(--bg); border-color: var(--muted); }
 		.gh-btn.danger { color: var(--red); border-color: var(--red); opacity: 0.7; }
 		.gh-btn.danger:hover { opacity: 1; }
-		.gh-setup { margin-top: 10px; }
-		.gh-setup a { color: var(--accent); }
-		.gh-hint { font-size: 0.62rem; color: var(--muted); margin-bottom: 8px; }
-		.gh-row { display: flex; gap: 8px; margin-bottom: 8px; }
-		.gh-row input {
-			flex: 1; font: inherit; font-size: 0.72rem; padding: 6px 10px;
-			border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg);
-		}
-		.gh-row button {
-			font: inherit; font-size: 0.68rem; padding: 6px 12px;
-			border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
-			background: var(--fg); color: var(--bg); font-weight: 500;
-		}
-		.gh-row button:hover { opacity: 0.85; }
-		.gh-error { font-size: 0.62rem; color: var(--red); display: none; margin-top: 4px; }
+		.gh-btn.primary { background: var(--fg); color: var(--bg); font-weight: 500; }
+		.gh-btn.primary:hover { opacity: 0.85; }
+		.gh-error { font-size: 0.62rem; color: var(--red); margin-top: 6px; display: none; }
+		.gh-success { font-size: 0.62rem; color: var(--green); margin-top: 6px; display: none; }
 
 		/* --- Sport list --- */
 		.sport-row {
@@ -335,47 +324,45 @@
 					<span class="gh-sync-time">synced ${timeAgo(lastSync)}</span>
 					<button class="gh-btn" id="gh-sync-btn">Sync now</button>
 					<button class="gh-btn danger" id="gh-disconnect-btn">Disconnect</button>
-				</div>`;
+				</div>
+				<div class="gh-success" id="gh-success"></div>`;
 			} else {
 				inner = `<div class="gh-status">
 					<span class="gh-dot"></span>
 					<span style="font-size:0.72rem;color:var(--muted)">Not connected</span>
-					<button class="gh-btn" id="gh-connect-toggle">Connect GitHub</button>
+					<button class="gh-btn primary" id="gh-connect-btn">Sign in with GitHub</button>
 				</div>
-				<div class="gh-setup" id="gh-setup" style="display:none">
-					<div class="gh-hint">Create a <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=SportSync+Sync" target="_blank" rel="noopener">personal access token</a> with <code>public_repo</code> scope</div>
-					<div class="gh-row">
-						<input type="password" id="gh-token-input" placeholder="Paste token here..." autocomplete="off">
-						<button id="gh-token-btn">Connect</button>
-					</div>
-					<div class="gh-error" id="gh-error"></div>
-				</div>`;
+				<div class="gh-error" id="gh-error"></div>`;
 			}
 
 			el.innerHTML = `<div class="card"><div class="card-header">GitHub Connection</div>${inner}</div>`;
 
 			// Bind events
-			document.getElementById('gh-connect-toggle')?.addEventListener('click', () => {
-				const setup = document.getElementById('gh-setup');
-				if (setup) setup.style.display = setup.style.display === 'none' ? 'block' : 'none';
-			});
-
-			document.getElementById('gh-token-btn')?.addEventListener('click', async () => {
-				const input = document.getElementById('gh-token-input');
+			document.getElementById('gh-connect-btn')?.addEventListener('click', async () => {
+				const btn = document.getElementById('gh-connect-btn');
 				const errEl = document.getElementById('gh-error');
-				if (!input?.value?.trim()) return;
-				const btn = document.getElementById('gh-token-btn');
-				if (btn) btn.textContent = '...';
+				if (btn) btn.textContent = 'Connecting...';
 				try {
-					await sync.connect(input.value.trim());
+					const result = await sync.connect();
 					sync.startAutoSync();
 					renderGitHub();
+					// Show restore feedback
+					if (result.restored) {
+						const successEl = document.getElementById('gh-success');
+						if (successEl) {
+							successEl.textContent = 'Preferences restored from last sync';
+							successEl.style.display = 'block';
+							setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+						}
+						renderSports();
+						renderFavorites();
+					}
 				} catch (err) {
 					if (errEl) {
 						errEl.textContent = err.message || 'Connection failed';
 						errEl.style.display = 'block';
 					}
-					if (btn) btn.textContent = 'Connect';
+					if (btn) btn.textContent = 'Sign in with GitHub';
 				}
 			});
 

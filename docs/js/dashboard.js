@@ -56,6 +56,10 @@ class Dashboard {
 	async init() {
 		this.bindThemeToggle();
 		this._monitorBrokenImages();
+		// Request persistent storage to prevent auto-eviction of preferences
+		if (navigator.storage?.persist) {
+			navigator.storage.persist().catch(() => {});
+		}
 		await this.loadEvents();
 		setInterval(() => this.loadEvents(), 15 * 60 * 1000);
 		this.startLivePolling();

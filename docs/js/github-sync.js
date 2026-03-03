@@ -1,12 +1,14 @@
 // GitHub Sync for SportSync
 // Syncs engagement telemetry to a single GitHub Issue (engagement-sync label)
 // and submits user feedback as individual issues (user-feedback label).
+// Connects via OAuth popup through the relay server on serverpi.
 
 class GitHubSync {
 	constructor() {
 		this.STORAGE_KEY = 'sportsync-github';
 		this.REPO = 'CHaerem/SportSync';
 		this.API = 'https://api.github.com';
+		this.OAUTH_RELAY = 'https://serverpi.corgi-climb.ts.net:3847';
 		this._config = this._load();
 		this._syncTimer = null;
 		this._lastFocusSync = 0;
@@ -38,17 +40,137 @@ class GitHubSync {
 		return this._config.lastSync;
 	}
 
-	async connect(token) {
-		if (!token?.trim()) throw new Error('Token is required');
+	/**
+	 * Connect via OAuth popup flow.
+	 * Opens the relay's /auth endpoint in a popup, waits for the token via postMessage.
+	 * Then validates the token, stores it, and auto-restores preferences from the latest sync issue.
+	 * @returns {Promise<{user: object, restored: boolean, restoreReason?: string, keys?: string[]}>}
+	 */
+	async connect() {
+		const popup = window.open(
+			`${this.OAUTH_RELAY}/auth`,
+			'sportsync-oauth',
+			'width=500,height=700,popup=yes'
+		);
+		if (!popup) throw new Error('Popup blocked — please allow popups for this site');
+
+		const token = await new Promise((resolve, reject) => {
+			const cleanup = () => {
+				window.removeEventListener('message', onMessage);
+				clearInterval(pollClosed);
+			};
+
+			const onMessage = (event) => {
+				if (event.data?.type === 'sportsync-oauth' && event.data.token) {
+					cleanup();
+					resolve(event.data.token);
+				}
+			};
+			window.addEventListener('message', onMessage);
+
+			// Poll for popup closed without completing
+			const pollClosed = setInterval(() => {
+				if (popup.closed) {
+					cleanup();
+					reject(new Error('Sign-in cancelled'));
+				}
+			}, 500);
+		});
+
+		// Validate token against GitHub API
 		const resp = await fetch(`${this.API}/user`, {
 			headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
 		});
-		if (!resp.ok) throw new Error('Invalid token');
-		const user = await resp.json();
+		if (!resp.ok) throw new Error('Invalid token from OAuth');
+		const userData = await resp.json();
+
 		this._config.token = token;
-		this._config.user = { login: user.login, avatar: user.avatar_url };
+		this._config.user = { login: userData.login, avatar: userData.avatar_url };
 		this._save();
-		return this._config.user;
+
+		// Auto-restore preferences from latest sync issue
+		const restoreResult = await this.restoreFromSync();
+
+		return {
+			user: this._config.user,
+			restored: restoreResult.restored,
+			restoreReason: restoreResult.reason,
+			keys: restoreResult.keys
+		};
+	}
+
+	/**
+	 * Restore preferences from the latest engagement-sync issue.
+	 * Called automatically after OAuth connect, or manually.
+	 * @returns {Promise<{restored: boolean, reason?: string, keys?: string[]}>}
+	 */
+	async restoreFromSync() {
+		if (!this.isConnected()) return { restored: false, reason: 'not-connected' };
+
+		try {
+			const issueNumber = await this._findSyncIssue();
+			if (!issueNumber) return { restored: false, reason: 'no-sync-issue' };
+
+			// Cache the issue number for future syncs
+			this._config.issueNumber = issueNumber;
+			this._save();
+
+			const issue = await this._apiRequest(`/repos/${this.REPO}/issues/${issueNumber}`);
+			const body = issue?.body;
+			if (!body) return { restored: false, reason: 'empty-issue' };
+
+			// Extract JSON from ```json block
+			const jsonMatch = body.match(/```json\n([\s\S]*?)\n```/);
+			if (!jsonMatch) return { restored: false, reason: 'no-json-block' };
+
+			let data;
+			try { data = JSON.parse(jsonMatch[1]); }
+			catch { return { restored: false, reason: 'invalid-json' }; }
+
+			const pm = window._ssPreferences;
+			if (!pm) return { restored: false, reason: 'no-preferences-manager' };
+
+			// Prefer nested preferences (full structure) over flattened backendPreferences
+			const prefs = data.preferences || null;
+			const backend = data.backendPreferences || null;
+
+			if (!prefs && !backend) return { restored: false, reason: 'no-preference-data' };
+
+			const keys = [];
+
+			if (prefs) {
+				// Full nested restore — merge directly into preferences
+				if (prefs.favoriteTeams) { pm.preferences.favoriteTeams = prefs.favoriteTeams; keys.push('favoriteTeams'); }
+				if (prefs.favoritePlayers) { pm.preferences.favoritePlayers = prefs.favoritePlayers; keys.push('favoritePlayers'); }
+				if (prefs.favoriteSports) { pm.preferences.favoriteSports = prefs.favoriteSports; keys.push('favoriteSports'); }
+				if (prefs.sportPreferences) { pm.preferences.sportPreferences = prefs.sportPreferences; keys.push('sportPreferences'); }
+				if (prefs.favoriteEvents) { pm.preferences.favoriteEvents = prefs.favoriteEvents; keys.push('favoriteEvents'); }
+			} else if (backend) {
+				// Flattened restore — reconstruct nested structure from backend format
+				if (backend.favoriteTeams?.length) {
+					// Backend format is flat array; we can't perfectly reconstruct sport-keyed structure
+					// but we store what we have
+					keys.push('favoriteTeams');
+				}
+				if (backend.favoritePlayers?.length) {
+					keys.push('favoritePlayers');
+				}
+				if (backend.sportPreferences) {
+					pm.preferences.sportPreferences = backend.sportPreferences;
+					keys.push('sportPreferences');
+				}
+			}
+
+			if (keys.length > 0) {
+				pm.savePreferences();
+				return { restored: true, keys };
+			}
+
+			return { restored: false, reason: 'no-restorable-data' };
+		} catch (err) {
+			console.warn('[GitHubSync] restore failed:', err.message);
+			return { restored: false, reason: 'error', error: err.message };
+		}
 	}
 
 	disconnect() {
@@ -84,7 +206,7 @@ class GitHubSync {
 	}
 
 	_buildSyncBody(payload) {
-		const { backendPreferences, telemetry } = payload;
+		const { backendPreferences, preferences, telemetry } = payload;
 		let body = '## SportSync Engagement Sync\n\n';
 		body += `_Last synced: ${new Date().toISOString()}_\n\n`;
 
@@ -125,7 +247,9 @@ class GitHubSync {
 		}
 
 		body += '### Data (for pipeline)\n\n```json\n';
-		body += JSON.stringify({ backendPreferences, telemetry, syncedAt: new Date().toISOString() });
+		const jsonData = { backendPreferences, telemetry, syncedAt: new Date().toISOString() };
+		if (preferences) jsonData.preferences = preferences;
+		body += JSON.stringify(jsonData);
 		body += '\n```\n';
 		return body;
 	}
@@ -138,7 +262,15 @@ class GitHubSync {
 
 		const backendPreferences = pm.exportForBackend();
 		const telemetry = pm.getTelemetry();
-		const payload = { backendPreferences, telemetry };
+		// Include nested preferences for restore-on-reconnect
+		const preferences = {
+			favoriteTeams: pm.preferences.favoriteTeams,
+			favoritePlayers: pm.preferences.favoritePlayers,
+			favoriteSports: pm.preferences.favoriteSports,
+			sportPreferences: pm.preferences.sportPreferences,
+			favoriteEvents: pm.preferences.favoriteEvents,
+		};
+		const payload = { backendPreferences, preferences, telemetry };
 
 		const hash = this._hash(payload);
 		if (hash === this._config.lastHash) {

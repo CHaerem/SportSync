@@ -18,6 +18,11 @@ globalThis.document = {
 	hidden: false,
 };
 
+// Mock window event methods for OAuth popup flow
+window.addEventListener = vi.fn();
+window.removeEventListener = vi.fn();
+window.open = vi.fn();
+
 // Mock PreferencesManager
 const pmSrc = readFileSync(join(import.meta.dirname, "../docs/js/preferences-manager.js"), "utf-8");
 eval(pmSrc);
@@ -29,6 +34,13 @@ globalThis.fetch = vi.fn();
 const src = readFileSync(join(import.meta.dirname, "../docs/js/github-sync.js"), "utf-8");
 eval(src);
 const GitHubSync = window.GitHubSync;
+
+// Helper: manually set connected state (bypasses OAuth popup)
+function connectSync(sync, token = "ghp_test") {
+	sync._config.token = token;
+	sync._config.user = { login: "testuser", avatar: "" };
+	sync._save();
+}
 
 describe("GitHubSync", () => {
 	let sync;
@@ -49,44 +61,9 @@ describe("GitHubSync", () => {
 		});
 	});
 
-	describe("connect()", () => {
-		it("validates token against GitHub API", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "https://example.com/avatar.png" }),
-			});
-
-			const user = await sync.connect("ghp_test123");
-			expect(user.login).toBe("testuser");
-			expect(user.avatar).toBe("https://example.com/avatar.png");
-			expect(sync.isConnected()).toBe(true);
-			expect(fetch).toHaveBeenCalledWith(
-				"https://api.github.com/user",
-				expect.objectContaining({
-					headers: expect.objectContaining({ Authorization: "Bearer ghp_test123" }),
-				})
-			);
-		});
-
-		it("throws on invalid token", async () => {
-			fetch.mockResolvedValueOnce({ ok: false, status: 401 });
-			await expect(sync.connect("bad_token")).rejects.toThrow("Invalid token");
-			expect(sync.isConnected()).toBe(false);
-		});
-
-		it("throws on empty token", async () => {
-			await expect(sync.connect("")).rejects.toThrow("Token is required");
-			await expect(sync.connect("  ")).rejects.toThrow("Token is required");
-		});
-	});
-
 	describe("disconnect()", () => {
-		it("clears all config", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+		it("clears all config", () => {
+			connectSync(sync);
 			expect(sync.isConnected()).toBe(true);
 
 			sync.disconnect();
@@ -145,12 +122,7 @@ describe("GitHubSync", () => {
 		});
 
 		it("returns unchanged when data hash matches", async () => {
-			// Connect
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			// Setup preferences
 			const pm = new PreferencesManager();
@@ -175,11 +147,7 @@ describe("GitHubSync", () => {
 		});
 
 		it("creates a new issue when none exists", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			const pm = new PreferencesManager();
 			pm.trackEngagement("football");
@@ -202,11 +170,7 @@ describe("GitHubSync", () => {
 		});
 
 		it("updates existing issue when found", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			const pm = new PreferencesManager();
 			pm.trackEngagement("golf");
@@ -235,22 +199,14 @@ describe("GitHubSync", () => {
 		});
 
 		it("returns empty when no content", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			const result = await sync.submitFeedback([], []);
 			expect(result).toEqual({ submitted: false, reason: "empty" });
 		});
 
 		it("creates feedback issue via API", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			window._ssPreferences = new PreferencesManager();
 
@@ -269,11 +225,7 @@ describe("GitHubSync", () => {
 		});
 
 		it("includes sport-request suggestions in issue body", async () => {
-			fetch.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ login: "testuser", avatar_url: "" }),
-			});
-			await sync.connect("ghp_test");
+			connectSync(sync);
 
 			window._ssPreferences = new PreferencesManager();
 
