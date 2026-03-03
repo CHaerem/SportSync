@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T20:11:55.635Z",
-  "eventCount": 33,
+  "generatedAt": "2026-03-03T21:13:15.368Z",
+  "eventCount": 32,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 19,
-      "previousCount": 23,
-      "delta": -4
+      "count": 18,
+      "previousCount": 19,
+      "delta": -1
     },
     "golf": {
       "count": 2,
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4206,
+      "ageMinutes": 4267,
       "stale": true
     },
     "f1.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 110,
+      "ageMinutes": 171,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 110,
+      "ageMinutes": 171,
       "stale": false
     }
   },
@@ -96,8 +96,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.42,
-    "eventsEnriched": 8,
+    "matchRate": 0.39,
+    "eventsEnriched": 7,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -105,7 +105,7 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-03-03: 5 events but events.json has 1"
+      "Snapshot 2026-03-03: 5 events but events.json has 0"
     ],
     "snapshotCount": 15
   },
@@ -187,7 +187,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4206 minutes old"
+      "message": "esports.json: data is 4267 minutes old"
     },
     {
       "severity": "warning",
@@ -197,12 +197,17 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 42% (8/19) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 39% (7/18) — team alias table may need updates"
     },
     {
       "severity": "warning",
       "code": "component_unresolvable",
       "message": "match-preview component for Barcelona vs Atlético Madrid has no matching event in events.json"
+    },
+    {
+      "severity": "warning",
+      "code": "component_unresolvable",
+      "message": "match-preview component for Wolverhampton Wanderers vs Liverpool has no matching event in events.json"
     },
     {
       "severity": "warning",
@@ -217,7 +222,7 @@
     {
       "severity": "critical",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-03: 5 events but events.json has 1"
+      "message": "Snapshot 2026-03-03: 5 events but events.json has 0"
     },
     {
       "severity": "info",
@@ -247,21 +252,21 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T20:11:55.772Z",
+    "computedAt": "2026-03-03T21:13:15.478Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is critical with 1 critical, 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
