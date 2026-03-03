@@ -1051,10 +1051,10 @@ export function generateHealthReport(options = {}) {
 	};
 }
 
-function buildFallbackSummary(report, autonomy, quality) {
+function buildFallbackSummary(report, _autonomy, quality) {
+	// Autonomy stats are shown separately in the status page header from autonomy-report.json.
+	// Duplicating them here risks stale data if the two files are generated at different times.
 	const parts = [];
-	const pct = Math.round((autonomy?.overallScore ?? 0) * 100);
-	parts.push(`Autonomy at ${pct}% with ${autonomy?.loopsClosed ?? 0}/${autonomy?.loopsTotal ?? 0} feedback loops closed.`);
 
 	if (report.status === "healthy") {
 		parts.push(`Pipeline is healthy with ${report.eventCount} events across ${Object.keys(report.sportCoverage).length} sports.`);

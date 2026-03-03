@@ -488,9 +488,11 @@ describe("generateStatusSummary()", () => {
 		const quality = { editorial: { score: 95 } };
 
 		const summary = await generateStatusSummary(report, autonomy, quality);
-		expect(summary).toContain("100%");
-		expect(summary).toContain("6/6");
+		// Autonomy stats are shown separately in the status page header,
+		// so the summary focuses on pipeline and quality only
+		expect(summary).toContain("Pipeline");
 		expect(summary).toContain("95");
+		expect(summary).not.toContain("loops closed");
 	});
 
 	it("handles null inputs gracefully", async () => {
