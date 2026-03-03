@@ -135,6 +135,56 @@ describe("FeedbackManager", () => {
 		});
 	});
 
+	describe("requestSport()", () => {
+		it("stores structured fields", () => {
+			fm.requestSport("Handball", "World Championship", "Norway is great at this");
+			expect(fm.data.suggestions).toHaveLength(1);
+			const s = fm.data.suggestions[0];
+			expect(s.type).toBe("sport-request");
+			expect(s.sport).toBe("Handball");
+			expect(s.event).toBe("World Championship");
+			expect(s.note).toBe("Norway is great at this");
+			expect(s.timestamp).toBeTruthy();
+		});
+
+		it("works with sport name only", () => {
+			fm.requestSport("Cycling");
+			const s = fm.data.suggestions[0];
+			expect(s.sport).toBe("Cycling");
+			expect(s.event).toBeNull();
+			expect(s.note).toBeNull();
+		});
+
+		it("trims all fields", () => {
+			fm.requestSport("  Handball  ", "  WC  ", "  note  ");
+			const s = fm.data.suggestions[0];
+			expect(s.sport).toBe("Handball");
+			expect(s.event).toBe("WC");
+			expect(s.note).toBe("note");
+		});
+
+		it("ignores empty/null/whitespace sport name", () => {
+			fm.requestSport("");
+			fm.requestSport(null);
+			fm.requestSport("   ");
+			fm.requestSport(undefined);
+			expect(fm.data.suggestions).toHaveLength(0);
+		});
+
+		it("counts toward pendingCount", () => {
+			fm.requestSport("Handball");
+			expect(fm.pendingCount()).toBe(1);
+		});
+
+		it("appears in buildIssueURL JSON block", () => {
+			fm.requestSport("Cycling", "Tour de France", "French stages");
+			const url = decodeURL(fm.buildIssueURL());
+			expect(url).toContain('"type":"sport-request"');
+			expect(url).toContain('"sport":"Cycling"');
+			expect(url).toContain('"event":"Tour de France"');
+		});
+	});
+
 	describe("pendingCount()", () => {
 		it("returns 0 when empty", () => {
 			expect(fm.pendingCount()).toBe(0);

@@ -267,5 +267,38 @@ describe("GitHubSync", () => {
 			expect(result.issueNumber).toBe(123);
 			expect(result.url).toContain("github.com");
 		});
+
+		it("includes sport-request suggestions in issue body", async () => {
+			fetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({ login: "testuser", avatar_url: "" }),
+			});
+			await sync.connect("ghp_test");
+
+			window._ssPreferences = new PreferencesManager();
+
+			fetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({ number: 456, html_url: "https://github.com/test/issues/456" }),
+			});
+
+			const sportRequest = {
+				type: "sport-request",
+				sport: "Handball",
+				event: "World Championship",
+				note: "Norway is great",
+				timestamp: new Date().toISOString(),
+			};
+
+			const result = await sync.submitFeedback([], [sportRequest]);
+			expect(result.submitted).toBe(true);
+
+			// Verify the body contains the sport-request data
+			const callArgs = fetch.mock.calls[fetch.mock.calls.length - 1];
+			const body = JSON.parse(callArgs[1].body);
+			expect(body.body).toContain("sport-request");
+			expect(body.body).toContain("Handball");
+			expect(body.labels).toContain("user-feedback");
+		});
 	});
 });

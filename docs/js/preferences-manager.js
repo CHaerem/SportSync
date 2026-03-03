@@ -206,6 +206,28 @@ class PreferencesManager {
 		return false;
 	}
 
+	// Sport preference levels (high/medium/low/none)
+	setSportPreference(sport, level) {
+		if (!sport?.trim()) return;
+		if (!this.preferences.sportPreferences) {
+			this.preferences.sportPreferences = {};
+		}
+		if (!level || level === 'none') {
+			delete this.preferences.sportPreferences[sport];
+		} else {
+			this.preferences.sportPreferences[sport] = level;
+		}
+		this.savePreferences();
+	}
+
+	getSportPreference(sport) {
+		return this.preferences.sportPreferences?.[sport] || null;
+	}
+
+	getAllSportPreferences() {
+		return this.preferences.sportPreferences || {};
+	}
+
 	// View preferences
 	setDefaultView(view) {
 		this.preferences.defaultView = view;
@@ -243,12 +265,14 @@ class PreferencesManager {
 			players.push(...sportPlayers);
 		}
 
-		// Derive sport preference levels from engagement
+		// Use explicit sport preferences if set, otherwise derive from engagement
+		const explicit = this.getAllSportPreferences();
 		const engagement = this.getEngagement();
-		const sportPreferences = {};
+		const sportPreferences = { ...explicit };
 		const totalClicks = Object.values(engagement).reduce((s, e) => s + (e.clicks || 0), 0);
 		if (totalClicks >= 20) {
 			for (const [sport, data] of Object.entries(engagement)) {
+				if (sportPreferences[sport]) continue; // explicit takes precedence
 				const share = data.clicks / totalClicks;
 				if (share >= 0.25) sportPreferences[sport] = 'high';
 				else if (share >= 0.10) sportPreferences[sport] = 'medium';

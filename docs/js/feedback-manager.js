@@ -50,6 +50,20 @@ class FeedbackManager {
 		this._save();
 	}
 
+	// --- Sport/event requests (structured) ---
+
+	requestSport(sportName, eventName, note) {
+		if (!sportName?.trim()) return;
+		this.data.suggestions.push({
+			type: 'sport-request',
+			sport: sportName.trim(),
+			event: eventName?.trim() || null,
+			note: note?.trim() || null,
+			timestamp: new Date().toISOString(),
+		});
+		this._save();
+	}
+
 	// --- Pending count ---
 
 	pendingCount() {

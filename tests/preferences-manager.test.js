@@ -362,6 +362,59 @@ describe("PreferencesManager", () => {
 		});
 	});
 
+	describe("sport preferences (setSportPreference / getSportPreference / getAllSportPreferences)", () => {
+		it("round-trips a sport preference", () => {
+			pm.setSportPreference("football", "high");
+			expect(pm.getSportPreference("football")).toBe("high");
+		});
+
+		it("removes on 'none'", () => {
+			pm.setSportPreference("golf", "medium");
+			pm.setSportPreference("golf", "none");
+			expect(pm.getSportPreference("golf")).toBeNull();
+		});
+
+		it("removes on null", () => {
+			pm.setSportPreference("tennis", "low");
+			pm.setSportPreference("tennis", null);
+			expect(pm.getSportPreference("tennis")).toBeNull();
+		});
+
+		it("returns null for unknown sport", () => {
+			expect(pm.getSportPreference("handball")).toBeNull();
+		});
+
+		it("getAllSportPreferences returns full map", () => {
+			pm.setSportPreference("football", "high");
+			pm.setSportPreference("chess", "low");
+			const all = pm.getAllSportPreferences();
+			expect(all).toEqual({ football: "high", chess: "low" });
+		});
+
+		it("exportForBackend includes explicit sportPreferences", () => {
+			pm.setSportPreference("football", "high");
+			pm.setSportPreference("golf", "medium");
+			const exported = pm.exportForBackend();
+			expect(exported.sportPreferences.football).toBe("high");
+			expect(exported.sportPreferences.golf).toBe("medium");
+		});
+
+		it("explicit preferences take precedence over engagement-derived", () => {
+			// Set explicit preference
+			pm.setSportPreference("football", "low");
+			// Generate engagement that would derive 'high' for football
+			for (let i = 0; i < 30; i++) pm.trackEngagement("football");
+			const exported = pm.exportForBackend();
+			expect(exported.sportPreferences.football).toBe("low");
+		});
+
+		it("ignores empty/null sport name", () => {
+			pm.setSportPreference("", "high");
+			pm.setSportPreference(null, "high");
+			expect(pm.getAllSportPreferences()).toEqual({});
+		});
+	});
+
 	describe("reset()", () => {
 		it("clears localStorage and restores defaults", () => {
 			pm.toggleFavoriteSport("chess");

@@ -293,6 +293,30 @@
 		.lesson-item { font-size: 0.7rem; color: var(--muted); font-style: italic; padding: 3px 0; border-bottom: 1px solid var(--border); }
 		.lesson-item:last-child { border-bottom: none; }
 
+		/* --- Tab bar --- */
+		.tab-bar {
+			display: flex;
+			gap: 0;
+			margin-bottom: 24px;
+			border-bottom: 1px solid var(--border);
+		}
+		.tab-link {
+			font-size: 0.72rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			text-decoration: none;
+			padding: 8px 16px 10px;
+			border-bottom: 2px solid transparent;
+			transition: color 0.15s, border-color 0.15s;
+		}
+		.tab-link:hover { color: var(--fg); }
+		.tab-link.active {
+			color: var(--accent);
+			border-bottom-color: var(--accent);
+		}
+
 		@media (max-width: 380px) {
 			.wrap { padding: 24px 16px 40px; }
 			.impact-stats { gap: 8px; }
@@ -302,9 +326,14 @@
 <body>
 	<div class="wrap">
 		<header>
-			<h1><a href="./">SportSync</a> <span class="header-sub">System</span></h1>
+			<h1><a href="./">SportSync</a></h1>
 			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
 		</header>
+
+		<nav class="tab-bar">
+			<a href="status.html" class="tab-link active">System</a>
+			<a href="preferences.html" class="tab-link">Preferences</a>
+		</nav>
 
 		<div id="ops"></div>
 		<div id="summary"></div>

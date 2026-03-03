@@ -38,6 +38,10 @@ Before creating or executing ANY task, verify it passes the Change Principles fr
 
 If a scouted improvement fails any principle, either redesign it to pass or skip it. A code cleanup that doesn't close the loop (add a test, health check, or detection) is incomplete.
 
+### Sport Expansion Policy
+
+**Do NOT add new sports autonomously.** Only expand coverage for sports already in the user's `sportPreferences` (stored in localStorage, exported via `exportForBackend()` in feedback issues). New sports require an explicit user request via `type: "sport-request"` feedback issues. When processing feedback (heuristic I), look for `sport-request` entries and create `[FEATURE]` tasks only for those. Never create tasks to add sports the user hasn't requested.
+
 ---
 
 ## Scouting Heuristics
@@ -99,7 +103,7 @@ Identify new sports, events, or data sources the dashboard should cover based on
 - Norwegian athletes in the news who aren't tracked in `user-context.json`
 - A new league/tour season starting that needs a config (e.g., OBOS-ligaen spring season)
 
-**Action:** Create a task to add the data source. For API-backed sports, this means writing a new fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` — it auto-flows into events.json. For event-based sports, create a curated config in `scripts/config/`.
+**Action:** Create a task to add the data source. For API-backed sports, this means writing a new fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` — it auto-flows into events.json. For event-based sports, create a curated config in `scripts/config/`. **Guard:** Only create tasks for sports already in `sportPreferences` or explicitly requested by the user via `sport-request` feedback. Do not add new sports autonomously — see Sport Expansion Policy above.
 
 **Example:** RSS shows multiple cycling headlines about Tour of Norway with a Norwegian stage winner → create task to add cycling fetcher using a public cycling API or curated config.
 
@@ -151,6 +155,8 @@ Check for GitHub Issues with the `user-feedback` label created by the repo owner
 
 3. **Suggestions** (`suggestions` array): New sports, events, features. Create new curated configs for event/sport requests. Add feature requests as `[PENDING]` tasks in the roadmap. Update `user-context.json` for preference changes (new favorite teams, players).
 
+4. **Sport requests** (`type: "sport-request"` in suggestions): These are explicit user requests to add a new sport or event. Create a `[FEATURE]` task to add the sport (fetcher + SPORT_CONFIG entry + curated config as appropriate). Also add the sport to the user's `sportPreferences` in `user-context.json`. Only sport-request entries authorize adding new sports — see Sport Expansion Policy.
+
 **After processing:** Close the issue with a comment summarizing actions taken. If changes were made to `user-context.json` or configs, include them in the next autopilot PR.
 
 ### J. Upstream Issue Resolution Detection
@@ -185,11 +191,11 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 **Ask:** "What single change would most advance the autonomy vision while serving the user?"
 
-**Action:** Create `[EXPLORE]` tasks for strategic investigations, or `[FEATURE]` tasks for concrete capabilities. Always link back to which vision pillar (data/code/capabilities/personalization/quality) this serves.
+**Action:** Create `[EXPLORE]` tasks for strategic investigations, or `[FEATURE]` tasks for concrete capabilities. Always link back to which vision pillar (data/code/capabilities/personalization/quality) this serves. **Exclusion:** Do not propose adding new sports not in `sportPreferences` or not explicitly requested by the user — see Sport Expansion Policy.
 
 **Examples:**
-- `[EXPLORE]` "Investigate cycling data sources for Tour de France coverage" — the user's RSS shows cycling interest but we have no cycling fetcher (capabilities pillar)
-- `[FEATURE]` "Add handball fetcher using free API" — user-context.json shows Norwegian focus, handball is a major Norwegian sport (data + personalization pillars)
+- `[EXPLORE]` "Investigate cycling data sources for Tour de France coverage" — only if cycling is in sportPreferences or user requested it
+- `[FEATURE]` "Add handball fetcher using free API" — only if user submitted a sport-request for handball
 - `[EXPLORE]` "Evaluate client-side feedback mechanisms beyond localStorage" — the preference evolution loop is working but limited to click counts (quality pillar)
 
 ### L. Visual Density Detection
@@ -1139,9 +1145,9 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 
 - [DONE] (explored, run 2026-03-03) [EXPLORE] **Ski jumping coverage for Johann Forfang** — No free FIS API, but ESPN has `skiing/ski-jumping/scoreboard` endpoint already wired in `schedule-verifier.js`. Curated config recommended for remaining 2025-26 WC rounds (Lahti Mar 7-8, Planica Mar 19-22). Norwegian jumpers: Granerud, Lindvik, Forfang, Johansson. Concrete [FEATURE] task created below.
 
-- [PENDING] [FEATURE] **Add IndyCar fetcher for Dennis Hauger** — Create `scripts/fetch/indycar.js` extending ESPNAdapter with `racing/irl/scoreboard`. Add `indycar` sport to SPORT_CONFIG, league-config, schedule-verifier. ~80 lines. 11th sport for the dashboard. (Capabilities + Personalization pillars)
+- [BLOCKED] user prefers on-demand sport requests [FEATURE] **Add IndyCar fetcher for Dennis Hauger** — Create `scripts/fetch/indycar.js` extending ESPNAdapter with `racing/irl/scoreboard`. Add `indycar` sport to SPORT_CONFIG, league-config, schedule-verifier. ~80 lines. 11th sport for the dashboard. (Capabilities + Personalization pillars)
 
-- [PENDING] [FEATURE] **Add ski jumping World Cup curated config** — Create `scripts/config/ski-jumping-wc-2026.json` with remaining rounds (Lahti, Planica). Add `skijumping` sport to SPORT_CONFIG and league-config. Norwegian athletes: Granerud, Lindvik, Forfang, Johansson, Markeng. ~60 lines. ESPN verifier endpoint already wired. (Capabilities + Personalization pillars)
+- [BLOCKED] user prefers on-demand sport requests [FEATURE] **Add ski jumping World Cup curated config** — Create `scripts/config/ski-jumping-wc-2026.json` with remaining rounds (Lahti, Planica). Add `skijumping` sport to SPORT_CONFIG and league-config. Norwegian athletes: Granerud, Lindvik, Forfang, Johansson, Markeng. ~60 lines. ESPN verifier endpoint already wired. (Capabilities + Personalization pillars)
 
 ---
 

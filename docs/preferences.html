@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+	<meta name="description" content="SportSync preferences — manage sports, favorites, and feedback.">
+	<meta name="theme-color" content="#d97757">
+	<title>SportSync — Preferences</title>
+	<style>
+		:root {
+			--bg: #faf9f5;
+			--bg-secondary: #f0efe8;
+			--fg: #3d3929;
+			--muted: #8b8580;
+			--border: #e8e5dc;
+			--border-strong: #3d3929;
+			--accent: #d97757;
+			--radius: 12px;
+			--max-w: 480px;
+			--font: system-ui, -apple-system, sans-serif;
+			--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+			--green: #2ecc71;
+			--amber: #f39c12;
+			--red: #e74c3c;
+		}
+		.dark {
+			--bg: #1a1816;
+			--bg-secondary: #242220;
+			--fg: #faf9f5;
+			--muted: #9a958e;
+			--border: #2d2a26;
+			--border-strong: #faf9f5;
+			--shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+		}
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+
+		body {
+			font-family: var(--font);
+			background: var(--bg);
+			color: var(--fg);
+			line-height: 1.6;
+			font-size: 15px;
+			font-weight: 400;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.wrap {
+			max-width: var(--max-w);
+			margin: 0 auto;
+			padding: 40px 24px 60px;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+		}
+		header h1 {
+			font-family: var(--font-serif);
+			font-size: 1.15rem;
+			font-weight: 400;
+			letter-spacing: -0.01em;
+			color: var(--fg);
+		}
+		header h1 a {
+			color: var(--fg);
+			text-decoration: none;
+		}
+		header h1 a:hover { color: var(--accent); }
+		#themeToggle {
+			background: none;
+			border: none;
+			font-size: 1rem;
+			cursor: pointer;
+			padding: 4px;
+			line-height: 1;
+			opacity: 0.5;
+			transition: opacity 0.15s;
+		}
+		#themeToggle:hover { opacity: 0.8; }
+
+		/* --- Tab bar --- */
+		.tab-bar {
+			display: flex;
+			gap: 0;
+			margin-bottom: 24px;
+			border-bottom: 1px solid var(--border);
+		}
+		.tab-link {
+			font-size: 0.72rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			text-decoration: none;
+			padding: 8px 16px 10px;
+			border-bottom: 2px solid transparent;
+			transition: color 0.15s, border-color 0.15s;
+		}
+		.tab-link:hover { color: var(--fg); }
+		.tab-link.active {
+			color: var(--accent);
+			border-bottom-color: var(--accent);
+		}
+
+		/* --- Cards --- */
+		.card {
+			background: var(--bg-secondary);
+			border-radius: var(--radius);
+			padding: 18px 20px;
+			margin-bottom: 16px;
+			box-shadow: var(--shadow);
+		}
+		.card-header {
+			font-size: 0.65rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--accent);
+			margin-bottom: 12px;
+		}
+
+		/* --- GitHub connection --- */
+		.gh-status { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; }
+		.gh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+		.gh-dot.connected { background: var(--green); }
+		.gh-avatar { width: 20px; height: 20px; border-radius: 50%; }
+		.gh-user { font-weight: 500; }
+		.gh-sync-time { color: var(--muted); font-size: 0.62rem; }
+		.gh-btn {
+			background: none; border: 1px solid var(--border); color: var(--fg); cursor: pointer;
+			font: inherit; font-size: 0.68rem; padding: 4px 12px; border-radius: 6px; margin-left: auto;
+		}
+		.gh-btn:hover { background: var(--bg); border-color: var(--muted); }
+		.gh-btn.danger { color: var(--red); border-color: var(--red); opacity: 0.7; }
+		.gh-btn.danger:hover { opacity: 1; }
+		.gh-setup { margin-top: 10px; }
+		.gh-setup a { color: var(--accent); }
+		.gh-hint { font-size: 0.62rem; color: var(--muted); margin-bottom: 8px; }
+		.gh-row { display: flex; gap: 8px; margin-bottom: 8px; }
+		.gh-row input {
+			flex: 1; font: inherit; font-size: 0.72rem; padding: 6px 10px;
+			border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg);
+		}
+		.gh-row button {
+			font: inherit; font-size: 0.68rem; padding: 6px 12px;
+			border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+			background: var(--fg); color: var(--bg); font-weight: 500;
+		}
+		.gh-row button:hover { opacity: 0.85; }
+		.gh-error { font-size: 0.62rem; color: var(--red); display: none; margin-top: 4px; }
+
+		/* --- Sport list --- */
+		.sport-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 8px 0;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.78rem;
+		}
+		.sport-row:last-child { border-bottom: none; }
+		.sport-emoji { font-size: 1rem; flex-shrink: 0; width: 24px; text-align: center; }
+		.sport-name { font-weight: 500; flex: 1; }
+		.sport-select {
+			font: inherit; font-size: 0.68rem; padding: 3px 8px;
+			border: 1px solid var(--border); border-radius: 6px;
+			background: var(--bg); color: var(--fg); cursor: pointer;
+		}
+
+		/* --- Favorites --- */
+		.fav-group { margin-bottom: 14px; }
+		.fav-label { font-size: 0.68rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+		.fav-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+		.fav-tag {
+			display: inline-flex; align-items: center; gap: 4px;
+			font-size: 0.68rem; padding: 3px 10px; border-radius: 12px;
+			background: var(--bg); border: 1px solid var(--border); color: var(--fg);
+		}
+		.fav-tag-remove {
+			background: none; border: none; cursor: pointer; font-size: 0.72rem;
+			color: var(--muted); padding: 0 2px; line-height: 1;
+		}
+		.fav-tag-remove:hover { color: var(--red); }
+		.fav-add-row { display: flex; gap: 6px; }
+		.fav-add-row input {
+			flex: 1; font: inherit; font-size: 0.68rem; padding: 5px 10px;
+			border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg);
+		}
+		.fav-add-row button {
+			font: inherit; font-size: 0.62rem; padding: 5px 10px;
+			border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+			background: var(--bg); color: var(--fg);
+		}
+		.fav-add-row button:hover { border-color: var(--muted); }
+
+		/* --- Request form --- */
+		.req-row { display: flex; gap: 8px; margin-bottom: 8px; }
+		.req-row input, .req-row textarea {
+			flex: 1; font: inherit; font-size: 0.72rem; padding: 6px 10px;
+			border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg);
+		}
+		.req-row textarea { resize: vertical; min-height: 40px; }
+		.req-submit {
+			font: inherit; font-size: 0.72rem; font-weight: 600; padding: 8px 16px;
+			border: 1px solid var(--fg); border-radius: 6px; cursor: pointer;
+			background: var(--fg); color: var(--bg); width: 100%;
+		}
+		.req-submit:hover { opacity: 0.85; }
+		.req-success { font-size: 0.68rem; color: var(--green); margin-top: 6px; display: none; }
+
+		/* --- Engagement --- */
+		.eng-row {
+			display: flex; justify-content: space-between; align-items: center;
+			padding: 4px 0; font-size: 0.78rem;
+		}
+		.eng-label { color: var(--muted); }
+		.eng-value { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+		/* --- Suggestion --- */
+		.sug-row { display: flex; gap: 8px; margin-bottom: 8px; }
+		.sug-row input {
+			flex: 1; font: inherit; font-size: 0.72rem; padding: 6px 10px;
+			border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg);
+		}
+		.sug-row button {
+			font: inherit; font-size: 0.68rem; padding: 6px 12px;
+			border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+			background: var(--bg); color: var(--fg);
+		}
+		.sug-row button:hover { border-color: var(--muted); }
+		.sug-pending { font-size: 0.62rem; color: var(--muted); margin-bottom: 6px; }
+		.sug-submit {
+			font: inherit; font-size: 0.68rem; font-weight: 600; padding: 8px 16px;
+			border: 1px solid var(--fg); border-radius: 6px; cursor: pointer;
+			background: var(--fg); color: var(--bg); width: 100%;
+		}
+		.sug-submit:hover { opacity: 0.85; }
+
+		/* --- Empty state --- */
+		.empty-state {
+			font-size: 0.72rem;
+			color: var(--muted);
+			font-style: italic;
+			padding: 4px 0;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				transition-duration: 0.01ms !important;
+			}
+		}
+
+		@media (max-width: 380px) {
+			.wrap { padding: 24px 16px 40px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<header>
+			<h1><a href="./">SportSync</a></h1>
+			<button id="themeToggle" aria-label="Toggle dark mode">&#127769;</button>
+		</header>
+
+		<nav class="tab-bar">
+			<a href="status.html" class="tab-link">System</a>
+			<a href="preferences.html" class="tab-link active">Preferences</a>
+		</nav>
+
+		<div id="github-card"></div>
+		<div id="sports-card"></div>
+		<div id="favorites-card"></div>
+		<div id="request-card"></div>
+		<div id="engagement-card"></div>
+		<div id="feedback-card"></div>
+	</div>
+
+	<script src="js/sport-config.js?v=2026030301"></script>
+	<script src="js/preferences-manager.js?v=2026030301"></script>
+	<script src="js/feedback-manager.js?v=2026030301"></script>
+	<script src="js/github-sync.js?v=2026030301"></script>
+
+	<script>
+		// Theme toggle
+		(function() {
+			const saved = localStorage.getItem('theme');
+			if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+			document.getElementById('themeToggle').addEventListener('click', () => {
+				const isDark = document.documentElement.classList.toggle('dark');
+				localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			});
+		})();
+
+		const pm = new PreferencesManager();
+		window._ssPreferences = pm;
+		const fm = new FeedbackManager();
+		const sync = new GitHubSync();
+
+		function esc(s) {
+			const d = document.createElement('div');
+			d.textContent = s;
+			return d.innerHTML;
+		}
+
+		function timeAgo(iso) {
+			if (!iso) return 'never';
+			const diff = Date.now() - new Date(iso).getTime();
+			const mins = Math.floor(diff / 60000);
+			if (mins < 1) return 'just now';
+			if (mins < 60) return mins + 'm ago';
+			const hrs = Math.floor(mins / 60);
+			if (hrs < 24) return hrs + 'h ago';
+			return Math.floor(hrs / 24) + 'd ago';
+		}
+
+		// === GitHub Connection ===
+		function renderGitHub() {
+			const el = document.getElementById('github-card');
+			const connected = sync.isConnected();
+
+			let inner = '';
+			if (connected) {
+				const user = sync.getUser();
+				const lastSync = sync.getLastSync();
+				inner = `<div class="gh-status">
+					<span class="gh-dot connected"></span>
+					${user.avatar ? `<img src="${esc(user.avatar)}" class="gh-avatar" alt="">` : ''}
+					<span class="gh-user">${esc(user.login)}</span>
+					<span class="gh-sync-time">synced ${timeAgo(lastSync)}</span>
+					<button class="gh-btn" id="gh-sync-btn">Sync now</button>
+					<button class="gh-btn danger" id="gh-disconnect-btn">Disconnect</button>
+				</div>`;
+			} else {
+				inner = `<div class="gh-status">
+					<span class="gh-dot"></span>
+					<span style="font-size:0.72rem;color:var(--muted)">Not connected</span>
+					<button class="gh-btn" id="gh-connect-toggle">Connect GitHub</button>
+				</div>
+				<div class="gh-setup" id="gh-setup" style="display:none">
+					<div class="gh-hint">Create a <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=SportSync+Sync" target="_blank" rel="noopener">personal access token</a> with <code>public_repo</code> scope</div>
+					<div class="gh-row">
+						<input type="password" id="gh-token-input" placeholder="Paste token here..." autocomplete="off">
+						<button id="gh-token-btn">Connect</button>
+					</div>
+					<div class="gh-error" id="gh-error"></div>
+				</div>`;
+			}
+
+			el.innerHTML = `<div class="card"><div class="card-header">GitHub Connection</div>${inner}</div>`;
+
+			// Bind events
+			document.getElementById('gh-connect-toggle')?.addEventListener('click', () => {
+				const setup = document.getElementById('gh-setup');
+				if (setup) setup.style.display = setup.style.display === 'none' ? 'block' : 'none';
+			});
+
+			document.getElementById('gh-token-btn')?.addEventListener('click', async () => {
+				const input = document.getElementById('gh-token-input');
+				const errEl = document.getElementById('gh-error');
+				if (!input?.value?.trim()) return;
+				const btn = document.getElementById('gh-token-btn');
+				if (btn) btn.textContent = '...';
+				try {
+					await sync.connect(input.value.trim());
+					sync.startAutoSync();
+					renderGitHub();
+				} catch (err) {
+					if (errEl) {
+						errEl.textContent = err.message || 'Connection failed';
+						errEl.style.display = 'block';
+					}
+					if (btn) btn.textContent = 'Connect';
+				}
+			});
+
+			document.getElementById('gh-disconnect-btn')?.addEventListener('click', () => {
+				sync.disconnect();
+				renderGitHub();
+			});
+
+			document.getElementById('gh-sync-btn')?.addEventListener('click', async () => {
+				const btn = document.getElementById('gh-sync-btn');
+				if (btn) btn.textContent = 'Syncing...';
+				await sync.syncEngagement();
+				renderGitHub();
+			});
+		}
+
+		// === Sport Preferences ===
+		// Default followed sports (user's 6 core sports)
+		const DEFAULT_SPORTS = { football: 'high', golf: 'high', formula1: 'high', tennis: 'medium', chess: 'medium', esports: 'medium' };
+
+		function renderSports() {
+			const el = document.getElementById('sports-card');
+			const prefs = pm.getAllSportPreferences();
+
+			const rows = SPORT_CONFIG.map(sport => {
+				const current = prefs[sport.id] || DEFAULT_SPORTS[sport.id] || 'none';
+				return `<div class="sport-row">
+					<span class="sport-emoji">${sport.emoji}</span>
+					<span class="sport-name">${sport.name}</span>
+					<select class="sport-select" data-sport="${sport.id}">
+						<option value="high"${current === 'high' ? ' selected' : ''}>High</option>
+						<option value="medium"${current === 'medium' ? ' selected' : ''}>Medium</option>
+						<option value="low"${current === 'low' ? ' selected' : ''}>Low</option>
+						<option value="none"${current === 'none' ? ' selected' : ''}>None</option>
+					</select>
+				</div>`;
+			}).join('');
+
+			el.innerHTML = `<div class="card"><div class="card-header">Followed Sports</div>${rows}</div>`;
+
+			el.querySelectorAll('.sport-select').forEach(sel => {
+				sel.addEventListener('change', () => {
+					pm.setSportPreference(sel.dataset.sport, sel.value);
+				});
+			});
+		}
+
+		// === Favorites ===
+		function renderFavorites() {
+			const el = document.getElementById('favorites-card');
+			const prefs = pm.getPreferences();
+
+			// Teams
+			let teamsHtml = '';
+			const teamSports = ['football', 'esports'];
+			for (const sport of teamSports) {
+				const teams = pm.getFavoriteTeams(sport);
+				const sportCfg = SPORT_CONFIG.find(s => s.id === sport);
+				const label = sportCfg ? sportCfg.name : sport;
+				const tags = teams.map(t =>
+					`<span class="fav-tag">${esc(t)}<button class="fav-tag-remove" data-sport="${sport}" data-name="${esc(t)}" data-type="team">&times;</button></span>`
+				).join('');
+				teamsHtml += `<div class="fav-group">
+					<div class="fav-label">${esc(label)} Teams</div>
+					<div class="fav-tags">${tags || '<span class="empty-state">None</span>'}</div>
+					<div class="fav-add-row">
+						<input type="text" placeholder="Add team..." data-sport="${sport}" data-type="team" maxlength="60">
+						<button class="fav-add-btn" data-sport="${sport}" data-type="team">Add</button>
+					</div>
+				</div>`;
+			}
+
+			// Players
+			let playersHtml = '';
+			const playerSports = ['golf', 'tennis', 'chess'];
+			for (const sport of playerSports) {
+				const players = pm.getFavoritePlayers(sport);
+				const sportCfg = SPORT_CONFIG.find(s => s.id === sport);
+				const label = sportCfg ? sportCfg.name : sport;
+				const tags = players.map(p =>
+					`<span class="fav-tag">${esc(p)}<button class="fav-tag-remove" data-sport="${sport}" data-name="${esc(p)}" data-type="player">&times;</button></span>`
+				).join('');
+				playersHtml += `<div class="fav-group">
+					<div class="fav-label">${esc(label)} Players</div>
+					<div class="fav-tags">${tags || '<span class="empty-state">None</span>'}</div>
+					<div class="fav-add-row">
+						<input type="text" placeholder="Add player..." data-sport="${sport}" data-type="player" maxlength="60">
+						<button class="fav-add-btn" data-sport="${sport}" data-type="player">Add</button>
+					</div>
+				</div>`;
+			}
+
+			el.innerHTML = `<div class="card"><div class="card-header">Favorites</div>${teamsHtml}${playersHtml}</div>`;
+
+			// Remove buttons
+			el.querySelectorAll('.fav-tag-remove').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const { sport, name, type } = btn.dataset;
+					if (type === 'team') pm.removeFavoriteTeam(sport, name);
+					else pm.removeFavoritePlayer(sport, name);
+					renderFavorites();
+				});
+			});
+
+			// Add buttons
+			el.querySelectorAll('.fav-add-btn').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const { sport, type } = btn.dataset;
+					const input = el.querySelector(`input[data-sport="${sport}"][data-type="${type}"]`);
+					if (!input?.value?.trim()) return;
+					if (type === 'team') pm.addFavoriteTeam(sport, input.value.trim());
+					else pm.addFavoritePlayer(sport, input.value.trim());
+					input.value = '';
+					renderFavorites();
+				});
+			});
+
+			// Enter key on inputs
+			el.querySelectorAll('.fav-add-row input').forEach(input => {
+				input.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter') {
+						const btn = input.parentElement.querySelector('.fav-add-btn');
+						btn?.click();
+					}
+				});
+			});
+		}
+
+		// === Request Sport/Event ===
+		function renderRequest() {
+			const el = document.getElementById('request-card');
+			el.innerHTML = `<div class="card">
+				<div class="card-header">Request Sport or Event</div>
+				<div class="req-row"><input type="text" id="req-sport" placeholder="Sport name (required)" maxlength="60"></div>
+				<div class="req-row"><input type="text" id="req-event" placeholder="Event or tournament (optional)" maxlength="120"></div>
+				<div class="req-row"><textarea id="req-note" placeholder="Additional notes (optional)" maxlength="300" rows="2"></textarea></div>
+				<button class="req-submit" id="req-submit-btn">${sync.isConnected() ? 'Submit request' : 'Submit via GitHub'}</button>
+				<div class="req-success" id="req-success">Request submitted!</div>
+			</div>`;
+
+			document.getElementById('req-submit-btn')?.addEventListener('click', async () => {
+				const sport = document.getElementById('req-sport')?.value?.trim();
+				if (!sport) {
+					document.getElementById('req-sport')?.focus();
+					return;
+				}
+				const event = document.getElementById('req-event')?.value?.trim() || null;
+				const note = document.getElementById('req-note')?.value?.trim() || null;
+				fm.requestSport(sport, event, note);
+
+				const btn = document.getElementById('req-submit-btn');
+				if (sync.isConnected()) {
+					if (btn) btn.textContent = 'Submitting...';
+					try {
+						const data = fm.data;
+						await sync.submitFeedback(data.reports, data.suggestions);
+						fm.clear();
+						if (btn) btn.textContent = 'Submit request';
+						const success = document.getElementById('req-success');
+						if (success) { success.style.display = 'block'; setTimeout(() => success.style.display = 'none', 3000); }
+					} catch {
+						if (btn) btn.textContent = 'Failed - try again';
+					}
+				} else {
+					fm.submit();
+					if (btn) btn.textContent = 'Submit via GitHub';
+				}
+
+				// Clear inputs
+				document.getElementById('req-sport').value = '';
+				document.getElementById('req-event').value = '';
+				document.getElementById('req-note').value = '';
+				renderFeedback();
+			});
+		}
+
+		// === Engagement Summary ===
+		async function renderEngagement() {
+			const el = document.getElementById('engagement-card');
+			const engagement = pm.getEngagement();
+			const telemetry = pm.getTelemetry();
+
+			const sorted = Object.entries(engagement)
+				.filter(([, d]) => d.clicks > 0)
+				.sort(([, a], [, b]) => b.clicks - a.clicks);
+
+			if (sorted.length === 0 && !telemetry) {
+				el.innerHTML = `<div class="card"><div class="card-header">Engagement</div><div class="empty-state">No engagement data yet. Use the dashboard to start tracking.</div></div>`;
+				return;
+			}
+
+			let rows = '';
+			for (const [sport, data] of sorted) {
+				const sportCfg = SPORT_CONFIG.find(s => s.id === sport);
+				const name = sportCfg ? `${sportCfg.emoji} ${sportCfg.name}` : sport;
+				rows += `<div class="eng-row"><span class="eng-label">${name}</span><span class="eng-value">${data.clicks} clicks</span></div>`;
+			}
+
+			let sessionHtml = '';
+			if (telemetry?.sessions) {
+				sessionHtml = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+					<div class="eng-row"><span class="eng-label">Sessions</span><span class="eng-value">${telemetry.sessions.count || 0}</span></div>
+					<div class="eng-row"><span class="eng-label">Total time</span><span class="eng-value">${Math.round(telemetry.sessions.totalMinutes || 0)} min</span></div>
+				</div>`;
+			}
+
+			let peakHtml = '';
+			if (telemetry?.peakHours) {
+				const peaks = Object.entries(telemetry.peakHours).sort(([, a], [, b]) => b - a).slice(0, 3);
+				if (peaks.length) {
+					peakHtml = `<div class="eng-row"><span class="eng-label">Peak hours</span><span class="eng-value">${peaks.map(([h, c]) => `${h}:00 (${c}x)`).join(', ')}</span></div>`;
+				}
+			}
+
+			el.innerHTML = `<div class="card"><div class="card-header">Engagement</div>${rows}${sessionHtml}${peakHtml}</div>`;
+		}
+
+		// === Feedback & Suggestions ===
+		function renderFeedback() {
+			const el = document.getElementById('feedback-card');
+			const count = fm.pendingCount();
+
+			el.innerHTML = `<div class="card">
+				<div class="card-header">Feedback</div>
+				<div class="sug-row">
+					<input type="text" id="sug-input" placeholder="Suggest a feature or improvement..." maxlength="200">
+					<button id="sug-add-btn">Add</button>
+				</div>
+				${count > 0 ? `<div class="sug-pending">${count} pending item${count > 1 ? 's' : ''}</div>` : ''}
+				<button class="sug-submit" id="sug-submit-btn" ${count === 0 ? 'style="opacity:0.4;cursor:default"' : ''}>
+					${sync.isConnected() ? 'Submit feedback' : 'Send feedback via GitHub'}
+				</button>
+			</div>`;
+
+			document.getElementById('sug-add-btn')?.addEventListener('click', () => {
+				const input = document.getElementById('sug-input');
+				if (input?.value?.trim()) {
+					fm.suggest(input.value);
+					input.value = '';
+					renderFeedback();
+				}
+			});
+
+			document.getElementById('sug-input')?.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') document.getElementById('sug-add-btn')?.click();
+			});
+
+			document.getElementById('sug-submit-btn')?.addEventListener('click', async () => {
+				if (count === 0) return;
+				if (sync.isConnected()) {
+					const btn = document.getElementById('sug-submit-btn');
+					if (btn) btn.textContent = 'Submitting...';
+					try {
+						await sync.submitFeedback(fm.data.reports, fm.data.suggestions);
+						fm.clear();
+						renderFeedback();
+					} catch {
+						if (btn) btn.textContent = 'Failed - try again';
+					}
+				} else {
+					fm.submit();
+					renderFeedback();
+				}
+			});
+		}
+
+		// Render all sections
+		renderGitHub();
+		renderSports();
+		renderFavorites();
+		renderRequest();
+		renderEngagement();
+		renderFeedback();
+
+		// Start auto-sync if connected
+		if (sync.isConnected()) {
+			sync.startAutoSync();
+		}
+	</script>
+</body>
+</html>
