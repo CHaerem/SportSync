@@ -8,7 +8,7 @@ class GitHubSync {
 		this.STORAGE_KEY = 'sportsync-github';
 		this.REPO = 'CHaerem/SportSync';
 		this.API = 'https://api.github.com';
-		this.OAUTH_RELAY = 'https://serverpi.corgi-climb.ts.net:3847';
+		this.OAUTH_RELAY = 'https://serverpi.corgi-climb.ts.net';
 		this._config = this._load();
 		this._syncTimer = null;
 		this._lastFocusSync = 0;
