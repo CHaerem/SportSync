@@ -102,18 +102,7 @@
 			margin-bottom: 12px;
 		}
 
-		/* --- Autonomy score --- */
-		.score-big {
-			font-size: 2.4rem;
-			font-weight: 300;
-			letter-spacing: -0.02em;
-			line-height: 1.1;
-		}
-		.score-label {
-			font-size: 0.7rem;
-			color: var(--muted);
-			margin-bottom: 12px;
-		}
+		/* --- Score bar --- */
 		.score-bar {
 			height: 4px;
 			border-radius: 2px;
@@ -244,13 +233,6 @@
 		}
 		.log-pr:hover { opacity: 0.7; }
 
-		/* --- Next actions --- */
-		.action-item {
-			font-size: 0.75rem;
-			padding: 4px 0;
-			color: var(--fg);
-		}
-
 		/* --- Empty state --- */
 		.empty-state {
 			font-size: 0.75rem;
@@ -264,8 +246,18 @@
 			font-size: 0.82rem;
 			color: var(--fg);
 			line-height: 1.6;
-			margin-bottom: 16px;
 			font-style: italic;
+		}
+
+		/* --- Autonomy inline --- */
+		.autonomy-inline {
+			font-size: 0.78rem;
+			padding: 8px 0 0;
+			border-top: 1px solid var(--border);
+			margin-top: 8px;
+		}
+		.autonomy-inline strong {
+			font-weight: 600;
 		}
 
 		/* --- Loading --- */
@@ -288,7 +280,6 @@
 		.impact-stat { flex: 1; text-align: center; }
 		.impact-stat-value { font-size: 1.4rem; font-weight: 300; }
 		.impact-stat-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-		.impact-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 		.impact-cat { font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
 		.lesson-item { font-size: 0.7rem; color: var(--muted); font-style: italic; padding: 3px 0; border-bottom: 1px solid var(--border); }
 		.lesson-item:last-child { border-bottom: none; }
@@ -317,6 +308,44 @@
 			border-bottom-color: var(--accent);
 		}
 
+		/* --- Details toggle --- */
+		.details-toggle {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			width: 100%;
+			background: none;
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: 10px 16px;
+			font-family: var(--font);
+			font-size: 0.72rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			cursor: pointer;
+			transition: color 0.15s, border-color 0.15s;
+			margin-bottom: 16px;
+		}
+		.details-toggle:hover {
+			color: var(--fg);
+			border-color: var(--border-strong);
+		}
+		.details-toggle-arrow {
+			transition: transform 0.2s;
+			font-size: 0.6rem;
+		}
+		.details-toggle.open .details-toggle-arrow {
+			transform: rotate(90deg);
+		}
+		.details-content {
+			display: none;
+		}
+		.details-content.open {
+			display: block;
+		}
+
 		@media (max-width: 380px) {
 			.wrap { padding: 24px 16px 40px; }
 			.impact-stats { gap: 8px; }
@@ -335,17 +364,10 @@
 			<a href="preferences.html" class="tab-link">Preferences</a>
 		</nav>
 
-		<div id="ops"></div>
-		<div id="summary"></div>
-		<div id="autonomy"><div class="loading">Loading...</div></div>
-		<div id="autopilot"></div>
+		<div id="health"><div class="loading">Loading...</div></div>
+		<div id="whats-new"></div>
 		<div id="pipeline"></div>
-		<div id="quality"></div>
-		<div id="trend"></div>
-		<div id="sanity"></div>
-		<div id="gaps"></div>
-		<div id="quota"></div>
-		<div id="freshness"></div>
+		<div id="details"></div>
 	</div>
 
 	<script>
@@ -399,6 +421,21 @@
 			return 'var(--red)';
 		}
 
+		function fmtTokens(n) {
+			if (n == null || n === 0) return '0';
+			if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+			if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+			return String(n);
+		}
+
+		function fmtDuration(ms) {
+			if (!ms) return '0m';
+			const mins = Math.round(ms / 60000);
+			if (mins < 60) return mins + 'm';
+			const hrs = Math.floor(mins / 60);
+			return hrs + 'h ' + (mins % 60) + 'm';
+		}
+
 		const LOOP_LABELS = {
 			featuredQuality: 'Featured Quality',
 			enrichmentQuality: 'Enrichment Quality',
@@ -412,8 +449,19 @@
 			snapshotHealth: 'Snapshot Health'
 		};
 
-		function renderOpsOverview(pipelineResult, meta, autopilotLog, health) {
-			const el = document.getElementById('ops');
+		function categorizeTask(run) {
+			const text = ((run.task || '') + ' ' + (run.details || '')).toLowerCase();
+			if (/aria|alt text|a11y|focus|accessible|screen.?reader/.test(text)) return 'Accessibility';
+			if (/\btest|tests|unit test|spec\b/.test(text)) return 'Testing';
+			if (/\badd\b|render|visualize|implement|feature/.test(text)) return 'Features';
+			if (/remove|dead code|fix|cleanup|refactor|simplify|rename/.test(text)) return 'Code Quality';
+			if (/guard|validation|hide|standings|data|stale|freshness/.test(text)) return 'Data Quality';
+			return 'Other';
+		}
+
+		// Section 1: System Health — ops dots + autonomy summary + health text
+		function renderHealth(pipelineResult, meta, autopilotLog, health, autonomy) {
+			const el = document.getElementById('health');
 			const rows = [];
 
 			// 1. Pipeline status
@@ -478,199 +526,36 @@
 				'</div>'
 			).join('');
 
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Ops Overview</div>' +
-				rowsHtml +
-				'</div>';
-		}
+			// Autonomy summary (compact inline)
+			let autonomyHtml = '';
+			if (autonomy) {
+				const pct = Math.round(autonomy.overallScore * 100);
+				autonomyHtml = '<div class="autonomy-inline">Autonomy: <strong>' + pct + '%</strong> \u2014 ' + autonomy.loopsClosed + '/' + autonomy.loopsTotal + ' loops closed</div>';
+			}
 
-		function renderSummary(health) {
-			const el = document.getElementById('summary');
+			// Health summary text
 			const raw = health?.statusSummary;
-			const text = typeof raw === 'string' ? raw : raw?.text;
-			if (!text) { el.innerHTML = ''; return; }
-			el.innerHTML = '<div class="summary">' + text + '</div>';
+			const summaryText = typeof raw === 'string' ? raw : raw?.text;
+			const summaryHtml = summaryText ? '<div class="summary" style="margin-top:8px">' + summaryText + '</div>' : '';
+
+			el.innerHTML = '<div class="card">' +
+				'<div class="card-header">System Health</div>' +
+				rowsHtml +
+				autonomyHtml +
+				summaryHtml +
+				'</div>';
 		}
 
-		function renderAutonomy(report, trend) {
-			const el = document.getElementById('autonomy');
-			if (!report) { el.innerHTML = '<div class="card"><div class="card-header">Autonomy</div><div class="empty-state">No data available</div></div>'; return; }
-			const pct = Math.round(report.overallScore * 100);
-			const loopRows = Object.entries(report.loops || {}).map(([key, loop]) => {
-				const icon = loop.status === 'closed' ? '&#9679;' : loop.status === 'partial' ? '&#9681;' : '&#9675;';
-				const color = loop.status === 'closed' ? 'var(--green)' : loop.status === 'partial' ? 'var(--amber)' : 'var(--red)';
-				return '<div class="loop-row">' +
-					'<span class="loop-icon" style="color:' + color + '">' + icon + '</span>' +
-					'<span class="loop-name">' + (LOOP_LABELS[key] || key) + '</span>' +
-					'<span class="loop-detail" title="' + (loop.details || '').replace(/"/g, '&quot;') + '">' + (loop.details || '') + '</span>' +
-					'</div>';
-			}).join('');
-
-			let trendHtml = '';
-			if (Array.isArray(trend) && trend.length > 1) {
-				const last20 = trend.slice(-20);
-				const bars = last20.map(e => {
-					const h = Math.max(2, e.overallScore * 40);
-					const title = new Date(e.timestamp).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ': ' + Math.round(e.overallScore * 100) + '%';
-					return '<div class="spark-bar" style="height:' + h + 'px" title="' + title + '"></div>';
-				}).join('');
-				trendHtml = '<div style="margin-top:4px;margin-bottom:12px"><div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px">Autonomy trend (last ' + last20.length + ' snapshots)</div>' +
-					'<div class="sparkline">' + bars + '</div></div>';
+		// Section 2: What's New — hero autopilot feed with 10 items
+		function renderWhatsNew(log) {
+			const el = document.getElementById('whats-new');
+			if (!log || !log.runs || !log.runs.length) {
+				el.innerHTML = '<div class="card"><div class="card-header">What\'s New</div><div class="empty-state">No autopilot runs recorded yet</div></div>';
+				return;
 			}
-
-			let actionsHtml = '';
-			if (report.nextActions && report.nextActions.length > 0) {
-				actionsHtml = '<div style="margin-top:12px"><div class="card-header" style="margin-bottom:6px">Next Actions</div>' +
-					report.nextActions.map(a => '<div class="action-item">' + a + '</div>').join('') + '</div>';
-			}
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Autonomy Score</div>' +
-				'<div class="score-big">' + pct + '%</div>' +
-				'<div class="score-label">' + report.loopsClosed + ' of ' + report.loopsTotal + ' feedback loops closed</div>' +
-				'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:' + statusColor(report.overallScore) + '"></div></div>' +
-				trendHtml +
-				loopRows +
-				actionsHtml +
-				'</div>';
-		}
-
-		function renderPipeline(health) {
-			const el = document.getElementById('pipeline');
-			if (!health) { el.innerHTML = ''; return; }
-			const badgeClass = health.status === 'healthy' ? 'healthy' : health.status === 'warning' ? 'warning' : 'critical';
-			const coverage = Object.entries(health.sportCoverage || {}).map(([sport, data]) => {
-				const delta = data.delta != null && data.delta !== 0 ? ' (' + (data.delta > 0 ? '+' : '') + data.delta + ')' : '';
-				return '<div class="metric-row"><span class="metric-label">' + sport + '</span><span class="metric-value">' + data.count + ' events' + delta + '</span></div>';
-			}).join('');
-
-			const issues = (health.issues || []).slice(0, 6).map(i =>
-				'<div class="issue-item"><span class="issue-dot ' + i.severity + '"></span>' + i.message + '</div>'
-			).join('');
-
-			const standingsHtml = health.standingsHealth ? '<div style="margin-top:8px">' +
-				Object.entries(health.standingsHealth).map(([k, v]) =>
-					'<div class="metric-row"><span class="metric-label">' + k + '</span><span class="metric-value" style="color:' + (v ? 'var(--green)' : 'var(--red)') + '">' + (v ? 'OK' : 'Down') + '</span></div>'
-				).join('') + '</div>' : '';
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Pipeline Health</div>' +
-				'<span class="status-badge ' + badgeClass + '">' + health.status + '</span>' +
-				'<div class="metric-row"><span class="metric-label">Total events</span><span class="metric-value">' + (health.eventCount || 0) + '</span></div>' +
-				coverage +
-				standingsHtml +
-				(issues ? '<div style="margin-top:8px">' + issues + '</div>' : '') +
-				'</div>';
-		}
-
-		function renderQuality(quality) {
-			const el = document.getElementById('quality');
-			if (!quality) { el.innerHTML = ''; return; }
-			const ed = quality.editorial || {};
-			const en = quality.enrichment || {};
-			const ft = quality.featured || {};
-
-			const metricsHtml = Object.entries(ed.metrics || {}).map(([k, v]) => {
-				const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
-				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + Math.round(v * 100) + '%</span></div>';
-			}).join('');
-
-			const hintsHtml = en.hintsApplied && en.hintsApplied.length > 0
-				? '<div style="margin-top:6px;font-size:0.7rem;color:var(--muted)">Hints: ' + en.hintsApplied.join(', ') + '</div>' : '';
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">AI Quality</div>' +
-				'<div class="metric-row"><span class="metric-label">Editorial score</span><span class="metric-value">' + (ed.score || '—') + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Enrichment score</span><span class="metric-value">' + (en.score || '—') + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Featured score</span><span class="metric-value">' + (ft.score || '—') + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Featured provider</span><span class="metric-value">' + (ft.provider || '—') + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Generation time</span><span class="metric-value">' + (ft.generationMs != null ? ft.generationMs + 'ms' : '—') + '</span></div>' +
-				metricsHtml +
-				hintsHtml +
-				'</div>';
-		}
-
-		function fmtTokens(n) {
-			if (n == null || n === 0) return '0';
-			if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-			if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-			return String(n);
-		}
-
-		// renderTokens removed — consolidated into renderQuota below
-
-		function renderTrend(history) {
-			const el = document.getElementById('trend');
-			if (!history || !history.length) { el.innerHTML = ''; return; }
-			const last20 = history.slice(-20);
-			const bars = last20.map((entry, i) => {
-				const score = (entry.editorial && entry.editorial.score) || 0;
-				const h = Math.max(2, (score / 100) * 40);
-				const title = new Date(entry.timestamp).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ': ' + score;
-				return '<div class="spark-bar" style="height:' + h + 'px" title="' + title + '"></div>';
-			}).join('');
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Quality Trend (last ' + last20.length + ' runs)</div>' +
-				'<div class="sparkline">' + bars + '</div>' +
-				'</div>';
-		}
-
-		function renderSanity(sanity) {
-			const el = document.getElementById('sanity');
-			if (!sanity) { el.innerHTML = ''; return; }
-			const s = sanity.summary || {};
-			const badgeClass = sanity.pass ? 'healthy' : 'critical';
-			const badgeText = sanity.pass ? 'pass' : 'fail';
-			const findingsHtml = (sanity.findings || []).map(f => {
-				const dotClass = f.severity === 'critical' ? 'critical' : 'warning';
-				return '<div class="issue-item"><span class="issue-dot ' + dotClass + '"></span>' + f.message + '</div>';
-			}).join('');
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Sanity Check</div>' +
-				'<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
-				' <span style="font-size:0.65rem;color:var(--muted)">' + (sanity.provider || '') + ' &middot; ' + timeAgo(sanity.generatedAt) + '</span>' +
-				'<div class="metric-row"><span class="metric-label">Findings</span><span class="metric-value">' + (s.total || 0) + '</span></div>' +
-				(s.critical > 0 ? '<div class="metric-row"><span class="metric-label">Critical</span><span class="metric-value" style="color:var(--red)">' + s.critical + '</span></div>' : '') +
-				(s.warning > 0 ? '<div class="metric-row"><span class="metric-label">Warnings</span><span class="metric-value" style="color:var(--amber)">' + s.warning + '</span></div>' : '') +
-				(findingsHtml || '<div class="empty-state">No issues found</div>') +
-				'</div>';
-		}
-
-		function renderGaps(gaps) {
-			const el = document.getElementById('gaps');
-			if (!gaps) { el.innerHTML = ''; return; }
-			const summary = gaps.summary || {};
-			const gapList = (gaps.gaps || []).slice(0, 5).map(g =>
-				'<div class="issue-item">' + (g.headline || g.title || JSON.stringify(g)) + '</div>'
-			).join('');
-
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Coverage Gaps</div>' +
-				'<div class="metric-row"><span class="metric-label">Total gaps</span><span class="metric-value">' + (summary.totalGapsDetected || 0) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Actionable</span><span class="metric-value">' + (summary.actionableGaps || 0) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Informational</span><span class="metric-value">' + (summary.informationalGaps || 0) + '</span></div>' +
-				(gapList || '<div class="empty-state">No coverage gaps detected</div>') +
-				'</div>';
-		}
-
-		function categorizeTask(run) {
-			const text = ((run.task || '') + ' ' + (run.details || '')).toLowerCase();
-			if (/aria|alt text|a11y|focus|accessible|screen.?reader/.test(text)) return 'Accessibility';
-			if (/\btest|tests|unit test|spec\b/.test(text)) return 'Testing';
-			if (/\badd\b|render|visualize|implement|feature/.test(text)) return 'Features';
-			if (/remove|dead code|fix|cleanup|refactor|simplify|rename/.test(text)) return 'Code Quality';
-			if (/guard|validation|hide|standings|data|stale|freshness/.test(text)) return 'Data Quality';
-			return 'Other';
-		}
-
-		function renderAutopilot(log) {
-			const el = document.getElementById('autopilot');
-			if (!log || !log.runs || !log.runs.length) { el.innerHTML = ''; return; }
 			const completed = log.runs.filter(r => r.outcome === 'completed');
 
-			// Header stats
+			// Impact stats
 			const prsMerged = completed.filter(r => r.pr).length;
 			const tasksCompleted = completed.length;
 			const filesImproved = completed.reduce((s, r) => s + (r.files_changed || 0), 0);
@@ -681,23 +566,12 @@
 				'<div class="impact-stat"><div class="impact-stat-value">' + filesImproved + '</div><div class="impact-stat-label">Files Improved</div></div>' +
 				'</div>';
 
-			// Categories
-			const cats = {};
-			completed.forEach(r => {
-				const cat = categorizeTask(r);
-				cats[cat] = (cats[cat] || 0) + 1;
-			});
-			const topCats = Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 3);
-			const catsHtml = topCats.length > 0
-				? '<div class="impact-cats">' + topCats.map(([cat, count]) => '<span class="impact-cat">' + cat + ' (' + count + ')</span>').join('') + '</div>'
-				: '';
-
-			// Recent activity
-			const last5 = completed.slice(-5).reverse();
-			const itemsHtml = last5.map(run => {
+			// Last 10 runs with richer detail
+			const last10 = completed.slice(-10).reverse();
+			const itemsHtml = last10.map(run => {
 				const prLink = run.pr ? ' <a class="log-pr" href="' + REPO_URL + '/pull/' + run.pr + '" target="_blank" rel="noopener">#' + run.pr + '</a>' : '';
 				const cat = categorizeTask(run);
-				const detail = run.details ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + run.details.slice(0, 80) + (run.details.length > 80 ? '...' : '') + '</div>' : '';
+				const detail = run.details ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + run.details.slice(0, 200) + (run.details.length > 200 ? '...' : '') + '</div>' : '';
 				return '<div class="log-item">' +
 					'<div class="log-task">' + run.task + ' <span class="impact-cat">' + cat + '</span></div>' +
 					detail +
@@ -705,7 +579,7 @@
 					'</div>';
 			}).join('');
 
-			// Lessons learned
+			// Lessons learned (last 3)
 			const lessons = [];
 			const seen = new Set();
 			for (let i = log.runs.length - 1; i >= 0 && lessons.length < 3; i--) {
@@ -721,142 +595,285 @@
 				: '';
 
 			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Autopilot Impact</div>' +
+				'<div class="card-header">What\'s New</div>' +
 				statsHtml +
-				catsHtml +
 				'<div style="margin-top:2px"><div class="card-header" style="margin-bottom:4px">Recent Activity</div>' + itemsHtml + '</div>' +
 				lessonsHtml +
 				'</div>';
 		}
 
-		function renderFreshness(meta) {
-			const el = document.getElementById('freshness');
-			if (!meta) { el.innerHTML = ''; return; }
+		// Section 3: Pipeline & Quality — condensed single card
+		function renderPipelineCondensed(health, meta) {
+			const el = document.getElementById('pipeline');
+			if (!health && !meta) { el.innerHTML = ''; return; }
+
+			// Pipeline status badge
+			let badgeHtml = '';
+			if (health) {
+				const badgeClass = health.status === 'healthy' ? 'healthy' : health.status === 'warning' ? 'warning' : 'critical';
+				badgeHtml = '<span class="status-badge ' + badgeClass + '">' + health.status + '</span>';
+			}
+
+			// Sport coverage (compact)
+			let coverageHtml = '';
+			if (health?.sportCoverage) {
+				coverageHtml = Object.entries(health.sportCoverage).map(([sport, data]) => {
+					const delta = data.delta != null && data.delta !== 0 ? ' (' + (data.delta > 0 ? '+' : '') + data.delta + ')' : '';
+					return '<div class="metric-row"><span class="metric-label">' + sport + '</span><span class="metric-value">' + data.count + ' events' + delta + '</span></div>';
+				}).join('');
+			}
+
+			// Top issues (up to 4)
+			const issues = (health?.issues || []).slice(0, 4).map(i =>
+				'<div class="issue-item"><span class="issue-dot ' + i.severity + '"></span>' + i.message + '</div>'
+			).join('');
+
+			// Data freshness (2 lines)
+			let freshnessHtml = '';
+			if (meta) {
+				const lastUpdate = '<div class="metric-row"><span class="metric-label">Last update</span><span class="metric-value">' + timeAgo(meta.lastUpdate) + '</span></div>';
+				let nextExpected = '';
+				if (meta.nextUpdate) {
+					nextExpected = '<div class="metric-row"><span class="metric-label">Next expected</span><span class="metric-value">' + new Date(meta.nextUpdate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: meta.timezone || 'Europe/Oslo' }) + '</span></div>';
+				}
+				freshnessHtml = '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' + lastUpdate + nextExpected + '</div>';
+			}
+
+			// Total events
+			const totalHtml = health ? '<div class="metric-row"><span class="metric-label">Total events</span><span class="metric-value">' + (health.eventCount || 0) + '</span></div>' : '';
+
 			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Data Freshness</div>' +
-				'<div class="metric-row"><span class="metric-label">Last update</span><span class="metric-value">' + timeAgo(meta.lastUpdate) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Next expected</span><span class="metric-value">' + (meta.nextUpdate ? new Date(meta.nextUpdate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: meta.timezone || 'Europe/Oslo' }) : '—') + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Timezone</span><span class="metric-value">' + (meta.timezone || '—') + '</span></div>' +
+				'<div class="card-header">Pipeline & Quality</div>' +
+				badgeHtml +
+				totalHtml +
+				coverageHtml +
+				(issues ? '<div style="margin-top:8px">' + issues + '</div>' : '') +
+				freshnessHtml +
 				'</div>';
 		}
 
-		function fmtDuration(ms) {
-			if (!ms) return '0m';
-			const mins = Math.round(ms / 60000);
-			if (mins < 60) return mins + 'm';
-			const hrs = Math.floor(mins / 60);
-			return hrs + 'h ' + (mins % 60) + 'm';
-		}
+		// Section 4: Details — collapsed toggle with loops, trend, gaps, quota
+		function renderDetails(autonomy, autonomyTrend, quality, history, gaps, usage, health) {
+			const el = document.getElementById('details');
 
-		function renderQuota(usage, quality, history) {
-			const el = document.getElementById('quota');
-			const c = usage?.current || {};
-			const share = usage?.sportsyncShare || {};
-			const gate = usage?.gateConfig || {};
-			const runs = usage?.runs || [];
-			const budget = usage?.budget || {};
+			// --- Feedback loop breakdown ---
+			let loopsHtml = '';
+			if (autonomy && autonomy.loops) {
+				const loopRows = Object.entries(autonomy.loops).map(([key, loop]) => {
+					const icon = loop.status === 'closed' ? '&#9679;' : loop.status === 'partial' ? '&#9681;' : '&#9675;';
+					const color = loop.status === 'closed' ? 'var(--green)' : loop.status === 'partial' ? 'var(--amber)' : 'var(--red)';
+					return '<div class="loop-row">' +
+						'<span class="loop-icon" style="color:' + color + '">' + icon + '</span>' +
+						'<span class="loop-name">' + (LOOP_LABELS[key] || key) + '</span>' +
+						'<span class="loop-detail" title="' + (loop.details || '').replace(/"/g, '&quot;') + '">' + (loop.details || '') + '</span>' +
+						'</div>';
+				}).join('');
 
-			const utilBar = (label, pct, resetIso) => {
-				if (pct == null) return '';
-				const p = Math.min(100, Math.max(0, pct));
-				const color = p > 80 ? 'var(--red)' : p > 60 ? 'var(--amber)' : 'var(--green)';
-				let resetHtml = '';
-				if (resetIso) {
-					const resetDate = new Date(resetIso);
-					resetHtml = '<span style="font-size:0.65rem;color:var(--muted);margin-left:4px">' +
-						(resetDate > new Date() ? 'resets ' + timeUntil(resetIso) : 'reset ' + timeAgo(resetIso)) + '</span>';
-				}
-				return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + pct + '%' + resetHtml + '</span></div>' +
-					'<div class="score-bar"><div class="score-bar-fill" style="width:' + p + '%;background:' + color + '"></div></div>';
-			};
-
-			// Quota utilization
-			const u5 = c.fiveHour?.utilization;
-			const u7 = c.sevenDay?.utilization;
-			let utilHtml = '';
-			if (u5 != null || u7 != null) {
-				utilHtml = utilBar('5-hour window', u5, c.fiveHour?.resets_at) + utilBar('7-day window', u7, c.sevenDay?.resets_at);
-			} else {
-				utilHtml = '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-style:italic">Quota data unavailable</div>';
-			}
-
-			// Per-step token breakdown from ai-quality.json
-			const enrichUsage = quality?.enrichment?.tokenUsage || null;
-			const featuredUsage = quality?.featured?.tokenUsage || null;
-			const discoveryUsage = quality?.discovery?.tokenUsage || null;
-			const multiDayUsage = quality?.multiDay?.tokenUsage || null;
-			const steps = [];
-			const addStep = (name, u) => { if (u) steps.push({ label: name + (u.estimated ? ' (est)' : ''), usage: u }); };
-			addStep('Enrichment', enrichUsage);
-			addStep('Featured', featuredUsage);
-			addStep('Discovery', discoveryUsage);
-			addStep('Multi-day', multiDayUsage);
-
-			let breakdownHtml = '';
-			if (steps.length > 0) {
-				const maxTok = Math.max(...steps.map(s => (s.usage.input || 0) + (s.usage.output || 0)), 1);
-				breakdownHtml = '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
-					'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">This run</div>' +
-					steps.map(s => {
-						const tok = (s.usage.input || 0) + (s.usage.output || 0);
-						const pct = Math.max(2, Math.round((tok / maxTok) * 100));
-						return '<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:2px"><span class="metric-label">' + s.label + '</span><span class="metric-value">' + fmtTokens(tok) + '</span></div>' +
-							'<div class="score-bar"><div class="score-bar-fill" style="width:' + pct + '%;background:var(--accent)"></div></div></div>';
-					}).join('') + '</div>';
-			}
-
-			// Token trend sparkline
-			let sparkHtml = '';
-			if (Array.isArray(history) && history.length > 0) {
-				const last20 = history.slice(-20).map(e => e.tokenUsage?.total?.total || 0);
-				const maxVal = Math.max(...last20, 1);
-				if (last20.some(v => v > 0)) {
-					sparkHtml = '<div style="margin-top:10px"><div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px">Token trend (last ' + last20.length + ' runs)</div>' +
-						'<div class="sparkline">' +
-						last20.map(v => '<div class="spark-bar" style="height:' + Math.max(2, (v / maxVal) * 40) + 'px"></div>').join('') +
-						'</div></div>';
-				}
-			}
-
-			// Budget
-			let budgetHtml = '';
-			if (budget.dailyBudget) {
-				const dPct = Math.min(100, budget.dailyPct || 0);
-				const wPct = Math.min(100, budget.weeklyPct || 0);
-				const dColor = dPct > 80 ? 'var(--red)' : dPct > 60 ? 'var(--amber)' : 'var(--green)';
-				const wColor = wPct > 80 ? 'var(--red)' : wPct > 60 ? 'var(--amber)' : 'var(--green)';
-				budgetHtml = '<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">' +
-					'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">Budget</div>' +
-					'<div class="metric-row"><span class="metric-label">Daily (' + fmtTokens(budget.dailyBudget) + ')</span><span class="metric-value">' + dPct + '%</span></div>' +
-					'<div class="score-bar"><div class="score-bar-fill" style="width:' + dPct + '%;background:' + dColor + '"></div></div>' +
-					'<div class="metric-row"><span class="metric-label">Weekly (' + fmtTokens(budget.weeklyBudget) + ')</span><span class="metric-value">' + wPct + '%</span></div>' +
-					'<div class="score-bar"><div class="score-bar-fill" style="width:' + wPct + '%;background:' + wColor + '"></div></div>' +
+				const pct = Math.round(autonomy.overallScore * 100);
+				loopsHtml = '<div class="card">' +
+					'<div class="card-header">Feedback Loops</div>' +
+					'<div class="score-bar" style="margin-bottom:12px"><div class="score-bar-fill" style="width:' + pct + '%;background:' + statusColor(autonomy.overallScore) + '"></div></div>' +
+					loopRows +
 					'</div>';
 			}
 
-			// Run counts
-			const fiveHAgo = Date.now() - 5 * 3600000;
-			const recent5h = runs.filter(r => new Date(r.timestamp).getTime() > fiveHAgo).length;
-			const runsHtml = runs.length > 0 ? '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
-				'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">Pipeline activity</div>' +
-				'<div class="metric-row"><span class="metric-label">Runs (5h)</span><span class="metric-value">' + recent5h + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Pipeline runs (7d)</span><span class="metric-value">' + (share.pipelineRuns || 0) + '</span></div>' +
-				'<div class="metric-row"><span class="metric-label">Autopilot runs (7d)</span><span class="metric-value">' + (share.autopilotRuns || 0) + '</span></div>' +
-				'</div>' : '';
+			// --- Quality trend sparkline ---
+			let trendHtml = '';
+			if (Array.isArray(history) && history.length > 0) {
+				const last20 = history.slice(-20);
+				const bars = last20.map(entry => {
+					const score = (entry.editorial && entry.editorial.score) || 0;
+					const h = Math.max(2, (score / 100) * 40);
+					const title = new Date(entry.timestamp).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ': ' + score;
+					return '<div class="spark-bar" style="height:' + h + 'px" title="' + title + '"></div>';
+				}).join('');
 
-			const updatedHtml = usage?.lastUpdated
-				? '<div style="font-size:0.65rem;color:var(--muted);margin-top:6px">Updated ' + timeAgo(usage.lastUpdated) + '</div>'
-				: '';
+				trendHtml = '<div class="card">' +
+					'<div class="card-header">Quality Trend (last ' + last20.length + ' runs)</div>' +
+					'<div class="sparkline">' + bars + '</div>' +
+					'</div>';
+			}
 
-			el.innerHTML = '<div class="card">' +
-				'<div class="card-header">Resource Usage</div>' +
-				utilHtml +
-				breakdownHtml +
-				sparkHtml +
-				budgetHtml +
-				runsHtml +
-				updatedHtml +
+			// --- AI Quality detailed metrics ---
+			let qualityHtml = '';
+			if (quality) {
+				const ed = quality.editorial || {};
+				const en = quality.enrichment || {};
+				const ft = quality.featured || {};
+
+				const metricsRows = Object.entries(ed.metrics || {}).map(([k, v]) => {
+					const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+					return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + Math.round(v * 100) + '%</span></div>';
+				}).join('');
+
+				const hintsLine = en.hintsApplied && en.hintsApplied.length > 0
+					? '<div style="margin-top:6px;font-size:0.7rem;color:var(--muted)">Hints: ' + en.hintsApplied.join(', ') + '</div>' : '';
+
+				qualityHtml = '<div class="card">' +
+					'<div class="card-header">AI Quality</div>' +
+					'<div class="metric-row"><span class="metric-label">Editorial score</span><span class="metric-value">' + (ed.score || '\u2014') + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Enrichment score</span><span class="metric-value">' + (en.score || '\u2014') + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Featured score</span><span class="metric-value">' + (ft.score || '\u2014') + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Featured provider</span><span class="metric-value">' + (ft.provider || '\u2014') + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Generation time</span><span class="metric-value">' + (ft.generationMs != null ? ft.generationMs + 'ms' : '\u2014') + '</span></div>' +
+					metricsRows +
+					hintsLine +
+					'</div>';
+			}
+
+			// --- Coverage gaps ---
+			let gapsHtml = '';
+			if (gaps) {
+				const summary = gaps.summary || {};
+				const gapList = (gaps.gaps || []).slice(0, 5).map(g =>
+					'<div class="issue-item">' + (g.headline || g.title || JSON.stringify(g)) + '</div>'
+				).join('');
+
+				gapsHtml = '<div class="card">' +
+					'<div class="card-header">Coverage Gaps</div>' +
+					'<div class="metric-row"><span class="metric-label">Total gaps</span><span class="metric-value">' + (summary.totalGapsDetected || 0) + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Actionable</span><span class="metric-value">' + (summary.actionableGaps || 0) + '</span></div>' +
+					(gapList || '<div class="empty-state">No coverage gaps detected</div>') +
+					'</div>';
+			}
+
+			// --- Resource usage / quota ---
+			let quotaHtml = '';
+			if (usage) {
+				const c = usage.current || {};
+				const share = usage.sportsyncShare || {};
+				const budget = usage.budget || {};
+
+				const utilBar = (label, pct, resetIso) => {
+					if (pct == null) return '';
+					const p = Math.min(100, Math.max(0, pct));
+					const color = p > 80 ? 'var(--red)' : p > 60 ? 'var(--amber)' : 'var(--green)';
+					let resetLine = '';
+					if (resetIso) {
+						const resetDate = new Date(resetIso);
+						resetLine = '<span style="font-size:0.65rem;color:var(--muted);margin-left:4px">' +
+							(resetDate > new Date() ? 'resets ' + timeUntil(resetIso) : 'reset ' + timeAgo(resetIso)) + '</span>';
+					}
+					return '<div class="metric-row"><span class="metric-label">' + label + '</span><span class="metric-value">' + pct + '%' + resetLine + '</span></div>' +
+						'<div class="score-bar"><div class="score-bar-fill" style="width:' + p + '%;background:' + color + '"></div></div>';
+				};
+
+				const u5 = c.fiveHour?.utilization;
+				const u7 = c.sevenDay?.utilization;
+				let utilLines = '';
+				if (u5 != null || u7 != null) {
+					utilLines = utilBar('5-hour window', u5, c.fiveHour?.resets_at) + utilBar('7-day window', u7, c.sevenDay?.resets_at);
+				} else {
+					utilLines = '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-style:italic">Quota data unavailable</div>';
+				}
+
+				// Per-step token breakdown
+				const enrichUsage = quality?.enrichment?.tokenUsage || null;
+				const featuredUsage = quality?.featured?.tokenUsage || null;
+				const discoveryUsage = quality?.discovery?.tokenUsage || null;
+				const multiDayUsage = quality?.multiDay?.tokenUsage || null;
+				const steps = [];
+				const addStep = (name, u) => { if (u) steps.push({ label: name + (u.estimated ? ' (est)' : ''), usage: u }); };
+				addStep('Enrichment', enrichUsage);
+				addStep('Featured', featuredUsage);
+				addStep('Discovery', discoveryUsage);
+				addStep('Multi-day', multiDayUsage);
+
+				let breakdownLines = '';
+				if (steps.length > 0) {
+					const maxTok = Math.max(...steps.map(s => (s.usage.input || 0) + (s.usage.output || 0)), 1);
+					breakdownLines = '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
+						'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">This run</div>' +
+						steps.map(s => {
+							const tok = (s.usage.input || 0) + (s.usage.output || 0);
+							const pctW = Math.max(2, Math.round((tok / maxTok) * 100));
+							return '<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:2px"><span class="metric-label">' + s.label + '</span><span class="metric-value">' + fmtTokens(tok) + '</span></div>' +
+								'<div class="score-bar"><div class="score-bar-fill" style="width:' + pctW + '%;background:var(--accent)"></div></div></div>';
+						}).join('') + '</div>';
+				}
+
+				// Token trend sparkline
+				let sparkLines = '';
+				if (Array.isArray(history) && history.length > 0) {
+					const last20 = history.slice(-20).map(e => e.tokenUsage?.total?.total || 0);
+					const maxVal = Math.max(...last20, 1);
+					if (last20.some(v => v > 0)) {
+						sparkLines = '<div style="margin-top:10px"><div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px">Token trend (last ' + last20.length + ' runs)</div>' +
+							'<div class="sparkline">' +
+							last20.map(v => '<div class="spark-bar" style="height:' + Math.max(2, (v / maxVal) * 40) + 'px"></div>').join('') +
+							'</div></div>';
+					}
+				}
+
+				// Budget
+				let budgetLines = '';
+				if (budget.dailyBudget) {
+					const dPct = Math.min(100, budget.dailyPct || 0);
+					const wPct = Math.min(100, budget.weeklyPct || 0);
+					const dColor = dPct > 80 ? 'var(--red)' : dPct > 60 ? 'var(--amber)' : 'var(--green)';
+					const wColor = wPct > 80 ? 'var(--red)' : wPct > 60 ? 'var(--amber)' : 'var(--green)';
+					budgetLines = '<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">' +
+						'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">Budget</div>' +
+						'<div class="metric-row"><span class="metric-label">Daily (' + fmtTokens(budget.dailyBudget) + ')</span><span class="metric-value">' + dPct + '%</span></div>' +
+						'<div class="score-bar"><div class="score-bar-fill" style="width:' + dPct + '%;background:' + dColor + '"></div></div>' +
+						'<div class="metric-row"><span class="metric-label">Weekly (' + fmtTokens(budget.weeklyBudget) + ')</span><span class="metric-value">' + wPct + '%</span></div>' +
+						'<div class="score-bar"><div class="score-bar-fill" style="width:' + wPct + '%;background:' + wColor + '"></div></div>' +
+						'</div>';
+				}
+
+				// Run counts
+				const runs = usage.runs || [];
+				const fiveHAgo = Date.now() - 5 * 3600000;
+				const recent5h = runs.filter(r => new Date(r.timestamp).getTime() > fiveHAgo).length;
+				const runsLines = runs.length > 0 ? '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">' +
+					'<div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px">Pipeline activity</div>' +
+					'<div class="metric-row"><span class="metric-label">Runs (5h)</span><span class="metric-value">' + recent5h + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Pipeline runs (7d)</span><span class="metric-value">' + (share.pipelineRuns || 0) + '</span></div>' +
+					'<div class="metric-row"><span class="metric-label">Autopilot runs (7d)</span><span class="metric-value">' + (share.autopilotRuns || 0) + '</span></div>' +
+					'</div>' : '';
+
+				quotaHtml = '<div class="card">' +
+					'<div class="card-header">Resource Usage</div>' +
+					utilLines +
+					breakdownLines +
+					sparkLines +
+					budgetLines +
+					runsLines +
+					'</div>';
+			}
+
+			// --- Standings health ---
+			let standingsHtml = '';
+			if (health?.standingsHealth) {
+				standingsHtml = '<div class="card"><div class="card-header">Standings Health</div>' +
+					Object.entries(health.standingsHealth).map(([k, v]) =>
+						'<div class="metric-row"><span class="metric-label">' + k + '</span><span class="metric-value" style="color:' + (v ? 'var(--green)' : 'var(--red)') + '">' + (v ? 'OK' : 'Down') + '</span></div>'
+					).join('') + '</div>';
+			}
+
+			// Assemble content
+			const contentHtml = loopsHtml + trendHtml + qualityHtml + gapsHtml + quotaHtml + standingsHtml;
+
+			if (!contentHtml) {
+				el.innerHTML = '';
+				return;
+			}
+
+			el.innerHTML = '<button class="details-toggle" id="detailsToggleBtn">' +
+				'<span class="details-toggle-arrow">&#9654;</span> Show technical details' +
+				'</button>' +
+				'<div class="details-content" id="detailsContent">' +
+				contentHtml +
 				'</div>';
+
+			document.getElementById('detailsToggleBtn').addEventListener('click', function() {
+				this.classList.toggle('open');
+				const content = document.getElementById('detailsContent');
+				content.classList.toggle('open');
+				const arrow = this.querySelector('.details-toggle-arrow');
+				this.innerHTML = '<span class="details-toggle-arrow"' + (this.classList.contains('open') ? ' style="transform:rotate(90deg)"' : '') + '>&#9654;</span> ' +
+					(this.classList.contains('open') ? 'Hide technical details' : 'Show technical details');
+			});
 		}
 
 		// Fetch all data in parallel and render
@@ -868,22 +885,14 @@
 			fetchJSON('coverage-gaps.json'),
 			fetchJSON('autopilot-log.json'),
 			fetchJSON('meta.json'),
-			fetchJSON('sanity-report.json'),
 			fetchJSON('usage-tracking.json'),
 			fetchJSON('autonomy-trend.json'),
 			fetchJSON('pipeline-result.json')
-		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, sanity, usage, autonomyTrend, pipelineResult]) => {
-			renderOpsOverview(pipelineResult, meta, autopilotLog, health);
-			renderSummary(health);
-			renderAutonomy(autonomy, autonomyTrend);
-			renderAutopilot(autopilotLog);
-			renderPipeline(health);
-			renderQuality(quality);
-			renderTrend(history);
-			renderSanity(sanity);
-			renderGaps(gaps);
-			renderQuota(usage, quality, history);
-			renderFreshness(meta);
+		]).then(([autonomy, health, quality, history, gaps, autopilotLog, meta, usage, autonomyTrend, pipelineResult]) => {
+			renderHealth(pipelineResult, meta, autopilotLog, health, autonomy);
+			renderWhatsNew(autopilotLog);
+			renderPipelineCondensed(health, meta);
+			renderDetails(autonomy, autonomyTrend, quality, history, gaps, usage, health);
 		});
 	</script>
 </body>

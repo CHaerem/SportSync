@@ -2,40 +2,61 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Camp Nou miracle night: Barça trail 4-0, Atlético need nothing"
+      "text": "5 events across 1 sport today"
     },
     {
       "type": "match-preview",
       "homeTeam": "Barcelona",
-      "awayTeam": "Atlético Madrid"
+      "awayTeam": "Atlético Madrid",
+      "showStandings": true,
+      "_fallbackText": "⚽ Barcelona v Atlético Madrid, 21:00, Copa del Rey — Favourite team Barcelona host Atlético at Camp Nou but trail 4-0 on aggregate — a historic comeback would be needed to advance"
     },
     {
-      "type": "narrative",
-      "text": "Trailing 4-0 on aggregate, Barcelona need a 4-0 win minimum just to reach extra time — and 5-0 to advance outright. Atlético arrive at Camp Nou as kings. This is survival territory."
+      "type": "match-preview",
+      "homeTeam": "Leeds United",
+      "awayTeam": "Sunderland",
+      "showStandings": true,
+      "_fallbackText": "⚽ Leeds United v Sunderland, 20:30, Premier League — Classic northern English rivalry as Sunderland visit Elland Road — two clubs with fierce, vocal support making this more than a routine fixture"
     },
     {
       "type": "match-preview",
       "homeTeam": "Wolverhampton Wanderers",
       "awayTeam": "Liverpool",
-      "showStandings": true
+      "showStandings": true,
+      "_fallbackText": "⚽ Wolverhampton Wanderers v Liverpool, 21:15, Premier League — Liverpool travel to Molineux in a Premier League fixture with title-race implications — Wolves a tricky away trip"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "AFC Bournemouth",
+      "awayTeam": "Brentford",
+      "showStandings": false,
+      "_fallbackText": "⚽ AFC Bournemouth v Brentford, 20:30, Premier League — Brentford travel to Vitality Stadium for a routine Premier League clash between two mid-table sides with little on the line"
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "event-line",
-      "text": "⚽ Wed 21:00 — El Derbi Vasco: Athletic Club must overturn 1-0 deficit at Real Sociedad, Reale Arena"
+      "type": "match-preview",
+      "homeTeam": "Real Sociedad",
+      "awayTeam": "Athletic Club",
+      "showStandings": true,
+      "_fallbackText": "⚽ Wed 21:00 — Athletic Club at Real Sociedad"
     },
     {
       "type": "event-line",
-      "text": "🏎️ Fri 02:30 — F1 season opens: Australian Grand Prix, Melbourne"
+      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
     },
     {
       "type": "event-line",
-      "text": "⛷️ Fri 16:10 — Johannes Thingnes Bø leads Norway in Biathlon Men's 20km Individual, Kontiolahti ★★★★★"
+      "text": "♟️ Wed 16:00 — Round 1 – FIDE Candidates Tournament 2026"
     }
   ],
-  "generatedAt": "2026-03-03T14:22:17.010Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-03-03T14:09:05.355Z",
+  "provider": "fallback"
 }

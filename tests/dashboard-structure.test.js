@@ -95,16 +95,10 @@ describe("status.html structure", () => {
 	});
 
 	const expectedIds = [
-		"summary",
-		"autonomy",
+		"health",
+		"whats-new",
 		"pipeline",
-		"quality",
-		"quota",
-		"trend",
-		"sanity",
-		"gaps",
-		"autopilot",
-		"freshness",
+		"details",
 		"themeToggle",
 	];
 
