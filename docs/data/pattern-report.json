@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T01:52:20.400Z",
+  "generatedAt": "2026-03-03T01:58:09.194Z",
   "patternsDetected": 2,
   "patterns": [
     {
@@ -13,11 +13,11 @@
     },
     {
       "type": "hint_fatigue",
-      "severity": "medium",
+      "severity": "high",
       "hintKey": "sanityScore",
-      "fireCount": 9,
+      "fireCount": 12,
       "hintText": "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data.",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 9 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 12 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -27,19 +27,19 @@
       "lastSeen": "2026-03-01T18:17:09.976Z"
     },
     "streaming_low_match_rate": {
-      "count": 243,
+      "count": 244,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "ux_eval_fallback": {
-      "count": 188,
+      "count": 189,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.137Z"
     },
     "missing_snapshot": {
-      "count": 10,
+      "count": 11,
       "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-03-02T06:32:11.956Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "norwegian_tagging_anomaly": {
       "count": 21,
@@ -47,9 +47,9 @@
       "lastSeen": "2026-02-28T01:58:44.887Z"
     },
     "streaming_coverage_gap": {
-      "count": 107,
+      "count": 108,
       "firstSeen": "2026-02-25T06:30:55.327Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "snapshot_event_mismatch": {
       "count": 32,
@@ -77,9 +77,9 @@
       "lastSeen": "2026-03-02T22:17:52.312Z"
     },
     "step_timeout_hit": {
-      "count": 32,
+      "count": 33,
       "firstSeen": "2026-02-27T08:26:58.303Z",
-      "lastSeen": "2026-03-02T16:16:52.481Z"
+      "lastSeen": "2026-03-03T01:58:09.137Z"
     },
     "recipe_repair_exhausted": {
       "count": 43,
@@ -92,9 +92,9 @@
       "lastSeen": "2026-03-01T19:09:18.054Z"
     },
     "invisible_events": {
-      "count": 34,
+      "count": 35,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "sport_count_drop": {
       "count": 1,
@@ -102,14 +102,14 @@
       "lastSeen": "2026-03-01T07:17:43.272Z"
     },
     "stale_data": {
-      "count": 49,
+      "count": 51,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "chronic_data_retention": {
-      "count": 45,
+      "count": 47,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-03T01:52:20.354Z"
+      "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "stale_output": {
       "count": 8,
@@ -132,7 +132,7 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-03-03T01:52:20.400Z",
+    "recordedAt": "2026-03-03T01:58:09.194Z",
     "moduleCount": 66,
     "avgModuleSize": 328,
     "pipelineSteps": 28,
@@ -145,5 +145,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "2 patterns detected (1 high, 1 medium). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 21 times since 2026-02-24."
+  "summary": "2 patterns detected (2 high). Top priority: recurring_health_warning — Health warning \"norwegian_tagging_anomaly\" has fired 21 times since 2026-02-24."
 }

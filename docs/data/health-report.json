@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T01:52:20.308Z",
-  "eventCount": 59,
+  "generatedAt": "2026-03-03T01:58:09.073Z",
+  "eventCount": 66,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 22,
+      "count": 23,
       "previousCount": 22,
-      "delta": 0
+      "delta": 1
     },
     "icehockey": {
       "count": 12,
@@ -38,9 +38,9 @@
       "delta": 0
     },
     "cycling": {
-      "count": 2,
+      "count": 8,
       "previousCount": 2,
-      "delta": 0
+      "delta": 6
     },
     "alpine": {
       "count": 8,
@@ -60,35 +60,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 222,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3106,
+      "ageMinutes": 3112,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 222,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 222,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1665,
+      "ageMinutes": 1671,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 222,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 220,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 220,
       "stale": false
     }
   },
@@ -116,8 +116,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.23,
-    "eventsEnriched": 5,
+    "matchRate": 0.52,
+    "eventsEnriched": 12,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -125,7 +125,8 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
+      "1 expected day snapshot(s) missing",
+      "Snapshot 2026-03-09: 2 events but events.json has 3"
     ],
     "snapshotCount": 15
   },
@@ -194,7 +195,9 @@
     ],
     "hasCoverage": false
   },
-  "unmappedLeagues": [],
+  "unmappedLeagues": [
+    "Cycling Grand Tours & Norwegian Races 2026"
+  ],
   "issues": [
     {
       "severity": "info",
@@ -204,32 +207,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 3106 minutes old"
+      "message": "esports.json: data is 3112 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1665 minutes old"
+      "message": "golf.json: data is 1671 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 33 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 34 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 16 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 23% (5/22) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "1 important event(s) lack streaming info: Copa del Rey • 2nd Leg - Real Sociedad lead 1-0 on aggregate"
+      "message": "golf: data retained 17 consecutive times (since 2026-03-02) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -240,6 +233,16 @@
       "severity": "warning",
       "code": "missing_snapshot",
       "message": "1 expected day snapshot(s) missing"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-09: 2 events but events.json has 3"
+    },
+    {
+      "severity": "info",
+      "code": "unmapped_leagues",
+      "message": "1 tournament(s) lack league theming: Cycling Grand Tours & Norwegian Races 2026"
     },
     {
       "severity": "warning",
@@ -265,16 +268,11 @@
       "severity": "info",
       "code": "focus_team_no_events",
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
-    },
-    {
-      "severity": "info",
-      "code": "model_change_quality_stable",
-      "message": "featured model changed (default → fallback) with stable quality — model efficiency improved"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T01:52:20.409Z",
+    "computedAt": "2026-03-03T01:58:09.204Z",
     "targets": [],
     "highestUrgency": 0,
     "urgentTargets": 0
@@ -288,17 +286,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 10 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Autonomy at 100% with 12/12 feedback loops closed. Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [
-      {
-        "severity": "info",
-        "code": "model_change_quality_stable",
-        "message": "featured model changed (default → fallback) with stable quality — model efficiency improved"
-      }
-    ],
-    "hasRegression": true
   }
 }
