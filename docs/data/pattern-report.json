@@ -1,16 +1,7 @@
 {
-  "generatedAt": "2026-03-03T14:22:18.946Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "hint_fatigue",
-      "severity": "high",
-      "hintKey": "sanityScore",
-      "fireCount": 10,
-      "hintText": "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data.",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n...\" has fired 10 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
-    }
-  ],
+  "generatedAt": "2026-03-03T18:22:53.901Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "component_unresolvable": {
       "count": 49,
@@ -23,9 +14,9 @@
       "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "ux_eval_fallback": {
-      "count": 198,
+      "count": 199,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-03T14:22:18.886Z"
+      "lastSeen": "2026-03-03T18:22:53.841Z"
     },
     "missing_snapshot": {
       "count": 12,
@@ -38,9 +29,9 @@
       "lastSeen": "2026-03-03T01:58:09.136Z"
     },
     "snapshot_event_mismatch": {
-      "count": 33,
+      "count": 44,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-03T06:29:41.200Z"
+      "lastSeen": "2026-03-03T18:22:53.841Z"
     },
     "bracket_stale_matches": {
       "count": 43,
@@ -68,9 +59,9 @@
       "lastSeen": "2026-03-01T19:09:18.054Z"
     },
     "invisible_events": {
-      "count": 44,
+      "count": 45,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-03T14:22:18.886Z"
+      "lastSeen": "2026-03-03T18:22:53.840Z"
     },
     "sport_count_drop": {
       "count": 1,
@@ -78,14 +69,14 @@
       "lastSeen": "2026-03-01T07:17:43.272Z"
     },
     "stale_data": {
-      "count": 69,
+      "count": 70,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-03T14:22:18.886Z"
+      "lastSeen": "2026-03-03T18:22:53.840Z"
     },
     "chronic_data_retention": {
-      "count": 65,
+      "count": 66,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-03T14:22:18.886Z"
+      "lastSeen": "2026-03-03T18:22:53.840Z"
     },
     "stale_output": {
       "count": 10,
@@ -100,19 +91,19 @@
   },
   "interventionEffectiveness": {
     "sanityScore": {
-      "fires": 18,
+      "fires": 12,
       "improved": 0,
-      "unchanged": 18,
+      "unchanged": 12,
       "worsened": 0,
       "effectivenessRate": 0
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-03-03T14:22:18.945Z",
+    "recordedAt": "2026-03-03T18:22:53.901Z",
     "moduleCount": 66,
     "avgModuleSize": 328,
     "pipelineSteps": 28,
-    "testCoverageRatio": 1.06,
+    "testCoverageRatio": 1.09,
     "smallModuleRatio": 0.02,
     "thresholdOverrides": {}
   },
@@ -121,5 +112,5 @@
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
-  "summary": "1 patterns detected (1 high). Top priority: hint_fatigue — Hint \"SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but n."
+  "summary": "0 patterns detected"
 }

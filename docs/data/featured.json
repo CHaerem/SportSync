@@ -2,61 +2,38 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "5 events across 1 sport today"
+      "text": "Barcelona need a miracle: four goals down at Camp Nou tonight"
     },
     {
       "type": "match-preview",
       "homeTeam": "Barcelona",
-      "awayTeam": "Atlético Madrid",
-      "showStandings": true,
-      "_fallbackText": "⚽ Barcelona v Atlético Madrid, 21:00, Copa del Rey — Favourite team Barcelona host Atlético at Camp Nou but trail 4-0 on aggregate — a historic comeback would be needed to advance"
+      "awayTeam": "Atlético Madrid"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Leeds United",
-      "awayTeam": "Sunderland",
-      "showStandings": true,
-      "_fallbackText": "⚽ Leeds United v Sunderland, 20:30, Premier League — Classic northern English rivalry as Sunderland visit Elland Road — two clubs with fierce, vocal support making this more than a routine fixture"
+      "type": "narrative",
+      "text": "Trailing 0-4 from the first leg, Barça would need the greatest Copa del Rey comeback ever staged. For Atlético, Camp Nou is a victory lap — not a battle."
     },
     {
       "type": "match-preview",
       "homeTeam": "Wolverhampton Wanderers",
       "awayTeam": "Liverpool",
-      "showStandings": true,
-      "_fallbackText": "⚽ Wolverhampton Wanderers v Liverpool, 21:15, Premier League — Liverpool travel to Molineux in a Premier League fixture with title-race implications — Wolves a tricky away trip"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "AFC Bournemouth",
-      "awayTeam": "Brentford",
-      "showStandings": false,
-      "_fallbackText": "⚽ AFC Bournemouth v Brentford, 20:30, Premier League — Brentford travel to Vitality Stadium for a routine Premier League clash between two mid-table sides with little on the line"
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ Cognizant Classic in The Palm Beaches"
+      "showStandings": true
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Real Sociedad",
-      "awayTeam": "Athletic Club",
-      "showStandings": true,
-      "_fallbackText": "⚽ Wed 21:00 — Athletic Club at Real Sociedad"
-    },
-    {
-      "type": "event-line",
-      "text": "🏎️ Fri 02:30 — Qatar Airways Australian Grand Prix"
-    },
-    {
-      "type": "event-line",
-      "text": "♟️ Wed 16:00 — Round 1 – FIDE Candidates Tournament 2026"
+      "type": "event-group",
+      "label": "⭐ Must-Watch Ahead",
+      "items": [
+        "⚽ Wed 21:00 — Copa del Rey Basque derby: Athletic Club must overturn Real Sociedad's 1-0 aggregate lead at Reale Arena",
+        "⛳ Thu 06:00 — Arnold Palmer Invitational: Hovland at Bay Hill, one of PGA Tour's premier Signature Events",
+        "🏎️ Fri 02:30 — Australian Grand Prix: F1 2025 season kicks off, first championship points on the board",
+        "🚴 Sat 12:00 — Strade Bianche: Abrahamsen and Hoelgaard chase glory on Tuscany's iconic gravel roads"
+      ]
     }
   ],
-  "generatedAt": "2026-03-03T14:09:05.355Z",
-  "provider": "fallback"
+  "generatedAt": "2026-03-03T18:22:02.090Z",
+  "provider": "claude-cli"
 }

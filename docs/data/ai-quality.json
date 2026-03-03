@@ -1,32 +1,37 @@
 {
-  "generatedAt": "2026-03-03T14:09:09.336Z",
+  "generatedAt": "2026-03-03T18:22:02.108Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": null,
-    "quotaModel": null,
+    "provider": "claude-cli",
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 10,
-    "generationMs": 3,
+    "blockCount": 6,
+    "generationMs": 101269,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 35559,
+      "output": 5912,
+      "cacheCreation": 35556,
+      "cacheRead": 0,
+      "total": 41471,
+      "costUSD": 0.3700399999999999,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 97,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
     "issues": []
@@ -35,40 +40,40 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 73,
+      "avgScore": 82,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 90,
+    "score": 88,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
       "recapHeadlineRate": 0,
-      "favoriteCoverage": 0.5,
+      "favoriteCoverage": 0.333,
       "golfPresent": 1,
-      "footballCount": 28
+      "footballCount": 27
     },
     "issues": [
       "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
-    "provider": "none",
-    "model": "unknown",
-    "quotaTier": null,
-    "quotaModel": null,
+    "provider": "claude-cli",
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 66,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 66,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -78,22 +83,36 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 3,
     "failedBatches": 0,
-    "totalEvents": 66,
+    "totalEvents": 37,
     "skipStats": {
-      "total": 66,
-      "unchanged": 66,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 37,
+      "unchanged": 34,
+      "enriched": 3,
+      "skipRate": 0.92
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 11018,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 30913,
+      "output": 2142,
+      "calls": 1,
+      "total": 33055,
+      "costUSD": 0.2467525,
+      "tracked": true,
+      "estimated": false
     }
+  },
+  "multiDay": {
+    "tokenUsage": {
+      "input": 35559,
+      "output": 5912,
+      "calls": 1,
+      "total": 41471,
+      "tracked": false,
+      "estimated": true
+    },
+    "lastRun": "2026-03-03T18:22:02.419Z"
   }
 }
