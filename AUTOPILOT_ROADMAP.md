@@ -275,11 +275,19 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 |--------|-------------------|---------------|-------|
 | 1. Data | ~95% | 2026-02-27 | Learned scraper system (Liquipedia CS2 recipe), smart bracket refresh, esports staleness addressed |
 | 2. Code | ~92% | 2026-03-03 | 2239 tests across 70 files, architecture threshold adjusted, league config entries added |
-| 3. Capabilities | ~83% | 2026-03-03 | 11 sports (cycling grand tours merged PR #119), IndyCar + ski jumping explored → FEATURE tasks ready |
-| 4. Personalization | ~60% | 2026-02-23 | watchPlan reasons fixed, For You block, watch-plan feedback loop, sport weights evolve |
+| 3. Capabilities | ~85% | 2026-03-04 | FIFA World Cup 2026 config added (user sport-request #121), Copa del Rey logo |
+| 4. Personalization | ~65% | 2026-03-04 | Liverpool + 100 Thieves added to favorites (user feedback #122), FIFA WC favoriteTeamConnections |
 | 5. Quality | ~100% | 2026-02-27 | 12/12 loops restored (pipelineHealth + snapshotHealth now quota-aware), 4 new managed codes |
 
 ### Run History Insights
+
+**Run 2026-03-04 (Run 18):** 1 pre-flight test repair + 2 user feedback issues processed. Parallel data-agent + ux-agent.
+- Pre-flight: Fixed github-sync-restore.test.js — `window.navigator` was undefined in Node.js test environment, causing 5 failures in `_isStandalone` tests. Fix: add `globalThis.navigator = {}` to test setup. Tests: 2281/2281.
+- data-agent: Created `scripts/config/fifa-world-cup-2026.json` from user sport-request (issue #121). 11 events (Opening → Final), 12 groups, bracket structure, favoriteTeamConnections for Barcelona + Liverpool. build-events confirms merge into events.json + brackets.json.
+- ux-agent: Added Copa del Rey logo to `getTournamentLogo()` in `asset-maps.js` (issue #122). URL: `football-data.org/CDR.png`. Also added `'spain cup'` + `'spanish la liga'` aliases.
+- Orchestrator: Updated user-context.json (Liverpool + 100 Thieves to favoriteTeams). Closed issues #121 and #122.
+- **Key insight**: User feedback via GitHub Issues is a high-signal input — a sport-request issue translates directly to a FEATURE task with clear scope (FIFA WC 2026 config ~80 lines). User-requested features should always be prioritized over scouted improvements.
+- 0 new tasks scouted (all capacity used on user feedback processing).
 
 **Run 2026-03-03 (Run 17):** 2 EXPLORE + 2 MAINTENANCE + 1 PR merge. Parallel data-agent + code-agent + orchestrator.
 - data-agent: EXPLORE IndyCar (ESPN `racing/irl/scoreboard` confirmed, full fetcher ~80 lines) + EXPLORE Ski Jumping (ESPN endpoint already in schedule-verifier, curated config for Lahti + Planica). 2 concrete FEATURE tasks created.
@@ -1148,6 +1156,16 @@ Closed-loop self-improvement system. Autonomy score: **100% (12/12 loops closed)
 - [BLOCKED] user prefers on-demand sport requests [FEATURE] **Add IndyCar fetcher for Dennis Hauger** — Create `scripts/fetch/indycar.js` extending ESPNAdapter with `racing/irl/scoreboard`. Add `indycar` sport to SPORT_CONFIG, league-config, schedule-verifier. ~80 lines. 11th sport for the dashboard. (Capabilities + Personalization pillars)
 
 - [BLOCKED] user prefers on-demand sport requests [FEATURE] **Add ski jumping World Cup curated config** — Create `scripts/config/ski-jumping-wc-2026.json` with remaining rounds (Lahti, Planica). Add `skijumping` sport to SPORT_CONFIG and league-config. Norwegian athletes: Granerud, Lindvik, Forfang, Johansson, Markeng. ~60 lines. ESPN verifier endpoint already wired. (Capabilities + Personalization pillars)
+
+---
+
+## Scouted Tasks (2026-03-04)
+
+### HIGH Priority
+
+- [DONE] (run 2026-03-04) [FEATURE] **FIFA World Cup 2026 curated config** — Created `scripts/config/fifa-world-cup-2026.json` in response to explicit user sport-request (issue #121). 11 events covering Opening Match through Final (June 11 – July 19, MetLife Stadium). 12 groups (48-team format), bracket structure for knockout rounds. `favoriteTeamConnections` for Barcelona (Yamal, Lewandowski) and Liverpool (Salah, Szoboszlai). `needsResearch: true` on group stage events pending official draw results. Football sport already in system — no new sport config needed. (Personalization + Capabilities pillars)
+
+- [DONE] (run 2026-03-04) **Copa del Rey logo** — Added `'copa del rey'` → `football-data.org/CDR.png` to `getTournamentLogo()` in `asset-maps.js`. Also added `'spain cup'` alias and `'spanish la liga'` alias. Copa del Rey branding now visible in results/sections. (Quality + Personalization pillars)
 
 ---
 

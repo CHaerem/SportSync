@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-04",
+      "task": "Fix test regression + process user feedback #121 (FIFA WC sport-request) + #122 (Copa del Rey logo)",
+      "outcome": "completed",
+      "pr": null,
+      "details": "Run 18: 1 pre-flight test fix + 2 user feedback issues processed via parallel subagents. (1) Pre-flight: github-sync-restore.test.js had 5 failures — window.navigator undefined in Node.js, tests setting window.navigator.standalone threw TypeError. Fix: added globalThis.navigator = {} to test setup. 2281/2281 tests pass. (2) data-agent: Created scripts/config/fifa-world-cup-2026.json from user sport-request (issue #121). 11 events (Opening Match June 11 → Final July 19 MetLife Stadium), 12 groups (48-team format), bracket structure for knockout rounds, favoriteTeamConnections for Barcelona (Yamal, Lewandowski) + Liverpool (Salah, Szoboszlai). No new sport config needed — merges into existing football coverage. (3) ux-agent: Added Copa del Rey logo to getTournamentLogo() in asset-maps.js (issue #122). URL: football-data.org/CDR.png (same CDN as CL/EL). Also added 'spain cup' alias + 'spanish la liga' alias. (4) Orchestrator: Updated user-context.json (Liverpool + 100 Thieves to favoriteTeams). Closed issues #121 and #122 with processing notes.",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 22,
+      "lesson": "User feedback via GitHub Issues is the highest-priority input — a sport-request translates directly to a FEATURE task. Processing user feedback in one run (detect → implement → close issue) is more valuable than any scouted improvement. Pre-flight test failures must block all other work — fixing them first ensures subagents commit to a clean baseline.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-03",
       "task": "EXPLORE IndyCar + Ski Jumping + MAINTENANCE league config + architecture threshold + merge PR #119",
       "outcome": "completed",
