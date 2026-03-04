@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T06:22:59.607Z",
+  "generatedAt": "2026-03-04T07:20:03.585Z",
   "eventCount": 47,
   "sportCoverage": {
     "esports": {
@@ -40,35 +40,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4817,
+      "ageMinutes": 4874,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 58,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 58,
       "stale": false
     }
   },
@@ -98,7 +98,7 @@
     "tvkampenReachable": true,
     "matchRate": 0.36,
     "eventsEnriched": 8,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
@@ -122,8 +122,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 2,
-    "sevenDay": 60,
+    "fiveHour": 1,
+    "sevenDay": 61,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -132,14 +132,14 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 237808,
+    "totalDuration": 319548,
     "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 128136,
-        "share": 54
+        "duration": 134463,
+        "share": 42
       }
     ],
     "failedSteps": [
@@ -187,22 +187,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4817 minutes old"
+      "message": "esports.json: data is 4874 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 47 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 48 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 36% (8/22) — team alias table may need updates"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 52% → 39% → 36%"
     },
     {
       "severity": "warning",
@@ -217,7 +212,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 2%, 7d: 60%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 1%, 7d: 61%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -227,7 +222,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 54% of total pipeline time (128s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 42% of total pipeline time (134s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -242,7 +237,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-04T06:22:59.749Z",
+    "computedAt": "2026-03-04T07:20:03.745Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -260,14 +255,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 8,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
