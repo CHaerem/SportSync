@@ -209,6 +209,9 @@ describe("FeedbackManager", () => {
 	describe("_getPreferencesSnapshot()", () => {
 		it("returns favorites from PreferencesManager", () => {
 			const pm = new PreferencesManager();
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
+			pm.addFavoritePlayer("chess", "Magnus Carlsen");
 			window._ssPreferences = pm;
 
 			const snap = fm._getPreferencesSnapshot();
@@ -289,6 +292,10 @@ describe("FeedbackManager", () => {
 
 		it("includes favorites snapshot from PreferencesManager", () => {
 			const pm = new PreferencesManager();
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoriteTeam("football", "Liverpool");
+			pm.addFavoriteTeam("football", "Lyn");
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			window._ssPreferences = pm;
 
 			const url = decodeURL(fm.buildIssueURL());
@@ -307,6 +314,8 @@ describe("FeedbackManager", () => {
 
 		it("JSON block is parseable", () => {
 			const pm = new PreferencesManager();
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			window._ssPreferences = pm;
 			fm.report("evt-1", "Title", "Msg", "golf", "PGA Tour");
 			fm.suggest("More chess");

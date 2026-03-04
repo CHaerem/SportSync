@@ -114,7 +114,7 @@ class Dashboard {
 		}
 
 		try {
-			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp, leagueConfigResp, bracketsResp] = await Promise.all([
+			const [eventsResp, featuredResp, standingsResp, watchPlanResp, rssDigestResp, metaResp, recentResultsResp, insightsResp, healthResp, leagueConfigResp, bracketsResp, userPrefsResp] = await Promise.all([
 				fetch('data/events.json?t=' + Date.now()),
 				fetch('data/featured.json?t=' + Date.now()).catch(() => null),
 				fetch('data/standings.json?t=' + Date.now()).catch(() => null),
@@ -125,7 +125,8 @@ class Dashboard {
 				fetch('data/insights.json?t=' + Date.now()).catch(() => null),
 				fetch('data/health-report.json?t=' + Date.now()).catch(() => null),
 				fetch('data/league-config.json?t=' + Date.now()).catch(() => null),
-				fetch('data/brackets.json?t=' + Date.now()).catch(() => null)
+				fetch('data/brackets.json?t=' + Date.now()).catch(() => null),
+				fetch('data/user-preferences.json?t=' + Date.now()).catch(() => null)
 			]);
 
 			if (!eventsResp.ok) throw new Error('Failed to load events');
@@ -136,7 +137,7 @@ class Dashboard {
 					title: ev.title,
 					time: ev.time,
 					endTime: ev.endTime || null,
-					sport: ev.sport === 'f1' ? 'formula1' : (ev.sport === 'cs2' ? 'esports' : ev.sport),
+					sport: normalizeClientSportId(ev.sport === 'cs2' ? 'esports' : ev.sport),
 					tournament: ev.tournament || '',
 					venue: ev.venue || '',
 					norwegian: ev.norwegian || false,
@@ -199,6 +200,20 @@ class Dashboard {
 
 			if (bracketsResp && bracketsResp.ok) {
 				try { this.brackets = await bracketsResp.json(); } catch { this.brackets = null; }
+			}
+
+			// Load server preferences into PreferencesManager for accurate favorites
+			if (userPrefsResp && userPrefsResp.ok) {
+				try {
+					this._userPreferences = await userPrefsResp.json();
+					if (this.preferences && this._userPreferences) {
+						this.preferences._serverPrefs = this._userPreferences;
+						// Merge server data if not yet synced
+						if (!this.preferences.preferences._serverSynced) {
+							await this.preferences.loadServerPreferences();
+						}
+					}
+				} catch { this._userPreferences = null; }
 			}
 
 			this._cacheSet('events', this.allEvents);
@@ -1894,7 +1909,7 @@ class Dashboard {
 	}
 
 	renderEmptySportNotes(allEvents) {
-		const PREF_MAP = { football: 'high', golf: 'high', f1: 'medium', tennis: 'medium', chess: 'medium', formula1: 'medium' };
+		const PREF_MAP = this._userPreferences?.sportPreferences || { football: 'high', golf: 'high', formula1: 'medium', tennis: 'medium', chess: 'medium', esports: 'medium', cycling: 'low' };
 		const activeSports = new Set(allEvents.map(e => e.sport));
 		const missing = SPORT_CONFIG
 			.filter(s => {
@@ -1982,7 +1997,7 @@ class Dashboard {
 	_getEmptySportReason(sportId) {
 		const h = this.healthReport;
 		if (!h) return '';
-		const dataKey = sportId === 'formula1' ? 'f1' : sportId;
+		const dataKey = normalizePipelineSportId(sportId);
 		const freshness = h.dataFreshness && h.dataFreshness[dataKey + '.json'];
 		const coverage = h.sportCoverage && h.sportCoverage[dataKey];
 		if (freshness && freshness.stale) return 'data source stale';
@@ -2621,7 +2636,7 @@ class Dashboard {
 		}
 
 		// F1: driver standings
-		if (event.sport === 'formula1' && this.standings?.f1?.drivers?.length > 0) {
+		if (event.sport === 'formula1' && this.standings?.[normalizePipelineSportId('formula1')]?.drivers?.length > 0) {
 			content += this.renderF1Standings();
 		}
 

@@ -92,6 +92,7 @@
       "description": "Usage reporting, capability registry, meta, gate",
       "steps": [
         { "name": "usage-report", "command": "node scripts/track-usage.js report pipeline", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
+        { "name": "publish-preferences", "command": "node scripts/publish-preferences.js", "errorPolicy": "continue" },
         { "name": "finalize-outputs", "command": "node scripts/generate-capabilities.js", "errorPolicy": "continue" },
         { "name": "pre-commit-gate", "command": "node scripts/pre-commit-gate.js", "errorPolicy": "continue" }
       ]

@@ -1,7 +1,12 @@
-// Simple Preferences Manager for SportSync
+// Preferences Manager for SportSync
+// Single source of truth: scripts/config/user-context.json (published to data/user-preferences.json)
+// Local edits stored in localStorage until committed to GitHub via Contents API.
 class PreferencesManager {
 	constructor() {
 		this.STORAGE_KEY = 'sportsync-preferences';
+		this.REPO = 'CHaerem/SportSync';
+		this._serverPrefs = null; // loaded from user-preferences.json
+		this._pendingEdits = false;
 		this.preferences = this.loadPreferences();
 	}
 
@@ -14,21 +19,14 @@ class PreferencesManager {
 		} catch (error) {
 			console.error('Error loading preferences:', error);
 		}
-		
-		// Default preferences — seeded from user-context.json values
-		// so frontend and backend start in sync
+
+		// Empty defaults — real data comes from server via loadServerPreferences()
 		return {
 			favoriteSports: [],
-			favoriteTeams: {
-				football: ['Barcelona', 'Liverpool', 'Lyn'],
-				esports: ['100 Thieves']
-			},
-			favoritePlayers: {
-				golf: ['Viktor Hovland'],
-				tennis: ['Casper Ruud'],
-				chess: ['Magnus Carlsen']
-			},
+			favoriteTeams: {},
+			favoritePlayers: {},
 			favoriteEvents: [],
+			sportPreferences: {},
 			hidePassedEvents: false,
 			defaultView: 'list',
 			theme: 'auto'
@@ -43,6 +41,203 @@ class PreferencesManager {
 			console.error('Error saving preferences:', error);
 			return false;
 		}
+	}
+
+	// --- Server preference loading ---
+
+	/**
+	 * Load published preferences from server (user-preferences.json).
+	 * This is the source of truth — published by the pipeline from user-context.json.
+	 * Merges server data into local preferences (server wins for favorites/sport prefs,
+	 * local wins for UI settings like theme, engagement, and telemetry).
+	 * @returns {Object|null} The server preferences, or null on failure
+	 */
+	async loadServerPreferences() {
+		try {
+			const resp = await fetch('data/user-preferences.json');
+			if (!resp.ok) return null;
+			this._serverPrefs = await resp.json();
+
+			// Merge server favorites into local if local has empty/default favorites
+			const local = this.preferences;
+			const server = this._serverPrefs;
+
+			// Server favorites override local if local is empty or still has old defaults
+			if (server.favoriteTeamsBySport && Object.keys(server.favoriteTeamsBySport).length > 0) {
+				const localTeamCount = Object.values(local.favoriteTeams || {}).reduce((s, a) => s + a.length, 0);
+				if (localTeamCount === 0 || !local._serverSynced) {
+					local.favoriteTeams = { ...server.favoriteTeamsBySport };
+				}
+			}
+			if (server.favoritePlayersBySport && Object.keys(server.favoritePlayersBySport).length > 0) {
+				const localPlayerCount = Object.values(local.favoritePlayers || {}).reduce((s, a) => s + a.length, 0);
+				if (localPlayerCount === 0 || !local._serverSynced) {
+					local.favoritePlayers = { ...server.favoritePlayersBySport };
+				}
+			}
+			if (server.sportPreferences && Object.keys(server.sportPreferences).length > 0) {
+				if (!local.sportPreferences || Object.keys(local.sportPreferences).length === 0 || !local._serverSynced) {
+					local.sportPreferences = { ...server.sportPreferences };
+				}
+			}
+
+			local._serverSynced = true;
+			local._serverPublishedAt = server._publishedAt;
+			this.savePreferences();
+
+			return this._serverPrefs;
+		} catch (err) {
+			console.warn('[PreferencesManager] Could not load server preferences:', err.message);
+			return null;
+		}
+	}
+
+	/**
+	 * Get the published-at timestamp from server preferences.
+	 */
+	getServerPublishedAt() {
+		return this._serverPrefs?._publishedAt || this.preferences._serverPublishedAt || null;
+	}
+
+	/**
+	 * Get effective preferences — server truth merged with any local overrides.
+	 * Server preferences always win for favorites and sport weights unless the user
+	 * has made local edits that haven't been saved to GitHub yet.
+	 */
+	getEffectivePreferences() {
+		if (!this._serverPrefs) return this.preferences;
+		return {
+			...this.preferences,
+			favoriteTeams: this._pendingEdits ? this.preferences.favoriteTeams : (this._serverPrefs.favoriteTeamsBySport || this.preferences.favoriteTeams),
+			favoritePlayers: this._pendingEdits ? this.preferences.favoritePlayers : (this._serverPrefs.favoritePlayersBySport || this.preferences.favoritePlayers),
+			sportPreferences: this._pendingEdits ? this.preferences.sportPreferences : (this._serverPrefs.sportPreferences || this.preferences.sportPreferences),
+		};
+	}
+
+	/**
+	 * Check whether there are unsaved local edits.
+	 */
+	hasPendingEdits() {
+		return this._pendingEdits;
+	}
+
+	/**
+	 * Mark that local preference edits have been made (need saving to GitHub).
+	 */
+	_markPendingEdits() {
+		this._pendingEdits = true;
+	}
+
+	// --- Direct commit to user-context.json via GitHub Contents API ---
+
+	/**
+	 * Save preference changes directly to scripts/config/user-context.json via GitHub API.
+	 * Uses the same proven pattern as autonomy.html saveRoadmap().
+	 * @param {GitHubSync} sync - GitHubSync instance with OAuth token
+	 * @returns {Object} { saved: boolean, reason?: string }
+	 */
+	async saveToGitHub(sync) {
+		if (!sync?.isConnected()) {
+			return { saved: false, reason: 'not-connected' };
+		}
+
+		const token = sync._config.token;
+		const filePath = 'scripts/config/user-context.json';
+		const apiUrl = `https://api.github.com/repos/${this.REPO}/contents/${filePath}`;
+
+		try {
+			// 1. GET current file (content + SHA for concurrency control)
+			const getResp = await fetch(apiUrl, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: 'application/vnd.github+json'
+				}
+			});
+			if (!getResp.ok) {
+				return { saved: false, reason: `fetch-failed: ${getResp.status}` };
+			}
+			const fileData = await getResp.json();
+			const current = JSON.parse(atob(fileData.content));
+
+			// 2. Merge local changes into current (preserve dynamicAthletes, notes, etc.)
+			const updated = this._mergePreferencesInto(current);
+
+			// 3. PUT with SHA for optimistic concurrency
+			const putResp = await fetch(apiUrl, {
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json',
+					Accept: 'application/vnd.github+json'
+				},
+				body: JSON.stringify({
+					message: 'Update preferences from dashboard',
+					content: btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2) + '\n'))),
+					sha: fileData.sha
+				})
+			});
+
+			if (!putResp.ok) {
+				const errText = await putResp.text();
+				return { saved: false, reason: `save-failed: ${putResp.status} ${errText}` };
+			}
+
+			this._pendingEdits = false;
+			return { saved: true };
+		} catch (err) {
+			return { saved: false, reason: `error: ${err.message}` };
+		}
+	}
+
+	/**
+	 * Merge local preference edits into the current user-context.json structure.
+	 * Preserves pipeline-only fields (dynamicAthletes, notes, norwegianFocus, location).
+	 * Normalizes sport IDs from client form (formula1) back to pipeline form (f1).
+	 * @param {Object} current - Current user-context.json contents
+	 * @returns {Object} Updated user-context.json contents
+	 */
+	_mergePreferencesInto(current) {
+		const eff = this.getEffectivePreferences();
+		const updated = { ...current };
+
+		// Flatten teams for pipeline compatibility
+		const allTeams = [];
+		for (const teams of Object.values(eff.favoriteTeams || {})) {
+			allTeams.push(...teams);
+		}
+		updated.favoriteTeams = [...new Set(allTeams)];
+
+		// Flatten players for pipeline compatibility
+		const allPlayers = [];
+		for (const players of Object.values(eff.favoritePlayers || {})) {
+			allPlayers.push(...players);
+		}
+		updated.favoritePlayers = [...new Set(allPlayers)];
+
+		// Nested by-sport structures
+		updated.favoriteTeamsBySport = { ...(eff.favoriteTeams || {}) };
+		updated.favoritePlayersBySport = { ...(eff.favoritePlayers || {}) };
+
+		// Esports orgs (extract from teams)
+		updated.favoriteEsportsOrgs = eff.favoriteTeams?.esports || current.favoriteEsportsOrgs || [];
+
+		// Sport preferences — normalize client IDs back to pipeline IDs
+		if (eff.sportPreferences && Object.keys(eff.sportPreferences).length > 0) {
+			const normalized = {};
+			for (const [key, value] of Object.entries(eff.sportPreferences)) {
+				// Use normalizePipelineSportId if available (client-side), else manual map
+				const pipelineKey = (typeof window !== 'undefined' && window.normalizePipelineSportId)
+					? window.normalizePipelineSportId(key)
+					: (key === 'formula1' ? 'f1' : key);
+				normalized[pipelineKey] = value;
+			}
+			updated.sportPreferences = normalized;
+		}
+
+		// Preserve pipeline-only fields
+		// (dynamicAthletes, notes, location, norwegianFocus are kept from current)
+
+		return updated;
 	}
 
 	// Sport preferences
@@ -69,6 +264,7 @@ class PreferencesManager {
 		}
 		if (!this.preferences.favoriteTeams[sport].includes(teamName)) {
 			this.preferences.favoriteTeams[sport].push(teamName);
+			this._markPendingEdits();
 			this.savePreferences();
 			return true;
 		}
@@ -80,18 +276,20 @@ class PreferencesManager {
 			const index = this.preferences.favoriteTeams[sport].indexOf(teamName);
 			if (index > -1) {
 				this.preferences.favoriteTeams[sport].splice(index, 1);
+				this._markPendingEdits();
 				this.savePreferences();
 			}
 		}
 	}
 
 	getFavoriteTeams(sport) {
-		return this.preferences.favoriteTeams[sport] || [];
+		const eff = this.getEffectivePreferences();
+		return eff.favoriteTeams?.[sport] || [];
 	}
 
 	isTeamFavorite(sport, teamName) {
 		const teams = this.getFavoriteTeams(sport);
-		return teams.some(team => 
+		return teams.some(team =>
 			teamName.toLowerCase().includes(team.toLowerCase()) ||
 			team.toLowerCase().includes(teamName.toLowerCase())
 		);
@@ -105,6 +303,7 @@ class PreferencesManager {
 		}
 		if (!this.preferences.favoritePlayers[sport].includes(playerName)) {
 			this.preferences.favoritePlayers[sport].push(playerName);
+			this._markPendingEdits();
 			this.savePreferences();
 			return true;
 		}
@@ -116,18 +315,20 @@ class PreferencesManager {
 			const index = this.preferences.favoritePlayers[sport].indexOf(playerName);
 			if (index > -1) {
 				this.preferences.favoritePlayers[sport].splice(index, 1);
+				this._markPendingEdits();
 				this.savePreferences();
 			}
 		}
 	}
 
 	getFavoritePlayers(sport) {
-		return this.preferences.favoritePlayers[sport] || [];
+		const eff = this.getEffectivePreferences();
+		return eff.favoritePlayers?.[sport] || [];
 	}
 
 	isPlayerFavorite(sport, playerName) {
 		const players = this.getFavoritePlayers(sport);
-		return players.some(player => 
+		return players.some(player =>
 			playerName.toLowerCase().includes(player.toLowerCase()) ||
 			player.toLowerCase().includes(playerName.toLowerCase())
 		);
@@ -138,7 +339,7 @@ class PreferencesManager {
 		if (!this.preferences.favoriteEvents) {
 			this.preferences.favoriteEvents = [];
 		}
-		
+
 		const index = this.preferences.favoriteEvents.indexOf(eventId);
 		if (index > -1) {
 			this.preferences.favoriteEvents.splice(index, 1);
@@ -153,7 +354,7 @@ class PreferencesManager {
 		return this.preferences.favoriteEvents && this.preferences.favoriteEvents.includes(eventId);
 	}
 
-	// Check if an event matches user favorites
+	// Check if an event matches user favorites (uses effective preferences)
 	isEventFavorite(event, eventId) {
 		// Check if this specific event is marked as favorite
 		if (eventId && this.isEventIdFavorite(eventId)) {
@@ -165,40 +366,44 @@ class PreferencesManager {
 			return true;
 		}
 
-		// Check team preferences for football
-		if (event.sport === 'football') {
-			if (event.homeTeam && this.isTeamFavorite('football', event.homeTeam)) {
-				return true;
-			}
-			if (event.awayTeam && this.isTeamFavorite('football', event.awayTeam)) {
-				return true;
-			}
-		}
+		const eff = this.getEffectivePreferences();
 
-		// Check team preferences for esports
-		if (event.sport === 'esports') {
-			const teams = this.getFavoriteTeams('esports');
+		// Check team preferences across all sports with teams
+		const teamSports = Object.keys(eff.favoriteTeams || {});
+		for (const sport of teamSports) {
+			if (event.sport !== sport) continue;
+			const teams = this.getFavoriteTeams(sport);
 			for (const team of teams) {
-				if (event.title.toLowerCase().includes(team.toLowerCase())) {
+				// Check homeTeam/awayTeam for football-like sports
+				if (event.homeTeam && (
+					event.homeTeam.toLowerCase().includes(team.toLowerCase()) ||
+					team.toLowerCase().includes(event.homeTeam.toLowerCase())
+				)) return true;
+				if (event.awayTeam && (
+					event.awayTeam.toLowerCase().includes(team.toLowerCase()) ||
+					team.toLowerCase().includes(event.awayTeam.toLowerCase())
+				)) return true;
+				// Check title for all team sports (esports, etc.)
+				if (event.title && event.title.toLowerCase().includes(team.toLowerCase())) {
 					return true;
 				}
 			}
 		}
 
-		// Check player preferences for golf
-		if (event.sport === 'golf' && event.norwegianPlayers) {
-			for (const player of event.norwegianPlayers) {
-				if (this.isPlayerFavorite('golf', player.name)) {
-					return true;
+		// Check player preferences across all sports with players
+		const playerSports = Object.keys(eff.favoritePlayers || {});
+		for (const sport of playerSports) {
+			if (event.sport !== sport) continue;
+			// Golf: check norwegianPlayers array
+			if (event.norwegianPlayers) {
+				for (const player of event.norwegianPlayers) {
+					if (this.isPlayerFavorite(sport, player.name)) return true;
 				}
 			}
-		}
-
-		// Check player preferences for tennis
-		if (event.sport === 'tennis' && event.participants) {
-			for (const participant of event.participants) {
-				if (this.isPlayerFavorite('tennis', participant)) {
-					return true;
+			// Tennis/chess: check participants array
+			if (event.participants) {
+				for (const participant of event.participants) {
+					if (this.isPlayerFavorite(sport, participant)) return true;
 				}
 			}
 		}
@@ -217,15 +422,18 @@ class PreferencesManager {
 		} else {
 			this.preferences.sportPreferences[sport] = level;
 		}
+		this._markPendingEdits();
 		this.savePreferences();
 	}
 
 	getSportPreference(sport) {
-		return this.preferences.sportPreferences?.[sport] || null;
+		const eff = this.getEffectivePreferences();
+		return eff.sportPreferences?.[sport] || null;
 	}
 
 	getAllSportPreferences() {
-		return this.preferences.sportPreferences || {};
+		const eff = this.getEffectivePreferences();
+		return eff.sportPreferences || {};
 	}
 
 	// View preferences
@@ -250,23 +458,24 @@ class PreferencesManager {
 
 	// Get all preferences (used by AI assistant)
 	getPreferences() {
-		return this.preferences;
+		return this.getEffectivePreferences();
 	}
 
 	// Export preferences in backend format (matches user-context.json)
 	// Use this to keep frontend and enrichment pipeline in sync
 	exportForBackend() {
+		const eff = this.getEffectivePreferences();
 		const teams = [];
-		for (const [sport, sportTeams] of Object.entries(this.preferences.favoriteTeams || {})) {
+		for (const sportTeams of Object.values(eff.favoriteTeams || {})) {
 			teams.push(...sportTeams);
 		}
 		const players = [];
-		for (const [sport, sportPlayers] of Object.entries(this.preferences.favoritePlayers || {})) {
+		for (const sportPlayers of Object.values(eff.favoritePlayers || {})) {
 			players.push(...sportPlayers);
 		}
 
 		// Use explicit sport preferences if set, otherwise derive from engagement
-		const explicit = this.getAllSportPreferences();
+		const explicit = eff.sportPreferences || {};
 		const engagement = this.getEngagement();
 		const sportPreferences = { ...explicit };
 		const totalClicks = Object.values(engagement).reduce((s, e) => s + (e.clicks || 0), 0);
@@ -281,9 +490,9 @@ class PreferencesManager {
 		}
 
 		return {
-			favoriteTeams: teams,
-			favoritePlayers: players,
-			favoriteEsportsOrgs: this.preferences.favoriteTeams?.esports || [],
+			favoriteTeams: [...new Set(teams)],
+			favoritePlayers: [...new Set(players)],
+			favoriteEsportsOrgs: eff.favoriteTeams?.esports || [],
 			location: 'Norway',
 			sportPreferences,
 			engagement,
@@ -408,6 +617,8 @@ class PreferencesManager {
 	// Reset preferences
 	reset() {
 		localStorage.removeItem(this.STORAGE_KEY);
+		this._pendingEdits = false;
+		this._serverPrefs = null;
 		this.preferences = this.loadPreferences();
 	}
 }

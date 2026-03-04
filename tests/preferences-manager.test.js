@@ -14,6 +14,10 @@ const localStorageMock = {
 globalThis.localStorage = localStorageMock;
 globalThis.window = globalThis;
 
+// Load sport-config.js first (provides normalizeClientSportId, normalizePipelineSportId)
+const sportConfigSrc = readFileSync(join(import.meta.dirname, "../docs/js/sport-config.js"), "utf-8");
+eval(sportConfigSrc);
+
 const src = readFileSync(join(import.meta.dirname, "../docs/js/preferences-manager.js"), "utf-8");
 eval(src);
 const PreferencesManager = window.PreferencesManager;
@@ -30,11 +34,12 @@ describe("PreferencesManager", () => {
 	});
 
 	describe("loadPreferences()", () => {
-		it("returns defaults when localStorage is empty", () => {
+		it("returns empty defaults when localStorage is empty", () => {
 			const prefs = pm.getPreferences();
 			expect(prefs.favoriteSports).toEqual([]);
-			expect(prefs.favoriteTeams.football).toEqual(["Barcelona", "Liverpool", "Lyn"]);
-			expect(prefs.favoritePlayers.golf).toEqual(["Viktor Hovland"]);
+			expect(prefs.favoriteTeams).toEqual({});
+			expect(prefs.favoritePlayers).toEqual({});
+			expect(prefs.sportPreferences).toEqual({});
 			expect(prefs.defaultView).toBe("list");
 			expect(prefs.theme).toBe("auto");
 		});
@@ -42,7 +47,7 @@ describe("PreferencesManager", () => {
 		it("loads stored preferences from localStorage", () => {
 			const custom = {
 				favoriteSports: ["football"], favoriteTeams: { football: ["Arsenal"] },
-				favoritePlayers: {}, favoriteEvents: [],
+				favoritePlayers: {}, favoriteEvents: [], sportPreferences: {},
 				hidePassedEvents: true, defaultView: "timeline", theme: "dark",
 			};
 			store["sportsync-preferences"] = JSON.stringify(custom);
@@ -81,11 +86,15 @@ describe("PreferencesManager", () => {
 	});
 
 	describe("team preferences", () => {
-		it("adds team to existing sport without duplicates", () => {
+		it("adds team and creates sport category", () => {
 			pm.addFavoriteTeam("football", "Arsenal");
 			expect(pm.getFavoriteTeams("football")).toContain("Arsenal");
-			pm.addFavoriteTeam("football", "Barcelona");
-			expect(pm.getFavoriteTeams("football").filter((t) => t === "Barcelona")).toHaveLength(1);
+		});
+
+		it("prevents duplicates", () => {
+			pm.addFavoriteTeam("football", "Arsenal");
+			pm.addFavoriteTeam("football", "Arsenal");
+			expect(pm.getFavoriteTeams("football").filter((t) => t === "Arsenal")).toHaveLength(1);
 		});
 
 		it("creates sport category if missing", () => {
@@ -93,9 +102,13 @@ describe("PreferencesManager", () => {
 			expect(pm.getFavoriteTeams("hockey")).toEqual(["Vålerenga"]);
 		});
 
-		it("removes existing team, no-ops for missing team/sport", () => {
+		it("removes existing team", () => {
+			pm.addFavoriteTeam("football", "Barcelona");
 			pm.removeFavoriteTeam("football", "Barcelona");
 			expect(pm.getFavoriteTeams("football")).not.toContain("Barcelona");
+		});
+
+		it("no-ops for missing team/sport", () => {
 			pm.removeFavoriteTeam("football", "NonExistent FC");
 			pm.removeFavoriteTeam("cricket", "Mumbai Indians");
 		});
@@ -121,10 +134,17 @@ describe("PreferencesManager", () => {
 			expect(pm.addFavoriteTeam("football", "Arsenal")).toBe(true);
 			expect(pm.addFavoriteTeam("football", "Arsenal")).toBe(false);
 		});
+
+		it("marks pending edits when adding/removing teams", () => {
+			expect(pm.hasPendingEdits()).toBe(false);
+			pm.addFavoriteTeam("football", "Arsenal");
+			expect(pm.hasPendingEdits()).toBe(true);
+		});
 	});
 
 	describe("isTeamFavorite()", () => {
 		it("matches exact, fuzzy substring, and case-insensitive", () => {
+			pm.addFavoriteTeam("football", "Barcelona");
 			expect(pm.isTeamFavorite("football", "Barcelona")).toBe(true);
 			expect(pm.isTeamFavorite("football", "FC Barcelona")).toBe(true);
 			expect(pm.isTeamFavorite("football", "barcelona")).toBe(true);
@@ -137,8 +157,10 @@ describe("PreferencesManager", () => {
 
 	describe("player preferences", () => {
 		it("adds, deduplicates, and removes players", () => {
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			pm.addFavoritePlayer("golf", "Rory McIlroy");
 			expect(pm.getFavoritePlayers("golf")).toContain("Rory McIlroy");
+			expect(pm.getFavoritePlayers("golf")).toContain("Viktor Hovland");
 			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			expect(pm.getFavoritePlayers("golf").filter((p) => p === "Viktor Hovland")).toHaveLength(1);
 			pm.removeFavoritePlayer("golf", "Viktor Hovland");
@@ -151,6 +173,7 @@ describe("PreferencesManager", () => {
 		});
 
 		it("no-ops removing non-existent player", () => {
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			const before = pm.getFavoritePlayers("golf").length;
 			pm.removeFavoritePlayer("golf", "Tiger Woods");
 			expect(pm.getFavoritePlayers("golf")).toHaveLength(before);
@@ -172,10 +195,18 @@ describe("PreferencesManager", () => {
 			expect(pm.addFavoritePlayer("golf", "Rory McIlroy")).toBe(true);
 			expect(pm.addFavoritePlayer("golf", "Rory McIlroy")).toBe(false);
 		});
+
+		it("marks pending edits when adding/removing players", () => {
+			expect(pm.hasPendingEdits()).toBe(false);
+			pm.addFavoritePlayer("golf", "Tiger Woods");
+			expect(pm.hasPendingEdits()).toBe(true);
+		});
 	});
 
 	describe("isPlayerFavorite()", () => {
 		it("matches exact, fuzzy, and case-insensitive", () => {
+			pm.addFavoritePlayer("tennis", "Casper Ruud");
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
 			expect(pm.isPlayerFavorite("tennis", "Casper Ruud")).toBe(true);
 			expect(pm.isPlayerFavorite("golf", "Viktor Hovland (NOR)")).toBe(true);
 			expect(pm.isPlayerFavorite("tennis", "casper ruud")).toBe(true);
@@ -207,21 +238,126 @@ describe("PreferencesManager", () => {
 		});
 
 		it("matches football home and away teams", () => {
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoriteTeam("football", "Liverpool");
 			expect(pm.isEventFavorite({ sport: "football", homeTeam: "FC Barcelona", awayTeam: "Getafe", title: "" })).toBe(true);
 			expect(pm.isEventFavorite({ sport: "football", homeTeam: "Getafe", awayTeam: "Liverpool FC", title: "" })).toBe(true);
 		});
 
 		it("matches esports team in title", () => {
+			pm.addFavoriteTeam("esports", "100 Thieves");
 			expect(pm.isEventFavorite({ sport: "esports", title: "100 Thieves vs Cloud9" })).toBe(true);
 		});
 
 		it("matches golf Norwegian player and tennis participant", () => {
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
+			pm.addFavoritePlayer("tennis", "Casper Ruud");
 			expect(pm.isEventFavorite({ sport: "golf", title: "PGA", norwegianPlayers: [{ name: "Viktor Hovland" }] })).toBe(true);
 			expect(pm.isEventFavorite({ sport: "tennis", title: "Roland Garros", participants: ["Casper Ruud"] })).toBe(true);
 		});
 
 		it("returns false when nothing matches", () => {
 			expect(pm.isEventFavorite({ sport: "chess", title: "FIDE Candidates" })).toBe(false);
+		});
+
+		it("matches chess participants", () => {
+			pm.addFavoritePlayer("chess", "Magnus Carlsen");
+			expect(pm.isEventFavorite({ sport: "chess", title: "WCC", participants: ["Magnus Carlsen", "Ding Liren"] })).toBe(true);
+		});
+	});
+
+	describe("server preferences", () => {
+		it("getServerPublishedAt returns null when no server prefs loaded", () => {
+			expect(pm.getServerPublishedAt()).toBeNull();
+		});
+
+		it("getEffectivePreferences returns local when no server prefs", () => {
+			pm.addFavoriteTeam("football", "Arsenal");
+			const eff = pm.getEffectivePreferences();
+			expect(eff.favoriteTeams.football).toEqual(["Arsenal"]);
+		});
+
+		it("getEffectivePreferences returns server data when loaded and no pending edits", () => {
+			pm._serverPrefs = {
+				favoriteTeamsBySport: { football: ["Barcelona", "Liverpool"] },
+				favoritePlayersBySport: { golf: ["Viktor Hovland"] },
+				sportPreferences: { football: "high", golf: "high" },
+				_publishedAt: "2026-03-04T00:00:00Z",
+			};
+			const eff = pm.getEffectivePreferences();
+			expect(eff.favoriteTeams.football).toEqual(["Barcelona", "Liverpool"]);
+			expect(eff.favoritePlayers.golf).toEqual(["Viktor Hovland"]);
+			expect(eff.sportPreferences.football).toBe("high");
+		});
+
+		it("getEffectivePreferences uses local when pending edits exist", () => {
+			pm._serverPrefs = {
+				favoriteTeamsBySport: { football: ["Barcelona"] },
+				favoritePlayersBySport: {},
+				sportPreferences: { football: "high" },
+			};
+			pm.addFavoriteTeam("football", "Arsenal"); // marks pending
+			const eff = pm.getEffectivePreferences();
+			expect(eff.favoriteTeams.football).toEqual(["Arsenal"]);
+		});
+
+		it("hasPendingEdits tracks edit state", () => {
+			expect(pm.hasPendingEdits()).toBe(false);
+			pm.setSportPreference("football", "high");
+			expect(pm.hasPendingEdits()).toBe(true);
+		});
+	});
+
+	describe("_mergePreferencesInto()", () => {
+		it("merges local preferences into current user-context.json", () => {
+			pm.addFavoriteTeam("football", "Arsenal");
+			pm.addFavoriteTeam("football", "Chelsea");
+			pm.addFavoritePlayer("golf", "Rory McIlroy");
+
+			const current = {
+				favoriteTeams: ["Barcelona"],
+				favoritePlayers: ["Viktor Hovland"],
+				sportPreferences: { football: "high" },
+				dynamicAthletes: { golf: { norwegian: true } },
+				notes: "Keep this",
+				location: "Norway",
+			};
+
+			const updated = pm._mergePreferencesInto(current);
+			expect(updated.favoriteTeams).toContain("Arsenal");
+			expect(updated.favoriteTeams).toContain("Chelsea");
+			expect(updated.favoritePlayers).toContain("Rory McIlroy");
+			expect(updated.favoriteTeamsBySport.football).toContain("Arsenal");
+			expect(updated.dynamicAthletes).toEqual({ golf: { norwegian: true } });
+			expect(updated.notes).toBe("Keep this");
+			expect(updated.location).toBe("Norway");
+		});
+
+		it("normalizes formula1 back to f1 in sportPreferences", () => {
+			pm.setSportPreference("formula1", "medium");
+			pm.setSportPreference("football", "high");
+
+			const current = { sportPreferences: {} };
+			const updated = pm._mergePreferencesInto(current);
+			expect(updated.sportPreferences.f1).toBe("medium");
+			expect(updated.sportPreferences.formula1).toBeUndefined();
+			expect(updated.sportPreferences.football).toBe("high");
+		});
+
+		it("deduplicates flat team/player arrays", () => {
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoriteTeam("esports", "Barcelona"); // same name different sport
+			const current = { favoriteTeams: [] };
+			const updated = pm._mergePreferencesInto(current);
+			expect(updated.favoriteTeams.filter((t) => t === "Barcelona")).toHaveLength(1);
+		});
+
+		it("extracts esports orgs from favorite teams", () => {
+			pm.addFavoriteTeam("esports", "100 Thieves");
+			pm.addFavoriteTeam("esports", "Cloud9");
+			const current = { favoriteEsportsOrgs: [] };
+			const updated = pm._mergePreferencesInto(current);
+			expect(updated.favoriteEsportsOrgs).toEqual(["100 Thieves", "Cloud9"]);
 		});
 	});
 
@@ -241,6 +377,10 @@ describe("PreferencesManager", () => {
 
 	describe("exportForBackend()", () => {
 		it("flattens teams and players, extracts esports orgs", () => {
+			pm.addFavoriteTeam("football", "Barcelona");
+			pm.addFavoriteTeam("esports", "100 Thieves");
+			pm.addFavoritePlayer("golf", "Viktor Hovland");
+			pm.addFavoritePlayer("tennis", "Casper Ruud");
 			const exported = pm.exportForBackend();
 			expect(exported.favoriteTeams).toContain("Barcelona");
 			expect(exported.favoriteTeams).toContain("100 Thieves");
@@ -277,7 +417,6 @@ describe("PreferencesManager", () => {
 		});
 
 		it("trackSessionEnd calculates elapsed time", () => {
-			// Set lastStart to 5 minutes ago
 			pm._ensureTelemetry();
 			pm.preferences.telemetry.sessions.lastStart = new Date(Date.now() - 5 * 60000).toISOString();
 			pm.trackSessionEnd();
@@ -313,7 +452,7 @@ describe("PreferencesManager", () => {
 
 		it("trackWatchPlanClick tracks unique clicks", () => {
 			pm.trackWatchPlanClick("arsenal_chelsea_20260301");
-			pm.trackWatchPlanClick("arsenal_chelsea_20260301"); // duplicate
+			pm.trackWatchPlanClick("arsenal_chelsea_20260301");
 			pm.trackWatchPlanClick("liverpool_city_20260301");
 			const t = pm.getTelemetry();
 			expect(t.watchPlanClicks.total).toBe(2);
@@ -342,7 +481,6 @@ describe("PreferencesManager", () => {
 		});
 
 		it("getTelemetry returns null when no telemetry exists", () => {
-			// Fresh PM without any telemetry calls
 			const fresh = new PreferencesManager();
 			expect(fresh.getTelemetry()).toBeNull();
 		});
@@ -400,9 +538,7 @@ describe("PreferencesManager", () => {
 		});
 
 		it("explicit preferences take precedence over engagement-derived", () => {
-			// Set explicit preference
 			pm.setSportPreference("football", "low");
-			// Generate engagement that would derive 'high' for football
 			for (let i = 0; i < 30; i++) pm.trackEngagement("football");
 			const exported = pm.exportForBackend();
 			expect(exported.sportPreferences.football).toBe("low");
@@ -412,6 +548,12 @@ describe("PreferencesManager", () => {
 			pm.setSportPreference("", "high");
 			pm.setSportPreference(null, "high");
 			expect(pm.getAllSportPreferences()).toEqual({});
+		});
+
+		it("marks pending edits when setting sport preference", () => {
+			expect(pm.hasPendingEdits()).toBe(false);
+			pm.setSportPreference("football", "high");
+			expect(pm.hasPendingEdits()).toBe(true);
 		});
 	});
 
@@ -423,6 +565,13 @@ describe("PreferencesManager", () => {
 			expect(localStorageMock.removeItem).toHaveBeenCalledWith("sportsync-preferences");
 			expect(pm.getPreferences().theme).toBe("auto");
 			expect(pm.isFavoriteSport("chess")).toBe(false);
+		});
+
+		it("clears pending edits flag", () => {
+			pm.addFavoriteTeam("football", "Arsenal");
+			expect(pm.hasPendingEdits()).toBe(true);
+			pm.reset();
+			expect(pm.hasPendingEdits()).toBe(false);
 		});
 	});
 });

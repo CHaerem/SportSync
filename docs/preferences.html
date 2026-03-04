@@ -351,6 +351,20 @@
 		function renderGitHub() {
 			const el = document.getElementById('github-card');
 			const connected = sync.isConnected();
+			const publishedAt = pm.getServerPublishedAt();
+			const hasPending = pm.hasPendingEdits();
+
+			let statusLine = '';
+			if (publishedAt) {
+				statusLine = `<div style="font-size:0.62rem;color:var(--muted);margin-top:6px">Pipeline preferences updated ${timeAgo(publishedAt)}</div>`;
+			}
+
+			let saveBtn = '';
+			if (connected && hasPending) {
+				saveBtn = `<button class="gh-btn primary" id="gh-save-prefs-btn" style="margin-top:8px;width:100%">Save preferences to GitHub</button>`;
+			} else if (!connected && hasPending) {
+				saveBtn = `<div style="font-size:0.62rem;color:var(--amber);margin-top:6px">Connect GitHub to save preference changes</div>`;
+			}
 
 			let inner = '';
 			if (connected) {
@@ -364,14 +378,16 @@
 					<button class="gh-btn" id="gh-sync-btn">Sync now</button>
 					<button class="gh-btn danger" id="gh-disconnect-btn">Disconnect</button>
 				</div>
-				<div class="gh-success" id="gh-success"></div>`;
+				<div class="gh-success" id="gh-success"></div>
+				${statusLine}${saveBtn}`;
 			} else {
 				inner = `<div class="gh-status">
 					<span class="gh-dot"></span>
 					<span style="font-size:0.72rem;color:var(--muted)">Not connected</span>
 					<button class="gh-btn primary" id="gh-connect-btn">Sign in with GitHub</button>
 				</div>
-				<div class="gh-error" id="gh-error"></div>`;
+				<div class="gh-error" id="gh-error"></div>
+				${statusLine}${saveBtn}`;
 			}
 
 			el.innerHTML = `<div class="card"><div class="card-header">GitHub Connection</div>${inner}</div>`;
@@ -416,18 +432,33 @@
 				await sync.syncEngagement();
 				renderGitHub();
 			});
+
+			document.getElementById('gh-save-prefs-btn')?.addEventListener('click', async () => {
+				const btn = document.getElementById('gh-save-prefs-btn');
+				if (btn) btn.textContent = 'Saving...';
+				const result = await pm.saveToGitHub(sync);
+				if (result.saved) {
+					const successEl = document.getElementById('gh-success');
+					if (successEl) {
+						successEl.textContent = 'Saved — changes take effect on next pipeline run (~1h)';
+						successEl.style.display = 'block';
+						setTimeout(() => { successEl.style.display = 'none'; }, 5000);
+					}
+					renderGitHub();
+				} else {
+					if (btn) btn.textContent = 'Failed — retry';
+					console.error('[save-prefs]', result.reason);
+				}
+			});
 		}
 
 		// === Sport Preferences ===
-		// Default followed sports (user's 6 core sports)
-		const DEFAULT_SPORTS = { football: 'high', golf: 'high', formula1: 'high', tennis: 'medium', chess: 'medium', esports: 'medium', cycling: 'low' };
-
 		function renderSports() {
 			const el = document.getElementById('sports-card');
 			const prefs = pm.getAllSportPreferences();
 
 			const rows = SPORT_CONFIG.map(sport => {
-				const current = prefs[sport.id] || DEFAULT_SPORTS[sport.id] || 'none';
+				const current = prefs[sport.id] || 'none';
 				return `<div class="sport-row">
 					<span class="sport-emoji">${sport.emoji}</span>
 					<span class="sport-name">${sport.name}</span>
@@ -445,6 +476,7 @@
 			el.querySelectorAll('.sport-select').forEach(sel => {
 				sel.addEventListener('change', () => {
 					pm.setSportPreference(sel.dataset.sport, sel.value);
+					renderGitHub(); // update save button visibility
 				});
 			});
 		}
@@ -452,12 +484,31 @@
 		// === Favorites ===
 		function renderFavorites() {
 			const el = document.getElementById('favorites-card');
-			const prefs = pm.getPreferences();
+			const eff = pm.getEffectivePreferences();
+
+			// Derive team sports and player sports dynamically from data
+			const teamSportIds = Object.keys(eff.favoriteTeams || {}).filter(s => {
+				const arr = eff.favoriteTeams[s];
+				return Array.isArray(arr) && arr.length > 0;
+			});
+			const playerSportIds = Object.keys(eff.favoritePlayers || {}).filter(s => {
+				const arr = eff.favoritePlayers[s];
+				return Array.isArray(arr) && arr.length > 0;
+			});
+
+			// Ensure we always show at least football/esports for teams and golf/tennis/chess for players
+			// even if currently empty (so users can add entries)
+			for (const s of ['football', 'esports']) { if (!teamSportIds.includes(s)) teamSportIds.push(s); }
+			for (const s of ['golf', 'tennis', 'chess']) { if (!playerSportIds.includes(s)) playerSportIds.push(s); }
+
+			// Sort by SPORT_CONFIG order
+			const configOrder = SPORT_CONFIG.map(s => s.id);
+			teamSportIds.sort((a, b) => configOrder.indexOf(a) - configOrder.indexOf(b));
+			playerSportIds.sort((a, b) => configOrder.indexOf(a) - configOrder.indexOf(b));
 
 			// Teams
 			let teamsHtml = '';
-			const teamSports = ['football', 'esports'];
-			for (const sport of teamSports) {
+			for (const sport of teamSportIds) {
 				const teams = pm.getFavoriteTeams(sport);
 				const sportCfg = SPORT_CONFIG.find(s => s.id === sport);
 				const label = sportCfg ? sportCfg.name : sport;
@@ -476,8 +527,7 @@
 
 			// Players
 			let playersHtml = '';
-			const playerSports = ['golf', 'tennis', 'chess'];
-			for (const sport of playerSports) {
+			for (const sport of playerSportIds) {
 				const players = pm.getFavoritePlayers(sport);
 				const sportCfg = SPORT_CONFIG.find(s => s.id === sport);
 				const label = sportCfg ? sportCfg.name : sport;
@@ -503,6 +553,7 @@
 					if (type === 'team') pm.removeFavoriteTeam(sport, name);
 					else pm.removeFavoritePlayer(sport, name);
 					renderFavorites();
+					renderGitHub(); // update save button
 				});
 			});
 
@@ -516,6 +567,7 @@
 					else pm.addFavoritePlayer(sport, input.value.trim());
 					input.value = '';
 					renderFavorites();
+					renderGitHub(); // update save button
 				});
 			});
 
@@ -699,20 +751,23 @@
 			}
 		}
 
-		// Render all sections
-		renderGitHub();
-		renderSports();
-		renderFavorites();
-		renderRequest();
-		renderEngagement();
-		renderFeedback();
+		// Load server preferences first, then render all sections
+		async function init() {
+			await pm.loadServerPreferences();
+			renderGitHub();
+			renderSports();
+			renderFavorites();
+			renderRequest();
+			renderEngagement();
+			renderFeedback();
 
-		// Check for OAuth redirect token, then start auto-sync
-		handleOAuthRedirect().then((handled) => {
+			// Check for OAuth redirect token, then start auto-sync
+			const handled = await handleOAuthRedirect();
 			if (!handled && sync.isConnected()) {
 				sync.startAutoSync();
 			}
-		});
+		}
+		init();
 	</script>
 </body>
 </html>
