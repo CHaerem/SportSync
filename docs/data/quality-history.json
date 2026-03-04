@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-27T18:25:25.346Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 28,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 28,
-      "warningCount": 16,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Austin Smotherman\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35863,
-        "output": 7247,
-        "cacheCreation": 17416,
-        "cacheRead": 18444,
-        "total": 43110,
-        "costUSD": 0.29926200000000003,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 35887,
-        "output": 6776,
-        "calls": 1,
-        "total": 42663,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 71750,
-        "output": 14023,
-        "calls": 4,
-        "total": 85773,
-        "costUSD": 0.29926200000000003,
-        "realPct": 50
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 99,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.952,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-27T19:27:59.365Z",
     "editorial": {
       "score": 100,
@@ -7323,6 +7221,100 @@
       "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 89.143
+    }
+  },
+  {
+    "timestamp": "2026-03-04T18:20:15.309Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 101,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 28,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 24,
+      "warningCount": 22,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Tonight Athletic Club\" but no matching athlete found in events data; Featured mentions \"Basque\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 36194,
+        "output": 6295,
+        "cacheCreation": 36191,
+        "cacheRead": 0,
+        "total": 42489,
+        "costUSD": 0.38358375,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 36179,
+        "output": 7982,
+        "calls": 1,
+        "total": 44161,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 72373,
+        "output": 14277,
+        "calls": 2,
+        "total": 86650,
+        "costUSD": 0.38358375,
+        "realPct": 49
+      }
+    },
+    "quota": {
+      "tier": 2,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 98.143,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 89
     }
   }
 ]
