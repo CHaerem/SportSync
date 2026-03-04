@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-03T22:11:44.824Z",
-  "overallScore": 1,
-  "loopsClosed": 12,
+  "generatedAt": "2026-03-04T06:22:59.662Z",
+  "overallScore": 0.95,
+  "loopsClosed": 10,
   "loopsTotal": 12,
   "loops": {
     "featuredQuality": {
@@ -20,9 +20,9 @@
       "details": "Gap detection works, resolver exists, auto-generated configs exist"
     },
     "pipelineHealth": {
-      "score": 1,
-      "status": "closed",
-      "details": "Health report is fresh (0 min old), 14 issue(s) are info/known"
+      "score": 0.75,
+      "status": "partial",
+      "details": "Health report is fresh (0 min old) but has 1 actionable issue(s) (14 total)"
     },
     "watchPlan": {
       "score": 1,
@@ -32,7 +32,7 @@
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "61 completed tasks in autopilot log"
+      "details": "62 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -60,10 +60,13 @@
       "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
     },
     "streamingVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
+      "score": 0.66,
+      "status": "partial",
+      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate declining: 52% → 39% → 36%"
     }
   },
-  "nextActions": []
+  "nextActions": [
+    "Run pipeline more frequently to keep health report fresh (< 6h)",
+    "Investigate declining streaming match rate — check alias table or tvkampen HTML structure"
+  ]
 }

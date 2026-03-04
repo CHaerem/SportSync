@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T02:03:23.409Z",
+  "generatedAt": "2026-03-04T06:22:59.607Z",
   "eventCount": 47,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 33,
-      "previousCount": 18,
-      "delta": 15
+      "previousCount": 33,
+      "delta": 0
     },
     "golf": {
       "count": 2,
@@ -40,35 +40,35 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4557,
+      "ageMinutes": 4817,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 4,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 1,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -104,9 +104,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-03-10: 1 events but events.json has 5"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -176,7 +174,7 @@
     "hasCoverage": false
   },
   "unmappedLeagues": [
-    "Grenke Chess Festival 2026: Freestyle Open A",
+    "Freestyle Open A",
     "Cycling Grand Tours & Norwegian Races 2026",
     "FIFA World Cup 2026"
   ],
@@ -189,7 +187,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4557 minutes old"
+      "message": "esports.json: data is 4817 minutes old"
     },
     {
       "severity": "warning",
@@ -212,19 +210,9 @@
       "message": "1 event(s) won't appear on dashboard (esports)"
     },
     {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-10: 1 events but events.json has 5"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026, FIFA World Cup 2026"
+      "message": "3 tournament(s) lack league theming: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026, FIFA World Cup 2026"
     },
     {
       "severity": "info",
@@ -252,9 +240,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-04T02:03:23.533Z",
+    "computedAt": "2026-03-04T06:22:59.749Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -272,14 +260,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 8,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
