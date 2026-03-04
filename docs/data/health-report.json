@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T13:28:33.228Z",
+  "generatedAt": "2026-03-04T14:18:46.022Z",
   "eventCount": 47,
   "sportCoverage": {
     "esports": {
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5242,
+      "ageMinutes": 5292,
       "stale": true
     },
     "f1.json": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 147,
+      "ageMinutes": 197,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 147,
+      "ageMinutes": 197,
       "stale": false
     }
   },
@@ -129,19 +129,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 54662,
+    "totalDuration": 53908,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29252,
-        "share": 54
+        "duration": 27423,
+        "share": 51
       },
       {
         "name": "fetch-results",
-        "duration": 43175,
-        "share": 79
+        "duration": 41343,
+        "share": 77
       }
     ],
     "failedSteps": []
@@ -187,12 +187,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 5242 minutes old"
+      "message": "esports.json: data is 5292 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 57 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 58 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -217,12 +217,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (43s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (41s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -232,7 +232,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-04T13:28:33.288Z",
+    "computedAt": "2026-03-04T14:18:46.082Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -250,7 +250,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 0,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
