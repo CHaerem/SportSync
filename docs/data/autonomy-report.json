@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-04T10:15:16.297Z",
+  "generatedAt": "2026-03-04T11:01:53.986Z",
   "overallScore": 1,
-  "loopsClosed": 12,
-  "loopsTotal": 12,
+  "loopsClosed": 11,
+  "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints fired 93 times"
+      "details": "100 entries, hints wired (93 fired)"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -17,7 +17,7 @@
     "coverageGaps": {
       "score": 1,
       "status": "closed",
-      "details": "Gap detection works, resolver exists, auto-generated configs exist"
+      "details": "gap detection + resolver + auto-configs exist"
     },
     "pipelineHealth": {
       "score": 1,
@@ -37,33 +37,27 @@
     "eventDiscovery": {
       "score": 1,
       "status": "closed",
-      "details": "discovery log exists, sync-configs exists, configs have been researched"
+      "details": "discovery log + sync-configs + researched configs all exist"
     },
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history exists and is fresh, schedule-verifier exists, configs have verification summaries"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
       "status": "closed",
-      "details": "fetcher exists, results data is fresh, pipeline monitors results health"
+      "details": "fetcher + fresh results + pipeline monitors results health"
     },
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots exist, pipeline monitors snapshot health, snapshots are fresh"
-    },
-    "uxQuality": {
-      "score": 1,
-      "status": "closed",
-      "details": "UX report exists and is fresh, 30 history entries (trend-capable), score 98/100 (passing), tier: file (file-based fallback with high score — acceptable)"
+      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
     },
     "streamingVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history exists and is fresh, 50 runs (trend-capable), match rate trend is stable or rising"
+      "details": "50 runs, match rate stable or rising"
     }
-  },
-  "nextActions": []
+  }
 }

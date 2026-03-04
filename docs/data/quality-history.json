@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-27T17:24:48.703Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 7
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 7,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 28,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 35,
-      "warningCount": 22,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"\udfbf Biathlon WC — Men's 20km Individual — JT Bø\" which may not match any event; Featured mentions \"Seven\" but no matching athlete found in events data; Featured mentions \"Days\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"Champions League\" but no matching athlete found in events data; Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 36004,
-        "output": 5512,
-        "cacheCreation": 19632,
-        "cacheRead": 16369,
-        "total": 41516,
-        "costUSD": 0.2686995,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 35887,
-        "output": 6776,
-        "calls": 1,
-        "total": 42663,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 71891,
-        "output": 12288,
-        "calls": 4,
-        "total": 84179,
-        "costUSD": 0.2686995,
-        "realPct": 49
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 99,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.952,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-27T18:25:25.346Z",
     "editorial": {
       "score": 100,
@@ -7331,6 +7229,100 @@
       "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 89.286
+    }
+  },
+  {
+    "timestamp": "2026-03-04T11:01:52.278Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 91,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 29,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 26,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"Five\" but no matching athlete found in events data; Featured mentions \"El Derbi Vasco\" but no matching athlete found in events data; Featured mentions \"Bay Hill\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 36210,
+        "output": 6488,
+        "cacheCreation": 19845,
+        "cacheRead": 16362,
+        "total": 42698,
+        "costUSD": 0.29442725,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 36179,
+        "output": 7982,
+        "calls": 1,
+        "total": 44161,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 72389,
+        "output": 14470,
+        "calls": 2,
+        "total": 86859,
+        "costUSD": 0.29442725,
+        "realPct": 49
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97.714,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 89.143
     }
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T10:15:16.164Z",
+  "generatedAt": "2026-03-04T11:01:53.886Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 47,
@@ -74,7 +74,7 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 93,
+    "editorialScore": 100,
     "issueCount": 10
   },
   "findings": [
@@ -176,22 +176,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolves\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Tonight Athletic Club\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Five\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"El Derbi Vasco\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bay Hill\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Basque\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -210,9 +200,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 24,
     "critical": 0,
-    "warning": 24,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
