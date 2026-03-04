@@ -48,39 +48,15 @@ If a scouted improvement fails any principle, either redesign it to pass or skip
 
 When scouting for improvement opportunities, apply these detection patterns in addition to the standard checks (dead code, TODO comments, missing tests):
 
-### A. Dead Field Detection
-
-Scan `scripts/build-events.js` event schema for fields that are always empty or default in `docs/data/events.json`. For each dead field, check if the data source (fetcher in `scripts/fetch/`) already has the data to populate it.
-
-**How to check:** Load `events.json`, iterate events, find fields that are always `[]`, `null`, `""`, or `0` across all entries. Cross-reference with the fetcher output to see if the data exists upstream but isn't being mapped.
-
-**Example:** `featuredGroups` is always `[]` on golf events, but `scripts/fetch/golf.js` already scrapes PGA Tour tee times for all field players — grouping by tee time + starting hole gives us pairings for free.
-
 ### B. Data-to-UI Gap Detection
 
-Compare fields loaded in `docs/js/dashboard.js` vs what's actually rendered. Fields that are loaded or destructured but never appear in any `render*()` method are dead UI paths.
+Compare fields loaded in `docs/js/dashboard.js` vs what's actually rendered. Fields that are loaded or destructured but never appear in any `render*()` method are dead UI paths. Also scan `scripts/build-events.js` event schema for fields that are always empty or default in `docs/data/events.json` — these are dead data paths where the pipeline produces data nobody consumes.
 
-**How to check:** Search for field names in dashboard.js data loading (e.g., `featured.json` parse, `events.json` parse) and verify each field has a corresponding render path that produces visible DOM output.
+**How to check:**
+- Search for field names in dashboard.js data loading (e.g., `featured.json` parse, `events.json` parse) and verify each field has a corresponding render path that produces visible DOM output.
+- Load `events.json`, iterate events, find fields that are always `[]`, `null`, `""`, or `0` across all entries. Cross-reference with the fetcher output to see if the data exists upstream but isn't being mapped.
 
-**Example:** `featuredGroups` is loaded but no render code references it — the data flows through the pipeline but is invisible to users.
-
-### C. Fetcher Data Waste Detection
-
-Check if API fetchers extract data that's discarded or only partially used. Fetchers may parse rich API responses but only store a subset of the available fields.
-
-**How to check:** Read each fetcher's API response handling and compare the fields extracted vs the fields written to the output JSON. Flag cases where useful data (names, times, scores, stats) is available but dropped.
-
-**Example:** PGA Tour scraper gets tee times for 150+ players but only stores Norwegian players' times on events — groupmate names are available in the same API response but discarded.
-
-### D. Data Quality Scouting (Sanity Report)
-
-Read `docs/data/sanity-report.json` — look for findings with `"actionable": true`. These are LLM-detected data quality issues from the pipeline's AI sanity check (`scripts/ai-sanity-check.js`).
-
-For each actionable finding, investigate the root cause in the code and create a `[PENDING]` task with a specific fix description. The finding's `message` field contains detail about which field is wrong, what the expected value would be, and what component likely caused it (fetcher, enrichment, config).
-
-**How to check:** Read `sanity-report.json`, filter findings for `actionable: true`, and cross-reference with the relevant fetcher or script. If the issue is transient (API downtime), skip it. If it's a code bug or missing data path, create a task.
-
-**Example:** Finding says "golf event with 80 totalPlayers but all norwegianPlayers have null teeTime during in-progress tournament — likely fetcher issue in scripts/fetch/golf.js". Investigate the tee-time scraping logic and create a task to fix the data path.
+**Example:** `featuredGroups` was loaded but no render code referenced it — the data flowed through the pipeline but was invisible to users. Also: `featuredGroups` was always `[]` on golf events even though `scripts/fetch/golf.js` already scraped PGA Tour tee times — groupmate names were available but discarded.
 
 ### E. Pattern Report Analysis
 
@@ -94,18 +70,22 @@ Read `docs/data/pattern-report.json` (generated every 2h by `scripts/analyze-pat
 
 **How to check:** Read `pattern-report.json`, filter for `severity: "high"`, and create one task per pattern. Use the `suggestion` field as the task description.
 
-### F. Opportunity Detection (RSS + Coverage Gaps)
+### F. Opportunity Detection (RSS + Coverage Gaps + Fetcher Waste)
 
-Identify new sports, events, or data sources the dashboard should cover based on what's trending in the news but missing from the data.
+Identify new sports, events, or data sources the dashboard should cover based on what's trending in the news but missing from the data. Also check if existing API fetchers extract data that's discarded or only partially used — underutilized fetcher output is an opportunity to surface richer data without new API calls.
 
 **How to check:** Read `docs/data/rss-digest.json` and `docs/data/coverage-gaps.json`. Look for:
 - A sport or event mentioned repeatedly in RSS that has no fetcher or curated config
 - Norwegian athletes in the news who aren't tracked in `user-context.json`
 - A new league/tour season starting that needs a config (e.g., OBOS-ligaen spring season)
 
-**Action:** Create a task to add the data source. For API-backed sports, this means writing a new fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` — it auto-flows into events.json. For event-based sports, create a curated config in `scripts/config/`. **Guard:** Only create tasks for sports already in `sportPreferences` or explicitly requested by the user via `sport-request` feedback. Do not add new sports autonomously — see Sport Expansion Policy above.
+Also read each fetcher's API response handling and compare the fields extracted vs the fields written to the output JSON. Flag cases where useful data (names, times, scores, stats) is available in the API response but dropped before reaching `events.json`.
 
-**Example:** RSS shows multiple cycling headlines about Tour of Norway with a Norwegian stage winner → create task to add cycling fetcher using a public cycling API or curated config.
+**Action:** Create a task to add the data source. For API-backed sports, this means writing a new fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }` — it auto-flows into events.json. For event-based sports, create a curated config in `scripts/config/`. For fetcher waste, create a task to map the discarded fields into the output schema. **Guard:** Only create tasks for sports already in `sportPreferences` or explicitly requested by the user via `sport-request` feedback. Do not add new sports autonomously — see Sport Expansion Policy above.
+
+**Examples:**
+- RSS shows multiple cycling headlines about Tour of Norway with a Norwegian stage winner → create task to add cycling fetcher using a public cycling API or curated config.
+- PGA Tour scraper gets tee times for 150+ players but only stores Norwegian players' times — groupmate names are available in the same API response but discarded.
 
 ### G. Dashboard UX Improvement
 
@@ -159,25 +139,6 @@ Check for GitHub Issues with the `user-feedback` label created by the repo owner
 
 **After processing:** Close the issue with a comment summarizing actions taken. If changes were made to `user-context.json` or configs, include them in the next autopilot PR.
 
-### J. Upstream Issue Resolution Detection
-
-Monitor external dependencies documented in "Known Limitations" below. When an upstream issue is resolved, the system should detect it and create a task to remove workarounds.
-
-**How to check:**
-
-1. Read `docs/data/health-report.json` — check `quotaApiHealth.transitioned`. If `true` and `available` is `true`, the quota API scope issue is resolved. Create a `[PENDING]` task to validate the data and clean up workaround code.
-
-2. Read `docs/data/usage-tracking.json` — check `quotaApiStatus.available`. If it has been `true` for 3+ consecutive runs, the fix is stable.
-
-3. For GitHub issue tracking: run `gh issue view 11985 --repo anthropics/claude-code --json state -q '.state'`. If the state is `CLOSED`, the upstream fix may be available. Cross-reference with the `quotaApiStatus` data.
-
-**Action:** When an upstream limitation is confirmed resolved:
-- Create a `[PENDING]` task to validate the fix (e.g., verify real utilization data is flowing)
-- Create a follow-up task to remove any workaround code or "unavailable" UI messages
-- Update the "Known Limitations" section to mark the issue as resolved
-
-**Example:** If the quota API starts returning real utilization data, create a task: "Quota API scope fixed — validate real utilization data and update status page to remove unavailable message."
-
 ### K. Vision-Guided Exploration
 
 Strategic scouting that reasons about the autonomy vision rather than pattern-matching. This heuristic enables the autopilot to think beyond code health and propose capability expansions.
@@ -198,45 +159,6 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - `[FEATURE]` "Add handball fetcher using free API" — only if user submitted a sport-request for handball
 - `[EXPLORE]` "Evaluate client-side feedback mechanisms beyond localStorage" — the preference evolution loop is working but limited to click counts (quality pillar)
 
-### L. Visual Density Detection
-
-Monitor the dashboard for visual clutter — too many competing card styles, borders, and decorative elements reduce readability.
-
-**How to check:**
-1. Take a screenshot via `scripts/screenshot.js`
-2. Read the CSS in `docs/index.html` and count distinct visual treatments (backgrounds, borders, cards, pills, badges)
-3. Read `docs/js/dashboard.js` render methods — count how many different card/container styles coexist on the "today" page
-
-**Flag when:** More than 4 different card/container styles (e.g., featured-section cards, insight cards, watch-plan picks, event rows, standings tables) all use different visual treatments (borders, backgrounds, shadows, colored accents).
-
-**Action:** Create a `[MAINTENANCE]` task to consolidate visual treatments. The dashboard should have at most 3 distinct container styles: (1) editorial/featured sections, (2) event rows, (3) data tables. Everything else should be inline text or simple dividers.
-
-**Example:** "Consolidate 5 separate standings widgets into one collapsible section" — reduces visual noise by moving from 5 independently-styled collapsible sections to one.
-
-### M. Architectural Fitness
-
-Evaluate whether the codebase structure is healthy — not too fragmented (many tiny scripts), not too monolithic, not too coupled. The system should develop architectural taste through experience.
-
-**How to check:**
-1. Read `docs/data/pattern-report.json` — look for patterns with type prefix `architecture_`
-2. For each finding, evaluate the severity and the suggested consolidation targets
-3. Read the `architectureBaseline` section — compare current metrics to the baseline to see which direction the codebase is trending
-
-**Action rules:**
-- `architecture_module_proliferation` (medium): Create `[MAINTENANCE]` task to consolidate the suggested module pairs. Each task should merge exactly 2-3 related modules, update imports, and run tests.
-- `architecture_module_proliferation` (high): Create `[FEATURE]` task for a larger refactoring — reorganize the script directory structure.
-- `architecture_small_module_ratio`: Identify modules under 30 lines that are imported by exactly one consumer → inline them.
-- `architecture_pipeline_bloat`: Identify pipeline steps that always run together or have trivial logic → combine into single steps.
-- `architecture_low_test_coverage`: Create `[MAINTENANCE]` tasks to add tests for untested modules.
-- `architecture_orphan_scripts`: Verify if orphans are needed. If unused, delete. If needed, wire into pipeline or package.json.
-
-**After completing a refactoring task:** Run the fitness detector again and compare to the `architectureBaseline`. Record the delta in the Lessons section — e.g., "Consolidated X+Y: module count -1, no test regressions, pipeline 2s faster." This feedback compounds into better thresholds over time.
-
-**Example tasks:**
-- `[MAINTENANCE]` "Consolidate track-prediction-accuracy.js into analyze-patterns.js as Detector 9"
-- `[MAINTENANCE]` "Inline norwegian-streaming.js into its only consumer"
-- `[MAINTENANCE]` "Add tests for 5 untested scripts in scripts/"
-
 ---
 
 ## Lessons & Effectiveness
@@ -255,19 +177,13 @@ Evaluate whether the codebase structure is healthy — not too fragmented (many 
 
 | Heuristic | Tasks Found | Tasks Completed | Hit Rate | Notes |
 |-----------|-------------|-----------------|----------|-------|
-| A. Dead Field | 1 | 1 | 100% | Golf featuredGroups (PR #49-50) |
-| B. Data-to-UI Gap | 3 | 3 | 100% | Inline PL/golf/F1 standings, insights rendering |
-| C. Fetcher Waste | 0 | 0 | - | Not yet applied systematically |
-| D. Sanity Report | 2 | 0 | 0% | Findings are mostly data/API issues, not code bugs |
+| B. Data-to-UI Gap (incl. Dead Fields) | 4 | 4 | 100% | Inline PL/golf/F1 standings, insights rendering, golf featuredGroups (PR #49-50) |
 | E. Pattern Report | 6 | 5 | 83% | Health warning fix (PR #96), pipelineHealth unstuck, must-watch scope, empty snapshot, hint fatigue identified as metric issue |
-| F. Opportunity | 2 | 0 | 0% | Winter sports + cycling identified, not yet implemented |
+| F. Opportunity (incl. Fetcher Waste) | 2 | 0 | 0% | Winter sports + cycling identified, not yet implemented |
 | G. Dashboard UX | 5 | 5 | 100% | a11y, PL table, watch-plan UI, insights cards |
 | H. Capability Seed | 2 | 2 | 100% | generate-insights, event fingerprinting |
 | I. User Feedback | 0 | 0 | - | No feedback issues submitted yet |
-| J. Upstream Issues | 0 | 0 | - | Quota API still unavailable |
 | K. Vision-Guided | 3 | 2 | 67% | Favorites evolution, insights pipeline |
-| L. Visual Density | 0 | 0 | - | Not yet applied |
-| M. Architectural Fitness | 0 | 0 | - | New — reads pattern-report architecture_* findings |
 
 ### Pillar Progress
 

@@ -1,0 +1,26 @@
+{
+  "_description": "Health warning codes managed by existing feedback loops or autonomous infrastructure. Suppressed from actionable pattern reports and autonomy scoring penalty. Edit this file to add/remove exception codes — both autonomy-scorecard.js and analyze-patterns.js read it.",
+  "codes": [
+    "bracket_stale_matches",
+    "chronic_data_retention",
+    "component_unresolvable",
+    "invisible_events",
+    "low_confidence_config",
+    "missing_snapshot",
+    "model_change_quality_drop",
+    "quota_api_unavailable",
+    "quota_high_utilization",
+    "quota_skip_time_critical",
+    "recipe_persistent_failure",
+    "recipe_repair_exhausted",
+    "snapshot_event_mismatch",
+    "sport_zero_events",
+    "stale_data",
+    "stale_output",
+    "stale_snapshot",
+    "step_timeout_hit",
+    "streaming_coverage_gap",
+    "streaming_low_match_rate",
+    "ux_eval_fallback"
+  ]
+}

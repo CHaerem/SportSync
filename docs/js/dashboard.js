@@ -642,6 +642,8 @@ class Dashboard {
 		if (isToday) {
 			// Today: editorial brief + card feed
 			this.renderEditorial();
+			this.renderWatchPlan();
+			this.renderInsights();
 			this.renderEvents();
 			this.renderNews();
 		} else {
@@ -655,7 +657,7 @@ class Dashboard {
 		this.renderDateLine();
 
 		// Hide today-centric sections on non-today dates
-		const todayOnlySections = ['news'];
+		const todayOnlySections = ['news', 'watch-plan', 'insights'];
 		for (const id of todayOnlySections) {
 			const section = document.getElementById(id);
 			if (section) section.style.display = isToday ? '' : 'none';
@@ -1172,7 +1174,7 @@ class Dashboard {
 			return false;
 		});
 		const overlapRate = picks.length > 0 ? overlapping.length / picks.length : 0;
-		if (overlapRate > 0.8) {
+		if (overlapRate > 0.95) {
 			container.innerHTML = '<div class="watch-plan-collapsed"><span class="watch-plan-collapsed-label">What to Watch</span> <span class="watch-plan-collapsed-count">' + picks.length + ' picks \u2014 already in brief above</span></div>';
 			return;
 		}
@@ -2442,6 +2444,8 @@ class Dashboard {
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
 
+		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
+
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
 				<div class="row-main">
@@ -2450,6 +2454,7 @@ class Dashboard {
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${subtitleHtml}</span>
 				</div>
+				${summaryHtml}
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
 		`;

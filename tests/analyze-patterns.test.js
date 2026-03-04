@@ -2,12 +2,9 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
 	analyzeRecurringHealthWarnings,
 	analyzeQualityDecline,
-	analyzeStagnantLoops,
 	analyzeHintFatigue,
 	analyzeAutopilotFailures,
-	analyzeInterventionEffectiveness,
 	analyzeCrossLoopDependencies,
-	detectArchitecturalFitness,
 	analyzePatterns,
 } from "../scripts/analyze-patterns.js";
 import fs from "fs";
@@ -249,61 +246,7 @@ describe("analyzeQualityDecline", () => {
 	});
 });
 
-// --- Detector 3: Stagnant Loops ---
-
-describe("analyzeStagnantLoops", () => {
-	it("returns empty for null input", () => {
-		expect(analyzeStagnantLoops(null)).toEqual([]);
-	});
-
-	it("returns empty for too few entries", () => {
-		expect(analyzeStagnantLoops([{}, {}])).toEqual([]);
-	});
-
-	it("detects stagnant loop at 6 runs", () => {
-		const trend = Array(6).fill({
-			loopScores: { scheduleVerification: 0.33, featuredQuality: 1.0 },
-		});
-		const patterns = analyzeStagnantLoops(trend);
-		expect(patterns).toHaveLength(1);
-		expect(patterns[0].loopName).toBe("scheduleVerification");
-		expect(patterns[0].severity).toBe("medium");
-		expect(patterns[0].stagnantRuns).toBe(6);
-	});
-
-	it("escalates to high at >= 10 runs", () => {
-		const trend = Array(12).fill({
-			loopScores: { scheduleVerification: 0.33 },
-		});
-		const patterns = analyzeStagnantLoops(trend);
-		expect(patterns[0].severity).toBe("high");
-		expect(patterns[0].stagnantRuns).toBe(12);
-	});
-
-	it("ignores closed loops (score 1.0)", () => {
-		const trend = Array(10).fill({
-			loopScores: { featuredQuality: 1.0, enrichmentQuality: 1.0 },
-		});
-		expect(analyzeStagnantLoops(trend)).toEqual([]);
-	});
-
-	it("ignores loops that recently changed", () => {
-		const trend = [
-			...Array(5).fill({ loopScores: { myLoop: 0.5 } }),
-			{ loopScores: { myLoop: 0.66 } },
-			...Array(4).fill({ loopScores: { myLoop: 0.66 } }),
-		];
-		// Only 5 consecutive at 0.66, not enough
-		expect(analyzeStagnantLoops(trend)).toEqual([]);
-	});
-
-	it("handles entries without loopScores", () => {
-		const trend = Array(8).fill({});
-		expect(analyzeStagnantLoops(trend)).toEqual([]);
-	});
-});
-
-// --- Detector 4: Hint Fatigue ---
+// --- Detector 3: Hint Fatigue ---
 
 describe("analyzeHintFatigue", () => {
 	it("returns empty for null input", () => {
@@ -434,7 +377,7 @@ describe("analyzeHintFatigue", () => {
 	});
 });
 
-// --- Detector 5: Autopilot Failures ---
+// --- Detector 4: Autopilot Failures ---
 
 describe("analyzeAutopilotFailures", () => {
 	it("returns empty for null input", () => {
@@ -509,93 +452,7 @@ describe("analyzeAutopilotFailures", () => {
 	});
 });
 
-// --- Detector 6: Intervention Effectiveness ---
-
-describe("analyzeInterventionEffectiveness", () => {
-	it("returns empty for insufficient data", () => {
-		expect(analyzeInterventionEffectiveness(null)).toEqual({});
-		expect(analyzeInterventionEffectiveness([])).toEqual({});
-		expect(analyzeInterventionEffectiveness([{}])).toEqual({});
-	});
-
-	it("tracks improvement when hint fires and metric goes up", () => {
-		const history = [
-			{ hintsApplied: ["must-watch events are missing"], editorial: { mustWatchCoverage: 0.3 } },
-			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.6 } },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.mustWatchCoverage.fires).toBe(1);
-		expect(eff.mustWatchCoverage.improved).toBe(1);
-		expect(eff.mustWatchCoverage.effectivenessRate).toBe(1);
-	});
-
-	it("tracks unchanged when metric stays the same", () => {
-		const history = [
-			{ hintsApplied: ["editorial quality needs work"], editorial: { score: 80 } },
-			{ hintsApplied: [], editorial: { score: 80 } },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.editorialScore.fires).toBe(1);
-		expect(eff.editorialScore.unchanged).toBe(1);
-		expect(eff.editorialScore.effectivenessRate).toBe(0);
-	});
-
-	it("tracks worsened when metric drops after hint", () => {
-		const history = [
-			{ hintsApplied: ["must-watch events are missing"], editorial: { mustWatchCoverage: 0.8 } },
-			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.5 } },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.mustWatchCoverage.worsened).toBe(1);
-	});
-
-	it("accumulates across multiple entries", () => {
-		const history = [
-			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 50 } },
-			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 60 } },
-			{ hintsApplied: ["RESULTS NOTE: stale data"], results: { score: 55 } },
-			{ hintsApplied: [], results: { score: 70 } },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.resultsScore.fires).toBe(3);
-		expect(eff.resultsScore.improved).toBe(2); // 50→60 and 55→70
-		expect(eff.resultsScore.worsened).toBe(1); // 60→55
-	});
-
-	it("handles SANITY hints with inverted metric", () => {
-		const history = [
-			{ hintsApplied: ["SANITY: issues found"], sanity: { findingCount: 10 } },
-			{ hintsApplied: [], sanity: { findingCount: 5 } }, // fewer findings = improved
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.sanityScore.fires).toBe(1);
-		expect(eff.sanityScore.improved).toBe(1); // lower count = higher score
-	});
-
-	it("maps unknown hints correctly", () => {
-		const history = [
-			{ hintsApplied: ["some random hint"] },
-			{ hintsApplied: [] },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.unknown.fires).toBe(1);
-		expect(eff.unknown.unchanged).toBe(1); // null metrics = unchanged
-	});
-
-	it("deduplicates hint types per entry", () => {
-		const history = [
-			{
-				hintsApplied: ["must-watch A", "must watch B"], // both map to mustWatchCoverage
-				editorial: { mustWatchCoverage: 0.3 },
-			},
-			{ hintsApplied: [], editorial: { mustWatchCoverage: 0.6 } },
-		];
-		const eff = analyzeInterventionEffectiveness(history);
-		expect(eff.mustWatchCoverage.fires).toBe(1); // not 2
-	});
-});
-
-// --- Detector 7: Cross-Loop Dependencies ---
+// --- Detector 5: Cross-Loop Dependencies ---
 
 describe("analyzeCrossLoopDependencies", () => {
 	it("returns empty for insufficient data", () => {
@@ -692,7 +549,6 @@ describe("analyzePatterns", () => {
 		expect(report.patternsDetected).toBe(0);
 		expect(report.patterns).toEqual([]);
 		expect(report.issueCodeHistory).toEqual({});
-		expect(report.interventionEffectiveness).toEqual({});
 		expect(report.summary).toContain("0 patterns");
 	});
 
@@ -705,18 +561,10 @@ describe("analyzePatterns", () => {
 		});
 		fs.writeFileSync(path.join(tmpDir, "quality-history.json"), JSON.stringify(qualityHistory));
 
-		// Write stagnant autonomy trend
-		const trend = Array(12).fill({
-			timestamp: "2026-02-12T00:00:00Z",
-			loopScores: { scheduleVerification: 0.33, featuredQuality: 1.0 },
-		});
-		fs.writeFileSync(path.join(tmpDir, "autonomy-trend.json"), JSON.stringify(trend));
-
 		const report = analyzePatterns({ dataDir: tmpDir });
 		expect(report.patternsDetected).toBeGreaterThan(0);
 
 		const types = report.patterns.map((p) => p.type);
-		expect(types).toContain("stagnant_loop");
 		expect(types).toContain("hint_fatigue");
 	});
 
@@ -726,11 +574,6 @@ describe("analyzePatterns", () => {
 			editorial: { score: 65, mustWatchCoverage: 0 },
 		});
 		fs.writeFileSync(path.join(tmpDir, "quality-history.json"), JSON.stringify(qualityHistory));
-
-		const trend = Array(12).fill({
-			loopScores: { scheduleVerification: 0.33 },
-		});
-		fs.writeFileSync(path.join(tmpDir, "autonomy-trend.json"), JSON.stringify(trend));
 
 		const report = analyzePatterns({ dataDir: tmpDir });
 		const severities = report.patterns.map((p) => p.severity);
@@ -759,11 +602,6 @@ describe("analyzePatterns", () => {
 	});
 
 	it("generates meaningful summary", () => {
-		const trend = Array(10).fill({
-			loopScores: { myLoop: 0.5 },
-		});
-		fs.writeFileSync(path.join(tmpDir, "autonomy-trend.json"), JSON.stringify(trend));
-
 		const report = analyzePatterns({ dataDir: tmpDir });
 		expect(report.summary).toContain("patterns detected");
 		if (report.patternsDetected > 0) {
@@ -778,243 +616,13 @@ describe("analyzePatterns", () => {
 		expect(report.issueCodeHistory).toEqual({});
 	});
 
-	it("includes architecture baseline in output", () => {
+	it("does not include architectureBaseline in output (detector removed)", () => {
 		const report = analyzePatterns({ dataDir: tmpDir });
-		expect(report.architectureBaseline).toBeDefined();
-		expect(report.architectureBaseline.moduleCount).toBeGreaterThan(0);
-		expect(report.architectureBaseline.recordedAt).toBeDefined();
-	});
-});
-
-// --- Detector 8: Architectural Fitness ---
-
-describe("detectArchitecturalFitness", () => {
-	let tmpRoot;
-
-	beforeEach(() => {
-		tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "arch-test-"));
-		// Create a minimal project structure
-		fs.mkdirSync(path.join(tmpRoot, "scripts"));
-		fs.mkdirSync(path.join(tmpRoot, "scripts", "lib"));
-		fs.mkdirSync(path.join(tmpRoot, "scripts", "fetch"));
-		fs.mkdirSync(path.join(tmpRoot, "tests"));
+		expect(report.architectureBaseline).toBeUndefined();
 	});
 
-	function createFiles(dir, files) {
-		for (const [name, lines] of Object.entries(files)) {
-			const content = Array(lines).fill("// line").join("\n");
-			fs.writeFileSync(path.join(dir, name), content);
-		}
-	}
-
-	it("returns empty patterns for small project", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 100, "b.js": 100 });
-		createFiles(path.join(tmpRoot, "scripts", "lib"), { "c.js": 80 });
-		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		expect(result.patterns).toEqual([]);
-		expect(result.metrics.moduleCount).toBe(3);
-		expect(result.metrics.avgModuleSize).toBeGreaterThan(0);
-	});
-
-	it("detects module proliferation at warn threshold", () => {
-		// Create 72 modules (over default 70 threshold)
-		const scripts = {};
-		for (let i = 0; i < 50; i++) scripts[`script${i}.js`] = 60;
-		createFiles(path.join(tmpRoot, "scripts"), scripts);
-		const libs = {};
-		for (let i = 0; i < 15; i++) libs[`lib${i}.js`] = 80;
-		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
-		const fetchers = {};
-		for (let i = 0; i < 7; i++) fetchers[`fetch${i}.js`] = 100;
-		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
-		expect(prolif).toBeDefined();
-		expect(prolif.severity).toBe("medium");
-		expect(prolif.moduleCount).toBe(72);
-		expect(prolif.breakdown).toEqual({ scripts: 50, lib: 15, fetch: 7 });
-	});
-
-	it("flags high severity above 85 modules", () => {
-		const scripts = {};
-		for (let i = 0; i < 65; i++) scripts[`s${i}.js`] = 60;
-		createFiles(path.join(tmpRoot, "scripts"), scripts);
-		const libs = {};
-		for (let i = 0; i < 21; i++) libs[`l${i}.js`] = 80;
-		createFiles(path.join(tmpRoot, "scripts", "lib"), libs);
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
-		expect(prolif).toBeDefined();
-		expect(prolif.severity).toBe("high");
-	});
-
-	it("detects high small module ratio", () => {
-		// 4 out of 8 modules < 30 lines = 50% > 25% threshold
-		createFiles(path.join(tmpRoot, "scripts"), {
-			"a.js": 10, "b.js": 15, "c.js": 20, "d.js": 25,
-			"e.js": 100, "f.js": 200, "g.js": 150, "h.js": 120,
-		});
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const small = result.patterns.find(p => p.type === "architecture_small_module_ratio");
-		expect(small).toBeDefined();
-		expect(small.ratio).toBe(0.5);
-	});
-
-	it("does not flag small ratio below threshold", () => {
-		createFiles(path.join(tmpRoot, "scripts"), {
-			"a.js": 100, "b.js": 100, "c.js": 100, "d.js": 10,
-		});
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const small = result.patterns.find(p => p.type === "architecture_small_module_ratio");
-		expect(small).toBeUndefined();
-	});
-
-	it("detects pipeline bloat", () => {
-		const manifest = {
-			phases: [
-				{ name: "fetch", steps: Array(11).fill({ name: "s", command: "echo" }) },
-				{ name: "build", steps: Array(10).fill({ name: "s", command: "echo" }) },
-				{ name: "monitor", steps: Array(10).fill({ name: "s", command: "echo" }) },
-			],
-		};
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });
-
-		const result = detectArchitecturalFitness({
-			projectRoot: tmpRoot,
-			pipelineManifest: manifest,
-		});
-		const bloat = result.patterns.find(p => p.type === "architecture_pipeline_bloat");
-		expect(bloat).toBeDefined();
-		expect(bloat.pipelineSteps).toBe(31);
-		expect(bloat.severity).toBe("medium");
-	});
-
-	it("flags high severity for pipeline above 35 steps", () => {
-		const manifest = {
-			phases: [
-				{ name: "a", steps: Array(18).fill({ name: "s", command: "echo" }) },
-				{ name: "b", steps: Array(18).fill({ name: "s", command: "echo" }) },
-			],
-		};
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 50 });
-
-		const result = detectArchitecturalFitness({
-			projectRoot: tmpRoot,
-			pipelineManifest: manifest,
-		});
-		const bloat = result.patterns.find(p => p.type === "architecture_pipeline_bloat");
-		expect(bloat).toBeDefined();
-		expect(bloat.severity).toBe("high");
-	});
-
-	it("detects low test coverage ratio", () => {
-		// 10 source modules, 2 test files → ratio 0.2 < 0.5
-		const scripts = {};
-		for (let i = 0; i < 10; i++) scripts[`s${i}.js`] = 60;
-		createFiles(path.join(tmpRoot, "scripts"), scripts);
-		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const coverage = result.patterns.find(p => p.type === "architecture_low_test_coverage");
-		expect(coverage).toBeDefined();
-		expect(coverage.ratio).toBe(0.2);
-		expect(coverage.sourceCount).toBe(10);
-		expect(coverage.testCount).toBe(2);
-	});
-
-	it("does not flag adequate test coverage", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 60 });
-		createFiles(path.join(tmpRoot, "tests"), { "a.test.js": 50, "b.test.js": 50 });
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const coverage = result.patterns.find(p => p.type === "architecture_low_test_coverage");
-		expect(coverage).toBeUndefined();
-	});
-
-	it("respects threshold overrides from baseline", () => {
-		// 20 modules — normally under threshold of 50, but override to 15
-		const scripts = {};
-		for (let i = 0; i < 20; i++) scripts[`s${i}.js`] = 60;
-		createFiles(path.join(tmpRoot, "scripts"), scripts);
-
-		const baseline = {
-			moduleCount: 18,
-			thresholdOverrides: { moduleCountWarn: 15, moduleCountHigh: 25 },
-		};
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
-		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
-		expect(prolif).toBeDefined();
-		expect(prolif.threshold).toBe(15);
-	});
-
-	it("computes baseline delta when previous baseline exists", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 60, "c.js": 60 });
-
-		const baseline = { moduleCount: 5, avgModuleSize: 100, pipelineSteps: 10 };
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
-		expect(result.baselineDelta).toBeDefined();
-		expect(result.baselineDelta.moduleCount).toBe(3 - 5); // -2
-	});
-
-	it("returns null delta when no baseline exists", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60 });
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		expect(result.baselineDelta).toBeNull();
-	});
-
-	it("records updated baseline with current metrics", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60, "b.js": 80 });
-		createFiles(path.join(tmpRoot, "scripts", "lib"), { "c.js": 100 });
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		expect(result.baseline.moduleCount).toBe(3);
-		expect(result.baseline.avgModuleSize).toBe(80);
-		expect(result.baseline.recordedAt).toBeDefined();
-		expect(result.baseline.thresholdOverrides).toEqual({});
-	});
-
-	it("preserves threshold overrides in new baseline", () => {
-		createFiles(path.join(tmpRoot, "scripts"), { "a.js": 60 });
-
-		const baseline = { thresholdOverrides: { moduleCountWarn: 30 } };
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot, baseline });
-		expect(result.baseline.thresholdOverrides).toEqual({ moduleCountWarn: 30 });
-	});
-
-	it("suggests inline candidates from small lib modules", () => {
-		// Create 72 modules to trigger proliferation (over default 70 threshold)
-		const scripts = {};
-		for (let i = 0; i < 55; i++) scripts[`s${i}.js`] = 60;
-		createFiles(path.join(tmpRoot, "scripts"), scripts);
-		// Small lib modules should appear as inline candidates
-		createFiles(path.join(tmpRoot, "scripts", "lib"), {
-			"tiny-helper.js": 15,
-			"small-util.js": 25,
-			"big-lib.js": 200,
-		});
-		const fetchers = {};
-		for (let i = 0; i < 14; i++) fetchers[`f${i}.js`] = 80;
-		createFiles(path.join(tmpRoot, "scripts", "fetch"), fetchers);
-
-		const result = detectArchitecturalFitness({ projectRoot: tmpRoot });
-		const prolif = result.patterns.find(p => p.type === "architecture_module_proliferation");
-		expect(prolif).toBeDefined();
-		expect(prolif.inlineCandidates).toContain("tiny-helper.js");
-		expect(prolif.inlineCandidates).toContain("small-util.js");
-		expect(prolif.inlineCandidates).not.toContain("big-lib.js");
-	});
-
-	it("handles missing directories gracefully", () => {
-		const emptyRoot = fs.mkdtempSync(path.join(os.tmpdir(), "empty-root-"));
-		const result = detectArchitecturalFitness({ projectRoot: emptyRoot });
-		expect(result.metrics.moduleCount).toBe(0);
-		expect(result.patterns).toEqual([]);
+	it("does not include interventionEffectiveness in output (detector removed)", () => {
+		const report = analyzePatterns({ dataDir: tmpDir });
+		expect(report.interventionEffectiveness).toBeUndefined();
 	});
 });

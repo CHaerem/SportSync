@@ -63,7 +63,7 @@
         "scripts/lib/broadcaster-urls.js"
       ],
       "memoryFile": ".claude/agent-memory/data-agent/MEMORY.md",
-      "scoutingHeuristics": ["A", "C", "D", "F"],
+      "scoutingHeuristics": ["B", "F"],
       "qualityMetrics": [
         "data freshness scores",
         "API success rates",
@@ -173,7 +173,7 @@
         "tests/**"
       ],
       "memoryFile": ".claude/agent-memory/code-agent/MEMORY.md",
-      "scoutingHeuristics": ["E", "H"],
+      "scoutingHeuristics": ["H"],
       "qualityMetrics": [
         "test pass rate",
         "code health score",
@@ -240,7 +240,7 @@
         "Balance work across the five autonomy pillars",
         "Manage the roadmap: prioritize tasks, assign to agents, track completion",
         "Cross-agent learning: synthesize insights from all agent memories",
-        "Autonomy scorecard maintenance (12 feedback loops)",
+        "Autonomy scorecard maintenance (11 feedback loops)",
         "Preference evolution (engagement → user-context.json updates)",
         "Resolve contention when multiple agents need the same file",
         "Strategic planning: identify highest-leverage improvements"
@@ -276,7 +276,7 @@
         "scripts/agents/**"
       ],
       "memoryFile": ".claude/agent-memory/orchestrator/MEMORY.md",
-      "scoutingHeuristics": ["I", "J", "K"],
+      "scoutingHeuristics": ["I", "K"],
       "qualityMetrics": [
         "autonomy score",
         "pillar balance",

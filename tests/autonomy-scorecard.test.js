@@ -12,7 +12,6 @@ import {
 	evaluateEventDiscovery,
 	evaluateScheduleVerification,
 	evaluateResultsHealth,
-	evaluateUxQuality,
 	evaluateAutonomy,
 	trackTrend,
 	detectRegressions,
@@ -58,7 +57,6 @@ describe("evaluateFeaturedQuality()", () => {
 		]);
 		const result = evaluateFeaturedQuality(dataDir);
 		expect(result.score).toBe(0);
-		expect(result.details).toContain("2 history entries");
 	});
 
 	it("scores 1.0 when hints pipeline is wired (hintsApplied field exists) even if never fired", () => {
@@ -70,10 +68,10 @@ describe("evaluateFeaturedQuality()", () => {
 		const result = evaluateFeaturedQuality(dataDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
-		expect(result.details).toContain("wired and ready");
+		expect(result.details).toContain("wired");
 	});
 
-	it("scores 1.0 when hints have fired and metric is improving", () => {
+	it("scores 1.0 when hints have fired", () => {
 		writeJson(path.join(dataDir, "quality-history.json"), [
 			{ timestamp: "2026-01-01T00:00:00Z", hintsApplied: ["boost_diversity"], editorial: { mustWatchCoverage: 0.8 } },
 			{ timestamp: "2026-01-02T00:00:00Z", hintsApplied: [], editorial: { mustWatchCoverage: 0.9 } },
@@ -82,32 +80,17 @@ describe("evaluateFeaturedQuality()", () => {
 		const result = evaluateFeaturedQuality(dataDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
-		expect(result.details).toContain("hints fired 2 times");
 	});
 
-	it("scores 0.75 when hints fire but metric stays below threshold", () => {
-		writeJson(path.join(dataDir, "quality-history.json"), [
-			{ timestamp: "2026-01-01T00:00:00Z", hintsApplied: ["must_watch"], editorial: { mustWatchCoverage: 0.2 } },
-			{ timestamp: "2026-01-02T00:00:00Z", hintsApplied: ["must_watch"], editorial: { mustWatchCoverage: 0.3 } },
-			{ timestamp: "2026-01-03T00:00:00Z", hintsApplied: ["must_watch"], editorial: { mustWatchCoverage: 0.1 } },
-			{ timestamp: "2026-01-04T00:00:00Z", hintsApplied: ["must_watch"], editorial: { mustWatchCoverage: 0.2 } },
-			{ timestamp: "2026-01-05T00:00:00Z", hintsApplied: ["must_watch"], editorial: { mustWatchCoverage: 0.3 } },
-		]);
-		const result = evaluateFeaturedQuality(dataDir);
-		expect(result.score).toBe(0.75);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("not improving");
-	});
-
-	it("scores 0.5 when history >= 3 but hintsApplied field not present (old format)", () => {
+	it("scores 0 when history >= 3 but hintsApplied field not present (old format)", () => {
 		writeJson(path.join(dataDir, "quality-history.json"), [
 			{ timestamp: "2026-01-01T00:00:00Z" },
 			{ timestamp: "2026-01-02T00:00:00Z" },
 			{ timestamp: "2026-01-03T00:00:00Z" },
 		]);
 		const result = evaluateFeaturedQuality(dataDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 });
 
@@ -126,13 +109,13 @@ describe("evaluateEnrichmentQuality()", () => {
 		expect(result.score).toBe(0);
 	});
 
-	it("scores 0.5 when enrichment exists but has no hintsApplied field", () => {
+	it("scores 0 when enrichment exists but has no hintsApplied field", () => {
 		writeJson(path.join(dataDir, "ai-quality.json"), {
 			enrichment: { score: 90, totalEvents: 30 },
 		});
 		const result = evaluateEnrichmentQuality(dataDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 		expect(result.details).toContain("hints not yet tracked");
 	});
 
@@ -163,15 +146,14 @@ describe("evaluateCoverageGaps()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.33 when only fresh gap data exists", () => {
+	it("scores 0 when only fresh gap data exists (no resolver)", () => {
 		writeJson(path.join(dataDir, "coverage-gaps.json"), {
 			generatedAt: new Date().toISOString(),
 			gaps: [],
 		});
 		const result = evaluateCoverageGaps(dataDir, scriptsDir);
-		expect(result.score).toBe(0.33);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("Gap detection works");
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("no resolver script");
 	});
 
 	it("scores 1.0 when gap data + resolver exist and zero gaps detected", () => {
@@ -199,10 +181,10 @@ describe("evaluateCoverageGaps()", () => {
 		const result = evaluateCoverageGaps(dataDir, scriptsDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
-		expect(result.details).toContain("auto-generated configs exist");
+		expect(result.details).toContain("auto-configs exist");
 	});
 
-	it("scores 0.66 when gap data + resolver exist but unresolved gaps remain", () => {
+	it("scores 0 when gap data + resolver exist but unresolved gaps remain", () => {
 		writeJson(path.join(dataDir, "coverage-gaps.json"), {
 			generatedAt: new Date().toISOString(),
 			gaps: [{ headline: "Unresolved gap", confidence: "high" }],
@@ -210,7 +192,7 @@ describe("evaluateCoverageGaps()", () => {
 		});
 		fs.writeFileSync(path.join(scriptsDir, "resolve-coverage-gaps.js"), "// resolver");
 		const result = evaluateCoverageGaps(dataDir, scriptsDir);
-		expect(result.score).toBe(0.66);
+		expect(result.score).toBe(0);
 		expect(result.details).toContain("1 unresolved gaps");
 	});
 });
@@ -235,7 +217,7 @@ describe("evaluatePipelineHealth()", () => {
 		expect(result.details).toContain("fresh");
 	});
 
-	it("scores 0.75 when health report is fresh but has actionable issues", () => {
+	it("scores 0 when health report is fresh but has actionable issues", () => {
 		writeJson(path.join(dataDir, "health-report.json"), {
 			generatedAt: new Date().toISOString(),
 			status: "warning",
@@ -244,8 +226,8 @@ describe("evaluatePipelineHealth()", () => {
 			],
 		});
 		const result = evaluatePipelineHealth(dataDir);
-		expect(result.score).toBe(0.75);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 		expect(result.details).toContain("1 actionable");
 	});
 
@@ -304,15 +286,15 @@ describe("evaluatePipelineHealth()", () => {
 		expect(result.details).toContain("info/known");
 	});
 
-	it("scores 0.5 when health report exists but is stale (> 6h)", () => {
+	it("scores 0 when health report exists but is stale (> 6h)", () => {
 		const reportPath = path.join(dataDir, "health-report.json");
 		writeJson(reportPath, { generatedAt: "2026-01-01T00:00:00Z", status: "ok" });
 		// Set mtime to 7 hours ago
 		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
 		fs.utimesSync(reportPath, sevenHoursAgo, sevenHoursAgo);
 		const result = evaluatePipelineHealth(dataDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 		expect(result.details).toContain("stale");
 	});
 });
@@ -344,14 +326,14 @@ describe("evaluateWatchPlan()", () => {
 		expect(result.details).toContain("1 picks with reasons");
 	});
 
-	it("scores 0.5 when picks exist but lack reasons", () => {
+	it("scores 0 when picks exist but lack reasons", () => {
 		writeJson(path.join(dataDir, "watch-plan.json"), {
 			picks: [
 				{ title: "Match", reasons: [], streaming: [{ platform: "NRK" }] },
 			],
 		});
 		const result = evaluateWatchPlan(dataDir);
-		expect(result.score).toBe(0.5);
+		expect(result.score).toBe(0);
 		expect(result.details).toContain("reasons");
 	});
 
@@ -379,20 +361,20 @@ describe("evaluateCodeHealth()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.5 when roadmap exists but no completed tasks in log", () => {
+	it("scores 0 when roadmap exists but no completed tasks in log", () => {
 		fs.writeFileSync(path.join(rootDir, "AUTOPILOT_ROADMAP.md"), "# Roadmap\n");
 		const result = evaluateCodeHealth(rootDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.5 when roadmap and log exist but no completed runs", () => {
+	it("scores 0 when roadmap and log exist but no completed runs", () => {
 		fs.writeFileSync(path.join(rootDir, "AUTOPILOT_ROADMAP.md"), "# Roadmap\n");
 		writeJson(path.join(rootDir, "docs", "data", "autopilot-log.json"), {
 			runs: [{ outcome: "skipped", task: "Something" }],
 		});
 		const result = evaluateCodeHealth(rootDir);
-		expect(result.score).toBe(0.5);
+		expect(result.score).toBe(0);
 	});
 
 	it("scores 1.0 when roadmap exists and log has completed tasks", () => {
@@ -419,25 +401,24 @@ describe("evaluateEventDiscovery()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.33 when only discovery log exists", () => {
+	it("scores 0 when only discovery log exists (no sync-configs)", () => {
 		writeJson(path.join(dataDir, "discovery-log.json"), {
 			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
 		});
 		const result = evaluateEventDiscovery(dataDir, scriptsDir);
-		expect(result.score).toBe(0.33);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("discovery log exists");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("no sync-configs script");
 	});
 
-	it("scores 0.66 when discovery log + sync-configs exist", () => {
+	it("scores 0 when discovery log + sync-configs exist but no researched configs", () => {
 		writeJson(path.join(dataDir, "discovery-log.json"), {
 			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
 		});
 		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
 		const result = evaluateEventDiscovery(dataDir, scriptsDir);
-		expect(result.score).toBe(0.66);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("sync-configs exists");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 
 	it("scores 1.0 when log + sync + researched configs all exist", () => {
@@ -452,7 +433,7 @@ describe("evaluateEventDiscovery()", () => {
 		const result = evaluateEventDiscovery(dataDir, scriptsDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
-		expect(result.details).toContain("configs have been researched");
+		expect(result.details).toContain("researched configs");
 	});
 });
 
@@ -465,26 +446,25 @@ describe("evaluateScheduleVerification()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.33 when only fresh verification history exists", () => {
+	it("scores 0 when only fresh verification history exists (no verifier module)", () => {
 		writeJson(path.join(dataDir, "verification-history.json"), {
 			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
 		});
 		const result = evaluateScheduleVerification(dataDir, scriptsDir);
-		expect(result.score).toBe(0.33);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("verification history exists");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("no schedule-verifier module");
 	});
 
-	it("scores 0.66 when history + verifier module exist", () => {
+	it("scores 0 when history + verifier exist but no verified configs", () => {
 		writeJson(path.join(dataDir, "verification-history.json"), {
 			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
 		});
 		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
 		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
 		const result = evaluateScheduleVerification(dataDir, scriptsDir);
-		expect(result.score).toBe(0.66);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("schedule-verifier exists");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 
 	it("scores 1.0 when history + verifier + verified configs all exist", () => {
@@ -500,10 +480,10 @@ describe("evaluateScheduleVerification()", () => {
 		const result = evaluateScheduleVerification(dataDir, scriptsDir);
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
-		expect(result.details).toContain("verification summaries");
+		expect(result.details).toContain("verified configs");
 	});
 
-	it("does not count stale history as fresh", () => {
+	it("scores 0 when history is stale and step did not fail", () => {
 		const historyPath = path.join(dataDir, "verification-history.json");
 		writeJson(historyPath, {
 			runs: [{ timestamp: "2026-01-01T00:00:00Z", results: [] }],
@@ -513,10 +493,10 @@ describe("evaluateScheduleVerification()", () => {
 		fs.utimesSync(historyPath, twoDaysAgo, twoDaysAgo);
 		const result = evaluateScheduleVerification(dataDir, scriptsDir);
 		expect(result.score).toBe(0);
-		expect(result.details).toContain("stale");
+		expect(result.details).toContain("No fresh verification history");
 	});
 
-	it("awards history point when verify-schedules step failed (stale is expected)", () => {
+	it("awards score when verify-schedules step failed (stale is expected)", () => {
 		const historyPath = path.join(dataDir, "verification-history.json");
 		writeJson(historyPath, {
 			runs: [{ timestamp: "2026-01-01T00:00:00Z", results: [] }],
@@ -558,15 +538,14 @@ describe("evaluateResultsHealth()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.33 when only fetch-results.js exists", () => {
+	it("scores 0 when only fetch-results.js exists (no results data)", () => {
 		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
 		const result = evaluateResultsHealth(dataDir, scriptsDir);
-		expect(result.score).toBe(0.33);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("fetcher exists");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 
-	it("scores 0.66 when fetcher + fresh results exist", () => {
+	it("scores 0 when fetcher + fresh results exist but no health monitoring", () => {
 		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
 		writeJson(path.join(dataDir, "recent-results.json"), {
 			lastUpdated: new Date().toISOString(),
@@ -574,9 +553,8 @@ describe("evaluateResultsHealth()", () => {
 			golf: { pga: null, dpWorld: null },
 		});
 		const result = evaluateResultsHealth(dataDir, scriptsDir);
-		expect(result.score).toBe(0.66);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("results data is fresh");
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
 	});
 
 	it("scores 1.0 when fetcher + fresh results + health monitoring all exist", () => {
@@ -596,113 +574,14 @@ describe("evaluateResultsHealth()", () => {
 		expect(result.details).toContain("pipeline monitors results health");
 	});
 
-	it("scores partial when results are stale", () => {
+	it("scores 0 when results are stale", () => {
 		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
 		const resultsPath = path.join(dataDir, "recent-results.json");
 		writeJson(resultsPath, { lastUpdated: "2026-01-01T00:00:00Z", football: [] });
 		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
 		fs.utimesSync(resultsPath, sevenHoursAgo, sevenHoursAgo);
 		const result = evaluateResultsHealth(dataDir, scriptsDir);
-		expect(result.score).toBe(0.33);
-		expect(result.details).toContain("stale");
-	});
-});
-
-// --- Loop 12: UX Quality ---
-
-describe("evaluateUxQuality()", () => {
-	it("scores 0 when no UX data exists", () => {
-		const result = evaluateUxQuality(dataDir);
 		expect(result.score).toBe(0);
-		expect(result.status).toBe("open");
-		expect(result.details).toContain("no UX report");
-	});
-
-	it("scores 0.33 when only fresh ux-report.json exists", () => {
-		writeJson(path.join(dataDir, "ux-report.json"), {
-			generatedAt: new Date().toISOString(),
-			score: 50,
-			tier: "dom",
-		});
-		const result = evaluateUxQuality(dataDir);
-		expect(result.score).toBe(0.33);
-		expect(result.details).toContain("UX report exists and is fresh");
-		expect(result.details).toContain("below 70 threshold");
-	});
-
-	it("scores 0.67 when report is fresh + score >= 70", () => {
-		writeJson(path.join(dataDir, "ux-report.json"), {
-			generatedAt: new Date().toISOString(),
-			score: 85,
-			tier: "dom",
-		});
-		const result = evaluateUxQuality(dataDir);
-		expect(result.score).toBe(0.67);
-		expect(result.details).toContain("passing");
-	});
-
-	it("scores 1.0 when report fresh + history trend-capable + score passing", () => {
-		writeJson(path.join(dataDir, "ux-report.json"), {
-			generatedAt: new Date().toISOString(),
-			score: 85,
-			tier: "dom",
-		});
-		writeJson(path.join(dataDir, "ux-history.json"), [
-			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
-			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
-			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
-		]);
-		const result = evaluateUxQuality(dataDir);
-		expect(result.score).toBe(1.0);
-		expect(result.status).toBe("closed");
-	});
-
-	it("scores 1.0 with file-based fallback when score >= 90", () => {
-		writeJson(path.join(dataDir, "ux-report.json"), {
-			generatedAt: new Date().toISOString(),
-			score: 98,
-			tier: "file",
-		});
-		writeJson(path.join(dataDir, "ux-history.json"), [
-			{ generatedAt: "2026-02-14T00:00:00Z", score: 95 },
-			{ generatedAt: "2026-02-15T00:00:00Z", score: 96 },
-			{ generatedAt: "2026-02-16T00:00:00Z", score: 98 },
-		]);
-		const result = evaluateUxQuality(dataDir);
-		expect(result.score).toBe(1.0);
-		expect(result.status).toBe("closed");
-		expect(result.details).toContain("file-based fallback with high score");
-	});
-
-	it("scores 0.83 with file-based fallback when score < 90", () => {
-		writeJson(path.join(dataDir, "ux-report.json"), {
-			generatedAt: new Date().toISOString(),
-			score: 75,
-			tier: "file",
-		});
-		writeJson(path.join(dataDir, "ux-history.json"), [
-			{ generatedAt: "2026-02-14T00:00:00Z", score: 70 },
-			{ generatedAt: "2026-02-15T00:00:00Z", score: 72 },
-			{ generatedAt: "2026-02-16T00:00:00Z", score: 75 },
-		]);
-		const result = evaluateUxQuality(dataDir);
-		expect(result.score).toBe(0.83);
-		expect(result.details).toContain("file-based fallback");
-		expect(result.details).not.toContain("high score");
-	});
-
-	it("counts stale report as not fresh", () => {
-		const reportPath = path.join(dataDir, "ux-report.json");
-		writeJson(reportPath, {
-			generatedAt: "2026-01-01T00:00:00Z",
-			score: 90,
-			tier: "dom",
-		});
-		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
-		fs.utimesSync(reportPath, sevenHoursAgo, sevenHoursAgo);
-		const result = evaluateUxQuality(dataDir);
-		// Should have score from passing (0.34) but not freshness (0) and no history
-		expect(result.score).toBe(0.34);
 		expect(result.details).toContain("stale");
 	});
 });
@@ -723,7 +602,12 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "coverage-gaps.json"), { gaps: [] });
 		fs.writeFileSync(path.join(scriptsDir, "resolve-coverage-gaps.js"), "// resolver");
 		writeJson(path.join(scriptsDir, "config", "auto.json"), { autoGenerated: true });
-		writeJson(path.join(dataDir, "health-report.json"), { status: "ok", issues: [] });
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			issues: [],
+			resultsHealth: { present: true, stale: false, footballCount: 1 },
+			snapshotHealth: { present: true, snapshotCount: 15, issues: [] },
+		});
 		writeJson(path.join(dataDir, "watch-plan.json"), {
 			picks: [{ title: "M", reasons: ["R"], streaming: [{ platform: "NRK" }] }],
 		});
@@ -756,12 +640,6 @@ describe("evaluateAutonomy()", () => {
 			lastUpdated: new Date().toISOString(),
 			football: [{ homeTeam: "Arsenal" }],
 		});
-		writeJson(path.join(dataDir, "health-report.json"), {
-			status: "ok",
-			issues: [],
-			resultsHealth: { present: true, stale: false, footballCount: 1 },
-			snapshotHealth: { present: true, snapshotCount: 15, issues: [] },
-		});
 		// Loop 10: Snapshot Health
 		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
 		writeJson(path.join(dataDir, "days", "_meta.json"), {
@@ -778,19 +656,12 @@ describe("evaluateAutonomy()", () => {
 				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
 			],
 		});
-		// Loop 12: UX Quality
-		writeJson(path.join(dataDir, "ux-report.json"), { generatedAt: new Date().toISOString(), score: 85, tier: "dom", metrics: {}, issues: [] });
-		writeJson(path.join(dataDir, "ux-history.json"), [
-			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
-			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
-			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
-		]);
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(12);
-		expect(report.loopsTotal).toBe(12);
-		expect(report.nextActions).toHaveLength(0);
+		expect(report.loopsClosed).toBe(11);
+		expect(report.loopsTotal).toBe(11);
+		expect(report.nextActions).toBeUndefined();
 	});
 
 	it("calculates partial score correctly", () => {
@@ -801,97 +672,10 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/12 ≈ 0.17
-		expect(report.overallScore).toBeCloseTo(0.17, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/11 ≈ 0.18
+		expect(report.overallScore).toBeCloseTo(0.18, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(12);
-	});
-
-	it("generates nextActions for open loops", () => {
-		// Everything missing
-		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		expect(report.nextActions.length).toBeGreaterThan(0);
-		// Should suggest actions for all 12 open loops
-		expect(report.nextActions.length).toBeGreaterThanOrEqual(11);
-	});
-
-	it("generates no nextActions when all loops are closed", () => {
-		writeJson(path.join(dataDir, "quality-history.json"), [
-			{ timestamp: "2026-01-01T00:00:00Z", hintsApplied: ["h"], editorial: { mustWatchCoverage: 0.9 } },
-			{ timestamp: "2026-01-02T00:00:00Z", hintsApplied: [], editorial: { mustWatchCoverage: 0.8 } },
-			{ timestamp: "2026-01-03T00:00:00Z", hintsApplied: [], editorial: { mustWatchCoverage: 0.85 } },
-		]);
-		writeJson(path.join(dataDir, "ai-quality.json"), {
-			enrichment: { score: 90, hintsApplied: [] },
-		});
-		writeJson(path.join(dataDir, "coverage-gaps.json"), { gaps: [] });
-		fs.writeFileSync(path.join(scriptsDir, "resolve-coverage-gaps.js"), "// resolver");
-		writeJson(path.join(scriptsDir, "config", "auto.json"), { autoGenerated: true });
-		writeJson(path.join(dataDir, "health-report.json"), { status: "ok", issues: [] });
-		writeJson(path.join(dataDir, "watch-plan.json"), {
-			picks: [{ title: "M", reasons: ["R"], streaming: [{ platform: "NRK" }] }],
-		});
-		fs.writeFileSync(path.join(rootDir, "AUTOPILOT_ROADMAP.md"), "# Roadmap\n");
-		writeJson(path.join(rootDir, "docs", "data", "autopilot-log.json"), {
-			runs: [{ outcome: "completed", task: "T", pr: 1 }],
-		});
-		// Loop 7: Event Discovery
-		writeJson(path.join(dataDir, "discovery-log.json"), {
-			runs: [{ timestamp: "2026-02-12T00:00:00Z", tasks: [] }],
-		});
-		fs.writeFileSync(path.join(scriptsDir, "sync-configs.js"), "// sync");
-		writeJson(path.join(scriptsDir, "config", "researched.json"), {
-			name: "Researched",
-			lastResearched: "2026-02-12T00:00:00Z",
-		});
-		// Loop 8: Schedule Verification
-		writeJson(path.join(dataDir, "verification-history.json"), {
-			runs: [{ timestamp: "2026-02-12T00:00:00Z", results: [] }],
-		});
-		fs.mkdirSync(path.join(scriptsDir, "lib"), { recursive: true });
-		fs.writeFileSync(path.join(scriptsDir, "lib", "schedule-verifier.js"), "// verifier");
-		writeJson(path.join(scriptsDir, "config", "verified.json"), {
-			name: "Verified",
-			verificationSummary: { lastRun: "2026-02-12T00:00:00Z", verified: 5 },
-		});
-		// Loop 9: Results Health
-		fs.writeFileSync(path.join(scriptsDir, "fetch-results.js"), "// fetcher");
-		writeJson(path.join(dataDir, "recent-results.json"), {
-			lastUpdated: new Date().toISOString(),
-			football: [{ homeTeam: "Arsenal" }],
-		});
-		writeJson(path.join(dataDir, "health-report.json"), {
-			status: "ok",
-			issues: [],
-			resultsHealth: { present: true, stale: false, footballCount: 1 },
-			snapshotHealth: { present: true, snapshotCount: 15, issues: [] },
-		});
-		// Loop 10: Snapshot Health
-		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
-		writeJson(path.join(dataDir, "days", "_meta.json"), {
-			generatedAt: new Date().toISOString(),
-			snapshotCount: 15,
-			perDay: {},
-			emptyDays: [],
-		});
-		// Loop 11: Streaming Verification
-		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
-			runs: [
-				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.5, listingsFound: 20, eventsEnriched: 10 },
-				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.6, listingsFound: 22, eventsEnriched: 13 },
-				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.7, listingsFound: 25, eventsEnriched: 17 },
-			],
-		});
-		// Loop 12: UX Quality
-		writeJson(path.join(dataDir, "ux-report.json"), { generatedAt: new Date().toISOString(), score: 85, tier: "dom", metrics: {}, issues: [] });
-		writeJson(path.join(dataDir, "ux-history.json"), [
-			{ generatedAt: "2026-02-14T00:00:00Z", score: 80 },
-			{ generatedAt: "2026-02-15T00:00:00Z", score: 82 },
-			{ generatedAt: "2026-02-16T00:00:00Z", score: 85 },
-		]);
-
-		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		expect(report.nextActions).toHaveLength(0);
+		expect(report.loopsTotal).toBe(11);
 	});
 
 	it("includes generatedAt timestamp in ISO format", () => {
@@ -912,7 +696,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(12);
+		expect(report.loopsTotal).toBe(11);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -922,7 +706,6 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.eventDiscovery.status).toBe("open");
 		expect(report.loops.scheduleVerification.status).toBe("open");
 		expect(report.loops.resultsHealth.status).toBe("open");
-		expect(report.loops.uxQuality.status).toBe("open");
 		expect(report.loops.streamingVerification.status).toBe("open");
 	});
 });
@@ -955,7 +738,7 @@ describe("trackTrend()", () => {
 			timestamp: `2026-01-${String(i + 1).padStart(2, "0")}`,
 			overallScore: 0.5,
 			loopsClosed: 4,
-			loopsTotal: 8,
+			loopsTotal: 11,
 			loopScores: {},
 		}));
 		writeJson(path.join(dataDir, "autonomy-trend.json"), existing);

@@ -61,22 +61,21 @@ For each task, delegate to the appropriate subagent with a clear, specific task 
 - `AUTOPILOT_ROADMAP.md`: Only you update the roadmap
 - `autopilot-log.json`: Only you update the log
 
-### 5. Scouting (if budget allows)
+### 5. Process User Feedback (ALWAYS before scouting)
+
+Run `gh issue list --label user-feedback --state open --author CHaerem`.
+If issues exist, process them FIRST — they are the highest-priority work. Each user feedback issue translates directly to a concrete task with clear scope. User-requested features are 2-3x more efficient than scouted improvements.
+
+### 6. Scouting (if budget allows)
 
 After completing assigned tasks, scan for new improvement opportunities:
-
-**I. User Feedback Processing**
-Check `gh issue list --label user-feedback --state open`. Process favorites, reports, and suggestions.
-
-**J. Upstream Issue Resolution Detection**
-Monitor external dependencies documented in AUTOPILOT_ROADMAP.md "Known Limitations". When resolved, create cleanup tasks.
 
 **K. Vision-Guided Exploration**
 Strategic scouting: reason about the autonomy vision, identify which pillar needs the most work, propose capability expansions that create compounding returns.
 
 Ask each subagent to scout within its domain if turns allow.
 
-### 6. Quality Gates & Wrap-up
+### 7. Quality Gates & Wrap-up
 
 After all subagent work is complete:
 
@@ -98,6 +97,14 @@ After all subagent work is complete:
 ## Pillar Balance
 
 The 5 autonomy pillars are: data, code, capabilities, personalization, quality. Bias task assignment toward the weakest pillar. Check `docs/data/autonomy-report.json` for current scores.
+
+## Turn Allocation Rule
+
+At least 50% of task turns must go to **user-visible improvements**: dashboard rendering changes, new UI features, content quality improvements, UX fixes, new data surfaced on the dashboard, new sport configs.
+
+**Infrastructure work** (test fixes, monitoring score adjustments, health check tuning, KNOWN exception additions, threshold bumps) should not exceed 50% of turns. If the pending task queue is >50% infrastructure, scout for user-visible tasks first.
+
+Log the user-visible / infrastructure ratio in `processNotes` at the end of each run.
 
 ## Safety
 

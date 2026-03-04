@@ -830,6 +830,9 @@
 		.row-rel-soon { color: var(--accent); font-weight: 500; opacity: 1; }
 		.row-rel-far { opacity: 0.5; }
 
+		/* Event summary (must-watch context) */
+		.row-summary { font-size: 0.68rem; color: var(--muted); padding: 2px 0 4px 22px; line-height: 1.35; }
+
 		/* Must-watch */
 		.event-row.must-watch {
 			background: var(--bg-accent); border-left: 2px solid rgba(194,90,52,0.35);
@@ -1217,6 +1220,9 @@
 		}
 		.cal-link { color: var(--muted); text-decoration: none; opacity: 0.7; }
 		.cal-link:hover { opacity: 1; text-decoration: underline; }
+		.feedback-link-row { text-align: center; padding: 8px 20px 24px; }
+		.feedback-link { font-size: 0.6rem; color: var(--muted); text-decoration: none; opacity: 0.5; transition: opacity 0.15s; }
+		.feedback-link:hover { opacity: 1; text-decoration: underline; }
 		.status-bar {
 			text-align: center; padding: 24px 20px; font-size: 0.56rem; color: var(--muted-light);
 		}
@@ -1265,6 +1271,9 @@
 		<div id="day-nav"></div>
 		<div id="the-brief"></div>
 
+		<div id="watch-plan"></div>
+		<div id="insights"></div>
+
 		<div id="sport-pills"></div>
 
 		<div class="feed">
@@ -1277,10 +1286,11 @@
 			<div id="news"></div>
 		</div>
 
-		<div id="watch-plan" style="display:none"></div>
-		<div id="insights" style="display:none"></div>
-
 		<div id="date-line"></div>
+
+		<div class="feedback-link-row">
+			<a href="https://github.com/CHaerem/SportSync/issues/new?labels=user-feedback&title=Feedback%3A%20" target="_blank" rel="noopener" class="feedback-link">Suggest an improvement</a>
+		</div>
 
 	</div>
 

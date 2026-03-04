@@ -74,16 +74,6 @@ describe("briefFormatting heuristic registration", () => {
 		expect(src).toContain("briefFormatting: 0.05");
 	});
 
-	it("evaluate-ux.js includes briefFormatting in inline metrics and weights", () => {
-		const src = fs.readFileSync(
-			path.resolve(process.cwd(), "scripts/evaluate-ux.js"),
-			"utf-8"
-		);
-		expect(src).toContain("checkBriefFormatting");
-		expect(src).toContain("briefFormatting: checkBriefFormatting()");
-		expect(src).toContain("briefFormatting: 0.05");
-	});
-
 	it("weights sum to approximately 1.0 in ux-heuristics.js", () => {
 		const src = fs.readFileSync(
 			path.resolve(process.cwd(), "scripts/lib/ux-heuristics.js"),
