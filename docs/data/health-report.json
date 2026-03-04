@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-03T22:11:44.770Z",
-  "eventCount": 32,
+  "generatedAt": "2026-03-04T02:03:23.409Z",
+  "eventCount": 47,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "football": {
-      "count": 18,
+      "count": 33,
       "previousCount": 18,
-      "delta": 0
+      "delta": 15
     },
     "golf": {
       "count": 2,
@@ -40,40 +40,40 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4325,
+      "ageMinutes": 4557,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 232,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 232,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.88,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -88,7 +88,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 28,
+    "footballCount": 29,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -96,15 +96,17 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.39,
-    "eventsEnriched": 7,
-    "trend": "stable",
+    "matchRate": 0.36,
+    "eventsEnriched": 8,
+    "trend": "declining",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 boundary day snapshot(s) outside event range (expected)"
+      "2 boundary day snapshot(s) outside event range (expected)",
+      "1 expected day snapshot(s) missing",
+      "Snapshot 2026-03-10: 1 events but events.json has 5"
     ],
     "snapshotCount": 15
   },
@@ -121,30 +123,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 2,
+    "sevenDay": 60,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 54137,
-    "stepCount": 21,
+    "totalDuration": 237808,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 27993,
-        "share": 52
-      },
-      {
-        "name": "fetch-results",
-        "duration": 39773,
-        "share": 73
+        "name": "generate-featured",
+        "duration": 128136,
+        "share": 54
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -175,7 +177,8 @@
   },
   "unmappedLeagues": [
     "Grenke Chess Festival 2026: Freestyle Open A",
-    "Cycling Grand Tours & Norwegian Races 2026"
+    "Cycling Grand Tours & Norwegian Races 2026",
+    "FIFA World Cup 2026"
   ],
   "issues": [
     {
@@ -186,17 +189,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 4325 minutes old"
+      "message": "esports.json: data is 4557 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 46 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 47 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 39% (7/18) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 36% (8/22) — team alias table may need updates"
+    },
+    {
+      "severity": "warning",
+      "code": "streaming_match_rate_declining",
+      "message": "Streaming match rate declining over 3 runs: 52% → 39% → 36%"
     },
     {
       "severity": "warning",
@@ -204,14 +212,24 @@
       "message": "1 event(s) won't appear on dashboard (esports)"
     },
     {
-      "severity": "info",
-      "code": "empty_day",
-      "message": "2026-02-26: no events or results for day navigator"
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-10: 1 events but events.json has 5"
     },
     {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026"
+      "message": "3 tournament(s) lack league theming: Grenke Chess Festival 2026: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026, FIFA World Cup 2026"
+    },
+    {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 2%, 7d: 60%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -221,12 +239,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 54% of total pipeline time (128s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (40s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -234,23 +252,34 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-03T22:11:44.909Z",
-    "targets": [],
-    "highestUrgency": 0,
-    "urgentTargets": 0
+    "computedAt": "2026-03-04T02:03:23.533Z",
+    "targets": [
+      {
+        "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
+        "score": 0.3,
+        "reasons": [
+          "overdue by 200%"
+        ],
+        "suggestedQuotaPriority": 2,
+        "suggestedRefreshIntervalMs": 21600000,
+        "suggestedStalenessThresholdMinutes": 180
+      }
+    ],
+    "highestUrgency": 0.3,
+    "urgentTargets": 1
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is critical with 1 critical, 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
