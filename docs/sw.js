@@ -39,6 +39,7 @@ self.addEventListener('install', (event) => {
                 '/SportSync/js/github-sync.js',
                 '/SportSync/js/block-renderers.js',
                 '/SportSync/js/bracket-renderer.js',
+                '/SportSync/js/standings-renderer.js',
                 '/SportSync/js/dashboard.js'
             ]);
         })

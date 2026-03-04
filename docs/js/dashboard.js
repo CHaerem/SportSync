@@ -1886,53 +1886,9 @@ class Dashboard {
 		return html;
 	}
 
-	/** Render leaderboard from standings.json data for a golf tournament card.
-	 *  Uses data-driven tracked flags from norwegian-golfers.json (via fetch-standings.js)
-	 *  instead of hardcoded name lists — new players added to the config are auto-surfaced. */
+	// Standings leaderboard — delegated to standings-renderer.js
 	renderStandingsLeaderboard(tournament) {
-		const tourKey = (tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
-		const tour = this.standings.golf[tourKey];
-		if (!tour?.leaderboard?.length) return '';
-
-		const statusLabel = tour.status === 'in_progress' ? 'In Progress' : (tour.status || '');
-
-		let html = '<div class="lead-lb">';
-		html += '<div class="lead-lb-header">';
-		html += '<span class="lead-lb-title">Leaderboard</span>';
-		if (statusLabel) html += `<span class="lead-lb-badge">${this.esc(statusLabel)}</span>`;
-		html += '</div>';
-
-		// Show top 3 + all tracked players (Norwegian golfers) regardless of position.
-		// Tracked players are flagged by the pipeline using norwegian-golfers.json —
-		// no hardcoded names needed. When a new Norwegian golfer is discovered,
-		// they automatically appear here.
-		const top3 = tour.leaderboard.slice(0, 3);
-		const trackedInLeaderboard = tour.leaderboard.filter(p => p.tracked && !top3.includes(p));
-		const trackedOutside = tour.trackedPlayers || [];
-		const showPlayers = [...top3, ...trackedInLeaderboard, ...trackedOutside];
-
-		for (const p of showPlayers) {
-			const isTracked = !!p.tracked;
-			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
-			const imgHtml = headshot
-				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
-				  + '<span class="lb-img-placeholder" style="display:none">\u26f3</span>'
-				: '<span class="lb-img-placeholder">\u26f3</span>';
-			const scoreNum = parseFloat(p.score || '0');
-			const scoreCls = (p.score || '').startsWith('-') ? ' under-par' : (scoreNum > 0 ? ' over-par' : '');
-			const posDisplay = p.positionDisplay || String(p.position);
-
-			html += `<div class="lb-row${isTracked ? ' is-you' : ''}">`;
-			html += `<span class="lb-pos">${this.esc(posDisplay)}</span>`;
-			html += imgHtml;
-			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
-			if (isTracked) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
-			html += `<span class="lb-score${scoreCls}">${this.esc(p.score || 'E')}</span>`;
-			html += '</div>';
-		}
-
-		html += '</div>';
-		return html;
+		return window.StandingsRenderer.renderStandingsLeaderboard(tournament, this.standings);
 	}
 
 	renderEmptySportNotes(allEvents) {
@@ -2919,241 +2875,23 @@ class Dashboard {
 
 	// --- Standings section (consolidated) ---
 
+	// Standings rendering — delegated to standings-renderer.js
 	renderStandingsSection() {
-		const tables = [];
-
-		// Premier League
-		const plTable = this.standings?.football?.premierLeague;
-		if (Array.isArray(plTable) && plTable.length > 0) {
-			tables.push(this._buildFootballTable('Premier League', plTable));
-		}
-
-		// La Liga
-		const laLigaTable = this.standings?.football?.laLiga;
-		if (Array.isArray(laLigaTable) && laLigaTable.length > 0) {
-			tables.push(this._buildFootballTable('La Liga', laLigaTable));
-		}
-
-		// Golf leaderboard
-		const pga = this.standings?.golf?.pga;
-		if (pga?.leaderboard?.length && pga.status !== 'scheduled') {
-			tables.push(this._buildGolfTable(pga));
-		}
-
-		// F1 standings
-		const drivers = this.standings?.f1?.drivers;
-		if (Array.isArray(drivers) && drivers.length > 0) {
-			const totalPoints = drivers.reduce((s, d) => s + (d.points || 0), 0);
-			if (totalPoints > 0) {
-				tables.push(this._buildF1Table(drivers));
-			}
-		}
-
-		// ATP rankings
-		const atp = this.standings?.tennis?.atp;
-		if (Array.isArray(atp) && atp.length > 0) {
-			tables.push(this._buildTennisTable(atp));
-		}
-
-		if (tables.length === 0) return '';
-
-		let html = '<div class="flow-label band-label collapsible" data-band="standings" role="button" tabindex="0" aria-expanded="false"><span class="flow-text">Standings</span><span class="flow-line"></span><span style="font-size:0.6rem">\u25b8</span></div>';
-		html += '<div class="band-content collapsed" data-band-content="standings">';
-		html += '<div class="event-card">';
-		html += tables.join('');
-		html += '</div></div>';
-		return html;
+		return window.StandingsRenderer.renderStandingsSection(this.standings, this.preferences);
 	}
 
-	/**
-	 * Generic mini-table builder for the consolidated standings section.
-	 * @param {object} opts
-	 * @param {string} opts.title - Table heading
-	 * @param {Array<{label: string}>} opts.columns - Column definitions (excluding #)
-	 * @param {Array} opts.allRows - Full dataset
-	 * @param {number} [opts.topN=5] - Number of top rows to always show
-	 * @param {Function} [opts.isHighlight] - (row) => boolean for highlight styling
-	 * @param {Function} opts.cellValues - (row) => string[] of cell values (excluding position)
-	 * @param {Function} [opts.getPosition] - (row) => number, defaults to row.position
-	 * @param {Function} [opts.extraRows] - (allRows, topRows) => additional rows to include
-	 */
-	_buildMiniTable({ title, columns, allRows, topN = 5, isHighlight, cellValues, getPosition, extraRows }) {
-		const pos = getPosition || (r => r.position);
-		const topRows = allRows.slice(0, topN);
-		const extra = extraRows ? extraRows(allRows, topRows) : [];
-		const rows = [...topRows, ...extra].sort((a, b) => pos(a) - pos(b));
-		if (rows.length === 0) return '';
-
-		const colCount = columns.length + 1;
-		let html = `<div class="standings-table-group"><div class="standings-table-label">${this.esc(title)}</div>`;
-		html += `<table class="exp-mini-table"><thead><tr><th>#</th>${columns.map(c => `<th>${c.label}</th>`).join('')}</tr></thead><tbody>`;
-		let lastPos = 0;
-		for (const row of rows) {
-			const p = pos(row);
-			if (p - lastPos > 1 && lastPos > 0) {
-				html += `<tr class="ellipsis"><td colspan="${colCount}">\u2026</td></tr>`;
-			}
-			const cls = isHighlight?.(row) ? ' class="highlight"' : '';
-			const cells = cellValues(row);
-			html += `<tr${cls}><td>${p}</td>${cells.map(v => `<td>${v}</td>`).join('')}</tr>`;
-			lastPos = p;
-		}
-		html += '</tbody></table></div>';
-		return html;
-	}
-
-	_buildFootballTable(name, table) {
-		const prefs = this.preferences ? this.preferences.getPreferences() : {};
-		const favTeams = prefs.favoriteTeams?.football || [];
-		const favorites = favTeams.map(t => t.toLowerCase());
-		const isFav = (row) => favorites.some(fav =>
-			row.team.toLowerCase().includes(fav) || fav.includes(row.team.toLowerCase())
-		);
-		return this._buildMiniTable({
-			title: name,
-			columns: [{ label: 'Team' }, { label: 'Pts' }, { label: 'GD' }],
-			allRows: table,
-			isHighlight: isFav,
-			cellValues: (row) => [this.esc(row.teamShort), row.points, row.gd > 0 ? `+${row.gd}` : row.gd],
-			extraRows: (all, top) => all.filter(t => isFav(t) && !top.includes(t)),
-		});
-	}
-
-	_buildGolfTable(pga) {
-		const norwegianNames = ['Hovland', 'Ventura', 'Aberg'];
-		const isNor = (row) => norwegianNames.some(n => row.player?.includes(n));
-		return this._buildMiniTable({
-			title: pga.name || 'Golf Leaderboard',
-			columns: [{ label: 'Player' }, { label: 'Score' }, { label: 'Thru' }],
-			allRows: pga.leaderboard,
-			isHighlight: isNor,
-			cellValues: (row) => [this.esc(row.player), this.esc(row.score), this.esc(row.thru || '')],
-			extraRows: (all, top) => all.filter(p => isNor(p) && !top.includes(p)),
-		});
-	}
-
-	_buildF1Table(drivers) {
-		return this._buildMiniTable({
-			title: 'F1 Standings',
-			columns: [{ label: 'Driver' }, { label: 'Pts' }, { label: 'Wins' }],
-			allRows: drivers,
-			cellValues: (d) => [this.esc(d.driver), d.points, d.wins],
-		});
-	}
-
-	_buildTennisTable(atp) {
-		const isRuud = (p) => p.player.toLowerCase().includes('ruud');
-		return this._buildMiniTable({
-			title: 'ATP Rankings',
-			columns: [{ label: 'Player' }, { label: 'Pts' }],
-			allRows: atp,
-			isHighlight: isRuud,
-			cellValues: (p) => [this.esc(p.player), p.points],
-			extraRows: (all, top) => {
-				const ruud = all.find(p => isRuud(p));
-				return ruud && !top.includes(ruud) ? [ruud] : [];
-			},
-		});
-	}
+	_buildMiniTable(opts) { return window.StandingsRenderer.buildMiniTable(opts); }
 
 	renderFootballStandings(event) {
-		const tournament = (event.tournament || '').toLowerCase();
-		const isSpanish = tournament.includes('la liga') || tournament.includes('copa del rey');
-		const tableKey = isSpanish ? 'laLiga' : 'premierLeague';
-		const tableName = isSpanish ? 'La Liga' : 'Premier League';
-		const table = this.standings.football[tableKey];
-		if (!table?.length) return '';
-		const matchTeams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => t.toLowerCase());
-
-		// Collect top 3 + both match teams, deduped, sorted by position
-		const top3 = table.slice(0, 3);
-		const matchRows = table.filter(t => matchTeams.some(mt =>
-			t.team.toLowerCase().includes(mt) || mt.includes(t.team.toLowerCase()) ||
-			t.teamShort.toLowerCase() === mt.replace(/ fc$| afc$/i, '').trim().toLowerCase()
-		));
-
-		const shown = new Map();
-		[...top3, ...matchRows].forEach(t => { if (!shown.has(t.position)) shown.set(t.position, t); });
-		const rows = Array.from(shown.values()).sort((a, b) => a.position - b.position);
-		if (rows.length === 0) return '';
-
-		let html = `<div class="exp-standings"><div class="exp-standings-header">${tableName}</div>`;
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
-
-		let lastPos = 0;
-		for (const row of rows) {
-			if (row.position - lastPos > 1 && lastPos > 0) {
-				html += '<tr class="ellipsis"><td colspan="8">\u2026</td></tr>';
-			}
-			const isHighlight = matchTeams.some(mt =>
-				row.team.toLowerCase().includes(mt) || mt.includes(row.team.toLowerCase()) ||
-				row.teamShort.toLowerCase() === mt.replace(/ fc$| afc$/i, '').trim().toLowerCase()
-			);
-			const cls = isHighlight ? ' class="highlight"' : '';
-			const gd = row.gd > 0 ? `+${row.gd}` : row.gd;
-			html += `<tr${cls}><td>${row.position}</td><td>${this.esc(row.teamShort)}</td><td>${row.played}</td><td>${row.won}</td><td>${row.drawn}</td><td>${row.lost}</td><td>${gd}</td><td>${row.points}</td></tr>`;
-			lastPos = row.position;
-		}
-
-		html += '</tbody></table></div>';
-		return html;
+		return window.StandingsRenderer.renderFootballStandings(event, this.standings);
 	}
 
 	renderGolfLeaderboard(event) {
-		// Try to match tournament to PGA or DP World Tour
-		const tourKey = (event.tournament || '').toLowerCase().includes('dp world') ? 'dpWorld' : 'pga';
-		const tour = this.standings.golf[tourKey];
-		if (!tour?.leaderboard?.length) return '';
-
-		const playerCell = (p) => {
-			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
-			const img = headshot
-				? `<img class="lb-tbl-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none'">`
-				: '';
-			return `${img}${this.esc(p.player)}`;
-		};
-
-		let html = `<div class="exp-standings"><div class="exp-standings-header">${this.esc(tour.name || 'Leaderboard')}</div>`;
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Today</th><th>Thru</th></tr></thead><tbody>';
-
-		const top5 = tour.leaderboard.slice(0, 5);
-		for (const p of top5) {
-			html += `<tr><td>${p.position || '-'}</td><td>${playerCell(p)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
-		}
-
-		// Check if any Norwegian player is on the leaderboard beyond top 5
-		if (event.norwegianPlayers?.length > 0) {
-			const norNames = event.norwegianPlayers.map(p => p.name.toLowerCase());
-			const norOnBoard = tour.leaderboard.slice(5).filter(p =>
-				norNames.some(n => p.player.toLowerCase().includes(n.split(' ').pop()))
-			);
-			if (norOnBoard.length > 0) {
-				html += '<tr class="ellipsis"><td colspan="5">\u2026</td></tr>';
-				for (const p of norOnBoard) {
-					html += `<tr class="highlight"><td>${p.position || '-'}</td><td>${playerCell(p)}</td><td>${this.esc(p.score)}</td><td>${this.esc(p.today)}</td><td>${this.esc(p.thru)}</td></tr>`;
-				}
-			}
-		}
-
-		html += '</tbody></table></div>';
-		return html;
+		return window.StandingsRenderer.renderGolfLeaderboard(event, this.standings);
 	}
 
 	renderF1Standings() {
-		const drivers = this.standings.f1.drivers.slice(0, 5);
-		if (drivers.length === 0) return '';
-		// Hide standings when all drivers have zero points (pre-season or stale data)
-		if (drivers.every(d => !d.points)) return '';
-
-		let html = '<div class="exp-standings"><div class="exp-standings-header">Driver Standings</div>';
-		html += '<table class="exp-mini-table"><thead><tr><th>#</th><th>Driver</th><th>Team</th><th>Pts</th></tr></thead><tbody>';
-
-		for (const d of drivers) {
-			html += `<tr><td>${d.position}</td><td>${this.esc(d.driver)}</td><td>${this.esc(d.team)}</td><td>${d.points}</td></tr>`;
-		}
-
-		html += '</tbody></table></div>';
-		return html;
+		return window.StandingsRenderer.renderF1StandingsTable(this.standings);
 	}
 
 	// --- Live score polling ---
