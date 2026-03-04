@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-03-04T20:12:26.179Z",
-  "eventCount": 41,
+  "generatedAt": "2026-03-04T21:12:29.403Z",
+  "eventCount": 40,
   "sportCoverage": {
     "esports": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "football": {
-      "count": 27,
-      "previousCount": 32,
-      "delta": -5
-    },
     "golf": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
+    },
+    "football": {
+      "count": 26,
+      "previousCount": 27,
+      "delta": -1
     },
     "f1": {
       "count": 1,
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5646,
+      "ageMinutes": 5706,
       "stale": true
     },
     "f1.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -64,11 +64,11 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 172,
       "stale": false
     },
     "ai-quality.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 172,
       "stale": false
     }
   },
@@ -96,8 +96,8 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.13,
-    "eventsEnriched": 2,
+    "matchRate": 0.07,
+    "eventsEnriched": 1,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -105,8 +105,8 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 551 minutes old (stale > 240m)",
-      "Snapshot 2026-03-04: 7 events but events.json has 1"
+      "Day snapshots are 611 minutes old (stale > 240m)",
+      "Snapshot 2026-03-04: 7 events but events.json has 0"
     ],
     "snapshotCount": 15
   },
@@ -189,7 +189,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 5646 minutes old"
+      "message": "esports.json: data is 5706 minutes old"
     },
     {
       "severity": "warning",
@@ -199,7 +199,7 @@
     {
       "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 13% (2/16) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 7% (1/15) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -209,12 +209,12 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 551 minutes old (stale > 240m)"
+      "message": "Day snapshots are 611 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-04: 7 events but events.json has 1"
+      "message": "Snapshot 2026-03-04: 7 events but events.json has 0"
     },
     {
       "severity": "info",
@@ -244,7 +244,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-04T20:12:26.241Z",
+    "computedAt": "2026-03-04T21:12:29.463Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -262,7 +262,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
