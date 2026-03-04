@@ -1,32 +1,5 @@
 // SportSync Dashboard — Sport-organized layout
-
-/** Check if an event overlaps a time window. Handles multi-day events (endTime). */
-function isEventInWindow(event, windowStart, windowEnd) {
-	if (!event?.time) return false;
-	const start = new Date(event.time).getTime();
-	const end = event.endTime ? new Date(event.endTime).getTime() : start;
-	const ws = windowStart instanceof Date ? windowStart.getTime() : windowStart;
-	const we = windowEnd instanceof Date ? windowEnd.getTime() : windowEnd;
-	return start < we && end >= ws;
-}
-
-/** Norwegian clubs that appear in European competitions (ESPN naming) */
-const NORWEGIAN_CLUBS = [
-	"bodo/glimt", "bodø/glimt", "molde", "rosenborg", "viking",
-	"brann", "lillestrøm", "lillestrom", "tromsø", "tromso",
-	"vålerenga", "valerenga", "sarpsborg", "odd", "lyn",
-];
-const UEFA_COMPETITION_CODES = ["uefa.champions", "uefa.europa", "uefa.europa.conf"];
-
-/** Check if a football result involves a Norwegian club in a UEFA competition */
-function isNoteworthyNorwegianResult(match) {
-	const home = (match.homeTeam || "").toLowerCase();
-	const away = (match.awayTeam || "").toLowerCase();
-	const isNorwegian = NORWEGIAN_CLUBS.some(club => home.includes(club) || away.includes(club));
-	if (!isNorwegian) return false;
-	const code = (match.leagueCode || "").toLowerCase();
-	return UEFA_COMPETITION_CODES.some(comp => code.includes(comp));
-}
+// Constants & utilities loaded from shared-constants.js (isEventInWindow, escapeHtml, ssShortName, etc.)
 
 class Dashboard {
 	constructor() {
@@ -283,7 +256,7 @@ class Dashboard {
 
 	getEventsForDate(date) {
 		const dayStart = this._startOfDay(date);
-		const dayEnd = new Date(dayStart.getTime() + 86400000);
+		const dayEnd = new Date(dayStart.getTime() + SS_CONSTANTS.MS_PER_DAY);
 		const now = new Date();
 
 		const dayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
@@ -351,7 +324,7 @@ class Dashboard {
 
 			// Find events for this day
 			const dayStart = this._startOfDay(day);
-			const dayEnd = new Date(dayStart.getTime() + 86400000);
+			const dayEnd = new Date(dayStart.getTime() + SS_CONSTANTS.MS_PER_DAY);
 			const dayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
 			const sports = [...new Set(dayEvents.map(e => e.sport))];
 
@@ -696,7 +669,7 @@ class Dashboard {
 		if (this._isViewingToday() && this.meta && this.meta.lastUpdate) {
 			const now = new Date();
 			const updated = new Date(this.meta.lastUpdate);
-			const diffMin = Math.round((now - updated) / 60000);
+			const diffMin = Math.round((now - updated) / SS_CONSTANTS.MS_PER_MINUTE);
 			let ago;
 			if (diffMin < 1) ago = 'just now';
 			else if (diffMin < 60) ago = `${diffMin}m ago`;
@@ -740,7 +713,7 @@ class Dashboard {
 		// Determine which sports have events on the selected date
 		const viewDate = this._getSelectedDate();
 		const dayStart = this._startOfDay(viewDate);
-		const dayEnd = new Date(dayStart.getTime() + 86400000);
+		const dayEnd = new Date(dayStart.getTime() + SS_CONSTANTS.MS_PER_DAY);
 		const todayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
 		const activeSports = [...new Set(todayEvents.map(e => e.sport))];
 
@@ -936,13 +909,27 @@ class Dashboard {
 		sectionsEl.innerHTML = '';
 	}
 
-	// Component renderer registry — structured blocks rendered from pre-loaded data
+	// Component renderer registry — delegates to block-renderers.js
 	_componentRenderers = {
-		'match-result':      (block) => this._renderMatchResult(block),
-		'match-preview':     (block) => this._renderMatchPreview(block),
-		'event-schedule':    (block) => this._renderEventSchedule(block),
-		'golf-status':       (block) => this._renderGolfStatus(block),
+		'match-result':      (block) => window.BLOCK_RENDERERS['match-result'](block, this._rendererCtx()),
+		'match-preview':     (block) => window.BLOCK_RENDERERS['match-preview'](block, this._rendererCtx()),
+		'event-schedule':    (block) => window.BLOCK_RENDERERS['event-schedule'](block, this._rendererCtx()),
+		'golf-status':       (block) => window.BLOCK_RENDERERS['golf-status'](block, this._rendererCtx()),
 	};
+
+	_rendererCtx() {
+		return {
+			allEvents: this.allEvents,
+			recentResults: this.recentResults,
+			standings: this.standings,
+			liveScores: this.liveScores,
+			liveLeaderboard: this.liveLeaderboard,
+			renderBriefLine: (line) => this.renderBriefLine(line),
+			relativeTime: (d) => this.relativeTime(d),
+			_isSameDay: (a, b) => this._isSameDay(a, b),
+			_getTrackedGolferNames: () => this._getTrackedGolferNames(),
+		};
+	}
 
 	renderBlock(block) {
 		// Check component registry first
@@ -988,181 +975,8 @@ class Dashboard {
 		}
 	}
 
-	/** match-result component: renders a completed match as a card with logos, score, goalscorers */
-	_renderMatchResult(block) {
-		const football = Array.isArray(this.recentResults?.football) ? this.recentResults.football : [];
-		if (!football.length || !block.homeTeam || !block.awayTeam) return null;
-
-		const homeL = block.homeTeam.toLowerCase();
-		const awayL = block.awayTeam.toLowerCase();
-		const match = football.find(m => {
-			const mHome = (m.homeTeam || '').toLowerCase();
-			const mAway = (m.awayTeam || '').toLowerCase();
-			return (mHome.includes(homeL) || homeL.includes(mHome)) &&
-				(mAway.includes(awayL) || awayL.includes(mAway));
-		});
-		if (!match || match.homeScore == null) return null;
-
-		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.homeTeam) : null;
-		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(match.awayTeam) : null;
-		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(match.homeTeam)}" class="result-card-logo" loading="lazy">` : '';
-		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(match.awayTeam)}" class="result-card-logo" loading="lazy">` : '';
-
-		const scorers = (match.goalScorers || []).slice(0, 3);
-		const scorerHtml = scorers.length > 0
-			? `<div class="result-card-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`
-			: '';
-		const leagueHtml = match.league ? `<div class="result-card-league">${this.esc(match.league)}</div>` : '';
-
-		return `<div class="block-match-result"><div class="result-card-teams"><span class="result-card-side">${hImg}<span class="result-card-name">${this.esc(this.shortName(match.homeTeam))}</span></span><span class="result-card-score">${match.homeScore} - ${match.awayScore}</span><span class="result-card-side">${aImg}<span class="result-card-name">${this.esc(this.shortName(match.awayTeam))}</span></span></div>${scorerHtml}${leagueHtml}</div>`;
-	}
-
-	/** match-preview component: renders an upcoming match with logos, time, optional standings */
-	_renderMatchPreview(block) {
-		if (!block.homeTeam || !block.awayTeam) return null;
-
-		const homeL = block.homeTeam.toLowerCase();
-		const awayL = block.awayTeam.toLowerCase();
-		const event = this.allEvents.find(e => {
-			if (e.sport !== 'football') return false;
-			const eHome = (e.homeTeam || '').toLowerCase();
-			const eAway = (e.awayTeam || '').toLowerCase();
-			return (eHome.includes(homeL) || homeL.includes(eHome)) &&
-				(eAway.includes(awayL) || awayL.includes(eAway));
-		});
-		if (!event) return null;
-
-		const date = new Date(event.time);
-		const timeStr = date.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
-		const rel = this.relativeTime(date) || '';
-
-		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
-		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
-		const hImg = hLogo ? `<img src="${hLogo}" alt="${this.esc(event.homeTeam)}" class="brief-logo" loading="lazy">` : '';
-		const aImg = aLogo ? `<img src="${aLogo}" alt="${this.esc(event.awayTeam)}" class="brief-logo" loading="lazy">` : '';
-
-		let standingsHtml = '';
-		if (block.showStandings && this.standings?.football) {
-			const tournament = (event.tournament || '').toLowerCase();
-			const isSpanish = tournament.includes('la liga') || tournament.includes('copa del rey');
-			const tableKey = isSpanish ? 'laLiga' : 'premierLeague';
-			const table = this.standings.football[tableKey];
-			if (table?.length) {
-				const matchTeams = [event.homeTeam, event.awayTeam].map(t => t.toLowerCase());
-				const positions = table.filter(t =>
-					matchTeams.some(mt => t.team.toLowerCase().includes(mt) || mt.includes(t.team.toLowerCase()))
-				).map(t => `${t.teamShort} ${this.esc(String(t.position))}${t.position === 1 ? 'st' : t.position === 2 ? 'nd' : t.position === 3 ? 'rd' : 'th'}`);
-				if (positions.length > 0) {
-					standingsHtml = ` <span class="block-standings-ctx">(${positions.join(' vs ')})</span>`;
-				}
-			}
-		}
-
-		const relHtml = rel ? `<span class="preview-rel">${this.esc(rel)}</span>` : '';
-		const tourCtx = event.tournament ? `<span class="preview-ctx">${this.esc(event.tournament)}</span>` : '';
-
-		// Extract editorial context from _fallbackText (text after " — " beyond team/time info)
-		let editorialHtml = '';
-		if (block._fallbackText) {
-			const parts = block._fallbackText.split(' — ');
-			// Editorial context is after the first " — " (skip "Team v Team, HH:MM, Tournament")
-			if (parts.length >= 2) {
-				const editorial = parts.slice(1).join(' — ').trim();
-				// Only show if it's actual editorial (not just team names or short fragments)
-				const lowerEd = editorial.toLowerCase();
-				const hasTeamNames = lowerEd.includes(block.homeTeam?.toLowerCase()) || lowerEd.includes(block.awayTeam?.toLowerCase());
-				const isJustTeams = hasTeamNames && editorial.length < 40;
-				const isEditorial = editorial.length > 20 && !isJustTeams;
-				if (isEditorial) {
-					editorialHtml = `<div class="preview-editorial">${this.esc(editorial)}</div>`;
-				}
-			}
-		}
-
-		return `<div class="block-event-line editorial-line block-match-preview"><span class="preview-main">⚽ ${hImg}${this.esc(this.shortName(event.homeTeam))} v ${aImg}${this.esc(this.shortName(event.awayTeam))}, ${this.esc(timeStr)}</span>${relHtml}${tourCtx}${standingsHtml}${editorialHtml}</div>`;
-	}
-
-	/** event-schedule component: renders filtered events from allEvents as a card */
-	_renderEventSchedule(block) {
-		const filter = block.filter || {};
-		if (!filter.sport) return null;
-
-		const now = new Date();
-		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		let windowStart, windowEnd;
-		if (filter.window === 'tomorrow') {
-			windowStart = new Date(todayStart.getTime() + 86400000);
-			windowEnd = new Date(windowStart.getTime() + 86400000);
-		} else if (filter.window === 'week') {
-			windowStart = todayStart;
-			windowEnd = new Date(todayStart.getTime() + 7 * 86400000);
-		} else {
-			windowStart = todayStart;
-			windowEnd = new Date(todayStart.getTime() + 86400000);
-		}
-
-		const filtered = this.allEvents
-			.filter(e => e.sport === filter.sport || (e.context || '').toLowerCase().includes(filter.sport))
-			.filter(e => isEventInWindow(e, windowStart, windowEnd))
-			.sort((a, b) => new Date(a.time) - new Date(b.time));
-
-		if (filtered.length === 0) return null;
-
-		const maxItems = block.maxItems || 6;
-		const items = filtered.slice(0, maxItems);
-		const todayStr = todayStart.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' });
-
-		let html = `<div class="block-event-schedule${block.style === 'highlight' ? ' highlight' : ''}">`;
-		if (block.label) {
-			html += `<div class="block-schedule-label">${this.esc(block.label)}</div>`;
-		}
-		for (const event of items) {
-			const t = new Date(event.time);
-			const timeStr = t.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
-			const eventDay = t.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' });
-			const dayPrefix = eventDay !== todayStr
-				? t.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' '
-				: '';
-			const norFlag = (block.showFlags !== false) && (event.norwegian || event.norwegianPlayers?.length > 0) ? ' 🇳🇴' : '';
-			html += `<div class="block-schedule-item">${this.esc(dayPrefix)}${this.esc(timeStr)} — ${this.esc(event.title)}${norFlag}</div>`;
-		}
-		if (filtered.length > maxItems) {
-			html += `<div class="block-schedule-more">+${filtered.length - maxItems} more</div>`;
-		}
-		html += `</div>`;
-		return html;
-	}
-
-	/** golf-status component: renders tournament status with Norwegian player position and leaderboard snippet */
-	_renderGolfStatus(block) {
-		if (!this.standings?.golf) return null;
-		const tourKey = block.tournament === 'dpWorld' ? 'dpWorld' : 'pga';
-		const tour = this.standings.golf[tourKey];
-		if (!tour?.leaderboard?.length) return null;
-
-		const name = tour.name || (tourKey === 'pga' ? 'PGA Tour' : 'DP World Tour');
-
-		// Find tracked (Norwegian) player — data-driven via tracked flag from pipeline
-		const trackedNames = this._getTrackedGolferNames();
-		const norPlayer = tour.leaderboard.find(p => p.tracked)
-			|| (tour.trackedPlayers || [])[0];
-
-		const headshot = norPlayer && typeof getGolferHeadshot === 'function'
-			? getGolferHeadshot(norPlayer.player) : null;
-		const headshotImg = headshot
-			? `<img src="${headshot}" alt="${this.esc(norPlayer.player)}" class="brief-logo brief-headshot" loading="lazy">`
-			: '';
-
-		let html = `<div class="block-event-line editorial-line block-golf-status">⛳ ${this.esc(name)}: `;
-		if (norPlayer) {
-			html += `${headshotImg}${this.esc(norPlayer.player)} ${this.esc(norPlayer.position || '')} (${this.esc(norPlayer.score || '')})`;
-		} else {
-			const leader = tour.leaderboard[0];
-			html += `${this.esc(leader.player)} leads at ${this.esc(leader.score || '')}`;
-		}
-		html += `</div>`;
-		return html;
-	}
+	// Block renderers (match-result, match-preview, event-schedule, golf-status)
+	// are in block-renderers.js — delegated via _componentRenderers + _rendererCtx()
 
 	generateDynamicBriefLine() {
 		const now = new Date();
@@ -1173,12 +987,12 @@ class Dashboard {
 
 		// If something starts within 30 minutes, highlight it
 		const soonEvents = bands.today.filter(e => {
-			const diff = (new Date(e.time) - now) / 60000;
+			const diff = (new Date(e.time) - now) / SS_CONSTANTS.MS_PER_MINUTE;
 			return diff > 0 && diff <= 30;
 		});
 		if (soonEvents.length > 0) {
 			const e = soonEvents[0];
-			const mins = Math.round((new Date(e.time) - now) / 60000);
+			const mins = Math.round((new Date(e.time) - now) / SS_CONSTANTS.MS_PER_MINUTE);
 			const sportConfig = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === e.sport) : null;
 			const emoji = sportConfig ? sportConfig.emoji : '';
 			if (e.sport === 'football' && e.homeTeam && e.awayTeam) {
@@ -1204,7 +1018,7 @@ class Dashboard {
 	generateBriefLines() {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const todayEnd = new Date(todayStart.getTime() + 86400000);
+		const todayEnd = new Date(todayStart.getTime() + SS_CONSTANTS.MS_PER_DAY);
 
 		const todayEvents = this.allEvents.filter(e => isEventInWindow(e, todayStart, todayEnd));
 
@@ -1559,7 +1373,7 @@ class Dashboard {
 
 		let timeAgo = '';
 		if (item.pubDate) {
-			const diff = (Date.now() - new Date(item.pubDate).getTime()) / 60000;
+			const diff = (Date.now() - new Date(item.pubDate).getTime()) / SS_CONSTANTS.MS_PER_MINUTE;
 			if (diff < 60) timeAgo = `${Math.round(diff)}m ago`;
 			else if (diff < 1440) timeAgo = `${Math.round(diff / 60)}h ago`;
 			else timeAgo = `${Math.round(diff / 1440)}d ago`;
@@ -1771,11 +1585,11 @@ class Dashboard {
 		// Day context for the card header
 		const firstDate = new Date(featured.time);
 		const today = this._startOfDay(new Date());
-		const tomorrow = new Date(today.getTime() + 86400000);
+		const tomorrow = new Date(today.getTime() + SS_CONSTANTS.MS_PER_DAY);
 		let dayLabel = '';
 		if (this._isSameDay(firstDate, new Date())) {
 			dayLabel = 'Today';
-		} else if (firstDate >= tomorrow && firstDate < new Date(tomorrow.getTime() + 86400000)) {
+		} else if (firstDate >= tomorrow && firstDate < new Date(tomorrow.getTime() + SS_CONSTANTS.MS_PER_DAY)) {
 			dayLabel = 'Tomorrow';
 		} else {
 			dayLabel = firstDate.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
@@ -1892,9 +1706,9 @@ class Dashboard {
 
 		// Day context — check if events span today (multi-day events like golf tournaments)
 		const today = this._startOfDay(now);
-		const todayEnd = new Date(today.getTime() + 86400000);
+		const todayEnd = new Date(today.getTime() + SS_CONSTANTS.MS_PER_DAY);
 		const tomorrow = todayEnd;
-		const tomorrowEnd = new Date(tomorrow.getTime() + 86400000);
+		const tomorrowEnd = new Date(tomorrow.getTime() + SS_CONSTANTS.MS_PER_DAY);
 		const spansToday = events.some(e => {
 			const start = new Date(e.time).getTime();
 			const end = e.endTime ? new Date(e.endTime).getTime() : start;
@@ -2634,7 +2448,7 @@ class Dashboard {
 
 		// Relative time for today's future events (not live, not ended)
 		let relHtml = '';
-		const diffMin = (date - now) / 60000;
+		const diffMin = (date - now) / SS_CONSTANTS.MS_PER_MINUTE;
 		const isStartingSoon = !hasLiveScore && !isEnded && diffMin > 0 && diffMin <= 30;
 		if (!hasLiveScore && !isEnded && date > now) {
 			const rel = this.relativeTime(date);
@@ -2685,10 +2499,7 @@ class Dashboard {
 		`;
 	}
 
-	shortName(name) {
-		if (!name) return '';
-		return name.replace(/ FC$| AFC$| CF$| FK$/i, '').replace(/^FC |^AFC /i, '').trim();
-	}
+	shortName(name) { return ssShortName(name); }
 
 	renderFeedbackButtons(eventId, sport, tournament) {
 		if (!this.feedback) return '';
@@ -3001,447 +2812,25 @@ class Dashboard {
 		return html;
 	}
 
+	// Bracket rendering methods — delegated to bracket-renderer.js
 	_findBracketForEvent(event) {
-		if (!this.brackets) return null;
-		// Direct match via _bracketId (synthesized tournament events)
-		if (event._bracketId && this.brackets[event._bracketId]) {
-			return this.brackets[event._bracketId];
-		}
-		const title = (event.title || '').toLowerCase();
-		const tournament = (event.tournament || '').toLowerCase();
-		const stage = (event.stage || '').toLowerCase();
-		for (const [id, data] of Object.entries(this.brackets)) {
-			if (!data.name) continue;
-			const bracketName = data.name.toLowerCase();
-			// Match if bracket name appears in event title, tournament, or stage
-			// Also match first word of bracket name (e.g. "draculan" from "DraculaN Season 5")
-			const firstWord = bracketName.split(' ')[0];
-			if (title.includes(bracketName) || title.includes(firstWord) ||
-				tournament.includes(bracketName) || tournament.includes(firstWord) ||
-				stage.includes(bracketName)) {
-				return data;
-			}
-		}
-		return null;
+		return window.BracketRenderer.findBracketForEvent(event, this.brackets);
 	}
 
-	/**
-	 * Render a compact bracket path for any tournament with playoff data.
-	 * Shows all remaining rounds from the focus team's current position to the final.
-	 * Generic — works for double elimination (UB/LB/GF), single elimination, or any format.
-	 */
 	_renderBracketPath(b, focus) {
-		const playoffs = b.playoffs;
-		if (!playoffs) return '';
-		const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
-		const focusLogo = getLogo(focus);
-		const focusImg = focusLogo ? `<img class="bpath-logo" src="${focusLogo}" alt="" loading="lazy">` : '';
-		const ftp = b.focusTeamPath; // pre-built path summary if available
-
-		// Collect all rounds in bracket order, tagged by section
-		const allRounds = [];
-		const addSection = (rounds, section) => {
-			if (!rounds?.length) return;
-			for (const r of rounds) allRounds.push({ ...r, _section: section });
-		};
-		addSection(playoffs.upperBracket, 'UB');
-		addSection(playoffs.lowerBracket, 'LB');
-		if (Array.isArray(playoffs.grandFinal)) {
-			addSection(playoffs.grandFinal, 'GF');
-		} else if (playoffs.grandFinal?.matches) {
-			addSection([{ round: 'Grand Final', ...playoffs.grandFinal }], 'GF');
-		}
-		addSection(playoffs.rounds, ''); // single elimination
-
-		// Walk all rounds — categorize focus team matches
-		const completed = [];
-		let currentSection = null;
-		let lastKnownRoundIdx = -1;
-		let nextMatch = null;
-		for (let i = 0; i < allRounds.length; i++) {
-			const round = allRounds[i];
-			for (const m of (round.matches || [])) {
-				if (!this._matchInvolves(m, focus)) continue;
-				currentSection = round._section;
-				lastKnownRoundIdx = i;
-				if (m.winner || m.status === 'completed') {
-					const won = m.winner === focus;
-					const opp = m.team1 === focus ? m.team2 : m.team1;
-					completed.push({
-						round: round.round, section: round._section,
-						opponent: opp, won, score: m.score, maps: m.maps,
-						status: m.status
-					});
-				} else if (!nextMatch) {
-					const opp = (m.team1 === focus ? m.team2 : m.team1) || 'TBD';
-					nextMatch = {
-						round: round.round, section: round._section,
-						opponent: opp, time: m.scheduledTime || round.scheduledTime,
-						status: m.status, note: m.note
-					};
-				}
-			}
-		}
-
-		// Double-elimination: prefix round names with UB/LB for clarity
-		const isDoubleElim = playoffs.upperBracket?.length && playoffs.lowerBracket?.length;
-		if (isDoubleElim) {
-			for (const c of completed) {
-				if (c.section === 'UB') c.round = 'UB ' + c.round;
-				else if (c.section === 'LB') c.round = 'LB ' + c.round;
-			}
-			if (nextMatch?.section === 'UB') nextMatch.round = 'UB ' + nextMatch.round;
-			else if (nextMatch?.section === 'LB') nextMatch.round = 'LB ' + nextMatch.round;
-		}
-
-		// Merge focusTeamPath.completed — includes group stage matches not in playoffs
-		if (ftp?.completed?.length) {
-			if (completed.length === 0) {
-				// No bracket walk results — use focusTeamPath entirely
-				for (const c of ftp.completed) {
-					const won = c.result?.startsWith('W');
-					completed.push({
-						round: c.stage, opponent: c.opponent, won,
-						score: c.result?.replace(/^[WL] /, ''),
-						maps: c.maps || (c.map ? `${c.map} ${c.result?.replace(/^[WL] /, '')}` : null)
-					});
-				}
-			} else {
-				// Merge: prepend group stage / pre-playoff matches, enrich map details
-				const prePlayoff = [];
-				for (const f of ftp.completed) {
-					const isInBracket = completed.some(c => c.opponent === f.opponent);
-					if (!isInBracket) {
-						const won = f.result?.startsWith('W');
-						prePlayoff.push({
-							round: f.stage, opponent: f.opponent, won,
-							score: f.result?.replace(/^[WL] /, ''),
-							maps: f.maps || (f.map ? `${f.map} ${f.result?.replace(/^[WL] /, '')}` : null)
-						});
-					}
-				}
-				completed.unshift(...prePlayoff);
-				// Enrich map details from focusTeamPath
-				for (const c of completed) {
-					if (c.maps) continue;
-					const ftpMatch = ftp.completed.find(f => f.opponent === c.opponent);
-					if (ftpMatch?.maps) c.maps = ftpMatch.maps;
-					else if (ftpMatch?.map) c.maps = `${ftpMatch.map} ${ftpMatch.result?.replace(/^[WL] /, '')}`;
-				}
-			}
-		}
-
-		// If no nextMatch from bracket walk, check focusTeamPath.current
-		if (!nextMatch && ftp?.current) {
-			nextMatch = {
-				round: ftp.current.stage,
-				opponent: ftp.current.opponent,
-				time: ftp.current.scheduledTime,
-				status: ftp.current.status,
-				format: ftp.current.format
-			};
-		}
-
-		// Build remaining path to final (future rounds after next match)
-		const futurePath = [];
-		if (lastKnownRoundIdx >= 0) {
-			let skippedNext = false;
-			for (let i = lastKnownRoundIdx; i < allRounds.length; i++) {
-				const round = allRounds[i];
-				const isReachable = round._section === currentSection || round._section === 'GF' || round._section === '';
-				if (!isReachable) continue;
-				const focusMatch = round.matches?.find(m => this._matchInvolves(m, focus));
-				const tbdMatch = round.matches?.find(m => !m.winner && m.status !== 'completed');
-				const m = focusMatch || tbdMatch;
-				if (!m) continue;
-				if (m.winner || m.status === 'completed') continue;
-				if (!skippedNext) { skippedNext = true; continue; } // skip the nextMatch
-				const prefix = isDoubleElim && round._section === 'UB' ? 'UB '
-				: isDoubleElim && round._section === 'LB' ? 'LB ' : '';
-			futurePath.push({
-					round: prefix + round.round,
-					time: m.scheduledTime || round.scheduledTime
-				});
-			}
-		}
-
-		if (completed.length === 0 && !nextMatch && futurePath.length === 0) return '';
-
-		// === Render ===
-		let html = '<div class="lead-bracket-path">';
-		html += `<div class="lead-bracket-path-header">${focusImg}<span>Tournament path \u00b7 ${this.esc(focus)}</span></div>`;
-
-		// Completed results
-		if (completed.length > 0) {
-			for (const c of completed) {
-				const oppLogo = getLogo(c.opponent);
-				const oppImg = oppLogo ? `<img class="bpath-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
-				const badge = c.won ? '<span class="bpath-badge bpath-win">W</span>' : '<span class="bpath-badge bpath-loss">L</span>';
-				html += `<div class="bpath-step bpath-completed">`;
-				html += `<span class="bpath-round">${this.esc(c.round || '')}</span>`;
-				html += `<span class="bpath-opp">${badge} ${oppImg} ${this.esc(c.opponent || '')}</span>`;
-				html += `<span class="bpath-score">${this.esc(c.score || '')}</span>`;
-				html += '</div>';
-				if (c.maps) {
-					html += `<div class="bpath-maps">${this.esc(c.maps)}</div>`;
-				}
-			}
-		}
-
-		// Next / current match (highlighted)
-		if (nextMatch) {
-			const oppLogo = getLogo(nextMatch.opponent);
-			const oppImg = oppLogo ? `<img class="bpath-logo" src="${oppLogo}" alt="" loading="lazy">` : '';
-			let timeStr = '';
-			let dayStr = '';
-			if (nextMatch.time) {
-				const d = new Date(nextMatch.time);
-				const now = new Date();
-				timeStr = d.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
-				if (!this._isSameDay(d, now)) {
-					dayStr = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ';
-				}
-			}
-			const format = nextMatch.format ? ` \u00b7 ${this.esc(nextMatch.format)}` : '';
-			html += `<div class="bpath-step bpath-next">`;
-			html += `<span class="bpath-round">${this.esc(nextMatch.round || 'Next')}</span>`;
-			html += `<span class="bpath-opp">\u25b6 ${oppImg} vs ${this.esc(nextMatch.opponent)}</span>`;
-			if (timeStr) html += `<span class="bpath-time">${dayStr}${timeStr}${format}</span>`;
-			html += '</div>';
-		}
-
-		// Future path to final
-		for (const step of futurePath) {
-			let timeStr = '';
-			let dayStr = '';
-			if (step.time) {
-				const d = new Date(step.time);
-				const now = new Date();
-				timeStr = d.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
-				if (!this._isSameDay(d, now)) {
-					dayStr = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ';
-				}
-			}
-			html += `<div class="bpath-step bpath-future">`;
-			html += `<span class="bpath-round">${this.esc(step.round)}</span>`;
-			html += `<span class="bpath-opp">TBD</span>`;
-			if (timeStr) html += `<span class="bpath-time">${dayStr}${timeStr}</span>`;
-			html += '</div>';
-		}
-
-		// Elimination info from focusTeamPath
-		if (ftp?.ifLose) {
-			html += `<div class="bpath-elim">If eliminated: ${this.esc(ftp.ifLose)}</div>`;
-		}
-
-		html += '</div>';
-		return html;
+		return window.BracketRenderer.renderBracketPath(b, focus, this._bracketCtx());
 	}
 
 	_renderTournamentBracket(bracketData, event) {
-		const b = bracketData.bracket;
-		if (!b?.playoffs) return '';
-		const focusTeam = bracketData.focusTeam || '';
-		const path = b.focusTeamPath;
-
-		let html = '<div class="exp-bracket">';
-
-		// Tournament header
-		html += '<div class="exp-bracket-header">';
-		html += `<span class="exp-bracket-title">${this.esc(bracketData.name)}</span>`;
-		if (bracketData.tier) html += `<span class="exp-bracket-tier">${this.esc(bracketData.tier)}</span>`;
-		html += '</div>';
-		if (bracketData.prizePool) {
-			html += `<div class="exp-bracket-prize">${this.esc(bracketData.prizePool)}</div>`;
-		}
-		// Staleness indicator
-		if (bracketData._lastUpdated) {
-			const hoursAgo = Math.round((Date.now() - new Date(bracketData._lastUpdated).getTime()) / 3600000);
-			if (hoursAgo >= 4) {
-				html += `<div class="exp-bracket-stale">Bracket data from ${hoursAgo}h ago</div>`;
-			}
-		}
-
-		// Visual bracket tree — show the full grid with all rounds and progressions.
-		html += this._renderBracketGrid(b.playoffs, focusTeam);
-
-		html += '</div>';
-		return html;
+		return window.BracketRenderer.renderTournamentBracket(bracketData, event, this._bracketCtx());
 	}
 
-	_renderBracketGrid(playoffs, focusTeam) {
-		let html = '<div class="bk-grid">';
+	_potLabel(m) { return window.BracketRenderer.bracketPotLabel(m); }
 
-		// Single elimination: playoffs.rounds = [{round, matches}, ...]
-		if (playoffs.rounds?.length > 0) {
-			html += this._renderBracketTree(playoffs.rounds, focusTeam);
-		}
+	_matchInvolves(match, teamName) { return window.BracketRenderer.bracketMatchInvolves(match, teamName); }
 
-		// Double elimination: upper/lower/grand final
-		const hasLower = playoffs.lowerBracket?.length > 0;
-		if (playoffs.upperBracket?.length > 0) {
-			if (hasLower) html += '<div class="bk-sec"><div class="bk-sec-label">Upper Bracket</div>';
-			html += this._renderBracketTree(playoffs.upperBracket, focusTeam);
-			if (hasLower) html += '</div>';
-		}
-		if (hasLower) {
-			html += '<div class="bk-sec"><div class="bk-sec-label">Lower Bracket</div>';
-			html += this._renderBracketTree(playoffs.lowerBracket, focusTeam);
-			html += '</div>';
-		}
-		if (playoffs.grandFinal?.matches?.length > 0) {
-			html += '<div class="bk-sec"><div class="bk-sec-label">Grand Final</div>';
-			html += this._renderBracketTree([{ matches: playoffs.grandFinal.matches }], focusTeam);
-			html += '</div>';
-		}
-
-		html += '</div>';
-		return html;
-	}
-
-	_renderBracketTree(rounds, focusTeam) {
-		// Show all rounds through to the final — TBD rounds display scheduled
-		// times and potential teams derived from previous round matchups
-		const vis = [...rounds];
-		if (!vis.length) return '';
-
-		// Pre-process: propagate round-level scheduledTime to matches,
-		// and compute potential team names for TBD slots
-		for (let i = 0; i < vis.length; i++) {
-			const round = vis[i];
-			const prev = vis[i - 1];
-			for (let j = 0; j < round.matches.length; j++) {
-				const m = round.matches[j];
-				// Propagate round scheduledTime to matches that lack one
-				if (!m.scheduledTime && round.scheduledTime) m._roundTime = round.scheduledTime;
-				// Derive potential teams from the previous round for TBD slots
-				if (prev && (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD') {
-					const prevPairSize = Math.ceil(prev.matches.length / round.matches.length);
-					const startIdx = j * prevPairSize;
-					const feeders = prev.matches.slice(startIdx, startIdx + prevPairSize);
-					if (feeders.length >= 2) {
-						m._pot1 = feeders[0].winner || this._potLabel(feeders[0]);
-						m._pot2 = feeders[1].winner || this._potLabel(feeders[1]);
-					} else if (feeders.length === 1) {
-						m._pot1 = feeders[0].winner || this._potLabel(feeders[0]);
-					}
-				}
-			}
-		}
-
-		const shortName = (r) => {
-			if (!r) return '';
-			const s = r.toLowerCase();
-			if (s.includes('grand')) return 'GF';
-			if (s.includes('final') && !s.includes('quarter') && !s.includes('semi')) return 'Final';
-			if (s.includes('semi')) return 'SF';
-			if (s.includes('quarter')) return 'QF';
-			if (s.includes('round of')) return 'R' + s.replace(/\D/g, '');
-			return r.replace(/round\s*/i, 'R');
-		};
-
-		let html = '<div class="bk-tree">';
-		for (let i = 0; i < vis.length; i++) {
-			const round = vis[i];
-			const next = vis[i + 1];
-
-			html += '<div class="bk-round">';
-			html += `<div class="bk-rh">${this.esc(shortName(round.round))}</div>`;
-			html += '<div class="bk-slots">';
-			for (const m of round.matches) {
-				html += this._renderBracketCard(m, focusTeam);
-			}
-			html += '</div></div>';
-
-			if (next) {
-				const lc = round.matches.length, rc = next.matches.length;
-				if (lc > 1 && rc === Math.ceil(lc / 2)) {
-					html += '<div class="bk-conn"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
-					for (let p = 0; p < rc; p++) html += '<div class="bk-cp"><div class="bk-cpin"></div></div>';
-					html += '</div></div>';
-				} else if (lc === rc) {
-					html += '<div class="bk-conn solo"><div class="bk-rh">&nbsp;</div><div class="bk-conn-body">';
-					for (let p = 0; p < lc; p++) html += '<div class="bk-cp"></div>';
-					html += '</div></div>';
-				}
-			}
-		}
-		html += '</div>';
-		return html;
-	}
-
-	/** Compact label for a pending match (e.g., "HEROIC/ASTRAL") */
-	_potLabel(m) {
-		const t1 = m.team1 || 'TBD';
-		const t2 = m.team2 || 'TBD';
-		if (t1 === 'TBD' && t2 === 'TBD') return 'TBD';
-		return `${t1}/${t2}`;
-	}
-
-	_renderBracketCard(m, focusTeam) {
-		const hasFocus = this._matchInvolves(m, focusTeam);
-		const isLive = m.status === 'live';
-		const isTbd = (m.team1 || 'TBD') === 'TBD' && (m.team2 || 'TBD') === 'TBD';
-		const hasWinner = !!m.winner;
-		const getLogo = typeof getTeamLogo === 'function' ? getTeamLogo : () => null;
-
-		let s1 = '', s2 = '';
-		if (m.score && m.score !== 'FF') {
-			const p = m.score.split('-');
-			if (p.length === 2) { s1 = p[0].trim(); s2 = p[1].trim(); }
-		} else if (m.score === 'FF') {
-			s1 = m.winner === m.team1 ? 'W' : '-';
-			s2 = m.winner === m.team2 ? 'W' : '-';
-		}
-
-		let timeStr = '';
-		if ((m.scheduledTime || m._roundTime) && !hasWinner && !isLive) {
-			const d = new Date(m.scheduledTime || m._roundTime);
-			if (!isNaN(d)) {
-				const now = new Date();
-				const sameDay = d.toDateString() === now.toDateString();
-				const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
-				timeStr = sameDay ? time : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ' + time;
-			}
-		}
-
-		const cls = ['bk-m', hasFocus ? 'focus' : '', isLive ? 'live' : '', isTbd ? 'tbd' : ''].filter(Boolean).join(' ');
-		const t1w = m.winner === m.team1, t2w = m.winner === m.team2;
-		const t1f = focusTeam && (m.team1 || '').toLowerCase().includes(focusTeam.toLowerCase());
-		const t2f = focusTeam && (m.team2 || '').toLowerCase().includes(focusTeam.toLowerCase());
-
-		const logoHtml = (name) => {
-			const url = getLogo(name);
-			return url ? `<img src="${url}" alt="" class="bk-logo" loading="lazy">` : '';
-		};
-
-		// For TBD matches with potential teams from bracket structure
-		const isTbd1 = !m.team1 || m.team1 === 'TBD';
-		const isTbd2 = !m.team2 || m.team2 === 'TBD';
-		const dispT1 = isTbd1 && m._pot1 ? `W: ${m._pot1}` : (m.team1 || 'TBD');
-		const dispT2 = isTbd2 && m._pot2 ? `W: ${m._pot2}` : (m.team2 || 'TBD');
-		const isPot1 = isTbd1 && m._pot1;
-		const isPot2 = isTbd2 && m._pot2;
-
-		let html = `<div class="${cls}">`;
-		html += `<div class="bk-t${t1w ? ' w' : ''}${hasWinner && !t1w ? ' l' : ''}${t1f ? ' ft' : ''}${isPot1 ? ' pot' : ''}">`;
-		html += logoHtml(m.team1);
-		html += `<span class="bk-name">${this.esc(dispT1)}</span>`;
-		html += `<span class="bk-sc">${this.esc(s1)}</span></div>`;
-		html += `<div class="bk-t${t2w ? ' w' : ''}${hasWinner && !t2w ? ' l' : ''}${t2f ? ' ft' : ''}${isPot2 ? ' pot' : ''}">`;
-		html += logoHtml(m.team2);
-		html += `<span class="bk-name">${this.esc(dispT2)}</span>`;
-		html += `<span class="bk-sc">${this.esc(s2)}</span></div>`;
-		if (timeStr) html += `<div class="bk-time">${timeStr}</div>`;
-		html += '</div>';
-		return html;
-	}
-
-	_matchInvolves(match, teamName) {
-		if (!teamName) return false;
-		const t = teamName.toLowerCase();
-		return (match.team1 || '').toLowerCase().includes(t) ||
-			(match.team2 || '').toLowerCase().includes(t);
+	_bracketCtx() {
+		return { esc: escapeHtml, _isSameDay: (a, b) => this._isSameDay(a, b) };
 	}
 
 	// --- Match details (football) ---
@@ -3950,10 +3339,7 @@ class Dashboard {
 		} catch (e) { console.debug('Golf live poll failed:', e.message); }
 	}
 
-	teamMatch(a, b) {
-		const normalize = s => s.toLowerCase().replace(/ fc$| afc$| cf$| fk$/i, '').replace(/^fc |^afc /i, '').trim();
-		return normalize(a) === normalize(b) || a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
-	}
+	teamMatch(a, b) { return ssTeamMatch(a, b); }
 
 	// --- Event handlers ---
 
@@ -4224,7 +3610,7 @@ class Dashboard {
 		const now = new Date();
 		const diffMs = date - now;
 		if (diffMs < 0) return null;
-		const mins = Math.round(diffMs / 60000);
+		const mins = Math.round(diffMs / SS_CONSTANTS.MS_PER_MINUTE);
 		if (mins < 5) return 'now';
 		if (mins < 60) return `in ${mins}m`;
 		const hrs = Math.floor(mins / 60);
@@ -4242,15 +3628,7 @@ class Dashboard {
 		return null;
 	}
 
-	esc(str) {
-		if (typeof str !== 'string') return '';
-		return str
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&#039;');
-	}
+	esc(str) { return escapeHtml(str); }
 }
 
 // Initialize on DOM ready
