@@ -43,6 +43,7 @@ You own infrastructure, pipeline orchestration, tests, and code health tools.
 - `scripts/pre-commit-gate.js` — pre-commit gate
 - `scripts/pipeline-manifest.json` — pipeline step definitions
 - `scripts/autopilot-strategy.json` — process strategy
+- `scripts/analyze-code-complexity.js` — standalone complexity analyzer
 - `tests/**` — all test files
 
 ### Key data you read for context:
@@ -68,6 +69,9 @@ Look for small additions (<300 lines) that enable larger future capabilities. Re
 
 ### Dead Code & TODO Scanning
 Scan for TODO/FIXME comments, unreachable code, unused imports/exports. Create cleanup tasks for anything that harms maintainability.
+
+### File Size Awareness
+When scouting, check for JS files over 500 lines (`wc -l scripts/**/*.js docs/js/*.js`). Large files are harder for all agents to work with. If a file is growing past ~800 lines, consider extracting focused modules — the pattern used for `block-renderers.js`, `bracket-renderer.js`, and `standings-renderer.js` (context object, window global, thin delegation wrappers) works well. You can also run `node scripts/analyze-code-complexity.js` for a detailed report.
 
 ## Test Conventions
 
