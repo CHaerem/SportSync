@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T09:17:35.369Z",
+  "generatedAt": "2026-03-04T09:23:50.563Z",
   "patternsDetected": 1,
   "patterns": [
     {
@@ -19,14 +19,14 @@
       "lastSeen": "2026-03-03T22:11:44.839Z"
     },
     "streaming_low_match_rate": {
-      "count": 249,
+      "count": 250,
       "firstSeen": "2026-02-17T20:19:44.225Z",
-      "lastSeen": "2026-03-04T09:17:35.303Z"
+      "lastSeen": "2026-03-04T09:23:50.506Z"
     },
     "ux_eval_fallback": {
-      "count": 205,
+      "count": 206,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-04T09:17:35.303Z"
+      "lastSeen": "2026-03-04T09:23:50.506Z"
     },
     "missing_snapshot": {
       "count": 13,
@@ -42,11 +42,6 @@
       "count": 46,
       "firstSeen": "2026-02-26T06:29:17.803Z",
       "lastSeen": "2026-03-04T06:22:59.678Z"
-    },
-    "bracket_stale_matches": {
-      "count": 5,
-      "firstSeen": "2026-02-26T18:20:12.117Z",
-      "lastSeen": "2026-03-01T06:27:45.815Z"
     },
     "stale_snapshot": {
       "count": 15,
@@ -69,19 +64,19 @@
       "lastSeen": "2026-03-04T07:20:03.669Z"
     },
     "invisible_events": {
-      "count": 51,
+      "count": 52,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-04T09:17:35.303Z"
+      "lastSeen": "2026-03-04T09:23:50.506Z"
     },
     "stale_data": {
-      "count": 76,
+      "count": 77,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-04T09:17:35.303Z"
+      "lastSeen": "2026-03-04T09:23:50.506Z"
     },
     "chronic_data_retention": {
-      "count": 72,
+      "count": 73,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-04T09:17:35.303Z"
+      "lastSeen": "2026-03-04T09:23:50.506Z"
     },
     "stale_output": {
       "count": 10,
@@ -104,16 +99,16 @@
     }
   },
   "architectureBaseline": {
-    "recordedAt": "2026-03-04T09:17:35.369Z",
-    "moduleCount": 66,
+    "recordedAt": "2026-03-04T09:23:50.563Z",
+    "moduleCount": 67,
     "avgModuleSize": 328,
     "pipelineSteps": 28,
-    "testCoverageRatio": 1.17,
-    "smallModuleRatio": 0.02,
+    "testCoverageRatio": 1.15,
+    "smallModuleRatio": 0.01,
     "thresholdOverrides": {}
   },
   "architectureDelta": {
-    "moduleCount": 0,
+    "moduleCount": 1,
     "avgModuleSize": 0,
     "pipelineSteps": 0
   },
