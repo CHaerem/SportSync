@@ -12,6 +12,7 @@ const localStorageMock = {
 };
 
 globalThis.localStorage = localStorageMock;
+globalThis.navigator = {};
 globalThis.window = globalThis;
 globalThis.document = {
 	addEventListener: vi.fn(),
