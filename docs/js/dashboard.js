@@ -166,6 +166,25 @@ class Dashboard {
 				try { this.featured = await featuredResp.json(); } catch { this.featured = null; }
 			}
 
+			// Staleness guard: if featured.json is from a previous day, prefer today's date-specific briefing
+			if (this.featured) {
+				const genAt = this.featured.generatedAt || this.featured._meta?.generatedAt;
+				const featuredDay = genAt ? genAt.substring(0, 10) : null;
+				const todayKey = this._dateKey(new Date());
+				if (featuredDay && featuredDay !== todayKey) {
+					try {
+						const todayResp = await fetch(`data/featured-${todayKey}.json?t=${Date.now()}`);
+						if (todayResp.ok) {
+							const todayData = await todayResp.json();
+							if (todayData && Array.isArray(todayData.blocks)) {
+								console.log(`[SportSync] featured.json stale (${featuredDay}), using featured-${todayKey}.json`);
+								this.featured = todayData;
+							}
+						}
+					} catch { /* keep stale featured.json as fallback */ }
+				}
+			}
+
 			if (standingsResp && standingsResp.ok) {
 				try { this.standings = await standingsResp.json(); } catch { this.standings = null; }
 			}
