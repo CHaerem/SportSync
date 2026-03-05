@@ -262,6 +262,28 @@ export function generateHealthReport(options = {}) {
 		}
 	}
 
+	// 2d. Featured.json date coherence — briefing must be for today's date
+	const featuredData = criticalOutputs["featured.json"];
+	if (featuredData) {
+		const genAt = featuredData.generatedAt || featuredData._meta?.generatedAt;
+		if (genAt) {
+			const featuredDay = genAt.substring(0, 10);
+			const todayKey = new Date().toISOString().substring(0, 10);
+			dataFreshness["featured.json"] = {
+				...dataFreshness["featured.json"],
+				dateCoherent: featuredDay === todayKey,
+				featuredDate: featuredDay,
+			};
+			if (featuredDay !== todayKey) {
+				issues.push({
+					severity: "warning",
+					code: "featured_date_mismatch",
+					message: `featured.json is from ${featuredDay} but today is ${todayKey} — briefing shows wrong day's content`,
+				});
+			}
+		}
+	}
+
 	// 3. Schema completeness
 	const schemaCompleteness = checkSchemaCompleteness(events);
 

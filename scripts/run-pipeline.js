@@ -32,6 +32,9 @@ const isDataOnly = PIPELINE_MODE === "data-only";
 // Track whether event data is unchanged between runs
 let dataUnchanged = false;
 
+// Track whether featured.json is from a different day than today
+let featuredDayStale = false;
+
 // Track subscription quota tier (0=green, 1=moderate, 2=high, 3=critical)
 let quotaTier = 0;
 let quotaMaxPriority = 3; // max step priority allowed (3=all, 0=none)
@@ -90,6 +93,21 @@ export function checkDataUnchanged() {
 	} catch {
 		console.log("  Events data unchanged but featured.json missing — AI steps will run.");
 	}
+
+	// Date coherence check: if featured.json is from a different day, flag it
+	// This ensures generate-featured runs even in data-only mode on day boundaries
+	try {
+		const featured = JSON.parse(fs.readFileSync(featuredPath, "utf-8"));
+		const genAt = featured.generatedAt || featured._meta?.generatedAt;
+		if (genAt) {
+			const featuredDay = genAt.substring(0, 10);
+			const todayKey = new Date().toISOString().substring(0, 10);
+			if (featuredDay !== todayKey) {
+				featuredDayStale = true;
+				console.log(`  Featured.json date mismatch: generated ${featuredDay}, today is ${todayKey} — will force regeneration.`);
+			}
+		}
+	} catch {}
 }
 
 /**
@@ -183,7 +201,11 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 	const stepTimeout = step.timeout || timeout;
 
 	// Check data-only mode — skip LLM steps
-	if (isDataOnly && step.llm) {
+	// Exception: generate-featured and post-generate run even in data-only mode
+	// if the briefing is from a different day (date coherence)
+	const featuredSteps = ["generate-featured", "post-generate"];
+	const exemptFromSkip = featuredDayStale && featuredSteps.includes(step.name);
+	if (isDataOnly && step.llm && !exemptFromSkip) {
 		return {
 			name: step.name,
 			status: "skipped",
@@ -192,8 +214,8 @@ export function executeStep(step, timeout = STEP_TIMEOUT) {
 		};
 	}
 
-	// Check data-unchanged skip
-	if (step.skipIfDataUnchanged && dataUnchanged) {
+	// Check data-unchanged skip (also exempt if featured date is stale)
+	if (step.skipIfDataUnchanged && dataUnchanged && !exemptFromSkip) {
 		return {
 			name: step.name,
 			status: "skipped",
@@ -259,7 +281,11 @@ export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 	const stepTimeout = step.timeout || timeout;
 
 	// Check data-only mode — skip LLM steps
-	if (isDataOnly && step.llm) {
+	// Exception: generate-featured and post-generate run even in data-only mode
+	// if the briefing is from a different day (date coherence)
+	const featuredSteps = ["generate-featured", "post-generate"];
+	const exemptFromSkip = featuredDayStale && featuredSteps.includes(step.name);
+	if (isDataOnly && step.llm && !exemptFromSkip) {
 		return {
 			name: step.name,
 			status: "skipped",
@@ -268,8 +294,8 @@ export async function executeStepAsync(step, timeout = STEP_TIMEOUT) {
 		};
 	}
 
-	// Check data-unchanged skip
-	if (step.skipIfDataUnchanged && dataUnchanged) {
+	// Check data-unchanged skip (also exempt if featured date is stale)
+	if (step.skipIfDataUnchanged && dataUnchanged && !exemptFromSkip) {
 		return {
 			name: step.name,
 			status: "skipped",

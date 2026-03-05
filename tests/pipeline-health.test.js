@@ -308,6 +308,55 @@ describe("generateHealthReport()", () => {
 		expect(staleIssues).toHaveLength(0);
 	});
 
+	it("flags featured.json date mismatch (wrong day)", () => {
+		// featured.json generated yesterday — should trigger date mismatch warning
+		const yesterday = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2h ago to not trigger stale_output
+		// But force a different date by using yesterday's date string
+		const yesterdayDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+		const yesterdayStr = yesterdayDate.toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { generatedAt: yesterdayStr },
+			},
+		});
+
+		const dateMismatch = report.issues.filter((i) => i.code === "featured_date_mismatch");
+		expect(dateMismatch).toHaveLength(1);
+		expect(dateMismatch[0].message).toContain("featured.json");
+		expect(dateMismatch[0].message).toContain("wrong day");
+		expect(report.dataFreshness["featured.json"].dateCoherent).toBe(false);
+	});
+
+	it("does not flag featured date mismatch when generated today", () => {
+		const freshDate = new Date().toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { generatedAt: freshDate },
+			},
+		});
+
+		const dateMismatch = report.issues.filter((i) => i.code === "featured_date_mismatch");
+		expect(dateMismatch).toHaveLength(0);
+		expect(report.dataFreshness["featured.json"].dateCoherent).toBe(true);
+	});
+
+	it("handles featured date check with _meta.generatedAt format", () => {
+		// Date-specific briefing files use _meta.generatedAt
+		const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { _meta: { generatedAt: yesterday } },
+			},
+		});
+
+		const dateMismatch = report.issues.filter((i) => i.code === "featured_date_mismatch");
+		expect(dateMismatch).toHaveLength(1);
+		expect(report.dataFreshness["featured.json"].dateCoherent).toBe(false);
+	});
+
 	it("detects empty days in day navigator (no events or results)", () => {
 		// No events, no results → all past 5 days are empty
 		const report = generateHealthReport({

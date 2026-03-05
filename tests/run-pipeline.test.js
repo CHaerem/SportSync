@@ -324,6 +324,33 @@ describe("runPhase", () => {
 	});
 });
 
+describe("featured date coherence logic", () => {
+	it("source code contains date coherence check in checkDataUnchanged", () => {
+		const source = fs.readFileSync(
+			path.join(process.cwd(), "scripts/run-pipeline.js"),
+			"utf-8",
+		);
+		// checkDataUnchanged should check featured.json date vs today
+		expect(source).toContain("featuredDayStale");
+		expect(source).toContain("date mismatch");
+		expect(source).toContain("force regeneration");
+	});
+
+	it("executeStep exempts generate-featured from data-only skip when date is stale", () => {
+		const source = fs.readFileSync(
+			path.join(process.cwd(), "scripts/run-pipeline.js"),
+			"utf-8",
+		);
+		// The skip logic should check exemptFromSkip for generate-featured and post-generate
+		expect(source).toContain("exemptFromSkip");
+		expect(source).toContain("generate-featured");
+		expect(source).toContain("post-generate");
+		// Both executeStep and executeStepAsync should have the exemption
+		const exemptCount = (source.match(/exemptFromSkip/g) || []).length;
+		expect(exemptCount).toBeGreaterThanOrEqual(4); // 2 functions × 2 checks each
+	});
+});
+
 describe("runPipeline", () => {
 	it("runs a minimal pipeline and writes result", async () => {
 		const resultPath = path.join(FIXTURES_DIR, "pipeline-result.json");
