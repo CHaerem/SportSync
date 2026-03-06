@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-04T22:12:57.399Z",
-  "eventCount": 40,
+  "generatedAt": "2026-03-06T08:30:47.701Z",
+  "eventCount": 43,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -12,15 +12,15 @@
       "previousCount": 2,
       "delta": 0
     },
-    "football": {
-      "count": 26,
-      "previousCount": 26,
-      "delta": 0
-    },
     "f1": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "football": {
+      "count": 29,
+      "previousCount": 26,
+      "delta": 3
     },
     "cycling": {
       "count": 8,
@@ -40,40 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5767,
+      "ageMinutes": 7824,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 3,
-      "stale": false
+      "ageMinutes": 2233,
+      "stale": true
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
-      "stale": false
+      "ageMinutes": 2291,
+      "stale": true,
+      "dateCoherent": false,
+      "featuredDate": "2026-03-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
-      "stale": false
+      "ageMinutes": 2058,
+      "stale": true
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.9,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -88,16 +90,16 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 31,
+    "footballCount": 33,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.03,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.07,
-    "eventsEnriched": 1,
+    "matchRate": 0.28,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -105,8 +107,11 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 671 minutes old (stale > 240m)",
-      "Snapshot 2026-03-04: 7 events but events.json has 0"
+      "Day snapshots are 2729 minutes old (stale > 240m)",
+      "2 expected day snapshot(s) missing",
+      "Snapshot 2026-03-04: 7 events but events.json has 0",
+      "Snapshot 2026-03-05: 3 events but events.json has 2",
+      "Snapshot 2026-03-11: 1 events but events.json has 5"
     ],
     "snapshotCount": 15
   },
@@ -176,7 +181,7 @@
     "hasCoverage": false
   },
   "unmappedLeagues": [
-    "Freestyle Open A",
+    "Grenke Chess Festival 2026 | Freestyle Open A",
     "Cycling Grand Tours & Norwegian Races 2026",
     "FIFA World Cup 2026"
   ],
@@ -189,7 +194,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 5767 minutes old"
+      "message": "esports.json: data is 7824 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "f1.json: data is 2233 minutes old"
     },
     {
       "severity": "warning",
@@ -198,8 +208,23 @@
     },
     {
       "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 2291 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 2058 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "featured_date_mismatch",
+      "message": "featured.json is from 2026-03-04 but today is 2026-03-06 — briefing shows wrong day's content"
+    },
+    {
+      "severity": "warning",
       "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 7% (1/15) — team alias table may need updates"
+      "message": "Streaming enrichment match rate is 28% (5/18) — team alias table may need updates"
     },
     {
       "severity": "warning",
@@ -209,7 +234,12 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 671 minutes old (stale > 240m)"
+      "message": "Day snapshots are 2729 minutes old (stale > 240m)"
+    },
+    {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "2 expected day snapshot(s) missing"
     },
     {
       "severity": "critical",
@@ -217,9 +247,19 @@
       "message": "Snapshot 2026-03-04: 7 events but events.json has 0"
     },
     {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-05: 3 events but events.json has 2"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-11: 1 events but events.json has 5"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "3 tournament(s) lack league theming: Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026, FIFA World Cup 2026"
+      "message": "3 tournament(s) lack league theming: Grenke Chess Festival 2026 | Freestyle Open A, Cycling Grand Tours & Norwegian Races 2026, FIFA World Cup 2026"
     },
     {
       "severity": "warning",
@@ -244,7 +284,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-04T22:12:57.460Z",
+    "computedAt": "2026-03-06T08:30:47.770Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -262,14 +302,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 37,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 6 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is critical with 2 critical, 12 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
