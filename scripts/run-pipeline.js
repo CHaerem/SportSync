@@ -74,6 +74,21 @@ export function checkDataUnchanged() {
 	fs.mkdirSync(DATA_DIR, { recursive: true });
 	fs.writeFileSync(PIPELINE_HASH_PATH, JSON.stringify({ eventsHash: currentHash, updatedAt: new Date().toISOString() }));
 
+	// Date coherence check: MUST run before any early returns
+	// If featured.json is from a different day, force regeneration even in data-only mode
+	try {
+		const featured = JSON.parse(fs.readFileSync(featuredPath, "utf-8"));
+		const genAt = featured.generatedAt || featured._meta?.generatedAt;
+		if (genAt) {
+			const featuredDay = genAt.substring(0, 10);
+			const todayKey = new Date().toISOString().substring(0, 10);
+			if (featuredDay !== todayKey) {
+				featuredDayStale = true;
+				console.log(`  Featured.json date mismatch: generated ${featuredDay}, today is ${todayKey} — will force regeneration.`);
+			}
+		}
+	} catch {}
+
 	if (currentHash !== previousHash) {
 		console.log("  Events data changed — AI steps will run.");
 		return;
@@ -93,21 +108,6 @@ export function checkDataUnchanged() {
 	} catch {
 		console.log("  Events data unchanged but featured.json missing — AI steps will run.");
 	}
-
-	// Date coherence check: if featured.json is from a different day, flag it
-	// This ensures generate-featured runs even in data-only mode on day boundaries
-	try {
-		const featured = JSON.parse(fs.readFileSync(featuredPath, "utf-8"));
-		const genAt = featured.generatedAt || featured._meta?.generatedAt;
-		if (genAt) {
-			const featuredDay = genAt.substring(0, 10);
-			const todayKey = new Date().toISOString().substring(0, 10);
-			if (featuredDay !== todayKey) {
-				featuredDayStale = true;
-				console.log(`  Featured.json date mismatch: generated ${featuredDay}, today is ${todayKey} — will force regeneration.`);
-			}
-		}
-	} catch {}
 }
 
 /**
