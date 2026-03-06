@@ -1,0 +1,75 @@
+name: Runner Health Check
+
+# Lightweight monitor that runs on GitHub-hosted runner (not self-hosted)
+# Detects when the self-hosted runner is offline and writes status to dashboard
+# Cost: ~10 seconds of ubuntu-latest per run, every 4 hours
+
+on:
+  schedule:
+    - cron: "30 */4 * * *"  # Every 4 hours at :30
+  workflow_dispatch:
+
+jobs:
+  check-health:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check runner and pipeline health
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Check self-hosted runner status
+          RUNNER_STATUS=$(gh api repos/${{ github.repository }}/actions/runners \
+            --jq '.runners[] | select(.name == "serverpi-sportsync") | .status' 2>/dev/null || echo "unknown")
+
+          # Find last successful pipeline run
+          LAST_SUCCESS=$(gh run list --workflow=update-sports-data.yml --status=completed \
+            --json conclusion,updatedAt --limit 20 \
+            --jq '[.[] | select(.conclusion == "success")] | .[0].updatedAt // "unknown"' 2>/dev/null || echo "unknown")
+
+          # Count recent cancelled runs (indicates runner issues)
+          CANCELLED=$(gh run list --workflow=update-sports-data.yml --status=completed \
+            --json conclusion --limit 10 \
+            --jq '[.[] | select(.conclusion == "cancelled")] | length' 2>/dev/null || echo "0")
+
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          cat > docs/data/system-status.json << STATUSEOF
+          {
+            "checkedAt": "${NOW}",
+            "runner": "${RUNNER_STATUS}",
+            "lastSuccessfulPipeline": "${LAST_SUCCESS}",
+            "recentCancelled": ${CANCELLED},
+            "healthy": $([ "$RUNNER_STATUS" = "online" ] && [ "$CANCELLED" -lt 5 ] && echo "true" || echo "false")
+          }
+          STATUSEOF
+
+          # Pretty print for log
+          cat docs/data/system-status.json
+
+          echo ""
+          if [ "$RUNNER_STATUS" != "online" ]; then
+            echo "::warning::Self-hosted runner is $RUNNER_STATUS"
+          fi
+          if [ "$CANCELLED" -ge 5 ]; then
+            echo "::warning::$CANCELLED of last 10 pipeline runs were cancelled"
+          fi
+
+      - name: Commit status
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/data/system-status.json
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update system status [skip ci]"
+            git push
+          fi

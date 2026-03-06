@@ -100,6 +100,11 @@ class Dashboard {
 			.then(m => { this.meta = m; this.renderDateLine(); })
 			.catch(() => {});
 
+		// Fetch system status (runner health from GitHub-hosted monitor)
+		fetch('data/system-status.json?t=' + Date.now()).then(r => r.ok ? r.json() : null)
+			.then(s => { this._systemStatus = s; this.renderDateLine(); })
+			.catch(() => {});
+
 		if (cachedEvents) {
 			this.allEvents = cachedEvents;
 			this.featured = cachedFeatured;
@@ -720,8 +725,34 @@ class Dashboard {
 				parts.push(`Next update in ${h > 0 ? h + 'h ' : ''}${m}m`);
 			}
 			parts.push(`<a href="data/events.ics" class="cal-link" title="Subscribe to calendar">iCal</a>`);
+
+			// Staleness alarm: if data is >3 hours old, show warning banner
+			this.renderStalenessWarning(diffMin);
 		}
 		el.innerHTML = parts.join(' \u00b7 ');
+	}
+
+	renderStalenessWarning(diffMin) {
+		const STALE_THRESHOLD = 180; // 3 hours
+		let banner = document.getElementById('staleness-banner');
+		if (diffMin < STALE_THRESHOLD) {
+			if (banner) banner.remove();
+			return;
+		}
+		if (!banner) {
+			banner = document.createElement('div');
+			banner.id = 'staleness-banner';
+			banner.style.cssText = 'background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;text-align:center;';
+			const brief = document.getElementById('the-brief');
+			if (brief) brief.parentNode.insertBefore(banner, brief);
+		}
+		const hours = Math.round(diffMin / 60);
+		const runnerInfo = this._systemStatus;
+		let msg = `\u26a0\ufe0f Data is ${hours}h old \u2014 pipeline may have stopped`;
+		if (runnerInfo && runnerInfo.runner === 'offline') {
+			msg = `\u26a0\ufe0f Pipeline runner is offline \u2014 data is ${hours}h old`;
+		}
+		banner.textContent = msg;
 	}
 
 	// --- Masthead ---
