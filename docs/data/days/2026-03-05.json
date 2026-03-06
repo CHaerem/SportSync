@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-05",
-  "generatedAt": "2026-03-04T11:01:52.707Z",
+  "generatedAt": "2026-03-06T08:38:13.814Z",
   "events": {
     "upcoming": [
       {
@@ -60,7 +60,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-04T10:59:52.032Z",
+        "enrichedAt": "2026-03-04T18:18:20.183Z",
         "_enrichHash": "dd8d59937a5541de77153547b2949967"
       },
       {
@@ -107,67 +107,235 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-04T10:59:52.032Z",
+        "enrichedAt": "2026-03-04T18:18:20.183Z",
         "_enrichHash": "dc72c13e5fc84272cdd42e287c4426ea"
-      },
-      {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "Crystal Palace at Tottenham Hotspur",
-        "time": "2026-03-05T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Tottenham Hotspur Stadium",
-        "meta": "Premier League",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Tottenham Hotspur",
-        "awayTeam": "Crystal Palace",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table Premier League fixture with no title or relegation stakes.",
-        "summary": "Crystal Palace visit Spurs in a routine Premier League fixture with limited implications for either side.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-04T10:59:52.032Z",
-        "_enrichHash": "b0686628ed2921baadf3b7ccc2b8bd2d",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
     "results": []
   },
-  "matchResults": [],
-  "standings": null,
-  "watchPlan": null,
-  "rssHighlights": null,
-  "meta": {
-    "eventCount": 3,
-    "sportsCovered": [
-      "golf",
-      "football"
+  "matchResults": [
+    {
+      "homeTeam": "Tottenham Hotspur",
+      "awayTeam": "Crystal Palace",
+      "homeScore": 1,
+      "awayScore": 3,
+      "date": "2026-03-05T20:00Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Tottenham Hotspur Stadium",
+      "goalScorers": [
+        {
+          "player": "Dominic Solanke",
+          "team": "Tottenham Hotspur",
+          "minute": "34'"
+        },
+        {
+          "player": "Ismaïla Sarr",
+          "team": "Crystal Palace",
+          "minute": "40'"
+        },
+        {
+          "player": "Jørgen Strand Larsen",
+          "team": "Crystal Palace",
+          "minute": "45'+1'"
+        },
+        {
+          "player": "Ismaïla Sarr",
+          "team": "Crystal Palace",
+          "minute": "45'+7'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
+  "standings": {
+    "premierLeague": [
+      {
+        "position": 1,
+        "team": "Arsenal",
+        "teamShort": "ARS",
+        "played": 30,
+        "won": 20,
+        "drawn": 7,
+        "lost": 3,
+        "gd": 37,
+        "points": 67
+      },
+      {
+        "position": 2,
+        "team": "Manchester City",
+        "teamShort": "MNC",
+        "played": 29,
+        "won": 18,
+        "drawn": 6,
+        "lost": 5,
+        "gd": 32,
+        "points": 60
+      },
+      {
+        "position": 3,
+        "team": "Manchester United",
+        "teamShort": "MAN",
+        "played": 29,
+        "won": 14,
+        "drawn": 9,
+        "lost": 6,
+        "gd": 11,
+        "points": 51
+      },
+      {
+        "position": 4,
+        "team": "Aston Villa",
+        "teamShort": "AVL",
+        "played": 29,
+        "won": 15,
+        "drawn": 6,
+        "lost": 8,
+        "gd": 5,
+        "points": 51
+      },
+      {
+        "position": 5,
+        "team": "Chelsea",
+        "teamShort": "CHE",
+        "played": 29,
+        "won": 13,
+        "drawn": 9,
+        "lost": 7,
+        "gd": 19,
+        "points": 48
+      }
     ],
-    "hasResults": false,
-    "hasStandings": false
+    "golf": {
+      "pga": {
+        "name": "Arnold Palmer Invitational pres. by Mastercard",
+        "leaderboard": [
+          {
+            "position": 1,
+            "positionDisplay": null,
+            "player": "Daniel Berger",
+            "score": "-9",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9025.png"
+          },
+          {
+            "position": 2,
+            "positionDisplay": null,
+            "player": "Collin Morikawa",
+            "score": "-6",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10592.png"
+          },
+          {
+            "position": 3,
+            "positionDisplay": null,
+            "player": "Ludvig Åberg",
+            "score": "-6",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Jhonattan Vegas",
+            "score": "-5",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/1030.png"
+          },
+          {
+            "position": 5,
+            "positionDisplay": null,
+            "player": "Cameron Young",
+            "score": "-5",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4425906.png"
+          }
+        ]
+      }
+    },
+    "f1": [
+      {
+        "position": 0,
+        "driver": "Fernando Alonso",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Lewis Hamilton",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Nico Hülkenberg",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Sergio Pérez",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      },
+      {
+        "position": 0,
+        "driver": "Valtteri Bottas",
+        "team": "",
+        "points": 0,
+        "wins": 0
+      }
+    ]
+  },
+  "watchPlan": null,
+  "rssHighlights": [
+    {
+      "title": "Stavangers nye olje – lokale fotballtalenter",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18535135"
+    },
+    {
+      "title": "Prevc kan skrive historie – har ikke skjedd siden 80-tallet",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/prevc-kan-skrive-historie-_-har-ikke-skjedd-siden-80-tallet-1.17796715"
+    },
+    {
+      "title": "Why Aston Martin and Newey feel \"powerless\" in Honda's F1 struggles",
+      "source": "autosport-f1",
+      "sport": "formula1",
+      "link": "https://www.autosport.com/f1/news/why-aston-martin-and-newey-feel-powerless-amid-hondas-f1-struggles/10802479/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk"
+    },
+    {
+      "title": "– Vi lever i trenernes verden",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18631252"
+    },
+    {
+      "title": "Why F1 Bahrain and Saudi Arabia GPs are unlikely to be replaced if cancelled",
+      "source": "autosport-f1",
+      "sport": "formula1",
+      "link": "https://www.autosport.com/f1/news/why-f1-bahrain-and-saudi-arabia-gps-are-unlikely-to-be-replaced-if-cancelled/10802461/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk"
+    }
+  ],
+  "meta": {
+    "eventCount": 2,
+    "sportsCovered": [
+      "golf"
+    ],
+    "hasResults": true,
+    "hasStandings": true
   }
 }

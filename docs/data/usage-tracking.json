@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-03-04T19:18:55.425Z",
+  "lastUpdated": "2026-03-06T08:38:16.068Z",
   "current": {
     "fiveHour": {
-      "utilization": 1
+      "utilization": 12
     },
     "sevenDay": {
-      "utilization": 71,
-      "resets_at": "1772776800"
+      "utilization": 1,
+      "resets_at": "1773381600"
     },
     "evaluation": {
-      "tier": 2,
-      "tierName": "high",
-      "maxPriority": 1,
-      "model": "claude-sonnet-4-6",
-      "constrained": true,
-      "reason": "high: 5h 1%, 7d 71%",
+      "tier": 0,
+      "tierName": "green",
+      "maxPriority": 3,
+      "model": null,
+      "constrained": false,
+      "reason": "ok",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-03-02T19:19:08.481Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-03-04T19:18:56.072Z"
+    "checkedAt": "2026-03-06T08:38:18.230Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 42489,
+    "featured": 0,
     "discovery": 0,
-    "multiDay": 44161,
-    "runTotal": 86650
+    "multiDay": 0,
+    "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 704036,
-    "weeklyUsed": 7918652,
+    "dailyUsed": 0,
+    "weeklyUsed": 6464353,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 14,
-    "weeklyPct": 32
+    "dailyPct": 0,
+    "weeklyPct": 26
   },
   "sportsyncShare": {
-    "pipelineRuns": 128,
+    "pipelineRuns": 100,
     "autopilotRuns": 0,
-    "totalDurationMs": 26434425
+    "totalDurationMs": 20125934
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,180 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-02-25T19:28:38.835Z",
-      "context": "pipeline",
-      "durationMs": 149598,
-      "tokens": 38376
-    },
-    {
-      "timestamp": "2026-02-25T20:17:40.759Z",
-      "context": "pipeline",
-      "durationMs": 210876,
-      "tokens": 41740
-    },
-    {
-      "timestamp": "2026-02-25T21:17:26.657Z",
-      "context": "pipeline",
-      "durationMs": 178698,
-      "tokens": 40118
-    },
-    {
-      "timestamp": "2026-02-25T22:13:36.407Z",
-      "context": "pipeline",
-      "durationMs": 154030,
-      "tokens": 38864
-    },
-    {
-      "timestamp": "2026-02-25T22:21:43.368Z",
-      "context": "pipeline",
-      "durationMs": 193930,
-      "tokens": 70424
-    },
-    {
-      "timestamp": "2026-02-26T06:30:17.679Z",
-      "context": "pipeline",
-      "durationMs": 241135,
-      "tokens": 74039
-    },
-    {
-      "timestamp": "2026-02-26T07:29:17.315Z",
-      "context": "pipeline",
-      "durationMs": 206911,
-      "tokens": 42275
-    },
-    {
-      "timestamp": "2026-02-26T08:22:16.909Z",
-      "context": "pipeline",
-      "durationMs": 207810,
-      "tokens": 42307
-    },
-    {
-      "timestamp": "2026-02-26T09:24:09.547Z",
-      "context": "pipeline",
-      "durationMs": 165794,
-      "tokens": 39789
-    },
-    {
-      "timestamp": "2026-02-26T10:23:24.686Z",
-      "context": "pipeline",
-      "durationMs": 160770,
-      "tokens": 39606
-    },
-    {
-      "timestamp": "2026-02-26T12:24:00.065Z",
-      "context": "pipeline",
-      "durationMs": 267010,
-      "tokens": 81822
-    },
-    {
-      "timestamp": "2026-02-26T13:30:31.288Z",
-      "context": "pipeline",
-      "durationMs": 179611,
-      "tokens": 40947
-    },
-    {
-      "timestamp": "2026-02-26T13:37:54.586Z",
-      "context": "pipeline",
-      "durationMs": 224553,
-      "tokens": 42855
-    },
-    {
-      "timestamp": "2026-02-26T14:28:17.633Z",
-      "context": "pipeline",
-      "durationMs": 223521,
-      "tokens": 42932
-    },
-    {
-      "timestamp": "2026-02-26T14:55:54.172Z",
-      "context": "pipeline",
-      "durationMs": 211670,
-      "tokens": 42362
-    },
-    {
-      "timestamp": "2026-02-26T15:03:42.600Z",
-      "context": "pipeline",
-      "durationMs": 150940,
-      "tokens": 38728
-    },
-    {
-      "timestamp": "2026-02-26T15:24:06.675Z",
-      "context": "pipeline",
-      "durationMs": 147345,
-      "tokens": 38939
-    },
-    {
-      "timestamp": "2026-02-26T15:33:30.905Z",
-      "context": "pipeline",
-      "durationMs": 208521,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T16:24:12.444Z",
-      "context": "pipeline",
-      "durationMs": 69301,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T17:28:30.143Z",
-      "context": "pipeline",
-      "durationMs": 69522,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T17:51:52.312Z",
-      "context": "pipeline",
-      "durationMs": 68257,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T18:21:12.253Z",
-      "context": "pipeline",
-      "durationMs": 69388,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T19:21:54.918Z",
-      "context": "pipeline",
-      "durationMs": 71413,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T20:15:27.149Z",
-      "context": "pipeline",
-      "durationMs": 68067,
-      "tokens": 42868
-    },
-    {
-      "timestamp": "2026-02-26T21:17:26.026Z",
-      "context": "pipeline",
-      "durationMs": 149831,
-      "tokens": 39770
-    },
-    {
-      "timestamp": "2026-02-26T22:15:24.852Z",
-      "context": "pipeline",
-      "durationMs": 251881,
-      "tokens": 0
-    },
-    {
-      "timestamp": "2026-02-27T06:35:33.579Z",
-      "context": "pipeline",
-      "durationMs": 807708,
-      "tokens": 148313
-    },
-    {
-      "timestamp": "2026-02-27T07:34:15.890Z",
-      "context": "pipeline",
-      "durationMs": 664599,
-      "tokens": 85014
-    },
-    {
-      "timestamp": "2026-02-27T08:27:58.082Z",
-      "context": "pipeline",
-      "durationMs": 682248,
-      "tokens": 85003
-    },
     {
       "timestamp": "2026-02-27T09:21:09.015Z",
       "context": "pipeline",
@@ -819,6 +645,12 @@
       "context": "pipeline",
       "durationMs": 10360,
       "tokens": 86650
+    },
+    {
+      "timestamp": "2026-03-06T08:38:16.068Z",
+      "context": "pipeline",
+      "durationMs": 146447,
+      "tokens": 0
     }
   ]
 }

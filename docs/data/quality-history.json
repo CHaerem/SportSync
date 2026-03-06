@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-27T19:27:59.365Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 28,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 32,
-      "warningCount": 20,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but no matching athlete found in events data; Featured mentions \"After Bod\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"Internazionale\" but no matching athlete found in events data; Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35921,
-        "output": 9221,
-        "cacheCreation": 19549,
-        "cacheRead": 16369,
-        "total": 45142,
-        "costUSD": 0.36090575,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 35887,
-        "output": 6776,
-        "calls": 1,
-        "total": 42663,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 71808,
-        "output": 15997,
-        "calls": 4,
-        "total": 87805,
-        "costUSD": 0.36090575,
-        "realPct": 51
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-27T20:14:14.207Z",
     "editorial": {
       "score": 100,
@@ -7315,6 +7213,95 @@
       "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-06T08:37:26.630Z",
+    "editorial": {
+      "score": 80,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 62,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0.03,
+      "goalScorerCoverage": 1,
+      "footballCount": 33,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 24,
+      "warningCount": 22,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Tonight Athletic Club\" but no matching athlete found in events data; Featured mentions \"Basque\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 41815,
+        "output": 4440,
+        "cacheCreation": 22789,
+        "cacheRead": 19022,
+        "total": 46255,
+        "costUSD": 0.26296225,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": null,
+      "multiDay": {
+        "input": 36179,
+        "output": 7982,
+        "calls": 1,
+        "total": 44161,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 77994,
+        "output": 12422,
+        "calls": 2,
+        "total": 90416,
+        "costUSD": 0.26296225,
+        "realPct": 51
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.714,
+      "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.917,
+      "enrichmentScore": 100,
+      "resultsScore": 88.857
     }
   }
 ]

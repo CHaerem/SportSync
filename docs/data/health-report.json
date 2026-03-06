@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-06T08:30:47.701Z",
+  "generatedAt": "2026-03-06T08:38:14.968Z",
   "eventCount": 43,
   "sportCoverage": {
     "esports": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 29,
-      "previousCount": 26,
-      "delta": 3
+      "previousCount": 29,
+      "delta": 0
     },
     "cycling": {
       "count": 8,
@@ -40,38 +40,38 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 7824,
+      "ageMinutes": 7832,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 2233,
+      "ageMinutes": 2240,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 2291,
-      "stale": true,
-      "dateCoherent": false,
-      "featuredDate": "2026-03-04"
+      "ageMinutes": 1,
+      "stale": false,
+      "dateCoherent": true,
+      "featuredDate": "2026-03-06"
     },
     "ai-quality.json": {
-      "ageMinutes": 2058,
-      "stale": true
+      "ageMinutes": 1,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -105,14 +105,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 2729 minutes old (stale > 240m)",
-      "2 expected day snapshot(s) missing",
-      "Snapshot 2026-03-04: 7 events but events.json has 0",
-      "Snapshot 2026-03-05: 3 events but events.json has 2",
-      "Snapshot 2026-03-11: 1 events but events.json has 5"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -194,32 +187,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 7824 minutes old"
+      "message": "esports.json: data is 7832 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 2233 minutes old"
+      "message": "f1.json: data is 2240 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
       "message": "esports: data retained 64 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 2291 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 2058 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "featured_date_mismatch",
-      "message": "featured.json is from 2026-03-04 but today is 2026-03-06 — briefing shows wrong day's content"
     },
     {
       "severity": "warning",
@@ -230,31 +208,6 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (esports)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 2729 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "2 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-04: 7 events but events.json has 0"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-05: 3 events but events.json has 2"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-11: 1 events but events.json has 5"
     },
     {
       "severity": "info",
@@ -282,9 +235,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-06T08:30:47.770Z",
+    "computedAt": "2026-03-06T08:38:15.078Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -309,7 +262,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 2 critical, 12 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }

@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-03-04T22:12:56.464Z",
+  "generatedAt": "2026-03-06T08:37:26.624Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": null,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 111690,
+    "generationMs": 87833,
     "tokenUsage": {
-      "input": 36198,
-      "output": 6251,
-      "cacheCreation": 36195,
-      "cacheRead": 0,
-      "total": 42449,
-      "costUSD": 0.38250874999999995,
+      "input": 41815,
+      "output": 4440,
+      "cacheCreation": 22789,
+      "cacheRead": 19022,
+      "total": 46255,
+      "costUSD": 0.26296225,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 80,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 75,
+      "pickCount": 1,
+      "avgScore": 62,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.03,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 31
+      "footballCount": 33
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 3% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -106,13 +106,13 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 36179,
-      "output": 7982,
+      "input": 41815,
+      "output": 4440,
       "calls": 1,
-      "total": 44161,
+      "total": 46255,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-04T06:21:59.326Z"
+    "lastRun": "2026-03-06T08:37:26.899Z"
   }
 }
