@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-06T08:37:26.624Z",
+  "generatedAt": "2026-03-06T14:21:18.017Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 87833,
+    "generationMs": 66181,
     "tokenUsage": {
-      "input": 41815,
-      "output": 4440,
-      "cacheCreation": 22789,
-      "cacheRead": 19022,
-      "total": 46255,
-      "costUSD": 0.26296225,
+      "input": 40735,
+      "output": 2931,
+      "cacheCreation": 21598,
+      "cacheRead": 19133,
+      "total": 43666,
+      "costUSD": 0.21784900000000001,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 62,
+      "pickCount": 3,
+      "avgScore": 68,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,29 +51,29 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.03,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 33
     },
     "issues": [
-      "Only 3% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
-      "totalEvents": 40,
+      "totalEvents": 43,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 40,
+      "totalEvents": 43,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +83,25 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 5,
     "failedBatches": 0,
-    "totalEvents": 40,
+    "totalEvents": 43,
     "skipStats": {
-      "total": 40,
-      "unchanged": 40,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 43,
+      "unchanged": 38,
+      "enriched": 5,
+      "skipRate": 0.88
     },
-    "tokensPerEvent": 0,
-    "hintsApplied": [],
+    "tokensPerEvent": 3179,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 14477,
+      "output": 1420,
+      "calls": 1,
+      "total": 15897,
+      "costUSD": 0.12597750000000002,
       "tracked": true,
       "estimated": false
     }
@@ -125,7 +127,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-06T10:14:03.543Z",
+    "lastRun": "2026-03-06T14:16:29.259Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1

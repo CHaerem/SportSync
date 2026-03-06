@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-02-27T20:14:14.207Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 27,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 33,
-      "warningCount": 21,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Milano\" but no matching athlete found in events data; Featured mentions \"Cortina\" but no matching athlete found in events data; Featured mentions \"Bodo\" but no matching athlete found in events data; Featured mentions \"Glimt\" but no matching athlete found in events data; Featured mentions \"Champions League\" but no matching athlete found in events data; Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 30197,
-        "output": 1191,
-        "calls": 1,
-        "total": 31388,
-        "costUSD": 0.12438075000000001,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35944,
-        "output": 9987,
-        "cacheCreation": 17497,
-        "cacheRead": 18444,
-        "total": 45931,
-        "costUSD": 0.36826824999999996,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 35887,
-        "output": 6776,
-        "calls": 1,
-        "total": 42663,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 102028,
-        "output": 17954,
-        "calls": 5,
-        "total": 119982,
-        "costUSD": 0.492649,
-        "realPct": 64
-      }
-    },
-    "quota": {
-      "tier": 1,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-27T21:20:02.308Z",
     "editorial": {
       "score": 93,
@@ -7302,6 +7200,108 @@
       "sportDiversity": 0.917,
       "enrichmentScore": 100,
       "resultsScore": 88.857
+    }
+  },
+  {
+    "timestamp": "2026-03-06T14:21:18.023Z",
+    "editorial": {
+      "score": 80,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.75,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 68,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 33,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 30,
+      "warningCount": 27,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Australian GP — Leclerc led P1\" which may not match any event; Featured mentions \"Leclerc\" but no matching athlete found in events data; Featured mentions \"Aston Martin\" but no matching athlete found in events data; Featured mentions \"Honda\" but no matching athlete found in events data; Featured mentions \"Race Sunday\" but no matching athlete found in events data; Featured mentions \"Bay Hill\" but no matching athlete found in events data; Featured mentions \"Berger\" but no matching athlete found in events data; Featured mentions \"The Arnold Palmer\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 14477,
+        "output": 1420,
+        "calls": 1,
+        "total": 15897,
+        "costUSD": 0.12597750000000002,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 40735,
+        "output": 2931,
+        "cacheCreation": 21598,
+        "cacheRead": 19133,
+        "total": 43666,
+        "costUSD": 0.21784900000000001,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 41815,
+        "output": 4440,
+        "calls": 1,
+        "total": 46255,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 97027,
+        "output": 8791,
+        "calls": 4,
+        "total": 105818,
+        "costUSD": 0.34382650000000003,
+        "realPct": 56
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 93.286,
+      "mustWatchCoverage": 0.857,
+      "sportDiversity": 0.881,
+      "enrichmentScore": 100,
+      "resultsScore": 88.714
     }
   }
 ]
