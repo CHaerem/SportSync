@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-07",
-  "generatedAt": "2026-03-07T18:14:07.112Z",
+  "generatedAt": "2026-03-07T22:12:02.301Z",
   "events": {
     "upcoming": [
       {
@@ -60,7 +60,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-07T18:12:51.179Z",
+        "enrichedAt": "2026-03-07T22:10:32.279Z",
         "_enrichHash": "dd8d59937a5541de77153547b2949967"
       },
       {
@@ -107,103 +107,71 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-07T18:12:51.179Z",
+        "enrichedAt": "2026-03-07T22:10:32.279Z",
         "_enrichHash": "dc72c13e5fc84272cdd42e287c4426ea"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Barcelona at Athletic Club",
-        "time": "2026-03-07T20:00:00.000Z",
-        "endTime": null,
-        "venue": "San Mamés",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Athletic Club",
-        "awayTeam": "Barcelona",
-        "isFavorite": true,
-        "importance": 5,
-        "importanceReason": "Fan-favorite Barcelona travel to fortress San Mamés in a must-win title clash.",
-        "summary": "Barcelona face their toughest away test of the season at San Mamés — Athletic Club's passionate crowd and pressing style make this a genuine title-race flashpoint for the viewer's favorite team.",
-        "tags": [
-          "must-watch",
-          "title-race",
-          "classic-matchup",
-          "rivalry"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-03-07T18:12:51.180Z",
-        "_enrichHash": "edab95e0aa31329ca5840b00c9c0effa",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 0.7
       }
     ],
-    "results": [
-      {
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "title": "Strade Bianche 2026",
-        "time": "2026-03-07T12:00:00+01:00",
-        "endTime": "2026-03-07T17:00:00+01:00",
-        "venue": "Siena, Tuscany, Italy",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Eurosport",
-            "type": "tv"
-          },
-          {
-            "platform": "Discovery+",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Jonas Abrahamsen"
-          },
-          {
-            "name": "Markus Hoelgaard"
-          }
-        ],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "context": "cycling-classics-2026",
-        "importance": 4,
-        "importanceReason": "Prestigious gravel classic with two Norwegian riders competing.",
-        "summary": "Strade Bianche's iconic Tuscan gravel roads host Jonas Abrahamsen and Markus Hoelgaard among the world's best one-day specialists — a brutally beautiful early-season classic.",
-        "tags": [
-          "must-watch",
-          "classic-matchup",
-          "norwegian-player",
-          "major"
-        ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-07T18:12:51.179Z",
-        "_enrichHash": "82516a622108441f95ab4a52bb94ea14"
-      }
-    ]
+    "results": []
   },
   "matchResults": [
+    {
+      "homeTeam": "Athletic Club",
+      "awayTeam": "Barcelona",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-03-07T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "San Mamés",
+      "goalScorers": [
+        {
+          "player": "Lamine Yamal",
+          "team": "Barcelona",
+          "minute": "68'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": true
+    },
+    {
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Real Sociedad",
+      "homeScore": 3,
+      "awayScore": 2,
+      "date": "2026-03-07T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Riyadh Air Metropolitano",
+      "goalScorers": [
+        {
+          "player": "Alexander Sørloth",
+          "team": "Atlético Madrid",
+          "minute": "5'"
+        },
+        {
+          "player": "Carlos Soler",
+          "team": "Real Sociedad",
+          "minute": "9'"
+        },
+        {
+          "player": "Nicolás González",
+          "team": "Atlético Madrid",
+          "minute": "67'"
+        },
+        {
+          "player": "Mikel Oyarzabal",
+          "team": "Real Sociedad",
+          "minute": "68'"
+        },
+        {
+          "player": "Nicolás González",
+          "team": "Atlético Madrid",
+          "minute": "81'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
     {
       "homeTeam": "Levante",
       "awayTeam": "Girona",
@@ -337,6 +305,15 @@
           {
             "position": 2,
             "positionDisplay": null,
+            "player": "Cameron Young",
+            "score": "-9",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4425906.png"
+          },
+          {
+            "position": 3,
+            "positionDisplay": null,
             "player": "Akshay Bhatia",
             "score": "-8",
             "today": "-",
@@ -344,31 +321,22 @@
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4419142.png"
           },
           {
-            "position": 3,
-            "positionDisplay": null,
-            "player": "Sahith Theegala",
-            "score": "-7",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10980.png"
-          },
-          {
             "position": 4,
             "positionDisplay": null,
-            "player": "Collin Morikawa",
+            "player": "Sepp Straka",
             "score": "-7",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10592.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/8961.png"
           },
           {
             "position": 5,
             "positionDisplay": null,
-            "player": "Ludvig Åberg",
+            "player": "Min Woo Lee",
             "score": "-7",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4410932.png"
           }
         ]
       }
@@ -414,37 +382,13 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-barcelona-at-athletic-club-2026-03-07t20:00:00.000z",
-        "title": "Barcelona at Athletic Club",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-07T20:00:00.000Z",
-        "timeLabel": "7 Mar, 21:00",
-        "relativeStart": "In 1h 47m",
-        "importance": 5,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 140,
-        "reasons": [
-          "Must-watch event",
-          "Starting soon"
-        ]
-      },
-      {
         "id": "football-elche-at-villarreal-2026-03-08t13:00:00.000z",
         "title": "Elche at Villarreal",
         "sport": "football",
         "tournament": "La Liga",
         "time": "2026-03-08T13:00:00.000Z",
         "timeLabel": "8 Mar, 14:00",
-        "relativeStart": "In 18h 47m",
+        "relativeStart": "In 14h 49m",
         "importance": 2,
         "norwegian": false,
         "streaming": [
@@ -467,7 +411,30 @@
         "tournament": "La Liga",
         "time": "2026-03-08T15:15:00.000Z",
         "timeLabel": "8 Mar, 16:15",
-        "relativeStart": "In 21h 2m",
+        "relativeStart": "In 17h 4m",
+        "importance": 2,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 44,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-rayo-vallecano-at-sevilla-2026-03-08t17:30:00.000z",
+        "title": "Rayo Vallecano at Sevilla",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-03-08T17:30:00.000Z",
+        "timeLabel": "8 Mar, 18:30",
+        "relativeStart": "In 19h 19m",
         "importance": 2,
         "norwegian": false,
         "streaming": [
@@ -484,46 +451,44 @@
         ]
       }
     ],
-    "headline": "Strade Bianche fires the starting gun on Spring Classics"
+    "headline": "Barcelona edge Bilbao — Wednesday's Norwegian football history is three days away"
   },
   "rssHighlights": [
     {
-      "title": "Viking til kvartfinale etter omdiskutert annullering",
-      "source": "tv2-sport",
+      "title": "City videre uten Haaland",
+      "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18635508"
+      "link": "https://www.nrk.no/sport/city-videre-uten-haaland-1.17799011"
     },
     {
-      "title": "Viking til kvartfinale etter omdiskutert annullering",
+      "title": "Guttormsen sjette best gjennom tidene",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/guttormsen-sjette-best-gjennom-tidene-1.17799034"
+    },
+    {
+      "title": "Casper Ruud videre i Indian Wells – klar seier mot Sjevtsjenko",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/casper-ruud-videre-i-indian-wells-_-klar-seier-mot-sjevtsjenko-1.17799033"
+    },
+    {
+      "title": "Utrolig drama da Wrexham røk ut av FA-cupen",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18636313"
+    },
+    {
+      "title": "Utrolig drama da Wrexham røk ut av FA-cupen",
       "source": "tv2-fotball",
       "sport": "football",
-      "link": "https://www.tv2.no/a/18635508"
-    },
-    {
-      "title": "Viking til kvartfinale i cupen",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/rogaland/viking-til-kvartfinale-i-cupen-1.17798851"
-    },
-    {
-      "title": "Sander Eitrem med superløp i VM",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/sander-eitrem-med-superlop-i-vm-1.17798794"
-    },
-    {
-      "title": "Rushfeldt Deila: – Jeg blir redd",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18633293"
+      "link": "https://www.tv2.no/a/18636313"
     }
   ],
   "meta": {
-    "eventCount": 4,
+    "eventCount": 2,
     "sportsCovered": [
-      "golf",
-      "cycling",
-      "football"
+      "golf"
     ],
     "hasResults": true,
     "hasStandings": true

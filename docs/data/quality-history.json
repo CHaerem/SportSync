@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-28T02:00:00.719Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 87,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 32,
-      "warningCount": 20,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Biathlon Men\" but no matching athlete found in events data; Featured mentions \"Wolves\" but no matching athlete found in events data; Featured mentions \"Emirates\" but no matching athlete found in events data; Featured mentions \"Blues\" but no matching athlete found in events data; Featured shows \"16:10\" for \"Biathlon World Cup — Women's 15km Individual (Kontiolahti)\" but events.json has 16:05. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": null,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-28T02:04:32.348Z",
     "editorial": {
       "score": 97,
@@ -7351,6 +7286,101 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 89.286,
+      "mustWatchCoverage": 0.857,
+      "sportDiversity": 0.857,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-07T22:12:01.871Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 44,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 27,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 26,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Bay Hill\" but no matching athlete found in events data; Featured mentions \"Berger\" but no matching athlete found in events data; Featured mentions \"Signature Event\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 40478,
+        "output": 3291,
+        "cacheCreation": 21573,
+        "cacheRead": 18901,
+        "total": 43769,
+        "costUSD": 0.22657675,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": null,
+      "total": {
+        "input": 40478,
+        "output": 3291,
+        "calls": 2,
+        "total": 43769,
+        "costUSD": 0.22657675,
+        "realPct": 100
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 90.143,
       "mustWatchCoverage": 0.857,
       "sportDiversity": 0.857,
       "enrichmentScore": 100,
