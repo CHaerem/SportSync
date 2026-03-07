@@ -376,6 +376,7 @@ class Dashboard {
 				chess: 'var(--sport-chess)',
 				esports: 'var(--sport-esports)',
 				olympics: 'var(--sport-olympics)',
+				cycling: 'var(--sport-cycling)',
 			};
 			const dotsHtml = sports.slice(0, 4).map(s =>
 				`<span class="day-dot" style="background:${sportVars[s] || 'var(--muted)'}"></span>`
@@ -792,10 +793,11 @@ class Dashboard {
 		const sportVars = {
 			football: 'var(--sport-football)', golf: 'var(--sport-golf)', tennis: 'var(--sport-tennis)',
 			formula1: 'var(--sport-f1)', chess: 'var(--sport-chess)', esports: 'var(--sport-esports)', olympics: 'var(--sport-olympics)',
+			cycling: 'var(--sport-cycling)',
 		};
 
-		let html = '<div class="pills-scroll">';
-		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="">All</button>`;
+		let html = '<div class="pills-scroll" role="navigation" aria-label="Sport filters">';
+		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports">All</button>`;
 		for (const sportId of activeSports) {
 			const sc = SPORT_CONFIG.find(s => s.id === sportId);
 			if (!sc) continue;
@@ -1538,7 +1540,7 @@ class Dashboard {
 		// Sort events by sport preference, then chronologically within sport.
 		// Engagement clicks take priority; fallback weights from user preferences
 		// ensure sensible ordering for new users with no engagement data.
-		const SPORT_WEIGHT = { football: 3, golf: 3, tennis: 2, formula1: 2, chess: 2, esports: 1, olympics: 3 };
+		const SPORT_WEIGHT = { football: 3, golf: 3, tennis: 2, formula1: 2, chess: 2, esports: 1, olympics: 3, cycling: 2 };
 		const engagement = this.preferences ? this.preferences.getEngagement() : {};
 		const sportClicks = {};
 		for (const [sport, data] of Object.entries(engagement)) {
