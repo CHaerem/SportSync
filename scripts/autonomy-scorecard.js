@@ -126,8 +126,9 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 		"quota_api_unavailable",   // heuristic J: upstream API scope limitation (uncontrollable)
 		"stale_data",              // loop 7+8: fetcher returned empty, sync-configs retains cached data
 		"chronic_data_retention",  // loop 7: repeated empty fetches, discovery loop re-researches
-		"streaming_low_match_rate",// loop 12: alias mining and trend tracking address this
-		"streaming_coverage_gap",  // loop 12: streaming verification tracks coverage gaps; alias mining addresses root cause
+		"streaming_low_match_rate",        // loop 12: alias mining and trend tracking address this
+		"streaming_match_rate_declining",  // loop 12: relevantMatchRate now scopes to covered leagues; rate noise from uncovered leagues is expected
+		"streaming_coverage_gap",          // loop 12: streaming verification tracks coverage gaps; alias mining addresses root cause
 		"invisible_events",        // loop 7: past events pruned by sync-configs on next cycle
 		"low_confidence_config",   // loop 8: verification loop re-verifies, discovery re-researches
 		"component_unresolvable",  // loop 3: featured quality gates monitor and adapt prompts

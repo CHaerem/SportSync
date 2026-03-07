@@ -185,6 +185,60 @@ describe("enrichStreaming", () => {
 		expect(log.totalEvents).toBe(2);
 	});
 
+	it("computes relevantMatchRate scoped to covered leagues", async () => {
+		// 2 PL events and 2 tvkampen entries:
+		// - 1 PL entry (relevant, matched)
+		// - 1 Bundesliga entry (not relevant — no Bundesliga event in our events.json)
+		// relevantMatchRate should be 1/1 = 1.0 (not 1/2 = 0.5 as plain matchRate would suggest)
+		const events = [
+			makeEvent("Arsenal", "Liverpool", todayAtUTC(20), { tournament: "Premier League" }),
+			makeEvent("Chelsea", "Newcastle", todayAtUTC(15), { tournament: "Premier League" }),
+		];
+
+		const listingHtml = makeListingHtml(
+			makeEventBlock("8001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), league: "Premier League", channelClasses: ["tv2play"] }),
+			makeEventBlock("8002", { home: "Bayern München", away: "Dortmund", time: "18:30", league: "Bundesliga", channelClasses: ["viaplay"] }),
+		);
+
+		const mockFetcher = vi.fn().mockImplementation((url) => {
+			if (url.includes("/date/")) return Promise.resolve(listingHtml);
+			return Promise.resolve("<div></div>");
+		});
+
+		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
+
+		// relevantMatchRate must be present and not penalize the score for Bundesliga entries
+		expect(log).toHaveProperty("relevantMatchRate");
+		expect(log).toHaveProperty("relevantTvkEntries");
+		// Bundesliga entry should NOT count as relevant (no Bundesliga event in events.json)
+		// PL entry IS relevant — and it matched
+		expect(log.relevantTvkEntries).toBe(1);
+		expect(log.relevantMatchRate).toBe(1);
+		// matchRate (old metric) would be 1/2 = 0.5 since only 1 of 2 events matched
+		expect(log.matchRate).toBe(0.5);
+	});
+
+	it("sets relevantMatchRate to null when no tvkampen leagues match our tournaments", async () => {
+		// Our events are all PL, tvkampen only has Bundesliga
+		const events = [
+			makeEvent("Arsenal", "Liverpool", todayAtUTC(20), { tournament: "Premier League" }),
+		];
+
+		const listingHtml = makeListingHtml(
+			makeEventBlock("9001", { home: "Bayern München", away: "Dortmund", time: "18:30", league: "Bundesliga", channelClasses: ["viaplay"] }),
+		);
+
+		const mockFetcher = vi.fn().mockImplementation((url) => {
+			if (url.includes("/date/")) return Promise.resolve(listingHtml);
+			return Promise.resolve("<div></div>");
+		});
+
+		const { log } = await enrichStreaming({ events, fetcher: mockFetcher });
+
+		expect(log.relevantTvkEntries).toBe(0);
+		expect(log.relevantMatchRate).toBeNull();
+	});
+
 	it("handles empty events array", async () => {
 		const mockFetcher = vi.fn();
 		const { events: result, log } = await enrichStreaming({ events: [], fetcher: mockFetcher });

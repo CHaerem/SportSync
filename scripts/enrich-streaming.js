@@ -101,6 +101,23 @@ export async function enrichStreaming({ events, fetcher }) {
 		? Number((matched.length / footballEvents.length).toFixed(2))
 		: 0;
 
+	// Compute relevantMatchRate: fraction of tvkampen entries (in leagues we cover) that were matched.
+	// This avoids penalizing low match rate when tvkampen covers leagues (Bundesliga, Serie A, etc.)
+	// that the pipeline simply doesn't track. The denominator is tvkampen entries whose league
+	// substring-matches at least one tournament from our football events.
+	const ourTournaments = footballEvents.map((e) => (e.tournament || "").toLowerCase()).filter(Boolean);
+	const relevantTvkEntries = tvkEntries.filter((tvk) => {
+		const tvkLeague = (tvk.league || "").toLowerCase();
+		if (!tvkLeague) return false;
+		return ourTournaments.some(
+			(t) => tvkLeague.includes(t) || t.includes(tvkLeague)
+		);
+	});
+	log.relevantTvkEntries = relevantTvkEntries.length;
+	log.relevantMatchRate = relevantTvkEntries.length > 0
+		? Number((matched.length / relevantTvkEntries.length).toFixed(2))
+		: null; // null = not computable (no overlapping leagues found)
+
 	// Track unmatched tvkampen entries for debugging / alias improvement
 	const matchedUrls = new Set(matched.map((m) => m.tvkEntry.matchUrl));
 	log.unmatched = tvkEntries
@@ -146,6 +163,7 @@ export async function enrichStreaming({ events, fetcher }) {
 	history.runs.push({
 		timestamp: now.toISOString(),
 		matchRate: log.matchRate,
+		relevantMatchRate: log.relevantMatchRate,
 		listingsFound: log.listingsFound,
 		eventsEnriched: log.eventsEnriched,
 		matchesSucceeded: log.matchesSucceeded,

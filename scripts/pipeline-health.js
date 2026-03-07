@@ -350,23 +350,29 @@ export function generateHealthReport(options = {}) {
 
 	// 6a. Streaming enrichment health (enhanced with verification history)
 	const { streamingEnrichment = null, streamingVerificationHistory = null } = options;
-	const streamingHealth = { present: false, tvkampenReachable: false, matchRate: 0, eventsEnriched: 0, trend: null, pendingAliasSuggestions: 0 };
+	const streamingHealth = { present: false, tvkampenReachable: false, matchRate: 0, relevantMatchRate: null, eventsEnriched: 0, trend: null, pendingAliasSuggestions: 0 };
 	if (streamingEnrichment) {
 		streamingHealth.present = true;
 		streamingHealth.tvkampenReachable = streamingEnrichment.tvkampenReachable === true;
 		streamingHealth.matchRate = streamingEnrichment.matchRate || 0;
+		// relevantMatchRate scopes to tvkampen entries for leagues we actually cover — avoids false
+		// alarms when tvkampen lists Bundesliga/Serie A/etc. that the pipeline doesn't track.
+		streamingHealth.relevantMatchRate = streamingEnrichment.relevantMatchRate ?? null;
 		streamingHealth.eventsEnriched = streamingEnrichment.eventsEnriched || 0;
+		// Use relevantMatchRate for health warnings when available; fall back to matchRate.
+		const rateForCheck = streamingHealth.relevantMatchRate ?? streamingHealth.matchRate;
 		if (!streamingHealth.tvkampenReachable) {
 			issues.push({
 				severity: "warning",
 				code: "tvkampen_unavailable",
 				message: "tvkampen.com was unreachable — streaming enrichment skipped",
 			});
-		} else if (streamingHealth.matchRate < 0.5 && (streamingEnrichment.matchesAttempted || 0) >= 3) {
+		} else if (rateForCheck < 0.5 && (streamingEnrichment.matchesAttempted || 0) >= 3
+			&& (streamingEnrichment.relevantTvkEntries ?? streamingEnrichment.matchesAttempted) >= 3) {
 			issues.push({
 				severity: "warning",
 				code: "streaming_low_match_rate",
-				message: `Streaming enrichment match rate is ${Math.round(streamingHealth.matchRate * 100)}% (${streamingEnrichment.matchesSucceeded}/${streamingEnrichment.matchesAttempted}) — team alias table may need updates`,
+				message: `Streaming enrichment match rate is ${Math.round(rateForCheck * 100)}% (${streamingEnrichment.matchesSucceeded}/${streamingEnrichment.relevantTvkEntries ?? streamingEnrichment.matchesAttempted}) — team alias table may need updates`,
 			});
 		}
 	}
@@ -375,7 +381,8 @@ export function generateHealthReport(options = {}) {
 	const svhRuns = Array.isArray(streamingVerificationHistory?.runs) ? streamingVerificationHistory.runs : [];
 	if (svhRuns.length >= 3) {
 		const recent3 = svhRuns.slice(-3);
-		const rates = recent3.map((r) => r.matchRate ?? 0);
+		// Prefer relevantMatchRate when available; fall back to matchRate for older history entries.
+		const rates = recent3.map((r) => r.relevantMatchRate ?? r.matchRate ?? 0);
 		const declining = rates.every((r, i) => i === 0 || r < rates[i - 1]);
 		const rising = rates.every((r, i) => i === 0 || r > rates[i - 1]);
 		streamingHealth.trend = declining ? "declining" : rising ? "rising" : "stable";
