@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-07T06:18:51.597Z",
+  "generatedAt": "2026-03-07T10:11:00.730Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 43,
@@ -72,7 +72,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 83,
-    "issueCount": 13
+    "issueCount": 10
   },
   "findings": [
     {
@@ -172,11 +172,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Berger\" but no matching athlete found in events data"
     },
@@ -202,9 +197,9 @@
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 24,
     "critical": 0,
-    "warning": 23,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
