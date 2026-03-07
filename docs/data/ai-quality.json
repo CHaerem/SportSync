@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-07T14:12:36.263Z",
+  "generatedAt": "2026-03-07T18:14:06.643Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 66226,
+    "blockCount": 8,
+    "generationMs": 74688,
     "tokenUsage": {
-      "input": 41135,
-      "output": 3258,
-      "cacheCreation": 21960,
-      "cacheRead": 19171,
-      "total": 44393,
-      "costUSD": 0.2283055,
+      "input": 19116,
+      "output": 3707,
+      "cacheCreation": 19113,
+      "cacheRead": 0,
+      "total": 22823,
+      "costUSD": 0.21214625,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 87,
+      "avgScore": 76,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 30
+      "footballCount": 26
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 42,
+      "totalEvents": 40,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 42,
+      "totalEvents": 40,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 42,
+    "totalEvents": 40,
     "skipStats": {
-      "total": 42,
-      "unchanged": 42,
+      "total": 40,
+      "unchanged": 40,
       "enriched": 0,
       "skipRate": 1
     },
@@ -114,7 +114,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-07T14:08:17.493Z",
+    "lastRun": "2026-03-07T18:09:40.565Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
