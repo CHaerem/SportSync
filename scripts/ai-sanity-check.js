@@ -161,7 +161,7 @@ function runDeterministicChecks(data) {
 
 		// Words that are not athlete names — exact-phrase exclusions (single words and known
 		// multi-word phrases captured as a whole by the regex)
-		const NON_ATHLETE_WORDS = new Set(["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today", "Meazza", "Bernabeu", "Bernabéu", "Anfield", "Wembley", "Emirates", "Etihad", "Stamford", "Allianz", "Maradona", "Olimpico", "Mestalla", "Soldeu"]);
+		const NON_ATHLETE_WORDS = new Set(["The", "Norway", "Norwegian", "Olympic", "Olympics", "World", "Cup", "London", "Paris", "Milan", "Italy", "Barcelona", "Arsenal", "Brentford", "Madrid", "Premier", "League", "Champions", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "This", "Week", "Gold", "Today", "Meazza", "Bernabeu", "Bernabéu", "Anfield", "Wembley", "Emirates", "Etihad", "Stamford", "Allianz", "Maradona", "Olimpico", "Mestalla", "Soldeu", "Melbourne", "Australian", "Bay", "Hill", "Bahrain", "Jeddah", "Monaco", "Silverstone", "Spa", "Monza", "Singapore", "Suzuka", "Interlagos", "Albert"]);
 		// Individual words that appear in venue/stadium names — used to exclude multi-word
 		// venue phrases like "Camp Nou", "At Camp Nou", "Old Trafford", "San Siro", etc.
 		// When ANY word in a multi-word capitalized match is in this set, skip the whole phrase.
