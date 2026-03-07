@@ -182,20 +182,30 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | F. Opportunity (incl. Fetcher Waste) | 2 | 0 | 0% | Winter sports + cycling identified, not yet implemented |
 | G. Dashboard UX | 5 | 5 | 100% | a11y, PL table, watch-plan UI, insights cards |
 | H. Capability Seed | 2 | 2 | 100% | generate-insights, event fingerprinting |
-| I. User Feedback | 0 | 0 | - | No feedback issues submitted yet |
+| I. User Feedback | 2 | 2 | 100% | FIFA WC sport-request #121, Copa del Rey logo #122 |
 | K. Vision-Guided | 3 | 2 | 67% | Favorites evolution, insights pipeline |
 
 ### Pillar Progress
 
 | Pillar | Estimated Maturity | Last Advanced | Notes |
 |--------|-------------------|---------------|-------|
-| 1. Data | ~95% | 2026-02-27 | Learned scraper system (Liquipedia CS2 recipe), smart bracket refresh, esports staleness addressed |
-| 2. Code | ~92% | 2026-03-03 | 2239 tests across 70 files, architecture threshold adjusted, league config entries added |
+| 1. Data | ~95% | 2026-03-07 | Streaming match rate re-scoped (relevantMatchRate filters untracked leagues), league config gaps closed |
+| 2. Code | ~93% | 2026-03-07 | 2457 tests across 79 files, streaming metric refinement, known-managed codes updated |
 | 3. Capabilities | ~85% | 2026-03-04 | FIFA World Cup 2026 config added (user sport-request #121), Copa del Rey logo |
 | 4. Personalization | ~65% | 2026-03-04 | Liverpool + 100 Thieves added to favorites (user feedback #122), FIFA WC favoriteTeamConnections |
-| 5. Quality | ~100% | 2026-02-27 | 12/12 loops restored (pipelineHealth + snapshotHealth now quota-aware), 4 new managed codes |
+| 5. Quality | ~100% | 2026-03-07 | 11/11 loops closed, streaming match rate noise reduced, cycling UX gaps fixed |
 
 ### Run History Insights
+
+**Run 2026-03-07 (Run 19):** 3 tasks via 3 parallel subagents (code-agent x2 + ux-agent) + 2 background scouts (ux-agent + data-agent). No pending tasks or user feedback — pure scouting run.
+- code-agent #1: Added 3 league-config entries (Grenke Chess, Cycling Grand Tours, FIFA WC 2026). Fixes unmapped_leagues health warning. Direct-to-main.
+- ux-agent: Fixed cycling UX gaps — added cycling to sportVars day-nav dot colors, SPORT_WEIGHT sort map, and --sport-cycling CSS variable. Added aria-labels (sport pills navigation + "All" button) to fix persistent low_aria_labels UX score issue. Direct-to-main.
+- code-agent #2: Re-scoped streaming match rate — added relevantMatchRate metric that filters tvkampen entries to only leagues covered by events.json. Updated pipeline-health.js to use relevant rate for warnings. Added streaming_match_rate_declining to KNOWN_MANAGED_CODES. 2 new tests. Direct-to-main.
+- data-agent (scout): Investigated streaming 24% match rate root cause — NOT an alias problem, tvkampen covers 6+ leagues (Bundesliga, Serie A, FA Cup, etc.) the pipeline has no events for. The 13 unmatched entries have no corresponding events. Alias additions would have zero impact.
+- ux-agent (scout): Found 8 UX improvement opportunities. Top picks: cycling day-nav dots (executed), aria-labels (executed), importanceReason surfacing, golf tee time + position crossref.
+- **Key insight**: When a metric declines but investigation reveals it's measuring the wrong scope, refining the metric is more valuable than trying to fix the underlying data. The streaming match rate was accurate but misleading — it penalized the pipeline for not covering every league on Norwegian TV.
+- User-visible / infrastructure ratio: ~60% / 40% (3 UX fixes + 1 league config = user-visible; 1 metric refinement = infrastructure).
+- 2457 tests pass across 79 files.
 
 **Run 2026-03-04 (Run 18):** 1 pre-flight test repair + 2 user feedback issues processed. Parallel data-agent + ux-agent.
 - Pre-flight: Fixed github-sync-restore.test.js — `window.navigator` was undefined in Node.js test environment, causing 5 failures in `_isStandalone` tests. Fix: add `globalThis.navigator = {}` to test setup. Tests: 2281/2281.
@@ -389,6 +399,10 @@ Keep this section near the top so the autopilot continuously improves user-facin
 - [BLOCKED] reverted — depends on feedback UI | Track recommendation conversion signals — Add lightweight client-side telemetry counters for `watch-plan` item clicks and streaming-link opens.
 
 - [DONE] (already implemented server-side) Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`.
+
+- [PENDING] [FEATURE] **Golf tee time cards: cross-reference standings position** — Norwegian player tee time cards in `renderSportGroupCard()` show "Viktor Hovland — 16:20" but don't include current leaderboard position. The standings data is already loaded (`this.standings.golf.pga.leaderboard`). Cross-reference player name to show "Viktor Hovland — T36 (E) — tees 16:20". Location: `docs/js/dashboard.js` lines 1847-1858. Pillar: personalization + UX.
+
+- [PENDING] [MAINTENANCE] **Surface importanceReason on must-watch collapsed cards** — Events have `importanceReason` (e.g. "Fan-favorite Barcelona travel to fortress San Mamés") but it's hidden until the user taps to expand. For importance >= 4 events, show the reason as a subtitle in the collapsed row when no summary is present. Location: `docs/js/dashboard.js` `renderRow()` around line 2512. Pillar: quality + UX.
 
 ---
 

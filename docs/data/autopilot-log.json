@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-07",
+      "task": "Scouting run: fix unmapped leagues + cycling UX gaps + streaming match rate metric refinement",
+      "outcome": "completed",
+      "pr": null,
+      "details": "Run 19: Pure scouting run — 0 pending tasks, 0 user feedback. 3 tasks executed via parallel subagents + 2 background scouts. (1) code-agent: Added 3 league-config entries (Grenke Chess, Cycling Grand Tours, FIFA WC 2026) — fixes unmapped_leagues health warning. (2) ux-agent: Fixed cycling UX gaps — day-nav dot colors, SPORT_WEIGHT sort, --sport-cycling CSS var, aria-labels on sport pills navigation. (3) code-agent: Re-scoped streaming match rate — added relevantMatchRate metric filtering tvkampen entries to only leagues in events.json, updated pipeline-health.js to use relevant rate, added streaming_match_rate_declining to KNOWN_MANAGED_CODES. 2 new tests. (4) data-agent scout: Root cause of 24% match rate is data coverage (tvkampen covers 6+ leagues pipeline doesn't track), not aliases. (5) ux-agent scout: Found 8 UX opportunities — top 3 executed, 2 added as PENDING tasks (golf tee time position crossref, importanceReason surfacing).",
+      "tests_passed": true,
+      "files_changed": 8,
+      "turns_used": 25,
+      "lesson": "When a monitoring metric declines but investigation reveals it's measuring the wrong scope, refining the metric (relevantMatchRate) is more valuable than trying to fix the underlying data. Pure scouting runs without pending tasks can still be productive by checking health signals, pattern reports, and delegating UX audits.",
+      "scouted": 2
+    },
+    {
       "date": "2026-03-04",
       "task": "Fix test regression + process user feedback #121 (FIFA WC sport-request) + #122 (Copa del Rey logo)",
       "outcome": "completed",

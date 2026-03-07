@@ -1,40 +1,39 @@
 {
-  "generatedAt": "2026-03-06T22:13:29.099Z",
+  "generatedAt": "2026-03-07T01:54:24.899Z",
   "featured": {
-    "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": 0,
+    "provider": "fallback",
+    "model": "fallback",
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 7,
-    "generationMs": 59759,
+    "score": 90,
+    "issues": [
+      "13 blocks exceeds recommended max of 10."
+    ],
+    "blockCount": 13,
+    "generationMs": 3712,
     "tokenUsage": {
-      "input": 40134,
-      "output": 2787,
-      "cacheCreation": 21111,
-      "cacheRead": 19019,
-      "total": 42921,
-      "costUSD": 0.21114825,
-      "tracked": true,
-      "estimated": false,
-      "calls": 1
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0
     }
   },
   "editorial": {
-    "score": 80,
+    "score": 94,
     "metrics": {
-      "mustWatchCoverage": 0.5,
-      "sportDiversity": 0.75,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.4,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Block count 13 is outside ideal range (3-8)"
+    ]
   },
   "watchPlan": {
     "score": 100,
@@ -63,7 +62,7 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "before": {
       "totalEvents": 42,
@@ -93,9 +92,7 @@
       "skipRate": 1
     },
     "tokensPerEvent": 0,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -105,31 +102,5 @@
       "tracked": true,
       "estimated": false
     }
-  },
-  "multiDay": {
-    "tokenUsage": {
-      "input": 41815,
-      "output": 4440,
-      "calls": 1,
-      "total": 46255,
-      "tracked": false,
-      "estimated": true
-    },
-    "lastRun": "2026-03-06T08:37:26.899Z"
-  },
-  "discovery": {
-    "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 1,
-      "total": 0,
-      "costUSD": 0,
-      "tracked": true,
-      "estimated": false
-    },
-    "lastRun": "2026-03-06T22:09:19.725Z",
-    "tasksExecuted": 1,
-    "succeeded": 0,
-    "failed": 1
   }
 }
