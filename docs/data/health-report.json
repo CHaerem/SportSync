@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-07T01:54:35.648Z",
-  "eventCount": 42,
+  "generatedAt": "2026-03-07T02:01:03.680Z",
+  "eventCount": 43,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -23,9 +23,9 @@
       "delta": 0
     },
     "football": {
-      "count": 28,
+      "count": 29,
       "previousCount": 28,
-      "delta": 0
+      "delta": 1
     },
     "chess": {
       "count": 2,
@@ -40,42 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8868,
+      "ageMinutes": 8875,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 3276,
+      "ageMinutes": 3283,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 7,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-07"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 7,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.9,
+    "venuePercent": 0.91,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -98,9 +98,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.24,
-    "relevantMatchRate": null,
-    "eventsEnriched": 4,
+    "matchRate": 0.44,
+    "relevantMatchRate": 1,
+    "eventsEnriched": 8,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -108,7 +108,8 @@
     "present": true,
     "issues": [
       "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
+      "1 expected day snapshot(s) missing",
+      "Snapshot 2026-03-13: 1 events but events.json has 2"
     ],
     "snapshotCount": 15
   },
@@ -184,27 +185,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 8868 minutes old"
+      "message": "esports.json: data is 8875 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 3276 minutes old"
+      "message": "f1.json: data is 3283 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 78 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 79 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 15 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_low_match_rate",
-      "message": "Streaming enrichment match rate is 24% (4/17) — team alias table may need updates"
+      "message": "f1: data retained 16 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -215,6 +211,11 @@
       "severity": "warning",
       "code": "missing_snapshot",
       "message": "1 expected day snapshot(s) missing"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-13: 1 events but events.json has 2"
     },
     {
       "severity": "warning",
@@ -239,7 +240,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-07T01:54:35.721Z",
+    "computedAt": "2026-03-07T02:01:03.747Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
