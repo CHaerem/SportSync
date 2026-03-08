@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-07T22:12:03.563Z",
-  "eventCount": 38,
+  "generatedAt": "2026-03-08T02:01:45.518Z",
+  "eventCount": 49,
   "sportCoverage": {
     "esports": {
       "count": 1,
@@ -17,57 +17,57 @@
       "previousCount": 1,
       "delta": 0
     },
+    "tennis": {
+      "count": 2,
+      "previousCount": 0,
+      "delta": 2
+    },
     "football": {
-      "count": 25,
+      "count": 34,
       "previousCount": 25,
-      "delta": 0
+      "delta": 9
     },
     "cycling": {
       "count": 7,
-      "previousCount": 8,
-      "delta": -1
+      "previousCount": 7,
+      "delta": 0
     },
     "chess": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
-    },
-    "tennis": {
-      "count": 0,
-      "previousCount": 0,
-      "delta": null
     }
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 10086,
+      "ageMinutes": 10315,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 4494,
+      "ageMinutes": 4724,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-03-07"
+      "featuredDate": "2026-03-08"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -75,7 +75,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.89,
+    "venuePercent": 0.88,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -98,9 +98,9 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.29,
+    "matchRate": 0.22,
     "relevantMatchRate": 1,
-    "eventsEnriched": 4,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -122,30 +122,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 7,
+    "sevenDay": 23,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 58130,
-    "stepCount": 21,
+    "totalDuration": 381393,
+    "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28424,
-        "share": 49
-      },
-      {
-        "name": "fetch-results",
-        "duration": 41566,
-        "share": 72
+        "name": "discover-events",
+        "duration": 180230,
+        "share": 47
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -174,37 +171,39 @@
     ],
     "hasCoverage": false
   },
-  "unmappedLeagues": [],
+  "unmappedLeagues": [
+    "ATP/WTA Tour"
+  ],
   "issues": [
     {
-      "severity": "info",
-      "code": "sport_zero_events",
-      "message": "tennis: data file exists but 0 events in events.json"
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "esports.json: data is 10315 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 10086 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "f1.json: data is 4494 minutes old"
+      "message": "f1.json: data is 4724 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 96 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 97 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 33 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 34 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "2 event(s) won't appear on dashboard (esports, f1)"
+    },
+    {
+      "severity": "info",
+      "code": "unmapped_leagues",
+      "message": "1 tournament(s) lack league theming: ATP/WTA Tour"
     },
     {
       "severity": "warning",
@@ -214,12 +213,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 47% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (42s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -229,7 +228,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-07T22:12:03.629Z",
+    "computedAt": "2026-03-08T02:01:45.595Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -247,14 +246,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 95/100.",
     "tokenUsage": null
   }
 }
