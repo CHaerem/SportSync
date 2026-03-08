@@ -50,7 +50,8 @@ describe("F1Fetcher", () => {
 			const raw = makeESPNEvent();
 			const result = fetcher.transformESPNEvent(raw);
 			expect(result).toBeTruthy();
-			expect(result.meta).toBe("Formula 1 2025 - Race Weekend");
+			const year = new Date().getFullYear();
+			expect(result.meta).toBe(`Formula 1 ${year} - Race Weekend`);
 		});
 
 		it("sets norwegian to false for all F1 events", () => {

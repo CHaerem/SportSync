@@ -851,10 +851,19 @@ export function buildSanityHints(sanityReport) {
 	// cannot fix stale source data — telling it to "verify claims against provided data" is
 	// a no-op that fires the hint every run without improvement.
 	const ESPORTS_RE = /\b(cs2|esports|counter.strike|major|hltv)\b/i;
+	// Suppress F1 orphan-ref findings: ESPN F1 event titles are verbose sponsor-laden strings
+	// (e.g. "Qatar Airways Australian Grand Prix") while LLM generates descriptive narrative
+	// text (e.g. "F1 season opens in Melbourne"). This mismatch is structural — the LLM
+	// cannot rewrite its narrative to match ESPN's title format without degrading readability.
+	// Telling it to "verify claims against provided data" is a no-op that fires every run.
+	const F1_RE = /\b(f1|formula.?1|grand prix|gp|australian|melbourne|bahrain|jeddah|miami|monaco|silverstone|spa|monza|suzuka|singapore|interlagos|abu dhabi)\b/i;
 	const featured = findings.filter(f => {
 		if (f.check !== "featured_orphan_ref") return f.check?.startsWith("featured_");
 		// Suppress esports/CS2 orphan refs — stale HLTV data, not an LLM error
-		return !ESPORTS_RE.test(f.message);
+		if (ESPORTS_RE.test(f.message)) return false;
+		// Suppress F1 orphan refs — ESPN title format mismatch, not an LLM error
+		if (F1_RE.test(f.message)) return false;
+		return true;
 	});
 
 	// Suppress result_all_recaps_null when it is the only result_ finding.

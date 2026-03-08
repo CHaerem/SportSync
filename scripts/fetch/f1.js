@@ -10,8 +10,9 @@ export class F1Fetcher extends ESPNAdapter {
 		const event = super.transformESPNEvent(espnEvent);
 		if (!event) return null;
 
-		// F1 specific transformations
-		event.meta = "Formula 1 2025 - Race Weekend";
+		// F1 specific transformations — use current year dynamically
+		const year = new Date().getFullYear();
+		event.meta = `Formula 1 ${year} - Race Weekend`;
 		event.venue = event.venue || "F1 Circuit";
 		
 		// F1 doesn't have Norwegian focus
