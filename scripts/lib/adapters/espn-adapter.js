@@ -37,8 +37,10 @@ export class ESPNAdapter extends BaseFetcher {
 					const data = await this.apiClient.fetchJSON(url);
 					
 					if (data?.events && Array.isArray(data.events)) {
-						const futureEvents = data.events.filter(e => new Date(e.date) > now);
-						allEvents.push(...futureEvents.map(e => ({ ...e, leagueName: league.name, leagueCode: league.code })));
+						// Include events from the last 4 hours (captures in-progress matches) and future
+						const windowStart = new Date(now.getTime() - 4 * 60 * 60 * 1000);
+						const recentAndFutureEvents = data.events.filter(e => new Date(e.date) > windowStart);
+						allEvents.push(...recentAndFutureEvents.map(e => ({ ...e, leagueName: league.name, leagueCode: league.code })));
 					}
 					
 					await this.apiClient.delay(150);

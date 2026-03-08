@@ -48,11 +48,10 @@ export const sportsConfig = {
 			{
 				api: "espn",
 				type: "scoreboard",
-				endpoints: [
-					{ name: "ATP Tour", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard" },
-					{ name: "ATP Events", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/events" },
-					{ name: "WTA Tour", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/wta/scoreboard" },
-					{ name: "WTA Events", url: "https://site.api.espn.com/apis/site/v2/sports/tennis/wta/events" }
+				baseUrl: "https://site.api.espn.com/apis/site/v2/sports/tennis",
+				leagues: [
+					{ code: "atp", name: "ATP Tour" },
+					{ code: "wta", name: "WTA Tour" }
 				]
 			}
 		],
@@ -63,7 +62,7 @@ export const sportsConfig = {
 		},
 		norwegian: {
 			players: ["Casper Ruud"],
-			filterMode: "exclusive"
+			filterMode: "focused"
 		}
 	},
 

@@ -98,7 +98,10 @@ describe('TennisFetcher', () => {
 			expect(fetcher.transformESPNEvent({ name: 'Test' })).toBeNull();
 		});
 
-		it('returns null for tournament without competitions in exclusive mode', () => {
+		it('returns null for tournament without competitions in explicit exclusive mode', () => {
+			const originalMode = fetcher.config.norwegian.filterMode;
+			fetcher.config.norwegian.filterMode = 'exclusive';
+
 			const espnEvent = {
 				name: 'Dubai Duty Free Tennis Championships',
 				date: futureDate,
@@ -110,6 +113,8 @@ describe('TennisFetcher', () => {
 
 			const event = fetcher.transformESPNEvent(espnEvent);
 			expect(event).toBeNull();
+
+			fetcher.config.norwegian.filterMode = originalMode;
 		});
 
 		it('creates tournament-level event in focused mode when no competitions', () => {
@@ -217,7 +222,10 @@ describe('TennisFetcher', () => {
 	});
 
 	describe('applyCustomFilters()', () => {
-		it('filters to Norwegian matches in exclusive mode', () => {
+		it('filters to Norwegian matches in explicit exclusive mode', () => {
+			const originalMode = fetcher.config.norwegian.filterMode;
+			fetcher.config.norwegian.filterMode = 'exclusive';
+
 			const events = [
 				{ norwegian: true, sport: 'tennis' },
 				{ norwegian: false, sport: 'tennis' },
@@ -227,21 +235,20 @@ describe('TennisFetcher', () => {
 			const filtered = fetcher.applyCustomFilters(events);
 			expect(filtered).toHaveLength(2);
 			expect(filtered.every(e => e.norwegian)).toBe(true);
+
+			fetcher.config.norwegian.filterMode = originalMode;
 		});
 
-		it('delegates to parent in non-exclusive mode', () => {
-			const originalMode = fetcher.config.norwegian.filterMode;
-			fetcher.config.norwegian.filterMode = 'focused';
-
+		it('shows all events in focused mode (default), Norwegian first', () => {
 			const events = [
-				{ norwegian: true, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() },
-				{ norwegian: false, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() }
+				{ norwegian: false, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() },
+				{ norwegian: true, sport: 'tennis', time: new Date(Date.now() + 86400000).toISOString() }
 			];
 
 			const filtered = fetcher.applyCustomFilters(events);
 			expect(filtered.length).toBeGreaterThan(0);
-
-			fetcher.config.norwegian.filterMode = originalMode;
+			// Norwegian events should appear first in focused mode
+			expect(filtered[0].norwegian).toBe(true);
 		});
 	});
 });
