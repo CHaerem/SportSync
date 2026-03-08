@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-08T14:13:15.695Z",
+  "generatedAt": "2026-03-08T18:14:22.791Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 47,
+    "totalEvents": 45,
     "sports": [
       "esports",
       "golf",
@@ -18,8 +18,6 @@
         "Puerto Rico Open"
       ],
       "today": [
-        "Real Betis at Getafe",
-        "Rayo Vallecano at Sevilla",
         "Alavés at Valencia"
       ],
       "tomorrow": [
@@ -77,7 +75,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 85,
-    "issueCount": 10
+    "issueCount": 11
   },
   "findings": [
     {
@@ -178,7 +176,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Italian\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Berger\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bay Hill\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Eight\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Signature Event\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -193,13 +206,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 23 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 23,
+    "total": 26,
     "critical": 0,
-    "warning": 21,
+    "warning": 24,
     "info": 2
   },
   "pass": true,
