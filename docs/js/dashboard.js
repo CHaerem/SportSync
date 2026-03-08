@@ -1849,10 +1849,28 @@ class Dashboard {
 		if (sportId === 'golf') {
 			const norPlayers = events.flatMap(e => (e.norwegianPlayers || []).filter(p => p.teeTime));
 			if (norPlayers.length > 0) {
+				// Build a flat leaderboard lookup across all golf tours
+				const golfTours = this.standings?.golf || {};
+				const allLbEntries = Object.values(golfTours).flatMap(tour => tour.leaderboard || []);
+
 				html += '<div class="lead-tee-times">';
 				for (const p of norPlayers) {
+					// Case-insensitive substring match against leaderboard player names
+					const playerNameLower = (p.name || '').toLowerCase();
+					const lbEntry = allLbEntries.find(entry => {
+						const entryNameLower = (entry.player || '').toLowerCase();
+						return entryNameLower === playerNameLower ||
+							entryNameLower.includes(playerNameLower) ||
+							playerNameLower.includes(entryNameLower);
+					});
+
 					html += `<div class="lead-tee-time">`;
 					html += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
+					if (lbEntry) {
+						const pos = lbEntry.positionDisplay || `T${lbEntry.position}`;
+						const score = lbEntry.score || 'E';
+						html += `<span class="lead-tee-standing">${this.esc(pos)} (${this.esc(score)})</span>`;
+					}
 					html += `<span class="lead-tee-clock">${this.esc(p.teeTime)}</span>`;
 					html += `</div>`;
 				}
@@ -2512,6 +2530,7 @@ class Dashboard {
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
 
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
+		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
 
 		return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
@@ -2522,6 +2541,7 @@ class Dashboard {
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${subtitleHtml}</span>
 				</div>
 				${summaryHtml}
+				${importanceReasonHtml}
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
 		`;
