@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T06:23:18.090Z",
+  "generatedAt": "2026-03-08T07:16:02.467Z",
   "eventCount": 48,
   "sportCoverage": {
     "esports": {
@@ -24,8 +24,8 @@
     },
     "tennis": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "cycling": {
       "count": 7,
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 10577,
+      "ageMinutes": 10630,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 4985,
+      "ageMinutes": 5038,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 53,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 53,
       "stale": false
     }
   },
@@ -122,25 +122,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 28,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 177514,
-    "stepCount": 23,
+    "totalDuration": 433110,
+    "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 99767,
-        "share": 56
+        "name": "discover-events",
+        "duration": 180292,
+        "share": 42
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -176,22 +178,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 10577 minutes old"
+      "message": "esports.json: data is 10630 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 4985 minutes old"
+      "message": "f1.json: data is 5038 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 98 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 99 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 35 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 36 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,7 +213,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 56% of total pipeline time (100s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 42% of total pipeline time (180s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -221,7 +228,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-08T06:23:18.165Z",
+    "computedAt": "2026-03-08T07:16:02.537Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -239,7 +246,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
