@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-08",
+      "task": "UX: importanceReason + golf standings tee time; Data: F1 hint_fatigue + tennis zero events",
+      "outcome": "completed",
+      "pr": "#124 (merged)",
+      "details": "Run 20: 5 tasks via 3 subagents. (1) ux-agent: 2 EXPERIENCE tasks batched into PR #124 — importanceReason shown as italic subtitle on collapsed must-watch rows when no summary, .row-importance-reason CSS; golf tee time cards cross-reference standings leaderboard to show position+score (e.g. 'T11 (-5)'), .lead-tee-standing CSS. (2) data-agent #1: F1 chronic stale (33×) — ESPN returns nothing between races (expected off-season behavior); fixed hardcoded 'Formula 1 2025' year to dynamic; suppressed sanityScore hint_fatigue (16 fires) by adding F1/formula1 to featured_orphan_ref filter in ai-quality-gates.js. Direct-to-main. (3) data-agent #2 (scouted from RSS — Ruud in RSS, 0 tennis events): Fixed 2 compounding tennis bugs: (a) exclusive→focused filterMode (tournament shows as event even without live match data); (b) endpoints→leagues date-window fetch (7-day range like football, not single scoreboard call); (c) 4h lookback in fetchScoreboardWithLeagues to not drop in-progress matches. Direct-to-main. 4 direct-to-main commits + 1 branch-pr (PR #124). All 2457 tests pass.",
+      "tests_passed": true,
+      "files_changed": 9,
+      "turns_used": 28,
+      "lesson": "RSS-to-dashboard gap is a high-signal scouting input — Casper Ruud appearing in RSS but absent from dashboard immediately revealed a data pipeline bug. filterMode 'exclusive' is fragile for any sport where the user's player isn't always on court; 'focused' provides tournament-level coverage guarantees. Both bugs (wrong fetch strategy + exclusive filter) combined to guarantee zero events — diagnose compound failures by tracing the full pipeline path, not just the last filter.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-07",
       "task": "Scouting run: fix unmapped leagues + cycling UX gaps + streaming match rate metric refinement",
       "outcome": "completed",

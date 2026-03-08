@@ -193,9 +193,20 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 2. Code | ~93% | 2026-03-07 | 2457 tests across 79 files, streaming metric refinement, known-managed codes updated |
 | 3. Capabilities | ~85% | 2026-03-04 | FIFA World Cup 2026 config added (user sport-request #121), Copa del Rey logo |
 | 4. Personalization | ~65% | 2026-03-04 | Liverpool + 100 Thieves added to favorites (user feedback #122), FIFA WC favoriteTeamConnections |
-| 5. Quality | ~100% | 2026-03-07 | 11/11 loops closed, streaming match rate noise reduced, cycling UX gaps fixed |
+| 3. Capabilities | ~87% | 2026-03-08 | Tennis event visibility restored during active tournaments |
+| 4. Personalization | ~68% | 2026-03-08 | Golf leaderboard position in tee time cards, importanceReason on collapsed must-watch rows |
+| 5. Quality | ~100% | 2026-03-08 | F1 sanityScore hint_fatigue suppressed, 2457 tests pass |
 
 ### Run History Insights
+
+**Run 2026-03-08 (Run 20):** 5 tasks via 3 subagents (ux-agent + data-agent x2) + 2 background agents. 2 pending UX tasks + 2 scouted data issues.
+- ux-agent: Both pending EXPERIENCE tasks completed in batch (PR #124, merged): (1) importanceReason italic subtitle on collapsed must-watch rows when no summary present; (2) golf tee time cards cross-referenced against loaded leaderboard to show position + score before tee time. 2457 tests pass.
+- data-agent #1: F1 chronic stale data (33×) + sanityScore hint_fatigue (16 fires). Root cause: ESPN F1 API returns nothing between race weekends (expected, Australian GP just ended Mar 6). Fix: hardcoded "2025" year → dynamic. Sanity hint: LLM writes "F1 season opens in Melbourne" but ESPN title is "Qatar Airways Australian Grand Prix" — structural mismatch, not fixable by LLM. Added F1/formula1 suppression to featured_orphan_ref filter (same as CS2 pattern). Direct-to-main.
+- data-agent #2 (scouted from RSS): Tennis zero events during Indian Wells Masters — Casper Ruud won his match but 0 tennis events in dashboard. Root cause: 2 compounding bugs: (1) wrong fetch strategy — single scoreboard call with no date returned only live matches; (2) filterMode "exclusive" required a live Ruud match. Fix: switched to league-based date-window iteration (same as football) + filterMode "focused" so tournament appears as event when no match data available. Also fixed 4h lookback in fetchScoreboardWithLeagues to not drop in-progress matches. Direct-to-main. 2457 tests pass.
+- **Key insight**: `filterMode: "exclusive"` is fragile for any sport where the user's player isn't always on court. "focused" mode (tournament-level events when no match data) provides better coverage guarantees. Apply this pattern when other sports show zero events despite active tournaments.
+- **Key insight**: RSS feed is a high-signal scouting input — Casper Ruud appearing in RSS but not on dashboard immediately revealed a data pipeline gap (tennis zero events). RSS-to-coverage-gap matching should be a priority scouting heuristic.
+- User-visible / infrastructure ratio: ~70% / 30% (2 UX + 1 data fix = user-visible; 1 metric suppression = infrastructure).
+- 4 commits direct-to-main, 1 branch-pr (PR #124). 2457 tests pass across 79 files.
 
 **Run 2026-03-07 (Run 19):** 3 tasks via 3 parallel subagents (code-agent x2 + ux-agent) + 2 background scouts (ux-agent + data-agent). No pending tasks or user feedback — pure scouting run.
 - code-agent #1: Added 3 league-config entries (Grenke Chess, Cycling Grand Tours, FIFA WC 2026). Fixes unmapped_leagues health warning. Direct-to-main.
@@ -400,9 +411,9 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (already implemented server-side) Personalize watch-plan ranking with favorites export — `scoreEventForWatchPlan()` in `scripts/lib/watch-plan.js` already boosts +18 for favorite teams/players and +12 for favorite esports orgs. `exportForBackend()` outputs in the exact format consumed by `userContext`.
 
-- [PENDING] [FEATURE] **Golf tee time cards: cross-reference standings position** — Norwegian player tee time cards in `renderSportGroupCard()` show "Viktor Hovland — 16:20" but don't include current leaderboard position. The standings data is already loaded (`this.standings.golf.pga.leaderboard`). Cross-reference player name to show "Viktor Hovland — T36 (E) — tees 16:20". Location: `docs/js/dashboard.js` lines 1847-1858. Pillar: personalization + UX.
+- [DONE] (PR #124) **Golf tee time cards: cross-reference standings position** — Norwegian player tee time cards now show leaderboard position + score before the tee time (e.g. "Viktor Hovland — T11 (-5) — tees 16:20"). Cross-references `this.standings.golf.*.leaderboard` via case-insensitive name matching. Gracefully degrades to existing display when no leaderboard match found. `.lead-tee-standing` CSS class added.
 
-- [PENDING] [MAINTENANCE] **Surface importanceReason on must-watch collapsed cards** — Events have `importanceReason` (e.g. "Fan-favorite Barcelona travel to fortress San Mamés") but it's hidden until the user taps to expand. For importance >= 4 events, show the reason as a subtitle in the collapsed row when no summary is present. Location: `docs/js/dashboard.js` `renderRow()` around line 2512. Pillar: quality + UX.
+- [DONE] (PR #124) **Surface importanceReason on must-watch collapsed cards** — For importance >= 4 events without a summary, `importanceReason` now shown as italic muted subtitle in collapsed row via `.row-importance-reason` CSS class. Summary takes priority to avoid duplication.
 
 ---
 
