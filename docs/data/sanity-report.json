@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-08T10:13:23.163Z",
+  "generatedAt": "2026-03-08T14:13:15.695Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 48,
+    "totalEvents": 47,
     "sports": [
       "esports",
       "golf",
@@ -18,7 +18,6 @@
         "Puerto Rico Open"
       ],
       "today": [
-        "Elche at Villarreal",
         "Real Betis at Getafe",
         "Rayo Vallecano at Sevilla",
         "Alavés at Valencia"
@@ -74,10 +73,10 @@
         "Qatar Airways Australian Grand Prix"
       ]
     },
-    "featuredBlockCount": 8,
-    "briefPresent": false,
+    "featuredBlockCount": 7,
+    "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 90,
+    "editorialScore": 85,
     "issueCount": 10
   },
   "findings": [
@@ -179,17 +178,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Rain\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bay Hill\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Berger\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Italian\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -204,13 +193,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 23 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 23,
     "critical": 0,
-    "warning": 23,
+    "warning": 21,
     "info": 2
   },
   "pass": true,
