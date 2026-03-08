@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-02-25T15:24:44.935Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-02-25T15:45:00.303Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -1209,6 +1203,40 @@
         "calls": 1,
         "total": 0,
         "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-03-08T10:08:12.721Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "esports-cs2-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "failed",
+          "error": "spawnSync /bin/sh ETIMEDOUT"
+        },
+        {
+          "type": "refresh-athletes",
+          "target": "cycling-classics-2026.json",
+          "reason": "Athletes last refreshed 2026-03-01",
+          "outcome": "success",
+          "changes": [
+            "Removed Kristoffer Halvorsen (retired 2023)",
+            "Removed Carl Fredrik Hagen (retired end of 2024)",
+            "Removed Tobias Hoelgaard (no longer confirmed active at WorldTour level in 2026)",
+            "Added Per Strand Hagenes (Visma-Lease a Bike, confirmed Paris-Roubaix 2026 participant, rising Classics prospect)"
+          ]
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 52520,
+        "output": 693,
+        "calls": 2,
+        "total": 53213,
+        "costUSD": 1.64314275,
         "tracked": true,
         "estimated": false
       }

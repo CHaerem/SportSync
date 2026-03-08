@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T06:23:18.082Z",
+  "generatedAt": "2026-03-08T10:13:23.163Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 48,
@@ -178,11 +178,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Rain\" but no matching athlete found in events data"
     },
@@ -213,9 +208,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 25,
     "critical": 0,
-    "warning": 24,
+    "warning": 23,
     "info": 2
   },
   "pass": true,
