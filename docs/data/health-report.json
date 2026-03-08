@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T21:08:22.498Z",
+  "generatedAt": "2026-03-08T22:11:51.204Z",
   "eventCount": 43,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "golf": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "f1": {
       "count": 1,
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 11462,
+      "ageMinutes": 11526,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 5870,
+      "ageMinutes": 5934,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 174,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 174,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 23,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -107,10 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-03-05: 2 events but events.json has 1",
-      "Snapshot 2026-03-06: 3 events but events.json has 2",
-      "Snapshot 2026-03-07: 2 events but events.json has 1",
-      "Snapshot 2026-03-08: 3 events but events.json has 1"
+      "1 day snapshot(s) within event range have 0 events and 0 results"
     ],
     "snapshotCount": 15
   },
@@ -186,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 11462 minutes old"
+      "message": "esports.json: data is 11526 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 5870 minutes old"
+      "message": "f1.json: data is 5934 minutes old"
     },
     {
       "severity": "warning",
@@ -209,24 +206,9 @@
       "message": "2 event(s) won't appear on dashboard (esports, f1)"
     },
     {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-05: 2 events but events.json has 1"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-06: 3 events but events.json has 2"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-07: 2 events but events.json has 1"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-08: 3 events but events.json has 1"
+      "severity": "info",
+      "code": "empty_day_snapshot",
+      "message": "1 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
       "severity": "info",
@@ -254,9 +236,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-08T21:08:22.567Z",
+    "computedAt": "2026-03-08T22:11:51.276Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -274,14 +256,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 9 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
     "tokenUsage": null
   }
 }
