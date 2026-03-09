@@ -1,16 +1,16 @@
 {
-  "lastUpdated": "2026-03-08T22:07:15.319Z",
+  "lastUpdated": "2026-03-09T22:09:31.627Z",
   "source": "ESPN + PGA Tour",
   "tournaments": [
     {
       "name": "PGA Tour",
       "events": [
         {
-          "title": "Arnold Palmer Invitational pres. by Mastercard",
+          "title": "THE PLAYERS Championship",
           "meta": "PGA Tour",
           "tournament": "PGA Tour",
-          "time": "2026-03-05T05:00:00.000Z",
-          "endTime": "2026-03-08T20:00:00.000Z",
+          "time": "2026-03-12T04:00:00.000Z",
+          "endTime": "2026-03-15T20:00:00.000Z",
           "venue": "TBD",
           "sport": "golf",
           "streaming": [
@@ -28,32 +28,51 @@
           "norwegian": true,
           "norwegianPlayers": [
             {
+              "name": "Kristoffer Reitan",
+              "teeTime": "13:04",
+              "teeTimeUTC": "2026-03-12T12:04:00.000Z",
+              "status": null
+            },
+            {
               "name": "Viktor Hovland",
-              "teeTime": "17:55",
-              "teeTimeUTC": "2026-03-08T16:55:00.000Z",
+              "teeTime": "14:04",
+              "teeTimeUTC": "2026-03-12T13:04:00.000Z",
               "status": null
             }
           ],
           "featuredGroups": [
             {
-              "player": "Viktor Hovland",
-              "teeTime": "17:55",
+              "player": "Kristoffer Reitan",
+              "teeTime": "13:04",
               "groupmates": [
                 {
-                  "name": "Rickie Fowler",
-                  "teeTime": "17:55"
+                  "name": "Rasmus Højgaard",
+                  "teeTime": "13:04"
+                },
+                {
+                  "name": "Danny Walker",
+                  "teeTime": "13:04"
+                }
+              ]
+            },
+            {
+              "player": "Viktor Hovland",
+              "teeTime": "14:04",
+              "groupmates": [
+                {
+                  "name": "Russell Henley",
+                  "teeTime": "14:04"
+                },
+                {
+                  "name": "Robert MacIntyre",
+                  "teeTime": "14:04"
                 }
               ]
             }
           ],
-          "totalPlayers": 72
+          "totalPlayers": 123
         }
       ]
     }
-  ],
-  "_retained": {
-    "since": "2026-03-09T02:00:21.940Z",
-    "consecutiveRetains": 14,
-    "lastFreshFetch": "2026-03-08T22:07:15.319Z"
-  }
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-13",
-  "generatedAt": "2026-03-09T14:29:21.375Z",
+  "generatedAt": "2026-03-09T22:14:00.973Z",
   "events": {
     "upcoming": [
       {
@@ -47,8 +47,93 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-09T14:28:26.766Z",
+        "enrichedAt": "2026-03-09T22:12:38.993Z",
         "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
+      },
+      {
+        "sport": "golf",
+        "tournament": "PGA Tour",
+        "title": "THE PLAYERS Championship",
+        "time": "2026-03-12T04:00:00.000Z",
+        "endTime": "2026-03-15T20:00:00.000Z",
+        "venue": "TBD",
+        "meta": "PGA Tour",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Kristoffer Reitan",
+            "teeTime": "13:04",
+            "teeTimeUTC": "2026-03-12T12:04:00.000Z",
+            "status": null
+          },
+          {
+            "name": "Viktor Hovland",
+            "teeTime": "14:04",
+            "teeTimeUTC": "2026-03-12T13:04:00.000Z",
+            "status": null
+          }
+        ],
+        "totalPlayers": 123,
+        "link": null,
+        "status": null,
+        "featuredGroups": [
+          {
+            "player": "Kristoffer Reitan",
+            "teeTime": "13:04",
+            "groupmates": [
+              {
+                "name": "Rasmus Højgaard",
+                "teeTime": "13:04"
+              },
+              {
+                "name": "Danny Walker",
+                "teeTime": "13:04"
+              }
+            ]
+          },
+          {
+            "player": "Viktor Hovland",
+            "teeTime": "14:04",
+            "groupmates": [
+              {
+                "name": "Russell Henley",
+                "teeTime": "14:04"
+              },
+              {
+                "name": "Robert MacIntyre",
+                "teeTime": "14:04"
+              }
+            ]
+          }
+        ],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 5,
+        "importanceReason": "THE PLAYERS is golf's 5th Major; Hovland and Reitan both competing.",
+        "summary": "THE PLAYERS Championship — often called golf's 'fifth major' — tees off at TPC Sawgrass with Viktor Hovland and Kristoffer Reitan representing Norway in one of the richest, most prestigious events on the PGA Tour calendar.",
+        "tags": [
+          "must-watch",
+          "major",
+          "norwegian-player",
+          "classic-matchup"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-03-09T22:12:38.993Z",
+        "_enrichHash": "7ae654afdbea4d31e7c05c8cd95fa03f"
       },
       {
         "sport": "football",
@@ -82,7 +167,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-09T14:28:26.767Z",
+        "enrichedAt": "2026-03-09T22:12:38.994Z",
         "_enrichHash": "df57bb18c6b16bc30726dd6da0ceabe6"
       }
     ],
@@ -93,9 +178,10 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 2,
+    "eventCount": 3,
     "sportsCovered": [
       "cycling",
+      "golf",
       "football"
     ],
     "hasResults": false,

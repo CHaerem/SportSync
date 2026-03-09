@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-09",
-  "generatedAt": "2026-03-09T14:29:21.365Z",
+  "generatedAt": "2026-03-09T22:14:00.967Z",
   "events": {
     "upcoming": [
       {
@@ -47,46 +47,8 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-09T14:28:26.766Z",
+        "enrichedAt": "2026-03-09T22:12:38.993Z",
         "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Real Oviedo at Espanyol",
-        "time": "2026-03-09T20:00:00.000Z",
-        "endTime": null,
-        "venue": "RCDE Stadium",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Espanyol",
-        "awayTeam": "Real Oviedo",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Second-division La Liga match, no Norwegian connection.",
-        "summary": "Espanyol host Real Oviedo in a mid-table La Liga clash with limited broader appeal.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-09T14:28:26.766Z",
-        "_enrichHash": "86e51a7041f970e192539fb78eca218d",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
     "results": [
@@ -122,12 +84,37 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-09T14:28:26.766Z",
+        "enrichedAt": "2026-03-09T22:12:38.993Z",
         "_enrichHash": "3df6cdda08337147743980d778ada144"
       }
     ]
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Espanyol",
+      "awayTeam": "Real Oviedo",
+      "homeScore": 1,
+      "awayScore": 1,
+      "date": "2026-03-09T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "RCDE Stadium",
+      "goalScorers": [
+        {
+          "player": "Alberto Reina",
+          "team": "Real Oviedo",
+          "minute": "8'"
+        },
+        {
+          "player": "Enrique García",
+          "team": "Espanyol",
+          "minute": "36'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -279,71 +266,137 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-real-oviedo-at-espanyol-2026-03-09t20:00:00.000z",
-        "title": "Real Oviedo at Espanyol",
+        "id": "football-barcelona-at-newcastle-united-2026-03-10t20:00:00.000z",
+        "title": "Barcelona at Newcastle United",
         "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-09T20:00:00.000Z",
-        "timeLabel": "9 Mar, 21:00",
-        "relativeStart": "In 5h 32m",
-        "importance": 2,
+        "tournament": "Champions League",
+        "time": "2026-03-10T20:00:00.000Z",
+        "timeLabel": "10 Mar, 21:00",
+        "relativeStart": "In 21h 47m",
+        "importance": 5,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
             "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
             "source": "tvkampen"
           }
         ],
-        "score": 52,
+        "score": 126,
         "reasons": [
-          "Preferred sport"
+          "Must-watch event",
+          "Favorite team"
+        ]
+      },
+      {
+        "id": "football-liverpool-at-galatasaray-2026-03-10t17:45:00.000z",
+        "title": "Liverpool at Galatasaray",
+        "sport": "football",
+        "tournament": "Champions League",
+        "time": "2026-03-10T17:45:00.000Z",
+        "timeLabel": "10 Mar, 18:45",
+        "relativeStart": "In 19h 32m",
+        "importance": 4,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 108,
+        "reasons": [
+          "Must-watch event",
+          "Favorite team"
+        ]
+      },
+      {
+        "id": "football-bayern-munich-at-atalanta-2026-03-10t20:00:00.000z",
+        "title": "Bayern Munich at Atalanta",
+        "sport": "football",
+        "tournament": "Champions League",
+        "time": "2026-03-10T20:00:00.000Z",
+        "timeLabel": "10 Mar, 21:00",
+        "relativeStart": "In 21h 47m",
+        "importance": 4,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "TV 2 Sport 1",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "tv",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 90,
+        "reasons": [
+          "Must-watch event",
+          "Must-watch"
         ]
       }
     ],
-    "headline": "🚴 Tirreno-Adriatico Stage 1 — Leknessund & Wærenskjold open Italy campaign — 12:40"
+    "headline": "Bodø/Glimt host Sporting CP Wednesday — Norwegian club football's greatest night"
   },
   "rssHighlights": [
     {
-      "title": "Alisson skadet – mister viktig Mesterligakamp",
+      "title": "Sportssjef Thoresen (40) måtte steppe inn – bidro i nedrykksduell",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/alisson-skadet-_-mister-viktig-mesterligakamp-1.17800516"
+      "link": "https://www.nrk.no/sport/sportssjef-thoresen-_40_-matte-steppe-inn-_-bidro-i-nedrykksduell-1.17801610"
     },
     {
-      "title": "Verstappen to compete in 'bucket list' 24-hour race",
-      "source": "bbc-f1",
-      "sport": "formula1",
-      "link": "https://www.bbc.com/sport/motorsport/articles/cr5lj3lg857o?at_medium=RSS&amp;at_campaign=rss"
+      "title": "MLS utestenger to spillere på livstid",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/mls-utestenger-to-spillere-pa-livstid-1.17801494"
     },
     {
-      "title": "Klæbos millionavtale avsluttet før tiden: – Enige om å terminere",
+      "title": "Reagerte på beskjeden han fikk: – Prøver du å få på meg skoene, sparker jeg deg",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/paralympics-2026_-magnus-valo-balchen-mistet-forligheten-i-beina-etter-batulykke_-_-skulle-vaert-lam-1.17798703"
+    },
+    {
+      "title": "Superinnbytter berget Rekdals Aalesund – klar for kvartfinale mot Viking",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/superinnbytter-berget-rekdals-aalesund-_-klar-for-kvartfinale-mot-viking-1.17801557"
+    },
+    {
+      "title": "Videre med et nødskrik: – Mye å jobbe med",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18640301"
-    },
-    {
-      "title": "'Greener Bantams' leading tree-planting scheme with one for every goal scored",
-      "source": "bbc-football",
-      "sport": "football",
-      "link": "https://www.bbc.com/sport/football/articles/cp81p0pzy53o?at_medium=RSS&amp;at_campaign=rss"
-    },
-    {
-      "title": "– Rykker ned",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18638252"
+      "link": "https://www.tv2.no/a/18641317"
     }
   ],
   "meta": {
-    "eventCount": 3,
+    "eventCount": 2,
     "sportsCovered": [
       "tennis",
-      "cycling",
-      "football"
+      "cycling"
     ],
-    "hasResults": false,
+    "hasResults": true,
     "hasStandings": true
   }
 }

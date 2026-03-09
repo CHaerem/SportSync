@@ -1,24 +1,22 @@
 {
-  "generatedAt": "2026-03-09T18:24:09.102Z",
+  "generatedAt": "2026-03-09T22:14:02.268Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 51,
+    "totalEvents": 50,
     "sports": [
       "esports",
-      "golf",
       "f1",
       "tennis",
       "cycling",
       "football",
+      "golf",
       "chess"
     ],
     "bands": {
       "live": [
         "Tirreno-Adriatico 2026"
       ],
-      "today": [
-        "Real Oviedo at Espanyol"
-      ],
+      "today": [],
       "tomorrow": [
         "Liverpool at Galatasaray",
         "Bayern Munich at Atalanta",
@@ -30,6 +28,7 @@
         "Sporting CP at Bodo/Glimt",
         "Chelsea at Paris Saint-Germain",
         "Manchester City at Real Madrid",
+        "THE PLAYERS Championship",
         "Villarreal at Alavés",
         "Athletic Club at Girona",
         "AFC Bournemouth at Burnley",
@@ -72,16 +71,15 @@
       ],
       "ended": [
         "HEROIC vs TBD (Consolidation Final winner)",
-        "Arnold Palmer Invitational pres. by Mastercard",
         "Qatar Airways Australian Grand Prix",
         "Austin 125 2"
       ]
     },
-    "featuredBlockCount": 5,
-    "briefPresent": false,
-    "pipelineStatus": "warning",
-    "editorialScore": 57,
-    "issueCount": 14
+    "featuredBlockCount": 8,
+    "briefPresent": true,
+    "pipelineStatus": "critical",
+    "editorialScore": 63,
+    "issueCount": 24
   },
   "findings": [
     {
@@ -182,7 +180,7 @@
     {
       "severity": "warning",
       "check": "low_editorial_quality",
-      "message": "Editorial quality score is 57/100 (below threshold)"
+      "message": "Editorial quality score is 63/100 (below threshold)"
     },
     {
       "severity": "warning",
@@ -192,17 +190,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Alisson\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Istanbul\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sawgrass\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -221,9 +214,9 @@
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 26,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 2
   },
   "pass": true,

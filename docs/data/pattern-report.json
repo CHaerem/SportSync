@@ -1,14 +1,32 @@
 {
-  "generatedAt": "2026-03-09T18:24:09.113Z",
-  "patternsDetected": 1,
+  "generatedAt": "2026-03-09T22:14:02.372Z",
+  "patternsDetected": 3,
   "patterns": [
     {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "editorialScore",
+      "earlyAvg": 89,
+      "lateAvg": 74,
+      "drop": 15,
+      "suggestion": "Editorial quality score dropped from 89 to 74 (15 point decline). Investigate recent prompt or data changes."
+    },
+    {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 0.83,
+      "lateAvg": 0.5,
+      "drop": 0.33,
+      "suggestion": "Must-watch coverage dropped from 83% to 50%. Featured content is missing high-importance events."
+    },
+    {
       "type": "hint_fatigue",
-      "severity": "high",
+      "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 10,
+      "fireCount": 9,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 season opens in Melbourne — Australian GP ra",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 10 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 9 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -18,9 +36,9 @@
       "lastSeen": "2026-03-07T02:01:03.736Z"
     },
     "ux_eval_fallback": {
-      "count": 286,
+      "count": 287,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-09T18:24:09.110Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "missing_snapshot": {
       "count": 19,
@@ -28,34 +46,34 @@
       "lastSeen": "2026-03-09T02:02:07.295Z"
     },
     "snapshot_event_mismatch": {
-      "count": 65,
+      "count": 74,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-08T22:11:51.264Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "stale_snapshot": {
-      "count": 38,
+      "count": 39,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-03-09T14:29:22.608Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "invisible_events": {
-      "count": 132,
+      "count": 133,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-09T18:24:09.110Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "stale_data": {
-      "count": 247,
+      "count": 250,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-09T18:24:09.110Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "chronic_data_retention": {
-      "count": 239,
+      "count": 242,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-09T18:24:09.110Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "stale_output": {
-      "count": 32,
+      "count": 34,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-03-09T14:29:22.608Z"
+      "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "step_timeout_hit": {
       "count": 2,
@@ -63,5 +81,5 @@
       "lastSeen": "2026-03-09T08:18:09.893Z"
     }
   },
-  "summary": "1 patterns detected (1 high). Top priority: hint_fatigue — Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas."
+  "summary": "3 patterns detected (3 medium). Top priority: quality_decline — Editorial quality score dropped from 89 to 74 (15 point decline)."
 }
