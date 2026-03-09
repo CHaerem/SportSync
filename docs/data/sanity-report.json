@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T06:32:10.901Z",
+  "generatedAt": "2026-03-09T10:24:04.906Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 51,
@@ -13,9 +13,7 @@
       "chess"
     ],
     "bands": {
-      "live": [
-        "Austin 125 2"
-      ],
+      "live": [],
       "today": [
         "Tirreno-Adriatico 2026",
         "Real Oviedo at Espanyol"
@@ -74,14 +72,15 @@
       "ended": [
         "HEROIC vs TBD (Consolidation Final winner)",
         "Arnold Palmer Invitational pres. by Mastercard",
-        "Qatar Airways Australian Grand Prix"
+        "Qatar Airways Australian Grand Prix",
+        "Austin 125 2"
       ]
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 63,
-    "issueCount": 10
+    "issueCount": 17
   },
   "findings": [
     {
@@ -186,11 +185,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 5 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Italian\" but no matching athlete found in events data"
     },
@@ -221,9 +215,9 @@
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 26,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 2
   },
   "pass": true,
