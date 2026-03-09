@@ -1702,8 +1702,8 @@ class Dashboard {
 			html += `<span class="md-featured-time">${fTime}</span>`;
 		}
 		html += '</div>';
-		if (featured.summary) {
-			html += `<div class="md-featured-context">${this.esc(featured.summary)}</div>`;
+		if (featured.summary || featured.importanceReason) {
+			html += `<div class="md-featured-context">${this.esc(featured.summary || featured.importanceReason)}</div>`;
 		}
 		if (featured.streaming?.length > 0) {
 			html += '<div class="md-featured-stream">';
@@ -1808,8 +1808,8 @@ class Dashboard {
 		if (headline.title) {
 			html += `<div class="lead-title">${this.esc(headline.title)}</div>`;
 		}
-		if (headline.summary) {
-			html += `<div class="lead-lede">${this.esc(headline.summary)}</div>`;
+		if (headline.summary || headline.importanceReason) {
+			html += `<div class="lead-lede">${this.esc(headline.summary || headline.importanceReason)}</div>`;
 		}
 
 		// Event rows inside the card
@@ -2195,10 +2195,12 @@ class Dashboard {
 		const faLogo = typeof getTeamLogo === 'function' ? getTeamLogo(feat.awayTeam) : null;
 		const fhImg = fhLogo ? `<img class="result-team-logo" src="${fhLogo}" alt="${this.esc(feat.homeTeam)}" loading="lazy">` : '';
 		const faImg = faLogo ? `<img class="result-team-logo" src="${faLogo}" alt="${this.esc(feat.awayTeam)}" loading="lazy">` : '';
+		const featHomeWins = feat.homeScore > feat.awayScore;
+		const featAwayWins = feat.awayScore > feat.homeScore;
 		html += '<div class="result-match">';
-		html += `<div class="result-team">${fhImg}<span class="result-team-name">${this.esc(this.shortName(feat.homeTeam))}</span></div>`;
+		html += `<div class="result-team${featHomeWins ? ' result-winner' : ''}">${fhImg}<span class="result-team-name">${this.esc(this.shortName(feat.homeTeam))}</span></div>`;
 		html += `<span class="result-score">${feat.homeScore} - ${feat.awayScore}</span>`;
-		html += `<div class="result-team">${faImg}<span class="result-team-name">${this.esc(this.shortName(feat.awayTeam))}</span></div>`;
+		html += `<div class="result-team${featAwayWins ? ' result-winner' : ''}">${faImg}<span class="result-team-name">${this.esc(this.shortName(feat.awayTeam))}</span></div>`;
 		html += '</div>';
 		if (feat.recapHeadline) {
 			html += `<div class="result-summary">${this.esc(feat.recapHeadline)}</div>`;
@@ -2231,10 +2233,12 @@ class Dashboard {
 		html += `<span class="result-sport">${leagueImg}${this.esc(m.league || '')}</span>`;
 		html += '<span class="result-ft">FT</span>';
 		html += '</div>';
+		const homeWins = m.homeScore > m.awayScore;
+		const awayWins = m.awayScore > m.homeScore;
 		html += '<div class="result-match">';
-		html += `<div class="result-team">${hImg}<span class="result-team-name">${this.esc(this.shortName(m.homeTeam))}</span></div>`;
+		html += `<div class="result-team${homeWins ? ' result-winner' : ''}">${hImg}<span class="result-team-name">${this.esc(this.shortName(m.homeTeam))}</span></div>`;
 		html += `<span class="result-score">${m.homeScore} - ${m.awayScore}</span>`;
-		html += `<div class="result-team">${aImg}<span class="result-team-name">${this.esc(this.shortName(m.awayTeam))}</span></div>`;
+		html += `<div class="result-team${awayWins ? ' result-winner' : ''}">${aImg}<span class="result-team-name">${this.esc(this.shortName(m.awayTeam))}</span></div>`;
 		html += '</div>';
 		if (m.recapHeadline) {
 			html += `<div class="result-summary">${this.esc(m.recapHeadline)}</div>`;
@@ -2368,10 +2372,10 @@ class Dashboard {
 			html += this.renderBand('Happening now', liveEvents, { cssClass: 'live' });
 		}
 
-		// 2. Today's events — no flow label (obviously today after the brief)
+		// 2. Today's events — label "Today" for clear hierarchy when results follow below
 		const todayEvents = filterBand(bands.today);
 		if (todayEvents.length > 0) {
-			html += this.renderBand(null, todayEvents, {});
+			html += this.renderBand('Today', todayEvents, {});
 		}
 
 		// 3. Results — render important results as result cards
