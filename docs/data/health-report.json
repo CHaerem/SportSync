@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T22:11:51.204Z",
+  "generatedAt": "2026-03-09T01:56:54.207Z",
   "eventCount": 43,
   "sportCoverage": {
     "esports": {
@@ -40,34 +40,34 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 230,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 11526,
+      "ageMinutes": 11751,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 5934,
+      "ageMinutes": 6159,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 230,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 230,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 230,
       "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-03-08"
+      "featuredDate": "2026-03-09"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -107,7 +107,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 day snapshot(s) within event range have 0 events and 0 results"
+      "1 day snapshot(s) within event range have 0 events and 0 results",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -124,30 +125,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 30,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 53192,
-    "stepCount": 21,
+    "totalDuration": 364517,
+    "stepCount": 28,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28423,
-        "share": 53
-      },
-      {
-        "name": "fetch-results",
-        "duration": 43384,
-        "share": 82
+        "name": "discover-events",
+        "duration": 180279,
+        "share": 49
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -176,19 +174,17 @@
     ],
     "hasCoverage": false
   },
-  "unmappedLeagues": [
-    "ATP/WTA Tour"
-  ],
+  "unmappedLeagues": [],
   "issues": [
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 11526 minutes old"
+      "message": "esports.json: data is 11751 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 5934 minutes old"
+      "message": "f1.json: data is 6159 minutes old"
     },
     {
       "severity": "warning",
@@ -203,7 +199,7 @@
     {
       "severity": "warning",
       "code": "invisible_events",
-      "message": "2 event(s) won't appear on dashboard (esports, f1)"
+      "message": "3 event(s) won't appear on dashboard (esports, golf, f1)"
     },
     {
       "severity": "info",
@@ -211,9 +207,9 @@
       "message": "1 day snapshot(s) within event range have 0 events and 0 results"
     },
     {
-      "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "1 tournament(s) lack league theming: ATP/WTA Tour"
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -223,12 +219,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 49% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 82% of total pipeline time (43s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -238,7 +234,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-08T22:11:51.276Z",
+    "computedAt": "2026-03-09T01:56:54.266Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -256,14 +252,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 94/100.",
     "tokenUsage": null
   }
 }

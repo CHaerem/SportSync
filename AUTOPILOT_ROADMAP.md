@@ -195,9 +195,20 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 4. Personalization | ~65% | 2026-03-04 | Liverpool + 100 Thieves added to favorites (user feedback #122), FIFA WC favoriteTeamConnections |
 | 3. Capabilities | ~87% | 2026-03-08 | Tennis event visibility restored during active tournaments |
 | 4. Personalization | ~68% | 2026-03-08 | Golf leaderboard position in tee time cards, importanceReason on collapsed must-watch rows |
-| 5. Quality | ~100% | 2026-03-08 | F1 sanityScore hint_fatigue suppressed, 2457 tests pass |
+| 5. Quality | ~100% | 2026-03-09 | sanityScore hint_fatigue fully suppressed (false-positive regex), ATP/WTA Tour league mapped, 2459 tests pass |
+| 3. Capabilities | ~87% | 2026-03-09 | UX improvements: winner emphasis, importanceReason card fallback, Today label |
+| 4. Personalization | ~70% | 2026-03-09 | importanceReason fallback surfaces "why this matters" on more cards |
 
 ### Run History Insights
+
+**Run 2026-03-09 (Run 21):** Scouting run — 0 pending tasks, 0 user feedback. 6 tasks via 3 subagents (code-agent + ux-agent scout + ux-agent execute).
+- code-agent: ATP/WTA Tour league-config entry added (fixes unmapped_leagues). sanityScore hint_fatigue suppressed — `featured_unknown_athlete` regex too broad (captures venue names, nationalities), suppressed when sole remaining finding type. 2 new tests. Direct-to-main.
+- ux-agent scout: 9 UX opportunities found. Top picks: ARIA labels, importanceReason card fallback, result winner emphasis, Today label, sport pills DOM position, standalone standings card.
+- ux-agent execute (PR #125, merged): 4 improvements batched — importanceReason fallback on cards, result winner emphasis, Today label, --sport-cycling CSS confirmed.
+- **Key insight**: Dedicated UX scouting via subagent is highly productive — systematic code+data+health analysis found 9 opportunities. Splitting scout→execute into 2 sequential runs prevents the scout from getting bogged down in implementation.
+- RSS scouting: Paralympics 2026 underway (curling, skiing) but Sport Expansion Policy blocks autonomous addition. No coverage gaps. Norwegian football stories (Schjelderup, Bodø/Glimt) covered by existing infrastructure.
+- User-visible / infrastructure ratio: ~80% / 20% (4 UX improvements = user-visible; 2 code fixes = infrastructure).
+- 1 direct-to-main + 1 branch-pr (PR #125). 2459 tests across 79 files.
 
 **Run 2026-03-08 (Run 20):** 5 tasks via 3 subagents (ux-agent + data-agent x2) + 2 background agents. 2 pending UX tasks + 2 scouted data issues.
 - ux-agent: Both pending EXPERIENCE tasks completed in batch (PR #124, merged): (1) importanceReason italic subtitle on collapsed must-watch rows when no summary present; (2) golf tee time cards cross-referenced against loaded leaderboard to show position + score before tee time. 2457 tests pass.
@@ -414,6 +425,20 @@ Keep this section near the top so the autopilot continuously improves user-facin
 - [DONE] (PR #124) **Golf tee time cards: cross-reference standings position** — Norwegian player tee time cards now show leaderboard position + score before the tee time (e.g. "Viktor Hovland — T11 (-5) — tees 16:20"). Cross-references `this.standings.golf.*.leaderboard` via case-insensitive name matching. Gracefully degrades to existing display when no leaderboard match found. `.lead-tee-standing` CSS class added.
 
 - [DONE] (PR #124) **Surface importanceReason on must-watch collapsed cards** — For importance >= 4 events without a summary, `importanceReason` now shown as italic muted subtitle in collapsed row via `.row-importance-reason` CSS class. Summary takes priority to avoid duplication.
+
+- [DONE] (PR #125) **importanceReason fallback on matchday/sport-group cards** — `renderMatchdayGroup` and `renderSportGroupCard` now fall back to `importanceReason` when `summary` is absent. Cards that previously showed nothing now display "why this matters" context.
+
+- [DONE] (PR #125) **Result cards visually emphasize winning team** — Winner detection in `_renderFootballResultCard` and `_renderGroupedResultCard`. `.result-winner` CSS class applies `font-weight: 600` and `color: var(--fg)` to winning team name. Draws get no emphasis.
+
+- [DONE] (PR #125) **"Today" label for today's events band** — Changed `renderBand(null, ...)` to `renderBand('Today', ...)` for today's upcoming events. Clearer visual hierarchy when "What you missed" results band follows.
+
+- [PENDING] **Add ARIA labels to key interactive elements** — Band labels, event rows, and masthead buttons need descriptive `aria-label` attributes. UX health report flags `low_aria_labels`. ~25 lines across `index.html` and `dashboard.js`. (Quality pillar — accessibility)
+
+- [PENDING] **Result cards: add fallback recap from goalscorer data** — `recapHeadlineRate: 0` means no result cards show context. When `recapHeadline` is absent, generate a one-liner from goalScorers (e.g., "Yamal 68' seals it"). ~15 lines in `_renderFootballResultCard`. (Content + UX)
+
+- [PENDING] **Standalone standings card in today's view** — `renderStandingsSection()` exists but is removed from today's render path. Re-enable as collapsible band below events for direct PL table/golf leaderboard access. ~20 lines. (Data utilization)
+
+- [PENDING] **Move sport pills above editorial brief** — Pills are below the brief in DOM order, making filtering require scroll-past on mobile. Reorder to `day-nav → sport-pills → the-brief → feed`. ~5 lines HTML. (Mobile UX)
 
 ---
 
