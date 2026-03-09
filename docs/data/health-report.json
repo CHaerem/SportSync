@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T20:11:29.992Z",
+  "generatedAt": "2026-03-09T21:12:18.786Z",
   "eventCount": 50,
   "sportCoverage": {
     "esports": {
@@ -24,8 +24,8 @@
     },
     "football": {
       "count": 37,
-      "previousCount": 38,
-      "delta": -1
+      "previousCount": 37,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -44,11 +44,11 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 12845,
+      "ageMinutes": 12906,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 7253,
+      "ageMinutes": 7314,
       "stale": true
     },
     "football.json": {
@@ -60,18 +60,18 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1091,
+      "ageMinutes": 1152,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 342,
-      "stale": false,
+      "ageMinutes": 403,
+      "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-03-09"
     },
     "ai-quality.json": {
-      "ageMinutes": 342,
-      "stale": false
+      "ageMinutes": 403,
+      "stale": true
     }
   },
   "schemaCompleteness": {
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "1 day snapshot(s) within event range have 0 events and 0 results",
-      "Day snapshots are 342 minutes old (stale > 240m)",
+      "Day snapshots are 403 minutes old (stale > 240m)",
       "Snapshot 2026-03-05: 1 events but events.json has 0",
       "Snapshot 2026-03-06: 2 events but events.json has 1",
       "Snapshot 2026-03-07: 1 events but events.json has 0",
@@ -188,17 +188,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 12845 minutes old"
+      "message": "esports.json: data is 12906 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 7253 minutes old"
+      "message": "f1.json: data is 7314 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 1091 minutes old"
+      "message": "tennis.json: data is 1152 minutes old"
     },
     {
       "severity": "warning",
@@ -217,6 +217,16 @@
     },
     {
       "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 403 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 403 minutes old"
+    },
+    {
+      "severity": "warning",
       "code": "invisible_events",
       "message": "2 event(s) won't appear on dashboard (esports, f1)"
     },
@@ -228,7 +238,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 342 minutes old (stale > 240m)"
+      "message": "Day snapshots are 403 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
@@ -298,7 +308,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-09T20:11:30.058Z",
+    "computedAt": "2026-03-09T21:12:18.850Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -316,14 +326,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 3 critical, 15 warning issue(s). Editorial quality score is 57/100.",
+    "text": "Pipeline is critical with 3 critical, 17 warning issue(s). Editorial quality score is 57/100.",
     "tokenUsage": null
   }
 }
