@@ -689,6 +689,42 @@ describe("buildSanityHints()", () => {
 		expect(result.hints[0]).toContain("13:00");
 		expect(result.hints[0]).not.toContain("CS2");
 	});
+
+	it("suppresses featured_unknown_athlete when it is the sole featured_ finding", () => {
+		// Athlete name detection uses broad capitalized-word regex with many false
+		// positives (venue names, nationalities, team abbreviations). When no real
+		// orphan-ref finding is present, the hint fires every run without improving
+		// sanityScore because the LLM can't fix missing norwegianPlayers data.
+		const report = {
+			pass: true,
+			summary: { total: 3, warning: 3 },
+			findings: [
+				{ severity: "warning", check: "featured_unknown_athlete", message: 'Featured mentions "Bay Hill" but no matching athlete found in events data' },
+				{ severity: "warning", check: "featured_unknown_athlete", message: 'Featured mentions "Berger" but no matching athlete found in events data' },
+				{ severity: "warning", check: "featured_unknown_athlete", message: 'Featured mentions "Italian" but no matching athlete found in events data' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(0);
+		expect(result.findingCount).toBe(3); // findings still counted, just not emitted as hint
+	});
+
+	it("still emits featured hint when unknown_athlete co-exists with real featured findings", () => {
+		// When a genuine orphan-ref finding is also present, the full set of featured
+		// findings should still produce a hint (the athlete findings add context).
+		const report = {
+			pass: true,
+			summary: { total: 2, warning: 2 },
+			findings: [
+				{ severity: "warning", check: "featured_orphan_ref", message: 'Featured block references "Indian Wells R2" which may not match any event' },
+				{ severity: "warning", check: "featured_unknown_athlete", message: 'Featured mentions "Ruud" but no matching athlete found in events data' },
+			],
+		};
+		const result = buildSanityHints(report);
+		expect(result.hints).toHaveLength(1);
+		expect(result.hints[0]).toContain("content issues");
+		expect(result.hints[0]).toContain("Indian Wells R2");
+	});
 });
 
 describe("buildQualitySnapshot() with sanity", () => {

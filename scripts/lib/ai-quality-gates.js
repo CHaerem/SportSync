@@ -877,11 +877,23 @@ export function buildSanityHints(sanityReport) {
 		allResultFindings.every(f => f.check === "result_all_recaps_null");
 	const result = isOnlyNullRecaps ? [] : allResultFindings;
 
+	// Suppress featured_unknown_athlete when it is the sole type of featured_ finding.
+	// The athlete name detection uses a broad capitalized-word regex that produces many
+	// false positives: venue names (Bay Hill, Indian Wells), nationalities (Italian,
+	// European), abbreviated team names (Man City), and players referenced by surname only
+	// (Ruud, Shevchenko). When no real orphan-ref finding remains (after F1/esports
+	// suppression above), telling the LLM to "verify claims against provided data" is
+	// a no-op — the names ARE from provided data, just not in norwegianPlayers.
+	const hasOnlyUnknownAthleteFindings =
+		featured.length > 0 &&
+		featured.every(f => f.check === "featured_unknown_athlete");
+	const filteredFeatured = hasOnlyUnknownAthleteFindings ? [] : featured;
+
 	const coverage = findings.filter(f => f.check === "sport_vanished" || f.check === "standings_without_events");
 	const actionable = findings.filter(f => f.actionable === true);
 
-	if (featured.length > 0) {
-		const msgs = featured.map(f => f.message).join("; ");
+	if (filteredFeatured.length > 0) {
+		const msgs = filteredFeatured.map(f => f.message).join("; ");
 		hints.push(`SANITY: Previous brief had content issues: ${msgs}. Verify all claims against provided data.`);
 	}
 
@@ -896,7 +908,7 @@ export function buildSanityHints(sanityReport) {
 	}
 
 	// Include actionable LLM findings directly (skip those already covered above)
-	const coveredChecks = new Set([...featured, ...result, ...coverage].map(f => f.message));
+	const coveredChecks = new Set([...filteredFeatured, ...result, ...coverage].map(f => f.message));
 	for (const f of actionable) {
 		if (!coveredChecks.has(f.message)) {
 			hints.push(`SANITY: ${f.message}`);
