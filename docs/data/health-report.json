@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-10T10:17:47.595Z",
+  "generatedAt": "2026-03-10T11:15:38.362Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -44,15 +44,15 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 13691,
+      "ageMinutes": 13749,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 8100,
+      "ageMinutes": 8158,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1938,
+      "ageMinutes": 1995,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 233,
+      "ageMinutes": 291,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-10"
     },
     "ai-quality.json": {
-      "ageMinutes": 233,
+      "ageMinutes": 291,
       "stale": false
     }
   },
@@ -106,7 +106,9 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Day snapshots are 291 minutes old (stale > 240m)"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -122,30 +124,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 59,
+    "sevenDay": 40,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 61688,
-    "stepCount": 21,
+    "totalDuration": 122811,
+    "stepCount": 23,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 31678,
-        "share": 51
+        "name": "fetch-results",
+        "duration": 48622,
+        "share": 40
       },
       {
-        "name": "fetch-results",
-        "duration": 46620,
-        "share": 76
+        "name": "verify-schedules",
+        "duration": 60081,
+        "share": 49
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -181,32 +188,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 13691 minutes old"
+      "message": "esports.json: data is 13749 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 8100 minutes old"
+      "message": "f1.json: data is 8158 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 1938 minutes old"
+      "message": "tennis.json: data is 1995 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 134 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 135 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 71 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 72 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 20 consecutive times (since 2026-03-09) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 21 consecutive times (since 2026-03-09) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -219,9 +226,19 @@
       "message": "3 event(s) won't appear on dashboard (esports, f1, tennis)"
     },
     {
+      "severity": "warning",
+      "code": "stale_snapshot",
+      "message": "Day snapshots are 291 minutes old (stale > 240m)"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: CS2 Major Tournaments 2026"
+    },
+    {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 59%, 7d: 40%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -231,12 +248,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 40% of total pipeline time (49s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (47s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 49% of total pipeline time (60s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -246,7 +268,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-10T10:17:47.657Z",
+    "computedAt": "2026-03-10T11:15:38.424Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -282,7 +304,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 83/100.",
+    "text": "Pipeline is warning with 10 warning issue(s). Editorial quality score is 83/100.",
     "tokenUsage": null
   }
 }
