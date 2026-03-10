@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-10T20:11:54.725Z",
+  "generatedAt": "2026-03-10T21:12:32.038Z",
   "eventCount": 49,
   "sportCoverage": {
     "esports": {
@@ -24,8 +24,8 @@
     },
     "football": {
       "count": 35,
-      "previousCount": 38,
-      "delta": -3
+      "previousCount": 35,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -44,11 +44,11 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14286,
+      "ageMinutes": 14346,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 8694,
+      "ageMinutes": 8754,
       "stale": true
     },
     "football.json": {
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2532,
+      "ageMinutes": 2592,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 106,
+      "ageMinutes": 166,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-10"
     },
     "ai-quality.json": {
-      "ageMinutes": 106,
+      "ageMinutes": 166,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 20,
+    "footballCount": 19,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -183,17 +183,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 14286 minutes old"
+      "message": "esports.json: data is 14346 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 8694 minutes old"
+      "message": "f1.json: data is 8754 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 2532 minutes old"
+      "message": "tennis.json: data is 2592 minutes old"
     },
     {
       "severity": "warning",
@@ -253,7 +253,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-10T20:11:54.784Z",
+    "computedAt": "2026-03-10T21:12:32.105Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -282,7 +282,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
