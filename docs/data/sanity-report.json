@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-10T06:24:50.529Z",
+  "generatedAt": "2026-03-10T10:17:47.540Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -83,7 +83,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 83,
-    "issueCount": 12
+    "issueCount": 13
   },
   "findings": [
     {
@@ -183,11 +183,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
     },
@@ -208,9 +203,9 @@
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 23,
     "critical": 0,
-    "warning": 22,
+    "warning": 21,
     "info": 2
   },
   "pass": true,
