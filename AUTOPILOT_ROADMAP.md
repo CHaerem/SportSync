@@ -198,8 +198,18 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 5. Quality | ~100% | 2026-03-09 | sanityScore hint_fatigue fully suppressed (false-positive regex), ATP/WTA Tour league mapped, 2459 tests pass |
 | 3. Capabilities | ~87% | 2026-03-09 | UX improvements: winner emphasis, importanceReason card fallback, Today label |
 | 4. Personalization | ~70% | 2026-03-09 | importanceReason fallback surfaces "why this matters" on more cards |
+| 1. Data | ~96% | 2026-03-10 | ESL Pro League S22 added for 100 Thieves (user feedback #126), esports coverage restored |
+| 5. Quality | ~100% | 2026-03-10 | ARIA labels, goalscorer recap fallback, sport pills reorder (PR #127) |
 
 ### Run History Insights
+
+**Run 2026-03-10 (Run 22):** 1 user feedback + 3 UX tasks via 2 parallel subagents (data-agent + ux-agent).
+- data-agent: Processed user feedback #126 — added ESL Pro League Season 22 to esports config for 100 Thieves (rain). Updated DraculaN S5 to completed. `needsVerification: true` for discovery loop refinement. Direct-to-main.
+- ux-agent (PR #127, merged): 3 improvements batched — (a) ARIA labels on masthead, day-nav, band labels, event rows; (b) goalscorer recap fallback generates one-liners when recapHeadline absent; (c) sport pills moved above editorial brief for mobile UX.
+- Orchestrator investigation: editorial quality decline (63/100) caused by featured.json containing placeholder content despite pipeline reporting success. Likely pipeline commit race condition — not actionable this run.
+- **Key insight**: User feedback issues are the highest-ROI work — issue #126 directly identified a missing tournament that the scouting heuristics couldn't detect (esports data was stale for 9 days with 128 consecutive retains).
+- User-visible / infrastructure ratio: 100% / 0% (all 4 changes are user-facing).
+- 1 direct-to-main + 1 branch-pr (PR #127). 2459 tests pass across 79 files.
 
 **Run 2026-03-09 (Run 21):** Scouting run — 0 pending tasks, 0 user feedback. 6 tasks via 3 subagents (code-agent + ux-agent scout + ux-agent execute).
 - code-agent: ATP/WTA Tour league-config entry added (fixes unmapped_leagues). sanityScore hint_fatigue suppressed — `featured_unknown_athlete` regex too broad (captures venue names, nationalities), suppressed when sole remaining finding type. 2 new tests. Direct-to-main.
@@ -432,13 +442,13 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #125) **"Today" label for today's events band** — Changed `renderBand(null, ...)` to `renderBand('Today', ...)` for today's upcoming events. Clearer visual hierarchy when "What you missed" results band follows.
 
-- [PENDING] **Add ARIA labels to key interactive elements** — Band labels, event rows, and masthead buttons need descriptive `aria-label` attributes. UX health report flags `low_aria_labels`. ~25 lines across `index.html` and `dashboard.js`. (Quality pillar — accessibility)
+- [DONE] (PR #127) **Add ARIA labels to key interactive elements** — Added `aria-label` to masthead, day-nav, band labels, and event rows in `index.html` and `dashboard.js`. Addresses `low_aria_labels` UX health flag.
 
-- [PENDING] **Result cards: add fallback recap from goalscorer data** — `recapHeadlineRate: 0` means no result cards show context. When `recapHeadline` is absent, generate a one-liner from goalScorers (e.g., "Yamal 68' seals it"). ~15 lines in `_renderFootballResultCard`. (Content + UX)
+- [DONE] (PR #127) **Result cards: add fallback recap from goalscorer data** — When `recapHeadline` is absent, generates one-liner from goalscorer data (e.g., "Yamal 68' seals it"). Addresses `recapHeadlineRate: 0`.
 
 - [PENDING] **Standalone standings card in today's view** — `renderStandingsSection()` exists but is removed from today's render path. Re-enable as collapsible band below events for direct PL table/golf leaderboard access. ~20 lines. (Data utilization)
 
-- [PENDING] **Move sport pills above editorial brief** — Pills are below the brief in DOM order, making filtering require scroll-past on mobile. Reorder to `day-nav → sport-pills → the-brief → feed`. ~5 lines HTML. (Mobile UX)
+- [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
 ---
 

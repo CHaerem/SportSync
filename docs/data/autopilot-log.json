@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-10",
+      "task": "User feedback #126: ESL Pro League S22 for 100 Thieves; UX: ARIA labels + goalscorer recap + sport pills reorder (PR #127)",
+      "outcome": "completed",
+      "pr": "#127 (merged)",
+      "details": "Run 22: 1 user feedback + 3 UX tasks via 2 parallel subagents (data-agent + ux-agent). (1) data-agent: Added ESL Pro League Season 22 (Mar 4 - Apr 6) to esports-cs2-2026.json for 100 Thieves with rain. Updated DraculaN S5 to completed. needsVerification flag for discovery loop. Direct-to-main. Issue #126 closed. (2) ux-agent (PR #127, merged): 3 improvements batched — ARIA labels on masthead/day-nav/bands/event rows, goalscorer recap fallback when recapHeadline absent, sport pills moved above editorial brief for mobile. (3) Orchestrator: Investigated editorial quality decline (63/100) — featured.json has placeholder content despite pipeline success, likely commit race condition. All 2459 tests pass.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 15,
+      "lesson": "Esports data was stale 9 days (128 consecutive retains) without any scouting heuristic catching it. User feedback is the only signal that detected the gap — the pipeline health check showed esports as stale but this is a KNOWN_DATA_GAPS item. Consider adding a 'favorite team coverage' health check that specifically monitors whether favoriteTeams have recent events.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-09",
       "task": "UX: 4 visual improvements (PR #125); Code: ATP/WTA league fix + sanityScore hint suppression",
       "outcome": "completed",

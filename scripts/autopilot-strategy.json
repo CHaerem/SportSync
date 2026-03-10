@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-10",
+        "note": "Run 22: 1 user feedback + 3 UX tasks via 2 parallel subagents (data-agent + ux-agent). User feedback #126 (100 Thieves missing tournament) — esports data stale 9 days with 128 consecutive retains. Added ESL Pro League S22. UX: 3 improvements batched into PR #127 (ARIA labels, goalscorer recap fallback, sport pills reorder). User-visible/infrastructure: 100%/0%. Key learning: favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. Consider adding a favorite_team_coverage health check that monitors whether favoriteTeams have recent events (not just checking data staleness, but team-level coverage)."
+      },
+      {
         "date": "2026-03-09",
         "note": "Run 21: Scouting run — 0 pending tasks, 0 user feedback. 6 tasks via 3 subagents (code-agent + ux-agent scout + ux-agent execute). code-agent: ATP/WTA Tour league fix + sanityScore hint_fatigue suppression (featured_unknown_athlete regex false positives — venue names, nationalities). 2 tests added. Direct-to-main. ux-agent: 2-phase approach — scout found 9 opportunities, then execute shipped top 4 as PR #125 (merged). Improvements: importanceReason card fallback, result winner emphasis, Today label, --sport-cycling CSS. 4 new PENDING tasks added from remaining scouting findings. User-visible/infrastructure: ~80%/20%. Key learning: splitting UX scout vs execute into separate subagent runs is more efficient — scout reports findings without implementation overhead, execute acts on prioritized subset."
       },
