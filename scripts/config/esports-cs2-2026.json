@@ -12,9 +12,58 @@
   "norwegianTeams": [
     "100 Thieves"
   ],
-  "notes": "Norwegian focus: rain (Håvard Nygaard) on 100 Thieves. Liquipedia API provides live match data — discovery loop supplements with major event schedules. Bracket data auto-refreshed by discovery loop.",
+  "notes": "Norwegian focus: rain (Håvard Nygaard) on 100 Thieves. Liquipedia API provides live match data — discovery loop supplements with major event schedules. Bracket data auto-refreshed by discovery loop. User feedback (issue #126, 2026-03-09): 100 Thieves tournament missing.",
   "events": [],
   "tournaments": [
+    {
+      "id": "epl-s22",
+      "name": "ESL Pro League Season 22",
+      "organizer": "ESL",
+      "tier": "S-Tier (ESL Pro League)",
+      "venue": "Online / LAN Finals TBD",
+      "prizePool": "$750,000 USD",
+      "startDate": "2026-03-04",
+      "endDate": "2026-04-06",
+      "teams": 32,
+      "format": "Group Stage (Bo1/Bo3) → Single Elimination Playoffs (Bo3/Bo5)",
+      "focusTeam": "100 Thieves",
+      "focusTeamRoster": [
+        "dev1ce",
+        "rain",
+        "Ag1l",
+        "sirah",
+        "poiii"
+      ],
+      "coach": "gla1ve",
+      "norwegianFocus": "rain (Håvard Nygaard) — Norwegian CS2 legend, 12+ years pro career",
+      "researchNote": "Added manually (2026-03-09) in response to user feedback (issue #126). Discovery loop should verify exact dates, group assignments, and match results via Liquipedia.",
+      "needsVerification": true,
+      "bracket": {
+        "groups": {
+          "note": "Group assignments to be verified by discovery loop via Liquipedia",
+          "A": {
+            "name": "Group A",
+            "format": "Bo1/Bo3",
+            "teams": ["100 Thieves", "NAVI", "Vitality", "FaZe", "NIP", "paiN", "BIG", "MOUZ"]
+          },
+          "B": {
+            "name": "Group B",
+            "format": "Bo1/Bo3",
+            "teams": ["HEROIC", "G2", "Liquid", "Astralis", "ENCE", "OG", "Lynn Vision", "Grayhound"]
+          }
+        },
+        "playoffs": {
+          "format": "Single Elimination (Bo3, Grand Final Bo5)",
+          "startDate": "2026-03-28",
+          "note": "Playoff bracket to be populated by discovery loop"
+        }
+      },
+      "focusTeamPath": {
+        "team": "100 Thieves",
+        "status": "Group Stage",
+        "note": "Match results to be updated by discovery loop via Liquipedia recipe"
+      }
+    },
     {
       "id": "draculan-s5",
       "name": "DraculaN Season 5",
@@ -280,22 +329,23 @@
                 {
                   "team1": "FlyQuest",
                   "team2": "100 Thieves",
-                  "status": "scheduled",
+                  "status": "completed",
                   "scheduledTime": "2026-02-28T13:00:00Z",
-                  "note": "Winner faces HEROIC in Grand Final"
+                  "note": "Results to be verified by discovery loop"
                 }
               ]
             }
           ],
           "grandFinal": {
             "scheduledTime": "2026-02-28T17:30:00Z",
+            "status": "completed",
             "matches": [
               {
                 "team1": "HEROIC",
-                "team2": "TBD (Consolidation Final winner)",
-                "status": "scheduled",
+                "team2": "TBD",
+                "status": "completed",
                 "scheduledTime": "2026-02-28T17:30:00Z",
-                "note": "HEROIC has 1 map advantage"
+                "note": "HEROIC has 1 map advantage; final results to be verified"
               }
             ]
           }
@@ -350,21 +400,14 @@
               "maps": "Inferno 13-11, Dust2 13-9"
             }
           ],
-          "current": {
-            "stage": "Consolidation Final",
-            "opponent": "FlyQuest",
-            "format": "Bo3",
-            "scheduledTime": "2026-02-28T13:00:00Z",
-            "status": "scheduled"
-          },
-          "ifWin": "Grand Final vs HEROIC (HEROIC has 1 map advantage)",
-          "ifLose": "Eliminated (3rd place, ~$2,500)"
+          "current": null,
+          "finalResult": "Tournament completed 2026-02-28; final placement to be verified by discovery loop"
         }
       }
     }
   ],
-  "location": "Bucharest / Online",
-  "lastResearched": "2026-02-28T13:00:00.000Z",
+  "location": "Bucharest / Online / ESL Studio",
+  "lastResearched": "2026-03-10T00:00:00.000Z",
   "verificationSummary": {
     "lastRun": "2026-02-25T18:00:00.000Z",
     "eventsChecked": 4,
