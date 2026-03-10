@@ -1525,11 +1525,11 @@ class Dashboard {
 				const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
 				const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
 
-				html += `<div class="flow-label band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span><span class="flow-count">${countText} \u25b8</span></div>`;
+				html += `<div class="flow-label band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false" aria-label="${this.esc(label)} (${countText} event${events.length !== 1 ? 's' : ''}, collapsed)"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span><span class="flow-count">${countText} \u25b8</span></div>`;
 				html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
 				html += `<div class="band-content collapsed" data-band-content="${bandId}">`;
 			} else {
-				html += `<div class="flow-label${isLive ? ' is-live' : ''} band-label ${cssClass}"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span>${events.length > 1 ? `<span class="flow-count">${countText}</span>` : ''}</div>`;
+				html += `<div class="flow-label${isLive ? ' is-live' : ''} band-label ${cssClass}" role="region" aria-label="${this.esc(label)}"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span>${events.length > 1 ? `<span class="flow-count">${countText}</span>` : ''}</div>`;
 				html += `<div class="band-content ${cssClass ? 'band-' + cssClass.split(' ')[0] : ''}">`;
 			}
 		} else {
@@ -2240,10 +2240,19 @@ class Dashboard {
 		html += `<span class="result-score">${m.homeScore} - ${m.awayScore}</span>`;
 		html += `<div class="result-team${awayWins ? ' result-winner' : ''}">${aImg}<span class="result-team-name">${this.esc(this.shortName(m.awayTeam))}</span></div>`;
 		html += '</div>';
+		const goalScorers = m.goalScorers || [];
+		const scorers = goalScorers.slice(0, 4);
 		if (m.recapHeadline) {
 			html += `<div class="result-summary">${this.esc(m.recapHeadline)}</div>`;
+		} else if (scorers.length > 0) {
+			// Fallback: generate a one-liner from goalscorer data when no recap headline is available
+			const lastScorer = goalScorers[goalScorers.length - 1];
+			const winner = m.homeScore > m.awayScore ? this.shortName(m.homeTeam) : m.awayScore > m.homeScore ? this.shortName(m.awayTeam) : null;
+			const sealText = lastScorer && lastScorer.player
+				? `${lastScorer.player} ${lastScorer.minute} seals it`
+				: winner ? `${winner} win` : '';
+			if (sealText) html += `<div class="result-summary">${this.esc(sealText)}</div>`;
 		}
-		const scorers = (m.goalScorers || []).slice(0, 4);
 		if (scorers.length > 0) {
 			html += `<div class="result-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`;
 		}
@@ -2536,8 +2545,9 @@ class Dashboard {
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
 
-		return `
-			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}">
+		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
+	return `
+			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}" aria-label="${this.esc(_ariaLabel)}">
 				<div class="row-main">
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
 					<span class="row-time">${timeStr}${relHtml}</span>
