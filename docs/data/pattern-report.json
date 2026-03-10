@@ -1,39 +1,39 @@
 {
-  "generatedAt": "2026-03-10T17:21:10.841Z",
+  "generatedAt": "2026-03-10T18:26:09.223Z",
   "patternsDetected": 3,
   "patterns": [
     {
       "type": "quality_decline",
       "severity": "medium",
       "metric": "editorialScore",
-      "earlyAvg": 90,
-      "lateAvg": 72,
-      "drop": 17,
-      "suggestion": "Editorial quality score dropped from 90 to 72 (17 point decline). Investigate recent prompt or data changes."
+      "earlyAvg": 91,
+      "lateAvg": 71,
+      "drop": 20,
+      "suggestion": "Editorial quality score dropped from 91 to 71 (20 point decline). Investigate recent prompt or data changes."
     },
     {
       "type": "quality_decline",
       "severity": "medium",
       "metric": "mustWatchCoverage",
-      "earlyAvg": 0.94,
-      "lateAvg": 0.39,
-      "drop": 0.55,
-      "suggestion": "Must-watch coverage dropped from 94% to 39%. Featured content is missing high-importance events."
+      "earlyAvg": 1,
+      "lateAvg": 0.31,
+      "drop": 0.69,
+      "suggestion": "Must-watch coverage dropped from 100% to 31%. Featured content is missing high-importance events."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 7,
+      "fireCount": 6,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 season opens in Melbourne — Australian GP ra",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 7 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 6 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 300,
+      "count": 301,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "missing_snapshot": {
       "count": 19,
@@ -46,29 +46,29 @@
       "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "stale_snapshot": {
-      "count": 45,
+      "count": 46,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "invisible_events": {
-      "count": 146,
+      "count": 147,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "stale_data": {
-      "count": 289,
+      "count": 292,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "chronic_data_retention": {
-      "count": 281,
+      "count": 284,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "stale_output": {
-      "count": 42,
+      "count": 44,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "step_timeout_hit": {
       "count": 2,
@@ -76,9 +76,9 @@
       "lastSeen": "2026-03-09T08:18:09.893Z"
     },
     "streaming_coverage_gap": {
-      "count": 11,
+      "count": 12,
       "firstSeen": "2026-03-10T07:21:05.886Z",
-      "lastSeen": "2026-03-10T17:21:10.838Z"
+      "lastSeen": "2026-03-10T18:26:09.219Z"
     },
     "quota_high_utilization": {
       "count": 1,
@@ -86,5 +86,5 @@
       "lastSeen": "2026-03-10T16:26:15.091Z"
     }
   },
-  "summary": "3 patterns detected (3 medium). Top priority: quality_decline — Editorial quality score dropped from 90 to 72 (17 point decline)."
+  "summary": "3 patterns detected (3 medium). Top priority: quality_decline — Editorial quality score dropped from 91 to 71 (20 point decline)."
 }
