@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-10T19:19:21.674Z",
-  "eventCount": 52,
+  "generatedAt": "2026-03-10T20:11:54.725Z",
+  "eventCount": 49,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -23,9 +23,9 @@
       "delta": 0
     },
     "football": {
-      "count": 38,
+      "count": 35,
       "previousCount": 38,
-      "delta": 0
+      "delta": -3
     },
     "golf": {
       "count": 1,
@@ -44,11 +44,11 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14233,
+      "ageMinutes": 14286,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 8641,
+      "ageMinutes": 8694,
       "stale": true
     },
     "football.json": {
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2479,
+      "ageMinutes": 2532,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 53,
+      "ageMinutes": 106,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-10"
     },
     "ai-quality.json": {
-      "ageMinutes": 53,
+      "ageMinutes": 106,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 23,
+    "footballCount": 20,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -98,15 +98,17 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.22,
-    "relevantMatchRate": 0.86,
-    "eventsEnriched": 6,
+    "matchRate": 0.13,
+    "relevantMatchRate": 0.5,
+    "eventsEnriched": 3,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-03-10: 5 events but events.json has 2"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -122,27 +124,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 8,
-    "sevenDay": 49,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 433863,
-    "stepCount": 28,
+    "totalDuration": 57123,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 180198,
-        "share": 42
+        "name": "fetch-sports",
+        "duration": 30362,
+        "share": 53
+      },
+      {
+        "name": "fetch-results",
+        "duration": 44329,
+        "share": 78
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -178,32 +183,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 14233 minutes old"
+      "message": "esports.json: data is 14286 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 8641 minutes old"
+      "message": "f1.json: data is 8694 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 2479 minutes old"
+      "message": "tennis.json: data is 2532 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 143 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 144 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 80 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 81 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 29 consecutive times (since 2026-03-09) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 30 consecutive times (since 2026-03-09) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -214,6 +219,11 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "3 event(s) won't appear on dashboard (esports, f1, tennis)"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-10: 5 events but events.json has 2"
     },
     {
       "severity": "info",
@@ -228,12 +238,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 42% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (44s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -241,9 +251,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-10T19:19:21.738Z",
+    "computedAt": "2026-03-10T20:11:54.784Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -279,7 +289,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Pipeline is critical with 1 critical, 9 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }
