@@ -1,9 +1,91 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-16",
-  "generatedAt": "2026-03-09T22:14:00.978Z",
+  "generatedAt": "2026-03-10T01:58:24.076Z",
   "events": {
-    "upcoming": [],
+    "upcoming": [
+      {
+        "sport": "esports",
+        "tournament": "CS2 Major Tournaments 2026",
+        "title": "ESL Pro League Season 22",
+        "time": "2026-03-04T00:00:00.000Z",
+        "endTime": "2026-04-06T23:59:59.000Z",
+        "venue": "Online / LAN Finals TBD",
+        "norwegian": true,
+        "streaming": [],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "rain (Håvard Nygaard)"
+          }
+        ],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "context": "cs2-majors-2026",
+        "_isTournament": true,
+        "_bracketId": "epl-s22",
+        "focusTeam": "100 Thieves",
+        "tier": "S-Tier (ESL Pro League)",
+        "prizePool": "$750,000 USD"
+      },
+      {
+        "sport": "football",
+        "tournament": "Premier League",
+        "title": "Wolverhampton Wanderers at Brentford",
+        "time": "2026-03-16T20:00:00.000Z",
+        "endTime": null,
+        "venue": "Gtech Community Stadium",
+        "meta": "Premier League",
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": "Brentford",
+        "awayTeam": "Wolverhampton Wanderers",
+        "isFavorite": false
+      },
+      {
+        "sport": "football",
+        "tournament": "La Liga",
+        "title": "Levante at Rayo Vallecano",
+        "time": "2026-03-16T20:00:00.000Z",
+        "endTime": null,
+        "venue": "Estadio de Vallecas",
+        "meta": "La Liga",
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": "Rayo Vallecano",
+        "awayTeam": "Levante",
+        "isFavorite": false
+      }
+    ],
     "results": []
   },
   "matchResults": [],
@@ -11,8 +93,11 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 0,
-    "sportsCovered": [],
+    "eventCount": 3,
+    "sportsCovered": [
+      "esports",
+      "football"
+    ],
     "hasResults": false,
     "hasStandings": false
   }

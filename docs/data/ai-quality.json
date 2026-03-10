@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-03-09T22:14:00.522Z",
+  "generatedAt": "2026-03-10T01:58:07.398Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 80796,
+    "generationMs": 66714,
     "tokenUsage": {
-      "input": 27189,
-      "output": 5038,
-      "cacheCreation": 27186,
+      "input": 26655,
+      "output": 3899,
+      "cacheCreation": 26652,
       "cacheRead": 0,
-      "total": 32227,
-      "costUSD": 0.2958775,
+      "total": 30554,
+      "costUSD": 0.158439,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 63,
+    "score": 78,
     "metrics": {
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0.75,
+      "sportDiversity": 0.25,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -35,7 +35,7 @@
       "componentUtilization": 1
     },
     "issues": [
-      "Only 0% of must-watch events covered in blocks"
+      "Sport diversity is 25%"
     ]
   },
   "watchPlan": {
@@ -125,13 +125,13 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 27130,
-      "output": 3432,
+      "input": 26655,
+      "output": 3899,
       "calls": 1,
-      "total": 30562,
+      "total": 30554,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-09T02:01:48.904Z"
+    "lastRun": "2026-03-10T01:58:07.723Z"
   }
 }

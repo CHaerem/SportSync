@@ -1,4 +1,61 @@
 {
+  "epl-s22": {
+    "name": "ESL Pro League Season 22",
+    "venue": "Online / LAN Finals TBD",
+    "startDate": "2026-03-04",
+    "endDate": "2026-04-06",
+    "format": "Group Stage (Bo1/Bo3) → Single Elimination Playoffs (Bo3/Bo5)",
+    "tier": "S-Tier (ESL Pro League)",
+    "prizePool": "$750,000 USD",
+    "focusTeam": "100 Thieves",
+    "focusTeamRoster": [
+      "dev1ce",
+      "rain",
+      "Ag1l",
+      "sirah",
+      "poiii"
+    ],
+    "coach": "gla1ve",
+    "bracket": {
+      "groups": {
+        "note": "Group assignments to be verified by discovery loop via Liquipedia",
+        "A": {
+          "name": "Group A",
+          "format": "Bo1/Bo3",
+          "teams": [
+            "100 Thieves",
+            "NAVI",
+            "Vitality",
+            "FaZe",
+            "NIP",
+            "paiN",
+            "BIG",
+            "MOUZ"
+          ]
+        },
+        "B": {
+          "name": "Group B",
+          "format": "Bo1/Bo3",
+          "teams": [
+            "HEROIC",
+            "G2",
+            "Liquid",
+            "Astralis",
+            "ENCE",
+            "OG",
+            "Lynn Vision",
+            "Grayhound"
+          ]
+        }
+      },
+      "playoffs": {
+        "format": "Single Elimination (Bo3, Grand Final Bo5)",
+        "startDate": "2026-03-28",
+        "note": "Playoff bracket to be populated by discovery loop"
+      }
+    },
+    "_lastUpdated": "2026-03-10T00:00:00.000Z"
+  },
   "draculan-s5": {
     "name": "DraculaN Season 5",
     "venue": "Nexus Gamers Pub, Bucharest, Romania",
@@ -261,22 +318,23 @@
               {
                 "team1": "FlyQuest",
                 "team2": "100 Thieves",
-                "status": "scheduled",
+                "status": "completed",
                 "scheduledTime": "2026-02-28T13:00:00Z",
-                "note": "Winner faces HEROIC in Grand Final"
+                "note": "Results to be verified by discovery loop"
               }
             ]
           }
         ],
         "grandFinal": {
           "scheduledTime": "2026-02-28T17:30:00Z",
+          "status": "completed",
           "matches": [
             {
               "team1": "HEROIC",
-              "team2": "TBD (Consolidation Final winner)",
-              "status": "scheduled",
+              "team2": "TBD",
+              "status": "completed",
               "scheduledTime": "2026-02-28T17:30:00Z",
-              "note": "HEROIC has 1 map advantage"
+              "note": "HEROIC has 1 map advantage; final results to be verified"
             }
           ]
         }
@@ -331,18 +389,11 @@
             "maps": "Inferno 13-11, Dust2 13-9"
           }
         ],
-        "current": {
-          "stage": "Consolidation Final",
-          "opponent": "FlyQuest",
-          "format": "Bo3",
-          "scheduledTime": "2026-02-28T13:00:00Z",
-          "status": "scheduled"
-        },
-        "ifWin": "Grand Final vs HEROIC (HEROIC has 1 map advantage)",
-        "ifLose": "Eliminated (3rd place, ~$2,500)"
+        "current": null,
+        "finalResult": "Tournament completed 2026-02-28; final placement to be verified by discovery loop"
       }
     },
-    "_lastUpdated": "2026-02-28T13:00:00.000Z"
+    "_lastUpdated": "2026-03-10T00:00:00.000Z"
   },
   "fifa-world-cup-2026": {
     "name": "FIFA World Cup 2026",

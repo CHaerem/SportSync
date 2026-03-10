@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T22:14:02.372Z",
+  "generatedAt": "2026-03-10T01:58:25.165Z",
   "patternsDetected": 3,
   "patterns": [
     {
@@ -7,26 +7,26 @@
       "severity": "medium",
       "metric": "editorialScore",
       "earlyAvg": 89,
-      "lateAvg": 74,
-      "drop": 15,
-      "suggestion": "Editorial quality score dropped from 89 to 74 (15 point decline). Investigate recent prompt or data changes."
+      "lateAvg": 73,
+      "drop": 17,
+      "suggestion": "Editorial quality score dropped from 89 to 73 (17 point decline). Investigate recent prompt or data changes."
     },
     {
       "type": "quality_decline",
       "severity": "medium",
       "metric": "mustWatchCoverage",
-      "earlyAvg": 0.83,
-      "lateAvg": 0.5,
-      "drop": 0.33,
-      "suggestion": "Must-watch coverage dropped from 83% to 50%. Featured content is missing high-importance events."
+      "earlyAvg": 0.89,
+      "lateAvg": 0.46,
+      "drop": 0.43,
+      "suggestion": "Must-watch coverage dropped from 89% to 46%. Featured content is missing high-importance events."
     },
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "sanityScore",
-      "fireCount": 9,
+      "fireCount": 8,
       "hintText": "SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 season opens in Melbourne — Australian GP ra",
-      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 9 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"SANITY: Previous brief had content issues: Featured block references \"\udfce️ F1 seas...\" has fired 8 times without improving sanityScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
@@ -36,9 +36,9 @@
       "lastSeen": "2026-03-07T02:01:03.736Z"
     },
     "ux_eval_fallback": {
-      "count": 287,
+      "count": 288,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-09T22:14:02.369Z"
+      "lastSeen": "2026-03-10T01:58:25.161Z"
     },
     "missing_snapshot": {
       "count": 19,
@@ -56,19 +56,19 @@
       "lastSeen": "2026-03-09T22:14:02.369Z"
     },
     "invisible_events": {
-      "count": 133,
+      "count": 134,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-09T22:14:02.369Z"
+      "lastSeen": "2026-03-10T01:58:25.161Z"
     },
     "stale_data": {
-      "count": 250,
+      "count": 253,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-09T22:14:02.369Z"
+      "lastSeen": "2026-03-10T01:58:25.161Z"
     },
     "chronic_data_retention": {
-      "count": 242,
+      "count": 245,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-09T22:14:02.369Z"
+      "lastSeen": "2026-03-10T01:58:25.161Z"
     },
     "stale_output": {
       "count": 34,
@@ -81,5 +81,5 @@
       "lastSeen": "2026-03-09T08:18:09.893Z"
     }
   },
-  "summary": "3 patterns detected (3 medium). Top priority: quality_decline — Editorial quality score dropped from 89 to 74 (15 point decline)."
+  "summary": "3 patterns detected (3 medium). Top priority: quality_decline — Editorial quality score dropped from 89 to 73 (17 point decline)."
 }
