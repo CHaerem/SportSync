@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T10:17:43.745Z",
+  "generatedAt": "2026-03-11T14:24:48.343Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -83,7 +83,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 82,
-    "issueCount": 9
+    "issueCount": 12
   },
   "findings": [
     {
@@ -189,22 +189,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Liverpool\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Galatasaray\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bayern\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Atalanta\" but no matching athlete found in events data"
+      "message": "Featured mentions \"England\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -220,6 +215,11 @@
       "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_unverified_result",
+      "message": "Brief references \"tico\" vs \"spurs\" result but no matching data in recent-results.json"
     }
   ],
   "summary": {
