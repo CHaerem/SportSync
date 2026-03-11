@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-11T19:20:42.881Z",
-  "eventCount": 52,
+  "generatedAt": "2026-03-11T20:12:32.982Z",
+  "eventCount": 49,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -12,11 +12,6 @@
       "previousCount": 7,
       "delta": 0
     },
-    "football": {
-      "count": 38,
-      "previousCount": 38,
-      "delta": 0
-    },
     "golf": {
       "count": 1,
       "previousCount": 1,
@@ -26,6 +21,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "football": {
+      "count": 35,
+      "previousCount": 38,
+      "delta": -3
     },
     "tennis": {
       "count": 1,
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 15674,
+      "ageMinutes": 15726,
       "stale": true
     },
     "f1.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 57,
+      "ageMinutes": 109,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 57,
+      "ageMinutes": 109,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 21,
+    "footballCount": 17,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -98,15 +98,17 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.07,
-    "relevantMatchRate": 0.67,
-    "eventsEnriched": 2,
+    "matchRate": 0,
+    "relevantMatchRate": 0,
+    "eventsEnriched": 0,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-03-11: 5 events but events.json has 2"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -122,30 +124,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 0,
-    "sevenDay": 58,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 157125,
-    "stepCount": 26,
+    "totalDuration": 50237,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 60057,
-        "share": 38
+        "name": "fetch-sports",
+        "duration": 26327,
+        "share": 52
+      },
+      {
+        "name": "fetch-results",
+        "duration": 41265,
+        "share": 82
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,12 +184,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 15674 minutes old"
+      "message": "esports.json: data is 15726 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 159 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 160 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -200,14 +202,14 @@
       "message": "1 event(s) won't appear on dashboard (esports)"
     },
     {
-      "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Formula 1 2026 - Race Weekend"
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-11: 5 events but events.json has 2"
     },
     {
       "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 0%, 7d: 58%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "code": "unmapped_leagues",
+      "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Formula 1 2026 - Race Weekend"
     },
     {
       "severity": "warning",
@@ -217,12 +219,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 38% of total pipeline time (60s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (26s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 82% of total pipeline time (41s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -230,9 +232,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-11T19:20:42.941Z",
+    "computedAt": "2026-03-11T20:12:33.045Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -268,7 +270,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Pipeline is critical with 1 critical, 5 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }
