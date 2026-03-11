@@ -17,6 +17,7 @@ export class EventNormalizer {
 				id: this.generateId(event, sport),
 				title: this.sanitizeString(event.title || "Unknown Event"),
 				time: normalizeToUTC(event.time || event.date || new Date()),
+				endTime: event.endTime ? normalizeToUTC(event.endTime) : undefined,
 				venue: this.sanitizeString(event.venue || "TBD"),
 				sport: sport,
 				meta: this.sanitizeString(event.meta || event.tournament || ""),
@@ -79,7 +80,7 @@ export class EventNormalizer {
 		const additional = {};
 		
 		const knownFields = [
-			"title", "time", "date", "venue", "sport", "meta", "tournament",
+			"title", "time", "date", "endTime", "venue", "sport", "meta", "tournament",
 			"streaming", "norwegian", "homeTeam", "awayTeam", "participants",
 			"norwegianPlayers", "totalPlayers", "isFavorite"
 		];
@@ -130,6 +131,16 @@ export class EventNormalizer {
 		// Allow events that started up to 6 hours ago (ongoing matches/rounds)
 		const graceWindow = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 		const oneYearFromNow = new Date(now.getTime() + 365 * 86400000);
+
+		// For multi-day events (tournaments), check endTime instead of start time
+		// A tournament that started days ago is still valid if it ends in the future
+		if (event.endTime) {
+			const endDate = new Date(event.endTime);
+			if (!isNaN(endDate.getTime()) && endDate > graceWindow && endDate <= oneYearFromNow) {
+				return true;
+			}
+		}
+
 		if (eventDate < graceWindow || eventDate > oneYearFromNow) {
 			console.warn(`Event date out of range: ${event.title} at ${event.time}`);
 			return false;

@@ -66,6 +66,31 @@ describe("EventNormalizer.validateEvent()", () => {
 			})
 		).toBe(true);
 	});
+
+	it("accepts ongoing multi-day tournament whose endTime is in the future", () => {
+		// start is 2 days ago, endTime is 4 days from now — tournament still running
+		const startTime = new Date(Date.now() - 2 * 86400000).toISOString();
+		const endTime = new Date(Date.now() + 4 * 86400000).toISOString();
+		expect(
+			EventNormalizer.validateEvent({
+				title: "ATP Indian Wells",
+				time: startTime,
+				endTime,
+			})
+		).toBe(true);
+	});
+
+	it("rejects multi-day tournament that has already ended", () => {
+		const startTime = new Date(Date.now() - 14 * 86400000).toISOString();
+		const endTime = new Date(Date.now() - 7 * 86400000).toISOString();
+		expect(
+			EventNormalizer.validateEvent({
+				title: "Ended Tournament",
+				time: startTime,
+				endTime,
+			})
+		).toBe(false);
+	});
 });
 
 describe("EventNormalizer.deduplicate()", () => {
@@ -84,6 +109,31 @@ describe("EventNormalizer.deduplicate()", () => {
 			{ sport: "golf", title: "Match", time: "2025-08-20T15:00:00Z" },
 		];
 		expect(EventNormalizer.deduplicate(events)).toHaveLength(2);
+	});
+});
+
+describe("EventNormalizer.normalize() endTime preservation", () => {
+	it("preserves endTime as a top-level field", () => {
+		const futureStart = new Date(Date.now() + 86400000).toISOString();
+		const futureEnd = new Date(Date.now() + 7 * 86400000).toISOString();
+		const result = EventNormalizer.normalize(
+			{ title: "ATP Tournament", time: futureStart, endTime: futureEnd },
+			"tennis"
+		);
+		expect(result).not.toBeNull();
+		expect(result.endTime).toBeDefined();
+		// endTime must NOT be buried inside additional
+		expect(result.additional?.endTime).toBeUndefined();
+	});
+
+	it("does not set endTime when input has none", () => {
+		const futureTime = new Date(Date.now() + 86400000).toISOString();
+		const result = EventNormalizer.normalize(
+			{ title: "Single Match", time: futureTime },
+			"tennis"
+		);
+		expect(result).not.toBeNull();
+		expect(result.endTime).toBeUndefined();
 	});
 });
 
