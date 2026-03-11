@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-03-11T18:23:38.237Z",
+  "generatedAt": "2026-03-11T22:11:11.789Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 52,
+    "totalEvents": 49,
     "sports": [
       "esports",
       "cycling",
-      "football",
       "golf",
       "f1",
+      "football",
       "tennis",
       "chess"
     ],
@@ -17,11 +17,7 @@
         "ESL Pro League Season 22",
         "Tirreno-Adriatico 2026"
       ],
-      "today": [
-        "Sporting CP at Bodo/Glimt",
-        "Chelsea at Paris Saint-Germain",
-        "Manchester City at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "THE PLAYERS Championship"
       ],
@@ -80,9 +76,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 80,
-    "issueCount": 9
+    "pipelineStatus": "critical",
+    "editorialScore": 62,
+    "issueCount": 10
   },
   "findings": [
     {
@@ -181,14 +177,34 @@
       "message": "\"UCI Road World Championships 2026\" is 193 days away — may clutter the dashboard"
     },
     {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae CS2 ESL Pro League S22 — rain (FaZe) carries Norway's flag in top-tier action\" which may not match any event"
+    },
+    {
       "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Galatasaray\" but no matching athlete found in events data"
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 62/100 (below threshold)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Valverde\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Haaland\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Sawgrass\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -203,14 +219,14 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 19 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 28,
     "critical": 0,
-    "warning": 22,
-    "info": 2
+    "warning": 25,
+    "info": 3
   },
   "pass": true,
   "tokenUsage": null

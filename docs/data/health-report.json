@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T21:11:36.345Z",
+  "generatedAt": "2026-03-11T22:11:11.647Z",
   "eventCount": 49,
   "sportCoverage": {
     "esports": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 15785,
+      "ageMinutes": 15845,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 168,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 168,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 16,
+    "footballCount": 19,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -106,9 +106,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Snapshot 2026-03-11: 5 events but events.json has 2"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -184,7 +182,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 15785 minutes old"
+      "message": "esports.json: data is 15845 minutes old"
     },
     {
       "severity": "warning",
@@ -200,11 +198,6 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (esports)"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-03-11: 5 events but events.json has 2"
     },
     {
       "severity": "info",
@@ -232,9 +225,9 @@
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-11T21:11:36.416Z",
+    "computedAt": "2026-03-11T22:11:11.723Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -263,14 +256,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 5 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 62/100.",
     "tokenUsage": null
   }
 }

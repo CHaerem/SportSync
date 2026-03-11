@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-03-11T19:20:42.934Z",
+  "generatedAt": "2026-03-11T22:11:11.713Z",
   "patternsDetected": 1,
   "patterns": [
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "mustWatchCoverage",
-      "fireCount": 8,
+      "fireCount": 9,
       "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 8 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 9 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 318,
+      "count": 319,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-11T19:20:42.931Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "missing_snapshot": {
       "count": 19,
@@ -23,9 +23,9 @@
       "lastSeen": "2026-03-09T02:02:07.295Z"
     },
     "snapshot_event_mismatch": {
-      "count": 75,
+      "count": 76,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-10T22:11:47.057Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "stale_snapshot": {
       "count": 49,
@@ -33,19 +33,19 @@
       "lastSeen": "2026-03-11T14:24:48.305Z"
     },
     "invisible_events": {
-      "count": 164,
+      "count": 165,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-11T19:20:42.931Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "stale_data": {
-      "count": 316,
+      "count": 317,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-11T19:20:42.931Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "chronic_data_retention": {
-      "count": 308,
+      "count": 309,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-11T19:20:42.931Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "stale_output": {
       "count": 46,
@@ -58,9 +58,9 @@
       "lastSeen": "2026-03-09T08:18:09.893Z"
     },
     "streaming_coverage_gap": {
-      "count": 29,
+      "count": 30,
       "firstSeen": "2026-03-10T07:21:05.886Z",
-      "lastSeen": "2026-03-11T19:20:42.931Z"
+      "lastSeen": "2026-03-11T22:11:11.709Z"
     },
     "quota_high_utilization": {
       "count": 1,
