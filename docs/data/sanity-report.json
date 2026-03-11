@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T06:23:10.981Z",
+  "generatedAt": "2026-03-11T10:17:43.745Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -83,7 +83,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 82,
-    "issueCount": 12
+    "issueCount": 9
   },
   "findings": [
     {
@@ -188,11 +188,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"After Liverpool\" but no matching athlete found in events data"
     },
@@ -228,9 +223,9 @@
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 27,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 3
   },
   "pass": true,
