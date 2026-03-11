@@ -1,77 +1,5 @@
 [
   {
-    "timestamp": "2026-02-28T13:14:50.212Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 101,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 28,
-      "warningCount": 16,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 0,
-        "output": 0,
-        "calls": 1,
-        "total": 0,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 1,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 96.429,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.952,
-      "enrichmentScore": 100,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-28T13:23:23.401Z",
     "editorial": {
       "score": 97,
@@ -7684,6 +7612,108 @@
       "editorialScore": 79.286,
       "mustWatchCoverage": 0.55,
       "sportDiversity": 0.636,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-11T18:23:36.707Z",
+    "editorial": {
+      "score": 80,
+      "mustWatchCoverage": 0.6,
+      "sportDiversity": 0.6,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 128,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 21,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 27,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest-priority fix."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26460,
+        "output": 2515,
+        "cacheCreation": 26457,
+        "cacheRead": 0,
+        "total": 28975,
+        "costUSD": 0.13694775,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26561,
+        "output": 4814,
+        "calls": 1,
+        "total": 31375,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 53021,
+        "output": 7329,
+        "calls": 3,
+        "total": 60350,
+        "costUSD": 0.13694775,
+        "realPct": 48
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 79.571,
+      "mustWatchCoverage": 0.529,
+      "sportDiversity": 0.686,
       "enrichmentScore": 100,
       "resultsScore": 89
     }

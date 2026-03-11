@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-11T14:24:48.343Z",
+  "generatedAt": "2026-03-11T18:23:38.237Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 53,
+    "totalEvents": 52,
     "sports": [
       "esports",
       "cycling",
@@ -18,7 +18,6 @@
         "Tirreno-Adriatico 2026"
       ],
       "today": [
-        "Arsenal at Bayer Leverkusen",
         "Sporting CP at Bodo/Glimt",
         "Chelsea at Paris Saint-Germain",
         "Manchester City at Real Madrid"
@@ -82,8 +81,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 82,
-    "issueCount": 12
+    "editorialScore": 80,
+    "issueCount": 9
   },
   "findings": [
     {
@@ -182,24 +181,14 @@
       "message": "\"UCI Road World Championships 2026\" is 193 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae ESL Pro League S22 — rain (FaZe) in top-tier CS2 action\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"After Galatasaray\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Galatasaray\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"England\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -214,19 +203,14 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
-    },
-    {
-      "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"tico\" vs \"spurs\" result but no matching data in recent-results.json"
+      "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 24,
     "critical": 0,
-    "warning": 24,
-    "info": 3
+    "warning": 22,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
