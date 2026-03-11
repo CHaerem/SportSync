@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T14:24:48.242Z",
+  "generatedAt": "2026-03-11T15:20:06.814Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 15378,
+      "ageMinutes": 15434,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 55,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 55,
       "stale": false
     }
   },
@@ -122,30 +122,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 16,
+    "sevenDay": 58,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 50206,
-    "stepCount": 21,
+    "totalDuration": 253439,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 27306,
-        "share": 54
-      },
-      {
-        "name": "fetch-results",
-        "duration": 41390,
-        "share": 82
+        "name": "generate-featured",
+        "duration": 140123,
+        "share": 55
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,12 +182,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 15378 minutes old"
+      "message": "esports.json: data is 15434 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 154 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 155 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -205,6 +205,11 @@
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Formula 1 2026 - Race Weekend"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 16%, 7d: 58%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -212,12 +217,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (27s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 55% of total pipeline time (140s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 82% of total pipeline time (41s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -227,7 +232,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-11T14:24:48.319Z",
+    "computedAt": "2026-03-11T15:20:06.889Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
