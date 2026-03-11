@@ -2397,7 +2397,9 @@ class Dashboard {
 		// Future events are accessible via the day navigator — no need for a
 		// "Coming up" dump on the today view.
 
-		// Standings: removed standalone section — standings available in expanded views
+		// Standings: collapsible band below events for direct PL table/golf leaderboard access
+		const standingsHtml = this.renderStandingsSection();
+		if (standingsHtml) html += standingsHtml;
 
 		if (!html) {
 			html = '<p class="empty">No upcoming events.</p>';
