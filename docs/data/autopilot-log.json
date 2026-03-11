@@ -1,18 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-03-11",
-      "task": "UX: standings card in today's view (PR #128); Data: tennis EventNormalizer endTime bug fix",
-      "outcome": "completed",
-      "pr": "#128 (merged)",
-      "details": "Run 23: 0 user feedback, 1 pending roadmap task + 1 data bug found via health report. (1) ux-agent (PR #128, merged): Re-enabled renderStandingsSection() in today's render path — adds collapsible PL table/golf leaderboard/F1 standings band below events. ~2 lines change, guarded by null check. (2) data-agent (direct-to-main 8085aac): Fixed tennis EventNormalizer bug — endTime was placed in 'additional' bucket (missing from knownFields) instead of top-level, causing multi-day tournaments to be dropped by isEventInWindow() which only reads top-level endTime. Also fixed validateEvent() to accept events whose endTime is still future (not just startTime). 4 new tests added. F1 stale: expected inter-race gap (Australian GP done, Chinese GP not yet in API). Esports stale: data gap in config (ESL Pro League S22 has no match times — needsResearch flagged). All 2463 tests pass.",
-      "tests_passed": true,
-      "files_changed": 3,
-      "turns_used": 12,
-      "lesson": "Tennis multi-day tournament drops were silent — EventNormalizer endTime omission from knownFields was a latent bug, exposed only by persistent health-report retention warnings. Health report correctly identified tennis as '30 consecutive retains' which triggered investigation. Data freshness warnings are worth inspecting even when assumed to be off-season. User-visible ratio: 100% (both tasks directly affect what users see).",
-      "scouted": 0
-    },
-    {
       "date": "2026-03-10",
       "task": "User feedback #126: ESL Pro League S22 for 100 Thieves; UX: ARIA labels + goalscorer recap + sport pills reorder (PR #127)",
       "outcome": "completed",

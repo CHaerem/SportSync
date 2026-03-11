@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-11T01:57:17.236Z",
-  "eventCount": 49,
+  "generatedAt": "2026-03-11T02:02:00.592Z",
+  "eventCount": 53,
   "sportCoverage": {
     "esports": {
       "count": 2,
@@ -12,22 +12,22 @@
       "previousCount": 1,
       "delta": 0
     },
-    "tennis": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "cycling": {
       "count": 7,
       "previousCount": 7,
       "delta": 0
     },
     "football": {
-      "count": 35,
+      "count": 39,
       "previousCount": 35,
-      "delta": 0
+      "delta": 4
     },
     "golf": {
+      "count": 1,
+      "previousCount": 1,
+      "delta": 0
+    },
+    "tennis": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
@@ -40,28 +40,28 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 229,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 14631,
+      "ageMinutes": 14636,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 9039,
+      "ageMinutes": 9044,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 228,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 228,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2877,
-      "stale": true
+      "ageMinutes": 2,
+      "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
@@ -98,7 +98,7 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.13,
+    "matchRate": 0.11,
     "relevantMatchRate": 1,
     "eventsEnriched": 3,
     "trend": "stable",
@@ -106,10 +106,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 day snapshot(s) within event range have 0 events and 0 results",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -184,32 +181,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 14631 minutes old"
+      "message": "esports.json: data is 14636 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 9039 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "tennis.json: data is 2877 minutes old"
+      "message": "f1.json: data is 9044 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 144 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 145 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 81 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "tennis: data retained 30 consecutive times (since 2026-03-09) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 82 consecutive times (since 2026-03-06) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -219,17 +206,7 @@
     {
       "severity": "warning",
       "code": "invisible_events",
-      "message": "3 event(s) won't appear on dashboard (esports, f1, tennis)"
-    },
-    {
-      "severity": "info",
-      "code": "empty_day_snapshot",
-      "message": "1 day snapshot(s) within event range have 0 events and 0 results"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
+      "message": "2 event(s) won't appear on dashboard (esports, f1)"
     },
     {
       "severity": "info",
@@ -264,7 +241,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-11T01:57:17.289Z",
+    "computedAt": "2026-03-11T02:02:00.659Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
@@ -300,7 +277,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 10 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
   }
 }

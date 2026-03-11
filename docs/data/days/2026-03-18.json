@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-03-06",
-  "generatedAt": "2026-03-11T02:01:59.481Z",
+  "date": "2026-03-18",
+  "generatedAt": "2026-03-11T02:01:59.503Z",
   "events": {
     "upcoming": [
       {
@@ -42,27 +42,20 @@
         "norwegianRelevance": 5,
         "enrichedAt": "2026-03-10T22:09:37.867Z",
         "_enrichHash": "3ea02ca1a5bd4e1ffea83a6b6b439810"
-      }
-    ],
-    "results": [
+      },
       {
-        "sport": "f1",
-        "tournament": "Formula 1 2025 - Race Weekend",
-        "title": "Qatar Airways Australian Grand Prix",
-        "time": "2026-03-06T01:30:00.000Z",
-        "endTime": null,
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "title": "Miami Open presented by Itau",
+        "time": "2026-03-17T04:00:00.000Z",
+        "endTime": "2026-03-30T03:59:00.000Z",
         "venue": "TBD",
-        "meta": "Formula 1 2025 - Race Weekend",
+        "meta": "ATP/WTA Tour",
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
-          },
-          {
-            "platform": "F1 TV Pro",
-            "url": "https://f1tv.formula1.com",
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
             "type": "streaming"
           }
         ],
@@ -74,50 +67,12 @@
         "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "F1 season opener in Melbourne; first championship points and title picture emerges",
-        "summary": "The Australian Grand Prix opens the F1 season in Melbourne — first points on the board and early championship picture takes shape.",
-        "tags": [
-          "must-watch"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-10T22:09:37.867Z",
-        "_enrichHash": "f68246f7c3aab10d74f6b8c57bc961dd"
+        "isFavorite": false
       }
-    ]
+    ],
+    "results": []
   },
-  "matchResults": [
-    {
-      "homeTeam": "Celta Vigo",
-      "awayTeam": "Real Madrid",
-      "homeScore": 1,
-      "awayScore": 2,
-      "date": "2026-03-06T20:00Z",
-      "league": "La Liga",
-      "leagueCode": "esp.1",
-      "venue": "Balaidos",
-      "goalScorers": [
-        {
-          "player": "Aurélien Tchouaméni",
-          "team": "Real Madrid",
-          "minute": "11'"
-        },
-        {
-          "player": "Borja Iglesias",
-          "team": "Celta Vigo",
-          "minute": "25'"
-        },
-        {
-          "player": "Federico Valverde",
-          "team": "Real Madrid",
-          "minute": "90'+4'"
-        }
-      ],
-      "recapHeadline": null,
-      "isFavorite": false
-    }
-  ],
+  "matchResults": [],
   "standings": null,
   "watchPlan": null,
   "rssHighlights": null,
@@ -125,9 +80,9 @@
     "eventCount": 2,
     "sportsCovered": [
       "esports",
-      "f1"
+      "tennis"
     ],
-    "hasResults": true,
+    "hasResults": false,
     "hasStandings": false
   }
 }

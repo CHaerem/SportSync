@@ -446,7 +446,7 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #127) **Result cards: add fallback recap from goalscorer data** — When `recapHeadline` is absent, generates one-liner from goalscorer data (e.g., "Yamal 68' seals it"). Addresses `recapHeadlineRate: 0`.
 
-- [DONE] (PR #128) **Standalone standings card in today's view** — Re-enabled `renderStandingsSection()` in today's render path as collapsible band below events for direct PL table/golf leaderboard access.
+- [PENDING] **Standalone standings card in today's view** — `renderStandingsSection()` exists but is removed from today's render path. Re-enable as collapsible band below events for direct PL table/golf leaderboard access. ~20 lines. (Data utilization)
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

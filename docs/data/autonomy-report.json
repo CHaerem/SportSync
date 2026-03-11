@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-03-11T01:57:17.268Z",
-  "overallScore": 1,
-  "loopsClosed": 11,
+  "generatedAt": "2026-03-11T02:02:00.636Z",
+  "overallScore": 0.91,
+  "loopsClosed": 10,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints wired (82 fired)"
+      "details": "100 entries, hints wired (90 fired)"
     },
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (0 applied)"
+      "details": "Enrichment hints tracked (1 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (4h old), 14 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 15 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -55,9 +55,9 @@
       "details": "15 snapshots + health monitoring + fresh"
     },
     "streamingVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "50 runs, match rate stable or rising"
+      "score": 0,
+      "status": "open",
+      "details": "Match rate declining: 22% → 13% → 11%"
     }
   }
 }
