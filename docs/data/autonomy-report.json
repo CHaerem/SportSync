@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-11T02:02:00.636Z",
-  "overallScore": 0.91,
-  "loopsClosed": 10,
+  "generatedAt": "2026-03-11T06:23:11.066Z",
+  "overallScore": 1,
+  "loopsClosed": 11,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
@@ -12,7 +12,7 @@
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (1 applied)"
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 15 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 13 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
+      "details": "verification history + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -55,9 +55,9 @@
       "details": "15 snapshots + health monitoring + fresh"
     },
     "streamingVerification": {
-      "score": 0,
-      "status": "open",
-      "details": "Match rate declining: 22% → 13% → 11%"
+      "score": 1,
+      "status": "closed",
+      "details": "50 runs, match rate stable or rising"
     }
   }
 }
