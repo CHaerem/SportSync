@@ -452,14 +452,6 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [PENDING] **esports: populate ESL Pro League S22 group-stage match schedule** — Discovery loop failed to populate `bracket.groups.A/B.matches` with `scheduledTime` fields. The curated-configs fetcher returns zero events because all DraculaN S5 bracket data is completed (ended 2026-02-28) and EPL S22 has no match-level timestamps. Fix: (1) discovery loop to research/populate EPL S22 group matches via Liquipedia, (2) consider replacing `currentWeek` filter with `timeRange:14` for multi-week esports tournaments.
 
-- [DONE] (PR #129) **Add league theming for F1 and CS2** — Added entries to `league-config.json` for "CS2 Major Tournaments 2026" (purple #6d28d9, CS2 badge) and "Formula 1 2026 - Race Weekend" (red #e10600, F1 badge). Fixes `unmapped_leagues` health warning.
-
-- [DONE] (PR #129) **Fix staleness banner dark mode** — Replaced hardcoded `style.cssText` hex colors with `.staleness-banner` CSS class using `var(--bg-warm)`, `var(--fg-2)`, `var(--muted-light)`. Banner now adapts in dark mode.
-
-- [DONE] (PR #129) **Hide expand affordance on result rows with no detail content** — Added `.no-expand` class when `hasDetails` is false; CSS removes pointer cursor. Rows without scorers/recap/venue no longer show false expand affordance.
-
-- [PENDING] **Sport pills: add event count and aria-hidden dots** — Pills show sport name + colored dot but no count. Screen reader users get "Football button" with no context. Add sr-only or visible count (e.g., "Football (35)") and `aria-hidden="true"` on decorative dots. ~20 lines in `docs/js/dashboard.js` (`renderSportPills`). (Scouted 2026-03-12)
-
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
 ---

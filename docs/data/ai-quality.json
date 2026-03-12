@@ -1,32 +1,32 @@
 {
-  "generatedAt": "2026-03-11T22:11:10.027Z",
+  "generatedAt": "2026-03-12T02:05:28.170Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": null,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 85959,
+    "blockCount": 7,
+    "generationMs": 46376,
     "tokenUsage": {
-      "input": 26482,
-      "output": 4104,
-      "cacheCreation": 26479,
+      "input": 26468,
+      "output": 2346,
+      "cacheCreation": 26465,
       "cacheRead": 0,
-      "total": 30586,
-      "costUSD": 0.16086525000000002,
+      "total": 28814,
+      "costUSD": 0.13444275,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 62,
+    "score": 72,
     "metrics": {
-      "mustWatchCoverage": 0,
+      "mustWatchCoverage": 0.333,
       "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -35,14 +35,14 @@
       "componentUtilization": 1
     },
     "issues": [
-      "Only 0% of must-watch events covered in blocks"
+      "Only 33% of must-watch events covered in blocks"
     ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 148,
+      "avgScore": 154,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -53,13 +53,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.053,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 19
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 5% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -123,13 +123,13 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26561,
-      "output": 4814,
+      "input": 26468,
+      "output": 2346,
       "calls": 1,
-      "total": 31375,
+      "total": 28814,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-11T02:01:43.792Z"
+    "lastRun": "2026-03-12T02:05:28.446Z"
   }
 }

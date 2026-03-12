@@ -743,7 +743,7 @@ class Dashboard {
 		if (!banner) {
 			banner = document.createElement('div');
 			banner.id = 'staleness-banner';
-			banner.className = 'staleness-banner';
+			banner.style.cssText = 'background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;text-align:center;';
 			const brief = document.getElementById('the-brief');
 			if (brief) brief.parentNode.insertBefore(banner, brief);
 		}
@@ -2296,11 +2296,7 @@ class Dashboard {
 	_renderCompactResultRow(m) {
 		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
-		// Expandable details
-		const scorers = (m.goalScorers || []).slice(0, 6);
-		const hasDetails = scorers.length > 0 || m.recapHeadline || m.venue;
-		const noExpandClass = hasDetails ? '' : ' no-expand';
-		let html = `<div class="result-row${noExpandClass}" role="button" tabindex="0">`;
+		let html = '<div class="result-row" role="button" tabindex="0">';
 		html += '<div class="result-row-main">';
 		html += '<div class="result-row-logos">';
 		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="" loading="lazy">`;
@@ -2309,6 +2305,9 @@ class Dashboard {
 		html += `<span class="result-row-teams">${this.esc(this.shortName(m.homeTeam))} v ${this.esc(this.shortName(m.awayTeam))}</span>`;
 		html += `<span class="result-row-score">${m.homeScore} - ${m.awayScore}</span>`;
 		html += '</div>';
+		// Expandable details
+		const scorers = (m.goalScorers || []).slice(0, 6);
+		const hasDetails = scorers.length > 0 || m.recapHeadline || m.venue;
 		if (hasDetails) {
 			html += '<div class="result-row-details">';
 			if (m.recapHeadline) {

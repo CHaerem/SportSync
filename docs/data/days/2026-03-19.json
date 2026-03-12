@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-03-09",
-  "generatedAt": "2026-03-12T02:05:46.787Z",
+  "date": "2026-03-19",
+  "generatedAt": "2026-03-12T02:05:46.805Z",
   "events": {
     "upcoming": [
       {
@@ -44,32 +44,23 @@
         "_enrichHash": "3ea02ca1a5bd4e1ffea83a6b6b439810"
       },
       {
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "title": "Tirreno-Adriatico 2026",
-        "time": "2026-03-09T12:40:00+01:00",
-        "endTime": "2026-03-15T16:00:00+01:00",
-        "venue": "Lido di Camaiore to San Benedetto del Tronto, Italy",
-        "norwegian": true,
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "title": "Miami Open presented by Itau",
+        "time": "2026-03-17T04:00:00.000Z",
+        "endTime": "2026-03-30T03:59:00.000Z",
+        "venue": "TBD",
+        "meta": "ATP/WTA Tour",
+        "norwegian": false,
         "streaming": [
           {
-            "platform": "Eurosport",
-            "type": "tv"
-          },
-          {
             "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
             "type": "streaming"
           }
         ],
         "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Andreas Leknessund"
-          },
-          {
-            "name": "Søren Wærenskjold"
-          }
-        ],
+        "norwegianPlayers": [],
         "totalPlayers": null,
         "link": null,
         "status": null,
@@ -77,47 +68,20 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "cycling-classics-2026",
-        "importance": 4,
-        "importanceReason": "Week-long WorldTour stage race with two strong Norwegian contenders.",
-        "summary": "Tirreno-Adriatico's 'Race of the Two Seas' kicks off with Andreas Leknessund and Søren Wærenskjold as Norwegian hopes across seven grueling Italian stages — a key early-season form guide.",
+        "importance": 3,
+        "importanceReason": "Masters 1000 event; Casper Ruud likely in the draw.",
+        "summary": "One of tennis's premier hard-court events where Casper Ruud is expected to compete for a deep run.",
         "tags": [
-          "must-watch",
           "norwegian-player"
         ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-11T22:09:43.344Z",
-        "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
+        "norwegianRelevance": 3,
+        "enrichedAt": "2026-03-11T22:09:43.345Z",
+        "_enrichHash": "30e443761d724a39a5c74e3c26c60be7"
       }
     ],
     "results": []
   },
-  "matchResults": [
-    {
-      "homeTeam": "Espanyol",
-      "awayTeam": "Real Oviedo",
-      "homeScore": 1,
-      "awayScore": 1,
-      "date": "2026-03-09T20:00Z",
-      "league": "La Liga",
-      "leagueCode": "esp.1",
-      "venue": "RCDE Stadium",
-      "goalScorers": [
-        {
-          "player": "Alberto Reina",
-          "team": "Real Oviedo",
-          "minute": "8'"
-        },
-        {
-          "player": "Enrique García",
-          "team": "Espanyol",
-          "minute": "36'"
-        }
-      ],
-      "recapHeadline": null,
-      "isFavorite": false
-    }
-  ],
+  "matchResults": [],
   "standings": null,
   "watchPlan": null,
   "rssHighlights": null,
@@ -125,9 +89,9 @@
     "eventCount": 2,
     "sportsCovered": [
       "esports",
-      "cycling"
+      "tennis"
     ],
-    "hasResults": true,
+    "hasResults": false,
     "hasStandings": false
   }
 }
