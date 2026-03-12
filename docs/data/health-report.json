@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T17:22:23.645Z",
+  "generatedAt": "2026-03-12T18:21:54.729Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 16996,
+      "ageMinutes": 17056,
       "stale": true
     },
     "f1.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 179,
+      "ageMinutes": 238,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-12"
     },
     "ai-quality.json": {
-      "ageMinutes": 179,
+      "ageMinutes": 238,
       "stale": false
     }
   },
@@ -130,19 +130,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52873,
+    "totalDuration": 52075,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27672,
-        "share": 52
+        "duration": 25263,
+        "share": 49
       },
       {
         "name": "fetch-results",
-        "duration": 44668,
-        "share": 84
+        "duration": 42836,
+        "share": 82
       }
     ],
     "failedSteps": []
@@ -182,12 +182,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 16996 minutes old"
+      "message": "esports.json: data is 17056 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 173 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 174 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -212,12 +212,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (25s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 84% of total pipeline time (45s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 82% of total pipeline time (43s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -227,7 +227,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-12T17:22:23.702Z",
+    "computedAt": "2026-03-12T18:21:54.802Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
