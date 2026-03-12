@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T11:15:50.097Z",
+  "generatedAt": "2026-03-12T12:15:45.217Z",
   "eventCount": 53,
   "sportCoverage": {
     "esports": {
@@ -44,7 +44,7 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 16629,
+      "ageMinutes": 16689,
       "stale": true
     },
     "f1.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 291,
+      "ageMinutes": 351,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-12"
     },
     "ai-quality.json": {
-      "ageMinutes": 291,
+      "ageMinutes": 351,
       "stale": false
     }
   },
@@ -107,7 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 291 minutes old (stale > 240m)"
+      "Day snapshots are 351 minutes old (stale > 240m)"
     ],
     "snapshotCount": 15
   },
@@ -124,35 +124,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 10,
-    "sevenDay": 60,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 112078,
-    "stepCount": 23,
+    "totalDuration": 55065,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-results",
-        "duration": 43408,
-        "share": 39
+        "name": "fetch-sports",
+        "duration": 26697,
+        "share": 48
       },
       {
-        "name": "verify-schedules",
-        "duration": 60065,
-        "share": 54
+        "name": "fetch-results",
+        "duration": 46696,
+        "share": 85
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -189,12 +184,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 16629 minutes old"
+      "message": "esports.json: data is 16689 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "esports: data retained 167 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
+      "message": "esports: data retained 168 consecutive times (since 2026-03-01) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -209,17 +204,12 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 291 minutes old (stale > 240m)"
+      "message": "Day snapshots are 351 minutes old (stale > 240m)"
     },
     {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "2 tournament(s) lack league theming: CS2 Major Tournaments 2026, Formula 1 2026 - Race Weekend"
-    },
-    {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 10%, 7d: 60%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -229,17 +219,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 39% of total pipeline time (43s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 48% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 54% of total pipeline time (60s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "Pipeline step \"fetch-results\" used 85% of total pipeline time (47s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -249,7 +234,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-12T11:15:50.165Z",
+    "computedAt": "2026-03-12T12:15:45.283Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:epl-s22",
