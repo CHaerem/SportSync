@@ -356,6 +356,39 @@ describe("evaluateEditorialQuality()", () => {
 		const result = evaluateEditorialQuality(featured, events, { now });
 		expect(result.metrics.mustWatchCoverage).toBe(1);
 	});
+
+	it("matches team names with diacritics via text blocks (Bodø/Glimt vs Bodo/Glimt)", () => {
+		// Events use proper Unicode team names; featured blocks use ASCII approximations.
+		// normalizeName() must strip diacritics on both sides before comparing.
+		const events = [
+			{ sport: "football", title: "Bodø/Glimt vs Molde", homeTeam: "Bodø/Glimt", awayTeam: "Molde", importance: 4, time: "2026-02-12T18:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Eliteserien preview" },
+				{ type: "event-line", text: "⚽ Bodo/Glimt vs Molde, 19:00" },
+				{ type: "divider", text: "Coming up" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("matches team names with diacritics via match-preview component (Bodø/Glimt vs Bodo/Glimt)", () => {
+		// Component blocks also need diacritic normalization when building coveredTeams.
+		const events = [
+			{ sport: "football", title: "Bodø/Glimt vs Molde", homeTeam: "Bodø/Glimt", awayTeam: "Molde", importance: 4, time: "2026-02-12T18:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "headline", text: "Eliteserien preview" },
+				{ type: "match-preview", homeTeam: "Bodo/Glimt", awayTeam: "Molde" },
+				{ type: "divider", text: "Coming up" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
 });
 
 describe("evaluateWatchPlanQuality()", () => {

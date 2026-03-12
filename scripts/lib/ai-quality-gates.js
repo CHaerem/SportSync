@@ -42,6 +42,14 @@ function normalizeLine(text) {
 	return text.replace(/\s+/g, " ").trim();
 }
 
+/** Strip diacritics and lowercase for fuzzy name comparison (handles ø→o, æ→ae, å→a, etc.) */
+function normalizeName(s) {
+	if (typeof s !== "string") return "";
+	// Pre-map multi-char expansions before NFD decomposition
+	const expanded = s.replace(/æ/gi, "ae").replace(/Æ/g, "AE");
+	return expanded.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 function looksLikeMajorEvent(event) {
 	const haystack = `${event?.context || ""} ${event?.tournament || ""} ${event?.title || ""}`;
 	if (MAJOR_EVENT_RE.test(haystack)) return true;
@@ -401,8 +409,8 @@ function mustWatchCoverage(blocks, events) {
 	const mustWatch = (events || []).filter((e) => e.importance >= 4);
 	if (mustWatch.length === 0) return 1;
 
-	// Collect text from text-based blocks
-	const allText = blocks
+	// Collect text from text-based blocks and normalize once (diacritic-insensitive)
+	const allTextNorm = normalizeName(blocks
 		.map((b) => {
 			let text = b.text || "";
 			if (b.label) text += " " + b.label;
@@ -410,9 +418,9 @@ function mustWatchCoverage(blocks, events) {
 			if (Array.isArray(b.items)) {
 				text += " " + b.items.map((i) => (typeof i === "string" ? i : i.text || "")).join(" ");
 			}
-			return text.toLowerCase();
+			return text;
 		})
-		.join(" ");
+		.join(" "));
 
 	// Collect structured references from component blocks
 	const coveredSports = new Set(
@@ -423,10 +431,10 @@ function mustWatchCoverage(blocks, events) {
 	const coveredTeams = new Set();
 	for (const b of blocks) {
 		if ((b.type === "match-result" || b.type === "match-preview") && b.homeTeam) {
-			coveredTeams.add(b.homeTeam.toLowerCase());
+			coveredTeams.add(normalizeName(b.homeTeam));
 		}
 		if ((b.type === "match-result" || b.type === "match-preview") && b.awayTeam) {
-			coveredTeams.add(b.awayTeam.toLowerCase());
+			coveredTeams.add(normalizeName(b.awayTeam));
 		}
 	}
 
@@ -434,12 +442,12 @@ function mustWatchCoverage(blocks, events) {
 	for (const event of mustWatch) {
 		// Check if sport is covered by event-schedule component
 		if (coveredSports.has(event.sport)) { covered++; continue; }
-		// Check if team is covered by match-result/match-preview component
-		const teams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => t.toLowerCase());
+		// Check if team is covered by match-result/match-preview component (diacritic-insensitive)
+		const teams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => normalizeName(t));
 		if (teams.some(t => coveredTeams.has(t))) { covered++; continue; }
-		// Check text-based coverage
+		// Check text-based coverage (diacritic-insensitive)
 		const needles = [event.title, event.homeTeam, event.awayTeam].filter(Boolean);
-		if (needles.some((n) => allText.includes(n.toLowerCase()))) covered++;
+		if (needles.some((n) => allTextNorm.includes(normalizeName(n)))) covered++;
 	}
 	return covered / mustWatch.length;
 }
@@ -723,13 +731,13 @@ export function evaluateResultsQuality(recentResults, events, rssDigest, userCon
 		: 0;
 
 	// 5. Favorite coverage (10%) — favorite teams present in results
-	const favTeams = (userContext?.favoriteTeams || []).map(t => t.toLowerCase());
+	const favTeams = (userContext?.favoriteTeams || []).map(t => normalizeName(t));
 	let favoriteCoverage = 0;
 	if (favTeams.length > 0) {
 		const found = favTeams.filter(fav =>
 			football.some(m =>
-				(m.homeTeam || "").toLowerCase().includes(fav) ||
-				(m.awayTeam || "").toLowerCase().includes(fav)
+				normalizeName(m.homeTeam || "").includes(fav) ||
+				normalizeName(m.awayTeam || "").includes(fav)
 			)
 		);
 		favoriteCoverage = found.length / favTeams.length;
