@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T18:21:54.660Z",
+  "generatedAt": "2026-03-12T22:09:58.359Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -82,7 +82,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 72,
-    "issueCount": 9
+    "issueCount": 12
   },
   "findings": [
     {
@@ -183,12 +183,17 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae CS2 — rain (FaZe) battles on in ESL Pro League S22\" which may not match any event"
+      "message": "Featured block references \"\udfae ESL Pro League S22 — rain (FaZe) in top-tier CS2 action\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sawgrass\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Knutsen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -203,13 +208,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 19 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 18 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 25,
     "critical": 0,
-    "warning": 21,
+    "warning": 22,
     "info": 3
   },
   "pass": true,
