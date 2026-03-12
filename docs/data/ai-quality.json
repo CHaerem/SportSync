@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T06:24:53.680Z",
+  "generatedAt": "2026-03-12T14:23:46.226Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 84498,
+    "generationMs": 77446,
     "tokenUsage": {
-      "input": 26454,
-      "output": 4885,
-      "cacheCreation": 26451,
+      "input": 26464,
+      "output": 4345,
+      "cacheCreation": 26461,
       "cacheRead": 0,
-      "total": 31339,
-      "costUSD": 0.17247524999999997,
+      "total": 30809,
+      "costUSD": 0.16441275,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -53,13 +53,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.053,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 19
     },
     "issues": [
-      "Only 5% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -72,7 +72,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.962
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 53,
@@ -84,26 +84,26 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 2,
-    "aiUpdatedFields": 4,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 53,
     "skipStats": {
       "total": 53,
-      "unchanged": 49,
-      "enriched": 4,
-      "skipRate": 0.92
+      "unchanged": 53,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 6042,
+    "tokensPerEvent": 0,
     "hintsApplied": [
       "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
     ],
     "tokenUsage": {
-      "input": 22028,
-      "output": 2138,
-      "calls": 1,
-      "total": 24166,
-      "costUSD": 0.11467274999999999,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
