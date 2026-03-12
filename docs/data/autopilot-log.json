@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-12",
+      "task": "Code: fix mustWatchCoverage diacritic normalization; Data: investigate esports stale + quality score; Roadmap: standings task verified done",
+      "outcome": "completed",
+      "pr": "direct-to-main",
+      "details": "Run 23: 0 user feedback, 1 pending task (standings — already implemented), 1 quality bug fixed. (1) Verified standings card already in today's render path (lines 2400-2402 in dashboard.js) — marked task [DONE]. (2) data-agent investigated esports stale (160 consecutive failures): root cause = all DraculaN S5 matches completed Feb 28, EPL S22 bracket has no scheduledTime on group-stage matches — extractor gets zero results. Added [PENDING] task to roadmap. (3) data-agent investigated editorial quality 62/100: root cause = mustWatchCoverage 0% due to diacritic mismatch ('Bodo/Glimt' vs 'Bodø/Glimt'). (4) code-agent fixed mustWatchCoverage + evaluateResultsQuality: added normalizeName() helper with NFD decomposition + diacritic strip; applied to team name comparisons on both sides. Added 2 test cases. Direct-to-main. Editorial quality improved 62→76/100. All 2465 tests pass.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 18,
+      "lesson": "Editorial quality score can silently read 0% on mustWatchCoverage even when content IS correct — caused by diacritic mismatch between featured blocks ('Bodo/Glimt') and events.json ('Bodø/Glimt'). NFD normalization is the right fix. Also: the standings-card task in the roadmap was stale — the feature was already implemented. System needs a way to verify roadmap task status without re-running.",
+      "scouted": 3
+    },
+    {
       "date": "2026-03-10",
       "task": "User feedback #126: ESL Pro League S22 for 100 Thieves; UX: ARIA labels + goalscorer recap + sport pills reorder (PR #127)",
       "outcome": "completed",

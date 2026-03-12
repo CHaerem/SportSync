@@ -158,6 +158,10 @@
       {
         "date": "2026-03-01",
         "note": "Run 15: 2 parallel subagents (code-agent + data-agent) + orchestrator own-work + 1 FEATURE (data-agent). EXPLORE→FEATURE same-run execution for cycling: investigation + config creation + PR in one run (~25 orchestrator turns). Key insight: capabilities.json had blind spots — hardcoded sport list and broken loop count meant scouting couldn't see half the system. Auto-discovering from events.json permanently closes this gap. 10th sport (cycling) added via curated config in 1 subagent pass. Cycling grand tours config remains as follow-up FEATURE."
+      },
+      {
+        "date": "2026-03-12",
+        "note": "Run 23: 0 user feedback, 1 pending task already done (standings card was already implemented). Key learning: stale roadmap tasks are invisible debt — the standings task claimed renderStandingsSection() was removed, but it was fully wired. Need to verify task preconditions before delegating. Main win: data-agent diagnosed editorial quality 62/100 → root cause was diacritic mismatch in mustWatchCoverage (Bodo/Glimt vs Bodø/Glimt). NFD normalization fix via code-agent improved score to 76/100. Pattern: quality metric failures should first be checked for string normalization bugs before assuming content generation issues. esports stale (160 runs) root cause confirmed: all matches completed or unscheduled. Added [PENDING] task for discovery loop repair. User-visible/infra ratio: 100%/0% (quality metric fix = user-visible outcome)."
       }
     ]
   }

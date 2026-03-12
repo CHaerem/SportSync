@@ -446,7 +446,11 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #127) **Result cards: add fallback recap from goalscorer data** — When `recapHeadline` is absent, generates one-liner from goalscorer data (e.g., "Yamal 68' seals it"). Addresses `recapHeadlineRate: 0`.
 
-- [PENDING] **Standalone standings card in today's view** — `renderStandingsSection()` exists but is removed from today's render path. Re-enable as collapsible band below events for direct PL table/golf leaderboard access. ~20 lines. (Data utilization)
+- [DONE] (already implemented) **Standalone standings card in today's view** — Verified present: `renderStandingsSection()` is called at line 2400-2402 in `renderEvents()`, delegating to `StandingsRenderer.renderStandingsSection()`. No changes needed.
+
+- [DONE] (direct-to-main 2026-03-12) **Fix mustWatchCoverage team-name diacritic normalization** — Added `normalizeName()` helper in `ai-quality-gates.js` using NFD decomposition + diacritic strip. Now "Bodo/Glimt" correctly matches "Bodø/Glimt" in quality coverage checks. Also fixed `evaluateResultsQuality()` favorites check. Added 2 test cases.
+
+- [PENDING] **esports: populate ESL Pro League S22 group-stage match schedule** — Discovery loop failed to populate `bracket.groups.A/B.matches` with `scheduledTime` fields. The curated-configs fetcher returns zero events because all DraculaN S5 bracket data is completed (ended 2026-02-28) and EPL S22 has no match-level timestamps. Fix: (1) discovery loop to research/populate EPL S22 group matches via Liquipedia, (2) consider replacing `currentWeek` filter with `timeRange:14` for multi-week esports tournaments.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
