@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-12T02:05:47.895Z",
-  "overallScore": 0.91,
-  "loopsClosed": 10,
+  "generatedAt": "2026-03-12T06:24:55.460Z",
+  "overallScore": 1,
+  "loopsClosed": 11,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
@@ -12,7 +12,7 @@
     "enrichmentQuality": {
       "score": 1,
       "status": "closed",
-      "details": "Enrichment hints tracked (0 applied)"
+      "details": "Enrichment hints tracked (1 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -20,9 +20,9 @@
       "details": "gap detection + resolver + auto-configs exist"
     },
     "pipelineHealth": {
-      "score": 0,
-      "status": "open",
-      "details": "Health report fresh (0 min) but has 1 actionable issue(s) (14 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
+      "details": "verification history + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,

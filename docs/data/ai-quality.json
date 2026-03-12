@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-12T02:05:28.170Z",
+  "generatedAt": "2026-03-12T06:24:53.680Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": null,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 46376,
+    "blockCount": 8,
+    "generationMs": 84498,
     "tokenUsage": {
-      "input": 26468,
-      "output": 2346,
-      "cacheCreation": 26465,
+      "input": 26454,
+      "output": 4885,
+      "cacheCreation": 26451,
       "cacheRead": 0,
-      "total": 28814,
-      "costUSD": 0.13444275,
+      "total": 31339,
+      "costUSD": 0.17247524999999997,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -42,7 +42,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 154,
+      "avgScore": 57,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -68,14 +68,14 @@
     "quotaTier": 1,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 49,
+      "totalEvents": 53,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.962
     },
     "after": {
-      "totalEvents": 49,
+      "totalEvents": 53,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -84,24 +84,26 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 2,
+    "aiUpdatedFields": 4,
     "failedBatches": 0,
-    "totalEvents": 49,
+    "totalEvents": 53,
     "skipStats": {
-      "total": 49,
+      "total": 53,
       "unchanged": 49,
-      "enriched": 0,
-      "skipRate": 1
+      "enriched": 4,
+      "skipRate": 0.92
     },
-    "tokensPerEvent": 0,
-    "hintsApplied": [],
+    "tokensPerEvent": 6042,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 22028,
+      "output": 2138,
+      "calls": 1,
+      "total": 24166,
+      "costUSD": 0.11467274999999999,
       "tracked": true,
       "estimated": false
     }
