@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T06:24:55.174Z",
+  "generatedAt": "2026-03-12T10:18:08.724Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 53,
@@ -82,7 +82,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 72,
-    "issueCount": 11
+    "issueCount": 9
   },
   "findings": [
     {
@@ -187,11 +187,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Istanbul\" but no matching athlete found in events data"
     },
@@ -217,9 +212,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 25,
     "critical": 0,
-    "warning": 23,
+    "warning": 22,
     "info": 3
   },
   "pass": true,
