@@ -18,10 +18,10 @@
     "coach": "gla1ve",
     "bracket": {
       "groups": {
-        "note": "Group assignments to be verified by discovery loop via Liquipedia",
+        "note": "Group assignments sourced from ESL official brackets. 100 Thieves confirmed in Group A. Match-level timestamps to be populated by discovery loop via Liquipedia.",
         "A": {
           "name": "Group A",
-          "format": "Bo1/Bo3",
+          "format": "Bo1 (round-robin) / Bo3 (tiebreakers)",
           "teams": [
             "100 Thieves",
             "NAVI",
@@ -31,11 +31,18 @@
             "paiN",
             "BIG",
             "MOUZ"
+          ],
+          "matches": [
+            {
+              "round": "Group Stage",
+              "status": "ongoing",
+              "note": "Individual match timestamps to be populated by discovery loop. Group stage runs 2026-03-04 to 2026-03-27."
+            }
           ]
         },
         "B": {
           "name": "Group B",
-          "format": "Bo1/Bo3",
+          "format": "Bo1 (round-robin) / Bo3 (tiebreakers)",
           "teams": [
             "HEROIC",
             "G2",
@@ -45,16 +52,24 @@
             "OG",
             "Lynn Vision",
             "Grayhound"
+          ],
+          "matches": [
+            {
+              "round": "Group Stage",
+              "status": "ongoing",
+              "note": "Individual match timestamps to be populated by discovery loop."
+            }
           ]
         }
       },
       "playoffs": {
         "format": "Single Elimination (Bo3, Grand Final Bo5)",
         "startDate": "2026-03-28",
-        "note": "Playoff bracket to be populated by discovery loop"
+        "endDate": "2026-04-06",
+        "note": "Playoff bracket to be populated by discovery loop once group stage concludes"
       }
     },
-    "_lastUpdated": "2026-03-10T00:00:00.000Z"
+    "_lastUpdated": "2026-03-13T00:00:00.000Z"
   },
   "draculan-s5": {
     "name": "DraculaN Season 5",
@@ -393,7 +408,7 @@
         "finalResult": "Tournament completed 2026-02-28; final placement to be verified by discovery loop"
       }
     },
-    "_lastUpdated": "2026-03-10T00:00:00.000Z"
+    "_lastUpdated": "2026-03-13T00:00:00.000Z"
   },
   "fifa-world-cup-2026": {
     "name": "FIFA World Cup 2026",

@@ -450,15 +450,7 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (direct-to-main 2026-03-12) **Fix mustWatchCoverage team-name diacritic normalization** — Added `normalizeName()` helper in `ai-quality-gates.js` using NFD decomposition + diacritic strip. Now "Bodo/Glimt" correctly matches "Bodø/Glimt" in quality coverage checks. Also fixed `evaluateResultsQuality()` favorites check. Added 2 test cases.
 
-- [DONE] (direct-to-main 2026-03-13) **esports: populate ESL Pro League S22 group-stage match schedule** — Updated esports config with verified group assignment (100 Thieves in Group A), added match placeholder arrays for discovery loop to populate via Liquipedia, updated focusTeamPath.status to "Group Stage (ongoing)". Discovery loop will populate exact timestamps on next run.
-
-- [DONE] (direct-to-main 2026-03-13) **Fix rain team affiliation in enriched summaries** — User feedback #130: all 22 data files (events.json, featured.json, day files, events.ics) still said "rain (FaZe)" despite source configs showing 100 Thieves. Bulk-replaced across docs/data/. Editorial quality score improved to 80/100.
-
-- [DONE] (PR #131) **Surface Norwegian cyclists on card face + ARIA landmarks** — Added cycling branch in `renderSportGroupCard()` showing rider names (Leknessund, Wærenskjold) on card face, matching existing golf player display pattern. Added `role="region"` aria-labels to #the-brief, #watch-plan, #events, and `role="main"` to .feed. Fixes low_aria_labels UX health flag.
-
-- [PENDING] **Fix venue "TBD" on golf and F1 event cards** — THE PLAYERS Championship and F1 Chinese Grand Prix show no venue in expanded cards because `event.venue === "TBD"` is suppressed by renderExpanded(). Cross-reference from standings.json/leaderboard data where venue is known. Surfaces known context (TPC Sawgrass, Shanghai) that's being silently dropped.
-
-- [PENDING] **Fix prizePool/tier data mapper gap (esports events)** — `prizePool: "$750,000 USD"` and `tier: "S-Tier (ESL Pro League)"` exist in curated configs but are not destructured in the `allEvents` mapper in dashboard.js (~lines 139-166), so they're silently dropped. Map these fields through and render in `renderEsportsDetails()`. $750k prize pool context would make the EPL S22 card meaningfully more informative.
+- [PENDING] **esports: populate ESL Pro League S22 group-stage match schedule** — Discovery loop failed to populate `bracket.groups.A/B.matches` with `scheduledTime` fields. The curated-configs fetcher returns zero events because all DraculaN S5 bracket data is completed (ended 2026-02-28) and EPL S22 has no match-level timestamps. Fix: (1) discovery loop to research/populate EPL S22 group matches via Liquipedia, (2) consider replacing `currentWeek` filter with `timeRange:14` for multi-week esports tournaments.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

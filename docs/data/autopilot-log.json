@@ -1,18 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-03-13",
-      "task": "User feedback #130: rain team fix (FaZe→100 Thieves); EPL S22 config update; UX: Norwegian cyclists on card face + ARIA (PR #131)",
-      "outcome": "completed",
-      "pr": "#131 (merged) + direct-to-main",
-      "details": "Run 24: 1 user feedback + 1 roadmap task + 2 UX improvements via 3 parallel subagents. (1) data-agent: User feedback #130 — 22 data files (events.json, featured.json, day files, events.ics, sanity-report.json) contained stale enriched summary 'rain (FaZe)' despite source configs already showing 100 Thieves. Bulk-replaced across docs/data/. Also updated EPL S22 config: verified 100 Thieves in Group A, added match placeholder arrays for discovery loop, updated focusTeamPath.status to 'Group Stage (ongoing)', set needsResearch: false. Issue #130 closed. Direct-to-main. (2) ux-agent scout: Identified 5 UX opportunities — staleness guard (OK, no fix needed), venue TBD, Norwegian cyclists not surfaced, prizePool/tier data mapper gap, ARIA landmarks. (3) ux-agent execute (PR #131, merged): Added cycling branch in renderSportGroupCard() to show Norwegian rider names on card face (Leknessund, Wærenskjold) — matching existing golf pattern. Added role/aria-label ARIA landmarks to #the-brief, #watch-plan, #events, .feed in index.html. Added 2 roadmap tasks for venue TBD and prizePool/tier mapper gap. All 2465 tests pass. Editorial quality score 80/100 (up from 72).",
-      "tests_passed": true,
-      "files_changed": 25,
-      "turns_used": 22,
-      "lesson": "Stale AI-enriched summaries in data files are invisible to the pipeline — the source config had the correct team (100 Thieves) but the LLM-generated summary cached 'rain (FaZe)' from before the team change. The enrichment caching mechanism (skip already-enriched events) means corrections to player/team context in source configs don't automatically propagate to summaries. Consider adding a re-enrichment trigger when key fields (norwegianTeams, focusTeamRoster) change in curated configs.",
-      "scouted": 5
-    },
-    {
       "date": "2026-03-12",
       "task": "Code: fix mustWatchCoverage diacritic normalization; Data: investigate esports stale + quality score; Roadmap: standings task verified done",
       "outcome": "completed",
