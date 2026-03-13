@@ -1878,6 +1878,27 @@ class Dashboard {
 			}
 		}
 
+		// Cycling: Norwegian rider names on card face (no tee times — just names)
+		if (sportId === 'cycling') {
+			const norRiders = events.flatMap(e => (e.norwegianPlayers || []).filter(p => p.name));
+			if (norRiders.length > 0) {
+				// Deduplicate by name
+				const seen = new Set();
+				const uniqueRiders = norRiders.filter(p => {
+					if (seen.has(p.name)) return false;
+					seen.add(p.name);
+					return true;
+				});
+				html += '<div class="lead-tee-times">';
+				for (const p of uniqueRiders) {
+					html += `<div class="lead-tee-time">`;
+					html += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
+					html += `</div>`;
+				}
+				html += '</div>';
+			}
+		}
+
 		// Leaderboard for golf cards — live polling first, standings fallback
 		if (sportId === 'golf') {
 			if (this.liveLeaderboard && this.liveLeaderboard.state === 'in' && this.liveLeaderboard.players?.length > 0) {
