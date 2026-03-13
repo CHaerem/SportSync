@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-13T06:27:35.873Z",
+  "generatedAt": "2026-03-13T10:17:47.576Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,33 +7,31 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "narrative block exceeds 40 words: \"T13 at -3 after round two, two shots off McNealy's...\""
-    ],
-    "blockCount": 9,
-    "generationMs": 148681,
+    "score": 100,
+    "issues": [],
+    "blockCount": 7,
+    "generationMs": 80177,
     "tokenUsage": {
-      "input": 95391,
-      "output": 8452,
-      "cacheCreation": 34546,
-      "cacheRead": 60838,
-      "total": 103843,
-      "costUSD": 0.2745999,
+      "input": 26493,
+      "output": 3982,
+      "cacheCreation": 26490,
+      "cacheRead": 0,
+      "total": 30475,
+      "costUSD": 0.1590765,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 71,
+    "score": 80,
     "metrics": {
       "mustWatchCoverage": 0.5,
-      "sportDiversity": 0.6,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
-      "textQuality": 0.833,
+      "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.7,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
     "issues": []
@@ -68,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 53,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 53,
+      "totalEvents": 52,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,37 +83,39 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 53,
+    "totalEvents": 52,
     "skipStats": {
-      "total": 53,
+      "total": 52,
       "unchanged": 52,
-      "enriched": 1,
-      "skipRate": 0.98
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 21616,
-    "hintsApplied": [],
+    "tokensPerEvent": 0,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 21504,
-      "output": 112,
-      "calls": 1,
-      "total": 21616,
-      "costUSD": 0.08231775,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 95391,
-      "output": 8452,
+      "input": 26493,
+      "output": 3982,
       "calls": 1,
-      "total": 103843,
+      "total": 30475,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-13T06:27:36.159Z"
+    "lastRun": "2026-03-13T10:17:47.855Z"
   },
   "discovery": {
     "tokenUsage": {

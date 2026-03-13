@@ -1,45 +1,9 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-13",
-  "generatedAt": "2026-03-13T06:28:34.281Z",
+  "generatedAt": "2026-03-13T10:18:08.129Z",
   "events": {
     "upcoming": [
-      {
-        "sport": "esports",
-        "tournament": "CS2 Major Tournaments 2026",
-        "title": "ESL Pro League Season 22 — DATA CORRECTION REQUIRED",
-        "time": "2026-03-04T00:00:00.000Z",
-        "endTime": "2026-04-06T23:59:59.000Z",
-        "venue": null,
-        "norwegian": true,
-        "streaming": [],
-        "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "rain (Håvard Nygaard)"
-          }
-        ],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "context": "cs2-majors-2026",
-        "_isTournament": true,
-        "_bracketId": "epl-s22-correction",
-        "focusTeam": "100 Thieves",
-        "importance": 3,
-        "importanceReason": "Major CS2 league with Norwegian player rain competing.",
-        "summary": "ESL Pro League Season 22 features rain (Håvard Nygaard), one of Norway's most celebrated CS2 pros.",
-        "tags": [
-          "norwegian-player"
-        ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-13T06:25:06.412Z",
-        "_enrichHash": "82988ad91acdd1cdbe22c04b99cdc5b3"
-      },
       {
         "sport": "cycling",
         "tournament": "Cycling Spring Classics 2026",
@@ -83,7 +47,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-13T06:25:06.412Z",
+        "enrichedAt": "2026-03-13T10:16:26.636Z",
         "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
       },
       {
@@ -168,9 +132,49 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-13T06:25:06.412Z",
+        "enrichedAt": "2026-03-13T10:16:26.636Z",
         "_enrichHash": "7ae654afdbea4d31e7c05c8cd95fa03f"
       },
+      {
+        "sport": "football",
+        "tournament": "La Liga",
+        "title": "Villarreal at Alavés",
+        "time": "2026-03-13T20:00:00.000Z",
+        "endTime": null,
+        "venue": "Mendizorrotza",
+        "meta": "La Liga",
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": "Alavés",
+        "awayTeam": "Villarreal",
+        "isFavorite": false,
+        "importance": 2,
+        "importanceReason": "Mid-table La Liga fixture, no Norwegian connection or title stakes.",
+        "summary": "Routine La Liga clash between Villarreal and struggling Alavés — neither team in title race or severe relegation danger.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-03-13T10:16:26.636Z",
+        "_enrichHash": "df57bb18c6b16bc30726dd6da0ceabe6",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
+      }
+    ],
+    "results": [
       {
         "sport": "f1",
         "tournament": "Formula 1 2026 - Race Weekend",
@@ -208,49 +212,10 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-13T06:25:06.412Z",
+        "enrichedAt": "2026-03-13T10:16:26.636Z",
         "_enrichHash": "7df4e82bc8bdae17729bedba426fcd9f"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Villarreal at Alavés",
-        "time": "2026-03-13T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Mendizorrotza",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Alavés",
-        "awayTeam": "Villarreal",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table La Liga fixture, no Norwegian connection or title stakes.",
-        "summary": "Routine La Liga clash between Villarreal and struggling Alavés — neither team in title race or severe relegation danger.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-13T06:25:06.412Z",
-        "_enrichHash": "df57bb18c6b16bc30726dd6da0ceabe6",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
-    ],
-    "results": []
+    ]
   },
   "matchResults": [],
   "standings": {
@@ -410,7 +375,7 @@
         "tournament": "La Liga",
         "time": "2026-03-13T20:00:00.000Z",
         "timeLabel": "13 Mar, 21:00",
-        "relativeStart": "In 13h 35m",
+        "relativeStart": "In 9h 44m",
         "importance": 2,
         "norwegian": false,
         "streaming": [
@@ -427,44 +392,43 @@
         ]
       }
     ],
-    "headline": "Hovland two shots off the lead — THE PLAYERS title in range"
+    "headline": "Hovland in the hunt at golf's fifth major — monster weekend ahead"
   },
   "rssHighlights": [
     {
-      "title": "Sterk Hovland-start i lukrativ PGA-turnering",
+      "title": "Heggen står over femmila i Holmenkollen",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/sterk-hovland-start-i-lukrativ-pga-turnering-1.17807326"
+      "link": "https://www.nrk.no/sport/heggen-star-over-femmila-i-holmenkollen-1.17807708"
     },
     {
-      "title": "Stortap for Brandsegg-Nygaard og Detroit Red Wings",
+      "title": "Gullvinners ski løsnet i fart: – Skal ikke skje",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/stortap-for-brandsegg-nygaard-og-detroit-red-wings-1.17807286"
+      "link": "https://www.nrk.no/sport/gullvinners-ski-losnet-i-fart_-_-skal-ikke-skje-1.17807676"
     },
     {
-      "title": "Oppgjørets time",
+      "title": "Svensk stjerne med klar Klæbo-beskjed: – Hodet er ikke noe man tuller med",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/oppdatering-rundt-johannes-hosflot-klaebo_-stiller-ikke-til-start-pa-lordagens-femmil-1.17807378"
+    },
+    {
+      "title": "Klæbo pådro seg hjernerystelse - Tvinges til å gjøre endringer",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18651008"
+      "link": "https://www.tv2.no/a/18653846"
     },
     {
-      "title": "Målgivende og straffebom for Zuccarello",
+      "title": "Lohne-Hansen falt i Paralympics – disket etter snarvei",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/malgivende-og-straffebom-for-zuccarello-1.17807283"
-    },
-    {
-      "title": "Man City & Barca hold Haaland talks - Friday's gossip",
-      "source": "bbc-football",
-      "sport": "football",
-      "link": "https://www.bbc.com/sport/football/articles/ce94ez3lg8do?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.nrk.no/sport/lohne-hansen-falt-i-paralympics-_-disket-etter-snarvei-1.17807511"
     }
   ],
   "meta": {
-    "eventCount": 5,
+    "eventCount": 4,
     "sportsCovered": [
-      "esports",
       "cycling",
       "golf",
       "f1",
