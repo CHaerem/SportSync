@@ -1,45 +1,48 @@
 {
-  "generatedAt": "2026-03-13T01:50:59.078Z",
+  "generatedAt": "2026-03-13T06:27:35.873Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": null,
+    "provider": "claude-cli",
+    "model": "default",
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 90,
+    "score": 95,
     "issues": [
-      "14 blocks exceeds recommended max of 10."
+      "narrative block exceeds 40 words: \"T13 at -3 after round two, two shots off McNealy's...\""
     ],
-    "blockCount": 14,
-    "generationMs": 3640,
+    "blockCount": 9,
+    "generationMs": 148681,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 95391,
+      "output": 8452,
+      "cacheCreation": 34546,
+      "cacheRead": 60838,
+      "total": 103843,
+      "costUSD": 0.2745999,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 80,
+    "score": 71,
     "metrics": {
-      "mustWatchCoverage": 0.667,
-      "sportDiversity": 0.8,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.6,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.833,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.4,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
-    "issues": [
-      "Block count 14 is outside ideal range (3-8)"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 58,
+      "pickCount": 1,
+      "avgScore": 44,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -62,7 +65,7 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "before": {
       "totalEvents": 53,
@@ -82,36 +85,51 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
     "totalEvents": 53,
     "skipStats": {
       "total": 53,
-      "unchanged": 53,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 52,
+      "enriched": 1,
+      "skipRate": 0.98
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 21616,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21504,
+      "output": 112,
+      "calls": 1,
+      "total": 21616,
+      "costUSD": 0.08231775,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
+      "input": 95391,
+      "output": 8452,
       "calls": 1,
-      "total": 0,
+      "total": 103843,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-13T01:51:03.584Z"
+    "lastRun": "2026-03-13T06:27:36.159Z"
+  },
+  "discovery": {
+    "tokenUsage": {
+      "input": 179594,
+      "output": 5884,
+      "calls": 1,
+      "total": 185478,
+      "costUSD": 0.64586355,
+      "tracked": true,
+      "estimated": false
+    },
+    "lastRun": "2026-03-13T06:21:50.665Z",
+    "tasksExecuted": 1,
+    "succeeded": 1,
+    "failed": 0
   }
 }
