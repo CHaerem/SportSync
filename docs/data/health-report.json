@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-03-13T07:23:22.895Z",
+  "generatedAt": "2026-03-13T08:15:52.764Z",
   "eventCount": 52,
   "sportCoverage": {
     "esports": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "cycling": {
       "count": 7,
@@ -44,12 +44,12 @@
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 17837,
+      "ageMinutes": 17890,
       "stale": true
     },
     "f1.json": {
-      "ageMinutes": 322,
-      "stale": false
+      "ageMinutes": 374,
+      "stale": true
     },
     "football.json": {
       "ageMinutes": 0,
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 56,
+      "ageMinutes": 108,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-13"
     },
     "ai-quality.json": {
-      "ageMinutes": 56,
+      "ageMinutes": 108,
       "stale": false
     }
   },
@@ -194,7 +194,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "esports.json: data is 17837 minutes old"
+      "message": "esports.json: data is 17890 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_data",
+      "message": "f1.json: data is 374 minutes old"
     },
     {
       "severity": "warning",
@@ -309,7 +314,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-13T07:23:22.958Z",
+    "computedAt": "2026-03-13T08:15:52.830Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -327,14 +332,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is critical with 3 critical, 16 warning issue(s). Editorial quality score is 71/100.",
+    "text": "Pipeline is critical with 3 critical, 17 warning issue(s). Editorial quality score is 71/100.",
     "tokenUsage": null
   }
 }
