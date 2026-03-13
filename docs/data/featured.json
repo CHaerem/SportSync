@@ -2,45 +2,132 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Hovland two shots back — THE PLAYERS R3 live at TPC Sawgrass"
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga"
+      "text": "Bodo/Glimt 3-0 Sporting CP"
     },
     {
       "type": "match-result",
       "homeTeam": "Bodo/Glimt",
-      "awayTeam": "Sporting CP"
+      "awayTeam": "Sporting CP",
+      "_fallbackText": "⚽ FT: Bodo/Glimt 3-0 Sporting CP — Sondre Brunstad Fet 32', Ole Didrik Blomberg 45'+1'"
     },
     {
       "type": "narrative",
-      "text": "Glimt's 3-0 demolition of Sporting CP is one of Norwegian football's finest European nights. Knutsen's side dream of the quarterfinals — while Arsenal (1-1 Leverkusen) and Liverpool (0-1 Galatasaray) had harder evenings."
+      "text": "3 must-watch events across esports and cycling and golf today."
     },
     {
       "type": "event-line",
-      "text": "🎮 ESL Pro League S22 — rain (FaZe) in top-tier CS2 action, ongoing"
+      "text": "⛳ THE PLAYERS Championship, 05:00 — PGA Tour"
     },
     {
       "type": "event-line",
-      "text": "🚴 Tirreno-Adriatico — Leknessund and Wærenskjold flying Norwegian colours through Italy"
+      "text": "🏆 Tirreno-Adriatico 2026, 12:40 — Cycling Spring Classics 2026"
+    },
+    {
+      "type": "event-line",
+      "text": "🏎️ Heineken Chinese Grand Prix, 04:30 — Formula 1 2026 - Race Weekend"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Alavés",
+      "awayTeam": "Villarreal",
+      "showStandings": false,
+      "_fallbackText": "⚽ Alavés v Villarreal, 21:00, La Liga — Routine La Liga clash between Villarreal and struggling Alavés — neither team in title race or severe relegation danger"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Tue 18:45 — Bodo/Glimt at Sporting CP",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Bayer Leverkusen at Arsenal",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Paris Saint-Germain at Chelsea",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Real Madrid at Manchester City",
+          "type": "event"
+        },
+        {
+          "text": "Wed 18:45 — Newcastle United at Barcelona",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Atalanta at Bayern Munich",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "football-fifa-world-cup",
+      "title": "FIFA World Cup 2026",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Fri 02:00 — FIFA World Cup 2026 — Group Stage (Week 1)",
+          "type": "event"
+        },
+        {
+          "text": "Fri 04:00 — FIFA World Cup 2026 — Opening Match",
+          "type": "event"
+        },
+        {
+          "text": "Mon 02:00 — FIFA World Cup 2026 — Group Stage (Week 2)",
+          "type": "event"
+        },
+        {
+          "text": "Mon 02:00 — FIFA World Cup 2026 — Group Stage (Final Matchday)",
+          "type": "event"
+        },
+        {
+          "text": "Sat 02:00 — FIFA World Cup 2026 — Round of 32",
+          "type": "event"
+        },
+        {
+          "text": "Wed 02:00 — FIFA World Cup 2026 — Round of 16",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ THE PLAYERS Championship"
     },
     {
       "type": "divider",
-      "text": "This Weekend"
+      "text": "This Week"
     },
     {
-      "type": "event-group",
-      "label": "⚽ Weekend blockbusters",
-      "items": [
-        "Sat 18:30 — Arsenal vs Everton · Arsenal lead PL (67pts, +7 on City)",
-        "Sat 18:30 — Chelsea vs Newcastle · top-four on the line",
-        "Sat 21:00 — Real Madrid vs Elche · Bernabéu title push",
-        "Sun 16:15 — Barcelona vs Sevilla · Camp Nou La Liga title race",
-        "Sun 17:30 — Liverpool vs Tottenham · Anfield showdown ★★★"
-      ]
+      "type": "match-preview",
+      "homeTeam": "Arsenal",
+      "awayTeam": "Everton",
+      "showStandings": true,
+      "_fallbackText": "⚽ Sat 18:30 — Everton at Arsenal"
+    },
+    {
+      "type": "event-line",
+      "text": "♟️ Wed 16:00 — Round 1 – FIDE Candidates Tournament 2026"
+    },
+    {
+      "type": "event-line",
+      "text": "🏆 Sat 12:00 — Giro d'Italia 2026"
     }
   ],
-  "generatedAt": "2026-03-12T22:09:56.739Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-03-13T01:50:53.346Z",
+  "provider": "fallback"
 }
