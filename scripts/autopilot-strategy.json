@@ -162,6 +162,10 @@
       {
         "date": "2026-03-12",
         "note": "Run 23: 0 user feedback, 1 pending task already done (standings card was already implemented). Key learning: stale roadmap tasks are invisible debt — the standings task claimed renderStandingsSection() was removed, but it was fully wired. Need to verify task preconditions before delegating. Main win: data-agent diagnosed editorial quality 62/100 → root cause was diacritic mismatch in mustWatchCoverage (Bodo/Glimt vs Bodø/Glimt). NFD normalization fix via code-agent improved score to 76/100. Pattern: quality metric failures should first be checked for string normalization bugs before assuming content generation issues. esports stale (160 runs) root cause confirmed: all matches completed or unscheduled. Added [PENDING] task for discovery loop repair. User-visible/infra ratio: 100%/0% (quality metric fix = user-visible outcome)."
+      },
+      {
+        "date": "2026-03-14",
+        "note": "Run 24: 3 parallel subagents (code-agent + data-agent + ux-agent scout) + orchestrator UX execution + PR. 1 pending task + 1 pattern-report high-severity + scouting. code-agent: mustWatchCoverage fuzzy matching for year-suffix titles + sportDiversity cycling emoji. data-agent: esports config restored, ESL S22 debunked as hallucination (important validation — run 22 created a non-existent tournament). UX: FT badge CSS mismatch + result row keyboard a11y (PR #132 merged). UX scout: 5 findings, 2 executed, 2 added to roadmap. Editorial quality 75→expected ~95 (mustWatchCoverage 0.5→1.0, sportDiversity 0.5→0.75+). User-visible/infra: ~80%/20%. Key insight: hint_fatigue often signals evaluation bugs, not LLM failures — the 19-fire mustWatchCoverage hint was caused by includes() being too strict for titles with year suffixes."
       }
     ]
   }

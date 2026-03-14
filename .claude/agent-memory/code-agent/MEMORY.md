@@ -32,6 +32,12 @@ if (rule.metric === "somethingUnreliable") {
 ```
 The hint still fires when other metrics are also low (genuine multi-metric failure).
 
+### mustWatchCoverage / sportDiversity evaluation pitfalls
+- `mustWatchCoverage` uses `filterTodayOnlyEvents` (today 00:00–24:00 UTC), NOT the 3-day window. Multi-day events (cycling, golf) enter via `endTime >= todayStart` even if their `time` is days earlier.
+- Title-based text matching uses `includes()` — a trailing year ("2026") in the event title will fail to match featured text that omits the year. Fixed by: (a) adding `event.tournament` as a needle, (b) fuzzy word-overlap fallback that strips 4-digit year tokens.
+- `sportDiversity` detects sports via emoji in block text. The emoji map (`sportEmojis`) must include all sports used by the system. Cycling (🚴) was missing and caused the cycling sport to count against the denominator without appearing in the numerator.
+- When both metrics are exactly 0.5 on the same run, likely cause is a day with only 2 must-watch events (both multi-day, e.g. cycling + golf) where one was not text-matched.
+
 ### Linter auto-reverts
 The linter reverts changes to `scripts/lib/ai-quality-gates.js` and test files. Always re-check file state after the linter runs and re-apply if reverted. The linter runs automatically after edits.
 

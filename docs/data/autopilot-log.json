@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-14",
+      "task": "Code: mustWatchCoverage fuzzy matching + sportDiversity cycling emoji; Data: esports config restored + PGL Major added; UX: FT badge + result row a11y (PR #132)",
+      "outcome": "completed",
+      "pr": "direct-to-main + PR #132",
+      "details": "Run 24: 0 user feedback, 1 pending task + 1 pattern-report high-severity + scouting. (1) code-agent: fixed mustWatchCoverage 0.5 — event title year suffix ('Tirreno-Adriatico 2026') didn't match LLM text ('Tirreno-Adriatico opens…'). Added tournament name to needles + fuzzy word-overlap fallback. Fixed sportDiversity 0.5 — added cycling emoji to detection map. 2 regression tests. Direct-to-main. (2) data-agent: restored esports-cs2-2026.json from archive (193 retains resolved). ESL Pro League S22 was hallucinated (ended Oct 2025). DraculaN S5 + PCC S2 marked completed. PGL CS2 Major Bucharest 2026 added. Changed filter from currentWeek→timeRange:14. Direct-to-main. (3) Orchestrator: UX fixes PR #132 — FT badge CSS class (result-ft→result-ft-badge), result row keyboard a11y, F1 league config 2025→2026. (4) UX scout: 5 findings, 2 executed immediately, 2 added to roadmap. All 2467 tests pass.",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 25,
+      "lesson": "mustWatchCoverage hint_fatigue root cause was evaluation code, not LLM: fuzzy matching needed for event titles with year suffixes that the LLM naturally omits. ESL Pro League S22 was a hallucination from run 22 — always verify tournament existence before adding configs. UX scout→execute in same run is efficient for small CSS/a11y fixes.",
+      "scouted": 5
+    },
+    {
       "date": "2026-03-12",
       "task": "Code: fix mustWatchCoverage diacritic normalization; Data: investigate esports stale + quality score; Roadmap: standings task verified done",
       "outcome": "completed",

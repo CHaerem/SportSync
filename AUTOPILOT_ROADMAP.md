@@ -200,6 +200,9 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 4. Personalization | ~70% | 2026-03-09 | importanceReason fallback surfaces "why this matters" on more cards |
 | 1. Data | ~96% | 2026-03-10 | ESL Pro League S22 added for 100 Thieves (user feedback #126), esports coverage restored |
 | 5. Quality | ~100% | 2026-03-10 | ARIA labels, goalscorer recap fallback, sport pills reorder (PR #127) |
+| 5. Quality | ~100% | 2026-03-14 | mustWatchCoverage fuzzy matching (year suffix), sportDiversity cycling emoji, 2467 tests |
+| 1. Data | ~97% | 2026-03-14 | Esports config restored (193 retains resolved), PGL Major Bucharest added, currentWeek→timeRange:14 |
+| 3. Capabilities | ~88% | 2026-03-14 | FT badge styling fixed, result row keyboard a11y, F1 league config 2025→2026 (PR #132) |
 
 ### Run History Insights
 
@@ -450,7 +453,13 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (direct-to-main 2026-03-12) **Fix mustWatchCoverage team-name diacritic normalization** — Added `normalizeName()` helper in `ai-quality-gates.js` using NFD decomposition + diacritic strip. Now "Bodo/Glimt" correctly matches "Bodø/Glimt" in quality coverage checks. Also fixed `evaluateResultsQuality()` favorites check. Added 2 test cases.
 
-- [PENDING] **esports: populate ESL Pro League S22 group-stage match schedule** — Discovery loop failed to populate `bracket.groups.A/B.matches` with `scheduledTime` fields. The curated-configs fetcher returns zero events because all DraculaN S5 bracket data is completed (ended 2026-02-28) and EPL S22 has no match-level timestamps. Fix: (1) discovery loop to research/populate EPL S22 group matches via Liquipedia, (2) consider replacing `currentWeek` filter with `timeRange:14` for multi-week esports tournaments.
+- [DONE] (direct-to-main 2026-03-14) **esports: restore active config and fix multi-week filter** — ESL Pro League S22 was hallucinated (ESL S22 ended Oct 2025, 100 Thieves not in S23). Restored esports-cs2-2026.json from archive with endDate 2026-07-31. DraculaN S5 + PCC S2 marked completed with scheduledTime. Added PGL CS2 Major Bucharest 2026 (Apr 6-20). Changed esports filter from currentWeek:true → timeRange:14 for multi-week tournaments. Resolves 193 consecutive retains.
+
+- [DONE] (PR #132) **Fix FT badge CSS class mismatch and result row keyboard a11y** — Fixed `result-ft` → `result-ft-badge` on 3 result card elements. Added `.result-row` to keydown handler for Enter/Space expansion. Updated F1 league config year 2025→2026.
+
+- [PENDING] [MAINTENANCE] **Golf standings mini-table: use data-driven tracked player names** — `buildGolfMiniTable()` in `standings-renderer.js` hardcodes `['Hovland', 'Ventura', 'Aberg']` for Norwegian highlighting, while `renderLiveLeaderboard()` correctly uses `_getTrackedGolferNames()` dynamically. Pass `trackedNames` parameter from the leaderboard data to `buildGolfMiniTable()` for consistent highlighting. ~5 lines. Pillar: personalization.
+
+- [PENDING] [MAINTENANCE] **Cycling expanded view: add sport-specific rendering** — Cycling events (importance 4, with norwegianPlayers) fall through to the generic non-golf athletes block. Add a cycling branch in `renderExpanded()` that shows multi-day progress + styled Norwegian riders list with race context from the event summary. ~15-20 lines. Pillar: capabilities.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

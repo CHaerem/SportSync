@@ -6,7 +6,11 @@
 - **TEAM_SHORT_FORMS map location**: In `scripts/fetch-results.js`, covers PL and La Liga teams. When new league teams need short forms, add entries there.
 - **Word-boundary regex for team matching**: Use `(?<![a-zA-ZÀ-ÖØ-öø-ÿ])term(?![a-zA-ZÀ-ÖØ-öø-ÿ])` — includes Nordic chars in the negative lookbehind/ahead to avoid false positives.
 - **Direct-to-main is safe for fetch-results.js changes**: Verified multiple times. Low-risk, full test coverage.
+- **Esports config archival pattern**: `sync-configs.js` archives any config whose `endDate` is in the past. When esports config is archived, fetcher gets zero curated matches. Always set esports config `endDate` at least 3+ months ahead.
+- **Esports currentWeek filter issue**: `sports-config.js` had `currentWeek:true` for esports which drops all matches outside the current week — bad for multi-week tournaments. Fixed 2026-03-14 to use `timeRange:14`. If you see esports events mysteriously vanishing mid-tournament, check this filter.
+- **ESL Pro League S22 historical note**: ESL Pro League S22 ended October 2025. 100 Thieves were NOT in S23 (March 2026). Any config referencing "100 Thieves in ESL Pro League S22" is hallucinated data.
+- **100 Thieves CS2 roster (as of 2026-03)**: dev1ce, rain (Håvard Nygaard — Norwegian), Ag1l, sirah, poiii. Coach: gla1ve.
 
-## Test Counts (as of 2026-02-23)
-- 1882 tests / 64 files (post RSS headline matching improvement)
-- fetch-results.test.js: 93 tests (was 85 before short-form matching addition)
+## Test Counts (as of 2026-03-14)
+- 2467 tests / 79 files (up from 2110/67 at last update)
+- fetch-results.test.js: 93 tests
