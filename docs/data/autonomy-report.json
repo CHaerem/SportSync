@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-14T16:10:43.731Z",
-  "overallScore": 0.91,
-  "loopsClosed": 10,
+  "generatedAt": "2026-03-14T17:10:47.434Z",
+  "overallScore": 1,
+  "loopsClosed": 11,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 11 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -55,9 +55,9 @@
       "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
     },
     "streamingVerification": {
-      "score": 0,
-      "status": "open",
-      "details": "Match rate declining: 57% → 54% → 52%"
+      "score": 1,
+      "status": "closed",
+      "details": "50 runs, match rate stable or rising"
     }
   }
 }
