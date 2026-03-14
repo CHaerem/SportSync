@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-28T13:39:41.991Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 101,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 28,
-      "warningCount": 16,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": null,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-28T13:39:44.570Z",
     "editorial": {
       "score": 97,
@@ -8073,6 +8008,106 @@
       "editorialScore": 80.857,
       "mustWatchCoverage": 0.619,
       "sportDiversity": 0.743,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-14T06:23:45.678Z",
+    "editorial": {
+      "score": 83,
+      "mustWatchCoverage": 0.667,
+      "sportDiversity": 0.667,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 90,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 19,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 26,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 21871,
+        "output": 213,
+        "calls": 1,
+        "total": 22084,
+        "costUSD": 0.085209,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26344,
+        "output": 5516,
+        "cacheCreation": 17491,
+        "cacheRead": 8850,
+        "total": 31860,
+        "costUSD": 0.15099525000000003,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 265637,
+        "output": 2393,
+        "calls": 1,
+        "total": 268030,
+        "costUSD": 0.5137977499999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26386,
+        "output": 4679,
+        "calls": 1,
+        "total": 31065,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 340238,
+        "output": 12801,
+        "calls": 4,
+        "total": 353039,
+        "costUSD": 0.750002,
+        "realPct": 91
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 81.286,
+      "mustWatchCoverage": 0.619,
+      "sportDiversity": 0.724,
       "enrichmentScore": 100,
       "resultsScore": 89
     }
