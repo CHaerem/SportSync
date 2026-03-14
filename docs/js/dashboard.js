@@ -2187,7 +2187,7 @@ class Dashboard {
 		html += '<div class="result-body">';
 		html += '<div class="result-header">';
 		html += `<span class="result-sport">${leagueImg}${this.esc(league || '')}</span>`;
-		html += `<span class="result-ft">${matches.length} results</span>`;
+		html += `<span class="result-ft-badge">${matches.length} results</span>`;
 		html += '</div>';
 		// Featured: first match with full detail
 		const feat = matches[0];
@@ -2231,7 +2231,7 @@ class Dashboard {
 		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="" loading="lazy">` : '';
 		html += '<div class="result-header">';
 		html += `<span class="result-sport">${leagueImg}${this.esc(m.league || '')}</span>`;
-		html += '<span class="result-ft">FT</span>';
+		html += '<span class="result-ft-badge">FT</span>';
 		html += '</div>';
 		const homeWins = m.homeScore > m.awayScore;
 		const awayWins = m.awayScore > m.homeScore;
@@ -2269,7 +2269,7 @@ class Dashboard {
 		html += '<div class="result-body">';
 		html += '<div class="result-header">';
 		html += `<span class="result-sport">PGA Tour</span>`;
-		html += `<span class="result-ft">${isFinal ? 'Final' : 'In progress'}</span>`;
+		html += `<span class="result-ft-badge">${isFinal ? 'Final' : 'In progress'}</span>`;
 		html += '</div>';
 		html += `<div class="result-golf-title">${this.esc(m._golfTournament || '')}</div>`;
 		if (lb.length > 0) {
@@ -3260,7 +3260,7 @@ class Dashboard {
 
 		container.addEventListener('keydown', (e) => {
 			if (e.key !== 'Enter' && e.key !== ' ') return;
-			const row = e.target.closest('.event-row');
+			const row = e.target.closest('.event-row') || e.target.closest('.result-row');
 			if (!row) return;
 			e.preventDefault();
 			row.click();
