@@ -389,6 +389,47 @@ describe("evaluateEditorialQuality()", () => {
 		const result = evaluateEditorialQuality(featured, events, { now });
 		expect(result.metrics.mustWatchCoverage).toBe(1);
 	});
+
+	it("matches multi-day cycling event when featured text contains significant words of title", () => {
+		// Real-world case: event titled "Tirreno-Adriatico 2026" but featured text reads
+		// "Tirreno-Adriatico opens…" — the trailing year prevented the exact-match from
+		// succeeding.  The fuzzy word-overlap fallback must resolve this.
+		const events = [
+			{
+				sport: "cycling",
+				title: "Tirreno-Adriatico 2026",
+				tournament: "Cycling Spring Classics 2026",
+				importance: 4,
+				time: "2026-02-09T11:40:00Z",
+				endTime: "2026-02-15T15:00:00Z",
+			},
+		];
+		const featured = {
+			blocks: [
+				{ type: "golf-status", tournament: "pga" },
+				{ type: "event-line", text: "🚴 Mon 12:40 — Tirreno-Adriatico opens: riders carry Norway's spring hopes" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now: new Date("2026-02-12T12:00:00Z") });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("cycling emoji detection in sportDiversity", () => {
+		// 🚴 (cycling) must be recognised the same way ⚽ (football) is.
+		const events = [
+			{ sport: "football", title: "Arsenal vs Everton", importance: 3, time: "2026-02-12T17:30:00Z" },
+			{ sport: "cycling", title: "Tirreno-Adriatico 2026", importance: 4, time: "2026-02-09T11:40:00Z", endTime: "2026-02-15T15:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "⚽ Arsenal vs Everton, 18:30" },
+				{ type: "event-line", text: "🚴 Tirreno-Adriatico opens: Leknessund leads" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		// Both sports covered by their respective emojis → diversity = 1
+		expect(result.metrics.sportDiversity).toBe(1);
+	});
 });
 
 describe("evaluateWatchPlanQuality()", () => {

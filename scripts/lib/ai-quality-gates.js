@@ -445,9 +445,21 @@ function mustWatchCoverage(blocks, events) {
 		// Check if team is covered by match-result/match-preview component (diacritic-insensitive)
 		const teams = [event.homeTeam, event.awayTeam].filter(Boolean).map(t => normalizeName(t));
 		if (teams.some(t => coveredTeams.has(t))) { covered++; continue; }
-		// Check text-based coverage (diacritic-insensitive)
-		const needles = [event.title, event.homeTeam, event.awayTeam].filter(Boolean);
-		if (needles.some((n) => allTextNorm.includes(normalizeName(n)))) covered++;
+		// Check text-based coverage (diacritic-insensitive).
+		// Include tournament name as an additional needle — it is often more recognisable
+		// than the full title and avoids year-suffix mismatches (e.g. "Tirreno-Adriatico 2026"
+		// vs featured text that reads "Tirreno-Adriatico opens…").
+		const needles = [event.title, event.tournament, event.homeTeam, event.awayTeam].filter(Boolean);
+		if (needles.some((n) => allTextNorm.includes(normalizeName(n)))) { covered++; continue; }
+		// Fuzzy fallback: check if the significant words of any needle (length ≥4, non-year)
+		// all appear somewhere in the combined block text.  This handles cases where the LLM
+		// writes "Tirreno-Adriatico opens…" for an event titled "Tirreno-Adriatico 2026".
+		const significantWords = (s) =>
+			normalizeName(s).split(/\s+/).filter(w => w.length >= 4 && !/^\d{4}$/.test(w));
+		if (needles.some((n) => {
+			const words = significantWords(n);
+			return words.length > 0 && words.every(w => allTextNorm.includes(w));
+		})) covered++;
 	}
 	return covered / mustWatch.length;
 }
@@ -463,7 +475,7 @@ function sportDiversity(blocks, events) {
 			return text;
 		})
 		.join(" ");
-	const sportEmojis = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎", f1: "🏎", chess: "♟", esports: "🎮", olympics: "🏅" };
+	const sportEmojis = { football: "⚽", golf: "⛳", tennis: "🎾", formula1: "🏎", f1: "🏎", chess: "♟", esports: "🎮", olympics: "🏅", cycling: "🚴" };
 	const found = new Set();
 	for (const [sport, emoji] of Object.entries(sportEmojis)) {
 		if (blockText.includes(emoji)) found.add(sport === "f1" ? "formula1" : sport);
