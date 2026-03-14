@@ -167,7 +167,7 @@ export const sportsConfig = {
 			}
 		],
 		filters: {
-			currentWeek: true,
+			timeRange: 14,
 			maxEvents: 10,
 			teams: ["100 Thieves", "100T", "Team Liquid", "NAVI", "G2", "Astralis"]
 		},
