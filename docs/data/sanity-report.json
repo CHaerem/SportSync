@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-14T06:23:47.393Z",
+  "generatedAt": "2026-03-14T10:12:16.032Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 54,
@@ -84,7 +84,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 83,
-    "issueCount": 9
+    "issueCount": 10
   },
   "findings": [
     {
@@ -189,11 +189,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Sawgrass\" but no matching athlete found in events data"
     },
@@ -219,9 +214,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 25,
     "critical": 0,
-    "warning": 24,
+    "warning": 23,
     "info": 2
   },
   "pass": true,
