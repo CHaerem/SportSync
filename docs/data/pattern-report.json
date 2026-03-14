@@ -1,21 +1,12 @@
 {
-  "generatedAt": "2026-03-13T22:14:27.657Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "hint_fatigue",
-      "severity": "high",
-      "hintKey": "mustWatchCoverage",
-      "fireCount": 19,
-      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 19 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
-    }
-  ],
+  "generatedAt": "2026-03-14T02:17:46.547Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 352,
+      "count": 353,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-13T22:14:27.654Z"
+      "lastSeen": "2026-03-14T02:17:46.544Z"
     },
     "missing_snapshot": {
       "count": 11,
@@ -33,19 +24,19 @@
       "lastSeen": "2026-03-13T22:14:27.654Z"
     },
     "invisible_events": {
-      "count": 198,
+      "count": 199,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-13T22:14:27.654Z"
+      "lastSeen": "2026-03-14T02:17:46.544Z"
     },
     "stale_data": {
-      "count": 363,
+      "count": 365,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-13T22:14:27.654Z"
+      "lastSeen": "2026-03-14T02:17:46.544Z"
     },
     "chronic_data_retention": {
-      "count": 353,
+      "count": 355,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-13T22:14:27.654Z"
+      "lastSeen": "2026-03-14T02:17:46.544Z"
     },
     "stale_output": {
       "count": 52,
@@ -63,5 +54,5 @@
       "lastSeen": "2026-03-12T02:05:47.911Z"
     }
   },
-  "summary": "1 patterns detected (1 high). Top priority: hint_fatigue — Hint \"CORRECTION: Recent outputs missed must-watch events."
+  "summary": "0 patterns detected"
 }
