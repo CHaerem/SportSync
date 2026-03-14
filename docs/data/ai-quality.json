@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-14T14:16:10.473Z",
+  "generatedAt": "2026-03-14T18:18:06.866Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,25 +9,25 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 64102,
+    "blockCount": 7,
+    "generationMs": 152464,
     "tokenUsage": {
-      "input": 26401,
-      "output": 3583,
-      "cacheCreation": 26398,
-      "cacheRead": 0,
-      "total": 29984,
-      "costUSD": 0.1527465,
+      "input": 94185,
+      "output": 7560,
+      "cacheCreation": 25047,
+      "cacheRead": 69131,
+      "total": 101745,
+      "costUSD": 0.22808655000000003,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 86,
     "metrics": {
-      "mustWatchCoverage": 0.833,
-      "sportDiversity": 1,
+      "mustWatchCoverage": 0.75,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 98,
+      "avgScore": 113,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 18
+      "footballCount": 21
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 53,
+      "totalEvents": 46,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 53,
+      "totalEvents": 46,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 53,
+    "totalEvents": 46,
     "skipStats": {
-      "total": 53,
-      "unchanged": 53,
+      "total": 46,
+      "unchanged": 46,
       "enriched": 0,
       "skipRate": 1
     },
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-14T14:11:49.471Z",
+    "lastRun": "2026-03-14T18:12:17.855Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
