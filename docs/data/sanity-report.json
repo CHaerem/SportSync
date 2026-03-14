@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-03-14T18:18:08.530Z",
+  "generatedAt": "2026-03-14T22:11:29.996Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 46,
+    "totalEvents": 44,
     "sports": [
       "cycling",
       "golf",
       "f1",
-      "football",
       "tennis",
+      "football",
       "chess",
       "esports"
     ],
@@ -17,11 +17,9 @@
         "Tirreno-Adriatico 2026",
         "THE PLAYERS Championship"
       ],
-      "today": [
-        "Manchester City at West Ham United",
-        "Elche at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
+        "Miami Open presented by Itau",
         "Espanyol at Mallorca",
         "Leeds United at Crystal Palace",
         "Aston Villa at Manchester United",
@@ -34,7 +32,6 @@
       "thisWeek": [
         "Wolverhampton Wanderers at Brentford",
         "Levante at Rayo Vallecano",
-        "Miami Open presented by Itau",
         "Bodo/Glimt at Sporting CP",
         "Bayer Leverkusen at Arsenal",
         "Paris Saint-Germain at Chelsea",
@@ -76,7 +73,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 86,
-    "issueCount": 11
+    "issueCount": 13
   },
   "findings": [
     {
@@ -187,6 +184,11 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Elche\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Lisbon\" but no matching athlete found in events data"
     },
     {
@@ -206,14 +208,14 @@
     },
     {
       "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 21 football results have null recapHeadline — RSS matching may be broken"
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"21:00\" for \"Celta Vigo at Real Betis\" but events.json has 18:30"
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 27,
     "critical": 0,
-    "warning": 23,
+    "warning": 24,
     "info": 3
   },
   "pass": true,
