@@ -56,10 +56,15 @@ function buildFootballMiniTable(name, table, favoriteTeams) {
 	});
 }
 
-/** Golf mini table for standings section */
-function buildGolfMiniTable(pga) {
-	const norwegianNames = ['Hovland', 'Ventura', 'Aberg'];
-	const isNor = (row) => norwegianNames.some(n => row.player?.includes(n));
+/** Golf mini table for standings section.
+ *  @param {object} pga - Golf leaderboard data
+ *  @param {Set<string>} [trackedNames] - Lowercase last names of tracked players (data-driven).
+ *    If not provided, falls back to a hardcoded list for backwards compatibility. */
+function buildGolfMiniTable(pga, trackedNames) {
+	const fallbackNames = ['Hovland', 'Ventura', 'Aberg'];
+	const isNor = trackedNames && trackedNames.size > 0
+		? (row) => trackedNames.has((row.player || '').split(' ').pop().toLowerCase())
+		: (row) => fallbackNames.some(n => row.player?.includes(n));
 	return buildMiniTable({
 		title: pga.name || 'Golf Leaderboard',
 		columns: [{ label: 'Player' }, { label: 'Score' }, { label: 'Thru' }],
@@ -96,8 +101,11 @@ function buildTennisMiniTable(atp) {
 	});
 }
 
-/** Render consolidated standings section (collapsed band with all sport tables) */
-function renderStandingsSection(standings, preferences) {
+/** Render consolidated standings section (collapsed band with all sport tables).
+ *  @param {object} standings - Standings data
+ *  @param {object} preferences - User preferences (for favorite teams)
+ *  @param {Set<string>} [trackedGolferNames] - Lowercase last names of tracked golfers (data-driven). */
+function renderStandingsSection(standings, preferences, trackedGolferNames) {
 	const tables = [];
 	const prefs = preferences ? preferences.getPreferences() : {};
 	const favTeams = prefs.favoriteTeams?.football || [];
@@ -117,7 +125,7 @@ function renderStandingsSection(standings, preferences) {
 	// Golf leaderboard
 	const pga = standings?.golf?.pga;
 	if (pga?.leaderboard?.length && pga.status !== 'scheduled') {
-		tables.push(buildGolfMiniTable(pga));
+		tables.push(buildGolfMiniTable(pga, trackedGolferNames));
 	}
 
 	// F1 standings

@@ -2706,8 +2706,23 @@ class Dashboard {
 			content += this.renderEsportsDetails(event);
 		}
 
-		// Non-golf: Norwegian athletes (Olympics, esports, etc.)
-		if (event.sport !== 'golf' && event.norwegianPlayers?.length > 0) {
+		// Cycling: Norwegian riders with race context
+		if (event.sport === 'cycling' && event.norwegianPlayers?.length > 0) {
+			content += '<div class="exp-athletes">';
+			content += '<div class="exp-athletes-header">\ud83c\uddf3\ud83c\uddf4 Norwegian Riders</div>';
+			event.norwegianPlayers.forEach(player => {
+				const name = typeof player === 'string' ? player : player.name;
+				const team = (typeof player === 'object' && player.team) ? player.team : null;
+				content += `<div class="exp-athlete">${this.esc(name)}${team ? ` <span class="exp-athlete-meta">${this.esc(team)}</span>` : ''}</div>`;
+			});
+			if (event.link) {
+				content += `<a href="${this.esc(event.link)}" target="_blank" rel="noopener noreferrer" class="exp-link">Race details \u2197</a>`;
+			}
+			content += '</div>';
+		}
+
+		// Non-golf, non-cycling: Norwegian athletes (Olympics, esports, etc.)
+		if (event.sport !== 'golf' && event.sport !== 'cycling' && event.norwegianPlayers?.length > 0) {
 			const isOlympics = event.context === 'olympics-2026';
 			content += '<div class="exp-athletes">';
 			content += `<div class="exp-athletes-header">${isOlympics ? '\ud83c\uddf3\ud83c\uddf4 Norwegian Athletes' : 'Norwegian Players'}</div>`;
@@ -2985,7 +3000,7 @@ class Dashboard {
 
 	// Standings rendering — delegated to standings-renderer.js
 	renderStandingsSection() {
-		return window.StandingsRenderer.renderStandingsSection(this.standings, this.preferences);
+		return window.StandingsRenderer.renderStandingsSection(this.standings, this.preferences, this._getTrackedGolferNames());
 	}
 
 	_buildMiniTable(opts) { return window.StandingsRenderer.buildMiniTable(opts); }
