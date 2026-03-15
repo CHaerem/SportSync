@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-15T10:17:49.109Z",
+  "generatedAt": "2026-03-15T14:19:58.533Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 54,
+    "totalEvents": 50,
     "sports": [
       "cycling",
       "golf",
@@ -18,10 +18,6 @@
         "THE PLAYERS Championship"
       ],
       "today": [
-        "Espanyol at Mallorca",
-        "Leeds United at Crystal Palace",
-        "Aston Villa at Manchester United",
-        "Fulham at Nottingham Forest",
         "Sevilla at Barcelona",
         "Tottenham Hotspur at Liverpool",
         "Celta Vigo at Real Betis",
@@ -82,9 +78,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "critical",
+    "pipelineStatus": "warning",
     "editorialScore": 86,
-    "issueCount": 16
+    "issueCount": 10
   },
   "findings": [
     {
@@ -190,12 +186,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Scandinavian\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sawgrass\" but no matching athlete found in events data"
+      "message": "Featured mentions \"West Ham\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -206,12 +202,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 25,
     "critical": 0,
-    "warning": 22,
+    "warning": 23,
     "info": 2
   },
   "pass": true,
