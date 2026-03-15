@@ -1,21 +1,12 @@
 {
-  "generatedAt": "2026-03-15T07:23:05.579Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "hint_fatigue",
-      "severity": "high",
-      "hintKey": "mustWatchCoverage",
-      "fireCount": 15,
-      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
-      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 15 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
-    }
-  ],
+  "generatedAt": "2026-03-15T10:17:49.226Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 373,
+      "count": 374,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-15T07:23:05.576Z"
+      "lastSeen": "2026-03-15T10:17:49.224Z"
     },
     "missing_snapshot": {
       "count": 12,
@@ -23,9 +14,9 @@
       "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "snapshot_event_mismatch": {
-      "count": 107,
+      "count": 115,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-15T06:31:38.138Z"
+      "lastSeen": "2026-03-15T10:17:49.224Z"
     },
     "stale_snapshot": {
       "count": 62,
@@ -33,19 +24,19 @@
       "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "invisible_events": {
-      "count": 219,
+      "count": 220,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-15T07:23:05.576Z"
+      "lastSeen": "2026-03-15T10:17:49.223Z"
     },
     "stale_data": {
-      "count": 402,
+      "count": 403,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-15T07:23:05.576Z"
+      "lastSeen": "2026-03-15T10:17:49.223Z"
     },
     "chronic_data_retention": {
-      "count": 392,
+      "count": 393,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-15T07:23:05.576Z"
+      "lastSeen": "2026-03-15T10:17:49.223Z"
     },
     "stale_output": {
       "count": 54,
@@ -53,9 +44,9 @@
       "lastSeen": "2026-03-14T14:16:12.117Z"
     },
     "streaming_coverage_gap": {
-      "count": 69,
+      "count": 70,
       "firstSeen": "2026-03-10T07:21:05.886Z",
-      "lastSeen": "2026-03-15T07:23:05.576Z"
+      "lastSeen": "2026-03-15T10:17:49.223Z"
     },
     "streaming_match_rate_declining": {
       "count": 1,
@@ -63,5 +54,5 @@
       "lastSeen": "2026-03-14T17:10:47.447Z"
     }
   },
-  "summary": "1 patterns detected (1 high). Top priority: hint_fatigue — Hint \"CORRECTION: Recent outputs missed must-watch events."
+  "summary": "0 patterns detected"
 }

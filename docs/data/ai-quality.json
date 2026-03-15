@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-15T06:31:03.392Z",
+  "generatedAt": "2026-03-15T10:17:14.558Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,31 +7,29 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"⚽ Tue 21:00 — Man City vs Real Madrid, CL second l...\""
-    ],
+    "score": 100,
+    "issues": [],
     "blockCount": 8,
-    "generationMs": 99320,
+    "generationMs": 90881,
     "tokenUsage": {
-      "input": 26691,
-      "output": 6253,
-      "cacheCreation": 17838,
-      "cacheRead": 8850,
-      "total": 32944,
-      "costUSD": 0.16335149999999998,
+      "input": 26725,
+      "output": 4923,
+      "cacheCreation": 26722,
+      "cacheRead": 0,
+      "total": 31648,
+      "costUSD": 0.17406149999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 74,
+    "score": 86,
     "metrics": {
-      "mustWatchCoverage": 0.6,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 0.75,
+      "sportDiversity": 0.667,
       "blockTypeBalance": 1,
-      "textQuality": 0.75,
+      "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -42,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 99,
+      "avgScore": 104,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -68,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 55,
+      "totalEvents": 54,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.873
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 55,
+      "totalEvents": 54,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -84,52 +82,52 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
-    "aiUpdatedFields": 12,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 55,
+    "totalEvents": 54,
     "skipStats": {
-      "total": 55,
-      "unchanged": 43,
-      "enriched": 12,
-      "skipRate": 0.78
+      "total": 54,
+      "unchanged": 54,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 3799,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 44547,
-      "output": 1037,
-      "calls": 2,
-      "total": 45584,
-      "costUSD": 0.18260175,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26691,
-      "output": 6253,
+      "input": 26725,
+      "output": 4923,
       "calls": 1,
-      "total": 32944,
+      "total": 31648,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-15T06:31:03.667Z"
+    "lastRun": "2026-03-15T10:17:14.835Z"
   },
   "discovery": {
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
+      "calls": 2,
       "total": 0,
       "costUSD": 0,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-15T06:25:28.121Z",
-    "tasksExecuted": 1,
+    "lastRun": "2026-03-15T10:10:30.383Z",
+    "tasksExecuted": 2,
     "succeeded": 0,
-    "failed": 1
+    "failed": 2
   }
 }
