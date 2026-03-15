@@ -1,27 +1,17 @@
 {
-  "generatedAt": "2026-03-15T17:10:00.090Z",
+  "generatedAt": "2026-03-15T18:17:27.728Z",
   "dates": [
     "2026-03-15",
     "2026-03-16"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 29,
-  "matchesAttempted": 24,
-  "matchesSucceeded": 4,
-  "eventsEnriched": 4,
-  "totalEvents": 48,
-  "matchRate": 0.17,
+  "listingsFound": 27,
+  "matchesAttempted": 23,
+  "matchesSucceeded": 3,
+  "eventsEnriched": 3,
+  "totalEvents": 47,
+  "matchRate": 0.13,
   "unmatched": [
-    {
-      "homeTeam": "Royal Antwerp FC",
-      "awayTeam": "Standard Liege",
-      "time": "16:00"
-    },
-    {
-      "homeTeam": "Barcelona",
-      "awayTeam": "Sevilla",
-      "time": "16:15"
-    },
     {
       "homeTeam": "FC Köln",
       "awayTeam": "FC Bayern Frauen",
@@ -73,6 +63,11 @@
       "time": "18:00"
     },
     {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Celta Vigo",
+      "time": "18:30"
+    },
+    {
       "homeTeam": "VfL Wolfsburg",
       "awayTeam": "Bayer Leverkusen Frauen",
       "time": "18:30"
@@ -111,17 +106,14 @@
       "homeTeam": "Vancouver Whitecaps FC",
       "awayTeam": "Minnesota United",
       "time": "21:30"
+    },
+    {
+      "homeTeam": "San Jose Earthquakes",
+      "awayTeam": "Seattle Sounders",
+      "time": "00:00"
     }
   ],
   "enrichedEvents": [
-    {
-      "homeTeam": "Real Betis",
-      "awayTeam": "Celta Vigo",
-      "broadcasters": [
-        "Viaplay"
-      ],
-      "confidence": 1
-    },
     {
       "homeTeam": "Real Sociedad",
       "awayTeam": "Osasuna",
@@ -148,8 +140,10 @@
       "confidence": 1
     }
   ],
-  "relevantTvkEntries": 6,
-  "relevantMatchRate": 0.67,
+  "relevantTvkEntries": 5,
+  "relevantMatchRate": 0.6,
   "aliasSuggestions": [],
-  "hintsApplied": []
+  "hintsApplied": [
+    "WARNING: Match rate declining over last 3 runs (23% → 20% → 17%)"
+  ]
 }

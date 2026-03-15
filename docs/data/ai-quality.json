@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-15T14:19:56.932Z",
+  "generatedAt": "2026-03-15T18:19:12.800Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,24 +9,24 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 79201,
+    "blockCount": 7,
+    "generationMs": 96855,
     "tokenUsage": {
-      "input": 26587,
-      "output": 4912,
-      "cacheCreation": 17734,
-      "cacheRead": 8850,
-      "total": 31499,
-      "costUSD": 0.1428465,
+      "input": 58891,
+      "output": 6197,
+      "cacheCreation": 32389,
+      "cacheRead": 26496,
+      "total": 65088,
+      "costUSD": 0.22238054999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 86,
+    "score": 78,
     "metrics": {
-      "mustWatchCoverage": 0.75,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 0.667,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 103,
+      "pickCount": 1,
+      "avgScore": 58,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 32
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 50,
+      "totalEvents": 47,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 50,
+      "totalEvents": 47,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 50,
+    "totalEvents": 47,
     "skipStats": {
-      "total": 50,
-      "unchanged": 50,
+      "total": 47,
+      "unchanged": 47,
       "enriched": 0,
       "skipRate": 1
     },
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-15T14:13:24.347Z",
+    "lastRun": "2026-03-15T18:12:26.805Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2

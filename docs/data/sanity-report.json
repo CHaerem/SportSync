@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-15T14:19:58.533Z",
+  "generatedAt": "2026-03-15T18:19:14.464Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 50,
+    "totalEvents": 47,
     "sports": [
       "cycling",
       "golf",
@@ -14,13 +14,9 @@
     ],
     "bands": {
       "live": [
-        "Tirreno-Adriatico 2026",
         "THE PLAYERS Championship"
       ],
       "today": [
-        "Sevilla at Barcelona",
-        "Tottenham Hotspur at Liverpool",
-        "Celta Vigo at Real Betis",
         "Osasuna at Real Sociedad"
       ],
       "tomorrow": [
@@ -73,13 +69,14 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
+        "Tirreno-Adriatico 2026",
         "Heineken Chinese Grand Prix"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 86,
+    "editorialScore": 78,
     "issueCount": 10
   },
   "findings": [
@@ -186,12 +183,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"West Ham\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Scandinavian\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -206,13 +198,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 32 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 24,
     "critical": 0,
-    "warning": 23,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
