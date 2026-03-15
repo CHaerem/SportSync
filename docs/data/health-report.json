@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-14T22:11:29.915Z",
+  "generatedAt": "2026-03-15T01:59:49.865Z",
   "eventCount": 44,
   "sportCoverage": {
     "cycling": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2650,
+      "ageMinutes": 2878,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 232,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 232,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 233,
+      "ageMinutes": 1,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-03-14"
+      "featuredDate": "2026-03-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 233,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -107,6 +107,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
+      "Day snapshots are 462 minutes old (stale > 240m)",
+      "1 expected day snapshot(s) missing",
       "Snapshot 2026-03-14: 4 events but events.json has 2",
       "Snapshot 2026-03-15: 10 events but events.json has 11",
       "Snapshot 2026-03-16: 2 events but events.json has 3"
@@ -126,30 +128,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 8,
+    "sevenDay": 21,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 59766,
-    "stepCount": 21,
+    "totalDuration": 298648,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 24634,
-        "share": 41
-      },
-      {
-        "name": "fetch-results",
-        "duration": 40785,
-        "share": 68
+        "name": "discover-events",
+        "duration": 180320,
+        "share": 60
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -185,7 +184,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 2650 minutes old"
+      "message": "f1.json: data is 2878 minutes old"
     },
     {
       "severity": "warning",
@@ -201,6 +200,16 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (f1)"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_snapshot",
+      "message": "Day snapshots are 462 minutes old (stale > 240m)"
+    },
+    {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -230,17 +239,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 41% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 60% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (41s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-14T22:11:29.997Z",
+    "computedAt": "2026-03-15T01:59:49.926Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -258,14 +267,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 8 warning issue(s). Editorial quality score is 86/100.",
+    "text": "Pipeline is warning with 10 warning issue(s). Editorial quality score is 83/100.",
     "tokenUsage": null
   }
 }

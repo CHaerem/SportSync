@@ -457,9 +457,9 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #132) **Fix FT badge CSS class mismatch and result row keyboard a11y** — Fixed `result-ft` → `result-ft-badge` on 3 result card elements. Added `.result-row` to keydown handler for Enter/Space expansion. Updated F1 league config year 2025→2026.
 
-- [PENDING] [MAINTENANCE] **Golf standings mini-table: use data-driven tracked player names** — `buildGolfMiniTable()` in `standings-renderer.js` hardcodes `['Hovland', 'Ventura', 'Aberg']` for Norwegian highlighting, while `renderLiveLeaderboard()` correctly uses `_getTrackedGolferNames()` dynamically. Pass `trackedNames` parameter from the leaderboard data to `buildGolfMiniTable()` for consistent highlighting. ~5 lines. Pillar: personalization.
+- [DONE] (PR #133) **Golf standings mini-table: use data-driven tracked player names** — `buildGolfMiniTable()` now accepts optional `trackedNames` parameter from `_getTrackedGolferNames()`. Consistent data-driven highlighting instead of hardcoded names. Fallback preserved for backwards compatibility.
 
-- [PENDING] [MAINTENANCE] **Cycling expanded view: add sport-specific rendering** — Cycling events (importance 4, with norwegianPlayers) fall through to the generic non-golf athletes block. Add a cycling branch in `renderExpanded()` that shows multi-day progress + styled Norwegian riders list with race context from the event summary. ~15-20 lines. Pillar: capabilities.
+- [DONE] (PR #133) **Cycling expanded view: add sport-specific rendering** — Added dedicated cycling branch in `renderExpanded()` with Norwegian Riders section, team affiliation display, and race-details link. Generic non-golf block narrowed to exclude cycling.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
