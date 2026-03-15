@@ -1,25 +1,22 @@
 {
-  "generatedAt": "2026-03-15T18:19:14.464Z",
+  "generatedAt": "2026-03-15T22:17:06.355Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 47,
+    "totalEvents": 46,
     "sports": [
-      "cycling",
       "golf",
       "f1",
-      "football",
       "tennis",
+      "football",
       "chess",
-      "esports"
+      "esports",
+      "cycling"
     ],
     "bands": {
-      "live": [
-        "THE PLAYERS Championship"
-      ],
-      "today": [
-        "Osasuna at Real Sociedad"
-      ],
+      "live": [],
+      "today": [],
       "tomorrow": [
+        "Miami Open presented by Itau",
         "Wolverhampton Wanderers at Brentford",
         "Levante at Rayo Vallecano"
       ],
@@ -69,15 +66,15 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Tirreno-Adriatico 2026",
+        "THE PLAYERS Championship",
         "Heineken Chinese Grand Prix"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 78,
-    "issueCount": 10
+    "pipelineStatus": "critical",
+    "editorialScore": 93,
+    "issueCount": 23
   },
   "findings": [
     {
@@ -183,7 +180,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Scandinavian\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Spurs\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Fullstendig\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Lisbon\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -198,13 +205,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 32 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 35 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 26,
     "critical": 0,
-    "warning": 22,
+    "warning": 24,
     "info": 2
   },
   "pass": true,

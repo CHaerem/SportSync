@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-15",
-  "generatedAt": "2026-03-15T18:19:13.243Z",
+  "generatedAt": "2026-03-15T22:17:05.251Z",
   "events": {
-    "upcoming": [
+    "upcoming": [],
+    "results": [
       {
         "sport": "golf",
         "tournament": "PGA Tour",
@@ -78,98 +79,36 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-15T18:17:35.217Z",
+        "enrichedAt": "2026-03-15T22:14:54.055Z",
         "_enrichHash": "7ae654afdbea4d31e7c05c8cd95fa03f"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Osasuna at Real Sociedad",
-        "time": "2026-03-15T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Reale Arena",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Real Sociedad",
-        "awayTeam": "Osasuna",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Solid La Liga fixture with limited title or relegation implications",
-        "summary": "Real Sociedad host Osasuna in a competent La Liga evening fixture, though neither side is likely to be chasing the title or looking over their shoulder.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-15T18:17:35.217Z",
-        "_enrichHash": "34941a90e86b2f095073626e1ae47f0b",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      }
-    ],
-    "results": [
-      {
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "title": "Tirreno-Adriatico 2026",
-        "time": "2026-03-09T12:40:00+01:00",
-        "endTime": "2026-03-15T16:00:00+01:00",
-        "venue": "Lido di Camaiore to San Benedetto del Tronto, Italy",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Eurosport",
-            "type": "tv"
-          },
-          {
-            "platform": "Discovery+",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Andreas Leknessund"
-          },
-          {
-            "name": "Søren Wærenskjold"
-          }
-        ],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "context": "cycling-classics-2026",
-        "importance": 4,
-        "importanceReason": "Week-long WorldTour stage race with two strong Norwegian contenders.",
-        "summary": "Tirreno-Adriatico's 'Race of the Two Seas' kicks off with Andreas Leknessund and Søren Wærenskjold as Norwegian hopes across seven grueling Italian stages — a key early-season form guide.",
-        "tags": [
-          "must-watch",
-          "norwegian-player"
-        ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-15T18:17:35.216Z",
-        "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
       }
     ]
   },
   "matchResults": [
+    {
+      "homeTeam": "Liverpool",
+      "awayTeam": "Tottenham Hotspur",
+      "homeScore": 1,
+      "awayScore": 1,
+      "date": "2026-03-15T16:30Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Anfield",
+      "goalScorers": [
+        {
+          "player": "Dominik Szoboszlai",
+          "team": "Liverpool",
+          "minute": "18'"
+        },
+        {
+          "player": "Richarlison ",
+          "team": "Tottenham Hotspur",
+          "minute": "90'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": true
+    },
     {
       "homeTeam": "Barcelona",
       "awayTeam": "Sevilla",
@@ -218,6 +157,98 @@
       ],
       "recapHeadline": null,
       "isFavorite": true
+    },
+    {
+      "homeTeam": "Real Sociedad",
+      "awayTeam": "Osasuna",
+      "homeScore": 3,
+      "awayScore": 1,
+      "date": "2026-03-15T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Reale Arena",
+      "goalScorers": [
+        {
+          "player": "Mikel Oyarzabal",
+          "team": "Real Sociedad",
+          "minute": "24'"
+        },
+        {
+          "player": "Gonçalo Guedes",
+          "team": "Real Sociedad",
+          "minute": "28'"
+        },
+        {
+          "player": "Gonçalo Guedes",
+          "team": "Real Sociedad",
+          "minute": "52'"
+        },
+        {
+          "player": "Víctor Muñoz",
+          "team": "Osasuna",
+          "minute": "77'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Tromso",
+      "awayTeam": "Fredrikstad",
+      "homeScore": 4,
+      "awayScore": 0,
+      "date": "2026-03-15T18:15Z",
+      "league": "Eliteserien",
+      "leagueCode": "nor.1",
+      "venue": "Romssa Arena",
+      "goalScorers": [
+        {
+          "player": "Heine Larsen",
+          "team": "Tromso",
+          "minute": "3'"
+        },
+        {
+          "player": "Jens Hjerto Dahl",
+          "team": "Tromso",
+          "minute": "64'"
+        },
+        {
+          "player": "Jens Hjerto Dahl",
+          "team": "Tromso",
+          "minute": "72'"
+        },
+        {
+          "player": "Jens Hjerto Dahl",
+          "team": "Tromso",
+          "minute": "86'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Celta Vigo",
+      "homeScore": 1,
+      "awayScore": 1,
+      "date": "2026-03-15T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio La Cartuja",
+      "goalScorers": [
+        {
+          "player": "Ferran Jutglà",
+          "team": "Celta Vigo",
+          "minute": "4'"
+        },
+        {
+          "player": "Héctor Bellerín",
+          "team": "Real Betis",
+          "minute": "49'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
     },
     {
       "homeTeam": "Aalesund",
@@ -473,14 +504,14 @@
       },
       {
         "position": 5,
-        "team": "Chelsea",
-        "teamShort": "CHE",
+        "team": "Liverpool",
+        "teamShort": "LIV",
         "played": 30,
-        "won": 13,
-        "drawn": 9,
-        "lost": 8,
-        "gd": 18,
-        "points": 48
+        "won": 14,
+        "drawn": 7,
+        "lost": 9,
+        "gd": 9,
+        "points": 49
       }
     ],
     "golf": {
@@ -490,48 +521,47 @@
           {
             "position": 1,
             "positionDisplay": null,
-            "player": "Ludvig Åberg",
-            "score": "-13",
-            "today": "E",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
-          },
-          {
-            "position": 2,
-            "positionDisplay": null,
-            "player": "Viktor Hovland",
-            "score": "-10",
-            "today": "-2",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4364873.png",
-            "tracked": true
-          },
-          {
-            "position": 3,
-            "positionDisplay": null,
-            "player": "Matt Fitzpatrick",
-            "score": "-10",
-            "today": "-2",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9037.png"
-          },
-          {
-            "position": 4,
-            "positionDisplay": null,
             "player": "Cameron Young",
-            "score": "-10",
-            "today": "-1",
+            "score": "-13",
+            "today": "-4",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4425906.png"
           },
           {
+            "position": 2,
+            "positionDisplay": null,
+            "player": "Matt Fitzpatrick",
+            "score": "-12",
+            "today": "-4",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9037.png"
+          },
+          {
+            "position": 3,
+            "positionDisplay": null,
+            "player": "Xander Schauffele",
+            "score": "-11",
+            "today": "-3",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10140.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Robert MacIntyre",
+            "score": "-10",
+            "today": "-3",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11378.png"
+          },
+          {
             "position": 5,
             "positionDisplay": null,
-            "player": "Michael Thorbjornsen",
-            "score": "-10",
-            "today": "E",
+            "player": "Sudarshan Yellamaraju",
+            "score": "-9",
+            "today": "-4",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4425904.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5143175.png"
           }
         ]
       }
@@ -577,13 +607,65 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-osasuna-at-real-sociedad-2026-03-15t20:00:00.000z",
-        "title": "Osasuna at Real Sociedad",
+        "id": "tennis-miami-open-presented-by-itau-2026-03-16t04:00:00.000z",
+        "title": "Miami Open presented by Itau",
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "time": "2026-03-16T04:00:00.000Z",
+        "timeLabel": "16 Mar, 05:00",
+        "relativeStart": "In 5h 45m",
+        "importance": 4,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "score": 93,
+        "reasons": [
+          "Must-watch event",
+          "Must-watch"
+        ]
+      },
+      {
+        "id": "football-wolverhampton-wanderers-at-brentford-2026-03-16t20:00:00.000z",
+        "title": "Wolverhampton Wanderers at Brentford",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-03-16T20:00:00.000Z",
+        "timeLabel": "16 Mar, 21:00",
+        "relativeStart": "In 21h 45m",
+        "importance": 2,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 44,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-levante-at-rayo-vallecano-2026-03-16t20:00:00.000z",
+        "title": "Levante at Rayo Vallecano",
         "sport": "football",
         "tournament": "La Liga",
-        "time": "2026-03-15T20:00:00.000Z",
-        "timeLabel": "15 Mar, 21:00",
-        "relativeStart": "In 1h 42m",
+        "time": "2026-03-16T20:00:00.000Z",
+        "timeLabel": "16 Mar, 21:00",
+        "relativeStart": "In 21h 45m",
         "importance": 2,
         "norwegian": false,
         "streaming": [
@@ -594,53 +676,50 @@
             "source": "tvkampen"
           }
         ],
-        "score": 58,
+        "score": 44,
         "reasons": [
-          "Starting soon",
           "Preferred sport"
         ]
       }
     ],
-    "headline": "Hovland charges at Åberg in final-round PLAYERS showdown"
+    "headline": "Cameron Young seizes THE PLAYERS — Hovland's challenge fades at TPC Sawgrass"
   },
   "rssHighlights": [
     {
-      "title": "Start tapte i eliteseriecomebacket",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/start-tapte-i-eliteseriecomebacket-1.17810210"
+      "title": "Winter Paralympics closes with memorable ceremony",
+      "source": "bbc-winter",
+      "sport": "olympics",
+      "link": "https://www.bbc.com/sport/articles/cn8zw92jq69o?at_medium=RSS&amp;at_campaign=rss"
     },
     {
-      "title": "Lehne Olsen forlenget Lillestrøms elleville rekke",
+      "title": "w0nderful shines as NAVI beat Aurora to lift ESL Pro League Season 23 trophy",
+      "source": "hltv",
+      "sport": "esports",
+      "link": "https://www.hltv.org/news/44096/w0nderful-shines-as-navi-beat-aurora-to-lift-esl-pro-league-season-23-trophy"
+    },
+    {
+      "title": "Tromsøs Hjertø-Dahl herjet med Fredrikstad – scoret hat trick",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/tromsos-hjerto-dahl-herjet-med-fredrikstad-_-scoret-hat-trick-1.17810241"
+    },
+    {
+      "title": "Havnet i milliondrama: Så herjet TIL-juvelen i sesongåpningen",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18659857"
+      "link": "https://www.tv2.no/a/18660078"
     },
     {
-      "title": "Lehne Olsen med mål-dobbel i Lillestrøm-seier",
+      "title": "Hauger slet i Texas – havnet langt ned på resultatlista",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/lehne-olsen-med-mal-dobbel-i-lillestrom-seier-1.17810208"
-    },
-    {
-      "title": "Rajkovic ble tidenes yngste eliteseriespiller i Vålerenga-seier",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/rajkovic-ble-tidenes-yngste-eliteseriespiller-i-valerenga-seier-1.17810199"
-    },
-    {
-      "title": "Nakamura v. Liang - Live!",
-      "source": "chessbase",
-      "sport": "chess",
-      "link": "https://en.chessbase.com/post/nakamura-liang-2026-live"
+      "link": "https://www.nrk.no/sport/hauger-slet-i-texas-_-havnet-langt-ned-pa-resultatlista-1.17810232"
     }
   ],
   "meta": {
-    "eventCount": 3,
+    "eventCount": 1,
     "sportsCovered": [
-      "cycling",
-      "golf",
-      "football"
+      "golf"
     ],
     "hasResults": true,
     "hasStandings": true
