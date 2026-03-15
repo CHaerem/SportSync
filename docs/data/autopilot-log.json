@@ -5,12 +5,12 @@
       "task": "UX: golf mini-table data-driven highlighting + cycling expanded view rendering (PR #133)",
       "outcome": "completed",
       "pr": "PR #133",
-      "details": "Run 25: 0 user feedback, 2 pending tasks (both UX). UX-agent batched both into single PR #133: (1) buildGolfMiniTable() now accepts trackedNames parameter from _getTrackedGolferNames() for data-driven Norwegian golfer highlighting instead of hardcoded names. (2) renderExpanded() cycling branch with Norwegian Riders section, team affiliation, race-details link. Generic non-golf block narrowed to exclude cycling. Cleaned up 11 stale remote branches. 2467 tests pass.",
+      "details": "Run 25: 0 user feedback, 2 pending tasks (both UX). UX-agent batched both into single PR #133: (1) buildGolfMiniTable() now accepts trackedNames parameter from _getTrackedGolferNames() for data-driven Norwegian golfer highlighting instead of hardcoded names. (2) renderExpanded() cycling branch with Norwegian Riders section, team affiliation, race-details link. Generic non-golf block narrowed to exclude cycling. Cleaned up 11 stale remote branches. UX scout found 5 opportunities: result card narratives (tags unused), summary/importanceReason duplication, totalPlayers dead field, cycling standings gap, cycling card content. 3 added to roadmap. 2467 tests pass.",
       "tests_passed": true,
       "files_changed": 2,
-      "turns_used": 15,
-      "lesson": "Both tasks were correctly identified as UX work despite task-router classifying them as data/content. File ownership (docs/js/**) is the best signal for agent routing, not task description keywords. Batching 2 small UX fixes into 1 PR is efficient.",
-      "scouted": 0
+      "turns_used": 18,
+      "lesson": "Both tasks were correctly identified as UX work despite task-router classifying them as data/content. File ownership (docs/js/**) is the best signal for agent routing, not task description keywords. Batching 2 small UX fixes into 1 PR is efficient. Background UX scout found actionable data-to-UI gaps (tags loaded but unused, totalPlayers dead field) — heuristic B continues to be productive.",
+      "scouted": 5
     },
     {
       "date": "2026-03-14",

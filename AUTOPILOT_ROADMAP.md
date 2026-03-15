@@ -461,6 +461,12 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #133) **Cycling expanded view: add sport-specific rendering** — Added dedicated cycling branch in `renderExpanded()` with Norwegian Riders section, team affiliation display, and race-details link. Generic non-golf block narrowed to exclude cycling.
 
+- [PENDING] [MAINTENANCE] **Improve result card narratives with event tags** — When `recapHeadline` is absent (96% of results), use event `tags` (title-race, relegation, rivalry) plus top scorer to build a richer one-line summary instead of the current "X seals it" fallback. Tags are loaded but unused in result cards — classic data-to-UI gap. ~20-30 lines in `dashboard.js` (`_renderFootballResultCard`). Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Deduplicate summary/importanceReason in expanded view** — When both `summary` and `importanceReason` are present, the expanded event view shows both, often expressing the same idea. Suppress `importanceReason` when a summary already covers the content, keeping "Why this matters" only when it adds new information. ~10-15 lines in `dashboard.js` (`renderExpanded`). Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Render totalPlayers field in golf event cards** — `totalPlayers` is loaded from events.json but never rendered anywhere. Show "N players" in the golf sport-group card header or expanded view (e.g. "THE PLAYERS Championship — 123 players"). Closes a data-to-UI gap. ~10 lines in `dashboard.js`. Pillar: capabilities.
+
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
 ---
