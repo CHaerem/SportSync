@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-15T07:23:05.521Z",
-  "eventCount": 55,
+  "generatedAt": "2026-03-15T08:14:25.324Z",
+  "eventCount": 54,
   "sportCoverage": {
     "cycling": {
       "count": 7,
@@ -17,15 +17,15 @@
       "previousCount": 1,
       "delta": 0
     },
-    "tennis": {
-      "count": 2,
-      "previousCount": 2,
-      "delta": 0
-    },
     "football": {
       "count": 41,
       "previousCount": 41,
       "delta": 0
+    },
+    "tennis": {
+      "count": 1,
+      "previousCount": 2,
+      "delta": -1
     },
     "chess": {
       "count": 2,
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3201,
+      "ageMinutes": 3253,
       "stale": true
     },
     "football.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -64,18 +64,18 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 103,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 103,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.91,
+    "venuePercent": 0.93,
     "streamingPercent": 0.98
   },
   "rssFeedHealth": {
@@ -106,7 +106,16 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-03-15: 11 events but events.json has 10",
+      "Snapshot 2026-03-16: 3 events but events.json has 2",
+      "Snapshot 2026-03-17: 5 events but events.json has 4",
+      "Snapshot 2026-03-18: 5 events but events.json has 4",
+      "Snapshot 2026-03-19: 1 events but events.json has 0",
+      "Snapshot 2026-03-20: 3 events but events.json has 2",
+      "Snapshot 2026-03-21: 12 events but events.json has 11",
+      "Snapshot 2026-03-22: 2 events but events.json has 1"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -122,27 +131,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 22,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 472034,
-    "stepCount": 28,
+    "totalDuration": 50630,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 180306,
-        "share": 38
+        "name": "fetch-sports",
+        "duration": 27452,
+        "share": 54
+      },
+      {
+        "name": "fetch-results",
+        "duration": 34544,
+        "share": 68
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -178,12 +190,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 3201 minutes old"
+      "message": "f1.json: data is 3253 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 34 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 35 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -194,6 +206,46 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (f1)"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-15: 11 events but events.json has 10"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-16: 3 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-17: 5 events but events.json has 4"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-18: 5 events but events.json has 4"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-19: 1 events but events.json has 0"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-20: 3 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-21: 12 events but events.json has 11"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-22: 2 events but events.json has 1"
     },
     {
       "severity": "info",
@@ -208,17 +260,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 38% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (35s) — optimization candidate"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-15T07:23:05.586Z",
+    "computedAt": "2026-03-15T08:14:25.391Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -243,7 +295,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 74/100.",
+    "text": "Pipeline is critical with 1 critical, 12 warning issue(s). Editorial quality score is 74/100.",
     "tokenUsage": null
   }
 }
