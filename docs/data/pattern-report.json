@@ -1,42 +1,51 @@
 {
-  "generatedAt": "2026-03-15T01:59:49.919Z",
-  "patternsDetected": 0,
-  "patterns": [],
+  "generatedAt": "2026-03-15T06:31:38.141Z",
+  "patternsDetected": 1,
+  "patterns": [
+    {
+      "type": "hint_fatigue",
+      "severity": "high",
+      "hintKey": "mustWatchCoverage",
+      "fireCount": 15,
+      "hintText": "CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events with importance ≥4. This is the highest",
+      "suggestion": "Hint \"CORRECTION: Recent outputs missed must-watch events. You MUST include ALL events...\" has fired 15 times without improving mustWatchCoverage. The hint-based approach isn't working — investigate the underlying code or data issue."
+    }
+  ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 371,
+      "count": 372,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "missing_snapshot": {
-      "count": 11,
+      "count": 12,
       "firstSeen": "2026-02-23T02:12:02.733Z",
-      "lastSeen": "2026-03-13T06:28:35.701Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "snapshot_event_mismatch": {
-      "count": 104,
+      "count": 107,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "stale_snapshot": {
-      "count": 61,
+      "count": 62,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-03-14T14:16:12.118Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "invisible_events": {
-      "count": 217,
+      "count": 218,
       "firstSeen": "2026-03-01T06:27:45.815Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "stale_data": {
-      "count": 400,
+      "count": 401,
       "firstSeen": "2026-03-01T07:17:43.272Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "chronic_data_retention": {
-      "count": 390,
+      "count": 391,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "stale_output": {
       "count": 54,
@@ -44,14 +53,9 @@
       "lastSeen": "2026-03-14T14:16:12.117Z"
     },
     "streaming_coverage_gap": {
-      "count": 67,
+      "count": 68,
       "firstSeen": "2026-03-10T07:21:05.886Z",
-      "lastSeen": "2026-03-15T01:59:49.916Z"
-    },
-    "model_change_quality_drop": {
-      "count": 1,
-      "firstSeen": "2026-03-12T02:05:47.911Z",
-      "lastSeen": "2026-03-12T02:05:47.911Z"
+      "lastSeen": "2026-03-15T06:31:38.138Z"
     },
     "streaming_match_rate_declining": {
       "count": 1,
@@ -59,5 +63,5 @@
       "lastSeen": "2026-03-14T17:10:47.447Z"
     }
   },
-  "summary": "0 patterns detected"
+  "summary": "1 patterns detected (1 high). Top priority: hint_fatigue — Hint \"CORRECTION: Recent outputs missed must-watch events."
 }

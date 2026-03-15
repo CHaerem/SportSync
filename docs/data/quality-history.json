@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-28T13:39:47.115Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 101,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 28,
-      "warningCount": 16,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": null,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-28T13:39:47.276Z",
     "editorial": {
       "score": 97,
@@ -8178,6 +8113,108 @@
       "editorialScore": 85.571,
       "mustWatchCoverage": 0.679,
       "sportDiversity": 0.762,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-15T06:31:03.398Z",
+    "editorial": {
+      "score": 74,
+      "mustWatchCoverage": 0.6,
+      "sportDiversity": 0.5,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 95,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 99,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0.038,
+      "goalScorerCoverage": 1,
+      "footballCount": 26,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 27,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Real Madrid vs Elche\" which may not match any event; Featured mentions \"Elche\" but no matching athlete found in events data; Featured mentions \"Lisbon\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Celta Vigo at Real Betis\" but events.json has 18:30. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 44547,
+        "output": 1037,
+        "calls": 2,
+        "total": 45584,
+        "costUSD": 0.18260175,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26691,
+        "output": 6253,
+        "cacheCreation": 17838,
+        "cacheRead": 8850,
+        "total": 32944,
+        "costUSD": 0.16335149999999998,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26386,
+        "output": 4679,
+        "calls": 1,
+        "total": 31065,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 97624,
+        "output": 11969,
+        "calls": 5,
+        "total": 109593,
+        "costUSD": 0.34595325,
+        "realPct": 72
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 84.714,
+      "mustWatchCoverage": 0.693,
+      "sportDiversity": 0.726,
       "enrichmentScore": 100,
       "resultsScore": 89
     }

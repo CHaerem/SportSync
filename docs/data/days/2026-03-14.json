@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-14",
-  "generatedAt": "2026-03-14T18:18:07.310Z",
+  "generatedAt": "2026-03-15T06:31:36.834Z",
   "events": {
     "upcoming": [
       {
@@ -47,7 +47,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-03-14T18:15:33.656Z",
+        "enrichedAt": "2026-03-15T06:29:23.248Z",
         "_enrichHash": "24a3481b2c42500448fde188fcc13eca"
       },
       {
@@ -124,98 +124,162 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-14T18:15:33.656Z",
+        "enrichedAt": "2026-03-15T06:29:23.248Z",
         "_enrichHash": "7ae654afdbea4d31e7c05c8cd95fa03f"
-      },
-      {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "Manchester City at West Ham United",
-        "time": "2026-03-14T20:00:00.000Z",
-        "endTime": null,
-        "venue": "London Stadium",
-        "meta": "Premier League",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "West Ham United",
-        "awayTeam": "Manchester City",
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "Manchester City away at West Ham, City chasing top-four",
-        "summary": "Manchester City visit West Ham needing points in the Premier League top-four race.",
-        "tags": [
-          "must-watch",
-          "top-4-battle"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-14T18:15:33.656Z",
-        "_enrichHash": "bdce8e422fc61648bb5e3e9be0bc927a",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Elche at Real Madrid",
-        "time": "2026-03-14T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Santiago Bernabéu",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Real Madrid",
-        "awayTeam": "Elche",
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "Real Madrid title contenders vs Elche, Bernabéu clash",
-        "summary": "Real Madrid host Elche at the Bernabéu in a La Liga fixture key to Madrid's title ambitions.",
-        "tags": [
-          "must-watch",
-          "title-race",
-          "classic-matchup"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-14T18:15:33.656Z",
-        "_enrichHash": "6d0de61577a4fa52e94690a0be765eac",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
     "results": []
   },
   "matchResults": [
+    {
+      "homeTeam": "West Ham United",
+      "awayTeam": "Manchester City",
+      "homeScore": 1,
+      "awayScore": 1,
+      "date": "2026-03-14T20:00Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "London Stadium",
+      "goalScorers": [
+        {
+          "player": "Bernardo Silva",
+          "team": "Manchester City",
+          "minute": "31'"
+        },
+        {
+          "player": "Konstantinos Mavropanos",
+          "team": "West Ham United",
+          "minute": "35'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Elche",
+      "homeScore": 4,
+      "awayScore": 1,
+      "date": "2026-03-14T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Santiago Bernabéu",
+      "goalScorers": [
+        {
+          "player": "Antonio Rüdiger",
+          "team": "Real Madrid",
+          "minute": "39'"
+        },
+        {
+          "player": "Federico Valverde",
+          "team": "Real Madrid",
+          "minute": "44'"
+        },
+        {
+          "player": "Dean Huijsen",
+          "team": "Real Madrid",
+          "minute": "66'"
+        },
+        {
+          "player": "Manuel Ángel",
+          "team": "Elche",
+          "minute": "85'"
+        },
+        {
+          "player": "Arda Güler",
+          "team": "Real Madrid",
+          "minute": "89'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Arsenal",
+      "awayTeam": "Everton",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-03-14T17:30Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Emirates Stadium",
+      "goalScorers": [
+        {
+          "player": "Viktor Gyökeres",
+          "team": "Arsenal",
+          "minute": "89'"
+        },
+        {
+          "player": "Max Dowman",
+          "team": "Arsenal",
+          "minute": "90'+7'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Chelsea",
+      "awayTeam": "Newcastle United",
+      "homeScore": 0,
+      "awayScore": 1,
+      "date": "2026-03-14T17:30Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Stamford Bridge",
+      "goalScorers": [
+        {
+          "player": "Anthony Gordon",
+          "team": "Newcastle United",
+          "minute": "18'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Real Oviedo",
+      "awayTeam": "Valencia",
+      "homeScore": 1,
+      "awayScore": 0,
+      "date": "2026-03-14T17:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio Carlos Tartiere",
+      "goalScorers": [
+        {
+          "player": "David Costas",
+          "team": "Real Oviedo",
+          "minute": "30'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Molde",
+      "awayTeam": "Rosenborg",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-03-14T17:00Z",
+      "league": "Eliteserien",
+      "leagueCode": "nor.1",
+      "venue": "Aker Stadion",
+      "goalScorers": [
+        {
+          "player": "Emil Breivik",
+          "team": "Molde",
+          "minute": "31'"
+        },
+        {
+          "player": "Eirik Hestad",
+          "team": "Molde",
+          "minute": "57'"
+        }
+      ],
+      "recapHeadline": "Rosenborg filleristet av Molde: – Hjelpeløst og sjanseløst",
+      "isFavorite": false
+    },
     {
       "homeTeam": "Atlético Madrid",
       "awayTeam": "Getafe",
@@ -345,23 +409,23 @@
         "position": 1,
         "team": "Arsenal",
         "teamShort": "ARS",
-        "played": 30,
-        "won": 20,
+        "played": 31,
+        "won": 21,
         "drawn": 7,
         "lost": 3,
-        "gd": 37,
-        "points": 67
+        "gd": 39,
+        "points": 70
       },
       {
         "position": 2,
         "team": "Manchester City",
         "teamShort": "MNC",
-        "played": 29,
+        "played": 30,
         "won": 18,
-        "drawn": 6,
+        "drawn": 7,
         "lost": 5,
         "gd": 32,
-        "points": 60
+        "points": 61
       },
       {
         "position": 3,
@@ -389,11 +453,11 @@
         "position": 5,
         "team": "Chelsea",
         "teamShort": "CHE",
-        "played": 29,
+        "played": 30,
         "won": 13,
         "drawn": 9,
-        "lost": 7,
-        "gd": 19,
+        "lost": 8,
+        "gd": 18,
         "points": 48
       }
     ],
@@ -405,7 +469,7 @@
             "position": 1,
             "positionDisplay": null,
             "player": "Ludvig Åberg",
-            "score": "-12",
+            "score": "-13",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
@@ -413,11 +477,11 @@
           {
             "position": 2,
             "positionDisplay": null,
-            "player": "Xander Schauffele",
+            "player": "Michael Thorbjornsen",
             "score": "-10",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10140.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4425904.png"
           },
           {
             "position": 3,
@@ -431,20 +495,20 @@
           {
             "position": 4,
             "positionDisplay": null,
-            "player": "Corey Conners",
+            "player": "Brian Harman",
             "score": "-8",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9126.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/1225.png"
           },
           {
             "position": 5,
             "positionDisplay": null,
-            "player": "Justin Thomas",
+            "player": "Matt Fitzpatrick",
             "score": "-8",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4848.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9037.png"
           }
         ]
       }
@@ -487,133 +551,44 @@
       }
     ]
   },
-  "watchPlan": {
-    "picks": [
-      {
-        "id": "football-tottenham-hotspur-at-liverpool-2026-03-15t16:30:00.000z",
-        "title": "Tottenham Hotspur at Liverpool",
-        "sport": "football",
-        "tournament": "Premier League",
-        "time": "2026-03-15T16:30:00.000Z",
-        "timeLabel": "15 Mar, 17:30",
-        "relativeStart": "In 22h 14m",
-        "importance": 5,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 126,
-        "reasons": [
-          "Must-watch event",
-          "Favorite team"
-        ]
-      },
-      {
-        "id": "football-sevilla-at-barcelona-2026-03-15t15:15:00.000z",
-        "title": "Sevilla at Barcelona",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-15T15:15:00.000Z",
-        "timeLabel": "15 Mar, 16:15",
-        "relativeStart": "In 20h 59m",
-        "importance": 4,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 108,
-        "reasons": [
-          "Must-watch event",
-          "Favorite team"
-        ]
-      },
-      {
-        "id": "football-manchester-city-at-west-ham-united-2026-03-14t20:00:00.000z",
-        "title": "Manchester City at West Ham United",
-        "sport": "football",
-        "tournament": "Premier League",
-        "time": "2026-03-14T20:00:00.000Z",
-        "timeLabel": "14 Mar, 21:00",
-        "relativeStart": "In 1h 44m",
-        "importance": 4,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 104,
-        "reasons": [
-          "Must-watch event",
-          "Starting soon"
-        ]
-      }
-    ],
-    "headline": "Åberg leads The Players — Hovland six back with Sunday still to play"
-  },
+  "watchPlan": null,
   "rssHighlights": [
     {
-      "title": "Nakamura v. Liang - Live!",
-      "source": "chessbase",
-      "sport": "chess",
-      "link": "https://en.chessbase.com/post/nakamura-liang-2026-live"
-    },
-    {
-      "title": "Haikin forlenget med Bodø/Glimt: – Det rette valget",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/haikin-forlenget-med-bodo_glimt_-_-det-rette-valget-1.17809430"
-    },
-    {
-      "title": "Winter Paralympics daily guide: 10 golds to be decided on final day",
-      "source": "bbc-winter",
-      "sport": "olympics",
-      "link": "https://www.bbc.com/sport/articles/czr0643d8gmo?at_medium=RSS&amp;at_campaign=rss"
-    },
-    {
-      "title": "Regjerende mester Viking rystet i serieåpningen – HamKam sikret seier",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/regjerende-mester-viking-rystet-i-serieapningen-_-hamkam-sikret-seier-1.17809428"
-    },
-    {
-      "title": "Sjokk-exit ga sjokk-seier",
+      "title": "– Jeg er ikke den samme",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18657914"
+      "link": "https://www.tv2.no/a/18654589"
+    },
+    {
+      "title": "– Jeg er ikke den samme",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18654589"
+    },
+    {
+      "title": "Unbalanced Man City cling to faint title hopes as Haaland struggles",
+      "source": "bbc-football",
+      "sport": "football",
+      "link": "https://www.bbc.com/sport/football/articles/c62dyng3vrro?at_medium=RSS&amp;at_campaign=rss"
+    },
+    {
+      "title": "Iraks landslag til Mexico i forsøk på å nå fotball-VM",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/nyheter/iraks-landslag-til-mexico-i-forsok-pa-a-na-fotball-vm-1.17809606"
+    },
+    {
+      "title": "F1 cancels Bahrain & Saudi Arabia Grands Prix",
+      "source": "bbc-f1",
+      "sport": "formula1",
+      "link": "https://www.bbc.com/sport/formula1/articles/c5ykne3g305o?at_medium=RSS&amp;at_campaign=rss"
     }
   ],
   "meta": {
-    "eventCount": 4,
+    "eventCount": 2,
     "sportsCovered": [
       "cycling",
-      "golf",
-      "football"
+      "golf"
     ],
     "hasResults": true,
     "hasStandings": true
