@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-15T18:19:14.370Z",
-  "overallScore": 0.91,
-  "loopsClosed": 10,
+  "generatedAt": "2026-03-15T19:13:17.657Z",
+  "overallScore": 1,
+  "loopsClosed": 11,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 10 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 9 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -52,12 +52,12 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "streamingVerification": {
-      "score": 0,
-      "status": "open",
-      "details": "Match rate declining: 20% → 17% → 13%"
+      "score": 1,
+      "status": "closed",
+      "details": "50 runs, match rate stable or rising"
     }
   }
 }
