@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-16T08:28:14.187Z",
+  "generatedAt": "2026-03-16T09:28:57.377Z",
   "eventCount": 52,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "tennis": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "chess": {
       "count": 2,
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4707,
+      "ageMinutes": 4767,
       "stale": true
     },
     "football.json": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 619,
+      "ageMinutes": 680,
       "stale": true
     },
     "tennis.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 361,
+      "ageMinutes": 421,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-03-16"
     },
     "ai-quality.json": {
-      "ageMinutes": 361,
+      "ageMinutes": 421,
       "stale": true
     }
   },
@@ -107,7 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 360 minutes old (stale > 240m)",
+      "Day snapshots are 421 minutes old (stale > 240m)",
       "Snapshot 2026-03-16: 3 events but events.json has 2",
       "Snapshot 2026-03-17: 5 events but events.json has 4",
       "Snapshot 2026-03-18: 5 events but events.json has 4",
@@ -191,12 +191,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 4707 minutes old"
+      "message": "f1.json: data is 4767 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 619 minutes old"
+      "message": "golf.json: data is 680 minutes old"
     },
     {
       "severity": "warning",
@@ -211,12 +211,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 361 minutes old"
+      "message": "featured.json: critical output is 421 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 361 minutes old"
+      "message": "ai-quality.json: critical output is 421 minutes old"
     },
     {
       "severity": "warning",
@@ -231,7 +231,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 360 minutes old (stale > 240m)"
+      "message": "Day snapshots are 421 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -296,7 +296,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-16T08:28:14.248Z",
+    "computedAt": "2026-03-16T09:28:57.446Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -314,7 +314,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
