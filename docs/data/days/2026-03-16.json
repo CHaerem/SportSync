@@ -1,95 +1,71 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-16",
-  "generatedAt": "2026-03-16T18:31:28.298Z",
+  "generatedAt": "2026-03-16T22:19:56.054Z",
   "events": {
-    "upcoming": [
-      {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "Wolverhampton Wanderers at Brentford",
-        "time": "2026-03-16T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Gtech Community Stadium",
-        "meta": "Premier League",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Brentford",
-        "awayTeam": "Wolverhampton Wanderers",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Routine mid-table Premier League fixture, no top sides involved",
-        "summary": "Brentford host Wolves in a mid-table Premier League clash with limited title or relegation drama at stake.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-16T18:30:16.906Z",
-        "_enrichHash": "52a1b15d6fa02621234b49882000a3c1",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Levante at Rayo Vallecano",
-        "time": "2026-03-16T20:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadio de Vallecas",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Rayo Vallecano",
-        "awayTeam": "Levante",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Lower-mid-table La Liga match, no Norwegian or favorite team link",
-        "summary": "Rayo Vallecano host Levante in an unremarkable La Liga fixture with no standout storylines or Norwegian connections.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-16T18:30:16.906Z",
-        "_enrichHash": "e739bf88062c254106dcd20b711b66ac",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
-      }
-    ],
+    "upcoming": [],
     "results": []
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Brentford",
+      "awayTeam": "Wolverhampton Wanderers",
+      "homeScore": 2,
+      "awayScore": 2,
+      "date": "2026-03-16T20:00Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Gtech Community Stadium",
+      "goalScorers": [
+        {
+          "player": "Michael Kayode",
+          "team": "Brentford",
+          "minute": "22'"
+        },
+        {
+          "player": "Igor Thiago",
+          "team": "Brentford",
+          "minute": "37'"
+        },
+        {
+          "player": "Adam Armstrong",
+          "team": "Wolverhampton Wanderers",
+          "minute": "44'"
+        },
+        {
+          "player": "Tolu Arokodare",
+          "team": "Wolverhampton Wanderers",
+          "minute": "77'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
+    {
+      "homeTeam": "Rayo Vallecano",
+      "awayTeam": "Levante",
+      "homeScore": 1,
+      "awayScore": 1,
+      "date": "2026-03-16T20:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio de Vallecas",
+      "goalScorers": [
+        {
+          "player": "Carlos Espí",
+          "team": "Levante",
+          "minute": "41'"
+        },
+        {
+          "player": "Pathé Ciss",
+          "team": "Rayo Vallecano",
+          "minute": "90'+4'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -247,7 +223,7 @@
         "tournament": "Champions League",
         "time": "2026-03-17T17:45:00.000Z",
         "timeLabel": "17 Mar, 18:45",
-        "relativeStart": "In 23h 15m",
+        "relativeStart": "In 19h 26m",
         "importance": 5,
         "norwegian": false,
         "streaming": [
@@ -264,100 +240,104 @@
         ]
       },
       {
-        "id": "football-wolverhampton-wanderers-at-brentford-2026-03-16t20:00:00.000z",
-        "title": "Wolverhampton Wanderers at Brentford",
+        "id": "football-real-madrid-at-manchester-city-2026-03-17t20:00:00.000z",
+        "title": "Real Madrid at Manchester City",
         "sport": "football",
-        "tournament": "Premier League",
-        "time": "2026-03-16T20:00:00.000Z",
-        "timeLabel": "16 Mar, 21:00",
-        "relativeStart": "In 1h 30m",
-        "importance": 2,
+        "tournament": "Champions League",
+        "time": "2026-03-17T20:00:00.000Z",
+        "timeLabel": "17 Mar, 21:00",
+        "relativeStart": "In 21h 41m",
+        "importance": 5,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
             "type": "streaming",
             "source": "tvkampen"
           },
           {
-            "platform": "Vsport",
+            "platform": "Lilibet",
             "url": "",
             "type": "unknown",
             "source": "tvkampen"
           }
         ],
-        "score": 58,
+        "score": 108,
         "reasons": [
-          "Starting soon",
-          "Preferred sport"
+          "Must-watch event",
+          "Must-watch"
         ]
       },
       {
-        "id": "football-levante-at-rayo-vallecano-2026-03-16t20:00:00.000z",
-        "title": "Levante at Rayo Vallecano",
+        "id": "football-bayer-leverkusen-at-arsenal-2026-03-17t20:00:00.000z",
+        "title": "Bayer Leverkusen at Arsenal",
         "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-03-16T20:00:00.000Z",
-        "timeLabel": "16 Mar, 21:00",
-        "relativeStart": "In 1h 30m",
-        "importance": 2,
+        "tournament": "Champions League",
+        "time": "2026-03-17T20:00:00.000Z",
+        "timeLabel": "17 Mar, 21:00",
+        "relativeStart": "In 21h 41m",
+        "importance": 4,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
+            "platform": "TV 2 Play",
+            "url": "https://play.tv2.no/sport/fotball/",
             "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
             "source": "tvkampen"
           }
         ],
-        "score": 58,
+        "score": 90,
         "reasons": [
-          "Starting soon",
-          "Preferred sport"
+          "Must-watch event",
+          "Must-watch"
         ]
       }
     ],
-    "headline": "Glimt fly to Lisbon — and Ødegaard's out for Arsenal's shootout"
+    "headline": "Tuesday night belongs to Glimt — and Haaland faces Real Madrid"
   },
   "rssHighlights": [
+    {
+      "title": "Wolverhampton slo tilbake",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/wolverhampton-slo-tilbake-1.17811889"
+    },
+    {
+      "title": "City-stjerne med avsløring: – Jeg vil ikke lyve for dere",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18664830"
+    },
+    {
+      "title": "City-stjerne med avsløring: – Jeg vil ikke lyve for dere",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18664830"
+    },
+    {
+      "title": "Røper festgrep etter OL-nedturen: – Ikke etter læreboken",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18659576"
+    },
     {
       "title": "Kristoffer Ventura fikk innpass i PGA-turnering – tre nordmenn til start for første gang",
       "source": "nrk-sport",
       "sport": "general",
       "link": "https://www.nrk.no/sport/kristoffer-ventura-fikk-innpass-i-pga-turnering-_-tre-nordmenn-til-start-for-forste-gang-1.17811893"
-    },
-    {
-      "title": "Ble beskyldt for «sabotasje» – spår totalforandring etter brutal lærepenge",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/bodo_glimt-i-mesterligaen_-forventer-et-helt-annet-sporting-lag-1.17811739"
-    },
-    {
-      "title": "Fotballtopper med iransk VM-beskjed: – Håper de løser problemene",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/fotballtopper-med-iransk-vm-beskjed_-_-haper-de-loser-problemene-1.17811727"
-    },
-    {
-      "title": "Byttet ut Drøbak med Monaco: – Han er på et historisk nivå",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18663184"
-    },
-    {
-      "title": "Her skiller Glimt seg ut i CL: – Veldig lite å skjule",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18663925"
     }
   ],
   "meta": {
-    "eventCount": 2,
-    "sportsCovered": [
-      "football"
-    ],
-    "hasResults": false,
+    "eventCount": 0,
+    "sportsCovered": [],
+    "hasResults": true,
     "hasStandings": true
   }
 }

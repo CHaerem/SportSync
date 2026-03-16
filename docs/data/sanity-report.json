@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-16T18:31:29.560Z",
+  "generatedAt": "2026-03-16T22:19:57.574Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 52,
+    "totalEvents": 50,
     "sports": [
       "golf",
       "f1",
@@ -14,10 +14,7 @@
     ],
     "bands": {
       "live": [],
-      "today": [
-        "Wolverhampton Wanderers at Brentford",
-        "Levante at Rayo Vallecano"
-      ],
+      "today": [],
       "tomorrow": [
         "Bodo/Glimt at Sporting CP",
         "Bayer Leverkusen at Arsenal",
@@ -79,9 +76,9 @@
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 14
+    "issueCount": 12
   },
   "findings": [
     {
@@ -187,12 +184,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Cameron Young\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Perfectly\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Four\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -212,13 +204,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 35 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 25,
     "critical": 0,
-    "warning": 24,
+    "warning": 23,
     "info": 2
   },
   "pass": true,
