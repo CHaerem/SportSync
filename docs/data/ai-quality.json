@@ -1,46 +1,48 @@
 {
-  "generatedAt": "2026-03-15T22:16:06.725Z",
+  "generatedAt": "2026-03-16T02:27:27.924Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 71853,
+    "generationMs": 99266,
     "tokenUsage": {
-      "input": 26477,
-      "output": 3799,
-      "cacheCreation": 17624,
-      "cacheRead": 8850,
-      "total": 30276,
-      "costUSD": 0.12573900000000002,
+      "input": 57513,
+      "output": 5209,
+      "cacheCreation": 31102,
+      "cacheRead": 26405,
+      "total": 62722,
+      "costUSD": 0.202707,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 70,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "mustWatchCoverage": 0,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Only 0% of must-watch events covered in blocks"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 60,
+      "avgScore": 62,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -108,14 +110,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26477,
-      "output": 3799,
+      "input": 57513,
+      "output": 5209,
       "calls": 1,
-      "total": 30276,
+      "total": 62722,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-15T22:16:07.007Z"
+    "lastRun": "2026-03-16T02:27:28.215Z"
   },
   "discovery": {
     "tokenUsage": {
