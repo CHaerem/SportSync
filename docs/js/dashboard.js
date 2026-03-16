@@ -149,6 +149,7 @@ class Dashboard {
 					streaming: ev.streaming || [],
 					participants: ev.participants || [],
 					norwegianPlayers: ev.norwegianPlayers || [],
+					totalPlayers: ev.totalPlayers || null,
 					link: ev.link || null,
 					homeTeam: ev.homeTeam || null,
 					awayTeam: ev.awayTeam || null,
@@ -2220,6 +2221,11 @@ class Dashboard {
 	}
 
 	_renderFootballResultCard(m) {
+		// Look up event tags from allEvents by team name match (tags are enriched there but not on recentResults)
+		const matchedEvent = (this.allEvents || []).find(e =>
+			e.sport === 'football' && e.homeTeam === m.homeTeam && e.awayTeam === m.awayTeam
+		);
+		if (matchedEvent?.tags?.length) m = { ...m, tags: matchedEvent.tags };
 		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
 		const hImg = hLogo ? `<img class="result-team-logo" src="${hLogo}" alt="${this.esc(m.homeTeam)}" loading="lazy">` : '';
@@ -2244,14 +2250,24 @@ class Dashboard {
 		const scorers = goalScorers.slice(0, 4);
 		if (m.recapHeadline) {
 			html += `<div class="result-summary">${this.esc(m.recapHeadline)}</div>`;
-		} else if (scorers.length > 0) {
-			// Fallback: generate a one-liner from goalscorer data when no recap headline is available
+		} else {
+			// Fallback: build a context-aware one-liner using tags + goalscorer data
+			const tags = m.tags || [];
+			const tagLabels = { 'title-race': 'Title race', 'relegation': 'Relegation battle', 'rivalry': 'Rivalry', 'derby': 'Derby', 'final': 'Final', 'knockout': 'Knockout' };
+			const contextTag = tags.find(t => tagLabels[t]);
 			const lastScorer = goalScorers[goalScorers.length - 1];
 			const winner = m.homeScore > m.awayScore ? this.shortName(m.homeTeam) : m.awayScore > m.homeScore ? this.shortName(m.awayTeam) : null;
-			const sealText = lastScorer && lastScorer.player
-				? `${lastScorer.player} ${lastScorer.minute} seals it`
-				: winner ? `${winner} win` : '';
-			if (sealText) html += `<div class="result-summary">${this.esc(sealText)}</div>`;
+			let summaryText = '';
+			if (contextTag && scorers.length > 0 && lastScorer?.player) {
+				summaryText = `${tagLabels[contextTag]}: ${lastScorer.player} ${lastScorer.minute} decides it`;
+			} else if (contextTag && winner) {
+				summaryText = `${tagLabels[contextTag]}: ${winner} win`;
+			} else if (scorers.length > 0 && lastScorer?.player) {
+				summaryText = `${lastScorer.player} ${lastScorer.minute} seals it`;
+			} else if (winner) {
+				summaryText = `${winner} win`;
+			}
+			if (summaryText) html += `<div class="result-summary">${this.esc(summaryText)}</div>`;
 		}
 		if (scorers.length > 0) {
 			html += `<div class="result-scorers">${scorers.map(g => this.esc(`${g.player} ${g.minute}`)).join(', ')}</div>`;
@@ -2606,6 +2622,21 @@ class Dashboard {
 		});
 	}
 
+	/** Returns true when summary already conveys the key content of importanceReason.
+	 *  Uses significant-word overlap: if >50% of the meaningful words in importanceReason
+	 *  appear in summary, the two are considered redundant.
+	 */
+	_summaryCoversReason(summary, importanceReason) {
+		if (!summary || !importanceReason) return false;
+		const stopwords = new Set(['a', 'an', 'the', 'is', 'in', 'on', 'at', 'to', 'for', 'of', 'and', 'or', 'with', 'this', 'that', 'it', 'as', 'be', 'by', 'are', 'was', 'will', 'its', 'from']);
+		const words = str => str.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 2 && !stopwords.has(w));
+		const summaryWords = new Set(words(summary));
+		const reasonWords = words(importanceReason);
+		if (reasonWords.length === 0) return true;
+		const overlap = reasonWords.filter(w => summaryWords.has(w)).length;
+		return overlap / reasonWords.length > 0.5;
+	}
+
 	renderExpanded(event) {
 		let content = '<div class="row-expanded">';
 
@@ -2629,8 +2660,8 @@ class Dashboard {
 			content += `<div class="exp-summary">${this.esc(event.summary)}</div>`;
 		}
 
-		// Importance reason
-		if (event.importanceReason) {
+		// Importance reason — suppress when summary already covers the key information
+		if (event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) {
 			content += `<div class="exp-importance-reason">Why this matters: ${this.esc(event.importanceReason)}</div>`;
 		}
 
@@ -2671,6 +2702,11 @@ class Dashboard {
 		// Football: mini league table
 		if (event.sport === 'football' && this.standings?.football) {
 			content += this.renderFootballStandings(event);
+		}
+
+		// Golf: field size
+		if (event.sport === 'golf' && event.totalPlayers && event.totalPlayers > 0) {
+			content += `<div class="exp-golf-field">${event.totalPlayers} players</div>`;
 		}
 
 		// Golf: Norwegian players with headshots
