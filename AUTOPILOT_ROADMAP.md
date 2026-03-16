@@ -461,11 +461,17 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #133) **Cycling expanded view: add sport-specific rendering** — Added dedicated cycling branch in `renderExpanded()` with Norwegian Riders section, team affiliation display, and race-details link. Generic non-golf block narrowed to exclude cycling.
 
-- [PENDING] [MAINTENANCE] **Improve result card narratives with event tags** — When `recapHeadline` is absent (96% of results), use event `tags` (title-race, relegation, rivalry) plus top scorer to build a richer one-line summary instead of the current "X seals it" fallback. Tags are loaded but unused in result cards — classic data-to-UI gap. ~20-30 lines in `dashboard.js` (`_renderFootballResultCard`). Pillar: quality.
+- [DONE] (PR #134) **Improve result card narratives with event tags** — Added tag-aware narrative generation in `_renderFootballResultCard`: when `recapHeadline` is absent, uses event tags (title-race, relegation, rivalry, derby, final) for context-aware fallback narratives.
 
-- [PENDING] [MAINTENANCE] **Deduplicate summary/importanceReason in expanded view** — When both `summary` and `importanceReason` are present, the expanded event view shows both, often expressing the same idea. Suppress `importanceReason` when a summary already covers the content, keeping "Why this matters" only when it adds new information. ~10-15 lines in `dashboard.js` (`renderExpanded`). Pillar: quality.
+- [DONE] (PR #134) **Deduplicate summary/importanceReason in expanded view** — Added `_summaryCoversReason()` word-overlap helper; suppresses "Why this matters" when >50% of its meaningful words already appear in the summary.
 
-- [PENDING] [MAINTENANCE] **Render totalPlayers field in golf event cards** — `totalPlayers` is loaded from events.json but never rendered anywhere. Show "N players" in the golf sport-group card header or expanded view (e.g. "THE PLAYERS Championship — 123 players"). Closes a data-to-UI gap. ~10 lines in `dashboard.js`. Pillar: capabilities.
+- [DONE] (PR #134) **Render totalPlayers field in golf event cards** — Added `totalPlayers` to event normalization mapping and renders "N players" in golf expanded view.
+
+- [PENDING] [MAINTENANCE] **Surface event meta field (knockout context)** — The `meta` field carries high-value knockout context (e.g. "Champions League • 2nd Leg - Bodo/Glimt lead 3-0 on aggregate") but is never mapped in event normalization (dashboard.js lines 140-167). Add `meta: ev.meta || null` to normalization, render as subtitle on event row and in expanded view. ~10 lines in `dashboard.js`. Pillar: personalization.
+
+- [PENDING] [MAINTENANCE] **Add favorite team visual indicator on event rows** — `isFavorite` flag is loaded but produces no visual distinction on event rows. A Liverpool favorite match looks identical to a generic fixture. Add a small favorite indicator (heart/star) alongside existing `norBadge` when `event.isFavorite` is true. ~10-15 lines in `dashboard.js` including CSS. Pillar: personalization.
+
+- [PENDING] [MAINTENANCE] **Include trackedPlayers in golf leaderboard position lookup** — Norwegian golfers outside top 15 (e.g. Reitan at 66) show no position on the collapsed card — `allLbEntries` only includes top 15 `leaderboard` array. Extend to also include `tour.trackedPlayers` from standings.json. ~5-8 lines in `dashboard.js` near line 1853. Pillar: personalization.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

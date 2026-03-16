@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-16",
+      "task": "UX: tag narratives + dedup importanceReason + golf totalPlayers (PR #134)",
+      "outcome": "completed",
+      "pr": "PR #134",
+      "details": "Run 26: 0 user feedback, 3 pending tasks (all UX). UX-agent batched all 3 into single PR #134: (1) tag-aware result card narratives — enriched tags (title-race, relegation, rivalry, derby, final) used for context-aware fallback when recapHeadline absent. (2) summary/importanceReason dedup — word-overlap helper suppresses redundant 'Why this matters' when >50% overlap with summary. (3) golf totalPlayers rendering in expanded view. Cleaned 3 stale remote branches. 4934 tests pass.",
+      "tests_passed": true,
+      "files_changed": 1,
+      "turns_used": 15,
+      "lesson": "All 3 tasks from previous run's scouting were executed in a single batch PR — scouting-to-execution pipeline continues to be productive. Task-router classified all 3 as UX (correct this time). Batching 3 small same-file changes into 1 PR saves ~16 turns vs 3 separate PRs.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-15",
       "task": "UX: golf mini-table data-driven highlighting + cycling expanded view rendering (PR #133)",
       "outcome": "completed",
