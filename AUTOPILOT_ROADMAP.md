@@ -473,6 +473,8 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [PENDING] [MAINTENANCE] **Include trackedPlayers in golf leaderboard position lookup** — Norwegian golfers outside top 15 (e.g. Reitan at 66) show no position on the collapsed card — `allLbEntries` only includes top 15 `leaderboard` array. Extend to also include `tour.trackedPlayers` from standings.json. ~5-8 lines in `dashboard.js` near line 1853. Pillar: personalization.
 
+- [PENDING] [MAINTENANCE] **Add "Today" round score column to golf mini-table** — `standings.json` has a `today` field per leaderboard entry showing current round score (-4, +2). The detailed leaderboard table shows it, but the compact mini-table in the Standings band (`buildGolfMiniTable` in `standings-renderer.js`) omits it. During live tournaments, round momentum is the most useful number. ~3-5 lines in `standings-renderer.js`. Pillar: quality.
+
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
 ---
