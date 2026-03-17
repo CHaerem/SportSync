@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-03-17T15:27:59.909Z",
+  "lastUpdated": "2026-03-17T18:32:18.759Z",
   "current": {
     "fiveHour": {
-      "utilization": 13
+      "utilization": 32
     },
     "sevenDay": {
-      "utilization": 46,
+      "utilization": 49,
       "resets_at": "1773986400"
     },
     "evaluation": {
@@ -23,27 +23,27 @@
     "since": "2026-03-07T14:13:39.144Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-03-17T15:28:01.525Z"
+    "checkedAt": "2026-03-17T18:32:20.349Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 29569,
+    "featured": 0,
     "discovery": 0,
-    "multiDay": 28893,
-    "runTotal": 58462
+    "multiDay": 0,
+    "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 425722,
+    "dailyUsed": 338638,
     "weeklyUsed": 3920778,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 9,
+    "dailyPct": 7,
     "weeklyPct": 16
   },
   "sportsyncShare": {
-    "pipelineRuns": 111,
+    "pipelineRuns": 109,
     "autopilotRuns": 0,
-    "totalDurationMs": 11798244
+    "totalDurationMs": 11843140
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,24 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-03-10T16:26:16.200Z",
-      "context": "pipeline",
-      "durationMs": 10530,
-      "tokens": 0
-    },
-    {
-      "timestamp": "2026-03-10T17:21:11.920Z",
-      "context": "pipeline",
-      "durationMs": 8665,
-      "tokens": 0
-    },
-    {
-      "timestamp": "2026-03-10T18:27:09.720Z",
-      "context": "pipeline",
-      "durationMs": 381988,
-      "tokens": 0
-    },
     {
       "timestamp": "2026-03-10T19:19:22.737Z",
       "context": "pipeline",
@@ -717,6 +699,12 @@
       "context": "pipeline",
       "durationMs": 11017,
       "tokens": 58462
+    },
+    {
+      "timestamp": "2026-03-17T18:32:18.759Z",
+      "context": "pipeline",
+      "durationMs": 446079,
+      "tokens": 0
     }
   ]
 }
