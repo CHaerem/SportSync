@@ -1,70 +1,5 @@
 [
   {
-    "timestamp": "2026-02-28T13:59:34.674Z",
-    "editorial": {
-      "score": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 9
-    },
-    "enrichment": null,
-    "featured": {
-      "score": 100,
-      "blockCount": 9,
-      "provider": "fallback",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 101,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 90,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 28,
-      "warningCount": 16,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"At Camp Nou\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": null,
-      "featured": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "realPct": 0
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": null,
-      "resultsScore": 90
-    }
-  },
-  {
     "timestamp": "2026-02-28T13:59:35.975Z",
     "editorial": {
       "score": 97,
@@ -8522,6 +8457,106 @@
       "editorialScore": 91.571,
       "mustWatchCoverage": 0.786,
       "sportDiversity": 0.905,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-17T06:34:19.234Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 102,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 36,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 25,
+      "warningCount": 23,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 21644,
+        "output": 103,
+        "calls": 1,
+        "total": 21747,
+        "costUSD": 0.08270775,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26462,
+        "output": 3147,
+        "cacheCreation": 26459,
+        "cacheRead": 0,
+        "total": 29609,
+        "costUSD": 0.14643525000000002,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26459,
+        "output": 2434,
+        "calls": 1,
+        "total": 28893,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 74565,
+        "output": 5684,
+        "calls": 5,
+        "total": 80249,
+        "costUSD": 0.229143,
+        "realPct": 64
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94.714,
+      "mustWatchCoverage": 0.857,
+      "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 89
     }

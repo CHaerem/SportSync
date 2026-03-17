@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-17T02:26:03.309Z",
+  "generatedAt": "2026-03-17T06:34:19.227Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 42456,
+    "generationMs": 58396,
     "tokenUsage": {
-      "input": 26459,
-      "output": 2434,
-      "cacheCreation": 26456,
+      "input": 26462,
+      "output": 3147,
+      "cacheCreation": 26459,
       "cacheRead": 0,
-      "total": 28893,
-      "costUSD": 0.13572900000000002,
+      "total": 29609,
+      "costUSD": 0.14643525000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 50,
+      "totalEvents": 51,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.98
     },
     "after": {
-      "totalEvents": 50,
+      "totalEvents": 51,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 1,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
-    "totalEvents": 50,
+    "totalEvents": 51,
     "skipStats": {
-      "total": 50,
+      "total": 51,
       "unchanged": 50,
-      "enriched": 0,
-      "skipRate": 1
+      "enriched": 1,
+      "skipRate": 0.98
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 21747,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21644,
+      "output": 103,
+      "calls": 1,
+      "total": 21747,
+      "costUSD": 0.08270775,
       "tracked": true,
       "estimated": false
     }
