@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-17T06:34:20.854Z",
+  "generatedAt": "2026-03-17T10:26:23.873Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 51,
@@ -80,7 +80,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 11
   },
   "findings": [
     {
@@ -185,11 +185,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Perfectly\" but no matching athlete found in events data"
     },
@@ -220,9 +215,9 @@
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 26,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 2
   },
   "pass": true,
