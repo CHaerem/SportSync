@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-17T20:15:14.385Z",
+  "generatedAt": "2026-03-17T21:15:54.769Z",
   "eventCount": 48,
   "sportCoverage": {
     "f1": {
@@ -9,13 +9,13 @@
     },
     "football": {
       "count": 34,
-      "previousCount": 37,
-      "delta": -3
+      "previousCount": 34,
+      "delta": 0
     },
     "golf": {
       "count": 2,
-      "previousCount": 1,
-      "delta": 1
+      "previousCount": 2,
+      "delta": 0
     },
     "tennis": {
       "count": 2,
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6854,
+      "ageMinutes": 6914,
       "stale": true
     },
     "football.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 104,
+      "ageMinutes": 165,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-17"
     },
     "ai-quality.json": {
-      "ageMinutes": 104,
+      "ageMinutes": 165,
       "stale": false
     }
   },
@@ -90,7 +90,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 32,
+    "footballCount": 33,
     "validationPassRate": 1,
     "recapHeadlineRate": 0,
     "issues": []
@@ -188,7 +188,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 6854 minutes old"
+      "message": "f1.json: data is 6914 minutes old"
     },
     {
       "severity": "warning",
@@ -258,7 +258,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-17T20:15:14.451Z",
+    "computedAt": "2026-03-17T21:15:54.838Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -276,7 +276,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
