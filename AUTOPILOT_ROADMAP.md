@@ -467,11 +467,17 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #134) **Render totalPlayers field in golf event cards** — Added `totalPlayers` to event normalization mapping and renders "N players" in golf expanded view.
 
-- [PENDING] [MAINTENANCE] **Surface event meta field (knockout context)** — The `meta` field carries high-value knockout context (e.g. "Champions League • 2nd Leg - Bodo/Glimt lead 3-0 on aggregate") but is never mapped in event normalization (dashboard.js lines 140-167). Add `meta: ev.meta || null` to normalization, render as subtitle on event row and in expanded view. ~10 lines in `dashboard.js`. Pillar: personalization.
+- [DONE] (PR #135) **Surface event meta field (knockout context)** — Added `meta: ev.meta || null` to normalization, renders as italic subtitle on event rows for knockout context like aggregate scores.
 
-- [PENDING] [MAINTENANCE] **Add favorite team visual indicator on event rows** — `isFavorite` flag is loaded but produces no visual distinction on event rows. A Liverpool favorite match looks identical to a generic fixture. Add a small favorite indicator (heart/star) alongside existing `norBadge` when `event.isFavorite` is true. ~10-15 lines in `dashboard.js` including CSS. Pillar: personalization.
+- [DONE] (PR #135) **Add favorite team visual indicator on event rows** — Added ★ badge with `row-fav` class next to `norBadge` when `event.isFavorite` is true. Subtle accent-colored indicator.
 
-- [PENDING] [MAINTENANCE] **Include trackedPlayers in golf leaderboard position lookup** — Norwegian golfers outside top 15 (e.g. Reitan at 66) show no position on the collapsed card — `allLbEntries` only includes top 15 `leaderboard` array. Extend to also include `tour.trackedPlayers` from standings.json. ~5-8 lines in `dashboard.js` near line 1853. Pillar: personalization.
+- [DONE] (PR #135) **Include trackedPlayers in golf leaderboard position lookup** — Extended `allLbEntries` to include `tour.trackedPlayers` from standings.json so Norwegian golfers outside top-15 show their position.
+
+- [PENDING] [MAINTENANCE] **Filter gambling/betting platforms from streaming display** — Streaming arrays contain `type: "unknown"` entries from tvkampen mapping to betting platforms (N1Bet, bvbet, Lilibet). Filter to only `type: "streaming"` or `type: "tv"` entries in `renderExpanded()`, `renderMatchdayGroup()`, and `renderLeadWrapper()`. ~8 lines in `dashboard.js`. Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Clamp must-watch summary to 2 lines on mobile** — `.row-summary` has no text overflow clamping, causing must-watch event rows to expand 2-3 lines on 480px width. Add `-webkit-line-clamp: 2` CSS. ~5 lines in `index.html`. Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Surface golf pairing info in card header** — `norwegianPlayers[0].teeTime` and `featuredGroups` data exists but pairings are only visible after expand. Add a one-liner like "Hovland with Harman · 18:20" in the golf sport group card header. ~15 lines in `dashboard.js`. Pillar: personalization.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

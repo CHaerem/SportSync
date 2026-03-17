@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-17",
+      "task": "Personalization: meta context + fav badge + tracked golfers (PR #135)",
+      "outcome": "completed",
+      "pr": "PR #135",
+      "details": "Run 27: 0 user feedback, 3 pending tasks (all UX/personalization). Batched all 3 into single PR #135: (1) meta field mapping + italic subtitle rendering for knockout context (aggregate scores). (2) Favorite team ★ badge on event rows via isFavorite flag. (3) trackedPlayers included in golf leaderboard lookup for Norwegian golfers outside top-15. UX scout found 4 new opportunities (gambling filter, summary clamp, golf pairing header, La Liga standings). 3 added to roadmap. 4934 tests pass.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 18,
+      "lesson": "Worktree agent completed code changes but failed to commit — orchestrator applied diff manually and created PR. Need to verify subagent commit step completes. Scouting→execution pipeline continues: all 3 executed tasks came from previous run's scouting queue. Background scout parallelism efficient.",
+      "scouted": 3
+    },
+    {
       "date": "2026-03-16",
       "task": "UX: tag narratives + dedup importanceReason + golf totalPlayers (PR #134)",
       "outcome": "completed",
