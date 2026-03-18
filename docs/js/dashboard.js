@@ -1276,7 +1276,7 @@ class Dashboard {
 			}
 
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
-			const streams = Array.isArray(pick.streaming) ? pick.streaming : [];
+			const streams = (Array.isArray(pick.streaming) ? pick.streaming : []).filter(s => s.type === 'streaming' || s.type === 'tv');
 
 			html += `<div class="watch-pick" data-pick-index="${i}" role="button" tabindex="0">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
@@ -1708,9 +1708,10 @@ class Dashboard {
 		if (featured.summary || featured.importanceReason) {
 			html += `<div class="md-featured-context">${this.esc(featured.summary || featured.importanceReason)}</div>`;
 		}
-		if (featured.streaming?.length > 0) {
+		const featuredStreams = (featured.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		if (featuredStreams.length > 0) {
 			html += '<div class="md-featured-stream">';
-			for (const s of featured.streaming.slice(0, 3)) {
+			for (const s of featuredStreams.slice(0, 3)) {
 				const url = s.url || '#';
 				const name = s.platform || s;
 				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
@@ -1749,9 +1750,10 @@ class Dashboard {
 		if (event.summary) {
 			html += `<div class="lead-lede">${this.esc(event.summary)}</div>`;
 		}
-		if (event.streaming?.length > 0) {
+		const leadStreams = (event.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		if (leadStreams.length > 0) {
 			html += '<div class="lead-stream">';
-			for (const s of event.streaming.slice(0, 3)) {
+			for (const s of leadStreams.slice(0, 3)) {
 				const url = s.url || '#';
 				const name = s.platform || s;
 				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
@@ -1813,6 +1815,22 @@ class Dashboard {
 		}
 		if (headline.summary || headline.importanceReason) {
 			html += `<div class="lead-lede">${this.esc(headline.summary || headline.importanceReason)}</div>`;
+		}
+
+		// Golf: show pairing snippet in card header (e.g. "Hovland with Harman · 18:20")
+		if (sportId === 'golf') {
+			const norPlayersWithGroup = events.flatMap(e => (e.norwegianPlayers || []).filter(p => {
+				const fg = (e.featuredGroups || []).find(g => g.player === p.name);
+				return fg?.groupmates?.length > 0;
+			}).map(p => ({ player: p, event: e })));
+			if (norPlayersWithGroup.length > 0) {
+				const { player, event: golfEv } = norPlayersWithGroup[0];
+				const fg = (golfEv.featuredGroups || []).find(g => g.player === player.name);
+				const partner = fg.groupmates[0]?.name || fg.groupmates[0];
+				const tee = player.teeTime ? ` \u00b7 ${player.teeTime}` : '';
+				const partnerShort = partner ? partner.split(' ').pop() : '';
+				html += `<div class="lead-pairing">${this.esc(player.name.split(' ').pop())} with ${this.esc(partnerShort)}${this.esc(tee)}</div>`;
+			}
 		}
 
 		// Event rows inside the card
@@ -1894,11 +1912,11 @@ class Dashboard {
 			}
 		}
 
-		// Streaming links from the first event that has them
-		const streamEvent = events.find(e => e.streaming?.length > 0);
-		if (streamEvent) {
+		// Streaming links from the first event that has them (tv/streaming only, not betting platforms)
+		const groupStreams = events.flatMap(e => (e.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv'));
+		if (groupStreams.length > 0) {
 			html += '<div class="lead-stream">';
-			for (const s of streamEvent.streaming.slice(0, 3)) {
+			for (const s of groupStreams.slice(0, 3)) {
 				const url = s.url || '#';
 				const name = s.platform || s;
 				html += `<a class="stream-link" href="${this.esc(url)}" target="_blank" rel="noopener">${this.esc(name)}</a>`;
@@ -2807,10 +2825,11 @@ class Dashboard {
 			content += `<a href="${this.esc(event.link)}" target="_blank" rel="noopener noreferrer" class="exp-link">More details \u2197</a>`;
 		}
 
-		// Streaming
-		if (event.streaming && event.streaming.length > 0) {
+		// Streaming (filter out betting/unknown platforms — only show tv and streaming)
+		const expStreams = (event.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		if (expStreams.length > 0) {
 			content += '<div class="exp-streaming">';
-			event.streaming.forEach(s => {
+			expStreams.forEach(s => {
 				if (s.url) {
 					content += `<a href="${this.esc(s.url)}" target="_blank" rel="noopener noreferrer" class="exp-stream-badge" aria-label="Watch on ${this.esc(s.platform)}">\ud83d\udcfa ${this.esc(s.platform)}</a>`;
 				} else {
