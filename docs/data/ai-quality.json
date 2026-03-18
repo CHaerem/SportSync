@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-18T02:15:35.519Z",
+  "generatedAt": "2026-03-18T06:29:45.665Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": null,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 40180,
+    "generationMs": 54482,
     "tokenUsage": {
-      "input": 26392,
-      "output": 2128,
-      "cacheCreation": 26389,
+      "input": 26403,
+      "output": 2823,
+      "cacheCreation": 26400,
       "cacheRead": 0,
-      "total": 28520,
-      "costUSD": 0.13088775,
+      "total": 29226,
+      "costUSD": 0.141354,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 99,
+      "avgScore": 125,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,8 +63,8 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
       "totalEvents": 48,
       "importanceCoverage": 1,
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 48,
     "skipStats": {
       "total": 48,
-      "unchanged": 47,
-      "enriched": 1,
-      "skipRate": 0.98
+      "unchanged": 48,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 21774,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21662,
-      "output": 112,
-      "calls": 1,
-      "total": 21774,
-      "costUSD": 0.08291025,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
