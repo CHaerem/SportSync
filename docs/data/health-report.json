@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T06:29:47.313Z",
+  "generatedAt": "2026-03-18T07:27:35.364Z",
   "eventCount": 48,
   "sportCoverage": {
     "f1": {
@@ -40,19 +40,19 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7468,
+      "ageMinutes": 7526,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 58,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 58,
       "stale": false
     }
   },
@@ -124,30 +124,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 2,
+    "sevenDay": 51,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 134185,
-    "stepCount": 23,
+    "totalDuration": 168135,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-results",
-        "duration": 44481,
+        "name": "generate-featured",
+        "duration": 55226,
         "share": 33
       },
       {
-        "name": "generate-featured",
-        "duration": 40933,
-        "share": 31
+        "name": "verify-schedules",
+        "duration": 60015,
+        "share": 36
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -183,12 +188,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 7468 minutes old"
+      "message": "f1.json: data is 7526 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 76 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 77 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -206,6 +211,11 @@
       "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 2%, 7d: 51%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -213,17 +223,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 33% of total pipeline time (44s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 33% of total pipeline time (55s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 31% of total pipeline time (41s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 36% of total pipeline time (60s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-18T06:29:47.402Z",
+    "computedAt": "2026-03-18T07:27:35.434Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -241,7 +256,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
