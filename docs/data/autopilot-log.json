@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-18",
+      "task": "UX batch: filter betting, clamp summaries, golf pairings (PR #136)",
+      "outcome": "completed",
+      "pr": "PR #135 (merged) + PR #136",
+      "details": "Run 28: 0 user feedback, 3 pending tasks (all UX). Merged stale PR #135 first. Batched all 3 into single PR #136 via UX-agent worktree: (1) Filtered gambling/betting platforms from all 5 streaming render paths (N1Bet, bvbet, Lilibet). (2) CSS line-clamp on .row-summary for mobile overflow. (3) Golf pairing info in card header from featuredGroups data. Background UX scout found 8 opportunities — 4 added to roadmap (Olympics CSS var, team form rendering, news aria-expanded, dark mode contrast). 4934 tests pass.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 20,
+      "lesson": "Cherry-pick from worktree branch to clean PR branch is reliable pattern when worktree has data file noise from test runs. Task-router misclassified gambling filter as data-agent — file ownership (dashboard.js) is better signal than description keywords. Scouting→execution pipeline: all 3 executed tasks came from run 27's scouting queue.",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-17",
       "task": "Personalization: meta context + fav badge + tracked golfers (PR #135)",
       "outcome": "completed",

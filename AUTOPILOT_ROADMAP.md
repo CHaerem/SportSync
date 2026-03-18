@@ -473,11 +473,19 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #135) **Include trackedPlayers in golf leaderboard position lookup** — Extended `allLbEntries` to include `tour.trackedPlayers` from standings.json so Norwegian golfers outside top-15 show their position.
 
-- [PENDING] [MAINTENANCE] **Filter gambling/betting platforms from streaming display** — Streaming arrays contain `type: "unknown"` entries from tvkampen mapping to betting platforms (N1Bet, bvbet, Lilibet). Filter to only `type: "streaming"` or `type: "tv"` entries in `renderExpanded()`, `renderMatchdayGroup()`, and `renderLeadWrapper()`. ~8 lines in `dashboard.js`. Pillar: quality.
+- [DONE] (PR #136) **Filter gambling/betting platforms from streaming display** — Filtered `type: "unknown"` entries (N1Bet, bvbet, Lilibet) from all 5 streaming render paths. Only `type: "streaming"` or `type: "tv"` entries render now.
 
-- [PENDING] [MAINTENANCE] **Clamp must-watch summary to 2 lines on mobile** — `.row-summary` has no text overflow clamping, causing must-watch event rows to expand 2-3 lines on 480px width. Add `-webkit-line-clamp: 2` CSS. ~5 lines in `index.html`. Pillar: quality.
+- [DONE] (PR #136) **Clamp must-watch summary to 2 lines on mobile** — Added `-webkit-line-clamp: 2` CSS to `.row-summary` preventing overflow on 480px width.
 
-- [PENDING] [MAINTENANCE] **Surface golf pairing info in card header** — `norwegianPlayers[0].teeTime` and `featuredGroups` data exists but pairings are only visible after expand. Add a one-liner like "Hovland with Harman · 18:20" in the golf sport group card header. ~15 lines in `dashboard.js`. Pillar: personalization.
+- [DONE] (PR #136) **Surface golf pairing info in card header** — Shows "Hovland with Harman · 18:20" in golf sport group cards when `featuredGroups` data with groupmates is present.
+
+- [PENDING] [MAINTENANCE] **Add missing `--sport-olympics` CSS variable** — `sport-config.js` defines Olympics sport but `:root` block in `index.html` lacks `--sport-olympics`. Olympics sport pills and day-nav dots are invisible. Add `--sport-olympics: #0070c0;` to `:root` and `.dark {}`. ~2 lines in `index.html`. Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Render team season form (W/D/L) in expanded football view** — `pollFootballScores()` extracts `homeForm` and `awayForm` from ESPN live data but never renders them. Show current season W/D/L record under each team name in expanded view. ~10 lines in `dashboard.js`. Pillar: data visualization.
+
+- [PENDING] [MAINTENANCE] **Add `aria-expanded` to news show-more button** — News show-more button has no `aria-expanded` attribute, screen reader users can't know the button changes state. Also add `aria-label` to news card anchors. ~8 lines in `dashboard.js`. Pillar: accessibility.
+
+- [PENDING] [MAINTENANCE] **Dark mode past-day items contrast fix** — `.day-item.is-past { opacity: 0.35 }` on dark background drops contrast below WCAG AA. Add `.dark .day-item.is-past { opacity: 0.5; }`. ~2 lines in `index.html`. Pillar: quality.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 

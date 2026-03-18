@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-18",
+        "note": "Run 28: 3 tasks via 1 UX-agent worktree (batched PR #136) + background UX scout + stale PR #135 merge. All 3 from previous run's scouting queue — scouting→execution pipeline 4th consecutive productive cycle. Cherry-pick from worktree branch to clean PR branch works reliably (worktree had data file noise from test runs). Background scout found 8 opportunities, 4 added to roadmap. Task-router misclassified gambling filter as data — override by file ownership. User-visible/infrastructure: 100%/0%. ~20 orchestrator turns."
+      },
+      {
         "date": "2026-03-17",
         "note": "Run 27: 3 tasks via 1 UX-agent worktree (batched PR #135) + background UX scout. All 3 from previous run's scouting queue — scouting→execution pipeline continues productive. Worktree agent completed code changes but didn't commit — orchestrator applied diff and created PR. Background scout ran in parallel, found 4 opportunities (3 added to roadmap). User-visible/infrastructure: 100%/0%. ~18 orchestrator turns."
       },
