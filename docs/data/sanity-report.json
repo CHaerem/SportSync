@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T10:23:24.907Z",
+  "generatedAt": "2026-03-18T14:35:05.336Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 48,
@@ -73,11 +73,11 @@
         "Heineken Chinese Grand Prix"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 8
+    "issueCount": 11
   },
   "findings": [
     {
@@ -178,17 +178,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Now Newcastle\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After Chelsea\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"English\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Both\" but no matching athlete found in events data"
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -209,6 +204,11 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"13:30\" for \"Galatasaray at Liverpool\" but events.json has 21:00"
     },
     {
       "severity": "warning",
