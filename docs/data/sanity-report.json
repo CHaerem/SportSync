@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-18T14:35:05.336Z",
+  "generatedAt": "2026-03-18T18:26:39.196Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 48,
+    "totalEvents": 47,
     "sports": [
       "f1",
       "football",
@@ -15,7 +15,6 @@
     "bands": {
       "live": [],
       "today": [
-        "Newcastle United at Barcelona",
         "Atalanta at Bayern Munich",
         "Galatasaray at Liverpool",
         "Atlético Madrid at Tottenham Hotspur"
@@ -73,11 +72,11 @@
         "Heineken Chinese Grand Prix"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 11
+    "issueCount": 8
   },
   "findings": [
     {
@@ -178,22 +177,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After Chelsea\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Slot\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tyne\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wear\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Kickoff\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -207,19 +206,14 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"13:30\" for \"Galatasaray at Liverpool\" but events.json has 21:00"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 35 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 26,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 2
   },
   "pass": true,
