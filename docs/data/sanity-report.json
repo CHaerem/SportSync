@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-18T18:26:39.196Z",
+  "generatedAt": "2026-03-18T22:13:44.053Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 47,
+    "totalEvents": 44,
     "sports": [
       "f1",
-      "football",
       "golf",
+      "football",
       "tennis",
       "chess",
       "esports",
@@ -14,11 +14,7 @@
     ],
     "bands": {
       "live": [],
-      "today": [
-        "Atalanta at Bayern Munich",
-        "Galatasaray at Liverpool",
-        "Atlético Madrid at Tottenham Hotspur"
-      ],
+      "today": [],
       "tomorrow": [
         "Valspar Championship",
         "Hainan Classic pres. by MAEXTRO"
@@ -74,9 +70,9 @@
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 8
+    "issueCount": 9
   },
   "findings": [
     {
@@ -177,7 +173,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Slot\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sørloth\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -187,12 +188,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Kickoff\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sporting\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -207,7 +203,7 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 35 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
