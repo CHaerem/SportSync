@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T07:27:35.364Z",
+  "generatedAt": "2026-03-18T08:19:36.704Z",
   "eventCount": 48,
   "sportCoverage": {
     "f1": {
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 7526,
+      "ageMinutes": 7578,
       "stale": true
     },
     "football.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 110,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 110,
       "stale": false
     }
   },
@@ -124,35 +124,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 2,
-    "sevenDay": 51,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 168135,
-    "stepCount": 26,
+    "totalDuration": 56245,
+    "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 55226,
-        "share": 33
+        "name": "fetch-sports",
+        "duration": 27717,
+        "share": 49
       },
       {
-        "name": "verify-schedules",
-        "duration": 60015,
-        "share": 36
+        "name": "fetch-results",
+        "duration": 38860,
+        "share": 69
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -188,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 7526 minutes old"
+      "message": "f1.json: data is 7578 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 77 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 78 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -211,11 +206,6 @@
       "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 2%, 7d: 51%) — 2 step(s) skipped: discover-events, learn-recipes"
-    },
-    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -223,22 +213,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 33% of total pipeline time (55s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 36% of total pipeline time (60s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "Pipeline step \"fetch-results\" used 69% of total pipeline time (39s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-18T07:27:35.434Z",
+    "computedAt": "2026-03-18T08:19:36.769Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
