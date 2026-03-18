@@ -163,6 +163,8 @@ class Dashboard {
 				format: ev.format || null,
 				stage: ev.stage || null,
 				result: ev.result || null,
+				meta: ev.meta || null,
+				isFavorite: ev.isFavorite || false,
 				_isTournament: ev._isTournament || false,
 				_bracketId: ev._bracketId || null,
 				}))
@@ -1851,8 +1853,12 @@ class Dashboard {
 			const norPlayers = events.flatMap(e => (e.norwegianPlayers || []).filter(p => p.teeTime));
 			if (norPlayers.length > 0) {
 				// Build a flat leaderboard lookup across all golf tours
+				// Include trackedPlayers so Norwegian golfers outside top-15 still show their position
 				const golfTours = this.standings?.golf || {};
-				const allLbEntries = Object.values(golfTours).flatMap(tour => tour.leaderboard || []);
+				const allLbEntries = Object.values(golfTours).flatMap(tour => [
+					...(tour.leaderboard || []),
+					...(tour.trackedPlayers || []),
+				]);
 
 				html += '<div class="lead-tee-times">';
 				for (const p of norPlayers) {
@@ -2545,6 +2551,9 @@ class Dashboard {
 		const isNorwegian = event.norwegian || event.norwegianPlayers?.length > 0 || event.norwegianRelevance >= 4;
 		const norBadge = isNorwegian ? '<span class="row-nor" title="Norsk interesse">🇳🇴</span>' : '';
 
+		// Favorite indicator
+		const favBadge = event.isFavorite ? '<span class="row-fav" title="Favorite">★</span>' : '';
+
 		// Tournament subtitle: show league badge if configured, else plain subtitle
 		let subtitleHtml = '';
 		if (event.tournament) {
@@ -2555,6 +2564,9 @@ class Dashboard {
 				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
 			}
 		}
+
+		// Meta subtitle: knockout context, aggregate scores, etc.
+		const metaHtml = event.meta ? `<span class="row-meta">${this.esc(event.meta)}</span>` : '';
 
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
@@ -2570,7 +2582,7 @@ class Dashboard {
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
 					<span class="row-time">${timeStr}${relHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${subtitleHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
 				</div>
 				${summaryHtml}
 				${importanceReasonHtml}
