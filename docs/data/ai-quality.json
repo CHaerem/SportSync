@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T18:23:37.640Z",
+  "generatedAt": "2026-03-19T22:10:28.821Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -9,24 +9,24 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 78462,
+    "blockCount": 7,
+    "generationMs": 74045,
     "tokenUsage": {
-      "input": 26504,
-      "output": 3764,
-      "cacheCreation": 26501,
-      "cacheRead": 0,
-      "total": 30268,
-      "costUSD": 0.15584775,
+      "input": 26487,
+      "output": 4163,
+      "cacheCreation": 17719,
+      "cacheRead": 8765,
+      "total": 30650,
+      "costUSD": 0.13152975,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 95,
+    "score": 80,
     "metrics": {
-      "mustWatchCoverage": 1,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 85,
+      "pickCount": 3,
+      "avgScore": 67,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -92,14 +92,14 @@
       "enriched": 1,
       "skipRate": 0.98
     },
-    "tokensPerEvent": 21772,
+    "tokensPerEvent": 21811,
     "hintsApplied": [],
     "tokenUsage": {
       "input": 21691,
-      "output": 81,
+      "output": 120,
       "calls": 1,
-      "total": 21772,
-      "costUSD": 0.082554,
+      "total": 21811,
+      "costUSD": 0.083139,
       "tracked": true,
       "estimated": false
     }

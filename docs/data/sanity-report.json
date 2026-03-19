@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T18:23:39.348Z",
+  "generatedAt": "2026-03-19T22:10:30.347Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 45,
@@ -18,7 +18,7 @@
         "Hainan Classic pres. by MAEXTRO"
       ],
       "today": [
-        "Round 2 – BTC Chess960 Championship 2026 | Survival"
+        "Round 4 – BTC Chess960 Championship 2026 | Survival"
       ],
       "tomorrow": [
         "Manchester United at AFC Bournemouth",
@@ -70,11 +70,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
-    "briefPresent": false,
+    "featuredBlockCount": 7,
+    "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
-    "issueCount": 5
+    "editorialScore": 80,
+    "issueCount": 6
   },
   "findings": [
     {
@@ -170,32 +170,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sungjae Im\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Seven\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Norwegians\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Innisbrook\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Christiansen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Survival Round\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"What\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Flick\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -203,9 +183,19 @@
       "message": "Featured mentions \"Galatasaray\" but no matching athlete found in events data"
     },
     {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Christiansen\" but no matching athlete found in events data"
+    },
+    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
-      "message": "\"Round 2 – BTC Chess960 Championship 2026 | Survival\" marked norwegian=true but has no norwegianPlayers"
+      "message": "\"Round 4 – BTC Chess960 Championship 2026 | Survival\" marked norwegian=true but has no norwegianPlayers"
     },
     {
       "severity": "info",
@@ -224,9 +214,9 @@
     }
   ],
   "summary": {
-    "total": 29,
+    "total": 27,
     "critical": 0,
-    "warning": 26,
+    "warning": 24,
     "info": 3
   },
   "pass": true,
