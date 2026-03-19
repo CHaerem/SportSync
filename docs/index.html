@@ -44,6 +44,7 @@
 			--sport-tennis: #2563eb;
 			--sport-chess: #57534e;
 		--sport-cycling: #b45309;
+			--sport-olympics: #0070c0;
 			--radius: 14px;
 			--radius-sm: 8px;
 			--max-w: 480px;
@@ -235,6 +236,7 @@
 			background: var(--accent);
 		}
 		.day-item.is-past { opacity: 0.35; }
+		.dark .day-item.is-past { opacity: 0.5; }
 		.day-item.is-selected:not(.is-today) { background: var(--bg-warm); box-shadow: inset 0 0 0 1.5px var(--accent); }
 		.day-label {
 			font-size: 0.48rem;
@@ -880,6 +882,7 @@
 		.exp-team { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
 		.exp-logo { width: 32px; height: 32px; object-fit: contain; }
 		.exp-logo-placeholder { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+		.exp-team-form { font-size: 0.65rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 		.exp-vs { color: var(--muted); font-size: 0.75rem; }
 		.exp-golfers { margin-bottom: 12px; }
 		.exp-golfer { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-light); }

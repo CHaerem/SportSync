@@ -1406,12 +1406,12 @@ class Dashboard {
 			contentHtml += this._renderNewsCard(item, sportColors);
 		}
 		if (hiddenItems.length > 0) {
-			contentHtml += '<div class="news-more-items">';
+			contentHtml += '<div class="news-more-items" id="news-more-items">';
 			for (const item of hiddenItems) {
 				contentHtml += this._renderNewsCard(item, sportColors);
 			}
 			contentHtml += '</div>';
-			contentHtml += `<button class="news-show-more">${hiddenItems.length} more headlines</button>`;
+			contentHtml += `<button class="news-show-more" aria-expanded="false" aria-controls="news-more-items">${hiddenItems.length} more headlines</button>`;
 		}
 		contentHtml += '</div>';
 
@@ -1427,8 +1427,9 @@ class Dashboard {
 			showMore.addEventListener('click', () => {
 				const hidden = container.querySelector('.news-more-items');
 				if (hidden) {
-					const isHidden = hidden.classList.toggle('open');
-					showMore.textContent = isHidden
+					const isOpen = hidden.classList.toggle('open');
+					showMore.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+					showMore.textContent = isOpen
 						? 'Show less'
 						: `${hiddenItems.length} more headlines`;
 				}
@@ -1451,7 +1452,7 @@ class Dashboard {
 			else timeAgo = `${Math.round(diff / 1440)}d ago`;
 		}
 
-		let html = `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration:none">`;
+		let html = `<a href="${this.esc(link)}" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration:none" aria-label="${this.esc(title)}">`;
 		html += `<div class="news-sport-bar" style="background:${barColor}"></div>`;
 		html += `<div class="news-body">`;
 		html += `<div class="news-headline">${this.esc(title)}</div>`;
@@ -2710,15 +2711,20 @@ class Dashboard {
 		if (event.sport === 'football' && event.homeTeam && event.awayTeam) {
 			const homeLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.homeTeam) : null;
 			const awayLogo = typeof getTeamLogo === 'function' ? getTeamLogo(event.awayTeam) : null;
+			const _liveData = this.liveScores[event.id];
+			const homeForm = _liveData?.homeForm || '';
+			const awayForm = _liveData?.awayForm || '';
 			content += '<div class="exp-teams">';
 			content += `<div class="exp-team">
 				${homeLogo ? `<img src="${homeLogo}" alt="${this.esc(event.homeTeam)}" class="exp-logo" loading="lazy">` : '<span class="exp-logo-placeholder">\u26bd</span>'}
 				<span>${this.esc(event.homeTeam)}</span>
+				${homeForm ? `<span class="exp-team-form">${this.esc(homeForm)}</span>` : ''}
 			</div>`;
 			content += '<span class="exp-vs">vs</span>';
 			content += `<div class="exp-team">
 				${awayLogo ? `<img src="${awayLogo}" alt="${this.esc(event.awayTeam)}" class="exp-logo" loading="lazy">` : '<span class="exp-logo-placeholder">\u26bd</span>'}
 				<span>${this.esc(event.awayTeam)}</span>
+				${awayForm ? `<span class="exp-team-form">${this.esc(awayForm)}</span>` : ''}
 			</div>`;
 			content += '</div>';
 		}
