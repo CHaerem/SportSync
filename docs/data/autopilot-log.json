@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-19",
+      "task": "UX batch: Olympics CSS var, football form display, aria-expanded, dark mode contrast (PR #138)",
+      "outcome": "completed",
+      "pr": "PR #138",
+      "details": "Run 29: 0 user feedback, 4 pending tasks (all UX MAINTENANCE). Batched all 4 into single PR #138 via UX-agent worktree: (1) Olympics CSS variable --sport-olympics: #0070c0 added to :root so sport pills/day-nav dots render. (2) Football W/D/L form rendered in expanded view from homeForm/awayForm fields in liveScores. (3) News show-more button gets aria-expanded + aria-controls + aria-label on news anchors. (4) Dark mode past-day contrast lifted from 0.35 to 0.5 for WCAG AA compliance. Background UX scout running. 4934 tests pass.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 22,
+      "lesson": "Batching all 4 scouted UX tasks saved ~20 turns vs 4 separate PRs. Run 27's background scout queue fully consumed in runs 28+29 — scouting→execution pipeline self-sustaining for 5th consecutive cycle.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-18",
       "task": "UX batch: filter betting, clamp summaries, golf pairings (PR #136)",
       "outcome": "completed",

@@ -479,13 +479,13 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #136) **Surface golf pairing info in card header** — Shows "Hovland with Harman · 18:20" in golf sport group cards when `featuredGroups` data with groupmates is present.
 
-- [PENDING] [MAINTENANCE] **Add missing `--sport-olympics` CSS variable** — `sport-config.js` defines Olympics sport but `:root` block in `index.html` lacks `--sport-olympics`. Olympics sport pills and day-nav dots are invisible. Add `--sport-olympics: #0070c0;` to `:root` and `.dark {}`. ~2 lines in `index.html`. Pillar: quality.
+- [DONE] (PR #138) **Add missing `--sport-olympics` CSS variable** — Added `--sport-olympics: #0070c0;` to `:root` in `index.html`. Olympics sport pills and day-nav dots now visible.
 
-- [PENDING] [MAINTENANCE] **Render team season form (W/D/L) in expanded football view** — `pollFootballScores()` extracts `homeForm` and `awayForm` from ESPN live data but never renders them. Show current season W/D/L record under each team name in expanded view. ~10 lines in `dashboard.js`. Pillar: data visualization.
+- [DONE] (PR #138) **Render team season form (W/D/L) in expanded football view** — `pollFootballScores()` now renders `homeForm`/`awayForm` as `<span class="exp-team-form">` under each team name in expanded view.
 
-- [PENDING] [MAINTENANCE] **Add `aria-expanded` to news show-more button** — News show-more button has no `aria-expanded` attribute, screen reader users can't know the button changes state. Also add `aria-label` to news card anchors. ~8 lines in `dashboard.js`. Pillar: accessibility.
+- [DONE] (PR #138) **Add `aria-expanded` to news show-more button** — Added `aria-expanded`, `aria-controls`, `id` on container, and toggling in click handler. Added `aria-label` to news card anchors.
 
-- [PENDING] [MAINTENANCE] **Dark mode past-day items contrast fix** — `.day-item.is-past { opacity: 0.35 }` on dark background drops contrast below WCAG AA. Add `.dark .day-item.is-past { opacity: 0.5; }`. ~2 lines in `index.html`. Pillar: quality.
+- [DONE] (PR #138) **Dark mode past-day items contrast fix** — Added `.dark .day-item.is-past { opacity: 0.5; }` lifting contrast above WCAG AA threshold.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
