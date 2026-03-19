@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T14:24:06.891Z",
+  "generatedAt": "2026-03-19T15:21:00.702Z",
   "eventCount": 45,
   "sportCoverage": {
     "golf": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false
     }
   },
@@ -124,30 +124,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 9,
+    "sevenDay": 59,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 62819,
-    "stepCount": 21,
+    "totalDuration": 196753,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 30119,
-        "share": 48
+        "name": "generate-featured",
+        "duration": 72089,
+        "share": 37
       },
       {
-        "name": "fetch-results",
-        "duration": 49923,
-        "share": 79
+        "name": "verify-schedules",
+        "duration": 60072,
+        "share": 31
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -192,6 +197,11 @@
       "message": "2 tournament(s) lack league theming: BTC Chess960 Championship 2026 | Survival, CS2 Tournaments 2026"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 9%, 7d: 59%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -199,17 +209,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 48% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 37% of total pipeline time (72s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (50s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 31% of total pipeline time (60s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-19T14:24:06.962Z",
+    "computedAt": "2026-03-19T15:21:00.789Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
