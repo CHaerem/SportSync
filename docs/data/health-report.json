@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-03-19T02:08:54.158Z",
-  "eventCount": 44,
+  "generatedAt": "2026-03-19T06:27:51.393Z",
+  "eventCount": 45,
   "sportCoverage": {
-    "f1": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "golf": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
+    },
+    "chess": {
+      "count": 3,
+      "previousCount": 2,
+      "delta": 1
     },
     "football": {
       "count": 30,
@@ -22,9 +22,9 @@
       "previousCount": 2,
       "delta": 0
     },
-    "chess": {
-      "count": 2,
-      "previousCount": 2,
+    "f1": {
+      "count": 1,
+      "previousCount": 1,
       "delta": 0
     },
     "esports": {
@@ -48,8 +48,8 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8647,
-      "stale": true
+      "ageMinutes": 2,
+      "stale": false
     },
     "football.json": {
       "ageMinutes": 2,
@@ -64,18 +64,18 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.86,
+    "venuePercent": 0.87,
     "streamingPercent": 0.98
   },
   "rssFeedHealth": {
@@ -124,35 +124,25 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 0,
-    "sevenDay": 56,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 190311,
-    "stepCount": 26,
+    "totalDuration": 154498,
+    "stepCount": 23,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 71829,
-        "share": 38
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60064,
-        "share": 32
+        "duration": 55903,
+        "share": 36
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,38 +172,19 @@
     "hasCoverage": true
   },
   "unmappedLeagues": [
+    "BTC Chess960 Championship 2026 | Survival",
     "CS2 Tournaments 2026"
   ],
   "issues": [
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "f1.json: data is 8647 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "f1: data retained 91 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
-    },
     {
       "severity": "warning",
       "code": "streaming_coverage_gap",
       "message": "1 important event(s) lack streaming info: CS2 Tournaments 2026"
     },
     {
-      "severity": "warning",
-      "code": "invisible_events",
-      "message": "1 event(s) won't appear on dashboard (f1)"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
-      "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
-    },
-    {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 0%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "2 tournament(s) lack league theming: BTC Chess960 Championship 2026 | Survival, CS2 Tournaments 2026"
     },
     {
       "severity": "warning",
@@ -223,22 +194,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 38% of total pipeline time (72s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "Pipeline step \"generate-featured\" used 36% of total pipeline time (56s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-19T02:08:54.236Z",
+    "computedAt": "2026-03-19T06:27:51.474Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -263,7 +224,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
   }
 }
