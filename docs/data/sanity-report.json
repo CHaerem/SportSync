@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T14:24:06.724Z",
+  "generatedAt": "2026-03-19T18:23:39.348Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 45,
@@ -18,7 +18,7 @@
         "Hainan Classic pres. by MAEXTRO"
       ],
       "today": [
-        "Round 1 – BTC Chess960 Championship 2026 | Survival"
+        "Round 2 – BTC Chess960 Championship 2026 | Survival"
       ],
       "tomorrow": [
         "Manchester United at AFC Bournemouth",
@@ -71,10 +71,10 @@
       "ended": []
     },
     "featuredBlockCount": 8,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 95,
-    "issueCount": 8
+    "issueCount": 5
   },
   "findings": [
     {
@@ -170,12 +170,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Both\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sungjae Im\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Europe\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Norwegians\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Innisbrook\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -185,12 +190,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Championship Survival\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Survival Round\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"What\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Galatasaray\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
       "check": "norwegian_flag_no_players",
-      "message": "\"Round 1 – BTC Chess960 Championship 2026 | Survival\" marked norwegian=true but has no norwegianPlayers"
+      "message": "\"Round 2 – BTC Chess960 Championship 2026 | Survival\" marked norwegian=true but has no norwegianPlayers"
     },
     {
       "severity": "info",
@@ -201,12 +216,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 29,
     "critical": 0,
-    "warning": 22,
+    "warning": 26,
     "info": 3
   },
   "pass": true,
