@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-03-20",
-  "generatedAt": "2026-03-18T22:13:42.870Z",
+  "generatedAt": "2026-03-19T02:08:53.036Z",
   "events": {
     "upcoming": [
       {
@@ -166,8 +166,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -187,7 +194,9 @@
         ],
         "norwegianRelevance": 1,
         "enrichedAt": "2026-03-18T22:12:30.617Z",
-        "_enrichHash": "d7cc695ff20ea74fb3b98fdb0badb07b"
+        "_enrichHash": "d7cc695ff20ea74fb3b98fdb0badb07b",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -200,9 +209,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -222,7 +232,9 @@
         ],
         "norwegianRelevance": 1,
         "enrichedAt": "2026-03-18T22:12:30.617Z",
-        "_enrichHash": "022782aa5e8694b974d5938470a8d2f8"
+        "_enrichHash": "022782aa5e8694b974d5938470a8d2f8",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []

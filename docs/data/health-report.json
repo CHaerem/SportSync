@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T22:13:44.156Z",
+  "generatedAt": "2026-03-19T02:08:54.158Z",
   "eventCount": 44,
   "sportCoverage": {
     "f1": {
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8412,
+      "ageMinutes": 8647,
       "stale": true
     },
     "football.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-03-18"
+      "featuredDate": "2026-03-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -92,22 +92,22 @@
     "stale": false,
     "footballCount": 36,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.06,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0,
-    "relevantMatchRate": null,
-    "eventsEnriched": 0,
+    "matchRate": 0.11,
+    "relevantMatchRate": 1,
+    "eventsEnriched": 2,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -124,30 +124,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 0,
+    "sevenDay": 56,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 65573,
-    "stepCount": 21,
+    "totalDuration": 190311,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 34026,
-        "share": 52
+        "name": "generate-featured",
+        "duration": 71829,
+        "share": 38
       },
       {
-        "name": "fetch-results",
-        "duration": 51538,
-        "share": 79
+        "name": "verify-schedules",
+        "duration": 60064,
+        "share": 32
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -183,12 +188,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 8412 minutes old"
+      "message": "f1.json: data is 8647 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 90 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 91 consecutive times (since 2026-03-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -206,6 +211,11 @@
       "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 0%, 7d: 56%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -213,17 +223,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (34s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 38% of total pipeline time (72s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (52s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-18T22:13:44.239Z",
+    "computedAt": "2026-03-19T02:08:54.236Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -241,14 +256,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
