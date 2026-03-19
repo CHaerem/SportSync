@@ -487,6 +487,12 @@ Keep this section near the top so the autopilot continuously improves user-facin
 
 - [DONE] (PR #138) **Dark mode past-day items contrast fix** — Added `.dark .day-item.is-past { opacity: 0.5; }` lifting contrast above WCAG AA threshold.
 
+- [PENDING] [MAINTENANCE] **Add missing CSS variables for winter sports** — `sport-config.js` defines biathlon, nordic skiing, and alpine skiing but `:root` in `index.html` lacks `--sport-biathlon`, `--sport-nordic`, `--sport-alpine`. Day-nav dots and sport pills fall back to muted gray. Add ~6 lines to `:root` and `.dark` blocks. Pillar: quality.
+
+- [PENDING] [MAINTENANCE] **Render `context` and `result` fields in expanded event view** — Events carry `context` (knockout round, aggregate scores) and `result` (match outcome) in events.json but `renderExpanded()` in `dashboard.js` never displays them. Add conditional rendering of these fields under the expanded event detail section. ~20 lines in `dashboard.js`. Pillar: data visualization.
+
+- [PENDING] [MAINTENANCE] **Add `aria-expanded` to event rows** — Event rows have `role="button"` and `tabindex="0"` but the `aria-expanded` attribute never updates when rows expand/collapse. Toggle `aria-expanded` on each row click in `dashboard.js`. ~8 lines. Pillar: accessibility.
+
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
 
 ---
