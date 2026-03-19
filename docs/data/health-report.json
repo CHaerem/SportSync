@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T09:20:05.067Z",
+  "generatedAt": "2026-03-19T10:18:15.606Z",
   "eventCount": 45,
   "sportCoverage": {
     "golf": {
@@ -52,7 +52,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 172,
+      "ageMinutes": 230,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 172,
+      "ageMinutes": 230,
       "stale": false
     }
   },
@@ -132,19 +132,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 62565,
+    "totalDuration": 85851,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 34065,
-        "share": 54
+        "duration": 42618,
+        "share": 50
       },
       {
         "name": "fetch-results",
-        "duration": 51096,
-        "share": 82
+        "duration": 73456,
+        "share": 86
       }
     ],
     "failedSteps": []
@@ -199,17 +199,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (34s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (43s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 82% of total pipeline time (51s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 86% of total pipeline time (73s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-19T09:20:05.134Z",
+    "computedAt": "2026-03-19T10:18:15.701Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",

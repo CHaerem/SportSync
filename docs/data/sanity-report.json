@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T06:27:51.245Z",
+  "generatedAt": "2026-03-19T10:18:15.557Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 45,
@@ -74,7 +74,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 80,
-    "issueCount": 10
+    "issueCount": 5
   },
   "findings": [
     {
@@ -169,11 +169,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Sørloth\" but no matching athlete found in events data"
     },
@@ -214,9 +209,9 @@
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 26,
     "critical": 0,
-    "warning": 24,
+    "warning": 23,
     "info": 3
   },
   "pass": true,
