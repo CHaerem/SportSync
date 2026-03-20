@@ -203,6 +203,8 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 5. Quality | ~100% | 2026-03-14 | mustWatchCoverage fuzzy matching (year suffix), sportDiversity cycling emoji, 2467 tests |
 | 1. Data | ~97% | 2026-03-14 | Esports config restored (193 retains resolved), PGL Major Bucharest added, currentWeek→timeRange:14 |
 | 3. Capabilities | ~88% | 2026-03-14 | FT badge styling fixed, result row keyboard a11y, F1 league config 2025→2026 (PR #132) |
+| 5. Quality | ~100% | 2026-03-20 | CS2 streaming gap silenced (build-events propagates streaming, esports Twitch/YouTube entries added) |
+| 3. Capabilities | ~88% | 2026-03-20 | Golf field size visible in compact row, .exp-golf-field CSS added, BTC Chess960/CS2 league theming (PR #139) |
 
 ### Run History Insights
 
@@ -488,6 +490,14 @@ Keep this section near the top so the autopilot continuously improves user-facin
 - [DONE] (PR #138) **Dark mode past-day items contrast fix** — Added `.dark .day-item.is-past { opacity: 0.5; }` lifting contrast above WCAG AA threshold.
 
 - [DONE] (PR #127) **Move sport pills above editorial brief** — Moved `#sport-pills` above `#the-brief` in DOM order. Mobile users hit filter pills before scrolling through editorial brief.
+
+- [DONE] (PR #139) **Add `.exp-golf-field` CSS styling** — Golf field size ("135 players") was rendered in dashboard.js but had no CSS rule. Added `.exp-golf-field` consistent with `.exp-venue` pattern (0.72rem, muted color, italic).
+
+- [DONE] (PR #139) **Show golf totalPlayers in compact row** — Added ` · N-field` hint in golf event compact/collapsed row when `totalPlayers > 0`. Closes data-to-UI gap (field was populated in events.json but invisible in collapsed view).
+
+- [DONE] (PR #139) **League theming for BTC Chess960 and CS2 Tournaments** — Added entries to `docs/data/league-config.json` for "BTC Chess960 Championship 2026" (chess color) and "CS2 Tournaments 2026" (esports purple). Resolves `unmapped_leagues` health warning.
+
+- [DONE] (direct-to-main 2026-03-20) **Fix CS2 streaming gap: propagate streaming from tournament configs** — `build-events.js` hardcoded `streaming: []` for synthesized tournament events, ignoring any streaming data in curated configs. Fixed to propagate `t.streaming` if present. Added Twitch/YouTube entries to DraculaN S5, PCC S2, and PGL CS2 Major Bucharest 2026 in `esports-cs2-2026.json`. Silences `streaming_coverage_gap` health warning and surfaces actual streaming info to users.
 
 ---
 
