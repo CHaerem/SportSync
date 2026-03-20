@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T10:21:47.462Z",
+  "generatedAt": "2026-03-20T14:27:22.109Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 6,
-    "generationMs": 54016,
+    "blockCount": 8,
+    "generationMs": 77696,
     "tokenUsage": {
-      "input": 26525,
-      "output": 2285,
-      "cacheCreation": 26522,
+      "input": 26506,
+      "output": 4456,
+      "cacheCreation": 26503,
       "cacheRead": 0,
-      "total": 28810,
-      "costUSD": 0.1337415,
+      "total": 30962,
+      "costUSD": 0.16623525,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 42,
+      "avgScore": 71,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.028,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 36
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 3% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
     "totalEvents": 44,
     "skipStats": {
       "total": 44,
-      "unchanged": 44,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 43,
+      "enriched": 1,
+      "skipRate": 0.98
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 21746,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21664,
+      "output": 82,
+      "calls": 1,
+      "total": 21746,
+      "costUSD": 0.0522285,
       "tracked": true,
       "estimated": false
     }
