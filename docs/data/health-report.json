@@ -1,16 +1,11 @@
 {
-  "generatedAt": "2026-03-19T22:10:30.441Z",
-  "eventCount": 45,
+  "generatedAt": "2026-03-20T02:28:40.001Z",
+  "eventCount": 44,
   "sportCoverage": {
     "golf": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
-    },
-    "chess": {
-      "count": 3,
-      "previousCount": 2,
-      "delta": 1
     },
     "football": {
       "count": 30,
@@ -26,6 +21,11 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
+    },
+    "chess": {
+      "count": 2,
+      "previousCount": 3,
+      "delta": -1
     },
     "esports": {
       "count": 1,
@@ -67,7 +67,7 @@
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-03-19"
+      "featuredDate": "2026-03-20"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -75,8 +75,8 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.87,
-    "streamingPercent": 0.98
+    "venuePercent": 0.86,
+    "streamingPercent": 1
   },
   "rssFeedHealth": {
     "itemCount": 30,
@@ -98,17 +98,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.11,
+    "matchRate": 0.63,
     "relevantMatchRate": 1,
-    "eventsEnriched": 2,
+    "eventsEnriched": 12,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -124,30 +122,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 0,
+    "sevenDay": 59,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 54446,
-    "stepCount": 21,
+    "totalDuration": 205670,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 30434,
-        "share": 56
-      },
-      {
-        "name": "fetch-results",
-        "duration": 43591,
-        "share": 80
+        "name": "generate-featured",
+        "duration": 74806,
+        "share": 36
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -177,19 +175,18 @@
     "hasCoverage": true
   },
   "unmappedLeagues": [
-    "BTC Chess960 Championship 2026 | Survival",
     "CS2 Tournaments 2026"
   ],
   "issues": [
     {
-      "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "1 important event(s) lack streaming info: CS2 Tournaments 2026"
+      "severity": "info",
+      "code": "unmapped_leagues",
+      "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
     },
     {
       "severity": "info",
-      "code": "unmapped_leagues",
-      "message": "2 tournament(s) lack league theming: BTC Chess960 Championship 2026 | Survival, CS2 Tournaments 2026"
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 0%, 7d: 59%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -199,17 +196,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 36% of total pipeline time (75s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 80% of total pipeline time (44s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-19T22:10:30.513Z",
+    "computedAt": "2026-03-20T02:28:40.081Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -227,14 +224,14 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 80/100.",
+    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }

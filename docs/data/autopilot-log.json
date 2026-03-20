@@ -1,18 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-03-20",
-      "task": "Scouting run: CS2 streaming fix (direct), UX batch: golf field CSS, totalPlayers compact row, league theming (PR #139)",
-      "outcome": "completed",
-      "pr": "direct-to-main + PR #139",
-      "details": "Run 30: 0 user feedback, 0 pending tasks — pure scouting run. Scouts found 5 UX opportunities and 1 data fix. (1) data-agent: Fixed CS2 streaming gap false positive — build-events.js hardcoded streaming:[] for synthesized events, ignoring config streaming data. Fixed to propagate streaming arrays from tournament configs. Added Twitch/YouTube entries to all 3 CS2 tournaments in esports-cs2-2026.json. Direct-to-main. (2) ux-agent (PR #139, merged): 3 improvements batched — (a) Added .exp-golf-field CSS rule to index.html (was rendered in dashboard.js but unstyled); (b) golf totalPlayers field shown in compact row as ' · N-field' hint when populated; (c) BTC Chess960 Championship 2026 + CS2 Tournaments 2026 added to league-config.json. All 2467 tests pass.",
-      "tests_passed": true,
-      "files_changed": 5,
-      "turns_used": 30,
-      "lesson": "Scouting-only runs can produce full scouting→execution cycles within the same run. CS2 streaming gap root cause was in build-events.js (hardcoded empty array), not in the config — always trace the full data flow before fixing. Scouting→execution pipeline continues self-sustaining for 6th consecutive cycle.",
-      "scouted": 5
-    },
-    {
       "date": "2026-03-19",
       "task": "UX batch: Olympics CSS var, football form display, aria-expanded, dark mode contrast (PR #138)",
       "outcome": "completed",
