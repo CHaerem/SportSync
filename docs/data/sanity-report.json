@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T14:27:23.987Z",
+  "generatedAt": "2026-03-20T18:22:05.379Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 44,
@@ -195,12 +195,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 25,
     "critical": 0,
-    "warning": 22,
+    "warning": 23,
     "info": 2
   },
   "pass": true,
