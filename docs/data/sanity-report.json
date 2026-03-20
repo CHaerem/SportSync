@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-20T18:22:05.379Z",
+  "generatedAt": "2026-03-20T22:16:05.435Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 44,
+    "totalEvents": 42,
     "sports": [
       "golf",
-      "football",
       "tennis",
+      "football",
       "f1",
       "chess",
       "esports",
@@ -17,10 +17,7 @@
         "Valspar Championship",
         "Hainan Classic pres. by MAEXTRO"
       ],
-      "today": [
-        "Manchester United at AFC Bournemouth",
-        "Real Sociedad at Villarreal"
-      ],
+      "today": [],
       "tomorrow": [
         "Puerto Vallarta Open",
         "Liverpool at Brighton & Hove Albion",
@@ -69,11 +66,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 4
+    "issueCount": 8
   },
   "findings": [
     {
@@ -169,22 +166,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"After\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Galatasaray\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Salah\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Fifth\" but no matching athlete found in events data"
+      "message": "Featured mentions \"El Derbi\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -199,13 +181,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 37 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 22,
     "critical": 0,
-    "warning": 23,
+    "warning": 20,
     "info": 2
   },
   "pass": true,
