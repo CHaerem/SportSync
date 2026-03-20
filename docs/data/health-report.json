@@ -1,41 +1,41 @@
 {
-  "generatedAt": "2026-03-20T08:16:26.157Z",
+  "generatedAt": "2026-03-20T09:17:40.185Z",
   "eventCount": 44,
   "sportCoverage": {
     "golf": {
       "count": 2,
-      "previousCount": 2,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "football": {
       "count": 30,
-      "previousCount": 30,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "tennis": {
       "count": 2,
-      "previousCount": 2,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "f1": {
       "count": 1,
-      "previousCount": 1,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "chess": {
       "count": 2,
-      "previousCount": 2,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "esports": {
       "count": 1,
-      "previousCount": 1,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     },
     "cycling": {
       "count": 6,
-      "previousCount": 6,
-      "delta": 0
+      "previousCount": null,
+      "delta": null
     }
   },
   "dataFreshness": {
@@ -64,14 +64,14 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 348,
-      "stale": false,
+      "ageMinutes": 409,
+      "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-03-20"
     },
     "ai-quality.json": {
-      "ageMinutes": 348,
-      "stale": false
+      "ageMinutes": 409,
+      "stale": true
     }
   },
   "schemaCompleteness": {
@@ -107,7 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 348 minutes old (stale > 240m)"
+      "Day snapshots are 409 minutes old (stale > 240m)"
     ],
     "snapshotCount": 15
   },
@@ -132,19 +132,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 57931,
+    "totalDuration": 57971,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28034,
-        "share": 48
+        "duration": 28332,
+        "share": 49
       },
       {
         "name": "fetch-results",
-        "duration": 41388,
-        "share": 71
+        "duration": 39297,
+        "share": 68
       }
     ],
     "failedSteps": []
@@ -182,8 +182,18 @@
   "issues": [
     {
       "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 409 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 409 minutes old"
+    },
+    {
+      "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 348 minutes old (stale > 240m)"
+      "message": "Day snapshots are 409 minutes old (stale > 240m)"
     },
     {
       "severity": "info",
@@ -198,17 +208,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 48% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (41s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (39s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-20T08:16:26.223Z",
+    "computedAt": "2026-03-20T09:17:40.250Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -233,7 +243,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
