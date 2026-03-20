@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T06:28:11.217Z",
+  "generatedAt": "2026-03-20T10:21:49.065Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 44,
@@ -70,10 +70,10 @@
       "ended": []
     },
     "featuredBlockCount": 6,
-    "briefPresent": false,
+    "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 5
+    "issueCount": 7
   },
   "findings": [
     {
@@ -169,17 +169,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sungjae Im\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Glimt\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"No Norwegians\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sporting\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Copperhead\" but no matching athlete found in events data"
+      "message": "Featured mentions \"The Champions League\" but no matching athlete found in events data"
     },
     {
       "severity": "info",

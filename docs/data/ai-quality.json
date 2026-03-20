@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-20T02:28:16.405Z",
+  "generatedAt": "2026-03-20T10:21:47.462Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 6,
-    "generationMs": 57614,
+    "generationMs": 54016,
     "tokenUsage": {
-      "input": 26456,
-      "output": 2723,
-      "cacheCreation": 26453,
+      "input": 26525,
+      "output": 2285,
+      "cacheCreation": 26522,
       "cacheRead": 0,
-      "total": 29179,
-      "costUSD": 0.14005275,
+      "total": 28810,
+      "costUSD": 0.1337415,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 44,
+      "pickCount": 3,
+      "avgScore": 42,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
-      "totalEvents": 45,
+      "totalEvents": 44,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 45,
+      "totalEvents": 44,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 45,
+    "totalEvents": 44,
     "skipStats": {
-      "total": 45,
+      "total": 44,
       "unchanged": 44,
-      "enriched": 1,
-      "skipRate": 0.98
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 21811,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21691,
-      "output": 120,
-      "calls": 1,
-      "total": 21811,
-      "costUSD": 0.083139,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }

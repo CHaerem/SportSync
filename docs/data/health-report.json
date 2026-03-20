@@ -1,77 +1,77 @@
 {
-  "generatedAt": "2026-03-20T09:17:40.185Z",
+  "generatedAt": "2026-03-20T10:21:49.225Z",
   "eventCount": 44,
   "sportCoverage": {
     "golf": {
       "count": 2,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 2,
+      "delta": 0
     },
     "football": {
       "count": 30,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 30,
+      "delta": 0
     },
     "tennis": {
       "count": 2,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 2,
+      "delta": 0
     },
     "f1": {
       "count": 1,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 1,
+      "delta": 0
     },
     "chess": {
       "count": 2,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 2,
+      "delta": 0
     },
     "esports": {
       "count": 1,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 1,
+      "delta": 0
     },
     "cycling": {
       "count": 6,
-      "previousCount": null,
-      "delta": null
+      "previousCount": 6,
+      "delta": 0
     }
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 409,
-      "stale": true,
+      "ageMinutes": 0,
+      "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-20"
     },
     "ai-quality.json": {
-      "ageMinutes": 409,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -106,9 +106,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 409 minutes old (stale > 240m)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -132,19 +130,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 57971,
+    "totalDuration": 59349,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28332,
-        "share": 49
+        "duration": 27861,
+        "share": 47
       },
       {
         "name": "fetch-results",
-        "duration": 39297,
-        "share": 68
+        "duration": 39808,
+        "share": 67
       }
     ],
     "failedSteps": []
@@ -181,21 +179,6 @@
   ],
   "issues": [
     {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 409 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 409 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 409 minutes old (stale > 240m)"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: CS2 Tournaments 2026"
@@ -208,17 +191,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 47% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 67% of total pipeline time (40s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-20T09:17:40.250Z",
+    "computedAt": "2026-03-20T10:21:49.327Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -243,7 +226,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
