@@ -2584,6 +2584,11 @@ class Dashboard {
 			}
 		}
 
+		// Golf field size hint in compact row
+		if (event.sport === 'golf' && event.totalPlayers > 0) {
+			subtitleHtml += `<span class="row-subtitle"> · ${event.totalPlayers}-field</span>`;
+		}
+
 		// Meta subtitle: knockout context, aggregate scores, etc.
 		const metaHtml = event.meta ? `<span class="row-meta">${this.esc(event.meta)}</span>` : '';
 
