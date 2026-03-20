@@ -124,7 +124,7 @@ if (fs.existsSync(configDir)) {
 					norwegianPlayers: (config.norwegianAthletes || []).map((name) =>
 						typeof name === "string" ? { name } : name
 					),
-					streaming: [],
+					streaming: Array.isArray(t.streaming) ? t.streaming : [],
 					_isTournament: true,
 					_bracketId: t.id || null,
 					focusTeam: t.focusTeam || null,
