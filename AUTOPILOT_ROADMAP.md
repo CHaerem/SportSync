@@ -167,6 +167,9 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [PENDING] [MAINTENANCE] **recapHeadline single-team matching** — recapHeadlineRate is 0% because Norwegian headlines mention only one team. Add 4th matching tier: single team + football sport tag + time proximity (<6h). Guard: only match football-tagged RSS items. Pillar: quality. Files: `scripts/fetch-results.js`.
 - [PENDING] [MAINTENANCE] **isEventInWindow() convention violations** — 4 files use manual date filtering instead of `isEventInWindow()`, silently dropping multi-day events: `generate-featured.js:564`, `generate-featured.js:639`, `fetch/golf.js:552`, `adapters/espn-adapter.js:42`. Pillar: code/quality. Files: listed above.
 - [PENDING] [MAINTENANCE] **WCAG minimum font sizes** — Multiple CSS elements use sub-0.55rem sizes (7-8px computed): `.day-label` 0.48rem, `.brief-label` 0.5rem, `.block-divider` 0.5rem. Bump to minimum 0.55rem for WCAG compliance. Pillar: quality (a11y). Files: `docs/index.html`.
+- [PENDING] [MAINTENANCE] **Vsport broadcaster URL missing** — 7+ PL football events show `"platform": "Vsport"` with empty URL and `"type": "unknown"`. Vsport is a major Norwegian sports channel. Add entry to `scripts/lib/broadcaster-urls.js`. Pillar: data. Files: `scripts/lib/broadcaster-urls.js`.
+- [PENDING] [MAINTENANCE] **Standings mini-table: highlight competing teams** — Match-preview editorial blocks show a standings mini-table but don't highlight the two teams playing. Pass competing team names to standings renderer and add `.lb-row.match-team` CSS. Pillar: quality (UX). Files: `docs/js/dashboard.js`, `docs/index.html`.
+- [PENDING] [MAINTENANCE] **Sport filter pills: show event count** — Sport pills show dot + name but no count. `sportCounts` is computed but unused in pills. Add `(N)` suffix to pill labels. Pillar: quality (UX). Files: `docs/js/dashboard.js`.
 
 ---
 
