@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-21T06:24:21.832Z",
+  "generatedAt": "2026-03-21T10:13:49.863Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 45,
+    "totalEvents": 44,
     "sports": [
       "golf",
-      "tennis",
       "football",
+      "tennis",
       "f1",
       "cycling",
       "chess",
@@ -15,8 +15,7 @@
     "bands": {
       "live": [
         "Valspar Championship",
-        "Hainan Classic pres. by MAEXTRO",
-        "Puerto Vallarta Open"
+        "Hainan Classic pres. by MAEXTRO"
       ],
       "today": [
         "Liverpool at Brighton & Hove Albion",
@@ -74,7 +73,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 4
+    "issueCount": 12
   },
   "findings": [
     {
@@ -169,11 +168,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Amex\" but no matching athlete found in events data"
     },
@@ -199,9 +193,9 @@
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 23,
     "critical": 0,
-    "warning": 22,
+    "warning": 21,
     "info": 2
   },
   "pass": true,
