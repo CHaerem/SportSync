@@ -170,6 +170,8 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [PENDING] [MAINTENANCE] **Vsport broadcaster URL missing** — 7+ PL football events show `"platform": "Vsport"` with empty URL and `"type": "unknown"`. Vsport is a major Norwegian sports channel. Add entry to `scripts/lib/broadcaster-urls.js`. Pillar: data. Files: `scripts/lib/broadcaster-urls.js`.
 - [PENDING] [MAINTENANCE] **Standings mini-table: highlight competing teams** — Match-preview editorial blocks show a standings mini-table but don't highlight the two teams playing. Pass competing team names to standings renderer and add `.lb-row.match-team` CSS. Pillar: quality (UX). Files: `docs/js/dashboard.js`, `docs/index.html`.
 - [PENDING] [MAINTENANCE] **Sport filter pills: show event count** — Sport pills show dot + name but no count. `sportCounts` is computed but unused in pills. Add `(N)` suffix to pill labels. Pillar: quality (UX). Files: `docs/js/dashboard.js`.
+- [PENDING] [MAINTENANCE] **Parallelize fetch-results HTTP calls** — `fetch-results.js` issues 42 sequential HTTP calls (14 football + 14 tennis + 14 F1). Use `Promise.all()` within each fetcher and across fetchers in `main()`. Expected: 38s → ~4-6s pipeline time. Pillar: code. Files: `scripts/fetch-results.js`.
+- [PENDING] [MAINTENANCE] **Add fetch-results timeout to pipeline manifest** — `fetch-results` has no timeout in `pipeline-manifest.json` but takes 38s. Add `"timeout": 60000` for defensive bound. Pillar: code. Files: `scripts/pipeline-manifest.json`.
 
 ---
 
