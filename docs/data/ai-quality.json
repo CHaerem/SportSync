@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T06:24:20.129Z",
+  "generatedAt": "2026-03-21T14:16:13.444Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 87601,
+    "generationMs": 66596,
     "tokenUsage": {
-      "input": 26608,
-      "output": 4804,
-      "cacheCreation": 26605,
-      "cacheRead": 0,
-      "total": 31412,
-      "costUSD": 0.17183775,
+      "input": 26659,
+      "output": 3991,
+      "cacheCreation": 17899,
+      "cacheRead": 8757,
+      "total": 30650,
+      "costUSD": 0.12962235,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 77,
+      "avgScore": 91,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 38
+      "footballCount": 36
     },
     "issues": [
       "Only 0% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 45,
+      "totalEvents": 42,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 45,
+      "totalEvents": 42,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,51 +83,51 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 3,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 45,
+    "totalEvents": 42,
     "skipStats": {
-      "total": 45,
+      "total": 42,
       "unchanged": 42,
-      "enriched": 3,
-      "skipRate": 0.93
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 7720,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 22001,
-      "output": 1158,
-      "calls": 1,
-      "total": 23159,
-      "costUSD": 0.0998715,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26485,
-      "output": 4996,
+      "input": 26659,
+      "output": 3991,
       "calls": 1,
-      "total": 31481,
+      "total": 30650,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-21T02:17:33.706Z"
+    "lastRun": "2026-03-21T14:16:13.721Z"
   },
   "discovery": {
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
+      "input": 55943,
+      "output": 647,
       "calls": 2,
-      "total": 0,
-      "costUSD": 0,
+      "total": 56590,
+      "costUSD": 0.8071773000000002,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-21T10:08:27.500Z",
+    "lastRun": "2026-03-21T14:09:46.936Z",
     "tasksExecuted": 2,
-    "succeeded": 0,
-    "failed": 2
+    "succeeded": 1,
+    "failed": 1
   }
 }
