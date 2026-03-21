@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-21T02:17:33.432Z",
+  "generatedAt": "2026-03-21T06:24:20.129Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 81442,
+    "generationMs": 87601,
     "tokenUsage": {
-      "input": 26485,
-      "output": 4996,
-      "cacheCreation": 26482,
+      "input": 26608,
+      "output": 4804,
+      "cacheCreation": 26605,
       "cacheRead": 0,
-      "total": 31481,
-      "costUSD": 0.17425649999999998,
+      "total": 31412,
+      "costUSD": 0.17183775,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 42,
+      "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 42,
+      "totalEvents": 45,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 3,
     "failedBatches": 0,
-    "totalEvents": 42,
+    "totalEvents": 45,
     "skipStats": {
-      "total": 42,
+      "total": 45,
       "unchanged": 42,
-      "enriched": 0,
-      "skipRate": 1
+      "enriched": 3,
+      "skipRate": 0.93
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 7720,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 22001,
+      "output": 1158,
+      "calls": 1,
+      "total": 23159,
+      "costUSD": 0.0998715,
       "tracked": true,
       "estimated": false
     }
