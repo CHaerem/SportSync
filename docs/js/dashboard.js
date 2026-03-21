@@ -385,7 +385,7 @@ class Dashboard {
 				`<span class="day-dot" style="background:${sportVars[s] || 'var(--muted)'}"></span>`
 			).join('');
 
-			html += `<div class="day-item ${cls}${selectedCls}" data-date="${this._dateKey(day)}">`;
+			html += `<div class="day-item ${cls}${selectedCls}" data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -406,8 +406,14 @@ class Dashboard {
 		const el = document.getElementById('day-nav');
 		if (!el) return;
 
-		// Day item clicks
+		// Day item clicks (and keyboard activation)
 		el.querySelectorAll('.day-item').forEach(item => {
+			item.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					item.click();
+				}
+			});
 			item.addEventListener('click', () => {
 				const dateKey = item.dataset.date;
 				if (!dateKey) return;
@@ -2154,7 +2160,9 @@ class Dashboard {
 
 	/** Render results section with grouped tournament cards */
 	_renderResultsSection(matchResults, resultEvents) {
-		let html = '<div class="flow-label band-label results"><span class="flow-text">What you missed</span><span class="flow-line"></span></div>';
+		const totalCount = matchResults.length + resultEvents.filter(e => !e._isResult).length;
+		const countBadge = totalCount > 0 ? `<span class="results-count-badge">${totalCount}</span>` : '';
+		let html = `<div class="flow-label band-label results"><span class="flow-text">What you missed</span><span class="flow-line"></span>${countBadge}</div>`;
 		html += '<div class="band-content">';
 
 		// Group match results by tournament
