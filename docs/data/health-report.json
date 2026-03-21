@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T11:08:53.847Z",
+  "generatedAt": "2026-03-21T12:12:24.421Z",
   "eventCount": 44,
   "sportCoverage": {
     "golf": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 285,
+      "ageMinutes": 348,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-21"
     },
     "ai-quality.json": {
-      "ageMinutes": 285,
+      "ageMinutes": 348,
       "stale": false
     }
   },
@@ -107,7 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 285 minutes old (stale > 240m)",
+      "Day snapshots are 348 minutes old (stale > 240m)",
       "Snapshot 2026-03-21: 13 events but events.json has 12",
       "Snapshot 2026-03-22: 10 events but events.json has 9",
       "Snapshot 2026-03-23: 2 events but events.json has 1",
@@ -132,30 +132,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 11,
-    "sevenDay": 10,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 425766,
-    "stepCount": 25,
-    "timeoutHits": [
-      "discover-events"
-    ],
+    "totalDuration": 66384,
+    "stepCount": 21,
+    "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 300100,
-        "share": 70
+        "name": "fetch-sports",
+        "duration": 26835,
+        "share": 40
+      },
+      {
+        "name": "fetch-results",
+        "duration": 40876,
+        "share": 62
       }
     ],
-    "failedSteps": [
-      "discover-events",
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -189,7 +189,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 285 minutes old (stale > 240m)"
+      "message": "Day snapshots are 348 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -237,24 +237,19 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "warning",
-      "code": "step_timeout_hit",
-      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-sports\" used 40% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 70% of total pipeline time (300s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
+      "message": "Pipeline step \"fetch-results\" used 62% of total pipeline time (41s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-21T11:08:53.905Z",
+    "computedAt": "2026-03-21T12:12:24.491Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -279,7 +274,7 @@
     "source": "none"
   },
   "statusSummary": {
-    "text": "Pipeline is warning with 11 warning issue(s). Editorial quality score is 93/100.",
+    "text": "Pipeline is warning with 10 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
   }
 }
