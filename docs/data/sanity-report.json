@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-21T14:16:32.948Z",
+  "generatedAt": "2026-03-21T18:17:40.356Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 42,
+    "totalEvents": 36,
     "sports": [
       "golf",
       "football",
@@ -18,16 +18,11 @@
         "Hainan Classic pres. by MAEXTRO"
       ],
       "today": [
-        "Burnley at Fulham",
-        "Crystal Palace at Manchester City",
-        "Getafe at Espanyol",
-        "Chelsea at Everton",
-        "Real Oviedo at Levante",
-        "Girona at Osasuna",
         "Brentford at Leeds United",
         "Valencia at Sevilla"
       ],
       "tomorrow": [
+        "Dubrovnik Open",
         "Sunderland at Newcastle United",
         "Rayo Vallecano at Barcelona",
         "West Ham United at Aston Villa",
@@ -37,7 +32,6 @@
         "Atlético Madrid at Real Madrid"
       ],
       "thisWeek": [
-        "Dubrovnik Open",
         "Aramco Japanese Grand Prix",
         "E3 Saxo Classic 2026"
       ],
@@ -71,7 +65,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 14
+    "issueCount": 5
   },
   "findings": [
     {
@@ -167,17 +161,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"But Sunday\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Liverpool\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tyne\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Brighton\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wear\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Easter\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -192,7 +186,7 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 36 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 33 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
