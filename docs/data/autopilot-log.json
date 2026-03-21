@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-21",
+      "task": "UX batch: focus styles, expand animation, results count badge (PR #140) + CS2 league config",
+      "outcome": "completed",
+      "pr": "PR #140 (merged) + direct-to-main",
+      "details": "Run 30: 0 user feedback, 0 pending tasks — scouting run. 3 parallel scouts (UX, Code, Data) + orchestrator. UX-agent worktree executed 3 batched improvements: (1) focus-visible styles on event-row, result-row, day-item, pill + tabindex/role/keydown on day-items. (2) Expand/collapse animation via max-height/opacity transition with prefers-reduced-motion guard. (3) Results count badge next to 'What you missed' label. Orchestrator: CS2 Tournaments 2026 added to league-config.json (fixes unmapped_leagues). 4 new PENDING tasks added to roadmap: La Liga standings, recapHeadline single-team matching, isEventInWindow violations, WCAG minimum font sizes. All 2467 tests pass.",
+      "tests_passed": true,
+      "files_changed": 3,
+      "turns_used": 22,
+      "lesson": "System fully healthy (11/11 loops, 93 editorial quality, 0 high-severity patterns) — scouting runs are the right strategy. UX scout found 15 opportunities, code scout found 10, data scout found 14. Top 3 UX items batched into single PR. Scouting→execution pipeline continues: 6th consecutive cycle. recapHeadlineRate 0% is structural (Norwegian headlines mention only one team, matcher requires both) — needs single-team matching tier.",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-19",
       "task": "UX batch: Olympics CSS var, football form display, aria-expanded, dark mode contrast (PR #138)",
       "outcome": "completed",

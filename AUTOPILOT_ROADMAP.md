@@ -161,6 +161,15 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 ---
 
+## Pending Tasks
+
+- [PENDING] [MAINTENANCE] **La Liga standings in standings.json** — `fetch-standings.js` fetches PL, golf, F1 from ESPN but not La Liga. Add `esp.1` league to standings fetch. User-visible: standings card shows more data. Pillar: data. Files: `scripts/fetch-standings.js`, `docs/js/dashboard.js` (rendering).
+- [PENDING] [MAINTENANCE] **recapHeadline single-team matching** — recapHeadlineRate is 0% because Norwegian headlines mention only one team. Add 4th matching tier: single team + football sport tag + time proximity (<6h). Guard: only match football-tagged RSS items. Pillar: quality. Files: `scripts/fetch-results.js`.
+- [PENDING] [MAINTENANCE] **isEventInWindow() convention violations** — 4 files use manual date filtering instead of `isEventInWindow()`, silently dropping multi-day events: `generate-featured.js:564`, `generate-featured.js:639`, `fetch/golf.js:552`, `adapters/espn-adapter.js:42`. Pillar: code/quality. Files: listed above.
+- [PENDING] [MAINTENANCE] **WCAG minimum font sizes** — Multiple CSS elements use sub-0.55rem sizes (7-8px computed): `.day-label` 0.48rem, `.brief-label` 0.5rem, `.block-divider` 0.5rem. Bump to minimum 0.55rem for WCAG compliance. Pillar: quality (a11y). Files: `docs/index.html`.
+
+---
+
 ## Lessons & Effectiveness
 
 *This section is maintained by the autopilot. It accumulates knowledge across runs.*
@@ -203,8 +212,19 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 5. Quality | ~100% | 2026-03-14 | mustWatchCoverage fuzzy matching (year suffix), sportDiversity cycling emoji, 2467 tests |
 | 1. Data | ~97% | 2026-03-14 | Esports config restored (193 retains resolved), PGL Major Bucharest added, currentWeek→timeRange:14 |
 | 3. Capabilities | ~88% | 2026-03-14 | FT badge styling fixed, result row keyboard a11y, F1 league config 2025→2026 (PR #132) |
+| 5. Quality | ~100% | 2026-03-21 | Focus styles on interactive elements, expand/collapse animation with reduced-motion guard, results count badge (PR #140) |
+| 2. Code | ~94% | 2026-03-21 | CS2 Tournaments 2026 league config mapped, 2467 tests pass |
 
 ### Run History Insights
+
+**Run 2026-03-21 (Run 30):** Scouting run — 0 pending tasks, 0 user feedback. 3 parallel scouts + orchestrator.
+- UX-agent (PR #140, merged): 3 improvements batched — (a) focus-visible outlines on event-row/result-row/day-item/pill + tabindex/role/keydown on day-items; (b) expand/collapse animation via max-height/opacity with prefers-reduced-motion guard; (c) results count badge on collapsed "What you missed" band.
+- Orchestrator: CS2 Tournaments 2026 added to league-config.json (fixes unmapped_leagues health warning). Direct-to-main.
+- Scouting found 39 total opportunities (UX: 15, Code: 10, Data: 14). Top 4 added to roadmap: La Liga standings, recapHeadline single-team matching, isEventInWindow violations, WCAG minimum font sizes.
+- **Key insight**: recapHeadlineRate 0% is structural — Norwegian headlines typically mention only one team ("Seieren glapp for Manchester United") but the matcher requires both teams. A single-team + time-proximity tier would fix this.
+- User-visible / infrastructure ratio: 80% / 20% (3 UX improvements = user-visible; 1 league config = infrastructure).
+- 1 direct-to-main + 1 branch-pr (PR #140). 2467 tests across 79 files.
+
 
 **Run 2026-03-10 (Run 22):** 1 user feedback + 3 UX tasks via 2 parallel subagents (data-agent + ux-agent).
 - data-agent: Processed user feedback #126 — added ESL Pro League Season 22 to esports config for 100 Thieves (rain). Updated DraculaN S5 to completed. `needsVerification: true` for discovery loop refinement. Direct-to-main.
