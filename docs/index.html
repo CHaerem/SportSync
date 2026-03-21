@@ -918,6 +918,45 @@
 		.exp-fav-btn:hover { border-color: var(--accent); color: var(--accent); }
 		.exp-fav-btn:focus-visible, .exp-stream-badge:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 		.exp-fav-btn:active, .exp-stream-badge:active { opacity: 0.6; }
+
+		/* === Keyboard focus indicators === */
+		.event-row:focus-visible,
+		.result-row:focus-visible,
+		.day-item:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 2px;
+			border-radius: 4px;
+		}
+		.pill:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 2px;
+		}
+
+		/* === Expand/collapse animation (respects reduced motion) === */
+		@media (prefers-reduced-motion: no-preference) {
+			.row-expanded {
+				overflow: hidden;
+				max-height: 0;
+				opacity: 0;
+				padding-top: 0;
+				padding-bottom: 0;
+				transition: max-height 0.25s ease-out, opacity 0.2s ease-out, padding 0.2s ease-out;
+			}
+			.event-row.expanded .row-expanded {
+				max-height: 500px;
+				opacity: 1;
+				padding-top: 14px;
+				padding-bottom: 10px;
+			}
+		}
+
+		/* === Results band count badge === */
+		.results-count-badge {
+			font-size: 0.56rem;
+			font-weight: 500;
+			color: var(--muted-light);
+			font-family: var(--mono);
+		}
 		.exp-importance-reason { font-size: 0.7rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
 
 		/* Standings mini-tables */
