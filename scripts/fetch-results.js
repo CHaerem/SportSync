@@ -614,11 +614,15 @@ function termMatchesHeadline(term, headline) {
 	return re.test(headline);
 }
 
-export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
+export function matchRssHeadline(homeTeam, awayTeam, rssItems, options = {}) {
 	if (!homeTeam || !awayTeam || !Array.isArray(rssItems)) return null;
 
+	const { matchDate = null } = options;
 	const home = homeTeam.toLowerCase();
 	const away = awayTeam.toLowerCase();
+
+	// Collect single-team football candidates for the 4th tier — evaluated after all two-team tiers
+	const singleTeamCandidates = [];
 
 	for (const item of rssItems) {
 		const title = (item.title || "").toLowerCase();
@@ -645,7 +649,26 @@ export function matchRssHeadline(homeTeam, awayTeam, rssItems) {
 		if (homeHit && awayHit) {
 			return item.title;
 		}
+
+		// Collect single-team football candidates for the 4th tier (evaluated below)
+		if (item.sport === "football" && (homeHit || awayHit)) {
+			singleTeamCandidates.push(item);
+		}
 	}
+
+	// 4th tier: single-team match — for football-tagged items where only one team
+	// appears in the headline. Norwegian RSS sources (NRK, TV2) often name only
+	// the prominent team. Apply time-proximity guard if a match date is provided.
+	for (const item of singleTeamCandidates) {
+		if (matchDate && item.pubDate) {
+			const itemTime = new Date(item.pubDate).getTime();
+			const matchTime = new Date(matchDate).getTime();
+			const SIX_HOURS = 6 * 60 * 60 * 1000;
+			if (Math.abs(itemTime - matchTime) > SIX_HOURS) continue;
+		}
+		return item.title;
+	}
+
 	return null;
 }
 
@@ -698,7 +721,7 @@ async function main() {
 		// Match RSS headlines
 		for (const result of merged) {
 			if (!result.recapHeadline) {
-				result.recapHeadline = matchRssHeadline(result.homeTeam, result.awayTeam, rssItems);
+				result.recapHeadline = matchRssHeadline(result.homeTeam, result.awayTeam, rssItems, { matchDate: result.date });
 			}
 		}
 		// Sort: favorites first, then by date descending

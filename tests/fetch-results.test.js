@@ -606,6 +606,57 @@ describe("matchRssHeadline()", () => {
 		const result = matchRssHeadline("Manchester City", "Liverpool", items);
 		expect(result).toBe("Preview: City vs Liverpool");
 	});
+
+	// --- 4th tier: single-team football-tagged match ---
+
+	it("matches single Norwegian team name in football-tagged RSS item", () => {
+		const matchDate = "2026-03-22T17:00:00Z";
+		const pubDate = new Date(new Date(matchDate).getTime() + 2 * 60 * 60 * 1000).toUTCString(); // 2h after match
+		const items = [
+			{ title: "Bodø/Glimt vant 3-1", sport: "football", pubDate },
+		];
+		const result = matchRssHeadline("Bodø/Glimt", "Molde FK", items, { matchDate });
+		expect(result).toBe("Bodø/Glimt vant 3-1");
+	});
+
+	it("does NOT apply single-team tier to non-football-tagged items", () => {
+		const matchDate = "2026-03-22T17:00:00Z";
+		const pubDate = new Date(new Date(matchDate).getTime() + 2 * 60 * 60 * 1000).toUTCString();
+		const items = [
+			{ title: "Arsenal storspilte hjemme", sport: "general", pubDate },
+		];
+		const result = matchRssHeadline("Arsenal", "Chelsea", items, { matchDate });
+		expect(result).toBeNull();
+	});
+
+	it("does NOT apply single-team tier when pubDate is more than 6 hours from match", () => {
+		const matchDate = "2026-03-22T17:00:00Z";
+		const pubDate = new Date(new Date(matchDate).getTime() + 8 * 60 * 60 * 1000).toUTCString(); // 8h after match
+		const items = [
+			{ title: "Arsenal vant igjen", sport: "football", pubDate },
+		];
+		const result = matchRssHeadline("Arsenal", "Chelsea", items, { matchDate });
+		expect(result).toBeNull();
+	});
+
+	it("applies single-team tier when no matchDate is provided (no time guard)", () => {
+		const items = [
+			{ title: "Liverpool knuste konkurrentene", sport: "football", pubDate: "Mon, 01 Jan 2026 12:00:00 GMT" },
+		];
+		const result = matchRssHeadline("Liverpool", "Everton", items);
+		expect(result).toBe("Liverpool knuste konkurrentene");
+	});
+
+	it("two-team match takes priority over single-team football match", () => {
+		const matchDate = "2026-03-22T17:00:00Z";
+		const pubDate = new Date(new Date(matchDate).getTime() + 1 * 60 * 60 * 1000).toUTCString();
+		const items = [
+			{ title: "Arsenal vant", sport: "football", pubDate }, // single-team match
+			{ title: "Arsenal slo Chelsea 2-0" }, // two-team match (no sport tag needed)
+		];
+		const result = matchRssHeadline("Arsenal", "Chelsea", items, { matchDate });
+		expect(result).toBe("Arsenal slo Chelsea 2-0");
+	});
 });
 
 describe("mergeFootballResults()", () => {
