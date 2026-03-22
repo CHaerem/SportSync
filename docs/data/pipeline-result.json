@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-03-22T12:11:53.127Z",
-  "completedAt": "2026-03-22T12:12:45.277Z",
-  "duration": 52149,
+  "startedAt": "2026-03-22T13:20:38.266Z",
+  "completedAt": "2026-03-22T13:21:37.593Z",
+  "duration": 59326,
   "mode": "data-only",
   "gate": "pass",
   "gateBlockedFiles": null,
@@ -14,32 +14,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 24988
+          "duration": 23556
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 4866
+          "duration": 5429
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9521
+          "duration": 9243
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 471
+          "duration": 283
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 36572
+          "duration": 37186
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 453
+          "duration": 370
         }
       ]
     },
@@ -50,12 +50,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 169
+          "duration": 195
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1053
+          "duration": 5909
         }
       ]
     },
@@ -84,12 +84,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 657
+          "duration": 767
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 10432
+          "duration": 11985
         }
       ]
     },
@@ -130,7 +130,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 578
+          "duration": 572
         }
       ]
     },
@@ -141,22 +141,22 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 344
+          "duration": 358
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 227
+          "duration": 218
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 210
+          "duration": 215
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 691
+          "duration": 670
         },
         {
           "name": "ai-sanity-check",
@@ -184,7 +184,7 @@
         {
           "name": "analyze-engagement",
           "status": "success",
-          "duration": 238
+          "duration": 250
         }
       ]
     },
@@ -195,22 +195,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 992
+          "duration": 976
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 133
+          "duration": 134
         },
         {
           "name": "finalize-outputs",
           "status": "success",
-          "duration": 155
+          "duration": 147
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 152
+          "duration": 187
         }
       ]
     }
