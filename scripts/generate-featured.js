@@ -561,7 +561,7 @@ export function looksLikeMajorEvent(event) {
 
 function buildFallbackSections(events, now) {
 	const upcomingMajor = events
-		.filter((event) => new Date(event.time) >= now)
+		.filter((event) => isEventInWindow(event, now, Infinity))
 		.filter((event) => looksLikeMajorEvent(event));
 
 	if (upcomingMajor.length === 0) return [];
@@ -636,7 +636,7 @@ function guessSectionSport(section) {
 function generateFallbackThisWeek(events, now, sectionSports = [], { followedSports, favoriteOrgs } = {}) {
 	const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 	const upcoming = events
-		.filter((event) => new Date(event.time) >= todayEnd)
+		.filter((event) => isEventInWindow(event, todayEnd, Infinity))
 		.filter((event) => !sectionSports.includes(event.sport))
 		.filter((event) => {
 			// Filter to followed sports if preferences exist
