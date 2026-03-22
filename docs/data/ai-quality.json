@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-03-21T18:17:20.961Z",
+  "generatedAt": "2026-03-22T02:37:37.574Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 62209,
+    "generationMs": 77795,
     "tokenUsage": {
-      "input": 26353,
-      "output": 3552,
-      "cacheCreation": 17593,
-      "cacheRead": 8757,
-      "total": 29905,
-      "costUSD": 0.12188985,
+      "input": 26423,
+      "output": 4599,
+      "cacheCreation": 26420,
+      "cacheRead": 0,
+      "total": 31022,
+      "costUSD": 0.16806899999999997,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 91,
+      "avgScore": 102,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.026,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 33
+      "footballCount": 39
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 3% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -106,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26353,
-      "output": 3552,
+      "input": 26423,
+      "output": 4599,
       "calls": 1,
-      "total": 29905,
+      "total": 31022,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-21T18:17:21.252Z"
+    "lastRun": "2026-03-22T02:37:37.852Z"
   },
   "discovery": {
     "tokenUsage": {
