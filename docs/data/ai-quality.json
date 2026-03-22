@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-22T14:15:28.156Z",
+  "generatedAt": "2026-03-22T18:15:26.189Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 53227,
+    "blockCount": 8,
+    "generationMs": 58209,
     "tokenUsage": {
-      "input": 26182,
-      "output": 2866,
-      "cacheCreation": 26179,
+      "input": 26033,
+      "output": 3427,
+      "cacheCreation": 26030,
       "cacheRead": 0,
-      "total": 29048,
-      "costUSD": 0.14117025,
+      "total": 29460,
+      "costUSD": 0.1490265,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 89,
+      "pickCount": 1,
+      "avgScore": 122,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.029,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 35
+      "footballCount": 37
     },
     "issues": [
-      "Only 3% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 31,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 31,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 31,
+    "totalEvents": 27,
     "skipStats": {
-      "total": 31,
-      "unchanged": 31,
+      "total": 27,
+      "unchanged": 27,
       "enriched": 0,
       "skipRate": 1
     },
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-22T14:11:17.810Z",
+    "lastRun": "2026-03-22T18:11:18.462Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
