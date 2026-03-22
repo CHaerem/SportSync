@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-22",
+        "note": "Run 31: 4 pending tasks from run 30's scouting. 3 parallel subagents: code-agent (recapHeadline + isEventInWindow), data-agent (La Liga — already done), ux-agent (WCAG fonts). Code-agent worktree committed 3 tasks direct-to-main successfully. Orchestrator added La Liga to buildStandingsContext() and applied WCAG PR #142. 1 task was pre-completed (La Liga standings already implemented) — verify task state before delegating saves duplicate work. User-visible/infrastructure: 75%/25% (WCAG fonts + La Liga context = user-visible; isEventInWindow = infra; recapHeadline = quality). ~22 orchestrator turns."
+      },
+      {
         "date": "2026-03-21",
         "note": "Run 30: Scouting run — 0 pending tasks, 0 user feedback. 3 parallel scouts (UX 15 findings, Code 10 findings, Data 14 findings) + orchestrator. Top 3 UX batched into PR #140 (merged) + CS2 league config direct-to-main. 4 new PENDING tasks added. System fully healthy: 11/11 loops, editorial 93/100, 0 high-severity patterns. Scouting→execution pipeline 6th consecutive cycle. User-visible/infrastructure: 80%/20%. ~22 orchestrator turns."
       },

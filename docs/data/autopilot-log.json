@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-22",
+      "task": "Execution run: 4 tasks — La Liga context, recapHeadline single-team, isEventInWindow, WCAG font sizes (PR #142)",
+      "outcome": "completed",
+      "pr": "PR #142 + direct-to-main (3 commits)",
+      "details": "Run 31: 0 user feedback, 4 pending tasks from run 30's scouting. (1) La Liga standings already implemented in fetch-standings.js — verified and added La Liga to buildStandingsContext() + tests. (2) recapHeadline 4th matching tier: single football-tagged team + 6h time proximity for Norwegian headlines mentioning only one team. 4 regression tests. (3) isEventInWindow: replaced 2 manual date filters in generate-featured.js with isEventInWindow(). Other 2 locations (golf.js, espn-adapter.js) did not exist. (4) WCAG: 12 CSS font-size declarations bumped from 0.42-0.54rem to 0.55rem minimum (PR #142). 3 parallel subagents launched; code-agent committed 3 tasks direct-to-main successfully via worktree. All 9884 tests pass.",
+      "tests_passed": true,
+      "files_changed": 5,
+      "turns_used": 22,
+      "lesson": "La Liga standings task was already implemented — verify task preconditions before delegating. Code-agent worktree successfully committed and pushed while orchestrator was applying same changes — worktree isolation works but creates duplicate work risk. Scouting→execution pipeline 7th consecutive cycle: all 4 tasks from run 30's scouting queue consumed.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-21",
       "task": "UX batch: focus styles, expand animation, results count badge (PR #140) + CS2 league config",
       "outcome": "completed",

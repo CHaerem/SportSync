@@ -163,10 +163,10 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 
 ## Pending Tasks
 
-- [PENDING] [MAINTENANCE] **La Liga standings in standings.json** — `fetch-standings.js` fetches PL, golf, F1 from ESPN but not La Liga. Add `esp.1` league to standings fetch. User-visible: standings card shows more data. Pillar: data. Files: `scripts/fetch-standings.js`, `docs/js/dashboard.js` (rendering).
-- [PENDING] [MAINTENANCE] **recapHeadline single-team matching** — recapHeadlineRate is 0% because Norwegian headlines mention only one team. Add 4th matching tier: single team + football sport tag + time proximity (<6h). Guard: only match football-tagged RSS items. Pillar: quality. Files: `scripts/fetch-results.js`.
-- [PENDING] [MAINTENANCE] **isEventInWindow() convention violations** — 4 files use manual date filtering instead of `isEventInWindow()`, silently dropping multi-day events: `generate-featured.js:564`, `generate-featured.js:639`, `fetch/golf.js:552`, `adapters/espn-adapter.js:42`. Pillar: code/quality. Files: listed above.
-- [PENDING] [MAINTENANCE] **WCAG minimum font sizes** — Multiple CSS elements use sub-0.55rem sizes (7-8px computed): `.day-label` 0.48rem, `.brief-label` 0.5rem, `.block-divider` 0.5rem. Bump to minimum 0.55rem for WCAG compliance. Pillar: quality (a11y). Files: `docs/index.html`.
+- [DONE] [MAINTENANCE] **La Liga standings in standings.json** — Already implemented: `fetchLaLigaStandings()` exists, called in main(), rendered in standings-renderer.js. Added La Liga to `buildStandingsContext()` for editorial prompt context. Run 31.
+- [DONE] [MAINTENANCE] **recapHeadline single-team matching** — Added 4th matching tier: single football-tagged team + 6h time proximity. Norwegian headlines mentioning only one team now match. Run 31.
+- [DONE] [MAINTENANCE] **isEventInWindow() convention violations** — Replaced 2 manual date filters in `generate-featured.js` (lines 573, 648) with `isEventInWindow()`. Other 2 locations (golf.js, espn-adapter.js) did not exist. Run 31.
+- [DONE] [MAINTENANCE] **WCAG minimum font sizes** — Bumped 12 CSS declarations from 0.42-0.54rem to 0.55rem minimum. PR #142. Run 31.
 
 ---
 
