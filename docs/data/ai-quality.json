@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-22T10:11:07.964Z",
+  "generatedAt": "2026-03-22T14:15:28.156Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 52715,
+    "blockCount": 7,
+    "generationMs": 53227,
     "tokenUsage": {
-      "input": 26485,
-      "output": 3197,
-      "cacheCreation": 26482,
+      "input": 26182,
+      "output": 2866,
+      "cacheCreation": 26179,
       "cacheRead": 0,
-      "total": 29682,
-      "costUSD": 0.1472715,
+      "total": 29048,
+      "costUSD": 0.14117025,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 109,
+      "avgScore": 89,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,10 +51,10 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.026,
+      "recapHeadlineRate": 0.029,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 39
+      "footballCount": 35
     },
     "issues": [
       "Only 3% of results have recap headlines"
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 34,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 34,
+      "totalEvents": 31,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 34,
+    "totalEvents": 31,
     "skipStats": {
-      "total": 34,
-      "unchanged": 34,
+      "total": 31,
+      "unchanged": 31,
       "enriched": 0,
       "skipRate": 1
     },
@@ -117,15 +117,15 @@
   },
   "discovery": {
     "tokenUsage": {
-      "input": 268532,
-      "output": 2078,
+      "input": 0,
+      "output": 0,
       "calls": 1,
-      "total": 270610,
-      "costUSD": 0.3871499,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-22T10:09:03.360Z",
+    "lastRun": "2026-03-22T14:11:17.810Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1

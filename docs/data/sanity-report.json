@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-22T10:11:09.728Z",
+  "generatedAt": "2026-03-22T14:15:29.795Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 34,
+    "totalEvents": 31,
     "sports": [
       "golf",
       "tennis",
@@ -15,14 +15,11 @@
     "bands": {
       "live": [
         "Valspar Championship",
-        "Hainan Classic pres. by MAEXTRO",
-        "Dubrovnik Open"
+        "Dubrovnik Open",
+        "West Ham United at Aston Villa",
+        "Nottingham Forest at Tottenham Hotspur"
       ],
       "today": [
-        "Sunderland at Newcastle United",
-        "Rayo Vallecano at Barcelona",
-        "West Ham United at Aston Villa",
-        "Nottingham Forest at Tottenham Hotspur",
         "Alavés at Celta Vigo",
         "Real Betis at Athletic Club",
         "Atlético Madrid at Real Madrid"
@@ -58,11 +55,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 6
+    "issueCount": 10
   },
   "findings": [
     {
@@ -161,6 +158,16 @@
       "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
@@ -169,12 +176,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_league_conflation",
+      "message": "Block mixes PL standings language with non-PL team: \"Barcelona sit 4 points clear at the top. A Real Madrid win keeps the pressure on...\""
     }
   ],
   "summary": {
-    "total": 21,
+    "total": 24,
     "critical": 0,
-    "warning": 18,
+    "warning": 21,
     "info": 3
   },
   "pass": true,
