@@ -12,6 +12,7 @@ vi.mock("../scripts/lib/helpers.js", async () => {
 const { fetchJson } = await import("../scripts/lib/helpers.js");
 const {
 	fetchFootballStandings,
+	fetchLaLigaStandings,
 	fetchGolfLeaderboard,
 	fetchF1Standings,
 	fetchTennisRankings,
@@ -150,6 +151,49 @@ describe("fetchFootballStandings()", () => {
 		};
 		fetchJson.mockResolvedValue(reversed);
 		const result = await fetchFootballStandings();
+		expect(result[0].position).toBe(1);
+		expect(result[1].position).toBe(2);
+	});
+});
+
+describe("fetchLaLigaStandings()", () => {
+	it("parses ESPN La Liga standings correctly", async () => {
+		fetchJson.mockResolvedValue(mockFootballResponse);
+		const result = await fetchLaLigaStandings();
+
+		expect(result).toHaveLength(2);
+		expect(result[0]).toEqual({
+			position: 1,
+			team: "Arsenal",
+			teamShort: "ARS",
+			played: 25,
+			won: 18,
+			drawn: 4,
+			lost: 3,
+			gd: 32,
+			points: 58,
+		});
+	});
+
+	it("returns empty array when data structure is missing", async () => {
+		fetchJson.mockResolvedValue({});
+		const result = await fetchLaLigaStandings();
+		expect(result).toEqual([]);
+	});
+
+	it("sorts by position", async () => {
+		const reversed = {
+			children: [{
+				standings: {
+					entries: [
+						mockFootballResponse.children[0].standings.entries[1],
+						mockFootballResponse.children[0].standings.entries[0],
+					],
+				},
+			}],
+		};
+		fetchJson.mockResolvedValue(reversed);
+		const result = await fetchLaLigaStandings();
 		expect(result[0].position).toBe(1);
 		expect(result[1].position).toBe(2);
 	});
@@ -395,9 +439,12 @@ describe("fetchTennisRankings()", () => {
 });
 
 describe("standings.json output shape", () => {
-	it("should have the expected top-level structure", async () => {
+	it("should have the expected top-level structure including La Liga", async () => {
 		fetchJson.mockResolvedValue(mockFootballResponse);
-		const football = await fetchFootballStandings();
+		const pl = await fetchFootballStandings();
+
+		fetchJson.mockResolvedValue(mockFootballResponse);
+		const laLiga = await fetchLaLigaStandings();
 
 		fetchJson.mockResolvedValue(mockGolfResponse);
 		const golf = await fetchGolfLeaderboard();
@@ -407,17 +454,20 @@ describe("standings.json output shape", () => {
 
 		const standings = {
 			lastUpdated: new Date().toISOString(),
-			football: { premierLeague: football },
+			football: { premierLeague: pl, laLiga },
 			golf,
 			f1: { drivers: f1 },
 		};
 
 		expect(standings).toHaveProperty("lastUpdated");
 		expect(standings).toHaveProperty("football.premierLeague");
+		expect(standings).toHaveProperty("football.laLiga");
 		expect(standings).toHaveProperty("golf.pga");
 		expect(standings).toHaveProperty("golf.dpWorld");
 		expect(standings).toHaveProperty("f1.drivers");
 		expect(Array.isArray(standings.football.premierLeague)).toBe(true);
+		expect(Array.isArray(standings.football.laLiga)).toBe(true);
+		expect(standings.football.laLiga).toHaveLength(2);
 		expect(Array.isArray(standings.f1.drivers)).toBe(true);
 	});
 });
@@ -443,6 +493,21 @@ describe("buildStandingsContext()", () => {
 		expect(result).toContain("Premier League standings");
 		expect(result).toContain("Arsenal");
 		expect(result).toContain("58pts");
+	});
+
+	it("formats La Liga standings correctly", () => {
+		const standings = {
+			football: {
+				laLiga: [
+					{ position: 1, team: "Real Madrid", teamShort: "RMA", played: 26, won: 19, drawn: 4, lost: 3, gd: 40, points: 61 },
+					{ position: 2, team: "Barcelona", teamShort: "BAR", played: 26, won: 18, drawn: 3, lost: 5, gd: 30, points: 57 },
+				],
+			},
+		};
+		const result = buildStandingsContext(standings);
+		expect(result).toContain("La Liga standings");
+		expect(result).toContain("Real Madrid");
+		expect(result).toContain("61pts");
 	});
 
 	it("formats golf leaderboard correctly", () => {

@@ -307,6 +307,15 @@ export function buildStandingsContext(standings) {
 		parts.push(`Premier League standings (top 5):\n${rows.join("\n")}`);
 	}
 
+	// La Liga top 5
+	const laLiga = standings.football?.laLiga;
+	if (Array.isArray(laLiga) && laLiga.length > 0) {
+		const rows = laLiga.slice(0, 5).map(
+			(t) => `  ${t.position}. ${t.team} — ${t.points}pts (W${t.won} D${t.drawn} L${t.lost}, GD ${t.gd > 0 ? "+" : ""}${t.gd})`
+		);
+		parts.push(`La Liga standings (top 5):\n${rows.join("\n")}`);
+	}
+
 	// Golf leaderboards
 	for (const key of ["pga", "dpWorld"]) {
 		const tour = standings.golf?.[key];
