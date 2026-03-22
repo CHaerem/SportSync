@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-22T02:37:37.574Z",
+  "generatedAt": "2026-03-22T10:11:07.964Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 77795,
+    "generationMs": 52715,
     "tokenUsage": {
-      "input": 26423,
-      "output": 4599,
-      "cacheCreation": 26420,
+      "input": 26485,
+      "output": 3197,
+      "cacheCreation": 26482,
       "cacheRead": 0,
-      "total": 31022,
-      "costUSD": 0.16806899999999997,
+      "total": 29682,
+      "costUSD": 0.1472715,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 102,
+      "avgScore": 109,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 36,
+      "totalEvents": 34,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.972
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 36,
+      "totalEvents": 34,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 1,
-    "aiUpdatedFields": 1,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 36,
+    "totalEvents": 34,
     "skipStats": {
-      "total": 36,
-      "unchanged": 35,
-      "enriched": 1,
-      "skipRate": 0.97
+      "total": 34,
+      "unchanged": 34,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 21795,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21690,
-      "output": 105,
-      "calls": 1,
-      "total": 21795,
-      "costUSD": 0.052698600000000005,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
@@ -117,15 +117,15 @@
   },
   "discovery": {
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
+      "input": 268532,
+      "output": 2078,
       "calls": 1,
-      "total": 0,
-      "costUSD": 0,
+      "total": 270610,
+      "costUSD": 0.3871499,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-22T06:21:53.691Z",
+    "lastRun": "2026-03-22T10:09:03.360Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
