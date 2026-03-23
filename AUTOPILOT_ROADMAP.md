@@ -167,6 +167,11 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **recapHeadline single-team matching** — Added 4th matching tier: single football-tagged team + 6h time proximity. Norwegian headlines mentioning only one team now match. Run 31.
 - [DONE] [MAINTENANCE] **isEventInWindow() convention violations** — Replaced 2 manual date filters in `generate-featured.js` (lines 573, 648) with `isEventInWindow()`. Other 2 locations (golf.js, espn-adapter.js) did not exist. Run 31.
 - [DONE] [MAINTENANCE] **WCAG minimum font sizes** — Bumped 12 CSS declarations from 0.42-0.54rem to 0.55rem minimum. PR #142. Run 31.
+- [DONE] [MAINTENANCE] **Must-watch styling + sport pill counts + ARIA labels** — Enhanced must-watch border (3px/0.6 opacity), added event count badges to sport filter pills, added `role="main"` ARIA label. PR #143. Run 32.
+
+- [PENDING] [MAINTENANCE] **importanceReason as badge for importance=5 events** — For importance=5 events, show `importanceReason` as a badge-style label above the `summary` (rather than either/or fallback). Currently `renderRow` shows summary OR importanceReason. Both carry complementary info. Files: `docs/js/dashboard.js` (renderRow method). Pillar: quality. Scouted run 32.
+- [PENDING] [MAINTENANCE] **Norwegian rider names in cycling card headers** — Cycling events with `norwegianPlayers` (e.g. Jonas Abrahamsen, Markus Hoelgaard) show no rider info in collapsed sport-group card headers. Golf gets leaderboard, football gets logos, but cycling shows nothing. Add rider names below the lede. Files: `docs/js/dashboard.js` (renderSportGroupCard). Pillar: personalization. Scouted run 32.
+- [PENDING] [MAINTENANCE] **Brief headline live-state indicator** — When a match featured in the brief headline goes live or finishes, the headline should visually indicate that state (LIVE badge or FT score). `generateDynamicBriefLine()` already replaces event-lines but doesn't update the main headline. Files: `docs/js/dashboard.js` (renderEditorial). Pillar: quality. Scouted run 32.
 
 ---
 

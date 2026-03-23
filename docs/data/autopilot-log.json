@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-23",
+      "task": "Scouting + UX batch: must-watch styling, sport pill counts, ARIA labels (PR #143)",
+      "outcome": "completed",
+      "pr": "PR #143 (merged)",
+      "details": "Run 32: 0 user feedback, 0 pending tasks — scouting run. 3 parallel scouts (UX 8 findings, Code investigating recapHeadlineRate, Data investigating tennis/football retains). UX-agent worktree executed 3 batched improvements: (1) Must-watch event border enhanced 2px/0.35 → 3px/0.6 + background opacity 0.04 → 0.07 (dark mode: 0.08 → 0.12, border 0.4 → 0.5). (2) Sport filter pills now show event count badges per sport. (3) Added role='main' aria-label on feed container. System healthy: 11/11 loops, editorial 100/100, 0 high-severity patterns. 3 new PENDING tasks added from scouting findings.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 20,
+      "lesson": "Must-watch accent was near-invisible at 4% opacity — increasing to 7% + thicker border makes importance=4-5 events scannable without breaking editorial aesthetic. Sport pill counts give instant event distribution at a glance. Tennis 15 consecutive retains and football 3 retains are normal off-schedule gaps, not fetcher bugs. recapHeadlineRate: 0 is structural — RSS keeps only 30 items from 24h window while results span 7 days, so most matches have no matching headlines regardless of matching algorithm.",
+      "scouted": 3
+    },
+    {
       "date": "2026-03-22",
       "task": "Execution run: 4 tasks — La Liga context, recapHeadline single-team, isEventInWindow, WCAG font sizes (PR #142)",
       "outcome": "completed",
