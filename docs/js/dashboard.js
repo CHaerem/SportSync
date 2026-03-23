@@ -1841,6 +1841,14 @@ class Dashboard {
 			}
 		}
 
+		// Cycling: show Norwegian rider names below the lede
+		if (sportId === 'cycling') {
+			const riderNames = [...new Set(events.flatMap(e => (e.norwegianPlayers || []).map(p => typeof p === 'string' ? p : p.name).filter(Boolean)))];
+			if (riderNames.length > 0) {
+				html += `<div style="font-size:0.65rem;color:var(--muted);padding:2px 0 4px 0;line-height:1.3">\ud83c\uddf3\ud83c\uddf4 ${this.esc(riderNames.join(', '))}</div>`;
+			}
+		}
+
 		// Event rows inside the card
 		for (const e of events) {
 			const date = new Date(e.time);
