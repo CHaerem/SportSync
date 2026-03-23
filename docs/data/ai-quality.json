@@ -1,35 +1,37 @@
 {
-  "generatedAt": "2026-03-23T14:30:11.058Z",
+  "generatedAt": "2026-03-23T22:15:30.371Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "model": "default",
+    "quotaTier": 0,
+    "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 6,
-    "generationMs": 46439,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"🏎️ Fri 03:30 — Aramco Japanese GP at Suzuka — Rus...\""
+    ],
+    "blockCount": 7,
+    "generationMs": 57249,
     "tokenUsage": {
-      "input": 25920,
-      "output": 2273,
-      "cacheCreation": 25917,
-      "cacheRead": 0,
-      "total": 28193,
-      "costUSD": 0.13129274999999999,
+      "input": 25976,
+      "output": 2793,
+      "cacheCreation": 17216,
+      "cacheRead": 8757,
+      "total": 28769,
+      "costUSD": 0.1090911,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 89,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.75,
       "quietDayCompliance": 0.3,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -51,20 +53,20 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.054,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 37
+      "footballCount": 35
     },
     "issues": [
-      "Only 5% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
       "totalEvents": 27,
       "importanceCoverage": 1,
@@ -125,7 +127,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-23T18:21:19.853Z",
+    "lastRun": "2026-03-23T22:11:28.498Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
