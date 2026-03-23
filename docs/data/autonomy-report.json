@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-22T22:11:41.927Z",
-  "overallScore": 1,
-  "loopsClosed": 11,
+  "generatedAt": "2026-03-23T02:54:09.053Z",
+  "overallScore": 0.91,
+  "loopsClosed": 10,
   "loopsTotal": 11,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints wired (58 fired)"
+      "details": "100 entries, hints wired (59 fired)"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -22,17 +22,17 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 5 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 6 issue(s) are info/known"
     },
     "watchPlan": {
-      "score": 1,
-      "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "score": 0,
+      "status": "open",
+      "details": "No watch plan data or no picks"
     },
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "75 completed tasks in autopilot log"
+      "details": "76 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
