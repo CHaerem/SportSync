@@ -15,6 +15,7 @@ export const sportsConfig = {
 					{ code: "uefa.champions", name: "Champions League" },
 					{ code: "nor.1", name: "Eliteserien" },
 					{ code: "nor.2", name: "OBOS-ligaen" },
+					{ code: "nor.cup", name: "Norwegian Cup" },
 					{ code: "fifa.world", name: "International" }
 				]
 			},
