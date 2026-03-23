@@ -186,13 +186,33 @@ async function main() {
 	const results = await Promise.all(FEEDS.map(fetchFeed));
 	const allItems = results.flat();
 
-	// Sort by pubDate descending, limit to 30 most recent
+	// Sort by pubDate descending
 	allItems.sort((a, b) => {
 		const da = new Date(a.pubDate || 0);
 		const db = new Date(b.pubDate || 0);
 		return db - da;
 	});
-	const digest = allItems.slice(0, 30);
+
+	// Per-sport minimum retention: guarantee at least 3 items per sport tag
+	// before applying the overall cap. This prevents general-sport feeds from
+	// crowding out sport-specific feeds (e.g. tv2-fotball, bbc-football).
+	const CAP = 40;
+	const MIN_PER_SPORT = 3;
+	const guaranteed = new Set();
+	const sportCounts = {};
+	for (const item of allItems) {
+		const s = item.sport || "general";
+		sportCounts[s] = (sportCounts[s] || 0) + 1;
+		if (sportCounts[s] <= MIN_PER_SPORT) {
+			guaranteed.add(item);
+		}
+	}
+	// Fill remaining slots with newest items (excluding already-guaranteed)
+	const remaining = allItems.filter(i => !guaranteed.has(i));
+	const combined = [...guaranteed, ...remaining.slice(0, CAP - guaranteed.size)];
+	// Re-sort by date since guaranteed items may be older
+	combined.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+	const digest = combined.slice(0, CAP);
 
 	// Summary by sport
 	const bySport = {};
