@@ -651,7 +651,9 @@ export function matchRssHeadline(homeTeam, awayTeam, rssItems, options = {}) {
 		}
 
 		// Collect single-team football candidates for the 4th tier (evaluated below)
-		if (item.sport === "football" && (homeHit || awayHit)) {
+		// Accept both football-tagged and general-sport items — Norwegian RSS sources
+		// (NRK, TV2) tag football headlines as "general", not "football"
+		if ((item.sport === "football" || item.sport === "general") && (homeHit || awayHit)) {
 			singleTeamCandidates.push(item);
 		}
 	}

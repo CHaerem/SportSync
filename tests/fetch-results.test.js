@@ -619,11 +619,21 @@ describe("matchRssHeadline()", () => {
 		expect(result).toBe("Bodø/Glimt vant 3-1");
 	});
 
-	it("does NOT apply single-team tier to non-football-tagged items", () => {
+	it("matches single-team in general-sport-tagged items (Norwegian RSS sources)", () => {
 		const matchDate = "2026-03-22T17:00:00Z";
 		const pubDate = new Date(new Date(matchDate).getTime() + 2 * 60 * 60 * 1000).toUTCString();
 		const items = [
 			{ title: "Arsenal storspilte hjemme", sport: "general", pubDate },
+		];
+		const result = matchRssHeadline("Arsenal", "Chelsea", items, { matchDate });
+		expect(result).toBe("Arsenal storspilte hjemme");
+	});
+
+	it("does NOT apply single-team tier to non-football/general-tagged items", () => {
+		const matchDate = "2026-03-22T17:00:00Z";
+		const pubDate = new Date(new Date(matchDate).getTime() + 2 * 60 * 60 * 1000).toUTCString();
+		const items = [
+			{ title: "Cycling news about Arsenal sponsor", sport: "cycling", pubDate },
 		];
 		const result = matchRssHeadline("Arsenal", "Chelsea", items, { matchDate });
 		expect(result).toBeNull();
