@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-23T10:28:17.331Z",
+  "generatedAt": "2026-03-23T14:30:12.857Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 27,
@@ -51,11 +51,11 @@
         "Atlético Madrid at Real Madrid"
       ]
     },
-    "featuredBlockCount": 5,
+    "featuredBlockCount": 6,
     "briefPresent": false,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 13
+    "editorialScore": 93,
+    "issueCount": 15
   },
   "findings": [
     {
@@ -151,22 +151,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Fitzpatrick\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Troms\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Florida\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Eliteserien\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Brann\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+      "message": "Featured mentions \"In La Liga\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -177,12 +177,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_league_conflation",
+      "message": "Block mixes PL standings language with non-PL team: \"Tromsø lead Eliteserien after defeating a still-winless Brann on Sunday. In La L...\""
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 25,
     "critical": 0,
-    "warning": 21,
+    "warning": 22,
     "info": 3
   },
   "pass": true,

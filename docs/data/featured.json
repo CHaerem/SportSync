@@ -1,12 +1,17 @@
 {
   "blocks": [
     {
-      "type": "golf-status",
-      "tournament": "pga"
+      "type": "narrative",
+      "text": "Tromsø lead Eliteserien after defeating a still-winless Brann on Sunday. In La Liga, Real Madrid edged city rivals Atlético 3-2 in a controversial derby — six points clear at the top."
     },
     {
-      "type": "narrative",
-      "text": "Fitzpatrick wins Valspar at -11. Viktor Hovland slides to T90 — a miserable week on the Florida swing as the season's marquee events approach."
+      "type": "match-result",
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Atlético Madrid"
+    },
+    {
+      "type": "golf-status",
+      "tournament": "pga"
     },
     {
       "type": "divider",
@@ -14,17 +19,17 @@
     },
     {
       "type": "event-line",
-      "text": "🏎️ Fri 03:30 — Aramco Japanese GP at Suzuka — Russell leads Antonelli by 4pts in the 2026 title fight"
+      "text": "🏎️ Fri 03:30 — Japanese GP at Suzuka — 2026 championship battle on the classic circuit"
     },
     {
       "type": "event-group",
-      "label": "🚴 Spring Classics — Norwegian charge",
+      "label": "🚴 Spring Classics",
       "items": [
-        "Fri 11:52 — E3 Saxo Classic: Abrahamsen & Hoelgaard on the cobbles",
-        "Sun 11:00 — Gent-Wevelgem: Wærenskjold hunts Norway's best Classic result of the spring"
+        "Fri 11:52 — E3 Saxo Classic — Abrahamsen & Hoelgaard on cobbles",
+        "Sun 11:00 — Gent-Wevelgem — Wærenskjold's best shot at a Classic result"
       ]
     }
   ],
-  "generatedAt": "2026-03-23T02:53:53.999Z",
+  "generatedAt": "2026-03-23T14:30:11.031Z",
   "provider": "claude-cli"
 }
