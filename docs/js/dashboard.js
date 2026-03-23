@@ -812,7 +812,8 @@ class Dashboard {
 			if (!sc) continue;
 			const isActive = this.activeSportFilter === sportId;
 			const dotColor = sportVars[sportId] || sc.color;
-			html += `<button class="pill${isActive ? ' active' : ''}" data-sport="${this.esc(sportId)}"><span class="pill-dot" style="background:${dotColor}"></span>${this.esc(sc.name)}</button>`;
+			const count = todayEvents.filter(e => e.sport === sportId).length;
+			html += `<button class="pill${isActive ? ' active' : ''}" data-sport="${this.esc(sportId)}"><span class="pill-dot" style="background:${dotColor}"></span>${this.esc(sc.name)}<span class="pill-count">${count}</span></button>`;
 		}
 		html += '</div>';
 		el.innerHTML = html;
