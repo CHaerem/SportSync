@@ -133,6 +133,7 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 		"low_confidence_config",   // loop 8: verification loop re-verifies, discovery re-researches
 		"component_unresolvable",  // loop 3: featured quality gates monitor and adapt prompts
 		"stale_output",            // quota adaptation: AI steps skipped when quota is tier 3, stale output is expected
+		"model_change_quality_drop",// loop 1+2: adaptive hints manage quality recovery after model changes; quality loops monitor and self-correct
 		"quota_high_utilization",  // quota adaptation: informational — quota system manages tier transitions autonomously
 		"ux_eval_fallback",        // infrastructure: Playwright unavailable in CI, file-based fallback is acceptable
 		"step_timeout_hit",        // quota adaptation: AI steps (discover/enrich) hit timeouts when quota-limited
