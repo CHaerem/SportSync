@@ -577,6 +577,19 @@ const TEAM_SHORT_FORMS = {
 	"real betis": ["betis"],
 	"rayo vallecano": ["rayo"],
 	"deportivo alavés": ["alaves", "alavés"],
+	"fc barcelona": ["barcelona", "barça", "barca"],
+	"sevilla fc": ["sevilla"],
+	"valencia cf": ["valencia"],
+	"villarreal cf": ["villarreal"],
+	"girona fc": ["girona"],
+	"rc celta de vigo": ["celta", "celta vigo"],
+	"ca osasuna": ["osasuna"],
+	"rcd mallorca": ["mallorca"],
+	"getafe cf": ["getafe"],
+	"ud las palmas": ["las palmas"],
+	"rcd espanyol": ["espanyol"],
+	"cd leganés": ["leganes", "leganés"],
+	"real valladolid": ["valladolid"],
 };
 
 /**
