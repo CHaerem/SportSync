@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-24",
+      "task": "Execution run: 6 tasks — importance badge + cycling names (PR #144), headline live-state (PR #145), RSS cap testability, recapHeadline + nor.cup verification",
+      "outcome": "completed",
+      "pr": "PR #144 (merged) + PR #145 (merged) + direct-to-main (2 commits)",
+      "details": "Run 33: 0 user feedback, 6 pending tasks from run 32's scouting. (1-2) PR #144 merged: importanceReason badge for importance=5 + Norwegian rider names in cycling cards. (3) PR #145 created+merged: brief headline live-state indicator — LIVE badge with pulsing dot + FT badge. (4) recapHeadline 4th-tier sport filter — already fixed in 0fcf34ad. (5) RSS item cap — already fixed (CAP=40, MIN_PER_SPORT=3) but extracted applyPerSportCap() as testable export + 6 new unit tests. (6) Norwegian Cup (nor.cup) — already added in 38a9393a. 3 parallel subagents (ux-agent worktree, code-agent worktree, data-agent worktree). All 9926 tests pass.",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 18,
+      "lesson": "3 of 6 tasks were already implemented — verifying task preconditions before delegating is critical. Scouting→execution pipeline 8th consecutive cycle. Code-agent efficiently identified pre-existing fixes and added test coverage instead of duplicating work. Stale PR merge at run start saves subagent turns — PR #144 was blocked only by Pages preview deploy failure (not real test failure).",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-23",
       "task": "Scouting + UX batch: must-watch styling, sport pill counts, ARIA labels (PR #143)",
       "outcome": "completed",

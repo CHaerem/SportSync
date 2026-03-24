@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-24",
+        "note": "Run 33: Execution run — 6 pending tasks from run 32. Merged stale PR #144 (importance badge + cycling rider names) + created+merged PR #145 (headline live-state). 3 parallel subagents. 3/6 tasks were already implemented — code-agent added test coverage instead of duplicating. Data-agent verified nor.cup. All 9926 tests pass. User-visible/infrastructure: 80%/20% (headline live-state + importance badge + cycling names = user-visible; test extraction = infra). ~18 orchestrator turns."
+      },
+      {
         "date": "2026-03-23",
         "note": "Run 32: Scouting run — 0 pending tasks, 0 user feedback. 3 parallel scouts (UX, code, data) + 1 UX-agent worktree (batched PR #143, merged). UX scout found 8 opportunities, top 3 executed: must-watch accent enhancement (CSS opacity/border), sport pill event count badges, ARIA role=main. Code scout investigated recapHeadlineRate:0 — confirmed structural (24h RSS window vs 7-day results), not algorithmic. Data scout confirmed tennis 15 retains and football 3 retains are normal schedule gaps. 3 new PENDING tasks added: importanceReason badge, cycling rider names, brief headline live-state. User-visible/infrastructure: 100%/0%. ~20 orchestrator turns."
       },
