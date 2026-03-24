@@ -178,6 +178,32 @@ async function fetchFeed(feed) {
 	}
 }
 
+/**
+ * Apply a per-sport minimum retention cap to a sorted (newest-first) item list.
+ * Guarantees at least minPerSport items per sport tag before filling remaining
+ * slots with the newest items overall, up to cap total items.
+ *
+ * This prevents high-volume general-sport feeds from crowding out sport-specific
+ * feeds like tv2-fotball and bbc-football when sorted purely by date.
+ */
+export function applyPerSportCap(items, cap = 40, minPerSport = 3) {
+	const guaranteed = new Set();
+	const sportCounts = {};
+	for (const item of items) {
+		const s = item.sport || "general";
+		sportCounts[s] = (sportCounts[s] || 0) + 1;
+		if (sportCounts[s] <= minPerSport) {
+			guaranteed.add(item);
+		}
+	}
+	// Fill remaining slots with newest items (excluding already-guaranteed)
+	const remaining = items.filter(i => !guaranteed.has(i));
+	const combined = [...guaranteed, ...remaining.slice(0, cap - guaranteed.size)];
+	// Re-sort by date since guaranteed items may be older than the newest items
+	combined.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+	return combined.slice(0, cap);
+}
+
 async function main() {
 	const dataDir = rootDataPath();
 	const outPath = path.join(dataDir, "rss-digest.json");
@@ -198,21 +224,7 @@ async function main() {
 	// crowding out sport-specific feeds (e.g. tv2-fotball, bbc-football).
 	const CAP = 40;
 	const MIN_PER_SPORT = 3;
-	const guaranteed = new Set();
-	const sportCounts = {};
-	for (const item of allItems) {
-		const s = item.sport || "general";
-		sportCounts[s] = (sportCounts[s] || 0) + 1;
-		if (sportCounts[s] <= MIN_PER_SPORT) {
-			guaranteed.add(item);
-		}
-	}
-	// Fill remaining slots with newest items (excluding already-guaranteed)
-	const remaining = allItems.filter(i => !guaranteed.has(i));
-	const combined = [...guaranteed, ...remaining.slice(0, CAP - guaranteed.size)];
-	// Re-sort by date since guaranteed items may be older
-	combined.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
-	const digest = combined.slice(0, CAP);
+	const digest = applyPerSportCap(allItems, CAP, MIN_PER_SPORT);
 
 	// Summary by sport
 	const bySport = {};

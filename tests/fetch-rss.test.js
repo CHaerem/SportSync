@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseRssItems, isNorwegianRelevant, filterRecent } from "../scripts/fetch-rss.js";
+import { parseRssItems, isNorwegianRelevant, filterRecent, applyPerSportCap } from "../scripts/fetch-rss.js";
 import { buildRssContext } from "../scripts/generate-featured.js";
 
 const SAMPLE_RSS = `<?xml version="1.0" encoding="UTF-8"?>
@@ -188,5 +188,75 @@ describe("rss-digest.json output shape", () => {
 		expect(output.items[0]).toHaveProperty("source");
 		expect(output.items[0]).toHaveProperty("sport");
 		expect(output.items[0]).toHaveProperty("title");
+	});
+});
+
+describe("applyPerSportCap()", () => {
+	function makeItem(sport, title, pubDate = new Date().toUTCString()) {
+		return { sport, title, pubDate };
+	}
+
+	it("returns all items when under cap", () => {
+		const items = [makeItem("football", "A"), makeItem("golf", "B")];
+		const result = applyPerSportCap(items, 40, 3);
+		expect(result).toHaveLength(2);
+	});
+
+	it("guarantees minPerSport items per sport even when general-sport items dominate", () => {
+		// 20 general items + 2 football items — football would be dropped by pure date cap of 10
+		const generalItems = Array.from({ length: 20 }, (_, i) =>
+			makeItem("general", `General ${i}`, new Date(Date.now() - i * 1000).toUTCString())
+		);
+		const footballItems = [
+			makeItem("football", "Football A", new Date(Date.now() - 25000).toUTCString()),
+			makeItem("football", "Football B", new Date(Date.now() - 26000).toUTCString()),
+		];
+		const items = [...generalItems, ...footballItems];
+		const result = applyPerSportCap(items, 10, 3);
+		const footballInResult = result.filter(i => i.sport === "football");
+		expect(footballInResult).toHaveLength(2);
+		expect(result).toHaveLength(10);
+	});
+
+	it("does not exceed cap even when minPerSport guaranteed items fill it", () => {
+		// 5 sports * 3 items = 15 guaranteed items, with cap=10 → still capped at 10
+		const sports = ["football", "golf", "tennis", "formula1", "chess"];
+		const items = sports.flatMap(s =>
+			Array.from({ length: 3 }, (_, i) => makeItem(s, `${s} ${i}`))
+		);
+		const result = applyPerSportCap(items, 10, 3);
+		expect(result.length).toBeLessThanOrEqual(10);
+	});
+
+	it("preserves at most minPerSport items per sport in the guaranteed set", () => {
+		const items = Array.from({ length: 10 }, (_, i) =>
+			makeItem("football", `Football ${i}`, new Date(Date.now() - i * 1000).toUTCString())
+		);
+		// With minPerSport=3, only first 3 football items are guaranteed
+		// Fill with cap=5 → 3 guaranteed + 2 remaining football = 5
+		const result = applyPerSportCap(items, 5, 3);
+		expect(result).toHaveLength(5);
+		expect(result.every(i => i.sport === "football")).toBe(true);
+	});
+
+	it("result is sorted newest-first", () => {
+		const now = Date.now();
+		const items = [
+			makeItem("general", "Old", new Date(now - 10000).toUTCString()),
+			makeItem("football", "Newest", new Date(now).toUTCString()),
+			makeItem("golf", "Middle", new Date(now - 5000).toUTCString()),
+		];
+		const result = applyPerSportCap(items, 10, 3);
+		expect(result[0].title).toBe("Newest");
+		expect(result[result.length - 1].title).toBe("Old");
+	});
+
+	it("handles items with missing sport by treating as general", () => {
+		const items = [
+			{ title: "No sport", pubDate: new Date().toUTCString() },
+			makeItem("football", "Football A"),
+		];
+		const result = applyPerSportCap(items, 10, 3);
+		expect(result).toHaveLength(2);
 	});
 });
