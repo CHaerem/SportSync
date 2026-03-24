@@ -1841,6 +1841,14 @@ class Dashboard {
 			}
 		}
 
+		// Cycling: show Norwegian rider names below the lede
+		if (sportId === 'cycling') {
+			const riderNames = [...new Set(events.flatMap(e => (e.norwegianPlayers || []).map(p => typeof p === 'string' ? p : p.name).filter(Boolean)))];
+			if (riderNames.length > 0) {
+				html += `<div style="font-size:0.65rem;color:var(--muted);padding:2px 0 4px 0;line-height:1.3">\ud83c\uddf3\ud83c\uddf4 ${this.esc(riderNames.join(', '))}</div>`;
+			}
+		}
+
 		// Event rows inside the card
 		for (const e of events) {
 			const date = new Date(e.time);
@@ -2602,6 +2610,7 @@ class Dashboard {
 
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
+		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
 
 		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
 	return `
@@ -2612,6 +2621,7 @@ class Dashboard {
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
 				</div>
+				${importanceBadgeHtml}
 				${summaryHtml}
 				${importanceReasonHtml}
 				${isExpanded ? this.renderExpanded(event) : ''}
