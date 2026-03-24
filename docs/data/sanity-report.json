@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-03-24T14:34:57.817Z",
+  "generatedAt": "2026-03-24T18:29:02.763Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
     "sports": [
-      "golf",
       "football",
+      "golf",
       "f1",
       "cycling",
       "tennis",
@@ -17,6 +17,7 @@
       "today": [],
       "tomorrow": [],
       "thisWeek": [
+        "Texas Children's Houston Open",
         "Aramco Japanese Grand Prix",
         "E3 Saxo Classic 2026",
         "Gent-Wevelgem 2026 (In Flanders Fields)",
@@ -50,15 +51,14 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Valspar Championship",
         "Atlético Madrid at Real Madrid"
       ]
     },
-    "featuredBlockCount": 5,
-    "briefPresent": false,
-    "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 10
+    "featuredBlockCount": 7,
+    "briefPresent": true,
+    "pipelineStatus": "critical",
+    "editorialScore": 93,
+    "issueCount": 17
   },
   "findings": [
     {
@@ -152,6 +152,41 @@
       "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Hovland\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Valspar\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Belgian\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wærenskjold Norway\" but no matching athlete found in events data"
+    },
+    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
@@ -160,17 +195,12 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 35 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 21,
+    "total": 27,
     "critical": 0,
-    "warning": 18,
+    "warning": 24,
     "info": 3
   },
   "pass": true,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T14:34:56.200Z",
+  "generatedAt": "2026-03-24T18:29:00.904Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,28 +9,28 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 5,
-    "generationMs": 40722,
+    "blockCount": 7,
+    "generationMs": 59030,
     "tokenUsage": {
-      "input": 26194,
-      "output": 1774,
-      "cacheCreation": 17437,
-      "cacheRead": 8754,
-      "total": 27968,
-      "costUSD": 0.09463395000000001,
+      "input": 26116,
+      "output": 2888,
+      "cacheCreation": 26113,
+      "cacheRead": 0,
+      "total": 29004,
+      "costUSD": 0.14125275,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 93,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
-      "quietDayCompliance": 1,
+      "quietDayCompliance": 0.3,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.029,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 35
+      "footballCount": 34
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 3% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -83,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
     "totalEvents": 31,
     "skipStats": {
       "total": 31,
-      "unchanged": 31,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 30,
+      "enriched": 1,
+      "skipRate": 0.97
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 21919,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21804,
+      "output": 115,
+      "calls": 1,
+      "total": 21919,
+      "costUSD": 0.05328645,
       "tracked": true,
       "estimated": false
     }
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-24T14:31:10.860Z",
+    "lastRun": "2026-03-24T18:24:43.576Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
