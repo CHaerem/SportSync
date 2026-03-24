@@ -1,38 +1,36 @@
 {
-  "generatedAt": "2026-03-23T22:15:30.371Z",
+  "generatedAt": "2026-03-24T02:35:47.613Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"🏎️ Fri 03:30 — Aramco Japanese GP at Suzuka — Rus...\""
-    ],
-    "blockCount": 7,
-    "generationMs": 57249,
+    "score": 100,
+    "issues": [],
+    "blockCount": 4,
+    "generationMs": 44794,
     "tokenUsage": {
-      "input": 25976,
-      "output": 2793,
-      "cacheCreation": 17216,
-      "cacheRead": 8757,
-      "total": 28769,
-      "costUSD": 0.1090911,
+      "input": 26032,
+      "output": 2238,
+      "cacheCreation": 26029,
+      "cacheRead": 0,
+      "total": 28270,
+      "costUSD": 0.13118775,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 89,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 0.75,
-      "quietDayCompliance": 0.3,
+      "textQuality": 1,
+      "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
@@ -108,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 25911,
-      "output": 1814,
+      "input": 26032,
+      "output": 2238,
       "calls": 1,
-      "total": 27725,
+      "total": 28270,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-23T02:53:54.285Z"
+    "lastRun": "2026-03-24T02:35:47.889Z"
   },
   "discovery": {
     "tokenUsage": {
