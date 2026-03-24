@@ -1,92 +1,5 @@
 [
   {
-    "timestamp": "2026-03-03T18:22:02.114Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 82,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 88,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 27,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 40,
-      "warningCount": 26,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Fri\" which may not match any event; Featured mentions \"Trailing\" but no matching athlete found in events data; Featured mentions \"El Derbi Vasco\" but no matching athlete found in events data; Featured mentions \"Melbourne\" but no matching athlete found in events data; Featured mentions \"Biathlon Men\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 30913,
-        "output": 2142,
-        "calls": 1,
-        "total": 33055,
-        "costUSD": 0.2467525,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 35559,
-        "output": 5912,
-        "cacheCreation": 35556,
-        "cacheRead": 0,
-        "total": 41471,
-        "costUSD": 0.3700399999999999,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": null,
-      "total": {
-        "input": 66472,
-        "output": 8054,
-        "calls": 2,
-        "total": 74526,
-        "costUSD": 0.6167925,
-        "realPct": 100
-      }
-    },
-    "quota": {
-      "tier": 1,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97.429,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 89.714
-    }
-  },
-  {
     "timestamp": "2026-03-03T22:11:43.004Z",
     "editorial": {
       "score": 100,
@@ -9273,6 +9186,108 @@
         "total": 80016,
         "costUSD": 0.16857165000000002,
         "realPct": 65
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 97.429,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-24T14:34:56.208Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 5
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 5,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 0,
+      "avgScore": 0,
+      "streamingCoverage": 0
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0,
+      "goalScorerCoverage": 1,
+      "footballCount": 35,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 26,
+      "warningCount": 23,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Fri\" which may not match any event; Featured mentions \"Russell\" but no matching athlete found in events data; Featured mentions \"Antonelli\" but no matching athlete found in events data; Featured mentions \"Four\" but no matching athlete found in events data; Featured mentions \"Russell\" but no matching athlete found in events data; Featured mentions \"Antonelli\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26194,
+        "output": 1774,
+        "cacheCreation": 17437,
+        "cacheRead": 8754,
+        "total": 27968,
+        "costUSD": 0.09463395000000001,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26032,
+        "output": 2238,
+        "calls": 1,
+        "total": 28270,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 52226,
+        "output": 4012,
+        "calls": 3,
+        "total": 56238,
+        "costUSD": 0.09463395000000001,
+        "realPct": 50
       }
     },
     "quota": {

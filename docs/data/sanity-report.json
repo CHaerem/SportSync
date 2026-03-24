@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T10:25:36.988Z",
+  "generatedAt": "2026-03-24T14:34:57.817Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -54,11 +54,11 @@
         "Atlético Madrid at Real Madrid"
       ]
     },
-    "featuredBlockCount": 4,
+    "featuredBlockCount": 5,
     "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 10
   },
   "findings": [
     {
@@ -152,31 +152,6 @@
       "message": "Featured block references \"\udfce️ Fri\" which may not match any event"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Four\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
@@ -193,9 +168,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 21,
     "critical": 0,
-    "warning": 23,
+    "warning": 18,
     "info": 3
   },
   "pass": true,
