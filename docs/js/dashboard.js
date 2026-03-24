@@ -1024,8 +1024,12 @@ class Dashboard {
 		}
 
 		switch (block.type) {
-			case 'headline':
-				return `<h1 class="block-headline brief-headline">${this.renderBriefLine(block.text || '')}</h1>`;
+			case 'headline': {
+				const headlineMatchState = this._getHeadlineMatchState(block.text || '');
+				const headlineStateBadge = this._renderHeadlineStateBadge(headlineMatchState);
+				const headlineCls = headlineMatchState?.state === 'in' ? ' brief-headline-live' : '';
+				return `<h1 class="block-headline brief-headline${headlineCls}">${this.renderBriefLine(block.text || '')}${headlineStateBadge}</h1>`;
+			}
 			case 'event-line': {
 				const isLive = block._live || (block.text && (block.text.startsWith('LIVE:') || block.text.startsWith('\u26f3')));
 				const isResult = !isLive && block.text && /\bFT:/.test(block.text);
@@ -1056,6 +1060,51 @@ class Dashboard {
 
 	// Block renderers (match-result, match-preview, event-schedule, golf-status)
 	// are in block-renderers.js — delegated via _componentRenderers + _rendererCtx()
+
+	/**
+	 * Given the text of a headline block, find any football match referenced in it
+	 * (by team name mention) and return its live state from liveScores.
+	 * Returns { state: 'in'|'post', home, away, clock, homeTeam, awayTeam } or null.
+	 */
+	_getHeadlineMatchState(headlineText) {
+		if (!headlineText || Object.keys(this.liveScores).length === 0) return null;
+		const text = headlineText.toLowerCase();
+		for (const event of this.allEvents) {
+			if (event.sport !== 'football' || !event.homeTeam || !event.awayTeam) continue;
+			const score = this.liveScores[event.id];
+			if (!score || (score.state !== 'in' && score.state !== 'post')) continue;
+			// Check if headline mentions either team
+			const homeMatch = text.includes(event.homeTeam.toLowerCase());
+			const awayMatch = text.includes(event.awayTeam.toLowerCase());
+			if (homeMatch || awayMatch) {
+				return {
+					state: score.state,
+					home: score.home,
+					away: score.away,
+					clock: score.clock,
+					homeTeam: event.homeTeam,
+					awayTeam: event.awayTeam,
+				};
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Render a live or FT badge for a headline, given the match state from _getHeadlineMatchState.
+	 * Returns an HTML string to append after the headline text, or '' if no state.
+	 */
+	_renderHeadlineStateBadge(matchState) {
+		if (!matchState) return '';
+		if (matchState.state === 'in') {
+			const clock = matchState.clock ? ` ${this.esc(matchState.clock)}` : '';
+			return ` <span class="headline-live-badge"><span class="live-dot"></span>LIVE ${matchState.home}\u2013${matchState.away}${clock}</span>`;
+		}
+		if (matchState.state === 'post') {
+			return ` <span class="headline-ft-badge">FT ${matchState.home}\u2013${matchState.away}</span>`;
+		}
+		return '';
+	}
 
 	generateDynamicBriefLine() {
 		const now = new Date();
