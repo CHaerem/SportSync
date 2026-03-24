@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-03-24T14:35:58.187Z",
+  "lastUpdated": "2026-03-24T15:29:36.873Z",
   "current": {
     "fiveHour": {
-      "utilization": 58
+      "utilization": 67
     },
     "sevenDay": {
       "utilization": 34,
@@ -14,7 +14,7 @@
       "maxPriority": 2,
       "model": "claude-sonnet-4-6",
       "constrained": true,
-      "reason": "moderate: 5h 58%, 7d 34%",
+      "reason": "moderate: 5h 67%, 7d 34%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-03-07T14:13:39.144Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-03-24T14:36:00.414Z"
+    "checkedAt": "2026-03-24T15:29:38.828Z"
   },
   "internalTokens": {
     "enrichment": 0,
-    "featured": 0,
+    "featured": 27968,
     "discovery": 0,
-    "multiDay": 0,
-    "runTotal": 0
+    "multiDay": 28270,
+    "runTotal": 56238
   },
   "budget": {
-    "dailyUsed": 304932,
-    "weeklyUsed": 7546360,
+    "dailyUsed": 305252,
+    "weeklyUsed": 7544136,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
     "dailyPct": 6,
     "weeklyPct": 30
   },
   "sportsyncShare": {
-    "pipelineRuns": 121,
+    "pipelineRuns": 120,
     "autopilotRuns": 0,
-    "totalDurationMs": 11697709
+    "totalDurationMs": 11263003
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,18 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-03-17T14:37:50.318Z",
-      "context": "pipeline",
-      "durationMs": 429461,
-      "tokens": 0
-    },
-    {
-      "timestamp": "2026-03-17T15:27:59.909Z",
-      "context": "pipeline",
-      "durationMs": 11017,
-      "tokens": 58462
-    },
     {
       "timestamp": "2026-03-17T18:32:18.759Z",
       "context": "pipeline",
@@ -777,6 +765,12 @@
       "context": "pipeline",
       "durationMs": 288642,
       "tokens": 0
+    },
+    {
+      "timestamp": "2026-03-24T15:29:36.873Z",
+      "context": "pipeline",
+      "durationMs": 5772,
+      "tokens": 56238
     }
   ]
 }
