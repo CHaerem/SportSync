@@ -794,7 +794,7 @@ class Dashboard {
 		const todayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
 		const activeSports = [...new Set(todayEvents.map(e => e.sport))];
 
-		if (typeof SPORT_CONFIG === 'undefined' || activeSports.length <= 1) {
+		if (typeof SPORT_CONFIG === 'undefined' || activeSports.length === 0) {
 			el.innerHTML = '';
 			return;
 		}
@@ -805,7 +805,7 @@ class Dashboard {
 			cycling: 'var(--sport-cycling)',
 		};
 
-		let html = '<div class="pills-scroll" role="navigation" aria-label="Sport filters">';
+		let html = '<div class="pills-scroll">';
 		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports">All</button>`;
 		for (const sportId of activeSports) {
 			const sc = SPORT_CONFIG.find(s => s.id === sportId);
@@ -2341,6 +2341,8 @@ class Dashboard {
 		const scorers = goalScorers.slice(0, 4);
 		if (m.recapHeadline) {
 			html += `<div class="result-summary">${this.esc(m.recapHeadline)}</div>`;
+		} else if (matchedEvent?.summary) {
+			html += `<div class="result-summary">${this.esc(matchedEvent.summary)}</div>`;
 		} else {
 			// Fallback: build a context-aware one-liner using tags + goalscorer data
 			const tags = m.tags || [];
@@ -2881,6 +2883,11 @@ class Dashboard {
 		// F1: driver standings
 		if (event.sport === 'formula1' && this.standings?.[normalizePipelineSportId('formula1')]?.drivers?.length > 0) {
 			content += this.renderF1Standings();
+		}
+
+		// Format (chess, tennis) — show event format when available
+		if (event.format && (event.sport === 'chess' || event.sport === 'tennis')) {
+			content += `<div class="exp-esports-meta"><span class="exp-esports-format">${this.esc(event.format)}</span></div>`;
 		}
 
 		// Participants (chess, tennis) — structured vertical list
