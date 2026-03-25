@@ -176,6 +176,14 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **RSS item cap starves football-specific feeds** — Already fixed (CAP=40, MIN_PER_SPORT=3). Extracted `applyPerSportCap()` as testable export + 6 new tests. Run 33.
 - [DONE] [MAINTENANCE] **Add Norwegian Cup (nor.cup) to football leagues** — Added `{ code: "nor.cup", name: "Norwegian Cup" }` to `scripts/config/sports-config.js` football leagues. `fetch-results.js` derives LEAGUE_MAP from sportsConfig dynamically so it propagated automatically. Commit 38a9393a.
 
+- [DONE] [MAINTENANCE] **UX batch: result summary fallback, format field, ARIA, sport pills** — (1) Result card summary fallback uses AI-enriched summary from events.json when no recapHeadline (97% of cards). (2) Chess/tennis format field in expanded view. (3) ARIA landmarks on #sport-pills and #the-brief. (4) Sport pills visible with single active sport. PR #146. Run 34.
+- [DONE] [MAINTENANCE] **watchPlan loop false-negative on quiet days** — evaluateWatchPlan() now awards 0.5 (partial) when plan is fresh and ran successfully but found no qualifying events. Fixes autonomy score drop during international breaks. Direct-to-main. Run 34.
+
+- [PENDING] [MAINTENANCE] **Norwegian relevance gradient badge** — Events with norwegianRelevance 2-3 show no Norwegian indicator despite clear relevance (e.g., cycling events with Norwegian riders). Add a secondary lighter badge or indicator for relevance 2-3 alongside the existing >= 4 threshold. ~10 lines in dashboard.js. (Pillar: personalization)
+- [PENDING] [MAINTENANCE] **Insights section visual weight** — #insights section has no card wrapper, no visual boundary, and 0.72rem muted text is nearly invisible. Add a card wrapper, section landmark, and slightly larger text. ~15 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Export + test snapshotHealth and streamingVerification evaluators** — evaluateSnapshotHealth() and evaluateStreamingVerification() are not exported from autonomy-scorecard.js, preventing direct unit testing. Export them and add 4-6 test cases. ~40 lines. (Pillar: code)
+- [PENDING] [MAINTENANCE] **Wire complexity report into pipeline health** — analyze-code-complexity.js generates complexity-report.json but pipeline-health.js never reads it. Wire it in to surface high-complexity files as health warnings, closing the documented loop. ~25 lines. (Pillar: quality)
+
 ---
 
 ## Lessons & Effectiveness
@@ -222,8 +230,22 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 3. Capabilities | ~88% | 2026-03-14 | FT badge styling fixed, result row keyboard a11y, F1 league config 2025→2026 (PR #132) |
 | 5. Quality | ~100% | 2026-03-21 | Focus styles on interactive elements, expand/collapse animation with reduced-motion guard, results count badge (PR #140) |
 | 2. Code | ~94% | 2026-03-21 | CS2 Tournaments 2026 league config mapped, 2467 tests pass |
+| 5. Quality | ~100% | 2026-03-25 | watchPlan loop false-negative fixed (partial credit on quiet days), ARIA landmarks added, 4 UX improvements (PR #146) |
+| 4. Personalization | ~72% | 2026-03-25 | Result card summary fallback surfaces AI-enriched summaries, chess/tennis format field rendered |
 
 ### Run History Insights
+
+**Run 2026-03-25 (Run 34):** Scouting + execution run — 0 pending tasks, 0 user feedback.
+- 3 parallel scouts (UX: 8 findings, Code: 8 findings, Data: 8 findings).
+- UX-agent worktree (PR #146): 4 improvements batched — result card summary fallback, chess/tennis format field, ARIA landmarks, single-sport pill bar.
+- Code-agent worktree (direct-to-main): watchPlan loop false-negative fix — evaluateWatchPlan() awards 0.5 for fresh empty plans on quiet days. Autonomy score 91% → ~94%.
+- Football staleness (38 retains) confirmed as international break — no code fix needed. Data refreshes when club fixtures resume ~Mar 28.
+- Data scout identified: women's football (Maanum/Hegerberg) in RSS uncovered, NM-sluttspillet hockey uncovered, alpine WC finals in Hafjell uncovered — all require user sport-request per Sport Expansion Policy.
+- 4 new PENDING tasks added: Norwegian relevance gradient, insights visual weight, scorecard exports, complexity report loop.
+- **Key insight**: Football international break causes cascading health warnings (stale_data, chronic_retention, invisible_events) — all are expected behavior. The streaming match rate 0% is also expected when tvkampen listings don't overlap with tracked sports.
+- User-visible / infrastructure: 80% / 20% (4 UX improvements = user-visible; 1 scorecard fix = infrastructure).
+
+
 
 **Run 2026-03-21 (Run 30):** Scouting run — 0 pending tasks, 0 user feedback. 3 parallel scouts + orchestrator.
 - UX-agent (PR #140, merged): 3 improvements batched — (a) focus-visible outlines on event-row/result-row/day-item/pill + tabindex/role/keydown on day-items; (b) expand/collapse animation via max-height/opacity with prefers-reduced-motion guard; (c) results count badge on collapsed "What you missed" band.

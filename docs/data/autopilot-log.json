@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-25",
+      "task": "Scouting + execution: UX batch (PR #146) + watchPlan loop fix (direct-to-main)",
+      "outcome": "completed",
+      "pr": "PR #146 + direct-to-main (1 commit)",
+      "details": "Run 34: 0 user feedback, 0 pending tasks — scouting run. 3 parallel scouts (UX: 8 findings, Code: 8 findings, Data: 8 findings). UX-agent worktree (PR #146): 4 improvements batched — (1) result card summary fallback uses AI-enriched summary when no recapHeadline (97% of cards). (2) Chess/tennis format field in expanded view. (3) ARIA landmarks on #sport-pills and #the-brief. (4) Sport pills visible with single active sport. Code-agent worktree (direct-to-main): watchPlan loop false-negative fix — evaluateWatchPlan() awards 0.5 for fresh empty plans on quiet days (international break). Football staleness (38 retains) confirmed as international break, no fix needed. Data scout found women's football, hockey, alpine skiing in RSS but uncovered — per Sport Expansion Policy, requires user request. 4 new PENDING tasks added. All 7455 tests pass.",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 20,
+      "lesson": "International breaks cause cascading health warnings (stale_data, chronic_retention, invisible_events, streaming 0%) — all expected behavior. watchPlan loop had a false-negative: plan ran correctly but scored 0 because picks were empty on quiet days. Partial credit (0.5) for fresh empty plans is the right fix. Data scout found 3 sports in RSS with no dashboard coverage (women's football, hockey, alpine skiing) — all require user sport-request per policy. Scouting→execution pipeline 9th consecutive cycle.",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-24",
       "task": "Execution run: 6 tasks — importance badge + cycling names (PR #144), headline live-state (PR #145), RSS cap testability, recapHeadline + nor.cup verification",
       "outcome": "completed",
