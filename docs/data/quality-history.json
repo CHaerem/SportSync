@@ -1,99 +1,5 @@
 [
   {
-    "timestamp": "2026-03-04T06:21:59.058Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 91,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 29,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 13,
-      "warningCount": 10,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Fri\" which may not match any event; Featured mentions \"Melbourne\" but no matching athlete found in events data. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 31562,
-        "output": 522,
-        "calls": 1,
-        "total": 32084,
-        "costUSD": 0.21030874999999996,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 36179,
-        "output": 7982,
-        "cacheCreation": 19814,
-        "cacheRead": 16362,
-        "total": 44161,
-        "costUSD": 0.3315834999999999,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": null,
-      "multiDay": {
-        "input": 35559,
-        "output": 5912,
-        "calls": 1,
-        "total": 41471,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 103300,
-        "output": 14416,
-        "calls": 3,
-        "total": 117716,
-        "costUSD": 0.5418922499999999,
-        "realPct": 65
-      }
-    },
-    "quota": {
-      "tier": 1,
-      "model": "claude-sonnet-4-6",
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "claude-sonnet-4-6"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97.286,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.952,
-      "enrichmentScore": 100,
-      "resultsScore": 89.286
-    }
-  },
-  {
     "timestamp": "2026-03-04T11:01:52.278Z",
     "editorial": {
       "score": 100,
@@ -9309,6 +9215,103 @@
       "editorialScore": 96.429,
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-25T02:36:22.182Z",
+    "editorial": {
+      "score": 93,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.667,
+      "blockCount": 6
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 6,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 0,
+      "avgScore": 0,
+      "streamingCoverage": 0
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0.032,
+      "goalScorerCoverage": 1,
+      "footballCount": 31,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 27,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Fri\" which may not match any event; Featured mentions \"Russell\" but no matching athlete found in events data; Featured mentions \"Antonelli\" but no matching athlete found in events data; Featured mentions \"Hovland\" but no matching athlete found in events data; Featured mentions \"Valspar\" but no matching athlete found in events data; Featured mentions \"Augusta\" but no matching athlete found in events data; Featured mentions \"Belgian\" but no matching athlete found in events data; Featured mentions \"Wærenskjold Norway\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 21804,
+        "output": 115,
+        "calls": 1,
+        "total": 21919,
+        "costUSD": 0.05328645,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26284,
+        "output": 2663,
+        "cacheCreation": 26281,
+        "cacheRead": 0,
+        "total": 28947,
+        "costUSD": 0.13850774999999999,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26032,
+        "output": 2238,
+        "calls": 1,
+        "total": 28270,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 74120,
+        "output": 5016,
+        "calls": 4,
+        "total": 79136,
+        "costUSD": 0.19179419999999997,
+        "realPct": 64
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.429,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.952,
       "enrichmentScore": 100,
       "resultsScore": 89
     }

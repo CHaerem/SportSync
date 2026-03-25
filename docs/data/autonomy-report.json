@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-24T22:14:58.441Z",
-  "overallScore": 0.91,
+  "generatedAt": "2026-03-25T02:36:39.075Z",
+  "overallScore": 0.95,
   "loopsClosed": 10,
   "loopsTotal": 11,
   "loops": {
@@ -25,14 +25,14 @@
       "details": "Health report is fresh (0 min old), 9 issue(s) are info/known"
     },
     "watchPlan": {
-      "score": 0,
-      "status": "open",
-      "details": "No watch plan data or no picks"
+      "score": 0.5,
+      "status": "partial",
+      "details": "Watch plan generated but no qualifying events (quiet day)"
     },
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "77 completed tasks in autopilot log"
+      "details": "78 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
