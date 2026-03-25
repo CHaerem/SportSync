@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T06:31:25.871Z",
+  "generatedAt": "2026-03-25T10:25:49.563Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,11 +55,11 @@
         "Atlético Madrid at Real Madrid"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 5,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 9
+    "issueCount": 12
   },
   "findings": [
     {
@@ -155,37 +155,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Maaanum\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Premier League\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Wolfsburg\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Hegerberg\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Suzuka Japanese\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Hovland\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Valspar\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -199,9 +184,9 @@
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 24,
     "critical": 0,
-    "warning": 24,
+    "warning": 21,
     "info": 3
   },
   "pass": true,
