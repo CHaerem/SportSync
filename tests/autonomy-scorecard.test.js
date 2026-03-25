@@ -308,8 +308,40 @@ describe("evaluateWatchPlan()", () => {
 		expect(result.status).toBe("open");
 	});
 
-	it("scores 0 when picks array is empty", () => {
+	it("scores 0 when picks array is empty and no generatedAt/summary", () => {
 		writeJson(path.join(dataDir, "watch-plan.json"), { picks: [] });
+		const result = evaluateWatchPlan(dataDir);
+		expect(result.score).toBe(0);
+	});
+
+	it("scores 0.5 when picks are empty but plan is fresh with a summary (quiet day)", () => {
+		writeJson(path.join(dataDir, "watch-plan.json"), {
+			picks: [],
+			generatedAt: new Date().toISOString(),
+			summary: "No high-priority events in the next 24 hours.",
+		});
+		const result = evaluateWatchPlan(dataDir);
+		expect(result.score).toBe(0.5);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("quiet day");
+	});
+
+	it("scores 0 when picks are empty and plan is stale (even with a summary)", () => {
+		const sixHoursAgo = new Date(Date.now() - 361 * 60 * 1000).toISOString();
+		writeJson(path.join(dataDir, "watch-plan.json"), {
+			picks: [],
+			generatedAt: sixHoursAgo,
+			summary: "No high-priority events in the next 24 hours.",
+		});
+		const result = evaluateWatchPlan(dataDir);
+		expect(result.score).toBe(0);
+	});
+
+	it("scores 0 when picks are empty, plan is fresh, but summary is missing", () => {
+		writeJson(path.join(dataDir, "watch-plan.json"), {
+			picks: [],
+			generatedAt: new Date().toISOString(),
+		});
 		const result = evaluateWatchPlan(dataDir);
 		expect(result.score).toBe(0);
 	});

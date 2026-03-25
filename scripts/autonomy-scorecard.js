@@ -161,7 +161,20 @@ export function evaluateWatchPlan(dataDir = ROOT) {
 	const planPath = path.join(dataDir, "watch-plan.json");
 	const plan = readJsonIfExists(planPath);
 
-	if (!plan || !Array.isArray(plan.picks) || plan.picks.length === 0) {
+	if (!plan) {
+		return makeLoop(0, "No watch plan data or no picks");
+	}
+
+	if (!Array.isArray(plan.picks) || plan.picks.length === 0) {
+		// Distinguish "module ran but no qualifying events" from "module broken/missing"
+		const generatedAt = plan.generatedAt ? new Date(plan.generatedAt) : null;
+		const ageMinutes = generatedAt ? (Date.now() - generatedAt.getTime()) / 60000 : Infinity;
+		const isFresh = ageMinutes < 360; // 6 hours
+		const hasSummary = typeof plan.summary === "string" && plan.summary.length > 0;
+
+		if (isFresh && hasSummary) {
+			return makeLoop(0.5, "Watch plan generated but no qualifying events (quiet day)");
+		}
 		return makeLoop(0, "No watch plan data or no picks");
 	}
 
