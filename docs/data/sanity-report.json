@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T18:27:13.921Z",
+  "generatedAt": "2026-03-25T22:19:02.891Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -55,11 +55,11 @@
         "Atlético Madrid at Real Madrid"
       ]
     },
-    "featuredBlockCount": 6,
-    "briefPresent": true,
+    "featuredBlockCount": 5,
+    "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 93,
-    "issueCount": 9
+    "issueCount": 12
   },
   "findings": [
     {
@@ -150,32 +150,52 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Fri — Suzuka Japanese GP\" which may not match any event"
+      "message": "Featured block references \"\udfce️ Fri–Sun — Aramco Japanese GP: Russell leads Antonelli by just 4pts — Suzuka decides early momentum\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Solbakken\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Graham Hansen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Dutch\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Berge\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Manchester United\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Suzuka Japanese\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Naalsund\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Terland\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Two Norwegian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -186,12 +206,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 30,
     "critical": 0,
-    "warning": 22,
+    "warning": 27,
     "info": 3
   },
   "pass": true,
