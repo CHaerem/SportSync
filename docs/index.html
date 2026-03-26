@@ -845,6 +845,7 @@
 		}
 		.row-title strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 		.row-nor { font-size: 0.6rem; margin-left: 4px; vertical-align: middle; }
+		.row-nor-muted { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; margin-left: 4px; vertical-align: middle; color: var(--muted-light); opacity: 0.85; }
 		.row-fav { font-size: 0.6rem; margin-left: 3px; vertical-align: middle; color: var(--accent); opacity: 0.7; }
 		.row-meta {
 			display: block; font-size: 0.6rem; color: var(--muted); opacity: 0.65;
@@ -1220,9 +1221,10 @@
 		#insights:not(:empty) {
 			background: var(--bg-card); border-radius: var(--radius);
 			padding: 14px 18px; margin: 0 16px 10px; box-shadow: var(--shadow);
+			border: 1px solid var(--border-light);
 		}
-		.insights-header { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
-		.insight-line { font-size: 0.72rem; padding: 2px 0; line-height: 1.5; color: var(--muted); }
+		.insights-header { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
+		.insight-line { font-size: 0.8rem; padding: 3px 0; line-height: 1.55; color: var(--text); }
 
 		/* === News === */
 		#news { padding: 0 16px; }
