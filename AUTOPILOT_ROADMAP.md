@@ -187,6 +187,8 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [PENDING] [MAINTENANCE] **Day navigator empty-day indicator** — Days with 0 events show the same styling as days with events. Add a muted/dimmed treatment (e.g., lighter dot color, reduced opacity text) for empty days so users can quickly scan which days have content. health-report.json already flags `empty_day` — surface this visually. ~15 lines in dashboard.js. (Pillar: quality)
 - [PENDING] [MAINTENANCE] **Watch-plan "why" tooltip** — Watch-plan picks show the streaming link and thumbs but not the `reason` field. Surface the pick reason (e.g., "Top-4 clash, Norwegian interest") as a subtitle or tooltip to help users understand why a pick was recommended. ~10 lines in dashboard.js. (Pillar: personalization)
 - [PENDING] [MAINTENANCE] **Dark mode NOR badge contrast** — The new `.row-nor-muted` badge uses `var(--muted-light)` which may be too dim in dark mode. Verify contrast and add a `.dark .row-nor-muted` rule if needed. ~5 lines in index.html. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Staleness warning dark mode colors** — `renderStalenessWarning()` uses hardcoded light colors (#fff3cd bg, #856404 text) that are unreadable in dark mode. Replace with CSS variables that adapt to `.dark` class. ~15 lines in dashboard.js + index.html. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Norwegian players badge in compact golf rows** — Golf events have `norwegianPlayers` array but only show in expanded view. Add a small "🇳🇴 2" badge to collapsed golf rows so users can scan which events feature Norwegian players. ~8 lines in dashboard.js. (Pillar: personalization)
 
 ---
 
