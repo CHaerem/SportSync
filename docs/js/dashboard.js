@@ -2632,9 +2632,14 @@ class Dashboard {
 		// Inline sport emoji prefix for single-event sport groups
 		const emojiPrefix = inlineSportEmoji ? `${inlineSportEmoji} ` : '';
 
-		// Norwegian interest badge
+		// Norwegian interest badge — full flag for high relevance, muted NOR for partial relevance
 		const isNorwegian = event.norwegian || event.norwegianPlayers?.length > 0 || event.norwegianRelevance >= 4;
-		const norBadge = isNorwegian ? '<span class="row-nor" title="Norsk interesse">🇳🇴</span>' : '';
+		const isPartialNor = !isNorwegian && (event.norwegianRelevance === 2 || event.norwegianRelevance === 3);
+		const norBadge = isNorwegian
+			? '<span class="row-nor" title="Norsk interesse">🇳🇴</span>'
+			: isPartialNor
+				? '<span class="row-nor-muted" title="Norsk relevans">NOR</span>'
+				: '';
 
 		// Favorite indicator
 		const favBadge = event.isFavorite ? '<span class="row-fav" title="Favorite">★</span>' : '';
