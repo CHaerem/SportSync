@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T18:29:26.947Z",
+  "generatedAt": "2026-03-26T22:13:37.973Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -57,10 +57,10 @@
       ]
     },
     "featuredBlockCount": 7,
-    "briefPresent": false,
+    "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 10
+    "editorialScore": 97,
+    "issueCount": 13
   },
   "findings": [
     {
@@ -156,12 +156,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Belgian\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sweden\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -171,12 +166,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Ronde\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -190,9 +185,9 @@
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 24,
     "critical": 0,
-    "warning": 22,
+    "warning": 21,
     "info": 3
   },
   "pass": true,
