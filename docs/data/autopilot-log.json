@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-26",
+      "task": "Execution run: UX batch (PR #147) + code batch (direct-to-main)",
+      "outcome": "completed",
+      "pr": "PR #147 (merged) + direct-to-main (1 commit)",
+      "details": "Run 35: 0 user feedback, 4 pending tasks from run 34. 2 parallel subagents. UX-agent worktree (PR #147, merged): Norwegian relevance gradient NOR badge for levels 2-3, insights section border + font size bump. Code-agent worktree (direct-to-main): 10 new evaluator tests (snapshotHealth + streamingVerification), complexityHealth wired into pipeline-health.js. 3 new PENDING tasks scouted. All 2496 tests pass.",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 16,
+      "lesson": "Parallel worktrees for mixed UX+code batches is optimal — both subagents finish independently in ~10 min. All 4 tasks from previous run's scouting consumed in one execution run. Complexity health loop now closed — system self-reports its own code complexity hotspots.",
+      "scouted": 3
+    },
+    {
       "date": "2026-03-25",
       "task": "Scouting + execution: UX batch (PR #146) + watchPlan loop fix (direct-to-main)",
       "outcome": "completed",

@@ -179,10 +179,14 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **UX batch: result summary fallback, format field, ARIA, sport pills** — (1) Result card summary fallback uses AI-enriched summary from events.json when no recapHeadline (97% of cards). (2) Chess/tennis format field in expanded view. (3) ARIA landmarks on #sport-pills and #the-brief. (4) Sport pills visible with single active sport. PR #146. Run 34.
 - [DONE] [MAINTENANCE] **watchPlan loop false-negative on quiet days** — evaluateWatchPlan() now awards 0.5 (partial) when plan is fresh and ran successfully but found no qualifying events. Fixes autonomy score drop during international breaks. Direct-to-main. Run 34.
 
-- [PENDING] [MAINTENANCE] **Norwegian relevance gradient badge** — Events with norwegianRelevance 2-3 show no Norwegian indicator despite clear relevance (e.g., cycling events with Norwegian riders). Add a secondary lighter badge or indicator for relevance 2-3 alongside the existing >= 4 threshold. ~10 lines in dashboard.js. (Pillar: personalization)
-- [PENDING] [MAINTENANCE] **Insights section visual weight** — #insights section has no card wrapper, no visual boundary, and 0.72rem muted text is nearly invisible. Add a card wrapper, section landmark, and slightly larger text. ~15 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Export + test snapshotHealth and streamingVerification evaluators** — evaluateSnapshotHealth() and evaluateStreamingVerification() are not exported from autonomy-scorecard.js, preventing direct unit testing. Export them and add 4-6 test cases. ~40 lines. (Pillar: code)
-- [PENDING] [MAINTENANCE] **Wire complexity report into pipeline health** — analyze-code-complexity.js generates complexity-report.json but pipeline-health.js never reads it. Wire it in to surface high-complexity files as health warnings, closing the documented loop. ~25 lines. (Pillar: quality)
+- [DONE] [MAINTENANCE] **Norwegian relevance gradient badge** — Added muted "NOR" text badge for norwegianRelevance 2-3 events (0.55rem, muted-light, 0.85 opacity). PR #147. Run 35.
+- [DONE] [MAINTENANCE] **Insights section visual weight** — Added border to card wrapper, bumped insight-line from 0.72rem/muted to 0.8rem/text, insights-header from 0.58rem to 0.6rem. PR #147. Run 35.
+- [DONE] [MAINTENANCE] **Export + test snapshotHealth and streamingVerification evaluators** — Added 10 unit tests (5 per evaluator) covering healthy, degraded, missing data, and edge cases. Direct-to-main. Run 35.
+- [DONE] [MAINTENANCE] **Wire complexity report into pipeline health** — Added complexityHealth block reading code-complexity-report.json, surfaces critical/high files as info-severity issues. Direct-to-main. Run 35.
+
+- [PENDING] [MAINTENANCE] **Day navigator empty-day indicator** — Days with 0 events show the same styling as days with events. Add a muted/dimmed treatment (e.g., lighter dot color, reduced opacity text) for empty days so users can quickly scan which days have content. health-report.json already flags `empty_day` — surface this visually. ~15 lines in dashboard.js. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Watch-plan "why" tooltip** — Watch-plan picks show the streaming link and thumbs but not the `reason` field. Surface the pick reason (e.g., "Top-4 clash, Norwegian interest") as a subtitle or tooltip to help users understand why a pick was recommended. ~10 lines in dashboard.js. (Pillar: personalization)
+- [PENDING] [MAINTENANCE] **Dark mode NOR badge contrast** — The new `.row-nor-muted` badge uses `var(--muted-light)` which may be too dim in dark mode. Verify contrast and add a `.dark .row-nor-muted` rule if needed. ~5 lines in index.html. (Pillar: quality)
 
 ---
 
@@ -232,8 +236,20 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 2. Code | ~94% | 2026-03-21 | CS2 Tournaments 2026 league config mapped, 2467 tests pass |
 | 5. Quality | ~100% | 2026-03-25 | watchPlan loop false-negative fixed (partial credit on quiet days), ARIA landmarks added, 4 UX improvements (PR #146) |
 | 4. Personalization | ~72% | 2026-03-25 | Result card summary fallback surfaces AI-enriched summaries, chess/tennis format field rendered |
+| 4. Personalization | ~74% | 2026-03-26 | Norwegian relevance gradient badge for norwegianRelevance 2-3, insights section readable (PR #147) |
+| 2. Code | ~95% | 2026-03-26 | 10 new scorecard evaluator tests, complexity report wired into pipeline health. 2496 tests pass |
+| 5. Quality | ~100% | 2026-03-26 | Complexity health loop closed — high-complexity files now surface in health report |
 
 ### Run History Insights
+
+**Run 2026-03-26 (Run 35):** Execution run — 4 pending tasks from run 34's scouting, 0 user feedback.
+- 2 parallel subagents: UX-agent worktree (PR #147, merged) + Code-agent worktree (direct-to-main).
+- UX-agent (PR #147): 2 improvements batched — (1) Norwegian relevance gradient "NOR" badge for norwegianRelevance 2-3. (2) Insights section border + bumped font sizes (0.72→0.8rem, 0.58→0.6rem).
+- Code-agent (direct-to-main): 2 tasks — (1) 10 new unit tests for snapshotHealth + streamingVerification evaluators. (2) complexityHealth wired into pipeline-health.js (reads code-complexity-report.json, surfaces critical files as info issues).
+- Football staleness continuing (56 retains, international break) — expected behavior, resumes ~Mar 28.
+- 3 new PENDING tasks scouted: day-nav empty-day indicator, watch-plan reason display, dark mode NOR badge contrast.
+- **Key insight**: All 4 scouted tasks from run 34 consumed efficiently in one run — 2 parallel worktrees is the optimal execution pattern for mixed UX + code batches.
+- User-visible / infrastructure: 50% / 50% (2 UX improvements = user-visible; 2 code/test tasks = infrastructure).
 
 **Run 2026-03-25 (Run 34):** Scouting + execution run — 0 pending tasks, 0 user feedback.
 - 3 parallel scouts (UX: 8 findings, Code: 8 findings, Data: 8 findings).

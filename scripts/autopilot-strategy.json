@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-26",
+        "note": "Run 35: Execution run — 4 pending tasks, 0 user feedback. 2 parallel subagents: UX-agent worktree (PR #147, merged) + Code-agent worktree (direct-to-main). UX: Norwegian relevance NOR badge + insights visibility. Code: 10 evaluator tests + complexity-health loop closed. Scouts identified 3 new tasks (day-nav empty-day, watch-plan reason, dark mode NOR). 2496 tests pass. User-visible/infrastructure: 50%/50%. ~16 orchestrator turns. Key: parallel worktrees for mixed UX+code is optimal execution pattern."
+      },
+      {
         "date": "2026-03-25",
         "note": "Run 34: Scouting + execution. 3 parallel scouts (UX 8, Code 8, Data 8 findings). UX-agent worktree batched PR #146 (result summary fallback, chess/tennis format, ARIA landmarks, single-sport pills). Code-agent worktree direct-to-main (watchPlan false-negative fix, 4 new tests). Football staleness = international break, no fix. Data scout found 3 uncovered RSS sports (women's football, hockey, alpine) — blocked by Sport Expansion Policy. 4 new PENDING tasks added. 7455 tests pass. User-visible/infrastructure: 80%/20%. ~20 orchestrator turns."
       },

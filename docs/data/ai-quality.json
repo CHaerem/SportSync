@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-03-25T22:19:01.188Z",
+  "generatedAt": "2026-03-26T02:17:31.391Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 5,
-    "generationMs": 59745,
+    "blockCount": 6,
+    "generationMs": 52425,
     "tokenUsage": {
-      "input": 26089,
-      "output": 3112,
-      "cacheCreation": 17333,
-      "cacheRead": 8753,
-      "total": 29201,
-      "costUSD": 0.11431365000000002,
+      "input": 26308,
+      "output": 2459,
+      "cacheCreation": 0,
+      "cacheRead": 26305,
+      "total": 28767,
+      "costUSD": 0.04478549999999999,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 93,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 102,
+      "avgScore": 108,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,7 +63,7 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "before": {
       "totalEvents": 31,
@@ -106,28 +106,13 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26284,
-      "output": 2663,
+      "input": 26308,
+      "output": 3481,
       "calls": 1,
-      "total": 28947,
+      "total": 29789,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-25T02:36:22.482Z"
-  },
-  "discovery": {
-    "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 1,
-      "total": 0,
-      "costUSD": 0,
-      "tracked": true,
-      "estimated": false
-    },
-    "lastRun": "2026-03-25T22:14:55.804Z",
-    "tasksExecuted": 1,
-    "succeeded": 0,
-    "failed": 1
+    "lastRun": "2026-03-26T02:09:31.198Z"
   }
 }
