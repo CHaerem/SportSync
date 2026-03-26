@@ -12,6 +12,8 @@ import {
 	evaluateEventDiscovery,
 	evaluateScheduleVerification,
 	evaluateResultsHealth,
+	evaluateSnapshotHealth,
+	evaluateStreamingVerification,
 	evaluateAutonomy,
 	trackTrend,
 	detectRegressions,
@@ -558,6 +560,148 @@ describe("evaluateScheduleVerification()", () => {
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
 		expect(result.details).toContain("stale due to pipeline step failure");
+	});
+});
+
+// --- Loop 10: Snapshot Health ---
+
+describe("evaluateSnapshotHealth()", () => {
+	it("scores 0 when day snapshots meta is missing", () => {
+		const result = evaluateSnapshotHealth(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("No day snapshots");
+	});
+
+	it("scores 0 when snapshots exist but pipeline does not monitor snapshot health", () => {
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		writeJson(path.join(dataDir, "days", "_meta.json"), {
+			generatedAt: new Date().toISOString(),
+			snapshotCount: 5,
+		});
+		const result = evaluateSnapshotHealth(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("does not monitor snapshot health");
+	});
+
+	it("scores 0 when snapshots and monitoring exist but snapshots are stale", () => {
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		const metaPath = path.join(dataDir, "days", "_meta.json");
+		writeJson(metaPath, { generatedAt: new Date().toISOString(), snapshotCount: 10 });
+		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
+		fs.utimesSync(metaPath, sevenHoursAgo, sevenHoursAgo);
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			snapshotHealth: { snapshotCount: 10, issues: [] },
+		});
+		const result = evaluateSnapshotHealth(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("stale");
+	});
+
+	it("scores 1.0 when fresh snapshots and monitoring both exist", () => {
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		writeJson(path.join(dataDir, "days", "_meta.json"), {
+			generatedAt: new Date().toISOString(),
+			snapshotCount: 15,
+		});
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			snapshotHealth: { snapshotCount: 15, issues: [] },
+		});
+		const result = evaluateSnapshotHealth(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("15 snapshots");
+	});
+
+	it("scores 1.0 when snapshots are stale but post-generate was quota-skipped", () => {
+		fs.mkdirSync(path.join(dataDir, "days"), { recursive: true });
+		const metaPath = path.join(dataDir, "days", "_meta.json");
+		writeJson(metaPath, { generatedAt: new Date().toISOString(), snapshotCount: 8 });
+		const sevenHoursAgo = new Date(Date.now() - 7 * 3600 * 1000);
+		fs.utimesSync(metaPath, sevenHoursAgo, sevenHoursAgo);
+		writeJson(path.join(dataDir, "health-report.json"), {
+			status: "ok",
+			snapshotHealth: { snapshotCount: 8, issues: [] },
+		});
+		writeJson(path.join(dataDir, "pipeline-result.json"), {
+			phases: {
+				postGenerate: {
+					steps: [{ name: "post-generate", status: "quota_skipped" }],
+				},
+			},
+		});
+		const result = evaluateSnapshotHealth(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.details).toContain("quota-skipped");
+	});
+});
+
+// --- Loop 12: Streaming Verification ---
+
+describe("evaluateStreamingVerification()", () => {
+	it("scores 0 when streaming verification history is missing", () => {
+		const result = evaluateStreamingVerification(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("No fresh streaming verification history");
+	});
+
+	it("scores 0 when history has fewer than 3 runs", () => {
+		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.5 },
+				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.6 },
+			],
+		});
+		const result = evaluateStreamingVerification(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("need >= 3 for trend analysis");
+	});
+
+	it("scores 0 when match rate is consistently declining across last 3 runs", () => {
+		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
+			runs: [
+				{ timestamp: "2026-02-13T00:00:00Z", matchRate: 0.8 },
+				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.7 },
+				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.5 },
+				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.4 },
+			],
+		});
+		const result = evaluateStreamingVerification(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("declining");
+	});
+
+	it("scores 1.0 when history has >= 3 runs with stable match rate", () => {
+		writeJson(path.join(dataDir, "streaming-verification-history.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", matchRate: 0.5 },
+				{ timestamp: "2026-02-15T00:00:00Z", matchRate: 0.5 },
+				{ timestamp: "2026-02-16T00:00:00Z", matchRate: 0.6 },
+			],
+		});
+		const result = evaluateStreamingVerification(dataDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("stable or rising");
+	});
+
+	it("scores 0 when history file is stale (> 24h)", () => {
+		const histPath = path.join(dataDir, "streaming-verification-history.json");
+		writeJson(histPath, {
+			runs: [
+				{ timestamp: "2026-01-01T00:00:00Z", matchRate: 0.5 },
+				{ timestamp: "2026-01-02T00:00:00Z", matchRate: 0.6 },
+				{ timestamp: "2026-01-03T00:00:00Z", matchRate: 0.7 },
+			],
+		});
+		const twoDaysAgo = new Date(Date.now() - 2 * 24 * 3600 * 1000);
+		fs.utimesSync(histPath, twoDaysAgo, twoDaysAgo);
+		const result = evaluateStreamingVerification(dataDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("No fresh streaming verification history");
 	});
 });
 

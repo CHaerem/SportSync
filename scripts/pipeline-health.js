@@ -1356,6 +1356,26 @@ async function main() {
 		}
 	}
 
+	// Code complexity health — surface high-complexity files from analyze-code-complexity.js
+	const complexityReport = readJsonIfExists(path.join(dataDir, "code-complexity-report.json"));
+	report.complexityHealth = null;
+	if (complexityReport?.summary) {
+		const { critical = 0, high = 0, warning: warn = 0, totalFiles = 0 } = complexityReport.summary;
+		const hotFiles = (complexityReport.summary.largestFiles || [])
+			.filter((f, i, arr) => f.severity === "critical" || (f.severity === "high" && i < 5))
+			// deduplicate by file path (analyzer can emit duplicates)
+			.filter((f, i, arr) => arr.findIndex(g => g.file === f.file) === i)
+			.slice(0, 3);
+		report.complexityHealth = { critical, high, warning: warn, totalFiles, hotFiles };
+		if (critical > 0) {
+			report.issues.push({
+				severity: "info",
+				code: "high_complexity_files",
+				message: `${critical} critical-complexity file(s) — consider refactoring: ${hotFiles.map(f => f.file).join(", ")}`,
+			});
+		}
+	}
+
 	// Status summary — deterministic fallback only (LLM summary moved to separate step to avoid timeout)
 	const quality = readJsonIfExists(path.join(dataDir, "ai-quality.json"));
 	const summary = buildFallbackSummary(report, autonomyReport, quality);
