@@ -1,105 +1,5 @@
 [
   {
-    "timestamp": "2026-03-09T22:14:00.528Z",
-    "editorial": {
-      "score": 63,
-      "mustWatchCoverage": 0,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 108,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 23,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 27,
-      "warningCount": 25,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 22151,
-        "output": 162,
-        "calls": 1,
-        "total": 22313,
-        "costUSD": 0.087911,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 27189,
-        "output": 5038,
-        "cacheCreation": 27186,
-        "cacheRead": 0,
-        "total": 32227,
-        "costUSD": 0.2958775,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 265443,
-        "output": 2271,
-        "calls": 1,
-        "total": 267714,
-        "costUSD": 1.054031,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 27130,
-        "output": 3432,
-        "calls": 1,
-        "total": 30562,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 341913,
-        "output": 10903,
-        "calls": 4,
-        "total": 352816,
-        "costUSD": 1.4378195,
-        "realPct": 91
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 76.143,
-      "mustWatchCoverage": 0.571,
-      "sportDiversity": 0.452,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-10T01:58:07.404Z",
     "editorial": {
       "score": 78,
@@ -9173,6 +9073,108 @@
         "calls": 3,
         "total": 58735,
         "costUSD": 0.1402815,
+        "realPct": 49
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "enrichmentScore": 100,
+      "resultsScore": 89
+    }
+  },
+  {
+    "timestamp": "2026-03-26T14:40:43.434Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 2,
+      "avgScore": 74,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 89,
+      "recapHeadlineRate": 0.037,
+      "goalScorerCoverage": 1,
+      "footballCount": 27,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 27,
+      "warningCount": 24,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfce️ Fri\" which may not match any event; Featured mentions \"Valspar\" but no matching athlete found in events data; Featured mentions \"Masters\" but no matching athlete found in events data; Featured mentions \"Russell\" but no matching athlete found in events data; Featured mentions \"Antonelli\" but no matching athlete found in events data; Featured mentions \"Candidates Round\" but no matching athlete found in events data; Featured mentions \"Carlsen\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26314,
+        "output": 2798,
+        "cacheCreation": 17686,
+        "cacheRead": 8625,
+        "total": 29112,
+        "costUSD": 0.11088900000000002,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26308,
+        "output": 3481,
+        "calls": 1,
+        "total": 29789,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 52622,
+        "output": 6279,
+        "calls": 3,
+        "total": 58901,
+        "costUSD": 0.11088900000000002,
         "realPct": 49
       }
     },

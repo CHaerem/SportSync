@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T10:27:15.854Z",
+  "generatedAt": "2026-03-26T14:40:45.123Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -57,10 +57,10 @@
       ]
     },
     "featuredBlockCount": 7,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 10
+    "issueCount": 13
   },
   "findings": [
     {
@@ -156,12 +156,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Valspar\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Belgian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Masters\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -171,12 +171,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Candidates Round\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Ronde\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -192,17 +187,12 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 27,
+    "total": 25,
     "critical": 0,
-    "warning": 24,
+    "warning": 22,
     "info": 3
   },
   "pass": true,
