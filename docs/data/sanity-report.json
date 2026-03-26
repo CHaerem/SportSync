@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T06:35:06.043Z",
+  "generatedAt": "2026-03-26T10:27:15.854Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -60,7 +60,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 10
   },
   "findings": [
     {
@@ -155,11 +155,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Valspar\" but no matching athlete found in events data"
     },
@@ -205,9 +200,9 @@
     }
   ],
   "summary": {
-    "total": 28,
+    "total": 27,
     "critical": 0,
-    "warning": 25,
+    "warning": 24,
     "info": 3
   },
   "pass": true,
