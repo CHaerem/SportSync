@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T22:13:36.280Z",
+  "generatedAt": "2026-03-27T06:35:55.079Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,31 +7,29 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"🏎️ Fri 03:30 — Aramco Japanese Grand Prix at Suzu...\""
-    ],
-    "blockCount": 7,
-    "generationMs": 61470,
+    "score": 100,
+    "issues": [],
+    "blockCount": 8,
+    "generationMs": 71029,
     "tokenUsage": {
-      "input": 26281,
-      "output": 3202,
-      "cacheCreation": 26278,
-      "cacheRead": 0,
-      "total": 29483,
-      "costUSD": 0.1465815,
+      "input": 26387,
+      "output": 3536,
+      "cacheCreation": 17759,
+      "cacheRead": 8625,
+      "total": 29923,
+      "costUSD": 0.12223275,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 97,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 0.8,
+      "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -41,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 78,
+      "pickCount": 1,
+      "avgScore": 70,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -108,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26308,
-      "output": 3481,
+      "input": 26387,
+      "output": 3536,
       "calls": 1,
-      "total": 29789,
+      "total": 29923,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-26T02:09:31.198Z"
+    "lastRun": "2026-03-27T06:35:55.414Z"
   },
   "discovery": {
     "tokenUsage": {
@@ -127,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-26T22:09:28.106Z",
+    "lastRun": "2026-03-27T06:31:34.569Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
