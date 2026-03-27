@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T06:35:55.079Z",
+  "generatedAt": "2026-03-27T14:29:55.644Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 71029,
+    "generationMs": 50858,
     "tokenUsage": {
-      "input": 26387,
-      "output": 3536,
-      "cacheCreation": 17759,
+      "input": 26309,
+      "output": 2302,
+      "cacheCreation": 17681,
       "cacheRead": 8625,
-      "total": 29923,
-      "costUSD": 0.12223275,
+      "total": 28611,
+      "costUSD": 0.10343025,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -37,12 +37,12 @@
     "issues": []
   },
   "watchPlan": {
-    "score": 100,
+    "score": 0,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 70,
-      "streamingCoverage": 1,
-      "reasonCoverage": 1
+      "pickCount": 0,
+      "avgScore": 0,
+      "streamingCoverage": 0,
+      "reasonCoverage": 0
     }
   },
   "results": {
@@ -51,13 +51,13 @@
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.037,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 27
     },
     "issues": [
-      "Only 4% of results have recap headlines"
+      "Only 0% of results have recap headlines"
     ]
   },
   "enrichment": {
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-27T10:20:27.129Z",
+    "lastRun": "2026-03-27T14:24:53.571Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1

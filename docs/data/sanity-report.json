@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T10:25:36.731Z",
+  "generatedAt": "2026-03-27T14:29:57.338Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -16,9 +16,7 @@
       "live": [
         "Texas Children's Houston Open"
       ],
-      "today": [
-        "E3 Saxo Classic 2026"
-      ],
+      "today": [],
       "tomorrow": [],
       "thisWeek": [
         "Gent-Wevelgem 2026 (In Flanders Fields)",
@@ -53,14 +51,15 @@
       ],
       "ended": [
         "Atlético Madrid at Real Madrid",
-        "Aramco Japanese Grand Prix"
+        "Aramco Japanese Grand Prix",
+        "E3 Saxo Classic 2026"
       ]
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 15
   },
   "findings": [
     {
@@ -166,12 +165,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Belgian\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Leclerc\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
