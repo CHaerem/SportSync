@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T18:27:18.127Z",
+  "generatedAt": "2026-03-27T22:15:26.792Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 30,
@@ -7,8 +7,8 @@
       "football",
       "golf",
       "f1",
-      "cycling",
       "tennis",
+      "cycling",
       "chess",
       "esports"
     ],
@@ -17,13 +17,14 @@
         "Texas Children's Houston Open"
       ],
       "today": [],
-      "tomorrow": [],
+      "tomorrow": [
+        "Credit One Charleston Open"
+      ],
       "thisWeek": [
         "Gent-Wevelgem 2026 (In Flanders Fields)",
         "Grand Prix Hassan II",
         "Fayez Sarofim & Co. U.S. Men's Clay Court Championship",
         "Tiriac Open presented by UniCredit Bank",
-        "Credit One Charleston Open",
         "Copa Colsanitas Colsubsidio",
         "Dwars door Vlaanderen 2026",
         "Round 1 – FIDE Candidates Tournament 2026",
@@ -58,7 +59,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 70,
-    "issueCount": 13
+    "issueCount": 12
   },
   "findings": [
     {
@@ -149,7 +150,7 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Japanese GP — Suzuka\" which may not match any event"
+      "message": "Featured block references \"\udfce️ Today\" which may not match any event"
     },
     {
       "severity": "warning",
@@ -164,12 +165,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Norwegian Spring Classic\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Five\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -184,13 +195,13 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 25 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 27,
     "critical": 0,
-    "warning": 22,
+    "warning": 24,
     "info": 3
   },
   "pass": true,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T21:14:32.372Z",
+  "generatedAt": "2026-03-27T22:15:26.812Z",
   "eventCount": 30,
   "sportCoverage": {
     "football": {
@@ -17,14 +17,14 @@
       "previousCount": 1,
       "delta": 0
     },
-    "cycling": {
-      "count": 8,
-      "previousCount": 8,
-      "delta": 0
-    },
     "tennis": {
       "count": 5,
       "previousCount": 5,
+      "delta": 0
+    },
+    "cycling": {
+      "count": 8,
+      "previousCount": 8,
       "delta": 0
     },
     "chess": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1386,
+      "ageMinutes": 1447,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 7323,
+      "ageMinutes": 7384,
       "stale": true
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-27"
     },
     "ai-quality.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -132,19 +132,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 56763,
+    "totalDuration": 61888,
     "stepCount": 21,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 31791,
-        "share": 56
+        "duration": 30943,
+        "share": 50
       },
       {
         "name": "fetch-results",
-        "duration": 43427,
-        "share": 77
+        "duration": 48814,
+        "share": 79
       }
     ],
     "failedSteps": []
@@ -181,22 +181,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 1386 minutes old"
+      "message": "f1.json: data is 1447 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "football.json: data is 7323 minutes old"
+      "message": "football.json: data is 7384 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 16 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 17 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "football: data retained 90 consecutive times (since 2026-03-22) — fetcher returning empty results, serving stale data"
+      "message": "football: data retained 91 consecutive times (since 2026-03-22) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -231,17 +231,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (31s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (43s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (49s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-27T21:14:32.438Z",
+    "computedAt": "2026-03-27T22:15:26.892Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
