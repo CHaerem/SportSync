@@ -385,7 +385,8 @@ class Dashboard {
 				`<span class="day-dot" style="background:${sportVars[s] || 'var(--muted)'}"></span>`
 			).join('');
 
-			html += `<div class="day-item ${cls}${selectedCls}" data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
+			const emptyCls = dayEvents.length === 0 ? ' has-no-events' : '';
+			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}" data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -1338,9 +1339,9 @@ class Dashboard {
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
 			html += `<div class="pick-body">`;
 			html += `<div class="pick-title">${emoji} ${this.esc(pick.title || '')}${statusHtml}</div>`;
-			if (reasons.length > 0 || streams.length > 0) {
+			if (reasons.length > 0) html += `<div class="pick-reason-subtitle">${this.esc(reasons.join(' · '))}</div>`;
+			if (streams.length > 0) {
 				html += '<div class="pick-reasons">';
-				reasons.forEach(r => { html += `<span class="pick-reason">${this.esc(r)}</span>`; });
 				streams.forEach(s => { html += `<span class="pick-stream">${this.esc(s.platform || s)}</span>`; });
 				html += '</div>';
 			}

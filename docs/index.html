@@ -237,6 +237,7 @@
 		}
 		.day-item.is-past { opacity: 0.35; }
 		.dark .day-item.is-past { opacity: 0.5; }
+		.day-item.has-no-events:not(.is-today):not(.is-selected) { opacity: 0.3; }
 		.day-item.is-selected:not(.is-today) { background: var(--bg-warm); box-shadow: inset 0 0 0 1.5px var(--accent); }
 		.day-label {
 			font-size: 0.55rem;
@@ -846,6 +847,7 @@
 		.row-title strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 		.row-nor { font-size: 0.6rem; margin-left: 4px; vertical-align: middle; }
 		.row-nor-muted { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; margin-left: 4px; vertical-align: middle; color: var(--muted-light); opacity: 0.85; }
+		.dark .row-nor-muted { color: var(--muted); opacity: 1; }
 		.row-fav { font-size: 0.6rem; margin-left: 3px; vertical-align: middle; color: var(--accent); opacity: 0.7; }
 		.row-meta {
 			display: block; font-size: 0.6rem; color: var(--muted); opacity: 0.65;
@@ -1195,6 +1197,7 @@
 		.pick-time .row-rel { display: block; font-size: 0.55rem; opacity: 0.7; line-height: 1.2; }
 		.pick-body { flex: 1; min-width: 0; }
 		.pick-title { font-weight: 450; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.pick-reason-subtitle { font-size: 0.62rem; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 		.pick-status { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.04em; margin-left: 6px; vertical-align: middle; }
 		.pick-live { color: var(--live); font-weight: 600; }
 		.pick-ended { color: var(--muted); opacity: 0.7; }
