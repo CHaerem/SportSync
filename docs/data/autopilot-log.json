@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-27",
+      "task": "Execution + scouting: UX batch (PR #148) + 2 background scouts",
+      "outcome": "completed",
+      "pr": "PR #148 (merged)",
+      "details": "Run 36: 0 user feedback, 3 pending UX tasks. UX batch PR #148 (merged): (1) Day navigator empty-day indicator (has-no-events class, 0.3 opacity). (2) Watch-plan pick reasons as subtitle below title. (3) Dark mode NOR badge contrast rule. 2 parallel background scouts: code-agent (5 findings: complexity manifest gap, post-generate/merge-open-data untested, chronic_data_retention escalation, recapHeadlineRate no hint, invisible_events correlation) + data-agent (5 findings: football stale 74 retains, streaming 0% Norwegian aliases, recapHeadlineRate 4%, 4 needsResearch configs, FIFA WC TBD groups). 4 new PENDING tasks added. All 2496 tests pass.",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 18,
+      "lesson": "Worktree agent completed code changes but didn't commit (test runs generated data file noise). Orchestrator applied diffs manually via Edit tool — more reliable than cherry-pick when worktree has dirty data files. All 3 pending tasks were UX — 100% user-visible ratio. Streaming match rate 0% during international breaks is a systemic gap (Norwegian country name aliases needed).",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-26",
       "task": "Execution run: UX batch (PR #147) + code batch (direct-to-main)",
       "outcome": "completed",

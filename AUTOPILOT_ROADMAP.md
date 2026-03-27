@@ -184,9 +184,14 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Export + test snapshotHealth and streamingVerification evaluators** — Added 10 unit tests (5 per evaluator) covering healthy, degraded, missing data, and edge cases. Direct-to-main. Run 35.
 - [DONE] [MAINTENANCE] **Wire complexity report into pipeline health** — Added complexityHealth block reading code-complexity-report.json, surfaces critical/high files as info-severity issues. Direct-to-main. Run 35.
 
-- [PENDING] [MAINTENANCE] **Day navigator empty-day indicator** — Days with 0 events show the same styling as days with events. Add a muted/dimmed treatment (e.g., lighter dot color, reduced opacity text) for empty days so users can quickly scan which days have content. health-report.json already flags `empty_day` — surface this visually. ~15 lines in dashboard.js. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Watch-plan "why" tooltip** — Watch-plan picks show the streaming link and thumbs but not the `reason` field. Surface the pick reason (e.g., "Top-4 clash, Norwegian interest") as a subtitle or tooltip to help users understand why a pick was recommended. ~10 lines in dashboard.js. (Pillar: personalization)
-- [PENDING] [MAINTENANCE] **Dark mode NOR badge contrast** — The new `.row-nor-muted` badge uses `var(--muted-light)` which may be too dim in dark mode. Verify contrast and add a `.dark .row-nor-muted` rule if needed. ~5 lines in index.html. (Pillar: quality)
+- [DONE] [MAINTENANCE] **Day navigator empty-day indicator** — Added `has-no-events` class (0.3 opacity) to day-nav items with 0 events. PR #148. Run 36.
+- [DONE] [MAINTENANCE] **Watch-plan "why" tooltip** — Surfaced pick reasons as `.pick-reason-subtitle` below title (e.g., "Top-4 clash · Norwegian interest"). PR #148. Run 36.
+- [DONE] [MAINTENANCE] **Dark mode NOR badge contrast** — Added `.dark .row-nor-muted` rule with `--muted` color at full opacity. PR #148. Run 36.
+
+- [PENDING] [MAINTENANCE] **Wire analyze-code-complexity.js into pipeline manifest** — `pipeline-health.js` reads `code-complexity-report.json` and surfaces `complexityHealth`, but the script is never invoked by the pipeline runner. Add it to the `monitor` phase in `pipeline-manifest.json`. ~5 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Streaming matcher Norwegian country name aliases** — tvkampen uses Norwegian names (Østerrike, Sveits, Spania) but events.json stores English names. Match rate is 0% during international breaks. Add a Norwegian→English country alias map to `streaming-matcher.js`. ~30 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **recapHeadlineRate hint rule** — `recapHeadlineRate` is persistently low (0.04) but no hint fires to inform featured content. Add a rule to `buildResultsHints()` in `ai-quality-gates.js` when rate drops below 0.10. ~40 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **post-generate.js and merge-open-data.js test coverage** — Both active pipeline scripts have no dedicated test files. Add basic unit tests for orchestration logic and merge-pair handling. ~130 lines. (Pillar: code)
 
 ---
 
@@ -239,8 +244,18 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 4. Personalization | ~74% | 2026-03-26 | Norwegian relevance gradient badge for norwegianRelevance 2-3, insights section readable (PR #147) |
 | 2. Code | ~95% | 2026-03-26 | 10 new scorecard evaluator tests, complexity report wired into pipeline health. 2496 tests pass |
 | 5. Quality | ~100% | 2026-03-26 | Complexity health loop closed — high-complexity files now surface in health report |
+| 5. Quality | ~100% | 2026-03-27 | Empty-day indicator, dark mode NOR contrast, watch-plan reasons subtitle (PR #148) |
+| 4. Personalization | ~76% | 2026-03-27 | Watch-plan picks now show reason text explaining why each pick was recommended |
 
 ### Run History Insights
+
+**Run 2026-03-27 (Run 36):** Execution + scouting — 3 pending UX tasks, 0 user feedback.
+- 1 UX-agent batch PR #148 (merged): (1) Day navigator empty-day indicator (has-no-events class, 0.3 opacity). (2) Watch-plan pick reasons as subtitle. (3) Dark mode NOR badge contrast rule.
+- 2 parallel background scouts: code-agent (5 findings) + data-agent (5 findings). Top findings: complexity loop never runs (manifest gap), streaming 0% match rate (Norwegian country aliases missing), recapHeadlineRate no hint.
+- 4 new PENDING tasks added: complexity manifest, streaming aliases, recapHeadline hint, post-generate tests.
+- Football staleness continuing (74 retains, international break) — expected behavior. Streaming match rate 0% (Norwegian country names unresolved).
+- **Key insight**: Worktree agent didn't commit (tests generated data file noise) — orchestrator cherry-picked diffs manually. Pattern: always verify worktree commits after agent returns.
+- User-visible / infrastructure: 100% / 0% (all 3 tasks are dashboard UX improvements).
 
 **Run 2026-03-26 (Run 35):** Execution run — 4 pending tasks from run 34's scouting, 0 user feedback.
 - 2 parallel subagents: UX-agent worktree (PR #147, merged) + Code-agent worktree (direct-to-main).
