@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T06:36:13.049Z",
+  "generatedAt": "2026-03-27T10:25:36.731Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -155,11 +155,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
     },
@@ -187,6 +182,11 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 27 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
