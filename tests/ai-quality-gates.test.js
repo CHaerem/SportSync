@@ -863,3 +863,76 @@ describe("computeRollingAverages()", () => {
 		expect(avg.enrichmentScore).toBeNull(); // no enrichment data
 	});
 });
+
+describe("buildResultsHints()", () => {
+	function makeEntry(overrides = {}) {
+		return {
+			results: {
+				recapHeadlineRate: 0.6,
+				goalScorerCoverage: 0.8,
+				favoriteCoverage: 0.8,
+				freshnessScore: 1.0,
+				...overrides,
+			},
+		};
+	}
+
+	it("returns empty hints with fewer than 3 history entries", () => {
+		const result = buildResultsHints([makeEntry(), makeEntry()]);
+		expect(result.hints).toEqual([]);
+		expect(result.metrics).toEqual({});
+	});
+
+	it("returns no hints when all metrics are healthy", () => {
+		const history = Array.from({ length: 5 }, () => makeEntry());
+		const result = buildResultsHints(history);
+		expect(result.hints).toEqual([]);
+	});
+
+	it("emits critically-low recapHeadlineRate hint when rate < 10%", () => {
+		// Rate of 0.04 is persistently low — the LLM needs context to adapt strategy
+		const history = Array.from({ length: 5 }, () => makeEntry({ recapHeadlineRate: 0.04 }));
+		const result = buildResultsHints(history);
+		expect(result.hints.some(h => h.includes("recapHeadlineRate is critically low"))).toBe(true);
+		expect(result.hints.some(h => h.includes("4%"))).toBe(true);
+		expect(result.hints.some(h => h.includes("scores/standings"))).toBe(true);
+	});
+
+	it("does NOT emit critically-low hint when rate is between 10% and 30%", () => {
+		// Rate at 0.20: below general threshold but not critically low — no critical hint
+		const history = Array.from({ length: 5 }, () => makeEntry({ recapHeadlineRate: 0.20 }));
+		const result = buildResultsHints(history);
+		expect(result.hints.some(h => h.includes("recapHeadlineRate is critically low"))).toBe(false);
+	});
+
+	it("suppresses general recapHeadlineRate hint when it is the sole low metric", () => {
+		// Rate at 0.04 (sole low metric): critical hint fires but general hint is suppressed
+		const history = Array.from({ length: 5 }, () => makeEntry({ recapHeadlineRate: 0.04 }));
+		const result = buildResultsHints(history);
+		expect(result.hints.some(h => h.includes("Few recap headlines available"))).toBe(false);
+		// Critical hint still fires
+		expect(result.hints.some(h => h.includes("critically low"))).toBe(true);
+	});
+
+	it("emits general recapHeadlineRate hint alongside other failing metrics", () => {
+		// Both recapHeadlineRate and goalScorerCoverage are low — both hints fire
+		const history = Array.from({ length: 5 }, () =>
+			makeEntry({ recapHeadlineRate: 0.20, goalScorerCoverage: 0.2 })
+		);
+		const result = buildResultsHints(history);
+		expect(result.hints.some(h => h.includes("Few recap headlines"))).toBe(true);
+		expect(result.hints.some(h => h.includes("Goal scorer data is sparse"))).toBe(true);
+	});
+
+	it("emits goalScorerCoverage hint when sparse", () => {
+		const history = Array.from({ length: 5 }, () => makeEntry({ goalScorerCoverage: 0.2 }));
+		const result = buildResultsHints(history);
+		expect(result.hints.some(h => h.includes("Goal scorer data is sparse"))).toBe(true);
+	});
+
+	it("includes metric averages in output", () => {
+		const history = Array.from({ length: 5 }, () => makeEntry({ recapHeadlineRate: 0.04 }));
+		const result = buildResultsHints(history);
+		expect(result.metrics.recapHeadlineRate).toBeCloseTo(0.04, 2);
+	});
+});

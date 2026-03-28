@@ -824,6 +824,19 @@ export function buildResultsHints(history) {
 	}
 
 	const hints = [];
+
+	// Emit a data-context hint when recapHeadlineRate is critically low (< 10%).
+	// This threshold is distinct from the general RESULTS_HINT_RULES threshold (0.3):
+	// at ≥10% some RSS headlines are available; at <10% virtually none are, so the
+	// narrative strategy must shift entirely to scores/standings. This hint always
+	// fires when critically low (not subject to the sole-low-metric suppression
+	// below) because it gives the LLM essential context about the data environment.
+	const recapRate = averages["recapHeadlineRate"];
+	if (recapRate !== null && recapRate < 0.10) {
+		const pct = Math.round(recapRate * 100);
+		hints.push(`RESULTS NOTE: recapHeadlineRate is critically low (${pct}%) — most recent results lack matching RSS headlines, so narrative should rely on match scores/standings rather than news angles.`);
+	}
+
 	for (const rule of RESULTS_HINT_RULES) {
 		const avg = averages[rule.metric];
 		if (avg !== null && avg < rule.threshold) {
