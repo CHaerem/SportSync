@@ -753,7 +753,7 @@ class Dashboard {
 		if (!banner) {
 			banner = document.createElement('div');
 			banner.id = 'staleness-banner';
-			banner.style.cssText = 'background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;text-align:center;';
+			banner.className = 'staleness-banner';
 			const brief = document.getElementById('the-brief');
 			if (brief) brief.parentNode.insertBefore(banner, brief);
 		}
@@ -1582,9 +1582,10 @@ class Dashboard {
 				const firstEmoji = firstSport ? firstSport.emoji : '';
 				const firstDate = new Date(first.time);
 				const dayStr = firstDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Europe/Oslo' });
+				const dateStr = firstDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
 				const timeStr = firstDate.toLocaleTimeString('en-NO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Oslo' });
 				const previewTitle = first.title.length > 32 ? first.title.slice(0, 30) + '\u2026' : first.title;
-				const previewLine = `${firstEmoji} ${dayStr} ${timeStr} ${this.esc(previewTitle)}`;
+				const previewLine = `${firstEmoji} ${dayStr} ${dateStr} ${timeStr} ${this.esc(previewTitle)}`;
 
 				html += `<div class="flow-label band-label ${cssClass} collapsible" data-band="${bandId}" role="button" tabindex="0" aria-expanded="false" aria-label="${this.esc(label)} (${countText} event${events.length !== 1 ? 's' : ''}, collapsed)"><span class="flow-text">${this.esc(label)}</span><span class="flow-line"></span><span class="flow-count">${countText} \u25b8</span></div>`;
 				html += `<div class="band-preview" data-band-preview="${bandId}">${previewLine}</div>`;
@@ -2665,7 +2666,7 @@ class Dashboard {
 
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
-		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
+		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
 
 		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
 	return `
