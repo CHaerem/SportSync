@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-03-28",
+        "note": "Run 37: Execution + scouting — 4 pending infra tasks + UX scout, 0 user feedback. 3 parallel worktree agents: code (3 tasks), data (1 task), UX scout. PR #149 merged (3 UX improvements). 52 new tests added across 4 test files. 7592 tests pass. User-visible/infrastructure: 43%/57% (3 UX changes / 4 infra). ~20 orchestrator turns. Key: 3 parallel worktree agents ran simultaneously without conflicts — most efficient parallel execution pattern yet. mustWatchCoverage decline (100%→67%) flagged for investigation."
+      },
+      {
         "date": "2026-03-27",
         "note": "Run 36: Execution + scouting — 3 pending UX tasks, 0 user feedback. 1 UX batch PR #148 (merged): empty-day indicator, watch-plan reasons, dark mode NOR. 2 background scouts (code 5 findings, data 5 findings). 4 new PENDING tasks added. Worktree agent didn't commit (test data noise) — orchestrator applied diffs via Edit. 2496 tests pass. User-visible/infrastructure: 100%/0%. ~18 orchestrator turns. Key: when worktree agent fails to commit, manual diff application is more reliable than cherry-pick."
       },

@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-28",
+      "task": "Execution + scouting: 4 infra tasks (direct-to-main) + UX batch (PR #149) + UX scout",
+      "outcome": "completed",
+      "pr": "PR #149 (merged) + direct-to-main (1 commit)",
+      "details": "Run 37: 0 user feedback, 4 pending infra tasks. 3 parallel subagents: code-agent worktree (pipeline manifest + recapHeadlineRate hint + test coverage, 27 new tests), data-agent worktree (Norwegian country aliases for streaming matcher, 25 new tests), UX-agent scout (8 findings). UX batch PR #149 (merged): (1) staleness banner dark mode CSS class, (2) importanceReason badge dedup via _summaryCoversReason(), (3) Later band date context in collapsed preview. 4 new PENDING tasks added from UX scout. All 7592 tests pass.",
+      "tests_passed": true,
+      "files_changed": 9,
+      "turns_used": 20,
+      "lesson": "Both worktree agents completed independently in parallel — code-agent (3 tasks) and data-agent (1 task) ran simultaneously without conflicts. UX scout found 8 opportunities, top 3 batched into PR #149. Norwegian country aliases fix a structural streaming match gap during international breaks. Pattern report flagged mustWatchCoverage decline (100%→67%) — added as investigation task.",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-27",
       "task": "Execution + scouting: UX batch (PR #148) + 2 background scouts",
       "outcome": "completed",

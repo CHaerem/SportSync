@@ -188,10 +188,18 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Watch-plan "why" tooltip** — Surfaced pick reasons as `.pick-reason-subtitle` below title (e.g., "Top-4 clash · Norwegian interest"). PR #148. Run 36.
 - [DONE] [MAINTENANCE] **Dark mode NOR badge contrast** — Added `.dark .row-nor-muted` rule with `--muted` color at full opacity. PR #148. Run 36.
 
-- [PENDING] [MAINTENANCE] **Wire analyze-code-complexity.js into pipeline manifest** — `pipeline-health.js` reads `code-complexity-report.json` and surfaces `complexityHealth`, but the script is never invoked by the pipeline runner. Add it to the `monitor` phase in `pipeline-manifest.json`. ~5 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Streaming matcher Norwegian country name aliases** — tvkampen uses Norwegian names (Østerrike, Sveits, Spania) but events.json stores English names. Match rate is 0% during international breaks. Add a Norwegian→English country alias map to `streaming-matcher.js`. ~30 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **recapHeadlineRate hint rule** — `recapHeadlineRate` is persistently low (0.04) but no hint fires to inform featured content. Add a rule to `buildResultsHints()` in `ai-quality-gates.js` when rate drops below 0.10. ~40 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **post-generate.js and merge-open-data.js test coverage** — Both active pipeline scripts have no dedicated test files. Add basic unit tests for orchestration logic and merge-pair handling. ~130 lines. (Pillar: code)
+- [DONE] [MAINTENANCE] **Wire analyze-code-complexity.js into pipeline manifest** — Added to `monitor` phase in `pipeline-manifest.json`. Direct-to-main. Run 37.
+- [DONE] [MAINTENANCE] **Streaming matcher Norwegian country name aliases** — Added 26-entry `NORWEGIAN_COUNTRY_ALIASES` map to `streaming-matcher.js`, 25 tests. Direct-to-main. Run 37.
+- [DONE] [MAINTENANCE] **recapHeadlineRate hint rule** — Added critically-low threshold (<10%) in `buildResultsHints()`, 7 tests. Direct-to-main. Run 37.
+- [DONE] [MAINTENANCE] **post-generate.js and merge-open-data.js test coverage** — 12 tests for merge-open-data, 8 tests for post-generate. Direct-to-main. Run 37.
+- [DONE] [MAINTENANCE] **Staleness banner dark mode fix** — Replaced inline styles with `.staleness-banner` CSS class with dark mode override. PR #149. Run 37.
+- [DONE] [MAINTENANCE] **importanceReason badge deduplication** — Applied `_summaryCoversReason()` guard in `renderRow()` to suppress duplicate badge. PR #149. Run 37.
+- [DONE] [MAINTENANCE] **"Later" band collapsed preview date context** — Added date string (e.g., "3 Apr") to collapsed band preview when `showDay` is false. PR #149. Run 37.
+
+- [PENDING] [MAINTENANCE] **Golf tee-time card headshots** — `renderSportGroupCard` golf path shows player name and position but no headshot in header row. Headshot data already loaded from standings. Wire `hsMap` lookup + 16px circular `<img>` into tee-time card. ~20 lines. (Pillar: personalization)
+- [PENDING] [MAINTENANCE] **Insights section visual differentiation** — `renderInsights()` renders flat text with no visual hierarchy. Wrap leading numbers/stats in accent-colored monospace styling to make the section scannable. ~25 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **Sport filter pills focus-visible ring + dark mode active state** — `.pill.active` has no explicit dark mode override, and `button.pill` lacks `focus-visible` outline. Add `focus-visible` ring and `.dark .pill.active` with `--accent` color. ~15 lines. (Pillar: quality)
+- [PENDING] [MAINTENANCE] **mustWatchCoverage decline investigation** — Pattern report shows must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events. Investigate root cause in `generate-featured.js` event selection logic. ~30 lines. (Pillar: quality)
 
 ---
 
