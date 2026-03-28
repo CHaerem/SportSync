@@ -1,27 +1,17 @@
 {
-  "generatedAt": "2026-03-28T17:11:18.207Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "mustWatchCoverage",
-      "earlyAvg": 1,
-      "lateAvg": 0.67,
-      "drop": 0.33,
-      "suggestion": "Must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events."
-    }
-  ],
+  "generatedAt": "2026-03-28T18:18:33.378Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 602,
+      "count": 603,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-28T17:11:18.204Z"
+      "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "snapshot_event_mismatch": {
-      "count": 244,
+      "count": 245,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-28T10:18:10.307Z"
+      "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "stale_snapshot": {
       "count": 118,
@@ -29,9 +19,9 @@
       "lastSeen": "2026-03-28T02:22:36.875Z"
     },
     "chronic_data_retention": {
-      "count": 188,
+      "count": 189,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-28T17:11:18.204Z"
+      "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "stale_output": {
       "count": 96,
@@ -39,14 +29,14 @@
       "lastSeen": "2026-03-27T14:29:57.307Z"
     },
     "stale_data": {
-      "count": 173,
+      "count": 174,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-03-28T17:11:18.204Z"
+      "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "invisible_events": {
-      "count": 100,
+      "count": 101,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-03-28T17:11:18.204Z"
+      "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "missing_snapshot": {
       "count": 4,
@@ -64,5 +54,5 @@
       "lastSeen": "2026-03-28T16:11:29.996Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Must-watch coverage dropped from 100% to 67%."
+  "summary": "0 patterns detected"
 }

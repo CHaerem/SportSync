@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-28T14:19:56.841Z",
+  "generatedAt": "2026-03-28T18:18:14.997Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 5,
-    "generationMs": 26737,
+    "generationMs": 41914,
     "tokenUsage": {
-      "input": 25818,
-      "output": 939,
-      "cacheCreation": 17259,
+      "input": 25811,
+      "output": 1890,
+      "cacheCreation": 17252,
       "cacheRead": 8556,
-      "total": 26757,
-      "costUSD": 0.08138205,
+      "total": 27701,
+      "costUSD": 0.0956208,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 62,
+      "pickCount": 3,
+      "avgScore": 47,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 23
+      "footballCount": 15
     },
     "issues": [
       "Only 0% of results have recap headlines",
@@ -71,7 +71,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.926
     },
     "after": {
       "totalEvents": 27,
@@ -83,38 +83,38 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 2,
+    "aiUpdatedFields": 2,
     "failedBatches": 0,
     "totalEvents": 27,
     "skipStats": {
       "total": 27,
-      "unchanged": 27,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 25,
+      "enriched": 2,
+      "skipRate": 0.93
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 10882,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21633,
+      "output": 130,
+      "calls": 1,
+      "total": 21763,
+      "costUSD": 0.0535533,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 25788,
-      "output": 1717,
+      "input": 25811,
+      "output": 1890,
       "calls": 1,
-      "total": 27505,
+      "total": 27701,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-28T10:17:51.735Z"
+    "lastRun": "2026-03-28T18:18:15.276Z"
   },
   "discovery": {
     "tokenUsage": {
