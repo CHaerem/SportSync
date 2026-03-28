@@ -7,6 +7,7 @@ import {
 	mineAliasSuggestions,
 	buildStreamingHints,
 	TEAM_ALIASES,
+	NORWEGIAN_COUNTRY_ALIASES,
 } from "../scripts/lib/streaming-matcher.js";
 
 // --- normalizeTeamName ---
@@ -407,6 +408,85 @@ describe("buildStreamingHints", () => {
 		];
 		const hints = buildStreamingHints(history);
 		expect(hints.some(h => h.includes("ALIAS SUGGESTION"))).toBe(true);
+	});
+});
+
+// --- NORWEGIAN_COUNTRY_ALIASES ---
+
+describe("NORWEGIAN_COUNTRY_ALIASES", () => {
+	it("is exported and non-empty", () => {
+		expect(typeof NORWEGIAN_COUNTRY_ALIASES).toBe("object");
+		expect(Object.keys(NORWEGIAN_COUNTRY_ALIASES).length).toBeGreaterThan(10);
+	});
+
+	it("maps key European football nations", () => {
+		expect(NORWEGIAN_COUNTRY_ALIASES["osterrike"]).toBe("austria");
+		expect(NORWEGIAN_COUNTRY_ALIASES["sveits"]).toBe("switzerland");
+		expect(NORWEGIAN_COUNTRY_ALIASES["frankrike"]).toBe("france");
+		expect(NORWEGIAN_COUNTRY_ALIASES["tyskland"]).toBe("germany");
+		expect(NORWEGIAN_COUNTRY_ALIASES["nederland"]).toBe("netherlands");
+	});
+});
+
+describe("normalizeTeamName — Norwegian country aliases", () => {
+	it("translates Østerrike to austria", () => {
+		expect(normalizeTeamName("Østerrike")).toBe("austria");
+	});
+
+	it("translates Sveits to switzerland", () => {
+		expect(normalizeTeamName("Sveits")).toBe("switzerland");
+	});
+
+	it("translates Frankrike to france", () => {
+		expect(normalizeTeamName("Frankrike")).toBe("france");
+	});
+
+	it("translates Tyskland to germany", () => {
+		expect(normalizeTeamName("Tyskland")).toBe("germany");
+	});
+
+	it("translates Nederland to netherlands", () => {
+		expect(normalizeTeamName("Nederland")).toBe("netherlands");
+	});
+
+	it("translates Tsjekkia to czech republic", () => {
+		expect(normalizeTeamName("Tsjekkia")).toBe("czech republic");
+	});
+
+	it("does not affect non-country names", () => {
+		expect(normalizeTeamName("Arsenal")).toBe("arsenal");
+		expect(normalizeTeamName("Barcelona")).toBe("barcelona");
+	});
+});
+
+describe("teamsMatch — Norwegian country name matching", () => {
+	it("matches Østerrike (tvkampen) to Austria (events.json)", () => {
+		expect(teamsMatch("Østerrike", "Austria")).toBe(true);
+	});
+
+	it("matches Sveits to Switzerland", () => {
+		expect(teamsMatch("Sveits", "Switzerland")).toBe(true);
+	});
+
+	it("matches Frankrike to France", () => {
+		expect(teamsMatch("Frankrike", "France")).toBe(true);
+	});
+
+	it("matches Tyskland to Germany", () => {
+		expect(teamsMatch("Tyskland", "Germany")).toBe(true);
+	});
+
+	it("matches Spania to Spain", () => {
+		expect(teamsMatch("Spania", "Spain")).toBe(true);
+	});
+
+	it("matches Nederland to Netherlands", () => {
+		expect(teamsMatch("Nederland", "Netherlands")).toBe(true);
+	});
+
+	it("does not false-positive unrelated countries", () => {
+		expect(teamsMatch("Frankrike", "Germany")).toBe(false);
+		expect(teamsMatch("Spania", "Portugal")).toBe(false);
 	});
 });
 

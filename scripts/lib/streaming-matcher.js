@@ -6,6 +6,41 @@
  */
 
 /**
+ * Norwegian country name → English translation map.
+ * tvkampen.com uses Norwegian country names for international matches;
+ * events.json stores English names. Applied during normalization so
+ * e.g. "Østerrike" matches "Austria" without needing alias table entries.
+ * Keys are already-normalized forms (lowercase, no accents).
+ */
+export const NORWEGIAN_COUNTRY_ALIASES = {
+	"osterrike": "austria",
+	"sveits": "switzerland",
+	"spania": "spain",
+	"frankrike": "france",
+	"tyskland": "germany",
+	"italia": "italy",
+	"skottland": "scotland",
+	"irland": "ireland",
+	"nord irland": "northern ireland",
+	"nederland": "netherlands",
+	"belgia": "belgium",
+	"hellas": "greece",
+	"tyrkia": "turkey",
+	"ungarn": "hungary",
+	"polen": "poland",
+	"tsjekkia": "czech republic",
+	"kroatia": "croatia",
+	"ukraina": "ukraine",
+	"russland": "russia",
+	"island": "iceland",
+	"faeroyene": "faroe islands",
+	"kypros": "cyprus",
+	"nord makedonia": "north macedonia",
+	"litauen": "lithuania",
+	"aserbajdsjan": "azerbaijan",
+};
+
+/**
  * Team name alias table for hard-to-match cases.
  * Keys are normalized names (lowercase, no accents, no suffixes).
  * Values are arrays of alternative normalized names.
@@ -59,7 +94,7 @@ export const TEAM_ALIASES = {
  */
 export function normalizeTeamName(name) {
 	if (!name) return "";
-	return name
+	const normalized = name
 		.toLowerCase()
 		// Replace Nordic characters that don't decompose via NFD
 		.replace(/ø/g, "o").replace(/æ/g, "ae").replace(/å/g, "a")
@@ -70,6 +105,8 @@ export function normalizeTeamName(name) {
 		.replace(/[^a-z0-9\s]/g, " ")  // remove non-alphanumeric
 		.replace(/\s+/g, " ")
 		.trim();
+	// Translate Norwegian country names to English equivalents
+	return NORWEGIAN_COUNTRY_ALIASES[normalized] ?? normalized;
 }
 
 /**
