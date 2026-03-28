@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-28T10:17:51.454Z",
+  "generatedAt": "2026-03-28T14:19:56.841Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 5,
-    "generationMs": 35401,
+    "generationMs": 26737,
     "tokenUsage": {
-      "input": 25788,
-      "output": 1717,
-      "cacheCreation": 25785,
-      "cacheRead": 0,
-      "total": 27505,
-      "costUSD": 0.12245774999999999,
+      "input": 25818,
+      "output": 939,
+      "cacheCreation": 17259,
+      "cacheRead": 8556,
+      "total": 26757,
+      "costUSD": 0.08138205,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -46,18 +46,19 @@
     }
   },
   "results": {
-    "score": 89,
+    "score": 87,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
       "recapHeadlineRate": 0,
-      "favoriteCoverage": 0.4,
+      "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 25
+      "footballCount": 23
     },
     "issues": [
-      "Only 0% of results have recap headlines"
+      "Only 0% of results have recap headlines",
+      "Only 20% of favorite teams present in results"
     ]
   },
   "enrichment": {
