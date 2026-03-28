@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-28T06:31:56.878Z",
+  "generatedAt": "2026-03-28T10:17:51.454Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 5,
-    "generationMs": 61674,
+    "generationMs": 35401,
     "tokenUsage": {
-      "input": 26052,
-      "output": 3106,
-      "cacheCreation": 17493,
-      "cacheRead": 8556,
-      "total": 29158,
-      "costUSD": 0.11476455000000002,
+      "input": 25788,
+      "output": 1717,
+      "cacheCreation": 25785,
+      "cacheRead": 0,
+      "total": 27505,
+      "costUSD": 0.12245774999999999,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -37,12 +37,12 @@
     "issues": []
   },
   "watchPlan": {
-    "score": 0,
+    "score": 100,
     "metrics": {
-      "pickCount": 0,
-      "avgScore": 0,
-      "streamingCoverage": 0,
-      "reasonCoverage": 0
+      "pickCount": 1,
+      "avgScore": 62,
+      "streamingCoverage": 1,
+      "reasonCoverage": 1
     }
   },
   "results": {
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 30,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.9
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 30,
+      "totalEvents": 27,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,38 +82,38 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 3,
-    "aiUpdatedFields": 3,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 30,
+    "totalEvents": 27,
     "skipStats": {
-      "total": 30,
+      "total": 27,
       "unchanged": 27,
-      "enriched": 3,
-      "skipRate": 0.9
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 7331,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21803,
-      "output": 189,
-      "calls": 1,
-      "total": 21992,
-      "costUSD": 0.0550758,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 25972,
-      "output": 2566,
+      "input": 25788,
+      "output": 1717,
       "calls": 1,
-      "total": 28538,
+      "total": 27505,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-28T02:22:17.316Z"
+    "lastRun": "2026-03-28T10:17:51.735Z"
   },
   "discovery": {
     "tokenUsage": {
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-03-28T06:25:29.674Z",
+    "lastRun": "2026-03-28T10:11:59.952Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2

@@ -1,23 +1,20 @@
 {
-  "generatedAt": "2026-03-28T06:31:58.561Z",
+  "generatedAt": "2026-03-28T10:18:10.423Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 30,
+    "totalEvents": 27,
     "sports": [
       "golf",
       "f1",
-      "tennis",
       "cycling",
+      "tennis",
       "chess",
       "football",
       "esports"
     ],
     "bands": {
       "live": [
-        "Texas Children's Houston Open",
-        "Fayez Sarofim & Co. U.S. Men's Clay Court Championship",
-        "Credit One Charleston Open",
-        "Copa Colsanitas Colsubsidio"
+        "Texas Children's Houston Open"
       ],
       "today": [],
       "tomorrow": [
@@ -57,9 +54,9 @@
     },
     "featuredBlockCount": 5,
     "briefPresent": false,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 9
+    "issueCount": 17
   },
   "findings": [
     {
@@ -149,33 +146,18 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Woodland\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Højgaard\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Best Norwegian\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Jaeger\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"World Chess Championship\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -194,9 +176,9 @@
     }
   ],
   "summary": {
-    "total": 26,
+    "total": 23,
     "critical": 0,
-    "warning": 24,
+    "warning": 21,
     "info": 2
   },
   "pass": true,
