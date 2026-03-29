@@ -454,11 +454,18 @@ function mustWatchCoverage(blocks, events) {
 		// Fuzzy fallback: check if the significant words of any needle (length ≥4, non-year)
 		// all appear somewhere in the combined block text.  This handles cases where the LLM
 		// writes "Tirreno-Adriatico opens…" for an event titled "Tirreno-Adriatico 2026".
+		// Also tries dropping the first word to handle sponsor prefixes like "Aramco Japanese
+		// Grand Prix" → LLM writes "Japanese Grand Prix" without the sponsor name.
 		const significantWords = (s) =>
 			normalizeName(s).split(/\s+/).filter(w => w.length >= 4 && !/^\d{4}$/.test(w));
 		if (needles.some((n) => {
 			const words = significantWords(n);
-			return words.length > 0 && words.every(w => allTextNorm.includes(w));
+			if (words.length === 0) return false;
+			if (words.every(w => allTextNorm.includes(w))) return true;
+			// Sponsor-prefix fallback: drop first word when >= 4 sig words remain before drop
+			// (ensures >= 3 words still required to avoid false positives)
+			if (words.length >= 4 && words.slice(1).every(w => allTextNorm.includes(w))) return true;
+			return false;
 		})) covered++;
 	}
 	return covered / mustWatch.length;

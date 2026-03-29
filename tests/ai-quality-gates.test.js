@@ -414,6 +414,49 @@ describe("evaluateEditorialQuality()", () => {
 		expect(result.metrics.mustWatchCoverage).toBe(1);
 	});
 
+	it("matches sponsor-prefixed F1 event when LLM drops sponsor name (Aramco Japanese Grand Prix → Japanese Grand Prix)", () => {
+		// Real-world case: event titled "Aramco Japanese Grand Prix" but LLMs commonly omit
+		// the sponsor prefix and write "Japanese Grand Prix".  The sponsor-prefix fallback
+		// (drop first significant word when >= 4 sig words) must resolve this.
+		const events = [
+			{
+				sport: "f1",
+				title: "Aramco Japanese Grand Prix",
+				tournament: "Formula 1 2026 - Race Weekend",
+				importance: 4,
+				time: "2026-03-27T02:30:00.000Z",
+			},
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "🏎 Japanese Grand Prix at Suzuka — season opener" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now: new Date("2026-03-27T12:00:00Z") });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("does not false-positive on vague sponsor-prefix drop (short title without enough words)", () => {
+		// If only 3 significant words total, dropping the first would leave just 2 — too vague.
+		// "Grand Prix Monaco" has 3 sig words; after drop only "prix" + "monaco" remain (2 words).
+		// A block saying "grand prix weekend" should NOT match the Monaco event via fuzzy.
+		const events = [
+			{
+				sport: "f1",
+				title: "Grand Prix Monaco",
+				importance: 4,
+				time: "2026-05-24T13:00:00Z",
+			},
+		];
+		const featured = {
+			blocks: [
+				{ type: "narrative", text: "A grand prix weekend lies ahead with fast cars" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now: new Date("2026-05-24T12:00:00Z") });
+		expect(result.metrics.mustWatchCoverage).toBe(0);
+	});
+
 	it("cycling emoji detection in sportDiversity", () => {
 		// 🚴 (cycling) must be recognised the same way ⚽ (football) is.
 		const events = [
