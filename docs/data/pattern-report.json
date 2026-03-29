@@ -1,51 +1,51 @@
 {
-  "generatedAt": "2026-03-29T21:11:48.522Z",
+  "generatedAt": "2026-03-29T22:14:00.813Z",
   "patternsDetected": 1,
   "patterns": [
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "resultsScore",
-      "fireCount": 6,
+      "fireCount": 7,
       "hintText": "RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lack matching RSS headlines, so narrative s",
-      "suggestion": "Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac...\" has fired 6 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac...\" has fired 7 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 624,
+      "count": 625,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.805Z"
     },
     "snapshot_event_mismatch": {
-      "count": 251,
+      "count": 252,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.805Z"
     },
     "stale_snapshot": {
-      "count": 123,
+      "count": 124,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.805Z"
     },
     "chronic_data_retention": {
-      "count": 214,
+      "count": 215,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.804Z"
     },
     "stale_output": {
-      "count": 98,
+      "count": 100,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-03-29T14:19:05.836Z"
+      "lastSeen": "2026-03-29T22:14:00.804Z"
     },
     "stale_data": {
-      "count": 196,
+      "count": 197,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.804Z"
     },
     "invisible_events": {
-      "count": 122,
+      "count": 123,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-03-29T21:11:48.518Z"
+      "lastSeen": "2026-03-29T22:14:00.805Z"
     },
     "missing_snapshot": {
       "count": 4,
@@ -61,6 +61,11 @@
       "count": 7,
       "firstSeen": "2026-03-27T12:20:14.489Z",
       "lastSeen": "2026-03-29T12:14:50.887Z"
+    },
+    "football_count_collapse": {
+      "count": 1,
+      "firstSeen": "2026-03-29T22:14:00.805Z",
+      "lastSeen": "2026-03-29T22:14:00.805Z"
     }
   },
   "summary": "1 patterns detected (1 medium). Top priority: hint_fatigue — Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac."
