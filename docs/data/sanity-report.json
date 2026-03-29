@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-29T06:36:17.749Z",
+  "generatedAt": "2026-03-29T10:18:08.556Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 31,
@@ -16,11 +16,10 @@
       "live": [
         "Texas Children's Houston Open",
         "Grand Prix Hassan II",
-        "Tiriac Open presented by UniCredit Bank"
-      ],
-      "today": [
+        "Tiriac Open presented by UniCredit Bank",
         "Gent-Wevelgem 2026 (In Flanders Fields)"
       ],
+      "today": [],
       "tomorrow": [],
       "thisWeek": [
         "Dwars door Vlaanderen 2026",
@@ -60,7 +59,7 @@
     "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 9
+    "issueCount": 8
   },
   "findings": [
     {
@@ -150,11 +149,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
@@ -190,9 +184,9 @@
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 24,
     "critical": 0,
-    "warning": 23,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
