@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-29T14:19:05.906Z",
+  "generatedAt": "2026-03-29T18:16:41.063Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 30,
+    "totalEvents": 29,
     "sports": [
       "golf",
       "f1",
-      "cycling",
       "tennis",
+      "cycling",
       "chess",
       "football",
       "esports"
@@ -51,15 +51,14 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Aramco Japanese Grand Prix",
-        "Gent-Wevelgem 2026 (In Flanders Fields)"
+        "Aramco Japanese Grand Prix"
       ]
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 9
   },
   "findings": [
     {
@@ -150,6 +149,21 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gent\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Wevelgem\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Flanders\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
@@ -166,17 +180,12 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 10 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 22,
+    "total": 24,
     "critical": 0,
-    "warning": 20,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
