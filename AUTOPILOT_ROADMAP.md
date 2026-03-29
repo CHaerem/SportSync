@@ -201,10 +201,6 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Sport filter pills dark mode active state** — Added `.dark .pill.active` with `--accent` color override. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **mustWatchCoverage decline fix** — Root cause: LLMs drop sponsor prefixes ("Aramco Japanese Grand Prix" → "Japanese Grand Prix"). Added sponsor-prefix fallback in fuzzy matcher (drop first word when >= 4 sig words). 2 regression tests. Direct-to-main. Run 38.
 
-- [PENDING] [MAINTENANCE] **Dark mode muted text contrast fix** — `--muted-light: #5a564f` in dark mode fails WCAG AA (3.2:1 vs 4.5:1 required). Affects `.row-nor-muted`, `.flow-count`, `.row-subtitle`. Bump to ~`#7a7570`. 1 line in `docs/index.html` line 65. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Expandable section aria-label state updates** — `.feat-expand` and `.band-label.collapsible` toggle `aria-expanded` but label text stays static ("Show X" vs "Hide X"). Update `aria-label` in both toggle handlers in `dashboard.js`. ~10 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Row summary clamp on sub-380px screens** — `.row-summary` steals vertical space on narrow devices, causing `.row-title-text` to ellipsis too early. Add `@media (max-width: 380px)` with `-webkit-line-clamp: 1`. ~6 lines in `docs/index.html`. (Pillar: quality)
-
 ---
 
 ## Lessons & Effectiveness

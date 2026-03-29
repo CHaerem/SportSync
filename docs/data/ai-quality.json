@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-03-28T18:18:14.997Z",
+  "generatedAt": "2026-03-29T02:17:14.063Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 5,
-    "generationMs": 41914,
+    "blockCount": 6,
+    "generationMs": 56598,
     "tokenUsage": {
-      "input": 25811,
-      "output": 1890,
-      "cacheCreation": 17252,
-      "cacheRead": 8556,
-      "total": 27701,
-      "costUSD": 0.0956208,
+      "input": 25922,
+      "output": 3144,
+      "cacheCreation": 25919,
+      "cacheRead": 0,
+      "total": 29066,
+      "costUSD": 0.14436525,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 47,
+      "avgScore": 56,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -54,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 15
+      "footballCount": 13
     },
     "issues": [
       "Only 0% of results have recap headlines",
@@ -107,14 +107,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 25811,
-      "output": 1890,
+      "input": 25922,
+      "output": 3144,
       "calls": 1,
-      "total": 27701,
+      "total": 29066,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-03-28T18:18:15.276Z"
+    "lastRun": "2026-03-29T02:17:14.336Z"
   },
   "discovery": {
     "tokenUsage": {
