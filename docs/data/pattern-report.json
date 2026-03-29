@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-03-29T13:27:01.270Z",
+  "generatedAt": "2026-03-29T14:19:05.846Z",
   "patternsDetected": 1,
   "patterns": [
     {
       "type": "hint_fatigue",
       "severity": "medium",
       "hintKey": "resultsScore",
-      "fireCount": 5,
+      "fireCount": 6,
       "hintText": "RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lack matching RSS headlines, so narrative s",
-      "suggestion": "Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac...\" has fired 5 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+      "suggestion": "Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac...\" has fired 6 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
     }
   ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 616,
+      "count": 617,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-29T13:27:01.265Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "snapshot_event_mismatch": {
       "count": 245,
@@ -23,29 +23,29 @@
       "lastSeen": "2026-03-28T18:18:33.375Z"
     },
     "stale_snapshot": {
-      "count": 120,
+      "count": 121,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-03-29T13:27:01.265Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "chronic_data_retention": {
-      "count": 205,
+      "count": 207,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-29T13:27:01.265Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "stale_output": {
-      "count": 96,
+      "count": 98,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-03-27T14:29:57.307Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "stale_data": {
-      "count": 187,
+      "count": 189,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-03-29T13:27:01.265Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "invisible_events": {
-      "count": 114,
+      "count": 115,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-03-29T13:27:01.265Z"
+      "lastSeen": "2026-03-29T14:19:05.836Z"
     },
     "missing_snapshot": {
       "count": 4,
