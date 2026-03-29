@@ -1417,7 +1417,13 @@ class Dashboard {
 		const top = this.insights.insights.slice(0, 5);
 		let html = '<div class="insights-header">Key Numbers</div>';
 		for (const insight of top) {
-			html += `<div class="insight-line">${this.esc(insight.text)}</div>`;
+			// Highlight leading numbers/stats with accent monospace styling
+			const text = this.esc(insight.text);
+			const highlighted = text.replace(
+				/^(\d[\d\.,\+\-\/\%]*(?:\s*[\-–]\s*\d[\d\.,\+\-\/\%]*)?)/,
+				'<span class="insight-stat">$1</span>'
+			);
+			html += `<div class="insight-line">${highlighted}</div>`;
 		}
 		container.innerHTML = html;
 	}
@@ -1956,7 +1962,15 @@ class Dashboard {
 							playerNameLower.includes(entryNameLower);
 					});
 
+					// Resolve headshot: standings entry first, then asset-map fallback
+					const hsUrl = (lbEntry && lbEntry.headshot) ||
+						(typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.name) : null);
+					const hsImg = hsUrl
+						? `<img class="lead-tee-hs" src="${this.esc(hsUrl)}" alt="" loading="lazy">`
+						: '<span class="lead-tee-hs lead-tee-hs-placeholder"></span>';
+
 					html += `<div class="lead-tee-time">`;
+					html += hsImg;
 					html += `<span class="lead-tee-name">${this.esc(p.name)}</span>`;
 					if (lbEntry) {
 						const pos = lbEntry.positionDisplay || `T${lbEntry.position}`;
