@@ -1,12 +1,21 @@
 {
-  "generatedAt": "2026-03-29T02:17:30.364Z",
-  "patternsDetected": 0,
-  "patterns": [],
+  "generatedAt": "2026-03-29T06:36:17.756Z",
+  "patternsDetected": 1,
+  "patterns": [
+    {
+      "type": "hint_fatigue",
+      "severity": "medium",
+      "hintKey": "resultsScore",
+      "fireCount": 5,
+      "hintText": "RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lack matching RSS headlines, so narrative s",
+      "suggestion": "Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac...\" has fired 5 times without improving resultsScore. The hint-based approach isn't working — investigate the underlying code or data issue."
+    }
+  ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 608,
+      "count": 609,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-29T02:17:30.361Z"
+      "lastSeen": "2026-03-29T06:36:17.753Z"
     },
     "snapshot_event_mismatch": {
       "count": 245,
@@ -19,9 +28,9 @@
       "lastSeen": "2026-03-28T02:22:36.875Z"
     },
     "chronic_data_retention": {
-      "count": 194,
+      "count": 195,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-29T02:17:30.361Z"
+      "lastSeen": "2026-03-29T06:36:17.753Z"
     },
     "stale_output": {
       "count": 96,
@@ -29,14 +38,14 @@
       "lastSeen": "2026-03-27T14:29:57.307Z"
     },
     "stale_data": {
-      "count": 179,
+      "count": 180,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-03-29T02:17:30.361Z"
+      "lastSeen": "2026-03-29T06:36:17.753Z"
     },
     "invisible_events": {
-      "count": 106,
+      "count": 107,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-03-29T02:17:30.361Z"
+      "lastSeen": "2026-03-29T06:36:17.753Z"
     },
     "missing_snapshot": {
       "count": 4,
@@ -49,10 +58,10 @@
       "lastSeen": "2026-03-27T06:36:13.065Z"
     },
     "step_timeout_hit": {
-      "count": 4,
+      "count": 5,
       "firstSeen": "2026-03-27T12:20:14.489Z",
-      "lastSeen": "2026-03-28T20:10:12.467Z"
+      "lastSeen": "2026-03-29T06:36:17.753Z"
     }
   },
-  "summary": "0 patterns detected"
+  "summary": "1 patterns detected (1 medium). Top priority: hint_fatigue — Hint \"RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lac."
 }
