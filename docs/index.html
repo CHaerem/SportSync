@@ -477,6 +477,7 @@
 		}
 		.pill:hover { border-color: var(--fg); color: var(--fg); }
 		.pill.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+		.dark .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 		.pill .pill-dot {
 			display: inline-block; width: 5px; height: 5px; border-radius: 50%;
 			margin-right: 4px; vertical-align: middle; position: relative; top: -0.5px;
@@ -577,8 +578,10 @@
 			font-style: italic; padding-left: 78px;
 		}
 		.lead-tee-times { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-light); }
-		.lead-tee-time { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
-		.lead-tee-name { font-size: 0.72rem; font-weight: 500; }
+		.lead-tee-time { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; gap: 6px; }
+		.lead-tee-hs { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+		.lead-tee-hs-placeholder { display: inline-block; background: var(--border); }
+		.lead-tee-name { font-size: 0.72rem; font-weight: 500; flex: 1; min-width: 0; }
 		.lead-tee-standing { font-size: 0.68rem; color: var(--muted); margin-left: auto; margin-right: 8px; font-variant-numeric: tabular-nums; }
 		.lead-tee-clock { font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 		.lead-stream {
@@ -1236,6 +1239,7 @@
 		}
 		.insights-header { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
 		.insight-line { font-size: 0.8rem; padding: 3px 0; line-height: 1.55; color: var(--text); }
+		.insight-stat { font-family: var(--mono); font-size: 0.85rem; font-weight: 700; color: var(--accent); letter-spacing: -0.01em; }
 
 		/* === News === */
 		#news { padding: 0 16px; }
