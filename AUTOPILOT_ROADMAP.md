@@ -196,10 +196,10 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **importanceReason badge deduplication** — Applied `_summaryCoversReason()` guard in `renderRow()` to suppress duplicate badge. PR #149. Run 37.
 - [DONE] [MAINTENANCE] **"Later" band collapsed preview date context** — Added date string (e.g., "3 Apr") to collapsed band preview when `showDay` is false. PR #149. Run 37.
 
-- [PENDING] [MAINTENANCE] **Golf tee-time card headshots** — `renderSportGroupCard` golf path shows player name and position but no headshot in header row. Headshot data already loaded from standings. Wire `hsMap` lookup + 16px circular `<img>` into tee-time card. ~20 lines. (Pillar: personalization)
-- [PENDING] [MAINTENANCE] **Insights section visual differentiation** — `renderInsights()` renders flat text with no visual hierarchy. Wrap leading numbers/stats in accent-colored monospace styling to make the section scannable. ~25 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **Sport filter pills focus-visible ring + dark mode active state** — `.pill.active` has no explicit dark mode override, and `button.pill` lacks `focus-visible` outline. Add `focus-visible` ring and `.dark .pill.active` with `--accent` color. ~15 lines. (Pillar: quality)
-- [PENDING] [MAINTENANCE] **mustWatchCoverage decline investigation** — Pattern report shows must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events. Investigate root cause in `generate-featured.js` event selection logic. ~30 lines. (Pillar: quality)
+- [DONE] [MAINTENANCE] **Golf tee-time card headshots** — Wired `lbEntry.headshot` + `getGolferHeadshot()` fallback into tee-time card as 16px circular `<img>`. PR #150. Run 38.
+- [DONE] [MAINTENANCE] **Insights section visual differentiation** — Regex-wrapped leading stats in `<span class="insight-stat">` with accent color + monospace. PR #150. Run 38.
+- [DONE] [MAINTENANCE] **Sport filter pills dark mode active state** — Added `.dark .pill.active` with `--accent` color override. PR #150. Run 38.
+- [DONE] [MAINTENANCE] **mustWatchCoverage decline fix** — Root cause: LLMs drop sponsor prefixes ("Aramco Japanese Grand Prix" → "Japanese Grand Prix"). Added sponsor-prefix fallback in fuzzy matcher (drop first word when >= 4 sig words). 2 regression tests. Direct-to-main. Run 38.
 
 ---
 

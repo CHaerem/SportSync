@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-29",
+      "task": "Execution: UX batch (PR #150) + mustWatchCoverage fix (direct-to-main) + UX scout",
+      "outcome": "completed",
+      "pr": "PR #150 (merged) + direct-to-main (1 commit)",
+      "details": "Run 38: 0 user feedback, 4 pending tasks. 2 parallel worktree subagents: UX-agent (3 tasks batched into PR #150 — golf headshots, insight stat styling, pill dark mode), code-agent (mustWatchCoverage decline — sponsor-prefix fuzzy matcher fix + 2 regression tests). 1 background UX scout. All 7624 tests pass.",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 18,
+      "lesson": "mustWatchCoverage 100%→67% was caused by LLMs dropping sponsor prefixes from F1 event names. Fixed with first-word-drop fallback requiring >= 4 significant words. UX PR merged cleanly; code-agent fix rebased with minor test conflict (duplicate tests from both agents). Parallel worktree pattern continues to work well.",
+      "scouted": 0
+    },
+    {
       "date": "2026-03-28",
       "task": "Execution + scouting: 4 infra tasks (direct-to-main) + UX batch (PR #149) + UX scout",
       "outcome": "completed",
