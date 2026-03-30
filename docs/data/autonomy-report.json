@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-30T14:40:48.581Z",
+  "generatedAt": "2026-03-30T15:33:08.280Z",
   "overallScore": 0.92,
   "loopsClosed": 11,
   "loopsTotal": 13,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -52,7 +52,7 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "preferenceEvolution": {
       "score": 0.5,
