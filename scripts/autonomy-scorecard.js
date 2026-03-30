@@ -144,6 +144,7 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 		"quota_skip_time_critical",// quota adaptation: time-critical steps skipped due to quota; next higher-quota run will run them
 		"recipe_persistent_failure",// loop 13: learn-recipes self-repairs broken recipes; quota-skipped when tier is low
 		"recipe_repair_exhausted",  // loop 13: recipe self-repair has exhaustion fallback; autopilot investigates via health report
+		"football_count_collapse",  // quality regression: football count drops during international breaks are structural
 	]);
 	const actionableIssues = Array.isArray(report.issues)
 		? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
@@ -387,6 +388,65 @@ export function evaluateSnapshotHealth(dataDir = ROOT) {
 	return makeLoop(1.0, `${meta.snapshotCount} snapshots + health monitoring + fresh${note}`);
 }
 
+// Loop 11: Preference Evolution
+// observe: engagement-data.json -> decide: evolve-preferences.js -> act: update sport weights in user-context.json
+export function evaluatePreferenceEvolution(dataDir = ROOT, scriptsDir = SCRIPTS) {
+	// evolve-preferences.js must exist
+	const evolvePath = path.join(scriptsDir, "evolve-preferences.js");
+	if (!fs.existsSync(evolvePath)) {
+		return makeLoop(0, "No evolve-preferences.js script");
+	}
+
+	// preference-evolution.json must exist
+	const historyPath = path.join(dataDir, "preference-evolution.json");
+	const history = readJsonIfExists(historyPath);
+	if (!history) {
+		return makeLoop(0, "No preference-evolution.json data");
+	}
+
+	// Must have at least one evolution entry
+	const entries = Array.isArray(history) ? history : (Array.isArray(history.history) ? history.history : []);
+	if (entries.length === 0) {
+		const ageMs = fileAgeMsOrNull(historyPath);
+		const ageHours = ageMs !== null ? Math.round(ageMs / (1000 * 60 * 60)) : null;
+		if (ageHours !== null && ageHours < 24) {
+			return makeLoop(0.5, "Preference evolution infrastructure exists but no entries yet");
+		}
+		return makeLoop(0, "Preference evolution file is empty or stale");
+	}
+
+	return makeLoop(1.0, `evolve-preferences.js + ${entries.length} evolution entries`);
+}
+
+// Loop 13: Learned Scraper
+// observe: scraper-history.json -> decide: learn-recipe.js self-repair -> act: zero-cost mechanical extraction
+export function evaluateLearnedScraper(dataDir = ROOT, scriptsDir = SCRIPTS) {
+	// run-recipes.js and learn-recipe.js must exist
+	const runRecipesPath = path.join(scriptsDir, "run-recipes.js");
+	const learnRecipePath = path.join(scriptsDir, "learn-recipe.js");
+	if (!fs.existsSync(runRecipesPath) || !fs.existsSync(learnRecipePath)) {
+		return makeLoop(0, "Recipe infrastructure missing (run-recipes.js or learn-recipe.js)");
+	}
+
+	// Recipe registry must exist
+	const registryPath = path.join(scriptsDir, "config", "recipes", "_registry.json");
+	if (!fs.existsSync(registryPath)) {
+		return makeLoop(0.5, "Recipe scripts exist but no recipe registry found");
+	}
+
+	// scraper-history.json must exist (freshness is optional — recipe runs are quota-gated)
+	const historyPath = path.join(dataDir, "scraper-history.json");
+	const history = readJsonIfExists(historyPath);
+	if (!history) {
+		return makeLoop(0.5, "Recipe registry exists but no scraper execution history yet");
+	}
+
+	const runs = Array.isArray(history) ? history : (Array.isArray(history.runs) ? history.runs : []);
+	const runCount = runs.length;
+
+	return makeLoop(1.0, `recipe infrastructure + registry + ${runCount} execution history entries`);
+}
+
 // Loop 12: Streaming Verification
 // observe: streaming-verification-history.json -> decide: buildStreamingHints -> act: alias suggestions, trend analysis
 export function evaluateStreamingVerification(dataDir = ROOT) {
@@ -427,7 +487,9 @@ export function evaluateAutonomy({ dataDir = ROOT, scriptsDir = SCRIPTS, rootDir
 		scheduleVerification: evaluateScheduleVerification(dataDir, scriptsDir),
 		resultsHealth: evaluateResultsHealth(dataDir, scriptsDir),
 		snapshotHealth: evaluateSnapshotHealth(dataDir),
+		preferenceEvolution: evaluatePreferenceEvolution(dataDir, scriptsDir),
 		streamingVerification: evaluateStreamingVerification(dataDir),
+		learnedScraper: evaluateLearnedScraper(dataDir, scriptsDir),
 	};
 
 	const scores = Object.values(loops).map((l) => l.score);

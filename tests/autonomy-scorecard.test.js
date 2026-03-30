@@ -13,6 +13,8 @@ import {
 	evaluateScheduleVerification,
 	evaluateResultsHealth,
 	evaluateSnapshotHealth,
+	evaluatePreferenceEvolution,
+	evaluateLearnedScraper,
 	evaluateStreamingVerification,
 	evaluateAutonomy,
 	trackTrend,
@@ -705,6 +707,131 @@ describe("evaluateStreamingVerification()", () => {
 	});
 });
 
+// --- Loop 11: Preference Evolution ---
+
+describe("evaluatePreferenceEvolution()", () => {
+	it("scores 0 when evolve-preferences.js is missing", () => {
+		writeJson(path.join(dataDir, "preference-evolution.json"), [
+			{ timestamp: "2026-02-14T00:00:00Z", changes: {} },
+		]);
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("No evolve-preferences.js");
+	});
+
+	it("scores 0 when preference-evolution.json is missing", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("No preference-evolution.json");
+	});
+
+	it("scores 0.5 when infrastructure exists but no entries and file is recent", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), []);
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(0.5);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("no entries yet");
+	});
+
+	it("scores 1.0 when evolve script + history entries exist (array format)", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), [
+			{ timestamp: "2026-02-14T00:00:00Z", changes: { football: 1.2 } },
+			{ timestamp: "2026-02-15T00:00:00Z", changes: { golf: 0.9 } },
+		]);
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("2 evolution entries");
+	});
+
+	it("scores 1.0 when history entries exist (nested object format)", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), {
+			history: [
+				{ timestamp: "2026-02-14T00:00:00Z", changes: { football: 1.2 } },
+			],
+		});
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("1 evolution entries");
+	});
+});
+
+// --- Loop 13: Learned Scraper ---
+
+describe("evaluateLearnedScraper()", () => {
+	it("scores 0 when recipe infrastructure is missing", () => {
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.status).toBe("open");
+		expect(result.details).toContain("Recipe infrastructure missing");
+	});
+
+	it("scores 0 when only run-recipes.js exists (missing learn-recipe.js)", () => {
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(0);
+		expect(result.details).toContain("Recipe infrastructure missing");
+	});
+
+	it("scores 0.5 when scripts exist but no registry", () => {
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		fs.writeFileSync(path.join(scriptsDir, "learn-recipe.js"), "// learner");
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(0.5);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("no recipe registry");
+	});
+
+	it("scores 0.5 when scripts + registry exist but no execution history", () => {
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		fs.writeFileSync(path.join(scriptsDir, "learn-recipe.js"), "// learner");
+		fs.mkdirSync(path.join(scriptsDir, "config", "recipes"), { recursive: true });
+		writeJson(path.join(scriptsDir, "config", "recipes", "_registry.json"), { recipes: [] });
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(0.5);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("no scraper execution history");
+	});
+
+	it("scores 1.0 when scripts + registry + execution history all exist", () => {
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		fs.writeFileSync(path.join(scriptsDir, "learn-recipe.js"), "// learner");
+		fs.mkdirSync(path.join(scriptsDir, "config", "recipes"), { recursive: true });
+		writeJson(path.join(scriptsDir, "config", "recipes", "_registry.json"), {
+			recipes: [{ id: "liquipedia-cs2", url: "https://example.com" }],
+		});
+		writeJson(path.join(dataDir, "scraper-history.json"), [
+			{ timestamp: "2026-02-16T00:00:00Z", recipeId: "liquipedia-cs2", success: true },
+			{ timestamp: "2026-02-17T00:00:00Z", recipeId: "liquipedia-cs2", success: true },
+		]);
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("2 execution history entries");
+	});
+
+	it("scores 1.0 with history in nested object format", () => {
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		fs.writeFileSync(path.join(scriptsDir, "learn-recipe.js"), "// learner");
+		fs.mkdirSync(path.join(scriptsDir, "config", "recipes"), { recursive: true });
+		writeJson(path.join(scriptsDir, "config", "recipes", "_registry.json"), { recipes: [] });
+		writeJson(path.join(dataDir, "scraper-history.json"), {
+			runs: [{ timestamp: "2026-02-16T00:00:00Z", recipeId: "test", success: true }],
+		});
+		const result = evaluateLearnedScraper(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("1 execution history entries");
+	});
+});
+
 // --- Loop 9: Results Health ---
 
 describe("evaluateResultsHealth()", () => {
@@ -833,10 +960,24 @@ describe("evaluateAutonomy()", () => {
 			],
 		});
 
+		// Loop 11: Preference Evolution
+		writeJson(path.join(dataDir, "preference-evolution.json"), [
+			{ timestamp: "2026-02-14T00:00:00Z", changes: { football: 1.2 } },
+		]);
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		// Loop 13: Learned Scraper
+		fs.writeFileSync(path.join(scriptsDir, "run-recipes.js"), "// runner");
+		fs.writeFileSync(path.join(scriptsDir, "learn-recipe.js"), "// learner");
+		fs.mkdirSync(path.join(scriptsDir, "config", "recipes"), { recursive: true });
+		writeJson(path.join(scriptsDir, "config", "recipes", "_registry.json"), { recipes: [] });
+		writeJson(path.join(dataDir, "scraper-history.json"), [
+			{ timestamp: "2026-02-16T00:00:00Z", recipeId: "test", success: true },
+		]);
+
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
 		expect(report.overallScore).toBe(1.0);
-		expect(report.loopsClosed).toBe(11);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsClosed).toBe(13);
+		expect(report.loopsTotal).toBe(13);
 		expect(report.nextActions).toBeUndefined();
 	});
 
@@ -848,10 +989,10 @@ describe("evaluateAutonomy()", () => {
 		writeJson(path.join(dataDir, "health-report.json"), { status: "ok" });
 
 		const report = evaluateAutonomy({ dataDir, scriptsDir, rootDir });
-		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/11 ≈ 0.18
-		expect(report.overallScore).toBeCloseTo(0.18, 1);
+		// enrichment=1.0, pipeline=1.0, rest=0 -> (1+1)/13 ≈ 0.15
+		expect(report.overallScore).toBeCloseTo(0.15, 1);
 		expect(report.loopsClosed).toBe(2);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsTotal).toBe(13);
 	});
 
 	it("includes generatedAt timestamp in ISO format", () => {
@@ -872,7 +1013,7 @@ describe("evaluateAutonomy()", () => {
 		});
 		expect(report.overallScore).toBe(0);
 		expect(report.loopsClosed).toBe(0);
-		expect(report.loopsTotal).toBe(11);
+		expect(report.loopsTotal).toBe(13);
 		expect(report.loops.featuredQuality.status).toBe("open");
 		expect(report.loops.enrichmentQuality.status).toBe("open");
 		expect(report.loops.coverageGaps.status).toBe("open");
@@ -883,6 +1024,8 @@ describe("evaluateAutonomy()", () => {
 		expect(report.loops.scheduleVerification.status).toBe("open");
 		expect(report.loops.resultsHealth.status).toBe("open");
 		expect(report.loops.streamingVerification.status).toBe("open");
+		expect(report.loops.preferenceEvolution.status).toBe("open");
+		expect(report.loops.learnedScraper.status).toBe("open");
 	});
 });
 
