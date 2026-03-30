@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-04-01",
-  "generatedAt": "2026-03-30T02:39:36.432Z",
+  "date": "2026-04-06",
+  "generatedAt": "2026-03-30T02:39:36.440Z",
   "events": {
     "upcoming": [
       {
@@ -40,71 +40,22 @@
         "_enrichHash": "dce27eb03dfd489256977bae9bae24cd"
       },
       {
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "title": "Dwars door Vlaanderen 2026",
-        "time": "2026-04-01T11:55:00+02:00",
-        "endTime": null,
-        "venue": "Belgium",
-        "norwegian": true,
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "title": "Rolex Monte-Carlo Masters",
+        "time": "2026-04-05T04:00:00.000Z",
+        "endTime": "2026-04-13T03:59:00.000Z",
+        "venue": "TBD",
+        "meta": "ATP/WTA Tour",
+        "norwegian": false,
         "streaming": [
           {
-            "platform": "Eurosport",
-            "type": "tv"
-          },
-          {
-            "platform": "Max",
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
             "type": "streaming"
           }
         ],
         "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Søren Wærenskjold"
-          }
-        ],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "context": "cycling-classics-2026",
-        "importance": 2,
-        "importanceReason": "Mid-week Flemish semi-classic; Tour of Flanders warm-up.",
-        "summary": "Short, punchy warm-up race before Ronde van Vlaanderen; Wærenskjold the sole Norwegian to watch.",
-        "tags": [
-          "norwegian-player"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-03-29T22:12:55.587Z",
-        "_enrichHash": "e0e5cb834d43090dede13650793dc882"
-      },
-      {
-        "sport": "chess",
-        "tournament": "FIDE Candidates Tournament 2026",
-        "title": "Round 1 – FIDE Candidates Tournament 2026",
-        "time": "2026-04-01T14:00:00.000Z",
-        "endTime": null,
-        "venue": "TBD",
-        "meta": "FIDE Candidates Tournament 2026",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "chess24",
-            "url": "https://chess24.com",
-            "type": "streaming"
-          },
-          {
-            "platform": "Chess.com",
-            "url": "https://chess.com/tv",
-            "type": "streaming"
-          }
-        ],
-        "participants": [
-          "Magnus Carlsen"
-        ],
         "norwegianPlayers": [],
         "totalPlayers": null,
         "link": null,
@@ -112,19 +63,58 @@
         "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
+        "isFavorite": false
+      },
+      {
+        "sport": "esports",
+        "tournament": "CS2 Tournaments 2026",
+        "title": "PGL CS2 Major Bucharest 2026",
+        "time": "2026-04-06T00:00:00.000Z",
+        "endTime": "2026-04-20T23:59:59.000Z",
+        "venue": "Bucharest, Romania",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "PGL Twitch",
+            "url": "https://twitch.tv/pgl_cs2",
+            "type": "streaming"
+          },
+          {
+            "platform": "PGL YouTube",
+            "url": "https://youtube.com/@PGLesports",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "rain (Håvard Nygaard)"
+          }
+        ],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
         "isFavorite": false,
+        "context": "cs2-majors-2026",
+        "_isTournament": true,
+        "_bracketId": "pgl-bucharest-2026",
+        "focusTeam": "100 Thieves",
+        "tier": "S-Tier (Valve Major)",
+        "prizePool": "$1,250,000 USD",
         "importance": 5,
-        "importanceReason": "Magnus Carlsen opens Candidates campaign; World Championship path begins",
-        "summary": "Magnus Carlsen launches his FIDE Candidates Tournament bid — the event that crowns the next World Chess Championship challenger.",
+        "importanceReason": "CS2 Major — premier tournament of the year, rain competing.",
+        "summary": "The biggest CS2 event of 2026 featuring Norwegian star rain (Håvard Nygaard) — must-watch for esports fans.",
         "tags": [
           "must-watch",
-          "norwegian-player",
           "major",
-          "classic-matchup"
+          "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-29T22:12:55.587Z",
-        "_enrichHash": "8b2801c24e47499317f18659e8850196"
+        "enrichedAt": "2026-03-29T22:12:55.588Z",
+        "_enrichHash": "bf0ae1efdb9c8613e3b81b4dfdf53e3b"
       }
     ],
     "results": []
@@ -137,8 +127,7 @@
     "eventCount": 3,
     "sportsCovered": [
       "tennis",
-      "cycling",
-      "chess"
+      "esports"
     ],
     "hasResults": false,
     "hasStandings": false

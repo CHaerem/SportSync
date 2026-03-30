@@ -92,10 +92,6 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
-        "date": "2026-03-30",
-        "note": "Run 39: Scouting + execution — 0 pending tasks, 0 user feedback. 3 parallel scouts (UX 8, Code 5, Data 5 findings). 2 parallel worktree agents: UX (4 tasks batched PR #151) + code (3 fixes direct-to-main). Orchestrator: FIFA WC config needsResearch. Key insight: autonomy scorecard tracked 11 loops but system claimed 13 — loops 11 (preference evolution) and 13 (learned scraper) had no evaluator functions. recapHeadlineRate hint fatigue (7 fires) solved by scoping to 24h window — 7-day results vs 24h RSS was a structural mismatch, not a content problem. User-visible/infrastructure: 63%/37% (4 UX + FIFA config / 3 code fixes). ~20 orchestrator turns."
-      },
-      {
         "date": "2026-03-29",
         "note": "Run 38: Execution — 4 pending tasks (3 UX + 1 quality), 0 user feedback. 2 parallel worktree agents: UX (3 tasks batched PR #150) + code (mustWatchCoverage fix). mustWatchCoverage root cause: LLMs drop sponsor prefixes from F1 events (Aramco Japanese GP → Japanese GP). Fixed with first-word-drop fallback. 7624 tests pass. User-visible/infrastructure: 75%/25% (3 UX improvements / 1 quality fix). ~18 orchestrator turns. Key: when both worktree agents produce overlapping test changes, rebase conflicts occur — keep test additions in the agent that owns the production code change."
       },
