@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-30T07:37:05.985Z",
-  "overallScore": 0.96,
-  "loopsClosed": 12,
+  "generatedAt": "2026-03-30T10:38:05.917Z",
+  "overallScore": 0.92,
+  "loopsClosed": 11,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
@@ -22,12 +22,12 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 9 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 20 issue(s) are info/known"
     },
     "watchPlan": {
-      "score": 1,
-      "status": "closed",
-      "details": "1 picks with reasons (1 with streaming)"
+      "score": 0.5,
+      "status": "partial",
+      "details": "Watch plan generated but no qualifying events (quiet day)"
     },
     "codeHealth": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
+      "details": "verification history + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,

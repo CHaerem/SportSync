@@ -1,21 +1,19 @@
 {
-  "generatedAt": "2026-03-30T06:46:38.171Z",
+  "generatedAt": "2026-03-30T10:38:05.792Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 34,
+    "totalEvents": 33,
     "sports": [
       "golf",
       "f1",
-      "tennis",
       "cycling",
       "chess",
       "football",
+      "tennis",
       "esports"
     ],
     "bands": {
-      "live": [
-        "Tiriac Open presented by UniCredit Bank"
-      ],
+      "live": [],
       "today": [],
       "tomorrow": [],
       "thisWeek": [
@@ -58,11 +56,11 @@
         "Aramco Japanese Grand Prix"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 7
+    "pipelineStatus": "critical",
+    "editorialScore": 93,
+    "issueCount": 20
   },
   "findings": [
     {
@@ -152,8 +150,8 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -168,17 +166,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Candidates Round\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Flemish\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Candidates Tournament Round\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -192,9 +185,9 @@
     }
   ],
   "summary": {
-    "total": 25,
+    "total": 24,
     "critical": 0,
-    "warning": 23,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
