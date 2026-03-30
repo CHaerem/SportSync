@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-30T06:46:38.067Z",
+  "generatedAt": "2026-03-30T07:37:05.947Z",
   "eventCount": 34,
   "sportCoverage": {
     "golf": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4838,
+      "ageMinutes": 4888,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 517,
+      "ageMinutes": 568,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 247,
+      "ageMinutes": 298,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-30"
     },
     "ai-quality.json": {
-      "ageMinutes": 247,
+      "ageMinutes": 298,
       "stale": false
     }
   },
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "3 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 247 minutes old (stale > 240m)"
+      "Day snapshots are 297 minutes old (stale > 240m)"
     ],
     "snapshotCount": 15
   },
@@ -125,30 +125,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 17,
+    "sevenDay": 14,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 128677,
-    "stepCount": 24,
+    "totalDuration": 293826,
+    "stepCount": 26,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-results",
-        "duration": 44585,
-        "share": 35
-      },
-      {
-        "name": "generate-featured",
-        "duration": 57338,
-        "share": 45
+        "name": "discover-events",
+        "duration": 180248,
+        "share": 61
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,17 +179,22 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 4838 minutes old"
+      "message": "f1.json: data is 4888 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 517 minutes old"
+      "message": "golf.json: data is 568 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 53 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 54 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "chronic_data_retention",
+      "message": "golf: data retained 3 consecutive times (since 2026-03-30) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -207,7 +209,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 247 minutes old (stale > 240m)"
+      "message": "Day snapshots are 297 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -217,17 +219,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 35% of total pipeline time (45s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 61% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 45% of total pipeline time (57s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-03-30T06:46:38.154Z",
+    "computedAt": "2026-03-30T07:37:06.009Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -245,7 +247,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -253,7 +255,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
