@@ -201,6 +201,17 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Sport filter pills dark mode active state** — Added `.dark .pill.active` with `--accent` color override. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **mustWatchCoverage decline fix** — Root cause: LLMs drop sponsor prefixes ("Aramco Japanese Grand Prix" → "Japanese Grand Prix"). Added sponsor-prefix fallback in fuzzy matcher (drop first word when >= 4 sig words). 2 regression tests. Direct-to-main. Run 38.
 
+- [DONE] [MAINTENANCE] **UX: stage badges, ARIA landmarks, matchday must-watch, event-line opacity** — (1) Football WC events show stage badge (Group Stage, Quarterfinals, etc.) in row subtitle. (2) ARIA `role="region"` on 4 main content sections. (3) Bold title weight for must-watch events in matchday lists. (4) Post-divider event-line opacity 0.65→0.8. PR #151. Run 39.
+- [DONE] [MAINTENANCE] **Autonomy scorecard: add loops 11 (preference evolution) and 13 (learned scraper)** — Two new evaluator functions + wired into evaluateAutonomy(). loopsTotal 11→13. 10 new tests. Direct-to-main. Run 39.
+- [DONE] [MAINTENANCE] **football_count_collapse to KNOWN_DATA_GAPS** — International-break football count drops are structural, not actionable. Added to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES. Direct-to-main. Run 39.
+- [DONE] [MAINTENANCE] **recapHeadlineRate scoped to 24h window** — Eliminated hint fatigue by computing rate only on recent (24h) matches. Older matches have expired RSS articles — including them dragged rate to 0%. Direct-to-main. Run 39.
+- [DONE] [MAINTENANCE] **FIFA World Cup 2026 needsResearch flag** — Set needsResearch: true to trigger discovery loop. Group compositions are all TBD despite draw being complete since Dec 2025. Direct-to-main. Run 39.
+
+- [PENDING] [MAINTENANCE] **Render `context` field for WC/cycling events** — `event.context` is only checked for `olympics-2026` in renderExpanded(). Add context-aware card headers for `football-fifa-world-cup` (trophy badge + stage) and `cycling-*` (series name label). dashboard.js ~line 2774. Pillar: personalization.
+- [PENDING] [MAINTENANCE] **Sport filter pills must-watch indicator** — Pills don't signal which sport has must-watch events. Add accent dot or border change on pills containing importance >= 4 events. dashboard.js ~line 817. Pillar: quality.
+- [PENDING] [MAINTENANCE] **F1 results: map team/status fields from ESPN API** — All F1 driver entries in recent-results.json have `team: null` and `status: null`. ESPN API returns constructor data but it's not mapped in the extraction path. fetch-results.js. Pillar: data.
+- [PENDING] [MAINTENANCE] **Test coverage: detect-coverage-gaps.js, run-recipes.js, learn-recipe.js** — Three critical pipeline scripts (loops 3, 13) have zero test coverage. Add unit tests for gap detection, recipe execution, and repair escalation. Pillar: code.
+
 ---
 
 ## Lessons & Effectiveness
@@ -254,6 +265,11 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 5. Quality | ~100% | 2026-03-26 | Complexity health loop closed — high-complexity files now surface in health report |
 | 5. Quality | ~100% | 2026-03-27 | Empty-day indicator, dark mode NOR contrast, watch-plan reasons subtitle (PR #148) |
 | 4. Personalization | ~76% | 2026-03-27 | Watch-plan picks now show reason text explaining why each pick was recommended |
+| 5. Quality | ~100% | 2026-03-28 | Staleness banner dark mode, importanceReason dedup, Later band date context (PR #149). Streaming Norwegian aliases, recapHeadline hint |
+| 5. Quality | ~100% | 2026-03-29 | Golf headshots, insight stat styling, pill dark mode (PR #150). mustWatchCoverage sponsor-prefix fix |
+| 5. Quality | ~100% | 2026-03-30 | Autonomy scorecard 11→13 loops, football_count_collapse suppressed, recapHeadlineRate 24h window fix. ARIA landmarks, stage badges (PR #151) |
+| 3. Capabilities | ~89% | 2026-03-30 | FIFA WC config flagged for discovery — group compositions will be auto-populated. Stage field now rendered on WC events |
+| 4. Personalization | ~78% | 2026-03-30 | Stage badges on WC events, must-watch bold in matchday lists, improved event-line readability |
 
 ### Run History Insights
 

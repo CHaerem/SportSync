@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-03-30",
+      "task": "Scouting + execution: UX batch (PR #151) + code fixes (direct-to-main) + FIFA WC config",
+      "outcome": "completed",
+      "pr": "PR #151 (merged) + direct-to-main (4 commits)",
+      "details": "Run 39: 0 user feedback, 0 pending tasks — pure scouting run. 3 parallel scouts (UX 8 findings, Code 5 findings, Data 5 findings). UX-agent worktree (PR #151 merged): stage badges on WC events, ARIA landmarks on 4 content regions, must-watch bold in matchday lists, event-line opacity 0.65→0.8. Code-agent worktree (direct-to-main): autonomy scorecard loops 11+13 added (loopsTotal 11→13, 10 new tests), football_count_collapse to KNOWN_DATA_GAPS, recapHeadlineRate scoped to 24h window. Orchestrator: FIFA WC config needsResearch:true (group compositions TBD). 4 new PENDING tasks added.",
+      "tests_passed": true,
+      "files_changed": 7,
+      "turns_used": 20,
+      "lesson": "Scorecard was tracking 11/11 but system claimed 13/13 — adding missing evaluators (preference evolution + learned scraper) was a genuine gap, not just number alignment. recapHeadlineRate hint fatigue (7 fires) was caused by 7-day vs 24h window mismatch — scoping to 24h eliminates structural false positives. FIFA WC group data available since Dec 2025 draw but discovery loop didn't pick it up because top-level needsResearch was false while per-group needsResearch notes existed.",
+      "scouted": 4
+    },
+    {
       "date": "2026-03-29",
       "task": "Execution: UX batch (PR #150) + mustWatchCoverage fix (direct-to-main) + UX scout",
       "outcome": "completed",
