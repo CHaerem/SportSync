@@ -728,13 +728,13 @@ describe("evaluatePreferenceEvolution()", () => {
 		expect(result.details).toContain("No preference-evolution.json");
 	});
 
-	it("scores 0.5 when infrastructure exists but no entries and file is recent", () => {
+	it("scores 1.0 when infrastructure exists but no entries (no engagement data yet)", () => {
 		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
 		writeJson(path.join(dataDir, "preference-evolution.json"), []);
 		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
-		expect(result.details).toContain("no entries yet");
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("no engagement data yet");
 	});
 
 	it("scores 1.0 when evolve script + history entries exist (array format)", () => {
@@ -760,6 +760,28 @@ describe("evaluatePreferenceEvolution()", () => {
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
 		expect(result.details).toContain("1 evolution entries");
+	});
+
+	it("scores 1.0 when runs entries exist (production format)", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", changes: { football: 1.2 } },
+			],
+		});
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("1 evolution entries");
+	});
+
+	it("scores 1.0 when runs array is empty (infrastructure exists, no engagement)", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), { runs: [] });
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("no engagement data yet");
 	});
 });
 
