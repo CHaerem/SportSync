@@ -2670,6 +2670,10 @@ class Dashboard {
 				subtitleHtml = `<span class="row-subtitle">${this.esc(event.tournament)}</span>`;
 			}
 		}
+		// Stage badge: show competition phase for football events (e.g. "Group Stage", "Round of 16")
+		if (event.sport === 'football' && event.stage) {
+			subtitleHtml += `<span class="stage-badge">${this.esc(event.stage)}</span>`;
+		}
 
 		// Meta subtitle: knockout context, aggregate scores, etc.
 		const metaHtml = event.meta ? `<span class="row-meta">${this.esc(event.meta)}</span>` : '';

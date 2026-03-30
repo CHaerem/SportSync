@@ -389,7 +389,7 @@
 			font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
 			color: var(--muted-light); margin: 14px 0 4px; padding-top: 8px; border-top: 1px dashed var(--border-light);
 		}
-		.block-divider ~ .block-event-line { opacity: 0.65; font-size: 0.78rem; }
+		.block-divider ~ .block-event-line { opacity: 0.8; font-size: 0.78rem; }
 		.editorial-line { padding: 3px 0; font-size: 0.84rem; }
 		.editorial-line.brief-headline { font-weight: 500; }
 		.editorial-line.brief-secondary { font-size: 0.78rem; color: var(--muted); }
@@ -661,6 +661,7 @@
 		.matchday-list .event-row:last-child { border-bottom: none; }
 		.matchday-list .event-row:hover { background: transparent; }
 		.matchday-list .event-row.must-watch { background: transparent; border-left: none; }
+		.matchday-list .event-row.must-watch .row-title { font-weight: 600; }
 		.matchday-list .event-sport-dot { display: none; }
 		.md-featured {
 			padding: 14px 18px; background: var(--bg-accent);
@@ -876,6 +877,7 @@
 			display: inline-block; font-size: 0.55rem; font-weight: 700;
 			text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.8; margin-left: 6px; vertical-align: middle;
 		}
+		.stage-badge { font-size: 0.7rem; opacity: 0.7; margin-left: 0.3em; }
 		.row-ended { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); opacity: 0.8; }
 		.row-ft { font-weight: 600; }
 
@@ -1368,19 +1370,19 @@
 
 		<div id="day-nav" role="navigation" aria-label="Date navigation"></div>
 		<div id="sport-pills"></div>
-		<div id="the-brief"></div>
+		<div id="the-brief" role="region" aria-label="Today's Brief"></div>
 
-		<div id="watch-plan"></div>
+		<div id="watch-plan" role="region" aria-label="What to Watch"></div>
 		<div id="insights"></div>
 
 		<div class="feed" role="main" aria-label="Sports dashboard">
 			<div id="featured-sections"></div>
 
-			<div id="events">
+			<div id="events" role="region" aria-label="Events">
 				<div class="loading">Loading...</div>
 			</div>
 
-			<div id="news"></div>
+			<div id="news" role="region" aria-label="Headlines"></div>
 		</div>
 
 		<div id="date-line"></div>
