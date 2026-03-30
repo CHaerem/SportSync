@@ -745,9 +745,13 @@ export function evaluateResultsQuality(recentResults, events, rssDigest, userCon
 		: 1;
 
 	// 4. Recap headline rate (15%) — % of football results with RSS headline
-	const recapHeadlineRate = football.length > 0
-		? football.filter(m => m.recapHeadline).length / football.length
-		: 0;
+	// Only count matches in the last 24h: RSS articles for older matches have expired,
+	// so a 0% rate on old matches is a data artifact, not an LLM failure.
+	const recentCutoff = Date.now() - 24 * 60 * 60 * 1000;
+	const recentFootball = football.filter(m => m.date && new Date(m.date).getTime() > recentCutoff);
+	const recapHeadlineRate = recentFootball.length > 0
+		? recentFootball.filter(m => m.recapHeadline).length / recentFootball.length
+		: null;
 
 	// 5. Favorite coverage (10%) — favorite teams present in results
 	const favTeams = (userContext?.favoriteTeams || []).map(t => normalizeName(t));
@@ -769,11 +773,15 @@ export function evaluateResultsQuality(recentResults, events, rssDigest, userCon
 	const golfPresent = golf.pga !== null || golf.dpWorld !== null ? 1 : 0;
 	const golfScore = !golfExpected ? 1 : golfPresent;
 
+	// When recapHeadlineRate is null (no recent football), redistribute its weight to integrity
+	const recapWeight = recapHeadlineRate !== null ? 5 : 0;
+	const integrityWeight = recapHeadlineRate !== null ? 25 : 30;
+
 	const metrics = {
 		integrityRate: roundRatio(integrityRate),
 		freshnessScore: roundRatio(freshnessScore),
 		goalScorerCoverage: roundRatio(goalScorerCoverage),
-		recapHeadlineRate: roundRatio(recapHeadlineRate),
+		recapHeadlineRate: recapHeadlineRate !== null ? roundRatio(recapHeadlineRate) : null,
 		favoriteCoverage: roundRatio(favoriteCoverage),
 		golfPresent: roundRatio(golfScore),
 		footballCount: football.length,
@@ -783,17 +791,18 @@ export function evaluateResultsQuality(recentResults, events, rssDigest, userCon
 	// recapHeadlineRate weight reduced from 15→5: RSS headline matching is unreliable
 	// (RSS feeds are dominated by Olympics/non-football content, making 0% a data artifact,
 	// not an LLM failure). Freed weight redistributed to goalScorerCoverage (20→30).
+	// When null (no recent football matches), weight is redistributed to integrityRate.
 	const score = clamp(Math.round(
-		integrityRate * 25 +
+		integrityRate * integrityWeight +
 		freshnessScore * 20 +
 		goalScorerCoverage * 30 +
-		recapHeadlineRate * 5 +
+		(recapHeadlineRate ?? 0) * recapWeight +
 		favoriteCoverage * 10 +
 		golfScore * 10
 	), 0, 100);
 
-	if (recapHeadlineRate < 0.2 && football.length > 0) {
-		issues.push({ severity: "warning", code: "low_recap_rate", message: `Only ${Math.round(recapHeadlineRate * 100)}% of results have recap headlines` });
+	if (recapHeadlineRate !== null && recapHeadlineRate < 0.2) {
+		issues.push({ severity: "warning", code: "low_recap_rate", message: `Only ${Math.round(recapHeadlineRate * 100)}% of recent results have recap headlines` });
 	}
 	if (goalScorerCoverage < 0.5 && nonNilMatches.length > 0) {
 		issues.push({ severity: "warning", code: "low_scorer_coverage", message: `Only ${Math.round(goalScorerCoverage * 100)}% of non-nil matches have goal scorers` });

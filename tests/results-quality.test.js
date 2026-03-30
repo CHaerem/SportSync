@@ -151,11 +151,12 @@ describe("evaluateResultsQuality()", () => {
 	const userContext = { favoriteTeams: ["Arsenal", "Barcelona"] };
 
 	it("scores complete data highly", () => {
+		const recentDate = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(); // 2h ago
 		const results = {
 			lastUpdated: new Date().toISOString(),
 			football: [
-				{ homeTeam: "Arsenal", awayTeam: "Liverpool", homeScore: 2, awayScore: 1, goalScorers: [{ player: "Saka" }], recapHeadline: "Arsenal win", isFavorite: true },
-				{ homeTeam: "Barcelona", awayTeam: "Madrid", homeScore: 3, awayScore: 0, goalScorers: [{ player: "Yamal" }], recapHeadline: "Barca cruise", isFavorite: true },
+				{ homeTeam: "Arsenal", awayTeam: "Liverpool", homeScore: 2, awayScore: 1, date: recentDate, goalScorers: [{ player: "Saka" }], recapHeadline: "Arsenal win", isFavorite: true },
+				{ homeTeam: "Barcelona", awayTeam: "Madrid", homeScore: 3, awayScore: 0, date: recentDate, goalScorers: [{ player: "Yamal" }], recapHeadline: "Barca cruise", isFavorite: true },
 			],
 			golf: { pga: { tournamentName: "Open" }, dpWorld: null },
 			validationMetrics: { totalResults: 3, validResults: 3, issueCount: 0 },
@@ -167,11 +168,12 @@ describe("evaluateResultsQuality()", () => {
 	});
 
 	it("penalizes low recap rate", () => {
+		const recentDate = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(); // 2h ago
 		const results = {
 			lastUpdated: new Date().toISOString(),
 			football: [
-				{ homeTeam: "A", awayTeam: "B", homeScore: 1, awayScore: 0, goalScorers: [{ player: "X" }], recapHeadline: null },
-				{ homeTeam: "C", awayTeam: "D", homeScore: 2, awayScore: 2, goalScorers: [{ player: "Y" }], recapHeadline: null },
+				{ homeTeam: "A", awayTeam: "B", homeScore: 1, awayScore: 0, date: recentDate, goalScorers: [{ player: "X" }], recapHeadline: null },
+				{ homeTeam: "C", awayTeam: "D", homeScore: 2, awayScore: 2, date: recentDate, goalScorers: [{ player: "Y" }], recapHeadline: null },
 			],
 			golf: { pga: null, dpWorld: null },
 		};
