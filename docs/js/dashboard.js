@@ -807,7 +807,7 @@ class Dashboard {
 		};
 
 		let html = '<div class="pills-scroll" role="navigation" aria-label="Sport filters">';
-		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports">All<span class="pill-count">${todayEvents.length}</span></button>`;
+		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports">All</button>`;
 		for (const sportId of activeSports) {
 			const sc = SPORT_CONFIG.find(s => s.id === sportId);
 			if (!sc) continue;
@@ -2066,7 +2066,7 @@ class Dashboard {
 			html += `<span class="lb-name">${this.esc(p.player)}</span>`;
 			if (isTracked) html += '<span class="lb-flag">\ud83c\uddf3\ud83c\uddf4</span>';
 			html += `<span class="lb-score${scoreCls}">${this.esc(p.score)}</span>`;
-			if (p.thru && p.thru !== '-') html += `<span class="lb-thru">${p.thru === '18' ? 'F' : p.thru}</span>`;
+			if (p.thru && p.thru !== '-') html += `<span class="lb-thru">F${p.thru === '18' ? '' : p.thru}</span>`;
 			html += '</div>';
 		}
 
@@ -2680,7 +2680,7 @@ class Dashboard {
 
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
-		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && !event.summary && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
+		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
 
 		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
 	return `
