@@ -1,12 +1,7 @@
 {
-  "generatedAt": "2026-03-31T16:26:43.285Z",
+  "generatedAt": "2026-03-31T17:25:31.804Z",
   "eventCount": 36,
   "sportCoverage": {
-    "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "f1": {
       "count": 1,
       "previousCount": 1,
@@ -20,6 +15,11 @@
     "chess": {
       "count": 2,
       "previousCount": 2,
+      "delta": 0
+    },
+    "golf": {
+      "count": 1,
+      "previousCount": 1,
       "delta": 0
     },
     "football": {
@@ -48,7 +48,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6858,
+      "ageMinutes": 6917,
       "stale": true
     },
     "football.json": {
@@ -56,21 +56,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2537,
-      "stale": true
+      "ageMinutes": 1,
+      "stale": false
     },
     "tennis.json": {
       "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 107,
+      "ageMinutes": 166,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-03-31"
     },
     "ai-quality.json": {
-      "ageMinutes": 107,
+      "ageMinutes": 166,
       "stale": false
     }
   },
@@ -84,7 +84,7 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": false,
+    "pgaGolf": true,
     "f1Drivers": true
   },
   "resultsHealth": {
@@ -107,7 +107,15 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 day snapshot(s) within event range have 0 events and 0 results"
+      "2 day snapshot(s) within event range have 0 events and 0 results",
+      "Snapshot 2026-03-26: 1 events but events.json has 0",
+      "Snapshot 2026-03-27: 2 events but events.json has 1",
+      "Snapshot 2026-03-28: 1 events but events.json has 0",
+      "Snapshot 2026-03-29: 1 events but events.json has 0",
+      "Snapshot 2026-04-02: 1 events but events.json has 2",
+      "Snapshot 2026-04-03: 1 events but events.json has 2",
+      "Snapshot 2026-04-04: 4 events but events.json has 5",
+      "Snapshot 2026-04-05: 5 events but events.json has 6"
     ],
     "snapshotCount": 15
   },
@@ -132,19 +140,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51106,
+    "totalDuration": 51260,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 23980,
-        "share": 47
+        "duration": 31329,
+        "share": 61
       },
       {
         "name": "fetch-results",
-        "duration": 40404,
-        "share": 79
+        "duration": 40875,
+        "share": 80
       }
     ],
     "failedSteps": []
@@ -181,32 +189,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 6858 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "golf.json: data is 2537 minutes old"
+      "message": "f1.json: data is 6917 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 79 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "golf: data retained 28 consecutive times (since 2026-03-30) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "standings_empty",
-      "message": "pgaGolf standings data is empty"
+      "message": "f1: data retained 80 consecutive times (since 2026-03-27) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
-      "message": "2 event(s) won't appear on dashboard (golf, f1)"
+      "message": "1 event(s) won't appear on dashboard (f1)"
     },
     {
       "severity": "info",
@@ -215,8 +208,63 @@
     },
     {
       "severity": "info",
+      "code": "empty_day",
+      "message": "2026-03-29: no events or results for day navigator"
+    },
+    {
+      "severity": "info",
+      "code": "empty_day",
+      "message": "2026-03-28: no events or results for day navigator"
+    },
+    {
+      "severity": "info",
+      "code": "empty_day",
+      "message": "2026-03-26: no events or results for day navigator"
+    },
+    {
+      "severity": "info",
       "code": "empty_day_snapshot",
       "message": "2 day snapshot(s) within event range have 0 events and 0 results"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-26: 1 events but events.json has 0"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-27: 2 events but events.json has 1"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-28: 1 events but events.json has 0"
+    },
+    {
+      "severity": "critical",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-03-29: 1 events but events.json has 0"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-02: 1 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-03: 1 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-04: 4 events but events.json has 5"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-05: 5 events but events.json has 6"
     },
     {
       "severity": "warning",
@@ -226,17 +274,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 47% of total pipeline time (24s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 61% of total pipeline time (31s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 80% of total pipeline time (41s) — optimization candidate"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-03-31T16:26:43.406Z",
+    "computedAt": "2026-03-31T17:25:31.885Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -262,7 +310,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is critical with 3 critical, 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
