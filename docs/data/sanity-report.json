@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-31T10:30:14.664Z",
+  "generatedAt": "2026-03-31T14:39:57.857Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 36,
@@ -60,11 +60,11 @@
         "Aramco Japanese Grand Prix"
       ]
     },
-    "featuredBlockCount": 6,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 13
+    "issueCount": 10
   },
   "findings": [
     {
@@ -155,7 +155,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Tomorrow\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"World Chess Champion\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -174,14 +184,14 @@
     },
     {
       "severity": "warning",
-      "check": "brief_league_conflation",
-      "message": "Block mixes PL standings language with non-PL team: \"Tuesday is silent on the schedule — but the storm arrives Wednesday. Magnus open...\""
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"16:15\" for \"Levante at Real Sociedad\" but events.json has 14:00"
     }
   ],
   "summary": {
-    "total": 22,
+    "total": 24,
     "critical": 0,
-    "warning": 20,
+    "warning": 22,
     "info": 2
   },
   "pass": true,
