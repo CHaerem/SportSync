@@ -630,6 +630,26 @@ describe("buildAdaptiveHints()", () => {
 		expect(result.hints).toEqual([]);
 	});
 
+	it("suppresses quietDayCompliance hint when it is the sole low metric", () => {
+		// quietDayCompliance alone being low is a data artifact (multi-day events on quiet days),
+		// not an LLM behaviour problem — suppress the hint to avoid fatigue.
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ quietDayCompliance: 0.2 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("quiet day"))).toBe(false);
+		expect(result.metrics.quietDayCompliance).toBeCloseTo(0.2);
+	});
+
+	it("still emits quietDayCompliance hint when other metrics are also low", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ quietDayCompliance: 0.2, mustWatchCoverage: 0.3 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("quiet day"))).toBe(true);
+		expect(result.hints.some(h => h.includes("must-watch"))).toBe(true);
+	});
+
 	it("generates quota-aware hint when constrained runs have lower quality", () => {
 		const unconstrained = Array.from({ length: 2 }, () => ({
 			...makeEditorialEntry({ score: 85 }),

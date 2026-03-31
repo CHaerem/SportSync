@@ -986,6 +986,16 @@ export function buildAdaptiveHints(history) {
 	for (const rule of ADAPTIVE_HINT_RULES) {
 		const avg = averages[rule.metric];
 		if (avg !== null && avg < rule.threshold) {
+			// Skip the quietDayCompliance hint when it is the sole low metric.
+			// On multi-day event days this metric can be the only one below threshold
+			// while all others are healthy — firing the hint creates fatigue without
+			// fixing anything meaningful (multi-day events aren't padding).
+			if (rule.metric === "quietDayCompliance") {
+				const otherRulesAllPass = ADAPTIVE_HINT_RULES
+					.filter(r => r.metric !== "quietDayCompliance")
+					.every(r => averages[r.metric] === null || averages[r.metric] >= r.threshold);
+				if (otherRulesAllPass) continue;
+			}
 			hints.push(rule.hint);
 		}
 	}

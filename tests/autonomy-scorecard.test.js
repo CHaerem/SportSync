@@ -318,15 +318,15 @@ describe("evaluateWatchPlan()", () => {
 		expect(result.score).toBe(0);
 	});
 
-	it("scores 0.5 when picks are empty but plan is fresh with a summary (quiet day)", () => {
+	it("scores 1.0 when picks are empty but plan is fresh with a summary (quiet day — loop ran correctly)", () => {
 		writeJson(path.join(dataDir, "watch-plan.json"), {
 			picks: [],
 			generatedAt: new Date().toISOString(),
 			summary: "No high-priority events in the next 24 hours.",
 		});
 		const result = evaluateWatchPlan(dataDir);
-		expect(result.score).toBe(0.5);
-		expect(result.status).toBe("partial");
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
 		expect(result.details).toContain("quiet day");
 	});
 
@@ -760,6 +760,29 @@ describe("evaluatePreferenceEvolution()", () => {
 		expect(result.score).toBe(1.0);
 		expect(result.status).toBe("closed");
 		expect(result.details).toContain("1 evolution entries");
+	});
+
+	it("scores 1.0 when history entries exist in runs array format ({ runs: [...] })", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), {
+			runs: [
+				{ timestamp: "2026-02-14T00:00:00Z", changes: { football: 1.2 } },
+				{ timestamp: "2026-02-15T00:00:00Z", changes: { golf: 0.9 } },
+			],
+		});
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(1.0);
+		expect(result.status).toBe("closed");
+		expect(result.details).toContain("2 evolution entries");
+	});
+
+	it("scores 0.5 when runs array exists but is empty and file is recent", () => {
+		fs.writeFileSync(path.join(scriptsDir, "evolve-preferences.js"), "// evolve");
+		writeJson(path.join(dataDir, "preference-evolution.json"), { runs: [] });
+		const result = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(result.score).toBe(0.5);
+		expect(result.status).toBe("partial");
+		expect(result.details).toContain("no entries yet");
 	});
 });
 

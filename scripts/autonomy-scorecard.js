@@ -174,7 +174,7 @@ export function evaluateWatchPlan(dataDir = ROOT) {
 		const hasSummary = typeof plan.summary === "string" && plan.summary.length > 0;
 
 		if (isFresh && hasSummary) {
-			return makeLoop(0.5, "Watch plan generated but no qualifying events (quiet day)");
+			return makeLoop(1.0, "Watch plan generated, no qualifying events today (quiet day)");
 		}
 		return makeLoop(0, "No watch plan data or no picks");
 	}
@@ -405,7 +405,9 @@ export function evaluatePreferenceEvolution(dataDir = ROOT, scriptsDir = SCRIPTS
 	}
 
 	// Must have at least one evolution entry
-	const entries = Array.isArray(history) ? history : (Array.isArray(history.history) ? history.history : []);
+	const entries = Array.isArray(history) ? history
+		: (Array.isArray(history.history) ? history.history
+		: (Array.isArray(history.runs) ? history.runs : []));
 	if (entries.length === 0) {
 		const ageMs = fileAgeMsOrNull(historyPath);
 		const ageHours = ageMs !== null ? Math.round(ageMs / (1000 * 60 * 60)) : null;
