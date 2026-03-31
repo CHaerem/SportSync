@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-31T06:35:35.242Z",
+  "generatedAt": "2026-03-31T10:30:14.664Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 36,
@@ -60,11 +60,11 @@
         "Aramco Japanese Grand Prix"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 6,
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 10
+    "issueCount": 13
   },
   "findings": [
     {
@@ -155,17 +155,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"World Chess Championship\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"For Carlsen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Candidates Round\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Magnus\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -181,12 +171,17 @@
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+    },
+    {
+      "severity": "warning",
+      "check": "brief_league_conflation",
+      "message": "Block mixes PL standings language with non-PL team: \"Tuesday is silent on the schedule — but the storm arrives Wednesday. Magnus open...\""
     }
   ],
   "summary": {
-    "total": 23,
+    "total": 22,
     "critical": 0,
-    "warning": 21,
+    "warning": 20,
     "info": 2
   },
   "pass": true,
