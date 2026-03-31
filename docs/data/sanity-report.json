@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-31T14:39:57.857Z",
+  "generatedAt": "2026-03-31T18:30:43.876Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 36,
     "sports": [
-      "golf",
       "f1",
       "cycling",
       "chess",
+      "golf",
       "football",
       "tennis",
       "esports"
@@ -20,6 +20,7 @@
         "Round 1 – FIDE Candidates Tournament 2026"
       ],
       "thisWeek": [
+        "Valero Texas Open",
         "Round 1 – Grenke Chess Festival 2026 | Freestyle Open A",
         "Elche at Rayo Vallecano",
         "Levante at Real Sociedad",
@@ -56,15 +57,14 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Texas Children's Houston Open",
         "Aramco Japanese Grand Prix"
       ]
     },
-    "featuredBlockCount": 8,
-    "briefPresent": true,
-    "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 10
+    "featuredBlockCount": 6,
+    "briefPresent": false,
+    "pipelineStatus": "critical",
+    "editorialScore": 93,
+    "issueCount": 20
   },
   "findings": [
     {
@@ -153,26 +153,6 @@
       "message": "\"UCI Road World Championships 2026\" is 173 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tomorrow\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"World Chess Champion\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
@@ -185,13 +165,13 @@
     {
       "severity": "warning",
       "check": "featured_time_mismatch",
-      "message": "Featured shows \"16:15\" for \"Levante at Real Sociedad\" but events.json has 14:00"
+      "message": "Featured shows \"12:00\" for \"Villarreal at Girona\" but events.json has 21:00"
     }
   ],
   "summary": {
-    "total": 24,
+    "total": 20,
     "critical": 0,
-    "warning": 22,
+    "warning": 18,
     "info": 2
   },
   "pass": true,

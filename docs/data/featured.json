@@ -1,40 +1,62 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Carlsen enters the ring — Candidates Tournament kicks off Wednesday"
+      "type": "section",
+      "id": "football-fifa-world-cup",
+      "title": "FIFA World Cup 2026",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Fri 02:00 — FIFA World Cup 2026 — Group Stage (Week 1)",
+          "type": "event"
+        },
+        {
+          "text": "Fri 04:00 — FIFA World Cup 2026 — Opening Match",
+          "type": "event"
+        },
+        {
+          "text": "Mon 02:00 — FIFA World Cup 2026 — Group Stage (Week 2)",
+          "type": "event"
+        },
+        {
+          "text": "Mon 02:00 — FIFA World Cup 2026 — Group Stage (Final Matchday)",
+          "type": "event"
+        },
+        {
+          "text": "Sat 02:00 — FIFA World Cup 2026 — Round of 32",
+          "type": "event"
+        },
+        {
+          "text": "Wed 02:00 — FIFA World Cup 2026 — Round of 16",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
-      "type": "narrative",
-      "text": "Tomorrow at 16:00, Magnus Carlsen opens his bid for the FIDE Candidates title — the only tournament that earns the right to challenge the World Chess Champion. The hardest road in chess starts now."
-    },
-    {
-      "type": "event-line",
-      "text": "♟️ Wed 16:00 — Carlsen launches FIDE Candidates bid, Round 1"
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "⛳ Valero Texas Open"
     },
     {
       "type": "divider",
-      "text": "This Weekend"
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Atlético Madrid",
-      "showStandings": true
+      "text": "This Week"
     },
     {
       "type": "event-line",
-      "text": "⚽ Sat 16:15 — Real Madrid at Mallorca, leaders need three points"
+      "text": "♟️ Wed 16:00 — Round 1 – FIDE Candidates Tournament 2026"
     },
     {
       "type": "event-line",
-      "text": "🎾 Sun 06:00 — Monte-Carlo Masters opens, clay season begins"
+      "text": "⛳ Thu 06:00 — Valero Texas Open"
     },
     {
       "type": "event-line",
-      "text": "🎮 Mon 02:00 — PGL CS2 Major Bucharest, rain storms into the biggest event of 2026"
+      "text": "🏆 Sat 12:00 — Giro d'Italia 2026"
     }
   ],
-  "generatedAt": "2026-03-31T14:39:56.060Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-03-31T18:30:41.977Z",
+  "provider": "fallback"
 }

@@ -1,9 +1,63 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-02",
-  "generatedAt": "2026-03-31T14:39:56.519Z",
+  "generatedAt": "2026-03-31T18:30:42.454Z",
   "events": {
     "upcoming": [
+      {
+        "sport": "golf",
+        "tournament": "PGA Tour",
+        "title": "Valero Texas Open",
+        "time": "2026-04-02T04:00:00.000Z",
+        "endTime": "2026-04-05T20:00:00.000Z",
+        "venue": "TBD",
+        "meta": "PGA Tour",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Kris Ventura",
+            "teeTime": null,
+            "teeTimeUTC": null,
+            "status": null
+          },
+          {
+            "name": "Kristoffer Reitan",
+            "teeTime": null,
+            "teeTimeUTC": null,
+            "status": null
+          }
+        ],
+        "totalPlayers": 132,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 4,
+        "importanceReason": "Norwegian favorites Ventura and Reitan competing in PGA Tour event",
+        "summary": "PGA Tour Masters warm-up at TPC San Antonio; Norwegian favorites Kristoffer Ventura and Kristoffer Reitan both in the field.",
+        "tags": [
+          "must-watch",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-03-31T18:27:40.905Z",
+        "_enrichHash": "a3048c956a74c020c04d86f00b71f789"
+      },
       {
         "sport": "chess",
         "tournament": "Grenke Chess Festival 2026 | Freestyle Open A",
@@ -43,7 +97,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-03-31T14:39:03.859Z",
+        "enrichedAt": "2026-03-31T18:27:40.906Z",
         "_enrichHash": "ee8e6cf31647715abb83cf855dac2044"
       }
     ],
@@ -54,8 +108,9 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 1,
+    "eventCount": 2,
     "sportsCovered": [
+      "golf",
       "chess"
     ],
     "hasResults": false,

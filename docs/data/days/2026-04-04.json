@@ -1,9 +1,63 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-04",
-  "generatedAt": "2026-03-31T14:39:56.520Z",
+  "generatedAt": "2026-03-31T18:30:42.457Z",
   "events": {
     "upcoming": [
+      {
+        "sport": "golf",
+        "tournament": "PGA Tour",
+        "title": "Valero Texas Open",
+        "time": "2026-04-02T04:00:00.000Z",
+        "endTime": "2026-04-05T20:00:00.000Z",
+        "venue": "TBD",
+        "meta": "PGA Tour",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Kris Ventura",
+            "teeTime": null,
+            "teeTimeUTC": null,
+            "status": null
+          },
+          {
+            "name": "Kristoffer Reitan",
+            "teeTime": null,
+            "teeTimeUTC": null,
+            "status": null
+          }
+        ],
+        "totalPlayers": 132,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 4,
+        "importanceReason": "Norwegian favorites Ventura and Reitan competing in PGA Tour event",
+        "summary": "PGA Tour Masters warm-up at TPC San Antonio; Norwegian favorites Kristoffer Ventura and Kristoffer Reitan both in the field.",
+        "tags": [
+          "must-watch",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-03-31T18:27:40.905Z",
+        "_enrichHash": "a3048c956a74c020c04d86f00b71f789"
+      },
       {
         "sport": "football",
         "tournament": "La Liga",
@@ -36,7 +90,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-31T14:39:03.860Z",
+        "enrichedAt": "2026-03-31T18:27:40.906Z",
         "_enrichHash": "d09cfe9ffc97420a092bf36e96229139"
       },
       {
@@ -71,7 +125,7 @@
           "title-race"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-03-31T14:39:03.860Z",
+        "enrichedAt": "2026-03-31T18:27:40.906Z",
         "_enrichHash": "dd16ca3da7258ca26fb44fc4dcdcde9f"
       },
       {
@@ -106,7 +160,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-03-31T14:39:03.860Z",
+        "enrichedAt": "2026-03-31T18:27:40.906Z",
         "_enrichHash": "d1b0c8cdf31e831be3d9b88b41589f55"
       },
       {
@@ -144,7 +198,7 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-03-31T14:39:03.860Z",
+        "enrichedAt": "2026-03-31T18:27:40.906Z",
         "_enrichHash": "b2005ab82ddbeadabcfb7b69a3c3779c"
       }
     ],
@@ -155,8 +209,9 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 4,
+    "eventCount": 5,
     "sportsCovered": [
+      "golf",
       "football"
     ],
     "hasResults": false,
