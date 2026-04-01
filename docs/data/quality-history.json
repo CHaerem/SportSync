@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-03-15T06:31:03.398Z",
-    "editorial": {
-      "score": 74,
-      "mustWatchCoverage": 0.6,
-      "sportDiversity": 0.5,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 95,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 99,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0.038,
-      "goalScorerCoverage": 1,
-      "footballCount": 26,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 27,
-      "warningCount": 24,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured block references \"21:00 — Real Madrid vs Elche\" which may not match any event; Featured mentions \"Elche\" but no matching athlete found in events data; Featured mentions \"Lisbon\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Celta Vigo at Real Betis\" but events.json has 18:30. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 44547,
-        "output": 1037,
-        "calls": 2,
-        "total": 45584,
-        "costUSD": 0.18260175,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 26691,
-        "output": 6253,
-        "cacheCreation": 17838,
-        "cacheRead": 8850,
-        "total": 32944,
-        "costUSD": 0.16335149999999998,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 1,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 26386,
-        "output": 4679,
-        "calls": 1,
-        "total": 31065,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 97624,
-        "output": 11969,
-        "calls": 5,
-        "total": 109593,
-        "costUSD": 0.34595325,
-        "realPct": 72
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 84.714,
-      "mustWatchCoverage": 0.693,
-      "sportDiversity": 0.726,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-15T10:17:14.565Z",
     "editorial": {
       "score": 86,
@@ -9291,6 +9189,108 @@
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 89.429,
+      "mustWatchCoverage": 0.714,
+      "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-01T14:40:20.066Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 7
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 7,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 1,
+      "avgScore": 122,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": null,
+      "goalScorerCoverage": 1,
+      "footballCount": 0,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 22,
+      "warningCount": 20,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data; Featured mentions \"Belgian\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Levante at Real Sociedad\" but events.json has 14:00. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26155,
+        "output": 5467,
+        "cacheCreation": 18803,
+        "cacheRead": 7349,
+        "total": 31622,
+        "costUSD": 0.15472995,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 1,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26121,
+        "output": 4961,
+        "calls": 1,
+        "total": 31082,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 52276,
+        "output": 10428,
+        "calls": 3,
+        "total": 62704,
+        "costUSD": 0.15472995,
+        "realPct": 50
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 90.429,
       "mustWatchCoverage": 0.714,
       "sportDiversity": 0.952,
       "enrichmentScore": 100,

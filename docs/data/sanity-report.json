@@ -1,24 +1,20 @@
 {
-  "generatedAt": "2026-04-01T10:31:50.433Z",
+  "generatedAt": "2026-04-01T14:40:21.850Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 38,
+    "totalEvents": 37,
     "sports": [
       "f1",
       "cycling",
-      "chess",
       "golf",
+      "chess",
       "football",
       "tennis",
       "esports"
     ],
     "bands": {
-      "live": [
-        "Dwars door Vlaanderen 2026"
-      ],
-      "today": [
-        "Round 1 – FIDE Candidates Tournament 2026"
-      ],
+      "live": [],
+      "today": [],
       "tomorrow": [
         "Valero Texas Open",
         "Round 1 – Grenke Chess Festival 2026 | Freestyle Open A"
@@ -61,14 +57,15 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Aramco Japanese Grand Prix"
+        "Aramco Japanese Grand Prix",
+        "Dwars door Vlaanderen 2026"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
-    "issueCount": 15
+    "editorialScore": 100,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -159,34 +156,29 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Van Aert\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Belgian\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 1 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Levante at Real Sociedad\" but events.json has 14:00"
     }
   ],
   "summary": {
-    "total": 22,
+    "total": 21,
     "critical": 0,
     "warning": 20,
-    "info": 2
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
