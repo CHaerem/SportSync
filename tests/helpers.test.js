@@ -1,8 +1,8 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, beforeEach } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput, parseSessionUsage, isNorwegianClubResult, isNoteworthyNorwegianResult, NORWEGIAN_CLUBS, UEFA_COMPETITIONS } from "../scripts/lib/helpers.js";
+import { iso, normalizeToUTC, hasEvents, countEvents, mergePrimaryAndOpen, isEventInWindow, parseCliJsonOutput, parseSessionUsage, isNorwegianClubResult, isNoteworthyNorwegianResult, NORWEGIAN_CLUBS, UEFA_COMPETITIONS, retainLastGood } from "../scripts/lib/helpers.js";
 
 describe("iso()", () => {
 	it("returns valid ISO string for current time", () => {
@@ -343,5 +343,216 @@ describe("Norwegian club helpers", () => {
 		expect(UEFA_COMPETITIONS).toContain("uefa.champions");
 		expect(UEFA_COMPETITIONS).toContain("uefa.europa");
 		expect(UEFA_COMPETITIONS).toContain("uefa.europa.conf");
+	});
+});
+
+describe("retainLastGood()", () => {
+	const tmpDir = path.join(os.tmpdir(), "sportsync-retain-test");
+	let targetFile;
+
+	beforeEach(() => {
+		fs.mkdirSync(tmpDir, { recursive: true });
+		targetFile = path.join(tmpDir, `test-${Date.now()}.json`);
+	});
+
+	afterEach(() => {
+		fs.rmSync(tmpDir, { recursive: true, force: true });
+	});
+
+	const validData = {
+		lastUpdated: new Date().toISOString(),
+		tournaments: [{ name: "PGA", events: [{ title: "Masters" }] }],
+	};
+
+	const emptyData = {
+		lastUpdated: new Date().toISOString(),
+		tournaments: [],
+	};
+
+	const emptyEventsData = {
+		lastUpdated: new Date().toISOString(),
+		tournaments: [{ name: "PGA", events: [] }],
+	};
+
+	it("writes fresh data when no existing file", () => {
+		const result = retainLastGood(targetFile, validData);
+		expect(result.kept).toBe(false);
+		expect(result.data).toEqual(validData);
+		const written = JSON.parse(fs.readFileSync(targetFile, "utf-8"));
+		expect(written.tournaments[0].name).toBe("PGA");
+	});
+
+	it("writes fresh data when new data has events", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const newData = {
+			lastUpdated: new Date().toISOString(),
+			tournaments: [{ name: "DP World", events: [{ title: "Open" }] }],
+		};
+		const result = retainLastGood(targetFile, newData);
+		expect(result.kept).toBe(false);
+		expect(result.data.tournaments[0].name).toBe("DP World");
+	});
+
+	it("clears _retained marker when fresh data arrives", () => {
+		const newDataWithRetained = {
+			lastUpdated: new Date().toISOString(),
+			tournaments: [{ name: "PGA", events: [{ title: "Open" }] }],
+			_retained: { since: "2026-01-01T00:00:00Z", consecutiveRetains: 5 },
+		};
+		const result = retainLastGood(targetFile, newDataWithRetained);
+		expect(result.kept).toBe(false);
+		expect(result.data._retained).toBeUndefined();
+		const written = JSON.parse(fs.readFileSync(targetFile, "utf-8"));
+		expect(written._retained).toBeUndefined();
+	});
+
+	it("retains old data when new data has no events", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(true);
+		expect(result.data.tournaments[0].name).toBe("PGA");
+	});
+
+	it("retains old data when new data has tournaments with empty events arrays", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const result = retainLastGood(targetFile, emptyEventsData);
+		expect(result.kept).toBe(true);
+		expect(result.data.tournaments[0].events).toHaveLength(1);
+	});
+
+	it("adds _retained metadata on first retain", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.data._retained).toBeDefined();
+		expect(result.data._retained.consecutiveRetains).toBe(1);
+		expect(result.data._retained.since).toBeDefined();
+		expect(result.data._retained.lastFreshFetch).toBe(validData.lastUpdated);
+	});
+
+	it("increments consecutiveRetains on repeated retains", () => {
+		const existingWithRetained = {
+			...validData,
+			_retained: {
+				since: "2026-03-01T00:00:00Z",
+				consecutiveRetains: 5,
+				lastFreshFetch: "2026-02-28T00:00:00Z",
+			},
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(existingWithRetained));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(true);
+		expect(result.data._retained.consecutiveRetains).toBe(6);
+		expect(result.data._retained.since).toBe("2026-03-01T00:00:00Z");
+		expect(result.data._retained.lastFreshFetch).toBe("2026-02-28T00:00:00Z");
+	});
+
+	it("increments from high consecutive counts (e.g. 84 like F1)", () => {
+		const existingWithRetained = {
+			...validData,
+			_retained: {
+				since: "2026-01-01T00:00:00Z",
+				consecutiveRetains: 84,
+				lastFreshFetch: "2025-12-31T00:00:00Z",
+			},
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(existingWithRetained));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.data._retained.consecutiveRetains).toBe(85);
+	});
+
+	it("expires retained data after maxAgeDays (default 14)", () => {
+		const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
+		const oldRetained = {
+			lastUpdated: fifteenDaysAgo,
+			tournaments: [{ name: "PGA", events: [{ title: "Old" }] }],
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(oldRetained));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(false);
+		expect(result.data).toEqual(emptyData);
+	});
+
+	it("retains data within 14-day boundary", () => {
+		const justUnder = new Date(Date.now() - 13.9 * 24 * 60 * 60 * 1000).toISOString();
+		const borderlineData = {
+			lastUpdated: justUnder,
+			tournaments: [{ name: "PGA", events: [{ title: "Borderline" }] }],
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(borderlineData));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(true);
+	});
+
+	it("expires data just past the boundary", () => {
+		const justOver = new Date(Date.now() - 14.1 * 24 * 60 * 60 * 1000).toISOString();
+		const expiredData = {
+			lastUpdated: justOver,
+			tournaments: [{ name: "PGA", events: [{ title: "Expired" }] }],
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(expiredData));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(false);
+	});
+
+	it("respects custom maxAgeDays parameter", () => {
+		const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+		const oldData = {
+			lastUpdated: threeDaysAgo,
+			tournaments: [{ name: "PGA", events: [{ title: "Old" }] }],
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(oldData));
+		const result = retainLastGood(targetFile, emptyData, 2);
+		expect(result.kept).toBe(false);
+	});
+
+	it("does not retain when existing data has no lastUpdated", () => {
+		const noTimestamp = {
+			tournaments: [{ name: "PGA", events: [{ title: "No timestamp" }] }],
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(noTimestamp));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(false);
+	});
+
+	it("skips retention when _noRetain flag is set", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const newData = { ...emptyData, _noRetain: true };
+		const result = retainLastGood(targetFile, newData);
+		expect(result.kept).toBe(false);
+		const written = JSON.parse(fs.readFileSync(targetFile, "utf-8"));
+		expect(written._noRetain).toBeUndefined();
+	});
+
+	it("handles newData with no tournaments property", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		const noTournaments = { lastUpdated: new Date().toISOString() };
+		const result = retainLastGood(targetFile, noTournaments);
+		expect(result.kept).toBe(true);
+	});
+
+	it("does not retain when both old and new data are empty", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(emptyData));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(false);
+	});
+
+	it("handles malformed _retained by starting fresh count", () => {
+		const existingWithBadRetained = {
+			...validData,
+			_retained: "not an object",
+		};
+		fs.writeFileSync(targetFile, JSON.stringify(existingWithBadRetained));
+		const result = retainLastGood(targetFile, emptyData);
+		expect(result.kept).toBe(true);
+		expect(result.data._retained.consecutiveRetains).toBe(1);
+	});
+
+	it("persists retained data to disk", () => {
+		fs.writeFileSync(targetFile, JSON.stringify(validData));
+		retainLastGood(targetFile, emptyData);
+		const onDisk = JSON.parse(fs.readFileSync(targetFile, "utf-8"));
+		expect(onDisk._retained).toBeDefined();
+		expect(onDisk._retained.consecutiveRetains).toBe(1);
+		expect(onDisk.tournaments[0].name).toBe("PGA");
 	});
 });
