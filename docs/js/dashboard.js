@@ -386,7 +386,8 @@ class Dashboard {
 			).join('');
 
 			const emptyCls = dayEvents.length === 0 ? ' has-no-events' : '';
-			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}" data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
+			const emptyTitle = dayEvents.length === 0 ? ' title="No events scheduled"' : '';
+			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -1458,8 +1459,8 @@ class Dashboard {
 			olympics: 'var(--sport-olympics)',
 		};
 
-		// Show 3 items by default, rest behind "show more"
-		const visibleCount = 3;
+		// Show 5 items by default, rest behind "show more"
+		const visibleCount = 5;
 		const visibleItems = items.slice(0, visibleCount);
 		const hiddenItems = items.slice(visibleCount);
 
@@ -1733,7 +1734,7 @@ class Dashboard {
 		}
 
 		const tourLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(tournament) : null;
-		const logoImg = tourLogo ? `<img class="matchday-logo" src="${tourLogo}" alt="" loading="lazy">` : '';
+		const logoImg = tourLogo ? `<img class="matchday-logo" src="${tourLogo}" alt="${this.esc(tournament)}" loading="lazy">` : '';
 
 		let html = '<div class="matchday">';
 		html += `<div class="matchday-accent" style="background:${color}"></div>`;
@@ -1864,7 +1865,7 @@ class Dashboard {
 
 		// Tournament logo
 		const tourLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(tournament) : null;
-		const logoImg = tourLogo ? `<img class="lead-tour-logo" src="${tourLogo}" alt="" loading="lazy">` : '';
+		const logoImg = tourLogo ? `<img class="lead-tour-logo" src="${tourLogo}" alt="${this.esc(tournament)}" loading="lazy">` : '';
 
 		let html = '<div class="lead">';
 		html += `<div class="lead-accent" style="background:${color}"></div>`;
@@ -1966,7 +1967,7 @@ class Dashboard {
 					const hsUrl = (lbEntry && lbEntry.headshot) ||
 						(typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.name) : null);
 					const hsImg = hsUrl
-						? `<img class="lead-tee-hs" src="${this.esc(hsUrl)}" alt="" loading="lazy">`
+						? `<img class="lead-tee-hs" src="${this.esc(hsUrl)}" alt="${this.esc(p.name)}" loading="lazy">`
 						: '<span class="lead-tee-hs lead-tee-hs-placeholder"></span>';
 
 					html += `<div class="lead-tee-time">`;
@@ -2056,7 +2057,7 @@ class Dashboard {
 			// Headshot: prefer ESPN CDN from data, fall back to manual map
 			const headshot = p.headshot || (typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null);
 			const imgHtml = headshot
-				? `<img class="lb-img" src="${headshot}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
+				? `<img class="lb-img" src="${headshot}" alt="${this.esc(p.player)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
 				  + '<span class="lb-img-placeholder" style="display:none">\u26f3</span>'
 				: '<span class="lb-img-placeholder">\u26f3</span>';
 
@@ -2289,7 +2290,7 @@ class Dashboard {
 
 	_renderGroupedResultCard(league, matches) {
 		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(league) : null;
-		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="" loading="lazy">` : '';
+		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="${this.esc(league || '')}" loading="lazy">` : '';
 		let html = '<div class="result-card">';
 		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
 		html += '<div class="result-body">';
@@ -2341,7 +2342,7 @@ class Dashboard {
 		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
 		html += '<div class="result-body">';
 		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(m.league) : null;
-		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="" loading="lazy">` : '';
+		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="${this.esc(m.league || '')}" loading="lazy">` : '';
 		html += '<div class="result-header">';
 		html += `<span class="result-sport">${leagueImg}${this.esc(m.league || '')}</span>`;
 		html += '<span class="result-ft-badge">FT</span>';
@@ -2401,13 +2402,13 @@ class Dashboard {
 				const p = lb[i];
 				const pName = p.player || p.name || '';
 				const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(pName) : null;
-				const img = headshot ? `<img class="result-golfer-img" src="${headshot}" alt="" loading="lazy">` : `<span class="result-golfer-pos">${p.position || i + 1}</span>`;
+				const img = headshot ? `<img class="result-golfer-img" src="${headshot}" alt="${this.esc(pName)}" loading="lazy">` : `<span class="result-golfer-pos">${p.position || i + 1}</span>`;
 				html += `<div class="result-golfer">${img}<span class="result-golfer-name">${this.esc(pName)}</span><span class="result-golfer-score">${this.esc(p.score || p.totalScore || '')}</span></div>`;
 			}
 			if (nor) {
 				const norName = nor.player || nor.name || '';
 				const norImg = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(norName) : null;
-				const nImg = norImg ? `<img class="result-golfer-img" src="${norImg}" alt="" loading="lazy">` : `<span class="result-golfer-pos">\ud83c\uddf3\ud83c\uddf4</span>`;
+				const nImg = norImg ? `<img class="result-golfer-img" src="${norImg}" alt="${this.esc(norName)}" loading="lazy">` : `<span class="result-golfer-pos">\ud83c\uddf3\ud83c\uddf4</span>`;
 				html += `<div class="result-golfer nor">${nImg}<span class="result-golfer-name">${this.esc(norName)}</span><span class="result-golfer-score">T${nor.position} (${this.esc(nor.score || '')})</span></div>`;
 			}
 			html += '</div>';
@@ -2422,8 +2423,8 @@ class Dashboard {
 		let html = '<div class="result-row" role="button" tabindex="0">';
 		html += '<div class="result-row-main">';
 		html += '<div class="result-row-logos">';
-		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="" loading="lazy">`;
-		if (aLogo) html += `<img class="result-row-logo" src="${aLogo}" alt="" loading="lazy">`;
+		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="${this.esc(m.homeTeam)}" loading="lazy">`;
+		if (aLogo) html += `<img class="result-row-logo" src="${aLogo}" alt="${this.esc(m.awayTeam)}" loading="lazy">`;
 		html += '</div>';
 		html += `<span class="result-row-teams">${this.esc(this.shortName(m.homeTeam))} v ${this.esc(this.shortName(m.awayTeam))}</span>`;
 		html += `<span class="result-row-score">${m.homeScore} - ${m.awayScore}</span>`;
