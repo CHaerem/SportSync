@@ -1,12 +1,22 @@
 {
-  "generatedAt": "2026-03-31T22:17:34.965Z",
-  "patternsDetected": 0,
-  "patterns": [],
+  "generatedAt": "2026-04-01T02:44:00.497Z",
+  "patternsDetected": 1,
+  "patterns": [
+    {
+      "type": "recurring_health_warning",
+      "severity": "medium",
+      "issueCode": "editorial_no_narrative",
+      "count": 5,
+      "firstSeen": "2026-03-31T19:27:05.833Z",
+      "lastSeen": "2026-04-01T02:44:00.493Z",
+      "suggestion": "Health warning \"editorial_no_narrative\" has fired 5 times since 2026-03-31. Investigate and fix the root cause rather than letting it keep firing."
+    }
+  ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 658,
+      "count": 659,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-03-31T22:17:34.961Z"
+      "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "snapshot_event_mismatch": {
       "count": 268,
@@ -19,9 +29,9 @@
       "lastSeen": "2026-03-31T10:30:15.284Z"
     },
     "chronic_data_retention": {
-      "count": 273,
+      "count": 274,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-03-31T22:17:34.961Z"
+      "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "stale_output": {
       "count": 106,
@@ -29,14 +39,14 @@
       "lastSeen": "2026-03-31T10:30:15.284Z"
     },
     "stale_data": {
-      "count": 256,
+      "count": 257,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-03-31T22:17:34.961Z"
+      "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "invisible_events": {
-      "count": 156,
+      "count": 157,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-03-31T22:17:34.961Z"
+      "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "step_timeout_hit": {
       "count": 7,
@@ -54,10 +64,10 @@
       "lastSeen": "2026-03-31T16:26:43.392Z"
     },
     "editorial_no_narrative": {
-      "count": 4,
+      "count": 5,
       "firstSeen": "2026-03-31T19:27:05.833Z",
-      "lastSeen": "2026-03-31T22:17:34.961Z"
+      "lastSeen": "2026-04-01T02:44:00.493Z"
     }
   },
-  "summary": "0 patterns detected"
+  "summary": "1 patterns detected (1 medium). Top priority: recurring_health_warning — Health warning \"editorial_no_narrative\" has fired 5 times since 2026-03-31."
 }
