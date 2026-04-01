@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-01T09:30:53.024Z",
-  "patternsDetected": 1,
+  "generatedAt": "2026-04-01T10:31:50.469Z",
+  "patternsDetected": 2,
   "patterns": [
     {
       "type": "recurring_health_warning",
@@ -10,13 +10,22 @@
       "firstSeen": "2026-03-31T19:27:05.833Z",
       "lastSeen": "2026-04-01T02:44:00.493Z",
       "suggestion": "Health warning \"editorial_no_narrative\" has fired 5 times since 2026-03-31. Investigate and fix the root cause rather than letting it keep firing."
+    },
+    {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 1,
+      "lateAvg": 0.67,
+      "drop": 0.33,
+      "suggestion": "Must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events."
     }
   ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 663,
+      "count": 664,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "snapshot_event_mismatch": {
       "count": 268,
@@ -24,29 +33,29 @@
       "lastSeen": "2026-03-31T18:30:43.838Z"
     },
     "stale_snapshot": {
-      "count": 134,
+      "count": 135,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "chronic_data_retention": {
-      "count": 278,
+      "count": 279,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "stale_output": {
-      "count": 106,
+      "count": 108,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-03-31T10:30:15.284Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "stale_data": {
-      "count": 261,
+      "count": 262,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "invisible_events": {
-      "count": 161,
+      "count": 162,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "step_timeout_hit": {
       "count": 7,
@@ -69,10 +78,10 @@
       "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "streaming_low_match_rate": {
-      "count": 4,
+      "count": 5,
       "firstSeen": "2026-04-01T06:43:24.947Z",
-      "lastSeen": "2026-04-01T09:30:53.021Z"
+      "lastSeen": "2026-04-01T10:31:50.461Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: recurring_health_warning — Health warning \"editorial_no_narrative\" has fired 5 times since 2026-03-31."
+  "summary": "2 patterns detected (2 medium). Top priority: recurring_health_warning — Health warning \"editorial_no_narrative\" has fired 5 times since 2026-03-31."
 }
