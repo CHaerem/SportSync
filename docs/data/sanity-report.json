@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-04-01T14:40:21.850Z",
+  "generatedAt": "2026-04-01T18:29:13.277Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 37,
+    "totalEvents": 36,
     "sports": [
       "f1",
-      "cycling",
       "golf",
       "chess",
       "football",
       "tennis",
-      "esports"
+      "esports",
+      "cycling"
     ],
     "bands": {
       "live": [],
@@ -57,15 +57,14 @@
         "UCI Road World Championships 2026"
       ],
       "ended": [
-        "Aramco Japanese Grand Prix",
-        "Dwars door Vlaanderen 2026"
+        "Aramco Japanese Grand Prix"
       ]
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
-    "pipelineStatus": "warning",
+    "pipelineStatus": "critical",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 13
   },
   "findings": [
     {
@@ -156,17 +155,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Van Aert\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Grenke Freestyle Open\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Houston\" but no matching athlete found in events data"
     },
     {
       "severity": "info",

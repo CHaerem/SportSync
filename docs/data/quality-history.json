@@ -1,107 +1,5 @@
 [
   {
-    "timestamp": "2026-03-15T10:17:14.565Z",
-    "editorial": {
-      "score": 86,
-      "mustWatchCoverage": 0.75,
-      "sportDiversity": 0.667,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 104,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0.038,
-      "goalScorerCoverage": 1,
-      "footballCount": 26,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 27,
-      "warningCount": 25,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "SANITY: Previous brief had content issues: Featured mentions \"Lisbon\" but no matching athlete found in events data; Featured mentions \"Man City\" but no matching athlete found in events data; Featured mentions \"Haaland\" but no matching athlete found in events data; Featured shows \"21:00\" for \"Celta Vigo at Real Betis\" but events.json has 18:30. Verify all claims against provided data."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 26725,
-        "output": 4923,
-        "cacheCreation": 26722,
-        "cacheRead": 0,
-        "total": 31648,
-        "costUSD": 0.17406149999999998,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 26691,
-        "output": 6253,
-        "calls": 1,
-        "total": 32944,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 53416,
-        "output": 11176,
-        "calls": 4,
-        "total": 64592,
-        "costUSD": 0.17406149999999998,
-        "realPct": 49
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 85.571,
-      "mustWatchCoverage": 0.729,
-      "sportDiversity": 0.714,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-15T14:19:56.939Z",
     "editorial": {
       "score": 86,
@@ -9280,6 +9178,106 @@
         "total": 62704,
         "costUSD": 0.15472995,
         "realPct": 50
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 90.429,
+      "mustWatchCoverage": 0.714,
+      "sportDiversity": 0.952,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-01T18:29:11.506Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 2,
+      "avgScore": 97,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": null,
+      "goalScorerCoverage": 1,
+      "footballCount": 0,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 21,
+      "warningCount": 20,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 25958,
+        "output": 3923,
+        "cacheCreation": 18606,
+        "cacheRead": 7349,
+        "total": 29881,
+        "costUSD": 0.1308312,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 0,
+        "output": 0,
+        "calls": 2,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26121,
+        "output": 4961,
+        "calls": 1,
+        "total": 31082,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 52079,
+        "output": 8884,
+        "calls": 4,
+        "total": 60963,
+        "costUSD": 0.1308312,
+        "realPct": 49
       }
     },
     "quota": {

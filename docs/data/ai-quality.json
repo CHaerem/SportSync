@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-01T14:40:20.058Z",
+  "generatedAt": "2026-04-01T18:29:11.499Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,15 +9,15 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 91471,
+    "blockCount": 8,
+    "generationMs": 74378,
     "tokenUsage": {
-      "input": 26155,
-      "output": 5467,
-      "cacheCreation": 18803,
+      "input": 25958,
+      "output": 3923,
+      "cacheCreation": 18606,
       "cacheRead": 7349,
-      "total": 31622,
-      "costUSD": 0.15472995,
+      "total": 29881,
+      "costUSD": 0.1308312,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -39,8 +39,8 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 122,
+      "pickCount": 2,
+      "avgScore": 97,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 37,
+      "totalEvents": 36,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 37,
+      "totalEvents": 36,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,17 +85,15 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 37,
+    "totalEvents": 36,
     "skipStats": {
-      "total": 37,
-      "unchanged": 37,
+      "total": 36,
+      "unchanged": 36,
       "enriched": 0,
       "skipRate": 1
     },
     "tokensPerEvent": 0,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "hintsApplied": [],
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -121,15 +119,15 @@
     "tokenUsage": {
       "input": 0,
       "output": 0,
-      "calls": 1,
+      "calls": 2,
       "total": 0,
       "costUSD": 0,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-01T14:35:43.464Z",
-    "tasksExecuted": 1,
+    "lastRun": "2026-04-01T18:22:51.986Z",
+    "tasksExecuted": 2,
     "succeeded": 0,
-    "failed": 1
+    "failed": 2
   }
 }
