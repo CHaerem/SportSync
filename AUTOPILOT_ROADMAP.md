@@ -201,6 +201,15 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Sport filter pills dark mode active state** — Added `.dark .pill.active` with `--accent` color override. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **mustWatchCoverage decline fix** — Root cause: LLMs drop sponsor prefixes ("Aramco Japanese Grand Prix" → "Japanese Grand Prix"). Added sponsor-prefix fallback in fuzzy matcher (drop first word when >= 4 sig words). 2 regression tests. Direct-to-main. Run 38.
 
+- [DONE] [MAINTENANCE] **pipelineHealth loop fix (KNOWN_DATA_GAPS)** — Added `editorial_no_narrative` (covered by Loop 1 featuredQuality) and `standings_empty` (transient ESPN API) to KNOWN_DATA_GAPS. Restores pipelineHealth loop to 1.0. Direct-to-main. Run 39.
+- [DONE] [MAINTENANCE] **Image alt text accessibility** — Added descriptive alt text to 10 `<img>` locations in dashboard.js (team logos, player headshots, league logos). PR #153. Run 39.
+- [DONE] [MAINTENANCE] **News section default 5 items** — Changed news section default visible count from 3 to 5 headlines. PR #153. Run 39.
+- [DONE] [MAINTENANCE] **Day navigator empty-day tooltip** — Added `title="No events scheduled"` to day items with `has-no-events` class. PR #153. Run 39.
+- [DONE] [MAINTENANCE] **retainLastGood() test coverage** — Added 18 tests covering fresh data, retention, consecutive counts, 14-day expiration, _noRetain flag, malformed metadata, disk persistence. Direct-to-main. Run 39.
+
+- [PENDING] [MAINTENANCE] **Pipeline abort cascade detection** — When a required step fails in run-pipeline.js, subsequent phases are skipped silently. Add `blockedPhases` array to pipeline-result.json so autopilot can detect cascade failures. (Code scout finding)
+- [PENDING] [MAINTENANCE] **ESPN adapter partial failure tracking** — fetchScoreboardWithLeagues() in espn-adapter.js continues on individual league failures without reporting coverage ratio. Track failed league count and return metadata. (Code scout finding)
+
 ---
 
 ## Lessons & Effectiveness
@@ -254,6 +263,9 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 | 5. Quality | ~100% | 2026-03-26 | Complexity health loop closed — high-complexity files now surface in health report |
 | 5. Quality | ~100% | 2026-03-27 | Empty-day indicator, dark mode NOR contrast, watch-plan reasons subtitle (PR #148) |
 | 4. Personalization | ~76% | 2026-03-27 | Watch-plan picks now show reason text explaining why each pick was recommended |
+| 5. Quality | ~100% | 2026-04-01 | pipelineHealth loop restored to 1.0, image alt text a11y (10 locations), 18 retainLastGood tests |
+| 2. Code | ~96% | 2026-04-01 | retainLastGood() — critical fallback code (84 F1 retains) now has 18 tests. 2575+ tests pass |
+| 4. Personalization | ~78% | 2026-04-01 | News default 5 items (from 3), day-nav tooltip explains empty days (PR #153) |
 
 ### Run History Insights
 
