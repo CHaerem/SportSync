@@ -145,6 +145,8 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 		"recipe_persistent_failure",// loop 13: learn-recipes self-repairs broken recipes; quota-skipped when tier is low
 		"recipe_repair_exhausted",  // loop 13: recipe self-repair has exhaustion fallback; autopilot investigates via health report
 		"football_count_collapse",  // quality regression: football count drops during international breaks are structural
+		"editorial_no_narrative",   // loop 1: featured quality loop monitors narrative presence; adaptive hints drive regeneration
+		"standings_empty",          // transient: ESPN standings API occasional empty responses; next pipeline cycle re-fetches
 	]);
 	const actionableIssues = Array.isArray(report.issues)
 		? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
