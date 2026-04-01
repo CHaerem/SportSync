@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-01T10:31:50.433Z",
+  "generatedAt": "2026-04-01T11:24:01.229Z",
   "overallScore": 0.96,
   "loopsClosed": 12,
   "loopsTotal": 13,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 15 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -52,7 +52,7 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "preferenceEvolution": {
       "score": 0.5,
