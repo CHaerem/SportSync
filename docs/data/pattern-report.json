@@ -1,22 +1,12 @@
 {
-  "generatedAt": "2026-04-02T13:36:30.143Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "mustWatchCoverage",
-      "earlyAvg": 1,
-      "lateAvg": 0.67,
-      "drop": 0.33,
-      "suggestion": "Must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events."
-    }
-  ],
+  "generatedAt": "2026-04-02T14:38:49.799Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 684,
+      "count": 685,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-02T13:36:30.139Z"
+      "lastSeen": "2026-04-02T14:38:49.795Z"
     },
     "snapshot_event_mismatch": {
       "count": 269,
@@ -24,9 +14,9 @@
       "lastSeen": "2026-04-01T18:29:13.459Z"
     },
     "stale_snapshot": {
-      "count": 138,
+      "count": 139,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-02T13:36:30.139Z"
+      "lastSeen": "2026-04-02T14:38:49.795Z"
     },
     "chronic_data_retention": {
       "count": 292,
@@ -34,9 +24,9 @@
       "lastSeen": "2026-04-02T06:38:17.813Z"
     },
     "stale_output": {
-      "count": 108,
+      "count": 110,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-04-01T10:31:50.461Z"
+      "lastSeen": "2026-04-02T14:38:49.795Z"
     },
     "stale_data": {
       "count": 275,
@@ -59,9 +49,9 @@
       "lastSeen": "2026-04-01T02:44:00.493Z"
     },
     "streaming_low_match_rate": {
-      "count": 23,
+      "count": 24,
       "firstSeen": "2026-04-01T06:43:24.947Z",
-      "lastSeen": "2026-04-02T13:36:30.139Z"
+      "lastSeen": "2026-04-02T14:38:49.795Z"
     },
     "step_timeout_hit": {
       "count": 3,
@@ -74,5 +64,5 @@
       "lastSeen": "2026-04-02T02:24:23.461Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Must-watch coverage dropped from 100% to 67%."
+  "summary": "0 patterns detected"
 }

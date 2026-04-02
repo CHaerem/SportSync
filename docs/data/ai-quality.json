@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T06:38:15.840Z",
+  "generatedAt": "2026-04-02T14:38:47.788Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 60224,
+    "generationMs": 120018,
     "tokenUsage": {
-      "input": 26431,
-      "output": 3126,
-      "cacheCreation": 26428,
+      "input": 26432,
+      "output": 7196,
+      "cacheCreation": 26429,
       "cacheRead": 0,
-      "total": 29557,
-      "costUSD": 0.146004,
+      "total": 33628,
+      "costUSD": 0.20705775,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 71,
+      "avgScore": 79,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -70,7 +70,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.974
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 38,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 1,
-    "aiUpdatedFields": 3,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 38,
     "skipStats": {
       "total": 38,
-      "unchanged": 35,
-      "enriched": 3,
-      "skipRate": 0.92
+      "unchanged": 38,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 7740,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 22145,
-      "output": 1076,
-      "calls": 1,
-      "total": 23221,
-      "costUSD": 0.09918149999999999,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-02T10:23:49.786Z",
+    "lastRun": "2026-04-02T14:31:41.158Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2
