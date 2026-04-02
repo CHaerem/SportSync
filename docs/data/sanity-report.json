@@ -1,26 +1,28 @@
 {
-  "generatedAt": "2026-04-01T22:19:10.191Z",
+  "generatedAt": "2026-04-02T06:38:17.929Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 36,
+    "totalEvents": 38,
     "sports": [
-      "f1",
       "golf",
       "chess",
       "football",
       "tennis",
       "esports",
+      "f1",
       "cycling"
     ],
     "bands": {
-      "live": [],
-      "today": [],
-      "tomorrow": [
-        "Valero Texas Open",
+      "live": [
+        "Valero Texas Open"
+      ],
+      "today": [
         "Round 1 – Grenke Chess Festival 2026 | Freestyle Open A"
       ],
+      "tomorrow": [
+        "Elche at Rayo Vallecano"
+      ],
       "thisWeek": [
-        "Elche at Rayo Vallecano",
         "Levante at Real Sociedad",
         "Real Madrid at Mallorca",
         "Espanyol at Real Betis",
@@ -35,9 +37,12 @@
         "Grand Prix Open Villa de Madrid by Silverway",
         "Villarreal at Girona",
         "Bayern Munich at Real Madrid",
-        "Arsenal at Sporting CP"
+        "Arsenal at Sporting CP",
+        "Atlético Madrid at Barcelona",
+        "Liverpool at Paris Saint-Germain"
       ],
       "later": [
+        "Gulf Air Bahrain Grand Prix",
         "Giro d'Italia 2026",
         "Tour of Norway 2026",
         "FIFA World Cup 2026 — Group Stage (Week 1)",
@@ -56,101 +61,104 @@
         "Vuelta a España 2026",
         "UCI Road World Championships 2026"
       ],
-      "ended": [
-        "Aramco Japanese Grand Prix"
-      ]
+      "ended": []
     },
     "featuredBlockCount": 8,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 13
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Giro d'Italia 2026\" is 31 days away — may clutter the dashboard"
+      "message": "\"Giro d'Italia 2026\" is 30 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Tour of Norway 2026\" is 41 days away — may clutter the dashboard"
+      "message": "\"Tour of Norway 2026\" is 40 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Week 1)\" is 72 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Week 1)\" is 71 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Opening Match\" is 72 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Opening Match\" is 71 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Week 2)\" is 82 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Week 2)\" is 81 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Tour de France 2026\" is 87 days away — may clutter the dashboard"
+      "message": "\"Tour de France 2026\" is 86 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Final Matchday)\" is 89 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Final Matchday)\" is 88 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Round of 32\" is 94 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Round of 32\" is 93 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Round of 16\" is 98 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Round of 16\" is 97 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Quarterfinals\" is 102 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Quarterfinals\" is 101 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Semifinal 1\" is 105 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Semifinal 1\" is 104 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Semifinal 2\" is 106 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Semifinal 2\" is 105 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Third Place Match\" is 109 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Third Place Match\" is 108 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 Final\" is 109 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 Final\" is 108 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Arctic Race of Norway 2026\" is 133 days away — may clutter the dashboard"
+      "message": "\"Arctic Race of Norway 2026\" is 132 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Vuelta a España 2026\" is 143 days away — may clutter the dashboard"
+      "message": "\"Vuelta a España 2026\" is 142 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"UCI Road World Championships 2026\" is 172 days away — may clutter the dashboard"
+      "message": "\"UCI Road World Championships 2026\" is 171 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 4 hours old"
     },
     {
       "severity": "warning",
@@ -160,12 +168,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grenke Freestyle Open\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Houston\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Grenke Freestyle Chess\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
