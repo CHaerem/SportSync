@@ -1,13 +1,8 @@
 {
-  "generatedAt": "2026-04-02T16:24:51.939Z",
-  "eventCount": 38,
+  "generatedAt": "2026-04-02T17:21:45.231Z",
+  "eventCount": 37,
   "sportCoverage": {
     "golf": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
-    "chess": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
@@ -36,6 +31,11 @@
       "count": 6,
       "previousCount": 6,
       "delta": 0
+    },
+    "chess": {
+      "count": 0,
+      "previousCount": 1,
+      "delta": -1
     }
   },
   "dataFreshness": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -64,22 +64,22 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 106,
+      "ageMinutes": 163,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-02"
     },
     "ai-quality.json": {
-      "ageMinutes": 106,
+      "ageMinutes": 163,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.87,
+    "venuePercent": 0.86,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 37,
     "healthy": true
   },
   "standingsHealth": {
@@ -107,7 +107,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "7 boundary day snapshot(s) outside event range (expected)"
+      "7 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-04-02: 2 events but events.json has 1"
     ],
     "snapshotCount": 15
   },
@@ -132,19 +133,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 47644,
+    "totalDuration": 51520,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28675,
-        "share": 60
+        "duration": 30330,
+        "share": 59
       },
       {
         "name": "fetch-results",
-        "duration": 38655,
-        "share": 81
+        "duration": 40564,
+        "share": 79
       }
     ],
     "failedSteps": []
@@ -179,6 +180,11 @@
   "unmappedLeagues": [],
   "issues": [
     {
+      "severity": "critical",
+      "code": "sport_dropped",
+      "message": "chess: 0 events (was 1)"
+    },
+    {
       "severity": "warning",
       "code": "streaming_low_match_rate",
       "message": "Streaming enrichment match rate is 0% (0/3) — team alias table may need updates"
@@ -210,23 +216,28 @@
     },
     {
       "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-02: 2 events but events.json has 1"
+    },
+    {
+      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 81% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (41s) — optimization candidate"
     }
   ],
-  "status": "warning",
+  "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-04-02T16:24:52.017Z",
+    "computedAt": "2026-04-02T17:21:45.347Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -252,7 +263,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is critical with 1 critical, 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
