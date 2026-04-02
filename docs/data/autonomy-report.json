@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-04-02T02:15:11.755Z",
-  "overallScore": 0.85,
-  "loopsClosed": 11,
+  "generatedAt": "2026-04-02T02:24:23.447Z",
+  "overallScore": 0.96,
+  "loopsClosed": 12,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints wired (36 fired)"
+      "details": "100 entries, hints wired (37 fired)"
     },
     "enrichmentQuality": {
-      "score": 0,
-      "status": "open",
-      "details": "No enrichment quality data found"
+      "score": 1,
+      "status": "closed",
+      "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (4h old), 11 issue(s) are info/known"
+      "details": "Health report is fresh (2 min old), 14 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -32,7 +32,7 @@
     "codeHealth": {
       "score": 1,
       "status": "closed",
-      "details": "83 completed tasks in autopilot log"
+      "details": "84 completed tasks in autopilot log"
     },
     "eventDiscovery": {
       "score": 1,
@@ -55,9 +55,9 @@
       "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
     },
     "preferenceEvolution": {
-      "score": 0,
-      "status": "open",
-      "details": "Preference evolution file is empty or stale"
+      "score": 0.5,
+      "status": "partial",
+      "details": "Preference evolution infrastructure exists but no entries yet"
     },
     "streamingVerification": {
       "score": 1,

@@ -1,12 +1,22 @@
 {
-  "generatedAt": "2026-04-02T02:15:11.770Z",
-  "patternsDetected": 0,
-  "patterns": [],
+  "generatedAt": "2026-04-02T02:24:23.465Z",
+  "patternsDetected": 1,
+  "patterns": [
+    {
+      "type": "quality_decline",
+      "severity": "medium",
+      "metric": "mustWatchCoverage",
+      "earlyAvg": 1,
+      "lateAvg": 0.67,
+      "drop": 0.33,
+      "suggestion": "Must-watch coverage dropped from 100% to 67%. Featured content is missing high-importance events."
+    }
+  ],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 675,
+      "count": 676,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-02T02:15:11.768Z"
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     },
     "snapshot_event_mismatch": {
       "count": 269,
@@ -14,14 +24,14 @@
       "lastSeen": "2026-04-01T18:29:13.459Z"
     },
     "stale_snapshot": {
-      "count": 135,
+      "count": 136,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-01T10:31:50.461Z"
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     },
     "chronic_data_retention": {
-      "count": 290,
+      "count": 291,
       "firstSeen": "2026-03-01T09:11:04.996Z",
-      "lastSeen": "2026-04-02T02:15:11.768Z"
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     },
     "stale_output": {
       "count": 108,
@@ -29,14 +39,14 @@
       "lastSeen": "2026-04-01T10:31:50.461Z"
     },
     "stale_data": {
-      "count": 273,
+      "count": 274,
       "firstSeen": "2026-03-22T14:15:29.866Z",
-      "lastSeen": "2026-04-02T02:15:11.768Z"
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     },
     "invisible_events": {
-      "count": 173,
+      "count": 174,
       "firstSeen": "2026-03-23T06:34:46.737Z",
-      "lastSeen": "2026-04-02T02:15:11.768Z"
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     },
     "standings_empty": {
       "count": 1,
@@ -57,7 +67,12 @@
       "count": 1,
       "firstSeen": "2026-04-01T20:17:44.564Z",
       "lastSeen": "2026-04-01T20:17:44.564Z"
+    },
+    "missing_snapshot": {
+      "count": 1,
+      "firstSeen": "2026-04-02T02:24:23.461Z",
+      "lastSeen": "2026-04-02T02:24:23.461Z"
     }
   },
-  "summary": "0 patterns detected"
+  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Must-watch coverage dropped from 100% to 67%."
 }

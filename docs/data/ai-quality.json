@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-04-01T18:29:11.499Z",
+  "generatedAt": "2026-04-02T02:24:08.425Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 74378,
+    "blockCount": 7,
+    "generationMs": 71400,
     "tokenUsage": {
-      "input": 25958,
-      "output": 3923,
-      "cacheCreation": 18606,
-      "cacheRead": 7349,
-      "total": 29881,
-      "costUSD": 0.1308312,
+      "input": 26351,
+      "output": 3712,
+      "cacheCreation": 26348,
+      "cacheRead": 0,
+      "total": 30063,
+      "costUSD": 0.15449400000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 2,
-      "avgScore": 97,
+      "avgScore": 104,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -106,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26121,
-      "output": 4961,
+      "input": 26351,
+      "output": 3712,
       "calls": 1,
-      "total": 31082,
+      "total": 30063,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-01T02:43:42.212Z"
+    "lastRun": "2026-04-02T02:24:08.712Z"
   },
   "discovery": {
     "tokenUsage": {
