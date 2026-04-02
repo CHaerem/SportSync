@@ -387,7 +387,9 @@ class Dashboard {
 
 			const emptyCls = dayEvents.length === 0 ? ' has-no-events' : '';
 			const emptyTitle = dayEvents.length === 0 ? ' title="No events scheduled"' : '';
-			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0">`;
+			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+			const dayAriaLabel = `${dayNames[day.getDay()]} ${monthNames[day.getMonth()]} ${day.getDate()}, ${dayEvents.length} event${dayEvents.length !== 1 ? 's' : ''}`;
+			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0" aria-label="${dayAriaLabel}">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -1903,7 +1905,7 @@ class Dashboard {
 		if (sportId === 'cycling') {
 			const riderNames = [...new Set(events.flatMap(e => (e.norwegianPlayers || []).map(p => typeof p === 'string' ? p : p.name).filter(Boolean)))];
 			if (riderNames.length > 0) {
-				html += `<div style="font-size:0.65rem;color:var(--muted);padding:2px 0 4px 0;line-height:1.3">\ud83c\uddf3\ud83c\uddf4 ${this.esc(riderNames.join(', '))}</div>`;
+				html += `<div class="lead-pairing">\ud83c\uddf3\ud83c\uddf4 ${this.esc(riderNames.join(', '))}</div>`;
 			}
 		}
 
@@ -2420,7 +2422,7 @@ class Dashboard {
 	_renderCompactResultRow(m) {
 		const hLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.homeTeam) : null;
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
-		let html = '<div class="result-row" role="button" tabindex="0">';
+		let html = `<div class="result-row" role="button" tabindex="0" aria-label="${this.esc(`${m.homeTeam} ${m.homeScore}\u2013${m.awayScore} ${m.awayTeam}`)}">`;
 		html += '<div class="result-row-main">';
 		html += '<div class="result-row-logos">';
 		if (hLogo) html += `<img class="result-row-logo" src="${hLogo}" alt="${this.esc(m.homeTeam)}" loading="lazy">`;

@@ -207,8 +207,18 @@ Strategic scouting that reasons about the autonomy vision rather than pattern-ma
 - [DONE] [MAINTENANCE] **Day navigator empty-day tooltip** — Added `title="No events scheduled"` to day items with `has-no-events` class. PR #153. Run 39.
 - [DONE] [MAINTENANCE] **retainLastGood() test coverage** — Added 18 tests covering fresh data, retention, consecutive counts, 14-day expiration, _noRetain flag, malformed metadata, disk persistence. Direct-to-main. Run 39.
 
+- [DONE] [MAINTENANCE] **KNOWN_MANAGED_CODES sync gap fix** — Added `editorial_no_narrative` and `standings_empty` to `KNOWN_MANAGED_CODES` in `analyze-patterns.js` (already in KNOWN_DATA_GAPS but missing from pattern suppression, causing false-positive pattern report). Direct-to-main. Run 40.
+- [DONE] [MAINTENANCE] **Day nav aria-label accessibility** — Added descriptive `aria-label` to day strip items (e.g., "Wed Apr 2, 3 events") for screen reader support. Direct-to-main. Run 40.
+- [DONE] [MAINTENANCE] **Result-row aria-label accessibility** — Added `aria-label` with full match result (e.g., "Arsenal 2–1 Chelsea") to compact result row buttons for screen readers. Direct-to-main. Run 40.
+- [DONE] [MAINTENANCE] **Cycling rider names CSS class** — Replaced inline style on cycling Norwegian rider names div with `.lead-pairing` CSS class for dark mode compatibility. Direct-to-main. Run 40.
+
 - [PENDING] [MAINTENANCE] **Pipeline abort cascade detection** — When a required step fails in run-pipeline.js, subsequent phases are skipped silently. Add `blockedPhases` array to pipeline-result.json so autopilot can detect cascade failures. (Code scout finding)
 - [PENDING] [MAINTENANCE] **ESPN adapter partial failure tracking** — fetchScoreboardWithLeagues() in espn-adapter.js continues on individual league failures without reporting coverage ratio. Track failed league count and return metadata. (Code scout finding)
+- [PENDING] [MAINTENANCE] **Later-section event lines sport-color cues** — Event lines after the "Later This Week" divider all appear uniformly muted (opacity 0.65) with no sport differentiation. Add a subtle sport-color left border or sport emoji to `.block-divider ~ .block-event-line` to restore scanability in the Later band. `docs/index.html` line ~392, `docs/js/dashboard.js` renderBriefLine(). (UX scout finding, run 40)
+- [PENDING] [MAINTENANCE] **importanceBadge inline style → CSS class** — The importance-5 badge in `renderRow()` (dashboard.js ~line 2684) uses hardcoded inline styles instead of a CSS class. Extract to `.row-importance-badge` for dark mode compatibility and maintainability. (UX scout finding, run 40)
+- [PENDING] [MAINTENANCE] **generateStatusSummary fallback test coverage** — `buildFallbackSummary()` in `scripts/pipeline-health.js` (line 1083) is the most-exercised production path (runs every CI build) with zero tests. Add tests for the fallback status summary generation. (Code scout finding, run 40)
+- [PENDING] [MAINTENANCE] **mustWatchCoverage sole-low-metric guard** — `mustWatchCoverage` in `ADAPTIVE_HINT_RULES` (ai-quality-gates.js line 876) lacks the sole-low-metric suppression that `RESULTS_HINT_RULES` uses for `recapHeadlineRate`. When mustWatchCoverage is the only degraded metric due to a structural data artifact, the hint fires every run (hint fatigue). Add guard. (Code scout finding, run 40)
+- [PENDING] [FEATURE] **F1 full-season calendar config** — ESPN F1 endpoint returns empty between race weekends → 100+ consecutive retains → dashboard goes blank between races. Create `scripts/config/f1-calendar-2026.json` with all 2026 F1 race dates so the dashboard always shows the upcoming race. (Data scout finding, run 40)
 
 ---
 

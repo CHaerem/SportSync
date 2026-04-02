@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-04-02",
+        "note": "Run 40: Scouting + execution — 0 pending tasks, 0 user feedback. 3 parallel scouts (UX 7, Code 7, Data 6). Code fix: KNOWN_MANAGED_CODES sync gap (editorial_no_narrative + standings_empty — run 39 only fixed KNOWN_DATA_GAPS). 3 UX a11y fixes applied manually from worktree (day nav aria-label, result-row aria-label, cycling inline→class). Task 4 (band aria-expanded) was already implemented. 5 new PENDING tasks added. Worktree Bash permission pattern persists (3rd run). 2575 tests pass. User-visible/infrastructure: 75%/25% (3 UX a11y / 1 pattern suppression). ~18 orchestrator turns. Key: KNOWN_DATA_GAPS and KNOWN_MANAGED_CODES are twin suppression lists that MUST be updated together — run 39 partially fixed, run 40 completed."
+      },
+      {
         "date": "2026-04-01",
         "note": "Run 39: Scouting + execution — 0 pending tasks, 0 user feedback. pipelineHealth loop stuck at 0 (editorial_no_narrative not suppressed) — fixed with KNOWN_DATA_GAPS addition. 2 parallel scouts (UX 10, Code 8). UX-agent worktree PR #153 (merged): alt text, news 5, day-nav tooltip. Code-agent worktree hit Bash permission — orchestrator applied 18 retainLastGood() tests manually. 2 new PENDING tasks. User-visible/infrastructure: 60%/40% (3 UX + 1 loop fix / 1 test coverage). ~20 orchestrator turns. Key: worktree agents may lose Bash permission — orchestrator fallback (read file, apply manually) works but costs extra turns. retainLastGood() was critical untested code — 84 F1 retains proved it works but no tests caught regressions."
       },

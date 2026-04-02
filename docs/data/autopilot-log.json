@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-02",
+      "task": "Scouting + execution: KNOWN_MANAGED_CODES sync + 3 UX a11y fixes + 5 new roadmap tasks",
+      "outcome": "completed",
+      "pr": "direct-to-main (2 commits)",
+      "details": "Run 40: 0 user feedback, 0 pending tasks — scouting run. 3 parallel scouts (UX 7 findings, Code 7 findings, Data 6 findings). Code fix: editorial_no_narrative + standings_empty added to KNOWN_MANAGED_CODES (run-39 incomplete fix — only added to KNOWN_DATA_GAPS). UX: 3 a11y improvements applied manually from worktree (day nav aria-label, result-row aria-label, cycling rider names inline→class). Task 4 (band aria-expanded) was already implemented. 5 new PENDING tasks added (Later-section sport cues, importanceBadge CSS, generateStatusSummary tests, mustWatchCoverage guard, F1 calendar config). Worktree agent hit same Bash permission pattern as run 39. Autonomy: 12/13 loops (preferenceEvolution 0.5 — structural, needs real engagement data).",
+      "tests_passed": true,
+      "files_changed": 2,
+      "turns_used": 18,
+      "lesson": "Worktree agents continue to have Bash permission issues (3rd consecutive run). Manual application of worktree diffs is reliable but costs ~5 extra turns. editorial_no_narrative/standings_empty fix was incomplete in run 39 — KNOWN_DATA_GAPS and KNOWN_MANAGED_CODES must always be updated in sync. band aria-expanded toggle was already correctly implemented, saving a task slot.",
+      "scouted": 5
+    },
+    {
       "date": "2026-04-01",
       "task": "Scouting + execution: pipelineHealth fix + UX batch (PR #153) + retainLastGood tests",
       "outcome": "completed",
