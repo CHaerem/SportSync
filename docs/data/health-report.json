@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-02T21:15:00.680Z",
-  "eventCount": 37,
+  "generatedAt": "2026-04-02T22:21:25.283Z",
+  "eventCount": 40,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -17,6 +17,11 @@
       "previousCount": 3,
       "delta": 0
     },
+    "cycling": {
+      "count": 9,
+      "previousCount": 6,
+      "delta": 3
+    },
     "esports": {
       "count": 1,
       "previousCount": 1,
@@ -27,11 +32,6 @@
       "previousCount": 1,
       "delta": 0
     },
-    "cycling": {
-      "count": 6,
-      "previousCount": 6,
-      "delta": 0
-    },
     "chess": {
       "count": 0,
       "previousCount": 0,
@@ -40,46 +40,46 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 7,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 8,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-02"
     },
     "ai-quality.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.86,
+    "venuePercent": 0.88,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 37,
+    "itemCount": 38,
     "healthy": true
   },
   "standingsHealth": {
@@ -132,19 +132,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 45474,
+    "totalDuration": 49320,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25966,
-        "share": 57
+        "duration": 29583,
+        "share": 60
       },
       {
         "name": "fetch-results",
-        "duration": 34548,
-        "share": 76
+        "duration": 40090,
+        "share": 81
       }
     ],
     "failedSteps": []
@@ -216,17 +216,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (26s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (35s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 81% of total pipeline time (40s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-02T21:15:00.768Z",
+    "computedAt": "2026-04-02T22:21:25.370Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -252,7 +252,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
