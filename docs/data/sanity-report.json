@@ -1,11 +1,10 @@
 {
-  "generatedAt": "2026-04-02T14:38:49.691Z",
+  "generatedAt": "2026-04-02T18:28:28.919Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 38,
+    "totalEvents": 37,
     "sports": [
       "golf",
-      "chess",
       "football",
       "tennis",
       "esports",
@@ -16,9 +15,7 @@
       "live": [
         "Valero Texas Open"
       ],
-      "today": [
-        "Round 1 – Grenke Chess Festival 2026 | Freestyle Open A"
-      ],
+      "today": [],
       "tomorrow": [
         "Elche at Rayo Vallecano"
       ],
@@ -63,11 +60,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
-    "briefPresent": false,
-    "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 12
+    "featuredBlockCount": 9,
+    "briefPresent": true,
+    "pipelineStatus": "critical",
+    "editorialScore": 97,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -156,37 +153,37 @@
       "message": "\"UCI Road World Championships 2026\" is 171 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "severity": "critical",
+      "check": "sport_vanished",
+      "message": "chess: 0 events (was 1)"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grenke Chess Freestyle Open\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Norwegians\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Same\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Spanish\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Zalatoris\" but no matching athlete found in events data"
     },
     {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 1 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Then Wednesday\" but no matching athlete found in events data"
     }
   ],
   "summary": {
     "total": 22,
-    "critical": 0,
+    "critical": 1,
     "warning": 21,
-    "info": 1
+    "info": 0
   },
-  "pass": true,
+  "pass": false,
   "tokenUsage": null
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T17:21:45.231Z",
+  "generatedAt": "2026-04-02T18:28:28.992Z",
   "eventCount": 37,
   "sportCoverage": {
     "golf": {
@@ -34,43 +34,43 @@
     },
     "chess": {
       "count": 0,
-      "previousCount": 1,
-      "delta": -1
+      "previousCount": 0,
+      "delta": null
     }
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 6,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 7,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 163,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-02"
     },
     "ai-quality.json": {
-      "ageMinutes": 163,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 37,
+    "itemCount": 38,
     "healthy": true
   },
   "standingsHealth": {
@@ -107,8 +107,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "7 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-04-02: 2 events but events.json has 1"
+      "7 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -180,9 +179,9 @@
   "unmappedLeagues": [],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "chess: 0 events (was 1)"
+      "severity": "info",
+      "code": "sport_zero_events",
+      "message": "chess: data file exists but 0 events in events.json"
     },
     {
       "severity": "warning",
@@ -216,11 +215,6 @@
     },
     {
       "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-02: 2 events but events.json has 1"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
@@ -235,9 +229,9 @@
       "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (41s) — optimization candidate"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-02T17:21:45.347Z",
+    "computedAt": "2026-04-02T18:28:29.060Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -255,7 +249,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -263,7 +257,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 3 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 97/100.",
     "tokenUsage": null
   }
 }

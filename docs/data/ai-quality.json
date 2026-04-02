@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T14:38:47.788Z",
+  "generatedAt": "2026-04-02T18:28:27.123Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,40 +9,40 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 120018,
+    "blockCount": 9,
+    "generationMs": 55175,
     "tokenUsage": {
-      "input": 26432,
-      "output": 7196,
-      "cacheCreation": 26429,
+      "input": 26266,
+      "output": 2778,
+      "cacheCreation": 26263,
       "cacheRead": 0,
-      "total": 33628,
-      "costUSD": 0.20705775,
+      "total": 29044,
+      "costUSD": 0.14016525000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 97,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
   },
   "watchPlan": {
-    "score": 100,
+    "score": 0,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 79,
-      "streamingCoverage": 1,
-      "reasonCoverage": 1
+      "pickCount": 0,
+      "avgScore": 0,
+      "streamingCoverage": 0,
+      "reasonCoverage": 0
     }
   },
   "results": {
@@ -66,14 +66,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 38,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 38,
+      "totalEvents": 37,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 38,
+    "totalEvents": 37,
     "skipStats": {
-      "total": 38,
-      "unchanged": 38,
+      "total": 37,
+      "unchanged": 37,
       "enriched": 0,
       "skipRate": 1
     },
@@ -125,7 +125,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-02T14:31:41.158Z",
+    "lastRun": "2026-04-02T18:22:26.739Z",
     "tasksExecuted": 2,
     "succeeded": 0,
     "failed": 2
