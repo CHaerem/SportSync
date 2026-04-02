@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T14:38:49.714Z",
+  "generatedAt": "2026-04-02T15:26:44.551Z",
   "eventCount": 38,
   "sportCoverage": {
     "golf": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 48,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-02"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 48,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 39,
     "healthy": true
   },
   "standingsHealth": {
@@ -124,30 +124,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 29,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 47708,
-    "stepCount": 22,
-    "timeoutHits": [],
+    "totalDuration": 534322,
+    "stepCount": 29,
+    "timeoutHits": [
+      "discover-events"
+    ],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 29106,
-        "share": 61
-      },
-      {
-        "name": "fetch-results",
-        "duration": 38570,
-        "share": 81
+        "name": "discover-events",
+        "duration": 300096,
+        "share": 56
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "discover-events",
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -214,24 +214,24 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 61% of total pipeline time (29s) — optimization candidate"
+      "severity": "warning",
+      "code": "step_timeout_hit",
+      "message": "Pipeline step \"discover-events\" hit or approached its timeout — consider reducing timeout or fixing the underlying issue"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 81% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 56% of total pipeline time (300s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
+      "code": "pipeline_step_failures",
+      "message": "2 pipeline step(s) failed: discover-events, verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-02T14:38:49.856Z",
+    "computedAt": "2026-04-02T15:26:44.629Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -255,34 +255,9 @@
     "hintCount": 0,
     "source": "none"
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 4,
-    "warning": 12,
-    "totalFiles": 111,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 3664,
-        "functions": 103,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1472,
-        "functions": 64,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1421,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
