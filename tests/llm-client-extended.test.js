@@ -122,9 +122,11 @@ describe("LLMClient", () => {
 			const call = fetchMock.mock.calls[0];
 			expect(call[0]).toBe("https://api.anthropic.com/v1/messages");
 			const body = JSON.parse(call[1].body);
-			expect(body.system).toBe("You are helpful");
+			// System prompt uses structured format with cache_control for prompt caching
+			expect(body.system).toEqual([{ type: "text", text: "You are helpful", cache_control: { type: "ephemeral" } }]);
 			expect(body.messages[0].content).toBe("Hello");
 			expect(call[1].headers["x-api-key"]).toBe("sk-ant-test");
+			expect(call[1].headers["anthropic-beta"]).toBe("prompt-caching-2024-07-31");
 		});
 
 		it("sends correct OpenAI request format", async () => {

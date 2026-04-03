@@ -495,8 +495,7 @@ Return ONLY valid JSON: { "blocks": [...] }, no markdown wrapper`;
 ${scopeLabel}:
 ${summary || "(no events)"}${curatedContext}${standingsContext}${rssContext}${resultsContext}${enrichmentContext}
 
-Generate the editorial zone as a blocks array matching this schema:
-${JSON.stringify(BLOCKS_SCHEMA, null, 2)}
+Generate the editorial zone as a blocks array following the block type schemas defined in your system prompt.
 
 Remember:
 - Compose 3-8 blocks. Start with today's top stories. Use divider + look-ahead only if something notable is coming this week.

@@ -1357,6 +1357,38 @@ async function main() {
 	}
 
 	// Code complexity health — surface high-complexity files from analyze-code-complexity.js
+	// Agent memory size monitoring (inspired by Claude Code's autoDream 200-line cap)
+	// Warns when any agent memory file exceeds 10KB — signals need for consolidation
+	const agentMemoryDir = path.join(process.cwd(), ".claude", "agent-memory");
+	report.agentMemoryHealth = null;
+	try {
+		if (fs.existsSync(agentMemoryDir)) {
+			const memFiles = [];
+			const entries = fs.readdirSync(agentMemoryDir, { withFileTypes: true });
+			for (const entry of entries) {
+				const memPath = entry.isDirectory()
+					? path.join(agentMemoryDir, entry.name, "MEMORY.md")
+					: entry.isFile() && entry.name.endsWith(".md")
+						? path.join(agentMemoryDir, entry.name)
+						: null;
+				if (memPath && fs.existsSync(memPath)) {
+					const stat = fs.statSync(memPath);
+					memFiles.push({ agent: entry.name, bytes: stat.size });
+				}
+			}
+			report.agentMemoryHealth = { files: memFiles };
+			for (const mf of memFiles) {
+				if (mf.bytes > 10240) {
+					report.issues.push({
+						severity: "info",
+						code: "agent_memory_large",
+						message: `Agent memory ${mf.agent} is ${Math.round(mf.bytes / 1024)}KB — consider consolidation`,
+					});
+				}
+			}
+		}
+	} catch { /* non-critical */ }
+
 	const complexityReport = readJsonIfExists(path.join(dataDir, "code-complexity-report.json"));
 	report.complexityHealth = null;
 	if (complexityReport?.summary) {

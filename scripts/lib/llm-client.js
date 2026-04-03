@@ -16,11 +16,16 @@ const PROVIDERS = {
 					"Content-Type": "application/json",
 					"x-api-key": apiKey,
 					"anthropic-version": "2023-06-01",
+					// Enable prompt caching — system prompt is stable across batch calls
+					"anthropic-beta": "prompt-caching-2024-07-31",
 				},
 				body: {
 					model: this.model,
 					max_tokens: 4096,
-					system: systemPrompt,
+					// Structured system prompt with cache_control for prompt caching
+					// The system prompt is identical across enrichment batches within a run,
+					// so batches 2+ get cache hits (inspired by Claude Code's stable/dynamic split)
+					system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
 					messages: [{ role: "user", content: userPrompt }],
 					temperature: 0.3,
 				},
