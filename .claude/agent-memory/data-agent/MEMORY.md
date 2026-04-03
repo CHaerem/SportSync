@@ -11,6 +11,9 @@
 - **ESL Pro League S22 historical note**: ESL Pro League S22 ended October 2025. 100 Thieves were NOT in S23 (March 2026). Any config referencing "100 Thieves in ESL Pro League S22" is hallucinated data.
 - **100 Thieves CS2 roster (as of 2026-03)**: dev1ce, rain (Håvard Nygaard — Norwegian), Ag1l, sirah, poiii. Coach: gla1ve.
 
-## Test Counts (as of 2026-03-14)
-- 2467 tests / 79 files (up from 2110/67 at last update)
+- **F1 calendar config pattern**: ESPN F1 API returns empty between race weekends. Curated `scripts/config/f1-calendar-2026.json` with 24 races fills the gap. Set endDate well past last race. Use `meta: { round, circuit, country }` for F1 events. No Norwegian drivers on F1 grid (as of 2026-04).
+- **Viaplay = Norwegian F1 broadcaster**: Always include Viaplay as streaming platform for F1 events in curated configs.
+
+## Test Counts (as of 2026-04-03)
+- 2575 tests / 81 files (up from 2467/79 at last update)
 - fetch-results.test.js: 93 tests
