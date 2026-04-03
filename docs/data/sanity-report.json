@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T10:21:30.506Z",
+  "generatedAt": "2026-04-03T14:24:26.134Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 62,
@@ -87,10 +87,10 @@
       "ended": []
     },
     "featuredBlockCount": 8,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
-    "editorialScore": 85,
-    "issueCount": 12
+    "editorialScore": 96,
+    "issueCount": 15
   },
   "findings": [
     {
@@ -286,18 +286,28 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Smalley\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Grenke Freestyle Open\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Norwegians\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Monument\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 40,
+    "total": 42,
     "critical": 0,
-    "warning": 40,
+    "warning": 42,
     "info": 0
   },
   "pass": true,
