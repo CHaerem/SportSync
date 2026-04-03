@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T18:43:40.067Z",
+  "generatedAt": "2026-04-03T19:00:02.311Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 62,
@@ -13,11 +13,10 @@
     ],
     "bands": {
       "live": [
-        "Valero Texas Open"
-      ],
-      "today": [
+        "Valero Texas Open",
         "Elche at Rayo Vallecano"
       ],
+      "today": [],
       "tomorrow": [
         "Rolex Monte-Carlo Masters",
         "Levante at Real Sociedad",
@@ -87,10 +86,10 @@
       "ended": []
     },
     "featuredBlockCount": 8,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 12
+    "issueCount": 9
   },
   "findings": [
     {
@@ -286,12 +285,27 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"️ Carlsen wins three from three — the world champion is in frightening form\" which may not match any event"
+      "message": "Featured block references \"\udfbe Sat — Monte-Carlo Masters: Ruud's favourite clay kingdom\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Simeone\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Ruud\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Roland Garros\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Norwegians\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -300,9 +314,9 @@
     }
   ],
   "summary": {
-    "total": 41,
+    "total": 44,
     "critical": 0,
-    "warning": 39,
+    "warning": 42,
     "info": 2
   },
   "pass": true,

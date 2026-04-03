@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T18:43:39.924Z",
+  "generatedAt": "2026-04-03T19:00:02.435Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -124,22 +124,25 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 38,
-    "sevenDay": 4,
-    "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "tier": 1,
+    "fiveHour": 59,
+    "sevenDay": 6,
+    "model": "claude-sonnet-4-6",
+    "stepsSkipped": 2,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 210666,
-    "stepCount": 29,
+    "totalDuration": 201957,
+    "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 98873,
-        "share": 47
+        "duration": 87803,
+        "share": 43
       }
     ],
     "failedSteps": [
@@ -208,6 +211,11 @@
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
     },
     {
+      "severity": "info",
+      "code": "quota_moderate_utilization",
+      "message": "Quota tier 1 (5h: 59%, 7d: 6%) — 2 step(s) skipped: discover-events, learn-recipes"
+    },
+    {
       "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
@@ -215,17 +223,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 47% of total pipeline time (99s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 43% of total pipeline time (88s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T18:43:40.072Z",
+    "computedAt": "2026-04-03T19:00:02.510Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -269,7 +282,32 @@
       }
     ]
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 4,
+    "warning": 12,
+    "totalFiles": 114,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3683,
+        "functions": 104,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1471,
+        "functions": 64,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1453,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
     "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null

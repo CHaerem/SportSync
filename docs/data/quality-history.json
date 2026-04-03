@@ -1,105 +1,5 @@
 [
   {
-    "timestamp": "2026-03-17T22:19:22.728Z",
-    "editorial": {
-      "score": 90,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.5,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 99,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 36,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 24,
-      "warningCount": 22,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 21662,
-        "output": 112,
-        "calls": 1,
-        "total": 21774,
-        "costUSD": 0.08291025,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 26378,
-        "output": 2829,
-        "cacheCreation": 17610,
-        "cacheRead": 8765,
-        "total": 29207,
-        "costUSD": 0.111111,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 265744,
-        "output": 2479,
-        "calls": 3,
-        "total": 268223,
-        "costUSD": 0.39110779999999995,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 26459,
-        "output": 2434,
-        "calls": 1,
-        "total": 28893,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 340243,
-        "output": 7854,
-        "calls": 6,
-        "total": 348097,
-        "costUSD": 0.5851290499999999,
-        "realPct": 92
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97.143,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.857,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-18T02:15:35.526Z",
     "editorial": {
       "score": 100,
@@ -9281,6 +9181,108 @@
         "calls": 3,
         "total": 117198,
         "costUSD": 0.73951755,
+        "realPct": 74
+      }
+    },
+    "quota": {
+      "tier": 1,
+      "model": "claude-sonnet-4-6",
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "claude-sonnet-4-6"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.857,
+      "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.943,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-03T19:00:00.553Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 73,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": null,
+      "goalScorerCoverage": 1,
+      "footballCount": 0,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 41,
+      "warningCount": 39,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"️ Carlsen wins three from three — the world champion is in frightening form\" which may not match any event; Featured mentions \"Carlsen\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26270,
+        "output": 3834,
+        "cacheCreation": 15385,
+        "cacheRead": 10882,
+        "total": 30104,
+        "costUSD": 0.11847735000000001,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 55094,
+        "output": 364,
+        "calls": 1,
+        "total": 55458,
+        "costUSD": 0.6048439499999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26728,
+        "output": 3898,
+        "calls": 1,
+        "total": 30626,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 108092,
+        "output": 8096,
+        "calls": 3,
+        "total": 116188,
+        "costUSD": 0.7233213,
         "realPct": 74
       }
     },
