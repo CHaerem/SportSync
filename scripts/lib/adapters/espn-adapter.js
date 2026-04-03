@@ -29,27 +29,52 @@ export class ESPNAdapter extends BaseFetcher {
 		const allEvents = [];
 		const now = new Date();
 		const days = this.generateDateRange(7);
-		
+		const leagueResults = new Map(); // track per-league success/failure
+
 		for (const league of source.leagues) {
+			let leagueSuccess = false;
+			let leagueError = null;
+
 			for (const day of days) {
 				try {
 					const url = `${source.baseUrl}/${league.code}/scoreboard?dates=${day}`;
 					const data = await this.apiClient.fetchJSON(url);
-					
+
 					if (data?.events && Array.isArray(data.events)) {
 						// Include events from the last 4 hours (captures in-progress matches) and future
 						const windowStart = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 						const recentAndFutureEvents = data.events.filter(e => new Date(e.date) > windowStart);
 						allEvents.push(...recentAndFutureEvents.map(e => ({ ...e, leagueName: league.name, leagueCode: league.code })));
+						leagueSuccess = true;
 					}
-					
+
 					await this.apiClient.delay(150);
 				} catch (error) {
+					leagueError = error.message;
 					console.warn(`Failed to fetch ${league.name} for ${day}:`, error.message);
 				}
 			}
+
+			leagueResults.set(league.name, { success: leagueSuccess, error: leagueError });
 		}
-		
+
+		// Build partial failure metadata
+		const totalLeagues = source.leagues.length;
+		const failedLeagueEntries = [...leagueResults.entries()].filter(([, v]) => !v.success);
+		const leaguesFetched = totalLeagues - failedLeagueEntries.length;
+		const failedLeagues = failedLeagueEntries.map(([name]) => name);
+
+		if (failedLeagues.length > 0) {
+			console.warn(`ESPN: ${leaguesFetched}/${totalLeagues} leagues fetched (failed: ${failedLeagues.join(", ")})`);
+		}
+
+		// Attach metadata to the returned array (arrays are objects)
+		allEvents._leagueMeta = {
+			leaguesFetched,
+			leaguesFailed: failedLeagues.length,
+			failedLeagues
+		};
+
 		return allEvents;
 	}
 
