@@ -1,105 +1,5 @@
 [
   {
-    "timestamp": "2026-03-17T14:36:48.049Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 8
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 8,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 110,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 36,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 26,
-      "warningCount": 24,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 26440,
-        "output": 3129,
-        "cacheCreation": 17672,
-        "cacheRead": 8765,
-        "total": 29569,
-        "costUSD": 0.11584349999999999,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 0,
-        "output": 0,
-        "calls": 2,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 26459,
-        "output": 2434,
-        "calls": 1,
-        "total": 28893,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 52899,
-        "output": 5563,
-        "calls": 4,
-        "total": 58462,
-        "costUSD": 0.11584349999999999,
-        "realPct": 51
-      }
-    },
-    "quota": {
-      "tier": 0,
-      "model": null,
-      "enrichmentModel": "claude-sonnet-4-6",
-      "featuredModel": "default"
-    },
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 95.714,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-17T18:31:16.746Z",
     "editorial": {
       "score": 90,
@@ -9280,6 +9180,108 @@
         "total": 139231,
         "costUSD": 0.8170877999999999,
         "realPct": 78
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 95.429,
+      "mustWatchCoverage": 0.929,
+      "sportDiversity": 0.943,
+      "enrichmentScore": 100,
+      "resultsScore": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-03T18:18:23.599Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 73,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": null,
+      "goalScorerCoverage": 1,
+      "footballCount": 0,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 46,
+      "warningCount": 44,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfbe Sat — Monte-Carlo Masters opens on clay. Ruud already in form: semifinal in exhibition this week — Roland Garros prep begins now.\" which may not match any event; Featured mentions \"This Masters\" but no matching athlete found in events data; Featured mentions \"Nordic\" but no matching athlete found in events data; Featured mentions \"Ruud\" but no matching athlete found in events data; Featured mentions \"Roland Garros\" but no matching athlete found in events data; Featured mentions \"Seven Norwegians\" but no matching athlete found in events data; Featured mentions \"Monument\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 0,
+        "output": 0,
+        "calls": 0,
+        "total": 0,
+        "costUSD": 0,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 58436,
+        "output": 5351,
+        "cacheCreation": 20653,
+        "cacheRead": 37777,
+        "total": 63787,
+        "costUSD": 0.16906485,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 55094,
+        "output": 364,
+        "calls": 1,
+        "total": 55458,
+        "costUSD": 0.6048439499999999,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26728,
+        "output": 3898,
+        "calls": 1,
+        "total": 30626,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 140258,
+        "output": 9613,
+        "calls": 3,
+        "total": 149871,
+        "costUSD": 0.7739087999999998,
+        "realPct": 80
       }
     },
     "quota": {

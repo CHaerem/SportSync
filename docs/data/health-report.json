@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T18:10:21.749Z",
+  "generatedAt": "2026-04-03T18:18:25.481Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -40,27 +40,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
@@ -124,31 +124,26 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 27,
+    "sevenDay": 3,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51149,
-    "stepCount": 22,
+    "totalDuration": 321558,
+    "stepCount": 29,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28255,
-        "share": 55
-      },
-      {
-        "name": "fetch-results",
-        "duration": 40156,
-        "share": 79
+        "name": "discover-events",
+        "duration": 104459,
+        "share": 32
       }
     ],
     "failedSteps": [
-      "coverage-gaps"
+      "verify-schedules"
     ]
   },
   "gateHealth": {
@@ -220,22 +215,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (28s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 32% of total pipeline time (104s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: coverage-gaps"
+      "message": "1 pipeline step(s) failed: verify-schedules"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T18:10:21.837Z",
+    "computedAt": "2026-04-03T18:18:25.561Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -253,15 +248,40 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 0,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
     "source": "none"
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 4,
+    "warning": 12,
+    "totalFiles": 111,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3683,
+        "functions": 104,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1472,
+        "functions": 64,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1421,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
-    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

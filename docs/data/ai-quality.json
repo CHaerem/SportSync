@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T18:10:02.415Z",
+  "generatedAt": "2026-04-03T18:18:23.592Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,32 +7,29 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 90,
-    "issues": [
-      "event-line block exceeds 20 words: \"🎾 Sat — Monte-Carlo Masters opens on clay. Ruud a...\"",
-      "event-line block exceeds 20 words: \"🚴 Sun 10:00 — Tour of Flanders. Seven Norwegians ...\""
-    ],
+    "score": 100,
+    "issues": [],
     "blockCount": 8,
-    "generationMs": 80480,
+    "generationMs": 98084,
     "tokenUsage": {
-      "input": 26728,
-      "output": 3898,
-      "cacheCreation": 17918,
-      "cacheRead": 8807,
-      "total": 30626,
-      "costUSD": 0.1283136,
+      "input": 58436,
+      "output": 5351,
+      "cacheCreation": 20653,
+      "cacheRead": 37777,
+      "total": 63787,
+      "costUSD": 0.16906485,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 90,
+    "score": 100,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.8,
+      "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 0.6,
+      "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -86,23 +83,23 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 62,
     "skipStats": {
       "total": 62,
-      "unchanged": 61,
-      "enriched": 1,
-      "skipRate": 0.98
+      "unchanged": 62,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 21974,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21838,
-      "output": 136,
-      "calls": 1,
-      "total": 21974,
-      "costUSD": 0.08393025,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
