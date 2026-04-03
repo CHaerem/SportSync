@@ -2,7 +2,7 @@
 name: content-agent
 description: Delegate to this agent for tasks related to AI enrichment, featured content generation, editorial briefs, watch plans, quality gates, fact verification, prompt engineering, and LLM content pipelines. Handles importance scoring, summaries, tags, and component block generation.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: sonnet
+model: opus
 memory: project
 maxTurns: 60
 ---

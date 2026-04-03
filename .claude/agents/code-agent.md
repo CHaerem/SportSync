@@ -2,7 +2,7 @@
 name: code-agent
 description: Delegate to this agent for tasks related to test failures, bug fixes, refactoring, dead code removal, pipeline infrastructure, test coverage, code health, pipeline manifest changes, and autopilot strategy updates.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: sonnet
+model: opus
 memory: project
 maxTurns: 60
 ---

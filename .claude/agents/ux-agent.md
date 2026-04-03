@@ -2,7 +2,7 @@
 name: ux-agent
 description: Delegate to this agent for tasks related to dashboard UI, CSS styling, visual design, component rendering, client-side JavaScript, accessibility, layout improvements, live score display, sport filters, dark mode, service worker, and screenshot validation.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: sonnet
+model: opus
 memory: project
 maxTurns: 60
 ---

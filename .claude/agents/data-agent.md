@@ -2,7 +2,7 @@
 name: data-agent
 description: Delegate to this agent for tasks related to data fetching, API integrations, sport fetchers, curated configs, streaming enrichment, schedule verification, coverage gaps, and data pipeline health. Handles ESPN, fotball.no, PGA Tour, RSS, and tvkampen data sources.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
-model: sonnet
+model: opus
 memory: project
 maxTurns: 60
 ---
