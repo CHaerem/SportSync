@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T14:24:24.370Z",
+  "generatedAt": "2026-04-03T18:10:02.415Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,29 +7,32 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
+    "score": 90,
+    "issues": [
+      "event-line block exceeds 20 words: \"🎾 Sat — Monte-Carlo Masters opens on clay. Ruud a...\"",
+      "event-line block exceeds 20 words: \"🚴 Sun 10:00 — Tour of Flanders. Seven Norwegians ...\""
+    ],
     "blockCount": 8,
-    "generationMs": 73389,
+    "generationMs": 80480,
     "tokenUsage": {
-      "input": 26729,
-      "output": 4102,
-      "cacheCreation": 26726,
-      "cacheRead": 0,
-      "total": 30831,
-      "costUSD": 0.1617615,
+      "input": 26728,
+      "output": 3898,
+      "cacheCreation": 17918,
+      "cacheRead": 8807,
+      "total": 30626,
+      "costUSD": 0.1283136,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 96,
+    "score": 90,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 0.8,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.6,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -40,7 +43,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 53,
+      "avgScore": 73,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -83,53 +86,51 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 1,
     "failedBatches": 0,
     "totalEvents": 62,
     "skipStats": {
       "total": 62,
-      "unchanged": 62,
-      "enriched": 0,
-      "skipRate": 1
+      "unchanged": 61,
+      "enriched": 1,
+      "skipRate": 0.98
     },
-    "tokensPerEvent": 0,
-    "hintsApplied": [
-      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
-    ],
+    "tokensPerEvent": 21974,
+    "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 21838,
+      "output": 136,
+      "calls": 1,
+      "total": 21974,
+      "costUSD": 0.08393025,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26628,
-      "output": 4545,
+      "input": 26728,
+      "output": 3898,
       "calls": 1,
-      "total": 31173,
+      "total": 30626,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-03T02:25:00.099Z"
+    "lastRun": "2026-04-03T18:10:02.692Z"
   },
   "discovery": {
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
+      "input": 55094,
+      "output": 364,
       "calls": 1,
-      "total": 0,
-      "costUSD": 0,
+      "total": 55458,
+      "costUSD": 0.6048439499999999,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-03T14:20:04.222Z",
+    "lastRun": "2026-04-03T18:06:33.902Z",
     "tasksExecuted": 1,
-    "succeeded": 0,
-    "failed": 1
+    "succeeded": 1,
+    "failed": 0
   }
 }

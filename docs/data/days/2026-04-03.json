@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-03",
-  "generatedAt": "2026-04-03T14:24:24.808Z",
+  "generatedAt": "2026-04-03T18:10:20.427Z",
   "events": {
     "upcoming": [
       {
@@ -84,7 +84,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-03T14:23:10.242Z",
+        "enrichedAt": "2026-04-03T18:08:41.189Z",
         "_enrichHash": "a3048c956a74c020c04d86f00b71f789"
       },
       {
@@ -98,9 +98,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -119,8 +120,10 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-03T14:23:10.243Z",
-        "_enrichHash": "8ce7118d0411579a1591338ef8d4af8b"
+        "enrichedAt": "2026-04-03T18:08:41.189Z",
+        "_enrichHash": "8ce7118d0411579a1591338ef8d4af8b",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
@@ -191,6 +194,33 @@
           {
             "position": 1,
             "positionDisplay": null,
+            "player": "Robert MacIntyre",
+            "score": "-14",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11378.png"
+          },
+          {
+            "position": 2,
+            "positionDisplay": null,
+            "player": "Ludvig Åberg",
+            "score": "-10",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
+          },
+          {
+            "position": 3,
+            "positionDisplay": null,
+            "player": "Steven Fisk",
+            "score": "-9",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4426182.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
             "player": "Alex Smalley",
             "score": "-8",
             "today": "-",
@@ -198,40 +228,13 @@
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9484.png"
           },
           {
-            "position": 2,
-            "positionDisplay": null,
-            "player": "Robert MacIntyre",
-            "score": "-7",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/11378.png"
-          },
-          {
-            "position": 3,
-            "positionDisplay": null,
-            "player": "Ludvig Åberg",
-            "score": "-6",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4375972.png"
-          },
-          {
-            "position": 4,
-            "positionDisplay": null,
-            "player": "Steven Fisk",
-            "score": "-6",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4426182.png"
-          },
-          {
             "position": 5,
             "positionDisplay": null,
-            "player": "Mark Hubbard",
-            "score": "-6",
+            "player": "Andrew Putnam",
+            "score": "-8",
             "today": "-",
             "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9143.png"
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5502.png"
           }
         ]
       }
@@ -277,20 +280,44 @@
   "watchPlan": {
     "picks": [
       {
+        "id": "tennis-rolex-monte-carlo-masters-2026-04-04t04:00:00.000z",
+        "title": "Rolex Monte-Carlo Masters",
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "time": "2026-04-04T04:00:00.000Z",
+        "timeLabel": "4 Apr, 06:00",
+        "relativeStart": "In 9h 51m",
+        "importance": 4,
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "score": 99,
+        "reasons": [
+          "Must-watch event",
+          "Norwegian interest"
+        ]
+      },
+      {
         "id": "football-real-madrid-at-mallorca-2026-04-04t14:15:00.000z",
         "title": "Real Madrid at Mallorca",
         "sport": "football",
         "tournament": "La Liga",
         "time": "2026-04-04T14:15:00.000Z",
         "timeLabel": "4 Apr, 16:15",
-        "relativeStart": "In 23h 52m",
+        "relativeStart": "In 20h 6m",
         "importance": 3,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "score": 62,
@@ -305,76 +332,56 @@
         "tournament": "La Liga",
         "time": "2026-04-03T19:00:00.000Z",
         "timeLabel": "3 Apr, 21:00",
-        "relativeStart": "In 4h 37m",
+        "relativeStart": "In 51m",
         "importance": 2,
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
-        "score": 52,
+        "score": 58,
         "reasons": [
-          "Preferred sport"
-        ]
-      },
-      {
-        "id": "football-levante-at-real-sociedad-2026-04-04t12:00:00.000z",
-        "title": "Levante at Real Sociedad",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-04-04T12:00:00.000Z",
-        "timeLabel": "4 Apr, 14:00",
-        "relativeStart": "In 21h 37m",
-        "importance": 2,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "score": 44,
-        "reasons": [
+          "Starting soon",
           "Preferred sport"
         ]
       }
     ],
-    "headline": "🚴 Sun 10:00 — Tour of Flanders: seven Norwegians in the cobbled Monument from Antwerp to Oudenaarde"
+    "headline": "MacIntyre storms Texas — but the real weekend starts tomorrow"
   },
   "rssHighlights": [
     {
-      "title": "Brann signerte Rangers-spiller",
+      "title": "Magnus Carlsen med tre av tre",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/brann-signerte-rangers-spiller-1.17834597"
+      "link": "https://www.nrk.no/sport/magnus-carlsen-med-tre-av-tre-1.17834694"
     },
     {
-      "title": "Arsenal-sjefen kryptisk om Ødegaard",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/arsenal-sjefen-kryptisk-om-odegaard-1.17834570"
-    },
-    {
-      "title": "– Vil vise haterne og verden",
+      "title": "– Levde i et mareritt",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18719403"
+      "link": "https://www.tv2.no/a/18619401"
     },
     {
-      "title": "– Vil vise haterne og verden",
-      "source": "tv2-fotball",
-      "sport": "football",
-      "link": "https://www.tv2.no/a/18719403"
-    },
-    {
-      "title": "Denne kvinna vil hindre Trump i å bruke ICE-styrkane i VM",
+      "title": "Superstjernen får krass kritikk etter uttalelser: – Mest negativ av alle",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/fotballvm2026/ho-vil-hindre-trump-i-a-bruke-ice-styrkane-pa-vm-arenaene-1.17819657"
+      "link": "https://www.nrk.no/sport/max-verstappens-hint-om-karriereslutt-far-kritikk-av-eksperter-1.17834154"
+    },
+    {
+      "title": "Etterfølgeren: Välbe skal fortsatt bestemme",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/etterfolgeren_-valbe-skal-fortsatt-bestemme-1.17834677"
+    },
+    {
+      "title": "Norsk trener på vei mot bragd i Sverige: – Gjør meg veldig stolt",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/norsk-trener-pa-vei-mot-bragd-i-sverige_-_-gjor-meg-veldig-stolt-1.17834615"
     }
   ],
   "meta": {

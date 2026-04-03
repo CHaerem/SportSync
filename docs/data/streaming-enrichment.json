@@ -1,27 +1,17 @@
 {
-  "generatedAt": "2026-04-03T17:14:16.469Z",
+  "generatedAt": "2026-04-03T18:08:19.126Z",
   "dates": [
     "2026-04-03",
     "2026-04-04"
   ],
   "tvkampenReachable": true,
-  "listingsFound": 58,
+  "listingsFound": 56,
   "matchesAttempted": 14,
-  "matchesSucceeded": 0,
-  "eventsEnriched": 0,
+  "matchesSucceeded": 5,
+  "eventsEnriched": 5,
   "totalEvents": 62,
-  "matchRate": 0,
+  "matchRate": 0.36,
   "unmatched": [
-    {
-      "homeTeam": "Roma",
-      "awayTeam": "Como",
-      "time": "18:00"
-    },
-    {
-      "homeTeam": "Sassuolo",
-      "awayTeam": "Milan",
-      "time": "18:00"
-    },
     {
       "homeTeam": "Paris Saint-Germain",
       "awayTeam": "Toulouse",
@@ -35,11 +25,6 @@
     {
       "homeTeam": "Coventry",
       "awayTeam": "Derby",
-      "time": "21:00"
-    },
-    {
-      "homeTeam": "Rayo Vallecano",
-      "awayTeam": "Elche",
       "time": "21:00"
     },
     {
@@ -78,11 +63,6 @@
       "time": "14:00"
     },
     {
-      "homeTeam": "Real Sociedad",
-      "awayTeam": "Levante",
-      "time": "14:00"
-    },
-    {
       "homeTeam": "CF Cadiz",
       "awayTeam": "Cordoba",
       "time": "14:00"
@@ -111,11 +91,72 @@
       "homeTeam": "Degerfors",
       "awayTeam": "Sirius",
       "time": "15:00"
+    },
+    {
+      "homeTeam": "AC Horsens",
+      "awayTeam": "Lyngby",
+      "time": "15:00"
+    },
+    {
+      "homeTeam": "Bayer Leverkusen",
+      "awayTeam": "Wolfsburg",
+      "time": "15:30"
+    },
+    {
+      "homeTeam": "Borussia Mönchengladbach",
+      "awayTeam": "1. FC Heidenheim",
+      "time": "15:30"
+    },
+    {
+      "homeTeam": "Freiburg",
+      "awayTeam": "Bayern München",
+      "time": "15:30"
     }
   ],
-  "enrichedEvents": [],
+  "enrichedEvents": [
+    {
+      "homeTeam": "Rayo Vallecano",
+      "awayTeam": "Elche",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Real Sociedad",
+      "awayTeam": "Levante",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Mallorca",
+      "awayTeam": "Real Madrid",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Espanyol",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    },
+    {
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Barcelona",
+      "broadcasters": [
+        "Viaplay"
+      ],
+      "confidence": 1
+    }
+  ],
   "relevantTvkEntries": 5,
-  "relevantMatchRate": 0,
+  "relevantMatchRate": 1,
   "aliasSuggestions": [],
   "hintsApplied": []
 }
