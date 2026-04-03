@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-03T19:05:02.084Z",
-  "eventCount": 61,
+  "generatedAt": "2026-04-03T20:09:00.765Z",
+  "eventCount": 62,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -12,10 +12,15 @@
       "previousCount": 3,
       "delta": 0
     },
+    "chess": {
+      "count": 1,
+      "previousCount": 0,
+      "delta": 1
+    },
     "football": {
       "count": 24,
-      "previousCount": 25,
-      "delta": -1
+      "previousCount": 24,
+      "delta": 0
     },
     "f1": {
       "count": 23,
@@ -31,46 +36,41 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
-    },
-    "chess": {
-      "count": 0,
-      "previousCount": 0,
-      "delta": null
     }
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 64,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-03"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 64,
       "stale": false
     }
   },
@@ -108,7 +108,8 @@
     "present": true,
     "issues": [
       "6 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-04-03: 2 events but events.json has 1"
+      "Snapshot 2026-04-03: 2 events but events.json has 1",
+      "Snapshot 2026-04-04: 6 events but events.json has 7"
     ],
     "snapshotCount": 15
   },
@@ -125,35 +126,31 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 1,
-    "fiveHour": 70,
+    "tier": 2,
+    "fiveHour": 71,
     "sevenDay": 7,
     "model": "claude-sonnet-4-6",
-    "stepsSkipped": 2,
+    "stepsSkipped": 5,
     "skippedSteps": [
       "discover-events",
-      "learn-recipes"
+      "learn-recipes",
+      "post-generate",
+      "ai-sanity-check",
+      "verify-schedules"
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 186900,
-    "stepCount": 30,
+    "totalDuration": 184519,
+    "stepCount": 27,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 74000,
-        "share": 40
-      },
-      {
-        "name": "verify-schedules",
-        "duration": 60067,
-        "share": 32
+        "duration": 140400,
+        "share": 76
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -188,11 +185,6 @@
   "issues": [
     {
       "severity": "info",
-      "code": "sport_zero_events",
-      "message": "chess: data file exists but 0 events in events.json"
-    },
-    {
-      "severity": "info",
       "code": "empty_day",
       "message": "2026-04-01: no events or results for day navigator"
     },
@@ -217,14 +209,19 @@
       "message": "Snapshot 2026-04-03: 2 events but events.json has 1"
     },
     {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-04: 6 events but events.json has 7"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
     },
     {
-      "severity": "info",
-      "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 70%, 7d: 7%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 2 (5h: 71%, 7d: 7%) — 5 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -234,22 +231,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (74s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "message": "Pipeline step \"generate-featured\" used 76% of total pipeline time (140s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T19:05:02.172Z",
+    "computedAt": "2026-04-03T20:09:00.846Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -267,7 +254,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 0,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -295,7 +282,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 89/100.",
     "tokenUsage": null
   }
 }
