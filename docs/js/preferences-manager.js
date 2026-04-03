@@ -498,6 +498,7 @@ class PreferencesManager {
 			engagement,
 			watchFeedback: this.getAllWatchFeedback(),
 			telemetry: this.getTelemetry(),
+			blockEngagement: this.getBlockEngagement(),
 		};
 	}
 
@@ -535,11 +536,49 @@ class PreferencesManager {
 		return this.preferences.telemetry;
 	}
 
-	trackBlockEngagement(blockType) {
+	trackBlockEngagement(blockType, blockId) {
 		if (!blockType?.trim()) return;
 		const t = this._ensureTelemetry();
 		t.blocks[blockType] = (t.blocks[blockType] || 0) + 1;
 		this.savePreferences();
+		// Also persist to dedicated block engagement store for pipeline export
+		this._persistBlockEngagement(blockType, blockId || null);
+	}
+
+	/**
+	 * Persist block-level engagement to a dedicated localStorage key.
+	 * Format: { blockEngagement: { [blockType]: { count, ids: { [blockId]: count } } }, lastUpdated }
+	 * This separate store enables the pipeline to read block engagement
+	 * independently of the full preferences blob.
+	 */
+	_persistBlockEngagement(blockType, blockId) {
+		const BLOCK_KEY = 'sportsync_block_engagement';
+		let data;
+		try {
+			data = JSON.parse(localStorage.getItem(BLOCK_KEY)) || {};
+		} catch { data = {}; }
+		if (!data.blockEngagement) data.blockEngagement = {};
+		if (!data.blockEngagement[blockType]) {
+			data.blockEngagement[blockType] = { count: 0, ids: {} };
+		}
+		data.blockEngagement[blockType].count++;
+		if (blockId) {
+			data.blockEngagement[blockType].ids[blockId] = (data.blockEngagement[blockType].ids[blockId] || 0) + 1;
+		}
+		data.lastUpdated = new Date().toISOString();
+		try {
+			localStorage.setItem(BLOCK_KEY, JSON.stringify(data));
+		} catch { /* localStorage full — silently skip */ }
+	}
+
+	/**
+	 * Get dedicated block engagement data (from separate localStorage key).
+	 * Returns { blockEngagement: { [type]: { count, ids } }, lastUpdated } or null.
+	 */
+	getBlockEngagement() {
+		try {
+			return JSON.parse(localStorage.getItem('sportsync_block_engagement')) || null;
+		} catch { return null; }
 	}
 
 	trackSessionStart() {

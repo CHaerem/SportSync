@@ -1382,6 +1382,14 @@ class Dashboard {
 			el.addEventListener('click', (e) => {
 				// Don't navigate if clicking a feedback button
 				if (e.target.closest('.pick-feedback')) return;
+				// Track watch-plan engagement
+				if (this.preferences) {
+					const idx = parseInt(el.dataset.pickIndex, 10);
+					const pick = picks[idx];
+					const pickKey = pick ? `${(pick.title || '').replace(/[^a-zA-Z0-9]/g, '_')}_${(pick.time || '').slice(0, 10)}` : null;
+					this.preferences.trackBlockEngagement('watch-plan', pickKey);
+					if (pickKey) this.preferences.trackWatchPlanClick(pickKey);
+				}
 				handlePickActivate(el);
 			});
 			el.addEventListener('keydown', (e) => {
@@ -3403,7 +3411,7 @@ class Dashboard {
 				return;
 			}
 
-			// Track editorial block engagement
+			// Track editorial block engagement (type + id for granular personalization)
 			if (this.preferences) {
 				const block = e.target.closest('.block-match-result, .block-match-preview, .block-golf-status, .block-event-schedule');
 				if (block) {
@@ -3412,7 +3420,8 @@ class Dashboard {
 						: cls.includes('match-preview') ? 'match-preview'
 						: cls.includes('golf-status') ? 'golf-status'
 						: cls.includes('event-schedule') ? 'event-schedule' : null;
-					if (type) this.preferences.trackBlockEngagement(type);
+					const blockId = block.dataset?.blockId || block.dataset?.id || null;
+					if (type) this.preferences.trackBlockEngagement(type, blockId);
 				}
 			}
 
@@ -3465,11 +3474,12 @@ class Dashboard {
 				const isCollapsed = content.classList.contains('collapsed');
 				content.classList.toggle('collapsed');
 
-				// Track feature usage on expand
+				// Track feature usage and block engagement on expand
 				if (isCollapsed && this.preferences) {
 					const featureMap = { standings: 'standings', results: 'resultsBand' };
 					const feature = featureMap[bandId] || (bandId.includes('bracket') ? 'brackets' : null);
 					if (feature) this.preferences.trackFeatureUse(feature);
+					this.preferences.trackBlockEngagement('band-expand', bandId);
 				}
 
 				// Toggle preview visibility

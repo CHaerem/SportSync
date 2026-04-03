@@ -407,6 +407,32 @@ describe("PreferencesManager", () => {
 			expect(pm.getTelemetry()).toBeNull();
 		});
 
+		it("trackBlockEngagement persists to dedicated localStorage key with blockId", () => {
+			pm.trackBlockEngagement("match-result", "evt_123");
+			pm.trackBlockEngagement("match-result", "evt_456");
+			pm.trackBlockEngagement("match-result", "evt_123");
+			pm.trackBlockEngagement("golf-status");
+			const data = pm.getBlockEngagement();
+			expect(data).toBeTruthy();
+			expect(data.blockEngagement["match-result"].count).toBe(3);
+			expect(data.blockEngagement["match-result"].ids["evt_123"]).toBe(2);
+			expect(data.blockEngagement["match-result"].ids["evt_456"]).toBe(1);
+			expect(data.blockEngagement["golf-status"].count).toBe(1);
+			expect(data.blockEngagement["golf-status"].ids).toEqual({});
+			expect(data.lastUpdated).toBeTruthy();
+		});
+
+		it("getBlockEngagement returns null when no data", () => {
+			expect(pm.getBlockEngagement()).toBeNull();
+		});
+
+		it("exportForBackend includes blockEngagement", () => {
+			pm.trackBlockEngagement("match-preview", "evt_1");
+			const exported = pm.exportForBackend();
+			expect(exported.blockEngagement).toBeTruthy();
+			expect(exported.blockEngagement.blockEngagement["match-preview"].count).toBe(1);
+		});
+
 		it("trackSessionStart records count, timestamp, and peak hour", () => {
 			pm.trackSessionStart();
 			const t = pm.getTelemetry();
