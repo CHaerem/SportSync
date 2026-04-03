@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T08:22:00.212Z",
+  "generatedAt": "2026-04-03T09:23:01.964Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -34,8 +34,8 @@
     },
     "chess": {
       "count": 0,
-      "previousCount": 1,
-      "delta": -1
+      "previousCount": 0,
+      "delta": null
     }
   },
   "dataFreshness": {
@@ -56,21 +56,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 105,
+      "ageMinutes": 166,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-03"
     },
     "ai-quality.json": {
-      "ageMinutes": 105,
+      "ageMinutes": 166,
       "stale": false
     }
   },
@@ -184,9 +184,9 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "chess: 0 events (was 1)"
+      "severity": "info",
+      "code": "sport_zero_events",
+      "message": "chess: data file exists but 0 events in events.json"
     },
     {
       "severity": "warning",
@@ -244,9 +244,9 @@
       "message": "1 pipeline step(s) failed: coverage-gaps"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T08:22:00.312Z",
+    "computedAt": "2026-04-03T09:23:02.051Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -264,7 +264,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -272,7 +272,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 3 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
   }
 }
