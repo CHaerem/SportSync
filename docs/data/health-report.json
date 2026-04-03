@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T18:18:25.481Z",
+  "generatedAt": "2026-04-03T18:43:39.924Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -125,21 +125,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 27,
-    "sevenDay": 3,
+    "fiveHour": 38,
+    "sevenDay": 4,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 321558,
+    "totalDuration": 210666,
     "stepCount": 29,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 104459,
-        "share": 32
+        "name": "generate-featured",
+        "duration": 98873,
+        "share": 47
       }
     ],
     "failedSteps": [
@@ -215,22 +215,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 32% of total pipeline time (104s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 47% of total pipeline time (99s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T18:18:25.561Z",
+    "computedAt": "2026-04-03T18:43:40.072Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -254,32 +249,27 @@
     "hintCount": 0,
     "source": "none"
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 4,
-    "warning": 12,
-    "totalFiles": 111,
-    "hotFiles": [
+  "agentMemoryHealth": {
+    "files": [
       {
-        "file": "docs/js/dashboard.js",
-        "lines": 3683,
-        "functions": 104,
-        "severity": "critical"
+        "agent": "MEMORY.md",
+        "bytes": 1953
       },
       {
-        "file": "scripts/generate-featured.js",
-        "lines": 1472,
-        "functions": 64,
-        "severity": "critical"
+        "agent": "code-agent",
+        "bytes": 3562
       },
       {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1421,
-        "functions": 72,
-        "severity": "critical"
+        "agent": "content-agent",
+        "bytes": 2465
+      },
+      {
+        "agent": "data-agent",
+        "bytes": 2160
       }
     ]
   },
+  "complexityHealth": null,
   "statusSummary": {
     "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
