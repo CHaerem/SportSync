@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-04-03T19:00:02.435Z",
-  "eventCount": 62,
+  "generatedAt": "2026-04-03T19:05:02.084Z",
+  "eventCount": 61,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "football": {
-      "count": 25,
-      "previousCount": 25,
-      "delta": 0
-    },
     "tennis": {
       "count": 3,
       "previousCount": 3,
       "delta": 0
+    },
+    "football": {
+      "count": 24,
+      "previousCount": 25,
+      "delta": -1
     },
     "f1": {
       "count": 23,
@@ -40,27 +40,27 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
@@ -98,16 +98,17 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.36,
-    "relevantMatchRate": 1,
-    "eventsEnriched": 5,
+    "matchRate": 0.31,
+    "relevantMatchRate": 0.8,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "6 boundary day snapshot(s) outside event range (expected)"
+      "6 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-04-03: 2 events but events.json has 1"
     ],
     "snapshotCount": 15
   },
@@ -125,8 +126,8 @@
   },
   "quotaHealth": {
     "tier": 1,
-    "fiveHour": 59,
-    "sevenDay": 6,
+    "fiveHour": 70,
+    "sevenDay": 7,
     "model": "claude-sonnet-4-6",
     "stepsSkipped": 2,
     "skippedSteps": [
@@ -135,14 +136,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 201957,
-    "stepCount": 27,
+    "totalDuration": 186900,
+    "stepCount": 30,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "generate-featured",
-        "duration": 87803,
-        "share": 43
+        "duration": 74000,
+        "share": 40
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 60067,
+        "share": 32
       }
     ],
     "failedSteps": [
@@ -206,6 +212,11 @@
       "message": "2026-03-29: no events or results for day navigator"
     },
     {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-03: 2 events but events.json has 1"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
@@ -213,7 +224,7 @@
     {
       "severity": "info",
       "code": "quota_moderate_utilization",
-      "message": "Quota tier 1 (5h: 59%, 7d: 6%) — 2 step(s) skipped: discover-events, learn-recipes"
+      "message": "Quota tier 1 (5h: 70%, 7d: 7%) — 2 step(s) skipped: discover-events, learn-recipes"
     },
     {
       "severity": "warning",
@@ -223,22 +234,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 43% of total pipeline time (88s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 40% of total pipeline time (74s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (60s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T19:00:02.510Z",
+    "computedAt": "2026-04-03T19:05:02.172Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -282,34 +293,9 @@
       }
     ]
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 4,
-    "warning": 12,
-    "totalFiles": 114,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 3683,
-        "functions": 104,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1471,
-        "functions": 64,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1453,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 89/100.",
     "tokenUsage": null
   }
 }

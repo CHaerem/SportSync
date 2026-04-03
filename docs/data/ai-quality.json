@@ -1,37 +1,37 @@
 {
-  "generatedAt": "2026-04-03T19:00:00.546Z",
+  "generatedAt": "2026-04-03T19:05:01.135Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
+    "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 73213,
+    "blockCount": 9,
+    "generationMs": 139623,
     "tokenUsage": {
-      "input": 26270,
-      "output": 3834,
-      "cacheCreation": 15385,
-      "cacheRead": 10882,
-      "total": 30104,
-      "costUSD": 0.11847735000000001,
+      "input": 59133,
+      "output": 8350,
+      "cacheCreation": 21925,
+      "cacheRead": 37202,
+      "total": 67483,
+      "costUSD": 0.21864735,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 89,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 1,
+      "blockCountTarget": 0.7,
       "componentUtilization": 1
     },
     "issues": []
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 73,
+      "avgScore": 96,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
+    "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 62,
+      "totalEvents": 61,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 62,
+      "totalEvents": 61,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,10 +85,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 62,
+    "totalEvents": 61,
     "skipStats": {
-      "total": 62,
-      "unchanged": 62,
+      "total": 61,
+      "unchanged": 61,
       "enriched": 0,
       "skipRate": 1
     },
