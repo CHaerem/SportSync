@@ -1,11 +1,10 @@
 {
-  "generatedAt": "2026-04-03T06:36:38.970Z",
+  "generatedAt": "2026-04-03T10:21:30.506Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 63,
+    "totalEvents": 62,
     "sports": [
       "golf",
-      "chess",
       "football",
       "tennis",
       "f1",
@@ -17,7 +16,6 @@
         "Valero Texas Open"
       ],
       "today": [
-        "Round 2 – Grenke Chess Festival 2026 | Freestyle Open A",
         "Elche at Rayo Vallecano"
       ],
       "tomorrow": [
@@ -92,7 +90,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 85,
-    "issueCount": 10
+    "issueCount": 12
   },
   "findings": [
     {
@@ -287,11 +285,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
@@ -299,18 +292,13 @@
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Grenke Freestyle Open\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 2 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 42,
+    "total": 40,
     "critical": 0,
-    "warning": 41,
-    "info": 1
+    "warning": 40,
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
