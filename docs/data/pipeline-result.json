@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-04-03T12:18:18.557Z",
-  "completedAt": "2026-04-03T12:19:03.613Z",
-  "duration": 45055,
+  "startedAt": "2026-04-03T13:31:39.632Z",
+  "completedAt": "2026-04-03T13:32:29.494Z",
+  "duration": 49861,
   "mode": "data-only",
   "gate": "pass",
   "gateBlockedFiles": null,
@@ -14,32 +14,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 29467
+          "duration": 24621
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 3227
+          "duration": 3600
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9351
+          "duration": 8931
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 346
+          "duration": 443
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 33061
+          "duration": 37134
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 326
+          "duration": 530
         }
       ]
     },
@@ -50,12 +50,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 202
+          "duration": 172
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1037
+          "duration": 1462
         }
       ]
     },
@@ -84,12 +84,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 637
+          "duration": 707
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 6539
+          "duration": 7085
         }
       ]
     },
@@ -141,24 +141,24 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 485
+          "duration": 506
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 219
+          "duration": 255
         },
         {
           "name": "coverage-gaps",
           "status": "failed",
-          "duration": 214,
+          "duration": 291,
           "error": "Command failed: node scripts/detect-coverage-gaps.js\nCoverage gap detection failed: TypeError: field.toLowerCase is not a function\n    at buildCoverageFingerprint (file:///tmp/runner/work/SportSync/Sp",
           "errorCategory": "command"
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 776
+          "duration": 839
         },
         {
           "name": "ai-sanity-check",
@@ -175,7 +175,7 @@
         {
           "name": "analyze-code-complexity",
           "status": "success",
-          "duration": 572
+          "duration": 577
         }
       ]
     },
@@ -186,12 +186,12 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 245
+          "duration": 247
         },
         {
           "name": "analyze-engagement",
           "status": "success",
-          "duration": 246
+          "duration": 238
         }
       ]
     },
@@ -202,22 +202,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1208
+          "duration": 885
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 135
+          "duration": 137
         },
         {
           "name": "finalize-outputs",
           "status": "success",
-          "duration": 161
+          "duration": 148
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 147
+          "duration": 150
         }
       ]
     }
