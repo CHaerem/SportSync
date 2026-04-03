@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T15:19:47.232Z",
+  "generatedAt": "2026-04-03T16:15:12.804Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 55,
+      "ageMinutes": 111,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-03"
     },
     "ai-quality.json": {
-      "ageMinutes": 55,
+      "ageMinutes": 111,
       "stale": false
     }
   },
@@ -124,27 +124,31 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 1,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 365659,
-    "stepCount": 29,
+    "totalDuration": 53716,
+    "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "discover-events",
-        "duration": 180234,
-        "share": 49
+        "name": "fetch-sports",
+        "duration": 29448,
+        "share": 55
+      },
+      {
+        "name": "fetch-results",
+        "duration": 42064,
+        "share": 78
       }
     ],
     "failedSteps": [
-      "coverage-gaps",
-      "verify-schedules"
+      "coverage-gaps"
     ]
   },
   "gateHealth": {
@@ -221,17 +225,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 49% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (42s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
-      "message": "2 pipeline step(s) failed: coverage-gaps, verify-schedules"
+      "message": "1 pipeline step(s) failed: coverage-gaps"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T15:19:47.325Z",
+    "computedAt": "2026-04-03T16:15:12.905Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
