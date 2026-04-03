@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-04-03T16:14:23.991Z",
-  "completedAt": "2026-04-03T16:15:15.288Z",
-  "duration": 51296,
+  "startedAt": "2026-04-03T17:13:34.261Z",
+  "completedAt": "2026-04-03T17:14:25.411Z",
+  "duration": 51149,
   "mode": "data-only",
   "gate": "pass",
   "gateBlockedFiles": null,
@@ -14,32 +14,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 28419
+          "duration": 28255
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 2742
+          "duration": 3265
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8984
+          "duration": 8902
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 448
+          "duration": 480
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 40478
+          "duration": 40156
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 292
+          "duration": 477
         }
       ]
     },
@@ -50,12 +50,12 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 177
+          "duration": 182
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 984
+          "duration": 982
         }
       ]
     },
@@ -84,12 +84,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 677
+          "duration": 701
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 5481
+          "duration": 5657
         }
       ]
     },
@@ -130,7 +130,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 590
+          "duration": 617
         }
       ]
     },
@@ -141,24 +141,24 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 501
+          "duration": 490
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 477
+          "duration": 293
         },
         {
           "name": "coverage-gaps",
           "status": "failed",
-          "duration": 299,
+          "duration": 214,
           "error": "Command failed: node scripts/detect-coverage-gaps.js\nCoverage gap detection failed: TypeError: field.toLowerCase is not a function\n    at buildCoverageFingerprint (file:///tmp/runner/work/SportSync/Sp",
           "errorCategory": "command"
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 1002
+          "duration": 893
         },
         {
           "name": "ai-sanity-check",
@@ -175,7 +175,7 @@
         {
           "name": "analyze-code-complexity",
           "status": "success",
-          "duration": 688
+          "duration": 606
         }
       ]
     },
@@ -186,12 +186,12 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 249
+          "duration": 241
         },
         {
           "name": "analyze-engagement",
           "status": "success",
-          "duration": 249
+          "duration": 237
         }
       ]
     },
@@ -202,22 +202,22 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 864
+          "duration": 964
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 145
+          "duration": 135
         },
         {
           "name": "finalize-outputs",
           "status": "success",
-          "duration": 160
+          "duration": 150
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 154
+          "duration": 147
         }
       ]
     }

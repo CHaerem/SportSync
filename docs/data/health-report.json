@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T16:15:12.804Z",
+  "generatedAt": "2026-04-03T17:14:22.922Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 170,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-03"
     },
     "ai-quality.json": {
-      "ageMinutes": 111,
+      "ageMinutes": 170,
       "stale": false
     }
   },
@@ -107,7 +107,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "6 boundary day snapshot(s) outside event range (expected)"
+      "6 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-04-04: 5 events but events.json has 6"
     ],
     "snapshotCount": 15
   },
@@ -132,19 +133,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 53716,
+    "totalDuration": 51296,
     "stepCount": 22,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29448,
+        "duration": 28419,
         "share": 55
       },
       {
         "name": "fetch-results",
-        "duration": 42064,
-        "share": 78
+        "duration": 40478,
+        "share": 79
       }
     ],
     "failedSteps": [
@@ -213,6 +214,11 @@
       "message": "2026-03-29: no events or results for day navigator"
     },
     {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-04: 5 events but events.json has 6"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
@@ -225,12 +231,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (42s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -240,7 +246,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T16:15:12.905Z",
+    "computedAt": "2026-04-03T17:14:23.077Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -266,7 +272,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 96/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 96/100.",
     "tokenUsage": null
   }
 }
