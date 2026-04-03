@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-04-08",
-  "generatedAt": "2026-04-03T02:25:18.120Z",
+  "date": "2026-04-10",
+  "generatedAt": "2026-04-03T02:25:18.123Z",
   "events": {
     "upcoming": [
       {
@@ -162,30 +162,28 @@
         "_enrichHash": "d9d7652c00c8bfe0a706d4ca4396cfdd"
       },
       {
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "title": "Scheldeprijs 2026",
-        "time": "2026-04-08T11:00:00+02:00",
+        "sport": "f1",
+        "tournament": "Formula 1 2026 - Race Weekend",
+        "title": "Gulf Air Bahrain Grand Prix",
+        "time": "2026-04-10T11:30:00.000Z",
         "endTime": null,
-        "venue": "Terneuzen to Schoten, Belgium",
-        "norwegian": true,
+        "venue": "TBD",
+        "meta": "Formula 1 2026 - Race Weekend",
+        "norwegian": false,
         "streaming": [
           {
-            "platform": "Eurosport",
-            "type": "tv"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
           },
           {
-            "platform": "Max",
-            "type": "stream"
+            "platform": "F1 TV Pro",
+            "url": "https://f1tv.formula1.com",
+            "type": "streaming"
           }
         ],
         "participants": [],
-        "norwegianPlayers": [
-          {
-            "name": "Søren Wærenskjold",
-            "team": "Uno-X Mobility"
-          }
-        ],
+        "norwegianPlayers": [],
         "totalPlayers": null,
         "link": null,
         "status": null,
@@ -193,91 +191,15 @@
         "homeTeam": null,
         "awayTeam": null,
         "isFavorite": false,
-        "context": "cycling-classics-2026",
-        "importance": 2,
-        "importanceReason": "Sprinters' classic, one Norwegian contender.",
-        "summary": "Flat Belgian sprinters' race with Wærenskjold as the sole Norwegian hope for a top result.",
+        "importance": 3,
+        "importanceReason": "F1 2026 Bahrain GP; early-season championship points on offer",
+        "summary": "The Bahrain Grand Prix offers early 2026 championship points, but no Norwegian drivers or title-decisive context yet.",
         "tags": [
-          "norwegian-player"
+          "watchlist"
         ],
-        "norwegianRelevance": 3,
+        "norwegianRelevance": 2,
         "enrichedAt": "2026-04-02T22:19:32.490Z",
-        "_enrichHash": "3b83fdddd14a4354f673b55211d71b95"
-      },
-      {
-        "sport": "football",
-        "tournament": "Champions League",
-        "title": "Atlético Madrid at Barcelona",
-        "time": "2026-04-08T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Spotify Camp Nou",
-        "meta": "Champions League • 1st Leg",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Barcelona",
-        "awayTeam": "Atlético Madrid",
-        "isFavorite": true,
-        "importance": 5,
-        "importanceReason": "CL quarter-final 1st leg; fan-favorite Barcelona hosting Atlético",
-        "summary": "Barcelona host fierce rivals Atlético Madrid in a high-stakes Champions League quarter-final first leg at Camp Nou.",
-        "tags": [
-          "must-watch",
-          "rivalry",
-          "major",
-          "classic-matchup"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-02T22:19:32.490Z",
-        "_enrichHash": "def793b14331aeb43e872a344f112f3f"
-      },
-      {
-        "sport": "football",
-        "tournament": "Champions League",
-        "title": "Liverpool at Paris Saint-Germain",
-        "time": "2026-04-08T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Parc des Princes",
-        "meta": "Champions League • 1st Leg",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Paris Saint-Germain",
-        "awayTeam": "Liverpool",
-        "isFavorite": true,
-        "importance": 5,
-        "importanceReason": "CL quarter-final; fan-favorite Liverpool away at PSG",
-        "summary": "Liverpool face PSG at Parc des Princes in a blockbuster Champions League quarter-final first leg.",
-        "tags": [
-          "must-watch",
-          "major",
-          "classic-matchup"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-02T22:19:32.490Z",
-        "_enrichHash": "fedcb7639da12ff2220d0feb5da936fe"
+        "_enrichHash": "204b6f682f2af8244a40a5e55eb4d3c2"
       }
     ],
     "results": []
@@ -287,12 +209,11 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 7,
+    "eventCount": 5,
     "sportsCovered": [
       "tennis",
       "esports",
-      "cycling",
-      "football"
+      "f1"
     ],
     "hasResults": false,
     "hasStandings": false
