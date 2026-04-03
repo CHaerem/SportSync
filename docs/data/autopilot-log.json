@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-03",
+      "task": "Execution: 5 tasks — 2 UX + 1 data FEATURE + 2 code (3 parallel worktree agents)",
+      "outcome": "completed",
+      "pr": "direct-to-main (5 commits merged from 3 worktrees)",
+      "details": "Run 41: 0 user feedback, 7 pending tasks from run 40 — execution run. 3 parallel worktree subagents: UX-agent (sport-color borders on Later-band + importanceBadge CSS class), Data-agent (F1 2026 full-season calendar config — 24 races), Code-agent (buildFallbackSummary 9 tests + mustWatchCoverage sole-low-metric guard with 3 tests). All 3 worktrees merged cleanly into main. 2587 tests pass (12 new). 2 PENDING tasks remain (pipeline abort cascade, ESPN partial failure tracking). Worktree agents completed successfully — no Bash permission issues this run. Autonomy: 12/13 loops (preferenceEvolution 0.5 — structural).",
+      "tests_passed": true,
+      "files_changed": 7,
+      "turns_used": 18,
+      "lesson": "3 parallel worktree agents ran successfully without conflicts or permission issues. Worktree cleanup (git worktree remove) prevents vitest from running 4x duplicate test suites — always clean worktrees before running npm test. F1 calendar config solves the chronic empty-between-races problem (100+ consecutive retains). User-visible/infrastructure ratio: 60%/40% (2 UX + F1 config / 2 code quality).",
+      "scouted": 0
+    },
+    {
       "date": "2026-04-02",
       "task": "Scouting + execution: KNOWN_MANAGED_CODES sync + 3 UX a11y fixes + 5 new roadmap tasks",
       "outcome": "completed",

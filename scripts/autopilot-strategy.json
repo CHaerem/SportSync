@@ -92,6 +92,10 @@
         "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
       },
       {
+        "date": "2026-04-03",
+        "note": "Run 41: Execution — 7 pending tasks, 0 user feedback. 3 parallel worktree agents: UX (sport-color Later borders + importanceBadge CSS), Data (F1 2026 calendar — 24 races), Code (buildFallbackSummary 9 tests + mustWatchCoverage sole-low guard 3 tests). All worktrees merged cleanly. 2587 tests pass (+12). 5/7 tasks completed, 2 remain (pipeline abort cascade, ESPN partial failure). User-visible/infrastructure: 60%/40% (2 UX + F1 config / 2 code quality). ~18 orchestrator turns. Key: worktree cleanup (git worktree remove) before npm test prevents 4x duplicate test runs — vitest picks up worktree copies otherwise. F1 calendar config permanently solves the blank-between-races problem."
+      },
+      {
         "date": "2026-04-02",
         "note": "Run 40: Scouting + execution — 0 pending tasks, 0 user feedback. 3 parallel scouts (UX 7, Code 7, Data 6). Code fix: KNOWN_MANAGED_CODES sync gap (editorial_no_narrative + standings_empty — run 39 only fixed KNOWN_DATA_GAPS). 3 UX a11y fixes applied manually from worktree (day nav aria-label, result-row aria-label, cycling inline→class). Task 4 (band aria-expanded) was already implemented. 5 new PENDING tasks added. Worktree Bash permission pattern persists (3rd run). 2575 tests pass. User-visible/infrastructure: 75%/25% (3 UX a11y / 1 pattern suppression). ~18 orchestrator turns. Key: KNOWN_DATA_GAPS and KNOWN_MANAGED_CODES are twin suppression lists that MUST be updated together — run 39 partially fixed, run 40 completed."
       },
