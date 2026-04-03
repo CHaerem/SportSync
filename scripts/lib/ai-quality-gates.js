@@ -996,6 +996,17 @@ export function buildAdaptiveHints(history) {
 					.every(r => averages[r.metric] === null || averages[r.metric] >= r.threshold);
 				if (otherRulesAllPass) continue;
 			}
+			// Skip the mustWatchCoverage hint when it is the sole low metric.
+			// When structural data artifacts cause a single must-watch event to be
+			// unmatched (e.g. F1 sponsor prefix stripping), this metric alone drops
+			// below threshold every run. The LLM cannot fix the underlying data
+			// mismatch — firing the hint repeatedly creates fatigue without improvement.
+			if (rule.metric === "mustWatchCoverage") {
+				const otherRulesAllPass = ADAPTIVE_HINT_RULES
+					.filter(r => r.metric !== "mustWatchCoverage")
+					.every(r => averages[r.metric] === null || averages[r.metric] >= r.threshold);
+				if (otherRulesAllPass) continue;
+			}
 			hints.push(rule.hint);
 		}
 	}

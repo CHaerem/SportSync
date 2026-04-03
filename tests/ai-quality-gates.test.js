@@ -586,13 +586,14 @@ describe("buildAdaptiveHints()", () => {
 		expect(result.metrics).toEqual({});
 	});
 
-	it("returns must-watch hint when coverage is low", () => {
+	it("returns must-watch hint when coverage is low alongside another failing metric", () => {
+		// mustWatchCoverage alone is suppressed (sole-low-metric guard), but fires when
+		// other metrics are also failing.
 		const history = Array.from({ length: 5 }, () =>
-			makeEditorialEntry({ mustWatchCoverage: 0.3 })
+			makeEditorialEntry({ mustWatchCoverage: 0.3, sportDiversity: 0.1 })
 		);
 		const result = buildAdaptiveHints(history);
-		expect(result.hints).toHaveLength(1);
-		expect(result.hints[0]).toContain("must-watch");
+		expect(result.hints.some(h => h.includes("must-watch"))).toBe(true);
 		expect(result.metrics.mustWatchCoverage).toBeCloseTo(0.3);
 	});
 
@@ -647,6 +648,38 @@ describe("buildAdaptiveHints()", () => {
 		);
 		const result = buildAdaptiveHints(history);
 		expect(result.hints.some(h => h.includes("quiet day"))).toBe(true);
+		expect(result.hints.some(h => h.includes("must-watch"))).toBe(true);
+	});
+
+	it("suppresses mustWatchCoverage hint when it is the sole low metric", () => {
+		// mustWatchCoverage alone being low can be caused by structural data artifacts
+		// (e.g. F1 sponsor prefix stripping making events unmatchable) — suppress to
+		// avoid hint fatigue when the LLM cannot fix the underlying data mismatch.
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ mustWatchCoverage: 0.2 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("must-watch"))).toBe(false);
+		expect(result.metrics.mustWatchCoverage).toBeCloseTo(0.2);
+	});
+
+	it("still emits mustWatchCoverage hint when other metrics are also low", () => {
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ mustWatchCoverage: 0.2, sportDiversity: 0.1 })
+		);
+		const result = buildAdaptiveHints(history);
+		expect(result.hints.some(h => h.includes("must-watch"))).toBe(true);
+		expect(result.hints.some(h => h.includes("one sport"))).toBe(true);
+	});
+
+	it("still emits mustWatchCoverage hint when only quietDayCompliance is also low", () => {
+		// quietDayCompliance being sole-low is itself suppressed, but mustWatchCoverage
+		// being low alongside it should still fire the must-watch hint because
+		// mustWatchCoverage + quietDayCompliance means mustWatchCoverage is NOT the sole low.
+		const history = Array.from({ length: 5 }, () =>
+			makeEditorialEntry({ mustWatchCoverage: 0.2, quietDayCompliance: 0.2 })
+		);
+		const result = buildAdaptiveHints(history);
 		expect(result.hints.some(h => h.includes("must-watch"))).toBe(true);
 	});
 

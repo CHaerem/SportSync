@@ -561,6 +561,112 @@ describe("generateStatusSummary()", () => {
 		const summary = await generateStatusSummary(report, autonomy, null);
 		expect(summary).toContain("critical");
 	});
+
+	// buildFallbackSummary is tested via generateStatusSummary with no LLM available
+	// (no API key in test environment → always takes the fallback path)
+
+	it("fallback: healthy status includes event count and sport count", async () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5, golf: 3, tennis: 2 }),
+			standings: {
+				football: { premierLeague: [{ team: "Arsenal" }] },
+				golf: { pga: { leaderboard: [{ player: "S" }] } },
+				f1: { drivers: [{ driver: "V" }] },
+			},
+			rssDigest: { items: new Array(15).fill({ title: "News" }) },
+		});
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(summary).toContain("healthy");
+		expect(summary).toContain("10"); // event count
+	});
+
+	it("fallback: warning status names issue counts", async () => {
+		const staleDate = new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			sportFiles: { "football.json": { lastUpdated: staleDate } },
+		});
+		expect(report.status).toBe("warning");
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(summary).toContain("warning");
+		expect(summary).toMatch(/\d+\s+warning/);
+	});
+
+	it("fallback: critical status names critical issue counts", async () => {
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			previousReport: { sportCoverage: { football: { count: 5 }, chess: { count: 3 } } },
+		});
+		expect(report.status).toBe("critical");
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(summary).toContain("critical");
+		expect(summary).toMatch(/\d+\s+critical/);
+	});
+
+	it("fallback: includes editorial score when provided", async () => {
+		const report = generateHealthReport({ events: makeEvents({ football: 3 }) });
+		const quality = { editorial: { score: 87 } };
+
+		const summary = await generateStatusSummary(report, null, quality);
+		expect(summary).toContain("87");
+		expect(summary).toContain("100");
+	});
+
+	it("fallback: omits editorial score when quality is null", async () => {
+		const report = generateHealthReport({ events: makeEvents({ football: 3 }) });
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(summary).not.toContain("/100");
+		expect(typeof summary).toBe("string");
+		expect(summary.length).toBeGreaterThan(0);
+	});
+
+	it("fallback: omits editorial score when editorial score field is absent", async () => {
+		const report = generateHealthReport({ events: makeEvents({ football: 3 }) });
+		const quality = { enrichment: { score: 90 } }; // no editorial key
+
+		const summary = await generateStatusSummary(report, null, quality);
+		expect(summary).not.toContain("/100");
+	});
+
+	it("fallback: returns string when report has no issues (zero events)", async () => {
+		const report = generateHealthReport({ events: [] });
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(typeof summary).toBe("string");
+		expect(summary.length).toBeGreaterThan(0);
+	});
+
+	it("fallback: handles report with many critical and warning issues", async () => {
+		// Trigger both a sport drop (critical) and a stale data warning
+		const staleDate = new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			previousReport: { sportCoverage: { football: { count: 5 }, chess: { count: 3 } } },
+			sportFiles: { "football.json": { lastUpdated: staleDate } },
+		});
+
+		const summary = await generateStatusSummary(report, null, null);
+		expect(typeof summary).toBe("string");
+		// Should describe the status and issue counts
+		expect(summary).toMatch(/critical|warning/);
+		expect(summary).toMatch(/\d+/);
+	});
+
+	it("fallback: LLM failure falls back gracefully", async () => {
+		const report = generateHealthReport({ events: makeEvents({ football: 5 }) });
+		const quality = { editorial: { score: 72 } };
+		const faultyLlm = { isAvailable: () => true, complete: async () => { throw new Error("network error"); } };
+
+		const summary = await generateStatusSummary(report, null, quality, faultyLlm);
+		// Should return the fallback string rather than throwing
+		expect(typeof summary).toBe("string");
+		expect(summary.length).toBeGreaterThan(0);
+		expect(summary).toContain("72");
+	});
 });
 
 describe("results validation and recap tracking", () => {
