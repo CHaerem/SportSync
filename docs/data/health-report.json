@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T20:09:00.765Z",
+  "generatedAt": "2026-04-03T20:12:48.672Z",
   "eventCount": 62,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "chess": {
       "count": 1,
-      "previousCount": 0,
-      "delta": 1
+      "previousCount": 1,
+      "delta": 0
     },
     "football": {
       "count": 24,
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 64,
+      "ageMinutes": 68,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-03"
     },
     "ai-quality.json": {
-      "ageMinutes": 64,
+      "ageMinutes": 68,
       "stale": false
     }
   },
@@ -126,27 +126,26 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 2,
-    "fiveHour": 71,
-    "sevenDay": 7,
-    "model": "claude-sonnet-4-6",
-    "stepsSkipped": 5,
-    "skippedSteps": [
-      "discover-events",
-      "learn-recipes",
-      "post-generate",
-      "ai-sanity-check",
-      "verify-schedules"
-    ]
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
+    "model": null,
+    "stepsSkipped": 0,
+    "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 184519,
-    "stepCount": 27,
+    "totalDuration": 44042,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 140400,
+        "name": "fetch-sports",
+        "duration": 31233,
+        "share": 71
+      },
+      {
+        "name": "fetch-results",
+        "duration": 33689,
         "share": 76
       }
     ],
@@ -220,23 +219,23 @@
     },
     {
       "severity": "warning",
-      "code": "quota_high_utilization",
-      "message": "Quota tier 2 (5h: 71%, 7d: 7%) — 5 step(s) skipped"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 76% of total pipeline time (140s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 71% of total pipeline time (31s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (34s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-03T20:09:00.846Z",
+    "computedAt": "2026-04-03T20:12:48.769Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -254,7 +253,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 0,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -282,7 +281,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 89/100.",
     "tokenUsage": null
   }
 }
