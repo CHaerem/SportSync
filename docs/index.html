@@ -390,6 +390,15 @@
 			color: var(--muted-light); margin: 14px 0 4px; padding-top: 8px; border-top: 1px dashed var(--border-light);
 		}
 		.block-divider ~ .block-event-line { opacity: 0.65; font-size: 0.78rem; }
+		.block-divider ~ .block-event-line[data-sport] { border-left: 2px solid; padding-left: 7px; }
+		.block-divider ~ .block-event-line[data-sport="football"] { border-left-color: var(--sport-football); }
+		.block-divider ~ .block-event-line[data-sport="golf"] { border-left-color: var(--sport-golf); }
+		.block-divider ~ .block-event-line[data-sport="tennis"] { border-left-color: var(--sport-tennis); }
+		.block-divider ~ .block-event-line[data-sport="formula1"] { border-left-color: var(--sport-f1); }
+		.block-divider ~ .block-event-line[data-sport="chess"] { border-left-color: var(--sport-chess); }
+		.block-divider ~ .block-event-line[data-sport="esports"] { border-left-color: var(--sport-esports); }
+		.block-divider ~ .block-event-line[data-sport="cycling"] { border-left-color: var(--sport-cycling); }
+		.block-divider ~ .block-event-line[data-sport="olympics"] { border-left-color: var(--sport-olympics); }
 		.editorial-line { padding: 3px 0; font-size: 0.84rem; }
 		.editorial-line.brief-headline { font-weight: 500; }
 		.editorial-line.brief-secondary { font-size: 0.78rem; color: var(--muted); }
@@ -887,6 +896,7 @@
 		/* Event summary and importance reason (must-watch context) */
 		.row-summary { font-size: 0.68rem; color: var(--muted); padding: 2px 0 4px 22px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 		.row-importance-reason { font-size: 0.65rem; color: var(--muted); padding: 2px 0 4px 22px; line-height: 1.3; font-style: italic; }
+		.row-importance-badge { font-size: 0.62rem; font-variant: small-caps; color: var(--muted); padding: 2px 0 2px 22px; letter-spacing: 0.03em; line-height: 1.3; opacity: 0.85; }
 
 		/* Must-watch */
 		.event-row.must-watch {

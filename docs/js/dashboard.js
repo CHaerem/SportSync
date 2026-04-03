@@ -1038,7 +1038,9 @@ class Dashboard {
 				const isLive = block._live || (block.text && (block.text.startsWith('LIVE:') || block.text.startsWith('\u26f3')));
 				const isResult = !isLive && block.text && /\bFT:/.test(block.text);
 				const cls = isLive ? ' brief-live' : isResult ? ' result-line' : '';
-				return `<div class="block-event-line editorial-line${cls}">${this.renderBriefLine(block.text || '')}</div>`;
+				const sportId = this._detectSportFromText(block.sport, block.text || '');
+				const sportAttr = sportId ? ` data-sport="${this.esc(sportId)}"` : '';
+				return `<div class="block-event-line editorial-line${cls}"${sportAttr}>${this.renderBriefLine(block.text || '')}</div>`;
 			}
 			case 'event-group': {
 				let html = `<div class="block-event-group">`;
@@ -2683,7 +2685,7 @@ class Dashboard {
 
 		const summaryHtml = (isMustWatch && !isExpanded && event.summary) ? `<div class="row-summary">${this.esc(event.summary)}</div>` : '';
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
-		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div style="font-size:0.62rem;font-variant:small-caps;color:var(--muted);padding:2px 0 2px 22px;letter-spacing:0.03em;line-height:1.3;opacity:0.85">${this.esc(event.importanceReason)}</div>` : '';
+		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div class="row-importance-badge">${this.esc(event.importanceReason)}</div>` : '';
 
 		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
 	return `
@@ -3562,6 +3564,23 @@ class Dashboard {
 			btn.textContent = isDark ? '\u2600\ufe0f' : '\ud83c\udf19';
 			if (this.preferences) this.preferences.setTheme(isDark ? 'dark' : 'light');
 		});
+	}
+
+	// --- Sport detection from block text (for Later-band color cues) ---
+
+	_detectSportFromText(blockSport, text) {
+		// If the block carries an explicit sport field, use it
+		if (blockSport && typeof SPORT_CONFIG !== 'undefined') {
+			const cfg = SPORT_CONFIG.find(s => s.id === blockSport || (s.aliases && s.aliases.includes(blockSport)));
+			if (cfg) return cfg.id;
+		}
+		// Infer from leading emoji in text
+		if (typeof SPORT_CONFIG === 'undefined') return null;
+		const emojiMap = { '⚽': 'football', '⛳': 'golf', '🎾': 'tennis', '🏎️': 'formula1', '🏎': 'formula1', '♟️': 'chess', '♟': 'chess', '🎮': 'esports', '🚴': 'cycling', '🏅': 'olympics' };
+		for (const [emoji, sportId] of Object.entries(emojiMap)) {
+			if (text.startsWith(emoji)) return sportId;
+		}
+		return null;
 	}
 
 	// --- Brief line rendering with inline logos ---
