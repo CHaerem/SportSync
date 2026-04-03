@@ -25,6 +25,7 @@
       "description": "Config maintenance and usage tracking",
       "steps": [
         { "name": "sync-configs", "command": "node scripts/sync-configs.js", "errorPolicy": "continue" },
+        { "name": "proactive-triggers", "command": "node scripts/check-proactive-triggers.js", "errorPolicy": "continue" },
         { "name": "usage-snapshot", "command": "node scripts/track-usage.js snapshot", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] }
       ]
     },
@@ -95,6 +96,8 @@
         { "name": "usage-report", "command": "node scripts/track-usage.js report pipeline", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"] },
         { "name": "publish-preferences", "command": "node scripts/publish-preferences.js", "errorPolicy": "continue" },
         { "name": "finalize-outputs", "command": "node scripts/generate-capabilities.js", "errorPolicy": "continue" },
+        { "name": "archive-roadmap", "command": "node scripts/archive-roadmap.js", "errorPolicy": "continue" },
+        { "name": "consolidate-strategy", "command": "node scripts/consolidate-strategy.js", "errorPolicy": "continue" },
         { "name": "pre-commit-gate", "command": "node scripts/pre-commit-gate.js", "errorPolicy": "continue" }
       ]
     }

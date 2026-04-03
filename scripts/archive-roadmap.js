@@ -146,11 +146,31 @@ export function summarizeTask(task) {
 }
 
 /**
+ * Build a run-number → date map from the Run History section of the roadmap.
+ * Matches patterns like "**Run 2026-03-27 (Run 36):**" and "Run 31."
+ */
+export function buildRunDateMap(content) {
+	const map = {};
+	// Match "Run YYYY-MM-DD (Run N):" pattern from Run History
+	const historyMatches = content.matchAll(/\*\*Run\s+(\d{4}-\d{2}-\d{2})\s+\(Run\s+(\d+)\)/g);
+	for (const m of historyMatches) {
+		map[m[2]] = m[1];
+	}
+	// Also match processNotes-style "date": "2026-XX-XX", "note": "Run N:"
+	const noteMatches = content.matchAll(/"date":\s*"(\d{4}-\d{2}-\d{2})"[^}]*Run\s+(\d+)/g);
+	for (const m of noteMatches) {
+		if (!map[m[2]]) map[m[2]] = m[1];
+	}
+	return map;
+}
+
+/**
  * Archive old DONE tasks, keeping the roadmap lean.
  */
-export function archiveRoadmap(content, now = new Date(), existingArchive = "") {
+export function archiveRoadmap(content, now = new Date(), existingArchive = "", runDateMapOverride = null) {
 	const { header, taskSection, lessons } = parseRoadmap(content);
 	const tasks = extractTasks(taskSection);
+	const runDateMap = runDateMapOverride || buildRunDateMap(content);
 
 	const cutoff = new Date(now.getTime() - RETENTION_DAYS * 24 * 60 * 60 * 1000);
 
@@ -163,7 +183,7 @@ export function archiveRoadmap(content, now = new Date(), existingArchive = "") 
 			continue;
 		}
 
-		const date = extractTaskDate(task.raw);
+		const date = extractTaskDate(task.raw, runDateMap);
 		if (date && date < cutoff) {
 			archive.push(task);
 		} else {
