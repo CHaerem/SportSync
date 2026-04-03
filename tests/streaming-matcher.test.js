@@ -6,6 +6,7 @@ import {
 	matchTvkampenToEvents,
 	mineAliasSuggestions,
 	buildStreamingHints,
+	getNorwayUtcOffset,
 	TEAM_ALIASES,
 	NORWEGIAN_COUNTRY_ALIASES,
 } from "../scripts/lib/streaming-matcher.js";
@@ -291,8 +292,38 @@ describe("computeMatchScore — cross-day matching", () => {
 	});
 });
 
-describe("computeMatchScore — CET timezone", () => {
-	it("handles CET offset: 21:00 CET matches 20:00 UTC", () => {
+describe("getNorwayUtcOffset", () => {
+	it("returns +01:00 in winter (January)", () => {
+		expect(getNorwayUtcOffset("2026-01-15")).toBe("+01:00");
+	});
+
+	it("returns +01:00 in early March (before DST)", () => {
+		expect(getNorwayUtcOffset("2026-03-20")).toBe("+01:00");
+	});
+
+	it("returns +02:00 in summer (July)", () => {
+		expect(getNorwayUtcOffset("2026-07-15")).toBe("+02:00");
+	});
+
+	it("returns +02:00 in April (after DST switch)", () => {
+		expect(getNorwayUtcOffset("2026-04-03")).toBe("+02:00");
+	});
+
+	it("returns +01:00 in November (after DST ends)", () => {
+		expect(getNorwayUtcOffset("2026-11-15")).toBe("+01:00");
+	});
+
+	it("returns +02:00 on the day DST starts (last Sunday of March 2026 = March 29)", () => {
+		expect(getNorwayUtcOffset("2026-03-29")).toBe("+02:00");
+	});
+
+	it("returns +01:00 on the day before DST starts", () => {
+		expect(getNorwayUtcOffset("2026-03-28")).toBe("+01:00");
+	});
+});
+
+describe("computeMatchScore — CET/CEST timezone", () => {
+	it("handles CET offset in winter: 21:00 CET matches 20:00 UTC", () => {
 		const event = {
 			homeTeam: "Arsenal",
 			awayTeam: "Liverpool",
@@ -306,6 +337,43 @@ describe("computeMatchScore — CET timezone", () => {
 			matchUrl: "url1",
 		};
 		const score = computeMatchScore(tvk, event, "2026-02-17");
+		expect(score).toBeGreaterThanOrEqual(0.6);
+	});
+
+	it("handles CEST offset in summer: 21:00 CEST matches 19:00 UTC", () => {
+		const event = {
+			homeTeam: "Rayo Vallecano",
+			awayTeam: "Elche",
+			time: "2026-04-03T19:00:00Z", // 19:00 UTC = 21:00 CEST
+			tournament: "La Liga",
+		};
+		const tvk = {
+			homeTeam: "Rayo Vallecano",
+			awayTeam: "Elche",
+			time: "21:00", // 21:00 CEST = 19:00 UTC
+			matchUrl: "url1",
+		};
+		const score = computeMatchScore(tvk, event, "2026-04-03");
+		expect(score).toBeGreaterThanOrEqual(0.6);
+	});
+
+	it("rejects CEST match when using wrong CET offset (the bug scenario)", () => {
+		// This test verifies the DST fix: if we used +01:00 instead of +02:00,
+		// 21:00+01:00 = 20:00 UTC, which is 60 min off from 19:00 UTC → rejected
+		const event = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "2026-04-03T19:00:00Z",
+			tournament: "Premier League",
+		};
+		const tvk = {
+			homeTeam: "Arsenal",
+			awayTeam: "Liverpool",
+			time: "21:00",
+			matchUrl: "url1",
+		};
+		const score = computeMatchScore(tvk, event, "2026-04-03");
+		// With correct CEST offset: 21:00+02:00 = 19:00 UTC → matches
 		expect(score).toBeGreaterThanOrEqual(0.6);
 	});
 

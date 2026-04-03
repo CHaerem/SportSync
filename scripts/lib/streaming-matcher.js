@@ -6,6 +6,25 @@
  */
 
 /**
+ * Get the correct CET/CEST UTC offset for a given date.
+ * European DST: last Sunday of March 02:00 UTC → last Sunday of October 03:00 UTC.
+ * tvkampen.com displays times in Norwegian local time (CET in winter, CEST in summer).
+ * @param {string} dateStr - YYYY-MM-DD date string
+ * @returns {string} "+01:00" (CET) or "+02:00" (CEST)
+ */
+export function getNorwayUtcOffset(dateStr) {
+	const d = new Date(dateStr + "T12:00:00Z"); // noon UTC to avoid edge cases
+	const year = d.getUTCFullYear();
+	// Last Sunday of March at 02:00 UTC
+	const mar31 = new Date(Date.UTC(year, 2, 31));
+	const dstStart = new Date(Date.UTC(year, 2, 31 - mar31.getUTCDay(), 2, 0, 0));
+	// Last Sunday of October at 03:00 UTC (01:00 local = 03:00 UTC in CEST)
+	const oct31 = new Date(Date.UTC(year, 9, 31));
+	const dstEnd = new Date(Date.UTC(year, 9, 31 - oct31.getUTCDay(), 3, 0, 0));
+	return (d >= dstStart && d < dstEnd) ? "+02:00" : "+01:00";
+}
+
+/**
  * Norwegian country name → English translation map.
  * tvkampen.com uses Norwegian country names for international matches;
  * events.json stores English names. Applied during normalization so
@@ -168,15 +187,17 @@ export function computeMatchScore(tvkEntry, event, dateStr) {
 	const matchDate = tvkEntry.date || dateStr;
 	if (tvkEntry.time && matchDate) {
 		const [hours, minutes] = tvkEntry.time.split(":").map(Number);
-		const tvkDate = new Date(`${matchDate}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+01:00`); // CET
+		const offset = getNorwayUtcOffset(matchDate);
+		const tvkDate = new Date(`${matchDate}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00${offset}`);
 		timeDiffMin = Math.abs(eventDate.getTime() - tvkDate.getTime()) / 60000;
 	} else if (tvkEntry.time) {
 		// Compare just time-of-day if no date context
 		const eventHours = eventDate.getUTCHours();
 		const eventMinutes = eventDate.getUTCMinutes();
 		const [tvkH, tvkM] = tvkEntry.time.split(":").map(Number);
-		// tvkampen times are CET/CEST — subtract 1 hour for rough UTC comparison
-		const tvkMinOfDay = (tvkH - 1) * 60 + tvkM;
+		// tvkampen times are CET/CEST — subtract offset for UTC comparison
+		const cetOffsetHours = (dateStr && getNorwayUtcOffset(dateStr) === "+02:00") ? 2 : 1;
+		const tvkMinOfDay = (tvkH - cetOffsetHours) * 60 + tvkM;
 		const eventMinOfDay = eventHours * 60 + eventMinutes;
 		timeDiffMin = Math.abs(eventMinOfDay - tvkMinOfDay);
 		if (timeDiffMin > 720) timeDiffMin = 1440 - timeDiffMin; // wrap around midnight

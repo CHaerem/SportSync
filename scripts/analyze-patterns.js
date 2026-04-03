@@ -223,8 +223,11 @@ export function analyzeHintFatigue(qualityHistory) {
 	for (const [hintText, fireCount] of hintCounts) {
 		if (fireCount < 5) continue;
 
-		// Find which metric this hint targets
+		// Skip recapHeadlineRate hints — this metric reflects RSS feed composition
+		// (no football recap headlines available), not an LLM or code failure.
+		// The quality gate already handles null/low recap rates by redistributing weight.
 		const hintLower = hintText.toLowerCase();
+		if (hintLower.includes("recapheadlinerate") || hintLower.includes("recap headline")) continue;
 		let metricKey = "unknown";
 		let metricName = "unknown";
 		for (const { pattern, metric, key } of hintMetricMap) {

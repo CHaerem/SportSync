@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { enrichStreaming } from "../scripts/enrich-streaming.js";
 import { formatDateKey } from "../scripts/lib/helpers.js";
+import { getNorwayUtcOffset } from "../scripts/lib/streaming-matcher.js";
 
 // Dynamic date helpers — tests must use dates relative to "now"
 // because enrichStreaming fetches today + tomorrow listings
@@ -18,10 +19,11 @@ function tomorrowAtUTC(hour, minute = 0) {
 	return `${TOMORROW}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00Z`;
 }
 
-/** Convert UTC hour to CET hour string (UTC+1) for tvkampen mock HTML */
-function utcToCET(utcHour) {
-	const cet = (utcHour + 1) % 24;
-	return `${String(cet).padStart(2, "0")}:00`;
+/** Convert UTC hour to Norwegian local time string (CET/CEST-aware) for tvkampen mock HTML */
+function utcToCET(utcHour, dateStr = TODAY) {
+	const offsetHours = getNorwayUtcOffset(dateStr) === "+02:00" ? 2 : 1;
+	const local = (utcHour + offsetHours) % 24;
+	return `${String(local).padStart(2, "0")}:00`;
 }
 
 // Helper: build realistic tvkampen event block HTML
@@ -280,7 +282,7 @@ describe("enrichStreaming", () => {
 			makeEventBlock("6001", { home: "Arsenal", away: "Liverpool", time: utcToCET(20), channelClasses: ["tv2play"] }),
 		);
 		const tomorrowHtml = makeListingHtml(
-			makeEventBlock("6002", { home: "Chelsea", away: "Newcastle", time: utcToCET(15), channelClasses: ["viaplay"] }),
+			makeEventBlock("6002", { home: "Chelsea", away: "Newcastle", time: utcToCET(15, TOMORROW), channelClasses: ["viaplay"] }),
 		);
 
 		const mockFetcher = vi.fn().mockImplementation((url) => {

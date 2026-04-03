@@ -304,9 +304,20 @@ describe("analyzeHintFatigue", () => {
 		expect(analyzeHintFatigue(history)).toEqual([]);
 	});
 
-	it("detects RESULTS NOTE hint fatigue", () => {
+	it("skips recap headline hint fatigue (known data-availability issue)", () => {
 		const history = Array(8).fill({
 			hintsApplied: ["RESULTS NOTE: Few recap headlines available — focus on scorelines"],
+			results: { score: 70 },
+		});
+		// Recap headline hints are excluded from fatigue detection because the low rate
+		// reflects RSS feed composition, not an LLM or code failure
+		const patterns = analyzeHintFatigue(history);
+		expect(patterns).toHaveLength(0);
+	});
+
+	it("detects non-recap RESULTS NOTE hint fatigue", () => {
+		const history = Array(8).fill({
+			hintsApplied: ["RESULTS NOTE: Results data may be stale — be cautious about referencing recent outcomes."],
 			results: { score: 70 },
 		});
 		const patterns = analyzeHintFatigue(history);

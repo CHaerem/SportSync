@@ -34,7 +34,9 @@ export const MAJOR_EVENT_PATTERNS = [
 function buildCoverageFingerprint(events) {
 	const fingerprint = new Set();
 	for (const ev of events) {
-		const fields = [ev.title, ev.tournament, ev.context, ev.meta].filter(Boolean);
+		const fields = [ev.title, ev.tournament, ev.context, ev.meta]
+			.map(f => (f && typeof f === "object" ? Object.values(f).filter(v => typeof v === "string").join(" ") : f))
+			.filter(f => typeof f === "string" && f.length > 0);
 		for (const field of fields) {
 			fingerprint.add(field.toLowerCase());
 		}

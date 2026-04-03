@@ -30,6 +30,7 @@ import { filterEventsByFocusTeam } from "./lib/focus-team-filter.js";
 const MAX_TASKS_PER_RUN = 3;
 const ATHLETE_REFRESH_DAYS = 7;
 const EVENT_WINDOW_DAYS = 14;
+const DISCOVERY_FAILURE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h backoff after failure
 
 const defaultConfigDir = path.resolve(process.cwd(), "scripts", "config");
 
@@ -37,8 +38,27 @@ const defaultConfigDir = path.resolve(process.cwd(), "scripts", "config");
  * Find configs and gaps that need research.
  * Returns a prioritized task list (max MAX_TASKS_PER_RUN).
  */
-export function findResearchTasks(configs, coverageGaps, now = new Date(), _urgencyDataOverride = null) {
+export function findResearchTasks(configs, coverageGaps, now = new Date(), _urgencyDataOverride = null, _discoveryLog = null) {
 	const tasks = [];
+
+	// Load discovery log to check for recent failures (backoff)
+	const discoveryLog = _discoveryLog || readJsonIfExists(
+		path.join(process.env.SPORTSYNC_DATA_DIR || rootDataPath(), "discovery-log.json")
+	);
+	const recentFailures = new Set();
+	if (discoveryLog?.runs) {
+		for (const run of discoveryLog.runs) {
+			if (!run.timestamp) continue;
+			const runAge = now.getTime() - new Date(run.timestamp).getTime();
+			if (runAge < DISCOVERY_FAILURE_COOLDOWN_MS) {
+				for (const task of (run.tasks || [])) {
+					if (task.outcome === "failed" && task.target) {
+						recentFailures.add(task.target);
+					}
+				}
+			}
+		}
+	}
 
 	// Priority 1: configs with needsResearch flag
 	for (const { filename, config } of configs) {
@@ -60,6 +80,8 @@ export function findResearchTasks(configs, coverageGaps, now = new Date(), _urge
 			(!Array.isArray(config.events) || config.events.length === 0) &&
 			!config.needsResearch
 		) {
+			// Backoff: skip configs that failed discovery within the last 24h
+			if (recentFailures.has(filename)) continue;
 			tasks.push({
 				type: "new-config",
 				priority: 2,
