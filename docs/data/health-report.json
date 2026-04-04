@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-04T19:15:44.578Z",
-  "eventCount": 59,
+  "generatedAt": "2026-04-04T20:00:35.280Z",
+  "eventCount": 60,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -27,15 +27,15 @@
       "previousCount": 9,
       "delta": 0
     },
+    "chess": {
+      "count": 1,
+      "previousCount": 0,
+      "delta": 1
+    },
     "football": {
       "count": 22,
-      "previousCount": 23,
-      "delta": -1
-    },
-    "chess": {
-      "count": 0,
-      "previousCount": 1,
-      "delta": -1
+      "previousCount": 22,
+      "delta": 0
     }
   },
   "dataFreshness": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 103,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 58,
+      "ageMinutes": 103,
       "stale": false
     }
   },
@@ -108,7 +108,8 @@
     "present": true,
     "issues": [
       "5 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-04-04: 4 events but events.json has 2"
+      "Snapshot 2026-04-04: 4 events but events.json has 2",
+      "Snapshot 2026-04-05: 10 events but events.json has 11"
     ],
     "snapshotCount": 15
   },
@@ -179,11 +180,6 @@
   ],
   "issues": [
     {
-      "severity": "critical",
-      "code": "sport_dropped",
-      "message": "chess: 0 events (was 1)"
-    },
-    {
       "severity": "info",
       "code": "empty_day",
       "message": "2026-04-01: no events or results for day navigator"
@@ -202,6 +198,11 @@
       "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-04-04: 4 events but events.json has 2"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-05: 10 events but events.json has 11"
     },
     {
       "severity": "info",
@@ -224,9 +225,9 @@
       "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T19:15:44.687Z",
+    "computedAt": "2026-04-04T20:00:35.367Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -244,7 +245,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -272,7 +273,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 2 warning issue(s). Editorial quality score is 71/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 71/100.",
     "tokenUsage": null
   }
 }
