@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-03",
-  "generatedAt": "2026-04-03T19:00:00.979Z",
+  "generatedAt": "2026-04-04T02:39:02.390Z",
   "events": {
     "upcoming": [
       {
@@ -84,51 +84,33 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-03T18:58:46.510Z",
+        "enrichedAt": "2026-04-03T19:02:40.755Z",
         "_enrichHash": "a3048c956a74c020c04d86f00b71f789"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Elche at Rayo Vallecano",
-        "time": "2026-04-03T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Estadio de Vallecas",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Rayo Vallecano",
-        "awayTeam": "Elche",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table La Liga clash, no title or relegation implications",
-        "summary": "Routine La Liga fixture between Elche and Rayo Vallecano with no Norwegian connection or major stakes.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-03T18:58:46.510Z",
-        "_enrichHash": "8ce7118d0411579a1591338ef8d4af8b",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
     "results": []
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Rayo Vallecano",
+      "awayTeam": "Elche",
+      "homeScore": 1,
+      "awayScore": 0,
+      "date": "2026-04-03T19:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio de Vallecas",
+      "goalScorers": [
+        {
+          "player": "Randy Nteka",
+          "team": "Rayo Vallecano",
+          "minute": "74'"
+        }
+      ],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -212,29 +194,29 @@
           {
             "position": 3,
             "positionDisplay": null,
+            "player": "Bud Cauley",
+            "score": "-9",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5338.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Thorbjørn Olesen",
+            "score": "-9",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5140.png"
+          },
+          {
+            "position": 5,
+            "positionDisplay": null,
             "player": "Kevin Roy",
             "score": "-9",
             "today": "-",
             "thru": "-",
             "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/4408320.png"
-          },
-          {
-            "position": 4,
-            "positionDisplay": null,
-            "player": "Alex Smalley",
-            "score": "-8",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9484.png"
-          },
-          {
-            "position": 5,
-            "positionDisplay": null,
-            "player": "Andrew Putnam",
-            "score": "-8",
-            "today": "-",
-            "thru": "-",
-            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5502.png"
           }
         ]
       }
@@ -277,120 +259,45 @@
       }
     ]
   },
-  "watchPlan": {
-    "picks": [
-      {
-        "id": "tennis-rolex-monte-carlo-masters-2026-04-04t04:00:00.000z",
-        "title": "Rolex Monte-Carlo Masters",
-        "sport": "tennis",
-        "tournament": "ATP/WTA Tour",
-        "time": "2026-04-04T04:00:00.000Z",
-        "timeLabel": "4 Apr, 06:00",
-        "relativeStart": "In 9h 1m",
-        "importance": 4,
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Discovery+",
-            "url": "https://www.discoveryplus.no",
-            "type": "streaming"
-          }
-        ],
-        "score": 99,
-        "reasons": [
-          "Must-watch event",
-          "Norwegian interest"
-        ]
-      },
-      {
-        "id": "football-real-madrid-at-mallorca-2026-04-04t14:15:00.000z",
-        "title": "Real Madrid at Mallorca",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-04-04T14:15:00.000Z",
-        "timeLabel": "4 Apr, 16:15",
-        "relativeStart": "In 19h 16m",
-        "importance": 3,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 62,
-        "reasons": [
-          "Preferred sport"
-        ]
-      },
-      {
-        "id": "football-elche-at-rayo-vallecano-2026-04-03t19:00:00.000z",
-        "title": "Elche at Rayo Vallecano",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-04-03T19:00:00.000Z",
-        "timeLabel": "3 Apr, 21:00",
-        "relativeStart": "Live now",
-        "importance": 2,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 58,
-        "reasons": [
-          "Starting soon",
-          "Preferred sport"
-        ]
-      }
-    ],
-    "headline": "🎾 Sat — Monte-Carlo Masters: Ruud's favourite clay kingdom, first Roland Garros dress rehearsal of 2026"
-  },
+  "watchPlan": null,
   "rssHighlights": [
+    {
+      "title": "Coventry enda nærmere opprykk - slo Derby i spinnvill kamp",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/coventry-enda-naermere-opprykk---slo-derby-i-spinnvill-kamp-1.17834748"
+    },
+    {
+      "title": "Ronaldo tilbake med to scoringer",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/ronaldo-tilbake-med-to-scoringer-1.17834659"
+    },
+    {
+      "title": "Fikk klar beskjed av kona: – Ikke gjør det",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18719811"
+    },
+    {
+      "title": "Fikk klar beskjed av kona: – Ikke gjør det",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18719811"
+    },
     {
       "title": "Måtte ta grep etter hets mot TV 2-ekspert: – Trist",
       "source": "tv2-sport",
       "sport": "general",
       "link": "https://www.tv2.no/a/18719999"
-    },
-    {
-      "title": "Magnus Carlsen med tre av tre",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/magnus-carlsen-med-tre-av-tre-1.17834694"
-    },
-    {
-      "title": "– Levde i et mareritt",
-      "source": "tv2-sport",
-      "sport": "general",
-      "link": "https://www.tv2.no/a/18619401"
-    },
-    {
-      "title": "Superstjernen får krass kritikk etter uttalelser: – Mest negativ av alle",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/max-verstappens-hint-om-karriereslutt-far-kritikk-av-eksperter-1.17834154"
-    },
-    {
-      "title": "Etterfølgeren: Välbe skal fortsatt bestemme",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/etterfolgeren_-valbe-skal-fortsatt-bestemme-1.17834677"
     }
   ],
   "meta": {
-    "eventCount": 2,
+    "eventCount": 1,
     "sportsCovered": [
-      "golf",
-      "football"
+      "golf"
     ],
-    "hasResults": false,
+    "hasResults": true,
     "hasStandings": true
   }
 }

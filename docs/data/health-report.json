@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-04T02:31:13.653Z",
-  "eventCount": 62,
+  "generatedAt": "2026-04-04T02:39:03.588Z",
+  "eventCount": 64,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
+      "count": 26,
       "previousCount": 24,
-      "delta": 0
+      "delta": 2
     },
     "f1": {
       "count": 23,
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 260,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -98,20 +98,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.31,
+    "matchRate": 0.53,
     "relevantMatchRate": 1,
-    "eventsEnriched": 4,
+    "eventsEnriched": 8,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "6 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 451 minutes old (stale > 240m)",
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-04-03: 2 events but events.json has 1",
-      "Snapshot 2026-04-04: 6 events but events.json has 7"
+      "5 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -202,26 +198,6 @@
       "message": "2026-03-30: no events or results for day navigator"
     },
     {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 451 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-03: 2 events but events.json has 1"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-04: 6 events but events.json has 7"
-    },
-    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
@@ -249,7 +225,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T02:31:13.711Z",
+    "computedAt": "2026-04-04T02:39:03.670Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -295,7 +271,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 81/100.",
+    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 94/100.",
     "tokenUsage": null
   }
 }
