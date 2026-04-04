@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-04T08:54:09.074Z",
+  "generatedAt": "2026-04-04T10:13:02.648Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 71,
+    "totalEvents": 63,
     "sports": [
       "golf",
       "football",
@@ -27,7 +27,6 @@
         "Japanese Grand Prix 2026",
         "Tour of Flanders 2026 (Ronde van Vlaanderen)",
         "Athletic Club at Getafe",
-        "Round 7 – FIDE Candidates Tournament 2026",
         "Celta Vigo at Valencia",
         "Sevilla at Real Oviedo",
         "Osasuna at Alavés"
@@ -37,24 +36,17 @@
         "Upper Austria Ladies Linz",
         "Grand Prix Open Villa de Madrid by Silverway",
         "Villarreal at Girona",
-        "Round 8 – FIDE Candidates Tournament 2026",
         "Bayern Munich at Real Madrid",
         "Arsenal at Sporting CP",
         "Scheldeprijs 2026",
-        "Round 9 – FIDE Candidates Tournament 2026",
         "Atlético Madrid at Barcelona",
         "Liverpool at Paris Saint-Germain",
-        "Round 10 – FIDE Candidates Tournament 2026",
         "Gulf Air Bahrain Grand Prix",
         "Wolverhampton Wanderers at West Ham United",
-        "Girona at Real Madrid",
-        "Round 11 – FIDE Candidates Tournament 2026"
+        "Girona at Real Madrid"
       ],
       "later": [
         "Paris-Roubaix 2026",
-        "Round 12 – FIDE Candidates Tournament 2026",
-        "Round 13 – FIDE Candidates Tournament 2026",
-        "Round 14 – FIDE Candidates Tournament 2026",
         "Bahrain Grand Prix 2026",
         "Saudi Arabian Grand Prix 2026",
         "Giro d'Italia 2026",
@@ -100,7 +92,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 84,
-    "issueCount": 18
+    "issueCount": 12
   },
   "findings": [
     {
@@ -297,58 +289,13 @@
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 6 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 7 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 8 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 9 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 10 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 11 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 12 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 13 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "info",
-      "check": "norwegian_flag_no_players",
-      "message": "\"Round 14 – FIDE Candidates Tournament 2026\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 48,
+    "total": 39,
     "critical": 0,
     "warning": 39,
-    "info": 9
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null
