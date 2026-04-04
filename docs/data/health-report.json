@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-04T14:16:36.785Z",
-  "eventCount": 62,
+  "generatedAt": "2026-04-04T15:11:58.624Z",
+  "eventCount": 61,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -9,12 +9,17 @@
     },
     "chess": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "football": {
-      "count": 25,
+      "count": 24,
       "previousCount": 25,
+      "delta": -1
+    },
+    "tennis": {
+      "count": 2,
+      "previousCount": 2,
       "delta": 0
     },
     "f1": {
@@ -31,51 +36,46 @@
       "count": 1,
       "previousCount": 1,
       "delta": 0
-    },
-    "tennis": {
-      "count": 2,
-      "previousCount": 2,
-      "delta": 0
     }
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 56,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 56,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.93,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -98,16 +98,18 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.5,
-    "relevantMatchRate": 0.88,
-    "eventsEnriched": 7,
+    "matchRate": 0.46,
+    "relevantMatchRate": 0.86,
+    "eventsEnriched": 6,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "5 boundary day snapshot(s) outside event range (expected)"
+      "5 boundary day snapshot(s) outside event range (expected)",
+      "Snapshot 2026-04-04: 5 events but events.json has 4",
+      "Snapshot 2026-04-05: 7 events but events.json has 8"
     ],
     "snapshotCount": 15
   },
@@ -124,30 +126,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 16,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49398,
-    "stepCount": 25,
+    "totalDuration": 234153,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 26230,
-        "share": 53
-      },
-      {
-        "name": "fetch-results",
-        "duration": 33473,
-        "share": 68
+        "name": "generate-featured",
+        "duration": 78589,
+        "share": 34
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -196,6 +195,16 @@
       "message": "2026-03-30: no events or results for day navigator"
     },
     {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-04: 5 events but events.json has 4"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-05: 7 events but events.json has 8"
+    },
+    {
       "severity": "info",
       "code": "unmapped_leagues",
       "message": "1 tournament(s) lack league theming: Formula 1 World Championship 2026"
@@ -208,17 +217,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (26s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 34% of total pipeline time (79s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (33s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T14:16:36.872Z",
+    "computedAt": "2026-04-04T15:11:58.743Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -264,7 +273,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 1 warning issue(s). Editorial quality score is 76/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 76/100.",
     "tokenUsage": null
   }
 }
