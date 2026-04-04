@@ -120,6 +120,7 @@ VOICE & PERSPECTIVE:
 - Lead with drama, stakes, and narrative — not just fixture facts
 - Reference standings positions and point gaps when relevant
 - Events marked ★4 or ★5 are must-watch — always include these
+- Cycling: ONLY feature Tour de France. Skip all other cycling events (classics, Giro, Vuelta) unless a Norwegian wins
 
 LINE FORMAT:
 - event-line text starts with ONE sport emoji: ⚽ ⛳ 🎾 🏎️ ♟️ 🎮 🏅
