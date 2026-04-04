@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-04T14:16:17.871Z",
+  "generatedAt": "2026-04-04T18:17:55.611Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,29 +7,31 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 8,
-    "generationMs": 77798,
+    "score": 95,
+    "issues": [
+      "narrative block exceeds 40 words: \"Real Madrid fell 2-1 at Mallorca today, handing Ba...\""
+    ],
+    "blockCount": 7,
+    "generationMs": 52127,
     "tokenUsage": {
-      "input": 26620,
-      "output": 4087,
-      "cacheCreation": 26617,
+      "input": 26608,
+      "output": 2825,
+      "cacheCreation": 26605,
       "cacheRead": 0,
-      "total": 30707,
-      "costUSD": 0.16112775000000001,
+      "total": 29433,
+      "costUSD": 0.14215275,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 76,
+    "score": 71,
     "metrics": {
       "mustWatchCoverage": 0.667,
       "sportDiversity": 0.286,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.667,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -42,24 +44,23 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 100,
+      "avgScore": 96,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 85,
+    "score": 87,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.333,
       "favoriteCoverage": 0,
       "golfPresent": 1,
-      "footballCount": 2
+      "footballCount": 3
     },
     "issues": [
-      "Only 0% of recent results have recap headlines",
       "Only 0% of favorite teams present in results"
     ]
   },
@@ -69,14 +70,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 62,
+      "totalEvents": 61,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.967
     },
     "after": {
-      "totalEvents": 62,
+      "totalEvents": 61,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -85,50 +86,50 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "fallbackFieldsFilled": 2,
+    "aiUpdatedFields": 4,
     "failedBatches": 0,
-    "totalEvents": 62,
+    "totalEvents": 61,
     "skipStats": {
-      "total": 62,
-      "unchanged": 61,
-      "enriched": 1,
-      "skipRate": 0.98
+      "total": 61,
+      "unchanged": 57,
+      "enriched": 4,
+      "skipRate": 0.93
     },
-    "tokensPerEvent": 21977,
+    "tokensPerEvent": 5828,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 21860,
-      "output": 117,
+      "input": 22284,
+      "output": 1027,
       "calls": 1,
-      "total": 21977,
-      "costUSD": 0.08372775,
+      "total": 23311,
+      "costUSD": 0.09896775,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26620,
-      "output": 4087,
+      "input": 26608,
+      "output": 2825,
       "calls": 1,
-      "total": 30707,
+      "total": 29433,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-04T14:16:18.155Z"
+    "lastRun": "2026-04-04T18:17:55.907Z"
   },
   "discovery": {
     "tokenUsage": {
-      "input": 55094,
-      "output": 364,
+      "input": 65807,
+      "output": 3697,
       "calls": 1,
-      "total": 55458,
-      "costUSD": 0.6048439499999999,
+      "total": 69504,
+      "costUSD": 1.0634767500000004,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-03T18:06:33.902Z",
+    "lastRun": "2026-04-04T18:13:28.697Z",
     "tasksExecuted": 1,
     "succeeded": 1,
     "failed": 0

@@ -1,28 +1,28 @@
 {
-  "generatedAt": "2026-04-04T14:16:36.571Z",
+  "generatedAt": "2026-04-04T18:18:16.779Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 62,
+    "totalEvents": 61,
     "sports": [
       "golf",
+      "esports",
       "chess",
       "football",
+      "tennis",
       "f1",
-      "cycling",
-      "esports",
-      "tennis"
+      "cycling"
     ],
     "bands": {
       "live": [
         "Valero Texas Open",
-        "Round 6 – FIDE Candidates Tournament 2026",
-        "Real Madrid at Mallorca"
+        "PGL Bucharest 2026"
       ],
       "today": [
-        "Espanyol at Real Betis",
         "Barcelona at Atlético Madrid"
       ],
       "tomorrow": [
+        "Upper Austria Ladies Linz",
+        "Grand Prix Open Villa de Madrid by Silverway",
         "Japanese Grand Prix 2026",
         "Tour of Flanders 2026 (Ronde van Vlaanderen)",
         "Athletic Club at Getafe",
@@ -31,9 +31,6 @@
         "Osasuna at Alavés"
       ],
       "thisWeek": [
-        "PGL CS2 Major Bucharest 2026",
-        "Upper Austria Ladies Linz",
-        "Grand Prix Open Villa de Madrid by Silverway",
         "Villarreal at Girona",
         "Bayern Munich at Real Madrid",
         "Arsenal at Sporting CP",
@@ -53,6 +50,7 @@
         "Tour of Norway 2026",
         "Emilia Romagna Grand Prix 2026",
         "Monaco Grand Prix 2026",
+        "IEM Cologne Major 2026",
         "Spanish Grand Prix 2026",
         "FIFA World Cup 2026 — Group Stage (Week 1)",
         "FIFA World Cup 2026 — Opening Match",
@@ -85,13 +83,15 @@
         "Qatar Grand Prix 2026",
         "Abu Dhabi Grand Prix 2026"
       ],
-      "ended": []
+      "ended": [
+        "Round 6 – FIDE Candidates Tournament 2026"
+      ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 76,
-    "issueCount": 13
+    "editorialScore": 71,
+    "issueCount": 9
   },
   "findings": [
     {
@@ -128,6 +128,11 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Monaco Grand Prix 2026\" is 57 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"IEM Cologne Major 2026\" is 59 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
@@ -283,12 +288,17 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Abu Dhabi Grand Prix 2026\" is 246 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Mallorca\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 38,
+    "total": 40,
     "critical": 0,
-    "warning": 38,
+    "warning": 40,
     "info": 0
   },
   "pass": true,
