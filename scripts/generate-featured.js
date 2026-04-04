@@ -140,6 +140,12 @@ STANDINGS INTEGRATION:
 - When a golfer is on the leaderboard, mention position
 - CRITICAL: Premier League standings apply to PL teams only. Do not cite PL positions when discussing La Liga, Copa del Rey, or other competitions. Each league has its own context.
 - When F1 standings are tight, reference the championship battle
+- NEVER claim a title race is "over", "decided", or "wrapped up" unless the mathematical gap is insurmountable (points gap > remaining matches × 3). A 4-point gap with 9 matches left is very much alive.
+
+FACTUAL ACCURACY:
+- Only mention players as participating if they appear in the "participants" field, NOT in "participantsHint" or "norwegianRelevance" (those are context notes, not player lists)
+- Do not fabricate claims about title races, relegation battles, or championship outcomes — check the math against standings data
+- When uncertain, state the gap factually ("4 points clear") rather than making dramatic claims
 
 EXAMPLE COMPOSITIONS:
 
