@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-04T21:11:34.325Z",
+  "generatedAt": "2026-04-04T22:09:29.717Z",
   "eventCount": 60,
   "sportCoverage": {
     "golf": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 174,
+      "ageMinutes": 232,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 174,
+      "ageMinutes": 232,
       "stale": false
     }
   },
@@ -134,24 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 60799,
+    "totalDuration": 55843,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27190,
-        "share": 45
+        "duration": 28621,
+        "share": 51
       },
       {
         "name": "fetch-results",
-        "duration": 34689,
-        "share": 57
-      },
-      {
-        "name": "enrich-streaming",
-        "duration": 20351,
-        "share": 33
+        "duration": 40482,
+        "share": 72
       }
     ],
     "failedSteps": []
@@ -225,22 +220,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 45% of total pipeline time (27s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 57% of total pipeline time (35s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-streaming\" used 33% of total pipeline time (20s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (40s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T21:11:34.393Z",
+    "computedAt": "2026-04-04T22:09:29.792Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
