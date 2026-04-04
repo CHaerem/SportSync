@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-04T09:17:32.245Z",
+  "generatedAt": "2026-04-04T09:25:46.731Z",
   "eventCount": 63,
   "sportCoverage": {
     "golf": {
@@ -14,8 +14,8 @@
     },
     "chess": {
       "count": 1,
-      "previousCount": 9,
-      "delta": -8
+      "previousCount": 1,
+      "delta": 0
     },
     "f1": {
       "count": 23,
@@ -56,21 +56,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 24,
+      "ageMinutes": 32,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 24,
+      "ageMinutes": 32,
       "stale": false
     }
   },
@@ -129,27 +129,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 8,
-    "sevenDay": 14,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 282541,
-    "stepCount": 32,
+    "totalDuration": 42945,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 95283,
-        "share": 34
+        "name": "fetch-sports",
+        "duration": 22587,
+        "share": 53
+      },
+      {
+        "name": "fetch-results",
+        "duration": 31114,
+        "share": 72
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,11 +185,6 @@
     "Formula 1 World Championship 2026"
   ],
   "issues": [
-    {
-      "severity": "warning",
-      "code": "sport_count_drop",
-      "message": "chess: 1 events (was 9, -89%)"
-    },
     {
       "severity": "info",
       "code": "empty_day",
@@ -240,17 +238,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 34% of total pipeline time (95s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (23s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (31s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T09:17:32.334Z",
+    "computedAt": "2026-04-04T09:25:46.817Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -296,7 +294,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 84/100.",
     "tokenUsage": null
   }
 }
