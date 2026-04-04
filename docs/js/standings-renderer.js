@@ -299,6 +299,37 @@ function renderStandingsLeaderboard(tournament, standings) {
 	return html;
 }
 
+/**
+ * Chess standings mini-table for expanded event view.
+ * Shows all players with W/D/L and total points.
+ */
+function buildChessMiniTable(tournament) {
+	if (!tournament?.standings?.length) return '';
+	const roundInfo = tournament.totalRounds
+		? ` (R${tournament.round}/${tournament.totalRounds})`
+		: '';
+	return buildMiniTable({
+		title: `♟️ ${escapeHtml(tournament.name || 'Chess')}${roundInfo}`,
+		columns: [
+			{ label: 'Player' },
+			{ label: 'W' },
+			{ label: 'D' },
+			{ label: 'L' },
+			{ label: 'Pts' },
+		],
+		allRows: tournament.standings,
+		topN: 8, // Show all players in a Candidates-style tournament
+		cellValues: (row) => [
+			escapeHtml(row.player),
+			String(row.wins || 0),
+			String(row.draws || 0),
+			String(row.losses || 0),
+			String(row.points || 0),
+		],
+		getPosition: (row) => row.position,
+	});
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.StandingsRenderer = {
 	buildMiniTable,
@@ -306,6 +337,7 @@ window.StandingsRenderer = {
 	buildGolfMiniTable,
 	buildF1MiniTable,
 	buildTennisMiniTable,
+	buildChessMiniTable,
 	renderStandingsSection,
 	renderFootballStandings,
 	renderGolfLeaderboard,

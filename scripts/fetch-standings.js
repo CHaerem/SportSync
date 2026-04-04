@@ -238,6 +238,84 @@ export async function fetchTennisRankings() {
 	return result;
 }
 
+/**
+ * Fetch chess tournament standings from curated config.
+ * Chess lacks a public API with standings data, so we read from the curated
+ * chess-tournaments.json config which the discovery loop keeps updated.
+ * The config contains participants and the pipeline enriches round-by-round.
+ *
+ * Future: could scrape chess-results.com or FIDE event pages for live standings.
+ */
+function fetchChessStandings() {
+	const configPath = path.resolve(process.cwd(), "scripts", "config", "chess-tournaments.json");
+	const tournaments = readJsonIfExists(configPath) || [];
+	const result = {};
+
+	for (const tournament of tournaments) {
+		if (!tournament.name || tournament.needsResearch) continue;
+
+		const now = new Date();
+		const rounds = tournament.rounds || [];
+		const participants = tournament.participants || [];
+		if (participants.length === 0) continue;
+
+		// Determine tournament status and current round
+		const firstRound = rounds[0]?.date ? new Date(rounds[0].date) : null;
+		const lastRound = rounds[rounds.length - 1]?.date ? new Date(rounds[rounds.length - 1].date) : null;
+
+		let status = "scheduled";
+		let currentRound = 0;
+		if (firstRound && lastRound) {
+			if (now > lastRound) {
+				status = "final";
+				currentRound = rounds.length;
+			} else if (now >= firstRound) {
+				status = "in_progress";
+				// Find current/most recent round
+				for (let i = rounds.length - 1; i >= 0; i--) {
+					if (new Date(rounds[i].date) <= now) {
+						currentRound = parseInt(rounds[i].round) || (i + 1);
+						break;
+					}
+				}
+			}
+		}
+
+		// Build standings from curated standings data if available, otherwise from participants
+		const standings = (tournament.standings || []).length > 0
+			? tournament.standings.map((s, i) => ({
+				position: s.position || (i + 1),
+				player: s.player,
+				played: s.played || 0,
+				wins: s.wins || 0,
+				draws: s.draws || 0,
+				losses: s.losses || 0,
+				points: s.points || 0,
+			}))
+			: participants.map((p, i) => ({
+				position: i + 1,
+				player: p,
+				played: 0, wins: 0, draws: 0, losses: 0, points: 0,
+			}));
+
+		// Derive tournament key from name
+		const key = tournament.broadcastMatch
+			|| tournament.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
+
+		result[key] = {
+			name: tournament.name,
+			venue: tournament.venue || null,
+			status,
+			round: currentRound,
+			totalRounds: rounds.length,
+			standings: standings.sort((a, b) => b.points - a.points || a.position - b.position),
+			streaming: tournament.streaming || [],
+		};
+	}
+
+	return result;
+}
+
 async function main() {
 	const dataDir = rootDataPath();
 	const outPath = path.join(dataDir, "standings.json");
@@ -290,6 +368,17 @@ async function main() {
 	} catch (err) {
 		console.warn("Tennis rankings failed:", err.message);
 		standings.tennis = { atp: [], wta: [] };
+	}
+
+	// Chess
+	try {
+		standings.chess = fetchChessStandings();
+		const tournamentCount = Object.keys(standings.chess).length;
+		const playerCount = Object.values(standings.chess).reduce((sum, t) => sum + (t.standings?.length || 0), 0);
+		console.log(`Chess: ${tournamentCount} tournament(s), ${playerCount} players`);
+	} catch (err) {
+		console.warn("Chess standings failed:", err.message);
+		standings.chess = {};
 	}
 
 	writeJsonPretty(outPath, standings);

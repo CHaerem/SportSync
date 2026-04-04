@@ -998,6 +998,7 @@ class Dashboard {
 		'match-preview':     (block) => window.BLOCK_RENDERERS['match-preview'](block, this._rendererCtx()),
 		'event-schedule':    (block) => window.BLOCK_RENDERERS['event-schedule'](block, this._rendererCtx()),
 		'golf-status':       (block) => window.BLOCK_RENDERERS['golf-status'](block, this._rendererCtx()),
+		'chess-status':      (block) => window.BLOCK_RENDERERS['chess-status'](block, this._rendererCtx()),
 	};
 
 	_rendererCtx() {
@@ -2907,6 +2908,16 @@ class Dashboard {
 		// F1: driver standings
 		if (event.sport === 'formula1' && this.standings?.[normalizePipelineSportId('formula1')]?.drivers?.length > 0) {
 			content += this.renderF1Standings();
+		}
+
+		// Chess: tournament standings table
+		if (event.sport === 'chess' && this.standings?.chess) {
+			const chessKey = Object.keys(this.standings.chess).find(k =>
+				event.tournament?.toLowerCase().includes(k) || k === 'candidates'
+			);
+			if (chessKey && this.standings.chess[chessKey]?.standings?.length > 0) {
+				content += window.StandingsRenderer.buildChessMiniTable(this.standings.chess[chessKey]);
+			}
 		}
 
 		// Participants (chess, tennis) — structured vertical list

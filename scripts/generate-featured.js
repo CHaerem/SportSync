@@ -4,7 +4,7 @@
  * Output: { blocks: [{ type, text, ... }, ...] }
  *
  * Narrative block types: headline, event-line, event-group, narrative, section, divider
- * Component block types: match-result, match-preview, event-schedule, golf-status
+ * Component block types: match-result, match-preview, event-schedule, golf-status, chess-status
  *
  * Auth (checked in order):
  *   1. CLAUDE_CODE_OAUTH_TOKEN — uses Claude CLI (Max subscription)
@@ -59,6 +59,7 @@ const BLOCKS_SCHEMA = {
 		{ type: "match-result", homeTeam: "string", awayTeam: "string" },
 		{ type: "match-preview", homeTeam: "string", awayTeam: "string", showStandings: "boolean (optional)" },
 		{ type: "golf-status", tournament: "pga | dpWorld" },
+		{ type: "chess-status", tournament: "candidates" },
 		{ type: "event-schedule", label: "string", filter: { sport: "string", window: "today | tomorrow | week" }, maxItems: "number (optional, default 6)", showFlags: "boolean (optional, default true)", style: "highlight | default" },
 	],
 };
@@ -88,12 +89,15 @@ YOUR EDITORIAL TOOLS — COMPONENT BLOCKS (you configure, client renders from li
    { type:"golf-status", tournament:"pga" } — tournament is "pga" or "dpWorld"
 10. "event-schedule" — Filtered event list. Client renders sorted events with times, day prefixes, 🇳🇴 flags.
    { type:"event-schedule", label:"🏅 Olympics today", filter:{sport:"olympics",window:"today"}, maxItems:6, showFlags:true, style:"highlight" }
+11. "chess-status" — Chess tournament status. Client renders standings (top players with points) and round progress.
+   { type:"chess-status", tournament:"candidates" }
 
 COMPONENT RULES:
 - Prefer match-result for football results and match-preview for football fixtures — the client adds logos and live data automatically
 - Prefer golf-status for golf tournaments in progress — the client adds leaderboard and Norwegian player tracking
+- Prefer chess-status for chess tournaments in progress — the client adds standings table with player points and round info
 - Use event-schedule for Olympics day schedules — the client adds sorted times, day prefixes, and Norwegian flags
-- Use event-line only for sports without component types (chess, esports, tennis, F1)
+- Use event-line only for sports without component types (esports, tennis, F1)
 - Narrative blocks provide your editorial voice around component blocks — components handle the data, you handle the story
 - Component blocks auto-update with live data (scores, times) — text blocks are static
 
@@ -924,6 +928,21 @@ export function buildFallbackFeatured(events, now, { recentResults, standings, r
 			tournament: "pga",
 			_fallbackText: `⛳ ${golfTourName}`,
 		});
+	}
+
+	// Chess status component when chess standings exist
+	if (standings?.chess) {
+		for (const [key, tournament] of Object.entries(standings.chess)) {
+			if (tournament?.standings?.length > 0 && tournament.status !== "scheduled") {
+				const top = tournament.standings[0];
+				blocks.push({
+					type: "chess-status",
+					tournament: key,
+					_fallbackText: `♟️ ${tournament.name}: ${top.player} ${top.points} pts`,
+				});
+				break; // Only one chess block in fallback
+			}
+		}
 	}
 
 	// This week — football events become match-preview components, filtered by preferences

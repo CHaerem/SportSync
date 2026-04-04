@@ -9,7 +9,7 @@ const BLOCK_WORD_LIMITS = {
 	divider: 8,
 };
 const VALID_BLOCK_TYPES = ["headline", "event-line", "event-group", "narrative", "section", "divider",
-	"match-result", "match-preview", "event-schedule", "golf-status"];
+	"match-result", "match-preview", "event-schedule", "golf-status", "chess-status"];
 
 /** Component block registry: defines required/optional fields per component type */
 export const COMPONENT_REGISTRY = {
@@ -17,6 +17,7 @@ export const COMPONENT_REGISTRY = {
 	"match-preview": { required: ["homeTeam", "awayTeam"], optional: ["showStandings", "_fallbackText"] },
 	"event-schedule": { required: ["filter"], optional: ["label", "maxItems", "showFlags", "style", "_fallbackText"] },
 	"golf-status": { required: ["tournament"], optional: ["_fallbackText"] },
+	"chess-status": { required: ["tournament"], optional: ["_fallbackText"] },
 };
 export const COMPONENT_TYPES = Object.keys(COMPONENT_REGISTRY);
 const ENRICHMENT_DEFAULTS = {

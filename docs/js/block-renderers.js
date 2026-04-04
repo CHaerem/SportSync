@@ -190,10 +190,37 @@ function renderGolfStatus(block, ctx) {
 	return html;
 }
 
+/** chess-status: renders tournament standings with top players and round progress */
+function renderChessStatus(block, ctx) {
+	if (!ctx.standings?.chess) return null;
+	const tourKey = block.tournament || 'candidates';
+	const tournament = ctx.standings.chess[tourKey];
+	if (!tournament?.standings?.length) return null;
+
+	const name = tournament.name || 'Chess Tournament';
+	const roundInfo = tournament.totalRounds
+		? `R${tournament.round}/${tournament.totalRounds}`
+		: '';
+
+	// Show top 3 players with points
+	const top3 = tournament.standings.slice(0, 3);
+	const playerStrs = top3.map(p =>
+		`${escapeHtml(p.player.split(' ').pop())} ${p.points}`
+	);
+
+	let html = `<div class="block-event-line editorial-line block-chess-status">`;
+	html += `\u265f\ufe0f ${escapeHtml(name)}`;
+	if (roundInfo) html += ` ${escapeHtml(roundInfo)}`;
+	html += `: ${playerStrs.join(' | ')}`;
+	html += `</div>`;
+	return html;
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.BLOCK_RENDERERS = {
 	'match-result':   renderMatchResult,
 	'match-preview':  renderMatchPreview,
 	'event-schedule': renderEventSchedule,
 	'golf-status':    renderGolfStatus,
+	'chess-status':   renderChessStatus,
 };
