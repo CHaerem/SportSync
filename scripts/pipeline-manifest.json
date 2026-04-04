@@ -57,7 +57,7 @@
       "description": "AI-powered content generation",
       "steps": [
         { "name": "generate-featured", "command": "npm run generate:featured", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 1, "llm": true },
-        { "name": "post-generate", "command": "node scripts/post-generate.js --backfill 5", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2, "llm": true }
+        { "name": "post-generate", "command": "node scripts/post-generate.js --backfill 1", "errorPolicy": "continue", "requires": ["CLAUDE_CODE_OAUTH_TOKEN"], "skipIfDataUnchanged": true, "quotaPriority": 2, "llm": true }
       ]
     },
     {

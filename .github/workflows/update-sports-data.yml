@@ -41,7 +41,7 @@ jobs:
           HOUR=$(date -u +%H)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "mode=full" >> $GITHUB_OUTPUT
-          elif [ "$HOUR" = "06" ] || [ "$HOUR" = "10" ] || [ "$HOUR" = "14" ] || [ "$HOUR" = "18" ] || [ "$HOUR" = "22" ]; then
+          elif [ "$HOUR" = "06" ] || [ "$HOUR" = "14" ] || [ "$HOUR" = "22" ]; then
             echo "mode=full" >> $GITHUB_OUTPUT
           else
             echo "mode=data-only" >> $GITHUB_OUTPUT
