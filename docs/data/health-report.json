@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-04T16:11:45.937Z",
-  "eventCount": 61,
+  "generatedAt": "2026-04-04T17:12:14.453Z",
+  "eventCount": 60,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -13,9 +13,9 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
+      "count": 23,
       "previousCount": 24,
-      "delta": 0
+      "delta": -1
     },
     "tennis": {
       "count": 2,
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 115,
+      "ageMinutes": 176,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-04"
     },
     "ai-quality.json": {
-      "ageMinutes": 115,
+      "ageMinutes": 176,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 31,
+    "itemCount": 37,
     "healthy": true
   },
   "standingsHealth": {
@@ -90,17 +90,17 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 2,
+    "footballCount": 3,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.33,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.46,
-    "relevantMatchRate": 0.86,
-    "eventsEnriched": 6,
+    "matchRate": 0.42,
+    "relevantMatchRate": 0.83,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "5 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-04-04: 5 events but events.json has 4",
+      "Snapshot 2026-04-04: 5 events but events.json has 3",
       "Snapshot 2026-04-05: 7 events but events.json has 8"
     ],
     "snapshotCount": 15
@@ -134,19 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51832,
+    "totalDuration": 55111,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 30768,
-        "share": 59
+        "duration": 31564,
+        "share": 57
       },
       {
         "name": "fetch-results",
-        "duration": 37312,
-        "share": 72
+        "duration": 38008,
+        "share": 69
       }
     ],
     "failedSteps": []
@@ -200,7 +200,7 @@
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-04: 5 events but events.json has 4"
+      "message": "Snapshot 2026-04-04: 5 events but events.json has 3"
     },
     {
       "severity": "warning",
@@ -220,17 +220,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (31s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 69% of total pipeline time (38s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-04T16:11:46.005Z",
+    "computedAt": "2026-04-04T17:12:14.534Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
