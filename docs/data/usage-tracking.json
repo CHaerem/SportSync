@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-04T15:11:59.793Z",
+  "lastUpdated": "2026-04-04T16:11:46.995Z",
   "current": {
     "fiveHour": {
       "utilization": 3
@@ -23,27 +23,27 @@
     "since": "2026-03-29T10:19:11.063Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-04-04T15:12:00.812Z"
+    "checkedAt": "2026-04-04T16:11:47.944Z"
   },
   "internalTokens": {
-    "enrichment": 21977,
-    "featured": 30707,
-    "discovery": 55458,
-    "multiDay": 30707,
-    "runTotal": 138849
+    "enrichment": 0,
+    "featured": 0,
+    "discovery": 0,
+    "multiDay": 0,
+    "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 1459626,
-    "weeklyUsed": 3736354,
+    "dailyUsed": 1397622,
+    "weeklyUsed": 3682092,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 29,
+    "dailyPct": 28,
     "weeklyPct": 15
   },
   "sportsyncShare": {
-    "pipelineRuns": 126,
+    "pipelineRuns": 125,
     "autopilotRuns": 0,
-    "totalDurationMs": 13078692
+    "totalDurationMs": 13071043
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,18 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-03-28T15:12:15.935Z",
-      "context": "pipeline",
-      "durationMs": 11471,
-      "tokens": 54262
-    },
-    {
-      "timestamp": "2026-03-28T16:11:31.032Z",
-      "context": "pipeline",
-      "durationMs": 9110,
-      "tokens": 0
-    },
     {
       "timestamp": "2026-03-28T17:11:19.219Z",
       "context": "pipeline",
@@ -807,6 +795,12 @@
       "context": "pipeline",
       "durationMs": 11164,
       "tokens": 138849
+    },
+    {
+      "timestamp": "2026-04-04T16:11:46.995Z",
+      "context": "pipeline",
+      "durationMs": 12932,
+      "tokens": 0
     }
   ]
 }
