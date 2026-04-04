@@ -578,10 +578,11 @@ class Dashboard {
 		html += this.renderBand('Results', allResults, { cssClass: 'results' });
 
 		if (!html) {
-			html = '<p class="date-empty">No events on this date.</p>';
+			html = this._renderEmptyDateState();
 		}
 
 		container.innerHTML = html;
+		this._bindEmptyDateToday(container);
 		this.bindEventRows();
 		this.bindBandToggles();
 		this.bindFeedbackButtons();
@@ -1460,7 +1461,7 @@ class Dashboard {
 		const sportColors = {
 			football: 'var(--sport-football)', golf: 'var(--sport-golf)', tennis: 'var(--sport-tennis)',
 			formula1: 'var(--sport-f1)', chess: 'var(--sport-chess)', esports: 'var(--sport-esports)',
-			olympics: 'var(--sport-olympics)',
+			olympics: 'var(--sport-olympics)', cycling: 'var(--sport-cycling)',
 		};
 
 		// Show 5 items by default, rest behind "show more"
@@ -2105,6 +2106,55 @@ class Dashboard {
 		}).join('');
 	}
 
+	/** Render a polished empty-date placeholder with contextual hint and back-to-today button */
+	_renderEmptyDateState() {
+		const viewDate = this._getSelectedDate();
+		const today = this._startOfDay(new Date());
+		const dayName = viewDate.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Oslo' });
+		const dateStr = viewDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+
+		// Find nearest day with events for a helpful hint
+		let hint = 'Try browsing adjacent days in the strip above.';
+		for (let offset = 1; offset <= 3; offset++) {
+			for (const dir of [1, -1]) {
+				const check = new Date(viewDate);
+				check.setDate(check.getDate() + (offset * dir));
+				const start = this._startOfDay(check);
+				const end = new Date(start.getTime() + SS_CONSTANTS.MS_PER_DAY);
+				const count = this.allEvents.filter(e => isEventInWindow(e, start, end)).length;
+				if (count > 0) {
+					const nearDay = check.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Oslo' });
+					hint = `${nearDay} has ${count} event${count !== 1 ? 's' : ''} scheduled.`;
+					break;
+				}
+			}
+			if (!hint.startsWith('Try')) break;
+		}
+
+		const isViewing = !this._isSameDay(viewDate, today);
+		const todayBtn = isViewing
+			? '<button class="date-empty-today" data-action="go-today">Back to today</button>'
+			: '';
+
+		return `<div class="date-empty-wrap">
+			<div class="date-empty-icon">\uD83D\uDCC5</div>
+			<div class="date-empty-text">No events on ${this.esc(dayName)}, ${this.esc(dateStr)}.</div>
+			<div class="date-empty-hint">${this.esc(hint)}</div>
+			${todayBtn}
+		</div>`;
+	}
+
+	/** Bind the "Back to today" button in the empty date state */
+	_bindEmptyDateToday(container) {
+		const btn = container.querySelector('[data-action="go-today"]');
+		if (btn) {
+			btn.addEventListener('click', () => {
+				this.selectedDate = null;
+				this.render();
+			});
+		}
+	}
+
 	/** Auto-generate a brief narrative from today's events when the LLM didn't provide one */
 	_generateAutoNarrative() {
 		const bands = this.categorizeEvents();
@@ -2486,10 +2536,11 @@ class Dashboard {
 			html += this.renderBand('Results', allResults, { cssClass: 'results' });
 
 			if (!html) {
-				html = '<p class="date-empty">No events on this date.</p>';
+				html = this._renderEmptyDateState();
 			}
 
 			container.innerHTML = html;
+			this._bindEmptyDateToday(container);
 			this.bindEventRows();
 			this.bindBandToggles();
 			this.bindFeedbackButtons();
