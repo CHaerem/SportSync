@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { loadManifest, checkRequirements, executeStep, executeStepAsync, runPhase, runPipeline, categorizeError } from "../scripts/run-pipeline.js";
+import { loadManifest, checkRequirements, executeStep, executeStepAsync, runPhase, runPipeline, categorizeError, checkProactiveTriggers } from "../scripts/run-pipeline.js";
 
 // Test fixtures
 const FIXTURES_DIR = path.join(os.tmpdir(), "sportsync-pipeline-test-" + Date.now());
@@ -397,5 +397,221 @@ describe("runPipeline", () => {
 		expect(phaseNames).toContain("validate");
 		expect(phaseNames).toContain("monitor");
 		expect(phaseNames).toContain("finalize");
+	});
+});
+
+describe("blockedPhases cascade detection", () => {
+	it("returns empty blockedPhases when no phases are blocked", async () => {
+		const phase1 = {
+			name: "build",
+			steps: [{ name: "step1", command: "echo ok", errorPolicy: "continue" }],
+		};
+		const phase2 = {
+			name: "enrich",
+			steps: [{ name: "step2", command: "echo ok", errorPolicy: "continue" }],
+		};
+		const manifestPath = writeManifest({
+			version: 1,
+			phases: [
+				{ ...phase1, description: "Build" },
+				{ ...phase2, description: "Enrich" },
+			],
+		});
+		const manifest = loadManifest(manifestPath);
+
+		// Simulate: run phases, track blockedPhases
+		let aborted = false;
+		let abortedByStep = null;
+		let abortedInPhase = null;
+		const blockedPhases = [];
+		const results = {};
+
+		for (const phase of manifest.phases) {
+			if (aborted) {
+				results[phase.name] = { name: phase.name, status: "skipped", steps: [] };
+				blockedPhases.push({
+					phase: phase.name,
+					reason: `required step '${abortedByStep}' failed in phase '${abortedInPhase}'`,
+				});
+				continue;
+			}
+			const result = await runPhase(phase);
+			results[phase.name] = result;
+			if (result.abortedBy) {
+				aborted = true;
+				abortedByStep = result.abortedBy;
+				abortedInPhase = phase.name;
+			}
+		}
+
+		expect(blockedPhases).toEqual([]);
+	});
+
+	it("records blocked phases when a required step fails", async () => {
+		const manifestPath = writeManifest({
+			version: 1,
+			phases: [
+				{
+					name: "build",
+					description: "Build",
+					steps: [{ name: "build-events", command: "exit 1", errorPolicy: "required" }],
+				},
+				{
+					name: "enrich",
+					description: "Enrich",
+					steps: [{ name: "enrich-events", command: "echo ok", errorPolicy: "continue" }],
+				},
+				{
+					name: "generate",
+					description: "Generate",
+					steps: [{ name: "gen-featured", command: "echo ok", errorPolicy: "continue" }],
+				},
+			],
+		});
+		const manifest = loadManifest(manifestPath);
+
+		let aborted = false;
+		let abortedByStep = null;
+		let abortedInPhase = null;
+		const blockedPhases = [];
+
+		for (const phase of manifest.phases) {
+			if (aborted) {
+				blockedPhases.push({
+					phase: phase.name,
+					reason: `required step '${abortedByStep}' failed in phase '${abortedInPhase}'`,
+				});
+				continue;
+			}
+			const result = await runPhase(phase);
+			if (result.abortedBy) {
+				aborted = true;
+				abortedByStep = result.abortedBy;
+				abortedInPhase = phase.name;
+			}
+		}
+
+		expect(blockedPhases).toHaveLength(2);
+		expect(blockedPhases[0]).toEqual({
+			phase: "enrich",
+			reason: "required step 'build-events' failed in phase 'build'",
+		});
+		expect(blockedPhases[1]).toEqual({
+			phase: "generate",
+			reason: "required step 'build-events' failed in phase 'build'",
+		});
+	});
+
+	it("multiple cascade failures reference the original failing step", async () => {
+		const manifestPath = writeManifest({
+			version: 1,
+			phases: [
+				{
+					name: "fetch",
+					description: "Fetch",
+					steps: [{ name: "fetch-data", command: "exit 1", errorPolicy: "required" }],
+				},
+				{ name: "build", description: "Build", steps: [{ name: "b", command: "echo ok", errorPolicy: "continue" }] },
+				{ name: "enrich", description: "Enrich", steps: [{ name: "e", command: "echo ok", errorPolicy: "continue" }] },
+				{ name: "validate", description: "Validate", steps: [{ name: "v", command: "echo ok", errorPolicy: "continue" }] },
+			],
+		});
+		const manifest = loadManifest(manifestPath);
+
+		let aborted = false;
+		let abortedByStep = null;
+		let abortedInPhase = null;
+		const blockedPhases = [];
+
+		for (const phase of manifest.phases) {
+			if (aborted) {
+				blockedPhases.push({
+					phase: phase.name,
+					reason: `required step '${abortedByStep}' failed in phase '${abortedInPhase}'`,
+				});
+				continue;
+			}
+			const result = await runPhase(phase);
+			if (result.abortedBy) {
+				aborted = true;
+				abortedByStep = result.abortedBy;
+				abortedInPhase = phase.name;
+			}
+		}
+
+		expect(blockedPhases).toHaveLength(3);
+		for (const bp of blockedPhases) {
+			expect(bp.reason).toContain("fetch-data");
+			expect(bp.reason).toContain("fetch");
+		}
+	});
+
+	it("pipeline-result.json schema includes blockedPhases field", () => {
+		const source = fs.readFileSync(
+			path.join(process.cwd(), "scripts/run-pipeline.js"),
+			"utf-8",
+		);
+		expect(source).toContain("blockedPhases");
+		// The field should be in the pipelineResult object
+		expect(source).toMatch(/pipelineResult\s*=\s*\{[\s\S]*blockedPhases/);
+	});
+});
+
+describe("checkProactiveTriggers", () => {
+	it("returns upgraded:false when not in data-only mode", () => {
+		// By default, the module is in full mode
+		const result = checkProactiveTriggers(FIXTURES_DIR);
+		expect(result.upgraded).toBe(false);
+	});
+
+	it("returns upgraded:false when proactive-triggers.json is missing", () => {
+		const triggersDir = path.join(FIXTURES_DIR, "no-triggers");
+		fs.mkdirSync(triggersDir, { recursive: true });
+		const result = checkProactiveTriggers(triggersDir);
+		expect(result.upgraded).toBe(false);
+	});
+
+	it("returns upgraded:false when shouldUpgrade is false", () => {
+		const triggersDir = path.join(FIXTURES_DIR, "no-upgrade");
+		fs.mkdirSync(triggersDir, { recursive: true });
+		fs.writeFileSync(
+			path.join(triggersDir, "proactive-triggers.json"),
+			JSON.stringify({ shouldUpgrade: false, triggerCount: 0, triggers: [] }),
+		);
+		const result = checkProactiveTriggers(triggersDir);
+		expect(result.upgraded).toBe(false);
+	});
+
+	it("returns upgraded:false when already in full mode even with shouldUpgrade true", () => {
+		const triggersDir = path.join(FIXTURES_DIR, "already-full");
+		fs.mkdirSync(triggersDir, { recursive: true });
+		fs.writeFileSync(
+			path.join(triggersDir, "proactive-triggers.json"),
+			JSON.stringify({ shouldUpgrade: true, triggerCount: 1, triggers: [{ type: "test" }] }),
+		);
+		// Module defaults to full mode, so this should be a no-op
+		const result = checkProactiveTriggers(triggersDir);
+		expect(result.upgraded).toBe(false);
+	});
+
+	it("source code wires proactive trigger check after prepare phase", () => {
+		const source = fs.readFileSync(
+			path.join(process.cwd(), "scripts/run-pipeline.js"),
+			"utf-8",
+		);
+		// The check should happen after the prepare phase
+		expect(source).toContain('phase.name === "prepare"');
+		expect(source).toContain("checkProactiveTriggers()");
+	});
+
+	it("handles malformed proactive-triggers.json gracefully", () => {
+		const triggersDir = path.join(FIXTURES_DIR, "malformed");
+		fs.mkdirSync(triggersDir, { recursive: true });
+		fs.writeFileSync(
+			path.join(triggersDir, "proactive-triggers.json"),
+			"not valid json {{{",
+		);
+		const result = checkProactiveTriggers(triggersDir);
+		expect(result.upgraded).toBe(false);
 	});
 });

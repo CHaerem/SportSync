@@ -61,18 +61,30 @@ export class ESPNAdapter extends BaseFetcher {
 		// Build partial failure metadata
 		const totalLeagues = source.leagues.length;
 		const failedLeagueEntries = [...leagueResults.entries()].filter(([, v]) => !v.success);
-		const leaguesFetched = totalLeagues - failedLeagueEntries.length;
-		const failedLeagues = failedLeagueEntries.map(([name]) => name);
+		const failedLeagueCount = failedLeagueEntries.length;
+		const failedLeagueNames = failedLeagueEntries.map(([name]) => name);
+		const coverageRatio = totalLeagues > 0 ? (totalLeagues - failedLeagueCount) / totalLeagues : 1;
 
-		if (failedLeagues.length > 0) {
-			console.warn(`ESPN: ${leaguesFetched}/${totalLeagues} leagues fetched (failed: ${failedLeagues.join(", ")})`);
+		if (failedLeagueNames.length > 0) {
+			console.warn(`ESPN: ${totalLeagues - failedLeagueCount}/${totalLeagues} leagues fetched (failed: ${failedLeagueNames.join(", ")})`);
 		}
 
-		// Attach metadata to the returned array (arrays are objects)
+		// Store metadata on instance for pipeline health consumption
+		this._fetchMetadata = {
+			...(this._fetchMetadata || {}),
+			leagues: {
+				totalLeagues,
+				failedLeagues: failedLeagueCount,
+				failedLeagueNames,
+				coverageRatio
+			}
+		};
+
+		// Attach metadata to the returned array for backward compatibility
 		allEvents._leagueMeta = {
-			leaguesFetched,
-			leaguesFailed: failedLeagues.length,
-			failedLeagues
+			leaguesFetched: totalLeagues - failedLeagueCount,
+			leaguesFailed: failedLeagueCount,
+			failedLeagues: failedLeagueNames
 		};
 
 		return allEvents;

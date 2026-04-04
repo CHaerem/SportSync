@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-04",
+      "task": "Execution: 5 tasks — 1 UX + 1 data + 2 code + 1 proactive triggers (3 parallel worktree agents)",
+      "outcome": "completed",
+      "pr": "direct-to-main (code+data) + branch-pr pending (UX)",
+      "details": "Run 42: 0 user feedback, 5 pending tasks. 3 parallel worktree subagents: Code-agent (pipeline cascade detection blockedPhases + proactive triggers wiring checkProactiveTriggers, 10 tests), Data-agent (ESPN adapter partial failure tracking coverageRatio metadata, 8 tests in new espn-adapter.test.js), UX-agent (skeleton loading placeholders + enhanced empty-date state with nearest-day hint + back-to-today button + cycling sport color). All 3 agents hit Bash permission denial (4th consecutive run) — orchestrator applied diffs manually via git apply. 2644 tests pass (+57 new). 2 PENDING tasks remain (autonomous sport addition, richer personalization signals). Autonomy: 12/13 loops (preferenceEvolution 0.5 — structural).",
+      "tests_passed": true,
+      "files_changed": 7,
+      "turns_used": 20,
+      "lesson": "Worktree agents hit Bash permission denial for 4th consecutive run — npx vitest and npm test both denied. Orchestrator git-apply workflow is reliable: save patches, clean worktrees, apply, test. Cleaning worktrees before npm test is critical (run 41 lesson confirmed). Block-level engagement tracking already existed (trackBlockEngagement) — always verify existing implementations before creating tasks. User-visible/infrastructure ratio: 40%/60% (1 UX skeleton/empty-date / 3 pipeline infra). Richer personalization task is mostly structural — needs real engagement data flowing.",
+      "scouted": 0
+    },
+    {
       "date": "2026-04-03",
       "task": "Execution: 5 tasks — 2 UX + 1 data FEATURE + 2 code (3 parallel worktree agents)",
       "outcome": "completed",

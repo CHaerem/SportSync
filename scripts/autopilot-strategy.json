@@ -3,7 +3,6 @@
   "version": 4,
   "updatedAt": "2026-02-18",
   "updatedBy": "autopilot",
-
   "shipModes": {
     "_description": "How to ship completed tasks. The autopilot chooses the mode per-task based on risk and efficiency.",
     "branchPr": {
@@ -21,7 +20,6 @@
       "maxTasksPerBatch": 4
     }
   },
-
   "turnBudgets": {
     "_description": "Expected turn costs per activity. Updated by the autopilot based on actual measurements.",
     "preflight": 10,
@@ -35,7 +33,6 @@
     "metaLearning": 5,
     "reserve": 10
   },
-
   "quotaAdaptation": {
     "_description": "How the autopilot adapts behavior based on quota tier. Read docs/data/.quota-status.json at startup for the current tier and evaluation. Runtime parameters (model, maxTurns, allowedTools) are resolved from runtimeConfigFile merged with the quota tier — see scripts/resolve-autopilot-config.js. The autopilot can evolve these guidelines based on observed outcomes.",
     "statusFile": "docs/data/.quota-status.json",
@@ -75,21 +72,12 @@
       }
     ]
   },
-
   "processNotes": {
     "_description": "Accumulated process knowledge. The autopilot adds notes here about what works and what doesn't.",
     "entries": [
       {
-        "date": "2026-02-16",
-        "note": "First run with strategy file. Direct-to-main used for 2 small tasks (4 turns each), branch-pr for 2 features (10-15 turns). Feature tasks were faster than estimated (15 vs 25 budget). Preflight was 10 turns (included branch cleanup). Scouting used 10 turns via Task agents. Total: ~70 turns for 4 tasks + scouting + meta. Updated turn budgets to match actuals."
-      },
-      {
-        "date": "2026-02-16",
-        "note": "Run 3: 5 tasks in ~35 turns (4 completed + 1 already done). Chaining data→UI tasks (tennis rankings → inline widget) in same run is highly efficient — eliminates context-loading overhead. Direct-to-main saves ~6 turns per task vs branch-pr and was safe for all 2 uses. Pre-verifying task completion status avoids wasted work. Scouting via Task agent was efficient (~5 turns)."
-      },
-      {
-        "date": "2026-02-17",
-        "note": "Run 4: 4 tasks + 2 explores in ~30 turns. Mixed ship modes: 2 direct-to-main (trivial changes), 2 branch-pr (tennis fix + For You block). Explore tasks delegated to subagents efficiently (~5 turns for 2 investigations). Key learning: API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. Personalization pillar advanced from 50% to 58% with For You block + contextual empty-sport notes."
+        "date": "2026-04-04",
+        "note": "Run 42: Execution — 5 pending tasks, 0 user feedback. 3 parallel worktree agents: code (cascade+triggers), data (ESPN adapter), UX (skeleton+empty-date). All 3 hit Bash permission denial (4th consecutive). Orchestrator applied via git apply (patches saved, worktrees cleaned, applied to main). 2644 tests pass (+57). User-visible/infrastructure: 40%/60% (1 UX / 3 pipeline infra — below 50% target, scouting would have helped). ~20 orchestrator turns. Key: git apply is the most reliable worktree recovery — faster than cherry-pick or manual Edit. Block-level engagement tracking already existed, saving a task slot."
       },
       {
         "date": "2026-04-03",
@@ -158,83 +146,140 @@
       {
         "date": "2026-03-15",
         "note": "Run 25: 2 tasks via 1 UX-agent (batched PR #133) + background UX scout. Both pending tasks were UX rendering (docs/js/**) despite task-router classifying as data/content — file ownership is better routing signal than description keywords. Batching 2 small UX fixes into 1 branch-pr saved ~8 turns vs separate PRs. Cleaned 11 stale remote branches. User-visible/infrastructure: 100%/0%. ~15 orchestrator turns."
-      },
-      {
-        "date": "2026-03-10",
-        "note": "Run 22: 1 user feedback + 3 UX tasks via 2 parallel subagents (data-agent + ux-agent). User feedback #126 (100 Thieves missing tournament) — esports data stale 9 days with 128 consecutive retains. Added ESL Pro League S22. UX: 3 improvements batched into PR #127 (ARIA labels, goalscorer recap fallback, sport pills reorder). User-visible/infrastructure: 100%/0%. Key learning: favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. Consider adding a favorite_team_coverage health check that monitors whether favoriteTeams have recent events (not just checking data staleness, but team-level coverage)."
-      },
-      {
-        "date": "2026-03-09",
-        "note": "Run 21: Scouting run — 0 pending tasks, 0 user feedback. 6 tasks via 3 subagents (code-agent + ux-agent scout + ux-agent execute). code-agent: ATP/WTA Tour league fix + sanityScore hint_fatigue suppression (featured_unknown_athlete regex false positives — venue names, nationalities). 2 tests added. Direct-to-main. ux-agent: 2-phase approach — scout found 9 opportunities, then execute shipped top 4 as PR #125 (merged). Improvements: importanceReason card fallback, result winner emphasis, Today label, --sport-cycling CSS. 4 new PENDING tasks added from remaining scouting findings. User-visible/infrastructure: ~80%/20%. Key learning: splitting UX scout vs execute into separate subagent runs is more efficient — scout reports findings without implementation overhead, execute acts on prioritized subset."
-      },
-      {
-        "date": "2026-03-08",
-        "note": "Run 20: 5 tasks via 3 subagents (ux-agent foreground + 2 data-agents background) + orchestrator scouting. 2 pending UX tasks + 3 scouted data issues. ux-agent: 2 EXPERIENCE tasks batched into 1 branch-pr (PR #124, merged) — importanceReason on collapsed must-watch rows + golf leaderboard position in tee time cards. data-agent #1: F1 chronic stale → ESPN off-season behavior (expected), fixed hardcoded 2025 year, suppressed F1 sanityScore hint_fatigue (orphan_ref filter, same pattern as CS2). data-agent #2 (scouted via RSS — Ruud in RSS but 0 tennis events): fixed 2 compounding tennis bugs — exclusive→focused filterMode + date-window fetch iteration. RSS-to-dashboard gap is a high-signal scouting input. User-visible/infrastructure: ~70%/30%. 4 direct-to-main + 1 branch-pr. 2457 tests across 79 files."
-      },
-      {
-        "date": "2026-03-07",
-        "note": "Run 19: Pure scouting run — 0 pending tasks, 0 user feedback. 3 tasks executed (all direct-to-main) via 3 subagents + 2 background scouts. Health signals drove task selection: unmapped leagues (3 entries), cycling UX gaps (day-nav dots, sort weight, aria-labels), streaming match rate metric scope. Background scouts investigated streaming root cause (coverage gap, not aliases) and UX opportunities (8 found, 3 executed, 2 added to roadmap). User-visible/infrastructure ratio: ~60%/40%. Key learning: background subagent scouts are efficient for investigation while foreground agents execute — parallel investigation + execution pattern saves ~50% time. 2457 tests, ~25 orchestrator turns."
-      },
-      {
-        "date": "2026-03-03",
-        "note": "Run 17: 2 EXPLORE + 2 MAINTENANCE (direct-to-main) + 1 PR merge. Parallel data-agent (EXPLORE) + code-agent (MAINTENANCE) while orchestrator scouted and merged stale PR #119. Both EXPLORE tasks completed efficiently — data-agent discovered ESPN already has IndyCar API (racing/irl) and ski jumping ESPN endpoint was already wired in schedule-verifier. This 'check existing infrastructure first' pattern converts EXPLORE→FEATURE at minimal effort. Code-agent added 3 league-config entries + bumped architecture threshold in single commit. Orchestrator merged cycling grand tours PR #119 (deploy check failure was GitHub Pages preview, not tests). 2 new FEATURE tasks created from EXPLORE findings (IndyCar fetcher, ski jumping config). RSS scouting found no new uncovered sports — current 11-sport coverage is comprehensive for Norwegian interests. ~17 orchestrator turns."
-      },
-      {
-        "date": "2026-03-02",
-        "note": "Run 16: 3 tasks via 3 parallel subagents (code-agent + content-agent + data-agent). All subagents shared same worktree — code-agent and content-agent committed to different branches (feature branch and main). Cherry-pick needed to move code-agent's fix from feature branch to main. Lesson: parallel subagents that need different ship modes (direct-to-main vs branch-pr) should use worktree isolation or run sequentially. The FEATURE task (cycling grand tours) completed fastest (~10 min), MAINTENANCE tasks took ~14-28 min due to full test suite runs. Scouting found 2 new EXPLORE tasks from RSS analysis (IndyCar + ski jumping). Total orchestrator turns: ~18."
-      },
-      {
-        "date": "2026-02-18",
-        "note": "Run 5: 6 tasks + 1 repair + 1 explore in ~45 turns. Pre-flight repair needed (date-dependent tests broke overnight). 5 direct-to-main (4-5 turns each), 1 branch-pr (refactor, 6 turns). Quality pillar dominated: pipelineHealth unstuck, must-watch scope fixed, empty snapshot noise eliminated. Key learning: hint fatigue signals metric bugs, not LLM issues. Pattern report heuristic E most productive (5/6 tasks from pattern analysis). Explore tasks via subagent efficient (~5 turns). Total estimated: ~45 turns for 8 activities."
-      },
-      {
-        "date": "2026-02-21",
-        "note": "Run 6: 7 tasks + 1 pre-flight repair, all direct-to-main. Used multi-agent architecture: 3 parallel subagents handled main tasks while orchestrator managed pre-flight and scouting. Subagents committed directly to main (each ran tests). Quality pillar dominant: 4 fixes unsticking loops, fixing hint fatigue, adding pattern decay. Autonomy 9/12→11/12 (only uxQuality remains open). Key learning: parallel subagents save ~60% time on independent tasks. Pattern decay is essential — without it, resolved issues remain high-severity forever. 4 new tasks scouted. ~20 orchestrator turns + subagent turns."
-      },
-      {
-        "date": "2026-02-21",
-        "note": "Run 7: 5 tasks, 3 parallel subagents (ux-agent + code-agent + data-agent) + orchestrator. Achieved 12/12 autonomy for the first time. Key milestones: (1) uxQuality loop closed via file-based fallback — silent process.exit(0) in CI is the hardest failure mode to diagnose; (2) fetchJson() timeout fix resolved 76 consecutive verify-schedules failures — no timeout = reliability risk for any HTTP call; (3) info-severity issues now filtered from recurring warning tracker — 359+118 fire accumulation was masking the decay mechanism. Architectural insight: when new sport configs are added, SPORT_CONFIG and day snapshots must be updated atomically to avoid test failures and health warnings. Parallel subagents + orchestrator own-work pattern is now proven stable across 2 runs."
-      },
-      {
-        "date": "2026-02-22",
-        "note": "Run 8: 4 tasks (3 quality, 1 data). Focused on reliability — fixing stagnant autonomy loops and hint fatigue. Orchestrator handled loop fixes + Olympics archival + league config. Code-agent handled sanity hint suppression in parallel. Autonomy stable at 12/12 (100%). Key insight: stagnant loops require scoring-function analysis not more data fixes. Three pattern-report high-severity items resolved (ux_eval_fallback, step_timeout_hit, sanity hints). Olympics 2026 archived on closing ceremony day — sync-configs.js will no longer process it. New sport config checklist expanded to 4 steps (config + SPORT_CONFIG + snapshots + league-config). 5 new tasks scouted: RSS headline matching, failed_batches decay, cycling exploration, pipeline bloat. Quality pillar now at ~100%."
-      },
-      {
-        "date": "2026-02-23",
-        "note": "Run 9: 3 tasks + 1 EXPLORE, all parallel subagents (code-agent + content-agent + data-agent). Three tasks fixing autonomy loop gaps: (1) watchPlan reasons — score factors without matching reason strings made picks appear broken (0.5→1.0); (2) mustWatchCoverage — golf-status blocks weren't recognized as covering golf events, plus 0/0 guard; (3) RSS headline matching — 3-tier matching with Norwegian short-forms for PL/La Liga teams. EXPLORE: pipeline bloat (28 steps) is appropriate for 12 loops, threshold should be 30. Key insight: when autonomy loops are stuck, investigate if the loop's evaluation criteria match the actual data paths — watchPlan scored picks but didn't see reasons because 2 of 6 score factors had no reason string. RSS short-form matching should lift recapHeadlineRate from 0% for the first time. 4 new tasks scouted. Parallel 3-agent delegation continues to work well."
-      },
-      {
-        "date": "2026-02-24",
-        "note": "Run 10: 5 tasks + 1 pre-flight repair. Pre-flight: build-events.js derived sport from config.context instead of config.sport — 'relive' from Olympics context string. Three code-pillar tasks executed in parallel via subagents: (1) pipeline bloat threshold 20→30 (code-agent), (2) pipeline consolidation 28→25 steps via post-generate.js wrapper + finalize-outputs merge (code-agent), (3) editorial_unsorted_events false positive fix (content-agent). Then pipelineHealth loop restored to 1.0 via missing_snapshot KNOWN_DATA_GAPS addition. Autonomy confirmed at 12/12 (100%). Key insight: health check day-name comparison is lossy — weekday indices can't distinguish same-week vs cross-week transitions. Previous EXPLORE findings executed immediately: all 3 pipeline consolidation candidates shipped. Alpine skiing World Cup Finals scouted as new FEATURE task. Code pillar ~87%→~89%."
-      },
-      {
-        "date": "2026-02-25",
-        "note": "Run 11: 2 tasks via 2 parallel subagents (data-agent + code-agent) + orchestrator scouting. (1) FEATURE: alpine skiing WC Finals config — new sport added end-to-end in one subagent pass (config + SPORT_CONFIG + league-config, 3/4 checklist items). (2) MAINTENANCE: KNOWN_MANAGED_CODES filter in analyze-patterns.js — silences 9 false-positive high-severity patterns from managed health codes. Orchestrator: removed 2 duplicate cycling EXPLORE roadmap entries, scouted Norwegian ice hockey (EHL) as new coverage opportunity. Key insight: pattern-report and autonomy-scorecard need synchronized managed-code lists — when analyze-patterns accumulates warnings for codes autonomy-scorecard already suppresses, it generates persistent noise that masks genuine new patterns. Capabilities pillar advanced with 8th sport (alpine skiing). 1904 tests pass."
-      },
-      {
-        "date": "2026-02-26",
-        "note": "Run 12: 2 tasks (code-agent direct-to-main + data-agent EXPLORE) in parallel. (1) MAINTENANCE: added streaming_coverage_gap to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES, model_change_quality_drop to KNOWN_MANAGED_CODES, ORPHAN_EXCEPTIONS for 4 active utility scripts — pipelineHealth loop unstuck 0.75→1.0, autonomy confirmed 12/12 (100%). (2) EXPLORE: Norwegian ice hockey — ESPN doesn't cover GET-ligaen, curated config approach viable for 2026 playoffs. New [FEATURE] task created. Key insight: streaming_coverage_gap is a downstream effect of streaming_low_match_rate (already in KNOWN_DATA_GAPS); once you recognize the parent-child relationship, the fix is obvious. Orphan exceptions needed for scripts that are entry points (run-pipeline.js) or called from post-generate.js rather than pipeline-manifest. Pattern decay will clear stagnant_loop pattern after next pipeline run writes pipelineHealth=1.0 to trend. 2076 tests pass."
-      },
-      {
-        "date": "2026-02-27",
-        "note": "Run 13: 2 tasks via 2 parallel subagents (code-agent + data-agent). (1) MAINTENANCE direct-to-main: 4 new quota-managed codes to KNOWN_DATA_GAPS + KNOWN_MANAGED_CODES + made snapshotHealth quota-aware. autonomy 10/12→12/12 (100%). (2) FEATURE branch-pr (PR #117): GET-ligaen ice hockey playoff config + icehockey sport (9th sport). Tests: 2148. Key insight: quota tier 2 skipping post-generate/discover-events/learn-recipes creates a burst of new warning codes that must be added to KNOWN_DATA_GAPS. The snapshotHealth loop needs the same quota-awareness pattern that scheduleVerification already uses. Parallel subagents continue to be efficient — both tasks completed in ~25 total turns."
-      },
-      {
-        "date": "2026-02-28",
-        "note": "Run 14: 3 maintenance fixes (code-agent batch) + 1 EXPLORE (data-agent) + 1 pre-existing test repair (code-agent), all parallel. Code fix > KNOWN_DATA_GAPS suppression when the health check has a real logic gap — norwegian_tagging_anomaly was fixable by adding tagRate < 1.0, which is more precise and preserves the check for genuinely anomalous sports. EXPLORE→FEATURE pipeline continues to work: athletics investigation → concrete [FEATURE] task with full schedule data (Diamond League 14 meetings extracted). New date-dependent test variant discovered: disk-resident data files (refresh-urgency.json) affecting test outcomes. Fix is deterministic override, not fake timers. Tests: 2180. Autonomy: should reach 12/12 once pipeline runs with fixed health check."
-      },
-      {
-        "date": "2026-03-01",
-        "note": "Run 15: 2 parallel subagents (code-agent + data-agent) + orchestrator own-work + 1 FEATURE (data-agent). EXPLORE→FEATURE same-run execution for cycling: investigation + config creation + PR in one run (~25 orchestrator turns). Key insight: capabilities.json had blind spots — hardcoded sport list and broken loop count meant scouting couldn't see half the system. Auto-discovering from events.json permanently closes this gap. 10th sport (cycling) added via curated config in 1 subagent pass. Cycling grand tours config remains as follow-up FEATURE."
-      },
-      {
-        "date": "2026-03-12",
-        "note": "Run 23: 0 user feedback, 1 pending task already done (standings card was already implemented). Key learning: stale roadmap tasks are invisible debt — the standings task claimed renderStandingsSection() was removed, but it was fully wired. Need to verify task preconditions before delegating. Main win: data-agent diagnosed editorial quality 62/100 → root cause was diacritic mismatch in mustWatchCoverage (Bodo/Glimt vs Bodø/Glimt). NFD normalization fix via code-agent improved score to 76/100. Pattern: quality metric failures should first be checked for string normalization bugs before assuming content generation issues. esports stale (160 runs) root cause confirmed: all matches completed or unscheduled. Added [PENDING] task for discovery loop repair. User-visible/infra ratio: 100%/0% (quality metric fix = user-visible outcome)."
-      },
-      {
-        "date": "2026-03-14",
-        "note": "Run 24: 3 parallel subagents (code-agent + data-agent + ux-agent scout) + orchestrator UX execution + PR. 1 pending task + 1 pattern-report high-severity + scouting. code-agent: mustWatchCoverage fuzzy matching for year-suffix titles + sportDiversity cycling emoji. data-agent: esports config restored, ESL S22 debunked as hallucination (important validation — run 22 created a non-existent tournament). UX: FT badge CSS mismatch + result row keyboard a11y (PR #132 merged). UX scout: 5 findings, 2 executed, 2 added to roadmap. Editorial quality 75→expected ~95 (mustWatchCoverage 0.5→1.0, sportDiversity 0.5→0.75+). User-visible/infra: ~80%/20%. Key insight: hint_fatigue often signals evaluation bugs, not LLM failures — the 19-fire mustWatchCoverage hint was caused by includes() being too strict for titles with year suffixes."
       }
-    ]
+    ],
+    "consolidated": [
+      {
+        "theme": "parallel-execution",
+        "entryCount": 19,
+        "dateRange": "2026-02-17 to 2026-03-14",
+        "summary": "parallel-execution (19 entries, 2026-02-17 to 2026-03-14): API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. favorite ...",
+        "runs": [
+          "Run 4",
+          "Run 22",
+          "Run 21",
+          "Run 20",
+          "Run 19"
+        ]
+      },
+      {
+        "theme": "scouting",
+        "entryCount": 16,
+        "dateRange": "2026-02-16 to 2026-03-14",
+        "summary": "scouting (16 entries, 2026-02-16 to 2026-03-14): favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. splitting UX scout vs execute into separate su...",
+        "runs": [
+          "2026-02-16",
+          "Run 3",
+          "Run 22",
+          "Run 21",
+          "Run 20"
+        ]
+      },
+      {
+        "theme": "key-learnings",
+        "entryCount": 16,
+        "dateRange": "2026-02-17 to 2026-03-14",
+        "summary": "key-learnings (16 entries, 2026-02-17 to 2026-03-14): API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. favorite team ...",
+        "runs": [
+          "Run 4",
+          "Run 22",
+          "Run 21",
+          "Run 19",
+          "Run 5"
+        ]
+      },
+      {
+        "theme": "testing",
+        "entryCount": 16,
+        "dateRange": "2026-03-10 to 2026-03-14",
+        "summary": "testing (16 entries, 2026-03-10 to 2026-03-14): favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. splitting UX scout vs execute into separate sub...",
+        "runs": [
+          "Run 22",
+          "Run 21",
+          "Run 20",
+          "Run 19",
+          "Run 17"
+        ]
+      },
+      {
+        "theme": "debugging",
+        "entryCount": 15,
+        "dateRange": "2026-02-17 to 2026-03-14",
+        "summary": "debugging (15 entries, 2026-02-17 to 2026-03-14): API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. splitting UX scout...",
+        "runs": [
+          "Run 4",
+          "Run 21",
+          "Run 20",
+          "Run 16",
+          "Run 5"
+        ]
+      },
+      {
+        "theme": "sport-expansion",
+        "entryCount": 14,
+        "dateRange": "2026-02-17 to 2026-03-14",
+        "summary": "sport-expansion (14 entries, 2026-02-17 to 2026-03-14): API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. favorite tea...",
+        "runs": [
+          "Run 4",
+          "Run 22",
+          "Run 21",
+          "Run 17",
+          "Run 7"
+        ]
+      },
+      {
+        "theme": "autonomy-loops",
+        "entryCount": 14,
+        "dateRange": "2026-03-10 to 2026-03-12",
+        "summary": "autonomy-loops (14 entries, 2026-03-10 to 2026-03-12): favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. splitting UX scout vs execute into separ...",
+        "runs": [
+          "Run 22",
+          "Run 21",
+          "Run 19",
+          "Run 6",
+          "Run 7"
+        ]
+      },
+      {
+        "theme": "quality-metrics",
+        "entryCount": 14,
+        "dateRange": "2026-03-10 to 2026-03-14",
+        "summary": "quality-metrics (14 entries, 2026-03-10 to 2026-03-14): favorite team coverage gap was invisible to all scouting heuristics — only user feedback detected it. splitting UX scout vs execute into sepa...",
+        "runs": [
+          "Run 22",
+          "Run 21",
+          "Run 20",
+          "Run 19",
+          "Run 5"
+        ]
+      },
+      {
+        "theme": "pattern-analysis",
+        "entryCount": 13,
+        "dateRange": "2026-03-09 to 2026-03-14",
+        "summary": "pattern-analysis (13 entries, 2026-03-09 to 2026-03-14): splitting UX scout vs execute into separate subagent runs is more efficient — scout reports findings without implementation overhead, execut...",
+        "runs": [
+          "Run 21",
+          "Run 20",
+          "Run 19",
+          "Run 17",
+          "Run 5"
+        ]
+      },
+      {
+        "theme": "shipping-strategy",
+        "entryCount": 12,
+        "dateRange": "2026-02-16 to 2026-02-27",
+        "summary": "shipping-strategy (12 entries, 2026-02-16 to 2026-02-27): API structure assumptions caused 108 recurring warnings — always verify API response format before assuming empty means no data. splitting ...",
+        "runs": [
+          "2026-02-16",
+          "Run 3",
+          "Run 4",
+          "Run 21",
+          "Run 20"
+        ]
+      }
+    ],
+    "_lastConsolidated": "2026-04-04T02:07:35.014Z"
   }
 }

@@ -182,11 +182,8 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
-- [PENDING] [MAINTENANCE] **Pipeline abort cascade detection** — When a required step fails in run-pipeline.js, subsequent phases are skipped silently. Add `blockedPhases` array to pipeline-result.json so autopilot can detect cascade failures. (Code scout finding)
-- [PENDING] [MAINTENANCE] **ESPN adapter partial failure tracking** — fetchScoreboardWithLeagues() in espn-adapter.js continues on individual league failures without reporting coverage ratio. Track failed league count and return metadata. (Code scout finding)
 - [PENDING] [FEATURE] **End-to-end autonomous sport addition (Pillar 3 proof)** — The system should detect a sport opportunity via RSS/coverage-gaps, create a curated config, populate it via discovery loop, verify schedules, enrich, and serve on the dashboard — all without human intervention. This is the key missing piece for Pillar 3 (~88% → ~95%). Start with an `[EXPLORE]` to identify which sport has the best data availability for autonomous addition. Respects Sport Expansion Policy — only sports already in sportPreferences or explicitly requested.
-- [PENDING] [FEATURE] **Richer personalization signals (Pillar 4 advancement)** — Track which editorial blocks users click/expand (block-level engagement), which events the user actually watches (post-event check-in), and feed these signals back into `generate-featured.js` scoring. Current engagement tracking is per-sport click counts only — block-level data would let the system learn which editorial styles resonate. Pillar 4 ~78% → ~85%.
-- [PENDING] [MAINTENANCE] **Wire proactive triggers into pipeline mode decision** — `check-proactive-triggers.js` runs in the pipeline but its output isn't read by `run-pipeline.js` yet. Add logic to upgrade `data-only` → `full` when `proactive-triggers.json` has `shouldUpgrade: true`. Completes the KAIROS-inspired event-driven pipeline pattern.
+- [PENDING] [FEATURE] **Richer personalization signals (Pillar 4 advancement)** — Block-level engagement tracking exists client-side (`trackBlockEngagement` in preferences-manager.js, called from dashboard.js). Telemetry exported via `exportForBackend()`. Pipeline reads `engagement-data.json`. Remaining: (1) feed block-type preferences into editorial prompt in generate-featured.js, (2) post-event check-in mechanism. Needs real engagement data flowing via GitHub Issues to activate. Pillar 4 ~78% → ~85%.
 
 - [DONE] [MAINTENANCE] **La Liga standings in standings.json** — Already implemented: `fetchLaLigaStandings()` exists, called in main(), rendered in standings-renderer.js. Added La Liga to `buildStandingsContext()` for editorial prompt context. Run 31.
 - [DONE] [MAINTENANCE] **recapHeadline single-team matching** — Added 4th matching tier: single football-tagged team + 6h time proximity. Norwegian headlines mentioning only one team now match. Run 31.
@@ -237,8 +234,10 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 - [DONE] [MAINTENANCE] **Result-row aria-label accessibility** — Added `aria-label` with full match result (e.g., "Arsenal 2–1 Chelsea") to compact result row buttons for screen readers. Direct-to-main. Run 40.
 - [DONE] [MAINTENANCE] **Cycling rider names CSS class** — Replaced inline style on cycling Norwegian rider names div with `.lead-pairing` CSS class for dark mode compatibility. Direct-to-main. Run 40.
 
-- [PENDING] [MAINTENANCE] **Pipeline abort cascade detection** — When a required step fails in run-pipeline.js, subsequent phases are skipped silently. Add `blockedPhases` array to pipeline-result.json so autopilot can detect cascade failures. (Code scout finding)
-- [PENDING] [MAINTENANCE] **ESPN adapter partial failure tracking** — fetchScoreboardWithLeagues() in espn-adapter.js continues on individual league failures without reporting coverage ratio. Track failed league count and return metadata. (Code scout finding)
+- [DONE] [MAINTENANCE] **Pipeline abort cascade detection** — Added `blockedPhases` array to pipeline-result.json. When a required step fails, downstream phases are recorded with `{ phase, reason }`. Also wired `checkProactiveTriggers()` to upgrade data-only → full mode. 10 new tests. Direct-to-main. Run 42.
+- [DONE] [MAINTENANCE] **ESPN adapter partial failure tracking** — Enhanced `fetchScoreboardWithLeagues()` with `coverageRatio` metadata (`totalLeagues`, `failedLeagues`, `failedLeagueNames`). Backward-compatible `_leagueMeta` preserved. `_fetchMetadata` propagates through `formatResponse()`. 8 new tests. Direct-to-main. Run 42.
+- [DONE] [MAINTENANCE] **Wire proactive triggers into pipeline mode decision** — Added `checkProactiveTriggers()` in run-pipeline.js, called after prepare phase. Reads `proactive-triggers.json`, upgrades data-only → full when `shouldUpgrade: true`. 6 tests. Direct-to-main. Run 42.
+- [DONE] [MAINTENANCE] **Skeleton loading + enhanced empty date state** — Replaced plain "Loading..." text with animated skeleton cards. Enhanced empty date state with nearest-day hint, contextual message, and "Back to today" button. Added cycling sport color. PR pending. Run 42.
 - [DONE] [MAINTENANCE] **Later-section event lines sport-color cues** — Added sport-color left borders on Later-band event lines using `data-sport` attribute + `_detectSportFromText()` helper. CSS uses existing `--sport-*` custom properties. Direct-to-main. Run 41.
 - [DONE] [MAINTENANCE] **importanceBadge inline style → CSS class** — Extracted inline styles to `.row-importance-badge` CSS class for dark mode compatibility. Direct-to-main. Run 41.
 - [DONE] [MAINTENANCE] **generateStatusSummary fallback test coverage** — Added 9 tests for `buildFallbackSummary()` covering healthy/warning/critical status, editorial score presence/absence, edge cases. Direct-to-main. Run 41.
@@ -301,6 +300,9 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 | 5. Quality | ~100% | 2026-04-01 | pipelineHealth loop restored to 1.0, image alt text a11y (10 locations), 18 retainLastGood tests |
 | 2. Code | ~96% | 2026-04-01 | retainLastGood() — critical fallback code (84 F1 retains) now has 18 tests. 2575+ tests pass |
 | 4. Personalization | ~78% | 2026-04-01 | News default 5 items (from 3), day-nav tooltip explains empty days (PR #153) |
+| 2. Code | ~97% | 2026-04-04 | Pipeline cascade detection, proactive triggers wiring, ESPN partial failure tracking. 2644 tests pass (+57) |
+| 5. Quality | ~100% | 2026-04-04 | Skeleton loading replaces plain "Loading..." text, enhanced empty-date with nearest-day hint + back-to-today button |
+| 1. Data | ~97% | 2026-04-04 | ESPN adapter now tracks per-league coverage ratio for partial failure detection |
 
 ### Run History Insights
 

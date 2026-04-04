@@ -26,8 +26,8 @@ const PIPELINE_HASH_PATH = path.join(DATA_DIR, ".pipeline-hash.json");
 const STEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes per step
 
 // Pipeline mode: "full" (default) runs everything, "data-only" skips LLM steps
-const PIPELINE_MODE = process.env.PIPELINE_MODE || "full";
-const isDataOnly = PIPELINE_MODE === "data-only";
+let PIPELINE_MODE = process.env.PIPELINE_MODE || "full";
+let isDataOnly = PIPELINE_MODE === "data-only";
 
 // Track whether event data is unchanged between runs
 let dataUnchanged = false;
@@ -380,6 +380,30 @@ export async function runPhase(phase) {
 }
 
 /**
+ * Check proactive-triggers.json and upgrade pipeline mode if needed.
+ * Called after data fetch/prepare phases, before AI phases.
+ * @param {string} dataDir - path to data directory
+ * @returns {{ upgraded: boolean, triggers?: object }}
+ */
+export function checkProactiveTriggers(dataDir = DATA_DIR) {
+	if (!isDataOnly) return { upgraded: false };
+	try {
+		const triggersPath = path.join(dataDir, "proactive-triggers.json");
+		if (!fs.existsSync(triggersPath)) return { upgraded: false };
+		const triggers = JSON.parse(fs.readFileSync(triggersPath, "utf-8"));
+		if (triggers.shouldUpgrade) {
+			PIPELINE_MODE = "full";
+			isDataOnly = false;
+			console.log(`  Proactive upgrade: data-only → full (${triggers.triggerCount} trigger(s))`);
+			return { upgraded: true, triggers };
+		}
+		return { upgraded: false };
+	} catch {
+		return { upgraded: false };
+	}
+}
+
+/**
  * Run the full pipeline.
  * @param {string} manifestPath - path to manifest JSON
  * @returns {Promise<object>} pipeline result
@@ -391,13 +415,20 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 	const manifest = loadManifest(manifestPath);
 	const phases = {};
 	let aborted = false;
+	let abortedByStep = null;
+	let abortedInPhase = null;
 	let gateStatus = "pass";
+	const blockedPhases = [];
 
 	console.log(`Pipeline mode: ${PIPELINE_MODE}${isDataOnly ? " (LLM steps will be skipped)" : ""}`);
 
 	for (const phase of manifest.phases) {
 		if (aborted) {
 			phases[phase.name] = { name: phase.name, status: "skipped", steps: [] };
+			blockedPhases.push({
+				phase: phase.name,
+				reason: `required step '${abortedByStep}' failed in phase '${abortedInPhase}'`,
+			});
 			continue;
 		}
 
@@ -427,6 +458,11 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		const result = await runPhase(phase);
 		phases[phase.name] = result;
 
+		// After prepare phase, check proactive triggers for mode upgrade
+		if (phase.name === "prepare") {
+			checkProactiveTriggers();
+		}
+
 		// After build phase, check if event data changed to gate AI steps
 		if (phase.name === "build") {
 			checkDataUnchanged();
@@ -441,6 +477,8 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		if (result.abortedBy) {
 			console.log(`  !! Phase "${phase.name}" aborted by required step "${result.abortedBy}"`);
 			aborted = true;
+			abortedByStep = result.abortedBy;
+			abortedInPhase = phase.name;
 			gateStatus = "fail";
 		}
 	}
@@ -494,6 +532,7 @@ export async function runPipeline(manifestPath = MANIFEST_PATH) {
 		mode: PIPELINE_MODE,
 		gate: gateStatus,
 		gateBlockedFiles,
+		blockedPhases,
 		quota: quotaStatus ? {
 			fiveHour: quotaStatus.fiveHour,
 			sevenDay: quotaStatus.sevenDay,

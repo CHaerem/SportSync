@@ -5,6 +5,7 @@ export class BaseFetcher {
 	constructor(config) {
 		this.config = config;
 		this.apiClient = new APIClient();
+		this._fetchMetadata = {};
 	}
 
 	async fetch() {
@@ -82,11 +83,18 @@ export class BaseFetcher {
 
 	formatResponse(events) {
 		const tournaments = this.groupEventsByTournament(events);
-		return {
+		const response = {
 			lastUpdated: iso(),
 			source: this.config.source || "API",
 			tournaments
 		};
+
+		// Attach fetch metadata if any was collected (e.g., partial failure tracking)
+		if (Object.keys(this._fetchMetadata).length > 0) {
+			response._fetchMetadata = this._fetchMetadata;
+		}
+
+		return response;
 	}
 
 	groupEventsByTournament(events) {
