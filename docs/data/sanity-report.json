@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-04-05T09:21:00.761Z",
+  "generatedAt": "2026-04-05T14:19:41.764Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 72,
+    "totalEvents": 70,
     "sports": [
       "golf",
       "esports",
       "tennis",
-      "f1",
-      "cycling",
+      "chess",
       "football",
-      "chess"
+      "cycling",
+      "f1"
     ],
     "bands": {
       "live": [
@@ -18,12 +18,11 @@
         "PGL Bucharest 2026",
         "Upper Austria Ladies Linz",
         "Grand Prix Open Villa de Madrid by Silverway",
-        "Tour of Flanders 2026 (Ronde van Vlaanderen)"
+        "Round 7 – FIDE Candidates Tournament 2026",
+        "Round 7 – Grenke Chess Festival 2026 | Freestyle Open A",
+        "Celta Vigo at Valencia"
       ],
       "today": [
-        "Athletic Club at Getafe",
-        "Round 7 – FIDE Candidates Tournament 2026",
-        "Celta Vigo at Valencia",
         "Sevilla at Real Oviedo",
         "Osasuna at Alavés"
       ],
@@ -94,15 +93,13 @@
         "Qatar Grand Prix 2026",
         "Abu Dhabi Grand Prix 2026"
       ],
-      "ended": [
-        "Japanese Grand Prix 2026"
-      ]
+      "ended": []
     },
     "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 71,
-    "issueCount": 7
+    "editorialScore": 73,
+    "issueCount": 8
   },
   "findings": [
     {
@@ -298,7 +295,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Lewandowski\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Magnus Carlsen\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Grenke Chess Festival Round\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -306,21 +308,16 @@
       "message": "Featured mentions \"Mallorca\" but no matching athlete found in events data"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"07:00\" for \"Grand Prix Open Villa de Madrid by Silverway\" but events.json has 06:00"
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Round 7 – Grenke Chess Festival 2026 | Freestyle Open A\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
     "total": 42,
     "critical": 0,
-    "warning": 42,
-    "info": 0
+    "warning": 41,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
