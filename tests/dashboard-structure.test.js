@@ -212,6 +212,25 @@ describe("sport mapping completeness", () => {
 			[],
 		);
 	});
+
+	it("all event tournaments have a league-config entry", () => {
+		const leagueConfigPath = path.join(docsDir, "data", "league-config.json");
+		if (!fs.existsSync(leagueConfigPath)) return; // skip if missing
+		const eventsPath = path.join(docsDir, "data/events.json");
+		if (!fs.existsSync(eventsPath)) return; // skip if missing
+		const events = JSON.parse(fs.readFileSync(eventsPath, "utf-8"));
+		const leagueConfig = JSON.parse(fs.readFileSync(leagueConfigPath, "utf-8"));
+		const leagueKeys = Object.keys(leagueConfig.leagues || {}).map(k => k.toLowerCase());
+		const tournaments = [...new Set(events.map(e => e.tournament).filter(Boolean))];
+		const unmappedLeagues = tournaments.filter(t => {
+			const tLower = t.toLowerCase();
+			return !leagueKeys.some(k => tLower.includes(k));
+		});
+		expect(
+			unmappedLeagues,
+			`Unmapped tournaments: ${unmappedLeagues.join(", ")}`,
+		).toEqual([]);
+	});
 });
 
 describe("hasLiveEvents logic", () => {
