@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-04",
-  "generatedAt": "2026-04-04T18:18:15.630Z",
+  "generatedAt": "2026-04-05T02:49:09.082Z",
   "events": {
     "upcoming": [
       {
@@ -120,95 +120,53 @@
         "norwegianRelevance": 4,
         "enrichedAt": "2026-04-04T18:17:02.730Z",
         "_enrichHash": "8375012c88b3d184ba545872f9916874"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Barcelona at Atlético Madrid",
-        "time": "2026-04-04T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Riyadh Air Metropolitano",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Atlético Madrid",
-        "awayTeam": "Barcelona",
-        "isFavorite": true,
-        "importance": 5,
-        "importanceReason": "Viewer's favorite Barcelona in a title-deciding La Liga rivalry clash.",
-        "summary": "Barcelona face Atlético Madrid at the Metropolitano in a potentially title-decisive La Liga showdown — the biggest fixture of the weekend.",
-        "tags": [
-          "must-watch",
-          "title-race",
-          "rivalry",
-          "classic-matchup"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-04T18:17:02.730Z",
-        "_enrichHash": "b2005ab82ddbeadabcfb7b69a3c3779c",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
-    "results": [
-      {
-        "sport": "chess",
-        "tournament": "FIDE Candidates Tournament 2026",
-        "title": "Round 6 – FIDE Candidates Tournament 2026",
-        "time": "2026-04-04T12:30:00.000Z",
-        "endTime": null,
-        "venue": "Cap St Georges Hotel, Pegeia, Cyprus",
-        "meta": "FIDE Candidates Tournament 2026",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "chess24",
-            "url": "https://chess24.com",
-            "type": "streaming"
-          },
-          {
-            "platform": "Chess.com",
-            "url": "https://chess.com/tv",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "FIDE Candidates decides who challenges for World Chess Championship.",
-        "summary": "Round 6 of the Candidates Tournament in Cyprus — the winner earns the right to challenge for the World Chess title.",
-        "tags": [
-          "must-watch",
-          "major",
-          "title-race"
-        ],
-        "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-04T18:17:02.730Z",
-        "_enrichHash": "12e329d90e50950709b47cc11457c536"
-      }
-    ]
+    "results": []
   },
   "matchResults": [
+    {
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Barcelona",
+      "homeScore": 1,
+      "awayScore": 2,
+      "date": "2026-04-04T19:00Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Riyadh Air Metropolitano",
+      "goalScorers": [
+        {
+          "player": "Giuliano Simeone",
+          "team": "Atlético Madrid",
+          "minute": "39'"
+        },
+        {
+          "player": "Marcus Rashford",
+          "team": "Barcelona",
+          "minute": "42'"
+        },
+        {
+          "player": "Robert Lewandowski",
+          "team": "Barcelona",
+          "minute": "87'"
+        }
+      ],
+      "recapHeadline": "Lewandowski senket Sørloths Atlético i sluttminuttene",
+      "isFavorite": true
+    },
+    {
+      "homeTeam": "Real Betis",
+      "awayTeam": "Espanyol",
+      "homeScore": 0,
+      "awayScore": 0,
+      "date": "2026-04-04T16:30Z",
+      "league": "La Liga",
+      "leagueCode": "esp.1",
+      "venue": "Estadio La Cartuja",
+      "goalScorers": [],
+      "recapHeadline": null,
+      "isFavorite": false
+    },
     {
       "homeTeam": "Mallorca",
       "awayTeam": "Real Madrid",
@@ -411,121 +369,44 @@
       }
     ]
   },
-  "watchPlan": {
-    "picks": [
-      {
-        "id": "football-barcelona-at-atlético-madrid-2026-04-04t19:00:00.000z",
-        "title": "Barcelona at Atlético Madrid",
-        "sport": "football",
-        "tournament": "La Liga",
-        "time": "2026-04-04T19:00:00.000Z",
-        "timeLabel": "4 Apr, 21:00",
-        "relativeStart": "In 43m",
-        "importance": 5,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          }
-        ],
-        "score": 140,
-        "reasons": [
-          "Must-watch event",
-          "Starting soon"
-        ]
-      },
-      {
-        "id": "cycling-tour-of-flanders-2026-(ronde-van-vlaanderen)-2026-04-05t10:00:00+02:00",
-        "title": "Tour of Flanders 2026 (Ronde van Vlaanderen)",
-        "sport": "cycling",
-        "tournament": "Cycling Spring Classics 2026",
-        "time": "2026-04-05T10:00:00+02:00",
-        "timeLabel": "5 Apr, 10:00",
-        "relativeStart": "In 13h 43m",
-        "importance": 4,
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Eurosport",
-            "type": "tv"
-          },
-          {
-            "platform": "Max",
-            "type": "stream"
-          }
-        ],
-        "score": 90,
-        "reasons": [
-          "Must-watch event",
-          "Norwegian interest"
-        ]
-      },
-      {
-        "id": "f1-japanese-grand-prix-2026-2026-04-05t05:00:00z",
-        "title": "Japanese Grand Prix 2026",
-        "sport": "f1",
-        "tournament": "Formula 1 World Championship 2026",
-        "time": "2026-04-05T05:00:00Z",
-        "timeLabel": "5 Apr, 07:00",
-        "relativeStart": "In 10h 43m",
-        "importance": 3,
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "type": "stream"
-          }
-        ],
-        "score": 57,
-        "reasons": [
-          "Preferred sport"
-        ]
-      }
-    ],
-    "headline": "Real Madrid stumble — Barcelona can go seven clear tonight"
-  },
+  "watchPlan": null,
   "rssHighlights": [
     {
-      "title": "Chelsea lekte seg til semifinale i FA-cupen",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/chelsea-lekte-seg-til-semifinale-i-fa-cupen-1.17835178"
+      "title": "grenke: Keymer and Niemann still perfect after five rounds",
+      "source": "chessbase",
+      "sport": "chess",
+      "link": "https://en.chessbase.com/post/grenke-freestyle-open-2026-d3"
     },
     {
-      "title": "Martin Ødegaard tilbake for Arsenal",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/martin-odegaard-tilbake-for-arsenal-1.17835133"
-    },
-    {
-      "title": "Måtte sy i tannkjøttet etter dette: – Vondt å spise",
-      "source": "nrk-sport",
-      "sport": "general",
-      "link": "https://www.nrk.no/sport/matte-sy-i-tannkjottet-etter-dette_-_-vondt-a-spise-1.17835145"
-    },
-    {
-      "title": "Nordås etter norsk rekord: Oppløftende melding",
+      "title": "– Den dagen var det vondt å se på",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18721569"
+      "link": "https://www.tv2.no/a/18719877"
     },
     {
-      "title": "Follestad stusser: – Hadde ikke forventet det",
+      "title": "– Et stort steg mot tittelen",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18721243"
+      "link": "https://www.tv2.no/a/18721847"
+    },
+    {
+      "title": "– Et stort steg mot tittelen",
+      "source": "tv2-fotball",
+      "sport": "football",
+      "link": "https://www.tv2.no/a/18721847"
+    },
+    {
+      "title": "Lewandowski senket Sørloths Atlético i sluttminuttene",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/lewandowski-senket-sorloths-atletico-i-sluttminuttene-1.17835238"
     }
   ],
   "meta": {
-    "eventCount": 4,
+    "eventCount": 2,
     "sportsCovered": [
       "golf",
-      "esports",
-      "chess",
-      "football"
+      "esports"
     ],
     "hasResults": true,
     "hasStandings": true

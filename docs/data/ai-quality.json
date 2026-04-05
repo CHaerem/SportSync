@@ -1,67 +1,63 @@
 {
-  "generatedAt": "2026-04-04T18:17:55.611Z",
+  "generatedAt": "2026-04-05T02:48:50.657Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "narrative block exceeds 40 words: \"Real Madrid fell 2-1 at Mallorca today, handing Ba...\""
-    ],
-    "blockCount": 7,
-    "generationMs": 52127,
+    "score": 100,
+    "issues": [],
+    "blockCount": 8,
+    "generationMs": 86963,
     "tokenUsage": {
-      "input": 26608,
-      "output": 2825,
-      "cacheCreation": 26605,
+      "input": 26559,
+      "output": 5025,
+      "cacheCreation": 26556,
       "cacheRead": 0,
-      "total": 29433,
-      "costUSD": 0.14215275,
+      "total": 31584,
+      "costUSD": 0.17496899999999999,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 71,
+    "score": 74,
     "metrics": {
-      "mustWatchCoverage": 0.667,
-      "sportDiversity": 0.286,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.429,
       "blockTypeBalance": 1,
-      "textQuality": 0.667,
+      "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Sport diversity is 29%"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 96,
+      "avgScore": 75,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 87,
+    "score": 90,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.333,
-      "favoriteCoverage": 0,
+      "recapHeadlineRate": 0.5,
+      "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 3
+      "footballCount": 5
     },
     "issues": [
-      "Only 0% of favorite teams present in results"
+      "Only 20% of favorite teams present in results"
     ]
   },
   "enrichment": {
@@ -110,14 +106,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26608,
-      "output": 2825,
+      "input": 26559,
+      "output": 5025,
       "calls": 1,
-      "total": 29433,
+      "total": 31584,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-04T18:17:55.907Z"
+    "lastRun": "2026-04-05T02:48:50.955Z"
   },
   "discovery": {
     "tokenUsage": {

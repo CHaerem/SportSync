@@ -275,7 +275,7 @@ describe("renderGolfStatus", () => {
 		});
 		const html = render({}, ctx);
 		expect(html).not.toBeNull();
-		expect(html).toContain("block-golf-card");
+		expect(html).toContain("block-golf-status");
 		expect(html).toContain("Viktor Hovland");
 		expect(html).toContain("T5");
 		expect(html).toContain("-8");
@@ -297,7 +297,7 @@ describe("renderGolfStatus", () => {
 		});
 		const html = render({}, ctx);
 		expect(html).toContain("Scottie Scheffler");
-		expect(html).toContain("golf-card-name");
+		expect(html).toContain("leads at");
 		expect(html).toContain("-15");
 	});
 
@@ -327,7 +327,7 @@ describe("renderGolfStatus", () => {
 			},
 		});
 		const html = render({}, ctx);
-		expect(html).toContain("golf-card-img");
+		expect(html).toContain("brief-headshot");
 		expect(getGolferHeadshot).toHaveBeenCalledWith("Viktor Hovland");
 	});
 });

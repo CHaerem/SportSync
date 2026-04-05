@@ -1,100 +1,5 @@
 [
   {
-    "timestamp": "2026-03-19T02:08:13.132Z",
-    "editorial": {
-      "score": 93,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.667,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 2,
-      "avgScore": 122,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 89,
-      "recapHeadlineRate": 0.056,
-      "goalScorerCoverage": 1,
-      "footballCount": 36,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 26,
-      "warningCount": 24,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 0,
-        "output": 0,
-        "calls": 0,
-        "total": 0,
-        "costUSD": 0,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 26485,
-        "output": 2534,
-        "cacheCreation": 26482,
-        "cacheRead": 0,
-        "total": 29019,
-        "costUSD": 0.1373265,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 265744,
-        "output": 2479,
-        "calls": 3,
-        "total": 268223,
-        "costUSD": 0.39110779999999995,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 26392,
-        "output": 2128,
-        "calls": 1,
-        "total": 28520,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 318621,
-        "output": 7141,
-        "calls": 5,
-        "total": 325762,
-        "costUSD": 0.5284342999999999,
-        "realPct": 91
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 97.571,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.881,
-      "enrichmentScore": 100,
-      "resultsScore": 89
-    }
-  },
-  {
     "timestamp": "2026-03-19T06:27:49.786Z",
     "editorial": {
       "score": 80,
@@ -9303,6 +9208,103 @@
       "editorialScore": 87.714,
       "mustWatchCoverage": 0.857,
       "sportDiversity": 0.657,
+      "enrichmentScore": 100,
+      "resultsScore": 87.429
+    }
+  },
+  {
+    "timestamp": "2026-04-05T02:48:50.665Z",
+    "editorial": {
+      "score": 74,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.429,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 75,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 90,
+      "recapHeadlineRate": 0.5,
+      "goalScorerCoverage": 1,
+      "footballCount": 5,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 40,
+      "warningCount": 40,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "RESULTS NOTE: recapHeadlineRate is critically low (8%) — most recent results lack matching RSS headlines, so narrative should rely on match scores/standings rather than news angles."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 22284,
+        "output": 1027,
+        "calls": 1,
+        "total": 23311,
+        "costUSD": 0.09896775,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 26559,
+        "output": 5025,
+        "cacheCreation": 26556,
+        "cacheRead": 0,
+        "total": 31584,
+        "costUSD": 0.17496899999999999,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 65807,
+        "output": 3697,
+        "calls": 1,
+        "total": 69504,
+        "costUSD": 1.0634767500000004,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 26608,
+        "output": 2825,
+        "calls": 1,
+        "total": 29433,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 141258,
+        "output": 12574,
+        "calls": 4,
+        "total": 153832,
+        "costUSD": 1.3374135000000003,
+        "realPct": 81
+      }
+    },
+    "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 84,
+      "mustWatchCoverage": 0.786,
+      "sportDiversity": 0.576,
       "enrichmentScore": 100,
       "resultsScore": 87.429
     }
