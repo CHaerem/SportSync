@@ -159,7 +159,7 @@ function renderEventSchedule(block, ctx) {
 	return html;
 }
 
-/** golf-status: renders tournament status with Norwegian player position and leaderboard snippet */
+/** golf-status: renders tournament leaderboard card with top players and tracked Norwegian */
 function renderGolfStatus(block, ctx) {
 	if (!ctx.standings?.golf) return null;
 	const tourKey = block.tournament === 'dpWorld' ? 'dpWorld' : 'pga';
@@ -167,30 +167,41 @@ function renderGolfStatus(block, ctx) {
 	if (!tour?.leaderboard?.length) return null;
 
 	const name = tour.name || (tourKey === 'pga' ? 'PGA Tour' : 'DP World Tour');
-
-	// Find tracked (Norwegian) player — data-driven via tracked flag from pipeline
 	const trackedNames = ctx._getTrackedGolferNames();
-	const norPlayer = tour.leaderboard.find(p => p.tracked)
-		|| (tour.trackedPlayers || [])[0];
 
-	const headshot = norPlayer && typeof getGolferHeadshot === 'function'
-		? getGolferHeadshot(norPlayer.player) : null;
-	const headshotImg = headshot
-		? `<img src="${headshot}" alt="${escapeHtml(norPlayer.player)}" class="brief-logo brief-headshot" loading="lazy">`
-		: '';
-
-	let html = `<div class="block-event-line editorial-line block-golf-status">\u26f3 ${escapeHtml(name)}: `;
-	if (norPlayer) {
-		html += `${headshotImg}${escapeHtml(norPlayer.player)} ${escapeHtml(norPlayer.position || '')} (${escapeHtml(norPlayer.score || '')})`;
-	} else {
-		const leader = tour.leaderboard[0];
-		html += `${escapeHtml(leader.player)} leads at ${escapeHtml(leader.score || '')}`;
+	// Determine which players to show: top 3 + tracked Norwegian if not already in top 3
+	const top3 = tour.leaderboard.slice(0, 3);
+	const norPlayer = tour.leaderboard.find(p => p.tracked) || (tour.trackedPlayers || [])[0];
+	const showPlayers = [...top3];
+	if (norPlayer && !top3.some(p => p.player === norPlayer.player)) {
+		showPlayers.push(norPlayer);
 	}
+
+	let html = `<div class="block-golf-card">`;
+	html += `<div class="golf-card-header"><span class="golf-card-tournament">\u26f3 ${escapeHtml(name)}</span></div>`;
+
+	for (const p of showPlayers) {
+		const isTracked = trackedNames.has(p.player) || p.tracked;
+		const headshot = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(p.player) : null;
+		const imgHtml = headshot
+			? `<img src="${headshot}" alt="${escapeHtml(p.player)}" class="golf-card-img" loading="lazy">`
+			: '';
+		const scoreStr = p.score || '';
+		const scoreNum = parseInt(scoreStr, 10);
+		const scoreCls = !isNaN(scoreNum) ? (scoreNum < 0 ? ' under-par' : scoreNum > 0 ? ' over-par' : '') : '';
+		html += `<div class="golf-card-player${isTracked ? ' tracked' : ''}">`;
+		html += `<span class="golf-card-pos">${escapeHtml(p.position || '')}</span>`;
+		if (imgHtml) html += imgHtml;
+		html += `<span class="golf-card-name">${escapeHtml(p.player)}</span>`;
+		html += `<span class="golf-card-score${scoreCls}">${escapeHtml(scoreStr)}</span>`;
+		html += `</div>`;
+	}
+
 	html += `</div>`;
 	return html;
 }
 
-/** chess-status: renders tournament standings with top players and round progress */
+/** chess-status: renders tournament standings card with top players and round progress */
 function renderChessStatus(block, ctx) {
 	if (!ctx.standings?.chess) return null;
 	const tourKey = block.tournament || 'candidates';
@@ -202,16 +213,28 @@ function renderChessStatus(block, ctx) {
 		? `R${tournament.round}/${tournament.totalRounds}`
 		: '';
 
-	// Show top 3 players with points
-	const top3 = tournament.standings.slice(0, 3);
-	const playerStrs = top3.map(p =>
-		`${escapeHtml(p.player.split(' ').pop())} ${p.points}`
-	);
+	const top4 = tournament.standings.slice(0, 4);
 
-	let html = `<div class="block-event-line editorial-line block-chess-status">`;
-	html += `\u265f\ufe0f ${escapeHtml(name)}`;
-	if (roundInfo) html += ` ${escapeHtml(roundInfo)}`;
-	html += `: ${playerStrs.join(' | ')}`;
+	let html = `<div class="block-chess-card">`;
+	html += `<div class="chess-card-header">`;
+	html += `<span class="chess-card-tournament">\u265f\ufe0f ${escapeHtml(name)}</span>`;
+	if (roundInfo) html += `<span class="chess-card-round">${escapeHtml(roundInfo)}</span>`;
+	html += `</div>`;
+
+	for (const p of top4) {
+		const record = [
+			p.wins != null ? `${p.wins}W` : '',
+			p.draws != null ? `${p.draws}D` : '',
+			p.losses != null ? `${p.losses}L` : '',
+		].filter(Boolean).join('/');
+		html += `<div class="chess-card-player">`;
+		html += `<span class="chess-card-pos">${p.position}</span>`;
+		html += `<span class="chess-card-name">${escapeHtml(p.player)}</span>`;
+		if (record) html += `<span class="chess-card-record">${escapeHtml(record)}</span>`;
+		html += `<span class="chess-card-pts">${p.points}</span>`;
+		html += `</div>`;
+	}
+
 	html += `</div>`;
 	return html;
 }

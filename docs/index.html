@@ -432,6 +432,58 @@
 		.block-schedule-item { font-size: 0.75rem; color: var(--muted); padding: 1px 0; line-height: 1.5; }
 		.block-schedule-more { font-size: 0.65rem; color: var(--muted); opacity: 0.7; margin-top: 2px; }
 
+		/* Golf status card */
+		.block-golf-card {
+			background: var(--bg-card); border-radius: var(--radius); padding: 12px 16px; margin: 8px 0;
+			box-shadow: var(--shadow); border-left: 3px solid var(--sport-golf);
+		}
+		.golf-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+		.golf-card-tournament { font-size: 0.68rem; font-weight: 600; color: var(--fg); }
+		.golf-card-round { font-size: 0.6rem; color: var(--muted); }
+		.golf-card-player {
+			display: flex; align-items: center; gap: 8px; padding: 5px 0;
+			border-bottom: 1px solid var(--border-light); font-size: 0.76rem;
+		}
+		.golf-card-player:last-child { border-bottom: none; }
+		.golf-card-player.tracked { background: var(--bg-accent); margin: 2px -8px; padding: 5px 8px; border-radius: var(--radius-sm); }
+		.golf-card-pos { font-size: 0.68rem; font-weight: 600; color: var(--muted); min-width: 24px; font-variant-numeric: tabular-nums; }
+		.golf-card-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+		.golf-card-name { flex: 1; font-weight: 450; }
+		.golf-card-score { font-weight: 600; font-variant-numeric: tabular-nums; }
+		.golf-card-score.under-par { color: #16a34a; }
+		.golf-card-score.over-par { color: var(--live); }
+
+		/* Chess status card */
+		.block-chess-card {
+			background: var(--bg-card); border-radius: var(--radius); padding: 12px 16px; margin: 8px 0;
+			box-shadow: var(--shadow); border-left: 3px solid var(--sport-chess);
+		}
+		.chess-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+		.chess-card-tournament { font-size: 0.68rem; font-weight: 600; color: var(--fg); }
+		.chess-card-round {
+			font-size: 0.58rem; font-weight: 600; color: var(--muted);
+			background: var(--bg-warm); border-radius: 4px; padding: 2px 7px;
+		}
+		.chess-card-player {
+			display: flex; align-items: center; gap: 8px; padding: 4px 0;
+			border-bottom: 1px solid var(--border-light); font-size: 0.74rem;
+		}
+		.chess-card-player:last-child { border-bottom: none; }
+		.chess-card-pos { font-size: 0.68rem; font-weight: 600; color: var(--muted); min-width: 18px; font-variant-numeric: tabular-nums; }
+		.chess-card-name { flex: 1; font-weight: 450; }
+		.chess-card-pts { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--fg); }
+		.chess-card-record { font-size: 0.6rem; color: var(--muted); }
+
+		/* Event-group sport borders */
+		.block-group-item[data-sport] { border-left: 2px solid; padding-left: 7px; }
+		.block-group-item[data-sport="football"] { border-left-color: var(--sport-football); }
+		.block-group-item[data-sport="golf"] { border-left-color: var(--sport-golf); }
+		.block-group-item[data-sport="tennis"] { border-left-color: var(--sport-tennis); }
+		.block-group-item[data-sport="formula1"] { border-left-color: var(--sport-f1); }
+		.block-group-item[data-sport="chess"] { border-left-color: var(--sport-chess); }
+		.block-group-item[data-sport="esports"] { border-left-color: var(--sport-esports); }
+		.block-group-item[data-sport="cycling"] { border-left-color: var(--sport-cycling); }
+
 		/* Scoped overrides: embedded cards on warm editorial background */
 		#the-brief .block-match-result {
 			margin: 10px 0 12px;
@@ -444,6 +496,10 @@
 			margin: 16px 0 6px;
 			padding-top: 12px;
 			border-top-color: var(--border);
+		}
+		#the-brief .block-golf-card,
+		#the-brief .block-chess-card {
+			border: 1px solid var(--border-light);
 		}
 
 		/* === Pills === */
