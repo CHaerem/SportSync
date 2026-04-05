@@ -1044,12 +1044,16 @@ class Dashboard {
 				return `<div class="block-event-line editorial-line${cls}"${sportAttr}>${this.renderBriefLine(block.text || '')}</div>`;
 			}
 			case 'event-group': {
+				// Detect sport from label for color-coding group items
+				const groupSport = this._detectSportFromText(block.sport, block.label || '');
 				let html = `<div class="block-event-group">`;
 				html += `<div class="block-group-label">${this.esc(block.label || '')}</div>`;
 				const items = Array.isArray(block.items) ? block.items : [];
 				for (const item of items) {
 					const text = typeof item === 'string' ? item : (item?.text || '');
-					html += `<div class="block-group-item">${this.renderBriefLine(text)}</div>`;
+					const itemSport = groupSport || this._detectSportFromText(null, text);
+					const sportAttr = itemSport ? ` data-sport="${this.esc(itemSport)}"` : '';
+					html += `<div class="block-group-item"${sportAttr}>${this.renderBriefLine(text)}</div>`;
 				}
 				html += `</div>`;
 				return html;
