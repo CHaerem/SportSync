@@ -1,46 +1,48 @@
 {
-  "generatedAt": "2026-04-05T02:48:50.657Z",
+  "generatedAt": "2026-04-05T09:20:58.921Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 86963,
+    "blockCount": 7,
+    "generationMs": 72469,
     "tokenUsage": {
-      "input": 26559,
-      "output": 5025,
-      "cacheCreation": 26556,
-      "cacheRead": 0,
-      "total": 31584,
-      "costUSD": 0.17496899999999999,
+      "input": 26702,
+      "output": 4428,
+      "cacheCreation": 17892,
+      "cacheRead": 8807,
+      "total": 31130,
+      "costUSD": 0.13616609999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 74,
+    "score": 71,
     "metrics": {
       "mustWatchCoverage": 0.5,
-      "sportDiversity": 0.429,
+      "sportDiversity": 0.286,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Sport diversity is 29%"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 75,
+      "avgScore": 69,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -66,14 +68,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 61,
+      "totalEvents": 72,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.967
+      "tagsCoverage": 0.972
     },
     "after": {
-      "totalEvents": 61,
+      "totalEvents": 72,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,23 +85,25 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 2,
-    "aiUpdatedFields": 4,
+    "aiUpdatedFields": 13,
     "failedBatches": 0,
-    "totalEvents": 61,
+    "totalEvents": 72,
     "skipStats": {
-      "total": 61,
-      "unchanged": 57,
-      "enriched": 4,
-      "skipRate": 0.93
+      "total": 72,
+      "unchanged": 59,
+      "enriched": 13,
+      "skipRate": 0.82
     },
-    "tokensPerEvent": 5828,
-    "hintsApplied": [],
+    "tokensPerEvent": 3762,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 22284,
-      "output": 1027,
-      "calls": 1,
-      "total": 23311,
-      "costUSD": 0.09896775,
+      "input": 45536,
+      "output": 3373,
+      "calls": 2,
+      "total": 48909,
+      "costUSD": 0.18610875,
       "tracked": true,
       "estimated": false
     }
