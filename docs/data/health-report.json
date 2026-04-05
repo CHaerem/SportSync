@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-05T16:12:45.681Z",
-  "eventCount": 68,
+  "generatedAt": "2026-04-05T17:12:50.515Z",
+  "eventCount": 67,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -23,9 +23,9 @@
       "delta": 0
     },
     "football": {
-      "count": 28,
+      "count": 27,
       "previousCount": 28,
-      "delta": 0
+      "delta": -1
     },
     "cycling": {
       "count": 8,
@@ -60,17 +60,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 524,
+      "ageMinutes": 584,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 113,
+      "ageMinutes": 173,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-05"
     },
     "ai-quality.json": {
-      "ageMinutes": 113,
+      "ageMinutes": 173,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 39,
+    "itemCount": 33,
     "healthy": true
   },
   "standingsHealth": {
@@ -90,17 +90,17 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 6,
+    "footballCount": 7,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.33,
+    "recapHeadlineRate": 0.29,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.18,
-    "relevantMatchRate": 0.75,
-    "eventsEnriched": 3,
+    "matchRate": 0.13,
+    "relevantMatchRate": 0.67,
+    "eventsEnriched": 2,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "4 boundary day snapshot(s) outside event range (expected)",
-      "Snapshot 2026-04-05: 9 events but events.json has 7"
+      "Snapshot 2026-04-05: 9 events but events.json has 6"
     ],
     "snapshotCount": 15
   },
@@ -133,19 +133,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 62038,
+    "totalDuration": 51741,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29673,
-        "share": 48
+        "duration": 29342,
+        "share": 57
       },
       {
         "name": "fetch-results",
-        "duration": 37414,
-        "share": 60
+        "duration": 32463,
+        "share": 63
       }
     ],
     "failedSteps": []
@@ -182,12 +182,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 524 minutes old"
+      "message": "tennis.json: data is 584 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 9 consecutive times (since 2026-04-05) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 10 consecutive times (since 2026-04-05) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "info",
@@ -202,7 +202,7 @@
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-05: 9 events but events.json has 7"
+      "message": "Snapshot 2026-04-05: 9 events but events.json has 6"
     },
     {
       "severity": "warning",
@@ -212,17 +212,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 48% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 60% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 63% of total pipeline time (32s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-05T16:12:45.790Z",
+    "computedAt": "2026-04-05T17:12:50.593Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
