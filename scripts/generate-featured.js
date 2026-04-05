@@ -414,6 +414,44 @@ export function buildResultsContext(recentResults) {
 	return `\n\nRecent results (last few days):\n${parts.join("\n")}`;
 }
 
+/**
+ * Build a "Content preferences" prompt section from engagement data.
+ * Reads block-type click counts from telemetry.blocks and produces a hint
+ * telling the LLM which block types the user engages with most.
+ *
+ * @param {Object|null} engagementData - engagement-data.json contents
+ * @returns {string} Prompt section (empty string if no meaningful data)
+ */
+export function buildBlockTypePreferences(engagementData) {
+	const blocks = engagementData?.telemetry?.blocks;
+	if (!blocks || typeof blocks !== "object") return "";
+
+	// Filter to known component/narrative block types and collect counts
+	const KNOWN_TYPES = new Set([
+		"match-result", "match-preview", "event-schedule", "golf-status", "chess-status",
+		"headline", "event-line", "event-group", "narrative", "section", "divider",
+	]);
+	const entries = Object.entries(blocks)
+		.filter(([type, count]) => KNOWN_TYPES.has(type) && typeof count === "number" && count > 0)
+		.sort((a, b) => b[1] - a[1]);
+
+	if (entries.length === 0) return "";
+
+	const totalClicks = entries.reduce((sum, [, count]) => sum + count, 0);
+	if (totalClicks < 5) return ""; // Not enough signal
+
+	// Top engaged types (>= 15% share)
+	const preferred = entries
+		.filter(([, count]) => count / totalClicks >= 0.15)
+		.map(([type]) => type);
+
+	if (preferred.length === 0) return "";
+
+	return `\n\nContent preferences (based on user engagement):
+The user engages most with these block types: ${preferred.join(", ")}.
+Favor these types when composing the editorial zone — but only when editorially appropriate. Do not force blocks that don't fit the day's events.`;
+}
+
 function buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults, mode = "live") {
 	const dateStr = now.toLocaleDateString("en-US", {
 		weekday: "long",
@@ -1226,6 +1264,14 @@ async function main() {
 			? buildPreviewSystemPrompt(VOICE)
 			: buildSystemPrompt(VOICE);
 	let baseUserPrompt = buildUserPrompt(events, now, curatedConfigs, standings, rssDigest, recentResults, FEATURED_MODE);
+
+	// Block-type engagement preferences — bias editorial composition toward types the user clicks
+	const engagementDataForPrompt = readJsonIfExists(path.join(dataDir, "engagement-data.json"));
+	const blockPrefsSection = buildBlockTypePreferences(engagementDataForPrompt);
+	if (blockPrefsSection) {
+		baseUserPrompt += blockPrefsSection;
+		console.log("Block-type engagement preferences injected into editorial prompt.");
+	}
 
 	// Adaptive hints: only for live mode (recap/preview don't need quality corrections)
 	let allHints = [];

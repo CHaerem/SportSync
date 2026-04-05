@@ -9,6 +9,7 @@ import {
 	buildFallbackHeadline,
 	buildFallbackResultLines,
 	buildFallbackNarrative,
+	buildBlockTypePreferences,
 } from "../scripts/generate-featured.js";
 
 describe("parseResponseJSON()", () => {
@@ -636,5 +637,95 @@ describe("This Week match-preview components", () => {
 		const narratives = result.blocks.filter(b => b.type === "narrative");
 		expect(narratives.length).toBe(1);
 		expect(narratives[0].text).toContain("Norwegian");
+	});
+});
+
+describe("buildBlockTypePreferences()", () => {
+	it("returns empty string when no engagement data", () => {
+		expect(buildBlockTypePreferences(null)).toBe("");
+		expect(buildBlockTypePreferences(undefined)).toBe("");
+		expect(buildBlockTypePreferences({})).toBe("");
+	});
+
+	it("returns empty string when telemetry.blocks is empty", () => {
+		expect(buildBlockTypePreferences({ telemetry: { blocks: {} } })).toBe("");
+	});
+
+	it("returns empty string when total clicks below threshold", () => {
+		const data = { telemetry: { blocks: { "match-preview": 2, "event-line": 1 } } };
+		expect(buildBlockTypePreferences(data)).toBe("");
+	});
+
+	it("returns preferred block types when engagement is sufficient", () => {
+		const data = {
+			telemetry: {
+				blocks: {
+					"match-preview": 20,
+					"golf-status": 15,
+					"event-line": 3,
+					"headline": 2,
+				},
+			},
+		};
+		const result = buildBlockTypePreferences(data);
+		expect(result).toContain("Content preferences");
+		expect(result).toContain("match-preview");
+		expect(result).toContain("golf-status");
+		// event-line at 3/40 = 7.5% is below 15% threshold
+		expect(result).not.toContain("event-line");
+	});
+
+	it("ignores unknown block types", () => {
+		const data = {
+			telemetry: {
+				blocks: {
+					"match-preview": 10,
+					"some-unknown-type": 50,
+				},
+			},
+		};
+		const result = buildBlockTypePreferences(data);
+		// Only match-preview is known; unknown type is filtered out
+		// match-preview is 10/10 = 100% so it qualifies
+		expect(result).toContain("match-preview");
+		expect(result).not.toContain("some-unknown-type");
+	});
+
+	it("returns empty string when no type reaches 15% threshold", () => {
+		// 7 types each with 1 click = 14.3% each, all below 15%
+		const data = {
+			telemetry: {
+				blocks: {
+					"match-result": 1,
+					"match-preview": 1,
+					"event-schedule": 1,
+					"golf-status": 1,
+					"headline": 1,
+					"event-line": 1,
+					"narrative": 1,
+				},
+			},
+		};
+		expect(buildBlockTypePreferences(data)).toBe("");
+	});
+
+	it("includes editorial guidance about not forcing blocks", () => {
+		const data = { telemetry: { blocks: { "match-result": 20 } } };
+		const result = buildBlockTypePreferences(data);
+		expect(result).toContain("editorially appropriate");
+	});
+
+	it("handles non-numeric counts gracefully", () => {
+		const data = {
+			telemetry: {
+				blocks: {
+					"match-preview": "not a number",
+					"golf-status": 10,
+				},
+			},
+		};
+		const result = buildBlockTypePreferences(data);
+		expect(result).toContain("golf-status");
+		expect(result).not.toContain("match-preview");
 	});
 });
