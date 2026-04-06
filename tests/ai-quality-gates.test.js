@@ -473,6 +473,41 @@ describe("evaluateEditorialQuality()", () => {
 		// Both sports covered by their respective emojis → diversity = 1
 		expect(result.metrics.sportDiversity).toBe(1);
 	});
+
+	it("keyword-based sportDiversity detection without emojis", () => {
+		const events = [
+			{ sport: "football", title: "Arsenal vs Chelsea", importance: 4, time: "2026-02-12T17:30:00Z" },
+			{ sport: "f1", title: "Japanese Grand Prix", importance: 4, time: "2026-02-12T06:00:00Z" },
+			{ sport: "cycling", title: "Tour of Flanders", importance: 4, time: "2026-02-12T10:00:00Z" },
+			{ sport: "chess", title: "Candidates Rd 5", importance: 4, time: "2026-02-12T14:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "match-preview", homeTeam: "Arsenal", awayTeam: "Chelsea" },
+				{ type: "narrative", text: "The Grand Prix weekend heats up as F1 returns to Suzuka" },
+				{ type: "event-line", text: "Cycling monument Tour of Flanders kicks off the cobbled classic season" },
+				{ type: "event-line", text: "Carlsen faces a must-win in the Candidates" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		// football via match-preview, f1 via "Grand Prix"/"F1", cycling via "Cycling"/"monument", chess via "Carlsen"/"Candidates"
+		expect(result.metrics.sportDiversity).toBe(1);
+	});
+
+	it("sportDiversity detects tennis by keyword", () => {
+		const events = [
+			{ sport: "football", title: "Match", importance: 3, time: "2026-02-12T17:30:00Z" },
+			{ sport: "tennis", title: "Australian Open Final", importance: 5, time: "2026-02-12T09:00:00Z" },
+		];
+		const featured = {
+			blocks: [
+				{ type: "match-preview", homeTeam: "A", awayTeam: "B" },
+				{ type: "narrative", text: "The Australian Open final is the highlight of the day" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now });
+		expect(result.metrics.sportDiversity).toBe(1);
+	});
 });
 
 describe("evaluateWatchPlanQuality()", () => {

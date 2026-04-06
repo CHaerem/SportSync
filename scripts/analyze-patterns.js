@@ -57,6 +57,8 @@ const KNOWN_MANAGED_CODES = new Set([
 	"football_count_collapse",  // quality regression: structural during international breaks
 	"editorial_no_narrative",   // loop 1: transient when featured.json regenerates; KNOWN_DATA_GAPS suppresses scorecard
 	"standings_empty",          // transient: ESPN standings endpoint occasionally returns empty; next fetch repairs
+	"sport_dropped",            // loop 7: events expire between tournaments; fetcher/discovery adds new events for next tournament
+	"sport_count_drop",         // loop 7: event count drops when tournaments end; normal between-tournament transition
 ]);
 
 /**

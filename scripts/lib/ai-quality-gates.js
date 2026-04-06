@@ -488,6 +488,21 @@ function sportDiversity(blocks, events) {
 	for (const [sport, emoji] of Object.entries(sportEmojis)) {
 		if (blockText.includes(emoji)) found.add(sport === "f1" ? "formula1" : sport);
 	}
+	// Also detect sports by name/keyword in text (LLMs sometimes omit emojis)
+	const textLower = blockText.toLowerCase();
+	const sportKeywords = {
+		football: /\b(?:premier league|la liga|champions league|europa league|serie a|bundesliga|ligue 1|football)\b/,
+		golf: /\b(?:pga|masters|the open|golf|lpga|dp world)\b/,
+		tennis: /\b(?:atp|wta|tennis|wimbledon|roland garros|us open|australian open|grand slam)\b/,
+		formula1: /\b(?:formula\s*1|f1|grand prix|verstappen|hamilton|norris)\b/,
+		chess: /\b(?:chess|carlsen|fide|candidates|freestyle)\b/,
+		esports: /\b(?:esports|e-sports|cs2|counter-?strike|valorant|dota)\b/,
+		cycling: /\b(?:cycling|tour de france|giro|vuelta|monument|peloton|cobble)\b/,
+		olympics: /\b(?:olympics|olympic|olympi)\b/,
+	};
+	for (const [sport, pattern] of Object.entries(sportKeywords)) {
+		if (pattern.test(textLower)) found.add(sport);
+	}
 	// Component blocks also cover sports: match-result/match-preview = football, golf-status = golf, event-schedule = filter.sport
 	for (const b of blocks) {
 		if (b.type === "match-result" || b.type === "match-preview") found.add("football");

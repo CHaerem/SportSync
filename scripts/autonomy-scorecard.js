@@ -147,6 +147,8 @@ export function evaluatePipelineHealth(dataDir = ROOT) {
 		"football_count_collapse",  // quality regression: football count drops during international breaks are structural
 		"editorial_no_narrative",   // loop 1: featured quality loop monitors narrative presence; adaptive hints drive regeneration
 		"standings_empty",          // transient: ESPN standings API occasional empty responses; next pipeline cycle re-fetches
+		"sport_dropped",            // loop 7: events expire between tournaments; fetcher/discovery adds new events for next tournament
+		"sport_count_drop",         // loop 7: event count drops when tournaments end; normal between-tournament transition
 	]);
 	const actionableIssues = Array.isArray(report.issues)
 		? report.issues.filter(i => i.severity !== "info" && !KNOWN_DATA_GAPS.has(i.code))
