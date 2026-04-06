@@ -184,6 +184,9 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 - [PENDING] [FEATURE] **End-to-end autonomous sport addition (Pillar 3 proof)** — The system should detect a sport opportunity via RSS/coverage-gaps, create a curated config, populate it via discovery loop, verify schedules, enrich, and serve on the dashboard — all without human intervention. This is the key missing piece for Pillar 3 (~88% → ~95%). Start with an `[EXPLORE]` to identify which sport has the best data availability for autonomous addition. Respects Sport Expansion Policy — only sports already in sportPreferences or explicitly requested.
 - [PENDING] [FEATURE] **Richer personalization signals (Pillar 4 advancement)** — Block-level engagement tracking exists client-side (`trackBlockEngagement` in preferences-manager.js, called from dashboard.js). Telemetry exported via `exportForBackend()`. Pipeline reads `engagement-data.json`. Remaining: (1) feed block-type preferences into editorial prompt in generate-featured.js, (2) post-event check-in mechanism. Needs real engagement data flowing via GitHub Issues to activate. Pillar 4 ~78% → ~85%.
+- [PENDING] [MAINTENANCE] **Must-watch text-level signal** — Must-watch events (importance 4-5) have only a faint background tint. Add a small "MUST WATCH" badge or bold accent on the time element so importance is visible without color perception. Files: docs/index.html CSS + docs/js/dashboard.js row render. ~20 lines.
+- [PENDING] [MAINTENANCE] **Golf featuredGroups subtitle in collapsed row** — Golf events load `featuredGroups` with groupmate names but only show in expanded detail. Add "Playing with Fleetwood" subtitle in collapsed row for at-a-glance value. Files: docs/js/dashboard.js. ~20 lines.
+- [PENDING] [MAINTENANCE] **Tennis curated config for major tournaments** — ESPN tennis API returns empty between tournament rounds, causing chronic staleness (884+ min). Create a curated config (like f1-calendar-2026.json) with major ATP/WTA tournaments + Casper Ruud schedule. Files: scripts/config/tennis-calendar-2026.json. ~30-50 lines.
 
 - [DONE] [MAINTENANCE] **La Liga standings in standings.json** — Already implemented: `fetchLaLigaStandings()` exists, called in main(), rendered in standings-renderer.js. Added La Liga to `buildStandingsContext()` for editorial prompt context. Run 31.
 - [DONE] [MAINTENANCE] **recapHeadline single-team matching** — Added 4th matching tier: single football-tagged team + 6h time proximity. Norwegian headlines mentioning only one team now match. Run 31.
@@ -243,6 +246,10 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 - [DONE] [MAINTENANCE] **generateStatusSummary fallback test coverage** — Added 9 tests for `buildFallbackSummary()` covering healthy/warning/critical status, editorial score presence/absence, edge cases. Direct-to-main. Run 41.
 - [DONE] [MAINTENANCE] **mustWatchCoverage sole-low-metric guard** — Added sole-low-metric suppression mirroring `recapHeadlineRate` pattern. When mustWatchCoverage is the only degraded metric, hint is suppressed. 3 new tests. Direct-to-main. Run 41.
 - [DONE] [FEATURE] **F1 full-season calendar config** — Created `scripts/config/f1-calendar-2026.json` with all 24 races (Australia Mar 15 through Abu Dhabi Dec 6). Includes venues, approximate race times, Viaplay broadcast info. Direct-to-main. Run 41.
+
+- [DONE] [MAINTENANCE] **sportDiversity keyword-based detection** — Enhanced `sportDiversity()` in ai-quality-gates.js to detect sports by name/keyword in block text (not just emojis). Added regex patterns for all 8 sports. 2 new tests. Direct-to-main. Run 43.
+- [DONE] [MAINTENANCE] **sport_dropped + sport_count_drop managed codes** — Added both to KNOWN_MANAGED_CODES and KNOWN_DATA_GAPS. These fire transiently between tournaments when events expire — handled by discovery/fetcher loop. Direct-to-main. Run 43.
+- [DONE] [MAINTENANCE] **UX a11y + dark mode batch** — (1) Skip-to-content link for keyboard users. (2) Sport pills `aria-pressed` + `role="toolbar"` semantics. (3) `prefers-color-scheme: dark` CSS fallback preventing white flash. PR #159. Run 43.
 
 ---
 

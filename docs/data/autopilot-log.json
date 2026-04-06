@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-06",
+      "task": "Scouting + execution: sportDiversity keyword detection + UX a11y batch (PR #159) + sport_dropped managed codes",
+      "outcome": "completed",
+      "pr": "PR #159 (merged) + direct-to-main (1 commit)",
+      "details": "Run 43: 0 user feedback, 2 pending FEATURE tasks. Investigated editorial quality decline (95→76): root cause was sportDiversity collapse + mustWatchCoverage drop during Apr 4-5, but hint system self-corrected (latest run recovered to 92). 3 parallel scouts (UX 7, Code 5, Data 4 findings). sportDiversity enhanced with keyword-based detection — now detects sports by name patterns in block text (not just emojis), 2 new tests. UX-agent worktree: PR #159 merged (skip-to-content link, sport pills aria-pressed, prefers-color-scheme dark mode fallback). sport_dropped + sport_count_drop added to both KNOWN_MANAGED_CODES and KNOWN_DATA_GAPS — transient between-tournament transitions handled by discovery loop. 2655 tests pass (+2 new). Autonomy: 12/13 loops (preferenceEvolution 0.5 — structural, needs real engagement data export).",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 22,
+      "lesson": "Quality pattern declines (editorial 95→76, mustWatchCoverage 94%→64%) were successfully self-corrected by adaptive hints — the system's feedback loops work. sportDiversity detection had a gap: emojis-only detection missed sport references by name. Adding keyword patterns (regex per sport) catches these cases. UX worktree agent ran clean (no Bash permission issues this run). KNOWN_MANAGED_CODES/KNOWN_DATA_GAPS sync remains critical — always update both together. Tennis stale data is structural (ESPN returns empty between rounds), not a fetcher bug. User-visible/infrastructure ratio: 67%/33% (3 UX a11y + 1 quality metric / 1 managed code suppression).",
+      "scouted": 3
+    },
+    {
       "date": "2026-04-04",
       "task": "Execution: 5 tasks — 1 UX + 1 data + 2 code + 1 proactive triggers (3 parallel worktree agents)",
       "outcome": "completed",
