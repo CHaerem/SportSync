@@ -70,6 +70,13 @@
 			--shadow: 0 1px 4px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.12);
 		}
 
+		@media (prefers-color-scheme: dark) {
+			:root:not(.light) { --bg: #1a1816; --bg-card: #242220; --bg-warm: #2a2725; --bg-secondary: #2a2725; --bg-accent: rgba(194,90,52,0.08); --fg: #f5f2eb; --fg-2: #c4bfb6; --muted: #8a857e; --muted-light: #5a564f; --border: #3a3632; --border-light: #2f2c28; --border-strong: #f5f2eb; --live-bg: rgba(220,53,69,0.08); --shadow: 0 1px 4px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.12); }
+		}
+
+		.skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; z-index: 100; }
+		.skip-link:focus { position: fixed; top: 0; left: 0; width: auto; height: auto; padding: 8px 16px; background: var(--bg); color: var(--fg); font-size: 0.8rem; border: 2px solid var(--accent); z-index: 9999; }
+
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
 		body {
@@ -1365,6 +1372,7 @@
 	</style>
 </head>
 <body>
+	<a href="#the-brief" class="skip-link">Skip to content</a>
 	<div class="page">
 		<div id="ptr-indicator"><span class="ptr-icon">&#x21bb;</span></div>
 		<div class="masthead" role="banner" aria-label="SportSync header">

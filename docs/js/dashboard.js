@@ -809,15 +809,15 @@ class Dashboard {
 			cycling: 'var(--sport-cycling)',
 		};
 
-		let html = '<div class="pills-scroll" role="navigation" aria-label="Sport filters">';
-		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports">All</button>`;
+		let html = '<div class="pills-scroll" role="toolbar" aria-label="Filter by sport">';
+		html += `<button class="pill${!this.activeSportFilter ? ' active' : ''}" data-sport="" aria-label="Show all sports" aria-pressed="${!this.activeSportFilter}">All</button>`;
 		for (const sportId of activeSports) {
 			const sc = SPORT_CONFIG.find(s => s.id === sportId);
 			if (!sc) continue;
 			const isActive = this.activeSportFilter === sportId;
 			const dotColor = sportVars[sportId] || sc.color;
 			const count = todayEvents.filter(e => e.sport === sportId).length;
-			html += `<button class="pill${isActive ? ' active' : ''}" data-sport="${this.esc(sportId)}"><span class="pill-dot" style="background:${dotColor}"></span>${this.esc(sc.name)}<span class="pill-count">${count}</span></button>`;
+			html += `<button class="pill${isActive ? ' active' : ''}" data-sport="${this.esc(sportId)}" aria-pressed="${isActive}"><span class="pill-dot" style="background:${dotColor}"></span>${this.esc(sc.name)}<span class="pill-count">${count}</span></button>`;
 		}
 		html += '</div>';
 		el.innerHTML = html;
