@@ -2,45 +2,105 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Madrid stung, Barcelona flying — CL quarter-finals ignite tomorrow"
+      "text": "Barcelona 1-2 Atlético Madrid"
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Atlético Madrid",
+      "awayTeam": "Barcelona",
+      "_fallbackText": "⚽ FT: Atlético Madrid 1-2 Barcelona — Giuliano Simeone 39', Marcus Rashford 42'"
     },
     {
       "type": "event-line",
-      "text": "♟️ 10:15 — Carlsen, Grenke Freestyle Rd 8 — world champion fired up and in action"
+      "text": "♟️ Round 8 – Grenke Chess Festival 2026 | Freestyle Open A, 10:15"
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Girona",
+      "awayTeam": "Villarreal",
+      "showStandings": true,
+      "_fallbackText": "⚽ Girona v Villarreal, 21:00, La Liga — Villarreal visit Girona in a La Liga fixture that could matter for Europa League spots; neither side is a viewer favourite"
+    },
+    {
+      "type": "event-line",
+      "text": "🎾 Upper Austria Ladies Linz, 06:00 — ATP/WTA Tour"
+    },
+    {
+      "type": "event-line",
+      "text": "🎾 Grand Prix Open Villa de Madrid by Silverway, 06:00 — ATP/WTA Tour"
+    },
+    {
+      "type": "section",
+      "id": "football",
+      "title": "Champions League",
+      "emoji": "⚽",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Tue 21:00 — Bayern Munich at Real Madrid",
+          "type": "event"
+        },
+        {
+          "text": "Tue 21:00 — Arsenal at Sporting CP",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Atlético Madrid at Barcelona",
+          "type": "event"
+        },
+        {
+          "text": "Wed 21:00 — Liverpool at Paris Saint-Germain",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
+    },
+    {
+      "type": "section",
+      "id": "golf",
+      "title": "PGA Tour",
+      "emoji": "⛳",
+      "style": "highlight",
+      "items": [
+        {
+          "text": "Thu 06:00 — Masters Tournament 🇳🇴",
+          "type": "event"
+        }
+      ],
+      "expandLabel": null,
+      "expandItems": []
     },
     {
       "type": "golf-status",
-      "tournament": "pga"
+      "tournament": "pga",
+      "_fallbackText": "⛳ Valero Texas Open"
     },
     {
-      "type": "narrative",
-      "text": "Real Madrid arrive at Tuesday's Bernabéu clash bruised from Saturday's Mallorca defeat. Barcelona, meanwhile, crushed Atlético 2-1 in stoppage time — and face them again in the CL on Wednesday."
+      "type": "chess-status",
+      "tournament": "candidates",
+      "_fallbackText": "♟️ FIDE Candidates Tournament 2026: Javokhir Sindarov 4.5 pts"
+    },
+    {
+      "type": "divider",
+      "text": "This Week"
     },
     {
       "type": "match-preview",
       "homeTeam": "Real Madrid",
       "awayTeam": "Bayern Munich",
-      "showStandings": false
+      "showStandings": true,
+      "_fallbackText": "⚽ Tue 21:00 — Bayern Munich at Real Madrid"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Atlético Madrid",
-      "showStandings": false
+      "type": "event-line",
+      "text": "⛳ Thu 06:00 — Masters Tournament"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Sporting CP",
-      "awayTeam": "Arsenal",
-      "showStandings": false
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Paris Saint-Germain",
-      "awayTeam": "Liverpool",
-      "showStandings": false
+      "type": "event-line",
+      "text": "🏆 Sun 10:50 — Paris-Roubaix 2026"
     }
   ],
-  "generatedAt": "2026-04-05T22:12:26.807Z",
-  "provider": "claude-cli"
+  "generatedAt": "2026-04-06T06:53:27.742Z",
+  "provider": "fallback"
 }
