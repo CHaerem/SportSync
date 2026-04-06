@@ -1,79 +1,79 @@
 {
-  "generatedAt": "2026-04-06T06:53:27.762Z",
+  "generatedAt": "2026-04-06T22:16:35.186Z",
   "featured": {
-    "provider": "fallback",
-    "model": "fallback",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "provider": "claude-cli",
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
-    "score": 90,
-    "issues": [
-      "14 blocks exceeds recommended max of 10."
-    ],
-    "blockCount": 14,
-    "generationMs": 180117,
+    "score": 100,
+    "issues": [],
+    "blockCount": 8,
+    "generationMs": 167288,
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0
+      "input": 53764,
+      "output": 10282,
+      "cacheCreation": 26879,
+      "cacheRead": 26879,
+      "total": 64046,
+      "costUSD": 0.26310795000000003,
+      "tracked": true,
+      "estimated": false,
+      "calls": 1
     }
   },
   "editorial": {
-    "score": 94,
+    "score": 88,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 1,
+      "sportDiversity": 0.4,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
-      "blockCountTarget": 0.4,
+      "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Block count 14 is outside ideal range (3-8)"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 2,
-      "avgScore": 97,
+      "pickCount": 3,
+      "avgScore": 85,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 87,
+    "score": 89,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
+      "recapHeadlineRate": 0.429,
       "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 9
+      "footballCount": 16
     },
     "issues": [
-      "Only 0% of recent results have recap headlines",
       "Only 20% of favorite teams present in results"
     ]
   },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 0,
-    "quotaModel": null,
+    "quotaTier": 1,
+    "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 74,
+      "totalEvents": 72,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.973
+      "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 74,
+      "totalEvents": 72,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 2,
-    "aiUpdatedFields": 9,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 74,
+    "totalEvents": 72,
     "skipStats": {
-      "total": 74,
-      "unchanged": 65,
-      "enriched": 9,
-      "skipRate": 0.88
+      "total": 72,
+      "unchanged": 72,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 2808,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 23056,
-      "output": 2219,
-      "calls": 1,
-      "total": 25275,
-      "costUSD": 0.11974275000000001,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }

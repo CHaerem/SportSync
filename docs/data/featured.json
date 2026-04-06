@@ -2,105 +2,45 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "Barcelona 1-2 Atlético Madrid"
-    },
-    {
-      "type": "match-result",
-      "homeTeam": "Atlético Madrid",
-      "awayTeam": "Barcelona",
-      "_fallbackText": "⚽ FT: Atlético Madrid 1-2 Barcelona — Giuliano Simeone 39', Marcus Rashford 42'"
-    },
-    {
-      "type": "event-line",
-      "text": "♟️ Round 8 – Grenke Chess Festival 2026 | Freestyle Open A, 10:15"
+      "text": "Bernabéu night: Bayern vs Real Madrid, Europe's biggest stage"
     },
     {
       "type": "match-preview",
-      "homeTeam": "Girona",
-      "awayTeam": "Villarreal",
-      "showStandings": true,
-      "_fallbackText": "⚽ Girona v Villarreal, 21:00, La Liga — Villarreal visit Girona in a La Liga fixture that could matter for Europa League spots; neither side is a viewer favourite"
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Bayern Munich",
+      "showStandings": false
     },
     {
-      "type": "event-line",
-      "text": "🎾 Upper Austria Ladies Linz, 06:00 — ATP/WTA Tour"
+      "type": "match-preview",
+      "homeTeam": "Sporting CP",
+      "awayTeam": "Arsenal",
+      "showStandings": false
     },
     {
-      "type": "event-line",
-      "text": "🎾 Grand Prix Open Villa de Madrid by Silverway, 06:00 — ATP/WTA Tour"
-    },
-    {
-      "type": "section",
-      "id": "football",
-      "title": "Champions League",
-      "emoji": "⚽",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Tue 21:00 — Bayern Munich at Real Madrid",
-          "type": "event"
-        },
-        {
-          "text": "Tue 21:00 — Arsenal at Sporting CP",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Atlético Madrid at Barcelona",
-          "type": "event"
-        },
-        {
-          "text": "Wed 21:00 — Liverpool at Paris Saint-Germain",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "section",
-      "id": "golf",
-      "title": "PGA Tour",
-      "emoji": "⛳",
-      "style": "highlight",
-      "items": [
-        {
-          "text": "Thu 06:00 — Masters Tournament 🇳🇴",
-          "type": "event"
-        }
-      ],
-      "expandLabel": null,
-      "expandItems": []
-    },
-    {
-      "type": "golf-status",
-      "tournament": "pga",
-      "_fallbackText": "⛳ Valero Texas Open"
+      "type": "narrative",
+      "text": "Arsenal arrive in Lisbon nine points clear at the top of the Premier League — Arteta's side chasing glory on two fronts. A first-leg result in Portugal could be season-defining."
     },
     {
       "type": "chess-status",
-      "tournament": "candidates",
-      "_fallbackText": "♟️ FIDE Candidates Tournament 2026: Javokhir Sindarov 4.5 pts"
+      "tournament": "candidates"
     },
     {
       "type": "divider",
       "text": "This Week"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Real Madrid",
-      "awayTeam": "Bayern Munich",
-      "showStandings": true,
-      "_fallbackText": "⚽ Tue 21:00 — Bayern Munich at Real Madrid"
+      "type": "event-group",
+      "label": "⚽ Wed 21:00 — CL quarter-finals, night two",
+      "items": [
+        "Barcelona vs Atlético Madrid — La Liga's top two collide in Europe ★5",
+        "PSG vs Liverpool — Parc des Princes hosts a blockbuster ★5"
+      ]
     },
     {
       "type": "event-line",
-      "text": "⛳ Thu 06:00 — Masters Tournament"
-    },
-    {
-      "type": "event-line",
-      "text": "🏆 Sun 10:50 — Paris-Roubaix 2026"
+      "text": "⛳ Thu 06:00 — The Masters begins at Augusta. Hovland and Reitan hunt the green jacket ★5"
     }
   ],
-  "generatedAt": "2026-04-06T06:53:27.742Z",
-  "provider": "fallback"
+  "generatedAt": "2026-04-06T22:16:35.165Z",
+  "provider": "claude-cli"
 }
