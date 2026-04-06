@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-06T06:53:45.255Z",
+  "generatedAt": "2026-04-06T07:37:09.140Z",
   "eventCount": 74,
   "sportCoverage": {
     "esports": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 34,
-      "previousCount": 26,
-      "delta": 8
+      "previousCount": 34,
+      "delta": 0
     },
     "cycling": {
       "count": 8,
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 7,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1405,
+      "ageMinutes": 1449,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 44,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-06"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 44,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 28,
+    "itemCount": 31,
     "healthy": true
   },
   "standingsHealth": {
@@ -125,21 +125,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 14,
-    "sevenDay": 46,
+    "fiveHour": 8,
+    "sevenDay": 48,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 263887,
+    "totalDuration": 533256,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
+        "name": "discover-events",
+        "duration": 180214,
+        "share": 34
+      },
+      {
         "name": "generate-featured",
-        "duration": 114854,
-        "share": 44
+        "duration": 180906,
+        "share": 34
       }
     ],
     "failedSteps": [
@@ -178,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 1405 minutes old"
+      "message": "tennis.json: data is 1449 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 13 consecutive times (since 2026-04-05) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 14 consecutive times (since 2026-04-05) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "info",
@@ -203,7 +208,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 44% of total pipeline time (115s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (180s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"generate-featured\" used 34% of total pipeline time (181s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -213,7 +223,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-06T06:53:45.349Z",
+    "computedAt": "2026-04-06T07:37:09.222Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -231,7 +241,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 9,
+    "ageHours": 1,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
