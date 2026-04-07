@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T19:28:52.583Z",
+  "generatedAt": "2026-04-07T20:16:30.718Z",
   "eventCount": 87,
   "sportCoverage": {
     "esports": {
@@ -14,13 +14,13 @@
     },
     "chess": {
       "count": 3,
-      "previousCount": 4,
-      "delta": -1
+      "previousCount": 3,
+      "delta": 0
     },
     "football": {
       "count": 33,
-      "previousCount": 35,
-      "delta": -2
+      "previousCount": 33,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -56,7 +56,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 122,
+      "ageMinutes": 170,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-07"
     },
     "ai-quality.json": {
-      "ageMinutes": 122,
+      "ageMinutes": 170,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 36,
+    "itemCount": 37,
     "healthy": true
   },
   "standingsHealth": {
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "3 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 1014 minutes old (stale > 240m)",
+      "Day snapshots are 1061 minutes old (stale > 240m)",
       "Snapshot 2026-04-07: 4 events but events.json has 1"
     ],
     "snapshotCount": 15
@@ -188,7 +188,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 1014 minutes old (stale > 240m)"
+      "message": "Day snapshots are 1061 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
@@ -213,7 +213,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-04-07T19:28:52.707Z",
+    "computedAt": "2026-04-07T20:16:30.809Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -231,7 +231,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
