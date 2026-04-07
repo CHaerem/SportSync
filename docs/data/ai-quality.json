@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T06:38:50.306Z",
+  "generatedAt": "2026-04-07T17:26:33.408Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -7,29 +7,31 @@
     "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"♟️ 14:30 — FIDE Candidates Round 8, Cyprus. Halfwa...\""
+    ],
     "blockCount": 8,
-    "generationMs": 71105,
+    "generationMs": 60025,
     "tokenUsage": {
-      "input": 27096,
-      "output": 3905,
-      "cacheCreation": 18286,
-      "cacheRead": 8807,
-      "total": 31001,
-      "costUSD": 0.1297986,
+      "input": 27077,
+      "output": 3295,
+      "cacheCreation": 27074,
+      "cacheRead": 0,
+      "total": 30372,
+      "costUSD": 0.15096150000000003,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 88,
+    "score": 89,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.4,
+      "sportDiversity": 0.6,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.8,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -40,23 +42,24 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 88,
+      "avgScore": 94,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 89,
+    "score": 87,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.429,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.2,
       "golfPresent": 1,
       "footballCount": 16
     },
     "issues": [
+      "Only 0% of recent results have recap headlines",
       "Only 20% of favorite teams present in results"
     ]
   },
@@ -70,7 +73,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.922
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 90,
@@ -82,24 +85,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 7,
-    "aiUpdatedFields": 20,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 90,
     "skipStats": {
       "total": 90,
-      "unchanged": 70,
-      "enriched": 20,
-      "skipRate": 0.78
+      "unchanged": 90,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 2426,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 46807,
-      "output": 1714,
-      "calls": 2,
-      "total": 48521,
-      "costUSD": 0.16613145,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
