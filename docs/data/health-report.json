@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T21:20:05.279Z",
+  "generatedAt": "2026-04-07T22:17:46.341Z",
   "eventCount": 87,
   "sportCoverage": {
     "esports": {
@@ -40,37 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 234,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-07"
     },
     "ai-quality.json": {
-      "ageMinutes": 234,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "3 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 1125 minutes old (stale > 240m)",
+      "Day snapshots are 1183 minutes old (stale > 240m)",
       "Snapshot 2026-04-07: 4 events but events.json has 1"
     ],
     "snapshotCount": 15
@@ -188,7 +188,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 1125 minutes old (stale > 240m)"
+      "message": "Day snapshots are 1183 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
@@ -213,7 +213,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-04-07T21:20:05.378Z",
+    "computedAt": "2026-04-07T22:17:46.463Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -231,7 +231,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -259,7 +259,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 2 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Pipeline is critical with 1 critical, 2 warning issue(s). Editorial quality score is 88/100.",
     "tokenUsage": null
   }
 }

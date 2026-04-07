@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T17:26:33.408Z",
+  "generatedAt": "2026-04-07T22:17:45.364Z",
   "featured": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
@@ -7,31 +7,29 @@
     "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
-    "score": 95,
-    "issues": [
-      "event-line block exceeds 20 words: \"♟️ 14:30 — FIDE Candidates Round 8, Cyprus. Halfwa...\""
-    ],
+    "score": 100,
+    "issues": [],
     "blockCount": 8,
-    "generationMs": 60025,
+    "generationMs": 78880,
     "tokenUsage": {
-      "input": 27077,
-      "output": 3295,
-      "cacheCreation": 27074,
+      "input": 27041,
+      "output": 3864,
+      "cacheCreation": 27038,
       "cacheRead": 0,
-      "total": 30372,
-      "costUSD": 0.15096150000000003,
+      "total": 30905,
+      "costUSD": 0.1593615,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 89,
+    "score": 88,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
+      "sportDiversity": 0.4,
       "blockTypeBalance": 1,
-      "textQuality": 0.8,
+      "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -42,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 94,
+      "avgScore": 103,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -56,7 +54,7 @@
       "recapHeadlineRate": 0,
       "favoriteCoverage": 0.2,
       "golfPresent": 1,
-      "footballCount": 16
+      "footballCount": 20
     },
     "issues": [
       "Only 0% of recent results have recap headlines",
@@ -69,14 +67,14 @@
     "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 90,
+      "totalEvents": 87,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 90,
+      "totalEvents": 87,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -88,10 +86,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 90,
+    "totalEvents": 87,
     "skipStats": {
-      "total": 90,
-      "unchanged": 90,
+      "total": 87,
+      "unchanged": 87,
       "enriched": 0,
       "skipRate": 1
     },
