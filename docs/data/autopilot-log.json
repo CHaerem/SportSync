@@ -1,6 +1,17 @@
 {
   "runs": [
     {
+      "date": "2026-04-07",
+      "task": "Execution: 3 MAINTENANCE tasks (must-watch badge, golf subtitle, tennis config) + EXPLORE (sport addition pipeline gaps)",
+      "outcome": "completed",
+      "pr": "PR #160 (merged: must-watch pill + golf playing-with subtitle) + direct-to-main (tennis config + league-config fix + capabilities)",
+      "details": "Run 44: 0 user feedback, 5 pending tasks. Batched UX tasks to ux-agent (worktree branch PR): must-watch pill badge on importance≥4 collapsed rows + golf featuredGroups 'Playing with...' subtitle. Data-agent: tennis-calendar-2026.json (14 tournaments, 5 Norwegian athletes, Casper Ruud) + EXPLORE on autonomous sport addition. Tests broke post-merge: new tennis config produced 'ATP/WTA Tennis Calendar 2026' tournament name not in league-config.json — fixed by adding entry. All 5310 tests pass. UX ratio: 2 UX + 1 data / 1 league-config fix = 75%/25% user-visible/infrastructure (above 50% target). EXPLORE findings: cycling is best candidate for end-to-end autonomous sport addition (has prefs, configs, athletes, no fetcher).",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 18,
+      "lesson": "New curated configs must have their tournament 'name' field added to docs/data/league-config.json or tests fail (dashboard-structure.test.js checks all tournament names). Pattern: when creating a config, always check league-config.json for the tournament name. Tennis curated config pattern mirrors F1: covers between-API-round gaps with static tournament schedule. EXPLORE on sport addition identified cycling as best candidate: has user preferences, existing curated data, Norwegian athletes — only missing is the fetcher script."
+    },
+    {
       "date": "2026-04-06",
       "task": "Scouting + execution: sportDiversity keyword detection + UX a11y batch (PR #159) + sport_dropped managed codes",
       "outcome": "completed",
