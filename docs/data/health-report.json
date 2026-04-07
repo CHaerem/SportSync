@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T20:16:30.718Z",
+  "generatedAt": "2026-04-07T21:20:05.279Z",
   "eventCount": 87,
   "sportCoverage": {
     "esports": {
@@ -64,13 +64,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 234,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-07"
     },
     "ai-quality.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 234,
       "stale": false
     }
   },
@@ -79,7 +79,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 37,
+    "itemCount": 40,
     "healthy": true
   },
   "standingsHealth": {
@@ -90,16 +90,16 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 18,
+    "footballCount": 20,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.06,
+    "recapHeadlineRate": 0.05,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
     "matchRate": 0.09,
-    "relevantMatchRate": 0.5,
+    "relevantMatchRate": 1,
     "eventsEnriched": 2,
     "trend": "stable",
     "pendingAliasSuggestions": 0
@@ -108,7 +108,7 @@
     "present": true,
     "issues": [
       "3 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 1061 minutes old (stale > 240m)",
+      "Day snapshots are 1125 minutes old (stale > 240m)",
       "Snapshot 2026-04-07: 4 events but events.json has 1"
     ],
     "snapshotCount": 15
@@ -188,7 +188,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 1061 minutes old (stale > 240m)"
+      "message": "Day snapshots are 1125 minutes old (stale > 240m)"
     },
     {
       "severity": "critical",
@@ -213,7 +213,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-04-07T20:16:30.809Z",
+    "computedAt": "2026-04-07T21:20:05.378Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -231,7 +231,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 2,
+    "ageHours": 3,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
