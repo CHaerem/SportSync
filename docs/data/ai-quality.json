@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-04-07T02:34:43.773Z",
+  "generatedAt": "2026-04-07T06:38:50.306Z",
   "featured": {
     "provider": "claude-cli",
-    "model": "default",
-    "quotaTier": null,
-    "quotaModel": null,
+    "model": "claude-sonnet-4-6",
+    "quotaTier": 2,
+    "quotaModel": "claude-sonnet-4-6",
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 57254,
+    "generationMs": 71105,
     "tokenUsage": {
-      "input": 27097,
-      "output": 2782,
-      "cacheCreation": 27094,
-      "cacheRead": 0,
-      "total": 29879,
-      "costUSD": 0.1433415,
+      "input": 27096,
+      "output": 3905,
+      "cacheCreation": 18286,
+      "cacheRead": 8807,
+      "total": 31001,
+      "costUSD": 0.1297986,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 92,
+    "score": 88,
     "metrics": {
       "mustWatchCoverage": 1,
-      "sportDiversity": 0.6,
+      "sportDiversity": 0.4,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 85,
+      "avgScore": 88,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -63,17 +63,17 @@
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 1,
+    "quotaTier": 2,
     "quotaModel": "claude-sonnet-4-6",
     "before": {
-      "totalEvents": 72,
+      "totalEvents": 90,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.922
     },
     "after": {
-      "totalEvents": 72,
+      "totalEvents": 90,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -82,24 +82,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 7,
+    "aiUpdatedFields": 20,
     "failedBatches": 0,
-    "totalEvents": 72,
+    "totalEvents": 90,
     "skipStats": {
-      "total": 72,
-      "unchanged": 72,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 90,
+      "unchanged": 70,
+      "enriched": 20,
+      "skipRate": 0.78
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 2426,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 46807,
+      "output": 1714,
+      "calls": 2,
+      "total": 48521,
+      "costUSD": 0.16613145,
       "tracked": true,
       "estimated": false
     }
