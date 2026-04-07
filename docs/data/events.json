@@ -48,76 +48,6 @@
     "_enrichHash": "8375012c88b3d184ba545872f9916874"
   },
   {
-    "sport": "tennis",
-    "tournament": "ATP/WTA Tour",
-    "title": "Upper Austria Ladies Linz",
-    "time": "2026-04-05T04:00:00.000Z",
-    "endTime": "2026-04-13T03:59:00.000Z",
-    "venue": "TBD",
-    "meta": "ATP/WTA Tour",
-    "norwegian": false,
-    "streaming": [
-      {
-        "platform": "Discovery+",
-        "url": "https://www.discoveryplus.no",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "importance": 2,
-    "importanceReason": "WTA 250-level event, no Norwegian players involved",
-    "summary": "Lower-tier WTA indoor clay event in Linz with no Norwegian players or standout storylines.",
-    "tags": [
-      "watchlist"
-    ],
-    "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-06T22:13:47.096Z",
-    "_enrichHash": "7389b2b82750a2508d8d9cf0ab616a1c"
-  },
-  {
-    "sport": "tennis",
-    "tournament": "ATP/WTA Tour",
-    "title": "Grand Prix Open Villa de Madrid by Silverway",
-    "time": "2026-04-05T04:00:00.000Z",
-    "endTime": "2026-04-13T03:59:00.000Z",
-    "venue": "TBD",
-    "meta": "ATP/WTA Tour",
-    "norwegian": false,
-    "streaming": [
-      {
-        "platform": "Discovery+",
-        "url": "https://www.discoveryplus.no",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "importance": 2,
-    "importanceReason": "Smaller ATP/WTA event in Madrid, limited stakes",
-    "summary": "Club-level ATP/WTA clay-court event in Madrid; no Norwegian players and limited title-race implications.",
-    "tags": [
-      "watchlist"
-    ],
-    "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-06T22:13:47.096Z",
-    "_enrichHash": "0d2df41280dbc99a20e4d30de146f896"
-  },
-  {
     "sport": "chess",
     "tournament": "FIDE Candidates Tournament 2026",
     "title": "Round 8 – FIDE Candidates Tournament 2026",
@@ -404,8 +334,45 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "TV 2 Sport 1",
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "N1Bet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -428,7 +395,9 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-06T22:13:47.097Z",
-    "_enrichHash": "def793b14331aeb43e872a344f112f3f"
+    "_enrichHash": "def793b14331aeb43e872a344f112f3f",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -442,8 +411,45 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Lilibet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "N1Bet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -465,7 +471,9 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-06T22:13:47.097Z",
-    "_enrichHash": "fedcb7639da12ff2220d0feb5da936fe"
+    "_enrichHash": "fedcb7639da12ff2220d0feb5da936fe",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "golf",
@@ -1050,6 +1058,39 @@
     "_enrichHash": "9a8a8ca10ea340be67f2cf952a18f44e"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Monte-Carlo Masters 2026",
+    "time": "2026-04-12T09:00:00Z",
+    "endTime": "2026-04-19T14:00:00Z",
+    "venue": "Monte-Carlo Country Club, Roquebrune-Cap-Martin, France",
+    "meta": {
+      "category": "ATP Masters 1000",
+      "surface": "Clay"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "football",
     "tournament": "La Liga",
     "title": "Real Betis at Osasuna",
@@ -1334,6 +1375,221 @@
     "_enrichHash": "8436d21975f71d8e1135a0671a98426a"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "BMW Open by Bitpanda",
+    "time": "2026-04-13T04:00:00.000Z",
+    "endTime": "2026-04-20T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "Barcelona Open Banc Sabadell",
+    "time": "2026-04-13T04:00:00.000Z",
+    "endTime": "2026-04-20T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "Porsche Tennis Grand Prix",
+    "time": "2026-04-13T04:00:00.000Z",
+    "endTime": "2026-04-20T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "Open Capfinances Rouen Métropole",
+    "time": "2026-04-13T04:00:00.000Z",
+    "endTime": "2026-04-20T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "Oeiras Jamor Ladies Open",
+    "time": "2026-04-13T04:00:00.000Z",
+    "endTime": "2026-04-20T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Leeds United at Manchester United",
+    "time": "2026-04-13T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Old Trafford",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Manchester United",
+    "awayTeam": "Leeds United",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Getafe at Levante",
+    "time": "2026-04-13T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Estadi Ciutat de València",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Levante",
+    "awayTeam": "Getafe",
+    "isFavorite": false
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Barcelona Open 2026",
+    "time": "2026-04-19T09:00:00Z",
+    "endTime": "2026-04-26T14:00:00Z",
+    "venue": "Real Club de Tenis Barcelona, Barcelona, Spain",
+    "meta": {
+      "category": "ATP 500",
+      "surface": "Clay"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "f1",
     "tournament": "Formula 1 World Championship 2026",
     "title": "Bahrain Grand Prix 2026",
@@ -1371,6 +1627,39 @@
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-06T22:13:47.097Z",
     "_enrichHash": "a7d5cc3750111104545a71503cb95267"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Madrid Open 2026",
+    "time": "2026-04-26T09:00:00Z",
+    "endTime": "2026-05-10T16:00:00Z",
+    "venue": "Caja Mágica, Madrid, Spain",
+    "meta": {
+      "category": "ATP/WTA Masters 1000",
+      "surface": "Clay"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "f1",
@@ -1457,6 +1746,39 @@
     "norwegianRelevance": 4,
     "enrichedAt": "2026-04-06T22:13:47.097Z",
     "_enrichHash": "81b33f906e26111215bf7b54e86b4cef"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Italian Open (Internazionali d'Italia) 2026",
+    "time": "2026-05-10T08:00:00Z",
+    "endTime": "2026-05-17T14:00:00Z",
+    "venue": "Foro Italico, Rome, Italy",
+    "meta": {
+      "category": "ATP/WTA Masters 1000",
+      "surface": "Clay"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "f1",
@@ -1555,6 +1877,39 @@
     "norwegianRelevance": 5,
     "enrichedAt": "2026-04-06T22:13:47.097Z",
     "_enrichHash": "48418aa42b3b66a9997ee76cdba54888"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Roland Garros (French Open) 2026",
+    "time": "2026-05-24T09:00:00Z",
+    "endTime": "2026-06-07T14:00:00Z",
+    "venue": "Stade Roland Garros, Paris, France",
+    "meta": {
+      "category": "Grand Slam",
+      "surface": "Clay"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "f1",
@@ -2015,6 +2370,39 @@
     "enrichedAt": "2026-04-06T22:13:47.098Z"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Wimbledon 2026",
+    "time": "2026-06-29T10:00:00Z",
+    "endTime": "2026-07-12T15:00:00Z",
+    "venue": "All England Lawn Tennis Club, London, United Kingdom",
+    "meta": {
+      "category": "Grand Slam",
+      "surface": "Grass"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "football",
     "tournament": "FIFA World Cup 2026",
     "title": "FIFA World Cup 2026 — Round of 32",
@@ -2409,6 +2797,39 @@
     "_enrichHash": "69f5090b78f3e53566bf98dcebb43ccd"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Canadian Open (Rogers Cup) 2026",
+    "time": "2026-08-09T15:00:00Z",
+    "endTime": "2026-08-16T20:00:00Z",
+    "venue": "IGA Stadium / Sobeys Stadium, Canada",
+    "meta": {
+      "category": "ATP/WTA Masters 1000",
+      "surface": "Hard"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "cycling",
     "tournament": "Cycling Grand Tours & Norwegian Races 2026",
     "title": "Arctic Race of Norway 2026",
@@ -2467,6 +2888,39 @@
     "norwegianRelevance": 5,
     "enrichedAt": "2026-04-06T22:13:47.098Z",
     "_enrichHash": "e7f1362e0b7cab2e43d263a729c96059"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Cincinnati Open 2026",
+    "time": "2026-08-16T15:00:00Z",
+    "endTime": "2026-08-23T20:00:00Z",
+    "venue": "Lindner Family Tennis Center, Cincinnati, Ohio, USA",
+    "meta": {
+      "category": "ATP/WTA Masters 1000",
+      "surface": "Hard"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "cycling",
@@ -2552,6 +3006,39 @@
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-06T22:13:47.098Z",
     "_enrichHash": "6523b8534e9c3dbbe3c3d9d35566c817"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "US Open 2026",
+    "time": "2026-08-31T15:00:00Z",
+    "endTime": "2026-09-13T20:00:00Z",
+    "venue": "USTA Billie Jean King National Tennis Center, New York, USA",
+    "meta": {
+      "category": "Grand Slam",
+      "surface": "Hard"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "f1",
@@ -2691,6 +3178,39 @@
     "_enrichHash": "fa96e828e797394b590d5e37e30471b4"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Shanghai Masters 2026",
+    "time": "2026-10-04T03:00:00Z",
+    "endTime": "2026-10-12T10:00:00Z",
+    "venue": "Qizhong Forest Sports City Arena, Shanghai, China",
+    "meta": {
+      "category": "ATP Masters 1000",
+      "surface": "Hard"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "f1",
     "tournament": "Formula 1 World Championship 2026",
     "title": "Singapore Grand Prix 2026",
@@ -2808,6 +3328,68 @@
     "_enrichHash": "d68199a0a620133d2bb403152872a209"
   },
   {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "Paris Masters 2026",
+    "time": "2026-10-26T09:00:00Z",
+    "endTime": "2026-11-01T16:00:00Z",
+    "venue": "Accor Arena, Paris, France",
+    "meta": {
+      "category": "ATP Masters 1000",
+      "surface": "Hard (Indoor)"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "WTA Finals 2026",
+    "time": "2026-11-02T09:00:00Z",
+    "endTime": "2026-11-09T16:00:00Z",
+    "venue": "TBD",
+    "meta": {
+      "category": "WTA Finals",
+      "surface": "Hard (Indoor)"
+    },
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
+  },
+  {
     "sport": "f1",
     "tournament": "Formula 1 World Championship 2026",
     "title": "São Paulo Grand Prix 2026",
@@ -2846,6 +3428,39 @@
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-06T22:13:47.098Z",
     "_enrichHash": "d07adb51aca42ea4ff378a7298e796f6"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tennis Calendar 2026",
+    "title": "ATP Finals 2026",
+    "time": "2026-11-15T13:00:00Z",
+    "endTime": "2026-11-22T18:00:00Z",
+    "venue": "Pala Alpitour, Turin, Italy",
+    "meta": {
+      "category": "ATP Finals",
+      "surface": "Hard (Indoor)"
+    },
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport/Discovery+",
+        "type": "stream"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Casper Ruud"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false,
+    "context": "tennis-calendar-2026"
   },
   {
     "sport": "f1",

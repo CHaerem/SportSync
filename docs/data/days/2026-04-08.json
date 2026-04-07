@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-08",
-  "generatedAt": "2026-04-06T22:16:35.646Z",
+  "generatedAt": "2026-04-07T02:35:01.697Z",
   "events": {
     "upcoming": [
       {
@@ -51,76 +51,6 @@
         "norwegianRelevance": 4,
         "enrichedAt": "2026-04-06T22:13:47.096Z",
         "_enrichHash": "8375012c88b3d184ba545872f9916874"
-      },
-      {
-        "sport": "tennis",
-        "tournament": "ATP/WTA Tour",
-        "title": "Upper Austria Ladies Linz",
-        "time": "2026-04-05T04:00:00.000Z",
-        "endTime": "2026-04-13T03:59:00.000Z",
-        "venue": "TBD",
-        "meta": "ATP/WTA Tour",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Discovery+",
-            "url": "https://www.discoveryplus.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "WTA 250-level event, no Norwegian players involved",
-        "summary": "Lower-tier WTA indoor clay event in Linz with no Norwegian players or standout storylines.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-06T22:13:47.096Z",
-        "_enrichHash": "7389b2b82750a2508d8d9cf0ab616a1c"
-      },
-      {
-        "sport": "tennis",
-        "tournament": "ATP/WTA Tour",
-        "title": "Grand Prix Open Villa de Madrid by Silverway",
-        "time": "2026-04-05T04:00:00.000Z",
-        "endTime": "2026-04-13T03:59:00.000Z",
-        "venue": "TBD",
-        "meta": "ATP/WTA Tour",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Discovery+",
-            "url": "https://www.discoveryplus.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Smaller ATP/WTA event in Madrid, limited stakes",
-        "summary": "Club-level ATP/WTA clay-court event in Madrid; no Norwegian players and limited title-race implications.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-06T22:13:47.096Z",
-        "_enrichHash": "0d2df41280dbc99a20e4d30de146f896"
       },
       {
         "sport": "cycling",
@@ -217,8 +147,45 @@
         "streaming": [
           {
             "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "TV 2 Sport 1",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "N1Bet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "bvbet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -241,7 +208,9 @@
         ],
         "norwegianRelevance": 3,
         "enrichedAt": "2026-04-06T22:13:47.097Z",
-        "_enrichHash": "def793b14331aeb43e872a344f112f3f"
+        "_enrichHash": "def793b14331aeb43e872a344f112f3f",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -255,8 +224,45 @@
         "streaming": [
           {
             "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "N1Bet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "bvbet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -278,7 +284,9 @@
         ],
         "norwegianRelevance": 3,
         "enrichedAt": "2026-04-06T22:13:47.097Z",
-        "_enrichHash": "fedcb7639da12ff2220d0feb5da936fe"
+        "_enrichHash": "fedcb7639da12ff2220d0feb5da936fe",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
@@ -288,10 +296,9 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 7,
+    "eventCount": 5,
     "sportsCovered": [
       "esports",
-      "tennis",
       "cycling",
       "chess",
       "football"
