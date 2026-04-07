@@ -2688,18 +2688,29 @@ class Dashboard {
 		const importanceReasonHtml = (isMustWatch && !isExpanded && !event.summary && event.importanceReason) ? `<div class="row-importance-reason">${this.esc(event.importanceReason)}</div>` : '';
 		const importanceBadgeHtml = (!isExpanded && event.importance === 5 && event.importanceReason && !this._summaryCoversReason(event.summary, event.importanceReason)) ? `<div class="row-importance-badge">${this.esc(event.importanceReason)}</div>` : '';
 
+		// Must-watch pill badge (visible in collapsed row, accessible without color perception)
+		const mustWatchPill = (isMustWatch && !isExpanded) ? '<span class="row-must-watch-pill">Must Watch</span>' : '';
+
+		// Golf: show playing-with subtitle from featuredGroups in collapsed row
+		let playingWithHtml = '';
+		if (!isExpanded && event.sport === 'golf' && event.featuredGroups?.length > 0) {
+			const names = event.featuredGroups.flatMap(g => (g.groupmates || []).map(m => m.name || m)).filter(Boolean);
+			if (names.length > 0) playingWithHtml = `<div class="row-playing-with">Playing with ${names.slice(0, 3).map(n => this.esc(n)).join(', ')}</div>`;
+		}
+
 		const _ariaLabel = `${event.title}, ${timeStr.replace(/<[^>]+>/g, '')}${isMustWatch ? ', must-watch' : ''}`;
 	return `
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}" aria-label="${this.esc(_ariaLabel)}">
 				<div class="row-main">
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
-					<span class="row-time">${timeStr}${relHtml}</span>
+					<span class="row-time">${timeStr}${relHtml}${mustWatchPill}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
 				</div>
 				${importanceBadgeHtml}
 				${summaryHtml}
 				${importanceReasonHtml}
+				${playingWithHtml}
 				${isExpanded ? this.renderExpanded(event) : ''}
 			</div>
 		`;
