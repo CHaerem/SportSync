@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-04-08T02:32:42.702Z",
+  "lastUpdated": "2026-04-08T06:38:14.779Z",
   "current": {
     "fiveHour": {
-      "utilization": 28
+      "utilization": 13
     },
     "sevenDay": {
-      "utilization": 85,
+      "utilization": 86,
       "resets_at": "1775800800"
     },
     "evaluation": {
-      "tier": 2,
-      "tierName": "high",
-      "maxPriority": 1,
-      "model": "claude-sonnet-4-6",
+      "tier": 3,
+      "tierName": "critical",
+      "maxPriority": 0,
+      "model": null,
       "constrained": true,
-      "reason": "high: 5h 28%, 7d 85%",
+      "reason": "critical: 5h 13%, 7d 86%",
       "resetNote": null
     }
   },
@@ -23,7 +23,7 @@
     "since": "2026-03-29T10:19:11.063Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-04-08T02:32:43.633Z"
+    "checkedAt": "2026-04-08T06:38:15.951Z"
   },
   "internalTokens": {
     "enrichment": 0,
@@ -33,17 +33,17 @@
     "runTotal": 0
   },
   "budget": {
-    "dailyUsed": 617864,
-    "weeklyUsed": 3938719,
+    "dailyUsed": 558106,
+    "weeklyUsed": 3854360,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 12,
-    "weeklyPct": 16
+    "dailyPct": 11,
+    "weeklyPct": 15
   },
   "sportsyncShare": {
     "pipelineRuns": 121,
     "autopilotRuns": 0,
-    "totalDurationMs": 10526767
+    "totalDurationMs": 10421881
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,12 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-04-01T02:44:01.605Z",
-      "context": "pipeline",
-      "durationMs": 112823,
-      "tokens": 84359
-    },
     {
       "timestamp": "2026-04-01T06:44:25.005Z",
       "context": "pipeline",
@@ -776,6 +770,12 @@
       "timestamp": "2026-04-08T02:32:42.702Z",
       "context": "pipeline",
       "durationMs": 136658,
+      "tokens": 0
+    },
+    {
+      "timestamp": "2026-04-08T06:38:14.779Z",
+      "context": "pipeline",
+      "durationMs": 7937,
       "tokens": 0
     }
   ]
