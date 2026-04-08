@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-08",
+      "task": "Execution: cycling fetcher (FEATURE) + snapshot mismatch fix (MAINTENANCE) + personalization signals verification",
+      "outcome": "completed",
+      "pr": "PR #161 (merged: cycling fetcher) + direct-to-main (snapshot mismatch false-positive fix)",
+      "details": "Run 45: 0 user feedback, 0 open autopilot PRs, 2 pending FEATURE tasks. Code-agent: fixed false CRITICAL alert — snapshot_event_mismatch was escalating to CRITICAL even when snapshots were stale, masking real system status. Fix: cap mismatch severity at 'warning' when snapshotsAreStale flag is set. 1 new test added. Data-agent: created scripts/fetch/cycling.js (curated-config-first, ESPN has no cycling API), registered in fetch/index.js. Reads cycling-grand-tours-2026.json (6 events) + cycling-classics-2026.json (2 events). PR #161 merged. Content-agent: discovered that block-type personalization (Pillar 4) is already fully implemented in generate-featured.js — buildBlockTypePreferences() reads engagement-data.json and injects preferences into editorial prompt with graceful degradation. No code changes needed. Health: CRITICAL→warning (snapshot fix). 2656 tests pass. Autonomy: 12/13 loops (preferenceEvolution structural). User-visible/infrastructure ratio: 67%/33% (cycling fetcher / snapshot fix).",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 28,
+      "lesson": "Verify existing implementations before assigning tasks — block-type personalization was already complete with tests (8 test cases). False CRITICAL alerts obscure real system health; always validate that mismatch checks account for correlated conditions (stale snapshots naturally diverge from current events.json). Cycling curated-config-first pattern works because discover-events.js already maintains cycling configs. New sport fetchers need only register in fetch/index.js — build-events.js and pipeline-health.js auto-discover by convention.",
+      "scouted": 1
+    },
+    {
       "date": "2026-04-07",
       "task": "Execution: 3 MAINTENANCE tasks (must-watch badge, golf subtitle, tennis config) + EXPLORE (sport addition pipeline gaps)",
       "outcome": "completed",
