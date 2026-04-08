@@ -155,6 +155,39 @@ export const sportsConfig = {
 		]
 	},
 
+	cycling: {
+		sport: "cycling",
+		enabled: true,
+		source: "Curated configs",
+		sources: [
+			{
+				api: "curated-configs",
+				type: "local",
+				enabled: true,
+				note: "Reads race schedules from scripts/config/cycling-*.json"
+			}
+		],
+		filters: {
+			timeRange: 30,
+			maxEvents: 10
+		},
+		norwegian: {
+			teams: ["Uno-X Mobility", "Uno-X"],
+			players: [
+				"Tobias Halland Johannessen",
+				"Jonas Abrahamsen",
+				"Søren Wærenskjold",
+				"Markus Hoelgaard",
+				"Andreas Leknessund"
+			],
+			filterMode: "inclusive"
+		},
+		streaming: [
+			{ platform: "Eurosport", url: "https://www.eurosport.no", type: "eurosport" },
+			{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" }
+		]
+	},
+
 	esports: {
 		sport: "esports",
 		enabled: true,
