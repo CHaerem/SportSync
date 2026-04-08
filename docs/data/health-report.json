@@ -1,15 +1,10 @@
 {
-  "generatedAt": "2026-04-08T14:38:25.861Z",
-  "eventCount": 91,
+  "generatedAt": "2026-04-08T15:34:56.118Z",
+  "eventCount": 90,
   "sportCoverage": {
     "esports": {
       "count": 2,
       "previousCount": 2,
-      "delta": 0
-    },
-    "cycling": {
-      "count": 10,
-      "previousCount": 10,
       "delta": 0
     },
     "chess": {
@@ -31,6 +26,11 @@
       "count": 22,
       "previousCount": 22,
       "delta": 0
+    },
+    "cycling": {
+      "count": 9,
+      "previousCount": 10,
+      "delta": -1
     },
     "tennis": {
       "count": 18,
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 727,
+      "ageMinutes": 783,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 727,
+      "ageMinutes": 783,
       "stale": true
     }
   },
@@ -112,8 +112,8 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 726 minutes old (stale > 240m)",
-      "Snapshot 2026-04-08: 6 events but events.json has 5"
+      "Day snapshots are 782 minutes old (stale > 240m)",
+      "Snapshot 2026-04-08: 6 events but events.json has 4"
     ],
     "snapshotCount": 15
   },
@@ -131,7 +131,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 20,
+    "fiveHour": 22,
     "sevenDay": 89,
     "model": null,
     "stepsSkipped": 7,
@@ -146,19 +146,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 43644,
+    "totalDuration": 50703,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27273,
-        "share": 62
+        "duration": 33161,
+        "share": 65
       },
       {
         "name": "fetch-results",
-        "duration": 31325,
-        "share": 72
+        "duration": 39528,
+        "share": 78
       }
     ],
     "failedSteps": []
@@ -195,27 +195,27 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 727 minutes old"
+      "message": "featured.json: critical output is 783 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 727 minutes old"
+      "message": "ai-quality.json: critical output is 783 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 726 minutes old (stale > 240m)"
+      "message": "Day snapshots are 782 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-08: 6 events but events.json has 5"
+      "message": "Snapshot 2026-04-08: 6 events but events.json has 4"
     },
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 20%, 7d: 89%) — 7 step(s) skipped"
+      "message": "Quota tier 3 (5h: 22%, 7d: 89%) — 7 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -225,17 +225,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 62% of total pipeline time (27s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 65% of total pipeline time (33s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (31s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (40s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-08T14:38:25.957Z",
+    "computedAt": "2026-04-08T15:34:56.213Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
