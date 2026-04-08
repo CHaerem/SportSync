@@ -515,6 +515,31 @@ describe("snapshot health checks", () => {
 		expect(mismatch.severity).toBe("critical");
 	});
 
+	it("caps mismatch severity at warning when snapshots are stale", () => {
+		const staleTime = new Date(Date.now() - 5 * 60 * 60 * 1000); // 5 hours ago
+		const now = new Date();
+		const dk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			snapshotHealth: {
+				meta: {
+					generatedAt: staleTime.toISOString(),
+					snapshotCount: 1,
+					perDay: { [dk]: { eventCount: 99, resultCount: 0, sports: ["football"] } },
+					emptyDays: [],
+				},
+			},
+		});
+
+		const mismatch = report.issues.find(i => i.code === "snapshot_event_mismatch");
+		expect(mismatch).toBeDefined();
+		// Large mismatch would normally be critical, but stale snapshots cap at warning
+		expect(mismatch.severity).toBe("warning");
+
+		const stale = report.issues.find(i => i.code === "stale_snapshot");
+		expect(stale).toBeDefined();
+	});
+
 	it("no snapshot issues when meta is absent", () => {
 		const report = generateHealthReport({
 			events: makeEvents({ football: 5 }),

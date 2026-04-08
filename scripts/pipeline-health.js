@@ -713,9 +713,11 @@ export function generateHealthReport(options = {}) {
 		}
 
 		// Check for stale snapshots (generatedAt > 4h old)
+		let snapshotsAreStale = false;
 		if (snapMeta.generatedAt) {
 			const snapAge = ageMinutes(snapMeta.generatedAt);
 			if (snapAge > 240) { // 4 hours = 2 pipeline cycles
+				snapshotsAreStale = true;
 				const msg = `Day snapshots are ${Math.round(snapAge)} minutes old (stale > 240m)`;
 				snapshotHealth.issues.push(msg);
 				issues.push({ severity: "warning", code: "stale_snapshot", message: msg });
@@ -743,6 +745,8 @@ export function generateHealthReport(options = {}) {
 		// Severity: "warning" — count mismatches are expected when events are added/removed
 		// between snapshot creation and the current build. Only flag as critical if the
 		// mismatch is large (>50% difference), suggesting data corruption.
+		// When snapshots are stale, mismatches are an expected consequence of staleness,
+		// not data corruption — cap severity at "warning" to avoid false critical alerts.
 		if (snapMeta.perDay && events.length > 0) {
 			for (const [dateKey, dayInfo] of Object.entries(snapMeta.perDay)) {
 				const dayStart = new Date(dateKey + "T00:00:00");
@@ -753,7 +757,11 @@ export function generateHealthReport(options = {}) {
 					snapshotHealth.issues.push(msg);
 					const maxCount = Math.max(dayInfo.eventCount, expectedCount, 1);
 					const diff = Math.abs(dayInfo.eventCount - expectedCount);
-					const severity = diff / maxCount > 0.5 ? "critical" : "warning";
+					let severity = diff / maxCount > 0.5 ? "critical" : "warning";
+					// Stale snapshots naturally drift from current events — don't escalate to critical
+					if (snapshotsAreStale && severity === "critical") {
+						severity = "warning";
+					}
 					issues.push({ severity, code: "snapshot_event_mismatch", message: msg });
 				}
 			}
