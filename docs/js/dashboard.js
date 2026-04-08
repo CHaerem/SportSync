@@ -1339,7 +1339,7 @@ class Dashboard {
 			}
 
 			const reasons = Array.isArray(pick.reasons) ? pick.reasons : [];
-			const streams = (Array.isArray(pick.streaming) ? pick.streaming : []).filter(s => s.type === 'streaming' || s.type === 'tv');
+			const streams = (Array.isArray(pick.streaming) ? pick.streaming : []).filter(s => ['streaming', 'stream', 'tv'].includes(s.type));
 
 			html += `<div class="watch-pick" data-pick-index="${i}" role="button" tabindex="0">`;
 			html += `<span class="pick-time">${this.esc(timeLabel)}${relLabel ? `<span class="row-rel">${this.esc(relLabel)}</span>` : ''}</span>`;
@@ -1779,7 +1779,7 @@ class Dashboard {
 		if (featured.summary || featured.importanceReason) {
 			html += `<div class="md-featured-context">${this.esc(featured.summary || featured.importanceReason)}</div>`;
 		}
-		const featuredStreams = (featured.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		const featuredStreams = (featured.streaming || []).filter(s => ['streaming', 'stream', 'tv'].includes(s.type));
 		if (featuredStreams.length > 0) {
 			html += '<div class="md-featured-stream">';
 			for (const s of featuredStreams.slice(0, 3)) {
@@ -1821,7 +1821,7 @@ class Dashboard {
 		if (event.summary) {
 			html += `<div class="lead-lede">${this.esc(event.summary)}</div>`;
 		}
-		const leadStreams = (event.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		const leadStreams = (event.streaming || []).filter(s => ['streaming', 'stream', 'tv'].includes(s.type));
 		if (leadStreams.length > 0) {
 			html += '<div class="lead-stream">';
 			for (const s of leadStreams.slice(0, 3)) {
@@ -2000,7 +2000,7 @@ class Dashboard {
 		}
 
 		// Streaming links from the first event that has them (tv/streaming only, not betting platforms)
-		const groupStreams = events.flatMap(e => (e.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv'));
+		const groupStreams = events.flatMap(e => (e.streaming || []).filter(s => ['streaming', 'stream', 'tv'].includes(s.type)));
 		if (groupStreams.length > 0) {
 			html += '<div class="lead-stream">';
 			for (const s of groupStreams.slice(0, 3)) {
@@ -2948,7 +2948,7 @@ class Dashboard {
 		}
 
 		// Streaming (filter out betting/unknown platforms — only show tv and streaming)
-		const expStreams = (event.streaming || []).filter(s => s.type === 'streaming' || s.type === 'tv');
+		const expStreams = (event.streaming || []).filter(s => ['streaming', 'stream', 'tv'].includes(s.type));
 		if (expStreams.length > 0) {
 			content += '<div class="exp-streaming">';
 			expStreams.forEach(s => {
