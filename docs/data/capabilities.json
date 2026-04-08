@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T18:23:40.135Z",
+  "generatedAt": "2026-04-08T02:32:43.949Z",
   "sports": {
     "football": {
       "fetcher": true,
@@ -36,7 +36,7 @@
     "chess": {
       "fetcher": true,
       "data": true,
-      "eventCount": 4,
+      "eventCount": 3,
       "liveScores": false,
       "standings": false,
       "results": false
@@ -50,9 +50,9 @@
       "results": false
     },
     "cycling": {
-      "fetcher": false,
-      "data": false,
-      "eventCount": 8,
+      "fetcher": true,
+      "data": true,
+      "eventCount": 3,
       "liveScores": false,
       "standings": false,
       "results": false
@@ -75,9 +75,9 @@
   "scoutingHeuristics": 8,
   "curatedConfigs": 10,
   "gaps": [
-    "No live scores for tennis, f1, chess, esports",
-    "No standings for tennis, chess, esports",
-    "No results tracking for tennis, f1, chess, esports",
+    "No live scores for tennis, f1, chess, esports, cycling",
+    "No standings for tennis, chess, esports, cycling",
+    "No results tracking for tennis, f1, chess, esports, cycling",
     "Esports HLTV API stale — relying on curated configs only"
   ]
 }
