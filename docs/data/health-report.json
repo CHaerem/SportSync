@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T09:29:29.058Z",
+  "generatedAt": "2026-04-08T10:27:23.811Z",
   "eventCount": 91,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "cycling": {
       "count": 10,
-      "previousCount": 11,
-      "delta": -1
+      "previousCount": 10,
+      "delta": 0
     },
     "chess": {
       "count": 3,
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 418,
+      "ageMinutes": 476,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 418,
+      "ageMinutes": 476,
       "stale": true
     }
   },
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 417 minutes old (stale > 240m)",
+      "Day snapshots are 475 minutes old (stale > 240m)",
       "Snapshot 2026-04-08: 6 events but events.json has 5"
     ],
     "snapshotCount": 15
@@ -130,27 +130,35 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 3,
+    "fiveHour": 29,
+    "sevenDay": 88,
     "model": null,
-    "stepsSkipped": 0,
-    "skippedSteps": []
+    "stepsSkipped": 7,
+    "skippedSteps": [
+      "discover-events",
+      "learn-recipes",
+      "enrich-events",
+      "generate-featured",
+      "post-generate",
+      "ai-sanity-check",
+      "verify-schedules"
+    ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 45170,
+    "totalDuration": 54697,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 31939,
-        "share": 71
+        "duration": 29740,
+        "share": 54
       },
       {
         "name": "fetch-results",
-        "duration": 35624,
-        "share": 79
+        "duration": 36243,
+        "share": 66
       }
     ],
     "failedSteps": []
@@ -187,22 +195,27 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 418 minutes old"
+      "message": "featured.json: critical output is 476 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 418 minutes old"
+      "message": "ai-quality.json: critical output is 476 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 417 minutes old (stale > 240m)"
+      "message": "Day snapshots are 475 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-04-08: 6 events but events.json has 5"
+    },
+    {
+      "severity": "warning",
+      "code": "quota_high_utilization",
+      "message": "Quota tier 3 (5h: 29%, 7d: 88%) — 7 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -212,17 +225,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 71% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (36s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 66% of total pipeline time (36s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-08T09:29:29.157Z",
+    "computedAt": "2026-04-08T10:27:23.928Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -268,7 +281,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 87/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 87/100.",
     "tokenUsage": null
   }
 }

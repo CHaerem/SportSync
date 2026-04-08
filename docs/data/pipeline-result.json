@@ -1,13 +1,13 @@
 {
-  "startedAt": "2026-04-08T09:28:45.875Z",
-  "completedAt": "2026-04-08T09:29:40.573Z",
-  "duration": 54697,
+  "startedAt": "2026-04-08T10:26:34.162Z",
+  "completedAt": "2026-04-08T10:27:26.662Z",
+  "duration": 52500,
   "mode": "full",
   "gate": "pass",
   "gateBlockedFiles": null,
   "blockedPhases": [],
   "quota": {
-    "fiveHour": 29,
+    "fiveHour": 30,
     "sevenDay": 88,
     "tier": 3,
     "maxPriority": 0,
@@ -21,32 +21,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 29740
+          "duration": 30023
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 3292
+          "duration": 3332
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 9038
+          "duration": 9149
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 331
+          "duration": 585
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 36243
+          "duration": 37008
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 437
+          "duration": 652
         }
       ]
     },
@@ -57,17 +57,17 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 173
+          "duration": 180
         },
         {
           "name": "proactive-triggers",
           "status": "success",
-          "duration": 140
+          "duration": 144
         },
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1062
+          "duration": 1047
         }
       ]
     },
@@ -96,12 +96,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 655
+          "duration": 652
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 2826
+          "duration": 3166
         }
       ]
     },
@@ -142,7 +142,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 589
+          "duration": 580
         }
       ]
     },
@@ -153,22 +153,22 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 425
+          "duration": 473
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 219
+          "duration": 360
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 256
+          "duration": 268
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 838
+          "duration": 913
         },
         {
           "name": "ai-sanity-check",
@@ -185,7 +185,7 @@
         {
           "name": "analyze-code-complexity",
           "status": "success",
-          "duration": 594
+          "duration": 585
         }
       ]
     },
@@ -196,12 +196,12 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 251
+          "duration": 240
         },
         {
           "name": "analyze-engagement",
           "status": "success",
-          "duration": 239
+          "duration": 241
         }
       ]
     },
@@ -212,32 +212,32 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 9760
+          "duration": 1087
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 150
+          "duration": 135
         },
         {
           "name": "finalize-outputs",
           "status": "success",
-          "duration": 156
+          "duration": 149
         },
         {
           "name": "archive-roadmap",
           "status": "success",
-          "duration": 114
+          "duration": 116
         },
         {
           "name": "consolidate-strategy",
           "status": "success",
-          "duration": 114
+          "duration": 103
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 154
+          "duration": 146
         }
       ]
     }
