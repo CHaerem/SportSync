@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T12:25:11.380Z",
+  "generatedAt": "2026-04-08T13:36:57.428Z",
   "eventCount": 91,
   "sportCoverage": {
     "esports": {
@@ -60,21 +60,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 594,
+      "ageMinutes": 665,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 594,
+      "ageMinutes": 665,
       "stale": true
     }
   },
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 593 minutes old (stale > 240m)",
+      "Day snapshots are 664 minutes old (stale > 240m)",
       "Snapshot 2026-04-08: 6 events but events.json has 5"
     ],
     "snapshotCount": 15
@@ -146,19 +146,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 48894,
+    "totalDuration": 47424,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 31736,
-        "share": 65
+        "duration": 32228,
+        "share": 68
       },
       {
         "name": "fetch-results",
-        "duration": 38357,
-        "share": 78
+        "duration": 36682,
+        "share": 77
       }
     ],
     "failedSteps": []
@@ -195,17 +195,17 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 594 minutes old"
+      "message": "featured.json: critical output is 665 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 594 minutes old"
+      "message": "ai-quality.json: critical output is 665 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 593 minutes old (stale > 240m)"
+      "message": "Day snapshots are 664 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -225,17 +225,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 65% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 68% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (38s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (37s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-08T12:25:11.481Z",
+    "computedAt": "2026-04-08T13:36:57.504Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -279,7 +284,32 @@
       }
     ]
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 4,
+    "warning": 12,
+    "totalFiles": 116,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3705,
+        "functions": 104,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1543,
+        "functions": 69,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1461,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
     "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 87/100.",
     "tokenUsage": null
