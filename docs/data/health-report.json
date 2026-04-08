@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T11:24:02.999Z",
+  "generatedAt": "2026-04-08T12:25:11.380Z",
   "eventCount": 91,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 532,
+      "ageMinutes": 594,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 532,
+      "ageMinutes": 594,
       "stale": true
     }
   },
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 20,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.25,
+    "recapHeadlineRate": 0.2,
     "issues": []
   },
   "streamingHealth": {
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 531 minutes old (stale > 240m)",
+      "Day snapshots are 593 minutes old (stale > 240m)",
       "Snapshot 2026-04-08: 6 events but events.json has 5"
     ],
     "snapshotCount": 15
@@ -131,7 +131,7 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 30,
+    "fiveHour": 1,
     "sevenDay": 88,
     "model": null,
     "stepsSkipped": 7,
@@ -146,19 +146,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52500,
+    "totalDuration": 48894,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 30023,
-        "share": 57
+        "duration": 31736,
+        "share": 65
       },
       {
         "name": "fetch-results",
-        "duration": 37008,
-        "share": 70
+        "duration": 38357,
+        "share": 78
       }
     ],
     "failedSteps": []
@@ -195,17 +195,17 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 532 minutes old"
+      "message": "featured.json: critical output is 594 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 532 minutes old"
+      "message": "ai-quality.json: critical output is 594 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 531 minutes old (stale > 240m)"
+      "message": "Day snapshots are 593 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -215,7 +215,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 30%, 7d: 88%) — 7 step(s) skipped"
+      "message": "Quota tier 3 (5h: 1%, 7d: 88%) — 7 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -225,17 +225,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 57% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 65% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 70% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (38s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-08T11:24:03.143Z",
+    "computedAt": "2026-04-08T12:25:11.481Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
