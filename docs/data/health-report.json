@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T13:36:57.428Z",
+  "generatedAt": "2026-04-08T14:38:25.861Z",
   "eventCount": 91,
   "sportCoverage": {
     "esports": {
@@ -60,21 +60,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 665,
+      "ageMinutes": 727,
       "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 665,
+      "ageMinutes": 727,
       "stale": true
     }
   },
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 664 minutes old (stale > 240m)",
+      "Day snapshots are 726 minutes old (stale > 240m)",
       "Snapshot 2026-04-08: 6 events but events.json has 5"
     ],
     "snapshotCount": 15
@@ -131,8 +131,8 @@
   },
   "quotaHealth": {
     "tier": 3,
-    "fiveHour": 1,
-    "sevenDay": 88,
+    "fiveHour": 20,
+    "sevenDay": 89,
     "model": null,
     "stepsSkipped": 7,
     "skippedSteps": [
@@ -146,19 +146,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 47424,
+    "totalDuration": 43644,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 32228,
-        "share": 68
+        "duration": 27273,
+        "share": 62
       },
       {
         "name": "fetch-results",
-        "duration": 36682,
-        "share": 77
+        "duration": 31325,
+        "share": 72
       }
     ],
     "failedSteps": []
@@ -195,17 +195,17 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 665 minutes old"
+      "message": "featured.json: critical output is 727 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 665 minutes old"
+      "message": "ai-quality.json: critical output is 727 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 664 minutes old (stale > 240m)"
+      "message": "Day snapshots are 726 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -215,7 +215,7 @@
     {
       "severity": "warning",
       "code": "quota_high_utilization",
-      "message": "Quota tier 3 (5h: 1%, 7d: 88%) — 7 step(s) skipped"
+      "message": "Quota tier 3 (5h: 20%, 7d: 89%) — 7 step(s) skipped"
     },
     {
       "severity": "warning",
@@ -225,22 +225,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 68% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 62% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (37s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
+      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (31s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-08T13:36:57.504Z",
+    "computedAt": "2026-04-08T14:38:25.957Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -284,32 +279,7 @@
       }
     ]
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 4,
-    "warning": 12,
-    "totalFiles": 116,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 3705,
-        "functions": 104,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1543,
-        "functions": 69,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1461,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
     "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 87/100.",
     "tokenUsage": null

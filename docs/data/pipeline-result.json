@@ -1,13 +1,13 @@
 {
-  "startedAt": "2026-04-08T13:36:16.224Z",
-  "completedAt": "2026-04-08T13:36:59.868Z",
-  "duration": 43644,
+  "startedAt": "2026-04-08T14:37:39.142Z",
+  "completedAt": "2026-04-08T14:38:29.845Z",
+  "duration": 50703,
   "mode": "full",
   "gate": "pass",
   "gateBlockedFiles": null,
   "blockedPhases": [],
   "quota": {
-    "fiveHour": 20,
+    "fiveHour": 22,
     "sevenDay": 89,
     "tier": 3,
     "maxPriority": 0,
@@ -21,32 +21,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 27273
+          "duration": 33161
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 2923
+          "duration": 3017
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8957
+          "duration": 8943
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 405
+          "duration": 357
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 31325
+          "duration": 39528
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 456
+          "duration": 367
         }
       ]
     },
@@ -57,7 +57,7 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 170
+          "duration": 167
         },
         {
           "name": "proactive-triggers",
@@ -67,7 +67,7 @@
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 3679
+          "duration": 1495
         }
       ]
     },
@@ -96,12 +96,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 650
+          "duration": 692
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 2918
+          "duration": 2598
         }
       ]
     },
@@ -142,7 +142,7 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 633
+          "duration": 593
         }
       ]
     },
@@ -153,22 +153,22 @@
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 642
+          "duration": 471
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 485
+          "duration": 320
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 356
+          "duration": 333
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 853
+          "duration": 806
         },
         {
           "name": "ai-sanity-check",
@@ -185,7 +185,7 @@
         {
           "name": "analyze-code-complexity",
           "status": "success",
-          "duration": 572
+          "duration": 654
         }
       ]
     },
@@ -196,12 +196,12 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 242
+          "duration": 240
         },
         {
           "name": "analyze-engagement",
           "status": "success",
-          "duration": 242
+          "duration": 237
         }
       ]
     },
@@ -212,12 +212,12 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 966
+          "duration": 2369
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 134
+          "duration": 135
         },
         {
           "name": "finalize-outputs",
@@ -232,12 +232,12 @@
         {
           "name": "consolidate-strategy",
           "status": "success",
-          "duration": 104
+          "duration": 105
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 146
+          "duration": 147
         }
       ]
     }
