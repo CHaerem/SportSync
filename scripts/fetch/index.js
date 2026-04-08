@@ -6,6 +6,7 @@ import { fetchTennis } from "./tennis.js";
 import { fetchF1ESPN } from "./f1.js";
 import { fetchChessOpen } from "./chess.js";
 import { fetchEsports } from "./esports.js";
+import { fetchCycling } from "./cycling.js";
 
 import path from "path";
 
@@ -18,7 +19,8 @@ async function main() {
 		{ name: "tennis", fn: fetchTennis },
 		{ name: "f1", fn: fetchF1ESPN },
 		{ name: "chess", fn: fetchChessOpen },
-		{ name: "esports", fn: fetchEsports }
+		{ name: "esports", fn: fetchEsports },
+		{ name: "cycling", fn: fetchCycling }
 	];
 
 	const results = await Promise.allSettled(
@@ -32,6 +34,7 @@ async function main() {
 		"f1.json",
 		"chess.json",
 		"esports.json",
+		"cycling.json",
 	];
 
 	for (let i = 0; i < mapping.length; i++) {
