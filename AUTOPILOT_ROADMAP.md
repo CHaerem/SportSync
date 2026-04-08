@@ -182,6 +182,9 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
+- [PENDING] [EXPLORE] **Invisible events UX indicator** — Health report shows 3 events outside the dashboard time window (chess, football). Users unaware of the day navigator miss content. Investigate adding a subtle "N more events outside today's window" note in the relevant sport sections pointing to the day navigator. Files: docs/js/dashboard.js `renderEvents()` ~line 2500.
+
+- [DONE] [MAINTENANCE] **Fix streaming badges hidden for 'stream' type entries** — 36 streaming entries in events.json (cycling, F1) used `type:'stream'` but filter only accepted `'streaming'` or `'tv'`, silently hiding all streaming links. Fixed 5 filter expressions in dashboard.js. Direct-to-main. Run 45.
 - [DONE] [FEATURE] **End-to-end autonomous sport addition (Pillar 3 proof)** — Cycling fetcher created (`scripts/fetch/cycling.js`) using curated-config-first pattern (ESPN has no cycling API). Registered in `scripts/fetch/index.js`. Sport color already existed in `docs/js/sport-config.js`. Reads from `scripts/config/cycling-*.json` (6+2 events). Auto-discovered by build-events.js. PR #161. Run 45.
 - [DONE] [FEATURE] **Richer personalization signals (Pillar 4 advancement)** — Already fully implemented: `buildBlockTypePreferences()` in `generate-featured.js` reads `engagement-data.json`, identifies preferred block types (≥15% share, ≥5 clicks), injects into editorial prompt. Gracefully degrades when no data. 8 tests covering all edge cases. Verified Run 45 — no code changes needed.
 
