@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-09T17:28:19.107Z",
+  "generatedAt": "2026-04-09T18:26:50.333Z",
   "eventCount": 89,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 2337,
+      "ageMinutes": 2395,
       "stale": true,
       "dateCoherent": false,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 2337,
+      "ageMinutes": 2395,
       "stale": true
     }
   },
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 2336 minutes old (stale > 240m)",
+      "Day snapshots are 2394 minutes old (stale > 240m)",
       "1 expected day snapshot(s) missing",
       "Snapshot 2026-04-08: 6 events but events.json has 1",
       "Snapshot 2026-04-15: 6 events but events.json has 8"
@@ -148,19 +148,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 41122,
+    "totalDuration": 49265,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25582,
-        "share": 62
+        "duration": 31770,
+        "share": 64
       },
       {
         "name": "fetch-results",
-        "duration": 31047,
-        "share": 75
+        "duration": 38643,
+        "share": 78
       }
     ],
     "failedSteps": []
@@ -197,12 +197,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 2337 minutes old"
+      "message": "featured.json: critical output is 2395 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 2337 minutes old"
+      "message": "ai-quality.json: critical output is 2395 minutes old"
     },
     {
       "severity": "warning",
@@ -212,7 +212,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 2336 minutes old (stale > 240m)"
+      "message": "Day snapshots are 2394 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -242,17 +242,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 62% of total pipeline time (26s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 64% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (31s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (39s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-09T17:28:19.211Z",
+    "computedAt": "2026-04-09T18:26:50.414Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -296,7 +301,32 @@
       }
     ]
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 4,
+    "warning": 12,
+    "totalFiles": 116,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3705,
+        "functions": 104,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1543,
+        "functions": 69,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1461,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
     "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 87/100.",
     "tokenUsage": null
