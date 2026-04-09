@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-09T14:40:52.288Z",
+  "generatedAt": "2026-04-09T15:36:24.736Z",
   "eventCount": 89,
   "sportCoverage": {
     "esports": {
@@ -60,21 +60,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 2169,
+      "ageMinutes": 2225,
       "stale": true,
       "dateCoherent": false,
       "featuredDate": "2026-04-08"
     },
     "ai-quality.json": {
-      "ageMinutes": 2169,
+      "ageMinutes": 2225,
       "stale": true
     }
   },
@@ -112,7 +112,7 @@
     "present": true,
     "issues": [
       "2 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 2168 minutes old (stale > 240m)",
+      "Day snapshots are 2224 minutes old (stale > 240m)",
       "1 expected day snapshot(s) missing",
       "Snapshot 2026-04-08: 6 events but events.json has 1",
       "Snapshot 2026-04-15: 6 events but events.json has 8"
@@ -148,19 +148,19 @@
     ]
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49672,
+    "totalDuration": 49492,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28784,
+        "duration": 28734,
         "share": 58
       },
       {
         "name": "fetch-results",
-        "duration": 38587,
-        "share": 78
+        "duration": 35291,
+        "share": 71
       }
     ],
     "failedSteps": []
@@ -197,12 +197,12 @@
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "featured.json: critical output is 2169 minutes old"
+      "message": "featured.json: critical output is 2225 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_output",
-      "message": "ai-quality.json: critical output is 2169 minutes old"
+      "message": "ai-quality.json: critical output is 2225 minutes old"
     },
     {
       "severity": "warning",
@@ -212,7 +212,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 2168 minutes old (stale > 240m)"
+      "message": "Day snapshots are 2224 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -247,12 +247,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (39s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (35s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-09T14:40:52.381Z",
+    "computedAt": "2026-04-09T15:36:24.850Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
