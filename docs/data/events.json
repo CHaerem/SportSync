@@ -224,8 +224,15 @@
     "streaming": [
       {
         "platform": "Viaplay",
-        "url": "https://viaplay.no",
-        "type": "streaming"
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Vsport",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -245,7 +252,9 @@
     ],
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-07T17:25:32.609Z",
-    "_enrichHash": "d8a20493a354b0a9ce1a3e47afbde70f"
+    "_enrichHash": "d8a20493a354b0a9ce1a3e47afbde70f",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -258,9 +267,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -280,7 +290,9 @@
     ],
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-07T17:25:32.609Z",
-    "_enrichHash": "7fb3537e7112181a7d5d1d265c851c11"
+    "_enrichHash": "7fb3537e7112181a7d5d1d265c851c11",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -1325,6 +1337,58 @@
     "homeTeam": "Liverpool",
     "awayTeam": "Paris Saint-Germain",
     "isFavorite": true
+  },
+  {
+    "sport": "football",
+    "tournament": "Champions League",
+    "title": "Sporting CP at Arsenal",
+    "time": "2026-04-15T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Emirates Stadium",
+    "meta": "Champions League • 2nd Leg - Arsenal lead 1-0 on aggregate",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Arsenal",
+    "awayTeam": "Sporting CP",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Champions League",
+    "title": "Real Madrid at Bayern Munich",
+    "time": "2026-04-15T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Allianz Arena",
+    "meta": "Champions League • 2nd Leg - Bayern Munich lead 2-1 on aggregate",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Bayern Munich",
+    "awayTeam": "Real Madrid",
+    "isFavorite": false
   },
   {
     "sport": "tennis",

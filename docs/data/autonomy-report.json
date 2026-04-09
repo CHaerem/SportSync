@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-04-08T22:17:48.349Z",
-  "overallScore": 0.96,
-  "loopsClosed": 12,
+  "generatedAt": "2026-04-09T06:38:17.928Z",
+  "overallScore": 0.85,
+  "loopsClosed": 11,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
@@ -40,9 +40,9 @@
       "details": "discovery log + sync-configs + researched configs all exist"
     },
     "scheduleVerification": {
-      "score": 1,
-      "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "score": 0,
+      "status": "open",
+      "details": "No fresh verification history"
     },
     "resultsHealth": {
       "score": 1,
@@ -55,9 +55,9 @@
       "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
     },
     "preferenceEvolution": {
-      "score": 0.5,
-      "status": "partial",
-      "details": "Preference evolution infrastructure exists but no entries yet"
+      "score": 0,
+      "status": "open",
+      "details": "Preference evolution file is empty or stale"
     },
     "streamingVerification": {
       "score": 1,
