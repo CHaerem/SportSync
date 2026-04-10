@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T13:35:35.894Z",
+  "generatedAt": "2026-04-10T14:30:46.460Z",
   "eventCount": 77,
   "sportCoverage": {
     "esports": {
@@ -40,42 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 134,
+      "ageMinutes": 190,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 404,
-      "stale": true,
+      "ageMinutes": 0,
+      "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-10"
     },
     "ai-quality.json": {
-      "ageMinutes": 404,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -110,9 +110,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 403 minutes old (stale > 240m)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -136,24 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 79044,
+    "totalDuration": 57593,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 24558,
-        "share": 31
+        "duration": 30732,
+        "share": 53
       },
       {
         "name": "fetch-results",
-        "duration": 33017,
-        "share": 42
-      },
-      {
-        "name": "enrich-streaming",
-        "duration": 40209,
-        "share": 51
+        "duration": 35496,
+        "share": 62
       }
     ],
     "failedSteps": []
@@ -189,18 +182,8 @@
   "issues": [
     {
       "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 404 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 404 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 403 minutes old (stale > 240m)"
+      "code": "chronic_data_retention",
+      "message": "f1: data retained 3 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -210,22 +193,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 31% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (31s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 42% of total pipeline time (33s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"enrich-streaming\" used 51% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 62% of total pipeline time (35s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-10T13:35:35.999Z",
+    "computedAt": "2026-04-10T14:30:46.637Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -271,7 +249,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 71/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 89/100.",
     "tokenUsage": null
   }
 }

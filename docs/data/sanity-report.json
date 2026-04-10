@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T06:52:11.734Z",
+  "generatedAt": "2026-04-10T14:30:46.619Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 77,
@@ -19,7 +19,6 @@
         "Masters Tournament"
       ],
       "today": [
-        "Gulf Air Bahrain Grand Prix",
         "Wolverhampton Wanderers at West Ham United",
         "Girona at Real Madrid"
       ],
@@ -100,13 +99,15 @@
         "Qatar Grand Prix 2026",
         "Abu Dhabi Grand Prix 2026"
       ],
-      "ended": []
+      "ended": [
+        "Gulf Air Bahrain Grand Prix"
+      ]
     },
     "featuredBlockCount": 8,
-    "briefPresent": true,
+    "briefPresent": false,
     "pipelineStatus": "warning",
-    "editorialScore": 71,
-    "issueCount": 13
+    "editorialScore": 89,
+    "issueCount": 7
   },
   "findings": [
     {
@@ -305,14 +306,9 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 240 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"21:00 — Real Madrid host Girona\" which may not match any event"
-    },
-    {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 9 hours old"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Burns\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -321,20 +317,20 @@
     },
     {
       "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"The Bernab\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "brief_league_conflation",
-      "message": "Block mixes PL standings language with non-PL team: \"⚽ 21:00 — Real Madrid host Girona, chasing Barcelona 7 points clear in La Liga...\""
+      "check": "result_all_recaps_null",
+      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 44,
+    "total": 43,
     "critical": 0,
     "warning": 43,
-    "info": 1
+    "info": 0
   },
   "pass": true,
   "tokenUsage": null

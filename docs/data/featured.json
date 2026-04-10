@@ -1,42 +1,45 @@
 {
   "blocks": [
     {
-      "type": "headline",
-      "text": "Hovland off the pace as Burns and McIlroy share Masters lead"
-    },
-    {
       "type": "golf-status",
       "tournament": "pga"
     },
     {
       "type": "narrative",
-      "text": "Reitan holds steady at T19 in his Masters debut — the Norwegian bright spot at Augusta. Hovland sits T49 (+3) and needs to find another gear over the weekend."
+      "text": "Burns and McIlroy share the Augusta lead at -5. Reitan sits T25 (E) as Norway's best hope — Hovland (T50, +3) must move on Friday before the weekend cuts close in."
     },
     {
-      "type": "event-line",
-      "text": "⚽ 21:00 — Real Madrid host Girona, chasing Barcelona 7 points clear in La Liga"
+      "type": "match-preview",
+      "homeTeam": "Real Madrid",
+      "awayTeam": "Girona",
+      "showStandings": true
+    },
+    {
+      "type": "narrative",
+      "text": "Madrid trail Barcelona by 7 in La Liga — and Bayern just ended their Champions League on Tuesday. The Bernabéu demands a response tonight."
     },
     {
       "type": "divider",
       "text": "This Weekend"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Espanyol",
-      "showStandings": true
-    },
-    {
-      "type": "match-preview",
-      "homeTeam": "Liverpool",
-      "awayTeam": "Fulham",
-      "showStandings": true
+      "type": "event-group",
+      "label": "⚽ Saturday football",
+      "items": [
+        "13:30 — Arsenal vs Bournemouth (PL, Arsenal 9pts clear at top)",
+        "18:30 — Liverpool vs Fulham (PL, Anfield)",
+        "18:30 — Barcelona vs Espanyol (La Liga, Catalan derby ★)"
+      ]
     },
     {
       "type": "chess-status",
       "tournament": "candidates"
+    },
+    {
+      "type": "event-line",
+      "text": "🎾 Sun 09:00 — Ruud opens Monte-Carlo Masters as genuine clay-court title contender"
     }
   ],
-  "generatedAt": "2026-04-10T06:51:09.638Z",
+  "generatedAt": "2026-04-10T14:30:44.740Z",
   "provider": "claude-cli"
 }
