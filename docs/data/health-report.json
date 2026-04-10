@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T21:15:19.357Z",
+  "generatedAt": "2026-04-10T22:19:36.741Z",
   "eventCount": 75,
   "sportCoverage": {
     "esports": {
@@ -40,42 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 594,
+      "ageMinutes": 658,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 405,
-      "stale": true,
+      "ageMinutes": 2,
+      "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-10"
     },
     "ai-quality.json": {
-      "ageMinutes": 405,
-      "stale": true
+      "ageMinutes": 2,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 23,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.09,
     "issues": []
   },
   "streamingHealth": {
@@ -111,10 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 405 minutes old (stale > 240m)",
-      "Snapshot 2026-04-10: 6 events but events.json has 4",
-      "Snapshot 2026-04-11: 12 events but events.json has 16",
-      "Snapshot 2026-04-12: 12 events but events.json has 16"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -139,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 48987,
+    "totalDuration": 49483,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28408,
-        "share": 58
+        "duration": 31951,
+        "share": 65
       },
       {
         "name": "fetch-results",
-        "duration": 32327,
-        "share": 66
+        "duration": 34530,
+        "share": 70
       }
     ],
     "failedSteps": []
@@ -188,42 +185,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 594 minutes old"
+      "message": "f1.json: data is 658 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 10 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 405 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 405 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 405 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-10: 6 events but events.json has 4"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-11: 12 events but events.json has 16"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-12: 12 events but events.json has 16"
+      "message": "f1: data retained 11 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -233,17 +200,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 65% of total pipeline time (32s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 66% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 70% of total pipeline time (35s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-10T21:15:19.438Z",
+    "computedAt": "2026-04-10T22:19:36.847Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -289,7 +256,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Pipeline is warning with 3 warning issue(s). Editorial quality score is 71/100.",
     "tokenUsage": null
   }
 }

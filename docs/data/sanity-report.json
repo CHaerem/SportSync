@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-10T14:30:46.619Z",
+  "generatedAt": "2026-04-10T22:19:36.612Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 77,
+    "totalEvents": 75,
     "sports": [
       "esports",
       "tennis",
@@ -18,11 +18,12 @@
         "Monte-Carlo Masters 2026",
         "Masters Tournament"
       ],
-      "today": [
-        "Wolverhampton Wanderers at West Ham United",
-        "Girona at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
+        "BMW Open by Bitpanda",
+        "Barcelona Open Banc Sabadell",
+        "Porsche Tennis Grand Prix",
+        "Open Capfinances Rouen Métropole",
         "AFC Bournemouth at Arsenal",
         "Alavés at Real Sociedad",
         "Round 11 – FIDE Candidates Tournament 2026",
@@ -44,10 +45,6 @@
         "Manchester City at Chelsea",
         "Real Oviedo at Celta Vigo",
         "Villarreal at Athletic Club",
-        "BMW Open by Bitpanda",
-        "Barcelona Open Banc Sabadell",
-        "Porsche Tennis Grand Prix",
-        "Open Capfinances Rouen Métropole",
         "Oeiras Jamor Ladies Open",
         "Barcelona Open Banc Sabadell 2026",
         "Leeds United at Manchester United",
@@ -104,10 +101,10 @@
       ]
     },
     "featuredBlockCount": 8,
-    "briefPresent": false,
+    "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 89,
-    "issueCount": 7
+    "editorialScore": 71,
+    "issueCount": 11
   },
   "findings": [
     {
@@ -308,7 +305,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Burns\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Debutant Kristoffer Reitan\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -318,12 +315,12 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Bernab\" but no matching athlete found in events data"
+      "message": "Featured mentions \"After\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 22 football results have null recapHeadline — RSS matching may be broken"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Catalan\" but no matching athlete found in events data"
     }
   ],
   "summary": {
