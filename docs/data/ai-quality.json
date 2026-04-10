@@ -1,80 +1,79 @@
 {
-  "generatedAt": "2026-04-08T02:31:34.865Z",
+  "generatedAt": "2026-04-10T06:51:09.657Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 63997,
+    "blockCount": 8,
+    "generationMs": 131646,
     "tokenUsage": {
-      "input": 26987,
-      "output": 3362,
-      "cacheCreation": 26984,
-      "cacheRead": 0,
-      "total": 30349,
-      "costUSD": 0.151629,
+      "input": 60774,
+      "output": 7402,
+      "cacheCreation": 33985,
+      "cacheRead": 26783,
+      "total": 68176,
+      "costUSD": 0.24652665,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 87,
+    "score": 71,
     "metrics": {
-      "mustWatchCoverage": 1,
-      "sportDiversity": 0.333,
+      "mustWatchCoverage": 0.5,
+      "sportDiversity": 0.286,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": []
+    "issues": [
+      "Sport diversity is 29%"
+    ]
   },
   "watchPlan": {
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 103,
+      "avgScore": 57,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 87,
+    "score": 94,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0,
-      "favoriteCoverage": 0.2,
+      "recapHeadlineRate": null,
+      "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 20
+      "footballCount": 22
     },
-    "issues": [
-      "Only 0% of recent results have recap headlines",
-      "Only 20% of favorite teams present in results"
-    ]
+    "issues": []
   },
   "enrichment": {
     "provider": "claude-cli",
     "model": "claude-sonnet-4-6",
-    "quotaTier": 2,
-    "quotaModel": "claude-sonnet-4-6",
+    "quotaTier": 0,
+    "quotaModel": null,
     "before": {
-      "totalEvents": 87,
+      "totalEvents": 77,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 87,
+      "totalEvents": 77,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -84,37 +83,37 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 8,
     "failedBatches": 0,
-    "totalEvents": 87,
+    "totalEvents": 77,
     "skipStats": {
-      "total": 87,
-      "unchanged": 87,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 77,
+      "unchanged": 69,
+      "enriched": 8,
+      "skipRate": 0.9
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 3440,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 23191,
+      "output": 4329,
+      "calls": 1,
+      "total": 27520,
+      "costUSD": 0.151899,
       "tracked": true,
       "estimated": false
     }
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 26987,
-      "output": 3362,
+      "input": 60774,
+      "output": 7402,
       "calls": 1,
-      "total": 30349,
+      "total": 68176,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-08T02:31:35.159Z"
+    "lastRun": "2026-04-10T06:51:09.944Z"
   },
   "discovery": {
     "tokenUsage": {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-10",
-  "generatedAt": "2026-04-08T02:32:40.303Z",
+  "generatedAt": "2026-04-10T06:52:10.160Z",
   "events": {
     "upcoming": [
       {
@@ -49,8 +49,57 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-04-07T17:25:32.608Z",
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
         "_enrichHash": "8375012c88b3d184ba545872f9916874"
+      },
+      {
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tennis Calendar 2026",
+        "title": "Monte-Carlo Masters 2026",
+        "time": "2026-04-05T09:00:00+02:00",
+        "endTime": "2026-04-12T17:00:00+02:00",
+        "venue": "Monte Carlo Country Club, Roquebrune-Cap-Martin, France",
+        "meta": {
+          "category": "ATP Masters 1000",
+          "surface": "Clay"
+        },
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "TV 2 Play",
+            "type": "stream",
+            "url": "https://play.tv2.no"
+          },
+          {
+            "platform": "TV 2",
+            "type": "tv"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Casper Ruud",
+            "seed": 9
+          }
+        ],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "context": "tennis-calendar-2026",
+        "importance": 4,
+        "importanceReason": "Masters 1000 clay classic; Ruud is a top contender on this surface",
+        "summary": "Casper Ruud, Norway's clay-court specialist, enters the prestigious Monte-Carlo Masters as a genuine title contender.",
+        "tags": [
+          "must-watch",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
+        "_enrichHash": "c24eb7272d078474edc5d3283b2ad4ea"
       },
       {
         "sport": "golf",
@@ -133,7 +182,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-07T17:25:32.609Z",
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
         "_enrichHash": "35924ba1c10653dde6c0669230dca54d"
       },
       {
@@ -173,7 +222,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-04-07T17:25:32.609Z",
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
         "_enrichHash": "204b6f682f2af8244a40a5e55eb4d3c2"
       },
       {
@@ -188,8 +237,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -208,8 +264,10 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-07T17:25:32.609Z",
-        "_enrichHash": "d8a20493a354b0a9ce1a3e47afbde70f"
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
+        "_enrichHash": "d8a20493a354b0a9ce1a3e47afbde70f",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -222,9 +280,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -243,25 +302,289 @@
           "title-race"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-07T17:25:32.609Z",
-        "_enrichHash": "7fb3537e7112181a7d5d1d265c851c11"
+        "enrichedAt": "2026-04-10T06:48:57.247Z",
+        "_enrichHash": "7fb3537e7112181a7d5d1d265c851c11",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
   },
   "matchResults": [],
-  "standings": null,
-  "watchPlan": null,
-  "rssHighlights": null,
+  "standings": {
+    "premierLeague": [
+      {
+        "position": 1,
+        "team": "Arsenal",
+        "teamShort": "ARS",
+        "played": 31,
+        "won": 21,
+        "drawn": 7,
+        "lost": 3,
+        "gd": 39,
+        "points": 70
+      },
+      {
+        "position": 2,
+        "team": "Manchester City",
+        "teamShort": "MNC",
+        "played": 30,
+        "won": 18,
+        "drawn": 7,
+        "lost": 5,
+        "gd": 32,
+        "points": 61
+      },
+      {
+        "position": 3,
+        "team": "Manchester United",
+        "teamShort": "MAN",
+        "played": 31,
+        "won": 15,
+        "drawn": 10,
+        "lost": 6,
+        "gd": 13,
+        "points": 55
+      },
+      {
+        "position": 4,
+        "team": "Aston Villa",
+        "teamShort": "AVL",
+        "played": 31,
+        "won": 16,
+        "drawn": 6,
+        "lost": 9,
+        "gd": 5,
+        "points": 54
+      },
+      {
+        "position": 5,
+        "team": "Liverpool",
+        "teamShort": "LIV",
+        "played": 31,
+        "won": 14,
+        "drawn": 7,
+        "lost": 10,
+        "gd": 8,
+        "points": 49
+      }
+    ],
+    "golf": {
+      "pga": {
+        "name": "Masters Tournament",
+        "leaderboard": [
+          {
+            "position": 1,
+            "positionDisplay": null,
+            "player": "Sam Burns",
+            "score": "-5",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/9938.png"
+          },
+          {
+            "position": 2,
+            "positionDisplay": null,
+            "player": "Rory McIlroy",
+            "score": "-5",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/3470.png"
+          },
+          {
+            "position": 3,
+            "positionDisplay": null,
+            "player": "Kurt Kitayama",
+            "score": "-3",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/10364.png"
+          },
+          {
+            "position": 4,
+            "positionDisplay": null,
+            "player": "Jason Day",
+            "score": "-3",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/1680.png"
+          },
+          {
+            "position": 5,
+            "positionDisplay": null,
+            "player": "Patrick Reed",
+            "score": "-3",
+            "today": "-",
+            "thru": "-",
+            "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5579.png"
+          }
+        ]
+      }
+    },
+    "f1": [
+      {
+        "position": 1,
+        "driver": "Kimi Antonelli",
+        "team": "",
+        "points": 72,
+        "wins": 0
+      },
+      {
+        "position": 2,
+        "driver": "George Russell",
+        "team": "",
+        "points": 63,
+        "wins": 0
+      },
+      {
+        "position": 3,
+        "driver": "Charles Leclerc",
+        "team": "",
+        "points": 49,
+        "wins": 0
+      },
+      {
+        "position": 4,
+        "driver": "Lewis Hamilton",
+        "team": "",
+        "points": 41,
+        "wins": 0
+      },
+      {
+        "position": 5,
+        "driver": "Lando Norris",
+        "team": "",
+        "points": 25,
+        "wins": 0
+      }
+    ]
+  },
+  "watchPlan": {
+    "picks": [
+      {
+        "id": "f1-gulf-air-bahrain-grand-prix-2026-04-10t11:30:00.000z",
+        "title": "Gulf Air Bahrain Grand Prix",
+        "sport": "f1",
+        "tournament": "Formula 1 2026 - Race Weekend",
+        "time": "2026-04-10T11:30:00.000Z",
+        "timeLabel": "10 Apr, 13:30",
+        "relativeStart": "In 4h 41m",
+        "importance": 3,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "F1 TV Pro",
+            "url": "https://f1tv.formula1.com",
+            "type": "streaming"
+          }
+        ],
+        "score": 65,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-girona-at-real-madrid-2026-04-10t19:00:00.000z",
+        "title": "Girona at Real Madrid",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-04-10T19:00:00.000Z",
+        "timeLabel": "10 Apr, 21:00",
+        "relativeStart": "In 12h 11m",
+        "importance": 3,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 62,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-wolverhampton-wanderers-at-west-ham-united-2026-04-10t19:00:00.000z",
+        "title": "Wolverhampton Wanderers at West Ham United",
+        "sport": "football",
+        "tournament": "Premier League",
+        "time": "2026-04-10T19:00:00.000Z",
+        "timeLabel": "10 Apr, 21:00",
+        "relativeStart": "In 12h 11m",
+        "importance": 2,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 44,
+        "reasons": [
+          "Preferred sport"
+        ]
+      }
+    ],
+    "headline": "Hovland off the pace as Burns and McIlroy share Masters lead"
+  },
+  "rssHighlights": [
+    {
+      "title": "Viktor Hovland bekrefter kjæreste",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/viktor-hovland-bekrefter-kjaereste-1.17841102"
+    },
+    {
+      "title": "Hovland bekrefter kjæreste",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18736529"
+    },
+    {
+      "title": "«Jeg kommer til å dø»",
+      "source": "tv2-sport",
+      "sport": "general",
+      "link": "https://www.tv2.no/a/18735891"
+    },
+    {
+      "title": "Zuccarello imponerte med tre målgivende pasninger",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/zuccarello-imponerte-med-tre-malgivende-pasninger-1.17841098"
+    },
+    {
+      "title": "Berg-og-dalbane for Reitan i Masters-debuten – smell for Hovland",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/berg-og-dalbane-for-reitan-i-masters-debuten-_-smell-for-hovland-1.17841094"
+    }
+  ],
   "meta": {
-    "eventCount": 5,
+    "eventCount": 6,
     "sportsCovered": [
       "esports",
+      "tennis",
       "golf",
       "f1",
       "football"
     ],
     "hasResults": false,
-    "hasStandings": false
+    "hasStandings": true
   }
 }
