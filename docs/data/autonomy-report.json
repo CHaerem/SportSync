@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-04-10T06:52:11.693Z",
-  "overallScore": 0.77,
-  "loopsClosed": 10,
+  "generatedAt": "2026-04-10T07:37:22.997Z",
+  "overallScore": 0.92,
+  "loopsClosed": 12,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
@@ -20,9 +20,9 @@
       "details": "gap detection + resolver + auto-configs exist"
     },
     "pipelineHealth": {
-      "score": 0,
-      "status": "open",
-      "details": "Health report fresh (0 min) but has 1 actionable issue(s) (13 total)"
+      "score": 1,
+      "status": "closed",
+      "details": "Health report is fresh (0 min old), 5 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -40,9 +40,9 @@
       "details": "discovery log + sync-configs + researched configs all exist"
     },
     "scheduleVerification": {
-      "score": 0,
-      "status": "open",
-      "details": "No fresh verification history"
+      "score": 1,
+      "status": "closed",
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -52,7 +52,7 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "preferenceEvolution": {
       "score": 0,
