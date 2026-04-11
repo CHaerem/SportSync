@@ -1,30 +1,25 @@
 {
-  "generatedAt": "2026-04-11T14:17:33.805Z",
+  "generatedAt": "2026-04-11T22:15:31.674Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 66,
+    "totalEvents": 62,
     "sports": [
       "esports",
       "tennis",
       "golf",
       "f1",
-      "chess",
-      "football",
-      "cycling"
+      "cycling",
+      "football"
     ],
     "bands": {
       "live": [
         "PGL Bucharest 2026",
         "Monte-Carlo Masters 2026",
-        "Masters Tournament",
-        "Round 11 – FIDE Candidates Tournament 2026"
+        "Masters Tournament"
       ],
-      "today": [
-        "Fulham at Liverpool",
-        "Espanyol at Barcelona",
-        "Atlético Madrid at Sevilla"
-      ],
+      "today": [],
       "tomorrow": [
+        "Oeiras Jamor Ladies Open",
         "Paris-Roubaix 2026",
         "Paris-Roubaix 2026",
         "Real Betis at Osasuna",
@@ -37,7 +32,6 @@
         "Villarreal at Athletic Club"
       ],
       "thisWeek": [
-        "Oeiras Jamor Ladies Open",
         "Barcelona Open Banc Sabadell 2026",
         "Leeds United at Manchester United",
         "Getafe at Levante",
@@ -92,10 +86,10 @@
         "Gulf Air Bahrain Grand Prix"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 84,
+    "editorialScore": 92,
     "issueCount": 7
   },
   "findings": [
@@ -293,17 +287,12 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Abu Dhabi Grand Prix 2026\" is 239 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bournemouth\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 40,
+    "total": 39,
     "critical": 0,
-    "warning": 40,
+    "warning": 39,
     "info": 0
   },
   "pass": true,
