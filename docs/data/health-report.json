@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T08:17:00.915Z",
+  "generatedAt": "2026-04-11T09:18:53.559Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "tennis": {
       "count": 3,
-      "previousCount": 7,
-      "delta": -4
+      "previousCount": 3,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -52,7 +52,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1256,
+      "ageMinutes": 1318,
       "stale": true
     },
     "football.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 108,
+      "ageMinutes": 170,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 108,
+      "ageMinutes": 170,
       "stale": false
     }
   },
@@ -83,7 +83,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 36,
     "healthy": true
   },
   "standingsHealth": {
@@ -196,13 +196,8 @@
   "issues": [
     {
       "severity": "warning",
-      "code": "sport_count_drop",
-      "message": "tennis: 3 events (was 7, -57%)"
-    },
-    {
-      "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 1256 minutes old"
+      "message": "f1.json: data is 1318 minutes old"
     },
     {
       "severity": "warning",
@@ -277,7 +272,7 @@
   ],
   "status": "critical",
   "refreshUrgency": {
-    "computedAt": "2026-04-11T08:17:01.007Z",
+    "computedAt": "2026-04-11T09:18:53.664Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -295,7 +290,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 2,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -323,7 +318,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 3 critical, 10 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Pipeline is critical with 3 critical, 9 warning issue(s). Editorial quality score is 84/100.",
     "tokenUsage": null
   }
 }
