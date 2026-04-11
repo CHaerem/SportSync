@@ -2,26 +2,31 @@
   "blocks": [
     {
       "type": "headline",
-      "text": "McIlroy six clear on Moving Day — Arsenal stumble hands City a lifeline"
+      "text": "Arsenal shocked at home — McIlroy stalks Augusta glory"
     },
     {
       "type": "golf-status",
       "tournament": "pga"
     },
     {
-      "type": "narrative",
-      "text": "Arsenal's shock 1-2 home defeat to Bournemouth leaves Man City nine points back — with two games in hand. City travel to Stamford Bridge tomorrow. The title race lives."
+      "type": "match-result",
+      "homeTeam": "Arsenal",
+      "awayTeam": "AFC Bournemouth"
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Espanyol",
-      "showStandings": false
+      "type": "narrative",
+      "text": "Arsenal's shock home defeat to Bournemouth leaves their 9-point lead over City intact but rattled. Liverpool, humbled 2-0 by PSG in midweek, now host Fulham needing a statement."
     },
     {
       "type": "match-preview",
       "homeTeam": "Liverpool",
       "awayTeam": "Fulham",
+      "showStandings": false
+    },
+    {
+      "type": "match-preview",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Espanyol",
       "showStandings": true
     },
     {
@@ -29,18 +34,10 @@
       "tournament": "candidates"
     },
     {
-      "type": "divider",
-      "text": "Tomorrow"
-    },
-    {
-      "type": "event-group",
-      "label": "Sunday",
-      "items": [
-        "⚽ 17:30 — Chelsea vs Manchester City: City must win to keep Arsenal pressure on",
-        "🎾 09:00 — Monte-Carlo Masters opens: Casper Ruud enters as clay-court favourite"
-      ]
+      "type": "event-line",
+      "text": "🎾 Sun 09:00 — Ruud opens Monte-Carlo Masters campaign"
     }
   ],
-  "generatedAt": "2026-04-11T13:31:44.564Z",
+  "generatedAt": "2026-04-11T14:17:32.160Z",
   "provider": "claude-cli"
 }
