@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T14:17:33.803Z",
+  "generatedAt": "2026-04-11T15:14:28.565Z",
   "eventCount": 66,
   "sportCoverage": {
     "esports": {
@@ -29,8 +29,8 @@
     },
     "football": {
       "count": 28,
-      "previousCount": 31,
-      "delta": -3
+      "previousCount": 28,
+      "delta": 0
     },
     "cycling": {
       "count": 9,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1616,
+      "ageMinutes": 1673,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false
     }
   },
@@ -103,7 +103,7 @@
     "present": true,
     "tvkampenReachable": true,
     "matchRate": 0.65,
-    "relevantMatchRate": 0.73,
+    "relevantMatchRate": 0.79,
     "eventsEnriched": 11,
     "trend": "stable",
     "pendingAliasSuggestions": 0
@@ -127,21 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 9,
     "sevenDay": 5,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 549609,
+    "totalDuration": 338994,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
+        "name": "generate-featured",
+        "duration": 105731,
+        "share": 31
+      },
+      {
         "name": "verify-schedules",
-        "duration": 180022,
-        "share": 33
+        "duration": 180071,
+        "share": 53
       }
     ],
     "failedSteps": [
@@ -180,12 +185,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 1616 minutes old"
+      "message": "f1.json: data is 1673 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 18 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 19 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -200,7 +205,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 33% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 31% of total pipeline time (106s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 53% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -210,7 +220,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-11T14:17:33.987Z",
+    "computedAt": "2026-04-11T15:14:28.656Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
