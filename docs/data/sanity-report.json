@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-04-11T06:29:23.720Z",
+  "generatedAt": "2026-04-11T13:33:05.067Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 75,
+    "totalEvents": 69,
     "sports": [
       "esports",
       "tennis",
       "golf",
       "f1",
-      "football",
       "chess",
+      "football",
       "cycling"
     ],
     "bands": {
@@ -17,15 +17,9 @@
         "PGL Bucharest 2026",
         "Monte-Carlo Masters 2026",
         "Masters Tournament",
-        "BMW Open by Bitpanda",
-        "Barcelona Open Banc Sabadell",
-        "Porsche Tennis Grand Prix",
-        "Open Capfinances Rouen Métropole"
+        "Round 11 – FIDE Candidates Tournament 2026"
       ],
       "today": [
-        "AFC Bournemouth at Arsenal",
-        "Alavés at Real Sociedad",
-        "Round 11 – FIDE Candidates Tournament 2026",
         "Everton at Brentford",
         "Brighton & Hove Albion at Burnley",
         "Valencia at Elche",
@@ -105,7 +99,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 84,
-    "issueCount": 5
+    "issueCount": 15
   },
   "findings": [
     {
@@ -305,13 +299,13 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Bournemouth\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
     }
   ],
   "summary": {

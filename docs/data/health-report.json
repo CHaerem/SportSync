@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T12:16:06.513Z",
+  "generatedAt": "2026-04-11T13:33:05.202Z",
   "eventCount": 69,
   "sportCoverage": {
     "esports": {
@@ -29,8 +29,8 @@
     },
     "football": {
       "count": 31,
-      "previousCount": 33,
-      "delta": -2
+      "previousCount": 31,
+      "delta": 0
     },
     "cycling": {
       "count": 9,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1495,
+      "ageMinutes": 1572,
       "stale": true
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 6,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 347,
+      "ageMinutes": 1,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 347,
+      "ageMinutes": 1,
       "stale": false
     }
   },
@@ -94,7 +94,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 22,
+    "footballCount": 23,
     "validationPassRate": 1,
     "recapHeadlineRate": 0.09,
     "issues": []
@@ -110,17 +110,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 347 minutes old (stale > 240m)",
-      "Snapshot 2026-04-11: 16 events but events.json has 10",
-      "Snapshot 2026-04-12: 16 events but events.json has 12",
-      "Snapshot 2026-04-13: 8 events but events.json has 4",
-      "Snapshot 2026-04-14: 8 events but events.json has 4",
-      "Snapshot 2026-04-15: 8 events but events.json has 4",
-      "Snapshot 2026-04-16: 6 events but events.json has 2",
-      "Snapshot 2026-04-17: 6 events but events.json has 2",
-      "Snapshot 2026-04-18: 6 events but events.json has 2"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -144,19 +134,24 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 55743,
+    "totalDuration": 59046,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28632,
-        "share": 51
+        "duration": 27972,
+        "share": 47
       },
       {
         "name": "fetch-results",
-        "duration": 33193,
-        "share": 60
+        "duration": 33770,
+        "share": 57
+      },
+      {
+        "name": "enrich-streaming",
+        "duration": 19612,
+        "share": 33
       }
     ],
     "failedSteps": []
@@ -193,62 +188,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 1495 minutes old"
+      "message": "f1.json: data is 1572 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "f1: data retained 16 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
+      "message": "f1: data retained 17 consecutive times (since 2026-04-10) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (f1)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 347 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-11: 16 events but events.json has 10"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-12: 16 events but events.json has 12"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-13: 8 events but events.json has 4"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-14: 8 events but events.json has 4"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-15: 8 events but events.json has 4"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-16: 6 events but events.json has 2"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-17: 6 events but events.json has 2"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-18: 6 events but events.json has 2"
     },
     {
       "severity": "warning",
@@ -258,17 +208,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 47% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 60% of total pipeline time (33s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 57% of total pipeline time (34s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"enrich-streaming\" used 33% of total pipeline time (20s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-11T12:16:06.649Z",
+    "computedAt": "2026-04-11T13:33:05.324Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -314,7 +269,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 13 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 84/100.",
     "tokenUsage": null
   }
 }

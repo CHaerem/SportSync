@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T06:29:22.159Z",
+  "generatedAt": "2026-04-11T13:31:44.587Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 92067,
+    "generationMs": 143437,
     "tokenUsage": {
-      "input": 27734,
-      "output": 4756,
-      "cacheCreation": 27731,
+      "input": 27671,
+      "output": 8666,
+      "cacheCreation": 27668,
       "cacheRead": 0,
-      "total": 32490,
-      "costUSD": 0.17534024999999998,
+      "total": 36337,
+      "costUSD": 0.23375400000000002,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,18 +40,18 @@
     "score": 100,
     "metrics": {
       "pickCount": 3,
-      "avgScore": 106,
+      "avgScore": 113,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 94,
+    "score": 92,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 1,
+      "recapHeadlineRate": 0.667,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 23
@@ -64,14 +64,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 75,
+      "totalEvents": 69,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 75,
+      "totalEvents": 69,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,10 +83,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 75,
+    "totalEvents": 69,
     "skipStats": {
-      "total": 75,
-      "unchanged": 75,
+      "total": 69,
+      "unchanged": 69,
       "enriched": 0,
       "skipRate": 1
     },
@@ -104,14 +104,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 55464,
-      "output": 8180,
-      "calls": 2,
-      "total": 63644,
+      "input": 27671,
+      "output": 8666,
+      "calls": 1,
+      "total": 36337,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-11T02:03:43.942Z"
+    "lastRun": "2026-04-11T13:31:44.874Z"
   },
   "discovery": {
     "tokenUsage": {
@@ -123,7 +123,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-06T06:46:30.600Z",
+    "lastRun": "2026-04-11T13:27:29.891Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1
