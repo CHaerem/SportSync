@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T10:14:21.039Z",
+  "generatedAt": "2026-04-11T11:12:56.030Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -52,7 +52,7 @@
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1373,
+      "ageMinutes": 1432,
       "stale": true
     },
     "football.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 284,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-11"
     },
     "ai-quality.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 284,
       "stale": false
     }
   },
@@ -111,6 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
+      "Day snapshots are 284 minutes old (stale > 240m)",
       "Snapshot 2026-04-11: 16 events but events.json has 12",
       "Snapshot 2026-04-12: 16 events but events.json has 12",
       "Snapshot 2026-04-13: 8 events but events.json has 4",
@@ -197,7 +198,7 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "f1.json: data is 1373 minutes old"
+      "message": "f1.json: data is 1432 minutes old"
     },
     {
       "severity": "warning",
@@ -208,6 +209,11 @@
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (f1)"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_snapshot",
+      "message": "Day snapshots are 284 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -235,17 +241,17 @@
       "message": "Snapshot 2026-04-15: 8 events but events.json has 4"
     },
     {
-      "severity": "critical",
+      "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-04-16: 6 events but events.json has 2"
     },
     {
-      "severity": "critical",
+      "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-04-17: 6 events but events.json has 2"
     },
     {
-      "severity": "critical",
+      "severity": "warning",
       "code": "snapshot_event_mismatch",
       "message": "Snapshot 2026-04-18: 6 events but events.json has 2"
     },
@@ -270,9 +276,9 @@
       "message": "Pipeline step \"enrich-streaming\" used 34% of total pipeline time (20s) — optimization candidate"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-11T10:14:21.147Z",
+    "computedAt": "2026-04-11T11:12:56.172Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -290,7 +296,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 3,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -318,7 +324,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 3 critical, 9 warning issue(s). Editorial quality score is 84/100.",
+    "text": "Pipeline is warning with 13 warning issue(s). Editorial quality score is 84/100.",
     "tokenUsage": null
   }
 }
