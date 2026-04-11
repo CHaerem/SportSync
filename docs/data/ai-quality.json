@@ -1,42 +1,40 @@
 {
-  "generatedAt": "2026-04-10T22:18:01.442Z",
+  "generatedAt": "2026-04-11T02:03:43.659Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": 0,
+    "quotaTier": null,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 90829,
+    "blockCount": 7,
+    "generationMs": 80113,
     "tokenUsage": {
-      "input": 27737,
-      "output": 5371,
-      "cacheCreation": 18030,
-      "cacheRead": 9704,
-      "total": 33108,
-      "costUSD": 0.1510977,
+      "input": 27732,
+      "output": 4090,
+      "cacheCreation": 27729,
+      "cacheRead": 0,
+      "total": 31822,
+      "costUSD": 0.16534275,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 71,
+    "score": 75,
     "metrics": {
-      "mustWatchCoverage": 0.5,
-      "sportDiversity": 0.286,
+      "mustWatchCoverage": 0.6,
+      "sportDiversity": 0.333,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
     },
-    "issues": [
-      "Sport diversity is 29%"
-    ]
+    "issues": []
   },
   "watchPlan": {
     "score": 100,
@@ -106,14 +104,14 @@
   },
   "multiDay": {
     "tokenUsage": {
-      "input": 27737,
-      "output": 5371,
-      "calls": 1,
-      "total": 33108,
+      "input": 55464,
+      "output": 8180,
+      "calls": 2,
+      "total": 63644,
       "tracked": false,
       "estimated": true
     },
-    "lastRun": "2026-04-10T22:18:01.723Z"
+    "lastRun": "2026-04-11T02:03:43.942Z"
   },
   "discovery": {
     "tokenUsage": {
