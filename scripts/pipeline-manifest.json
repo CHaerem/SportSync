@@ -77,7 +77,7 @@
         { "name": "coverage-gaps", "command": "node scripts/detect-coverage-gaps.js", "errorPolicy": "continue" },
         { "name": "build-calendar", "command": "npm run build:calendar", "errorPolicy": "continue" },
         { "name": "ai-sanity-check", "command": "node scripts/ai-sanity-check.js", "errorPolicy": "continue", "quotaPriority": 2, "llm": true },
-        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue", "timeout": 60000, "quotaPriority": 2, "llm": true },
+        { "name": "verify-schedules", "command": "node scripts/verify-schedules.js", "errorPolicy": "continue", "timeout": 180000, "quotaPriority": 2, "llm": true },
         { "name": "analyze-code-complexity", "command": "node scripts/analyze-code-complexity.js", "errorPolicy": "continue" }
       ]
     },

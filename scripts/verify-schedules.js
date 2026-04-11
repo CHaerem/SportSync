@@ -248,9 +248,13 @@ Return ONLY valid JSON, no markdown fences:
 		fs.writeFileSync(tmpFile, prompt);
 		try {
 			const cmd = `cat "${tmpFile}" | npx -y @anthropic-ai/claude-code@latest -p --model claude-sonnet-4-6 --output-format json --max-turns 4 --allowedTools "WebSearch" "WebFetch"`;
+			// Per-call budget tight enough that 3 web searches complete within the
+			// pipeline's verify-schedules timeout (180s) and leave headroom for ESPN
+			// fetches + the modular verifier chain. execSync blocks the event loop,
+			// so a long timeout here prevents the 50s safety timer from firing.
 			const output = execSync(cmd, {
 				encoding: "utf-8",
-				timeout: 120000,
+				timeout: 40000,
 				maxBuffer: 2 * 1024 * 1024,
 			});
 			const parsed = parseCliJsonOutput(output);

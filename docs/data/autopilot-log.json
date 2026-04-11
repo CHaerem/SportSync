@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-11",
+      "task": "Execution: featured_date_mismatch quota-awareness + verify-schedules timeout + invisible events UX hint",
+      "outcome": "completed",
+      "pr": "direct-to-main (single commit)",
+      "details": "Run 46: 0 user feedback, 0 open autopilot PRs, 1 pending EXPLORE task. Root-caused 2 health signals and shipped 3 fixes. (1) Pattern report HIGH: featured_date_mismatch fired 17x since 2026-04-09 — root cause was quota-skipped generate-featured leaving yesterday's briefing in place, which double-fires with quota_high_utilization. Fix: emit info-severity featured_date_mismatch_quota_skipped when phases show generate-featured/generate-multi-day skipped with 'quota' reason; warning path preserved for genuine mismatches. +1 targeted test in pipeline-health.test.js. (2) verify-schedules failed at 60s timeout (14 consecutive runs) because createWebSearchFn's blocking execSync (120s/call) prevents the 50s safety timer from firing. Fix: pipeline-manifest.json timeout 60s→180s + execSync timeout 120s→40s so 3 web searches fit the budget with ESPN headroom. (3) UX: added _renderUpcomingHint() at the end of today's view — subtle dashed button 'N more events on upcoming days · Sport1, Sport2 +N more →' honouring active sport filter, scrolls to day-nav on click and focuses next non-empty day. CSS in index.html. All 2656 tests pass. Autonomy: 12/13 (scheduleVerification re-closed by structure credit, preferenceEvolution still structural). User-visible/infrastructure ratio: 1 UX hint / 2 health fixes ≈ 33%/67% — this run was health-heavy because pattern-report had a HIGH signal that blocked scouting.",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 24,
+      "lesson": "execSync in event-loop-critical code blocks setTimeout-based safety valves — safety timers with .unref() look correct but never fire when the main promise chain goes into a blocking sync call. When adding LLM-backed pipeline steps with a sync CLI wrapper, either (a) use execFile async or (b) ensure every per-call timeout × max-iterations fits safely under the pipeline step budget. Pattern report HIGH signals should be investigated for ROOT CAUSE — adding to KNOWN_MANAGED_CODES is the wrong reflex; distinguish genuine mismatches from quota-induced noise by emitting a different code with info-severity.",
+      "scouted": 0
+    },
+    {
       "date": "2026-04-08",
       "task": "Execution: cycling fetcher (FEATURE) + snapshot mismatch fix (MAINTENANCE) + personalization signals verification",
       "outcome": "completed",

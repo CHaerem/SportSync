@@ -357,6 +357,34 @@ describe("generateHealthReport()", () => {
 		expect(report.dataFreshness["featured.json"].dateCoherent).toBe(false);
 	});
 
+	it("suppresses featured_date_mismatch when generate-featured was quota-skipped", () => {
+		// Stale briefing + generate-featured skipped for quota = expected noise,
+		// already surfaced via quota_high_utilization. Emit info-severity instead.
+		const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+		const report = generateHealthReport({
+			events: makeEvents({ football: 5 }),
+			criticalOutputs: {
+				"featured.json": { generatedAt: yesterdayStr },
+			},
+			pipelineResult: {
+				phases: {
+					generate: {
+						steps: [
+							{ name: "generate-featured", status: "skipped", reason: "quota tier 2" },
+						],
+					},
+				},
+			},
+		});
+
+		const warnMismatch = report.issues.filter((i) => i.code === "featured_date_mismatch");
+		const infoMismatch = report.issues.filter((i) => i.code === "featured_date_mismatch_quota_skipped");
+		expect(warnMismatch).toHaveLength(0);
+		expect(infoMismatch).toHaveLength(1);
+		expect(infoMismatch[0].severity).toBe("info");
+		expect(report.dataFreshness["featured.json"].dateCoherent).toBe(false);
+	});
+
 	it("detects empty days in day navigator (no events or results)", () => {
 		// No events, no results → all past 5 days are empty
 		const report = generateHealthReport({

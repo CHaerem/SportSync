@@ -275,11 +275,32 @@ export function generateHealthReport(options = {}) {
 				featuredDate: featuredDay,
 			};
 			if (featuredDay !== todayKey) {
-				issues.push({
-					severity: "warning",
-					code: "featured_date_mismatch",
-					message: `featured.json is from ${featuredDay} but today is ${todayKey} — briefing shows wrong day's content`,
-				});
+				// Suppress the warning when generate-featured was skipped due to quota —
+				// the stale briefing is an expected consequence of quota-skipping, already
+				// surfaced via quota_high_utilization. Emitting both creates duplicate noise.
+				const featuredSkippedForQuota = Array.isArray(pipelineResult?.phases)
+					? false
+					: Object.values(pipelineResult?.phases || {}).some((phase) =>
+							(phase.steps || []).some(
+								(step) =>
+									(step.name === "generate-featured" || step.name === "generate-multi-day") &&
+									step.status === "skipped" &&
+									step.reason?.includes("quota")
+							)
+						);
+				if (featuredSkippedForQuota) {
+					issues.push({
+						severity: "info",
+						code: "featured_date_mismatch_quota_skipped",
+						message: `featured.json is from ${featuredDay} but today is ${todayKey} — generate-featured was quota-skipped (briefing is stale but expected)`,
+					});
+				} else {
+					issues.push({
+						severity: "warning",
+						code: "featured_date_mismatch",
+						message: `featured.json is from ${featuredDay} but today is ${todayKey} — briefing shows wrong day's content`,
+					});
+				}
 			}
 		}
 	}

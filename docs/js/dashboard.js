@@ -2239,6 +2239,29 @@ class Dashboard {
 	}
 
 	/** Render results section with grouped tournament cards */
+	_renderUpcomingHint(futureEvents) {
+		// Count distinct sports represented in future events so we can summarise
+		// them concisely ("Chess, Football +2 more").
+		const sportCounts = new Map();
+		for (const e of futureEvents) {
+			const id = e.sport || 'other';
+			sportCounts.set(id, (sportCounts.get(id) || 0) + 1);
+		}
+		const sortedSports = Array.from(sportCounts.entries()).sort((a, b) => b[1] - a[1]);
+		const nameFor = (id) => {
+			const sp = SPORT_CONFIG.find(s => s.id === id);
+			return sp ? sp.name : id;
+		};
+		const topNames = sortedSports.slice(0, 2).map(([id]) => nameFor(id));
+		const extraSportCount = Math.max(0, sortedSports.length - topNames.length);
+		const sportText = topNames.join(', ') + (extraSportCount > 0 ? ` +${extraSportCount} more` : '');
+		const eventWord = futureEvents.length === 1 ? 'event' : 'events';
+		return `<button type="button" class="upcoming-hint" data-upcoming-hint aria-label="Jump to upcoming days">` +
+			`<span class="upcoming-hint-count">${futureEvents.length}</span> more ${eventWord} on upcoming days` +
+			(sportText ? ` · <span class="upcoming-hint-sports">${this.esc(sportText)}</span>` : '') +
+			` <span class="upcoming-hint-arrow">→</span></button>`;
+	}
+
 	_renderResultsSection(matchResults, resultEvents) {
 		const totalCount = matchResults.length + resultEvents.filter(e => !e._isResult).length;
 		const countBadge = totalCount > 0 ? `<span class="results-count-badge">${totalCount}</span>` : '';
@@ -2523,8 +2546,13 @@ class Dashboard {
 			html += this._renderResultsSection(recentMatches, resultEvents);
 		}
 
-		// Future events are accessible via the day navigator — no need for a
-		// "Coming up" dump on the today view.
+		// Future events are accessible via the day navigator — surface a subtle
+		// hint so users who haven't discovered the day strip know content exists
+		// outside today's window. Honours the active sport filter.
+		const futureEvents = filterBand([...bands.tomorrow, ...bands.week, ...bands.later]);
+		if (futureEvents.length > 0) {
+			html += this._renderUpcomingHint(futureEvents);
+		}
 
 		// Standings: collapsible band below events for direct PL table/golf leaderboard access
 		const standingsHtml = this.renderStandingsSection();
@@ -3399,6 +3427,19 @@ class Dashboard {
 		container._ssDelegated = true;
 
 		container.addEventListener('click', (e) => {
+			// Upcoming-days hint — scroll to the day navigator so users can pick a day
+			const hint = e.target.closest('[data-upcoming-hint]');
+			if (hint) {
+				e.stopPropagation();
+				const nav = document.getElementById('day-nav');
+				if (nav) {
+					nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					const nextItem = nav.querySelector('.day-item:not(.active):not(.has-no-events)');
+					if (nextItem) nextItem.focus({ preventScroll: true });
+				}
+				return;
+			}
+
 			// Handle favorite buttons
 			const favBtn = e.target.closest('.exp-fav-btn');
 			if (favBtn) {

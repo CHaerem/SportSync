@@ -1019,6 +1019,44 @@
 			color: var(--muted-light);
 			font-family: var(--mono);
 		}
+
+		/* === Upcoming-days hint — surfaces future events behind the day navigator === */
+		.upcoming-hint {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			width: 100%;
+			margin: 14px 0 6px;
+			padding: 8px 10px;
+			background: transparent;
+			border: 1px dashed var(--border);
+			border-radius: 6px;
+			color: var(--muted);
+			font-size: 0.68rem;
+			font-family: var(--sans);
+			text-align: left;
+			cursor: pointer;
+			transition: border-color 0.15s, color 0.15s;
+		}
+		.upcoming-hint:hover,
+		.upcoming-hint:focus-visible {
+			border-color: var(--accent);
+			color: var(--fg);
+			outline: none;
+		}
+		.upcoming-hint-count {
+			font-variant-numeric: tabular-nums;
+			font-weight: 600;
+			color: var(--fg);
+		}
+		.upcoming-hint-sports {
+			color: var(--muted-light);
+		}
+		.upcoming-hint-arrow {
+			margin-left: auto;
+			font-size: 0.8rem;
+			color: var(--muted-light);
+		}
 		.exp-importance-reason { font-size: 0.7rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
 
 		/* Standings mini-tables */
