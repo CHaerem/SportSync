@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-12T13:32:03.898Z",
+  "generatedAt": "2026-04-12T14:20:44.374Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,24 +9,24 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 56333,
+    "blockCount": 8,
+    "generationMs": 78261,
     "tokenUsage": {
-      "input": 27603,
-      "output": 3363,
-      "cacheCreation": 27600,
+      "input": 27607,
+      "output": 4650,
+      "cacheCreation": 27604,
       "cacheRead": 0,
-      "total": 30966,
-      "costUSD": 0.153954,
+      "total": 32257,
+      "costUSD": 0.17327399999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 77,
+    "score": 85,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 0.75,
       "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -46,12 +46,12 @@
     }
   },
   "results": {
-    "score": 90,
+    "score": 91,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.25,
+      "recapHeadlineRate": 0.4,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 29
@@ -64,14 +64,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 67,
+      "totalEvents": 66,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 67,
+      "totalEvents": 66,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -81,23 +81,25 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 1,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 67,
+    "totalEvents": 66,
     "skipStats": {
-      "total": 67,
+      "total": 66,
       "unchanged": 66,
-      "enriched": 1,
-      "skipRate": 0.99
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 23962,
-    "hintsApplied": [],
+    "tokensPerEvent": 0,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 22894,
-      "output": 1068,
-      "calls": 1,
-      "total": 23962,
-      "costUSD": 0.10187025000000001,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
@@ -115,15 +117,15 @@
   },
   "discovery": {
     "tokenUsage": {
-      "input": 56709,
-      "output": 861,
+      "input": 190552,
+      "output": 4298,
       "calls": 1,
-      "total": 57570,
-      "costUSD": 0.9465315,
+      "total": 194850,
+      "costUSD": 0.40948745,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-12T06:37:17.235Z",
+    "lastRun": "2026-04-12T14:17:37.291Z",
     "tasksExecuted": 1,
     "succeeded": 1,
     "failed": 0
