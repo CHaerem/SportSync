@@ -120,6 +120,52 @@ describe("F1Fetcher", () => {
 			expect(Array.isArray(result.tournaments)).toBe(true);
 		});
 
+		it("appends dates=<currentYear> to the ESPN F1 scoreboard URL", async () => {
+			// Regression guard: without a dates param, ESPN's F1 scoreboard
+			// silently returns only the single most-recent race (stale data).
+			const calledUrls = [];
+			fetcher.apiClient.fetchJSON = vi.fn(async (url) => {
+				calledUrls.push(url);
+				return { events: [] };
+			});
+
+			await fetcher.fetch();
+
+			const year = new Date().getFullYear();
+			const f1Calls = calledUrls.filter(u => /racing\/f1\/scoreboard/.test(u));
+			expect(f1Calls.length).toBeGreaterThan(0);
+			for (const url of f1Calls) {
+				expect(url).toMatch(new RegExp(`[?&]dates=${year}`));
+			}
+		});
+
+		it("returns multiple events when ESPN responds with a full season", async () => {
+			// Regression guard for the 'only 1 event' stale-data bug:
+			// the fetcher must pass through multiple future races.
+			const now = Date.now();
+			const makeRace = (offsetDays, name) =>
+				makeESPNEvent({
+					name,
+					date: new Date(now + offsetDays * 86400000).toISOString(),
+				});
+
+			fetcher.apiClient.fetchJSON = vi.fn(async () => ({
+				events: [
+					makeRace(3, "Bahrain GP"),
+					makeRace(10, "Saudi Arabian GP"),
+					makeRace(17, "Japanese GP"),
+					makeRace(24, "Chinese GP"),
+				],
+			}));
+
+			const result = await fetcher.fetch();
+			const total = result.tournaments.reduce(
+				(sum, t) => sum + (t.events?.length || 0),
+				0
+			);
+			expect(total).toBeGreaterThanOrEqual(2);
+		});
+
 		it("handles empty API response", async () => {
 			mockFetch.mockResolvedValue({
 				ok: true,
