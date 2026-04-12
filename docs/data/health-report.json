@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-12T02:14:57.367Z",
+  "generatedAt": "2026-04-12T02:30:28.713Z",
   "eventCount": 72,
   "sportCoverage": {
     "esports": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-12"
     },
     "ai-quality.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -102,23 +102,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.57,
+    "matchRate": 0.5,
     "relevantMatchRate": 1,
-    "eventsEnriched": 8,
+    "eventsEnriched": 10,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 expected day snapshot(s) missing",
-      "Snapshot 2026-04-10: 4 events but events.json has 3",
-      "Snapshot 2026-04-12: 13 events but events.json has 14",
-      "Snapshot 2026-04-14: 4 events but events.json has 5",
-      "Snapshot 2026-04-15: 4 events but events.json has 5",
-      "Snapshot 2026-04-17: 2 events but events.json has 3",
-      "Snapshot 2026-04-18: 2 events but events.json has 8"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -192,41 +184,6 @@
     },
     {
       "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-10: 4 events but events.json has 3"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-12: 13 events but events.json has 14"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-14: 4 events but events.json has 5"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-15: 4 events but events.json has 5"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-17: 2 events but events.json has 3"
-    },
-    {
-      "severity": "critical",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-18: 2 events but events.json has 8"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
@@ -241,9 +198,9 @@
       "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
-  "status": "critical",
+  "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-12T02:14:57.431Z",
+    "computedAt": "2026-04-12T02:30:28.821Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -289,7 +246,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is critical with 1 critical, 8 warning issue(s). Editorial quality score is 89/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 86/100.",
     "tokenUsage": null
   }
 }
