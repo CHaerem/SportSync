@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-12T14:20:46.214Z",
-  "eventCount": 66,
+  "generatedAt": "2026-04-12T15:16:57.445Z",
+  "eventCount": 65,
   "sportCoverage": {
     "tennis": {
       "count": 3,
@@ -12,11 +12,6 @@
       "previousCount": 1,
       "delta": 0
     },
-    "cycling": {
-      "count": 9,
-      "previousCount": 9,
-      "delta": 0
-    },
     "chess": {
       "count": 3,
       "previousCount": 3,
@@ -24,13 +19,18 @@
     },
     "football": {
       "count": 26,
-      "previousCount": 27,
-      "delta": -1
+      "previousCount": 26,
+      "delta": 0
     },
     "f1": {
       "count": 23,
       "previousCount": 23,
       "delta": 0
+    },
+    "cycling": {
+      "count": 8,
+      "previousCount": 9,
+      "delta": -1
     },
     "esports": {
       "count": 1,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 407,
+      "ageMinutes": 463,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 56,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-12"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 56,
       "stale": false
     }
   },
@@ -83,7 +83,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 40,
     "healthy": true
   },
   "standingsHealth": {
@@ -94,23 +94,25 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 29,
+    "footballCount": 33,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.07,
+    "recapHeadlineRate": 0.09,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
     "matchRate": 0.33,
-    "relevantMatchRate": 0.5,
+    "relevantMatchRate": 0.56,
     "eventsEnriched": 5,
-    "trend": "declining",
+    "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Snapshot 2026-04-12: 8 events but events.json has 7"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -127,21 +129,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
+    "fiveHour": 5,
     "sevenDay": 10,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 371621,
+    "totalDuration": 405873,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "verify-schedules",
-        "duration": 180111,
-        "share": 48
+        "duration": 180078,
+        "share": 44
       }
     ],
     "failedSteps": [
@@ -180,17 +182,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 407 minutes old"
+      "message": "tennis.json: data is 463 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 7 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 8 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
-      "code": "streaming_match_rate_declining",
-      "message": "Streaming match rate declining over 3 runs: 90% → 60% → 50%"
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-12: 8 events but events.json has 7"
     },
     {
       "severity": "warning",
@@ -200,7 +202,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 48% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 44% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -210,7 +212,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-12T14:20:46.301Z",
+    "computedAt": "2026-04-12T15:16:57.553Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
