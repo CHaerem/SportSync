@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-04-11T22:15:31.440Z",
-  "overallScore": 0.96,
-  "loopsClosed": 12,
+  "generatedAt": "2026-04-12T02:14:57.404Z",
+  "overallScore": 1,
+  "loopsClosed": 13,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints wired (48 fired)"
+      "details": "100 entries, hints wired (39 fired)"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -22,7 +22,7 @@
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
+      "details": "Health report is fresh (0 min old), 11 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
@@ -42,7 +42,7 @@
     "scheduleVerification": {
       "score": 1,
       "status": "closed",
-      "details": "verification history + verifier + verified configs all exist"
+      "details": "verification history (stale due to pipeline step failure) + verifier + verified configs all exist"
     },
     "resultsHealth": {
       "score": 1,
@@ -52,12 +52,12 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "preferenceEvolution": {
-      "score": 0.5,
-      "status": "partial",
-      "details": "Preference evolution infrastructure exists but no entries yet"
+      "score": 1,
+      "status": "closed",
+      "details": "evolve-preferences.js + 1 evolution entries"
     },
     "streamingVerification": {
       "score": 1,

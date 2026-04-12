@@ -1304,6 +1304,21 @@
       "lesson": "Pattern report and autonomy scorecard should use the same managed-code list. When analyze-patterns.js accumulates warnings for codes that autonomy-scorecard already considers 'known', it generates noise that masks genuine new patterns.",
       "scouted": 1,
       "meta_insight": "Ice hockey (EHL/GET-ligaen) appears in Norwegian RSS with strong engagement potential but has zero coverage. This is the first sport detected by RSS scouting that has genuine Norwegian cultural relevance beyond niche interest."
+    },
+    {
+      "date": "2026-04-12",
+      "task": "Run 47: F1 fetcher dates param fix + preferenceEvolution loop closure",
+      "outcome": "completed",
+      "shipMode": "direct-to-main",
+      "pr": null,
+      "pillar": "data+quality",
+      "details": "Two parallel subagent tasks via orchestrator. (1) data-agent: F1 chronic_data_retention (25 runs of stale data) — root cause: ESPN f1/scoreboard returns only most-recent past race without dates param. Fix: F1Fetcher.fetchFromSource() override appends ?dates=<currentYear> dynamically. Live fetch: 24 raw events (full season). +2 regression tests. Commit 1e49078. (2) code-agent: preferenceEvolution loop partial (0.5) because preference-evolution.json was empty. Fix: recordHeartbeat() with 24h throttle so quiet-period runs prove loop aliveness. +5 tests (including end-to-end scorecard closure validation). Autonomy now 13/13 (100%).",
+      "tests_passed": true,
+      "files_changed": 5,
+      "turns_used": 15,
+      "lesson": "ESPN scoreboard endpoints silently degrade to single-event mode without dates= param — a pattern likely to affect future motorsport fetchers (MotoGP, NASCAR, IndyCar, WEC, WRC, Formula E). Also: feedback loops that wire up infrastructure but never record no-op entries will stay at 0.5 forever — always record throttled heartbeat entries so liveness is provable from history alone.",
+      "scouted": 0,
+      "meta_insight": "Pattern: partial loops (0.5 score) are often caused by missing heartbeat telemetry, not missing logic. When a loop scores partial for many runs with no engagement signals, check whether the script writes history entries on no-op paths — it usually doesn't."
     }
   ]
 }
