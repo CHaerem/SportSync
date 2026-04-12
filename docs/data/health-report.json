@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-12T15:16:57.445Z",
-  "eventCount": 65,
+  "generatedAt": "2026-04-12T16:14:00.000Z",
+  "eventCount": 64,
   "sportCoverage": {
     "tennis": {
       "count": 3,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 26,
+      "count": 25,
       "previousCount": 26,
-      "delta": 0
+      "delta": -1
     },
     "f1": {
       "count": 23,
@@ -29,8 +29,8 @@
     },
     "cycling": {
       "count": 8,
-      "previousCount": 9,
-      "delta": -1
+      "previousCount": 8,
+      "delta": 0
     },
     "esports": {
       "count": 1,
@@ -64,17 +64,17 @@
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 463,
+      "ageMinutes": 520,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 56,
+      "ageMinutes": 113,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-12"
     },
     "ai-quality.json": {
-      "ageMinutes": 56,
+      "ageMinutes": 113,
       "stale": false
     }
   },
@@ -83,7 +83,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 40,
+    "itemCount": 34,
     "healthy": true
   },
   "standingsHealth": {
@@ -94,7 +94,7 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 33,
+    "footballCount": 34,
     "validationPassRate": 1,
     "recapHeadlineRate": 0.09,
     "issues": []
@@ -102,16 +102,16 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.33,
-    "relevantMatchRate": 0.56,
-    "eventsEnriched": 5,
-    "trend": "stable",
+    "matchRate": 0.29,
+    "relevantMatchRate": 0.67,
+    "eventsEnriched": 4,
+    "trend": "rising",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Snapshot 2026-04-12: 8 events but events.json has 7"
+      "Snapshot 2026-04-12: 8 events but events.json has 6"
     ],
     "snapshotCount": 15
   },
@@ -128,27 +128,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 5,
-    "sevenDay": 10,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 405873,
-    "stepCount": 32,
+    "totalDuration": 71621,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 180078,
-        "share": 44
+        "name": "fetch-sports",
+        "duration": 53984,
+        "share": 75
+      },
+      {
+        "name": "fetch-results",
+        "duration": 31950,
+        "share": 45
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -182,17 +185,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 463 minutes old"
+      "message": "tennis.json: data is 520 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 8 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 9 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-12: 8 events but events.json has 7"
+      "message": "Snapshot 2026-04-12: 8 events but events.json has 6"
     },
     {
       "severity": "warning",
@@ -202,17 +205,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 44% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 75% of total pipeline time (54s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 45% of total pipeline time (32s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-12T15:16:57.553Z",
+    "computedAt": "2026-04-12T16:14:00.096Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
