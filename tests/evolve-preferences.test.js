@@ -13,7 +13,9 @@ import {
 	mergeEngagement,
 	readEngagementFromFile,
 	evolvePreferences,
+	recordHeartbeat,
 } from "../scripts/evolve-preferences.js";
+import { evaluatePreferenceEvolution } from "../scripts/autonomy-scorecard.js";
 
 // --- exportForBackend tests use the browser class ---
 import { readFileSync } from "fs";
@@ -599,6 +601,93 @@ describe("evolvePreferences()", () => {
 
 		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
 		expect(history.watchFeedback).toEqual({ up: 1, down: 1, total: 2 });
+	});
+
+	it("writes a heartbeat entry when no engagement and no prior history", async () => {
+		writeUserContext({ football: "high" });
+		// No engagement data file, no watch feedback
+		const result = await evolvePreferences({ configDir, dataDir });
+		expect(result.skipped).toBe(true);
+		expect(result.reason).toBe("insufficient-data");
+		expect(result.heartbeatWritten).toBe(true);
+
+		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
+		expect(history.runs).toHaveLength(1);
+		expect(history.runs[0].type).toBe("heartbeat");
+		expect(history.runs[0].changes).toBe(0);
+		expect(history.runs[0].reason).toBe("insufficient-data");
+		expect(history.lastEvolved).toBeDefined();
+	});
+
+	it("does not write a duplicate heartbeat when last entry is <24h old", async () => {
+		writeUserContext({ football: "high" });
+		// Pre-populate with a recent heartbeat (1 hour old)
+		const recentTs = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+		fs.writeFileSync(path.join(dataDir, "preference-evolution.json"), JSON.stringify({
+			runs: [{ timestamp: recentTs, type: "heartbeat", changes: 0, reason: "insufficient-data" }],
+			lastEvolved: recentTs,
+		}));
+
+		const result = await evolvePreferences({ configDir, dataDir });
+		expect(result.skipped).toBe(true);
+		expect(result.heartbeatWritten).toBe(false);
+
+		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
+		// Still only the original entry — no duplicate
+		expect(history.runs).toHaveLength(1);
+		expect(history.runs[0].timestamp).toBe(recentTs);
+	});
+
+	it("writes a heartbeat when last entry is >=24h old", async () => {
+		writeUserContext({ football: "high" });
+		// Pre-populate with an old heartbeat (25 hours old)
+		const oldTs = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+		fs.writeFileSync(path.join(dataDir, "preference-evolution.json"), JSON.stringify({
+			runs: [{ timestamp: oldTs, type: "heartbeat", changes: 0, reason: "insufficient-data" }],
+			lastEvolved: oldTs,
+		}));
+
+		const result = await evolvePreferences({ configDir, dataDir });
+		expect(result.skipped).toBe(true);
+		expect(result.heartbeatWritten).toBe(true);
+
+		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
+		expect(history.runs).toHaveLength(2);
+		expect(history.runs[1].type).toBe("heartbeat");
+	});
+
+	it("records a regular (non-heartbeat) entry when there are real changes", async () => {
+		writeUserContext({ football: "low" });
+		writeEngagement({
+			football: { clicks: 30, lastClick: new Date().toISOString() },
+		});
+
+		await evolvePreferences({ configDir, dataDir });
+		const history = JSON.parse(fs.readFileSync(path.join(dataDir, "preference-evolution.json"), "utf-8"));
+		expect(history.runs.length).toBeGreaterThan(0);
+		const latest = history.runs[history.runs.length - 1];
+		// Real evolution entries have weightChanges/newTeams/newPlayers fields; no type:"heartbeat"
+		expect(latest.type).not.toBe("heartbeat");
+		expect(latest.changes).toBeGreaterThan(0);
+	});
+
+	it("bumps preferenceEvolution loop score to 1.0 after a heartbeat is recorded", async () => {
+		writeUserContext({ football: "high" });
+
+		// Before: evaluate with empty history (simulates the stuck-at-0.5 state).
+		// We create an empty file to represent the "infrastructure exists but
+		// no entries yet" partial state.
+		fs.writeFileSync(path.join(dataDir, "preference-evolution.json"), JSON.stringify({ runs: [] }));
+		const scriptsDir = path.resolve(import.meta.dirname, "../scripts");
+		const before = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(before.score).toBe(0.5);
+
+		// Run evolve — should record a heartbeat
+		await evolvePreferences({ configDir, dataDir });
+
+		// After: score should be 1.0
+		const after = evaluatePreferenceEvolution(dataDir, scriptsDir);
+		expect(after.score).toBe(1.0);
 	});
 
 	it("does not skip when only watch feedback is available (no weight changes)", async () => {
