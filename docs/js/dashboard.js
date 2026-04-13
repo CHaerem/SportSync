@@ -2706,7 +2706,15 @@ class Dashboard {
 		}
 
 		// Meta subtitle: knockout context, aggregate scores, etc.
-		const metaHtml = event.meta ? `<span class="row-meta">${this.esc(event.meta)}</span>` : '';
+		let metaText = '';
+		if (event.meta) {
+			if (typeof event.meta === 'string') {
+				metaText = event.meta;
+			} else if (typeof event.meta === 'object') {
+				metaText = Object.values(event.meta).filter(Boolean).join(' \u00b7 ');
+			}
+		}
+		const metaHtml = metaText ? `<span class="row-meta">${this.esc(metaText)}</span>` : '';
 
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;

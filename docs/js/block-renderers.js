@@ -181,7 +181,8 @@ function renderGolfStatus(block, ctx) {
 
 	let html = `<div class="block-event-line editorial-line block-golf-status">\u26f3 ${escapeHtml(name)}: `;
 	if (norPlayer) {
-		html += `${headshotImg}${escapeHtml(norPlayer.player)} ${escapeHtml(norPlayer.position || '')} (${escapeHtml(norPlayer.score || '')})`;
+		const todayStr = norPlayer.today && norPlayer.today !== '-' ? `, today ${escapeHtml(norPlayer.today)}` : '';
+		html += `${headshotImg}${escapeHtml(norPlayer.player)} ${escapeHtml(norPlayer.position || '')} (${escapeHtml(norPlayer.score || '')}${todayStr})`;
 	} else {
 		const leader = tour.leaderboard[0];
 		html += `${escapeHtml(leader.player)} leads at ${escapeHtml(leader.score || '')}`;
