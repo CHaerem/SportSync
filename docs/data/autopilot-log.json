@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-13",
+      "task": "Scouting + execution: 2 UX bug fixes + 2 UX improvements + tennis clay season calendar (3 events)",
+      "outcome": "completed",
+      "pr": "direct-to-main (orchestrator applied UX agent worktree changes after verification)",
+      "details": "Run 48: 0 user feedback, 0 open autopilot PRs, 0 pending tasks — scouting run. 3 parallel scouts (UX 8 findings, Code 1 finding, Data 6 findings). Executed 5 changes: (1) BUG FIX: expanded row content clipped at max-height:500px — raised to 2000px. (2) BUG FIX: [object Object] rendered for structured meta fields (tennis/curated configs with {category, surface}) — now formats as 'ATP 500 · Clay'. (3) Golf 'today' round score in brief golf-status blocks — 'Hovland T19 (-4, today -5)'. (4) Missing CSS for .exp-golf-field and .exp-athlete-meta classes. (5) Tennis calendar expanded: added Madrid Open, Rome Masters, Roland-Garros to curated config (endDate 2026-04-19→2026-06-07). 6 new PENDING tasks scouted (standings preview, CL aggregate, favorite-team dots, tennis seed, build-events tests, FIFA WC groups EXPLORE). UX agent worktree created PR #162 but orchestrator applied identical changes to main first (faster) — PR closed. 2664 tests pass. Autonomy: 13/13 (100%).",
+      "tests_passed": true,
+      "files_changed": 7,
+      "turns_used": 30,
+      "lesson": "UX agent worktree takes 10+ minutes (test run + PR creation overhead). When changes are small (<30 lines across 3 files) and verified by inspection, orchestrator direct-apply is faster and equally safe. The [object Object] bug affects all curated configs with structured meta fields — a general pattern to watch: any dashboard code that calls .esc() or .toString() on event fields should handle objects. Tennis curated calendar is critical for between-tournament coverage — the ESPN API returns nothing between rounds, making curated configs the sole data source.",
+      "scouted": 6
+    },
+    {
       "date": "2026-04-11",
       "task": "Execution: featured_date_mismatch quota-awareness + verify-schedules timeout + invisible events UX hint",
       "outcome": "completed",
