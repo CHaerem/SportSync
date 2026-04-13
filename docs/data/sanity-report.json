@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T14:38:54.792Z",
+  "generatedAt": "2026-04-13T18:33:40.702Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 67,
@@ -97,7 +97,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 8
+    "issueCount": 9
   },
   "findings": [
     {
@@ -313,23 +313,13 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Rory\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Scheffler\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Four\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 45,
+    "total": 43,
     "critical": 0,
-    "warning": 45,
+    "warning": 43,
     "info": 0
   },
   "pass": true,
