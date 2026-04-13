@@ -1,22 +1,12 @@
 {
-  "generatedAt": "2026-04-13T06:52:40.237Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "recurring_health_warning",
-      "severity": "medium",
-      "issueCode": "featured_date_mismatch",
-      "count": 8,
-      "firstSeen": "2026-04-09T07:37:04.875Z",
-      "lastSeen": "2026-04-10T06:52:11.710Z",
-      "suggestion": "Health warning \"featured_date_mismatch\" has fired 8 times since 2026-04-09. Investigate and fix the root cause rather than letting it keep firing."
-    }
-  ],
+  "generatedAt": "2026-04-13T07:39:14.085Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 870,
+      "count": 871,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-13T06:52:40.235Z"
+      "lastSeen": "2026-04-13T07:39:14.081Z"
     },
     "snapshot_event_mismatch": {
       "count": 500,
@@ -24,9 +14,9 @@
       "lastSeen": "2026-04-12T22:18:43.871Z"
     },
     "stale_snapshot": {
-      "count": 224,
+      "count": 225,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-12T22:18:43.871Z"
+      "lastSeen": "2026-04-13T07:39:14.081Z"
     },
     "stale_output": {
       "count": 210,
@@ -34,24 +24,14 @@
       "lastSeen": "2026-04-12T22:18:43.871Z"
     },
     "quota_high_utilization": {
-      "count": 38,
+      "count": 19,
       "firstSeen": "2026-04-03T20:12:48.755Z",
       "lastSeen": "2026-04-10T07:37:23.018Z"
-    },
-    "featured_date_mismatch": {
-      "count": 8,
-      "firstSeen": "2026-04-09T07:37:04.875Z",
-      "lastSeen": "2026-04-10T06:52:11.710Z"
     },
     "missing_snapshot": {
       "count": 22,
       "firstSeen": "2026-04-09T07:37:04.875Z",
       "lastSeen": "2026-04-13T02:16:56.045Z"
-    },
-    "sport_count_drop": {
-      "count": 1,
-      "firstSeen": "2026-04-10T07:37:23.018Z",
-      "lastSeen": "2026-04-10T07:37:23.018Z"
     },
     "step_timeout_hit": {
       "count": 3,
@@ -59,19 +39,19 @@
       "lastSeen": "2026-04-13T06:52:40.235Z"
     },
     "chronic_data_retention": {
-      "count": 39,
+      "count": 40,
       "firstSeen": "2026-04-10T15:21:24.013Z",
-      "lastSeen": "2026-04-13T06:52:40.235Z"
+      "lastSeen": "2026-04-13T07:39:14.081Z"
     },
     "stale_data": {
-      "count": 31,
+      "count": 33,
       "firstSeen": "2026-04-10T19:22:22.183Z",
-      "lastSeen": "2026-04-13T06:52:40.235Z"
+      "lastSeen": "2026-04-13T07:39:14.081Z"
     },
     "invisible_events": {
-      "count": 21,
+      "count": 22,
       "firstSeen": "2026-04-11T06:29:23.972Z",
-      "lastSeen": "2026-04-13T06:52:40.235Z"
+      "lastSeen": "2026-04-13T07:39:14.081Z"
     },
     "sport_dropped": {
       "count": 1,
@@ -84,5 +64,5 @@
       "lastSeen": "2026-04-12T15:16:57.539Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: recurring_health_warning — Health warning \"featured_date_mismatch\" has fired 8 times since 2026-04-09."
+  "summary": "0 patterns detected"
 }
