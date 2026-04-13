@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T06:52:40.206Z",
+  "generatedAt": "2026-04-13T08:47:29.652Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 67,
@@ -14,10 +14,10 @@
     ],
     "bands": {
       "live": [
-        "Oeiras Jamor Ladies Open"
+        "Oeiras Jamor Ladies Open",
+        "Barcelona Open Banc Sabadell 2026"
       ],
       "today": [
-        "Barcelona Open Banc Sabadell 2026",
         "Leeds United at Manchester United",
         "Getafe at Levante"
       ],
@@ -97,7 +97,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 7
+    "issueCount": 9
   },
   "findings": [
     {
@@ -312,11 +312,6 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 5 hours old"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Augusta\" but no matching athlete found in events data"
     },
@@ -327,9 +322,9 @@
     }
   ],
   "summary": {
-    "total": 45,
+    "total": 44,
     "critical": 0,
-    "warning": 45,
+    "warning": 44,
     "info": 0
   },
   "pass": true,
