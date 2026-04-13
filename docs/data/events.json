@@ -170,8 +170,15 @@
     "streaming": [
       {
         "platform": "Viaplay",
-        "url": "https://viaplay.no",
-        "type": "streaming"
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Vsport",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -194,7 +201,9 @@
     ],
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-13T02:06:12.750Z",
-    "_enrichHash": "633b0244920601f4fc92d30d7019bddf"
+    "_enrichHash": "633b0244920601f4fc92d30d7019bddf",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -207,9 +216,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -229,7 +239,9 @@
     ],
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-13T02:06:12.750Z",
-    "_enrichHash": "43c406666dd2470f26e3f6e5838becd9"
+    "_enrichHash": "43c406666dd2470f26e3f6e5838becd9",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "chess",
@@ -282,8 +294,45 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "TV 2 Sport 1",
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Lilibet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -305,7 +354,9 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-13T02:06:12.750Z",
-    "_enrichHash": "6cc6c8b004dad54f4ec7641a795402ed"
+    "_enrichHash": "6cc6c8b004dad54f4ec7641a795402ed",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -319,8 +370,39 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Lilibet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -342,7 +424,9 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-13T02:06:12.750Z",
-    "_enrichHash": "42ffe4285427fce8744723c2b0562bdf"
+    "_enrichHash": "42ffe4285427fce8744723c2b0562bdf",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "chess",
@@ -699,6 +783,84 @@
     "enrichedAt": "2026-04-13T02:06:12.751Z"
   },
   {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Sunderland at Aston Villa",
+    "time": "2026-04-19T13:00:00.000Z",
+    "endTime": null,
+    "venue": "Villa Park",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Sunderland",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Liverpool at Everton",
+    "time": "2026-04-19T13:00:00.000Z",
+    "endTime": null,
+    "venue": "Hill Dickinson Stadium",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Everton",
+    "awayTeam": "Liverpool",
+    "isFavorite": true
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Burnley at Nottingham Forest",
+    "time": "2026-04-19T13:00:00.000Z",
+    "endTime": null,
+    "venue": "The City Ground",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Burnley",
+    "isFavorite": false
+  },
+  {
     "sport": "f1",
     "tournament": "Formula 1 World Championship 2026",
     "title": "Bahrain Grand Prix 2026",
@@ -736,6 +898,32 @@
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-13T02:06:12.751Z",
     "_enrichHash": "a7d5cc3750111104545a71503cb95267"
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Arsenal at Manchester City",
+    "time": "2026-04-19T15:30:00.000Z",
+    "endTime": null,
+    "venue": "Etihad Stadium",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Manchester City",
+    "awayTeam": "Arsenal",
+    "isFavorite": false
   },
   {
     "sport": "tennis",
@@ -860,6 +1048,44 @@
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-13T02:06:12.751Z",
     "_enrichHash": "568980bdf085897778d0c7f998a46e4c"
+  },
+  {
+    "sport": "cycling",
+    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
+    "title": "Giro d'Italia 2026",
+    "time": "2026-05-02T10:00:00.000Z",
+    "endTime": "2026-05-24T15:00:00.000Z",
+    "venue": "Italy (route TBC)",
+    "meta": "Cycling Grand Tours & Norwegian Races 2026",
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "Eurosport",
+        "url": "",
+        "type": "tv"
+      },
+      {
+        "platform": "Discovery+",
+        "url": "",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Tobias Halland Johannessen"
+      },
+      {
+        "name": "Andreas Leknessund"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
   },
   {
     "sport": "cycling",
@@ -991,6 +1217,60 @@
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-13T02:06:12.751Z",
     "_enrichHash": "020cf2a2a3799cad30b69f21774b7e04"
+  },
+  {
+    "sport": "cycling",
+    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
+    "title": "Tour of Norway 2026",
+    "time": "2026-05-12T09:00:00.000Z",
+    "endTime": "2026-05-16T15:00:00.000Z",
+    "venue": "Norway (route TBC)",
+    "meta": "Cycling Grand Tours & Norwegian Races 2026",
+    "norwegian": true,
+    "streaming": [
+      {
+        "platform": "NRK",
+        "url": "",
+        "type": "tv"
+      },
+      {
+        "platform": "NRK TV",
+        "url": "",
+        "type": "streaming"
+      },
+      {
+        "platform": "Eurosport",
+        "url": "",
+        "type": "tv"
+      },
+      {
+        "platform": "Discovery+",
+        "url": "",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [
+      {
+        "name": "Tobias Halland Johannessen"
+      },
+      {
+        "name": "Jonas Abrahamsen"
+      },
+      {
+        "name": "Søren Wærenskjold"
+      },
+      {
+        "name": "Andreas Leknessund"
+      }
+    ],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
   },
   {
     "sport": "cycling",

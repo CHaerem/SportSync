@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-13T01:57:37.910Z",
-  "eventCount": 61,
+  "generatedAt": "2026-04-13T02:16:55.974Z",
+  "eventCount": 67,
   "sportCoverage": {
     "golf": {
       "count": 1,
@@ -9,13 +9,13 @@
     },
     "tennis": {
       "count": 5,
-      "previousCount": 2,
-      "delta": 3
+      "previousCount": 5,
+      "delta": 0
     },
     "football": {
-      "count": 23,
+      "count": 27,
       "previousCount": 23,
-      "delta": 0
+      "delta": 4
     },
     "chess": {
       "count": 2,
@@ -28,9 +28,9 @@
       "delta": 0
     },
     "cycling": {
-      "count": 6,
-      "previousCount": 8,
-      "delta": -2
+      "count": 8,
+      "previousCount": 6,
+      "delta": 2
     },
     "esports": {
       "count": 1,
@@ -40,42 +40,46 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 2,
+      "stale": false
+    },
+    "cycling.json": {
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 226,
+      "ageMinutes": 245,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1104,
+      "ageMinutes": 1123,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-13"
     },
     "ai-quality.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.94,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -98,18 +102,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.17,
+    "matchRate": 0.25,
     "relevantMatchRate": 1,
-    "eventsEnriched": 2,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -182,22 +183,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 1104 minutes old"
+      "message": "tennis.json: data is 1123 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 15 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 16 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (golf)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -222,7 +218,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-13T01:57:37.982Z",
+    "computedAt": "2026-04-13T02:16:56.067Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -268,7 +264,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }

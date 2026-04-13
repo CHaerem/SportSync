@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-14",
-  "generatedAt": "2026-04-12T22:18:42.484Z",
+  "generatedAt": "2026-04-13T02:16:54.742Z",
   "events": {
     "upcoming": [
       {
@@ -36,7 +36,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-12T22:17:11.530Z",
+        "enrichedAt": "2026-04-13T02:06:12.750Z",
         "_enrichHash": "08332c12822d9a9b0361179e410cdb57"
       },
       {
@@ -84,7 +84,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-12T22:17:11.530Z",
+        "enrichedAt": "2026-04-13T02:06:12.750Z",
         "_enrichHash": "f9d3c171bcd7e21f6529a97b3bb7d9b9"
       },
       {
@@ -124,7 +124,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-12T22:17:11.531Z"
+        "enrichedAt": "2026-04-13T02:06:12.750Z"
       },
       {
         "sport": "football",
@@ -138,8 +138,45 @@
         "streaming": [
           {
             "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "TV 2 Sport 1",
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "bvbet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -160,8 +197,10 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-12T22:17:11.531Z",
-        "_enrichHash": "6cc6c8b004dad54f4ec7641a795402ed"
+        "enrichedAt": "2026-04-13T02:06:12.750Z",
+        "_enrichHash": "6cc6c8b004dad54f4ec7641a795402ed",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -175,8 +214,39 @@
         "streaming": [
           {
             "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "url": "https://play.tv2.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Lilibet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "bvbet",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Eurosport Norge",
+            "url": "https://www.discoveryplus.no/sport",
+            "type": "tv",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "MAX",
+            "url": "https://play.max.com/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -197,8 +267,10 @@
           "rivalry"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-12T22:17:11.531Z",
-        "_enrichHash": "42ffe4285427fce8744723c2b0562bdf"
+        "enrichedAt": "2026-04-13T02:06:12.750Z",
+        "_enrichHash": "42ffe4285427fce8744723c2b0562bdf",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
