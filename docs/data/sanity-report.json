@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-12T22:18:43.670Z",
+  "generatedAt": "2026-04-13T06:52:40.206Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 60,
+    "totalEvents": 67,
     "sports": [
       "golf",
       "tennis",
@@ -16,16 +16,17 @@
       "live": [
         "Oeiras Jamor Ladies Open"
       ],
-      "today": [],
-      "tomorrow": [
+      "today": [
         "Barcelona Open Banc Sabadell 2026",
         "Leeds United at Manchester United",
         "Getafe at Levante"
       ],
-      "thisWeek": [
+      "tomorrow": [
         "Round 13 – FIDE Candidates Tournament 2026",
         "Barcelona at Atlético Madrid",
-        "Paris Saint-Germain at Liverpool",
+        "Paris Saint-Germain at Liverpool"
+      ],
+      "thisWeek": [
         "Round 14 – FIDE Candidates Tournament 2026",
         "Sporting CP at Arsenal",
         "Real Madrid at Bayern Munich",
@@ -36,17 +37,24 @@
         "Brighton & Hove Albion at Tottenham Hotspur",
         "Manchester United at Chelsea",
         "Real Sociedad at Atlético Madrid",
-        "Bahrain Grand Prix 2026"
+        "Sunderland at Aston Villa",
+        "Liverpool at Everton",
+        "Burnley at Nottingham Forest",
+        "Bahrain Grand Prix 2026",
+        "Arsenal at Manchester City"
       ],
       "later": [
+        "Mutua Madrid Open 2026",
         "Saudi Arabian Grand Prix 2026",
         "Crypto.com Miami Grand Prix",
         "Giro d'Italia 2026",
         "Giro d'Italia 2026",
+        "Internazionali BNL d'Italia 2026",
         "Miami Grand Prix 2026",
         "Tour of Norway 2026",
         "Tour of Norway 2026",
         "Emilia Romagna Grand Prix 2026",
+        "Roland-Garros 2026",
         "Monaco Grand Prix 2026",
         "IEM Cologne Major 2026",
         "Spanish Grand Prix 2026",
@@ -88,209 +96,224 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 95,
-    "issueCount": 16
+    "editorialScore": 100,
+    "issueCount": 7
   },
   "findings": [
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Crypto.com Miami Grand Prix\" is 19 days away — may clutter the dashboard"
+      "message": "\"Crypto.com Miami Grand Prix\" is 18 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Giro d'Italia 2026\" is 20 days away — may clutter the dashboard"
+      "message": "\"Giro d'Italia 2026\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Giro d'Italia 2026\" is 20 days away — may clutter the dashboard"
+      "message": "\"Giro d'Italia 2026\" is 19 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Miami Grand Prix 2026\" is 28 days away — may clutter the dashboard"
+      "message": "\"Internazionali BNL d'Italia 2026\" is 27 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Tour of Norway 2026\" is 30 days away — may clutter the dashboard"
+      "message": "\"Miami Grand Prix 2026\" is 27 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Tour of Norway 2026\" is 30 days away — may clutter the dashboard"
+      "message": "\"Tour of Norway 2026\" is 29 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Emilia Romagna Grand Prix 2026\" is 42 days away — may clutter the dashboard"
+      "message": "\"Tour of Norway 2026\" is 29 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Monaco Grand Prix 2026\" is 49 days away — may clutter the dashboard"
+      "message": "\"Emilia Romagna Grand Prix 2026\" is 41 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"IEM Cologne Major 2026\" is 51 days away — may clutter the dashboard"
+      "message": "\"Roland-Garros 2026\" is 42 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Spanish Grand Prix 2026\" is 56 days away — may clutter the dashboard"
+      "message": "\"Monaco Grand Prix 2026\" is 48 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Week 1)\" is 61 days away — may clutter the dashboard"
+      "message": "\"IEM Cologne Major 2026\" is 50 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Opening Match\" is 61 days away — may clutter the dashboard"
+      "message": "\"Spanish Grand Prix 2026\" is 55 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Canadian Grand Prix 2026\" is 63 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Week 1)\" is 60 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Week 2)\" is 71 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Opening Match\" is 60 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Tour de France 2026\" is 76 days away — may clutter the dashboard"
+      "message": "\"Canadian Grand Prix 2026\" is 62 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Austrian Grand Prix 2026\" is 77 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Week 2)\" is 70 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Group Stage (Final Matchday)\" is 78 days away — may clutter the dashboard"
+      "message": "\"Tour de France 2026\" is 75 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Round of 32\" is 83 days away — may clutter the dashboard"
+      "message": "\"Austrian Grand Prix 2026\" is 76 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"British Grand Prix 2026\" is 84 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Group Stage (Final Matchday)\" is 77 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Round of 16\" is 87 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Round of 32\" is 82 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Quarterfinals\" is 91 days away — may clutter the dashboard"
+      "message": "\"British Grand Prix 2026\" is 83 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Semifinal 1\" is 94 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Round of 16\" is 86 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Semifinal 2\" is 95 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Quarterfinals\" is 90 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 — Third Place Match\" is 98 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Semifinal 1\" is 93 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"FIFA World Cup 2026 Final\" is 98 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Semifinal 2\" is 94 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Belgian Grand Prix 2026\" is 105 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 — Third Place Match\" is 97 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Hungarian Grand Prix 2026\" is 112 days away — may clutter the dashboard"
+      "message": "\"FIFA World Cup 2026 Final\" is 97 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Arctic Race of Norway 2026\" is 122 days away — may clutter the dashboard"
+      "message": "\"Belgian Grand Prix 2026\" is 104 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Vuelta a España 2026\" is 132 days away — may clutter the dashboard"
+      "message": "\"Hungarian Grand Prix 2026\" is 111 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Dutch Grand Prix 2026\" is 140 days away — may clutter the dashboard"
+      "message": "\"Arctic Race of Norway 2026\" is 121 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Italian Grand Prix 2026\" is 147 days away — may clutter the dashboard"
+      "message": "\"Vuelta a España 2026\" is 131 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"UCI Road World Championships 2026\" is 161 days away — may clutter the dashboard"
+      "message": "\"Dutch Grand Prix 2026\" is 139 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Azerbaijan Grand Prix 2026\" is 161 days away — may clutter the dashboard"
+      "message": "\"Italian Grand Prix 2026\" is 146 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Singapore Grand Prix 2026\" is 175 days away — may clutter the dashboard"
+      "message": "\"UCI Road World Championships 2026\" is 160 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"United States Grand Prix 2026\" is 189 days away — may clutter the dashboard"
+      "message": "\"Azerbaijan Grand Prix 2026\" is 160 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Mexico City Grand Prix 2026\" is 196 days away — may clutter the dashboard"
+      "message": "\"Singapore Grand Prix 2026\" is 174 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"São Paulo Grand Prix 2026\" is 210 days away — may clutter the dashboard"
+      "message": "\"United States Grand Prix 2026\" is 188 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Las Vegas Grand Prix 2026\" is 223 days away — may clutter the dashboard"
+      "message": "\"Mexico City Grand Prix 2026\" is 195 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Qatar Grand Prix 2026\" is 231 days away — may clutter the dashboard"
+      "message": "\"São Paulo Grand Prix 2026\" is 209 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
       "check": "event_too_far",
-      "message": "\"Abu Dhabi Grand Prix 2026\" is 238 days away — may clutter the dashboard"
+      "message": "\"Las Vegas Grand Prix 2026\" is 222 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"Qatar Grand Prix 2026\" is 230 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "event_too_far",
+      "message": "\"Abu Dhabi Grand Prix 2026\" is 237 days away — may clutter the dashboard"
+    },
+    {
+      "severity": "warning",
+      "check": "stale_dashboard",
+      "message": "Dashboard data is 5 hours old"
     },
     {
       "severity": "warning",
@@ -300,18 +323,13 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Scheffler\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Roland Garros\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Grand Slam\" but no matching athlete found in events data"
     }
   ],
   "summary": {
-    "total": 43,
+    "total": 45,
     "critical": 0,
-    "warning": 43,
+    "warning": 45,
     "info": 0
   },
   "pass": true,
