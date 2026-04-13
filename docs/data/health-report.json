@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T10:37:36.153Z",
+  "generatedAt": "2026-04-13T11:34:50.601Z",
   "eventCount": 67,
   "sportCoverage": {
     "golf": {
@@ -40,42 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 746,
+      "ageMinutes": 803,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1624,
+      "ageMinutes": 1681,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 501,
-      "stale": true,
+      "ageMinutes": 0,
+      "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-13"
     },
     "ai-quality.json": {
-      "ageMinutes": 501,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -110,9 +110,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 501 minutes old (stale > 240m)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -129,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 11,
-    "sevenDay": 17,
+    "fiveHour": 16,
+    "sevenDay": 18,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 228450,
+    "totalDuration": 229812,
     "stepCount": 29,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "verify-schedules",
-        "duration": 180106,
-        "share": 79
+        "duration": 180094,
+        "share": 78
       }
     ],
     "failedSteps": [
@@ -182,42 +180,27 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 746 minutes old"
+      "message": "golf.json: data is 803 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 1624 minutes old"
+      "message": "tennis.json: data is 1681 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 6 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 7 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 21 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 501 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 501 minutes old"
+      "message": "tennis: data retained 22 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (golf)"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 501 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -227,17 +210,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 79% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 78% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-13T10:37:36.244Z",
+    "computedAt": "2026-04-13T11:34:50.694Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -281,9 +269,34 @@
       }
     ]
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 4,
+    "warning": 12,
+    "totalFiles": 116,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3754,
+        "functions": 105,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1543,
+        "functions": 69,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1482,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
