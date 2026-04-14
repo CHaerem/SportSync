@@ -76,41 +76,6 @@
     "_enrichHash": "35924ba1c10653dde6c0669230dca54d"
   },
   {
-    "sport": "tennis",
-    "tournament": "ATP/WTA Tour",
-    "title": "Oeiras Jamor Ladies Open",
-    "time": "2026-04-12T04:00:00.000Z",
-    "endTime": "2026-04-20T03:59:00.000Z",
-    "venue": "TBD",
-    "meta": "ATP/WTA Tour",
-    "norwegian": false,
-    "streaming": [
-      {
-        "platform": "Discovery+",
-        "url": "https://www.discoveryplus.no",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "importance": 2,
-    "importanceReason": "WTA 125 event, no Norwegian players, low-tier tournament.",
-    "summary": "Lower-tier WTA 125 clay event in Portugal; no Norwegian players or major stars likely involved.",
-    "tags": [
-      "watchlist"
-    ],
-    "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-13T22:22:46.424Z",
-    "_enrichHash": "08332c12822d9a9b0361179e410cdb57"
-  },
-  {
     "sport": "esports",
     "tournament": "CS2 Tournaments 2026",
     "title": "IEM Rio 2026",
@@ -450,8 +415,45 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "TV 2 Sport 1",
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Lilibet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -471,7 +473,9 @@
     ],
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-13T22:22:46.424Z",
-    "_enrichHash": "7c6a4d68698e5da8decf73edd3273540"
+    "_enrichHash": "7c6a4d68698e5da8decf73edd3273540",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -485,8 +489,39 @@
     "streaming": [
       {
         "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "url": "https://play.tv2.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Lilibet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "bvbet",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Eurosport Norge",
+        "url": "https://www.discoveryplus.no/sport",
+        "type": "tv",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "MAX",
+        "url": "https://play.max.com/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -508,7 +543,9 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-13T22:22:46.425Z",
-    "_enrichHash": "33bbcaa3f1252c9bf28beeb6600fec56"
+    "_enrichHash": "33bbcaa3f1252c9bf28beeb6600fec56",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "f1",
@@ -937,6 +974,58 @@
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-13T22:22:46.425Z",
     "_enrichHash": "3cfa8d61e13dab1da086be01f7889981"
+  },
+  {
+    "sport": "tennis",
+    "tournament": "ATP/WTA Tour",
+    "title": "Oeiras Open CETO",
+    "time": "2026-04-20T04:00:00.000Z",
+    "endTime": "2026-04-27T03:59:00.000Z",
+    "venue": "TBD",
+    "meta": "ATP/WTA Tour",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Discovery+",
+        "url": "https://www.discoveryplus.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": null,
+    "awayTeam": null,
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "West Ham United at Crystal Palace",
+    "time": "2026-04-20T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Selhurst Park",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "West Ham United",
+    "isFavorite": false
   },
   {
     "sport": "tennis",

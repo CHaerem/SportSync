@@ -1,18 +1,12 @@
 {
-  "startedAt": "2026-04-13T22:19:16.484Z",
-  "completedAt": "2026-04-13T22:28:21.865Z",
-  "duration": 545380,
-  "mode": "full",
+  "startedAt": "2026-04-14T02:12:25.554Z",
+  "completedAt": "2026-04-14T02:14:53.032Z",
+  "duration": 147478,
+  "mode": "data-only",
   "gate": "pass",
   "gateBlockedFiles": null,
   "blockedPhases": [],
-  "quota": {
-    "fiveHour": 0,
-    "sevenDay": 20,
-    "tier": 0,
-    "maxPriority": 3,
-    "model": null
-  },
+  "quota": null,
   "phases": {
     "fetch": {
       "name": "fetch",
@@ -21,32 +15,32 @@
         {
           "name": "fetch-sports",
           "status": "success",
-          "duration": 27429
+          "duration": 27876
         },
         {
           "name": "fetch-standings",
           "status": "success",
-          "duration": 2613
+          "duration": 3233
         },
         {
           "name": "fetch-rss",
           "status": "success",
-          "duration": 8834
+          "duration": 8839
         },
         {
           "name": "merge-data",
           "status": "success",
-          "duration": 285
+          "duration": 569
         },
         {
           "name": "fetch-results",
           "status": "success",
-          "duration": 37412
+          "duration": 38065
         },
         {
           "name": "run-recipes",
           "status": "success",
-          "duration": 358
+          "duration": 551
         }
       ]
     },
@@ -57,7 +51,7 @@
         {
           "name": "sync-configs",
           "status": "success",
-          "duration": 177
+          "duration": 230
         },
         {
           "name": "proactive-triggers",
@@ -67,7 +61,7 @@
         {
           "name": "usage-snapshot",
           "status": "success",
-          "duration": 1096
+          "duration": 1759
         }
       ]
     },
@@ -77,13 +71,15 @@
       "steps": [
         {
           "name": "discover-events",
-          "status": "success",
-          "duration": 153710
+          "status": "skipped",
+          "duration": 0,
+          "reason": "data-only mode"
         },
         {
           "name": "learn-recipes",
-          "status": "success",
-          "duration": 149
+          "status": "skipped",
+          "duration": 0,
+          "reason": "data-only mode"
         }
       ]
     },
@@ -94,12 +90,12 @@
         {
           "name": "build-events",
           "status": "success",
-          "duration": 656
+          "duration": 633
         },
         {
           "name": "enrich-streaming",
           "status": "success",
-          "duration": 3200
+          "duration": 5552
         }
       ]
     },
@@ -109,8 +105,9 @@
       "steps": [
         {
           "name": "enrich-events",
-          "status": "success",
-          "duration": 12533
+          "status": "skipped",
+          "duration": 0,
+          "reason": "data-only mode"
         }
       ]
     },
@@ -121,12 +118,12 @@
         {
           "name": "generate-featured",
           "status": "success",
-          "duration": 131232
+          "duration": 80826
         },
         {
           "name": "post-generate",
           "status": "success",
-          "duration": 21167
+          "duration": 16649
         }
       ]
     },
@@ -137,50 +134,50 @@
         {
           "name": "validate-data",
           "status": "success",
-          "duration": 638
+          "duration": 585
         }
       ]
     },
     "monitor": {
       "name": "monitor",
-      "status": "partial",
+      "status": "success",
       "steps": [
         {
           "name": "pipeline-health",
           "status": "success",
-          "duration": 705
+          "duration": 486
         },
         {
           "name": "quality-regression",
           "status": "success",
-          "duration": 544
+          "duration": 306
         },
         {
           "name": "coverage-gaps",
           "status": "success",
-          "duration": 456
+          "duration": 288
         },
         {
           "name": "build-calendar",
           "status": "success",
-          "duration": 1058
+          "duration": 826
         },
         {
           "name": "ai-sanity-check",
-          "status": "success",
-          "duration": 530
+          "status": "skipped",
+          "duration": 0,
+          "reason": "data-only mode"
         },
         {
           "name": "verify-schedules",
-          "status": "failed",
-          "duration": 180050,
-          "error": "Command failed: node scripts/verify-schedules.js\n",
-          "errorCategory": "command"
+          "status": "skipped",
+          "duration": 0,
+          "reason": "data-only mode"
         },
         {
           "name": "analyze-code-complexity",
           "status": "success",
-          "duration": 732
+          "duration": 531
         }
       ]
     },
@@ -191,7 +188,7 @@
         {
           "name": "evolve-preferences",
           "status": "success",
-          "duration": 247
+          "duration": 239
         },
         {
           "name": "analyze-engagement",
@@ -207,40 +204,40 @@
         {
           "name": "usage-report",
           "status": "success",
-          "duration": 1110
+          "duration": 1008
         },
         {
           "name": "publish-preferences",
           "status": "success",
-          "duration": 134
+          "duration": 133
         },
         {
           "name": "finalize-outputs",
           "status": "success",
-          "duration": 157
+          "duration": 148
         },
         {
           "name": "archive-roadmap",
           "status": "success",
-          "duration": 116
+          "duration": 115
         },
         {
           "name": "consolidate-strategy",
           "status": "success",
-          "duration": 107
+          "duration": 103
         },
         {
           "name": "pre-commit-gate",
           "status": "success",
-          "duration": 149
+          "duration": 145
         }
       ]
     }
   },
   "summary": {
     "total": 32,
-    "success": 31,
-    "failed": 1,
-    "skipped": 0
+    "success": 27,
+    "failed": 0,
+    "skipped": 5
   }
 }

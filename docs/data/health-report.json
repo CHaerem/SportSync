@@ -1,8 +1,13 @@
 {
-  "generatedAt": "2026-04-14T02:04:06.085Z",
-  "eventCount": 65,
+  "generatedAt": "2026-04-14T02:14:50.429Z",
+  "eventCount": 66,
   "sportCoverage": {
     "golf": {
+      "count": 1,
+      "previousCount": 1,
+      "delta": 0
+    },
+    "esports": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
@@ -12,20 +17,15 @@
       "previousCount": 5,
       "delta": 0
     },
-    "esports": {
-      "count": 1,
-      "previousCount": 1,
-      "delta": 0
-    },
     "chess": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
     },
     "football": {
-      "count": 25,
+      "count": 26,
       "previousCount": 25,
-      "delta": 0
+      "delta": 1
     },
     "f1": {
       "count": 23,
@@ -40,28 +40,32 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 2,
+      "stale": false
+    },
+    "cycling.json": {
+      "ageMinutes": 2,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 2,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 225,
+      "ageMinutes": 2,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 224,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1673,
+      "ageMinutes": 1683,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2550,
-      "stale": true
+      "ageMinutes": 2,
+      "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
@@ -79,7 +83,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 40,
+    "itemCount": 39,
     "healthy": true
   },
   "standingsHealth": {
@@ -92,24 +96,21 @@
     "stale": false,
     "footballCount": 34,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.03,
+    "recapHeadlineRate": 0,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.14,
+    "matchRate": 0.27,
     "relevantMatchRate": 1,
-    "eventsEnriched": 2,
+    "eventsEnriched": 4,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -179,32 +180,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1673 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "tennis.json: data is 2550 minutes old"
+      "message": "golf.json: data is 1683 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 18 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "tennis: data retained 33 consecutive times (since 2026-04-12) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 19 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (golf)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -229,7 +215,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-14T02:04:06.186Z",
+    "computedAt": "2026-04-14T02:14:50.515Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -275,11 +261,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 85/100.",
+    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 80/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }
