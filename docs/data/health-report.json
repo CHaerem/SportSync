@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T22:25:20.050Z",
+  "generatedAt": "2026-04-14T02:04:06.085Z",
   "eventCount": 65,
   "sportCoverage": {
     "golf": {
@@ -40,38 +40,34 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
-      "stale": false
-    },
-    "cycling.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 225,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 225,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 225,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 224,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1454,
+      "ageMinutes": 1673,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 2331,
+      "ageMinutes": 2550,
       "stale": true
     },
     "featured.json": {
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-04-13"
+      "featuredDate": "2026-04-14"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -111,7 +107,8 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -128,30 +125,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 20,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 46853,
-    "stepCount": 25,
+    "totalDuration": 545380,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28108,
-        "share": 60
-      },
-      {
-        "name": "fetch-results",
-        "duration": 37281,
-        "share": 80
+        "name": "verify-schedules",
+        "duration": 180050,
+        "share": 33
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -185,12 +179,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1454 minutes old"
+      "message": "golf.json: data is 1673 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 2331 minutes old"
+      "message": "tennis.json: data is 2550 minutes old"
     },
     {
       "severity": "warning",
@@ -209,18 +203,23 @@
     },
     {
       "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
+    },
+    {
+      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 33% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 80% of total pipeline time (37s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -230,7 +229,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-13T22:25:20.157Z",
+    "computedAt": "2026-04-14T02:04:06.186Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -248,7 +247,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -276,7 +275,11 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
+  },
+  "qualityRegression": {
+    "issues": [],
+    "hasRegression": false
   }
 }

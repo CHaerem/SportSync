@@ -183,52 +183,44 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 ## Pending Tasks
 
 - [PENDING] [MAINTENANCE] **Standings section collapsed preview** — Standalone Standings section is always collapsed behind a tiny label with zero indication of its rich content (PL table, Masters leaderboard, F1 drivers, chess standings). Add a `band-preview` element showing sport icons and table names (e.g., "PL | Masters | F1 | Candidates") so users discover the data. Files: `docs/js/standings-renderer.js`, `docs/js/dashboard.js`. ~25 lines. Pillar: personalization (data discoverability). Scouted run 48.
-- [PENDING] [MAINTENANCE] **CL aggregate score prominence** — Champions League knockout second-leg rows show aggregate context only in a muted italic meta line. For importance-5 matches, the aggregate score (e.g., "0-2 agg") is the most critical info but requires tapping to discover. Detect aggregate-score patterns in `event.meta` strings and render with more visual weight. Files: `docs/js/dashboard.js`. ~20 lines. Pillar: quality (editorial presentation). Scouted run 48.
 - [PENDING] [MAINTENANCE] **Favorite-team day nav dots** — Day strip shows colored sport dots but does not distinguish between generic events and events involving user's favorite teams. Add a distinct dot style (accent color, star) for days with favorite-team matches. Files: `docs/js/dashboard.js` `renderDayNav()`. ~30 lines. Pillar: personalization (favorite surfacing). Scouted run 48.
 - [PENDING] [MAINTENANCE] **Tennis player seed + structured meta in expanded view** — Tennis events carry `norwegianPlayers[].seed` data (e.g., Casper Ruud seeded 5th) but expanded view just shows the name. Add seed display and parse structured `meta` objects for tennis to show category/surface. Files: `docs/js/dashboard.js` expanded view. ~15 lines. Pillar: data (richer presentation). Scouted run 48.
-- [PENDING] [MAINTENANCE] **build-events.js curated config test coverage** — `build-events.test.js` creates a `tmpConfigDir` but never writes curated config files to it. Curated config merging, bracket extraction from configs, and `_bracketId` propagation are entirely untested. Add 6-8 tests for curated config loading, event merging, and bracket extraction. Files: `tests/build-events.test.js`. ~80 lines. Pillar: code (test coverage gap). Scouted run 48.
-- [EXPLORE] **FIFA World Cup 2026 group compositions** — Config has all 12 groups with only seed teams populated (USA, Brazil, etc.) and all other slots as "TBD". Draw was held Dec 2025 — all 48 group compositions are public. `health-report.json` flags urgency 0.3 (overdue by 200%). Investigate whether `discover-events.js` can populate the groups, or if manual research is needed. User requested WC coverage (issue #121). Pillar: data. Scouted run 48.
 
+### Recently Completed
+
+- [DONE] [MAINTENANCE] **CL aggregate score prominence** — Champions League knockout second-leg rows now surface the aggregate score as a distinct pill on collapsed rows for importance-5 matches (no tap required). Extracted aggregate-pattern matcher for `event.meta` strings, rendered as accent-colored chip alongside the scoreline. +tests for aggregate detection. Commit `382233e`. Run 49.
+- [DONE] [MAINTENANCE] **build-events.js curated config test coverage** — Added 8 tests under a new `curated config merging` describe block: curated tournaments merged into events.json, `bracket` field extraction, `_bracketId` propagation via `pushEvent()`, archive-subdir exclusion, empty/needsResearch-flagged configs skipped cleanly, multi-sport merging, and malformed JSON tolerance. All 2682 tests pass. PR #163 (merged). Run 49.
 - [DONE] [MAINTENANCE] **F1 fetcher dates=<year> param** — F1 chronic_data_retention (25 consecutive runs) + stale_data + invisible_events warnings. Root cause: ESPN `/racing/f1/scoreboard` silently returns only the most-recent past race without a `dates` param. Fix: `F1Fetcher.fetchFromSource()` override appends `?dates=<currentYear>` dynamically (defensive — only patches ESPN scoreboard sources, skips if `dates=` already present). Live fetch now returns 24 raw events (full season); pipeline surfaces 2 upcoming events after the 30-day filter. +2 regression tests (URL contains dates param, ≥2 events on multi-race response). data-agent memory updated with ESPN racing scoreboard pattern for future motorsport fetchers. Commit `1e49078`. Run 47.
 - [DONE] [MAINTENANCE] **Close preferenceEvolution partial loop (12/13 → 13/13)** — Loop stuck at 0.5 because `preference-evolution.json` had 0 entries: evolve-preferences.js returned silently when engagement was zero and no watch feedback existed. Fix: added `recordHeartbeat()` with 24h throttle — when the loop runs with no actionable changes, it appends a `type: "heartbeat"` entry (throttled to avoid hourly spam) so the loop's aliveness is provable. Real evolution entries unchanged. +5 tests including end-to-end closure validation via `evaluatePreferenceEvolution()`. Autonomy now 100% (13/13 loops closed). Run 47.
-
 - [DONE] [MAINTENANCE] **Invisible events UX indicator** — Added subtle "N more events on upcoming days · Football, Chess +2 more →" hint button at the end of today's view in `renderEvents()`. Respects active sport filter. Click scrolls to day-nav and focuses next non-empty day. Dashed border, hover highlights with accent. Run 46.
 - [DONE] [MAINTENANCE] **featured_date_mismatch quota-awareness (pattern report)** — Pattern report showed 17 firings since 2026-04-09 (HIGH). Root cause: generate-featured quota-skipped in earlier runs left yesterday's briefing in place, triggering the date-mismatch warning even though the stale state was already surfaced as quota_high_utilization. Fix: emit info-severity `featured_date_mismatch_quota_skipped` when `pipelineResult.phases` shows generate-featured/generate-multi-day skipped with quota reason; warning path unchanged for genuine mismatches. +1 test. Run 46.
 - [DONE] [MAINTENANCE] **verify-schedules timeout fix (scheduleVerification loop)** — Step failed with 60s timeout (14 consecutive runs). Root cause: `createWebSearchFn` uses blocking `execSync` with 120s per-call timeout, blocking the event loop and preventing the 50s safety timer from firing. Fix: bump manifest timeout to 180s + cap per-call execSync timeout to 40s so 3 web searches fit within budget with headroom for ESPN fetches. Run 46.
-
 - [DONE] [MAINTENANCE] **Fix streaming badges hidden for 'stream' type entries** — 36 streaming entries in events.json (cycling, F1) used `type:'stream'` but filter only accepted `'streaming'` or `'tv'`, silently hiding all streaming links. Fixed 5 filter expressions in dashboard.js. Direct-to-main. Run 45.
 - [DONE] [FEATURE] **End-to-end autonomous sport addition (Pillar 3 proof)** — Cycling fetcher created (`scripts/fetch/cycling.js`) using curated-config-first pattern (ESPN has no cycling API). Registered in `scripts/fetch/index.js`. Sport color already existed in `docs/js/sport-config.js`. Reads from `scripts/config/cycling-*.json` (6+2 events). Auto-discovered by build-events.js. PR #161. Run 45.
 - [DONE] [FEATURE] **Richer personalization signals (Pillar 4 advancement)** — Already fully implemented: `buildBlockTypePreferences()` in `generate-featured.js` reads `engagement-data.json`, identifies preferred block types (≥15% share, ≥5 clicks), injects into editorial prompt. Gracefully degrades when no data. 8 tests covering all edge cases. Verified Run 45 — no code changes needed.
-
 - [DONE] [MAINTENANCE] **Must-watch text-level signal** — Added `<span class="row-must-watch-pill">Must Watch</span>` badge on collapsed rows for importance ≥ 4. CSS pill with accent color + dark mode variant. PR #160. Run 44.
 - [DONE] [MAINTENANCE] **Golf featuredGroups subtitle in collapsed row** — Renders "Playing with [name1, name2]" subtitle from `event.featuredGroups` in collapsed golf rows, up to 3 groupmates. PR #160. Run 44.
 - [DONE] [MAINTENANCE] **Tennis curated config for major tournaments** — Created `scripts/config/tennis-calendar-2026.json` with 14 major ATP/WTA 2026 tournaments + 5 Norwegian athletes (Casper Ruud primary). Fixes chronic ESPN staleness. Direct-to-main. Run 44.
-
 - [DONE] [MAINTENANCE] **La Liga standings in standings.json** — Already implemented: `fetchLaLigaStandings()` exists, called in main(), rendered in standings-renderer.js. Added La Liga to `buildStandingsContext()` for editorial prompt context. Run 31.
 - [DONE] [MAINTENANCE] **recapHeadline single-team matching** — Added 4th matching tier: single football-tagged team + 6h time proximity. Norwegian headlines mentioning only one team now match. Run 31.
 - [DONE] [MAINTENANCE] **isEventInWindow() convention violations** — Replaced 2 manual date filters in `generate-featured.js` (lines 573, 648) with `isEventInWindow()`. Other 2 locations (golf.js, espn-adapter.js) did not exist. Run 31.
 - [DONE] [MAINTENANCE] **WCAG minimum font sizes** — Bumped 12 CSS declarations from 0.42-0.54rem to 0.55rem minimum. PR #142. Run 31.
 - [DONE] [MAINTENANCE] **Must-watch styling + sport pill counts + ARIA labels** — Enhanced must-watch border (3px/0.6 opacity), added event count badges to sport filter pills, added `role="main"` ARIA label. PR #143. Run 32.
-
 - [DONE] [MAINTENANCE] **importanceReason as badge for importance=5 events** — Shows importanceReason as small-caps muted label above summary for importance=5 events. PR #144. Run 33.
 - [DONE] [MAINTENANCE] **Norwegian rider names in cycling card headers** — Renders deduplicated Norwegian rider names below lede in collapsed cycling cards. PR #144. Run 33.
 - [DONE] [MAINTENANCE] **Brief headline live-state indicator** — Headline shows LIVE badge (pulsing dot + score + clock) or FT badge when referenced match state changes. PR #145. Run 33.
 - [DONE] [MAINTENANCE] **recapHeadline 4th-tier sport filter too strict** — Already fixed in commit 0fcf34ad — 4th tier accepts `sport: "general"` items. Verified run 33.
 - [DONE] [MAINTENANCE] **RSS item cap starves football-specific feeds** — Already fixed (CAP=40, MIN_PER_SPORT=3). Extracted `applyPerSportCap()` as testable export + 6 new tests. Run 33.
 - [DONE] [MAINTENANCE] **Add Norwegian Cup (nor.cup) to football leagues** — Added `{ code: "nor.cup", name: "Norwegian Cup" }` to `scripts/config/sports-config.js` football leagues. `fetch-results.js` derives LEAGUE_MAP from sportsConfig dynamically so it propagated automatically. Commit 38a9393a.
-
 - [DONE] [MAINTENANCE] **UX batch: result summary fallback, format field, ARIA, sport pills** — (1) Result card summary fallback uses AI-enriched summary from events.json when no recapHeadline (97% of cards). (2) Chess/tennis format field in expanded view. (3) ARIA landmarks on #sport-pills and #the-brief. (4) Sport pills visible with single active sport. PR #146. Run 34.
 - [DONE] [MAINTENANCE] **watchPlan loop false-negative on quiet days** — evaluateWatchPlan() now awards 0.5 (partial) when plan is fresh and ran successfully but found no qualifying events. Fixes autonomy score drop during international breaks. Direct-to-main. Run 34.
-
 - [DONE] [MAINTENANCE] **Norwegian relevance gradient badge** — Added muted "NOR" text badge for norwegianRelevance 2-3 events (0.55rem, muted-light, 0.85 opacity). PR #147. Run 35.
 - [DONE] [MAINTENANCE] **Insights section visual weight** — Added border to card wrapper, bumped insight-line from 0.72rem/muted to 0.8rem/text, insights-header from 0.58rem to 0.6rem. PR #147. Run 35.
 - [DONE] [MAINTENANCE] **Export + test snapshotHealth and streamingVerification evaluators** — Added 10 unit tests (5 per evaluator) covering healthy, degraded, missing data, and edge cases. Direct-to-main. Run 35.
 - [DONE] [MAINTENANCE] **Wire complexity report into pipeline health** — Added complexityHealth block reading code-complexity-report.json, surfaces critical/high files as info-severity issues. Direct-to-main. Run 35.
-
 - [DONE] [MAINTENANCE] **Day navigator empty-day indicator** — Added `has-no-events` class (0.3 opacity) to day-nav items with 0 events. PR #148. Run 36.
 - [DONE] [MAINTENANCE] **Watch-plan "why" tooltip** — Surfaced pick reasons as `.pick-reason-subtitle` below title (e.g., "Top-4 clash · Norwegian interest"). PR #148. Run 36.
 - [DONE] [MAINTENANCE] **Dark mode NOR badge contrast** — Added `.dark .row-nor-muted` rule with `--muted` color at full opacity. PR #148. Run 36.
-
 - [DONE] [MAINTENANCE] **Wire analyze-code-complexity.js into pipeline manifest** — Added to `monitor` phase in `pipeline-manifest.json`. Direct-to-main. Run 37.
 - [DONE] [MAINTENANCE] **Streaming matcher Norwegian country name aliases** — Added 26-entry `NORWEGIAN_COUNTRY_ALIASES` map to `streaming-matcher.js`, 25 tests. Direct-to-main. Run 37.
 - [DONE] [MAINTENANCE] **recapHeadlineRate hint rule** — Added critically-low threshold (<10%) in `buildResultsHints()`, 7 tests. Direct-to-main. Run 37.
@@ -236,23 +228,19 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 - [DONE] [MAINTENANCE] **Staleness banner dark mode fix** — Replaced inline styles with `.staleness-banner` CSS class with dark mode override. PR #149. Run 37.
 - [DONE] [MAINTENANCE] **importanceReason badge deduplication** — Applied `_summaryCoversReason()` guard in `renderRow()` to suppress duplicate badge. PR #149. Run 37.
 - [DONE] [MAINTENANCE] **"Later" band collapsed preview date context** — Added date string (e.g., "3 Apr") to collapsed band preview when `showDay` is false. PR #149. Run 37.
-
 - [DONE] [MAINTENANCE] **Golf tee-time card headshots** — Wired `lbEntry.headshot` + `getGolferHeadshot()` fallback into tee-time card as 16px circular `<img>`. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **Insights section visual differentiation** — Regex-wrapped leading stats in `<span class="insight-stat">` with accent color + monospace. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **Sport filter pills dark mode active state** — Added `.dark .pill.active` with `--accent` color override. PR #150. Run 38.
 - [DONE] [MAINTENANCE] **mustWatchCoverage decline fix** — Root cause: LLMs drop sponsor prefixes ("Aramco Japanese Grand Prix" → "Japanese Grand Prix"). Added sponsor-prefix fallback in fuzzy matcher (drop first word when >= 4 sig words). 2 regression tests. Direct-to-main. Run 38.
-
 - [DONE] [MAINTENANCE] **pipelineHealth loop fix (KNOWN_DATA_GAPS)** — Added `editorial_no_narrative` (covered by Loop 1 featuredQuality) and `standings_empty` (transient ESPN API) to KNOWN_DATA_GAPS. Restores pipelineHealth loop to 1.0. Direct-to-main. Run 39.
 - [DONE] [MAINTENANCE] **Image alt text accessibility** — Added descriptive alt text to 10 `<img>` locations in dashboard.js (team logos, player headshots, league logos). PR #153. Run 39.
 - [DONE] [MAINTENANCE] **News section default 5 items** — Changed news section default visible count from 3 to 5 headlines. PR #153. Run 39.
 - [DONE] [MAINTENANCE] **Day navigator empty-day tooltip** — Added `title="No events scheduled"` to day items with `has-no-events` class. PR #153. Run 39.
 - [DONE] [MAINTENANCE] **retainLastGood() test coverage** — Added 18 tests covering fresh data, retention, consecutive counts, 14-day expiration, _noRetain flag, malformed metadata, disk persistence. Direct-to-main. Run 39.
-
 - [DONE] [MAINTENANCE] **KNOWN_MANAGED_CODES sync gap fix** — Added `editorial_no_narrative` and `standings_empty` to `KNOWN_MANAGED_CODES` in `analyze-patterns.js` (already in KNOWN_DATA_GAPS but missing from pattern suppression, causing false-positive pattern report). Direct-to-main. Run 40.
 - [DONE] [MAINTENANCE] **Day nav aria-label accessibility** — Added descriptive `aria-label` to day strip items (e.g., "Wed Apr 2, 3 events") for screen reader support. Direct-to-main. Run 40.
 - [DONE] [MAINTENANCE] **Result-row aria-label accessibility** — Added `aria-label` with full match result (e.g., "Arsenal 2–1 Chelsea") to compact result row buttons for screen readers. Direct-to-main. Run 40.
 - [DONE] [MAINTENANCE] **Cycling rider names CSS class** — Replaced inline style on cycling Norwegian rider names div with `.lead-pairing` CSS class for dark mode compatibility. Direct-to-main. Run 40.
-
 - [DONE] [MAINTENANCE] **Pipeline abort cascade detection** — Added `blockedPhases` array to pipeline-result.json. When a required step fails, downstream phases are recorded with `{ phase, reason }`. Also wired `checkProactiveTriggers()` to upgrade data-only → full mode. 10 new tests. Direct-to-main. Run 42.
 - [DONE] [MAINTENANCE] **ESPN adapter partial failure tracking** — Enhanced `fetchScoreboardWithLeagues()` with `coverageRatio` metadata (`totalLeagues`, `failedLeagues`, `failedLeagueNames`). Backward-compatible `_leagueMeta` preserved. `_fetchMetadata` propagates through `formatResponse()`. 8 new tests. Direct-to-main. Run 42.
 - [DONE] [MAINTENANCE] **Wire proactive triggers into pipeline mode decision** — Added `checkProactiveTriggers()` in run-pipeline.js, called after prepare phase. Reads `proactive-triggers.json`, upgrades data-only → full when `shouldUpgrade: true`. 6 tests. Direct-to-main. Run 42.
@@ -261,11 +249,13 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 - [DONE] [MAINTENANCE] **importanceBadge inline style → CSS class** — Extracted inline styles to `.row-importance-badge` CSS class for dark mode compatibility. Direct-to-main. Run 41.
 - [DONE] [MAINTENANCE] **generateStatusSummary fallback test coverage** — Added 9 tests for `buildFallbackSummary()` covering healthy/warning/critical status, editorial score presence/absence, edge cases. Direct-to-main. Run 41.
 - [DONE] [MAINTENANCE] **mustWatchCoverage sole-low-metric guard** — Added sole-low-metric suppression mirroring `recapHeadlineRate` pattern. When mustWatchCoverage is the only degraded metric, hint is suppressed. 3 new tests. Direct-to-main. Run 41.
-- [DONE] [FEATURE] **F1 full-season calendar config** — Created `scripts/config/f1-calendar-2026.json` with all 24 races (Australia Mar 15 through Abu Dhabi Dec 6). Includes venues, approximate race times, Viaplay broadcast info. Direct-to-main. Run 41.
-
 - [DONE] [MAINTENANCE] **sportDiversity keyword-based detection** — Enhanced `sportDiversity()` in ai-quality-gates.js to detect sports by name/keyword in block text (not just emojis). Added regex patterns for all 8 sports. 2 new tests. Direct-to-main. Run 43.
 - [DONE] [MAINTENANCE] **sport_dropped + sport_count_drop managed codes** — Added both to KNOWN_MANAGED_CODES and KNOWN_DATA_GAPS. These fire transiently between tournaments when events expire — handled by discovery/fetcher loop. Direct-to-main. Run 43.
 - [DONE] [MAINTENANCE] **UX a11y + dark mode batch** — (1) Skip-to-content link for keyboard users. (2) Sport pills `aria-pressed` + `role="toolbar"` semantics. (3) `prefers-color-scheme: dark` CSS fallback preventing white flash. PR #159. Run 43.
+
+### Archived (last 1 of 1 total)
+
+- F1 full-season calendar config — Run 41
 
 ---
 

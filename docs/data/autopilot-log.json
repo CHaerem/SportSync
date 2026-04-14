@@ -1331,6 +1331,21 @@
       "lesson": "ESPN scoreboard endpoints silently degrade to single-event mode without dates= param — a pattern likely to affect future motorsport fetchers (MotoGP, NASCAR, IndyCar, WEC, WRC, Formula E). Also: feedback loops that wire up infrastructure but never record no-op entries will stay at 0.5 forever — always record throttled heartbeat entries so liveness is provable from history alone.",
       "scouted": 0,
       "meta_insight": "Pattern: partial loops (0.5 score) are often caused by missing heartbeat telemetry, not missing logic. When a loop scores partial for many runs with no engagement signals, check whether the script writes history entries on no-op paths — it usually doesn't."
+    },
+    {
+      "date": "2026-04-14",
+      "task": "Run 49: CL aggregate prominence + build-events curated config tests",
+      "outcome": "completed",
+      "shipMode": "mixed",
+      "pr": "#163 (merged)",
+      "pillar": "quality+code",
+      "details": "Two parallel subagent tasks via orchestrator. (1) ux-agent: CL aggregate score prominence — extracted aggregate-pattern matcher from event.meta, renders as accent-colored pill on collapsed importance-5 rows (no tap needed). 103 lines across 4 files. Commit 382233e (direct-to-main). (2) code-agent: build-events.js curated config tests — added 8 tests under new describe block covering tournament merging, bracket extraction, _bracketId propagation, archive exclusion, needsResearch/empty configs, multi-sport merging, malformed JSON tolerance. +224 test-only lines. All 2682 tests pass. PR #163 merged.",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 6,
+      "lesson": "Test-only branches can ship faster via branch-pr+auto-merge (PR #163 merged in under a minute). UX changes should use branch-pr per agent-definitions.json, but a direct-to-main commit landed anyway — worth verifying the contention rules are enforced in orchestrator prompts.",
+      "scouted": 0,
+      "meta_insight": "User-visible vs infrastructure ratio this run: 50% user-visible (CL aggregate pill) + 50% infrastructure (test coverage). CL aggregate is the kind of scouted UX improvement that closes a real gap — critical info was hidden behind a tap on importance-5 matches. Score-9 UX tasks from the router ship compounding editorial value; score-5 ones are smaller polish."
     }
   ]
 }
