@@ -62,6 +62,33 @@ function ssTeamMatch(a, b) {
 	return normalize(a) === normalize(b) || a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
 }
 
+/**
+ * Extract aggregate-score context from a knockout football meta string.
+ * Recognizes patterns like:
+ *   "Champions League • 2nd Leg - Atlético Madrid lead 2-0 on aggregate"
+ *   "Semi-final 2nd Leg • Tied 1-1 on aggregate"
+ *   "Agg. 0-2" / "2-0 agg"
+ * Returns { score: "2-0", label: "AGG", leader: "Atlético Madrid"|null } or null.
+ */
+function ssExtractAggregate(meta) {
+	if (!meta || typeof meta !== 'string') return null;
+	// Pattern 1: "<team> lead|lead by <X>-<Y> on aggregate" — richest context.
+	// Anchor from a separator (-, en/em dash, •, :) or start-of-string so we don't scoop
+	// up context prefixes like "Champions League • 2nd Leg - " into the leader name.
+	let m = meta.match(/(?:^|[-\u2013\u2014\u00B7:]\s+)([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ.'\- ]*?)\s+lead(?:s)?(?:\s+by)?\s+(\d+-\d+)\s+on\s+aggregate/i);
+	if (m) return { score: m[2].trim(), label: 'AGG', leader: m[1].trim() };
+	// Pattern 2: "Tied <X>-<Y> on aggregate"
+	m = meta.match(/tied\s+(\d+-\d+)\s+on\s+aggregate/i);
+	if (m) return { score: m[1].trim(), label: 'AGG', leader: null, tied: true };
+	// Pattern 3: "<X>-<Y> on aggregate" (no leader specified)
+	m = meta.match(/(\d+-\d+)\s+on\s+aggregate/i);
+	if (m) return { score: m[1].trim(), label: 'AGG', leader: null };
+	// Pattern 4: "Agg. <X>-<Y>" or "<X>-<Y> agg"
+	m = meta.match(/agg\.?\s+(\d+-\d+)/i) || meta.match(/(\d+-\d+)\s+agg\b/i);
+	if (m) return { score: m[1].trim(), label: 'AGG', leader: null };
+	return null;
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.SS_CONSTANTS = Object.freeze({
 	MS_PER_MINUTE,
@@ -76,3 +103,4 @@ window.isNoteworthyNorwegianResult = isNoteworthyNorwegianResult;
 window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;
 window.ssTeamMatch = ssTeamMatch;
+window.ssExtractAggregate = ssExtractAggregate;
