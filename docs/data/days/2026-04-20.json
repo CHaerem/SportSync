@@ -1,9 +1,46 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-20",
-  "generatedAt": "2026-04-14T02:14:49.268Z",
+  "generatedAt": "2026-04-14T06:46:33.709Z",
   "events": {
     "upcoming": [
+      {
+        "sport": "esports",
+        "tournament": "CS2 Tournaments 2026",
+        "title": "FISSURE Playground 3",
+        "time": "2026-04-20T00:00:00.000Z",
+        "endTime": "2026-04-26T23:59:59.000Z",
+        "venue": "Shenzhen, China",
+        "norwegian": true,
+        "streaming": [],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "rain (Håvard Nygaard)"
+          }
+        ],
+        "totalPlayers": null,
+        "link": null,
+        "status": null,
+        "featuredGroups": [],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "context": "cs2-majors-2026",
+        "_isTournament": true,
+        "_bracketId": "fissure-playground-3",
+        "tier": "S-Tier (Valve Tier 1)",
+        "prizePool": "$450,000 USD",
+        "importance": 2,
+        "importanceReason": "Mid-tier CS2 invitational in China; rain competing but limited stakes",
+        "summary": "FISSURE Playground 3 in Shenzhen is a smaller CS2 invitational; worth watching only for rain's participation.",
+        "tags": [
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 4,
+        "enrichedAt": "2026-04-14T06:45:20.799Z",
+        "_enrichHash": "0ce7e04bb4d44906e3ae4b8cfa0275d9"
+      },
       {
         "sport": "tennis",
         "tournament": "ATP/WTA Tour",
@@ -28,7 +65,16 @@
         "featuredGroups": [],
         "homeTeam": null,
         "awayTeam": null,
-        "isFavorite": false
+        "isFavorite": false,
+        "importance": 2,
+        "importanceReason": "Lower-tier ATP tennis event, no Norwegian players or major stakes",
+        "summary": "Oeiras Open is a Challenger-level ATP event in Portugal with no Norwegian presence and limited star power.",
+        "tags": [
+          "watchlist"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-04-14T06:45:20.800Z",
+        "_enrichHash": "86e8b414db882a5c84e63422f549a80a"
       },
       {
         "sport": "football",
@@ -54,7 +100,16 @@
         "featuredGroups": [],
         "homeTeam": "Crystal Palace",
         "awayTeam": "West Ham United",
-        "isFavorite": false
+        "isFavorite": false,
+        "importance": 2,
+        "importanceReason": "Late-season PL fixture between mid-table sides, possible relegation stakes",
+        "summary": "Selhurst Park hosts a potentially tense PL clash as West Ham and Crystal Palace may both need points to stay up.",
+        "tags": [
+          "relegation"
+        ],
+        "norwegianRelevance": 1,
+        "enrichedAt": "2026-04-14T06:45:20.800Z",
+        "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581"
       }
     ],
     "results": []
@@ -64,8 +119,9 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 2,
+    "eventCount": 3,
     "sportsCovered": [
+      "esports",
       "tennis",
       "football"
     ],
