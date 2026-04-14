@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-14T19:33:37.829Z",
+  "generatedAt": "2026-04-14T20:24:05.267Z",
   "eventCount": 65,
   "sportCoverage": {
     "esports": {
@@ -14,13 +14,13 @@
     },
     "chess": {
       "count": 1,
-      "previousCount": 2,
-      "delta": -1
+      "previousCount": 1,
+      "delta": 0
     },
     "football": {
       "count": 24,
-      "previousCount": 26,
-      "delta": -2
+      "previousCount": 24,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 292,
+      "ageMinutes": 342,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-14"
     },
     "ai-quality.json": {
-      "ageMinutes": 292,
+      "ageMinutes": 342,
       "stale": false
     }
   },
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 292 minutes old (stale > 240m)",
+      "Day snapshots are 342 minutes old (stale > 240m)",
       "Snapshot 2026-04-09: 1 events but events.json has 0",
       "Snapshot 2026-04-10: 1 events but events.json has 0",
       "Snapshot 2026-04-11: 1 events but events.json has 0",
@@ -145,19 +145,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 46284,
+    "totalDuration": 48173,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27934,
-        "share": 60
+        "duration": 31412,
+        "share": 65
       },
       {
         "name": "fetch-results",
-        "duration": 35697,
-        "share": 77
+        "duration": 36395,
+        "share": 76
       }
     ],
     "failedSteps": []
@@ -204,7 +204,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 292 minutes old (stale > 240m)"
+      "message": "Day snapshots are 342 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -259,12 +259,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 65% of total pipeline time (31s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (36s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (36s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -274,7 +274,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-14T19:33:37.963Z",
+    "computedAt": "2026-04-14T20:24:05.371Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
