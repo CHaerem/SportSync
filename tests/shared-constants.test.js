@@ -190,6 +190,62 @@ describe("ssShortName", () => {
 	});
 });
 
+describe("ssExtractAggregate", () => {
+	it("extracts leader + score from 'X lead Y-Z on aggregate'", () => {
+		const result = ssExtractAggregate("Champions League • 2nd Leg - Atlético Madrid lead 2-0 on aggregate");
+		expect(result).toEqual({ score: "2-0", label: "AGG", leader: "Atlético Madrid" });
+	});
+
+	it("extracts leader with multi-word team name", () => {
+		const result = ssExtractAggregate("Champions League • 2nd Leg - Paris Saint-Germain lead 2-0 on aggregate");
+		expect(result?.leader).toBe("Paris Saint-Germain");
+		expect(result?.score).toBe("2-0");
+	});
+
+	it("extracts tied score", () => {
+		const result = ssExtractAggregate("Semi-final 2nd Leg • Tied 1-1 on aggregate");
+		expect(result).toEqual({ score: "1-1", label: "AGG", leader: null, tied: true });
+	});
+
+	it("extracts score from plain 'X-Y on aggregate'", () => {
+		const result = ssExtractAggregate("2-1 on aggregate");
+		expect(result).toEqual({ score: "2-1", label: "AGG", leader: null });
+	});
+
+	it("extracts 'Agg. X-Y' format", () => {
+		const result = ssExtractAggregate("Agg. 0-2");
+		expect(result?.score).toBe("0-2");
+	});
+
+	it("extracts 'X-Y agg' format", () => {
+		const result = ssExtractAggregate("3-1 agg");
+		expect(result?.score).toBe("3-1");
+	});
+
+	it("returns null for meta without aggregate info", () => {
+		expect(ssExtractAggregate("Champions League • Group Stage")).toBeNull();
+		expect(ssExtractAggregate("Matchday 34")).toBeNull();
+	});
+
+	it("returns null for empty or invalid input", () => {
+		expect(ssExtractAggregate("")).toBeNull();
+		expect(ssExtractAggregate(null)).toBeNull();
+		expect(ssExtractAggregate(undefined)).toBeNull();
+		expect(ssExtractAggregate(42)).toBeNull();
+	});
+
+	it("handles 'lead by' variant", () => {
+		const result = ssExtractAggregate("Arsenal lead by 2-1 on aggregate");
+		expect(result?.leader).toBe("Arsenal");
+		expect(result?.score).toBe("2-1");
+	});
+
+	it("case-insensitive match on 'aggregate'", () => {
+		const result = ssExtractAggregate("Bayern Munich Lead 2-1 On Aggregate");
+		expect(result?.score).toBe("2-1");
+	});
+});
+
 describe("ssTeamMatch", () => {
 	it("matches exact names", () => {
 		expect(ssTeamMatch("Liverpool", "Liverpool")).toBe(true);

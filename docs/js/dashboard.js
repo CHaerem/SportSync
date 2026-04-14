@@ -2716,6 +2716,20 @@ class Dashboard {
 		}
 		const metaHtml = metaText ? `<span class="row-meta">${this.esc(metaText)}</span>` : '';
 
+		// Aggregate pill: must-watch (importance 5) knockout football with an aggregate score
+		// surfaces the critical context (e.g., "AGG 2-0") in the collapsed row so users don't
+		// need to tap to discover it. See ssExtractAggregate in shared-constants.js.
+		let aggregatePillHtml = '';
+		if (!isExpanded && event.importance === 5 && event.sport === 'football' && metaText) {
+			const agg = typeof ssExtractAggregate === 'function' ? ssExtractAggregate(metaText) : null;
+			if (agg) {
+				const title = agg.leader
+					? `${agg.leader} lead ${agg.score} on aggregate`
+					: (agg.tied ? `Tied ${agg.score} on aggregate` : `Aggregate ${agg.score}`);
+				aggregatePillHtml = `<span class="row-agg-pill" title="${this.esc(title)}"><span class="row-agg-label">${agg.label}</span> ${this.esc(agg.score)}</span>`;
+			}
+		}
+
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
@@ -2739,7 +2753,7 @@ class Dashboard {
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}" aria-label="${this.esc(_ariaLabel)}">
 				<div class="row-main">
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
-					<span class="row-time">${timeStr}${relHtml}${mustWatchPill}</span>
+					<span class="row-time">${timeStr}${relHtml}${mustWatchPill}${aggregatePillHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
 				</div>
