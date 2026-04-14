@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-14T07:37:51.290Z",
+  "generatedAt": "2026-04-14T08:38:57.025Z",
   "eventCount": 68,
   "sportCoverage": {
     "golf": {
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2006,
+      "ageMinutes": 2067,
       "stale": true
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 51,
+      "ageMinutes": 112,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-14"
     },
     "ai-quality.json": {
-      "ageMinutes": 51,
+      "ageMinutes": 112,
       "stale": false
     }
   },
@@ -126,27 +126,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 23,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 455516,
-    "stepCount": 32,
+    "totalDuration": 49801,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 180111,
-        "share": 40
+        "name": "fetch-sports",
+        "duration": 28904,
+        "share": 58
+      },
+      {
+        "name": "fetch-results",
+        "duration": 37270,
+        "share": 75
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -180,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2006 minutes old"
+      "message": "golf.json: data is 2067 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 21 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 22 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -205,12 +208,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 40% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (37s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -220,7 +223,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-14T07:37:51.381Z",
+    "computedAt": "2026-04-14T08:38:57.120Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
