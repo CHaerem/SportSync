@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-14T12:27:24.677Z",
+  "generatedAt": "2026-04-14T13:42:19.539Z",
   "eventCount": 68,
   "sportCoverage": {
     "golf": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2296,
+      "ageMinutes": 2371,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 341,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-14"
     },
     "ai-quality.json": {
-      "ageMinutes": 341,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -110,9 +110,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 341 minutes old (stale > 240m)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -136,19 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 55510,
+    "totalDuration": 50654,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29285,
-        "share": 53
+        "duration": 25500,
+        "share": 50
       },
       {
         "name": "fetch-results",
-        "duration": 43536,
-        "share": 78
+        "duration": 39220,
+        "share": 77
       }
     ],
     "failedSteps": []
@@ -185,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2296 minutes old"
+      "message": "golf.json: data is 2371 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 26 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 27 consecutive times (since 2026-04-13) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -204,23 +202,18 @@
     },
     {
       "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 341 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (26s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 78% of total pipeline time (44s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (39s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -230,7 +223,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-14T12:27:24.766Z",
+    "computedAt": "2026-04-14T13:42:19.673Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -276,7 +269,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 6 warning issue(s). Editorial quality score is 90/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 85/100.",
     "tokenUsage": null
   }
 }
