@@ -1,33 +1,30 @@
 {
-  "generatedAt": "2026-04-14T14:41:55.692Z",
+  "generatedAt": "2026-04-14T22:21:53.650Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 68,
+    "totalEvents": 65,
     "sports": [
-      "golf",
       "esports",
       "tennis",
       "chess",
       "football",
+      "golf",
       "f1",
       "cycling"
     ],
     "bands": {
       "live": [
         "IEM Rio 2026",
-        "Barcelona Open Banc Sabadell 2026",
-        "Round 13 – FIDE Candidates Tournament 2026"
+        "Barcelona Open Banc Sabadell 2026"
       ],
-      "today": [
-        "Barcelona at Atlético Madrid",
-        "Paris Saint-Germain at Liverpool"
-      ],
+      "today": [],
       "tomorrow": [
         "Round 14 – FIDE Candidates Tournament 2026",
         "Sporting CP at Arsenal",
         "Real Madrid at Bayern Munich"
       ],
       "thisWeek": [
+        "RBC Heritage",
         "STC Saudi Arabian Grand Prix",
         "Fulham at Brentford",
         "Wolverhampton Wanderers at Leeds United",
@@ -90,15 +87,13 @@
         "Qatar Grand Prix 2026",
         "Abu Dhabi Grand Prix 2026"
       ],
-      "ended": [
-        "Masters Tournament"
-      ]
+      "ended": []
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 90,
-    "issueCount": 8
+    "editorialScore": 58,
+    "issueCount": 18
   },
   "findings": [
     {
@@ -308,14 +303,44 @@
     },
     {
       "severity": "warning",
+      "check": "low_editorial_quality",
+      "message": "Editorial quality score is 58/100 (below threshold)"
+    },
+    {
+      "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Sørloth\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Tonight Arsenal\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Sindarov\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Merseyside Derby\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Goodison\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"17:30\" for \"Manchester United at Chelsea\" but events.json has 21:00"
     }
   ],
   "summary": {
-    "total": 42,
+    "total": 48,
     "critical": 0,
-    "warning": 42,
+    "warning": 48,
     "info": 0
   },
   "pass": true,

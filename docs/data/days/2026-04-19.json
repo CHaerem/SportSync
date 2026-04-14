@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-19",
-  "generatedAt": "2026-04-14T14:41:54.353Z",
+  "generatedAt": "2026-04-14T22:21:52.232Z",
   "events": {
     "upcoming": [
       {
@@ -51,7 +51,7 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.009Z",
         "_enrichHash": "8c6e4e4ed7a0a1b076840e72b6628541"
       },
       {
@@ -99,8 +99,67 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 5,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.009Z",
         "_enrichHash": "f9d3c171bcd7e21f6529a97b3bb7d9b9"
+      },
+      {
+        "sport": "golf",
+        "tournament": "PGA Tour",
+        "title": "RBC Heritage",
+        "time": "2026-04-16T04:00:00.000Z",
+        "endTime": "2026-04-19T20:00:00.000Z",
+        "venue": "TBD",
+        "meta": "PGA Tour",
+        "norwegian": true,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no",
+            "type": "streaming"
+          },
+          {
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
+            "type": "streaming"
+          }
+        ],
+        "participants": [],
+        "norwegianPlayers": [
+          {
+            "name": "Viktor Hovland",
+            "teeTime": "15:55",
+            "teeTimeUTC": "2026-04-16T13:55:00.000Z",
+            "status": null
+          }
+        ],
+        "totalPlayers": 82,
+        "link": null,
+        "status": null,
+        "featuredGroups": [
+          {
+            "player": "Viktor Hovland",
+            "teeTime": "15:55",
+            "groupmates": [
+              {
+                "name": "Chris Gotterup",
+                "teeTime": "15:55"
+              }
+            ]
+          }
+        ],
+        "homeTeam": null,
+        "awayTeam": null,
+        "isFavorite": false,
+        "importance": 4,
+        "importanceReason": "PGA Tour event with Viktor Hovland, post-Masters top field.",
+        "summary": "RBC Heritage at Hilton Head follows the Masters, drawing a strong field including Norwegian fan-favorite Viktor Hovland.",
+        "tags": [
+          "must-watch",
+          "norwegian-player"
+        ],
+        "norwegianRelevance": 5,
+        "enrichedAt": "2026-04-14T22:19:48.009Z",
+        "_enrichHash": "feca696ef91f39e327557b388eca511a"
       },
       {
         "sport": "football",
@@ -134,7 +193,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.010Z",
         "_enrichHash": "602e23a4a579e47df7c13a7673db7b80"
       },
       {
@@ -172,7 +231,7 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.010Z",
         "_enrichHash": "413d2a5634dd6fa15da4b9247151bc4f"
       },
       {
@@ -207,7 +266,7 @@
           "top-4-battle"
         ],
         "norwegianRelevance": 2,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.010Z",
         "_enrichHash": "9e7bac9dc2dec7cb03276f7eed20bc1d"
       },
       {
@@ -246,7 +305,7 @@
           "watchlist"
         ],
         "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.010Z",
         "_enrichHash": "a7d5cc3750111104545a71503cb95267"
       },
       {
@@ -284,7 +343,7 @@
           "classic-matchup"
         ],
         "norwegianRelevance": 3,
-        "enrichedAt": "2026-04-14T14:39:47.653Z",
+        "enrichedAt": "2026-04-14T22:19:48.010Z",
         "_enrichHash": "3cfa8d61e13dab1da086be01f7889981"
       }
     ],
@@ -295,10 +354,11 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 7,
+    "eventCount": 8,
     "sportsCovered": [
       "esports",
       "tennis",
+      "golf",
       "football",
       "f1"
     ],
