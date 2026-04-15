@@ -272,6 +272,21 @@
 			border-radius: 50%;
 		}
 		.day-item.is-today .day-dot { opacity: 0.7; }
+		/* Favorite-team day: accent ring around the day number + slightly larger dots for fav sports */
+		.day-dot.day-dot-fav {
+			width: 5px; height: 5px;
+			box-shadow: 0 0 0 1px var(--accent);
+		}
+		.day-item.has-favorite .day-num::after {
+			content: '\u2605';
+			display: inline-block;
+			margin-left: 2px;
+			font-size: 0.55rem;
+			color: var(--accent);
+			vertical-align: top;
+			line-height: 1;
+		}
+		.day-item.is-today.has-favorite .day-num::after { color: #fff; opacity: 0.85; }
 		/* backward compat: old day nav classes */
 		.day-nav-arrow {
 			background: none; border: none; font-size: 0.75rem; color: var(--muted); cursor: pointer; padding: 4px 8px; transition: color 0.15s; line-height: 1;
@@ -963,6 +978,14 @@
 		.exp-athletes-header { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
 		.exp-athlete { font-size: 0.78rem; padding: 3px 0; }
 	.exp-golf-field, .exp-athlete-meta { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+		.exp-athlete-seed {
+			color: var(--accent); font-weight: 600; font-size: 0.7rem;
+			margin-left: 2px;
+		}
+		.exp-tennis-meta {
+			font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+			margin-bottom: 8px; font-weight: 500;
+		}
 		.exp-result { margin-bottom: 12px; }
 		.exp-result-score { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
 		.exp-result-scorers { display: flex; flex-direction: column; gap: 2px; }
