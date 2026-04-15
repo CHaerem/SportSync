@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T09:36:48.642Z",
+  "generatedAt": "2026-04-15T10:32:09.155Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 225,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 170,
+      "ageMinutes": 225,
       "stale": false
     }
   },
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 32,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.13,
+    "recapHeadlineRate": 0.09,
     "issues": []
   },
   "streamingHealth": {
@@ -136,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49837,
+    "totalDuration": 52142,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27664,
+        "duration": 29176,
         "share": 56
       },
       {
         "name": "fetch-results",
-        "duration": 39595,
-        "share": 79
+        "duration": 41864,
+        "share": 80
       }
     ],
     "failedSteps": []
@@ -195,12 +195,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 80% of total pipeline time (42s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -210,7 +210,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-15T09:36:48.745Z",
+    "computedAt": "2026-04-15T10:32:09.258Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
