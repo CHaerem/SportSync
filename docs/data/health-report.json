@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-15T02:11:09.058Z",
-  "eventCount": 65,
+  "generatedAt": "2026-04-15T06:47:43.905Z",
+  "eventCount": 71,
   "sportCoverage": {
     "esports": {
       "count": 3,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "tennis": {
-      "count": 5,
+      "count": 6,
       "previousCount": 5,
-      "delta": 0
+      "delta": 1
     },
     "chess": {
       "count": 1,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 24,
+      "count": 29,
       "previousCount": 24,
-      "delta": 0
+      "delta": 5
     },
     "golf": {
       "count": 1,
@@ -40,40 +40,46 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
+      "stale": false
+    },
+    "cycling.json": {
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 232,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": null,
-      "stale": true
+      "ageMinutes": 1,
+      "stale": false,
+      "dateCoherent": true,
+      "featuredDate": "2026-04-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
+    "venuePercent": 0.93,
     "streamingPercent": 0.97
   },
   "rssFeedHealth": {
@@ -96,7 +102,7 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.15,
+    "matchRate": 0.11,
     "relevantMatchRate": 1,
     "eventsEnriched": 2,
     "trend": "stable",
@@ -105,8 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "2 boundary day snapshot(s) outside event range (expected)",
-      "1 expected day snapshot(s) missing"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -181,18 +186,8 @@
   "issues": [
     {
       "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is Infinity minutes old"
-    },
-    {
-      "severity": "warning",
       "code": "streaming_coverage_gap",
       "message": "1 important event(s) lack streaming info: CS2 Tournaments 2026"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -222,7 +217,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-15T02:11:09.129Z",
+    "computedAt": "2026-04-15T06:47:44.033Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -240,7 +235,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 4,
+    "ageHours": 8,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -268,11 +263,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s).",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 93/100.",
     "tokenUsage": null
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }
