@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T14:41:38.292Z",
+  "generatedAt": "2026-04-15T15:32:16.519Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false
     }
   },
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 32,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.09,
+    "recapHeadlineRate": 0.13,
     "issues": []
   },
   "streamingHealth": {
@@ -129,26 +129,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 29,
-    "sevenDay": 36,
+    "fiveHour": 37,
+    "sevenDay": 37,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 359667,
+    "totalDuration": 436913,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "generate-featured",
-        "duration": 129473,
-        "share": 36
-      },
-      {
         "name": "verify-schedules",
-        "duration": 180076,
-        "share": 50
+        "duration": 180111,
+        "share": 41
       }
     ],
     "failedSteps": [
@@ -197,12 +192,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"generate-featured\" used 36% of total pipeline time (129s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 50% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 41% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -217,7 +207,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-15T14:41:38.409Z",
+    "computedAt": "2026-04-15T15:32:16.607Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
