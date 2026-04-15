@@ -370,6 +370,17 @@ class Dashboard {
 			const dayEvents = this.allEvents.filter(e => isEventInWindow(e, dayStart, dayEnd));
 			const sports = [...new Set(dayEvents.map(e => e.sport))];
 
+			// Detect favorite-team matches on this day (personalization signal)
+			const favSports = new Set();
+			if (this.preferences) {
+				for (const ev of dayEvents) {
+					if (this.preferences.isEventFavorite(ev, ev.id)) {
+						favSports.add(ev.sport);
+					}
+				}
+			}
+			const hasFavorite = favSports.size > 0;
+
 			// Sport dots
 			const sportVars = {
 				football: 'var(--sport-football)',
@@ -381,15 +392,19 @@ class Dashboard {
 				olympics: 'var(--sport-olympics)',
 				cycling: 'var(--sport-cycling)',
 			};
-			const dotsHtml = sports.slice(0, 4).map(s =>
-				`<span class="day-dot" style="background:${sportVars[s] || 'var(--muted)'}"></span>`
-			).join('');
+			const dotsHtml = sports.slice(0, 4).map(s => {
+				const isFav = favSports.has(s);
+				const clsAttr = isFav ? ' day-dot-fav' : '';
+				return `<span class="day-dot${clsAttr}" style="background:${sportVars[s] || 'var(--muted)'}"></span>`;
+			}).join('');
 
 			const emptyCls = dayEvents.length === 0 ? ' has-no-events' : '';
+			const favCls = hasFavorite ? ' has-favorite' : '';
 			const emptyTitle = dayEvents.length === 0 ? ' title="No events scheduled"' : '';
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-			const dayAriaLabel = `${dayNames[day.getDay()]} ${monthNames[day.getMonth()]} ${day.getDate()}, ${dayEvents.length} event${dayEvents.length !== 1 ? 's' : ''}`;
-			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0" aria-label="${dayAriaLabel}">`;
+			const favAriaSuffix = hasFavorite ? ', includes favorites' : '';
+			const dayAriaLabel = `${dayNames[day.getDay()]} ${monthNames[day.getMonth()]} ${day.getDate()}, ${dayEvents.length} event${dayEvents.length !== 1 ? 's' : ''}${favAriaSuffix}`;
+			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}${favCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0" aria-label="${dayAriaLabel}">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -2949,6 +2964,16 @@ class Dashboard {
 			content += '</div>';
 		}
 
+		// Tennis: structured meta (category + surface) before athlete list
+		if (event.sport === 'tennis' && event.meta && typeof event.meta === 'object') {
+			const metaBits = [];
+			if (event.meta.category) metaBits.push(this.esc(event.meta.category));
+			if (event.meta.surface) metaBits.push(this.esc(event.meta.surface));
+			if (metaBits.length > 0) {
+				content += `<div class="exp-tennis-meta">${metaBits.join(' \u00b7 ')}</div>`;
+			}
+		}
+
 		// Non-golf, non-cycling: Norwegian athletes (Olympics, esports, etc.)
 		if (event.sport !== 'golf' && event.sport !== 'cycling' && event.norwegianPlayers?.length > 0) {
 			const isOlympics = event.context === 'olympics-2026';
@@ -2956,7 +2981,10 @@ class Dashboard {
 			content += `<div class="exp-athletes-header">${isOlympics ? '\ud83c\uddf3\ud83c\uddf4 Norwegian Athletes' : 'Norwegian Players'}</div>`;
 			event.norwegianPlayers.forEach(player => {
 				const name = typeof player === 'string' ? player : player.name;
-				content += `<div class="exp-athlete">${this.esc(name)}</div>`;
+				// Tennis seed display: "(5)" after the name
+				const seed = (event.sport === 'tennis' && typeof player === 'object' && player.seed)
+					? ` <span class="exp-athlete-seed">(${this.esc(String(player.seed))})</span>` : '';
+				content += `<div class="exp-athlete">${this.esc(name)}${seed}</div>`;
 			});
 			content += '</div>';
 		}

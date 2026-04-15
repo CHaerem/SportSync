@@ -260,6 +260,44 @@ describe("renderStandingsSection", () => {
 		const html = SR.renderStandingsSection(standings, null);
 		expect(html).toBe("");
 	});
+
+	it("renders band-preview with sport icons + table names for discoverability", () => {
+		const standings = {
+			football: {
+				premierLeague: [
+					{ position: 1, team: "Liverpool", teamShort: "LIV", points: 70, gd: 35 },
+				],
+			},
+			golf: {
+				pga: {
+					name: "Masters 2026", status: "in_progress",
+					leaderboard: [{ position: 1, player: "Scheffler", score: "-10", thru: "F" }],
+				},
+			},
+			f1: {
+				drivers: [{ position: 1, driver: "Verstappen", points: 200, wins: 8 }],
+			},
+			chess: {
+				candidates: {
+					name: "FIDE Candidates Tournament 2026",
+					standings: [{ position: 1, player: "Nepomniachtchi", wins: 4, draws: 5, losses: 1, points: 6.5 }],
+				},
+			},
+		};
+		const html = SR.renderStandingsSection(standings, null);
+		expect(html).toContain('class="band-preview"');
+		expect(html).toContain('data-band-preview="standings"');
+		// Preview should tease what's inside — PL, Masters (cleaned of year), F1, Candidates
+		expect(html).toContain("PL");
+		expect(html).toContain("Masters");
+		expect(html).toContain("F1");
+		expect(html).toContain("Candidates");
+	});
+
+	it("omits band-preview when no tables render", () => {
+		const html = SR.renderStandingsSection({}, null);
+		expect(html).not.toContain('class="band-preview"');
+	});
 });
 
 describe("renderFootballStandings", () => {

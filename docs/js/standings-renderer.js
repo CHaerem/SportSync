@@ -107,6 +107,7 @@ function buildTennisMiniTable(atp) {
  *  @param {Set<string>} [trackedGolferNames] - Lowercase last names of tracked golfers (data-driven). */
 function renderStandingsSection(standings, preferences, trackedGolferNames) {
 	const tables = [];
+	const previewItems = []; // [{ icon, label }] — shown in collapsed band-preview
 	const prefs = preferences ? preferences.getPreferences() : {};
 	const favTeams = prefs.favoriteTeams?.football || [];
 
@@ -114,18 +115,23 @@ function renderStandingsSection(standings, preferences, trackedGolferNames) {
 	const plTable = standings?.football?.premierLeague;
 	if (Array.isArray(plTable) && plTable.length > 0) {
 		tables.push(buildFootballMiniTable('Premier League', plTable, favTeams));
+		previewItems.push({ icon: '\u26bd', label: 'PL' });
 	}
 
 	// La Liga
 	const laLigaTable = standings?.football?.laLiga;
 	if (Array.isArray(laLigaTable) && laLigaTable.length > 0) {
 		tables.push(buildFootballMiniTable('La Liga', laLigaTable, favTeams));
+		previewItems.push({ icon: '\u26bd', label: 'La Liga' });
 	}
 
 	// Golf leaderboard
 	const pga = standings?.golf?.pga;
 	if (pga?.leaderboard?.length && pga.status !== 'scheduled') {
 		tables.push(buildGolfMiniTable(pga, trackedGolferNames));
+		// Use tournament name (e.g., "Masters") when available for richer preview
+		const golfLabel = pga.name ? pga.name.replace(/\s*\d{4}\s*$/, '').trim() : 'Golf';
+		previewItems.push({ icon: '\u26f3', label: golfLabel });
 	}
 
 	// F1 standings
@@ -134,6 +140,7 @@ function renderStandingsSection(standings, preferences, trackedGolferNames) {
 		const totalPoints = drivers.reduce((s, d) => s + (d.points || 0), 0);
 		if (totalPoints > 0) {
 			tables.push(buildF1MiniTable(drivers));
+			previewItems.push({ icon: '\ud83c\udfce\ufe0f', label: 'F1' });
 		}
 	}
 
@@ -141,11 +148,29 @@ function renderStandingsSection(standings, preferences, trackedGolferNames) {
 	const atp = standings?.tennis?.atp;
 	if (Array.isArray(atp) && atp.length > 0) {
 		tables.push(buildTennisMiniTable(atp));
+		previewItems.push({ icon: '\ud83c\udfbe', label: 'ATP' });
+	}
+
+	// Chess (candidates, etc.) — read from first non-empty chess tournament if present
+	const chessData = standings?.chess;
+	if (chessData && typeof chessData === 'object') {
+		const firstChessKey = Object.keys(chessData).find(k => chessData[k]?.standings?.length > 0);
+		if (firstChessKey) {
+			const chessName = chessData[firstChessKey].name || firstChessKey;
+			// Short label: "Candidates" rather than "FIDE Candidates Tournament 2026"
+			const shortChess = chessName.match(/candidates/i) ? 'Candidates' : chessName.split(/\s+/).slice(0, 2).join(' ');
+			previewItems.push({ icon: '\u265f\ufe0f', label: shortChess });
+		}
 	}
 
 	if (tables.length === 0) return '';
 
+	const previewLine = previewItems.map(p => `${p.icon} ${escapeHtml(p.label)}`).join(' \u00b7 ');
+
 	let html = '<div class="flow-label band-label collapsible" data-band="standings" role="button" tabindex="0" aria-expanded="false"><span class="flow-text">Standings</span><span class="flow-line"></span><span style="font-size:0.6rem">\u25b8</span></div>';
+	if (previewLine) {
+		html += `<div class="band-preview" data-band-preview="standings">${previewLine}</div>`;
+	}
 	html += '<div class="band-content collapsed" data-band-content="standings">';
 	html += '<div class="event-card">';
 	html += tables.join('');
