@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T13:39:34.670Z",
+  "generatedAt": "2026-04-15T14:41:38.395Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 71,
@@ -100,7 +100,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 80,
-    "issueCount": 6
+    "issueCount": 5
   },
   "findings": [
     {
@@ -309,14 +309,19 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 235 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Hilton Head\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae IEM Rio — rain (Håvard Nygaard) in the field at CS2 Major\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Masters\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Tonight Arsenal\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -325,10 +330,10 @@
     }
   ],
   "summary": {
-    "total": 44,
+    "total": 45,
     "critical": 0,
     "warning": 43,
-    "info": 1
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
