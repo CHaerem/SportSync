@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-15",
+      "task": "Execution: UX personalization batch (standings preview + favorite-team day dots + tennis seed/meta)",
+      "outcome": "completed",
+      "pr": "PR #164 (merged via --auto --squash)",
+      "details": "Run 50: 0 user feedback, 0 open autopilot PRs, 3 pending UX MAINTENANCE tasks (all personalization pillar). Baseline tests pass. Delegated all 3 as a single batch to ux-agent using branch-pr ship mode (per agent-definitions.json contention rules — frontend work cannot go direct-to-main). Agent implemented: (1) renderStandingsPreview() in standings-renderer.js + dashboard.js wiring — sport-icon band preview ('PL | Masters | F1 | Candidates') on collapsed standings band. (2) renderDayNav() favorite-team dot style using PreferencesManager.getFavoriteTeams() — distinct accent treatment for days with favorite matches, falls back silently. (3) Expanded tennis view now shows norwegianPlayers[].seed as '(5)' and structured meta (category/surface). +7 new tests in tests/ux-personalization.test.js + 4 dashboard-structure + 38 standings-renderer additions = 49 new test lines (close-the-loop). Final commit: 6 files / 257 insertions / 6 deletions. All 2695 tests pass. PR merged immediately (no reviews required). User-visible/infrastructure ratio: 100%/0% (all 3 tasks are direct dashboard UX). Autonomy: 13/13 (100%).",
+      "tests_passed": true,
+      "files_changed": 6,
+      "turns_used": 26,
+      "lesson": "When the pending queue is all in one domain and all small (<50 lines each), single-agent batch delegation is more efficient than sequential individual tasks — one test run, one PR, one review cycle. UX agent's npm test run touches docs/data/*.json (watch-plan/featured/ai-quality regenerate) — those MUST be reset before the commit or they pollute the PR. Explicit pre-commit instruction with an exact `git checkout -- <files>` list prevented this run from including pipeline-output noise. Frontend work via ux-agent requires `branch-pr` mode by policy (agent-definitions.json contention) even for LOW-risk changes — orchestrator must enforce this, not leave it to agent judgment.",
+      "scouted": 0
+    },
+    {
       "date": "2026-04-13",
       "task": "Scouting + execution: 2 UX bug fixes + 2 UX improvements + tennis clay season calendar (3 events)",
       "outcome": "completed",
