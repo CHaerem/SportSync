@@ -1,22 +1,12 @@
 {
-  "generatedAt": "2026-04-15T12:27:29.396Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "editorialScore",
-      "earlyAvg": 98,
-      "lateAvg": 83,
-      "drop": 16,
-      "suggestion": "Editorial quality score dropped from 98 to 83 (16 point decline). Investigate recent prompt or data changes."
-    }
-  ],
+  "generatedAt": "2026-04-15T13:39:34.671Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 912,
+      "count": 913,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-15T12:27:29.393Z"
+      "lastSeen": "2026-04-15T13:39:34.668Z"
     },
     "snapshot_event_mismatch": {
       "count": 530,
@@ -24,9 +14,9 @@
       "lastSeen": "2026-04-14T22:21:53.535Z"
     },
     "stale_snapshot": {
-      "count": 237,
+      "count": 238,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-15T12:27:29.393Z"
+      "lastSeen": "2026-04-15T13:39:34.668Z"
     },
     "stale_output": {
       "count": 219,
@@ -64,9 +54,9 @@
       "lastSeen": "2026-04-12T15:16:57.539Z"
     },
     "streaming_coverage_gap": {
-      "count": 24,
+      "count": 25,
       "firstSeen": "2026-04-14T07:37:51.365Z",
-      "lastSeen": "2026-04-15T12:27:29.393Z"
+      "lastSeen": "2026-04-15T13:39:34.668Z"
     },
     "standings_empty": {
       "count": 4,
@@ -74,5 +64,5 @@
       "lastSeen": "2026-04-14T19:33:37.949Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Editorial quality score dropped from 98 to 83 (16 point decline)."
+  "summary": "0 patterns detected"
 }
