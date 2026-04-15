@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T14:41:36.628Z",
+  "generatedAt": "2026-04-15T22:20:03.278Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,25 +9,25 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 109961,
+    "blockCount": 7,
+    "generationMs": 93503,
     "tokenUsage": {
-      "input": 27836,
-      "output": 6201,
-      "cacheCreation": 27833,
+      "input": 27857,
+      "output": 4830,
+      "cacheCreation": 27854,
       "cacheRead": 0,
-      "total": 34037,
-      "costUSD": 0.20162575,
+      "total": 32687,
+      "costUSD": 0.1812265,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 80,
+    "score": 95,
     "metrics": {
-      "mustWatchCoverage": 0.667,
-      "sportDiversity": 0.5,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 0.75,
       "blockTypeBalance": 1,
       "textQuality": 1,
       "quietDayCompliance": 1,
@@ -39,22 +39,22 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 3,
-      "avgScore": 112,
+      "pickCount": 1,
+      "avgScore": 130,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 94,
+    "score": 90,
     "metrics": {
       "integrityRate": 1,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 1,
+      "recapHeadlineRate": 0.25,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 32
+      "footballCount": 34
     },
     "issues": []
   },
@@ -64,14 +64,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 71,
+      "totalEvents": 68,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 71,
+      "totalEvents": 68,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,10 +83,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 71,
+    "totalEvents": 68,
     "skipStats": {
-      "total": 71,
-      "unchanged": 71,
+      "total": 68,
+      "unchanged": 68,
       "enriched": 0,
       "skipRate": 1
     },
