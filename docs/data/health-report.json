@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T08:39:24.824Z",
+  "generatedAt": "2026-04-15T09:36:48.642Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 113,
+      "ageMinutes": 170,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-15"
     },
     "ai-quality.json": {
-      "ageMinutes": 113,
+      "ageMinutes": 170,
       "stale": false
     }
   },
@@ -136,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 41788,
+    "totalDuration": 49837,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 26170,
-        "share": 63
+        "duration": 27664,
+        "share": 56
       },
       {
         "name": "fetch-results",
-        "duration": 31684,
-        "share": 76
+        "duration": 39595,
+        "share": 79
       }
     ],
     "failedSteps": []
@@ -195,12 +195,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 63% of total pipeline time (26s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 56% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 76% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -210,7 +210,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-15T08:39:24.968Z",
+    "computedAt": "2026-04-15T09:36:48.745Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
