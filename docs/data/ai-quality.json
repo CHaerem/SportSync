@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T06:45:40.463Z",
+  "generatedAt": "2026-04-16T13:39:08.962Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,23 +10,23 @@
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 68640,
+    "generationMs": 66638,
     "tokenUsage": {
-      "input": 27815,
-      "output": 4135,
-      "cacheCreation": 18043,
-      "cacheRead": 9769,
-      "total": 31950,
-      "costUSD": 0.13690395,
+      "input": 27766,
+      "output": 4123,
+      "cacheCreation": 27763,
+      "cacheRead": 0,
+      "total": 31889,
+      "costUSD": 0.17015425,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 92,
+    "score": 77,
     "metrics": {
-      "mustWatchCoverage": 1,
+      "mustWatchCoverage": 0.5,
       "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -37,12 +37,12 @@
     "issues": []
   },
   "watchPlan": {
-    "score": 0,
+    "score": 100,
     "metrics": {
-      "pickCount": 0,
-      "avgScore": 0,
-      "streamingCoverage": 0,
-      "reasonCoverage": 0
+      "pickCount": 1,
+      "avgScore": 39,
+      "streamingCoverage": 1,
+      "reasonCoverage": 1
     }
   },
   "results": {
@@ -68,7 +68,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.973
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 73,
@@ -80,24 +80,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 2,
-    "aiUpdatedFields": 5,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 73,
     "skipStats": {
       "total": 73,
-      "unchanged": 68,
-      "enriched": 5,
-      "skipRate": 0.93
+      "unchanged": 73,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 5251,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 23753,
-      "output": 2501,
-      "calls": 1,
-      "total": 26254,
-      "costUSD": 0.1277325,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
