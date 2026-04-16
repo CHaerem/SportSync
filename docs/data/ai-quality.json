@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T13:39:08.962Z",
+  "generatedAt": "2026-04-16T14:45:37.900Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -9,24 +9,24 @@
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 7,
-    "generationMs": 66638,
+    "blockCount": 8,
+    "generationMs": 115490,
     "tokenUsage": {
-      "input": 27766,
-      "output": 4123,
-      "cacheCreation": 27763,
+      "input": 27736,
+      "output": 6840,
+      "cacheCreation": 27733,
       "cacheRead": 0,
-      "total": 31889,
-      "costUSD": 0.17015425,
+      "total": 34576,
+      "costUSD": 0.21077674999999998,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 77,
+    "score": 92,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -91,7 +91,9 @@
       "skipRate": 1
     },
     "tokensPerEvent": 0,
-    "hintsApplied": [],
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
       "input": 0,
       "output": 0,
@@ -112,7 +114,7 @@
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-15T14:38:08.826Z",
+    "lastRun": "2026-04-16T14:40:32.815Z",
     "tasksExecuted": 1,
     "succeeded": 0,
     "failed": 1

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T13:39:10.720Z",
+  "generatedAt": "2026-04-16T14:45:39.649Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 73,
@@ -96,11 +96,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 77,
-    "issueCount": 7
+    "editorialScore": 92,
+    "issueCount": 6
   },
   "findings": [
     {
@@ -309,34 +309,19 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 234 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae IEM Rio Major — rain hunting CS2 glory in Brazil [ongoing]\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
+      "message": "Featured mentions \"The Merseyside Derby\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Sporting\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bayern\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Merseyside Derby\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Rio Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -345,15 +330,15 @@
     },
     {
       "severity": "warning",
-      "check": "brief_unverified_result",
-      "message": "Brief references \"gunners\" vs \"through\" result but no matching data in recent-results.json"
+      "check": "brief_score_mismatch",
+      "message": "Brief says Arsenal and Barcelona reach semis  PSG silence Liverpool 2-0 in but data has Liverpool 0-2 Paris Saint-Germain"
     }
   ],
   "summary": {
-    "total": 49,
+    "total": 46,
     "critical": 0,
-    "warning": 47,
-    "info": 2
+    "warning": 45,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
