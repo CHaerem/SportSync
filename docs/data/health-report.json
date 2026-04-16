@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T14:45:39.786Z",
+  "generatedAt": "2026-04-16T15:37:01.035Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-16"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false
     }
   },
@@ -129,21 +129,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 23,
+    "fiveHour": 30,
     "sevenDay": 44,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 298590,
+    "totalDuration": 531028,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
+        "name": "discover-events",
+        "duration": 180288,
+        "share": 34
+      },
+      {
         "name": "verify-schedules",
-        "duration": 180109,
-        "share": 60
+        "duration": 180080,
+        "share": 34
       }
     ],
     "failedSteps": [
@@ -197,7 +202,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 60% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 34% of total pipeline time (180s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 34% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -208,16 +218,11 @@
       "severity": "info",
       "code": "focus_team_no_events",
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-16T14:45:39.913Z",
+    "computedAt": "2026-04-16T15:37:01.128Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -261,32 +266,7 @@
       }
     ]
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 3,
-    "warning": 9,
-    "totalFiles": 83,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 3819,
-        "functions": 105,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1543,
-        "functions": 69,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1482,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
     "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
