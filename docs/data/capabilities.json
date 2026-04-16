@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-16T02:15:27.148Z",
+  "generatedAt": "2026-04-16T02:23:22.156Z",
   "sports": {
     "football": {
       "fetcher": true,
       "data": true,
-      "eventCount": 16,
+      "eventCount": 21,
       "liveScores": true,
       "standings": true,
       "results": true
@@ -51,8 +51,8 @@
     },
     "cycling": {
       "fetcher": true,
-      "data": false,
-      "eventCount": 8,
+      "data": true,
+      "eventCount": 2,
       "liveScores": false,
       "standings": false,
       "results": false
@@ -78,7 +78,6 @@
     "No live scores for tennis, f1, chess, esports, cycling",
     "No standings for tennis, chess, esports, cycling",
     "No results tracking for tennis, f1, chess, esports, cycling",
-    "No data file for cycling — fetcher may be broken",
     "Esports HLTV API stale — relying on curated configs only"
   ]
 }
