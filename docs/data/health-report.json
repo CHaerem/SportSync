@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T17:33:28.111Z",
+  "generatedAt": "2026-04-16T18:33:57.868Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 168,
+      "ageMinutes": 228,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-16"
     },
     "ai-quality.json": {
-      "ageMinutes": 168,
+      "ageMinutes": 228,
       "stale": false
     }
   },
@@ -136,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 46622,
+    "totalDuration": 45222,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 27488,
-        "share": 59
+        "duration": 24678,
+        "share": 55
       },
       {
         "name": "fetch-results",
-        "duration": 32753,
-        "share": 70
+        "duration": 26713,
+        "share": 59
       }
     ],
     "failedSteps": []
@@ -200,12 +200,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (27s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (25s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 70% of total pipeline time (33s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 59% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
@@ -215,7 +215,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-16T17:33:28.255Z",
+    "computedAt": "2026-04-16T18:33:57.981Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
