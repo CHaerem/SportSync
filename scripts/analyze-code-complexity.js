@@ -215,7 +215,7 @@ function detectTrends(current, previous) {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 function main() {
-	const scanDirs = ['scripts', 'scripts/lib', 'scripts/fetch', 'scripts/agents', 'docs/js'];
+	const scanDirs = ['scripts', 'docs/js'];
 	const files = findJsFiles(scanDirs);
 
 	console.log(`Analyzing ${files.length} JS files...`);

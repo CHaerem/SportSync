@@ -182,9 +182,18 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
-_(queue drained — last 3 pending tasks merged in PR #164, Run 50)_
+- [PENDING] [MAINTENANCE] **Favorite-team accent on result cards — verify rendering** — Result cards already have `.result-fav` CSS (PR #165), but verify the star pseudo-element renders correctly across grouped and single result cards, and in dark mode. Visual validation task.
+- [PENDING] [MAINTENANCE] **RSS headlines in expanded event view** — When expanding a match (e.g., Arsenal CL semi), show 1-2 relevant RSS headlines matched by team/tournament keywords from `rssDigest`. Data already loaded in dashboard.js but not surfaced contextually in expanded rows. Personalization pillar.
+- [PENDING] [MAINTENANCE] **Favorite buttons for non-football sports** — Expanded view only offers team-favorite buttons for football. Extend to esports orgs, F1 teams, cycling teams. Personalization pillar.
+- [PENDING] [MAINTENANCE] **Test computeEnrichHash()** — Pure function in enrich-events.js, determines enrichment cache validity. Currently untested. Low effort, high leverage (cache bug = wasted quota or stale enrichments).
+- [PENDING] [MAINTENANCE] **Test run-recipes.js core functions** — Extract `applyRecipeResults` and auto-quarantine logic as exported functions, write unit tests. Currently 170 lines with zero test coverage.
+- [PENDING] [MAINTENANCE] **Extend esports config for 100 Thieves coverage** — Research 100 Thieves' CS2 schedule for May-July 2026 (IEM Cologne Major qualification, smaller events). Currently 0 future events for focus team.
 
 ### Recently Completed
+
+- [DONE] [MAINTENANCE] **UX personalization batch — sport sorting, favorite results, insight filtering, cycling cards** — 4 changes: (1) Sport band sorting by user preferences (high/medium/low → weights 4/3/2 primary sort). (2) `.result-fav` accent + star on favorite-team result cards. (3) Insights filtered/prioritized by sport preferences. (4) Cycling added to card sports for richer rendering. PR #165 (merged). Run 51.
+- [DONE] [MAINTENANCE] **Extend esports config endDate** — `endDate` 2026-04-28 → 2026-07-31. Prevents sync-configs.js from archiving the entire esports config on April 29, preserving IEM Cologne Major (June 2-21) entry. Direct-to-main. Run 51.
+- [DONE] [MAINTENANCE] **Fix complexity analyzer duplicate files** — `scanDirs` listed `scripts` + 3 subdirs (`scripts/lib`, `scripts/fetch`, `scripts/agents`), but `walkDir()` recurses. Removed subdirs, fixing inflated file counts (116→~100) and duplicate entries in report. Direct-to-main. Run 51.
 
 - [DONE] [MAINTENANCE] **Standings section collapsed preview** — Added `renderStandingsPreview()` in `standings-renderer.js` + wired into `dashboard.js` collapsed band. Shows sport icons + table names (e.g., "PL | Masters | F1 | Candidates") so users discover content before expanding. Uses existing `band-preview` pattern. PR #164. Run 50.
 - [DONE] [MAINTENANCE] **Favorite-team day nav dots** — `renderDayNav()` now marks days containing favorite-team events with a distinct accent-colored dot style sourced from `PreferencesManager.getFavoriteTeams()`. Falls back silently when no favorites are set. PR #164. Run 50.
@@ -320,6 +329,9 @@ _(queue drained — last 3 pending tasks merged in PR #164, Run 50)_
 | 5. Quality | ~100% | 2026-04-13 | Fixed 2 UX bugs: expanded row content clipping (500px→2000px), [object Object] meta rendering for curated configs. Golf brief shows today's round score. 2664 tests pass |
 | 1. Data | ~98% | 2026-04-13 | Tennis clay season calendar: Barcelona + Madrid + Rome + Roland-Garros (4 events). Curated configs are sole coverage path between ESPN rounds |
 | 4. Personalization | ~80% | 2026-04-13 | Golf brief shows "today -5" round context. Structured meta renders as "ATP 500 · Clay" instead of [object Object]. 6 new user-visible tasks scouted |
+| 4. Personalization | ~85% | 2026-04-16 | Sport bands sort by user preferences (high/medium/low), favorite-team result cards get accent+star, insights prioritize preferred sports, cycling gets rich card rendering. PR #165. Run 51 |
+| 1. Data | ~98% | 2026-04-16 | Esports config endDate extended (Apr 28 → Jul 31) preventing archival of IEM Cologne Major entry. Run 51 |
+| 2. Code | ~97% | 2026-04-16 | Fixed complexity analyzer duplicate file scanning (scanDirs recursion bug). Run 51 |
 
 ### Run History Insights
 

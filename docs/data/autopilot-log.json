@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-16",
+      "task": "Scouting + execution: 4 UX personalization + 1 data config fix + 1 code bug fix",
+      "outcome": "completed",
+      "pr": "PR #165 (merged via --auto --squash) + direct-to-main (2 commits)",
+      "details": "Run 51: 0 user feedback, 0 open autopilot PRs, 0 pending tasks — scouting run. 3 parallel scouts (UX 7 findings, Code 7 findings, Data 7 findings). Selected 6 tasks: 4 UX personalization (batch PR #165) + 2 direct-to-main fixes. UX-agent worktree: (1) Sport band sorting by user preferences (high/medium/low → primary sort). (2) Favorite-team result cards get .result-fav accent border + star. (3) Insights prioritized by sport preferences before slicing. (4) Cycling added to card sports for richer rendering. Direct-to-main: (5) Esports config endDate 2026-04-28 → 2026-07-31 (URGENT — prevents archival of entire CS2 config including IEM Cologne Major entry in 12 days). (6) Complexity analyzer scanDirs bug — walkDir recurses so listing scripts + scripts/lib + scripts/fetch + scripts/agents caused duplicate analysis (~16% file count inflation). 6 new PENDING tasks scouted. 2695 tests pass. Autonomy: 13/13 (100%). User-visible/infrastructure ratio: 67%/33% (4 UX personalization / 1 data config + 1 code fix).",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 28,
+      "lesson": "Personalization pillar (~80% → ~85%) is the best investment area now — 4 small UX changes collectively make the dashboard feel responsive to user preferences (sort order, result highlights, insight filtering, card rendering). Data scout found a time-sensitive issue (esports endDate approaching archival in 12 days) that would have silently dropped all CS2 coverage — proactive config maintenance prevents coverage loss. Code scout found a real bug in the complexity analyzer (recursive walkDir + explicit subdirs = duplicates) — quality tools need quality tests too.",
+      "scouted": 6
+    },
+    {
       "date": "2026-04-15",
       "task": "Execution: UX personalization batch (standings preview + favorite-team day dots + tennis seed/meta)",
       "outcome": "completed",
