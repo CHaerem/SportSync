@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T14:45:39.649Z",
+  "generatedAt": "2026-04-16T21:21:01.174Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 73,
@@ -99,8 +99,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 92,
-    "issueCount": 6
+    "editorialScore": 96,
+    "issueCount": 7
   },
   "findings": [
     {
@@ -309,14 +309,24 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 234 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfce️ Sun\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Merseyside Derby\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Bayern\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"European\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -330,15 +340,20 @@
     },
     {
       "severity": "warning",
-      "check": "brief_score_mismatch",
-      "message": "Brief says Arsenal and Barcelona reach semis  PSG silence Liverpool 2-0 in but data has Liverpool 0-2 Paris Saint-Germain"
+      "check": "featured_time_mismatch",
+      "message": "Featured shows \"17:00\" for \"STC Saudi Arabian Grand Prix\" but events.json has 15:30"
+    },
+    {
+      "severity": "warning",
+      "check": "result_all_recaps_null",
+      "message": "All 34 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 46,
+    "total": 49,
     "critical": 0,
-    "warning": 45,
-    "info": 1
+    "warning": 47,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
