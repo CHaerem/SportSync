@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T21:21:00.974Z",
+  "generatedAt": "2026-04-16T22:19:48.112Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -128,30 +128,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 0,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 44354,
-    "stepCount": 25,
+    "totalDuration": 320175,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 26387,
-        "share": 59
-      },
-      {
-        "name": "fetch-results",
-        "duration": 31570,
-        "share": 71
+        "name": "verify-schedules",
+        "duration": 180084,
+        "share": 56
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -200,12 +197,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (26s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 56% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (32s) — optimization candidate"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     },
     {
       "severity": "info",
@@ -215,7 +212,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-16T21:21:01.169Z",
+    "computedAt": "2026-04-16T22:19:48.258Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -261,7 +258,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 96/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 77/100.",
     "tokenUsage": null
   }
 }

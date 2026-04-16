@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T21:21:01.174Z",
+  "generatedAt": "2026-04-16T22:19:48.152Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 73,
@@ -99,8 +99,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 96,
-    "issueCount": 7
+    "editorialScore": 77,
+    "issueCount": 6
   },
   "findings": [
     {
@@ -309,29 +309,19 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 234 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Sun\" which may not match any event"
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Scandinavian\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Bayern\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Hilton Head\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Champions League\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"European\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Merseyside\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -340,20 +330,15 @@
     },
     {
       "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"17:00\" for \"STC Saudi Arabian Grand Prix\" but events.json has 15:30"
-    },
-    {
-      "severity": "warning",
       "check": "result_all_recaps_null",
       "message": "All 34 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 49,
+    "total": 46,
     "critical": 0,
-    "warning": 47,
-    "info": 2
+    "warning": 45,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
