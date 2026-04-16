@@ -1435,7 +1435,23 @@ class Dashboard {
 			return;
 		}
 
-		const top = this.insights.insights.slice(0, 5);
+		// Prioritize insights matching user sport preferences
+		let allInsights = this.insights.insights;
+		const sportPrefs = this.preferences ? this.preferences.getAllSportPreferences() : {};
+		const hasSportPrefs = Object.keys(sportPrefs).length > 0;
+		if (hasSportPrefs) {
+			const preferredSports = new Set(Object.keys(sportPrefs));
+			// Also check canonical alias (e.g. 'f1' → 'formula1')
+			for (const sp of [...preferredSports]) {
+				const canonical = typeof normalizeClientSportId === 'function' ? normalizeClientSportId(sp) : sp;
+				if (canonical !== sp) preferredSports.add(canonical);
+			}
+			const preferred = allInsights.filter(i => i.sport && preferredSports.has(i.sport));
+			const rest = allInsights.filter(i => !i.sport || !preferredSports.has(i.sport));
+			// Use preferred-first ordering, but ensure at least 3 insights total
+			allInsights = preferred.length >= 3 ? [...preferred, ...rest] : [...preferred, ...rest];
+		}
+		const top = allInsights.slice(0, 5);
 		let html = '<div class="insights-header">Key Numbers</div>';
 		for (const insight of top) {
 			// Highlight leading numbers/stats with accent monospace styling
@@ -1627,15 +1643,20 @@ class Dashboard {
 		}
 
 		// Sort events by sport preference, then chronologically within sport.
-		// Engagement clicks take priority; fallback weights from user preferences
-		// ensure sensible ordering for new users with no engagement data.
+		// User sport preferences (high/medium/low) take priority, then engagement
+		// clicks, then static fallback weights for new users with no data.
 		const SPORT_WEIGHT = { football: 3, golf: 3, tennis: 2, formula1: 2, chess: 2, esports: 1, olympics: 3, cycling: 2 };
+		const PREF_WEIGHT = { high: 4, medium: 3, low: 2 };
+		const sportPrefs = this.preferences ? this.preferences.getAllSportPreferences() : {};
 		const engagement = this.preferences ? this.preferences.getEngagement() : {};
 		const sportClicks = {};
 		for (const [sport, data] of Object.entries(engagement)) {
 			sportClicks[sport] = data.clicks || 0;
 		}
 		const sorted = [...events].sort((a, b) => {
+			const aPrefW = PREF_WEIGHT[sportPrefs[a.sport]] || 0;
+			const bPrefW = PREF_WEIGHT[sportPrefs[b.sport]] || 0;
+			if (aPrefW !== bPrefW) return bPrefW - aPrefW;
 			const aPri = (sportClicks[a.sport] || 0) + (SPORT_WEIGHT[a.sport] || 0) * 0.1;
 			const bPri = (sportClicks[b.sport] || 0) + (SPORT_WEIGHT[b.sport] || 0) * 0.1;
 			if (aPri !== bPri) return bPri - aPri;
@@ -1659,7 +1680,7 @@ class Dashboard {
 			if (sportBuf.events.length === 0) return;
 			const n = sportBuf.events.length;
 			const hasTeams = sportBuf.events[0].homeTeam && sportBuf.events[0].awayTeam;
-			const isCardSport = ['olympics', 'golf', 'esports'].includes(sportBuf.sport);
+			const isCardSport = ['olympics', 'golf', 'esports', 'cycling'].includes(sportBuf.sport);
 
 			if (sportBuf.sport === 'football' && hasTeams && n >= 2) {
 				// 2+ football matches → matchday card
@@ -2334,7 +2355,8 @@ class Dashboard {
 	_renderGroupedResultCard(league, matches) {
 		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(league) : null;
 		const leagueImg = leagueLogo ? `<img class="result-league-logo" src="${leagueLogo}" alt="${this.esc(league || '')}" loading="lazy">` : '';
-		let html = '<div class="result-card">';
+		const hasFavorite = matches.some(m => m.isFavorite);
+		let html = `<div class="result-card${hasFavorite ? ' result-fav' : ''}">`;
 		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
 		html += '<div class="result-body">';
 		html += '<div class="result-header">';
@@ -2381,7 +2403,8 @@ class Dashboard {
 		const aLogo = typeof getTeamLogo === 'function' ? getTeamLogo(m.awayTeam) : null;
 		const hImg = hLogo ? `<img class="result-team-logo" src="${hLogo}" alt="${this.esc(m.homeTeam)}" loading="lazy">` : '';
 		const aImg = aLogo ? `<img class="result-team-logo" src="${aLogo}" alt="${this.esc(m.awayTeam)}" loading="lazy">` : '';
-		let html = '<div class="result-card">';
+		const favClass = m.isFavorite ? ' result-fav' : '';
+		let html = `<div class="result-card${favClass}">`;
 		html += '<div class="result-accent" style="background:var(--sport-football)"></div>';
 		html += '<div class="result-body">';
 		const leagueLogo = typeof getTournamentLogo === 'function' ? getTournamentLogo(m.league) : null;
