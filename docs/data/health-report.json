@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-16T09:36:28.159Z",
+  "generatedAt": "2026-04-16T10:33:33.222Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 228,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-16"
     },
     "ai-quality.json": {
-      "ageMinutes": 171,
+      "ageMinutes": 228,
       "stale": false
     }
   },
@@ -136,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49865,
+    "totalDuration": 59665,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25426,
-        "share": 51
+        "duration": 27218,
+        "share": 46
       },
       {
         "name": "fetch-results",
-        "duration": 36685,
-        "share": 74
+        "duration": 37798,
+        "share": 63
       }
     ],
     "failedSteps": []
@@ -200,22 +200,27 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 46% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 63% of total pipeline time (38s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "focus_team_no_events",
       "message": "100 Thieves: no future esports events — discover-tournaments should run"
+    },
+    {
+      "severity": "info",
+      "code": "high_complexity_files",
+      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-16T09:36:28.295Z",
+    "computedAt": "2026-04-16T10:33:33.294Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -259,7 +264,32 @@
       }
     ]
   },
-  "complexityHealth": null,
+  "complexityHealth": {
+    "critical": 3,
+    "high": 3,
+    "warning": 9,
+    "totalFiles": 83,
+    "hotFiles": [
+      {
+        "file": "docs/js/dashboard.js",
+        "lines": 3819,
+        "functions": 105,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/generate-featured.js",
+        "lines": 1543,
+        "functions": 69,
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/pipeline-health.js",
+        "lines": 1482,
+        "functions": 72,
+        "severity": "critical"
+      }
+    ]
+  },
   "statusSummary": {
     "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 92/100.",
     "tokenUsage": null
