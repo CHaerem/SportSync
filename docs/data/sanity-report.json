@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-17T14:33:14.504Z",
+  "generatedAt": "2026-04-17T22:21:11.724Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 76,
+    "totalEvents": 75,
     "sports": [
       "esports",
       "tennis",
@@ -32,7 +32,6 @@
         "Burnley at Nottingham Forest",
         "Bahrain Grand Prix 2026",
         "Arsenal at Manchester City",
-        "FISSURE Playground 3",
         "Oeiras Open CETO",
         "West Ham United at Crystal Palace",
         "Mutua Madrid Open",
@@ -46,6 +45,7 @@
         "Leeds United at AFC Bournemouth",
         "Manchester City at Burnley",
         "Celta Vigo at Barcelona",
+        "BIG vs 100 Thieves — CCT Global Finals 2026",
         "Sevilla at Levante",
         "Espanyol at Rayo Vallecano",
         "Villarreal at Real Oviedo"
@@ -59,7 +59,6 @@
         "Giro d'Italia 2026",
         "Internazionali BNL d'Italia 2026",
         "Miami Grand Prix 2026",
-        "ESL Challenger Cologne 2026",
         "Tour of Norway 2026",
         "Tour of Norway 2026",
         "Emilia Romagna Grand Prix 2026",
@@ -102,8 +101,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 81,
-    "issueCount": 9
+    "editorialScore": 77,
+    "issueCount": 8
   },
   "findings": [
     {
@@ -125,11 +124,6 @@
       "severity": "warning",
       "check": "event_too_far",
       "message": "\"Miami Grand Prix 2026\" is 23 days away — may clutter the dashboard"
-    },
-    {
-      "severity": "warning",
-      "check": "event_too_far",
-      "message": "\"ESL Challenger Cologne 2026\" is 25 days away — may clutter the dashboard"
     },
     {
       "severity": "warning",
@@ -314,32 +308,12 @@
     {
       "severity": "info",
       "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfae IEM Rio Major ongoing — rain hunting CS2 glory on Brazil's biggest stage\" which may not match any event"
-    },
-    {
-      "severity": "info",
-      "check": "featured_orphan_ref",
       "message": "Featured block references \"\udfce️ Sun\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Rio Major\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Saka\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Fitzpatrick\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -349,14 +323,14 @@
     {
       "severity": "warning",
       "check": "result_all_recaps_null",
-      "message": "All 34 football results have null recapHeadline — RSS matching may be broken"
+      "message": "All 32 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 49,
+    "total": 44,
     "critical": 0,
-    "warning": 46,
-    "info": 3
+    "warning": 42,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null

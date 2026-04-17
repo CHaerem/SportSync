@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-17T21:19:12.496Z",
-  "eventCount": 76,
+  "generatedAt": "2026-04-17T22:21:11.823Z",
+  "eventCount": 75,
   "sportCoverage": {
     "esports": {
-      "count": 4,
+      "count": 3,
       "previousCount": 4,
-      "delta": 0
+      "delta": -1
     },
     "tennis": {
       "count": 6,
@@ -40,42 +40,42 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 406,
-      "stale": true,
+      "ageMinutes": 0,
+      "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-17"
     },
     "ai-quality.json": {
-      "ageMinutes": 406,
-      "stale": true
+      "ageMinutes": 0,
+      "stale": false
     }
   },
   "schemaCompleteness": {
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 406 minutes old (stale > 240m)"
+      "1 boundary day snapshot(s) outside event range (expected)"
     ],
     "snapshotCount": 15
   },
@@ -136,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 54136,
+    "totalDuration": 45495,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28891,
-        "share": 53
+        "duration": 27284,
+        "share": 60
       },
       {
         "name": "fetch-results",
-        "duration": 36712,
-        "share": 68
+        "duration": 30590,
+        "share": 67
       }
     ],
     "failedSteps": []
@@ -189,23 +189,8 @@
     },
     {
       "severity": "warning",
-      "code": "stale_output",
-      "message": "featured.json: critical output is 406 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_output",
-      "message": "ai-quality.json: critical output is 406 minutes old"
-    },
-    {
-      "severity": "warning",
       "code": "streaming_coverage_gap",
-      "message": "1 important event(s) lack streaming info: CS2 Tournaments 2026"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 406 minutes old (stale > 240m)"
+      "message": "2 important event(s) lack streaming info: CS2 Tournaments 2026"
     },
     {
       "severity": "warning",
@@ -215,17 +200,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 68% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 67% of total pipeline time (31s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-17T21:19:12.608Z",
+    "computedAt": "2026-04-17T22:21:11.973Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -236,6 +221,16 @@
         "suggestedQuotaPriority": 2,
         "suggestedRefreshIntervalMs": 21600000,
         "suggestedStalenessThresholdMinutes": 180
+      },
+      {
+        "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
+        "score": 0.1,
+        "reasons": [
+          "focus team involved"
+        ],
+        "suggestedQuotaPriority": 3,
+        "suggestedRefreshIntervalMs": 43200000,
+        "suggestedStalenessThresholdMinutes": 360
       }
     ],
     "highestUrgency": 0.3,
@@ -271,7 +266,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 81/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 77/100.",
     "tokenUsage": null
   }
 }

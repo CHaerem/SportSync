@@ -1,4 +1,82 @@
 {
+  "cct-s3-global-finals-2026": {
+    "name": "CCT Season 3 Global Finals",
+    "venue": "SAW Esports Arena, Vila Nova de Gaia (Porto), Portugal",
+    "startDate": "2026-04-23",
+    "endDate": "2026-04-26",
+    "format": "Double Elimination (Bo3, Grand Final Bo5)",
+    "tier": "B-Tier",
+    "prizePool": "$75,000 USD",
+    "focusTeam": "100 Thieves",
+    "focusTeamRoster": [
+      "dev1ce",
+      "rain",
+      "Ag1l",
+      "sirah",
+      "poiii"
+    ],
+    "coach": "gla1ve",
+    "bracket": {
+      "playoffs": {
+        "format": "Double Elimination (Bo3, Grand Final Bo5)",
+        "upperBracket": [
+          {
+            "round": "Upper Bracket Quarterfinal",
+            "matches": [
+              {
+                "team1": "HEROIC",
+                "team2": "illwill",
+                "score": "2-0",
+                "winner": "HEROIC",
+                "status": "completed",
+                "note": "illwill withdrew — forfeit win to HEROIC"
+              },
+              {
+                "team1": "Monte",
+                "team2": "Betclic Apogee Esports",
+                "score": null,
+                "winner": null,
+                "status": "scheduled"
+              },
+              {
+                "team1": "Sharks Esports",
+                "team2": "NIP",
+                "score": null,
+                "winner": null,
+                "status": "scheduled"
+              },
+              {
+                "team1": "BIG",
+                "team2": "100 Thieves",
+                "score": null,
+                "winner": null,
+                "status": "scheduled"
+              }
+            ]
+          }
+        ],
+        "lowerBracket": [],
+        "grandFinal": {
+          "matches": []
+        }
+      },
+      "focusTeamPath": {
+        "team": "100 Thieves",
+        "status": "Upper Bracket Quarterfinal — April 23",
+        "completed": [],
+        "current": {
+          "stage": "Upper Bracket Quarterfinal",
+          "opponent": "BIG",
+          "format": "Bo3",
+          "status": "scheduled",
+          "time": "2026-04-23T17:00:00+02:00"
+        },
+        "ifWin": "Upper Bracket Semifinal — April 24",
+        "ifLose": "Lower Bracket Round 1 — April 24 (still alive)"
+      }
+    },
+    "_lastUpdated": "2026-04-17T22:16:34.150Z"
+  },
   "fifa-world-cup-2026": {
     "name": "FIFA World Cup 2026",
     "venue": "USA / Canada / Mexico (16 venues)",
