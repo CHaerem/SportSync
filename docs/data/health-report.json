@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-17T07:37:39.488Z",
+  "generatedAt": "2026-04-17T08:39:12.300Z",
   "eventCount": 77,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 113,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-17"
     },
     "ai-quality.json": {
-      "ageMinutes": 52,
+      "ageMinutes": 113,
       "stale": false
     }
   },
@@ -126,27 +126,30 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 1,
-    "sevenDay": 6,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 367652,
-    "stepCount": 32,
+    "totalDuration": 52879,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 180111,
-        "share": 49
+        "name": "fetch-sports",
+        "duration": 29338,
+        "share": 55
+      },
+      {
+        "name": "fetch-results",
+        "duration": 33283,
+        "share": 63
       }
     ],
-    "failedSteps": [
-      "verify-schedules"
-    ]
+    "failedSteps": []
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -195,17 +198,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 49% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "pipeline_step_failures",
-      "message": "1 pipeline step(s) failed: verify-schedules"
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 63% of total pipeline time (33s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-17T07:37:39.581Z",
+    "computedAt": "2026-04-17T08:39:12.423Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
