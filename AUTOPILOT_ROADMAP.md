@@ -182,15 +182,16 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
-- [PENDING] [MAINTENANCE] **Favorite-team accent on result cards — verify rendering** — Result cards already have `.result-fav` CSS (PR #165), but verify the star pseudo-element renders correctly across grouped and single result cards, and in dark mode. Visual validation task.
-- [PENDING] [MAINTENANCE] **RSS headlines in expanded event view** — When expanding a match (e.g., Arsenal CL semi), show 1-2 relevant RSS headlines matched by team/tournament keywords from `rssDigest`. Data already loaded in dashboard.js but not surfaced contextually in expanded rows. Personalization pillar.
-- [PENDING] [MAINTENANCE] **Favorite buttons for non-football sports** — Expanded view only offers team-favorite buttons for football. Extend to esports orgs, F1 teams, cycling teams. Personalization pillar.
-- [PENDING] [MAINTENANCE] **Test computeEnrichHash()** — Pure function in enrich-events.js, determines enrichment cache validity. Currently untested. Low effort, high leverage (cache bug = wasted quota or stale enrichments).
-- [PENDING] [MAINTENANCE] **Test run-recipes.js core functions** — Extract `applyRecipeResults` and auto-quarantine logic as exported functions, write unit tests. Currently 170 lines with zero test coverage.
-- [PENDING] [MAINTENANCE] **Extend esports config for 100 Thieves coverage** — Research 100 Thieves' CS2 schedule for May-July 2026 (IEM Cologne Major qualification, smaller events). Currently 0 future events for focus team.
+- [PENDING] [MAINTENANCE] **Verify-schedules persistent timeout investigation** — Step has been failing for 20+ consecutive runs at 180s timeout (56% of pipeline time). Run 46 fixed per-call timeout (120s→40s) but step still times out. Root cause: too many configs to verify or blocking web searches. Investigate how many configs are verified per run and whether async web fetching would help. Quality pillar.
 
 ### Recently Completed
 
+- [DONE] [MAINTENANCE] **Favorite-team accent on result cards — verify rendering** — CSS review confirms: `--accent` has good contrast on both light/dark backgrounds, star `::after` on `.result-header` flex layout positions correctly after FT badge, both grouped and single cards apply class correctly. No code changes needed. Run 52.
+- [DONE] [MAINTENANCE] **RSS headlines in expanded event view** — Added `_findRelatedHeadlines(event)` method: extracts keywords from team names, tournament, and player last names, matches against rss-digest.json items, returns up to 2 deduplicated headlines. Rendered as "Related news" section in expanded view with muted styling and accent hover. PR #166 (merged). Run 52.
+- [DONE] [MAINTENANCE] **Favorite buttons for non-football sports** — Extended team-favorite star buttons to esports (from participants), F1 (from title "vs" patterns), and cycling (from norwegianPlayers team metadata). New `_extractTeamNames()` handles "Tournament - Team A vs Team B" title patterns. Both team and player buttons render in same container. PR #166 (merged). Run 52.
+- [DONE] [MAINTENANCE] **Test computeEnrichHash()** — 28 tests covering determinism, field sensitivity (10 relevant fields), irrelevant field immunity (7 enrichment outputs), edge cases, and order insensitivity for participants/norwegianPlayers arrays. Direct-to-main. Run 52.
+- [DONE] [MAINTENANCE] **Test run-recipes.js core functions** — Extracted `shouldAutoQuarantine()` as pure function, added export to `applyRecipeResults()`. 21 tests covering quarantine thresholds, result application, recipe tagging, focus-team filtering, and deduplication. Direct-to-main. Run 52.
+- [DONE] [MAINTENANCE] **Extend esports config for 100 Thieves coverage** — Added 3 CS2 tournaments (ESL Challenger Cologne May 12-18, IEM Dallas May 19-25, BLAST Premier Spring Final Jun 23-29) + updated IEM Cologne Major with roster. All marked needsVerification for discovery loop. PR #166 (merged). Run 52.
 - [DONE] [MAINTENANCE] **UX personalization batch — sport sorting, favorite results, insight filtering, cycling cards** — 4 changes: (1) Sport band sorting by user preferences (high/medium/low → weights 4/3/2 primary sort). (2) `.result-fav` accent + star on favorite-team result cards. (3) Insights filtered/prioritized by sport preferences. (4) Cycling added to card sports for richer rendering. PR #165 (merged). Run 51.
 - [DONE] [MAINTENANCE] **Extend esports config endDate** — `endDate` 2026-04-28 → 2026-07-31. Prevents sync-configs.js from archiving the entire esports config on April 29, preserving IEM Cologne Major (June 2-21) entry. Direct-to-main. Run 51.
 - [DONE] [MAINTENANCE] **Fix complexity analyzer duplicate files** — `scanDirs` listed `scripts` + 3 subdirs (`scripts/lib`, `scripts/fetch`, `scripts/agents`), but `walkDir()` recurses. Removed subdirs, fixing inflated file counts (116→~100) and duplicate entries in report. Direct-to-main. Run 51.
@@ -332,6 +333,9 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 | 4. Personalization | ~85% | 2026-04-16 | Sport bands sort by user preferences (high/medium/low), favorite-team result cards get accent+star, insights prioritize preferred sports, cycling gets rich card rendering. PR #165. Run 51 |
 | 1. Data | ~98% | 2026-04-16 | Esports config endDate extended (Apr 28 → Jul 31) preventing archival of IEM Cologne Major entry. Run 51 |
 | 2. Code | ~97% | 2026-04-16 | Fixed complexity analyzer duplicate file scanning (scanDirs recursion bug). Run 51 |
+| 4. Personalization | ~88% | 2026-04-17 | RSS headlines in expanded view (contextual news per event), favorite buttons for all sports (esports, F1, cycling). PR #166. Run 52 |
+| 2. Code | ~98% | 2026-04-17 | 49 new tests: computeEnrichHash (28) + run-recipes core (21). 2776 tests across 89 files. Run 52 |
+| 1. Data | ~98% | 2026-04-17 | 100 Thieves CS2 coverage: 3 new tournaments (ESL Challenger, IEM Dallas, BLAST Spring Final) + IEM Cologne roster. Run 52 |
 
 ### Run History Insights
 

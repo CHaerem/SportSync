@@ -76,6 +76,10 @@
     "_description": "Accumulated process knowledge. The autopilot adds notes here about what works and what doesn't.",
     "entries": [
       {
+        "date": "2026-04-17",
+        "note": "Run 52: Execution — 6 pending tasks, 0 user feedback, 0 open PRs. 3 parallel subagents (UX: RSS headlines + favorite buttons, Code: 49 new tests, Data: 100 Thieves CS2 config). Orchestrator verified result-fav CSS via code review + fixed UX test assertion order bug. PR #166 merged. 2776 tests (+81). User-visible/infrastructure: 67%/33%. Autonomy: 13/13. ~30 orchestrator turns. Key learnings: (a) Source-level tests that grep HTML templates are brittle to attribute reordering — prefer testing behavior over structure. (b) MUST reset docs/data/* BEFORE creating feature branch, not after — dirty data files from npm test get included in squash merge otherwise. (c) When all pending tasks fit the run, executing all is more efficient than scouting first — no wasted turns on discovery when the queue is full."
+      },
+      {
         "date": "2026-04-16",
         "note": "Run 51: Scouting + execution — 0 pending tasks, 0 user feedback, 0 open PRs. 3 parallel scouts (UX 7, Code 7, Data 7). Executed 6 tasks: 4 UX personalization batch (PR #165 merged) + 2 direct-to-main (esports endDate, complexity duplicates). UX agent worktree worked cleanly, PR created and merged. Orchestrator applied 2 trivial fixes directly. 2695 tests pass. User-visible/infrastructure: 67%/33% (4 UX personalization / 1 data config + 1 code fix). Autonomy: 13/13. ~28 orchestrator turns. Key learnings: (a) Personalization pillar at ~80% is highest-ROI investment — sport sorting + favorite accents + insight filtering collectively make the dashboard feel responsive to user preferences. (b) Data scout found time-sensitive esports endDate issue (12 days to archival) — proactive config maintenance is essential for coverage continuity. (c) Code scout found complexity analyzer walkDir recursion + explicit subdirs = duplicate file analysis — quality tools need their own quality checks."
       },

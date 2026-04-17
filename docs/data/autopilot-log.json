@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-17",
+      "task": "Execution: 6 pending tasks — 2 UX personalization (PR #166) + 2 test coverage (direct-to-main) + 1 esports config (direct-to-main) + 1 visual verification",
+      "outcome": "completed",
+      "pr": "PR #166 (merged via --auto --squash) + direct-to-main (1 commit: tests)",
+      "details": "Run 52: 0 user feedback, 0 open autopilot PRs, 6 pending tasks — execution run. 3 parallel subagents: UX-agent (RSS headlines in expanded view + favorite buttons for all sports), Code-agent (computeEnrichHash 28 tests + run-recipes 21 tests), Data-agent (100 Thieves CS2 config: 3 new tournaments + IEM Cologne roster). Orchestrator: verified result-fav CSS rendering via code review (both light/dark, grouped/single cards — no changes needed). UX-agent test had 1 assertion ordering bug (regex expected class before target, actual was target before class) — fixed by orchestrator. Code-agent shipped 49 tests direct-to-main. Data-agent's esports config included in PR #166 squash merge. Scouting: no metric collapse, no coverage gaps, 0 patterns detected, chess 0 events expected (between Candidates end and Norway Chess start). 1 new PENDING task scouted (verify-schedules persistent timeout). 2776 tests pass across 89 files (+81 new). Autonomy: 13/13 (100%). User-visible/infrastructure ratio: 67%/33% (2 UX personalization + 1 data config + 1 visual verify / 2 test coverage tasks).",
+      "tests_passed": true,
+      "files_changed": 10,
+      "turns_used": 30,
+      "lesson": "UX agent wrote tests with assertion order assumption (class before target in HTML attributes) that didn't match the actual template literal. Source-level tests that grep for patterns in HTML templates are brittle — they break on attribute reordering. When creating a branch from working tree with dirty data files (from npm test), git adds those files to the branch and they end up in the squash merge. Always reset docs/data/* BEFORE creating the feature branch. Data-agent Bash permissions were denied, so orchestrator committed its work — this is now a reliable pattern (4th consecutive run). When all 6 pending tasks fit the current run, executing them all is more efficient than scouting first.",
+      "scouted": 1
+    },
+    {
       "date": "2026-04-16",
       "task": "Scouting + execution: 4 UX personalization + 1 data config fix + 1 code bug fix",
       "outcome": "completed",
