@@ -1,32 +1,32 @@
 {
-  "generatedAt": "2026-04-17T02:19:36.794Z",
+  "generatedAt": "2026-04-17T06:45:53.608Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
-    "blockCount": 8,
-    "generationMs": 134891,
+    "blockCount": 7,
+    "generationMs": 86047,
     "tokenUsage": {
-      "input": 62610,
-      "output": 7170,
-      "cacheCreation": 34763,
-      "cacheRead": 27841,
-      "total": 69780,
-      "costUSD": 0.25049955,
+      "input": 27844,
+      "output": 5499,
+      "cacheCreation": 18106,
+      "cacheRead": 9735,
+      "total": 33343,
+      "costUSD": 0.15755,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 77,
+    "score": 92,
     "metrics": {
-      "mustWatchCoverage": 0.5,
+      "mustWatchCoverage": 1,
       "sportDiversity": 0.6,
       "blockTypeBalance": 1,
       "textQuality": 1,
@@ -64,14 +64,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 73,
+      "totalEvents": 77,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 73,
+      "totalEvents": 77,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -81,23 +81,25 @@
     "valid": true,
     "issues": [],
     "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "aiUpdatedFields": 4,
     "failedBatches": 0,
-    "totalEvents": 73,
+    "totalEvents": 77,
     "skipStats": {
-      "total": 73,
+      "total": 77,
       "unchanged": 73,
-      "enriched": 0,
-      "skipRate": 1
+      "enriched": 4,
+      "skipRate": 0.95
     },
-    "tokensPerEvent": 0,
-    "hintsApplied": [],
+    "tokensPerEvent": 6435,
+    "hintsApplied": [
+      "CORRECTION: Important events were missed in editorial. Ensure importance ≥4 events get rich, descriptive summaries."
+    ],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 23728,
+      "output": 2013,
+      "calls": 1,
+      "total": 25741,
+      "costUSD": 0.12020375,
       "tracked": true,
       "estimated": false
     }
