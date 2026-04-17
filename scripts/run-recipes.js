@@ -89,10 +89,11 @@ async function main() {
 			// Auto-quarantine: disable recipes with sustained failures (20+)
 			// so the pipeline stops wasting time on permanently dead sources.
 			// The health report surfaces this for the autopilot to investigate alternatives.
-			if (entry.consecutiveFailures >= 20 && !entry.lastSuccess) {
+			const quarantineResult = shouldAutoQuarantine(entry);
+			if (quarantineResult.quarantine) {
 				entry.active = false;
 				entry.needsRepair = false;
-				entry.deactivatedReason = `Auto-quarantined: ${entry.consecutiveFailures} consecutive failures with no prior success — source likely permanently unavailable`;
+				entry.deactivatedReason = quarantineResult.reason;
 				console.log(`  ⛔ Auto-quarantined recipe "${entry.id}" after ${entry.consecutiveFailures} consecutive failures`);
 			}
 		}
@@ -128,10 +129,27 @@ async function main() {
 }
 
 /**
+ * Check if a registry entry should be auto-quarantined.
+ * Quarantines recipes with 20+ consecutive failures that have never succeeded.
+ * @param {object} entry - Registry entry with consecutiveFailures and lastSuccess
+ * @returns {{ quarantine: boolean, reason: string|null }}
+ */
+export function shouldAutoQuarantine(entry) {
+	const QUARANTINE_THRESHOLD = 20;
+	if (entry.consecutiveFailures >= QUARANTINE_THRESHOLD && !entry.lastSuccess) {
+		return {
+			quarantine: true,
+			reason: `Auto-quarantined: ${entry.consecutiveFailures} consecutive failures with no prior success — source likely permanently unavailable`,
+		};
+	}
+	return { quarantine: false, reason: null };
+}
+
+/**
  * Apply recipe results to the target config's events array.
  * Only updates events that came from this recipe (tagged with _recipeId).
  */
-function applyRecipeResults(recipe, events) {
+export function applyRecipeResults(recipe, events) {
 	const configPath = path.join(configDir, recipe.metadata.configRef);
 	const config = readJsonIfExists(configPath);
 	if (!config) {
