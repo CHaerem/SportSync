@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-16T22:19:48.112Z",
-  "eventCount": 73,
+  "generatedAt": "2026-04-17T02:19:56.442Z",
+  "eventCount": 77,
   "sportCoverage": {
     "esports": {
-      "count": 3,
+      "count": 4,
       "previousCount": 3,
-      "delta": 0
+      "delta": 1
     },
     "tennis": {
       "count": 6,
@@ -23,9 +23,9 @@
       "delta": 0
     },
     "football": {
-      "count": 32,
+      "count": 35,
       "previousCount": 32,
-      "delta": 0
+      "delta": 3
     },
     "cycling": {
       "count": 8,
@@ -40,38 +40,38 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-04-16"
+      "featuredDate": "2026-04-17"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -79,7 +79,7 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.93,
+    "venuePercent": 0.94,
     "streamingPercent": 0.97
   },
   "rssFeedHealth": {
@@ -102,17 +102,15 @@
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0,
-    "relevantMatchRate": null,
-    "eventsEnriched": 0,
+    "matchRate": 0.25,
+    "relevantMatchRate": 1,
+    "eventsEnriched": 6,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -129,21 +127,21 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 0,
+    "fiveHour": 7,
+    "sevenDay": 1,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 320175,
+    "totalDuration": 315814,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "verify-schedules",
-        "duration": 180084,
-        "share": 56
+        "duration": 180079,
+        "share": 57
       }
     ],
     "failedSteps": [
@@ -171,11 +169,11 @@
     "teams": [
       {
         "name": "100 Thieves",
-        "totalEvents": 0,
-        "futureEvents": 0
+        "totalEvents": 1,
+        "futureEvents": 1
       }
     ],
-    "hasCoverage": false
+    "hasCoverage": true
   },
   "unmappedLeagues": [],
   "issues": [
@@ -197,22 +195,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 56% of total pipeline time (180s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 57% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "pipeline_step_failures",
       "message": "1 pipeline step(s) failed: verify-schedules"
-    },
-    {
-      "severity": "info",
-      "code": "focus_team_no_events",
-      "message": "100 Thieves: no future esports events — discover-tournaments should run"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-16T22:19:48.258Z",
+    "computedAt": "2026-04-17T02:19:56.539Z",
     "targets": [
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
@@ -230,7 +223,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
