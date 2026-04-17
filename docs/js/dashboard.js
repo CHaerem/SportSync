@@ -3062,7 +3062,7 @@ class Dashboard {
 			content += '</div>';
 		}
 
-		// Favorite actions
+		// Favorite actions — team buttons for football and other team sports
 		if (event.sport === 'football' && (event.homeTeam || event.awayTeam)) {
 			const teams = [event.homeTeam, event.awayTeam].filter(Boolean);
 			content += '<div class="exp-fav-actions">';
@@ -3071,12 +3071,37 @@ class Dashboard {
 				content += `<button class="exp-fav-btn" data-action="team" data-sport="football" data-name="${this.esc(team)}" aria-label="${isTeamFav ? 'Remove' : 'Add'} ${this.esc(team)} ${isTeamFav ? 'from' : 'to'} favorites">${isTeamFav ? '\u2605' : '\u2606'} ${this.esc(team)}</button>`;
 			});
 			content += '</div>';
-		} else if (event.norwegianPlayers?.length > 0) {
-			content += '<div class="exp-fav-actions">';
-			event.norwegianPlayers.forEach(player => {
-				const name = typeof player === 'string' ? player : player.name;
-				const isPlayerFav = this.preferences?.isPlayerFavorite(event.sport, name);
-				content += `<button class="exp-fav-btn" data-action="player" data-sport="${this.esc(event.sport)}" data-name="${this.esc(name)}" aria-label="${isPlayerFav ? 'Remove' : 'Add'} ${this.esc(name)} ${isPlayerFav ? 'from' : 'to'} favorites">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(name)}</button>`;
+		} else {
+			// Non-football: extract team names for esports, F1, cycling
+			const extractedTeams = this._extractTeamNames(event);
+			const hasFavTeams = extractedTeams.length > 0;
+			const hasPlayers = event.norwegianPlayers?.length > 0;
+			if (hasFavTeams || hasPlayers) {
+				content += '<div class="exp-fav-actions">';
+				// Team favorite buttons
+				extractedTeams.forEach(team => {
+					const isTeamFav = this.preferences?.isTeamFavorite(event.sport, team);
+					content += `<button class="exp-fav-btn" data-action="team" data-sport="${this.esc(event.sport)}" data-name="${this.esc(team)}" aria-label="${isTeamFav ? 'Remove' : 'Add'} ${this.esc(team)} ${isTeamFav ? 'from' : 'to'} favorites">${isTeamFav ? '\u2605' : '\u2606'} ${this.esc(team)}</button>`;
+				});
+				// Player favorite buttons (if not already covered by team buttons)
+				if (hasPlayers) {
+					event.norwegianPlayers.forEach(player => {
+						const name = typeof player === 'string' ? player : player.name;
+						const isPlayerFav = this.preferences?.isPlayerFavorite(event.sport, name);
+						content += `<button class="exp-fav-btn" data-action="player" data-sport="${this.esc(event.sport)}" data-name="${this.esc(name)}" aria-label="${isPlayerFav ? 'Remove' : 'Add'} ${this.esc(name)} ${isPlayerFav ? 'from' : 'to'} favorites">${isPlayerFav ? '\u2605' : '\u2606'} ${this.esc(name)}</button>`;
+					});
+				}
+				content += '</div>';
+			}
+		}
+
+		// Related news from RSS
+		const relatedHeadlines = this._findRelatedHeadlines(event);
+		if (relatedHeadlines.length > 0) {
+			content += '<div class="exp-related-news">';
+			content += '<div class="exp-related-news-header">Related news</div>';
+			relatedHeadlines.forEach(item => {
+				content += `<a href="${this.esc(item.link)}" target="_blank" rel="noopener noreferrer" class="exp-related-news-link">${this.esc(item.title)}</a>`;
 			});
 			content += '</div>';
 		}
@@ -3807,6 +3832,85 @@ class Dashboard {
 			if (t.includes(key.toLowerCase())) return val;
 		}
 		return null;
+	}
+
+	/**
+	 * Find RSS headlines related to an event by matching team names,
+	 * tournament names, and player names against headline text.
+	 * Returns up to 2 matching headlines or empty array.
+	 */
+	_findRelatedHeadlines(event) {
+		if (!this.rssDigest?.items?.length) return [];
+		const keywords = [];
+		if (event.homeTeam) keywords.push(event.homeTeam.toLowerCase());
+		if (event.awayTeam) keywords.push(event.awayTeam.toLowerCase());
+		if (event.tournament) {
+			// Extract meaningful tournament words (skip generic words)
+			const skip = new Set(['2026','2025','2024','calendar','season','race','weekend','round','grand','prix','tournaments','championship','world']);
+			const words = event.tournament.split(/[\s\-\/]+/).filter(w => w.length > 2 && !skip.has(w.toLowerCase()));
+			words.forEach(w => keywords.push(w.toLowerCase()));
+		}
+		// Add player names (golf, tennis, chess, etc.)
+		if (event.norwegianPlayers?.length > 0) {
+			event.norwegianPlayers.forEach(p => {
+				const name = typeof p === 'string' ? p : p.name;
+				if (name) {
+					// Use last name for matching (more specific), or full name
+					const parts = name.replace(/\s*\(.*?\)\s*/g, '').trim().split(/\s+/);
+					if (parts.length > 1) keywords.push(parts[parts.length - 1].toLowerCase());
+					keywords.push(name.replace(/\s*\(.*?\)\s*/g, '').trim().toLowerCase());
+				}
+			});
+		}
+		if (keywords.length === 0) return [];
+
+		const matches = [];
+		const seenLinks = new Set();
+		for (const item of this.rssDigest.items) {
+			if (matches.length >= 2) break;
+			const haystack = ((item.title || '') + ' ' + (item.description || '')).toLowerCase();
+			const matched = keywords.some(kw => kw.length > 2 && haystack.includes(kw));
+			if (matched && item.link && !seenLinks.has(item.link)) {
+				seenLinks.add(item.link);
+				matches.push(item);
+			}
+		}
+		return matches;
+	}
+
+	/**
+	 * Extract team names from a non-football event for favorite buttons.
+	 * Looks at title "X vs Y" patterns, participants, and cycling team metadata.
+	 */
+	_extractTeamNames(event) {
+		const teams = [];
+		const sport = event.sport;
+		// Esports / F1 / cycling: parse "Team A vs Team B" from title
+		// Use the last segment after " - " or " – " to handle "Tournament - Team A vs Team B"
+		if (event.title) {
+			const segments = event.title.split(/\s+[-–—]\s+/);
+			const last = segments[segments.length - 1];
+			const vsMatch = last.match(/^(.+?)\s+vs\.?\s+(.+?)$/i);
+			if (vsMatch) {
+				teams.push(vsMatch[1].trim(), vsMatch[2].trim());
+			}
+		}
+		// Esports: participants as team names
+		if (sport === 'esports' && event.participants?.length > 0) {
+			event.participants.forEach(p => {
+				const name = typeof p === 'string' ? p : p.name;
+				if (name && !teams.includes(name)) teams.push(name);
+			});
+		}
+		// Cycling: extract rider team names from norwegianPlayers
+		if (sport === 'cycling' && event.norwegianPlayers?.length > 0) {
+			event.norwegianPlayers.forEach(p => {
+				if (typeof p === 'object' && p.team && !teams.includes(p.team)) {
+					teams.push(p.team);
+				}
+			});
+		}
+		return teams;
 	}
 
 	esc(str) { return escapeHtml(str); }
