@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-04-17T06:45:55.452Z",
+  "generatedAt": "2026-04-17T14:33:14.504Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 77,
+    "totalEvents": 76,
     "sports": [
       "esports",
       "tennis",
       "golf",
-      "f1",
       "football",
+      "f1",
       "cycling"
     ],
     "bands": {
@@ -17,9 +17,7 @@
         "Barcelona Open Banc Sabadell 2026",
         "RBC Heritage"
       ],
-      "today": [
-        "STC Saudi Arabian Grand Prix"
-      ],
+      "today": [],
       "tomorrow": [
         "Fulham at Brentford",
         "Wolverhampton Wanderers at Leeds United",
@@ -101,11 +99,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 92,
-    "issueCount": 5
+    "editorialScore": 81,
+    "issueCount": 9
   },
   "findings": [
     {
@@ -314,14 +312,34 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 233 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 4 hours old"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfae IEM Rio Major ongoing — rain hunting CS2 glory on Brazil's biggest stage\" which may not match any event"
+    },
+    {
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfce️ Sun\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Major\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Rio Major\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Saka\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -335,10 +353,10 @@
     }
   ],
   "summary": {
-    "total": 45,
+    "total": 49,
     "critical": 0,
-    "warning": 44,
-    "info": 1
+    "warning": 46,
+    "info": 3
   },
   "pass": true,
   "tokenUsage": null
