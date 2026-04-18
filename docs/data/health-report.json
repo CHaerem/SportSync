@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T09:20:48.765Z",
+  "generatedAt": "2026-04-18T10:18:43.830Z",
   "eventCount": 77,
   "sportCoverage": {
     "esports": {
@@ -56,7 +56,7 @@
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 225,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 167,
+      "ageMinutes": 225,
       "stale": false
     }
   },
@@ -134,19 +134,24 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 55055,
+    "totalDuration": 63583,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28952,
-        "share": 53
+        "duration": 25564,
+        "share": 40
       },
       {
         "name": "fetch-results",
-        "duration": 32872,
-        "share": 60
+        "duration": 36521,
+        "share": 57
+      },
+      {
+        "name": "enrich-streaming",
+        "duration": 20695,
+        "share": 33
       }
     ],
     "failedSteps": []
@@ -198,17 +203,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 40% of total pipeline time (26s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 60% of total pipeline time (33s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 57% of total pipeline time (37s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"enrich-streaming\" used 33% of total pipeline time (21s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-18T09:20:48.850Z",
+    "computedAt": "2026-04-18T10:18:43.931Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
