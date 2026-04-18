@@ -935,6 +935,13 @@
 		.row-agg-pill { display: inline-block; font-size: 0.6rem; font-weight: 600; color: var(--accent); background: rgba(194,90,52,0.08); border: 1px solid rgba(194,90,52,0.3); border-radius: 3px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; line-height: 1.4; font-variant-numeric: tabular-nums; }
 		.row-agg-pill .row-agg-label { font-size: 0.48rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; margin-right: 2px; }
 		.dark .row-agg-pill { background: rgba(194,90,52,0.16); border-color: rgba(194,90,52,0.4); }
+		/* Tennis surface badge (Clay/Grass/Hard) in collapsed row */
+		.surface-badge { display: inline-block; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; border-radius: 3px; padding: 1px 4px; margin-left: 5px; vertical-align: middle; line-height: 1.4; }
+		/* Multi-day progress badge (Day X/Y) in collapsed row */
+		.day-progress-badge { display: inline-block; font-size: 0.52rem; font-weight: 600; letter-spacing: 0.03em; color: var(--muted); background: var(--bg-secondary); border-radius: 3px; padding: 1px 4px; margin-left: 5px; vertical-align: middle; line-height: 1.4; }
+		/* Esports tier + prize in expanded view */
+		.exp-esports-tier { font-size: 0.65rem; font-weight: 600; color: var(--muted); }
+		.exp-esports-prize { font-size: 0.65rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 		/* Golf playing-with subtitle in collapsed row */
 		.row-playing-with { font-size: 0.65rem; color: var(--muted); padding: 1px 0 2px 22px; line-height: 1.3; }
 
@@ -1344,6 +1351,7 @@
 		}
 		.news-toggle::after { content: ''; flex: 1; height: 1px; background: var(--border-light); }
 		.news-toggle:hover { opacity: 0.7; }
+		.news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 		.news-content { display: none; }
 		.news-content.open { display: block; }
 		.news-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }

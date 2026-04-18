@@ -165,6 +165,8 @@ class Dashboard {
 				result: ev.result || null,
 				meta: ev.meta || null,
 				isFavorite: ev.isFavorite || false,
+				tier: ev.tier || null,
+				prizePool: ev.prizePool || null,
 				_isTournament: ev._isTournament || false,
 				_bracketId: ev._bracketId || null,
 				}))
@@ -2768,6 +2770,28 @@ class Dashboard {
 			}
 		}
 
+		// Tennis surface badge (Clay/Grass/Hard/Indoor Hard)
+		let surfaceBadgeHtml = '';
+		if (event.sport === 'tennis' && event.meta?.surface) {
+			const surfaceColors = { 'Clay': '#c97a2e', 'Grass': '#2e8b57', 'Hard': '#4682b4', 'Indoor Hard': '#4682b4' };
+			const sColor = surfaceColors[event.meta.surface] || '#888';
+			surfaceBadgeHtml = `<span class="surface-badge" style="background:${sColor}">${this.esc(event.meta.surface)}</span>`;
+		}
+
+		// Multi-day progress badge (Day X/Y)
+		let dayProgressHtml = '';
+		if (event.time && event.endTime) {
+			const evStart = new Date(event.time);
+			const evEnd = new Date(event.endTime);
+			const totalDays = Math.ceil((evEnd - evStart) / 86400000) + 1;
+			if (totalDays > 1) {
+				const currentDay = Math.ceil((now - evStart) / 86400000) + 1;
+				if (currentDay >= 1 && currentDay <= totalDays) {
+					dayProgressHtml = `<span class="day-progress-badge">Day ${currentDay}/${totalDays}</span>`;
+				}
+			}
+		}
+
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
@@ -2791,7 +2815,7 @@ class Dashboard {
 			<div class="event-row${isExpanded ? ' expanded' : ''}${isMustWatch ? ' must-watch' : ''}${isStartingSoon ? ' starting-soon' : ''}" data-id="${this.esc(event.id)}" role="button" tabindex="0" aria-expanded="${isExpanded}" aria-label="${this.esc(_ariaLabel)}">
 				<div class="row-main">
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
-					<span class="row-time">${timeStr}${relHtml}${mustWatchPill}${aggregatePillHtml}</span>
+					<span class="row-time">${timeStr}${surfaceBadgeHtml}${dayProgressHtml}${relHtml}${mustWatchPill}${aggregatePillHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
 					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
 				</div>
@@ -3152,6 +3176,14 @@ class Dashboard {
 
 	renderEsportsDetails(event) {
 		let html = '';
+
+		// Tier + prize pool
+		if (event.tier || event.prizePool) {
+			html += '<div class="exp-esports-meta">';
+			if (event.tier) html += `<span class="exp-esports-tier">${this.esc(event.tier)}</span>`;
+			if (event.prizePool) html += `<span class="exp-esports-prize">${this.esc(event.prizePool)}</span>`;
+			html += '</div>';
+		}
 
 		// Stage + format badge
 		if (event.stage || event.format) {
