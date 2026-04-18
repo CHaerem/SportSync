@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-04-20",
-  "generatedAt": "2026-04-18T06:35:00.477Z",
+  "date": "2026-04-25",
+  "generatedAt": "2026-04-18T06:35:00.485Z",
   "events": {
     "upcoming": [
       {
@@ -40,18 +40,18 @@
         "_enrichHash": "86e8b414db882a5c84e63422f549a80a"
       },
       {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "West Ham United at Crystal Palace",
-        "time": "2026-04-20T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Selhurst Park",
-        "meta": "Premier League",
-        "norwegian": false,
+        "sport": "tennis",
+        "tournament": "ATP/WTA Tour",
+        "title": "Mutua Madrid Open",
+        "time": "2026-04-21T04:00:00.000Z",
+        "endTime": "2026-05-04T03:59:00.000Z",
+        "venue": "TBD",
+        "meta": "ATP/WTA Tour",
+        "norwegian": true,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no",
+            "platform": "Discovery+",
+            "url": "https://www.discoveryplus.no",
             "type": "streaming"
           }
         ],
@@ -61,18 +61,19 @@
         "link": null,
         "status": null,
         "featuredGroups": [],
-        "homeTeam": "Crystal Palace",
-        "awayTeam": "West Ham United",
+        "homeTeam": null,
+        "awayTeam": null,
         "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Late-season PL fixture between mid-table sides, possible relegation stakes",
-        "summary": "Selhurst Park hosts a potentially tense PL clash as West Ham and Crystal Palace may both need points to stay up.",
+        "importance": 4,
+        "importanceReason": "Masters 1000 clay event; Casper Ruud a top contender on this surface",
+        "summary": "Premier clay-court tuneup before Roland Garros; Casper Ruud is a serious contender at this high-prestige ATP/WTA Masters 1000 event in Madrid.",
         "tags": [
-          "relegation"
+          "must-watch",
+          "norwegian-player"
         ],
-        "norwegianRelevance": 1,
+        "norwegianRelevance": 5,
         "enrichedAt": "2026-04-18T06:32:12.611Z",
-        "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581"
+        "_enrichHash": "a8d2964a87eb3bd2aae6fa676467f5ca"
       }
     ],
     "results": []
@@ -84,8 +85,7 @@
   "meta": {
     "eventCount": 2,
     "sportsCovered": [
-      "tennis",
-      "football"
+      "tennis"
     ],
     "hasResults": false,
     "hasStandings": false
