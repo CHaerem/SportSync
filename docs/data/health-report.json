@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T14:20:47.466Z",
+  "generatedAt": "2026-04-18T15:17:45.552Z",
   "eventCount": 74,
   "sportCoverage": {
     "esports": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 34,
-      "previousCount": 36,
-      "delta": -2
+      "previousCount": 34,
+      "delta": 0
     },
     "f1": {
       "count": 22,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 57,
       "stale": false
     }
   },
@@ -83,7 +83,7 @@
     "streamingPercent": 0.97
   },
   "rssFeedHealth": {
-    "itemCount": 40,
+    "itemCount": 35,
     "healthy": true
   },
   "standingsHealth": {
@@ -126,30 +126,32 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 18,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 64536,
-    "stepCount": 25,
+    "totalDuration": 369302,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28909,
-        "share": 45
+        "name": "generate-featured",
+        "duration": 130641,
+        "share": 35
       },
       {
-        "name": "fetch-results",
-        "duration": 35287,
-        "share": 55
+        "name": "verify-schedules",
+        "duration": 180073,
+        "share": 49
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -198,17 +200,22 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 45% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"generate-featured\" used 35% of total pipeline time (131s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 55% of total pipeline time (35s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 49% of total pipeline time (180s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-18T14:20:47.620Z",
+    "computedAt": "2026-04-18T15:17:45.627Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
