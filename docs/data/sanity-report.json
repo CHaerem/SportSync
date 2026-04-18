@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-18T14:20:47.630Z",
+  "generatedAt": "2026-04-18T22:14:20.214Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 74,
+    "totalEvents": 71,
     "sports": [
       "esports",
       "tennis",
@@ -17,12 +17,9 @@
         "Barcelona Open Banc Sabadell 2026",
         "RBC Heritage"
       ],
-      "today": [
-        "Brighton & Hove Albion at Tottenham Hotspur",
-        "Manchester United at Chelsea",
-        "Real Sociedad at Atlético Madrid"
-      ],
+      "today": [],
       "tomorrow": [
+        "Oeiras Open CETO",
         "Sunderland at Aston Villa",
         "Liverpool at Everton",
         "Burnley at Nottingham Forest",
@@ -30,7 +27,6 @@
         "Arsenal at Manchester City"
       ],
       "thisWeek": [
-        "Oeiras Open CETO",
         "West Ham United at Crystal Palace",
         "Mutua Madrid Open",
         "Osasuna at Athletic Club",
@@ -98,10 +94,10 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 7,
+    "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 96,
+    "editorialScore": 100,
     "issueCount": 10
   },
   "findings": [
@@ -296,15 +292,25 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 232 days away — may clutter the dashboard"
     },
     {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+    },
+    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Mutua Madrid Open\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 39,
+    "total": 41,
     "critical": 0,
-    "warning": 38,
+    "warning": 40,
     "info": 1
   },
   "pass": true,
