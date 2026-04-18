@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T19:19:28.780Z",
+  "generatedAt": "2026-04-18T20:13:21.980Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -19,8 +19,8 @@
     },
     "football": {
       "count": 31,
-      "previousCount": 33,
-      "delta": -2
+      "previousCount": 31,
+      "delta": 0
     },
     "f1": {
       "count": 22,
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 299,
+      "ageMinutes": 353,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 299,
+      "ageMinutes": 353,
       "stale": false
     }
   },
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 28,
     "validationPassRate": 1,
-    "recapHeadlineRate": 0.11,
+    "recapHeadlineRate": 0.14,
     "issues": []
   },
   "streamingHealth": {
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 299 minutes old (stale > 240m)",
+      "Day snapshots are 353 minutes old (stale > 240m)",
       "Snapshot 2026-04-18: 6 events but events.json has 3",
       "Snapshot 2026-04-19: 8 events but events.json has 9"
     ],
@@ -138,19 +138,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52957,
+    "totalDuration": 55188,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28917,
-        "share": 55
+        "duration": 26884,
+        "share": 49
       },
       {
         "name": "fetch-results",
-        "duration": 33170,
-        "share": 63
+        "duration": 32938,
+        "share": 60
       }
     ],
     "failedSteps": []
@@ -197,7 +197,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 299 minutes old (stale > 240m)"
+      "message": "Day snapshots are 353 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -217,17 +217,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 49% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 63% of total pipeline time (33s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 60% of total pipeline time (33s) — optimization candidate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-18T19:19:28.862Z",
+    "computedAt": "2026-04-18T20:13:22.068Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
