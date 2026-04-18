@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-18T06:35:01.559Z",
+  "generatedAt": "2026-04-18T14:20:47.630Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 77,
+    "totalEvents": 74,
     "sports": [
       "esports",
       "tennis",
@@ -18,9 +18,6 @@
         "RBC Heritage"
       ],
       "today": [
-        "Fulham at Brentford",
-        "Wolverhampton Wanderers at Leeds United",
-        "AFC Bournemouth at Newcastle United",
         "Brighton & Hove Albion at Tottenham Hotspur",
         "Manchester United at Chelsea",
         "Real Sociedad at Atlético Madrid"
@@ -101,11 +98,11 @@
       ],
       "ended": []
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 73,
-    "issueCount": 5
+    "editorialScore": 96,
+    "issueCount": 10
   },
   "findings": [
     {
@@ -299,35 +296,15 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 232 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 8 hours old"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Fitzpatrick\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Hilton Head\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Mutua Madrid Open\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "result_all_recaps_null",
-      "message": "All 32 football results have null recapHeadline — RSS matching may be broken"
     }
   ],
   "summary": {
-    "total": 43,
+    "total": 39,
     "critical": 0,
-    "warning": 42,
+    "warning": 38,
     "info": 1
   },
   "pass": true,

@@ -1,42 +1,32 @@
 {
-  "generatedAt": "2026-04-18T13:30:47.086Z",
-  "patternsDetected": 1,
-  "patterns": [
-    {
-      "type": "quality_decline",
-      "severity": "medium",
-      "metric": "mustWatchCoverage",
-      "earlyAvg": 0.92,
-      "lateAvg": 0.58,
-      "drop": 0.33,
-      "suggestion": "Must-watch coverage dropped from 92% to 58%. Featured content is missing high-importance events."
-    }
-  ],
+  "generatedAt": "2026-04-18T14:20:47.591Z",
+  "patternsDetected": 0,
+  "patterns": [],
   "issueCodeHistory": {
     "ux_eval_fallback": {
-      "count": 965,
+      "count": 966,
       "firstSeen": "2026-02-21T17:16:28.273Z",
-      "lastSeen": "2026-04-18T13:30:47.082Z"
+      "lastSeen": "2026-04-18T14:20:47.584Z"
     },
     "snapshot_event_mismatch": {
-      "count": 535,
+      "count": 536,
       "firstSeen": "2026-02-26T06:29:17.803Z",
-      "lastSeen": "2026-04-18T13:30:47.082Z"
+      "lastSeen": "2026-04-18T14:20:47.584Z"
     },
     "stale_snapshot": {
-      "count": 253,
+      "count": 254,
       "firstSeen": "2026-02-26T20:14:27.351Z",
-      "lastSeen": "2026-04-18T13:30:47.082Z"
+      "lastSeen": "2026-04-18T14:20:47.584Z"
     },
     "stale_output": {
-      "count": 225,
+      "count": 227,
       "firstSeen": "2026-03-01T14:24:59.816Z",
-      "lastSeen": "2026-04-17T22:21:11.946Z"
+      "lastSeen": "2026-04-18T14:20:47.584Z"
     },
     "streaming_coverage_gap": {
-      "count": 77,
+      "count": 78,
       "firstSeen": "2026-04-14T07:37:51.365Z",
-      "lastSeen": "2026-04-18T13:30:47.082Z"
+      "lastSeen": "2026-04-18T14:20:47.584Z"
     },
     "sport_dropped": {
       "count": 1,
@@ -44,5 +34,5 @@
       "lastSeen": "2026-04-15T20:21:43.814Z"
     }
   },
-  "summary": "1 patterns detected (1 medium). Top priority: quality_decline — Must-watch coverage dropped from 92% to 58%."
+  "summary": "0 patterns detected"
 }
