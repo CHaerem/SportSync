@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T20:13:47.437Z",
+  "generatedAt": "2026-04-19T21:14:20.629Z",
   "eventCount": 69,
   "sportCoverage": {
     "esports": {
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 0,
       "stale": false
     },
     "tennis.json": {
@@ -68,14 +68,14 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 349,
-      "stale": false,
+      "ageMinutes": 409,
+      "stale": true,
       "dateCoherent": true,
       "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 349,
-      "stale": false
+      "ageMinutes": 409,
+      "stale": true
     }
   },
   "schemaCompleteness": {
@@ -96,7 +96,7 @@
     "stale": false,
     "footballCount": 26,
     "validationPassRate": 0.97,
-    "recapHeadlineRate": 0.27,
+    "recapHeadlineRate": 0.15,
     "issues": []
   },
   "streamingHealth": {
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 349 minutes old (stale > 240m)",
+      "Day snapshots are 409 minutes old (stale > 240m)",
       "Snapshot 2026-04-19: 5 events but events.json has 4",
       "Snapshot 2026-04-20: 1 events but events.json has 2"
     ],
@@ -138,19 +138,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 46645,
+    "totalDuration": 51050,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25066,
-        "share": 54
+        "duration": 27233,
+        "share": 53
       },
       {
         "name": "fetch-results",
-        "duration": 33576,
-        "share": 72
+        "duration": 39395,
+        "share": 77
       }
     ],
     "failedSteps": []
@@ -191,8 +191,18 @@
     },
     {
       "severity": "warning",
+      "code": "stale_output",
+      "message": "featured.json: critical output is 409 minutes old"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_output",
+      "message": "ai-quality.json: critical output is 409 minutes old"
+    },
+    {
+      "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 349 minutes old (stale > 240m)"
+      "message": "Day snapshots are 409 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -212,12 +222,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 54% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 53% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (34s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 77% of total pipeline time (39s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -237,7 +247,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T20:13:47.535Z",
+    "computedAt": "2026-04-19T21:14:20.720Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -254,11 +264,11 @@
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
         "score": 0.3,
         "reasons": [
-          "overdue by 196%"
+          "overdue by 200%"
         ],
-        "suggestedQuotaPriority": 3,
+        "suggestedQuotaPriority": 2,
         "suggestedRefreshIntervalMs": 21600000,
-        "suggestedStalenessThresholdMinutes": 360
+        "suggestedStalenessThresholdMinutes": 180
       }
     ],
     "highestUrgency": 0.4,
@@ -294,7 +304,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
