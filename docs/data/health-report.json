@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T08:25:14.837Z",
+  "generatedAt": "2026-04-19T09:25:11.666Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -9,8 +9,8 @@
     },
     "tennis": {
       "count": 5,
-      "previousCount": 6,
-      "delta": -1
+      "previousCount": 5,
+      "delta": 0
     },
     "golf": {
       "count": 1,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 5,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 5,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 342,
+      "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 342,
+      "ageMinutes": 0,
       "stale": false
     }
   },
@@ -110,17 +110,7 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "Day snapshots are 342 minutes old (stale > 240m)",
-      "Snapshot 2026-04-19: 9 events but events.json has 8",
-      "Snapshot 2026-04-20: 2 events but events.json has 1",
-      "Snapshot 2026-04-21: 7 events but events.json has 6",
-      "Snapshot 2026-04-22: 7 events but events.json has 6",
-      "Snapshot 2026-04-23: 6 events but events.json has 5",
-      "Snapshot 2026-04-24: 4 events but events.json has 3",
-      "Snapshot 2026-04-25: 11 events but events.json has 10",
-      "Snapshot 2026-04-26: 4 events but events.json has 3"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -144,19 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 51986,
+    "totalDuration": 54797,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 30424,
-        "share": 59
+        "duration": 27333,
+        "share": 50
       },
       {
         "name": "fetch-results",
-        "duration": 36763,
-        "share": 71
+        "duration": 35926,
+        "share": 66
       }
     ],
     "failedSteps": []
@@ -197,63 +187,18 @@
     },
     {
       "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 342 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-19: 9 events but events.json has 8"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-20: 2 events but events.json has 1"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-21: 7 events but events.json has 6"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-22: 7 events but events.json has 6"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-23: 6 events but events.json has 5"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-24: 4 events but events.json has 3"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-25: 11 events but events.json has 10"
-    },
-    {
-      "severity": "warning",
-      "code": "snapshot_event_mismatch",
-      "message": "Snapshot 2026-04-26: 4 events but events.json has 3"
-    },
-    {
-      "severity": "warning",
       "code": "ux_eval_fallback",
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 66% of total pipeline time (36s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -264,11 +209,16 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config f1-calendar-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
+    },
+    {
+      "severity": "warning",
+      "code": "low_confidence_config",
+      "message": "Config tennis-calendar-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T08:25:14.928Z",
+    "computedAt": "2026-04-19T09:25:11.758Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -283,7 +233,7 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.09,
+        "score": 0,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -323,7 +273,16 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 12 warning issue(s). Editorial quality score is 96/100.",
+    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 96/100.",
     "tokenUsage": null
+  },
+  "scheduleVerification": {
+    "lastChecked": "2026-04-19T09:27:14.479Z",
+    "configsChecked": 5,
+    "eventsChecked": 43,
+    "verified": 0,
+    "plausible": 6,
+    "unverified": 0,
+    "correctionsApplied": 0
   }
 }

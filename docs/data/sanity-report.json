@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-19T06:40:33.357Z",
+  "generatedAt": "2026-04-19T09:25:11.768Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 74,
+    "totalEvents": 73,
     "sports": [
       "esports",
       "tennis",
@@ -15,8 +15,7 @@
       "live": [
         "IEM Rio 2026",
         "Barcelona Open Banc Sabadell 2026",
-        "RBC Heritage",
-        "Oeiras Open CETO"
+        "RBC Heritage"
       ],
       "today": [
         "Sunderland at Aston Villa",
@@ -102,7 +101,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 96,
-    "issueCount": 5
+    "issueCount": 15
   },
   "findings": [
     {
@@ -273,7 +272,22 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Guardiola\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Lose\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Arteta\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -297,9 +311,9 @@
     }
   ],
   "summary": {
-    "total": 38,
+    "total": 41,
     "critical": 0,
-    "warning": 37,
+    "warning": 40,
     "info": 1
   },
   "pass": true,
