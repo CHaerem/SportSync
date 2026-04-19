@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-19T07:34:42.082Z",
-  "eventCount": 74,
+  "generatedAt": "2026-04-19T08:25:14.837Z",
+  "eventCount": 73,
   "sportCoverage": {
     "esports": {
       "count": 3,
@@ -8,9 +8,9 @@
       "delta": 0
     },
     "tennis": {
-      "count": 6,
+      "count": 5,
       "previousCount": 6,
-      "delta": 0
+      "delta": -1
     },
     "golf": {
       "count": 1,
@@ -68,18 +68,18 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 291,
+      "ageMinutes": 342,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 291,
+      "ageMinutes": 342,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.95,
+    "venuePercent": 0.96,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
@@ -111,7 +111,15 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 291 minutes old (stale > 240m)"
+      "Day snapshots are 342 minutes old (stale > 240m)",
+      "Snapshot 2026-04-19: 9 events but events.json has 8",
+      "Snapshot 2026-04-20: 2 events but events.json has 1",
+      "Snapshot 2026-04-21: 7 events but events.json has 6",
+      "Snapshot 2026-04-22: 7 events but events.json has 6",
+      "Snapshot 2026-04-23: 6 events but events.json has 5",
+      "Snapshot 2026-04-24: 4 events but events.json has 3",
+      "Snapshot 2026-04-25: 11 events but events.json has 10",
+      "Snapshot 2026-04-26: 4 events but events.json has 3"
     ],
     "snapshotCount": 15
   },
@@ -128,22 +136,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 24,
+    "tier": null,
+    "fiveHour": null,
+    "sevenDay": null,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 192755,
-    "stepCount": 29,
+    "totalDuration": 51986,
+    "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "verify-schedules",
-        "duration": 119780,
-        "share": 62
+        "name": "fetch-sports",
+        "duration": 30424,
+        "share": 59
+      },
+      {
+        "name": "fetch-results",
+        "duration": 36763,
+        "share": 71
       }
     ],
     "failedSteps": []
@@ -185,7 +198,47 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 291 minutes old (stale > 240m)"
+      "message": "Day snapshots are 342 minutes old (stale > 240m)"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-19: 9 events but events.json has 8"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-20: 2 events but events.json has 1"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-21: 7 events but events.json has 6"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-22: 7 events but events.json has 6"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-23: 6 events but events.json has 5"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-24: 4 events but events.json has 3"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-25: 11 events but events.json has 10"
+    },
+    {
+      "severity": "warning",
+      "code": "snapshot_event_mismatch",
+      "message": "Snapshot 2026-04-26: 4 events but events.json has 3"
     },
     {
       "severity": "warning",
@@ -195,7 +248,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"verify-schedules\" used 62% of total pipeline time (120s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 59% of total pipeline time (30s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (37s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -206,16 +264,11 @@
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config f1-calendar-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T07:34:42.159Z",
+    "computedAt": "2026-04-19T08:25:14.928Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -230,7 +283,7 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.05,
+        "score": 0.09,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -268,34 +321,9 @@
       }
     ]
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 3,
-    "warning": 9,
-    "totalFiles": 83,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 4037,
-        "functions": 108,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1543,
-        "functions": 69,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1482,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 96/100.",
+    "text": "Pipeline is warning with 12 warning issue(s). Editorial quality score is 96/100.",
     "tokenUsage": null
   }
 }
