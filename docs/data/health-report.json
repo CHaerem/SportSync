@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T22:14:20.428Z",
+  "generatedAt": "2026-04-19T02:37:45.007Z",
   "eventCount": 71,
   "sportCoverage": {
     "esports": {
@@ -40,41 +40,37 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 3,
-      "stale": false
-    },
-    "cycling.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 266,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 266,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 266,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 2,
+      "ageMinutes": 266,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 266,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 3,
+      "ageMinutes": 266,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 264,
       "stale": false,
-      "dateCoherent": true,
+      "dateCoherent": false,
       "featuredDate": "2026-04-18"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 264,
       "stale": false
     }
   },
@@ -111,7 +107,9 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
+      "1 boundary day snapshot(s) outside event range (expected)",
+      "Day snapshots are 263 minutes old (stale > 240m)",
+      "1 expected day snapshot(s) missing"
     ],
     "snapshotCount": 15
   },
@@ -128,30 +126,27 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 19,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 53452,
-    "stepCount": 25,
+    "totalDuration": 350390,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 28028,
-        "share": 52
-      },
-      {
-        "name": "fetch-results",
-        "duration": 33698,
-        "share": 63
+        "name": "verify-schedules",
+        "duration": 180013,
+        "share": 51
       }
     ],
-    "failedSteps": []
+    "failedSteps": [
+      "verify-schedules"
+    ]
   },
   "gateHealth": {
     "currentGate": "pass",
@@ -189,8 +184,23 @@
     },
     {
       "severity": "warning",
+      "code": "featured_date_mismatch",
+      "message": "featured.json is from 2026-04-18 but today is 2026-04-19 — briefing shows wrong day's content"
+    },
+    {
+      "severity": "warning",
       "code": "streaming_coverage_gap",
       "message": "2 important event(s) lack streaming info: CS2 Tournaments 2026"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_snapshot",
+      "message": "Day snapshots are 263 minutes old (stale > 240m)"
+    },
+    {
+      "severity": "warning",
+      "code": "missing_snapshot",
+      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -200,22 +210,17 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (28s) — optimization candidate"
+      "message": "Pipeline step \"verify-schedules\" used 51% of total pipeline time (180s) — optimization candidate"
     },
     {
       "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 63% of total pipeline time (34s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "high_complexity_files",
-      "message": "3 critical-complexity file(s) — consider refactoring: docs/js/dashboard.js, scripts/generate-featured.js, scripts/pipeline-health.js"
+      "code": "pipeline_step_failures",
+      "message": "1 pipeline step(s) failed: verify-schedules"
     }
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-18T22:14:20.504Z",
+    "computedAt": "2026-04-19T02:37:45.135Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -244,7 +249,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -270,34 +275,9 @@
       }
     ]
   },
-  "complexityHealth": {
-    "critical": 3,
-    "high": 3,
-    "warning": 9,
-    "totalFiles": 83,
-    "hotFiles": [
-      {
-        "file": "docs/js/dashboard.js",
-        "lines": 3955,
-        "functions": 107,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/generate-featured.js",
-        "lines": 1543,
-        "functions": 69,
-        "severity": "critical"
-      },
-      {
-        "file": "scripts/pipeline-health.js",
-        "lines": 1482,
-        "functions": 72,
-        "severity": "critical"
-      }
-    ]
-  },
+  "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
