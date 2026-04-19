@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T09:25:11.666Z",
+  "generatedAt": "2026-04-19T10:18:12.396Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 53,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 53,
       "stale": false
     }
   },
@@ -126,29 +126,18 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 4,
+    "sevenDay": 24,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 54797,
-    "stepCount": 25,
+    "totalDuration": 452086,
+    "stepCount": 32,
     "timeoutHits": [],
-    "dominantSteps": [
-      {
-        "name": "fetch-sports",
-        "duration": 27333,
-        "share": 50
-      },
-      {
-        "name": "fetch-results",
-        "duration": 35926,
-        "share": 66
-      }
-    ],
+    "dominantSteps": [],
     "failedSteps": []
   },
   "gateHealth": {
@@ -191,16 +180,6 @@
       "message": "UX evaluation ran in file-based fallback mode — Playwright/Chromium not available, visual validation disabled"
     },
     {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 50% of total pipeline time (27s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 66% of total pipeline time (36s) — optimization candidate"
-    },
-    {
       "severity": "warning",
       "code": "low_confidence_config",
       "message": "Config esports-cs2-2026.json has low verification confidence (0.4) with upcoming events — schedule may be inaccurate"
@@ -218,7 +197,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T09:25:11.758Z",
+    "computedAt": "2026-04-19T10:18:12.530Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -233,7 +212,7 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0,
+        "score": 0.05,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
@@ -275,14 +254,5 @@
   "statusSummary": {
     "text": "Pipeline is warning with 4 warning issue(s). Editorial quality score is 96/100.",
     "tokenUsage": null
-  },
-  "scheduleVerification": {
-    "lastChecked": "2026-04-19T09:27:14.479Z",
-    "configsChecked": 5,
-    "eventsChecked": 43,
-    "verified": 0,
-    "plausible": 6,
-    "unverified": 0,
-    "correctionsApplied": 0
   }
 }
