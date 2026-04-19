@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-04-19T09:25:11.768Z",
+  "generatedAt": "2026-04-19T14:24:58.844Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 73,
+    "totalEvents": 70,
     "sports": [
       "esports",
       "tennis",
       "golf",
-      "football",
       "f1",
+      "football",
       "cycling"
     ],
     "bands": {
@@ -18,9 +18,6 @@
         "RBC Heritage"
       ],
       "today": [
-        "Sunderland at Aston Villa",
-        "Liverpool at Everton",
-        "Burnley at Nottingham Forest",
         "Bahrain Grand Prix 2026",
         "Arsenal at Manchester City"
       ],
@@ -100,8 +97,8 @@
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 96,
-    "issueCount": 15
+    "editorialScore": 100,
+    "issueCount": 10
   },
   "findings": [
     {
@@ -270,24 +267,19 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 231 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Guardiola\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Lose\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Arteta\" but no matching athlete found in events data"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"\udfce️ Bahrain GP\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Biggest Premier League\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -305,6 +297,11 @@
       "message": "Featured mentions \"Major\" but no matching athlete found in events data"
     },
     {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Madrid Masters\" but no matching athlete found in events data"
+    },
+    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Mutua Madrid Open\" marked norwegian=true but has no norwegianPlayers"
@@ -313,8 +310,8 @@
   "summary": {
     "total": 41,
     "critical": 0,
-    "warning": 40,
-    "info": 1
+    "warning": 39,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null

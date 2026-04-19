@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-04-04T06:26:32.171Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-04-04T08:51:14.460Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -615,6 +609,37 @@
         "calls": 1,
         "total": 75253,
         "costUSD": 0.7330215000000001,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-04-19T14:18:01.378Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "fifa-world-cup-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 11
+        },
+        {
+          "type": "refresh-athletes",
+          "target": "cycling-grand-tours-2026.json",
+          "reason": "Athletes last refreshed 2026-04-12",
+          "outcome": "success",
+          "changes": [
+            "Added Storm Ingebrigtsen (20-year-old Uno-X Mobility signing for 2026-2027, won Stage 1 Tour of Norway 2025, top Norwegian prospect)"
+          ]
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 130079,
+        "output": 5372,
+        "calls": 2,
+        "total": 135451,
+        "costUSD": 1.74047455,
         "tracked": true,
         "estimated": false
       }
