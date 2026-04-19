@@ -385,6 +385,40 @@ describe("build-events.js", () => {
 			expect(events[0].title).toBe("Valid Match");
 		});
 
+		it("does not duplicate cycling events already handled by the cycling fetcher", () => {
+			const time = futureTime();
+			// Step 1: cycling.json (produced by the cycling fetcher) is auto-discovered
+			writeSportFile("cycling", {
+				tournaments: [
+					{
+						name: "Cycling Grand Tours",
+						events: [
+							{ title: "Giro d'Italia 2026", time, venue: "Italy" },
+							{ title: "Tour of Norway 2026", time: futureTime(48), venue: "Norway" },
+						],
+					},
+				],
+			});
+			// Step 2: cycling-grand-tours-2026.json config has the same events
+			// (this is what the cycling fetcher reads from)
+			writeConfigFile("cycling-grand-tours-2026", {
+				name: "Cycling Grand Tours",
+				sport: "cycling",
+				events: [
+					{ title: "Giro d'Italia 2026", time, venue: "Italy" },
+					{ title: "Tour of Norway 2026", time: futureTime(48), venue: "Norway" },
+				],
+			});
+
+			const events = runBuildEvents();
+			// Should only have 2 events, not 4 (no duplicates)
+			expect(events).toHaveLength(2);
+			const giro = events.filter(e => e.title === "Giro d'Italia 2026");
+			expect(giro).toHaveLength(1);
+			const tourNorway = events.filter(e => e.title === "Tour of Norway 2026");
+			expect(tourNorway).toHaveLength(1);
+		});
+
 		it("only writes brackets.json entries for tournaments with both id and bracket", () => {
 			writeConfigFile("esports-cs2", {
 				name: "CS2 Majors",
