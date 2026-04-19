@@ -2266,6 +2266,42 @@ class Dashboard {
 			}
 		}
 
+		// DP World Tour golf results (same pattern as PGA)
+		if (!hasActiveGolf) {
+			const dpData = this.recentResults?.golf?.dpWorld;
+			if (dpData?.status === 'final') {
+				const nor = (dpData.norwegianPlayers || [])[0] || null;
+				results.push({
+					_resultSport: 'golf',
+					_golfTournament: dpData.tournamentName,
+					_golfStatus: dpData.status,
+					_golfLeaderboard: (dpData.topPlayers || []).slice(0, 3),
+					_golfNorwegian: nor,
+					_golfTour: 'DP World Tour',
+					league: 'DP World Tour',
+					date: dpData.lastUpdated || now.toISOString(),
+					homeTeam: dpData.tournamentName,
+				});
+			}
+		}
+
+		// F1 race results
+		if (this.recentResults?.f1?.length) {
+			for (const race of this.recentResults.f1) {
+				if (race.raceName && race.topDrivers?.length && new Date(race.date) >= cutoff) {
+					results.push({
+						_resultSport: 'f1',
+						_f1RaceName: race.raceName,
+						_f1TopDrivers: race.topDrivers.slice(0, 3),
+						_f1Circuit: race.circuit || '',
+						_f1Type: race.type || 'Race',
+						league: 'Formula 1',
+						date: race.date,
+					});
+				}
+			}
+		}
+
 		// Sort: favorites first, then by date (most recent)
 		results.sort((a, b) => {
 			const aFav = a.isFavorite ? 1 : 0;
@@ -2330,6 +2366,10 @@ class Dashboard {
 				// Golf results rendered individually
 				for (const m of group.matches) {
 					html += this._renderGolfResultCard(m);
+				}
+			} else if (group.sport === 'f1') {
+				for (const m of group.matches) {
+					html += this._renderF1ResultCard(m);
 				}
 			} else if (group.matches.length >= 2) {
 				// 2+ same-tournament results → grouped card with featured + compact rows
@@ -2460,7 +2500,7 @@ class Dashboard {
 		html += '<div class="result-accent" style="background:var(--sport-golf)"></div>';
 		html += '<div class="result-body">';
 		html += '<div class="result-header">';
-		html += `<span class="result-sport">PGA Tour</span>`;
+		html += `<span class="result-sport">${this.esc(m._golfTour || 'PGA Tour')}</span>`;
 		html += `<span class="result-ft-badge">${isFinal ? 'Final' : 'In progress'}</span>`;
 		html += '</div>';
 		html += `<div class="result-golf-title">${this.esc(m._golfTournament || '')}</div>`;
@@ -2478,6 +2518,34 @@ class Dashboard {
 				const norImg = typeof getGolferHeadshot === 'function' ? getGolferHeadshot(norName) : null;
 				const nImg = norImg ? `<img class="result-golfer-img" src="${norImg}" alt="${this.esc(norName)}" loading="lazy">` : `<span class="result-golfer-pos">\ud83c\uddf3\ud83c\uddf4</span>`;
 				html += `<div class="result-golfer nor">${nImg}<span class="result-golfer-name">${this.esc(norName)}</span><span class="result-golfer-score">T${nor.position} (${this.esc(nor.score || '')})</span></div>`;
+			}
+			html += '</div>';
+		}
+		html += '</div></div>';
+		return html;
+	}
+
+	_renderF1ResultCard(m) {
+		const drivers = m._f1TopDrivers || [];
+		let html = '<div class="result-card">';
+		html += '<div class="result-accent" style="background:var(--sport-formula1)"></div>';
+		html += '<div class="result-body">';
+		html += '<div class="result-header">';
+		html += '<span class="result-sport">Formula 1</span>';
+		html += `<span class="result-ft-badge">${this.esc(m._f1Type || 'Race')}</span>`;
+		html += '</div>';
+		html += `<div class="result-f1-title">${this.esc(m._f1RaceName || '')}</div>`;
+		if (m._f1Circuit) {
+			html += `<div class="result-f1-circuit">${this.esc(m._f1Circuit)}</div>`;
+		}
+		if (drivers.length > 0) {
+			html += '<div class="result-f1-podium">';
+			const medals = ['\ud83e\udd47', '\ud83e\udd48', '\ud83e\udd49'];
+			for (let i = 0; i < drivers.length; i++) {
+				const d = drivers[i];
+				const driverName = d.driver || d.name || '';
+				const medal = medals[i] || `${i + 1}.`;
+				html += `<div class="result-f1-driver"><span class="result-f1-pos">${medal}</span><span class="result-f1-name">${this.esc(driverName)}</span></div>`;
 			}
 			html += '</div>';
 		}
@@ -2750,6 +2818,11 @@ class Dashboard {
 		if (event.meta) {
 			if (typeof event.meta === 'string') {
 				metaText = event.meta;
+			} else if (event.sport === 'formula1' && typeof event.meta === 'object') {
+				const parts = [];
+				if (event.meta.round) parts.push(`Rd ${event.meta.round}`);
+				parts.push(event.meta.circuit || event.meta.country || '');
+				metaText = parts.filter(Boolean).join(' \u00b7 ');
 			} else if (typeof event.meta === 'object') {
 				metaText = Object.values(event.meta).filter(Boolean).join(' \u00b7 ');
 			}
@@ -3041,7 +3114,16 @@ class Dashboard {
 			content += this.renderGolfLeaderboard(event);
 		}
 
-		// F1: driver standings
+		// F1: circuit/round context + driver standings
+		if (event.sport === 'formula1' && event.meta && typeof event.meta === 'object') {
+			const f1MetaBits = [];
+			if (event.meta.round) f1MetaBits.push(`Round ${event.meta.round}`);
+			if (event.meta.circuit) f1MetaBits.push(event.meta.circuit);
+			if (event.meta.country) f1MetaBits.push(event.meta.country);
+			if (f1MetaBits.length > 0) {
+				content += `<div class="exp-f1-meta">${f1MetaBits.map(b => this.esc(b)).join(' · ')}</div>`;
+			}
+		}
 		if (event.sport === 'formula1' && this.standings?.[normalizePipelineSportId('formula1')]?.drivers?.length > 0) {
 			content += this.renderF1Standings();
 		}

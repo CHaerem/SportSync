@@ -72,10 +72,18 @@ for (const sport of sports) {
 }
 
 // 2. Auto-discover curated event configs from scripts/config/*.json
+// Config prefixes whose events are already included via a sport fetcher's output
+// (e.g., cycling fetcher reads cycling-*.json → docs/data/cycling.json, which Step 1 loads).
+// Skip these to avoid duplicating events.
+const FETCHER_HANDLED_PREFIXES = ['cycling-'];
 const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 if (fs.existsSync(configDir)) {
 	const configFiles = fs.readdirSync(configDir).filter((f) => f.endsWith(".json"));
 	for (const file of configFiles) {
+		if (FETCHER_HANDLED_PREFIXES.some(prefix => file.startsWith(prefix))) {
+			console.log(`  Curated config: ${file} → skipped (handled by fetcher)`);
+			continue;
+		}
 		const config = readJsonIfExists(path.join(configDir, file));
 		if (!config || !Array.isArray(config.events)) continue;
 		const sport = config.sport || config.context?.split("-")[0] || file.replace(".json", "").split("-")[0];
