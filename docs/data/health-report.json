@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-19T02:37:45.007Z",
-  "eventCount": 71,
+  "generatedAt": "2026-04-19T02:43:39.132Z",
+  "eventCount": 74,
   "sportCoverage": {
     "esports": {
       "count": 3,
@@ -18,9 +18,9 @@
       "delta": 0
     },
     "football": {
-      "count": 31,
+      "count": 40,
       "previousCount": 31,
-      "delta": 0
+      "delta": 9
     },
     "f1": {
       "count": 22,
@@ -28,9 +28,9 @@
       "delta": 0
     },
     "cycling": {
-      "count": 8,
+      "count": 2,
       "previousCount": 8,
-      "delta": 0
+      "delta": -6
     },
     "chess": {
       "count": 0,
@@ -40,43 +40,47 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 3,
+      "stale": false
+    },
+    "cycling.json": {
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 2,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 2,
       "stale": false
     },
     "tennis.json": {
-      "ageMinutes": 266,
+      "ageMinutes": 2,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 264,
+      "ageMinutes": 0,
       "stale": false,
-      "dateCoherent": false,
-      "featuredDate": "2026-04-18"
+      "dateCoherent": true,
+      "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 264,
+      "ageMinutes": 0,
       "stale": false
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.94,
-    "streamingPercent": 0.97
+    "venuePercent": 0.95,
+    "streamingPercent": 1
   },
   "rssFeedHealth": {
     "itemCount": 40,
@@ -92,25 +96,21 @@
     "stale": false,
     "footballCount": 30,
     "validationPassRate": 0.97,
-    "recapHeadlineRate": 0.17,
+    "recapHeadlineRate": 0.2,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.2,
+    "matchRate": 0.17,
     "relevantMatchRate": 1,
-    "eventsEnriched": 4,
+    "eventsEnriched": 5,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)",
-      "Day snapshots are 263 minutes old (stale > 240m)",
-      "1 expected day snapshot(s) missing"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -178,29 +178,14 @@
   "unmappedLeagues": [],
   "issues": [
     {
+      "severity": "warning",
+      "code": "sport_count_drop",
+      "message": "cycling: 2 events (was 8, -75%)"
+    },
+    {
       "severity": "info",
       "code": "sport_zero_events",
       "message": "chess: data file exists but 0 events in events.json"
-    },
-    {
-      "severity": "warning",
-      "code": "featured_date_mismatch",
-      "message": "featured.json is from 2026-04-18 but today is 2026-04-19 — briefing shows wrong day's content"
-    },
-    {
-      "severity": "warning",
-      "code": "streaming_coverage_gap",
-      "message": "2 important event(s) lack streaming info: CS2 Tournaments 2026"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_snapshot",
-      "message": "Day snapshots are 263 minutes old (stale > 240m)"
-    },
-    {
-      "severity": "warning",
-      "code": "missing_snapshot",
-      "message": "1 expected day snapshot(s) missing"
     },
     {
       "severity": "warning",
@@ -220,7 +205,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T02:37:45.135Z",
+    "computedAt": "2026-04-19T02:43:39.240Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -277,7 +262,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 5 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 2 warning issue(s). Editorial quality score is 96/100.",
     "tokenUsage": null
   }
 }

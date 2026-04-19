@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-04-18T22:17:20.547Z",
+  "lastUpdated": "2026-04-19T02:43:40.291Z",
   "current": {
     "fiveHour": {
-      "utilization": 6
+      "utilization": 60
     },
     "sevenDay": {
-      "utilization": 19,
+      "utilization": 24,
       "resets_at": "1776974400"
     },
     "evaluation": {
-      "tier": 0,
-      "tierName": "green",
-      "maxPriority": 3,
-      "model": null,
-      "constrained": false,
-      "reason": "ok",
+      "tier": 1,
+      "tierName": "moderate",
+      "maxPriority": 2,
+      "model": "claude-sonnet-4-6",
+      "constrained": true,
+      "reason": "moderate: 5h 60%, 7d 24%",
       "resetNote": null
     }
   },
@@ -23,27 +23,27 @@
     "since": "2026-03-29T10:19:11.063Z",
     "previousState": "available",
     "transitioned": false,
-    "checkedAt": "2026-04-18T22:17:21.504Z"
+    "checkedAt": "2026-04-19T02:43:41.197Z"
   },
   "internalTokens": {
-    "enrichment": 0,
-    "featured": 0,
-    "discovery": 0,
-    "multiDay": 0,
-    "runTotal": 0
+    "enrichment": 23372,
+    "featured": 33075,
+    "discovery": 71343,
+    "multiDay": 33075,
+    "runTotal": 160865
   },
   "budget": {
-    "dailyUsed": 466571,
-    "weeklyUsed": 3676612,
+    "dailyUsed": 627436,
+    "weeklyUsed": 3687792,
     "dailyBudget": 5000000,
     "weeklyBudget": 25000000,
-    "dailyPct": 9,
+    "dailyPct": 13,
     "weeklyPct": 15
   },
   "sportsyncShare": {
-    "pipelineRuns": 124,
+    "pipelineRuns": 123,
     "autopilotRuns": 0,
-    "totalDurationMs": 12879530
+    "totalDurationMs": 12331942
   },
   "gateConfig": {
     "quotaTiers": "graduated (see quota-probe.js TIERS)",
@@ -52,18 +52,6 @@
     "maxRuns5h": 10
   },
   "runs": [
-    {
-      "timestamp": "2026-04-11T22:18:31.645Z",
-      "context": "pipeline",
-      "durationMs": 504814,
-      "tokens": 0
-    },
-    {
-      "timestamp": "2026-04-12T02:30:29.851Z",
-      "context": "pipeline",
-      "durationMs": 164342,
-      "tokens": 149685
-    },
     {
       "timestamp": "2026-04-12T06:45:31.571Z",
       "context": "pipeline",
@@ -795,6 +783,12 @@
       "context": "pipeline",
       "durationMs": 312054,
       "tokens": 0
+    },
+    {
+      "timestamp": "2026-04-19T02:43:40.291Z",
+      "context": "pipeline",
+      "durationMs": 121568,
+      "tokens": 160865
     }
   ]
 }

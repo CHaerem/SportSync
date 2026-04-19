@@ -1,18 +1,6 @@
 {
   "runs": [
     {
-      "date": "2026-04-19",
-      "task": "Scouting + execution: 4 UX data-to-UI gaps + 1 dedup fix + 3 config updates + 1 timeout fix",
-      "outcome": "completed",
-      "pr": "PR #168 (merged via --auto --squash) + direct-to-main (3 commits)",
-      "details": "Run 53: 0 user feedback, 0 open autopilot PRs, 1 pending task (verify-schedules timeout). Baseline tests pass. Executed pending task + 3 parallel scouts (UX 8 findings, Data 8 findings). 8 changes shipped: (1) INFRA: verify-schedules timeout fix — execSync blocks event loop preventing safety timer, added elapsed-time guards at 120s/100s, reduced MAX_WEB_SEARCHES 3→2, safety timer 50s→160s. (2) UX: F1 race results in 'What You Missed' with podium medals (🥇🥈🥉), circuit name. (3) UX: DP World Tour golf results alongside PGA — dynamic tour label. (4) UX: F1 structured meta in collapsed rows: 'Rd N · Circuit'. (5) UX: F1 expanded view context bar (Round/Circuit/Country) before standings. (6) DATA: Fix duplicate cycling events — cycling fetcher reads configs then build-events re-reads them. Added FETCHER_HANDLED_PREFIXES skip. (7) DATA: Chess config needsResearch (Candidates ended), FIFA WC needsResearch (36/48 TBD), esports streaming (IEM Rio + BLAST Rivals Twitch/HLTV). 25 new UX tests + 1 dedup test. 2802 tests pass across 90 files. 4 new PENDING tasks from scouting. Autonomy: 13/13 (100%).",
-      "tests_passed": true,
-      "files_changed": 7,
-      "turns_used": 30,
-      "lesson": "Data-to-UI gaps in the results section are high-leverage: F1 and DP World data was fully available but invisible — 4 small rendering additions (total ~80 lines) surface 2 new result types. Cycling event duplication was caused by the cycling fetcher's curated-config-first pattern overlapping with build-events.js auto-discovery — FETCHER_HANDLED_PREFIXES is a clean, extensible dedup mechanism. verify-schedules root cause (execSync blocking event loop) is a pattern to watch: any pipeline step using blocking CLI calls prevents setTimeout safety timers from firing.",
-      "scouted": 4
-    },
-    {
       "date": "2026-04-16",
       "task": "Scouting + execution: 4 UX personalization + 1 data config fix + 1 code bug fix",
       "outcome": "completed",

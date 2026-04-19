@@ -7,7 +7,18 @@
     "endTime": "2026-04-19T23:59:59.000Z",
     "venue": "Rio de Janeiro, Brazil",
     "norwegian": true,
-    "streaming": [],
+    "streaming": [
+      {
+        "platform": "Twitch",
+        "channel": "esl_csgo",
+        "url": "https://www.twitch.tv/esl_csgo",
+        "type": "stream"
+      },
+      {
+        "platform": "HLTV",
+        "type": "streaming"
+      }
+    ],
     "participants": [],
     "norwegianPlayers": [
       {
@@ -413,8 +424,15 @@
     "streaming": [
       {
         "platform": "Viaplay",
-        "url": "https://viaplay.no",
-        "type": "streaming"
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Vsport",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -434,7 +452,9 @@
     ],
     "norwegianRelevance": 1,
     "enrichedAt": "2026-04-18T22:12:30.426Z",
-    "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581"
+    "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "tennis",
@@ -1050,6 +1070,240 @@
     "_enrichHash": "df641686946131d7fd3907076162973c"
   },
   {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Aston Villa at Fulham",
+    "time": "2026-04-25T11:30:00.000Z",
+    "endTime": null,
+    "venue": "Craven Cottage",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Fulham",
+    "awayTeam": "Aston Villa",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Mallorca at Alavés",
+    "time": "2026-04-25T12:00:00.000Z",
+    "endTime": null,
+    "venue": "Mendizorrotza",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Alavés",
+    "awayTeam": "Mallorca",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Crystal Palace at Liverpool",
+    "time": "2026-04-25T14:00:00.000Z",
+    "endTime": null,
+    "venue": "Anfield",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Liverpool",
+    "awayTeam": "Crystal Palace",
+    "isFavorite": true
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Everton at West Ham United",
+    "time": "2026-04-25T14:00:00.000Z",
+    "endTime": null,
+    "venue": "London Stadium",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "West Ham United",
+    "awayTeam": "Everton",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Tottenham Hotspur at Wolverhampton Wanderers",
+    "time": "2026-04-25T14:00:00.000Z",
+    "endTime": null,
+    "venue": "Molineux Stadium",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Wolverhampton Wanderers",
+    "awayTeam": "Tottenham Hotspur",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Barcelona at Getafe",
+    "time": "2026-04-25T14:15:00.000Z",
+    "endTime": null,
+    "venue": "Estadio Coliseum",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Getafe",
+    "awayTeam": "Barcelona",
+    "isFavorite": true
+  },
+  {
+    "sport": "football",
+    "tournament": "Premier League",
+    "title": "Newcastle United at Arsenal",
+    "time": "2026-04-25T16:30:00.000Z",
+    "endTime": null,
+    "venue": "Emirates Stadium",
+    "meta": "Premier League",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Arsenal",
+    "awayTeam": "Newcastle United",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Girona at Valencia",
+    "time": "2026-04-25T16:30:00.000Z",
+    "endTime": null,
+    "venue": "Mestalla Stadium",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Valencia",
+    "awayTeam": "Girona",
+    "isFavorite": false
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Athletic Club at Atlético Madrid",
+    "time": "2026-04-25T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Riyadh Air Metropolitano",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Atlético Madrid",
+    "awayTeam": "Athletic Club",
+    "isFavorite": false
+  },
+  {
     "sport": "tennis",
     "tournament": "ATP/WTA Tennis Calendar 2026",
     "title": "Mutua Madrid Open 2026",
@@ -1141,7 +1395,18 @@
     "endTime": "2026-05-03T23:59:59.000Z",
     "venue": "Dickies Arena, Fort Worth, TX, USA",
     "norwegian": true,
-    "streaming": [],
+    "streaming": [
+      {
+        "platform": "Twitch",
+        "channel": "BLASTtv",
+        "url": "https://www.twitch.tv/blasttv",
+        "type": "stream"
+      },
+      {
+        "platform": "HLTV",
+        "type": "streaming"
+      }
+    ],
     "participants": [],
     "norwegianPlayers": [
       {
@@ -1258,53 +1523,6 @@
     "norwegianRelevance": 5,
     "enrichedAt": "2026-04-18T22:12:30.427Z",
     "_enrichHash": "8818388c2994c99727abac69db49231e"
-  },
-  {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "Giro d'Italia 2026",
-    "time": "2026-05-02T12:00:00+02:00",
-    "endTime": "2026-05-24T17:00:00+02:00",
-    "venue": "Italy (route TBC)",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Andreas Leknessund"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 4,
-    "importanceReason": "Grand Tour with Norwegian GC contenders Johannessen and Leknessund.",
-    "summary": "Italy's three-week Grand Tour begins — Tobias Halland Johannessen and Andreas Leknessund are Norwegian GC threats.",
-    "tags": [
-      "must-watch",
-      "norwegian-player",
-      "major"
-    ],
-    "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-18T22:12:30.427Z",
-    "_enrichHash": "81b33f906e26111215bf7b54e86b4cef"
   },
   {
     "sport": "tennis",
@@ -1454,65 +1672,6 @@
     "norwegianRelevance": 5,
     "enrichedAt": "2026-04-18T22:12:30.427Z",
     "_enrichHash": "aad1afe7bf0dc454dbb068b0a72e999f"
-  },
-  {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "Tour of Norway 2026",
-    "time": "2026-05-12T11:00:00+02:00",
-    "endTime": "2026-05-16T17:00:00+02:00",
-    "venue": "Norway (route TBC)",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "NRK",
-        "type": "tv"
-      },
-      {
-        "platform": "NRK TV",
-        "type": "streaming"
-      },
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Jonas Abrahamsen"
-      },
-      {
-        "name": "Søren Wærenskjold"
-      },
-      {
-        "name": "Andreas Leknessund"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 3,
-    "importanceReason": "Norwegian stage race with multiple top Norwegian riders on home roads",
-    "summary": "The Tour of Norway features Johannessen, Abrahamsen, Wærenskjold and Leknessund racing on home roads — a national celebration of Norwegian cycling talent.",
-    "tags": [
-      "norwegian-player"
-    ],
-    "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-18T22:12:30.427Z",
-    "_enrichHash": "48418aa42b3b66a9997ee76cdba54888"
   },
   {
     "sport": "f1",
@@ -1839,59 +1998,6 @@
     ],
     "norwegianRelevance": 3,
     "enrichedAt": "2026-04-18T22:12:30.428Z"
-  },
-  {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "Tour de France 2026",
-    "time": "2026-06-27T12:00:00+02:00",
-    "endTime": "2026-07-19T17:00:00+02:00",
-    "venue": "France (route TBC)",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Jonas Abrahamsen"
-      },
-      {
-        "name": "Søren Wærenskjold"
-      },
-      {
-        "name": "Markus Hoelgaard"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 4,
-    "importanceReason": "World's greatest cycling race with strong Norwegian contenders",
-    "summary": "The Tour de France is the pinnacle of world cycling — Johannessen, Wærenskjold, Abrahamsen and Hoelgaard carry Norwegian hopes across three iconic weeks in France.",
-    "tags": [
-      "must-watch",
-      "major",
-      "norwegian-player"
-    ],
-    "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-18T22:12:30.428Z",
-    "_enrichHash": "fe2489ae046312e220c4d0314dce9605"
   },
   {
     "sport": "f1",
@@ -2367,112 +2473,6 @@
     "_enrichHash": "69f5090b78f3e53566bf98dcebb43ccd"
   },
   {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "Arctic Race of Norway 2026",
-    "time": "2026-08-12T11:00:00+02:00",
-    "endTime": "2026-08-15T17:00:00+02:00",
-    "venue": "Northern Norway (route TBC)",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "NRK",
-        "type": "tv"
-      },
-      {
-        "platform": "NRK TV",
-        "type": "streaming"
-      },
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Jonas Abrahamsen"
-      },
-      {
-        "name": "Søren Wærenskjold"
-      },
-      {
-        "name": "Markus Hoelgaard"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 3,
-    "importanceReason": "Norwegian home race with multiple Norwegian riders competing.",
-    "summary": "Norway's own Arctic Race returns to the north with Johannessen, Abrahamsen, Wærenskjold and Hoelgaard all in the mix for home glory.",
-    "tags": [
-      "norwegian-team",
-      "norwegian-player"
-    ],
-    "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-18T22:12:30.428Z",
-    "_enrichHash": "e7f1362e0b7cab2e43d263a729c96059"
-  },
-  {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "Vuelta a España 2026",
-    "time": "2026-08-22T17:00:00+02:00",
-    "endTime": "2026-09-13T17:00:00+02:00",
-    "venue": "Spain (route TBC)",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Sven Erik Bystrøm"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 3,
-    "importanceReason": "Grand Tour with Norwegian representation but smaller field.",
-    "summary": "Spain's Vuelta features Tobias Halland Johannessen and Sven Erik Bystrøm carrying Norwegian colors.",
-    "tags": [
-      "norwegian-player",
-      "major"
-    ],
-    "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-18T22:12:30.428Z",
-    "_enrichHash": "c81a69bb5469f0f6bd6577b74992da7f"
-  },
-  {
     "sport": "f1",
     "tournament": "Formula 1 World Championship 2026",
     "title": "Dutch Grand Prix 2026",
@@ -2550,64 +2550,6 @@
     "norwegianRelevance": 2,
     "enrichedAt": "2026-04-18T22:12:30.428Z",
     "_enrichHash": "167349b3461e8304183440101260b071"
-  },
-  {
-    "sport": "cycling",
-    "tournament": "Cycling Grand Tours & Norwegian Races 2026",
-    "title": "UCI Road World Championships 2026",
-    "time": "2026-09-20T08:00:00+02:00",
-    "endTime": "2026-09-27T17:00:00+02:00",
-    "venue": "Kigali, Rwanda",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "Eurosport",
-        "type": "tv"
-      },
-      {
-        "platform": "Discovery+",
-        "type": "streaming"
-      },
-      {
-        "platform": "NRK",
-        "type": "tv"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "Tobias Halland Johannessen"
-      },
-      {
-        "name": "Søren Wærenskjold"
-      },
-      {
-        "name": "Andreas Leknessund"
-      },
-      {
-        "name": "Jonas Abrahamsen"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cycling-grand-tours-2026",
-    "importance": 4,
-    "importanceReason": "Annual road cycling world championship; major title race with Norwegian riders.",
-    "summary": "The pinnacle of road cycling's season in Kigali — Leknessund, Johannessen and Wærenskjold chase the rainbow jersey for Norway.",
-    "tags": [
-      "must-watch",
-      "major",
-      "norwegian-player",
-      "final"
-    ],
-    "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-18T22:12:30.428Z",
-    "_enrichHash": "7842289fe267527dd4abdf1803e7ec64"
   },
   {
     "sport": "f1",

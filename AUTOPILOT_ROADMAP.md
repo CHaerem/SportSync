@@ -182,17 +182,9 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
-- [PENDING] [MAINTENANCE] **Tennis/ESPN event deduplication** — ESPN tennis events overlap with curated tennis-calendar-2026.json events (e.g., Mutua Madrid Open appears twice with different data quality). Add fuzzy title matching in build-events.js to detect when an ESPN event and curated event share the same name (modulo year suffix) and date range, preferring the richer curated version. Data pillar.
-- [PENDING] [MAINTENANCE] **getResultsForDate() multi-sport support** — When navigating to past dates via the day navigator, `getResultsForDate()` (dashboard.js:335) only returns football results. Golf and F1 results in recent-results.json are ignored for non-today dates. Extend to include all sports. Personalization pillar.
-- [PENDING] [MAINTENANCE] **Compact result rows favorite-team accent** — In grouped result cards (`_renderGroupedResultCard`), individual compact result rows (`_renderCompactResultRow`) have no visual distinction for favorite teams. Add `result-row-fav` class when `m.isFavorite`. Personalization pillar.
-- [PENDING] [MAINTENANCE] **Streaming info placeholder for must-watch events** — When expanding must-watch (importance ≥ 4) events with empty streaming arrays, show "Streaming info unavailable" placeholder instead of nothing. Quality pillar.
+- [PENDING] [MAINTENANCE] **Verify-schedules persistent timeout investigation** — Step has been failing for 20+ consecutive runs at 180s timeout (56% of pipeline time). Run 46 fixed per-call timeout (120s→40s) but step still times out. Root cause: too many configs to verify or blocking web searches. Investigate how many configs are verified per run and whether async web fetching would help. Quality pillar.
 
 ### Recently Completed
-
-- [DONE] [MAINTENANCE] **Verify-schedules persistent timeout fix** — Root cause: `execSync` in web search function blocks the event loop, preventing setTimeout safety timer from firing. 3 web searches × 40s = 120s blocking + ESPN fetches > 180s timeout. Fix: added elapsed-time guards in config loop (break at 120s) and web search function (skip at 100s), reduced MAX_WEB_SEARCHES from 3 to 2, updated safety timer to 160s. Direct-to-main. Run 53.
-- [DONE] [MAINTENANCE] **F1 race results + DP World Tour results + F1 meta rendering** — 4 UX improvements: (1) F1 race results in "What You Missed" with podium medals. (2) DP World Tour golf results alongside PGA. (3) F1 meta in collapsed rows: "Rd N · Circuit". (4) F1 expanded view: Round/Circuit/Country context bar. 25 new tests. PR #168 (merged). Run 53.
-- [DONE] [MAINTENANCE] **Fix duplicate cycling events** — Cycling events appeared twice in events.json because cycling fetcher reads curated configs AND build-events.js re-reads them. Added `FETCHER_HANDLED_PREFIXES` skip set in build-events.js step 2. 1 new test. Direct-to-main. Run 53.
-- [DONE] [MAINTENANCE] **Update stale curated configs** — (1) Chess Candidates: set needsResearch (tournament ended, standings frozen at Rd 5/14). (2) FIFA WC 2026: set needsResearch (36/48 TBD group slots). (3) Esports: added Twitch/HLTV streaming to IEM Rio and BLAST Rivals events. Direct-to-main. Run 53.
 
 - [DONE] [MAINTENANCE] **Favorite-team accent on result cards — verify rendering** — CSS review confirms: `--accent` has good contrast on both light/dark backgrounds, star `::after` on `.result-header` flex layout positions correctly after FT badge, both grouped and single cards apply class correctly. No code changes needed. Run 52.
 - [DONE] [MAINTENANCE] **RSS headlines in expanded event view** — Added `_findRelatedHeadlines(event)` method: extracts keywords from team names, tournament, and player last names, matches against rss-digest.json items, returns up to 2 deduplicated headlines. Rendered as "Related news" section in expanded view with muted styling and accent hover. PR #166 (merged). Run 52.
@@ -344,9 +336,6 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 | 4. Personalization | ~88% | 2026-04-17 | RSS headlines in expanded view (contextual news per event), favorite buttons for all sports (esports, F1, cycling). PR #166. Run 52 |
 | 2. Code | ~98% | 2026-04-17 | 49 new tests: computeEnrichHash (28) + run-recipes core (21). 2776 tests across 89 files. Run 52 |
 | 1. Data | ~98% | 2026-04-17 | 100 Thieves CS2 coverage: 3 new tournaments (ESL Challenger, IEM Dallas, BLAST Spring Final) + IEM Cologne roster. Run 52 |
-| 4. Personalization | ~90% | 2026-04-19 | F1 race results with podium display, DP World Tour golf results, F1 meta "Rd N · Circuit" in collapsed rows, F1 context bar in expanded view. PR #168. Run 53 |
-| 1. Data | ~99% | 2026-04-19 | Cycling dedup fixed (FETCHER_HANDLED_PREFIXES). Chess/FIFA WC flagged for discovery refresh. Esports streaming added (IEM Rio + BLAST Rivals). Run 53 |
-| 5. Quality | ~100% | 2026-04-19 | verify-schedules timeout fixed (elapsed-time guards). 2802 tests across 90 files. Run 53 |
 
 ### Run History Insights
 
