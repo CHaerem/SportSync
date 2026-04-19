@@ -1,31 +1,26 @@
 {
-  "generatedAt": "2026-04-19T14:24:58.844Z",
+  "generatedAt": "2026-04-19T22:17:48.847Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 70,
+    "totalEvents": 68,
     "sports": [
       "esports",
-      "tennis",
       "golf",
       "f1",
+      "tennis",
       "football",
       "cycling"
     ],
     "bands": {
       "live": [
-        "IEM Rio 2026",
-        "Barcelona Open Banc Sabadell 2026",
-        "RBC Heritage"
+        "IEM Rio 2026"
       ],
-      "today": [
-        "Bahrain Grand Prix 2026",
-        "Arsenal at Manchester City"
-      ],
+      "today": [],
       "tomorrow": [
+        "Mutua Madrid Open",
         "West Ham United at Crystal Palace"
       ],
       "thisWeek": [
-        "Mutua Madrid Open",
         "Osasuna at Athletic Club",
         "Valencia at Mallorca",
         "Chelsea at Brighton & Hove Albion",
@@ -92,13 +87,16 @@
         "Qatar Grand Prix 2026",
         "Abu Dhabi Grand Prix 2026"
       ],
-      "ended": []
+      "ended": [
+        "RBC Heritage",
+        "Bahrain Grand Prix 2026"
+      ]
     },
     "featuredBlockCount": 8,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 100,
-    "issueCount": 10
+    "editorialScore": 96,
+    "issueCount": 12
   },
   "findings": [
     {
@@ -267,29 +265,9 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 231 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfce️ Bahrain GP\" which may not match any event"
-    },
-    {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Gunners\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Biggest Premier League\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Antonelli\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Russell\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Guardiola\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -299,7 +277,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Madrid Masters\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Masters\" but no matching athlete found in events data"
     },
     {
       "severity": "info",
@@ -308,10 +286,10 @@
     }
   ],
   "summary": {
-    "total": 41,
+    "total": 37,
     "critical": 0,
-    "warning": 39,
-    "info": 2
+    "warning": 36,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
