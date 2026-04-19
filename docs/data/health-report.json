@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T11:16:54.652Z",
+  "generatedAt": "2026-04-19T12:16:51.368Z",
   "eventCount": 73,
   "sportCoverage": {
     "esports": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 172,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-19"
     },
     "ai-quality.json": {
-      "ageMinutes": 112,
+      "ageMinutes": 172,
       "stale": false
     }
   },
@@ -94,9 +94,9 @@
   "resultsHealth": {
     "present": true,
     "stale": false,
-    "footballCount": 30,
+    "footballCount": 29,
     "validationPassRate": 0.97,
-    "recapHeadlineRate": 0.2,
+    "recapHeadlineRate": 0.21,
     "issues": []
   },
   "streamingHealth": {
@@ -134,19 +134,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 49006,
+    "totalDuration": 55957,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 25103,
+        "duration": 28410,
         "share": 51
       },
       {
         "name": "fetch-results",
-        "duration": 35519,
-        "share": 72
+        "duration": 37208,
+        "share": 66
       }
     ],
     "failedSteps": []
@@ -193,12 +193,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (25s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 51% of total pipeline time (28s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 72% of total pipeline time (36s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 66% of total pipeline time (37s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -218,7 +218,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-19T11:16:54.784Z",
+    "computedAt": "2026-04-19T12:16:51.475Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -233,8 +233,10 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.1,
-        "reasons": [],
+        "score": 0.15,
+        "reasons": [
+          "overdue by 47%"
+        ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
