@@ -25,7 +25,7 @@ const dataDir = rootDataPath();
 
 const MAX_HISTORY_RUNS = 50;
 const UNVERIFIED_THRESHOLD = 0.5;
-const MAX_WEB_SEARCHES = 3;
+const MAX_WEB_SEARCHES = 2;
 
 /**
  * Load all curated configs that have an `events` array with date info.
@@ -210,17 +210,34 @@ function loadSportDataMap(dDir) {
 	return sportDataMap;
 }
 
+/** Elapsed-time threshold: skip new web searches after this many ms to leave margin. */
+const WEB_SEARCH_TIME_BUDGET_MS = 100000;
+
 /**
  * Create a web search verification function using Claude CLI.
  * Returns a function compatible with context.webSearchFn.
  * Returns null if Claude CLI is not available (no CLAUDE_CODE_OAUTH_TOKEN).
+ *
+ * @param {number} startTime - Date.now() when the verification run started.
+ *   Used to skip web searches that would risk exceeding the pipeline timeout.
  */
-function createWebSearchFn() {
+function createWebSearchFn(startTime) {
 	if (!process.env.CLAUDE_CODE_OAUTH_TOKEN) {
 		return null;
 	}
 
 	return async function webSearchVerify(event) {
+		// Elapsed-time guard: execSync blocks the event loop, so setTimeout
+		// safety timers cannot fire while a web search is running. Check the
+		// wall-clock budget before starting a potentially 40s blocking call.
+		const elapsed = Date.now() - startTime;
+		if (elapsed > WEB_SEARCH_TIME_BUDGET_MS) {
+			return {
+				verified: false,
+				confidence: 0,
+				details: `Skipped — time budget exceeded (${Math.round(elapsed / 1000)}s elapsed)`,
+			};
+		}
 		const prompt = `You are a sports schedule fact-checker. Verify the exact start time for this event.
 
 EVENT: ${event.title}
@@ -439,13 +456,20 @@ export async function runVerification(options = {}) {
 		cfgDir = configDir,
 	} = options;
 
+	const startTime = Date.now();
+
+	/** Time budget for the entire verification loop (ms).  The pipeline
+	 *  runner kills this step at 180s, so we stop early to allow I/O
+	 *  cleanup (writing history, health report) before the hard kill. */
+	const LOOP_TIME_BUDGET_MS = 120000;
+
 	// Load context
 	const rssDigest = readJsonIfExists(path.join(dDir, "rss-digest.json"));
 	const sportDataMap = loadSportDataMap(dDir);
 	const espnEvents = await fetchESPNData(fetchFn);
 	const verificationHistory = readJsonIfExists(path.join(dDir, "verification-history.json")) || { runs: [] };
 
-	const webSearchFn = createWebSearchFn();
+	const webSearchFn = createWebSearchFn(startTime);
 
 	const context = {
 		rssDigest,
@@ -455,6 +479,7 @@ export async function runVerification(options = {}) {
 		webSearchFn,
 		webSearchCount: 0,
 		maxWebSearches: MAX_WEB_SEARCHES,
+		startTime,
 	};
 
 	// Run verifier chain for each config
@@ -462,6 +487,15 @@ export async function runVerification(options = {}) {
 	const skipWebSearch = !webSearchFn;
 	const configResults = [];
 	for (const config of configs) {
+		// Elapsed-time guard: break early to leave margin for writing results
+		// before the pipeline runner's 180s hard kill.
+		const elapsed = Date.now() - startTime;
+		if (elapsed > LOOP_TIME_BUDGET_MS) {
+			console.warn(
+				`verify-schedules: time budget exceeded (${Math.round(elapsed / 1000)}s) — returning partial results for ${configResults.length}/${configs.length} configs`
+			);
+			break;
+		}
 		const result = await verifyConfig(config, context, { skipWebSearch, dryRun });
 		configResults.push(result);
 	}
@@ -514,11 +548,14 @@ export async function runVerification(options = {}) {
 async function main() {
 	console.log("Verifying curated config schedules...");
 
-	// Safety valve: exit cleanly after 50s so the pipeline step never times out hard.
-	// The pipeline timeout is 60s; this gives a 10s margin for I/O cleanup.
-	const SAFETY_TIMEOUT_MS = 50000;
+	// Safety valve: exit cleanly before the pipeline runner's 180s hard kill.
+	// Note: this timer cannot fire while execSync (web searches) blocks the
+	// event loop — the elapsed-time guards in runVerification() and
+	// createWebSearchFn() handle that case instead. This timer catches
+	// non-blocking stalls (slow async ESPN fetches, stuck I/O, etc.).
+	const SAFETY_TIMEOUT_MS = 160000;
 	const safetyTimer = setTimeout(() => {
-		console.warn("verify-schedules: safety timeout reached — exiting cleanly with partial results");
+		console.warn("verify-schedules: safety timeout reached (160s) — exiting cleanly with partial results");
 		process.exit(0);
 	}, SAFETY_TIMEOUT_MS);
 	safetyTimer.unref(); // Don't keep the process alive just for this timer
