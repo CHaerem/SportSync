@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T12:31:30.305Z",
+  "generatedAt": "2026-04-20T13:38:05.203Z",
   "eventCount": 70,
   "sportCoverage": {
     "golf": {
@@ -60,21 +60,21 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 859,
+      "ageMinutes": 926,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 859,
+      "ageMinutes": 926,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 182,
+      "ageMinutes": 248,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-20"
     },
     "ai-quality.json": {
-      "ageMinutes": 182,
+      "ageMinutes": 248,
       "stale": false
     }
   },
@@ -110,7 +110,9 @@
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [],
+    "issues": [
+      "Day snapshots are 247 minutes old (stale > 240m)"
+    ],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -134,19 +136,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52447,
+    "totalDuration": 45765,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 31310,
-        "share": 60
+        "duration": 26629,
+        "share": 58
       },
       {
         "name": "fetch-results",
-        "duration": 37389,
-        "share": 71
+        "duration": 34490,
+        "share": 75
       }
     ],
     "failedSteps": []
@@ -188,27 +190,32 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 859 minutes old"
+      "message": "golf.json: data is 926 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 859 minutes old"
+      "message": "tennis.json: data is 926 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 5 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 6 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "tennis: data retained 5 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "tennis: data retained 6 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
       "code": "invisible_events",
       "message": "1 event(s) won't appear on dashboard (golf)"
+    },
+    {
+      "severity": "warning",
+      "code": "stale_snapshot",
+      "message": "Day snapshots are 247 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -218,12 +225,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (31s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 58% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 71% of total pipeline time (37s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 75% of total pipeline time (34s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -243,7 +250,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-20T12:31:30.393Z",
+    "computedAt": "2026-04-20T13:38:05.296Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -258,12 +265,12 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.16,
+        "score": 0.21,
         "reasons": [
-          "overdue by 57%"
+          "overdue by 112%"
         ],
         "suggestedQuotaPriority": 3,
-        "suggestedRefreshIntervalMs": 43200000,
+        "suggestedRefreshIntervalMs": 21600000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
@@ -300,7 +307,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 10 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
   }
 }
