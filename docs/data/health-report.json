@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T09:30:50.945Z",
+  "generatedAt": "2026-04-20T09:40:15.128Z",
   "eventCount": 70,
   "sportCoverage": {
     "golf": {
@@ -14,18 +14,18 @@
     },
     "football": {
       "count": 40,
-      "previousCount": 36,
-      "delta": 4
+      "previousCount": 40,
+      "delta": 0
     },
     "esports": {
       "count": 2,
-      "previousCount": 3,
-      "delta": -1
+      "previousCount": 2,
+      "delta": 0
     },
     "f1": {
       "count": 21,
-      "previousCount": 22,
-      "delta": -1
+      "previousCount": 21,
+      "delta": 0
     },
     "cycling": {
       "count": 2,
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 8,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 679,
+      "ageMinutes": 688,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 679,
+      "ageMinutes": 688,
       "stale": true
     },
     "featured.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-20"
     },
     "ai-quality.json": {
-      "ageMinutes": 1,
+      "ageMinutes": 11,
       "stale": false
     }
   },
@@ -127,20 +127,20 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 26,
+    "fiveHour": 15,
+    "sevenDay": 33,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 472181,
+    "totalDuration": 610397,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 169916,
+        "duration": 220292,
         "share": 36
       }
     ],
@@ -183,12 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 679 minutes old"
+      "message": "golf.json: data is 688 minutes old"
     },
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "tennis.json: data is 679 minutes old"
+      "message": "tennis.json: data is 688 minutes old"
     },
     {
       "severity": "warning",
@@ -203,7 +203,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (170s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (220s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -228,7 +228,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-20T09:30:51.031Z",
+    "computedAt": "2026-04-20T09:40:15.230Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -255,7 +255,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 11,
+    "ageHours": 0,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -277,7 +277,7 @@
       },
       {
         "agent": "data-agent",
-        "bytes": 2705
+        "bytes": 2508
       }
     ]
   },
@@ -310,14 +310,5 @@
   "statusSummary": {
     "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "scheduleVerification": {
-    "lastChecked": "2026-04-20T09:32:49.341Z",
-    "configsChecked": 5,
-    "eventsChecked": 41,
-    "verified": 1,
-    "plausible": 40,
-    "unverified": 0,
-    "correctionsApplied": 0
   }
 }
