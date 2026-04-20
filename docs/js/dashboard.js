@@ -2865,6 +2865,12 @@ class Dashboard {
 			}
 		}
 
+		// Esports tier badge (S-Tier, A-Tier, etc.) in collapsed row
+		let tierBadgeHtml = '';
+		if (!isExpanded && event.sport === 'esports' && event.tier) {
+			tierBadgeHtml = `<span class="row-tier-badge">${this.esc(event.tier)}</span>`;
+		}
+
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
@@ -2890,7 +2896,7 @@ class Dashboard {
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
 					<span class="row-time">${timeStr}${surfaceBadgeHtml}${dayProgressHtml}${relHtml}${mustWatchPill}${aggregatePillHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${metaHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${tierBadgeHtml}${metaHtml}</span>
 				</div>
 				${importanceBadgeHtml}
 				${summaryHtml}
