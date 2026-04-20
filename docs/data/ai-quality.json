@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T09:29:43.077Z",
+  "generatedAt": "2026-04-20T14:41:30.893Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -10,14 +10,14 @@
     "score": 100,
     "issues": [],
     "blockCount": 7,
-    "generationMs": 105148,
+    "generationMs": 109890,
     "tokenUsage": {
-      "input": 28224,
-      "output": 6081,
-      "cacheCreation": 16124,
-      "cacheRead": 12097,
-      "total": 34305,
-      "costUSD": 0.15989609999999999,
+      "input": 62465,
+      "output": 6405,
+      "cacheCreation": 34313,
+      "cacheRead": 28146,
+      "total": 68870,
+      "costUSD": 0.23772355,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -40,7 +40,7 @@
     "score": 100,
     "metrics": {
       "pickCount": 1,
-      "avgScore": 44,
+      "avgScore": 52,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
@@ -51,7 +51,7 @@
       "integrityRate": 0.966,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.444,
+      "recapHeadlineRate": 0.4,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
       "footballCount": 26
@@ -68,7 +68,7 @@
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 0.971
+      "tagsCoverage": 1
     },
     "after": {
       "totalEvents": 70,
@@ -80,41 +80,41 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 2,
-    "aiUpdatedFields": 4,
+    "fallbackFieldsFilled": 0,
+    "aiUpdatedFields": 0,
     "failedBatches": 0,
     "totalEvents": 70,
     "skipStats": {
       "total": 70,
-      "unchanged": 66,
-      "enriched": 4,
-      "skipRate": 0.94
+      "unchanged": 70,
+      "enriched": 0,
+      "skipRate": 1
     },
-    "tokensPerEvent": 6667,
+    "tokensPerEvent": 0,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 23768,
-      "output": 2898,
-      "calls": 1,
-      "total": 26666,
-      "costUSD": 0.0516355,
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "total": 0,
+      "costUSD": 0,
       "tracked": true,
       "estimated": false
     }
   },
   "discovery": {
     "tokenUsage": {
-      "input": 130019,
-      "output": 2585,
-      "calls": 2,
-      "total": 132604,
-      "costUSD": 1.53504955,
+      "input": 35007,
+      "output": 379,
+      "calls": 1,
+      "total": 35386,
+      "costUSD": 0.14457899999999999,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-20T09:23:19.862Z",
-    "tasksExecuted": 2,
-    "succeeded": 2,
+    "lastRun": "2026-04-20T14:38:40.407Z",
+    "tasksExecuted": 1,
+    "succeeded": 1,
     "failed": 0
   },
   "multiDay": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T09:30:50.789Z",
+  "generatedAt": "2026-04-20T14:41:32.523Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 70,
@@ -99,7 +99,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 7
+    "issueCount": 13
   },
   "findings": [
     {
@@ -269,23 +269,8 @@
     },
     {
       "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 11 hours old"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
       "check": "featured_unknown_athlete",
       "message": "Featured mentions \"Three\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"The Premier League\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -299,9 +284,9 @@
     }
   ],
   "summary": {
-    "total": 39,
+    "total": 36,
     "critical": 0,
-    "warning": 38,
+    "warning": 35,
     "info": 1
   },
   "pass": true,
