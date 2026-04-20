@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-20",
-  "generatedAt": "2026-04-20T14:41:31.350Z",
+  "generatedAt": "2026-04-20T21:25:43.761Z",
   "events": {
     "upcoming": [
       {
@@ -38,57 +38,27 @@
           "norwegian-player"
         ],
         "norwegianRelevance": 4,
-        "enrichedAt": "2026-04-20T14:39:40.250Z",
+        "enrichedAt": "2026-04-20T21:23:08.891Z",
         "_enrichHash": "6a7b0fc2e05e51432d2b28548ddc8bda"
-      },
-      {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "West Ham United at Crystal Palace",
-        "time": "2026-04-20T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Selhurst Park",
-        "meta": "Premier League",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no/sport/fotball/",
-            "type": "streaming",
-            "source": "tvkampen"
-          },
-          {
-            "platform": "Vsport",
-            "url": "",
-            "type": "unknown",
-            "source": "tvkampen"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Crystal Palace",
-        "awayTeam": "West Ham United",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Late-season PL fixture between mid-table sides, possible relegation stakes",
-        "summary": "Selhurst Park hosts a potentially tense PL clash as West Ham and Crystal Palace may both need points to stay up.",
-        "tags": [
-          "relegation"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-20T14:39:40.250Z",
-        "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581",
-        "streamingSource": "tvkampen",
-        "streamingConfidence": 1
       }
     ],
     "results": []
   },
-  "matchResults": [],
+  "matchResults": [
+    {
+      "homeTeam": "Crystal Palace",
+      "awayTeam": "West Ham United",
+      "homeScore": 0,
+      "awayScore": 0,
+      "date": "2026-04-20T19:00Z",
+      "league": "Premier League",
+      "leagueCode": "eng.1",
+      "venue": "Selhurst Park",
+      "goalScorers": [],
+      "recapHeadline": null,
+      "isFavorite": false
+    }
+  ],
   "standings": {
     "premierLeague": [
       {
@@ -240,14 +210,61 @@
   "watchPlan": {
     "picks": [
       {
-        "id": "football-west-ham-united-at-crystal-palace-2026-04-20t19:00:00.000z",
-        "title": "West Ham United at Crystal Palace",
+        "id": "football-alavés-at-real-madrid-2026-04-21t19:30:00.000z",
+        "title": "Alavés at Real Madrid",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-04-21T19:30:00.000Z",
+        "timeLabel": "21 Apr, 21:30",
+        "relativeStart": "In 22h 7m",
+        "importance": 4,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 90,
+        "reasons": [
+          "Must-watch event",
+          "Must-watch"
+        ]
+      },
+      {
+        "id": "football-valencia-at-mallorca-2026-04-21t17:00:00.000z",
+        "title": "Valencia at Mallorca",
+        "sport": "football",
+        "tournament": "La Liga",
+        "time": "2026-04-21T17:00:00.000Z",
+        "timeLabel": "21 Apr, 19:00",
+        "relativeStart": "In 19h 37m",
+        "importance": 3,
+        "norwegian": false,
+        "streaming": [
+          {
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          }
+        ],
+        "score": 62,
+        "reasons": [
+          "Preferred sport"
+        ]
+      },
+      {
+        "id": "football-chelsea-at-brighton-&-hove-albion-2026-04-21t19:00:00.000z",
+        "title": "Chelsea at Brighton & Hove Albion",
         "sport": "football",
         "tournament": "Premier League",
-        "time": "2026-04-20T19:00:00.000Z",
-        "timeLabel": "20 Apr, 21:00",
-        "relativeStart": "In 4h 20m",
-        "importance": 2,
+        "time": "2026-04-21T19:00:00.000Z",
+        "timeLabel": "21 Apr, 21:00",
+        "relativeStart": "In 21h 37m",
+        "importance": 3,
         "norwegian": false,
         "streaming": [
           {
@@ -263,53 +280,52 @@
             "source": "tvkampen"
           }
         ],
-        "score": 52,
+        "score": 62,
         "reasons": [
           "Preferred sport"
         ]
       }
     ],
-    "headline": "City cut Arsenal's lead to three — the title race is alive again"
+    "headline": "City strike back — Arsenal's lead reduced to three with a game in hand"
   },
   "rssHighlights": [
     {
-      "title": "Tidligere Stabæk-juvel fanget på video – havnet i basketak med fan",
+      "title": "Ny pris til Solfrid Koanda",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/tidligere-stabaek-juvel-fanget-pa-video-_-havnet-i-basketak-med-fan-1.17854026"
+      "link": "https://www.nrk.no/sport/ny-pris-til-solfrid-koanda-1.17854392"
     },
     {
-      "title": "Glimt-stjerne forlenger: – Jeg og familien trives her",
+      "title": "West Ham sikret viktig poeng – Wolverhampton rykket ned",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/west-ham-sikret-viktig-poeng-_-wolverhampton-rykket-ned-1.17854382"
+    },
+    {
+      "title": "Alcaraz og Sabalenka vant priser",
+      "source": "nrk-sport",
+      "sport": "general",
+      "link": "https://www.nrk.no/sport/alcaraz-og-sabalenka-vant-priser-1.17854258"
+    },
+    {
+      "title": "Bedrev selvpisking",
       "source": "tv2-sport",
       "sport": "general",
-      "link": "https://www.tv2.no/a/18767943"
+      "link": "https://www.tv2.no/a/18767235"
     },
     {
-      "title": "Glimt-profil forlenger kontrakten",
+      "title": "Budkov Kjær videre i Madrid-kvalifiseringen",
       "source": "nrk-sport",
       "sport": "general",
-      "link": "https://www.nrk.no/sport/glimt-profil-forlenger-kontrakten-1.17854021"
-    },
-    {
-      "title": "Redesigned ball could reduce heading impact - scientists",
-      "source": "bbc-football",
-      "sport": "football",
-      "link": "https://www.bbc.com/sport/football/articles/c4g43yd416xo?at_medium=RSS&amp;at_campaign=rss"
-    },
-    {
-      "title": "Should Gabriel have been sent off for Haaland clash?",
-      "source": "bbc-football",
-      "sport": "football",
-      "link": "https://www.bbc.com/sport/football/articles/clyrxr66388o?at_medium=RSS&amp;at_campaign=rss"
+      "link": "https://www.nrk.no/sport/budkov-kjaer-videre-i-madrid-kvalifiseringen-1.17854330"
     }
   ],
   "meta": {
-    "eventCount": 2,
+    "eventCount": 1,
     "sportsCovered": [
-      "tennis",
-      "football"
+      "tennis"
     ],
-    "hasResults": false,
+    "hasResults": true,
     "hasStandings": true
   }
 }

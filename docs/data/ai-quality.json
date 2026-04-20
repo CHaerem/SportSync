@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T14:41:30.893Z",
+  "generatedAt": "2026-04-20T21:25:43.314Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
@@ -7,29 +7,31 @@
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
-    "score": 100,
-    "issues": [],
-    "blockCount": 7,
-    "generationMs": 109890,
+    "score": 95,
+    "issues": [
+      "event-line block exceeds 20 words: \"🎮 Thu 17:00 — rain & 100 Thieves vs BIG, CCT Glob...\""
+    ],
+    "blockCount": 8,
+    "generationMs": 153640,
     "tokenUsage": {
-      "input": 62465,
-      "output": 6405,
-      "cacheCreation": 34313,
-      "cacheRead": 28146,
-      "total": 68870,
-      "costUSD": 0.23772355,
+      "input": 63385,
+      "output": 7466,
+      "cacheCreation": 35232,
+      "cacheRead": 28147,
+      "total": 70851,
+      "costUSD": 0.2571111,
       "tracked": true,
       "estimated": false,
       "calls": 1
     }
   },
   "editorial": {
-    "score": 100,
+    "score": 97,
     "metrics": {
       "mustWatchCoverage": 1,
       "sportDiversity": 1,
       "blockTypeBalance": 1,
-      "textQuality": 1,
+      "textQuality": 0.8,
       "quietDayCompliance": 1,
       "blockCountTarget": 1,
       "componentUtilization": 1
@@ -39,24 +41,26 @@
   "watchPlan": {
     "score": 100,
     "metrics": {
-      "pickCount": 1,
-      "avgScore": 52,
+      "pickCount": 3,
+      "avgScore": 71,
       "streamingCoverage": 1,
       "reasonCoverage": 1
     }
   },
   "results": {
-    "score": 90,
+    "score": 88,
     "metrics": {
-      "integrityRate": 0.966,
+      "integrityRate": 0.964,
       "freshnessScore": 1,
       "goalScorerCoverage": 1,
-      "recapHeadlineRate": 0.4,
+      "recapHeadlineRate": 0,
       "favoriteCoverage": 0.4,
       "golfPresent": 1,
-      "footballCount": 26
+      "footballCount": 25
     },
-    "issues": []
+    "issues": [
+      "Only 0% of recent results have recap headlines"
+    ]
   },
   "enrichment": {
     "provider": "claude-cli",
@@ -64,14 +68,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 70,
+      "totalEvents": 69,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
       "tagsCoverage": 1
     },
     "after": {
-      "totalEvents": 70,
+      "totalEvents": 69,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -83,10 +87,10 @@
     "fallbackFieldsFilled": 0,
     "aiUpdatedFields": 0,
     "failedBatches": 0,
-    "totalEvents": 70,
+    "totalEvents": 69,
     "skipStats": {
-      "total": 70,
-      "unchanged": 70,
+      "total": 69,
+      "unchanged": 69,
       "enriched": 0,
       "skipRate": 1
     },
@@ -104,15 +108,15 @@
   },
   "discovery": {
     "tokenUsage": {
-      "input": 35007,
-      "output": 379,
+      "input": 73434,
+      "output": 4826,
       "calls": 1,
-      "total": 35386,
-      "costUSD": 0.14457899999999999,
+      "total": 78260,
+      "costUSD": 0.9255620499999999,
       "tracked": true,
       "estimated": false
     },
-    "lastRun": "2026-04-20T14:38:40.407Z",
+    "lastRun": "2026-04-20T21:20:34.650Z",
     "tasksExecuted": 1,
     "succeeded": 1,
     "failed": 0
