@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T09:19:57.079Z",
+  "generatedAt": "2026-04-20T09:30:50.789Z",
   "provider": "rules-only",
   "snapshot": {
     "totalEvents": 70,
@@ -95,10 +95,10 @@
         "RBC Heritage"
       ]
     },
-    "featuredBlockCount": 8,
+    "featuredBlockCount": 7,
     "briefPresent": true,
     "pipelineStatus": "warning",
-    "editorialScore": 70,
+    "editorialScore": 100,
     "issueCount": 7
   },
   "findings": [
@@ -268,11 +268,6 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 230 days away — may clutter the dashboard"
     },
     {
-      "severity": "info",
-      "check": "featured_orphan_ref",
-      "message": "Featured block references \"\udfbe Madrid Open — Ruud's clay fortress opens\" which may not match any event"
-    },
-    {
       "severity": "warning",
       "check": "stale_dashboard",
       "message": "Dashboard data is 11 hours old"
@@ -280,7 +275,17 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Masters\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Three\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "warning",
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"The Premier League\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -294,10 +299,10 @@
     }
   ],
   "summary": {
-    "total": 38,
+    "total": 39,
     "critical": 0,
-    "warning": 36,
-    "info": 2
+    "warning": 38,
+    "info": 1
   },
   "pass": true,
   "tokenUsage": null
