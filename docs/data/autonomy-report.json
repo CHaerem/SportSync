@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-04-19T22:17:48.717Z",
-  "overallScore": 1,
-  "loopsClosed": 13,
+  "generatedAt": "2026-04-20T09:19:56.990Z",
+  "overallScore": 0.92,
+  "loopsClosed": 12,
   "loopsTotal": 13,
   "loops": {
     "featuredQuality": {
       "score": 1,
       "status": "closed",
-      "details": "100 entries, hints wired (40 fired)"
+      "details": "100 entries, hints wired (39 fired)"
     },
     "enrichmentQuality": {
       "score": 1,
@@ -15,19 +15,19 @@
       "details": "Enrichment hints tracked (0 applied)"
     },
     "coverageGaps": {
-      "score": 1,
-      "status": "closed",
-      "details": "gap detection + resolver + auto-configs exist"
+      "score": 0,
+      "status": "open",
+      "details": "No fresh coverage gaps data"
     },
     "pipelineHealth": {
       "score": 1,
       "status": "closed",
-      "details": "Health report is fresh (0 min old), 12 issue(s) are info/known"
+      "details": "Health report is fresh (7 min old), 7 issue(s) are info/known"
     },
     "watchPlan": {
       "score": 1,
       "status": "closed",
-      "details": "2 picks with reasons (2 with streaming)"
+      "details": "1 picks with reasons (1 with streaming)"
     },
     "codeHealth": {
       "score": 1,
@@ -52,7 +52,7 @@
     "snapshotHealth": {
       "score": 1,
       "status": "closed",
-      "details": "15 snapshots + health monitoring + fresh (post-generate quota-skipped)"
+      "details": "15 snapshots + health monitoring + fresh"
     },
     "preferenceEvolution": {
       "score": 1,

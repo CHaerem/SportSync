@@ -1,55 +1,5 @@
 [
   {
-    "sport": "esports",
-    "tournament": "CS2 Tournaments 2026",
-    "title": "IEM Rio 2026",
-    "time": "2026-04-13T00:00:00.000Z",
-    "endTime": "2026-04-19T23:59:59.000Z",
-    "venue": "Rio de Janeiro, Brazil",
-    "norwegian": true,
-    "streaming": [
-      {
-        "platform": "Twitch",
-        "channel": "esl_csgo",
-        "url": "https://www.twitch.tv/esl_csgo",
-        "type": "stream"
-      },
-      {
-        "platform": "HLTV",
-        "type": "streaming"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [
-      {
-        "name": "rain (Håvard Nygaard)"
-      }
-    ],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "cs2-majors-2026",
-    "_isTournament": true,
-    "_bracketId": "iem-rio-2026",
-    "tier": "S-Tier",
-    "prizePool": "$1,000,000 USD",
-    "importance": 5,
-    "importanceReason": "CS2 Major tournament with Norwegian star rain directly competing",
-    "summary": "IEM Rio 2026 is a flagship CS2 Major; Norwegian legend rain (Håvard Nygaard) is in the field chasing the title.",
-    "tags": [
-      "must-watch",
-      "major",
-      "norwegian-player"
-    ],
-    "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "8c6e4e4ed7a0a1b076840e72b6628541"
-  },
-  {
     "sport": "golf",
     "tournament": "PGA Tour",
     "title": "RBC Heritage",
@@ -105,47 +55,8 @@
       "norwegian-player"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "feca696ef91f39e327557b388eca511a"
-  },
-  {
-    "sport": "f1",
-    "tournament": "Formula 1 World Championship 2026",
-    "title": "Bahrain Grand Prix 2026",
-    "time": "2026-04-19T15:00:00Z",
-    "endTime": "2026-04-19T17:00:00Z",
-    "venue": "Bahrain International Circuit, Sakhir, Bahrain",
-    "meta": {
-      "round": 4,
-      "circuit": "Bahrain International Circuit",
-      "country": "Bahrain"
-    },
-    "norwegian": false,
-    "streaming": [
-      {
-        "platform": "Viaplay",
-        "type": "stream"
-      }
-    ],
-    "participants": [],
-    "norwegianPlayers": [],
-    "totalPlayers": null,
-    "link": null,
-    "status": null,
-    "featuredGroups": [],
-    "homeTeam": null,
-    "awayTeam": null,
-    "isFavorite": false,
-    "context": "f1-calendar-2026",
-    "importance": 3,
-    "importanceReason": "Round 4, championship points battle developing.",
-    "summary": "Bahrain Grand Prix — round 4 as the 2026 championship picture begins to take shape.",
-    "tags": [
-      "watchlist"
-    ],
-    "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "a7d5cc3750111104545a71503cb95267"
   },
   {
     "sport": "tennis",
@@ -181,7 +92,7 @@
       "norwegian-player"
     ],
     "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "6a7b0fc2e05e51432d2b28548ddc8bda"
   },
   {
@@ -223,7 +134,7 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "8f1be83fc64b9a54a2821e9c22e7a581",
     "streamingSource": "tvkampen",
     "streamingConfidence": 1
@@ -239,9 +150,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -260,8 +172,10 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "9562e138ce0bcd53d4481d47f0634e9e"
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
+    "_enrichHash": "9562e138ce0bcd53d4481d47f0634e9e",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 0.7
   },
   {
     "sport": "football",
@@ -274,9 +188,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -295,8 +210,10 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "7a09ec2232e7862ba6a2909849d3bd3d"
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
+    "_enrichHash": "7a09ec2232e7862ba6a2909849d3bd3d",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -310,8 +227,15 @@
     "streaming": [
       {
         "platform": "Viaplay",
-        "url": "https://viaplay.no",
-        "type": "streaming"
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
+      },
+      {
+        "platform": "Vsport",
+        "url": "",
+        "type": "unknown",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -330,8 +254,10 @@
       "top-4-battle"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "98f8026c0417fd806d96fcad3572ae7f"
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
+    "_enrichHash": "98f8026c0417fd806d96fcad3572ae7f",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -344,9 +270,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -365,8 +292,10 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "a5501def9e0cbfa6ec58466eb7b01edc"
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
+    "_enrichHash": "a5501def9e0cbfa6ec58466eb7b01edc",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -379,9 +308,10 @@
     "norwegian": false,
     "streaming": [
       {
-        "platform": "TV 2 Play",
-        "url": "https://play.tv2.no",
-        "type": "streaming"
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/sport/fotball/",
+        "type": "streaming",
+        "source": "tvkampen"
       }
     ],
     "participants": [],
@@ -401,8 +331,10 @@
       "title-race"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
-    "_enrichHash": "b2c9e4ca51d82a7f64d113cf13f83909"
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
+    "_enrichHash": "b2c9e4ca51d82a7f64d113cf13f83909",
+    "streamingSource": "tvkampen",
+    "streamingConfidence": 1
   },
   {
     "sport": "football",
@@ -437,7 +369,7 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.810Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "52c477cea744ffce85b98deda5403596"
   },
   {
@@ -472,7 +404,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "9577f968c973dc1de2168bfc4b3c60a3"
   },
   {
@@ -507,7 +439,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "da10cc734a7de160e68e089cbd27cb8d"
   },
   {
@@ -543,7 +475,7 @@
       "relegation"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "cfc302de206c011924eed8cf8bce8a0f"
   },
   {
@@ -579,7 +511,7 @@
       "title-race"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "f919f20175ff7ce11aafff29e987c927"
   },
   {
@@ -625,7 +557,7 @@
       "final"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "3c0a93824c9a69efbe3a1f36d97cbe44"
   },
   {
@@ -660,7 +592,7 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "ad9d93575e50182a92ccd3d0414d9b9c"
   },
   {
@@ -695,7 +627,7 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "252b21ed8f5cbfd3e19bc4b78b345071"
   },
   {
@@ -731,7 +663,7 @@
       "upset-potential"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "907824fbeddcdf66c2ae69198b13d69e"
   },
   {
@@ -766,7 +698,7 @@
       "relegation"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.423Z",
     "_enrichHash": "b6b41cab160e81700abd12324c9ec873"
   },
   {
@@ -802,7 +734,7 @@
       "must-watch"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "df641686946131d7fd3907076162973c"
   },
   {
@@ -837,7 +769,7 @@
       "top-4-battle"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "624070da25e9399ebdd7a3cea545bf4c"
   },
   {
@@ -872,7 +804,7 @@
       "relegation"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "f40dca1e61a0b0204f25e01e8d94b17f"
   },
   {
@@ -908,7 +840,7 @@
       "title-race"
     ],
     "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "8ea75a493213a9077dc937bad2ffac5a"
   },
   {
@@ -943,7 +875,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "84ae14dd1d46c2182d926aadadf08213"
   },
   {
@@ -978,7 +910,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "70f5dc7b24afc1b9b3ac24e1f4143983"
   },
   {
@@ -1014,7 +946,7 @@
       "title-race"
     ],
     "norwegianRelevance": 4,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "941113a7246bea65c09105dde14de072"
   },
   {
@@ -1050,7 +982,7 @@
       "top-4-battle"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "98a736378189a9b6da67e74fd0bda055"
   },
   {
@@ -1085,7 +1017,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "0c82bd8587df7ddc04254aa389e2320d"
   },
   {
@@ -1121,7 +1053,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "fdebee59bc0ca90e335912aab44b59ea"
   },
   {
@@ -1166,8 +1098,113 @@
       "norwegian-player"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
     "_enrichHash": "e86a9eb69d0fbd80705c94138dcc4d05"
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Real Sociedad at Rayo Vallecano",
+    "time": "2026-04-26T12:00:00.000Z",
+    "endTime": null,
+    "venue": "Estadio de Vallecas",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Rayo Vallecano",
+    "awayTeam": "Real Sociedad",
+    "isFavorite": false,
+    "importance": 2,
+    "importanceReason": "Mid-table La Liga fixture, no title or relegation implications.",
+    "summary": "Routine La Liga clash between two mid-table sides with little at stake this late in the season.",
+    "tags": [
+      "watchlist"
+    ],
+    "norwegianRelevance": 2,
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
+    "_enrichHash": "499f3735524c973c5ad9dec5ff8942c3"
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Elche at Real Oviedo",
+    "time": "2026-04-26T14:15:00.000Z",
+    "endTime": null,
+    "venue": "Estadio Carlos Tartiere",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Real Oviedo",
+    "awayTeam": "Elche",
+    "isFavorite": false,
+    "importance": 2,
+    "importanceReason": "Lower-table La Liga match, possible relegation context.",
+    "summary": "Elche visit Oviedo in a potentially tense lower-table La Liga battle with possible survival stakes.",
+    "tags": [
+      "relegation"
+    ],
+    "norwegianRelevance": 1,
+    "enrichedAt": "2026-04-20T09:17:05.424Z",
+    "_enrichHash": "de5e8bb17b047c95268b1b8078c98f7e"
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Sevilla at Osasuna",
+    "time": "2026-04-26T16:30:00.000Z",
+    "endTime": null,
+    "venue": "El Sadar",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Osasuna",
+    "awayTeam": "Sevilla",
+    "isFavorite": false,
+    "importance": 2,
+    "importanceReason": "Mid-table La Liga encounter, neither side in title or relegation fight.",
+    "summary": "Sevilla travel to Pamplona to face Osasuna in a forgettable mid-table La Liga fixture.",
+    "tags": [
+      "watchlist"
+    ],
+    "norwegianRelevance": 1,
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
+    "_enrichHash": "7b30cdfe69bc27753fd399b4b6774b6e"
   },
   {
     "sport": "f1",
@@ -1205,8 +1242,43 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "09c908df91062830ad4aba0f7e94d028"
+  },
+  {
+    "sport": "football",
+    "tournament": "La Liga",
+    "title": "Celta Vigo at Villarreal",
+    "time": "2026-04-26T19:00:00.000Z",
+    "endTime": null,
+    "venue": "Estadio de la Cerámica",
+    "meta": "La Liga",
+    "norwegian": false,
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no",
+        "type": "streaming"
+      }
+    ],
+    "participants": [],
+    "norwegianPlayers": [],
+    "totalPlayers": null,
+    "link": null,
+    "status": null,
+    "featuredGroups": [],
+    "homeTeam": "Villarreal",
+    "awayTeam": "Celta Vigo",
+    "isFavorite": false,
+    "importance": 3,
+    "importanceReason": "Villarreal chasing European spots; Celta could threaten from below.",
+    "summary": "Villarreal host Celta in a meaningful La Liga evening kick-off with European qualification implications.",
+    "tags": [
+      "top-4-battle"
+    ],
+    "norwegianRelevance": 2,
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
+    "_enrichHash": "1c0a8403c8949f174fefc2a799480029"
   },
   {
     "sport": "esports",
@@ -1253,7 +1325,7 @@
       "norwegian-player"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "64147fcd8d767da5ef94c5b330b761ce"
   },
   {
@@ -1293,7 +1365,7 @@
       "title-race"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "568980bdf085897778d0c7f998a46e4c"
   },
   {
@@ -1342,7 +1414,7 @@
       "major"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "8818388c2994c99727abac69db49231e"
   },
   {
@@ -1387,7 +1459,7 @@
       "norwegian-player"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "67f15e3ce15a59df9ca7bfedec0bdaf1"
   },
   {
@@ -1426,7 +1498,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "020cf2a2a3799cad30b69f21774b7e04"
   },
   {
@@ -1491,7 +1563,7 @@
       "norwegian-team"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "aad1afe7bf0dc454dbb068b0a72e999f"
   },
   {
@@ -1530,7 +1602,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "e55fbb067546af283254f7780374613f"
   },
   {
@@ -1582,7 +1654,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 5,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "680a7922df6d9ff19b7cbe69258fd9a9"
   },
   {
@@ -1622,7 +1694,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "066f595633f691ad83e1de0fe7e22b58"
   },
   {
@@ -1661,7 +1733,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.811Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "4998c863f30c46d0f33eaf2dc82c8d26"
   },
   {
@@ -1701,7 +1773,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -1740,7 +1812,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "f1",
@@ -1778,7 +1850,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "c8396bfa13736da0d80bbf4d407ce117"
   },
   {
@@ -1818,7 +1890,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "f1",
@@ -1856,7 +1928,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "17c4cef8fd9b4d91af0044965f870eb4"
   },
   {
@@ -1897,7 +1969,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -1936,7 +2008,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "f1",
@@ -1974,7 +2046,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "32bd72e49168d6f1f8ac4d866d238b4e"
   },
   {
@@ -2014,7 +2086,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -2054,7 +2126,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -2094,7 +2166,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -2134,7 +2206,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -2173,7 +2245,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "football",
@@ -2213,7 +2285,7 @@
       "major"
     ],
     "norwegianRelevance": 3,
-    "enrichedAt": "2026-04-19T22:15:43.812Z"
+    "enrichedAt": "2026-04-20T09:17:05.425Z"
   },
   {
     "sport": "f1",
@@ -2251,7 +2323,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "36e9eacb5bf4bce37b5a476269abe47b"
   },
   {
@@ -2290,7 +2362,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "69f5090b78f3e53566bf98dcebb43ccd"
   },
   {
@@ -2329,7 +2401,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "6523b8534e9c3dbbe3c3d9d35566c817"
   },
   {
@@ -2369,7 +2441,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "167349b3461e8304183440101260b071"
   },
   {
@@ -2408,7 +2480,7 @@
       "upset-potential"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "fa96e828e797394b590d5e37e30471b4"
   },
   {
@@ -2447,7 +2519,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "d6bd5e0fff544b53983689b06cfa2ce6"
   },
   {
@@ -2486,7 +2558,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "9e06fd6d8557dc43b943da26d345e93e"
   },
   {
@@ -2525,7 +2597,7 @@
       "watchlist"
     ],
     "norwegianRelevance": 1,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "d68199a0a620133d2bb403152872a209"
   },
   {
@@ -2565,7 +2637,7 @@
       "title-race"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "d07adb51aca42ea4ff378a7298e796f6"
   },
   {
@@ -2604,7 +2676,7 @@
       "title-race"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "a332722dd75659fd9bf2705b5102d593"
   },
   {
@@ -2644,7 +2716,7 @@
       "title-race"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "14c03fdca4ad1d76bd87130361d692c2"
   },
   {
@@ -2686,7 +2758,7 @@
       "classic-matchup"
     ],
     "norwegianRelevance": 2,
-    "enrichedAt": "2026-04-19T22:15:43.812Z",
+    "enrichedAt": "2026-04-20T09:17:05.425Z",
     "_enrichHash": "bcf1cc2236f9a3f522dbb5447a80e6e3"
   }
 ]
