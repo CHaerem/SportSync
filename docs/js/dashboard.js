@@ -382,6 +382,7 @@ class Dashboard {
 				}
 			}
 			const hasFavorite = favSports.size > 0;
+			const hasMustWatch = dayEvents.some(e => e.importance >= 4);
 
 			// Sport dots
 			const sportVars = {
@@ -402,11 +403,13 @@ class Dashboard {
 
 			const emptyCls = dayEvents.length === 0 ? ' has-no-events' : '';
 			const favCls = hasFavorite ? ' has-favorite' : '';
+			const mustWatchCls = hasMustWatch ? ' has-must-watch' : '';
 			const emptyTitle = dayEvents.length === 0 ? ' title="No events scheduled"' : '';
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+			const mustWatchAriaSuffix = hasMustWatch ? ', has must-watch events' : '';
 			const favAriaSuffix = hasFavorite ? ', includes favorites' : '';
-			const dayAriaLabel = `${dayNames[day.getDay()]} ${monthNames[day.getMonth()]} ${day.getDate()}, ${dayEvents.length} event${dayEvents.length !== 1 ? 's' : ''}${favAriaSuffix}`;
-			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}${favCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0" aria-label="${dayAriaLabel}">`;
+			const dayAriaLabel = `${dayNames[day.getDay()]} ${monthNames[day.getMonth()]} ${day.getDate()}, ${dayEvents.length} event${dayEvents.length !== 1 ? 's' : ''}${favAriaSuffix}${mustWatchAriaSuffix}`;
+			html += `<div class="day-item ${cls}${selectedCls}${emptyCls}${favCls}${mustWatchCls}"${emptyTitle} data-date="${this._dateKey(day)}" role="button" tabindex="0" aria-label="${dayAriaLabel}">`;
 			html += `<div class="day-label">${dayNames[day.getDay()]}</div>`;
 			html += `<div class="day-num">${day.getDate()}</div>`;
 			html += `<div class="day-dots">${dotsHtml}</div>`;
@@ -2871,6 +2874,10 @@ class Dashboard {
 			tierBadgeHtml = `<span class="row-tier-badge">${this.esc(event.tier)}</span>`;
 		}
 
+		// Streaming availability badge (collapsed row hint)
+		const hasStreaming = !isExpanded && event.streaming && event.streaming.some(s => ['streaming', 'stream', 'tv'].includes(s.type));
+		const streamingBadgeHtml = hasStreaming ? '<span class="row-streaming-badge" title="Available to stream">TV</span>' : '';
+
 		// Sport dot color
 		const sportCfg = typeof SPORT_CONFIG !== 'undefined' ? SPORT_CONFIG.find(s => s.id === event.sport) : null;
 		const dotColor = sportCfg ? sportCfg.color : 'var(--muted)';
@@ -2896,7 +2903,7 @@ class Dashboard {
 					<span class="event-sport-dot" style="background:${dotColor}"></span>
 					<span class="row-time">${timeStr}${surfaceBadgeHtml}${dayProgressHtml}${relHtml}${mustWatchPill}${aggregatePillHtml}</span>
 					${iconHtml ? `<span class="row-icons">${iconHtml}</span>` : ''}
-					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${tierBadgeHtml}${metaHtml}</span>
+					<span class="row-title${isMustWatch ? ' must-watch-title' : ''}"><span class="row-title-text">${titleHtml}</span>${norBadge}${favBadge}${subtitleHtml}${tierBadgeHtml}${streamingBadgeHtml}${metaHtml}</span>
 				</div>
 				${importanceBadgeHtml}
 				${summaryHtml}
