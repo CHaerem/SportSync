@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-21T14:43:11.288Z",
+  "generatedAt": "2026-04-21T15:33:46.199Z",
   "eventCount": 74,
   "sportCoverage": {
     "golf": {
@@ -40,41 +40,41 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 0,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2431,
+      "ageMinutes": 2481,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 4,
+      "ageMinutes": 1,
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-21"
     },
     "ai-quality.json": {
-      "ageMinutes": 0,
+      "ageMinutes": 51,
       "stale": false
     }
   },
@@ -88,7 +88,7 @@
   },
   "standingsHealth": {
     "premierLeague": true,
-    "pgaGolf": true,
+    "pgaGolf": false,
     "f1Drivers": true
   },
   "resultsHealth": {
@@ -127,21 +127,26 @@
   },
   "quotaHealth": {
     "tier": 0,
-    "fiveHour": 0,
-    "sevenDay": 40,
+    "fiveHour": 12,
+    "sevenDay": 41,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 514971,
+    "totalDuration": 394002,
     "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "discover-events",
-        "duration": 243398,
-        "share": 47
+        "duration": 137085,
+        "share": 35
+      },
+      {
+        "name": "verify-schedules",
+        "duration": 125642,
+        "share": 32
       }
     ],
     "failedSteps": []
@@ -180,12 +185,17 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2431 minutes old"
+      "message": "golf.json: data is 2481 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 25 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 26 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+    },
+    {
+      "severity": "warning",
+      "code": "standings_empty",
+      "message": "pgaGolf standings data is empty"
     },
     {
       "severity": "warning",
@@ -205,7 +215,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"discover-events\" used 47% of total pipeline time (243s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 35% of total pipeline time (137s) — optimization candidate"
+    },
+    {
+      "severity": "info",
+      "code": "step_dominant_duration",
+      "message": "Pipeline step \"verify-schedules\" used 32% of total pipeline time (126s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -225,11 +240,11 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-21T14:43:11.406Z",
+    "computedAt": "2026-04-21T15:33:46.291Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
-        "score": 0.15,
+        "score": 0.2,
         "reasons": [
           "focus team involved"
         ],
@@ -239,14 +254,14 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0,
+        "score": 0.05,
         "reasons": [],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.15,
+    "highestUrgency": 0.2,
     "urgentTargets": 0
   },
   "engagementHealth": {
@@ -279,16 +294,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
+    "text": "Pipeline is warning with 8 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "scheduleVerification": {
-    "lastChecked": "2026-04-21T14:45:16.431Z",
-    "configsChecked": 5,
-    "eventsChecked": 41,
-    "verified": 0,
-    "plausible": 6,
-    "unverified": 0,
-    "correctionsApplied": 0
   }
 }
