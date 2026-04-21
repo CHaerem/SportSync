@@ -1,102 +1,5 @@
 [
   {
-    "timestamp": "2026-03-29T02:17:14.070Z",
-    "editorial": {
-      "score": 100,
-      "mustWatchCoverage": 1,
-      "sportDiversity": 1,
-      "blockCount": 6
-    },
-    "enrichment": {
-      "score": 100,
-      "importanceCoverage": 1,
-      "summaryCoverage": 1
-    },
-    "featured": {
-      "score": 100,
-      "blockCount": 6,
-      "provider": "claude-cli",
-      "valid": true
-    },
-    "watchPlan": {
-      "pickCount": 3,
-      "avgScore": 56,
-      "streamingCoverage": 1
-    },
-    "results": {
-      "score": 87,
-      "recapHeadlineRate": 0,
-      "goalScorerCoverage": 1,
-      "footballCount": 13,
-      "freshnessScore": 1
-    },
-    "sanity": {
-      "findingCount": 22,
-      "warningCount": 20,
-      "pass": true
-    },
-    "factCheck": null,
-    "hintsApplied": [
-      "RESULTS NOTE: recapHeadlineRate is critically low (0%) — most recent results lack matching RSS headlines, so narrative should rely on match scores/standings rather than news angles."
-    ],
-    "tokenUsage": {
-      "enrichment": {
-        "input": 21633,
-        "output": 130,
-        "calls": 1,
-        "total": 21763,
-        "costUSD": 0.0535533,
-        "tracked": true,
-        "estimated": false
-      },
-      "featured": {
-        "input": 25922,
-        "output": 3144,
-        "cacheCreation": 25919,
-        "cacheRead": 0,
-        "total": 29066,
-        "costUSD": 0.14436525,
-        "tracked": true,
-        "estimated": false,
-        "calls": 1
-      },
-      "discovery": {
-        "input": 55175,
-        "output": 682,
-        "calls": 2,
-        "total": 55857,
-        "costUSD": 0.5839596,
-        "tracked": true,
-        "estimated": false
-      },
-      "multiDay": {
-        "input": 25811,
-        "output": 1890,
-        "calls": 1,
-        "total": 27701,
-        "tracked": false,
-        "estimated": true
-      },
-      "total": {
-        "input": 128541,
-        "output": 5846,
-        "calls": 5,
-        "total": 134387,
-        "costUSD": 0.78187815,
-        "realPct": 79
-      }
-    },
-    "quota": null,
-    "rollingAverage": {
-      "windowSize": 7,
-      "editorialScore": 95.714,
-      "mustWatchCoverage": 0.857,
-      "sportDiversity": 1,
-      "enrichmentScore": 100,
-      "resultsScore": 88.143
-    }
-  },
-  {
     "timestamp": "2026-03-29T06:36:15.967Z",
     "editorial": {
       "score": 100,
@@ -9663,6 +9566,108 @@
       }
     },
     "quota": null,
+    "rollingAverage": {
+      "windowSize": 7,
+      "editorialScore": 94.714,
+      "mustWatchCoverage": 0.857,
+      "sportDiversity": 0.971,
+      "enrichmentScore": 100,
+      "resultsScore": 91
+    }
+  },
+  {
+    "timestamp": "2026-04-21T06:52:28.104Z",
+    "editorial": {
+      "score": 100,
+      "mustWatchCoverage": 1,
+      "sportDiversity": 1,
+      "blockCount": 8
+    },
+    "enrichment": {
+      "score": 100,
+      "importanceCoverage": 1,
+      "summaryCoverage": 1
+    },
+    "featured": {
+      "score": 100,
+      "blockCount": 8,
+      "provider": "claude-cli",
+      "valid": true
+    },
+    "watchPlan": {
+      "pickCount": 3,
+      "avgScore": 71,
+      "streamingCoverage": 1
+    },
+    "results": {
+      "score": 93,
+      "recapHeadlineRate": 1,
+      "goalScorerCoverage": 1,
+      "footballCount": 25,
+      "freshnessScore": 1
+    },
+    "sanity": {
+      "findingCount": 39,
+      "warningCount": 37,
+      "pass": true
+    },
+    "factCheck": null,
+    "hintsApplied": [
+      "SANITY: Previous brief had content issues: Featured block references \"\udfbe Madrid Open underway — Ruud begins clay campaign at Masters 1000 Madrid\" which may not match any event; Featured mentions \"Los Blancos\" but no matching athlete found in events data; Featured mentions \"European\" but no matching athlete found in events data; Featured mentions \"Masters\" but no matching athlete found in events data. Verify all claims against provided data."
+    ],
+    "tokenUsage": {
+      "enrichment": {
+        "input": 23901,
+        "output": 1649,
+        "calls": 1,
+        "total": 25550,
+        "costUSD": 0.11549150000000001,
+        "tracked": true,
+        "estimated": false
+      },
+      "featured": {
+        "input": 66054,
+        "output": 10241,
+        "cacheCreation": 28024,
+        "cacheRead": 38024,
+        "total": 76295,
+        "costUSD": 0.2747262,
+        "tracked": true,
+        "estimated": false,
+        "calls": 1
+      },
+      "discovery": {
+        "input": 73067,
+        "output": 2515,
+        "calls": 1,
+        "total": 75582,
+        "costUSD": 0.9179810000000002,
+        "tracked": true,
+        "estimated": false
+      },
+      "multiDay": {
+        "input": 62615,
+        "output": 6596,
+        "calls": 1,
+        "total": 69211,
+        "tracked": false,
+        "estimated": true
+      },
+      "total": {
+        "input": 225637,
+        "output": 21001,
+        "calls": 4,
+        "total": 246638,
+        "costUSD": 1.3081987000000002,
+        "realPct": 72
+      }
+    },
+    "quota": {
+      "tier": 0,
+      "model": null,
+      "enrichmentModel": "claude-sonnet-4-6",
+      "featuredModel": "default"
+    },
     "rollingAverage": {
       "windowSize": 7,
       "editorialScore": 94.714,

@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-04-05T09:18:17.830Z",
-      "tasks": [],
-      "skipped": "No tasks needed",
-      "tokenUsage": null
-    },
-    {
       "timestamp": "2026-04-05T14:14:45.863Z",
       "tasks": [
         {
@@ -699,6 +693,35 @@
         "calls": 1,
         "total": 75582,
         "costUSD": 0.9179810000000002,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-04-21T06:44:08.289Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "fifa-world-cup-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 11
+        },
+        {
+          "type": "refresh-bracket",
+          "target": "esports-cs2-2026.json",
+          "reason": "Active tournament bracket refresh: CCT Season 3 Global Finals",
+          "outcome": "success",
+          "bracketUpdated": true
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 132394,
+        "output": 8712,
+        "calls": 2,
+        "total": 141106,
+        "costUSD": 1.7032779500000002,
         "tracked": true,
         "estimated": false
       }

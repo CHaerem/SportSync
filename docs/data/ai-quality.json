@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-04-21T02:15:04.070Z",
+  "generatedAt": "2026-04-21T06:52:28.097Z",
   "featured": {
     "provider": "claude-cli",
     "model": "default",
-    "quotaTier": null,
+    "quotaTier": 0,
     "quotaModel": null,
     "attempts": 1,
     "valid": true,
     "score": 100,
     "issues": [],
     "blockCount": 8,
-    "generationMs": 125874,
+    "generationMs": 161184,
     "tokenUsage": {
-      "input": 62615,
-      "output": 6596,
-      "cacheCreation": 34379,
-      "cacheRead": 28230,
-      "total": 69211,
-      "costUSD": 0.24094525,
+      "input": 66054,
+      "output": 10241,
+      "cacheCreation": 28024,
+      "cacheRead": 38024,
+      "total": 76295,
+      "costUSD": 0.2747262,
       "tracked": true,
       "estimated": false,
       "calls": 1
@@ -64,14 +64,14 @@
     "quotaTier": 0,
     "quotaModel": null,
     "before": {
-      "totalEvents": 69,
+      "totalEvents": 73,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
-      "tagsCoverage": 1
+      "tagsCoverage": 0.945
     },
     "after": {
-      "totalEvents": 69,
+      "totalEvents": 73,
       "importanceCoverage": 1,
       "summaryCoverage": 1,
       "relevanceCoverage": 1,
@@ -80,24 +80,24 @@
     "score": 100,
     "valid": true,
     "issues": [],
-    "fallbackFieldsFilled": 0,
-    "aiUpdatedFields": 0,
+    "fallbackFieldsFilled": 4,
+    "aiUpdatedFields": 5,
     "failedBatches": 0,
-    "totalEvents": 69,
+    "totalEvents": 73,
     "skipStats": {
-      "total": 69,
-      "unchanged": 69,
-      "enriched": 0,
-      "skipRate": 1
+      "total": 73,
+      "unchanged": 68,
+      "enriched": 5,
+      "skipRate": 0.93
     },
-    "tokensPerEvent": 0,
+    "tokensPerEvent": 5110,
     "hintsApplied": [],
     "tokenUsage": {
-      "input": 0,
-      "output": 0,
-      "calls": 0,
-      "total": 0,
-      "costUSD": 0,
+      "input": 23901,
+      "output": 1649,
+      "calls": 1,
+      "total": 25550,
+      "costUSD": 0.11549150000000001,
       "tracked": true,
       "estimated": false
     }
