@@ -463,9 +463,9 @@ function mustWatchCoverage(blocks, events) {
 			const words = significantWords(n);
 			if (words.length === 0) return false;
 			if (words.every(w => allTextNorm.includes(w))) return true;
-			// Sponsor-prefix fallback: drop first word when >= 4 sig words remain before drop
-			// (ensures >= 3 words still required to avoid false positives)
-			if (words.length >= 4 && words.slice(1).every(w => allTextNorm.includes(w))) return true;
+			// Sponsor-prefix fallback: drop first word when >= 3 sig words
+			// (e.g. "Mutua Madrid Open" → LLM writes "Madrid Open")
+			if (words.length >= 3 && words.slice(1).every(w => allTextNorm.includes(w))) return true;
 			return false;
 		})) covered++;
 	}

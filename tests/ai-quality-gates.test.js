@@ -436,10 +436,29 @@ describe("evaluateEditorialQuality()", () => {
 		expect(result.metrics.mustWatchCoverage).toBe(1);
 	});
 
-	it("does not false-positive on vague sponsor-prefix drop (short title without enough words)", () => {
-		// If only 3 significant words total, dropping the first would leave just 2 — too vague.
-		// "Grand Prix Monaco" has 3 sig words; after drop only "prix" + "monaco" remain (2 words).
-		// A block saying "grand prix weekend" should NOT match the Monaco event via fuzzy.
+	it("matches 3-word sponsor-prefixed tennis event (Mutua Madrid Open → Madrid Open)", () => {
+		const events = [
+			{
+				sport: "tennis",
+				title: "Mutua Madrid Open",
+				tournament: "ATP/WTA Tour",
+				importance: 4,
+				time: "2026-04-20T04:00:00.000Z",
+				endTime: "2026-05-04T03:59:00.000Z",
+			},
+		];
+		const featured = {
+			blocks: [
+				{ type: "event-line", text: "🎾 Madrid Open underway — Ruud begins clay campaign at Masters 1000 Madrid" },
+			],
+		};
+		const result = evaluateEditorialQuality(featured, events, { now: new Date("2026-04-20T12:00:00Z") });
+		expect(result.metrics.mustWatchCoverage).toBe(1);
+	});
+
+	it("does not false-positive on vague sponsor-prefix drop (remaining words too generic)", () => {
+		// "Grand Prix Monaco" has 3 sig words; after drop only "prix" + "monaco" remain.
+		// A block saying "grand prix weekend" should NOT match because "monaco" is absent.
 		const events = [
 			{
 				sport: "f1",

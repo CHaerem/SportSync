@@ -182,10 +182,15 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 
 ## Pending Tasks
 
-- [PENDING] [MAINTENANCE] **Verify-schedules persistent timeout investigation** — Step has been failing for 20+ consecutive runs at 180s timeout (56% of pipeline time). Run 46 fixed per-call timeout (120s→40s) but step still times out. Root cause: too many configs to verify or blocking web searches. Investigate how many configs are verified per run and whether async web fetching would help. Quality pillar.
+- [PENDING] [MAINTENANCE] **News section client-side sport tagging** — RSS items are tagged "general" instead of specific sports, making sport filter pills ineffective for the Headlines section. Client-side keyword matching on headline text would restore filtering. Quality pillar.
+- [PENDING] [MAINTENANCE] **F1 standings team names** — F1 mini table shows Driver/Pts/Wins but the `team` field is always empty string. Data fix in `fetch-standings.js` + rendering in `standings-renderer.js`. Quality pillar.
 
 ### Recently Completed
 
+- [DONE] [MAINTENANCE] **mustWatchCoverage sponsor-prefix fix (editorial 97→70 collapse)** — Metric collapsed because "Mutua Madrid Open" (3 significant words) wasn't matched by the sponsor-prefix fallback which required >= 4 words. LLM wrote "Madrid Open" (dropped sponsor). Fix: lowered threshold from >= 4 to >= 3 significant words. +1 regression test. Direct-to-main. Run 53.
+- [DONE] [MAINTENANCE] **Streaming badge on collapsed event rows** — Added muted "TV" badge on collapsed rows when event has streaming entries. Users can now see at a glance which events are available to watch without expanding. PR #170 (merged). Run 53.
+- [DONE] [MAINTENANCE] **Must-watch indicator on day navigator** — Days with importance >= 4 events get a subtle accent border-bottom in the day strip. Helps users spot high-value days when planning. PR #170 (merged). Run 53.
+- [DONE] [MAINTENANCE] **Verify-schedules timeout — resolved** — Step was failing for 2 months (Feb–Apr). Run 46 fixed per-call timeout (120s→40s). Now succeeds consistently at ~119s within 180s budget. 5 configs / 41 events verified per run. No further action needed. Run 53.
 - [DONE] [MAINTENANCE] **Favorite-team accent on result cards — verify rendering** — CSS review confirms: `--accent` has good contrast on both light/dark backgrounds, star `::after` on `.result-header` flex layout positions correctly after FT badge, both grouped and single cards apply class correctly. No code changes needed. Run 52.
 - [DONE] [MAINTENANCE] **RSS headlines in expanded event view** — Added `_findRelatedHeadlines(event)` method: extracts keywords from team names, tournament, and player last names, matches against rss-digest.json items, returns up to 2 deduplicated headlines. Rendered as "Related news" section in expanded view with muted styling and accent hover. PR #166 (merged). Run 52.
 - [DONE] [MAINTENANCE] **Favorite buttons for non-football sports** — Extended team-favorite star buttons to esports (from participants), F1 (from title "vs" patterns), and cycling (from norwegianPlayers team metadata). New `_extractTeamNames()` handles "Tournament - Team A vs Team B" title patterns. Both team and player buttons render in same container. PR #166 (merged). Run 52.
@@ -335,6 +340,8 @@ Detect sudden metric drops that indicate a regression or environmental change (e
 | 2. Code | ~97% | 2026-04-16 | Fixed complexity analyzer duplicate file scanning (scanDirs recursion bug). Run 51 |
 | 4. Personalization | ~88% | 2026-04-17 | RSS headlines in expanded view (contextual news per event), favorite buttons for all sports (esports, F1, cycling). PR #166. Run 52 |
 | 2. Code | ~98% | 2026-04-17 | 49 new tests: computeEnrichHash (28) + run-recipes core (21). 2776 tests across 89 files. Run 52 |
+| 5. Quality | ~100% | 2026-04-21 | mustWatchCoverage sponsor-prefix fix (3-word titles now matched). Streaming badge on collapsed rows. Must-watch day-nav indicator. PR #170. Run 53 |
+| 4. Personalization | ~89% | 2026-04-21 | Streaming badge surfaces "where to watch" at scan level. Day-nav accent highlights must-watch days for planning. 2803 tests. Run 53 |
 | 1. Data | ~98% | 2026-04-17 | 100 Thieves CS2 coverage: 3 new tournaments (ESL Challenger, IEM Dallas, BLAST Spring Final) + IEM Cologne roster. Run 52 |
 
 ### Run History Insights

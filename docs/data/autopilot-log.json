@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "date": "2026-04-21",
+      "task": "Metric collapse fix (editorial 97→70) + 2 UX improvements (streaming badge, day-nav must-watch) + verify-schedules resolved",
+      "outcome": "completed",
+      "pr": "PR #170 (merged via --auto --squash) + direct-to-main (1 commit)",
+      "details": "Run 53: 0 user feedback, 0 open autopilot PRs, 1 pending task (verify-schedules investigation). Metric collapse detection (heuristic L): editorial score 97→70, mustWatchCoverage 1→0 in latest pipeline run. Root cause: sponsor-prefix fallback in mustWatchCoverage required >= 4 significant words before dropping first word, but 'Mutua Madrid Open' has only 3 — LLM wrote 'Madrid Open' (dropped sponsor). Fix: lowered threshold to >= 3. +1 regression test. 2 parallel scouts (UX: 7 findings, Code: in progress). Best UX picks: (1) Streaming 'TV' badge on collapsed event rows — surfaces watchability at scan level without expanding. (2) Must-watch accent border on day-nav items — helps users spot high-value days. PR #170 merged (14 lines). Verify-schedules task: step now succeeds at 119s (within 180s budget) after Run 46 fixes — no longer failing. Marked resolved, 2 new PENDING tasks scouted from UX findings. 2803 tests pass. Autonomy: 13/13 (100%). User-visible/infrastructure ratio: 67%/33% (2 UX improvements + 1 metric fix / 1 verify-schedules investigation).",
+      "tests_passed": true,
+      "files_changed": 4,
+      "turns_used": 22,
+      "lesson": "Metric collapse detection (heuristic L) caught a real regression that the hint system would have self-corrected eventually — but fixing the root cause (fuzzy matching threshold) is faster and permanent. The sponsor-prefix fallback with >= 4 words was too conservative for 3-word tournament names like 'Mutua Madrid Open'. With >= 3, the remaining 2 words ('Madrid Open') still provide sufficient specificity. UX scouting found 7 opportunities — news sport tagging and F1 standings team names added as pending tasks for next run.",
+      "scouted": 2
+    },
+    {
       "date": "2026-04-16",
       "task": "Scouting + execution: 4 UX personalization + 1 data config fix + 1 code bug fix",
       "outcome": "completed",
