@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-21T19:31:40.728Z",
+  "generatedAt": "2026-04-21T20:22:09.891Z",
   "eventCount": 69,
   "sportCoverage": {
     "golf": {
@@ -9,8 +9,8 @@
     },
     "football": {
       "count": 36,
-      "previousCount": 39,
-      "delta": -3
+      "previousCount": 36,
+      "delta": 0
     },
     "esports": {
       "count": 2,
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2719,
+      "ageMinutes": 2770,
       "stale": true
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 289,
+      "ageMinutes": 339,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-21"
     },
     "ai-quality.json": {
-      "ageMinutes": 289,
+      "ageMinutes": 339,
       "stale": false
     }
   },
@@ -83,7 +83,7 @@
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 39,
     "healthy": true
   },
   "standingsHealth": {
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 289 minutes old (stale > 240m)",
+      "Day snapshots are 339 minutes old (stale > 240m)",
       "Snapshot 2026-04-21: 5 events but events.json has 0"
     ],
     "snapshotCount": 15
@@ -137,19 +137,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 52231,
+    "totalDuration": 50518,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 28517,
-        "share": 55
+        "duration": 26521,
+        "share": 52
       },
       {
         "name": "fetch-results",
-        "duration": 38403,
-        "share": 74
+        "duration": 36648,
+        "share": 73
       }
     ],
     "failedSteps": []
@@ -188,12 +188,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2719 minutes old"
+      "message": "golf.json: data is 2770 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 30 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 31 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -208,7 +208,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 289 minutes old (stale > 240m)"
+      "message": "Day snapshots are 339 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -228,12 +228,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 55% of total pipeline time (29s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 52% of total pipeline time (27s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 74% of total pipeline time (38s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 73% of total pipeline time (37s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -253,31 +253,31 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-21T19:31:40.821Z",
+    "computedAt": "2026-04-21T20:22:09.983Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
-        "score": 0.39,
+        "score": 0.4,
         "reasons": [
-          "overdue by 195%",
+          "overdue by 200%",
           "focus team involved"
         ],
         "suggestedQuotaPriority": 2,
-        "suggestedRefreshIntervalMs": 21600000,
+        "suggestedRefreshIntervalMs": 7200000,
         "suggestedStalenessThresholdMinutes": 180
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.24,
+        "score": 0.29,
         "reasons": [
-          "overdue by 144%"
+          "overdue by 186%"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 21600000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.39,
+    "highestUrgency": 0.4,
     "urgentTargets": 1
   },
   "engagementHealth": {
