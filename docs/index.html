@@ -287,6 +287,8 @@
 			line-height: 1;
 		}
 		.day-item.is-today.has-favorite .day-num::after { color: #fff; opacity: 0.85; }
+		.day-item.has-must-watch:not(.is-today) { border-bottom: 2px solid rgba(194,90,52,0.4); }
+		.dark .day-item.has-must-watch:not(.is-today) { border-bottom: 2px solid rgba(220,120,80,0.45); }
 		/* backward compat: old day nav classes */
 		.day-nav-arrow {
 			background: none; border: none; font-size: 0.75rem; color: var(--muted); cursor: pointer; padding: 4px 8px; transition: color 0.15s; line-height: 1;
@@ -965,6 +967,8 @@
 		/* Esports tier badge in collapsed row */
 		.row-tier-badge { display: inline-block; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.05em; font-variant: small-caps; color: var(--muted); background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 3px; padding: 1px 4px; margin-left: 5px; vertical-align: middle; line-height: 1.4; }
 		.dark .row-tier-badge { color: var(--muted); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+		.row-streaming-badge { font-size: 0.5rem; font-weight: 600; letter-spacing: 0.04em; color: var(--muted-light); margin-left: 5px; vertical-align: middle; opacity: 0.7; }
+		.dark .row-streaming-badge { color: var(--muted); opacity: 0.8; }
 		/* Golf playing-with subtitle in collapsed row */
 		.row-playing-with { font-size: 0.65rem; color: var(--muted); padding: 1px 0 2px 22px; line-height: 1.3; }
 
