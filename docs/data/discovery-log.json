@@ -1,32 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-04-05T14:14:45.863Z",
-      "tasks": [
-        {
-          "type": "refresh-athletes",
-          "target": "cycling-grand-tours-2026.json",
-          "reason": "Athletes last refreshed 2026-03-29",
-          "outcome": "success",
-          "changes": [
-            "Added Jørgen Nordhagen (Visma-Lease a Bike, born 2005 — standout climber, 9th GC at UAE Tour 2026, strong grand tour prospect)",
-            "Added Embret Svestad-Bardseng (INEOS Grenadiers, born 2002 — mountain specialist, 22nd at Giro d'Italia debut)",
-            "Added Fredrik Dversnes (Uno-X Mobility, born 1997 — stage winner Tirreno-Adriatico 2025 and Arctic Race of Norway 2025)"
-          ]
-        }
-      ],
-      "skipped": null,
-      "tokenUsage": {
-        "input": 56958,
-        "output": 913,
-        "calls": 1,
-        "total": 57871,
-        "costUSD": 1.1673391499999999,
-        "tracked": true,
-        "estimated": false
-      }
-    },
-    {
       "timestamp": "2026-04-05T22:10:01.926Z",
       "tasks": [],
       "skipped": "No tasks needed",
@@ -722,6 +696,35 @@
         "calls": 2,
         "total": 141106,
         "costUSD": 1.7032779500000002,
+        "tracked": true,
+        "estimated": false
+      }
+    },
+    {
+      "timestamp": "2026-04-21T13:37:48.774Z",
+      "tasks": [
+        {
+          "type": "new-config",
+          "target": "fifa-world-cup-2026.json",
+          "reason": "needsResearch flag set",
+          "outcome": "success",
+          "eventsFound": 11
+        },
+        {
+          "type": "refresh-bracket",
+          "target": "esports-cs2-2026.json",
+          "reason": "Active tournament bracket refresh: CCT Season 3 Global Finals",
+          "outcome": "success",
+          "bracketUpdated": true
+        }
+      ],
+      "skipped": null,
+      "tokenUsage": {
+        "input": 133712,
+        "output": 6871,
+        "calls": 2,
+        "total": 140583,
+        "costUSD": 1.5162521,
         "tracked": true,
         "estimated": false
       }

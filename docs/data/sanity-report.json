@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-04-21T06:52:29.922Z",
+  "generatedAt": "2026-04-21T13:43:39.496Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 73,
+    "totalEvents": 74,
     "sports": [
       "golf",
       "football",
       "esports",
+      "chess",
       "tennis",
       "f1",
       "cycling"
@@ -29,6 +30,7 @@
       ],
       "thisWeek": [
         "BIG vs 100 Thieves — CCT Global Finals 2026",
+        "Round of 16 | Game 1 – 2026 Chess.com Open | Playoffs | Winners",
         "Sevilla at Levante",
         "Espanyol at Rayo Vallecano",
         "Villarreal at Real Oviedo",
@@ -101,7 +103,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 9
+    "issueCount": 12
   },
   "findings": [
     {
@@ -270,31 +272,36 @@
       "message": "\"Abu Dhabi Grand Prix 2026\" is 229 days away — may clutter the dashboard"
     },
     {
-      "severity": "warning",
-      "check": "stale_dashboard",
-      "message": "Dashboard data is 5 hours old"
+      "severity": "info",
+      "check": "featured_orphan_ref",
+      "message": "Featured block references \"19:00 — Valencia vs Mallorca\" which may not match any event"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Los Blancos\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Man City\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Tonight\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
-      "check": "brief_league_conflation",
-      "message": "Block mixes PL standings language with non-PL team: \"Barcelona sit nine points clear with seven games left — mathematically alive, bu...\""
+      "check": "featured_unknown_athlete",
+      "message": "Featured mentions \"Porto\" but no matching athlete found in events data"
+    },
+    {
+      "severity": "info",
+      "check": "norwegian_flag_no_players",
+      "message": "\"Round of 16 | Game 1 – 2026 Chess.com Open | Playoffs | Winners\" marked norwegian=true but has no norwegianPlayers"
     }
   ],
   "summary": {
-    "total": 37,
+    "total": 38,
     "critical": 0,
-    "warning": 37,
-    "info": 0
+    "warning": 36,
+    "info": 2
   },
   "pass": true,
   "tokenUsage": null
