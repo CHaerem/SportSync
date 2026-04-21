@@ -1,46 +1,9 @@
 {
   "schemaVersion": 1,
   "date": "2026-04-22",
-  "generatedAt": "2026-04-20T22:24:09.238Z",
+  "generatedAt": "2026-04-21T02:15:19.612Z",
   "events": {
     "upcoming": [
-      {
-        "sport": "tennis",
-        "tournament": "ATP/WTA Tour",
-        "title": "Mutua Madrid Open",
-        "time": "2026-04-20T04:00:00.000Z",
-        "endTime": "2026-05-04T03:59:00.000Z",
-        "venue": "TBD",
-        "meta": "ATP/WTA Tour",
-        "norwegian": true,
-        "streaming": [
-          {
-            "platform": "Discovery+",
-            "url": "https://www.discoveryplus.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": null,
-        "awayTeam": null,
-        "isFavorite": false,
-        "importance": 4,
-        "importanceReason": "Masters 1000 event, one of tennis's most prestigious clay tournaments",
-        "summary": "Mutua Madrid Open begins — a Masters 1000 clay event where Casper Ruud is historically strong and often contends.",
-        "tags": [
-          "must-watch",
-          "major",
-          "norwegian-player"
-        ],
-        "norwegianRelevance": 4,
-        "enrichedAt": "2026-04-20T22:22:20.709Z",
-        "_enrichHash": "6a7b0fc2e05e51432d2b28548ddc8bda"
-      },
       {
         "sport": "football",
         "tournament": "La Liga",
@@ -52,9 +15,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -75,7 +39,9 @@
         ],
         "norwegianRelevance": 1,
         "enrichedAt": "2026-04-20T22:22:20.710Z",
-        "_enrichHash": "52c477cea744ffce85b98deda5403596"
+        "_enrichHash": "52c477cea744ffce85b98deda5403596",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -88,9 +54,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -110,7 +77,9 @@
         ],
         "norwegianRelevance": 1,
         "enrichedAt": "2026-04-20T22:22:20.710Z",
-        "_enrichHash": "9577f968c973dc1de2168bfc4b3c60a3"
+        "_enrichHash": "9577f968c973dc1de2168bfc4b3c60a3",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -124,8 +93,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -145,7 +121,9 @@
         ],
         "norwegianRelevance": 2,
         "enrichedAt": "2026-04-20T22:22:20.710Z",
-        "_enrichHash": "da10cc734a7de160e68e089cbd27cb8d"
+        "_enrichHash": "da10cc734a7de160e68e089cbd27cb8d",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -159,8 +137,15 @@
         "streaming": [
           {
             "platform": "Viaplay",
-            "url": "https://viaplay.no",
-            "type": "streaming"
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
+          },
+          {
+            "platform": "Vsport",
+            "url": "",
+            "type": "unknown",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -181,7 +166,9 @@
         ],
         "norwegianRelevance": 2,
         "enrichedAt": "2026-04-20T22:22:20.710Z",
-        "_enrichHash": "cfc302de206c011924eed8cf8bce8a0f"
+        "_enrichHash": "cfc302de206c011924eed8cf8bce8a0f",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       },
       {
         "sport": "football",
@@ -194,9 +181,10 @@
         "norwegian": false,
         "streaming": [
           {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
+            "platform": "Viaplay",
+            "url": "https://viaplay.no/sport/fotball/",
+            "type": "streaming",
+            "source": "tvkampen"
           }
         ],
         "participants": [],
@@ -217,7 +205,9 @@
         ],
         "norwegianRelevance": 3,
         "enrichedAt": "2026-04-20T22:22:20.710Z",
-        "_enrichHash": "f919f20175ff7ce11aafff29e987c927"
+        "_enrichHash": "f919f20175ff7ce11aafff29e987c927",
+        "streamingSource": "tvkampen",
+        "streamingConfidence": 1
       }
     ],
     "results": []
@@ -227,9 +217,8 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 6,
+    "eventCount": 5,
     "sportsCovered": [
-      "tennis",
       "football"
     ],
     "hasResults": false,

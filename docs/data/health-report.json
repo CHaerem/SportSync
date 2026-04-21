@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-04-20T21:25:45.105Z",
-  "eventCount": 69,
+  "generatedAt": "2026-04-21T02:15:20.793Z",
+  "eventCount": 73,
   "sportCoverage": {
     "golf": {
       "count": 1,
       "previousCount": 1,
       "delta": 0
     },
-    "tennis": {
-      "count": 4,
-      "previousCount": 4,
-      "delta": 0
-    },
     "football": {
-      "count": 39,
+      "count": 41,
       "previousCount": 39,
-      "delta": 0
+      "delta": 2
     },
     "esports": {
       "count": 2,
       "previousCount": 2,
       "delta": 0
+    },
+    "tennis": {
+      "count": 6,
+      "previousCount": 4,
+      "delta": 2
     },
     "f1": {
       "count": 21,
@@ -40,38 +40,38 @@
   },
   "dataFreshness": {
     "chess.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 3,
       "stale": false
     },
     "cycling.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 3,
       "stale": false
     },
     "esports.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 3,
       "stale": false
     },
     "f1.json": {
-      "ageMinutes": 6,
+      "ageMinutes": 3,
       "stale": false
     },
     "football.json": {
-      "ageMinutes": 5,
+      "ageMinutes": 3,
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 1393,
+      "ageMinutes": 1683,
       "stale": true
     },
     "tennis.json": {
-      "ageMinutes": 1394,
-      "stale": true
+      "ageMinutes": 3,
+      "stale": false
     },
     "featured.json": {
       "ageMinutes": 0,
       "stale": false,
       "dateCoherent": true,
-      "featuredDate": "2026-04-20"
+      "featuredDate": "2026-04-21"
     },
     "ai-quality.json": {
       "ageMinutes": 0,
@@ -79,11 +79,11 @@
     }
   },
   "schemaCompleteness": {
-    "venuePercent": 0.96,
+    "venuePercent": 0.93,
     "streamingPercent": 1
   },
   "rssFeedHealth": {
-    "itemCount": 38,
+    "itemCount": 39,
     "healthy": true
   },
   "standingsHealth": {
@@ -96,23 +96,21 @@
     "stale": false,
     "footballCount": 25,
     "validationPassRate": 0.96,
-    "recapHeadlineRate": 0,
+    "recapHeadlineRate": 0.04,
     "issues": []
   },
   "streamingHealth": {
     "present": true,
     "tvkampenReachable": true,
-    "matchRate": 0.18,
+    "matchRate": 0.33,
     "relevantMatchRate": 1,
-    "eventsEnriched": 5,
+    "eventsEnriched": 10,
     "trend": "stable",
     "pendingAliasSuggestions": 0
   },
   "snapshotHealth": {
     "present": true,
-    "issues": [
-      "1 boundary day snapshot(s) outside event range (expected)"
-    ],
+    "issues": [],
     "snapshotCount": 15
   },
   "uxHealth": {
@@ -128,27 +126,22 @@
     "unavailableSince": null
   },
   "quotaHealth": {
-    "tier": null,
-    "fiveHour": null,
-    "sevenDay": null,
+    "tier": 0,
+    "fiveHour": 0,
+    "sevenDay": 37,
     "model": null,
     "stepsSkipped": 0,
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 50491,
-    "stepCount": 25,
+    "totalDuration": 429698,
+    "stepCount": 32,
     "timeoutHits": [],
     "dominantSteps": [
       {
-        "name": "fetch-sports",
-        "duration": 30326,
-        "share": 60
-      },
-      {
-        "name": "fetch-results",
-        "duration": 39807,
-        "share": 79
+        "name": "discover-events",
+        "duration": 155842,
+        "share": 36
       }
     ],
     "failedSteps": []
@@ -190,22 +183,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 1393 minutes old"
-    },
-    {
-      "severity": "warning",
-      "code": "stale_data",
-      "message": "tennis.json: data is 1394 minutes old"
+      "message": "golf.json: data is 1683 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 14 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
-    },
-    {
-      "severity": "warning",
-      "code": "chronic_data_retention",
-      "message": "tennis: data retained 14 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 16 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -220,12 +203,7 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (30s) — optimization candidate"
-    },
-    {
-      "severity": "info",
-      "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 79% of total pipeline time (40s) — optimization candidate"
+      "message": "Pipeline step \"discover-events\" used 36% of total pipeline time (156s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -245,7 +223,7 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-20T21:25:45.224Z",
+    "computedAt": "2026-04-21T02:15:20.907Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
@@ -260,8 +238,10 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0,
-        "reasons": [],
+        "score": 0.2,
+        "reasons": [
+          "overdue by 96%"
+        ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 43200000,
         "suggestedStalenessThresholdMinutes": 360
@@ -272,7 +252,7 @@
   },
   "engagementHealth": {
     "status": "ok",
-    "ageHours": 1,
+    "ageHours": 4,
     "avgSessionMinutes": 0,
     "preferredBlocks": [],
     "hintCount": 0,
@@ -300,20 +280,7 @@
   },
   "complexityHealth": null,
   "statusSummary": {
-    "text": "Pipeline is warning with 9 warning issue(s). Editorial quality score is 97/100.",
+    "text": "Pipeline is warning with 7 warning issue(s). Editorial quality score is 100/100.",
     "tokenUsage": null
-  },
-  "scheduleVerification": {
-    "lastChecked": "2026-04-20T22:26:09.405Z",
-    "configsChecked": 5,
-    "eventsChecked": 41,
-    "verified": 1,
-    "plausible": 40,
-    "unverified": 0,
-    "correctionsApplied": 0
-  },
-  "qualityRegression": {
-    "issues": [],
-    "hasRegression": false
   }
 }

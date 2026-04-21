@@ -1,14 +1,14 @@
 {
-  "lastUpdated": "2026-04-19T22:12:14.510Z",
+  "lastUpdated": "2026-04-21T02:12:26.705Z",
   "source": "ESPN Tennis API",
   "tournaments": [
     {
       "name": "ATP/WTA Tour",
       "events": [
         {
-          "id": "tennis-mutua-madrid-open-1776657600000",
-          "title": "Mutua Madrid Open",
-          "time": "2026-04-20T04:00:00.000Z",
+          "id": "tennis-l'open-35-de-saint-malo-1777262400000",
+          "title": "L'Open 35 de Saint Malo",
+          "time": "2026-04-27T04:00:00.000Z",
           "endTime": "2026-05-04T03:59:00.000Z",
           "venue": "TBD",
           "sport": "tennis",
@@ -21,7 +21,63 @@
               "type": "streaming"
             }
           ],
-          "norwegian": true,
+          "norwegian": false,
+          "homeTeam": "",
+          "awayTeam": "",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "isFavorite": false,
+          "additional": {
+            "status": "STATUS_SCHEDULED",
+            "_isTournament": "true"
+          }
+        },
+        {
+          "id": "tennis-catalonia-open-solgironès-1777262400000",
+          "title": "Catalonia Open Solgironès",
+          "time": "2026-04-27T04:00:00.000Z",
+          "endTime": "2026-05-04T03:59:00.000Z",
+          "venue": "TBD",
+          "sport": "tennis",
+          "meta": "ATP/WTA Tour",
+          "tournament": "ATP/WTA Tour",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "",
+          "awayTeam": "",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "isFavorite": false,
+          "additional": {
+            "status": "STATUS_SCHEDULED",
+            "_isTournament": "true"
+          }
+        },
+        {
+          "id": "tennis-huzhou-open-1777262400000",
+          "title": "Huzhou Open",
+          "time": "2026-04-27T04:00:00.000Z",
+          "endTime": "2026-05-04T03:59:00.000Z",
+          "venue": "TBD",
+          "sport": "tennis",
+          "meta": "ATP/WTA Tour",
+          "tournament": "ATP/WTA Tour",
+          "streaming": [
+            {
+              "platform": "Discovery+",
+              "url": "https://www.discoveryplus.no",
+              "type": "streaming"
+            }
+          ],
+          "norwegian": false,
           "homeTeam": "",
           "awayTeam": "",
           "participants": [],
@@ -43,10 +99,5 @@
       "failedLeagueNames": [],
       "coverageRatio": 1
     }
-  },
-  "_retained": {
-    "since": "2026-04-20T09:23:10.703Z",
-    "consecutiveRetains": 15,
-    "lastFreshFetch": "2026-04-19T22:12:14.510Z"
   }
 }
