@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-21T14:43:11.479Z",
+  "generatedAt": "2026-04-21T22:26:03.907Z",
   "provider": "rules-only",
   "snapshot": {
-    "totalEvents": 74,
+    "totalEvents": 69,
     "sports": [
       "golf",
       "football",
@@ -14,13 +14,7 @@
     ],
     "bands": {
       "live": [],
-      "today": [
-        "Osasuna at Athletic Club",
-        "Valencia at Mallorca",
-        "Chelsea at Brighton & Hove Albion",
-        "Real Betis at Girona",
-        "Alavés at Real Madrid"
-      ],
+      "today": [],
       "tomorrow": [
         "Atlético Madrid at Elche",
         "Getafe at Real Sociedad",
@@ -103,7 +97,7 @@
     "briefPresent": true,
     "pipelineStatus": "warning",
     "editorialScore": 100,
-    "issueCount": 10
+    "issueCount": 15
   },
   "findings": [
     {
@@ -274,12 +268,7 @@
     {
       "severity": "warning",
       "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Drop\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Los Blancos\" but no matching athlete found in events data"
+      "message": "Featured mentions \"Meanwhile Barcelona\" but no matching athlete found in events data"
     },
     {
       "severity": "warning",
@@ -287,30 +276,15 @@
       "message": "Featured mentions \"Carlsen\" but no matching athlete found in events data"
     },
     {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Porto\" but no matching athlete found in events data"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_unknown_athlete",
-      "message": "Featured mentions \"Seville\" but no matching athlete found in events data"
-    },
-    {
       "severity": "info",
       "check": "norwegian_flag_no_players",
       "message": "\"Round of 16 | Game 1 – 2026 Chess.com Open | Playoffs | Winners\" marked norwegian=true but has no norwegianPlayers"
-    },
-    {
-      "severity": "warning",
-      "check": "featured_time_mismatch",
-      "message": "Featured shows \"21:00\" for \"Real Betis at Girona\" but events.json has 21:30"
     }
   ],
   "summary": {
-    "total": 40,
+    "total": 36,
     "critical": 0,
-    "warning": 39,
+    "warning": 35,
     "info": 1
   },
   "pass": true,
