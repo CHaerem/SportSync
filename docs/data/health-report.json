@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-21T11:29:17.711Z",
+  "generatedAt": "2026-04-21T12:28:27.093Z",
   "eventCount": 74,
   "sportCoverage": {
     "golf": {
@@ -19,8 +19,8 @@
     },
     "chess": {
       "count": 1,
-      "previousCount": 0,
-      "delta": 1
+      "previousCount": 1,
+      "delta": 0
     },
     "tennis": {
       "count": 6,
@@ -60,7 +60,7 @@
       "stale": false
     },
     "golf.json": {
-      "ageMinutes": 2237,
+      "ageMinutes": 2296,
       "stale": true
     },
     "tennis.json": {
@@ -68,13 +68,13 @@
       "stale": false
     },
     "featured.json": {
-      "ageMinutes": 277,
+      "ageMinutes": 336,
       "stale": false,
       "dateCoherent": true,
       "featuredDate": "2026-04-21"
     },
     "ai-quality.json": {
-      "ageMinutes": 277,
+      "ageMinutes": 336,
       "stale": false
     }
   },
@@ -111,7 +111,7 @@
   "snapshotHealth": {
     "present": true,
     "issues": [
-      "Day snapshots are 277 minutes old (stale > 240m)",
+      "Day snapshots are 336 minutes old (stale > 240m)",
       "Snapshot 2026-04-23: 4 events but events.json has 5"
     ],
     "snapshotCount": 15
@@ -137,19 +137,19 @@
     "skippedSteps": []
   },
   "pipelineTimingHealth": {
-    "totalDuration": 48287,
+    "totalDuration": 50739,
     "stepCount": 25,
     "timeoutHits": [],
     "dominantSteps": [
       {
         "name": "fetch-sports",
-        "duration": 29537,
-        "share": 61
+        "duration": 30240,
+        "share": 60
       },
       {
         "name": "fetch-results",
-        "duration": 32111,
-        "share": 67
+        "duration": 35298,
+        "share": 70
       }
     ],
     "failedSteps": []
@@ -188,12 +188,12 @@
     {
       "severity": "warning",
       "code": "stale_data",
-      "message": "golf.json: data is 2237 minutes old"
+      "message": "golf.json: data is 2296 minutes old"
     },
     {
       "severity": "warning",
       "code": "chronic_data_retention",
-      "message": "golf: data retained 22 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
+      "message": "golf: data retained 23 consecutive times (since 2026-04-20) — fetcher returning empty results, serving stale data"
     },
     {
       "severity": "warning",
@@ -203,7 +203,7 @@
     {
       "severity": "warning",
       "code": "stale_snapshot",
-      "message": "Day snapshots are 277 minutes old (stale > 240m)"
+      "message": "Day snapshots are 336 minutes old (stale > 240m)"
     },
     {
       "severity": "warning",
@@ -223,12 +223,12 @@
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-sports\" used 61% of total pipeline time (30s) — optimization candidate"
+      "message": "Pipeline step \"fetch-sports\" used 60% of total pipeline time (30s) — optimization candidate"
     },
     {
       "severity": "info",
       "code": "step_dominant_duration",
-      "message": "Pipeline step \"fetch-results\" used 67% of total pipeline time (32s) — optimization candidate"
+      "message": "Pipeline step \"fetch-results\" used 70% of total pipeline time (35s) — optimization candidate"
     },
     {
       "severity": "warning",
@@ -248,13 +248,13 @@
   ],
   "status": "warning",
   "refreshUrgency": {
-    "computedAt": "2026-04-21T11:29:17.833Z",
+    "computedAt": "2026-04-21T12:28:27.247Z",
     "targets": [
       {
         "id": "config:esports-cs2-2026.json:cct-s3-global-finals-2026",
-        "score": 0.34,
+        "score": 0.39,
         "reasons": [
-          "overdue by 138%",
+          "overdue by 187%",
           "focus team involved"
         ],
         "suggestedQuotaPriority": 2,
@@ -263,16 +263,16 @@
       },
       {
         "id": "config:fifa-world-cup-2026.json:fifa-world-cup-2026",
-        "score": 0.24,
+        "score": 0.29,
         "reasons": [
-          "overdue by 138%"
+          "overdue by 187%"
         ],
         "suggestedQuotaPriority": 3,
         "suggestedRefreshIntervalMs": 21600000,
         "suggestedStalenessThresholdMinutes": 360
       }
     ],
-    "highestUrgency": 0.34,
+    "highestUrgency": 0.39,
     "urgentTargets": 1
   },
   "engagementHealth": {
