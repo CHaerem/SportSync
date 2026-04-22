@@ -77,11 +77,18 @@ function buildGolfMiniTable(pga, trackedNames) {
 
 /** F1 mini table for standings section */
 function buildF1MiniTable(drivers) {
+	const hasTeams = drivers.some(d => d.team);
+	const columns = hasTeams
+		? [{ label: 'Driver' }, { label: 'Team' }, { label: 'Pts' }]
+		: [{ label: 'Driver' }, { label: 'Pts' }, { label: 'Wins' }];
+	const cellValues = hasTeams
+		? (d) => [escapeHtml(d.driver), escapeHtml(d.team), d.points]
+		: (d) => [escapeHtml(d.driver), d.points, d.wins];
 	return buildMiniTable({
 		title: 'F1 Standings',
-		columns: [{ label: 'Driver' }, { label: 'Pts' }, { label: 'Wins' }],
+		columns,
 		allRows: drivers,
-		cellValues: (d) => [escapeHtml(d.driver), d.points, d.wins],
+		cellValues,
 	});
 }
 

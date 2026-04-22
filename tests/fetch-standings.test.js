@@ -16,6 +16,7 @@ const {
 	fetchGolfLeaderboard,
 	fetchF1Standings,
 	fetchTennisRankings,
+	buildDriverTeamMap,
 } = await import("../scripts/fetch-standings.js");
 
 // Also test buildStandingsContext from generate-featured
@@ -82,30 +83,80 @@ const mockGolfResponse = {
 };
 
 const mockF1Response = {
-	children: [{
-		standings: {
-			entries: [
-				{
-					athlete: { displayName: "Max Verstappen" },
-					team: { displayName: "Red Bull Racing" },
-					stats: [
-						{ name: "rank", value: 1 },
-						{ name: "championshipPts", value: 51 },
-						{ name: "wins", value: 2 },
-					],
-				},
-				{
-					athlete: { displayName: "Lando Norris" },
-					team: { displayName: "McLaren" },
-					stats: [
-						{ name: "rank", value: 2 },
-						{ name: "championshipPts", value: 42 },
-						{ name: "wins", value: 1 },
-					],
-				},
-			],
+	children: [
+		{
+			name: "Driver Standings",
+			standings: {
+				entries: [
+					{
+						athlete: { displayName: "Max Verstappen" },
+						stats: [
+							{ name: "rank", value: 1 },
+							{ name: "championshipPts", value: 51 },
+							{ name: "wins", value: 2 },
+							{ name: "AUS", played: true, value: 25 },
+							{ name: "CHN", played: true, value: 18 },
+						],
+					},
+					{
+						athlete: { displayName: "Lando Norris" },
+						stats: [
+							{ name: "rank", value: 2 },
+							{ name: "championshipPts", value: 42 },
+							{ name: "wins", value: 1 },
+							{ name: "AUS", played: true, value: 15 },
+							{ name: "CHN", played: true, value: 12 },
+						],
+					},
+					{
+						athlete: { displayName: "Oscar Piastri" },
+						stats: [
+							{ name: "rank", value: 3 },
+							{ name: "championshipPts", value: 30 },
+							{ name: "wins", value: 0 },
+							{ name: "AUS", played: true, value: 10 },
+							{ name: "CHN", played: true, value: 8 },
+						],
+					},
+					{
+						athlete: { displayName: "Sergio Perez" },
+						stats: [
+							{ name: "rank", value: 4 },
+							{ name: "championshipPts", value: 20 },
+							{ name: "wins", value: 0 },
+							{ name: "AUS", played: true, value: 8 },
+							{ name: "CHN", played: true, value: 6 },
+						],
+					},
+				],
+			},
 		},
-	}],
+		{
+			name: "Constructor Standings",
+			standings: {
+				entries: [
+					{
+						team: { displayName: "Red Bull Racing" },
+						stats: [
+							{ name: "rank", value: 1 },
+							{ name: "points", value: 71 },
+							{ name: "AUS", played: true, value: 33 },
+							{ name: "CHN", played: true, value: 24 },
+						],
+					},
+					{
+						team: { displayName: "McLaren" },
+						stats: [
+							{ name: "rank", value: 2 },
+							{ name: "points", value: 72 },
+							{ name: "AUS", played: true, value: 25 },
+							{ name: "CHN", played: true, value: 20 },
+						],
+					},
+				],
+			},
+		},
+	],
 };
 
 beforeEach(() => {
@@ -315,11 +366,11 @@ describe("fetchGolfLeaderboard()", () => {
 });
 
 describe("fetchF1Standings()", () => {
-	it("parses ESPN F1 standings correctly", async () => {
+	it("parses ESPN F1 standings with team from constructor correlation", async () => {
 		fetchJson.mockResolvedValue(mockF1Response);
 		const result = await fetchF1Standings();
 
-		expect(result).toHaveLength(2);
+		expect(result).toHaveLength(4);
 		expect(result[0]).toEqual({
 			position: 1,
 			driver: "Max Verstappen",
@@ -327,12 +378,186 @@ describe("fetchF1Standings()", () => {
 			points: 51,
 			wins: 2,
 		});
+		expect(result[1]).toEqual({
+			position: 2,
+			driver: "Lando Norris",
+			team: "McLaren",
+			points: 42,
+			wins: 1,
+		});
+		// Piastri should be correlated to McLaren via race points
+		expect(result[2].driver).toBe("Oscar Piastri");
+		expect(result[2].team).toBe("McLaren");
+		// Perez should be correlated to Red Bull Racing
+		expect(result[3].driver).toBe("Sergio Perez");
+		expect(result[3].team).toBe("Red Bull Racing");
 	});
 
 	it("returns empty array when data structure is missing", async () => {
 		fetchJson.mockResolvedValue({});
 		const result = await fetchF1Standings();
 		expect(result).toEqual([]);
+	});
+
+	it("returns empty team when constructor standings missing", async () => {
+		const noConstructors = {
+			children: [{
+				standings: {
+					entries: [{
+						athlete: { displayName: "Max Verstappen" },
+						stats: [
+							{ name: "rank", value: 1 },
+							{ name: "championshipPts", value: 51 },
+							{ name: "wins", value: 2 },
+						],
+					}],
+				},
+			}],
+		};
+		fetchJson.mockResolvedValue(noConstructors);
+		const result = await fetchF1Standings();
+		expect(result).toHaveLength(1);
+		expect(result[0].team).toBe("");
+	});
+});
+
+describe("buildDriverTeamMap()", () => {
+	it("correctly maps drivers to teams via race point correlation", () => {
+		const driverEntries = [
+			{
+				athlete: { displayName: "Driver A" },
+				stats: [
+					{ name: "AUS", played: true, value: 25 },
+					{ name: "CHN", played: true, value: 18 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver B" },
+				stats: [
+					{ name: "AUS", played: true, value: 10 },
+					{ name: "CHN", played: true, value: 8 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver C" },
+				stats: [
+					{ name: "AUS", played: true, value: 15 },
+					{ name: "CHN", played: true, value: 12 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver D" },
+				stats: [
+					{ name: "AUS", played: true, value: 8 },
+					{ name: "CHN", played: true, value: 6 },
+				],
+			},
+		];
+		const constructorGroup = {
+			standings: {
+				entries: [
+					{
+						team: { displayName: "Team Alpha" },
+						stats: [
+							{ name: "AUS", played: true, value: 35 },
+							{ name: "CHN", played: true, value: 26 },
+						],
+					},
+					{
+						team: { displayName: "Team Beta" },
+						stats: [
+							{ name: "AUS", played: true, value: 23 },
+							{ name: "CHN", played: true, value: 18 },
+						],
+					},
+				],
+			},
+		};
+		const map = buildDriverTeamMap(driverEntries, constructorGroup);
+		// A(25+18) + B(10+8) => AUS=35, CHN=26 => Team Alpha
+		expect(map["Driver A"]).toBe("Team Alpha");
+		expect(map["Driver B"]).toBe("Team Alpha");
+		// C(15+12) + D(8+6) => AUS=23, CHN=18 => Team Beta
+		expect(map["Driver C"]).toBe("Team Beta");
+		expect(map["Driver D"]).toBe("Team Beta");
+	});
+
+	it("returns empty map when no constructor data", () => {
+		expect(buildDriverTeamMap([], null)).toEqual({});
+		expect(buildDriverTeamMap([], undefined)).toEqual({});
+		expect(buildDriverTeamMap([], { standings: { entries: [] } })).toEqual({});
+	});
+
+	it("handles drivers with no race points gracefully", () => {
+		const driverEntries = [
+			{
+				athlete: { displayName: "Driver A" },
+				stats: [{ name: "rank", value: 1 }],
+			},
+			{
+				athlete: { displayName: "Driver B" },
+				stats: [{ name: "rank", value: 2 }],
+			},
+		];
+		const constructorGroup = {
+			standings: {
+				entries: [{
+					team: { displayName: "Team X" },
+					stats: [{ name: "rank", value: 1 }],
+				}],
+			},
+		};
+		// No played races, so no correlation possible
+		const map = buildDriverTeamMap(driverEntries, constructorGroup);
+		expect(Object.keys(map)).toHaveLength(0);
+	});
+
+	it("handles pre-season when all points are zero", () => {
+		const driverEntries = [
+			{
+				athlete: { displayName: "Driver A" },
+				stats: [
+					{ name: "AUS", played: true, value: 0 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver B" },
+				stats: [
+					{ name: "AUS", played: true, value: 0 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver C" },
+				stats: [
+					{ name: "AUS", played: true, value: 0 },
+				],
+			},
+			{
+				athlete: { displayName: "Driver D" },
+				stats: [
+					{ name: "AUS", played: true, value: 0 },
+				],
+			},
+		];
+		const constructorGroup = {
+			standings: {
+				entries: [
+					{
+						team: { displayName: "Team Alpha" },
+						stats: [{ name: "AUS", played: true, value: 0 }],
+					},
+					{
+						team: { displayName: "Team Beta" },
+						stats: [{ name: "AUS", played: true, value: 0 }],
+					},
+				],
+			},
+		};
+		// When all zero, the first pair matches the first constructor
+		const map = buildDriverTeamMap(driverEntries, constructorGroup);
+		// With all zeros, Driver A+B match Team Alpha (first pair found),
+		// then Driver C+D match Team Beta
+		expect(Object.keys(map)).toHaveLength(4);
 	});
 });
 

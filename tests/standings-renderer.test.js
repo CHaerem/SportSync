@@ -170,15 +170,32 @@ describe("buildGolfMiniTable", () => {
 });
 
 describe("buildF1MiniTable", () => {
-	it("renders F1 standings", () => {
+	it("renders F1 standings with team column when teams available", () => {
 		const drivers = [
-			{ position: 1, driver: "Max Verstappen", points: 200, wins: 8 },
-			{ position: 2, driver: "Lewis Hamilton", points: 150, wins: 3 },
+			{ position: 1, driver: "Max Verstappen", team: "Red Bull", points: 200, wins: 8 },
+			{ position: 2, driver: "Lewis Hamilton", team: "Ferrari", points: 150, wins: 3 },
 		];
 		const html = SR.buildF1MiniTable(drivers);
 		expect(html).toContain("F1 Standings");
 		expect(html).toContain("Max Verstappen");
+		expect(html).toContain("Red Bull");
+		expect(html).toContain("Ferrari");
 		expect(html).toContain("200");
+		// Team column header should be present
+		expect(html).toContain("<th>Team</th>");
+		// Pts column header should be present
+		expect(html).toContain("<th>Pts</th>");
+	});
+
+	it("falls back to Driver/Pts/Wins columns when no teams", () => {
+		const drivers = [
+			{ position: 1, driver: "Max Verstappen", team: "", points: 200, wins: 8 },
+			{ position: 2, driver: "Lewis Hamilton", team: "", points: 150, wins: 3 },
+		];
+		const html = SR.buildF1MiniTable(drivers);
+		expect(html).toContain("Max Verstappen");
+		expect(html).toContain("<th>Wins</th>");
+		expect(html).not.toContain("<th>Team</th>");
 	});
 });
 

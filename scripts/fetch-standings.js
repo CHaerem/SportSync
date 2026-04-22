@@ -174,22 +174,85 @@ export async function fetchGolfLeaderboard() {
 	return result;
 }
 
+/**
+ * Build a driver→team map by correlating constructor standings points with
+ * driver race-by-race point sums. ESPN's F1 driver standings entries don't
+ * include team info, but the constructor standings (children[1]) expose each
+ * team's total and per-race points. By finding which pair of drivers' per-race
+ * points sum to each constructor's per-race points, we can infer the mapping.
+ *
+ * Falls back to an empty map if the correlation fails — team field will be "".
+ */
+export function buildDriverTeamMap(driverEntries, constructorGroup) {
+	const map = {};
+	if (!constructorGroup?.standings?.entries?.length) return map;
+
+	// Extract per-race points for each driver
+	const driverRacePoints = driverEntries.map((entry) => {
+		const racePoints = {};
+		for (const s of entry.stats || []) {
+			if (s.played) racePoints[s.name] = s.value || 0;
+		}
+		return {
+			name: entry.athlete?.displayName || "Unknown",
+			racePoints,
+		};
+	});
+
+	// Extract per-race points for each constructor
+	for (const cEntry of constructorGroup.standings.entries) {
+		const teamName = cEntry.team?.displayName || "";
+		if (!teamName) continue;
+
+		const constructorRacePoints = {};
+		for (const s of cEntry.stats || []) {
+			if (s.played) constructorRacePoints[s.name] = s.value || 0;
+		}
+
+		const raceKeys = Object.keys(constructorRacePoints);
+		if (raceKeys.length === 0) continue;
+
+		// Find the pair of drivers whose race points sum to this constructor's
+		const unassigned = driverRacePoints.filter((d) => !map[d.name]);
+		for (let i = 0; i < unassigned.length; i++) {
+			for (let j = i + 1; j < unassigned.length; j++) {
+				const match = raceKeys.every((race) => {
+					const sum = (unassigned[i].racePoints[race] || 0) + (unassigned[j].racePoints[race] || 0);
+					return sum === constructorRacePoints[race];
+				});
+				if (match) {
+					map[unassigned[i].name] = teamName;
+					map[unassigned[j].name] = teamName;
+					break;
+				}
+			}
+			if (map[unassigned[i]?.name]) break;
+		}
+	}
+
+	return map;
+}
+
 export async function fetchF1Standings() {
 	const url = `${ESPN_BASE}/racing/f1/standings`;
 	const data = await fetchJson(url);
 
-	const group = data?.children?.[0];
-	if (!group?.standings?.entries) return [];
+	const driverGroup = data?.children?.[0];
+	if (!driverGroup?.standings?.entries) return [];
 
-	return group.standings.entries.map((entry) => {
+	const constructorGroup = data?.children?.[1];
+	const driverTeamMap = buildDriverTeamMap(driverGroup.standings.entries, constructorGroup);
+
+	return driverGroup.standings.entries.map((entry) => {
 		const stats = {};
 		for (const s of entry.stats || []) {
 			stats[s.name] = s.value;
 		}
+		const driverName = entry.athlete?.displayName || "Unknown";
 		return {
 			position: stats.rank || 0,
-			driver: entry.athlete?.displayName || "Unknown",
-			team: entry.team?.displayName || "",
+			driver: driverName,
+			team: driverTeamMap[driverName] || entry.team?.displayName || "",
 			points: stats.championshipPts || stats.points || 0,
 			wins: stats.wins || 0,
 		};
