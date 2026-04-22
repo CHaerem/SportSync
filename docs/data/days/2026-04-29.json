@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "date": "2026-04-27",
-  "generatedAt": "2026-04-22T02:53:45.749Z",
+  "date": "2026-04-29",
+  "generatedAt": "2026-04-22T02:53:45.754Z",
   "events": {
     "upcoming": [
       {
@@ -155,74 +155,52 @@
         "_enrichHash": "d4b76e032e5da4bc0fef79f00af38439"
       },
       {
-        "sport": "football",
-        "tournament": "Premier League",
-        "title": "Brentford at Manchester United",
-        "time": "2026-04-27T19:00:00.000Z",
-        "endTime": null,
-        "venue": "Old Trafford",
-        "meta": "Premier League",
-        "norwegian": false,
+        "sport": "esports",
+        "tournament": "CS2 Tournaments 2026",
+        "title": "BLAST Rivals 2026 Season 1",
+        "time": "2026-04-29T00:00:00.000Z",
+        "endTime": "2026-05-03T23:59:59.000Z",
+        "venue": "Dickies Arena, Fort Worth, TX, USA",
+        "norwegian": true,
         "streaming": [
           {
-            "platform": "Viaplay",
-            "url": "https://viaplay.no",
+            "platform": "Twitch",
+            "channel": "BLASTtv",
+            "url": "https://www.twitch.tv/blasttv",
+            "type": "stream"
+          },
+          {
+            "platform": "HLTV",
             "type": "streaming"
           }
         ],
         "participants": [],
-        "norwegianPlayers": [],
+        "norwegianPlayers": [
+          {
+            "name": "rain (Håvard Nygaard)"
+          }
+        ],
         "totalPlayers": null,
         "link": null,
         "status": null,
         "featuredGroups": [],
-        "homeTeam": "Manchester United",
-        "awayTeam": "Brentford",
+        "homeTeam": null,
+        "awayTeam": null,
         "isFavorite": false,
+        "context": "cs2-majors-2026",
+        "_isTournament": true,
+        "_bracketId": "blast-rivals-2026-s1",
+        "tier": "S-Tier",
+        "prizePool": "$350,000 USD",
         "importance": 3,
-        "importanceReason": "Premier League at iconic Old Trafford; United's European hopes under pressure.",
-        "summary": "Manchester United host Brentford at Old Trafford in a Premier League clash that could matter for European qualification hopes.",
+        "importanceReason": "BLAST Rivals LAN — reputable CS2 organizer, rain competing for 100 Thieves",
+        "summary": "BLAST Rivals Season 1 heads to Fort Worth's Dickies Arena — rain and 100 Thieves enter a stacked CS2 field at a high-production BLAST LAN event.",
         "tags": [
-          "top-4-battle"
+          "norwegian-player"
         ],
-        "norwegianRelevance": 2,
+        "norwegianRelevance": 5,
         "enrichedAt": "2026-04-21T22:24:27.619Z",
-        "_enrichHash": "4ff4fd2b2a63d4f195f1232bb3fcb8dc"
-      },
-      {
-        "sport": "football",
-        "tournament": "La Liga",
-        "title": "Levante at Espanyol",
-        "time": "2026-04-27T19:00:00.000Z",
-        "endTime": null,
-        "venue": "RCDE Stadium",
-        "meta": "La Liga",
-        "norwegian": false,
-        "streaming": [
-          {
-            "platform": "TV 2 Play",
-            "url": "https://play.tv2.no",
-            "type": "streaming"
-          }
-        ],
-        "participants": [],
-        "norwegianPlayers": [],
-        "totalPlayers": null,
-        "link": null,
-        "status": null,
-        "featuredGroups": [],
-        "homeTeam": "Espanyol",
-        "awayTeam": "Levante",
-        "isFavorite": false,
-        "importance": 2,
-        "importanceReason": "Mid-table La Liga clash, no favorite teams or Norwegian players.",
-        "summary": "Routine La Liga fixture between Levante and Espanyol at RCDE Stadium; no title race or Norwegian connection.",
-        "tags": [
-          "watchlist"
-        ],
-        "norwegianRelevance": 1,
-        "enrichedAt": "2026-04-21T22:24:27.619Z",
-        "_enrichHash": "6bd04f9fa3edf99d7c479bc69c1cf5be"
+        "_enrichHash": "64147fcd8d767da5ef94c5b330b761ce"
       }
     ],
     "results": []
@@ -232,10 +210,10 @@
   "watchPlan": null,
   "rssHighlights": null,
   "meta": {
-    "eventCount": 6,
+    "eventCount": 5,
     "sportsCovered": [
       "tennis",
-      "football"
+      "esports"
     ],
     "hasResults": false,
     "hasStandings": false

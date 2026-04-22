@@ -1481,18 +1481,10 @@ class Dashboard {
 			return;
 		}
 
-		let items = this.rssDigest.items.map(item => {
-			if (!item._inferredSport && (!item.sport || item.sport === 'general')) {
-				item._inferredSport = this._inferSportFromHeadline(item);
-			}
-			return item;
-		});
-		// Apply sport filter if active (checks both original and inferred sport)
+		let items = this.rssDigest.items;
+		// Apply sport filter if active
 		if (this.activeSportFilter) {
-			items = items.filter(item => {
-				const sport = item._inferredSport || item.sport;
-				return sport === this.activeSportFilter;
-			});
+			items = items.filter(item => item.sport === this.activeSportFilter);
 		}
 		items = items.slice(0, 8);
 
@@ -1551,7 +1543,7 @@ class Dashboard {
 	}
 
 	_renderNewsCard(item, sportColors) {
-		const sport = item._inferredSport || item.sport || 'general';
+		const sport = item.sport || 'general';
 		const barColor = sportColors[sport] || 'var(--muted)';
 		const source = item.source || '';
 		const title = item.title || '';
@@ -1574,74 +1566,6 @@ class Dashboard {
 		if (timeAgo) html += `<span class="news-time">${this.esc(timeAgo)}</span>`;
 		html += `</div></div></a>`;
 		return html;
-	}
-
-	/**
-	 * Infer a sport from headline text when item.sport is "general".
-	 * Checks title + description against sport-specific keywords.
-	 * Returns a canonical sport ID or null if no match.
-	 */
-	_inferSportFromHeadline(item) {
-		const text = ((item.title || '') + ' ' + (item.description || '')).toLowerCase();
-		// Order matters: check more specific patterns first to avoid false positives.
-		// Each entry: [sportId, keywords[]] — first sport to match wins.
-		const sportKeywords = [
-			['formula1', [
-				'formel 1', 'formula 1', 'grand prix', ' f1 ', 'f1-', 'red bull racing',
-				'verstappen', 'hamilton', 'leclerc', 'norris', 'sainz', 'piastri',
-				'mclaren', 'ferrari', 'mercedes', 'alonso',
-			]],
-			['tennis', [
-				'tennis', ' atp ', ' wta ', 'roland garros', 'roland-garros', 'wimbledon',
-				'us open tennis', 'australian open', 'ruud', 'djokovic', 'sinner',
-				'alcaraz', 'medvedev', 'swiatek', 'sabalenka', 'budkov',
-				'masters 1000', 'tennistalentet',
-			]],
-			['golf', [
-				'golf', ' pga ', 'pga tour', 'dp world', 'masters', 'open championship',
-				'the open', 'ryder cup', 'hovland', 'rahm', 'scheffler', 'mcilroy',
-				'koepka', 'spieth', 'augusta', 'birdie', 'bogey', 'eagle',
-			]],
-			['chess', [
-				'chess', 'sjakk', ' fide', 'carlsen', 'magnus carlsen', 'candidates',
-				'tari', 'grandmaster', 'stormester',
-			]],
-			['esports', [
-				'esport', 'e-sport', 'counter-strike', ' cs2', 'cs2 ', ' csgo',
-				'hltv', 'blast', 'iem ', 'esl ', 'major cs', 'navi', 'faze clan',
-			]],
-			['cycling', [
-				'cycling', 'sykkel', 'sykling', 'tour de france', 'giro', 'vuelta',
-				'monument', 'etappeseier', 'sykkelstjerne', 'uno-x', 'visma-lease',
-				'klassiker', 'peloton', 'rittet', 'etappe',
-				'johannessen', 'tobias halland',
-			]],
-			['football', [
-				'premier league', 'champions league', 'europa league', 'la liga',
-				'serie a', 'bundesliga', 'ligue 1', 'eliteserien', 'obos-ligaen',
-				'toppserien', 'fotball', 'football', 'soccer',
-				' vm ', 'vm-', 'fotball-vm', 'world cup',
-				'arsenal', 'chelsea', 'liverpool', 'manchester city', 'manchester united',
-				'man city', 'man united', 'tottenham', 'spurs', 'newcastle',
-				'brighton', 'aston villa', 'west ham', 'everton', 'leicester',
-				'barcelona', 'real madrid', 'atletico',
-				'haaland', 'odegaard', 'ødegaard', 'salah', 'palmer',
-				'brann', 'rosenborg', 'vålerenga', 'molde', 'bodø/glimt',
-				'lyn oslo', 'seriegull', 'nedrykk', 'opprykk', 'tabellen',
-				'cup-', 'cupfinale', 'straffespark', 'offside', ' var ',
-				'inter', 'milan', 'como', 'lens', 'toulouse',
-				'slot', 'knutsen', 'rekdal',
-			]],
-		];
-
-		for (const [sportId, keywords] of sportKeywords) {
-			for (const kw of keywords) {
-				if (text.includes(kw)) {
-					return sportId;
-				}
-			}
-		}
-		return null;
 	}
 
 	// --- Temporal band event layout ---
