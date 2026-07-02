@@ -7,9 +7,9 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const userContextPath = path.join(__dirname, "..", "config", "user-context.json");
-const userContext = readJsonIfExists(userContextPath) || {};
-const FAVORITE_TEAMS = (userContext.favoriteTeams || ["Barcelona", "Liverpool", "Lyn"])
+const interestsPath = path.join(__dirname, "..", "config", "interests.json");
+const interests = readJsonIfExists(interestsPath) || {};
+const FAVORITE_TEAMS = (interests.alwaysTrack?.teams || ["Barcelona", "Liverpool", "Lyn"])
 	.map(t => t.toLowerCase());
 
 export class FootballFetcher extends ESPNAdapter {

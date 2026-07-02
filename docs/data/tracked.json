@@ -1,0 +1,129 @@
+{
+  "lastUpdated": "2026-07-02T00:00:00Z",
+  "lastUpdatedBy": "manual-seed",
+  "version": 1,
+  "leagues": [
+    {
+      "id": "premier-league-2026-27",
+      "name": "Premier League 2026/27",
+      "sport": "football",
+      "reason": "User lists Premier League in alwaysTrack.tournaments and interests mention general overview + Liverpool",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "priority": "high"
+    },
+    {
+      "id": "la-liga-2026-27",
+      "name": "La Liga 2026/27",
+      "sport": "football",
+      "reason": "User lists La Liga in alwaysTrack.tournaments with focus on Barcelona",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "priority": "high"
+    },
+    {
+      "id": "obos-ligaen-2026",
+      "name": "OBOS-ligaen 2026 (Lyn Oslo)",
+      "sport": "football",
+      "reason": "User follows Lyn Oslo in Norwegian second division",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.teams", "interests.json#interests"],
+      "priority": "high"
+    }
+  ],
+  "athletes": [
+    {
+      "id": "viktor-hovland",
+      "name": "Viktor Hovland",
+      "sport": "golf",
+      "reason": "Listed in alwaysTrack.athletes — PGA Tour and majors coverage",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "priority": "high"
+    },
+    {
+      "id": "casper-ruud",
+      "name": "Casper Ruud",
+      "sport": "tennis",
+      "reason": "Listed in alwaysTrack.athletes — grand slams + all matches",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "priority": "high"
+    },
+    {
+      "id": "magnus-carlsen",
+      "name": "Magnus Carlsen",
+      "sport": "chess",
+      "reason": "Listed in alwaysTrack.athletes — elite chess coverage",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "priority": "high"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "fifa-world-cup-2026",
+      "name": "FIFA World Cup 2026",
+      "sport": "football",
+      "reason": "Listed in alwaysTrack.tournaments — active right now (June–July 2026)",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "expires": "2026-07-19T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "tour-de-france-2026",
+      "name": "Tour de France 2026",
+      "sport": "cycling",
+      "reason": "Listed in alwaysTrack.tournaments — active in July; Uno-X Mobility and Norwegian riders",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.teams"],
+      "expires": "2026-07-26T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "f1-world-championship-2026",
+      "name": "Formula 1 World Championship 2026",
+      "sport": "f1",
+      "reason": "User listed F1 in alwaysTrack.tournaments and interests mention full season",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "expires": "2026-12-31T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "the-open-championship-2026",
+      "name": "The Open Championship 2026",
+      "sport": "golf",
+      "reason": "Golf major in alwaysTrack.tournaments — played mid-July",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "expires": "2026-07-20T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "wimbledon-2026",
+      "name": "Wimbledon 2026",
+      "sport": "tennis",
+      "reason": "Grand slam in alwaysTrack.tournaments — active late June–mid July; Casper Ruud focus",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "manual-seed",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.athletes"],
+      "expires": "2026-07-13T23:59:59Z",
+      "priority": "high"
+    }
+  ],
+  "notes": [
+    "Pre-seeded manually from interests.json during the v2 rebuild (2026-07-02). The research agent refines this file on every run."
+  ]
+}

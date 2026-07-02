@@ -1,0 +1,98 @@
+/* SportSync v2 — page layout: header, container, responsive grid */
+
+.container {
+	max-width: var(--max-w);
+	margin: 0 auto;
+	padding: 0 16px;
+}
+
+/* Header */
+.site-header {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	background: color-mix(in srgb, var(--bg) 85%, transparent);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: 1px solid var(--border);
+	padding-top: env(safe-area-inset-top);
+}
+
+.site-header .container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 56px;
+}
+
+.site-title { display: flex; align-items: baseline; gap: 10px; }
+.site-title .date { color: var(--fg-2); font-size: 13px; }
+
+.header-actions { display: flex; gap: 4px; }
+.header-btn {
+	width: 36px; height: 36px;
+	display: grid; place-items: center;
+	border-radius: 50%;
+	font-size: 17px;
+	color: var(--fg-2);
+}
+.header-btn:hover { background: var(--surface-2); color: var(--fg); }
+
+/* Sections */
+main { padding: 20px 0 48px; }
+section { margin-bottom: 32px; }
+section > .container > h2 { margin-bottom: 12px; }
+
+/* Sport grid: 1 col mobile → 2 col ≥768 → 3 col ≥1200 */
+.sports-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+}
+@media (min-width: 768px) {
+	.sports-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px) {
+	.sports-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.sport-section { min-width: 0; }
+.sport-heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--fg-2);
+	border-left: 3px solid var(--sport-color, var(--accent));
+	padding-left: 10px;
+}
+.sport-heading .count { font-weight: 400; opacity: 0.7; }
+
+/* Live hero strip: horizontal scroll of big cards */
+.live-strip {
+	display: flex;
+	gap: 12px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	padding-bottom: 4px;
+	scrollbar-width: none;
+}
+.live-strip::-webkit-scrollbar { display: none; }
+.live-strip > * { scroll-snap-align: start; flex: 0 0 min(320px, 85vw); }
+
+/* Footer */
+.site-footer {
+	border-top: 1px solid var(--border);
+	padding: 16px 0 32px;
+	color: var(--fg-2);
+	font-size: 12px;
+}
+.site-footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+/* Utility */
+[hidden] { display: none !important; }
+.muted { color: var(--fg-2); }

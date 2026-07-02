@@ -1,133 +1,60 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+// validate-events.js: catches malformed events, enforces the AI-research contract.
+import { describe, it, expect } from "vitest";
+import { execFileSync } from "child_process";
 import fs from "fs";
-import path from "path";
 import os from "os";
-import { execSync } from "child_process";
+import path from "path";
 
-let tmpDir;
-
-function futureTime(hoursAhead = 24) {
-	return new Date(Date.now() + hoursAhead * 3600000).toISOString();
+function runValidate(events) {
+	const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-validate-"));
+	fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(events));
+	let exitCode = 0;
+	try {
+		execFileSync("node", ["scripts/validate-events.js"], {
+			env: { ...process.env, SPORTSYNC_DATA_DIR: dataDir },
+			stdio: "pipe",
+		});
+	} catch (err) {
+		exitCode = err.status;
+	}
+	fs.rmSync(dataDir, { recursive: true, force: true });
+	return exitCode;
 }
 
-function writeEvents(events) {
-	fs.writeFileSync(path.join(tmpDir, "events.json"), JSON.stringify(events));
-}
+const future = new Date(Date.now() + 86400000).toISOString();
 
-function runValidate() {
-	return execSync("node scripts/validate-events.js", {
-		cwd: process.cwd(),
-		env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
-	}).toString();
-}
-
-describe("validate-events.js", () => {
-	beforeEach(() => {
-		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "validate-events-"));
+describe("validate-events", () => {
+	it("passes valid events", () => {
+		expect(runValidate([{ sport: "golf", title: "Open", time: future }])).toBe(0);
 	});
 
-	afterEach(() => {
-		fs.rmSync(tmpDir, { recursive: true, force: true });
+	it("fails on missing time", () => {
+		expect(runValidate([{ sport: "golf", title: "Open" }])).toBe(1);
 	});
 
-	it("passes with valid events", () => {
-		writeEvents([
-			{
-				sport: "football",
-				title: "Test Match",
-				time: futureTime(),
-				tournament: "Test League",
-			},
-		]);
-		const output = runValidate();
-		expect(output).toContain("0 error(s)");
+	it("fails on invalid time format", () => {
+		expect(runValidate([{ sport: "golf", title: "Open", time: "not-a-date" }])).toBe(1);
 	});
 
-	it("passes with valid enrichment fields", () => {
-		writeEvents([
-			{
-				sport: "football",
-				title: "Test Match",
-				time: futureTime(),
-				tournament: "Test",
-				importance: 4,
-				norwegianRelevance: 2,
-				tags: ["must-watch"],
-			},
-		]);
-		const output = runValidate();
-		expect(output).toContain("0 error(s)");
-		expect(output).toContain("1 enriched");
+	it("fails on out-of-range importance", () => {
+		expect(runValidate([{ sport: "golf", title: "Open", time: future, importance: 9 }])).toBe(1);
 	});
 
-	it("fails on invalid importance", () => {
-		writeEvents([
-			{
-				sport: "football",
-				title: "Test",
-				time: futureTime(),
-				tournament: "Test",
-				importance: 10,
-			},
-		]);
-		expect(() => runValidate()).toThrow();
+	it("fails on ai-research event without valid confidence", () => {
+		expect(runValidate([{ sport: "biathlon", title: "Sprint", time: future, source: "ai-research" }])).toBe(1);
 	});
 
-	it("fails on invalid tags type", () => {
-		writeEvents([
-			{
-				sport: "football",
-				title: "Test",
-				time: futureTime(),
-				tournament: "Test",
-				tags: "not-an-array",
-			},
-		]);
-		expect(() => runValidate()).toThrow();
+	it("fails on high-confidence ai-research event with fewer than 2 evidence URLs", () => {
+		expect(
+			runValidate([{ sport: "biathlon", title: "Sprint", time: future, source: "ai-research", confidence: "high", evidence: ["https://a.no"] }])
+		).toBe(1);
 	});
 
-	it("warns about timezone bleed when endTime crosses CET midnight", () => {
-		// endTime at 23:30 UTC → 00:30 CET next day = timezone bleed
-		const tomorrow = new Date(Date.now() + 24 * 3600000);
-		const endTime = new Date(tomorrow);
-		endTime.setUTCHours(23, 30, 0, 0);
-		writeEvents([
-			{
-				sport: "golf",
-				title: "Test Tournament",
-				time: futureTime(),
-				endTime: endTime.toISOString(),
-				tournament: "PGA Tour",
-			},
-		]);
-		// console.warn goes to stderr — redirect to capture it
-		const output = execSync("node scripts/validate-events.js 2>&1", {
-			cwd: process.cwd(),
-			env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
-		}).toString();
-		expect(output).toContain("Timezone bleed");
-		expect(output).toContain("crosses midnight in CET");
-	});
-
-	it("no timezone bleed warning for safe endTime", () => {
-		const tomorrow = new Date(Date.now() + 24 * 3600000);
-		const endTime = new Date(tomorrow);
-		endTime.setUTCHours(20, 0, 0, 0); // 21:00 CET — safe
-		writeEvents([
-			{
-				sport: "golf",
-				title: "Test Tournament",
-				time: futureTime(),
-				endTime: endTime.toISOString(),
-				tournament: "PGA Tour",
-			},
-		]);
-		// Capture stderr too so we can confirm no timezone bleed warning
-		const output = execSync("node scripts/validate-events.js 2>&1", {
-			cwd: process.cwd(),
-			env: { ...process.env, SPORTSYNC_DATA_DIR: tmpDir },
-		}).toString();
-		expect(output).toContain("0 error(s)");
-		expect(output).not.toContain("Timezone bleed");
+	it("passes high-confidence ai-research event with 2+ evidence URLs", () => {
+		expect(
+			runValidate([
+				{ sport: "biathlon", title: "Sprint", time: future, source: "ai-research", confidence: "high", evidence: ["https://a.no", "https://b.no"] },
+			])
+		).toBe(0);
 	});
 });

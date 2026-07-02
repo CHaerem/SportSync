@@ -1,0 +1,34 @@
+name: Research agent
+
+on:
+  schedule:
+    - cron: "15 */4 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/research.md and execute it.
+            When done, commit your changes:
+              git add docs/data/events.json docs/data/research-log.json scripts/config/tracked.json
+              git commit -m "research-agent: update tracked events"
+              git push || (git pull --rebase origin main && git push)

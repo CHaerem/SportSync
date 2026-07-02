@@ -72,6 +72,17 @@ for (const ev of events) {
 		console.warn("Invalid tags (must be array) for", key);
 		errors++;
 	}
+	// AI-research contract: confidence levels and evidence requirements
+	if (ev.source === "ai-research") {
+		if (!["high", "medium", "low"].includes(ev.confidence)) {
+			console.warn("AI-research event missing valid confidence for", key, ev.confidence);
+			errors++;
+		}
+		if (ev.confidence === "high" && (!Array.isArray(ev.evidence) || ev.evidence.length < 2)) {
+			console.warn("AI-research event with high confidence needs 2+ evidence URLs for", key);
+			errors++;
+		}
+	}
 	// Timezone bleed check: endTime crossing midnight in CET but not UTC
 	if (ev.endTime) {
 		const endUTC = new Date(ev.endTime);

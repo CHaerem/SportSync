@@ -1,0 +1,50 @@
+name: Static data pipeline
+
+on:
+  schedule:
+    - cron: "0 5-21 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/fetch/**"
+      - "scripts/build-events.js"
+      - "scripts/fetch-standings.js"
+      - "scripts/fetch-rss.js"
+      - "scripts/fetch-results.js"
+
+concurrency:
+  group: sportsync-static-pipeline
+  cancel-in-progress: false
+
+jobs:
+  fetch-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: mkdir -p docs/data
+      - run: node scripts/fetch/index.js
+      - run: node scripts/fetch-standings.js
+        continue-on-error: true
+      - run: node scripts/fetch-rss.js
+        continue-on-error: true
+      - run: node scripts/fetch-results.js
+        continue-on-error: true
+      - run: node scripts/build-events.js
+      - run: node scripts/validate-events.js
+      - run: node scripts/build-ics.js
+      - name: Write meta
+        run: echo "{\"lastUpdated\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > docs/data/meta.json
+      - name: Commit
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add docs/data/
+          git diff --staged --quiet || git commit -m "Update sports data $(date -u +%H:%MZ)"
+          git push || (git pull --rebase origin ${{ github.ref_name }} && git push)

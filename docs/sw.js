@@ -1,122 +1,71 @@
-// SportSync Service Worker - Controls caching to ensure fresh data
-const CACHE_NAME = 'sportsync-v37';
-const DATA_FILES = [
-    '/SportSync/data/events.json',
-    '/SportSync/data/featured.json',
-    '/SportSync/data/watch-plan.json',
-    '/SportSync/data/insights.json',
-    '/SportSync/data/standings.json',
-    '/SportSync/data/rss-digest.json',
-    '/SportSync/data/meta.json',
-    '/SportSync/data/recent-results.json',
-    '/SportSync/data/autonomy-report.json',
-    '/SportSync/data/health-report.json',
-    '/SportSync/data/autopilot-log.json',
-    '/SportSync/data/engagement-insights.json'
+// SportSync v2 Service Worker — fresh data always, network-first shell
+const CACHE_NAME = 'sportsync-v2-0';
+const DATA_PATH_FRAGMENT = '/data/';
+
+const SHELL_FILES = [
+    '/SportSync/',
+    '/SportSync/index.html',
+    '/SportSync/manifest.webmanifest',
+    '/SportSync/favicon.png',
+    '/SportSync/icons/icon-180x180.png',
+    '/SportSync/icons/icon-192x192.png',
+    '/SportSync/icons/icon-512x512.png',
+    '/SportSync/icons/icon.svg',
+    '/SportSync/css/base.css',
+    '/SportSync/css/layout.css',
+    '/SportSync/css/cards.css',
+    '/SportSync/js/shared-constants.js',
+    '/SportSync/js/sport-config.js',
+    '/SportSync/js/asset-maps.js',
+    '/SportSync/js/block-renderers.js',
+    '/SportSync/js/dashboard.js'
 ];
 
-// Install event - cache static assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll([
-                '/SportSync/',
-                '/SportSync/index.html',
-                '/SportSync/status.html',
-                '/SportSync/autonomy.html',
-                '/SportSync/preferences.html',
-                '/SportSync/manifest.webmanifest',
-                '/SportSync/favicon.png',
-                '/SportSync/icons/icon-180x180.png',
-                '/SportSync/icons/icon-192x192.png',
-                '/SportSync/icons/icon-512x512.png',
-                '/SportSync/icons/icon.svg',
-                '/SportSync/js/shared-constants.js',
-                '/SportSync/js/sport-config.js',
-                '/SportSync/js/asset-maps.js',
-                '/SportSync/js/preferences-manager.js',
-                '/SportSync/js/feedback-manager.js',
-                '/SportSync/js/github-sync.js',
-                '/SportSync/js/block-renderers.js',
-                '/SportSync/js/bracket-renderer.js',
-                '/SportSync/js/standings-renderer.js',
-                '/SportSync/js/dashboard.js'
-            ]);
-        })
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_FILES)).catch(() => {})
     );
-    self.skipWaiting(); // Activate immediately
+    self.skipWaiting();
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
+        caches.keys().then((names) =>
+            Promise.all(names.map((name) => (name !== CACHE_NAME ? caches.delete(name) : undefined)))
+        )
     );
-    self.clients.claim(); // Take control immediately
+    self.clients.claim();
 });
 
-// Fetch event - control caching strategy
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Always fetch data files fresh (no cache)
-    if (DATA_FILES.some(dataFile => url.pathname.includes(dataFile.replace('/SportSync', '')))) {
+    // Data files: always fresh from network
+    if (url.pathname.includes(DATA_PATH_FRAGMENT)) {
         event.respondWith(
-            fetch(event.request, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            }).catch(() => {
-                return new Response('{"error": "Network unavailable"}', {
+            fetch(event.request, { cache: 'no-cache' }).catch(
+                () => new Response('{"error": "Network unavailable"}', {
                     headers: { 'Content-Type': 'application/json' }
-                });
-            })
+                })
+            )
         );
         return;
     }
 
-    // For static assets, use network-first with cache fallback
+    // Shell: network-first with cache fallback (offline support)
     event.respondWith(
-        fetch(event.request).then((response) => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+        fetch(event.request)
+            .then((response) => {
+                if (response && response.status === 200 && response.type === 'basic') {
+                    const copy = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+                }
                 return response;
-            }
-
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseToCache);
-            });
-
-            return response;
-        }).catch(() => {
-            return caches.match(event.request);
-        })
+            })
+            .catch(() => caches.match(event.request))
     );
 });
 
-// Handle messages from the main thread
 self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-    }
-
-    if (event.data && event.data.type === 'CLEAR_DATA_CACHE') {
-        // Clear any cached data files
-        caches.open(CACHE_NAME).then((cache) => {
-            DATA_FILES.forEach(dataFile => {
-                cache.delete(dataFile);
-            });
-        });
-    }
+    if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });

@@ -1,7 +1,0 @@
-services:
-  oauth-relay:
-    build: .
-    ports:
-      - "3847:3847"
-    env_file: .env
-    restart: unless-stopped
