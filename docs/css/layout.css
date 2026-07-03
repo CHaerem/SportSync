@@ -1,98 +1,96 @@
-/* SportSync v2 — page layout: header, container, responsive grid */
+/* SportSync — page frame: masthead, container, responsive two-column on desktop */
 
 .container {
 	max-width: var(--max-w);
 	margin: 0 auto;
-	padding: 0 16px;
+	padding: 0 18px;
 }
 
-/* Header */
-.site-header {
+/* Masthead */
+.masthead {
 	position: sticky;
 	top: 0;
 	z-index: 20;
-	background: color-mix(in srgb, var(--bg) 85%, transparent);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
+	background: color-mix(in srgb, var(--bg) 88%, transparent);
+	backdrop-filter: blur(14px) saturate(1.2);
+	-webkit-backdrop-filter: blur(14px) saturate(1.2);
 	border-bottom: 1px solid var(--border);
 	padding-top: env(safe-area-inset-top);
 }
-
-.site-header .container {
+.masthead-inner {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 56px;
+	height: 58px;
 }
-
-.site-title { display: flex; align-items: baseline; gap: 10px; }
-.site-title .date { color: var(--fg-2); font-size: 13px; }
-
-.header-actions { display: flex; gap: 4px; }
-.header-btn {
-	width: 36px; height: 36px;
+.brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.wordmark {
+	font-family: var(--font-display);
+	font-weight: 800;
+	font-size: 22px;
+	letter-spacing: -0.035em;
+	color: var(--fg);
+}
+.wordmark .sync { color: var(--accent); }
+.masthead-date {
+	font-size: 12.5px;
+	color: var(--fg-2);
+	text-transform: capitalize;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.icon-btn {
+	width: 38px; height: 38px;
 	display: grid; place-items: center;
 	border-radius: 50%;
 	font-size: 17px;
 	color: var(--fg-2);
+	flex-shrink: 0;
 }
-.header-btn:hover { background: var(--surface-2); color: var(--fg); }
+.icon-btn:hover { background: var(--surface-2); color: var(--fg); }
 
-/* Sections */
-main { padding: 20px 0 48px; }
-section { margin-bottom: 32px; }
-section > .container > h2 { margin-bottom: 12px; }
+/* Layout: single column mobile, two columns ≥1024 */
+.layout { padding-top: 4px; padding-bottom: 56px; }
+.col-main { min-width: 0; }
+.col-aside { min-width: 0; }
 
-/* Sport grid: 1 col mobile → 2 col ≥768 → 3 col ≥1200 */
-.sports-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 24px;
-}
-@media (min-width: 768px) {
-	.sports-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1200px) {
-	.sports-grid { grid-template-columns: repeat(3, 1fr); }
+@media (min-width: 1024px) {
+	.layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 340px;
+		gap: 40px;
+		align-items: start;
+	}
+	.col-aside {
+		position: sticky;
+		top: 74px;
+	}
+	/* first section header in each column shouldn't push extra top margin */
+	.col-main > section:first-child .section-head,
+	.col-aside > section:first-child .section-head { margin-top: 14px; }
 }
 
-.sport-section { min-width: 0; }
-.sport-heading {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-bottom: 10px;
-	font-size: 14px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	color: var(--fg-2);
-	border-left: 3px solid var(--sport-color, var(--accent));
-	padding-left: 10px;
-}
-.sport-heading .count { font-weight: 400; opacity: 0.7; }
-
-/* Live hero strip: horizontal scroll of big cards */
+/* Live strip: horizontal scroll of cards */
 .live-strip {
 	display: flex;
 	gap: 12px;
 	overflow-x: auto;
 	scroll-snap-type: x mandatory;
-	padding-bottom: 4px;
+	padding-bottom: 6px;
 	scrollbar-width: none;
 }
 .live-strip::-webkit-scrollbar { display: none; }
-.live-strip > * { scroll-snap-align: start; flex: 0 0 min(320px, 85vw); }
+.live-strip > * { scroll-snap-align: start; flex: 0 0 min(300px, 82vw); }
 
 /* Footer */
 .site-footer {
 	border-top: 1px solid var(--border);
-	padding: 16px 0 32px;
+	margin-top: 40px;
+	padding: 16px 0 34px;
 	color: var(--fg-2);
 	font-size: 12px;
 }
-.site-footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-
-/* Utility */
-[hidden] { display: none !important; }
-.muted { color: var(--fg-2); }
+.site-footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.site-footer a { border-bottom: 1px dotted var(--border-strong); }
+.site-footer a:hover { color: var(--accent); }

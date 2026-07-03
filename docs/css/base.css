@@ -1,71 +1,124 @@
-/* SportSync v2 — design tokens, reset, typography */
+/* SportSync — design tokens, reset, typography
+   Identity: a personal Norwegian sports paper. Display face is Schibsted Grotesk
+   (the house type of Norway's largest media group), so the character comes from
+   the subject, not a generic UI font. Times use a mono for a departure-board spine. */
 
 :root {
-	--bg: #000;
-	--surface: #0e0e10;
-	--surface-2: #16161a;
-	--border: #26262c;
-	--fg: #f5f5f7;
-	--fg-2: #a1a1aa;
-	--accent: #ff6b35;
-	--live: #ef4444;
-	--favorite: #fbbf24;
-	--radius: 16px;
-	--radius-sm: 10px;
-	--max-w: 1280px;
-	--font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-	--mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+	/* Dark = the late-night sports desk (default identity) */
+	--bg: #0b0d10;
+	--surface: #14171c;
+	--surface-2: #1b1f26;
+	--surface-3: #232830;
+	--border: #262c35;
+	--border-strong: #363d48;
+	--fg: #f3f5f8;
+	--fg-2: #98a2ae;
+	--fg-3: #6b7480;
+	--accent: #ff5c35;
+	--accent-soft: rgba(255, 92, 53, 0.14);
+	--live: #ff3b3b;
+	--favorite: #ffc233;
+
+	--font-display: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	--font-body: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+	--radius: 14px;
+	--radius-sm: 9px;
+	--radius-chip: 7px;
+	--max-w: 1180px;
+
+	--shadow-hero: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px rgba(0,0,0,0.35);
+}
+
+/* Light = fresh newsprint, warm paper tint (not pure white) */
+:root[data-theme="light"] {
+	--bg: #f4f1ea;
+	--surface: #ffffff;
+	--surface-2: #efebe1;
+	--surface-3: #e7e2d6;
+	--border: #e0dacd;
+	--border-strong: #cfc8b8;
+	--fg: #17130d;
+	--fg-2: #635d51;
+	--fg-3: #8b8578;
+	--accent: #d8431a;
+	--accent-soft: rgba(216, 67, 26, 0.10);
+	--live: #d61f1f;
+	--favorite: #b8860b;
+	--shadow-hero: 0 1px 2px rgba(0,0,0,0.04), 0 10px 26px rgba(60,50,30,0.10);
 }
 
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme="dark"]) {
-		--bg: #f7f6f3;
+		--bg: #f4f1ea;
 		--surface: #ffffff;
-		--surface-2: #f0efec;
-		--border: #e2e0db;
-		--fg: #17171a;
-		--fg-2: #6b6b70;
+		--surface-2: #efebe1;
+		--surface-3: #e7e2d6;
+		--border: #e0dacd;
+		--border-strong: #cfc8b8;
+		--fg: #17130d;
+		--fg-2: #635d51;
+		--fg-3: #8b8578;
+		--accent: #d8431a;
+		--accent-soft: rgba(216, 67, 26, 0.10);
+		--live: #d61f1f;
+		--favorite: #b8860b;
+		--shadow-hero: 0 1px 2px rgba(0,0,0,0.04), 0 10px 26px rgba(60,50,30,0.10);
 	}
 }
 
-:root[data-theme="light"] {
-	--bg: #f7f6f3;
-	--surface: #ffffff;
-	--surface-2: #f0efec;
-	--border: #e2e0db;
-	--fg: #17171a;
-	--fg-2: #6b6b70;
-}
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { -webkit-text-size-adjust: 100%; }
 
 body {
 	background: var(--bg);
 	color: var(--fg);
-	font-family: var(--font);
+	font-family: var(--font-body);
 	font-size: 16px;
 	line-height: 1.5;
 	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 	padding-bottom: env(safe-area-inset-bottom);
+	font-feature-settings: "ss01", "cv01";
 }
 
 img { max-width: 100%; display: inline-block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 
-a { color: inherit; }
-
-button {
-	font: inherit;
-	color: inherit;
-	background: none;
-	border: none;
-	cursor: pointer;
+/* Section headers — the editorial kicker system */
+.section-head {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 26px 0 12px;
+}
+.section-head h2 {
+	font-family: var(--font-display);
+	font-size: 13px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.13em;
+	color: var(--fg-2);
+}
+.section-head::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--border);
 }
 
-h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-h2 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--fg-2); }
+[hidden] { display: none !important; }
 
-.mono, .score { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+::selection { background: var(--accent); color: #fff; }
 
-::selection { background: var(--accent); color: #000; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+	.section, .hero-card { animation: rise 0.4s cubic-bezier(0.2,0.7,0.2,1) both; }
+	@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
