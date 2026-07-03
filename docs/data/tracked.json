@@ -1,36 +1,36 @@
 {
-  "lastUpdated": "2026-07-02T00:00:00Z",
-  "lastUpdatedBy": "manual-seed",
-  "version": 1,
+  "lastUpdated": "2026-07-03T19:45:00Z",
+  "lastUpdatedBy": "research-agent",
+  "version": 2,
   "leagues": [
     {
       "id": "premier-league-2026-27",
       "name": "Premier League 2026/27",
       "sport": "football",
-      "reason": "User lists Premier League in alwaysTrack.tournaments and interests mention general overview + Liverpool",
+      "reason": "alwaysTrack.tournaments + interesse for generell oversikt og Liverpool. Sesongstart medio august 2026 — statiske ESPN-fetchere dekker kampene når terminlisten publiseres.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
+      "addedBy": "research-agent",
       "evidence": ["interests.json#alwaysTrack.tournaments"],
       "priority": "high"
     },
     {
       "id": "la-liga-2026-27",
-      "name": "La Liga 2026/27",
+      "name": "La Liga 2026/27 (Barcelona)",
       "sport": "football",
-      "reason": "User lists La Liga in alwaysTrack.tournaments with focus on Barcelona",
+      "reason": "alwaysTrack.tournaments med fokus på Barcelona (alwaysTrack.teams). Sesongstart august 2026; ferievindu nå.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.teams"],
       "priority": "high"
     },
     {
       "id": "obos-ligaen-2026",
       "name": "OBOS-ligaen 2026 (Lyn Oslo)",
       "sport": "football",
-      "reason": "User follows Lyn Oslo in Norwegian second division",
+      "reason": "Lyn er i alwaysTrack.teams. Ligaen har VM-pause; Lyns neste kamp er borte mot serieleder Strømsgodset 25. juli kl. 18.00 (lagt inn som ai-research-event). Lyn slo Åsane 6-2 på Bislett 2. juli før pausen.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.teams", "interests.json#interests"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.teams", "https://obosligaenkamper.com/lyn/", "https://www.obos-ligaen.no/terminliste"],
       "priority": "high"
     }
   ],
@@ -39,31 +39,51 @@
       "id": "viktor-hovland",
       "name": "Viktor Hovland",
       "sport": "golf",
-      "reason": "Listed in alwaysTrack.athletes — PGA Tour and majors coverage",
+      "reason": "alwaysTrack.athletes. Neste start: Genesis Scottish Open 9.–12. juli (bekreftet i feltet), deretter The Open på Royal Birkdale 16.–19. juli (kvalifisert via OWGR topp 50). Spiller IKKE John Deere Classic denne uken.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.athletes", "https://www.europeantour.com/dpworld-tour/rolex/news/articles/detail/european-ryder-cup-stars-lead-2026-genesis-scottish-open-field/", "https://www.golfchannel.com/randa/news/open-championship-2026-full-field-and-how-players-qualified-for-royal-birkdale"],
       "priority": "high"
+    },
+    {
+      "id": "kristoffer-ventura",
+      "name": "Kristoffer Ventura",
+      "sport": "golf",
+      "reason": "alwaysTrack.athletes (manglet i tracked.json — lagt til). Spiller John Deere Classic nå (2.–5. juli, dekket av statisk pipeline). Ikke i The Open-feltet per Wikipedias feltliste.",
+      "addedAt": "2026-07-03T19:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.athletes", "docs/data/golf.json (John Deere Classic featured group)"],
+      "priority": "medium"
     },
     {
       "id": "casper-ruud",
       "name": "Casper Ruud",
       "sport": "tennis",
-      "reason": "Listed in alwaysTrack.athletes — grand slams + all matches",
+      "reason": "alwaysTrack.athletes. UTE av Wimbledon 2026 — tapte 1. runde mot Hubert Hurkacz 29. juni. Har uttalt at han prioriterer amerikansk hardcourt-sesong fremover; ingen bekreftet neste turnering. Sjekk Nordea Open Båstad-entrylisten (13.–19. juli) neste kjøring.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.athletes", "https://sports.yahoo.com/articles/wimbledon-day-1-upsets-8-030215510.html"],
       "priority": "high"
     },
     {
       "id": "magnus-carlsen",
       "name": "Magnus Carlsen",
       "sport": "chess",
-      "reason": "Listed in alwaysTrack.athletes — elite chess coverage",
+      "reason": "alwaysTrack.athletes. Neste bekreftede event: Esports World Cup-sjakken 11.–15. august i Paris (tittelforsvarer, lagt inn som ai-research-event). Spiller IKKE GCT SuperUnited Zagreb 2026 (1.–5. juli) — 2026-feltet er uten ham.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.athletes", "https://esportsworldcup.com/en/competitions/2026/chess", "https://en.chessbase.com/post/super-croatia-2026-live"],
       "priority": "high"
+    },
+    {
+      "id": "aryan-tari",
+      "name": "Aryan Tari",
+      "sport": "chess",
+      "reason": "alwaysTrack.athletes (manglet i tracked.json — lagt til). Ingen verifisert kommende turnering funnet denne kjøringen; NM i sjakk (Landsturneringen) går tradisjonelt tidlig i juli — sjekk sjakk.no neste kjøring før noe legges inn.",
+      "addedAt": "2026-07-03T19:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.athletes"],
+      "priority": "medium"
     }
   ],
   "tournaments": [
@@ -71,10 +91,10 @@
       "id": "fifa-world-cup-2026",
       "name": "FIFA World Cup 2026",
       "sport": "football",
-      "reason": "Listed in alwaysTrack.tournaments — active right now (June–July 2026)",
+      "reason": "alwaysTrack.tournaments, pågår nå. Norge møter Brasil i åttedelsfinalen søndag 5. juli kl. 22.00 norsk tid — sendes på NRK1/NRK TV (eksplisitt bekreftet i NRKs pressemelding; statisk event i events.json er beriket med NRK-streaming).",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.nrk.no/presse/slik-sendes-attedelsfinalene-i-fotball-vm-2026-1.17943491"],
       "expires": "2026-07-19T23:59:59Z",
       "priority": "high"
     },
@@ -82,48 +102,84 @@
       "id": "tour-de-france-2026",
       "name": "Tour de France 2026",
       "sport": "cycling",
-      "reason": "Listed in alwaysTrack.tournaments — active in July; Uno-X Mobility and Norwegian riders",
+      "reason": "alwaysTrack.tournaments + Uno-X Mobility (alwaysTrack.teams). Starter 4. juli med lagtempo i Barcelona — etappe 1–5 lagt inn som ai-research-events. Uno-X stiller med fem nordmenn; Tobias Halland Johannessen er GC-kaptein (6. plass 2025). TV 2 har rettighetene ut 2030.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.teams"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.unoxteam.com/news/this-is-our-team-for-tour-de-france", "https://en.wikipedia.org/wiki/2026_Tour_de_France"],
       "expires": "2026-07-26T23:59:59Z",
-      "priority": "high"
-    },
-    {
-      "id": "f1-world-championship-2026",
-      "name": "Formula 1 World Championship 2026",
-      "sport": "f1",
-      "reason": "User listed F1 in alwaysTrack.tournaments and interests mention full season",
-      "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments"],
-      "expires": "2026-12-31T23:59:59Z",
-      "priority": "high"
-    },
-    {
-      "id": "the-open-championship-2026",
-      "name": "The Open Championship 2026",
-      "sport": "golf",
-      "reason": "Golf major in alwaysTrack.tournaments — played mid-July",
-      "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments"],
-      "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
     },
     {
       "id": "wimbledon-2026",
       "name": "Wimbledon 2026",
       "sport": "tennis",
-      "reason": "Grand slam in alwaysTrack.tournaments — active late June–mid July; Casper Ruud focus",
+      "reason": "Grand slam i alwaysTrack.tournaments, pågår til 12. juli. Ruud er ute (1. runde), men finalene 11.–12. juli er lagt inn som ai-research-events. Norske rettigheter: Max (Eurosport) — norwegian-rights-skillen er oppdatert fra Viaplay.",
       "addedAt": "2026-07-02T00:00:00Z",
-      "addedBy": "manual-seed",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.athletes"],
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://en.wikipedia.org/wiki/2026_Wimbledon_Championships", "https://tvguide.vg.no/sport/tennis-wimbledon"],
+      "expires": "2026-07-13T23:59:59Z",
+      "priority": "medium"
+    },
+    {
+      "id": "genesis-scottish-open-2026",
+      "name": "Genesis Scottish Open 2026",
+      "sport": "golf",
+      "reason": "Hovlands neste start (9.–12. juli, Renaissance Club) — dekker interessen «Golf — særlig når Hovland spiller». Lagt inn som ai-research-event; ESPN-fetcheren plukker den trolig opp når uken starter.",
+      "addedAt": "2026-07-03T19:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["https://www.europeantour.com/dpworld-tour/genesis-scottish-open-2026/", "https://www.todays-golfer.com/news-and-events/tour-news/2026-genesis-scottish-open-field/"],
       "expires": "2026-07-13T23:59:59Z",
       "priority": "high"
+    },
+    {
+      "id": "the-open-championship-2026",
+      "name": "The Open Championship 2026 (Royal Birkdale)",
+      "sport": "golf",
+      "reason": "Major i alwaysTrack.tournaments, 16.–19. juli på Royal Birkdale. Hovland kvalifisert. Lagt inn som ai-research-event med Viaplay-streaming.",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.theopen.com/latest/all-you-need-to-know-154th-open-royal-birkdale"],
+      "expires": "2026-07-20T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "f1-world-championship-2026",
+      "name": "Formula 1 World Championship 2026",
+      "sport": "f1",
+      "reason": "alwaysTrack.tournaments, hele sesongen (kvalifisering + race). Neste: Belgia GP 17.–19. juli (statisk event; streaming rettet til Viaplay som holder eksklusive norske F1-rettigheter 2026).",
+      "addedAt": "2026-07-02T00:00:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://viaplay.no/no-nb/formel-1-guide"],
+      "expires": "2026-12-31T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "esports-world-cup-2026-chess",
+      "name": "Esports World Cup 2026 – sjakk",
+      "sport": "chess",
+      "reason": "Magnus Carlsen forsvarer tittelen 11.–15. august i Paris (flyttet fra Riyadh 20. mai). Dekker interessen «Sjakk på elite-nivå». Datokonflikt i kilder ble avgjort av uavhengig faktasjekk mot offisiell EWC-side + Liquipedia.",
+      "addedAt": "2026-07-03T19:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["https://esportsworldcup.com/en/competitions/2026/chess", "https://liquipedia.net/chess/Esports_World_Cup/2026"],
+      "expires": "2026-08-16T23:59:59Z",
+      "priority": "high"
+    },
+    {
+      "id": "blast-bounty-2026-s2",
+      "name": "BLAST Bounty 2026 Season 2 (100 Thieves)",
+      "sport": "esports",
+      "reason": "100 Thieves (alwaysTrack.teams) gjør tier-1-debut som wildcard; online-stadiet 21.–26. juli, LAN-finaler i Malta 30. juli–2. august. Nordmannen Håvard «rain» Nygaard på laget. Kamptider ikke publisert — følg opp.",
+      "addedAt": "2026-07-03T19:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#alwaysTrack.teams", "https://www.hltv.org/news/44953/blast-bounty-2026-season-2-teams-revealed", "https://blast.tv/cs/tournaments/bounty-2026-season-2"],
+      "expires": "2026-08-03T23:59:59Z",
+      "priority": "medium"
     }
   ],
   "notes": [
-    "Pre-seeded manually from interests.json during the v2 rebuild (2026-07-02). The research agent refines this file on every run."
+    "Full omskriving 2026-07-03 av research-agenten (v2 av filen, første AI-genererte versjon etter manuell seed 2026-07-02).",
+    "Ryddet: Ventura og Tari (begge i alwaysTrack.athletes) manglet og er lagt til. Ingen utløpte oppføringer å fjerne.",
+    "Vinteridretter trackes ikke nå (juli = av-sesong, jf. interests «i OL- og verdenscup-perioder»). NB for sesongen 2026/27: TV 2 + Viaplay overtar FIS-verdenscuprettighetene fra NRK (NTB des. 2025) — norwegian-rights-skillen er oppdatert.",
+    "Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League i alwaysTrack er utenfor sesong/vindu og får oppføringer når de nærmer seg."
   ]
 }
