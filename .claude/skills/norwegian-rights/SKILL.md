@@ -29,16 +29,16 @@ Confidence key: `[solid]` = well-established, `[verify]` = check before relying 
 ## Tennis
 - Roland-Garros → **Discovery+/Eurosport** [solid]
 - Australian Open → **Discovery+/Eurosport** [solid]
-- Wimbledon → **Viaplay** [verify]
+- Wimbledon → **Max (WBD/Eurosport)** [verify] (changed from Viaplay 2026-07-03: tvkampen.com rights page lists Discovery Networks, tvtilbud.no says Max Sport carries all Grand Slams incl. Wimbledon 2026; no 2026-specific press release found)
 - ATP/WTA tour events → [verify per event]
 
 ## Winter sports
 - Biathlon (IBU World Cup/WCH) → **NRK** [solid]
-- Cross-country, ski jumping, nordic combined (FIS World Cup) → **NRK** [solid]
+- Cross-country, ski jumping, nordic combined (FIS World Cup) → **NRK** [solid] through 2025/26; from season 2026/27 **TV 2 + Viaplay** share FIS World Cup rights [verify] (NTB press release Dec 2025, kommunikasjon.ntb.no/pressemelding/18377092; noted 2026-07-03)
 - Alpine (FIS World Cup) → **Viaplay** [verify]
 
 ## Cycling
-- Tour de France → **TV 2 Play** [solid]
+- Tour de France → **TV 2 Play** [solid] (TV 2 deal covers 2026–2030 per NTB press release; hjelp.tv2.no confirms TV 2 Direkte + TV 2 Play; Eurosport Norge reportedly shares 2026 rights per cyclingweekly.com [verify]; confirmed 2026-07-03)
 - Other UCI races → [verify per event]
 
 ## Chess
