@@ -15,8 +15,9 @@ import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY } from
 /** Build the watchlist: names worth spotting in headlines. */
 export function buildWatchlist(interests, tracked) {
 	const names = new Set();
-	for (const n of interests?.alwaysTrack?.athletes || []) names.add(n);
-	for (const n of interests?.alwaysTrack?.teams || []) names.add(n);
+	for (const group of ["athletes", "teams", "tournaments"]) {
+		for (const n of interests?.alwaysTrack?.[group] || []) names.add(n);
+	}
 	for (const group of ["athletes", "tournaments", "leagues"]) {
 		for (const entry of tracked?.[group] || []) {
 			if (entry?.name) names.add(entry.name);
@@ -29,9 +30,17 @@ function normalize(s) {
 	return (s || "").toLowerCase();
 }
 
+/**
+ * Word-boundary containment check. Plain substring matching makes short names
+ * like "Lyn" match "lynnedslag" — boundaries kill that class of false positive.
+ */
+export function containsName(haystack, name) {
+	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu").test(haystack);
+}
+
 /** Does any upcoming event mention this name (title, teams, tournament, players)? */
 export function hasUpcomingEvent(name, events, now = Date.now()) {
-	const n = normalize(name);
 	const horizon = now + 14 * MS_PER_DAY;
 	return events.some((e) => {
 		const t = Date.parse(e.time);
@@ -46,7 +55,7 @@ export function hasUpcomingEvent(name, events, now = Date.now()) {
 				...(e.participants || []),
 			].join(" ")
 		);
-		return haystack.includes(n);
+		return containsName(haystack, normalize(name));
 	});
 }
 
@@ -60,7 +69,7 @@ export function detectGaps({ rss, events, interests, tracked, now = Date.now() }
 		const headline = normalize(`${item.title || ""} ${item.description || ""}`);
 		for (const name of watchlist) {
 			const n = normalize(name);
-			if (!headline.includes(n)) continue;
+			if (!containsName(headline, n)) continue;
 			if (seen.has(n)) continue;
 			if (hasUpcomingEvent(name, events, now)) continue;
 			seen.add(n);

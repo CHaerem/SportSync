@@ -19,6 +19,19 @@ import { rootDataPath, writeJsonPretty, iso, MS_PER_DAY } from "./lib/helpers.js
 
 const WINDOW_DAYS = 180; // old lessons decay out of the stats
 
+/** Normalize "https://www.pgatour.com/x", "www.pgatour.com" and "pgatour.com" to one key. */
+export function normalizeSource(source) {
+	let s = String(source).trim().toLowerCase();
+	if (s.includes("://")) {
+		try {
+			s = new URL(s).hostname;
+		} catch {
+			s = s.split("://")[1] || s;
+		}
+	}
+	return s.split("/")[0].replace(/^www\./, "");
+}
+
 export function aggregate(lines, now = Date.now()) {
 	const cutoff = now - WINDOW_DAYS * MS_PER_DAY;
 	const sources = {};
@@ -43,7 +56,7 @@ export function aggregate(lines, now = Date.now()) {
 			continue;
 		}
 		used++;
-		const key = rec.source.toLowerCase().replace(/^www\./, "");
+		const key = normalizeSource(rec.source);
 		if (!sources[key]) {
 			sources[key] = { checks: 0, agreed: 0, bySport: {}, byField: {}, lastChecked: null };
 		}
@@ -60,7 +73,9 @@ export function aggregate(lines, now = Date.now()) {
 			s.byField[rec.field].checks++;
 			if (rec.agreed) s.byField[rec.field].agreed++;
 		}
-		if (!s.lastChecked || rec.checkedAt > s.lastChecked) s.lastChecked = rec.checkedAt;
+		if (!s.lastChecked || Date.parse(rec.checkedAt) > Date.parse(s.lastChecked)) {
+			s.lastChecked = rec.checkedAt;
+		}
 	}
 
 	// Reliability only shown with a minimum sample — avoid overclaiming from 1-2 checks

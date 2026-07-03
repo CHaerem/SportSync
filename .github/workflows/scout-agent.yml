@@ -12,6 +12,7 @@ concurrency:
 jobs:
   scout:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       actions: write # allows escalation via `gh workflow run research-agent.yml`
@@ -27,7 +28,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-haiku-4-5
-            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(gh workflow run:*),Bash(date:*),Bash(jq:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             Read scripts/agents/scout.md and execute it. Be quick — this is an
             hourly triage pass, not a research run.

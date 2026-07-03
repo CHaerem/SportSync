@@ -13,7 +13,11 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
   (recall failures are the worst failure mode). Noise is expected; dismiss fast.
 - `docs/data/calibration.json` — per-source trust stats from past verifications.
   Prefer sources with high reliability for the sport at hand; distrust repeat offenders.
-- `docs/data/tv-listings.json` — tvkampen.com ground truth for Norwegian football TV/streaming
+- `docs/data/tv-listings.json` — tvkampen.com ground truth for Norwegian football
+  TV/streaming (times are Oslo-local HH:MM without dates — match by team names)
+- `docs/data/scout-log.json` — the hourly scout's verdicts. If a recent entry
+  has `"verdict": "escalate"`, its `reason`/`signals` tell you why THIS run was
+  triggered — investigate those first.
 - `docs/data/recent-results.json` — last 7 days completed events
 - Current date (UTC and Europe/Oslo)
 
@@ -67,7 +71,7 @@ Append discovered events to the existing array in `docs/data/events.json`
   "venue": "Holmenkollen",
   "norwegian": true,
   "norwegianPlayers": [{ "name": "Johannes Thingnes Bø" }],
-  "streaming": ["NRK 1"],
+  "streaming": [{ "platform": "NRK 1", "url": "https://tv.nrk.no" }],
   "source": "ai-research",
   "researchedAt": "2026-07-02T10:00:00Z",
   "confidence": "high",
@@ -123,6 +127,11 @@ log honestly, never loop).
 3. `docs/data/research-log.json`: `{ "runAt": ISO, "eventsAdded": n, "eventsRemoved": n, "trackedDelta": "...", "quality": { "pass": bool, "score": n, "failures": [] }, "notes": ["..."] }`
 
 After writing files, run `node scripts/validate-events.js` and fix any errors it reports.
+
+**Concurrency:** the hourly static pipeline commits events.json too. Just before
+you write, run `git pull --rebase origin main` and re-read events.json so your
+append lands on the freshest version; if the final push conflicts, rebase and
+re-apply your additions rather than force-pushing.
 
 ## Constraints
 - Think in Norwegian sport-fan terms

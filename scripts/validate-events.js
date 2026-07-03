@@ -84,9 +84,10 @@ for (const ev of events) {
 			errors++;
 		}
 		// Streaming contract (soft): "hvor kan jeg se det" should be answered for
-		// near-term events. Warning only — the research grader enforces harder.
+		// upcoming near-term events. Warning only — the research grader enforces harder.
 		const ts2 = Date.parse(ev.time);
-		if (!Number.isNaN(ts2) && ts2 < Date.now() + 7 * 24 * 60 * 60 * 1000) {
+		const nowMs = Date.now();
+		if (!Number.isNaN(ts2) && ts2 > nowMs - 4 * 60 * 60 * 1000 && ts2 < nowMs + 7 * 24 * 60 * 60 * 1000) {
 			if (!Array.isArray(ev.streaming) || ev.streaming.length === 0) {
 				streamingMissing++;
 			}

@@ -19,17 +19,22 @@ process.stdin.on("end", () => {
 
 	let touches = false;
 	const filePath = (ti.file_path || "").replace(/\\/g, "/");
-	if (filePath.endsWith(target) || filePath.endsWith("/interests.json")) {
+	// Basename check catches absolute, repo-relative AND bare-relative paths.
+	if (filePath.split("/").pop() === "interests.json") {
 		touches = true;
 	}
 	if (tool === "Bash" && typeof ti.command === "string") {
 		const cmd = ti.command;
 		// Block only when a write operation targets the file itself — merely
 		// mentioning interests.json (commit messages, greps, 2>&1) is fine.
+		// This is defense-in-depth, not a sandbox: an adversarial inline script
+		// could still evade it, but the Write/Edit path (covered above) is the
+		// channel agents actually use.
 		const redirectsInto = />>?\s*[^\s;&|<>]*interests\.json/.test(cmd);
 		const pipesInto = /\btee\b[^;&|]*interests\.json/.test(cmd);
 		const mutatesInPlace = /\b(?:sed\s+-i|mv|cp|rm|truncate|dd)\b[^;&|]*interests\.json/.test(cmd);
-		if (redirectsInto || pipesInto || mutatesInPlace) {
+		const scriptWrites = /\bwrite(?:File(?:Sync)?)?\s*\([^)]*interests\.json/.test(cmd);
+		if (redirectsInto || pipesInto || mutatesInPlace || scriptWrites) {
 			touches = true;
 		}
 	}

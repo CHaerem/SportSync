@@ -18,10 +18,13 @@ process.stdin.on("end", () => {
 	if (!filePath.endsWith("docs/data/events.json")) process.exit(0);
 
 	const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+	// Validate the directory that was actually written, not whatever the repo
+	// happens to contain (matters when tools write to a non-repo data dir).
+	const writtenDataDir = filePath.slice(0, -"/events.json".length);
 	const result = spawnSync("node", ["scripts/validate-events.js"], {
 		cwd: projectDir,
 		encoding: "utf-8",
-		env: process.env,
+		env: { ...process.env, SPORTSYNC_DATA_DIR: writtenDataDir },
 	});
 	if (result.status !== 0) {
 		console.error(

@@ -1,6 +1,6 @@
 // aggregate-calibration.js: mechanical trust stats from the verify agent's ledger.
 import { describe, it, expect } from "vitest";
-import { aggregate } from "../scripts/aggregate-calibration.js";
+import { aggregate, normalizeSource } from "../scripts/aggregate-calibration.js";
 
 const NOW = Date.parse("2026-07-03T12:00:00Z");
 const rec = (over = {}) =>
@@ -36,6 +36,13 @@ describe("aggregate-calibration", () => {
 		const out = aggregate([rec(), rec({ source: "www.pgatour.com" })], NOW);
 		expect(Object.keys(out.sources)).toEqual(["pgatour.com"]);
 		expect(out.sources["pgatour.com"].checks).toBe(2);
+	});
+
+	it("normalizes full URLs to hostnames (review finding)", () => {
+		expect(normalizeSource("https://www.pgatour.com/schedule/x")).toBe("pgatour.com");
+		expect(normalizeSource("pgatour.com/schedule")).toBe("pgatour.com");
+		const out = aggregate([rec(), rec({ source: "https://pgatour.com/leaderboard" })], NOW);
+		expect(Object.keys(out.sources)).toEqual(["pgatour.com"]);
 	});
 
 	it("drops records outside the decay window and malformed lines", () => {

@@ -88,23 +88,52 @@ if (fs.existsSync(configDir)) {
 	}
 }
 
-// 3. Preserve AI-research events from the previous events.json.
-// The research agent appends events with source: "ai-research" that no static
-// fetcher knows about — a rebuild must not erase them. Dedupe key: sport|title|time.
+// 3. Preserve AI work from the previous events.json.
+// (a) AI-research events no static fetcher knows about must survive rebuilds.
+// (b) Agent amendments to STATIC events (streaming corrections, verification
+//     stamps) must also survive — the fetchers regenerate those events from
+//     API data and would otherwise silently erase the corrections every hour.
+// Dedupe key: sport|title|time.
+const CARRY_FORWARD_FIELDS = [
+	"streaming",
+	"verifiedAt",
+	"verificationStatus",
+	"verificationSources",
+];
 const previousEvents = readJsonIfExists(path.join(dataDir, "events.json"));
 if (Array.isArray(previousEvents)) {
-	const seen = new Set(all.map((e) => `${e.sport}|${e.title}|${e.time}`));
+	const byKey = new Map(all.map((e) => [`${e.sport}|${e.title}|${e.time}`, e]));
 	let preserved = 0;
+	let carried = 0;
 	for (const prev of previousEvents) {
-		if (prev.source !== "ai-research") continue;
 		const key = `${prev.sport}|${prev.title}|${prev.time}`;
-		if (seen.has(key)) continue;
-		seen.add(key);
+		const current = byKey.get(key);
+		if (current) {
+			// Same event re-fetched: keep agent amendments the fetcher lacks
+			for (const field of CARRY_FORWARD_FIELDS) {
+				const currentEmpty =
+					current[field] == null ||
+					(Array.isArray(current[field]) && current[field].length === 0);
+				const prevHasValue =
+					prev[field] != null &&
+					(!Array.isArray(prev[field]) || prev[field].length > 0);
+				if (currentEmpty && prevHasValue) {
+					current[field] = prev[field];
+					carried++;
+				}
+			}
+			continue;
+		}
+		if (prev.source !== "ai-research") continue;
+		byKey.set(key, prev);
 		all.push(prev);
 		preserved++;
 	}
 	if (preserved > 0) {
 		console.log(`Preserved ${preserved} AI-research event(s) from previous build.`);
+	}
+	if (carried > 0) {
+		console.log(`Carried forward ${carried} agent amendment(s) onto re-fetched static events.`);
 	}
 }
 

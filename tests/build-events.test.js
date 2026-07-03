@@ -68,6 +68,30 @@ describe("build-events", () => {
 		expect(events.find((e) => e.title === "Old static event")).toBeUndefined();
 	});
 
+	it("carries agent amendments (streaming, verification) onto re-fetched static events", () => {
+		const time = future(2);
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "PL", events: [{ title: "Derby", time }] }] })
+		);
+		// Previous build: verify agent added streaming + verification to the static event
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{
+					sport: "football", tournament: "PL", title: "Derby", time,
+					streaming: [{ platform: "TV 2 Play" }],
+					verifiedAt: "2026-07-03T05:30:00Z",
+					verificationStatus: "confirmed",
+				},
+			])
+		);
+		const events = runBuild();
+		const derby = events.find((e) => e.title === "Derby");
+		expect(derby.streaming).toEqual([{ platform: "TV 2 Play" }]);
+		expect(derby.verificationStatus).toBe("confirmed");
+	});
+
 	it("dedupes ai-research events that a static fetcher now covers", () => {
 		const time = future(2);
 		fs.writeFileSync(

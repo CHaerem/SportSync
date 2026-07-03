@@ -1,6 +1,6 @@
 // detect-coverage-gaps.js: recall watch — entities in the news with no upcoming event.
 import { describe, it, expect } from "vitest";
-import { buildWatchlist, hasUpcomingEvent, detectGaps } from "../scripts/detect-coverage-gaps.js";
+import { buildWatchlist, hasUpcomingEvent, detectGaps, containsName } from "../scripts/detect-coverage-gaps.js";
 
 const NOW = Date.parse("2026-07-03T12:00:00Z");
 const interests = { alwaysTrack: { athletes: ["Viktor Hovland"], teams: ["Lyn"], tournaments: [] } };
@@ -10,6 +10,22 @@ describe("buildWatchlist", () => {
 	it("merges interests and tracked entities", () => {
 		const list = buildWatchlist(interests, tracked);
 		expect(list).toEqual(expect.arrayContaining(["Viktor Hovland", "Lyn", "Casper Ruud", "Tour de France 2026"]));
+	});
+
+	it("includes interests.alwaysTrack.tournaments (review finding)", () => {
+		const list = buildWatchlist(
+			{ alwaysTrack: { athletes: [], teams: [], tournaments: ["Wimbledon"] } },
+			null
+		);
+		expect(list).toContain("Wimbledon");
+	});
+});
+
+describe("containsName (word boundaries)", () => {
+	it("matches whole names but not substrings inside words (review finding)", () => {
+		expect(containsName("lyn slo vif i går", "lyn")).toBe(true);
+		expect(containsName("kraftig lynnedslag i oslo", "lyn")).toBe(false);
+		expect(containsName("vålerenga-lyn utsatt", "lyn")).toBe(true);
 	});
 });
 

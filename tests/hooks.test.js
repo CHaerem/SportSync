@@ -68,6 +68,22 @@ describe("protect-interests hook", () => {
 		expect(r.status).toBe(0);
 	});
 
+	it("blocks bare relative paths (review finding)", () => {
+		const r = runHook(hook, {
+			tool_name: "Write",
+			tool_input: { file_path: "interests.json", content: "{}" },
+		});
+		expect(r.status).toBe(2);
+	});
+
+	it("blocks node -e writeFileSync targeting interests.json (review finding)", () => {
+		const r = runHook(hook, {
+			tool_name: "Bash",
+			tool_input: { command: `node -e "fs.writeFileSync('scripts/config/interests.json','{}')"` },
+		});
+		expect(r.status).toBe(2);
+	});
+
 	it("survives malformed input without blocking", () => {
 		const r = spawnSync("node", [hook], { input: "not json", encoding: "utf-8" });
 		expect(r.status).toBe(0);
@@ -85,35 +101,37 @@ describe("validate-after-write hook", () => {
 		expect(r.status).toBe(0);
 	});
 
+	// The hook validates the directory that was actually written (derived from
+	// file_path), so tests must place events.json at a real docs/data path.
+	function makeDataDir(events) {
+		const root = fs.mkdtempSync(path.join(os.tmpdir(), "ss-hook-"));
+		const dataDir = path.join(root, "docs", "data");
+		fs.mkdirSync(dataDir, { recursive: true });
+		fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(events));
+		return { root, filePath: path.join(dataDir, "events.json") };
+	}
+
 	it("passes when events.json is valid", () => {
-		const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-hook-"));
 		const future = new Date(Date.now() + 86400000).toISOString();
-		fs.writeFileSync(
-			path.join(dataDir, "events.json"),
-			JSON.stringify([{ sport: "golf", title: "Open", time: future }])
-		);
+		const { root, filePath } = makeDataDir([{ sport: "golf", title: "Open", time: future }]);
 		const r = runHook(
 			hook,
-			{ tool_name: "Write", tool_input: { file_path: "/x/docs/data/events.json" } },
-			{ SPORTSYNC_DATA_DIR: dataDir, CLAUDE_PROJECT_DIR: process.cwd() }
+			{ tool_name: "Write", tool_input: { file_path: filePath } },
+			{ CLAUDE_PROJECT_DIR: process.cwd() }
 		);
 		expect(r.status).toBe(0);
-		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(root, { recursive: true, force: true });
 	});
 
 	it("exits 2 with feedback when events.json is invalid", () => {
-		const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-hook-bad-"));
-		fs.writeFileSync(
-			path.join(dataDir, "events.json"),
-			JSON.stringify([{ sport: "golf", title: "Missing time" }])
-		);
+		const { root, filePath } = makeDataDir([{ sport: "golf", title: "Missing time" }]);
 		const r = runHook(
 			hook,
-			{ tool_name: "Write", tool_input: { file_path: "/x/docs/data/events.json" } },
-			{ SPORTSYNC_DATA_DIR: dataDir, CLAUDE_PROJECT_DIR: process.cwd() }
+			{ tool_name: "Write", tool_input: { file_path: filePath } },
+			{ CLAUDE_PROJECT_DIR: process.cwd() }
 		);
 		expect(r.status).toBe(2);
 		expect(r.stderr).toContain("failed validation");
-		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(root, { recursive: true, force: true });
 	});
 });

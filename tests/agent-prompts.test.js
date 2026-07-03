@@ -80,7 +80,12 @@ describe("agent prompts", () => {
 
 	it("skills have valid frontmatter (name + description)", () => {
 		const skillsDir = path.resolve(".claude", "skills");
-		for (const dir of fs.readdirSync(skillsDir)) {
+		const dirs = fs
+			.readdirSync(skillsDir, { withFileTypes: true })
+			.filter((d) => d.isDirectory()) // ignore .DS_Store and stray files
+			.map((d) => d.name);
+		expect(dirs.length).toBeGreaterThan(0);
+		for (const dir of dirs) {
 			const skill = fs.readFileSync(path.join(skillsDir, dir, "SKILL.md"), "utf-8");
 			expect(skill.startsWith("---"), `${dir}/SKILL.md missing frontmatter`).toBe(true);
 			expect(skill).toMatch(/name:\s*\S+/);

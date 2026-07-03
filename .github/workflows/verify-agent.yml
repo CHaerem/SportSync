@@ -12,6 +12,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
@@ -29,6 +30,6 @@ jobs:
           prompt: |
             Read scripts/agents/verify.md and execute it.
             When done, commit your changes:
-              git add docs/data/events.json docs/data/verify-log.json docs/data/calibration-ledger.jsonl .claude/skills/norwegian-rights/SKILL.md
+              git add docs/data/events.json docs/data/verify-log.json docs/data/calibration-ledger.jsonl .claude/skills/
               git commit -m "verify-agent: verify upcoming events"
               git push || (git pull --rebase origin main && git push)

@@ -20,6 +20,7 @@ concurrency:
 jobs:
   fetch-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
