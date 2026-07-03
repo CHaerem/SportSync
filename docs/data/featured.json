@@ -1,42 +1,41 @@
 {
+  "generatedAt": "2026-07-03T05:00:00Z",
+  "mode": "morning",
+  "provider": "claude-cli",
   "blocks": [
     {
       "type": "headline",
-      "text": "City can draw level with Arsenal tonight — Barça protect a six-point lead"
+      "text": "Norge klar for Brasil i VM-åttedelsfinalen søndag — i dag venter golf med Ventura og ny VM-runde"
     },
     {
       "type": "narrative",
-      "text": "Man City's 2-1 win over Arsenal on Sunday cracked the title race wide open. Three points at Burnley tonight puts City level on 70 — same games played as Arsenal. The race is alive."
+      "text": "Norges VM-eventyr fortsetter: søndag møter Haaland og co. Brasil i åttedelsfinalen på MetLife Stadium, og oppkjøringen preges av bekymring for varmen i New Jersey og spørsmålstegn ved Julian Ryersons form. På golfbanen er Kris Ventura i aksjon i John Deere Classic, mens Tour de France nærmer seg med Uno-X og Tobias Halland Johannessen i sentrum. En innholdsrik sportshelg står for døren."
     },
     {
       "type": "match-preview",
-      "homeTeam": "Burnley",
-      "awayTeam": "Manchester City",
-      "showStandings": true
+      "homeTeam": "Brazil",
+      "awayTeam": "Norway",
+      "showStandings": false,
+      "_fallbackText": "Brasil v Norge, søndag 22.00 — VM-åttedelsfinale på MetLife Stadium; Haaland og Nusa mot Gabriel og co."
     },
     {
-      "type": "match-preview",
-      "homeTeam": "Barcelona",
-      "awayTeam": "Celta Vigo",
-      "showStandings": false
+      "type": "golf-status",
+      "tournament": "pga",
+      "_fallbackText": "John Deere Classic pågår — Kris Ventura er norsk deltaker på PGA Tour."
+    },
+    {
+      "type": "match-result",
+      "homeTeam": "Portugal",
+      "awayTeam": "Croatia",
+      "_fallbackText": "Portugal slo Kroatia 2-1 i åttedelsfinalen — Gonçalo Ramos avgjorde på overtid etter Ronaldo-utligning."
     },
     {
       "type": "divider",
-      "text": "This Week"
+      "text": "Denne uka"
     },
     {
       "type": "event-line",
-      "text": "♟️ Thu 17:15 — Magnus Carlsen opens Chess.com Open playoffs, Round of 16"
-    },
-    {
-      "type": "event-line",
-      "text": "🎮 Thu 17:00 — rain & 100 Thieves vs BIG, CCT Global Finals — Portugal"
-    },
-    {
-      "type": "event-line",
-      "text": "⚽ Fri 21:00 — Real Madrid at Real Betis — La Liga title-race stakes"
+      "text": "🚴 Tour de France står for døren — Uno-X Mobility og Tobias Halland Johannessen bærer de norske håpene."
     }
-  ],
-  "generatedAt": "2026-04-22T02:53:30.336Z",
-  "provider": "claude-cli"
+  ]
 }
