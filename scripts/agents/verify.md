@@ -23,5 +23,8 @@ After writing files, run `node scripts/validate-events.js` and fix any errors it
 
 ## Constraints
 - Never verify by inventing — if you cannot find a source, mark nothing and note it in verify-log
+- X/Twitter-derived claims: apply the trust rules in `scripts/agents/playbooks/x-sources.md`
+  (official-account announcements count as one authoritative source; anything else
+  needs independent corroboration before an event keeps `high` confidence)
 - Never modify `scripts/config/interests.json`
 - Stop after ~10 minutes

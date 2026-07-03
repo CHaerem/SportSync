@@ -49,4 +49,15 @@ describe("agent prompts", () => {
 			expect(read(f).toLowerCase()).toContain("never modify");
 		}
 	});
+
+	it("every playbook referenced in a prompt exists, and x-sources is wired in", () => {
+		for (const f of ["research.md", "verify.md", "editorial.md"]) {
+			const refs = [...read(f).matchAll(/scripts\/agents\/playbooks\/[\w-]+\.md/g)].map((m) => m[0]);
+			for (const ref of refs) {
+				expect(fs.existsSync(path.resolve(ref)), `${f} references missing ${ref}`).toBe(true);
+			}
+		}
+		expect(read("research.md")).toContain("playbooks/x-sources.md");
+		expect(read("verify.md")).toContain("playbooks/x-sources.md");
+	});
 });

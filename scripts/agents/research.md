@@ -32,6 +32,10 @@ Use the **web-search** and **web-fetch** capabilities provided by your runtime. 
 - Official: fis-ski.com, biathlonworld.com, uci.org, atptour.com, pgatour.com, espn.com
 - Wikipedia "[sport] season 2026" for canonical calendars
 - Athlete/team official channels for last-minute info
+- X/Twitter — **indirectly via web search only** (x.com blocks fetching). Read
+  `scripts/agents/playbooks/x-sources.md` for the account list, search patterns,
+  and trust rules. X is often first with schedule changes, broadcaster
+  announcements and withdrawals — exactly what static APIs miss.
 
 ### Step 3 — Add discovered events to events.json
 Append discovered events to the existing array in `docs/data/events.json`
