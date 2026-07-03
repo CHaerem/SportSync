@@ -1,3 +1,8 @@
+---
+name: x-sources
+description: How to use X/Twitter as an indirect sports source — account list, search patterns, and trust rules for confidence levels. Use when researching schedule changes, broadcaster/streaming announcements, start lists, or athlete withdrawals.
+---
+
 # Playbook: X/Twitter as a source
 
 X is often first with schedule changes, broadcaster announcements, withdrawals and

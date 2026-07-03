@@ -20,6 +20,16 @@ entries (e.g. "Norske utøvere" → research who's competing this week).
 Drop expired entries. Every entry must have a `reason` you can defend.
 
 ### Step 2 — Find what static APIs miss (PRIMARY VALUE)
+
+**Fan out with parallel subagents.** Delegate one scout subagent per active
+domain instead of researching sequentially — e.g. one per in-season sport from
+tracked.json (golf scout, cycling scout, chess scout, winter-sports scout in
+season) plus one X/media sweep using the `x-sources` skill. Each scout returns
+candidate events with sources; you reconcile, dedupe against events.json, apply
+the confidence rules, and write the outputs yourself. Intervene if a scout goes
+off track. Do not delegate Steps 1, 3 or 4 — reconciliation and file writes are
+yours alone.
+
 Static fetchers (ESPN-driven) miss:
 - Norwegian events (NM, OBOS-ligaen beyond Lyn, ski-VM, skiskyting, hopping)
 - Tournaments not in ESPN (Norway Chess, FIDE events, cycling stage races)
@@ -32,10 +42,10 @@ Use the **web-search** and **web-fetch** capabilities provided by your runtime. 
 - Official: fis-ski.com, biathlonworld.com, uci.org, atptour.com, pgatour.com, espn.com
 - Wikipedia "[sport] season 2026" for canonical calendars
 - Athlete/team official channels for last-minute info
-- X/Twitter — **indirectly via web search only** (x.com blocks fetching). Read
-  `scripts/agents/playbooks/x-sources.md` for the account list, search patterns,
-  and trust rules. X is often first with schedule changes, broadcaster
-  announcements and withdrawals — exactly what static APIs miss.
+- X/Twitter — **indirectly via web search only** (x.com blocks fetching). Use the
+  `x-sources` skill (`.claude/skills/x-sources/SKILL.md`) for the account list,
+  search patterns, and trust rules. X is often first with schedule changes,
+  broadcaster announcements and withdrawals — exactly what static APIs miss.
 
 ### Step 3 — Add discovered events to events.json
 Append discovered events to the existing array in `docs/data/events.json`

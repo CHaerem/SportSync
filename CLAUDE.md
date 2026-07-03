@@ -49,11 +49,24 @@ Two kinds of scheduled work:
 ### 2. Claude agents (Claude Code Max OAuth, scheduled)
 Three workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
-| Agent | Prompt | Schedule | Job |
-|---|---|---|---|
-| **research** | `scripts/agents/research.md` | every 4h | Find events static APIs miss (Norwegian sports, chess, cycling, winter sports); append to `events.json` with `source/confidence/evidence`; rewrite `scripts/config/tracked.json`; write `research-log.json` |
-| **verify** | `scripts/agents/verify.md` | daily 05:30 UTC | Verify AI-researched events in the next 7 days via web fetch; confirm/amend/remove; write `verify-log.json` |
-| **editorial** | `scripts/agents/editorial.md` | 05:00 + 15:00 UTC | Generate `featured.json` (morning/evening brief) — narrative + structured blocks |
+| Agent | Prompt | Model | Schedule | Job |
+|---|---|---|---|---|
+| **research** | `scripts/agents/research.md` | `claude-fable-5` (experiment since 2026-07-03; fallback `claude-opus-4-8`) | every 4h | Find events static APIs miss (Norwegian sports, chess, cycling, winter sports) — fans out parallel scout subagents per in-season sport via the Task tool; append to `events.json` with `source/confidence/evidence`; rewrite `scripts/config/tracked.json`; write `research-log.json` |
+| **verify** | `scripts/agents/verify.md` | `claude-sonnet-5` | daily 05:30 UTC | Verify AI-researched events in the next 7 days via web fetch; confirm/amend/remove; write `verify-log.json` |
+| **editorial** | `scripts/agents/editorial.md` | `claude-opus-4-8` | 05:00 + 15:00 UTC | Generate `featured.json` (morning/evening brief) — narrative + structured blocks |
+
+### Harness-enforced contracts (hooks + skills)
+
+- `.claude/settings.json` wires two hooks (shared by CI agents and local sessions):
+  - **PreToolUse** `scripts/hooks/protect-interests.js` — blocks any Write/Edit/Bash
+    mutation of `scripts/config/interests.json` (user-owned; enforcement, not convention)
+  - **PostToolUse** `scripts/hooks/validate-after-write.js` — runs `validate-events.js`
+    after every write to `docs/data/events.json` and feeds failures back to the agent
+- `.claude/skills/` holds agent playbooks with progressive disclosure (loaded when
+  relevant, not stuffed into prompts). First skill: `x-sources` (X/Twitter as an
+  indirect source — account list + trust rules). Agents update their own skills
+  when they learn something durable; tests enforce frontmatter and that prompt
+  references point at existing skills.
 
 ### Config model
 

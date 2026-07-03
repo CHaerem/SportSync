@@ -50,14 +50,24 @@ describe("agent prompts", () => {
 		}
 	});
 
-	it("every playbook referenced in a prompt exists, and x-sources is wired in", () => {
+	it("every skill referenced in a prompt exists, and x-sources is wired in", () => {
 		for (const f of ["research.md", "verify.md", "editorial.md"]) {
-			const refs = [...read(f).matchAll(/scripts\/agents\/playbooks\/[\w-]+\.md/g)].map((m) => m[0]);
+			const refs = [...read(f).matchAll(/\.claude\/skills\/[\w-]+\/SKILL\.md/g)].map((m) => m[0]);
 			for (const ref of refs) {
 				expect(fs.existsSync(path.resolve(ref)), `${f} references missing ${ref}`).toBe(true);
 			}
 		}
-		expect(read("research.md")).toContain("playbooks/x-sources.md");
-		expect(read("verify.md")).toContain("playbooks/x-sources.md");
+		expect(read("research.md")).toContain(".claude/skills/x-sources/SKILL.md");
+		expect(read("verify.md")).toContain(".claude/skills/x-sources/SKILL.md");
+	});
+
+	it("skills have valid frontmatter (name + description)", () => {
+		const skillsDir = path.resolve(".claude", "skills");
+		for (const dir of fs.readdirSync(skillsDir)) {
+			const skill = fs.readFileSync(path.join(skillsDir, dir, "SKILL.md"), "utf-8");
+			expect(skill.startsWith("---"), `${dir}/SKILL.md missing frontmatter`).toBe(true);
+			expect(skill).toMatch(/name:\s*\S+/);
+			expect(skill).toMatch(/description:\s*\S+/);
+		}
 	});
 });
