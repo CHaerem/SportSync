@@ -33,6 +33,6 @@ jobs:
           prompt: |
             Read scripts/agents/research.md and execute it.
             When done, commit your changes:
-              git add docs/data/events.json docs/data/research-log.json scripts/config/tracked.json
+              git add docs/data/events.json docs/data/research-log.json scripts/config/tracked.json .claude/skills/
               git commit -m "research-agent: update tracked events"
               git push || (git pull --rebase origin main && git push)

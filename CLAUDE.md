@@ -41,8 +41,11 @@ Two kinds of scheduled work:
 - `scripts/fetch-standings.js` → `standings.json` (PL table, golf leaderboards, F1)
 - `scripts/fetch-rss.js` → `rss-digest.json` (11 feeds)
 - `scripts/fetch-results.js` → `recent-results.json` (7-day history)
+- `scripts/fetch-tvkampen.js` → `tv-listings.json` — Norwegian TV/streaming **ground truth** for football (tvkampen.com, today+2 days; lib: `scripts/lib/tvkampen-scraper.js`)
 - `scripts/build-events.js` → `events.json` — **preserves `source: "ai-research"` events** from the previous build (dedupe key `sport|title|time`), publishes `tracked.json` to `docs/data/`
-- `scripts/validate-events.js` — schema + AI-research contract (high confidence ⇒ 2+ evidence URLs)
+- `scripts/validate-events.js` — schema + AI-research contract (high confidence ⇒ 2+ evidence URLs; warns on near-term events missing streaming)
+- `scripts/detect-coverage-gaps.js` → `coverage-gaps.json` — recall watch: tracked entities in RSS headlines with no upcoming event (mechanical, recall-biased; research agent triages)
+- `scripts/aggregate-calibration.js` → `calibration.json` — mechanical per-source trust stats from `calibration-ledger.jsonl` (180-day window, reliability withheld under 5 checks)
 - `scripts/build-ics.js` — calendar export
 - Commits `docs/data/` directly to main
 
@@ -54,6 +57,25 @@ Three workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **research** | `scripts/agents/research.md` | `claude-fable-5` (experiment since 2026-07-03; fallback `claude-opus-4-8`) | every 4h | Find events static APIs miss (Norwegian sports, chess, cycling, winter sports) — fans out parallel scout subagents per in-season sport via the Task tool; append to `events.json` with `source/confidence/evidence`; rewrite `scripts/config/tracked.json`; write `research-log.json` |
 | **verify** | `scripts/agents/verify.md` | `claude-sonnet-5` | daily 05:30 UTC | Verify AI-researched events in the next 7 days via web fetch; confirm/amend/remove; write `verify-log.json` |
 | **editorial** | `scripts/agents/editorial.md` | `claude-opus-4-8` | 05:00 + 15:00 UTC | Generate `featured.json` (morning/evening brief) — narrative + structured blocks |
+| **scout** | `scripts/agents/scout.md` | `claude-haiku-4-5` | hourly 05–21 UTC | The Watchtower: triage RSS + coverage gaps; escalate to research via `gh workflow run` (max 2/day); log to `scout-log.json` |
+
+### Coverage & correctness loops (the core mission)
+
+The product's primary goal is **correct when/where info and complete coverage**
+(see interests.json owner priorities). Four loops enforce it:
+
+1. **Streaming contract** — every AI-research event must carry Norwegian viewing
+   options in `streaming` (or explicitly empty + noted). Priors live in the
+   `norwegian-rights` skill; football ground truth in `tv-listings.json`.
+2. **Write-time fact-check** — research spawns a fresh-context subagent that
+   independently verifies time+streaming on candidate events *before* they are
+   written; unverifiable events are demoted or dropped.
+3. **Grader gate** — research runs end with an independent grader subagent
+   scoring against `scripts/agents/rubrics/research-rubric.md` (one bounded
+   revision pass, fail-open, result recorded in research-log `quality`).
+4. **Calibration ledger** — verify appends one JSONL record per source check;
+   `aggregate-calibration.js` turns them into per-source trust stats that steer
+   the research agent's source choices.
 
 ### Harness-enforced contracts (hooks + skills)
 

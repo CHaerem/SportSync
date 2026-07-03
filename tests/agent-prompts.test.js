@@ -21,12 +21,29 @@ describe("agent prompts", () => {
 		expect(p).toContain("research-log.json");
 		expect(p).toContain('"ai-research"');
 		expect(p).toContain("validate-events.js");
+		// Coverage & correctness package contracts
+		expect(p).toContain("coverage-gaps.json");
+		expect(p).toContain("calibration.json");
+		expect(p).toContain("tv-listings.json");
+		expect(p).toContain("norwegian-rights");
+		expect(p).toContain("fact-check");
+		expect(p).toContain("rubrics/research-rubric.md");
+		expect(fs.existsSync(path.resolve("scripts", "agents", "rubrics", "research-rubric.md"))).toBe(true);
 	});
 
 	it("verify prompt covers the full contract", () => {
 		const p = read("verify.md");
 		expect(p).toContain("verificationStatus");
 		expect(p).toContain("verify-log.json");
+		expect(p).toContain("calibration-ledger.jsonl");
+		expect(p).toContain("norwegian-rights");
+	});
+
+	it("scout prompt exists with escalation cap and log contract", () => {
+		const p = read("scout.md");
+		expect(p).toContain("scout-log.json");
+		expect(p).toContain("max 2 escalations");
+		expect(p).toContain("gh workflow run research-agent.yml");
 	});
 
 	it("editorial prompt only references block types the client can render", () => {

@@ -36,8 +36,14 @@ jobs:
         continue-on-error: true
       - run: node scripts/fetch-results.js
         continue-on-error: true
+      - run: node scripts/fetch-tvkampen.js
+        continue-on-error: true
       - run: node scripts/build-events.js
       - run: node scripts/validate-events.js
+      - run: node scripts/detect-coverage-gaps.js
+        continue-on-error: true
+      - run: node scripts/aggregate-calibration.js
+        continue-on-error: true
       - run: node scripts/build-ics.js
       - name: Write meta
         run: echo "{\"lastUpdated\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > docs/data/meta.json

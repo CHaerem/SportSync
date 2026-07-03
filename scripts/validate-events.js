@@ -24,6 +24,7 @@ if (!Array.isArray(events)) {
 }
 
 let errors = 0;
+let streamingMissing = 0;
 const now = Date.now() - GRACE_WINDOW_MS; // allow tiny grace window
 const seenKeys = new Set();
 for (const ev of events) {
@@ -82,6 +83,14 @@ for (const ev of events) {
 			console.warn("AI-research event with high confidence needs 2+ evidence URLs for", key);
 			errors++;
 		}
+		// Streaming contract (soft): "hvor kan jeg se det" should be answered for
+		// near-term events. Warning only — the research grader enforces harder.
+		const ts2 = Date.parse(ev.time);
+		if (!Number.isNaN(ts2) && ts2 < Date.now() + 7 * 24 * 60 * 60 * 1000) {
+			if (!Array.isArray(ev.streaming) || ev.streaming.length === 0) {
+				streamingMissing++;
+			}
+		}
 	}
 	// Timezone bleed check: endTime crossing midnight in CET but not UTC
 	if (ev.endTime) {
@@ -95,5 +104,8 @@ for (const ev of events) {
 	}
 }
 let enrichedCount = events.filter(e => e.importance != null).length;
+if (streamingMissing > 0) {
+	console.warn(`Streaming info missing on ${streamingMissing} near-term AI-research event(s) — "hvor kan jeg se det" unanswered.`);
+}
 console.log(`Validated ${events.length} events with ${errors} error(s). ${enrichedCount} enriched.`);
 if (errors) process.exit(1);

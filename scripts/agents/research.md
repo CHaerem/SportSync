@@ -8,6 +8,12 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
 - `scripts/config/tracked.json` — what AI currently tracks (prior state)
 - `docs/data/events.json` — what the static pipeline already found
 - `docs/data/rss-digest.json` — last 24h Norwegian + international headlines
+- `docs/data/coverage-gaps.json` — entities in the news with NO upcoming event
+  on the dashboard. **Triage these first** — each is a potential missed event
+  (recall failures are the worst failure mode). Noise is expected; dismiss fast.
+- `docs/data/calibration.json` — per-source trust stats from past verifications.
+  Prefer sources with high reliability for the sport at hand; distrust repeat offenders.
+- `docs/data/tv-listings.json` — tvkampen.com ground truth for Norwegian football TV/streaming
 - `docs/data/recent-results.json` — last 7 days completed events
 - Current date (UTC and Europe/Oslo)
 
@@ -70,6 +76,14 @@ Append discovered events to the existing array in `docs/data/events.json`
 }
 ```
 
+**Streaming is a first-class field — "hvor kan jeg se det" is half the product.**
+For EVERY event you add (and every static event you touch): fill `streaming`
+with Norwegian viewing options as `[{ "platform": "NRK 1", "url": "https://..." }]`.
+Use the `norwegian-rights` skill (`.claude/skills/norwegian-rights/SKILL.md`) as
+the prior, `docs/data/tv-listings.json` as ground truth for football, and web
+search for confirmation. If genuinely unknown after checking, write
+`"streaming": []` and mention it in research-log notes — never guess a channel.
+
 Confidence:
 - `high` = 2+ authoritative sources agree on date/time/venue
 - `medium` = 1 source + reasonable corroboration
@@ -80,15 +94,33 @@ Never write `high` without 2+ URLs in evidence.
 Dedupe key: `sport|title|time`. If a static-pipeline event already covers the
 same thing, do not add a duplicate — enrich your understanding and move on.
 
+### Step 3.5 — Write-time fact-check (before events.json is written)
+Spawn ONE fresh-context fact-checker subagent. Give it ONLY your candidate new
+events (JSON) and this instruction: "Independently verify date/time (with
+timezone) and streaming for each event via web search/fetch. You may not reuse
+the reasoning that produced them. Return per event: confirmed | amended (with
+corrections) | unverifiable." Apply the results: amended events get the
+corrections; unverifiable events are demoted to `low` or dropped. Wrong
+times/channels must never reach the dashboard — a missing event is better than
+a wrong one.
+
 ### Step 4 — Update tracked.json
 Rewrite it from scratch using your reasoning. Every entry needs:
 `reason`, `addedAt`, `addedBy: "research-agent"`, `evidence`, optional `expires`.
 Keep the top-level shape: `{ lastUpdated, lastUpdatedBy, version, leagues, athletes, tournaments, notes }`.
 
+### Step 5 — Grade your own run (independent grader)
+After all outputs are written: spawn ONE fresh-context grader subagent that
+reads `scripts/agents/rubrics/research-rubric.md` plus your outputs and returns
+`{ "pass": bool, "score": 0-100, "failures": ["..."] }`. Record the result in
+research-log.json under `"quality"`. If it fails: do ONE bounded revision pass
+addressing the failures, re-grade, then stop regardless of outcome (fail-open —
+log honestly, never loop).
+
 ## Output contract
 1. Updated `docs/data/events.json` (original events preserved, new appended)
 2. Updated `scripts/config/tracked.json` (full transparent rewrite)
-3. `docs/data/research-log.json`: `{ "runAt": ISO, "eventsAdded": n, "eventsRemoved": n, "trackedDelta": "...", "notes": ["..."] }`
+3. `docs/data/research-log.json`: `{ "runAt": ISO, "eventsAdded": n, "eventsRemoved": n, "trackedDelta": "...", "quality": { "pass": bool, "score": n, "failures": [] }, "notes": ["..."] }`
 
 After writing files, run `node scripts/validate-events.js` and fix any errors it reports.
 
