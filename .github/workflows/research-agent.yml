@@ -25,6 +25,7 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true # temp debug: research ends ~22 turns without committing
           # Fable 5 experiment (2026-07-03): the Mythos-class model is strongest at
           # long-horizon research with parallel subagents. Measure quota impact via
           # Actions run durations for ~1 week; fall back to claude-opus-4-8 if Max
