@@ -98,14 +98,16 @@ The product's primary goal is **correct when/where info and complete coverage**
 
 ### Frontend
 
-Pure static HTML/CSS/JS on GitHub Pages (PWA). No build step.
+Pure static HTML/CSS/JS on GitHub Pages (PWA). No build step. **Calm design** —
+the whole page is one quiet, scannable overview of the events you follow;
+no dashboard grid, no competing panels.
 
-- `docs/index.html` — shell: header, live hero strip, editorial brief, sport card grid, "Hva vi følger" (tracked viewer), footer
-- `docs/css/` — `base.css` (tokens: OLED black default, light via prefers-color-scheme; accent `#ff6b35`; max-width 1280px), `layout.css` (grid: 1 col → 2 col ≥768px → 3 col ≥1200px), `cards.css`
-- `docs/js/dashboard.js` (~550 lines) — data load, live hero, brief block dispatch, sport card grid, tracked surface, ESPN live polling (60s), theme toggle, AI-provenance modal
-- `docs/js/block-renderers.js` — structured editorial blocks (`match-result`, `match-preview`, `event-schedule`, `golf-status`) resolved against pre-loaded data; `_fallbackText` for graceful degradation
+- `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Hva vi følger" disclosure, footer
+- `docs/css/` — `base.css` (calm tokens: near-black dark default, warm-paper light via prefers-color-scheme; one restrained accent; single typeface Schibsted Grotesk with tabular numerals; max-width 640px), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
+- `docs/js/dashboard.js` (~250 lines) — data load, one day-grouped agenda (`renderAgenda`/`eventRow`), `whereToWatch` channel helper, quiet live-now line, ESPN live polling (60s), theme toggle, AI-provenance modal (hidden until tapped)
+- Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
 - `docs/js/shared-constants.js`, `sport-config.js`, `asset-maps.js` — utilities, sport metadata, logo/headshot maps
-- **AI badge**: events with `source: "ai-research"` show an "AI" pill; click opens a modal with `evidence` URLs, confidence, and verification status
+- The editorial agent produces a single `headline` block shown as one quiet line under the date (a "nice extra"), nothing more. AI-research events carry a small ⓘ that opens a source modal on tap.
 
 ### Data files (docs/data/, gitignore-whitelisted)
 
@@ -135,7 +137,7 @@ per-sport source files (`football.json` …), `events.ics`.
 `tests/` — 16 files, all fast and network-free:
 - Pipeline: `build-events`, `build-events-schema`, `validate-events`, `build-ics`, `integration-pipeline` (spawn scripts against temp `SPORTSYNC_DATA_DIR`/`SPORTSYNC_CONFIG_DIR`)
 - Libs: `helpers`, `event-normalizer`, `response-validator`, `llm-client` (mocked fetch), `fetch-results` (pure functions)
-- Client: `block-renderers`, `dashboard-cards` — loaded via `tests/helpers/load-client.js` (vm sandbox, no jsdom)
+- Client: `dashboard-cards` — loaded via `tests/helpers/load-client.js` (vm sandbox, no jsdom)
 - Coherence: `agent-prompts` (prompt contracts match client renderers), `workflows` (YAML references existing files), `interests-schema`, `tracked-schema`
 
 Coherence tests are the v2 replacement for v1's feedback loops: if a prompt, workflow,

@@ -1,96 +1,51 @@
-/* SportSync — page frame: masthead, container, responsive two-column on desktop */
+/* SportSync — calm single-column frame. Same narrow reading column everywhere;
+   no dashboard grid, no competing panels. Generous, quiet, mobile-first. */
 
-.container {
+.wrap {
 	max-width: var(--max-w);
 	margin: 0 auto;
-	padding: 0 18px;
+	padding: 0 22px;
 }
 
-/* Masthead */
 .masthead {
-	position: sticky;
-	top: 0;
-	z-index: 20;
-	background: color-mix(in srgb, var(--bg) 88%, transparent);
-	backdrop-filter: blur(14px) saturate(1.2);
-	-webkit-backdrop-filter: blur(14px) saturate(1.2);
-	border-bottom: 1px solid var(--border);
-	padding-top: env(safe-area-inset-top);
+	padding-top: calc(env(safe-area-inset-top) + 26px);
 }
 .masthead-inner {
 	display: flex;
-	align-items: center;
+	align-items: baseline;
 	justify-content: space-between;
-	height: 58px;
+	gap: 16px;
 }
-.brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
 .wordmark {
-	font-family: var(--font-display);
-	font-weight: 800;
-	font-size: 22px;
-	letter-spacing: -0.035em;
+	font-size: 19px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
 	color: var(--fg);
 }
-.wordmark .sync { color: var(--accent); }
 .masthead-date {
-	font-size: 12.5px;
+	font-size: 14px;
 	color: var(--fg-2);
 	text-transform: capitalize;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
-.icon-btn {
-	width: 38px; height: 38px;
-	display: grid; place-items: center;
-	border-radius: 50%;
-	font-size: 17px;
-	color: var(--fg-2);
-	flex-shrink: 0;
+.theme-toggle {
+	font-size: 16px;
+	color: var(--fg-3);
+	padding: 4px;
+	line-height: 1;
 }
-.icon-btn:hover { background: var(--surface-2); color: var(--fg); }
+.theme-toggle:hover { color: var(--fg-2); }
 
-/* Layout: single column mobile, two columns ≥1024 */
-.layout { padding-top: 4px; padding-bottom: 56px; }
-.col-main { min-width: 0; }
-.col-aside { min-width: 0; }
+main { padding: 8px 0 60px; }
 
-@media (min-width: 1024px) {
-	.layout {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 340px;
-		gap: 40px;
-		align-items: start;
-	}
-	.col-aside {
-		position: sticky;
-		top: 74px;
-	}
-	/* first section header in each column shouldn't push extra top margin */
-	.col-main > section:first-child .section-head,
-	.col-aside > section:first-child .section-head { margin-top: 14px; }
-}
-
-/* Live strip: horizontal scroll of cards */
-.live-strip {
-	display: flex;
-	gap: 12px;
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	padding-bottom: 6px;
-	scrollbar-width: none;
-}
-.live-strip::-webkit-scrollbar { display: none; }
-.live-strip > * { scroll-snap-align: start; flex: 0 0 min(300px, 82vw); }
-
-/* Footer */
 .site-footer {
-	border-top: 1px solid var(--border);
-	margin-top: 40px;
-	padding: 16px 0 34px;
-	color: var(--fg-2);
-	font-size: 12px;
+	margin-top: 48px;
+	padding-top: 18px;
+	border-top: 1px solid var(--line);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 18px;
+	font-size: 13px;
+	color: var(--fg-3);
 }
-.site-footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-.site-footer a { border-bottom: 1px dotted var(--border-strong); }
+.site-footer a { color: var(--fg-2); }
 .site-footer a:hover { color: var(--accent); }

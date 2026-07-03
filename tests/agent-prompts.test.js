@@ -46,18 +46,15 @@ describe("agent prompts", () => {
 		expect(p).toContain("gh workflow run research-agent.yml");
 	});
 
-	it("editorial prompt only references block types the client can render", () => {
+	it("editorial produces only the one block type the calm page renders", () => {
 		const p = read("editorial.md");
-		const clientRenderers = fs.readFileSync(path.resolve("docs", "js", "block-renderers.js"), "utf-8");
 		const dashboardJs = fs.readFileSync(path.resolve("docs", "js", "dashboard.js"), "utf-8");
-		const structuredTypes = ["match-result", "match-preview", "event-schedule", "golf-status"];
-		for (const type of structuredTypes) {
-			expect(p, `editorial.md should document ${type}`).toContain(type);
-			expect(clientRenderers, `block-renderers.js should render ${type}`).toContain(`'${type}'`);
-		}
-		for (const type of ["headline", "narrative", "divider", "event-line"]) {
-			expect(p).toContain(type);
-			expect(dashboardJs, `dashboard.js should render ${type}`).toContain(`'${type}'`);
+		// The calm dashboard shows a single quiet headline line — nothing else.
+		expect(p).toContain("headline");
+		expect(dashboardJs, "dashboard.js should read the headline block").toContain("'headline'");
+		// Editorial must NOT promise rich blocks the calm page can't show.
+		for (const gone of ["match-result", "match-preview", "event-schedule", "golf-status"]) {
+			expect(p, `editorial.md should no longer document ${gone}`).not.toContain(gone);
 		}
 	});
 
