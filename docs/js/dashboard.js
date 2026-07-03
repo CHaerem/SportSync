@@ -1,6 +1,8 @@
-// SportSync v2 — dashboard controller
-// Loads pre-built JSON data, renders: live hero, editorial brief (blocks),
-// per-sport card grid, tracked-entities surface. Polls ESPN for live scores.
+// SportSync — dashboard controller
+// Goal-driven hierarchy: live now → dagens viktigste (must-see hero cards) →
+// program (chronological today+tomorrow agenda, channel chip per row) →
+// senere denne uka → demoted editorial brief → tracked surface.
+// Channel info ("hvor kan jeg se det") is a first-class chip everywhere.
 // Depends on: shared-constants.js, sport-config.js, asset-maps.js, block-renderers.js
 
 class Dashboard {
@@ -23,7 +25,8 @@ class Dashboard {
 		await this.loadData();
 		this.render();
 		this.startLivePolling();
-		this.bindTrackedToggle();
+		this.bindDisclosure('brief-toggle', 'brief');
+		this.bindDisclosure('tracked-toggle', 'tracked-body');
 		this.bindAiBadges();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
@@ -63,8 +66,10 @@ class Dashboard {
 
 	render() {
 		this.renderLive();
+		this.renderHighlights();
+		this.renderTimeline();
+		this.renderLater();
 		this.renderBrief();
-		this.renderSportsGrid();
 		this.renderTracked();
 		this.renderFooter();
 	}
@@ -175,7 +180,9 @@ class Dashboard {
 			html += this.renderBlock(block, ctx) || '';
 		}
 		container.innerHTML = html;
-		section.hidden = false;
+		const label = document.getElementById('brief-toggle-label');
+		if (label) label.textContent = `Redaksjonens ${modeLabel.toLowerCase()}`;
+		section.hidden = false; // content stays collapsed until the disclosure is opened
 	}
 
 	renderBlock(block, ctx) {
@@ -203,100 +210,210 @@ class Dashboard {
 		}
 	}
 
-	// ── Sport card grid ───────────────────────────────────────────────────────
+	// ── Shared event helpers ────────────────────────────────────────────────────
 
-	renderSportsGrid() {
-		const grid = document.getElementById('sports-grid');
-		if (!grid) return;
+	sportCfg(e) {
+		const id = normalizeClientSportId(e.sport);
+		return SPORT_CONFIG.find((s) => s.id === id) || { emoji: '🏆', name: e.sport, color: 'var(--accent)' };
+	}
 
-		const now = Date.now();
-		const horizon = now + 7 * SS_CONSTANTS.MS_PER_DAY;
-		const visible = this.allEvents.filter((e) => isEventInWindow(e, now - SS_CONSTANTS.MS_PER_HOUR * 4, horizon));
+	/** Must-see = matches the goal's priority: favorite, high importance, or Norwegian participation. */
+	isMustSee(e) {
+		return !!(e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length));
+	}
 
-		// Group by sport, ordered by soonest event
-		const bySport = new Map();
-		for (const e of visible) {
-			const key = normalizeClientSportId(e.sport);
-			if (!bySport.has(key)) bySport.set(key, []);
-			bySport.get(key).push(e);
+	osloTime(date) {
+		return date.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
+	}
+	osloDayKey(date) {
+		return date.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' });
+	}
+
+	/** The "hvor kan jeg se det" component — consistent channel chips everywhere. */
+	channelChips(e, { big = false } = {}) {
+		const streams = Array.isArray(e.streaming) ? e.streaming : [];
+		if (streams.length === 0) {
+			return `<span class="chip unknown${big ? ' big' : ''}">Kanal ukjent</span>`;
 		}
-		const sections = [...bySport.entries()]
-			.map(([sport, events]) => {
-				events.sort((a, b) => new Date(a.time) - new Date(b.time));
-				return { sport, events, first: new Date(events[0].time).getTime() };
-			})
-			.sort((a, b) => a.first - b.first);
-
-		if (sections.length === 0) {
-			grid.innerHTML = `<div class="empty-state">Ingen kommende arrangementer de neste 7 dagene.</div>`;
-			return;
-		}
-
-		grid.innerHTML = sections.map(({ sport, events }) => {
-			const cfg = SPORT_CONFIG.find((s) => s.id === sport) || { emoji: '🏆', name: sport, color: 'var(--accent)' };
-			const cards = events.slice(0, 8).map((e) => this.eventCard(e)).join('');
-			const more = events.length > 8 ? `<div class="empty-state">+${events.length - 8} flere</div>` : '';
-			return `<div class="sport-section" style="--sport-color:${cfg.color}">
-				<div class="sport-heading">${cfg.emoji} ${escapeHtml(cfg.name)} <span class="count">${events.length}</span></div>
-				${cards}${more}
-			</div>`;
+		return streams.slice(0, 3).map((s) => {
+			const platform = escapeHtml(String(s.platform || s));
+			const inner = `<span class="tv">▮</span>${platform}`;
+			return s.url
+				? `<a class="chip${big ? ' big' : ''}" href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${inner}</a>`
+				: `<span class="chip${big ? ' big' : ''}">${inner}</span>`;
 		}).join('');
 	}
 
-	eventCard(e) {
-		const date = new Date(e.time);
-		const now = new Date();
-		const sameDay = date.toDateString() === now.toDateString();
-		const dayStr = sameDay
-			? ''
-			: date.toLocaleDateString('nb-NO', { weekday: 'short', timeZone: 'Europe/Oslo' }) + ' ';
-		const timeStr = date.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
-		const rel = this.relativeTime(date);
+	badges(e) {
+		const b = [];
+		if (e.isFavorite) b.push('<span class="fav-star" title="Favoritt">★</span>');
+		if (e.norwegian || e.norwegianPlayers?.length) b.push('<span class="nor-flag" title="Norsk deltakelse">🇳🇴</span>');
+		if (e.source === 'ai-research') {
+			b.push(`<button class="ai-badge" data-event-id="${escapeHtml(e.id)}" title="Funnet av AI-research — klikk for kilder">AI</button>`);
+		}
+		return b.join(' ');
+	}
 
-		// Title: teams with logos for matches, plain title otherwise
-		let title;
+	/** Match title: teams+logos (with live/final score if present) or plain title. */
+	matchTitle(e, { logoClass = 'team-logo' } = {}) {
 		if (e.homeTeam && e.awayTeam) {
 			const hLogo = getTeamLogo(e.homeTeam);
 			const aLogo = getTeamLogo(e.awayTeam);
 			const live = this.liveScores[e.id];
 			const mid = live && live.state !== 'pre'
 				? `<span class="score">${live.home}–${live.away}</span>`
-				: '<span class="muted">–</span>';
-			title = `${hLogo ? `<img class="team-logo" src="${hLogo}" alt="" loading="lazy">` : ''}${escapeHtml(ssShortName(e.homeTeam))} ${mid} ${aLogo ? `<img class="team-logo" src="${aLogo}" alt="" loading="lazy">` : ''}${escapeHtml(ssShortName(e.awayTeam))}`;
-		} else {
-			title = escapeHtml(e.title);
+				: 'mot';
+			return `${hLogo ? `<img class="${logoClass}" src="${hLogo}" alt="" loading="lazy">` : ''}${escapeHtml(ssShortName(e.homeTeam))} ${mid} ${aLogo ? `<img class="${logoClass}" src="${aLogo}" alt="" loading="lazy">` : ''}${escapeHtml(ssShortName(e.awayTeam))}`;
+		}
+		return escapeHtml(e.title);
+	}
+
+	// ── Dagens viktigste (enlarged must-see cards) ──────────────────────────────
+
+	renderHighlights() {
+		const section = document.getElementById('highlights-section');
+		const wrap = document.getElementById('highlights');
+		if (!section || !wrap) return;
+
+		const now = Date.now();
+		const horizon = now + 36 * SS_CONSTANTS.MS_PER_HOUR; // today + into tomorrow
+		const picks = this.allEvents
+			.filter((e) => isEventInWindow(e, now - 2 * SS_CONSTANTS.MS_PER_HOUR, horizon))
+			.filter((e) => this.isMustSee(e))
+			.sort((a, b) => new Date(a.time) - new Date(b.time))
+			.slice(0, 3);
+
+		this._highlightIds = new Set(picks.map((e) => e.id));
+
+		if (picks.length === 0) { section.hidden = true; return; }
+		wrap.innerHTML = picks.map((e) => this.heroCard(e)).join('');
+		section.hidden = false;
+	}
+
+	heroCard(e) {
+		const cfg = this.sportCfg(e);
+		const date = new Date(e.time);
+		const todayKey = this.osloDayKey(new Date());
+		const isToday = this.osloDayKey(date) === todayKey;
+		const dayStr = isToday ? '' : `<span class="hero-day">${escapeHtml(date.toLocaleDateString('nb-NO', { weekday: 'long', timeZone: 'Europe/Oslo' }))}</span>`;
+		const rel = this.relativeTime(date);
+		const meta = [];
+		if (e.venue && e.venue !== 'TBD') meta.push(escapeHtml(e.venue));
+		if (e.norwegianPlayers?.length) meta.push(escapeHtml(e.norwegianPlayers.slice(0, 3).map((p) => p.name || p).join(', ')));
+		const must = (e.importance || 0) >= 4;
+		return `<article class="hero-card${must ? ' must' : ''}" style="--sport-color:${cfg.color}">
+			<div class="hero-top"><span class="sport-dot"></span><span class="sport-name">${cfg.emoji} ${escapeHtml(cfg.name)} · ${escapeHtml(e.tournament || '')}</span><span class="spacer"></span>${this.badges(e)}</div>
+			<div class="hero-when"><span class="hero-time">${escapeHtml(this.osloTime(date))}</span>${dayStr}${rel ? `<span class="hero-rel">${escapeHtml(rel)}</span>` : ''}</div>
+			<div class="hero-title">${this.matchTitle(e, { logoClass: 'team-logo' })}</div>
+			${meta.length ? `<div class="hero-meta">${meta.join('<span class="dot-sep">·</span>')}</div>` : ''}
+			<div class="chips">${this.channelChips(e, { big: true })}</div>
+		</article>`;
+	}
+
+	// ── Program (chronological agenda: today + tomorrow) ────────────────────────
+
+	renderTimeline() {
+		const container = document.getElementById('timeline');
+		if (!container) return;
+		const now = Date.now();
+		const start = now - 4 * SS_CONSTANTS.MS_PER_HOUR;
+		const horizon = now + 2 * SS_CONSTANTS.MS_PER_DAY;
+		const highlightIds = this._highlightIds || new Set();
+
+		const events = this.allEvents
+			.filter((e) => isEventInWindow(e, start, horizon))
+			.filter((e) => !highlightIds.has(e.id))
+			.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+		if (events.length === 0 && highlightIds.size === 0) {
+			container.innerHTML = `<div class="empty-state">Ingen arrangementer i dag eller i morgen.</div>`;
+			return;
+		}
+		if (events.length === 0) {
+			container.innerHTML = `<div class="empty-state">Alt dagens er løftet fram over. Se «Senere denne uka».</div>`;
+			return;
 		}
 
-		const badges = [];
-		if (e.isFavorite) badges.push('<span class="fav-star" title="Favoritt">★</span>');
-		if (e.norwegian || e.norwegianPlayers?.length) badges.push('<span class="nor-flag" title="Norsk deltakelse">🇳🇴</span>');
-		if (e.source === 'ai-research') {
-			badges.push(`<button class="ai-badge" data-event-id="${escapeHtml(e.id)}" title="Funnet av AI-research — klikk for kilder">AI</button>`);
+		const todayKey = this.osloDayKey(new Date());
+		const tomorrowKey = this.osloDayKey(new Date(Date.now() + SS_CONSTANTS.MS_PER_DAY));
+		const groups = new Map();
+		for (const e of events) {
+			const key = this.osloDayKey(new Date(e.time));
+			if (!groups.has(key)) groups.set(key, []);
+			groups.get(key).push(e);
 		}
 
-		const details = [];
-		if (e.venue && e.venue !== 'TBD') details.push(`<span>${escapeHtml(e.venue)}</span>`);
-		if (e.norwegianPlayers?.length) {
-			details.push(`<span>${escapeHtml(e.norwegianPlayers.slice(0, 3).map((p) => p.name || p).join(', '))}</span>`);
+		let html = '';
+		for (const [key, evs] of groups) {
+			let label;
+			if (key === todayKey) label = 'I dag';
+			else if (key === tomorrowKey) label = 'I morgen';
+			else label = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
+			html += `<div class="day-group"><div class="day-label">${escapeHtml(label)}</div>${evs.map((e) => this.timelineRow(e)).join('')}</div>`;
 		}
-		const streams = (e.streaming || []).slice(0, 2)
-			.map((s) => {
-				const platform = s.platform || s;
-				return s.url
-					? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(platform)}</a>`
-					: escapeHtml(String(platform));
-			});
-		if (streams.length) details.push(`<span class="streaming">📺 ${streams.join(' · ')}</span>`);
-		if (e.summary) details.push(`<span>${escapeHtml(e.summary)}</span>`);
+		container.innerHTML = html;
+	}
 
-		const mustWatch = (e.importance || 0) >= 4;
-		return `<div class="card event-card${mustWatch ? ' must-watch' : ''}">
-			<div class="card-top">
-				<span class="card-time">${escapeHtml(dayStr)}${escapeHtml(timeStr)}${rel ? ` · ${escapeHtml(rel)}` : ''}</span>
-				<span class="card-tournament">${escapeHtml(e.tournament || '')}</span>
+	timelineRow(e) {
+		const cfg = this.sportCfg(e);
+		const date = new Date(e.time);
+		const rel = this.relativeTime(date);
+		const live = this.liveScores[e.id];
+		const isLive = live && live.state === 'in';
+		const relShort = rel.replace(/^om /, ''); // "om 54 min" → "54 min" to fit the time column
+		return `<div class="tl-row${isLive ? ' is-live' : ''}" style="--sport-color:${cfg.color}">
+			<div class="tl-time">${escapeHtml(this.osloTime(date))}${rel ? `<span class="tl-rel">${escapeHtml(isLive ? 'pågår' : relShort)}</span>` : ''}</div>
+			<div class="tl-body">
+				<div class="tl-head"><span class="sport-dot"></span><span class="tl-title">${this.matchTitle(e, { logoClass: 'team-logo' })}</span> ${this.badges(e)}</div>
+				<div class="tl-tournament">${escapeHtml([cfg.name, e.tournament].filter(Boolean).join(' · '))}</div>
+				<div class="chips" style="margin-top:6px;">${this.channelChips(e)}</div>
 			</div>
-			<div class="card-title">${title} ${badges.join(' ')}</div>
-			${details.length ? `<div class="card-detail">${details.join('')}</div>` : ''}
+		</div>`;
+	}
+
+	// ── Senere denne uka (tight list, grouped by weekday) ───────────────────────
+
+	renderLater() {
+		const section = document.getElementById('later-section');
+		const container = document.getElementById('later');
+		if (!section || !container) return;
+		const now = Date.now();
+		const start = now + 2 * SS_CONSTANTS.MS_PER_DAY;
+		const horizon = now + 7 * SS_CONSTANTS.MS_PER_DAY;
+		const events = this.allEvents
+			.filter((e) => isEventInWindow(e, start, horizon))
+			.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+		if (events.length === 0) { section.hidden = true; return; }
+
+		const groups = new Map();
+		for (const e of events) {
+			const key = this.osloDayKey(new Date(e.time));
+			if (!groups.has(key)) groups.set(key, []);
+			groups.get(key).push(e);
+		}
+
+		let html = '';
+		for (const [, evs] of groups) {
+			const label = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+			html += `<div class="day-group"><div class="day-label">${escapeHtml(label)}</div>${evs.map((e) => this.laterRow(e)).join('')}</div>`;
+		}
+		container.innerHTML = html;
+		section.hidden = false;
+	}
+
+	laterRow(e) {
+		const cfg = this.sportCfg(e);
+		const date = new Date(e.time);
+		const streams = Array.isArray(e.streaming) ? e.streaming : [];
+		const chan = streams.length ? escapeHtml(String(streams[0].platform || streams[0])) : '';
+		const titleText = e.homeTeam && e.awayTeam
+			? `${escapeHtml(ssShortName(e.homeTeam))} – ${escapeHtml(ssShortName(e.awayTeam))}`
+			: escapeHtml(e.title);
+		return `<div class="later-row" style="--sport-color:${cfg.color}">
+			<span class="later-time">${escapeHtml(this.osloTime(date))}</span>
+			<span class="later-title"><span class="sport-dot" title="${escapeHtml(cfg.name)}"></span><span class="t">${titleText}</span></span>
+			<span class="later-chip">${chan}</span>
 		</div>`;
 	}
 
@@ -330,9 +447,9 @@ class Dashboard {
 		section.hidden = false;
 	}
 
-	bindTrackedToggle() {
-		const btn = document.getElementById('tracked-toggle');
-		const body = document.getElementById('tracked-body');
+	bindDisclosure(toggleId, bodyId) {
+		const btn = document.getElementById(toggleId);
+		const body = document.getElementById(bodyId);
 		if (!btn || !body) return;
 		btn.addEventListener('click', () => {
 			const open = btn.getAttribute('aria-expanded') === 'true';
@@ -400,7 +517,8 @@ class Dashboard {
 		try {
 			await Promise.all([this.pollFootballScores(), this.pollGolfScores()]);
 			this.renderLive();
-			this.renderSportsGrid();
+			this.renderHighlights();
+			this.renderTimeline();
 		} catch {
 			// Silent fail — live scores are a nice-to-have
 		}

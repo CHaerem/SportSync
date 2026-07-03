@@ -3,70 +3,82 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-	<meta name="description" content="Personlig sportsdashboard — fotball, golf, tennis, F1, sjakk, sykkel og esport med norsk perspektiv.">
-	<meta name="theme-color" content="#000000">
-	<!-- PWA manifest -->
+	<meta name="description" content="Personlig sportsdashboard — når det skjer og hvor du ser det. Fotball, golf, tennis, F1, sjakk, sykkel og vintersport med norsk perspektiv.">
+	<meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
 	<link rel="manifest" href="manifest.webmanifest">
-	<!-- iOS PWA support -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="apple-mobile-web-app-title" content="SportSync">
 	<link rel="apple-touch-icon" href="icons/icon-180x180.png">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<title>SportSync</title>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<link rel="stylesheet" href="css/cards.css">
 </head>
 <body>
-	<header class="site-header">
-		<div class="container">
-			<div class="site-title">
-				<h1>SportSync</h1>
-				<span class="date" id="header-date"></span>
+	<header class="masthead">
+		<div class="container masthead-inner">
+			<div class="brand">
+				<span class="wordmark">Sport<span class="sync">Sync</span></span>
+				<span class="masthead-date" id="header-date"></span>
 			</div>
-			<div class="header-actions">
-				<button class="header-btn" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
-			</div>
+			<button class="icon-btn" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
 		</div>
 	</header>
 
-	<main>
-		<section id="live-section" hidden>
-			<div class="container">
-				<h2><span class="live-dot"></span> Direkte nå</h2>
+	<main class="container layout">
+		<div class="col-main">
+			<section id="live-section" hidden>
+				<div class="section-head"><span class="live-dot"></span><h2>Direkte nå</h2></div>
 				<div class="live-strip" id="live-strip"></div>
-			</div>
-		</section>
+			</section>
 
-		<section id="brief-section" hidden>
-			<div class="container">
-				<div class="brief" id="brief"></div>
-			</div>
-		</section>
+			<section id="highlights-section" hidden>
+				<div class="section-head"><h2 id="highlights-title">Dagens viktigste</h2></div>
+				<div class="highlights" id="highlights"></div>
+			</section>
 
-		<section id="sports-section">
-			<div class="container">
-				<div class="sports-grid" id="sports-grid"></div>
-			</div>
-		</section>
+			<section id="program-section">
+				<div class="section-head"><h2>Program</h2></div>
+				<div class="timeline" id="timeline"></div>
+			</section>
+		</div>
 
-		<section id="tracked-section" hidden>
-			<div class="container">
-				<button class="tracked-toggle" id="tracked-toggle" aria-expanded="false">
-					<span>Hva vi følger</span>
+		<aside class="col-aside">
+			<section id="later-section" hidden>
+				<div class="section-head"><h2>Senere denne uka</h2></div>
+				<div class="later" id="later"></div>
+			</section>
+
+			<section id="brief-section" hidden>
+				<div class="section-head"><h2>Brief</h2></div>
+				<button class="disclosure-toggle" id="brief-toggle" aria-expanded="false">
+					<span id="brief-toggle-label">Redaksjonens brief</span>
+					<span class="chevron">▾</span>
+				</button>
+				<div class="brief" id="brief" hidden></div>
+			</section>
+
+			<section id="tracked-section" hidden>
+				<div class="section-head"><h2>Hva vi følger</h2></div>
+				<button class="disclosure-toggle" id="tracked-toggle" aria-expanded="false">
+					<span>Se hva systemet sporer og hvorfor</span>
 					<span class="chevron">▾</span>
 				</button>
 				<div class="tracked-body" id="tracked-body" hidden></div>
-			</div>
-		</section>
+			</section>
+		</aside>
 	</main>
 
 	<footer class="site-footer">
 		<div class="container">
 			<span id="footer-updated"></span>
-			<a href="data/events.ics" download style="text-decoration:none;">📅 Kalender (.ics)</a>
+			<a href="data/events.ics" download>📅 Legg til i kalender</a>
 		</div>
 	</footer>
 
