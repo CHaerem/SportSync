@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
+      id-token: write
       actions: write # allows escalation via `gh workflow run research-agent.yml`
     steps:
       - uses: actions/checkout@v4
