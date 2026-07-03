@@ -46,6 +46,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-8
+            --max-turns 60
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             Read scripts/agents/editorial.md and execute it with mode=${{ steps.mode.outputs.mode }}.
