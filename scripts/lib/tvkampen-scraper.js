@@ -38,6 +38,9 @@ const MAX_CONCURRENT = 3;
 const BETTING_SITES = new Set([
 	"stake", "arcticbet", "ibet", "bet365", "unibet", "comeon",
 	"betsson", "nordicbet", "coolbet", "rizk", "casumo",
+	// observed leaking through on live pages 2026-07-03:
+	"lilibet", "boabet", "jaabet", "boomerangbet", "betinia",
+	"leovegas", "mrgreen", "expekt", "betway", "888sport",
 ]);
 
 /**

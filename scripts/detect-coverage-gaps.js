@@ -1,155 +1,108 @@
 #!/usr/bin/env node
 /**
- * Coverage Gap Detection
+ * Coverage watch (mechanical half): cross-references RSS headlines against
+ * events.json and tracked interests, flagging entities that are in the news
+ * but have no upcoming event on the dashboard → docs/data/coverage-gaps.json
  *
- * Cross-references RSS headlines against events.json to find major events
- * the pipeline is missing. Produces docs/data/coverage-gaps.json.
- * Deterministic pattern matching — no LLM needed.
+ * Deliberately recall-biased and noisy — the research agent reads the gaps
+ * file each run and decides what is real. Detection is mechanical so it costs
+ * nothing and runs every pipeline cycle.
  */
 
 import path from "path";
-import { readJsonIfExists, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
-import { resolveCoverageGaps } from "./resolve-coverage-gaps.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY } from "./lib/helpers.js";
 
-const dataDir = rootDataPath();
-
-export const MAJOR_EVENT_PATTERNS = [
-	{ pattern: /champions league/i, sport: "football", type: "tournament" },
-	{ pattern: /europa league/i, sport: "football", type: "tournament" },
-	{ pattern: /conference league/i, sport: "football", type: "tournament" },
-	{ pattern: /world cup/i, sport: "football", type: "tournament" },
-	{ pattern: /euro\s?\d{4}|european championship/i, sport: "football", type: "tournament" },
-	{ pattern: /copa del rey/i, sport: "football", type: "tournament" },
-	{ pattern: /fa cup/i, sport: "football", type: "tournament" },
-	{ pattern: /grand slam|australian open|french open|roland garros|wimbledon|us open/i, sport: "tennis", type: "tournament" },
-	{ pattern: /masters(?!\s*league)|the open championship|pga championship|us open golf/i, sport: "golf", type: "tournament" },
-	{ pattern: /ryder cup/i, sport: "golf", type: "tournament" },
-	{ pattern: /monaco|silverstone|monza|spa|bahrain|saudi|melbourne|imola/i, sport: "f1", type: "race" },
-	{ pattern: /formula\s*1|f1\s+grand\s+prix/i, sport: "f1", type: "race" },
-	{ pattern: /candidates|world chess|chess olympiad|norway chess/i, sport: "chess", type: "tournament" },
-	{ pattern: /major\b|iem\s|esl\s*pro|blast\s*premier/i, sport: "esports", type: "tournament" },
-	{ pattern: /olympics|olympic games/i, sport: "olympics", type: "tournament" },
-];
-
-function buildCoverageFingerprint(events) {
-	const fingerprint = new Set();
-	for (const ev of events) {
-		const fields = [ev.title, ev.tournament, ev.context, ev.meta]
-			.map(f => (f && typeof f === "object" ? Object.values(f).filter(v => typeof v === "string").join(" ") : f))
-			.filter(f => typeof f === "string" && f.length > 0);
-		for (const field of fields) {
-			fingerprint.add(field.toLowerCase());
+/** Build the watchlist: names worth spotting in headlines. */
+export function buildWatchlist(interests, tracked) {
+	const names = new Set();
+	for (const group of ["athletes", "teams", "tournaments"]) {
+		for (const n of interests?.alwaysTrack?.[group] || []) names.add(n);
+	}
+	for (const group of ["athletes", "tournaments", "leagues"]) {
+		for (const entry of tracked?.[group] || []) {
+			if (entry?.name) names.add(entry.name);
 		}
 	}
-	return fingerprint;
+	return [...names].filter((n) => n && n.length >= 3);
 }
 
-function isEventCovered(pattern, fingerprint) {
-	for (const entry of fingerprint) {
-		if (pattern.pattern.test(entry)) return true;
-	}
-	return false;
+function normalize(s) {
+	return (s || "").toLowerCase();
 }
 
-export function detectCoverageGaps(rssItems, events) {
-	const fingerprint = buildCoverageFingerprint(events);
-	const gapMap = new Map(); // pattern source → gap info
-
-	for (const item of rssItems) {
-		const title = item.title || "";
-
-		for (const ep of MAJOR_EVENT_PATTERNS) {
-			if (!ep.pattern.test(title)) continue;
-
-			// Check if this event type is already covered in our pipeline
-			if (isEventCovered(ep, fingerprint)) continue;
-
-			const key = ep.pattern.source;
-			if (!gapMap.has(key)) {
-				// Generate a slug-style ID
-				const slug = title.toLowerCase()
-					.replace(/[^a-z0-9]+/g, "-")
-					.replace(/^-|-$/g, "")
-					.slice(0, 40);
-
-				gapMap.set(key, {
-					id: slug,
-					sport: ep.sport,
-					type: ep.type,
-					matchedPattern: ep.pattern.source.replace(/\\/g, "").replace(/\|/g, " | "),
-					headlines: [],
-					classification: "actionable",
-					suggestedConfigName: `${ep.sport}-${ep.type}-${new Date().getFullYear()}.json`,
-				});
-			}
-
-			const gap = gapMap.get(key);
-			if (!gap.headlines.includes(title)) {
-				gap.headlines.push(title);
-			}
-		}
-	}
-
-	// Assign confidence and finalize
-	const gaps = [];
-	for (const gap of gapMap.values()) {
-		const headlineCount = gap.headlines.length;
-		gap.confidence = headlineCount >= 3 ? "high" : headlineCount >= 2 ? "medium" : "low";
-
-		// Informational if low confidence and generic pattern
-		if (gap.confidence === "low" && gap.type !== "tournament") {
-			gap.classification = "informational";
-		}
-
-		gaps.push(gap);
-	}
-
-	const actionableGaps = gaps.filter((g) => g.classification === "actionable").length;
-	const informationalGaps = gaps.filter((g) => g.classification === "informational").length;
-
-	return {
-		generatedAt: new Date().toISOString(),
-		gaps,
-		summary: {
-			totalGapsDetected: gaps.length,
-			actionableGaps,
-			informationalGaps,
-		},
-	};
+/**
+ * Word-boundary containment check. Plain substring matching makes short names
+ * like "Lyn" match "lynnedslag" — boundaries kill that class of false positive.
+ */
+export function containsName(haystack, name) {
+	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu").test(haystack);
 }
 
-async function main() {
-	const rssDigest = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
-	const events = readJsonIfExists(path.join(dataDir, "events.json")) || [];
-
-	const rssItems = Array.isArray(rssDigest?.items) ? rssDigest.items : [];
-
-	const result = detectCoverageGaps(rssItems, events);
-
-	const outPath = path.join(dataDir, "coverage-gaps.json");
-	writeJsonPretty(outPath, result);
-
-	console.log(`Coverage gaps: ${result.summary.totalGapsDetected} detected (${result.summary.actionableGaps} actionable, ${result.summary.informationalGaps} informational)`);
-	for (const gap of result.gaps) {
-		console.log(`  [${gap.confidence}] ${gap.sport}/${gap.type}: ${gap.matchedPattern} (${gap.headlines.length} headline(s))`);
-	}
-
-	// Auto-resolve actionable gaps by creating skeleton configs
-	if (result.summary.actionableGaps > 0) {
-		console.log("\nAttempting to resolve actionable gaps...");
-		const { created, skipped } = resolveCoverageGaps();
-		if (created.length > 0) {
-			console.log(`Auto-resolved: ${created.length} new config(s) created`);
-		}
-		if (skipped.length > 0) {
-			console.log(`Skipped: ${skipped.length} (already covered)`);
-		}
-	}
-}
-
-if (process.argv[1]?.includes("detect-coverage-gaps")) {
-	main().catch((err) => {
-		console.error("Coverage gap detection failed:", err);
-		process.exit(1);
+/** Does any upcoming event mention this name (title, teams, tournament, players)? */
+export function hasUpcomingEvent(name, events, now = Date.now()) {
+	const horizon = now + 14 * MS_PER_DAY;
+	return events.some((e) => {
+		const t = Date.parse(e.time);
+		if (Number.isNaN(t) || t < now - MS_PER_DAY || t > horizon) return false;
+		const haystack = normalize(
+			[
+				e.title,
+				e.tournament,
+				e.homeTeam,
+				e.awayTeam,
+				...(e.norwegianPlayers || []).map((p) => p.name || p),
+				...(e.participants || []),
+			].join(" ")
+		);
+		return containsName(haystack, normalize(name));
 	});
+}
+
+export function detectGaps({ rss, events, interests, tracked, now = Date.now() }) {
+	const watchlist = buildWatchlist(interests, tracked);
+	const items = rss?.items || [];
+	const gaps = [];
+	const seen = new Set();
+
+	for (const item of items) {
+		const headline = normalize(`${item.title || ""} ${item.description || ""}`);
+		for (const name of watchlist) {
+			const n = normalize(name);
+			if (!containsName(headline, n)) continue;
+			if (seen.has(n)) continue;
+			if (hasUpcomingEvent(name, events, now)) continue;
+			seen.add(n);
+			gaps.push({
+				entity: name,
+				headline: item.title || "",
+				link: item.link || null,
+				feed: item.feed || item.source || null,
+				detectedAt: iso(now),
+			});
+		}
+	}
+	return gaps;
+}
+
+function main() {
+	const dataDir = rootDataPath();
+	const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+	const rss = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
+	const events = readJsonIfExists(path.join(dataDir, "events.json")) || [];
+	const interests = readJsonIfExists(path.join(configDir, "interests.json"));
+	const tracked = readJsonIfExists(path.join(configDir, "tracked.json"));
+
+	const gaps = detectGaps({ rss, events, interests, tracked });
+	writeJsonPretty(path.join(dataDir, "coverage-gaps.json"), {
+		generatedAt: iso(),
+		gapCount: gaps.length,
+		gaps,
+		note: "Recall-biased mechanical detection — the research agent triages these.",
+	});
+	console.log(`Coverage gaps: ${gaps.length} entity(ies) in the news without an upcoming event`);
+}
+
+if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+	main();
 }

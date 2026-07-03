@@ -1,219 +1,86 @@
 # SportSync
 
-> **Can a software system maintain itself, improve itself, and expand its own capabilities — with zero infrastructure beyond GitHub?**
+> A personal sports dashboard for a Norwegian sports fan — where **scheduled AI research
+> agents** find, verify, and editorialize the events that static APIs miss.
 
-[![Deploy](https://github.com/CHaerem/SportSync/workflows/Update%20Sports%20Data/badge.svg)](https://github.com/CHaerem/SportSync/actions)
+[![Static pipeline](https://github.com/CHaerem/SportSync/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/SportSync/actions)
 [![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/SportSync/)
-
-## The Experiment
-
-SportSync is a **proof of concept for fully autonomous software systems**. The sports dashboard is the vehicle — the real experiment is the autonomy architecture underneath.
-
-The thesis: a system built on nothing but **GitHub Actions**, a **Claude Code Max subscription**, and **GitHub Pages** can autonomously:
-
-1. **Maintain its own data** — fetch, enrich, verify, and correct sports information from 6 APIs
-2. **Maintain its own code** — detect bugs and improvement opportunities, then ship fixes via PRs (82+ merged autonomously)
-3. **Expand its own capabilities** — recognize when new features or data sources would help, and build them (pipeline steps are defined in an editable manifest the autopilot controls)
-4. **Personalize its output** — adapt content to user interests that evolve over time based on engagement signals
-5. **Self-correct quality** — 12 closed feedback loops observe outcomes, decide on corrective actions, and act
-
-No databases. No servers. No paid APIs. No deployment infrastructure. This constraint is deliberate — it proves that meaningful autonomy is possible with minimal infrastructure.
 
 **See it live**: [chaerem.github.io/SportSync](https://chaerem.github.io/SportSync/)
 
-## How It Works
+## The idea
 
-Three automation layers run continuously without human intervention:
+Sports APIs cover the big leagues. They miss most of what a Norwegian fan cares about:
+biathlon world cups, Norway Chess, cross-country skiing, cycling stage races, Norwegian
+Cup football, last-minute schedule changes. v1 of this project tried to close that gap
+with an elaborate self-improving autonomy architecture (13 feedback loops, a nightly
+multi-agent autopilot, 2000+ tests). It proved the concept — and produced stagnating
+quality at high complexity.
+
+**v2 bets on the model instead of the machinery**: three scheduled Claude agents with
+web search do real research, write transparent JSON, and explain their reasoning.
+
+## Architecture
+
+Everything runs on **GitHub Actions + Claude Code Max + GitHub Pages**. No servers,
+no databases, no paid APIs.
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  DATA PIPELINE (every 2 hours)                           │
-│                                                          │
-│  Orchestrated by run-pipeline.js reading a declarative   │
-│  manifest (pipeline-manifest.json) that the autopilot    │
-│  can edit to add new steps — no workflow changes needed.  │
-│                                                          │
-│  9 phases, 21 steps:                                     │
-│  fetch → prepare → discover → build → generate →         │
-│  validate → monitor → personalize → finalize             │
-│                                                          │
-│  Each step has an error policy (continue/required),      │
-│  env requirements, and timing. Results written to        │
-│  pipeline-result.json for observability.                 │
-└──────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────┐
-│  AUTONOMOUS DISCOVERY (every pipeline run)               │
-│                                                          │
-│  When a coverage gap is detected (RSS mentions an event  │
-│  but no config exists), the system:                      │
-│                                                          │
-│  1. Creates a skeleton config                            │
-│  2. Flags it for research                                │
-│  3. Invokes Claude CLI + WebSearch to find real dates,   │
-│     venues, Norwegian athletes, and streaming info       │
-│  4. Verifies the schedule against ESPN/RSS/sport data    │
-│  5. Events appear on the dashboard next cycle            │
-│                                                          │
-│  No human needed at any step.                            │
-└──────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────┐
-│  MULTI-AGENT AUTOPILOT (nightly at 01:00 UTC)            │
-│                                                          │
-│  An orchestrator agent coordinates 4 specialized         │
-│  subagents that work in parallel:                        │
-│                                                          │
-│  ┌────────────┐ ┌─────────────┐ ┌──────────┐ ┌────────┐│
-│  │ data-agent │ │content-agent│ │code-agent│ │ux-agent││
-│  │ APIs,fetch │ │ editorial,  │ │ tests,   │ │ HTML,  ││
-│  │ configs,   │ │ enrichment, │ │ bugs,    │ │ CSS,   ││
-│  │ streaming  │ │ watch-plan  │ │ refactor │ │ a11y   ││
-│  └────────────┘ └─────────────┘ └──────────┘ └────────┘│
-│                                                          │
-│  Each subagent has persistent memory (.claude/agents/)   │
-│  and accumulates domain knowledge across runs.           │
-│                                                          │
-│  The orchestrator:                                       │
-│  1. Assesses system state (health, quality, autonomy)    │
-│  2. Routes tasks to the right subagent                   │
-│  3. Delegates work in parallel                           │
-│  4. Runs quality gates and meta-learning after           │
-│                                                          │
-│  82+ PRs completed autonomously.                         │
-└──────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ STATIC PIPELINE (hourly, no AI, ~3 min)                    │
+│ ESPN + fotball.no fetchers → standings, RSS, results       │
+│ → build-events.js → events.json (+ preserves AI events)    │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ RESEARCH AGENT (every 4h, Claude + web search)             │
+│ Reads interests.json → finds events APIs miss →            │
+│ appends to events.json with confidence + evidence URLs →   │
+│ rewrites tracked.json with a reason per entry              │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ VERIFY AGENT (daily)                                       │
+│ Re-checks AI-researched events against the web →           │
+│ confirms / amends / removes                                │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ EDITORIAL AGENT (07:00 + 17:00 Oslo)                       │
+│ Writes the morning/evening brief: narrative + structured   │
+│ blocks the client resolves against live data               │
+└────────────────────────────────────────────────────────────┘
 ```
 
-## The Five Pillars
+### Transparent tracking
 
-Every change to SportSync — whether by a human or the autopilot — must serve at least one pillar and pass all six change principles (vision alignment, close the loop, zero infrastructure, autonomous by default, measurable impact, compound learning):
+- **`scripts/config/interests.json`** — the human's source of truth. AI never touches it.
+- **`scripts/config/tracked.json`** — what the AI currently tracks. Every entry carries
+  `reason`, `addedBy`, `evidence`, and an optional `expires` — inspectable on the
+  dashboard under *"Hva vi følger"*.
+- Every AI-researched event carries `confidence` (high requires 2+ source URLs) and an
+  **AI badge** in the UI that opens the evidence.
 
-### 1. Self-Maintaining Data
+### Portability
 
-The pipeline fetches from ESPN, PGA Tour, fotball.no, HLTV, and 11 RSS feeds every 2 hours. AI enrichment adds importance scores, summaries, and Norwegian relevance tags. A 5-stage schedule verifier cross-references discovered events against ESPN, RSS, and sport data sources. Stale data is detected and surfaced in health reports.
+Vendor lock-in is confined to the three agent workflow files
+(`anthropics/claude-code-action@v1`). The prompts in `scripts/agents/*.md` are
+capability-described — swap the AI provider by replacing workflow YAML only.
 
-### 2. Self-Maintaining Code
+## Frontend
 
-The nightly autopilot uses a multi-agent architecture: an orchestrator delegates to specialized subagents (data, content, code, UX) that work in parallel. Each agent has persistent memory and accumulates domain-specific knowledge. The system scouts for dead code, missing tests, data-to-UI gaps, and fetcher data waste. When it finds something, it routes the task to the right agent, implements the fix, runs 1882 tests, and merges. 82+ PRs merged autonomously across 7 runs.
-
-### 3. Self-Expanding Capabilities
-
-The data pipeline is defined in a declarative JSON manifest (`scripts/pipeline-manifest.json`). The autopilot can add new pipeline steps — a new fetcher, a new quality check, a new data export — by editing this file. No workflow modification needed. A capability registry (`capabilities.json`) auto-generates a map of what the system can do and what gaps remain, giving the autopilot strategic awareness of where to invest effort.
-
-Task tiers allow the autopilot to take on larger work:
-- `[MAINTENANCE]` — 8 files, 300 lines (bug fixes, tests, cleanups)
-- `[FEATURE]` — 12 files, 500 lines (new capabilities)
-- `[EXPLORE]` — read-only investigation that produces concrete tasks
-
-### 4. Personalized Output
-
-The dashboard adapts to user interests. Engagement tracking records which sports the user clicks on. `evolve-preferences.js` reads this data and adjusts sport weights in the user preference config. These weights flow through the entire pipeline — enrichment, featured content, watch-plan ranking, and discovery research priorities all respond to what the user actually cares about.
-
-### 5. Self-Correcting Quality
-
-12 closed feedback loops form a self-correcting system:
-
-| # | Loop | Observe | Decide | Act |
-|---|------|---------|--------|-----|
-| 1 | Featured Quality | Quality history scores | Build adaptive hints | Inject corrections into next editorial prompt |
-| 2 | Enrichment Quality | AI quality gate metrics | Detect low tag/summary coverage | Adjust enrichment prompts |
-| 3 | Coverage Gaps | RSS headlines vs events | Find blind spots | Auto-create skeleton configs |
-| 4 | Pipeline Health | Data freshness, sport coverage | Surface issues | Health report triggers autopilot repair |
-| 5 | Watch Plan | Event scores and windows | Rank picks | Explain reasoning, boost favorites |
-| 6 | Code Health | Codebase analysis | Scout improvements | Autopilot PRs |
-| 7 | Event Discovery | Flagged empty configs | Research via web | Populate with real schedules |
-| 8 | Schedule Verification | 5-stage verifier chain | Score confidence | Feed accuracy hints back into discovery |
-| 9 | Results Health | Recent results staleness | Detect gaps | Surface in health report |
-| 10 | Fact Verification | LLM claim checking | Verify against source data | Flag inaccuracies |
-| 11 | Preference Evolution | Engagement click data | Compute sport weights | Update user-context.json |
-| 12 | Streaming Verification | tvkampen match rate trends | Mine alias suggestions, detect HTML changes | Feed hints back, surface issues for autopilot |
-
-Measured by `autonomy-scorecard.js` — currently 100% (12/12 loops closed).
-
-## The Dashboard
-
-The product is a 480px reading-column sports dashboard with a Norwegian perspective, covering 7 sports:
-
-| Sport | Data Source | Features |
-|-------|------------|----------|
-| Football | ESPN + fotball.no | Live scores, standings, results, team logos |
-| Golf | ESPN + PGA Tour | Live leaderboard, tee times, featured groups, headshots |
-| Tennis | ESPN | ATP/WTA schedules, Grand Slams |
-| Formula 1 | ESPN Racing | Full calendar, driver standings |
-| Chess | Curated + Lichess | Major tournaments, Norwegian focus |
-| Esports | HLTV + Discovery | CS2 competitions |
-| Olympics | Auto-discovered | Schedules researched via web search when active |
-
-Key features:
-- **AI editorial brief** — Claude generates themed summaries, featured sections, and watch picks every 2 hours
-- **AI watch plan** — ranked "what to watch in the next 30/60/120 minutes" picks
-- **Live scores** — client-side ESPN polling with pulsing LIVE dot
-- **Day navigator** — browse past recaps and future previews
-- **OLED-ready dark mode** — phone-width, minimal design
-
-The dashboard is a generic block renderer — the intelligence lives in the build step. It adapts to whatever is happening (Olympics, World Cup, Champions League) without frontend changes.
+Static PWA, no build step. Card-based layout up to 1280px (1→2→3 columns), OLED-dark
+default with light mode, live ESPN score polling (60s), editorial brief on top,
+installable on iOS/Android.
 
 ## Development
 
-### Quick Start
-
 ```bash
-git clone https://github.com/CHaerem/SportSync.git
-cd SportSync
-npm install
-npm run dev          # http://localhost:8000
+npm ci
+npm run build      # fetch data + build events + calendar
+npm run dev        # localhost:8000
+npm test           # 16 focused test files, <5s
+npm run screenshot # Playwright visual check
 ```
 
-### Commands
-
-```bash
-npm run dev              # Local dev server
-npm test                 # Run all tests (vitest)
-npm run build:events     # Generate events.json from sport files
-npm run generate:featured # Generate featured.json (needs API key or Claude CLI)
-npm run validate:data    # Check data integrity
-npm run build:calendar   # Create .ics calendar export
-```
-
-### Required Secrets
-
-| Secret | Used by | Purpose |
-|--------|---------|---------|
-| `CLAUDE_CODE_OAUTH_TOKEN` | Both workflows | Claude Max subscription for AI generation, discovery, and autopilot |
-| `OPENAI_API_KEY` | Data pipeline | Event enrichment fallback |
-
-Auth priority: Claude CLI (Max) > Anthropic API > OpenAI > template fallback.
-
-### Adding a Sport or Event
-
-To add a new **sport**: write a fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }`. It auto-flows into `events.json` — no registration needed.
-
-To add a **curated event**: create a JSON config in `scripts/config/`. Or just create an empty config with `autoGenerated: true` — the discovery pipeline will research and populate it automatically.
-
-## Acceleration Thesis
-
-The system doesn't just improve the product — it improves at improving. Three forces create compounding returns:
-
-1. **Better models over time** — model names live in code (not external config). When a better model ships, updating 5 references is a single PR. The system's reasoning, code generation, and editorial quality all improve.
-2. **Accumulated knowledge** — each autopilot run deposits lessons in a persistent "Lessons & Effectiveness" section of the roadmap and evolves its own process strategy (`autopilot-strategy.json`). After 100 runs, the system knows which task types are fast, which ship modes save turns, and which approaches fail.
-3. **Richer architecture** — each new feedback loop, pipeline step, or detection mechanism creates more surface area for autonomous improvement.
-
-Early runs prioritize **velocity** (25 seeded tasks, sprint mode). As the system matures, it shifts toward **depth** (self-discovered features). Eventually: **refinement** (optimization, personalization fine-tuning).
-
-## What's Next
-
-The system is autonomous at **12/12 feedback loops** with a multi-agent architecture proven stable across multiple runs. Most of the original vision gaps are closed:
-
-- ~~User feedback loop~~ — **DONE**: thumbs-up/down on watch-plan picks, engagement tracking, feedback flows into scoring
-- ~~Evolving favorites~~ — **DONE**: sport weights and favorite teams/players evolve from engagement data
-- ~~First self-added pipeline step~~ — **DONE**: `generate-insights.js` added by the autopilot (PR #100)
-
-Remaining gaps:
-- **End-to-end self-expansion** — the autopilot can add pipeline steps and create configs, but hasn't yet demonstrated creating a new sport fetcher from a self-discovered opportunity start to finish
-- **Meta-learning correlation** — the system accumulates knowledge and evolves strategy, but lacks automated measurement of whether strategy changes actually improve outcomes
-- **Richer feedback signals** — beyond thumbs-up/down: tracking which editorial blocks resonate, post-event satisfaction
-
-The goal: a system that detects a new major event, creates the config, discovers the schedule, verifies accuracy, enriches the data, generates editorial content, and serves a personalized dashboard — all without human intervention.
+See [CLAUDE.md](CLAUDE.md) for the full architecture reference.
 
 ## License
 

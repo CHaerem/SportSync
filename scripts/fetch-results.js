@@ -7,7 +7,7 @@
  * - F1: race and sprint results (past 14 days, 30-day retention)
  *
  * Matches football results against rss-digest.json for recap headlines
- * and user-context.json for favorite tagging (Casper Ruud for tennis).
+ * and interests.json for favorite tagging (Casper Ruud for tennis).
  *
  * Output: docs/data/recent-results.json
  */
@@ -17,14 +17,18 @@ import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER
 import { validateESPNScoreboard } from "./lib/response-validator.js";
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
-const USER_CONTEXT_PATH = path.resolve(process.cwd(), "scripts", "config", "user-context.json");
+const INTERESTS_PATH = path.resolve(process.cwd(), "scripts", "config", "interests.json");
 
 export function formatDate(d) {
 	return d.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
 function loadUserContext() {
-	return readJsonIfExists(USER_CONTEXT_PATH) || {};
+	const interests = readJsonIfExists(INTERESTS_PATH) || {};
+	return {
+		favoriteTeams: interests.alwaysTrack?.teams || [],
+		favoritePlayers: interests.alwaysTrack?.athletes || [],
+	};
 }
 
 export function isFavoriteTeam(teamName, userContext) {

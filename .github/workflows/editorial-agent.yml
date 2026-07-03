@@ -1,0 +1,54 @@
+name: Editorial agent
+
+on:
+  schedule:
+    - cron: "0 5 * * *"  # 07:00 Oslo (CEST) — morning brief
+    - cron: "0 15 * * *" # 17:00 Oslo (CEST) — evening brief
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Editorial mode"
+        type: choice
+        options: [morning, evening]
+        default: morning
+
+concurrency:
+  group: sportsync-editorial
+  cancel-in-progress: false
+
+jobs:
+  editorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - name: Determine mode
+        id: mode
+        run: |
+          if [ -n "${{ inputs.mode }}" ]; then
+            echo "mode=${{ inputs.mode }}" >> $GITHUB_OUTPUT
+          elif [ "$(date -u +%-H)" -lt 10 ]; then
+            echo "mode=morning" >> $GITHUB_OUTPUT
+          else
+            echo "mode=evening" >> $GITHUB_OUTPUT
+          fi
+      - uses: anthropics/claude-code-action@v1
+        env:
+          SPORTSYNC_EDITORIAL_MODE: ${{ steps.mode.outputs.mode }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/editorial.md and execute it with mode=${{ steps.mode.outputs.mode }}.
+            When done, commit your changes:
+              git add docs/data/featured.json
+              git commit -m "editorial-agent (${{ steps.mode.outputs.mode }}): update brief"
+              git push || (git pull --rebase origin main && git push)

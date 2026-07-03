@@ -1,0 +1,26 @@
+{
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit|MultiEdit|Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/protect-interests.js\""
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Write|Edit|MultiEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/validate-after-write.js\""
+					}
+				]
+			}
+		]
+	}
+}

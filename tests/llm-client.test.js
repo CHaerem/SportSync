@@ -1,128 +1,60 @@
+// llm-client.js: Anthropic-only client builds a valid request with cache breakpoints.
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { callLLM, detectProvider } from "../scripts/lib/llm-client.js";
 
-// We need to set env vars before importing LLMClient
-const ORIG_ENV = { ...process.env };
+let lastRequest;
 
-describe("LLMClient usage tracking", () => {
-	let LLMClient;
+beforeEach(() => {
+	process.env.ANTHROPIC_API_KEY = "test-key";
+	vi.stubGlobal("fetch", vi.fn(async (url, opts) => {
+		lastRequest = { url, opts, body: JSON.parse(opts.body) };
+		return {
+			ok: true,
+			json: async () => ({
+				content: [{ type: "text", text: "hello" }],
+				usage: { input_tokens: 10, output_tokens: 5 },
+				model: "claude-opus-4-8",
+				stop_reason: "end_turn",
+			}),
+		};
+	}));
+});
 
-	beforeEach(async () => {
-		// Reset env
+afterEach(() => {
+	vi.unstubAllGlobals();
+	delete process.env.ANTHROPIC_API_KEY;
+});
+
+describe("llm-client", () => {
+	it("detects anthropic provider from env", () => {
+		expect(detectProvider()).toBe("anthropic");
+	});
+
+	it("builds a valid Messages API request", async () => {
+		const result = await callLLM("system prompt", "user prompt");
+		expect(lastRequest.url).toBe("https://api.anthropic.com/v1/messages");
+		expect(lastRequest.opts.headers["x-api-key"]).toBe("test-key");
+		expect(lastRequest.body.model).toBe("claude-opus-4-8");
+		expect(lastRequest.body.thinking).toEqual({ type: "adaptive" });
+		// no removed sampling params
+		expect(lastRequest.body.temperature).toBeUndefined();
+		expect(lastRequest.body.top_p).toBeUndefined();
+		// prompt cache breakpoint on the system prompt
+		expect(lastRequest.body.system[0].cache_control).toEqual({ type: "ephemeral" });
+		expect(result.text).toBe("hello");
+		expect(result.usage).toEqual({ input: 10, output: 5 });
+	});
+
+	it("throws without an API key", async () => {
 		delete process.env.ANTHROPIC_API_KEY;
-		delete process.env.OPENAI_API_KEY;
-		// Fresh import each time
-		vi.resetModules();
+		await expect(callLLM("s", "u")).rejects.toThrow(/ANTHROPIC_API_KEY/);
 	});
 
-	afterEach(() => {
-		process.env = { ...ORIG_ENV };
-		vi.restoreAllMocks();
-	});
-
-	it("getUsage() returns zeros initially", async () => {
-		process.env.ANTHROPIC_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-		const usage = llm.getUsage();
-		expect(usage).toEqual({ input: 0, output: 0, calls: 0, total: 0 });
-	});
-
-	it("accumulates usage from Anthropic responses", async () => {
-		process.env.ANTHROPIC_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-
-		const mockResponse = {
+	it("throws on refusal stop reason", async () => {
+		vi.stubGlobal("fetch", vi.fn(async () => ({
 			ok: true,
-			json: async () => ({
-				content: [{ text: "hello" }],
-				usage: { input_tokens: 100, output_tokens: 50 },
-			}),
-		};
-		vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockResponse));
-
-		await llm.complete("system", "user");
-		expect(llm.getUsage()).toEqual({ input: 100, output: 50, calls: 1, total: 150 });
-
-		// Second call accumulates
-		await llm.complete("system", "user2");
-		expect(llm.getUsage()).toEqual({ input: 200, output: 100, calls: 2, total: 300 });
-	});
-
-	it("accumulates usage from OpenAI responses", async () => {
-		process.env.OPENAI_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-
-		const mockResponse = {
-			ok: true,
-			json: async () => ({
-				choices: [{ message: { content: "hi" } }],
-				usage: { prompt_tokens: 200, completion_tokens: 80 },
-			}),
-		};
-		vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockResponse));
-
-		await llm.complete("system", "user");
-		expect(llm.getUsage()).toEqual({ input: 200, output: 80, calls: 1, total: 280 });
-	});
-
-	it("resetUsage() clears counters", async () => {
-		process.env.ANTHROPIC_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-
-		const mockResponse = {
-			ok: true,
-			json: async () => ({
-				content: [{ text: "hello" }],
-				usage: { input_tokens: 100, output_tokens: 50 },
-			}),
-		};
-		vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockResponse));
-
-		await llm.complete("system", "user");
-		expect(llm.getUsage().total).toBe(150);
-
-		llm.resetUsage();
-		expect(llm.getUsage()).toEqual({ input: 0, output: 0, calls: 0, total: 0 });
-	});
-
-	it("handles responses without usage data gracefully", async () => {
-		process.env.ANTHROPIC_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-
-		const mockResponse = {
-			ok: true,
-			json: async () => ({
-				content: [{ text: "hello" }],
-				// no usage field
-			}),
-		};
-		vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockResponse));
-
-		await llm.complete("system", "user");
-		expect(llm.getUsage()).toEqual({ input: 0, output: 0, calls: 0, total: 0 });
-	});
-
-	it("getUsage() returns correct total field", async () => {
-		process.env.ANTHROPIC_API_KEY = "test-key";
-		const mod = await import("../scripts/lib/llm-client.js");
-		LLMClient = mod.LLMClient;
-		const llm = new LLMClient();
-
-		// Manually set usage to test total calculation
-		llm.usage = { input: 1500, output: 500, calls: 3 };
-		const usage = llm.getUsage();
-		expect(usage.total).toBe(2000);
-		expect(usage.input).toBe(1500);
-		expect(usage.output).toBe(500);
-		expect(usage.calls).toBe(3);
+			json: async () => ({ content: [], stop_reason: "refusal" }),
+		})));
+		await expect(callLLM("s", "u")).rejects.toThrow(/refused/);
 	});
 });

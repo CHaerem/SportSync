@@ -1,186 +1,55 @@
 /**
- * Multi-provider LLM client for event enrichment.
- * Supports OpenAI and Anthropic APIs via native fetch (Node 18+).
- * Auto-detects available API key from environment.
+ * Thin Anthropic LLM client (native fetch, Node 18+).
+ * Not used by the scheduled agent workflows (they run Claude Code directly) —
+ * kept as the Node-SDK fallback path described in the vendor swap recipe.
  */
 
-const PROVIDERS = {
-	anthropic: {
-		url: "https://api.anthropic.com/v1/messages",
-		model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
-		envKey: "ANTHROPIC_API_KEY",
-		buildRequest(apiKey, systemPrompt, userPrompt) {
-			return {
-				url: this.url,
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": apiKey,
-					"anthropic-version": "2023-06-01",
-					// Enable prompt caching — system prompt is stable across batch calls
-					"anthropic-beta": "prompt-caching-2024-07-31",
-				},
-				body: {
-					model: this.model,
-					max_tokens: 4096,
-					// Structured system prompt with cache_control for prompt caching
-					// The system prompt is identical across enrichment batches within a run,
-					// so batches 2+ get cache hits (inspired by Claude Code's stable/dynamic split)
-					system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
-					messages: [{ role: "user", content: userPrompt }],
-					temperature: 0.3,
-				},
-			};
+const API_URL = "https://api.anthropic.com/v1/messages";
+const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
+
+export function detectProvider() {
+	return process.env.ANTHROPIC_API_KEY ? "anthropic" : null;
+}
+
+/**
+ * Call Claude with a system + user prompt, return the text response.
+ * The system prompt gets a cache_control breakpoint so repeated calls
+ * within a run hit the prompt cache.
+ */
+export async function callLLM(systemPrompt, userPrompt, { model = DEFAULT_MODEL, maxTokens = 4096 } = {}) {
+	const apiKey = process.env.ANTHROPIC_API_KEY;
+	if (!apiKey) throw new Error("No ANTHROPIC_API_KEY set");
+
+	const res = await fetch(API_URL, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"x-api-key": apiKey,
+			"anthropic-version": "2023-06-01",
 		},
-		extractContent(response) {
-			return response.content?.[0]?.text;
-		},
-		extractUsage(response) {
-			return response.usage
-				? { input: response.usage.input_tokens, output: response.usage.output_tokens }
-				: null;
-		},
-	},
-	openai: {
-		url: "https://api.openai.com/v1/chat/completions",
-		model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-		envKey: "OPENAI_API_KEY",
-		buildRequest(apiKey, systemPrompt, userPrompt) {
-			return {
-				url: this.url,
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${apiKey}`,
-				},
-				body: {
-					model: this.model,
-					response_format: { type: "json_object" },
-					messages: [
-						{ role: "system", content: systemPrompt },
-						{ role: "user", content: userPrompt },
-					],
-					temperature: 0.3,
-				},
-			};
-		},
-		extractContent(response) {
-			return response.choices?.[0]?.message?.content;
-		},
-		extractUsage(response) {
-			return response.usage
-				? { input: response.usage.prompt_tokens, output: response.usage.completion_tokens }
-				: null;
-		},
-	},
-};
+		body: JSON.stringify({
+			model,
+			max_tokens: maxTokens,
+			thinking: { type: "adaptive" },
+			system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
+			messages: [{ role: "user", content: userPrompt }],
+		}),
+	});
 
-export class LLMClient {
-	constructor() {
-		this.provider = null;
-		this.apiKey = null;
-		this.usage = { input: 0, output: 0, calls: 0 };
-
-		for (const [name, config] of Object.entries(PROVIDERS)) {
-			const key = process.env[config.envKey];
-			if (key) {
-				this.provider = name;
-				this.apiKey = key;
-				this.config = config;
-				break;
-			}
-		}
+	if (!res.ok) {
+		const body = await res.text();
+		throw new Error(`Anthropic API ${res.status}: ${body.slice(0, 300)}`);
 	}
-
-	getUsage() {
-		return { ...this.usage, total: this.usage.input + this.usage.output };
+	const data = await res.json();
+	if (data.stop_reason === "refusal") {
+		throw new Error("Anthropic API refused the request");
 	}
-
-	resetUsage() {
-		this.usage = { input: 0, output: 0, calls: 0 };
-	}
-
-	isAvailable() {
-		return this.provider !== null;
-	}
-
-	getProviderName() {
-		return this.provider;
-	}
-
-	async complete(systemPrompt, userPrompt, { maxRetries = 2 } = {}) {
-		if (!this.isAvailable()) {
-			throw new Error(
-				"No LLM API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY."
-			);
-		}
-
-		const req = this.config.buildRequest(
-			this.apiKey,
-			systemPrompt,
-			userPrompt
-		);
-
-		let lastError;
-		for (let attempt = 0; attempt <= maxRetries; attempt++) {
-			try {
-				const response = await fetch(req.url, {
-					method: "POST",
-					headers: req.headers,
-					body: JSON.stringify(req.body),
-				});
-
-				if (!response.ok) {
-					const errorBody = await response.text();
-					throw new Error(
-						`${this.provider} API error ${response.status}: ${errorBody}`
-					);
-				}
-
-				const data = await response.json();
-				const usage = this.config.extractUsage(data);
-				if (usage) {
-					this.usage.input += usage.input;
-					this.usage.output += usage.output;
-					this.usage.calls++;
-				}
-
-				const content = this.config.extractContent(data);
-
-				if (!content) {
-					throw new Error("Empty response from LLM");
-				}
-
-				return content;
-			} catch (err) {
-				lastError = err;
-				if (attempt < maxRetries) {
-					const delay = Math.pow(2, attempt) * 1000;
-					console.warn(
-						`LLM request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms:`,
-						err.message
-					);
-					await new Promise((r) => setTimeout(r, delay));
-				}
-			}
-		}
-
-		throw lastError;
-	}
-
-	async completeJSON(systemPrompt, userPrompt, options = {}) {
-		const content = await this.complete(systemPrompt, userPrompt, options);
-
-		// Try direct parse first
-		try {
-			return JSON.parse(content);
-		} catch {
-			// Try extracting JSON from markdown code blocks
-			const match = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-			if (match) {
-				return JSON.parse(match[1].trim());
-			}
-			throw new Error(
-				`Failed to parse LLM response as JSON: ${content.substring(0, 200)}`
-			);
-		}
-	}
+	const text = data.content?.filter((b) => b.type === "text").map((b) => b.text).join("") || "";
+	return {
+		text,
+		usage: data.usage
+			? { input: data.usage.input_tokens, output: data.usage.output_tokens }
+			: null,
+		model: data.model,
+	};
 }

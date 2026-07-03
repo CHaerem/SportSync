@@ -2,8 +2,18 @@ import fs from "fs";
 import path from "path";
 import https from "https";
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
-import { getNorwegianStreaming } from "../lib/norwegian-streaming.js";
 import { validateESPNScoreboard } from "../lib/response-validator.js";
+
+// Norwegian streaming for golf (was lib/norwegian-streaming.js — v2 keeps a local map)
+function getNorwegianStreaming(_sport, tourName = "") {
+	if (/masters/i.test(tourName)) {
+		return [{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" }];
+	}
+	return [
+		{ platform: "Viaplay", url: "https://viaplay.no", type: "streaming" },
+		{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
+	];
+}
 
 // Load Norwegian golfers from config
 const configPath = path.resolve(process.cwd(), "scripts", "config", "norwegian-golfers.json");
