@@ -50,7 +50,7 @@ Two kinds of scheduled work:
 - Commits `docs/data/` directly to main, then — only when data changed — **auto-publishes** by calling `preview-deploy.yml` via `workflow_call`. (A `GITHUB_TOKEN` push can't *trigger* a workflow, so the pipeline invokes the deploy directly instead of relying on `preview-deploy`'s `push` trigger; no PAT needed. `preview-deploy` keeps `concurrency: pages-deploy`, which `workflow_call` honors, so a called deploy still serialises with merge-triggered ones — never two Pages deploys at once.)
 
 ### 2. Claude agents (Claude Code Max OAuth, scheduled)
-Seven workflows run `anthropics/claude-code-action@v1` with a prompt file:
+Nine workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
 | Agent | Prompt | Model | Schedule | Job |
 |---|---|---|---|---|
@@ -61,6 +61,8 @@ Seven workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **coverage-critic** | `scripts/agents/coverage-critic.md` | `claude-opus-4-8` | daily 04:00 UTC | Recall audit: reason adversarially about important events we're MISSING over a ~4-week horizon; write `coverage-audit.json`; escalate high-severity gaps to research (max 1/day) |
 | **visual-qa** | `scripts/agents/visual-qa.md` | `claude-sonnet-5` | daily 08:00 UTC | Vision QA: screenshot the dashboard at 375/393/900px, LOOK at the images, flag truncation/overflow/foreign-channel/calm-design issues; write `visual-qa-log.json` |
 | **ui-fix** | `scripts/agents/ui-fix.md` | `claude-opus-4-8` | daily 09:00 UTC | Self-heal: read visual-qa findings, fix the frontend ON A BRANCH, re-screenshot to prove the fix + no regressions, `npm test`, open a PR. The workflow then **re-runs the tests as a hard gate and auto-merges + deploys** it (fully hands-off). Fix ships only if it verifies twice; a test failure leaves the PR open + fails loudly. Closes the visual-qa loop |
+| **self-repair** | `scripts/agents/self-repair.md` | `claude-opus-4-8` | daily 08:30 UTC | The mechanic: detect real breakage (failed runs, failing tests, validation errors, broken fetchers), fix ON A BRANCH, prove it, open a PR. Workflow re-gates tests AND **auto-merges only if every changed file is in a safe path** (`scripts/fetch`, `scripts/lib`, `tests`, `docs/js`, `docs/css`, `index.html`); sensitive paths (workflows/config/hooks/agent-prompts/package.json) are left open for review. Ignores quota/transient failures |
+| **improve** | `scripts/agents/improve.md` | `claude-opus-4-8` | weekly Mon 07:00 UTC | Evolution, **proposal-only**: mine the logs for ONE evidenced improvement (source/skill/prompt/threshold/fetcher tuning), open a PR a human reviews. Never auto-merges. Biased toward sharpening what exists over adding machinery (the v1 lesson) |
 
 ### Quota governor (self-throttling on real Max usage)
 
@@ -125,7 +127,8 @@ no dashboard grid, no competing panels.
 `events.json`, `featured.json`, `standings.json`, `rss-digest.json`, `recent-results.json`,
 `tracked.json` (published copy), `research-log.json`, `verify-log.json`, `meta.json`,
 `coverage-gaps.json`, `coverage-audit.json` (coverage-critic), `visual-qa-log.json` (visual-qa),
-`ui-fix-log.json` (ui-fix), `usage-state.json` (quota governor), `scout-log.json`, `calibration.json`, `tv-listings.json`,
+`ui-fix-log.json` (ui-fix), `self-repair-log.json` (self-repair), `improve-log.json` (improve),
+`usage-state.json` (quota governor), `scout-log.json`, `calibration.json`, `tv-listings.json`,
 per-sport source files (`football.json` …), `events.ics`.
 
 New data files must be whitelisted in `.gitignore` (which ignores `docs/data/*.json`

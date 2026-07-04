@@ -1,0 +1,92 @@
+name: Self-repair agent
+
+# The mechanic: keeps the system running. Detects real breakage (failed runs,
+# failing tests, validation errors, broken fetchers), fixes it ON A BRANCH,
+# proves it, and opens a PR. The workflow then re-runs the tests AND checks the
+# PR only touches SAFE paths before auto-merging; anything sensitive is left open
+# for a human. Fixes ship only if they verify twice and stay in bounds.
+
+on:
+  schedule:
+    - cron: "30 6 * * *" # daily 08:30 Oslo
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-self-repair
+  cancel-in-progress: false
+
+jobs:
+  self-repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read # read failed-run logs
+      id-token: write
+    outputs:
+      merged: ${{ steps.automerge.outputs.merged }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: npm ci
+      - id: usage
+        run: node scripts/usage-gate.js optional
+      - if: steps.usage.outputs.run == 'true'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --max-turns 80
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/self-repair.md and execute it — find real breakage,
+            fix it on a branch, prove it, open a PR. Do not merge.
+
+      # Re-gate the fix ourselves, then auto-merge ONLY if it stays in safe paths.
+      - name: Re-gate + auto-merge (safe paths only)
+        id: automerge
+        if: steps.usage.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --state open --json number,headRefName \
+                --jq '[.[] | select(.headRefName | startswith("self-repair/"))] | sort_by(.number) | last | .number // empty')
+          if [ -z "$PR" ]; then
+            echo "No self-repair PR (nothing broken / abandoned)."; echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # Deterministic guardrail: every changed file must be in a safe path,
+          # else a human reviews it (workflows/config/hooks/agent-prompts/package.json).
+          SAFE='^(scripts/fetch/|scripts/lib/|tests/|docs/js/|docs/css/|docs/index\.html$|docs/data/self-repair-log\.json$)'
+          RISKY=0
+          for f in $(gh pr view "$PR" --json files --jq '.files[].path'); do
+            echo "$f" | grep -qE "$SAFE" || { echo "risky path: $f"; RISKY=1; }
+          done
+          if [ "$RISKY" = "1" ]; then
+            echo "PR #$PR touches sensitive paths — leaving OPEN for human review."
+            gh pr edit "$PR" --add-label needs-review 2>/dev/null || true
+            echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "Re-gating PR #$PR (safe paths only) with fresh tests…"
+          gh pr checkout "$PR"
+          npm ci
+          npm test
+          node scripts/validate-events.js
+          gh pr merge "$PR" --merge --delete-branch
+          echo "Auto-merged PR #$PR."; echo "merged=true" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: self-repair
+    if: needs.self-repair.outputs.merged == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/preview-deploy.yml
