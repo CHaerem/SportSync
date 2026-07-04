@@ -23,18 +23,12 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+    outputs:
+      # Whether this run actually changed data. The deploy job below runs only
+      # when true, so we never spend a Pages build on a no-op run.
+      changed: ${{ steps.commit.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Check out with a PAT so the docs/data commit this job pushes TRIGGERS
-          # preview-deploy. Pushes made with the default GITHUB_TOKEN deliberately
-          # do NOT trigger workflows (anti-recursion), which meant hourly data
-          # landed on main but never auto-published. See pages-deploy-gotchas.
-          # Falls back to github.token when DEPLOY_PAT is unset — the workflow
-          # keeps working (just without auto-deploy) until the secret is added.
-          # No loop risk: this pipeline's own push trigger watches scripts/** only,
-          # not docs/**, so a data push won't re-run the pipeline.
-          token: ${{ secrets.DEPLOY_PAT || github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -59,9 +53,32 @@ jobs:
       - name: Write meta
         run: echo "{\"lastUpdated\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > docs/data/meta.json
       - name: Commit
+        id: commit
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           git add docs/data/
-          git diff --staged --quiet || git commit -m "Update sports data $(date -u +%H:%MZ)"
-          git push || (git pull --rebase origin ${{ github.ref_name }} && git push)
+          if git diff --staged --quiet; then
+            echo "No data changes — nothing to commit or deploy."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Update sports data $(date -u +%H:%MZ)"
+            git push || (git pull --rebase origin ${{ github.ref_name }} && git push)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Publish the data this run just committed. We CALL preview-deploy instead of
+  # relying on its push trigger: the commit above is pushed with GITHUB_TOKEN,
+  # and GitHub deliberately does not let GITHUB_TOKEN pushes trigger workflows
+  # (anti-recursion). A direct workflow_call has no trigger to be suppressed and
+  # needs no PAT. preview-deploy keeps its own `concurrency: pages-deploy`, so a
+  # called deploy still serialises with merge-triggered deploys (never two at
+  # once — that mid-flight collision is what corrupted the Pages environment).
+  deploy:
+    needs: fetch-and-build
+    if: needs.fetch-and-build.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/preview-deploy.yml
