@@ -14,7 +14,7 @@ autopilot, pipeline manifest) with a **lean, reliable design** built on one idea
 Four priorities, in order:
 1. **Correct, complete data** — especially events that static APIs miss
 2. **Dynamic AI research** — scheduled agents with web search find and verify events
-3. **Modern dashboard** — card-based, up to 1280px, OLED-dark, PWA
+3. **Calm dashboard** — one quiet single-column agenda (max 640px), near-black dark default, PWA
 4. **Transparent tracking** — AI decides what to track and writes human-readable
    `tracked.json` with a defensible `reason` per entry
 
@@ -47,10 +47,10 @@ Two kinds of scheduled work:
 - `scripts/detect-coverage-gaps.js` → `coverage-gaps.json` — recall watch: tracked entities in RSS headlines with no upcoming event (mechanical, recall-biased; research agent triages)
 - `scripts/aggregate-calibration.js` → `calibration.json` — mechanical per-source trust stats from `calibration-ledger.jsonl` (180-day window, reliability withheld under 5 checks)
 - `scripts/build-ics.js` — calendar export
-- Commits `docs/data/` directly to main
+- Commits `docs/data/` directly to main, then — only when data changed — **auto-publishes** by calling `preview-deploy.yml` via `workflow_call`. (A `GITHUB_TOKEN` push can't *trigger* a workflow, so the pipeline invokes the deploy directly instead of relying on `preview-deploy`'s `push` trigger; no PAT needed. `preview-deploy` keeps `concurrency: pages-deploy`, which `workflow_call` honors, so a called deploy still serialises with merge-triggered ones — never two Pages deploys at once.)
 
 ### 2. Claude agents (Claude Code Max OAuth, scheduled)
-Three workflows run `anthropics/claude-code-action@v1` with a prompt file:
+Four workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
 | Agent | Prompt | Model | Schedule | Job |
 |---|---|---|---|---|

@@ -17,7 +17,7 @@ with an elaborate self-improving autonomy architecture (13 feedback loops, a nig
 multi-agent autopilot, 2000+ tests). It proved the concept — and produced stagnating
 quality at high complexity.
 
-**v2 bets on the model instead of the machinery**: three scheduled Claude agents with
+**v2 bets on the model instead of the machinery**: four scheduled Claude agents with
 web search do real research, write transparent JSON, and explain their reasoning.
 
 ## Architecture
@@ -28,8 +28,10 @@ no databases, no paid APIs.
 ```
 ┌────────────────────────────────────────────────────────────┐
 │ STATIC PIPELINE (hourly, no AI, ~3 min)                    │
-│ ESPN + fotball.no fetchers → standings, RSS, results       │
-│ → build-events.js → events.json (+ preserves AI events)    │
+│ ESPN + fotball.no fetchers → standings, RSS, results,      │
+│ tvkampen TV listings → build-events.js → events.json       │
+│ (+ preserves AI events, resolves Norwegian channels)       │
+│ → auto-publishes to Pages on change (workflow_call)        │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ RESEARCH AGENT (every 4h, Claude + web search)             │
@@ -40,14 +42,28 @@ no databases, no paid APIs.
 ┌────────────────────────────────────────────────────────────┐
 │ VERIFY AGENT (daily)                                       │
 │ Re-checks AI-researched events against the web →           │
-│ confirms / amends / removes                                │
+│ confirms / amends / removes; logs a calibration ledger     │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ EDITORIAL AGENT (07:00 + 17:00 Oslo)                       │
-│ Writes the morning/evening brief: narrative + structured   │
-│ blocks the client resolves against live data               │
+│ Writes the morning/evening brief: one quiet headline       │
+│ line the client resolves against live data                 │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ SCOUT AGENT (hourly, Claude Haiku) — the Watchtower        │
+│ Triages RSS + coverage gaps → escalates to research        │
+│ (max 2/day) when something important looks uncovered       │
 └────────────────────────────────────────────────────────────┘
 ```
+
+### Correct "where to watch"
+
+Getting the time and channel right is the whole point. Every followed event
+resolves to a **Norwegian** channel (never FOX/ESPN): football matches match
+against real [tvkampen.com](https://www.tvkampen.com) TV listings, with a
+deterministic Norwegian-rights map (`scripts/lib/norwegian-rights.js`) as the
+fallback. When the exact broadcaster isn't yet known (e.g. a World Cup match days
+out), the UI shows one honest tentative `NRK / TV 2` label rather than guessing.
 
 ### Transparent tracking
 
@@ -66,9 +82,14 @@ capability-described — swap the AI provider by replacing workflow YAML only.
 
 ## Frontend
 
-Static PWA, no build step. Card-based layout up to 1280px (1→2→3 columns), OLED-dark
-default with light mode, live ESPN score polling (60s), editorial brief on top,
-installable on iOS/Android.
+Static PWA, no build step. **Calm design**: one quiet, scannable column (max 640px) —
+no dashboard grid, no competing panels. A single day-grouped agenda where every row
+answers only **when · what · where to watch**, with club crests / national flags and
+always-Norwegian channels. Must-see events (favorite / Norwegian / high importance) get
+the gentlest possible accent; details (standings, results, AI sources) are a tap away,
+never in your face. Near-black dark default with a warm-paper light mode that follows the
+system theme, live ESPN score polling (60s), one quiet editorial headline on top, tuned
+to fit iPhone widths, installable on iOS/Android.
 
 ## Development
 
@@ -76,7 +97,7 @@ installable on iOS/Android.
 npm ci
 npm run build      # fetch data + build events + calendar
 npm run dev        # localhost:8000
-npm test           # 16 focused test files, <5s
+npm test           # ~20 focused test files (~160 tests), <5s
 npm run screenshot # Playwright visual check
 ```
 
