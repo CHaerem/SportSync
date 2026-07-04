@@ -26,19 +26,32 @@ jobs:
           node-version: "22"
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
-      - name: Read /usage → usage-state.json
+      - name: PROBE — can we read quota headlessly?
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
-          # /usage is a status read (not a model turn); capture it, fail SOFT so a
-          # hiccup keeps the previous state rather than blanking the gauge.
-          claude -p "/usage" > /tmp/usage.txt 2>/tmp/usage.err || echo "(claude /usage exited non-zero)"
-          echo "--- /usage raw output ---"; cat /tmp/usage.txt; echo "--- stderr ---"; cat /tmp/usage.err || true
-          if [ -s /tmp/usage.txt ]; then
-            node scripts/parse-usage.js < /tmp/usage.txt
-          else
-            echo "No /usage output — keeping previous usage-state.json"
-          fi
+          echo "=== A) undocumented GET /api/oauth/usage (Bearer OAuth) ==="
+          for beta in "oauth-2025-04-20" ""; do
+            echo "--- anthropic-beta: '${beta}' ---"
+            curl -sS -m 20 -w "\nHTTP %{http_code}\n" \
+              -H "Authorization: Bearer ${CLAUDE_CODE_OAUTH_TOKEN}" \
+              ${beta:+-H "anthropic-beta: ${beta}"} \
+              https://api.anthropic.com/api/oauth/usage 2>&1 | head -30 || true
+          done
+          echo ""
+          echo "=== B) rate-limit headers from a MINIMAL /v1/messages call ==="
+          curl -sS -m 30 -D /tmp/h.txt -o /tmp/b.txt -w "HTTP %{http_code}\n" \
+            -H "Authorization: Bearer ${CLAUDE_CODE_OAUTH_TOKEN}" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "anthropic-beta: oauth-2025-04-20" \
+            -H "content-type: application/json" \
+            -d '{"model":"claude-haiku-4-5","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}' \
+            https://api.anthropic.com/v1/messages 2>&1 || true
+          echo "--- unified rate-limit headers (the prize) ---"
+          grep -i "anthropic-ratelimit-unified" /tmp/h.txt || echo "(none found)"
+          echo "--- any ratelimit headers ---"
+          grep -i "anthropic-ratelimit" /tmp/h.txt || echo "(none)"
+          echo "--- body (truncated) ---"; head -c 400 /tmp/b.txt; echo
       - name: Commit usage-state.json
         run: |
           git config user.email "action@github.com"
