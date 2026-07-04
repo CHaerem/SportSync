@@ -28,6 +28,7 @@ export class EventNormalizer {
 				norwegianPlayers: event.norwegianPlayers || null,
 				totalPlayers: event.totalPlayers || null,
 				isFavorite: Boolean(event.isFavorite),
+				round: event.round ? this.sanitizeString(event.round) : undefined,
 				additional: this.extractAdditional(event)
 			};
 		} catch (error) {

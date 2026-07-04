@@ -186,10 +186,11 @@ class Dashboard {
 		const attrs = expandable
 			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
 			: '';
+		const round = e.round ? `<span class="ev-round">${escapeHtml(e.round)}</span>` : '';
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.sportBadge(e)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-title">${this.eventTitle(e)}</span>
+			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}</span>
 			${where}
 			${caret}
 		</div><div class="ev-detail" hidden></div></div>`;

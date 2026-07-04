@@ -58,6 +58,12 @@ describe("agenda event row", () => {
 		expect(html).toContain("🇧🇷");
 	});
 
+	it("shows round context when present (e.g. WC knockout round)", () => {
+		const html = dash.eventRow({ id: "w", sport: "football", homeTeam: "Brazil", awayTeam: "Norway", time: soon(), round: "Åttedelsfinale", tournament: "FIFA World Cup" });
+		expect(html).toContain("ev-round");
+		expect(html).toContain("Åttedelsfinale");
+	});
+
 	it("escapes HTML in event fields", () => {
 		const html = dash.eventRow({ id: "q", sport: "golf", title: "<script>alert(1)</script>", time: soon() });
 		expect(html).not.toContain("<script>alert");

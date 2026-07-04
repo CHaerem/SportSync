@@ -173,6 +173,10 @@ export class ESPNAdapter extends BaseFetcher {
 			streaming: this.extractStreaming(espnEvent, competition),
 			status: espnEvent.status?.type?.name
 		};
+
+		// Round / stage — e.g. World Cup season.slug "round-of-16" → "Åttedelsfinale".
+		const round = this.extractRound(espnEvent, competition);
+		if (round) event.round = round;
 		
 		if (competition.competitors && competition.competitors.length >= 2) {
 			const home = competition.competitors.find(c => c.homeAway === "home");
@@ -217,6 +221,37 @@ export class ESPNAdapter extends BaseFetcher {
 		}
 		
 		return "Unknown Event";
+	}
+
+	/**
+	 * Extract a human, Norwegian round label from ESPN data.
+	 * Cup rounds come via `season.slug` (round-of-16, quarterfinals, …); some
+	 * competitions put a headline (e.g. "Matchday 5", "Group A") in competition.notes.
+	 */
+	extractRound(espnEvent, competition) {
+		const slug = (espnEvent.season?.slug || "").toLowerCase();
+		const SLUG_NB = {
+			"final": "Finale",
+			"3rd-place": "Bronsefinale",
+			"third-place": "Bronsefinale",
+			"semifinals": "Semifinale",
+			"semi-finals": "Semifinale",
+			"quarterfinals": "Kvartfinale",
+			"quarter-finals": "Kvartfinale",
+			"round-of-16": "Åttedelsfinale",
+			"round-of-32": "16-delsfinale",
+			"group-stage": "Gruppespill",
+			"group-phase": "Gruppespill",
+			"playoff": "Playoff",
+			"knockout-round-playoffs": "Playoff",
+		};
+		if (SLUG_NB[slug]) return SLUG_NB[slug];
+		if (slug.includes("group")) return "Gruppespill";
+		if (slug.includes("final")) return "Finale";
+		// Fallback: a notes headline like "Group A" / "Matchday 5"
+		const headline = competition?.notes?.[0]?.headline;
+		if (headline && !/regular season/i.test(headline)) return headline;
+		return null;
 	}
 
 	extractMeta(espnEvent, competition) {

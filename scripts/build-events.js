@@ -39,6 +39,7 @@ function pushEvent(ev, sport, tournament) {
 		homeTeam: ev.homeTeam || null,
 		awayTeam: ev.awayTeam || null,
 		isFavorite: ev.isFavorite || false,
+		round: ev.round || null,
 	};
 	if (ev.format) event.format = ev.format;
 	if (ev.stage) event.stage = ev.stage;
