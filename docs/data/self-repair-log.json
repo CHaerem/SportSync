@@ -1,0 +1,16 @@
+{
+	"runAt": "2026-07-04T19:28:00Z",
+	"action": "opened-pr",
+	"pr": "https://github.com/CHaerem/SportSync/pull/194",
+	"diagnosed": "The football ESPN source configured a dead league code `nor.cup` (Norwegian Cup). ESPN returns HTTP 400 for it every request (nor.1/nor.2 return 200), so every hourly pipeline run fired 7 doomed requests, logged 'ESPN: 7/8 leagues fetched (failed: Norwegian Cup)', and dinged the coverageRatio to 0.875. A valid ESPN league with no fixtures returns 200 + empty events, not 400 — confirming nor.cup is not a real endpoint (nor.nm, nor.cupen etc. also 400).",
+	"fixed": [
+		"Removed the invalid { code: 'nor.cup', name: 'Norwegian Cup' } league from scripts/config/sports-config.js and left a comment so it isn't re-added; NM Cupen coverage falls to the research agent per v2 design."
+	],
+	"autoMergeEligible": false,
+	"notes": [
+		"Fix touches scripts/config/** (sensitive path) so the workflow will leave the PR open for human review, not auto-merge.",
+		"Proof: football fetcher now completes with no partial-failure warning and no nor.cup/400 lines (previously logged 7/8 leagues); full npm test green (173 passing).",
+		"Ignored: the many 'Deploy Pages with Previews' failures are the transient GitHub Pages infra error 'Deployment failed, try again later.' (not our code, recent deploys succeed). The earlier 'Static data pipeline' rebase-conflict failures were already fixed by commit 409c0ae (Harden pipeline commit against concurrent-run push races); no pipeline failures since.",
+		"Noted-not-fixed: chess fetcher logs ENOENT for scripts/config/chess-tournaments.json + norwegian-chess-players.json (removed in the v2 rebuild). It degrades gracefully (loadJsonFile falls back to []) and the Lichess source still works, so this is noise rather than breakage; a proper fix would remove the dead 'curated' chess source (sensitive path, design decision) and belongs in a reviewed change."
+	]
+}
