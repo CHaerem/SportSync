@@ -193,9 +193,12 @@ console.log(
 	`Aggregated ${kept.length} events (filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
 
-// Publish tracked.json so the dashboard's "Hva vi følger" surface can read it
-const trackedSrc = path.join(configDir, "tracked.json");
-if (fs.existsSync(trackedSrc)) {
-	fs.copyFileSync(trackedSrc, path.join(dataDir, "tracked.json"));
-	console.log("Published tracked.json to docs/data/");
+// Publish tracked.json + interests.json so the dashboard's "Hva vi følger"
+// surface can show both what you asked for and what the AI discovered.
+for (const name of ["tracked.json", "interests.json"]) {
+	const src = path.join(configDir, name);
+	if (fs.existsSync(src)) {
+		fs.copyFileSync(src, path.join(dataDir, name));
+		console.log(`Published ${name} to docs/data/`);
+	}
 }
