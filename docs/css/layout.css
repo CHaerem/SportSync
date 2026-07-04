@@ -53,3 +53,5 @@ main { padding: 8px 0 60px; }
 }
 .site-footer a { color: var(--fg-2); }
 .site-footer a:hover { color: var(--accent); }
+/* Quiet staleness warning — only shown when data is unexpectedly old */
+.footer-stale { flex-basis: 100%; color: var(--live); font-size: 12.5px; }

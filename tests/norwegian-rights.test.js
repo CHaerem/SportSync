@@ -56,6 +56,14 @@ describe("tvkampen real-listing integration", () => {
 		const s = resolveStreaming({ sport: "football", homeTeam: "Bodø/Glimt", awayTeam: "Molde", tournament: "Eliteserien" }, listings);
 		expect(s[0].platform).toBe("TV 2 Play"); // from map, not a listing
 	});
+	it("collapses NRK sub-channels and caps aggregator padding to two channels", () => {
+		const padded = [{
+			homeTeam: "Rosenborg", awayTeam: "Brann",
+			broadcasters: ["NRK1", "NRK TV", "Viaplay", "Eurosport Norge", "MAX"],
+		}];
+		const s = resolveStreaming({ sport: "football", homeTeam: "Rosenborg", awayTeam: "Brann", tournament: "Eliteserien" }, padded);
+		expect(s.map((c) => c.platform)).toEqual(["NRK", "Viaplay"]); // NRK1/NRK TV -> one NRK, trailing padding dropped
+	});
 	it("non-football ignores listings and uses the map", () => {
 		const s = resolveStreaming({ sport: "f1", tournament: "Belgian Grand Prix" }, listings);
 		expect(s[0].platform).toBe("Viaplay");

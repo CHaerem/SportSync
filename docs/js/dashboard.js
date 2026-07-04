@@ -74,6 +74,22 @@ class Dashboard {
 		if (!updated) return;
 		const mins = Math.round((Date.now() - new Date(updated).getTime()) / SS_CONSTANTS.MS_PER_MINUTE);
 		el.textContent = mins < 90 ? `Oppdatert for ${mins} min siden` : `Oppdatert ${new Date(updated).toLocaleDateString('nb-NO', { timeZone: 'Europe/Oslo' })}`;
+
+		// Quiet staleness signal. The pipeline runs hourly 05–21 UTC, so during
+		// those hours data should be well under an hour old; if it's hours stale
+		// the pipeline likely stopped publishing. Surface it calmly rather than
+		// silently showing old data. (Overnight the pipeline is idle by design,
+		// so we only flag during active hours to avoid nightly false alarms.)
+		const stale = document.getElementById('footer-stale');
+		if (!stale) return;
+		const utcHour = new Date().getUTCHours();
+		const activeHours = utcHour >= 6 && utcHour <= 22;
+		if (activeHours && mins > 180) {
+			stale.textContent = `⚠ Dataene er ~${Math.round(mins / 60)} t gamle — oppdatering kan ha stoppet`;
+			stale.hidden = false;
+		} else {
+			stale.hidden = true;
+		}
 	}
 
 	// ── Helpers ─────────────────────────────────────────────────────────────

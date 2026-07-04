@@ -28,10 +28,10 @@ jobs:
       # when true, so we never spend a Pages build on a no-op run.
       changed: ${{ steps.commit.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "22"
       - run: npm ci
       - run: mkdir -p docs/data
       - run: node scripts/fetch/index.js
