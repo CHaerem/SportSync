@@ -44,7 +44,8 @@
     ],
     "homeTeam": null,
     "awayTeam": null,
-    "isFavorite": false
+    "isFavorite": false,
+    "round": null
   },
   {
     "sport": "cycling",
@@ -97,12 +98,12 @@
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Morocco at Canada",
     "time": "2026-07-04T17:00:00.000Z",
     "endTime": null,
     "venue": "NRG Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -122,16 +123,17 @@
     "featuredGroups": [],
     "homeTeam": "Canada",
     "awayTeam": "Morocco",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "France at Paraguay",
     "time": "2026-07-04T21:00:00.000Z",
     "endTime": null,
     "venue": "Lincoln Financial Field",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -151,7 +153,8 @@
     "featuredGroups": [],
     "homeTeam": "Paraguay",
     "awayTeam": "France",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "cycling",
@@ -202,12 +205,12 @@
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Norway at Brazil",
     "time": "2026-07-05T20:00:00.000Z",
     "endTime": null,
     "venue": "MetLife Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": true,
     "streaming": [
       {
@@ -227,16 +230,17 @@
     "featuredGroups": [],
     "homeTeam": "Brazil",
     "awayTeam": "Norway",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "England at Mexico",
     "time": "2026-07-06T00:00:00.000Z",
     "endTime": null,
     "venue": "Estadio Banorte",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -256,7 +260,8 @@
     "featuredGroups": [],
     "homeTeam": "Mexico",
     "awayTeam": "England",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "cycling",
@@ -307,12 +312,12 @@
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Spain at Portugal",
     "time": "2026-07-06T19:00:00.000Z",
     "endTime": null,
     "venue": "AT&T Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -332,16 +337,17 @@
     "featuredGroups": [],
     "homeTeam": "Portugal",
     "awayTeam": "Spain",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Belgium at United States",
     "time": "2026-07-07T00:00:00.000Z",
     "endTime": null,
     "venue": "Lumen Field",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -361,7 +367,8 @@
     "featuredGroups": [],
     "homeTeam": "United States",
     "awayTeam": "Belgium",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "cycling",
@@ -412,12 +419,12 @@
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Egypt at Argentina",
     "time": "2026-07-07T16:00:00.000Z",
     "endTime": null,
     "venue": "Mercedes-Benz Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -437,16 +444,17 @@
     "featuredGroups": [],
     "homeTeam": "Argentina",
     "awayTeam": "Egypt",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Colombia at Switzerland",
     "time": "2026-07-07T20:00:00.000Z",
     "endTime": null,
     "venue": "BC Place",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
     "streaming": [
       {
@@ -466,7 +474,8 @@
     "featuredGroups": [],
     "homeTeam": "Switzerland",
     "awayTeam": "Colombia",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Åttedelsfinale"
   },
   {
     "sport": "cycling",
@@ -553,14 +562,23 @@
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Round of 16 2 Winner at Round of 16 1 Winner",
     "time": "2026-07-09T20:00:00.000Z",
     "endTime": null,
     "venue": "Gillette Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
-    "streaming": [],
+    "streaming": [
+      {
+        "platform": "NRK",
+        "url": "https://tv.nrk.no"
+      },
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no"
+      }
+    ],
     "participants": [],
     "norwegianPlayers": [],
     "totalPlayers": null,
@@ -569,18 +587,28 @@
     "featuredGroups": [],
     "homeTeam": "Round of 16 1 Winner",
     "awayTeam": "Round of 16 2 Winner",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Kvartfinale"
   },
   {
     "sport": "football",
-    "tournament": "International",
+    "tournament": "FIFA World Cup",
     "title": "Round of 16 6 Winner at Round of 16 5 Winner",
     "time": "2026-07-10T19:00:00.000Z",
     "endTime": null,
     "venue": "SoFi Stadium",
-    "meta": "International",
+    "meta": "FIFA World Cup",
     "norwegian": false,
-    "streaming": [],
+    "streaming": [
+      {
+        "platform": "NRK",
+        "url": "https://tv.nrk.no"
+      },
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no"
+      }
+    ],
     "participants": [],
     "norwegianPlayers": [],
     "totalPlayers": null,
@@ -589,7 +617,8 @@
     "featuredGroups": [],
     "homeTeam": "Round of 16 5 Winner",
     "awayTeam": "Round of 16 6 Winner",
-    "isFavorite": false
+    "isFavorite": false,
+    "round": "Kvartfinale"
   },
   {
     "sport": "tennis",
@@ -700,7 +729,8 @@
     "featuredGroups": [],
     "homeTeam": null,
     "awayTeam": null,
-    "isFavorite": false
+    "isFavorite": false,
+    "round": null
   },
   {
     "sport": "esports",
@@ -755,6 +785,7 @@
     "homeTeam": null,
     "awayTeam": null,
     "isFavorite": false,
+    "round": null,
     "verifiedAt": "2026-07-03T18:56:29.000Z",
     "verificationStatus": "amended",
     "verificationSources": [
