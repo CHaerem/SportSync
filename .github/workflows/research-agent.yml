@@ -22,13 +22,22 @@ jobs:
         with:
           node-version: "22"
       - run: npm ci
-      - uses: anthropics/claude-code-action@v1
+
+      # Model strategy: PREFER Fable 5 (most capable at long-horizon research), but
+      # it is not always available on Claude Code Max (quota / tier) — when it isn't
+      # it returns is_error instantly, which the action still reports as job success.
+      # So we can't trust the exit code: we snapshot HEAD, run Fable 5, and check
+      # whether it actually produced a commit. If not, we fall back to Opus 4.8
+      # (always available on this tier). Research must never silently no-op.
+      - name: Snapshot HEAD before research
+        id: pre
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Research — Fable 5 (preferred)
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # Fable 5 experiment (2026-07-03): the Mythos-class model is strongest at
-          # long-horizon research with parallel subagents. Measure quota impact via
-          # Actions run durations for ~1 week; fall back to claude-opus-4-8 if Max
-          # session limits bite (research runs share quota with interactive use).
           claude_args: |
             --model claude-fable-5
             --max-turns 150
@@ -38,4 +47,40 @@ jobs:
             When done, commit your changes:
               git add docs/data/events.json docs/data/research-log.json scripts/config/tracked.json .claude/skills/
               git commit -m "research-agent: update tracked events"
-              git push || (git pull --rebase origin main && git push)
+              git push || (git pull --rebase -X theirs origin main && git push)
+
+      - name: Did Fable 5 do the work?
+        id: gate
+        run: |
+          if [ "$(git rev-parse HEAD)" != "${{ steps.pre.outputs.sha }}" ]; then
+            echo "Fable 5 produced a commit — done, skipping fallback."
+            echo "fallback=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Fable 5 produced no commit (unavailable / quota / error) — falling back to Opus 4.8."
+            echo "fallback=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Research — Opus 4.8 (fallback)
+        if: steps.gate.outputs.fallback == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --max-turns 150
+            --allowedTools "Read,Write,Edit,Glob,Grep,Task,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/research.md and execute it.
+            When done, commit your changes:
+              git add docs/data/events.json docs/data/research-log.json scripts/config/tracked.json .claude/skills/
+              git commit -m "research-agent: update tracked events"
+              git push || (git pull --rebase -X theirs origin main && git push)
+
+      - name: Fail loudly if neither model produced work
+        if: steps.gate.outputs.fallback == 'true'
+        run: |
+          if [ "$(git rev-parse HEAD)" = "${{ steps.pre.outputs.sha }}" ]; then
+            echo "::error::Research produced no commit on Fable 5 OR Opus 4.8 — likely total Claude Code quota exhaustion. Surfacing instead of silently no-op'ing."
+            exit 1
+          fi
+          echo "Opus 4.8 fallback produced a commit."
