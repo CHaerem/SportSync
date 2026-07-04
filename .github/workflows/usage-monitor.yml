@@ -1,0 +1,52 @@
+name: Usage monitor
+
+# Reads REAL Claude Code Max quota via `claude -p "/usage"` and writes
+# docs/data/usage-state.json, which the scheduled agents gate on (skip / conserve
+# when the budget runs low) and the dashboard surfaces. This is the fuel gauge.
+
+on:
+  schedule:
+    - cron: "20 */2 * * *" # every 2h, offset from the other jobs
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-usage-monitor
+  cancel-in-progress: false
+
+jobs:
+  usage-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Read /usage → usage-state.json
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          # /usage is a status read (not a model turn); capture it, fail SOFT so a
+          # hiccup keeps the previous state rather than blanking the gauge.
+          claude -p "/usage" > /tmp/usage.txt 2>/tmp/usage.err || echo "(claude /usage exited non-zero)"
+          echo "--- /usage raw output ---"; cat /tmp/usage.txt; echo "--- stderr ---"; cat /tmp/usage.err || true
+          if [ -s /tmp/usage.txt ]; then
+            node scripts/parse-usage.js < /tmp/usage.txt
+          else
+            echo "No /usage output — keeping previous usage-state.json"
+          fi
+      - name: Commit usage-state.json
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add docs/data/usage-state.json 2>/dev/null || true
+          if ! git diff --staged --quiet; then
+            git commit -m "usage-monitor: refresh quota state"
+            git push || (git pull --rebase -X theirs origin ${{ github.ref_name }} && git push)
+          else
+            echo "usage-state.json unchanged — nothing to commit"
+          fi
