@@ -17,10 +17,13 @@ with an elaborate self-improving autonomy architecture (13 feedback loops, a nig
 multi-agent autopilot, 2000+ tests). It proved the concept — and produced stagnating
 quality at high complexity.
 
-**v2 bets on the model instead of the machinery**: seven scheduled Claude agents —
-research, verify, editorial, scout, a coverage critic (recall audit), a vision-based
-visual QA, and a UI-fix agent that self-heals rendering bugs (fix → verify →
-auto-merge) — do real research, write transparent JSON, and explain their reasoning.
+**v2 bets on the model instead of the machinery**: nine scheduled Claude agents —
+research, verify, editorial, scout, a coverage critic, a vision-based visual QA, a
+UI-fix agent that self-heals rendering bugs (fix → verify → auto-merge), a
+self-repair "mechanic" that fixes its own broken code/tests, and a weekly improve
+agent that proposes its own upgrades — do real research, write transparent JSON,
+and explain their reasoning. Every self-fixing loop is narrow and test-gated —
+the deliberate opposite of v1's sprawling autopilot.
 
 ## Architecture
 
@@ -70,6 +73,16 @@ no databases, no paid APIs.
 │ UI FIX (daily, Claude Opus) — self-heal loop               │
 │ Reads visual-qa findings → fixes frontend on a branch →    │
 │ re-screenshots + tests → PR → tests re-gate → auto-merge   │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ SELF-REPAIR (daily, Claude Opus) — the mechanic            │
+│ Detects failed runs / broken tests / fetchers → fixes on   │
+│ a branch → re-gates tests → auto-merges SAFE paths only    │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ IMPROVE (weekly, Claude Opus) — evolution, proposal-only   │
+│ Mines the logs for one evidenced improvement → opens a     │
+│ PR you review (never auto-merged)                          │
 └────────────────────────────────────────────────────────────┘
 ```
 

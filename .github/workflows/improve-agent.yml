@@ -1,0 +1,47 @@
+name: Improve agent
+
+# Evolution, proposal-only. Weekly, the system reviews its own logs and proposes
+# ONE evidenced improvement as a PR for a human to review — never auto-merged,
+# because "what should we do better" is a judgment call. Biased toward sharpening
+# what exists over adding machinery (the v1 complexity lesson).
+
+on:
+  schedule:
+    - cron: "0 7 * * 1" # Mondays 09:00 Oslo
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-improve
+  cancel-in-progress: false
+
+jobs:
+  improve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: npm ci
+      - id: usage
+        run: node scripts/usage-gate.js optional
+      - if: steps.usage.outputs.run == 'true'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --max-turns 80
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/improve.md and execute it — mine the logs for ONE
+            evidenced improvement and open a proposal PR. Do NOT merge (proposal-only).
