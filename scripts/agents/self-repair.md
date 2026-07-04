@@ -34,17 +34,16 @@ succeeded on the next run), and anything you cannot reproduce. Don't "fix" noise
    `gh pr create --title "self-repair: <what broke>" --body "<root cause · fix · proof>"`.
    Do NOT merge — the workflow re-gates and decides (see below).
 
-## What auto-merges vs waits for you
-The workflow re-runs the tests and inspects the PR's changed files:
-- **Auto-merges** only if EVERY changed file is in a safe path:
-  `scripts/fetch/**`, `scripts/lib/**`, `tests/**`, `docs/js/**`, `docs/css/**`, `docs/index.html`.
-- **Leaves the PR open for human review** if the fix touches anything sensitive —
-  `.github/workflows/**`, `package.json`, `scripts/config/**`, `scripts/hooks/**`,
-  `scripts/agents/**`. These change how the whole system behaves, so a human ships them.
+## What auto-merges vs waits for review
+The workflow re-runs the tests and inspects the PR's changed files. It
+**auto-merges + deploys** your PR after tests pass — EXCEPT it leaves the PR open
+for human review if the fix touches one of three protected paths:
+`.github/workflows/**` (the automation's own defs + gates), `scripts/hooks/**`
+(the safety hooks), or `scripts/config/interests.json` (user-owned). Those are the
+only things a human must ship; everything else ships hands-free once tests pass.
 
-Prefer a fix that stays inside the safe paths when you can. If the only correct
-fix touches a sensitive path, still do it — it'll just wait for review; say so in
-the PR body.
+If the only correct fix touches a protected path, still make it — it'll wait for
+review; say so in the PR body. Never edit `interests.json` at all.
 
 ## Output
 - `docs/data/self-repair-log.json`:

@@ -21,9 +21,11 @@ quality at high complexity.
 research, verify, editorial, scout, a coverage critic, a vision-based visual QA, a
 UI-fix agent that self-heals rendering bugs (fix → verify → auto-merge), a
 self-repair "mechanic" that fixes its own broken code/tests, and a weekly improve
-agent that proposes its own upgrades — do real research, write transparent JSON,
-and explain their reasoning. Every self-fixing loop is narrow and test-gated —
-the deliberate opposite of v1's sprawling autopilot.
+agent that evolves its own behavior — do real research, write transparent JSON,
+and explain their reasoning. The self-fixing loops auto-merge their own verified
+changes (test-gated), stopping short only at three protected paths (workflows,
+hooks, your interests file). Every loop is narrow and test-gated — the deliberate
+opposite of v1's sprawling autopilot.
 
 ## Architecture
 
@@ -77,12 +79,13 @@ no databases, no paid APIs.
 ┌────────────────────────────────────────────────────────────┐
 │ SELF-REPAIR (daily, Claude Opus) — the mechanic            │
 │ Detects failed runs / broken tests / fetchers → fixes on   │
-│ a branch → re-gates tests → auto-merges SAFE paths only    │
+│ a branch → re-gates tests → auto-merges (except workflows/ │
+│ hooks/interests, which wait for review)                    │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
-│ IMPROVE (weekly, Claude Opus) — evolution, proposal-only   │
-│ Mines the logs for one evidenced improvement → opens a     │
-│ PR you review (never auto-merged)                          │
+│ IMPROVE (weekly, Claude Opus) — evolution                  │
+│ Mines the logs for one evidenced improvement → PR →        │
+│ tests re-gate → auto-merges (except protected paths)       │
 └────────────────────────────────────────────────────────────┘
 ```
 

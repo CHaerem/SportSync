@@ -61,8 +61,25 @@ Nine workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **coverage-critic** | `scripts/agents/coverage-critic.md` | `claude-opus-4-8` | daily 04:00 UTC | Recall audit: reason adversarially about important events we're MISSING over a ~4-week horizon; write `coverage-audit.json`; escalate high-severity gaps to research (max 1/day) |
 | **visual-qa** | `scripts/agents/visual-qa.md` | `claude-sonnet-5` | daily 08:00 UTC | Vision QA: screenshot the dashboard at 375/393/900px, LOOK at the images, flag truncation/overflow/foreign-channel/calm-design issues; write `visual-qa-log.json` |
 | **ui-fix** | `scripts/agents/ui-fix.md` | `claude-opus-4-8` | daily 09:00 UTC | Self-heal: read visual-qa findings, fix the frontend ON A BRANCH, re-screenshot to prove the fix + no regressions, `npm test`, open a PR. The workflow then **re-runs the tests as a hard gate and auto-merges + deploys** it (fully hands-off). Fix ships only if it verifies twice; a test failure leaves the PR open + fails loudly. Closes the visual-qa loop |
-| **self-repair** | `scripts/agents/self-repair.md` | `claude-opus-4-8` | daily 08:30 UTC | The mechanic: detect real breakage (failed runs, failing tests, validation errors, broken fetchers), fix ON A BRANCH, prove it, open a PR. Workflow re-gates tests AND **auto-merges only if every changed file is in a safe path** (`scripts/fetch`, `scripts/lib`, `tests`, `docs/js`, `docs/css`, `index.html`); sensitive paths (workflows/config/hooks/agent-prompts/package.json) are left open for review. Ignores quota/transient failures |
-| **improve** | `scripts/agents/improve.md` | `claude-opus-4-8` | weekly Mon 07:00 UTC | Evolution, **proposal-only**: mine the logs for ONE evidenced improvement (source/skill/prompt/threshold/fetcher tuning), open a PR a human reviews. Never auto-merges. Biased toward sharpening what exists over adding machinery (the v1 lesson) |
+| **self-repair** | `scripts/agents/self-repair.md` | `claude-opus-4-8` | daily 08:30 UTC | The mechanic: detect real breakage (failed runs, failing tests, validation errors, broken fetchers), fix ON A BRANCH, prove it, open a PR. Workflow re-gates tests and **auto-merges + deploys** — EXCEPT the three protected paths below, which are left open for review. Ignores quota/transient failures |
+| **improve** | `scripts/agents/improve.md` | `claude-opus-4-8` | weekly Mon 07:00 UTC | Evolution: mine the logs for ONE evidenced improvement (source/skill/prompt/threshold/fetcher tuning), open a PR. Workflow re-gates tests and **auto-merges** it (except protected paths). Biased toward sharpening what exists over adding machinery (the v1 lesson) |
+
+### Autonomy model (what ships unattended)
+
+The self-fixing loops (ui-fix, self-repair, improve) each fix on a branch, open a
+PR, and the **workflow re-runs `npm test` as a hard gate and then auto-merges +
+deploys** — fully hands-off. The ONLY exception is three **protected paths** that
+are never auto-merged (a change touching them is left open, labelled
+`needs-review`):
+
+- `.github/workflows/**` — the automation's own definitions and gates; auto-merging
+  a broken change here could disable the test-gate or break the fixer itself.
+- `scripts/hooks/**` — the safety hooks (interests protection, post-write validate).
+- `scripts/config/interests.json` — user-owned; "AI never writes here" (also hook-enforced).
+
+Everything else — fetchers, libs, agent prompts, skills, other config, docs, tests,
+`package.json` — auto-merges once tests pass. Every auto-merge is a revertable
+commit; a test failure leaves the PR open and fails the run loudly.
 
 ### Quota governor (self-throttling on real Max usage)
 
@@ -166,7 +183,7 @@ or schema drifts from the code, CI fails.
 
 - **Never modify `scripts/config/interests.json`** — it is user-owned.
 - Agents commit only their contracted outputs (see each prompt's output contract).
-- `.github/workflows/**` and `package.json` are protected paths for scheduled agents (manual sessions may edit them).
+- **Protected paths — never auto-merged** (self-fixing loops leave them as an open PR for review): `.github/workflows/**`, `scripts/hooks/**`, `scripts/config/interests.json`. Everything else the loops touch auto-merges once tests pass (see Autonomy model).
 - Run `npm test` before committing code changes; run `node scripts/validate-events.js` after writing events.
 - Always `git pull --rebase` before pushing — the static pipeline and agents commit to main on schedules.
 

@@ -22,6 +22,8 @@ jobs:
       contents: write
       pull-requests: write
       id-token: write
+    outputs:
+      merged: ${{ steps.automerge.outputs.merged }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -44,4 +46,44 @@ jobs:
             --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             Read scripts/agents/improve.md and execute it — mine the logs for ONE
-            evidenced improvement and open a proposal PR. Do NOT merge (proposal-only).
+            evidenced improvement, make it on a branch, open a PR. Do not merge
+            (the workflow re-gates tests and auto-merges it).
+
+      # Re-gate tests + auto-merge, except protected paths (workflows/hooks/
+      # interests) which are left open for review.
+      - name: Re-gate + auto-merge
+        id: automerge
+        if: steps.usage.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --state open --json number,headRefName \
+                --jq '[.[] | select(.headRefName | startswith("improve/"))] | sort_by(.number) | last | .number // empty')
+          if [ -z "$PR" ]; then
+            echo "No improve PR this run."; echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          BLOCK='^(\.github/workflows/|scripts/hooks/|scripts/config/interests\.json$)'
+          BLOCKED=0
+          for f in $(gh pr view "$PR" --json files --jq '.files[].path'); do
+            echo "$f" | grep -qE "$BLOCK" && { echo "protected path: $f"; BLOCKED=1; }
+          done
+          if [ "$BLOCKED" = "1" ]; then
+            echo "PR #$PR touches a protected path — leaving OPEN for review."
+            gh pr edit "$PR" --add-label needs-review 2>/dev/null || true
+            echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "Re-gating PR #$PR with fresh tests…"
+          gh pr checkout "$PR"
+          npm ci
+          npm test
+          gh pr merge "$PR" --merge --delete-branch
+          echo "Auto-merged PR #$PR."; echo "merged=true" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: improve
+    if: needs.improve.outputs.merged == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/preview-deploy.yml
