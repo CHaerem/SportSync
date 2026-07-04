@@ -15,31 +15,42 @@ function runHook(script, input, env = {}) {
 	});
 }
 
-describe("protect-interests hook", () => {
+describe("protect-interests hook (CI-gated: blocks autonomous agents, allows local operator)", () => {
 	const hook = "scripts/hooks/protect-interests.js";
+	const CI = { GITHUB_ACTIONS: "true" }; // simulate the claude-code-action environment
 
-	it("blocks Write to interests.json with exit 2", () => {
+	it("blocks Write to interests.json in CI with exit 2", () => {
 		const r = runHook(hook, {
 			tool_name: "Write",
 			tool_input: { file_path: "/repo/scripts/config/interests.json", content: "{}" },
-		});
+		}, CI);
 		expect(r.status).toBe(2);
 		expect(r.stderr).toContain("user-owned");
 	});
 
-	it("blocks Bash redirect into interests.json", () => {
+	it("blocks Bash redirect into interests.json in CI", () => {
 		const r = runHook(hook, {
 			tool_name: "Bash",
 			tool_input: { command: "echo '{}' > scripts/config/interests.json" },
-		});
+		}, CI);
 		expect(r.status).toBe(2);
 	});
 
-	it("allows Bash reads of interests.json", () => {
+	it("ALLOWS a local operator (no CI) to edit interests.json", () => {
+		// spawnSync inherits process.env; ensure CI markers are absent for this case.
+		const r = spawnSync("node", [hook], {
+			input: JSON.stringify({ tool_name: "Write", tool_input: { file_path: "/repo/scripts/config/interests.json", content: "{}" } }),
+			encoding: "utf-8",
+			env: { ...process.env, GITHUB_ACTIONS: "", CI: "" },
+		});
+		expect(r.status).toBe(0);
+	});
+
+	it("allows Bash reads of interests.json (even in CI)", () => {
 		const r = runHook(hook, {
 			tool_name: "Bash",
 			tool_input: { command: "grep -n teams scripts/config/interests.json" },
-		});
+		}, CI);
 		expect(r.status).toBe(0);
 	});
 
@@ -47,16 +58,16 @@ describe("protect-interests hook", () => {
 		const r = runHook(hook, {
 			tool_name: "Bash",
 			tool_input: { command: 'git commit -m "docs: explain interests.json contract" 2>&1 | tail -2' },
-		});
+		}, CI);
 		expect(r.status).toBe(0);
 	});
 
-	it("still blocks sed -i and mv targeting interests.json", () => {
+	it("still blocks sed -i and mv targeting interests.json in CI", () => {
 		for (const command of [
 			"sed -i '' 's/a/b/' scripts/config/interests.json",
 			"mv /tmp/new.json scripts/config/interests.json",
 		]) {
-			expect(runHook(hook, { tool_name: "Bash", tool_input: { command } }).status, command).toBe(2);
+			expect(runHook(hook, { tool_name: "Bash", tool_input: { command } }, CI).status, command).toBe(2);
 		}
 	});
 
@@ -64,28 +75,28 @@ describe("protect-interests hook", () => {
 		const r = runHook(hook, {
 			tool_name: "Write",
 			tool_input: { file_path: "/repo/scripts/config/tracked.json", content: "{}" },
-		});
+		}, CI);
 		expect(r.status).toBe(0);
 	});
 
-	it("blocks bare relative paths (review finding)", () => {
+	it("blocks bare relative paths in CI (review finding)", () => {
 		const r = runHook(hook, {
 			tool_name: "Write",
 			tool_input: { file_path: "interests.json", content: "{}" },
-		});
+		}, CI);
 		expect(r.status).toBe(2);
 	});
 
-	it("blocks node -e writeFileSync targeting interests.json (review finding)", () => {
+	it("blocks node -e writeFileSync targeting interests.json in CI (review finding)", () => {
 		const r = runHook(hook, {
 			tool_name: "Bash",
 			tool_input: { command: `node -e "fs.writeFileSync('scripts/config/interests.json','{}')"` },
-		});
+		}, CI);
 		expect(r.status).toBe(2);
 	});
 
 	it("survives malformed input without blocking", () => {
-		const r = spawnSync("node", [hook], { input: "not json", encoding: "utf-8" });
+		const r = spawnSync("node", [hook], { input: "not json", encoding: "utf-8", env: { ...process.env, GITHUB_ACTIONS: "true" } });
 		expect(r.status).toBe(0);
 	});
 });
