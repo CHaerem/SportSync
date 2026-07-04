@@ -11,6 +11,10 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
 - `docs/data/coverage-gaps.json` — entities in the news with NO upcoming event
   on the dashboard. **Triage these first** — each is a potential missed event
   (recall failures are the worst failure mode). Noise is expected; dismiss fast.
+- `docs/data/coverage-audit.json` — the coverage-critic's reasoned recall audit.
+  Its `gaps[]` (esp. `severity: "high"`) are events it believes we're MISSING,
+  each with a `suggestedSource`. **Treat high-severity gaps as priority work** —
+  go find and add those events. This is a smarter signal than coverage-gaps.json.
 - `docs/data/calibration.json` — per-source trust stats from past verifications.
   Prefer sources with high reliability for the sport at hand; distrust repeat offenders.
 - `docs/data/tv-listings.json` — tvkampen.com ground truth for Norwegian football

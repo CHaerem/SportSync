@@ -17,8 +17,9 @@ with an elaborate self-improving autonomy architecture (13 feedback loops, a nig
 multi-agent autopilot, 2000+ tests). It proved the concept — and produced stagnating
 quality at high complexity.
 
-**v2 bets on the model instead of the machinery**: four scheduled Claude agents with
-web search do real research, write transparent JSON, and explain their reasoning.
+**v2 bets on the model instead of the machinery**: six scheduled Claude agents —
+research, verify, editorial, scout, a coverage critic (recall audit), and a vision-based
+visual QA — do real research, write transparent JSON, and explain their reasoning.
 
 ## Architecture
 
@@ -53,6 +54,16 @@ no databases, no paid APIs.
 │ SCOUT AGENT (hourly, Claude Haiku) — the Watchtower        │
 │ Triages RSS + coverage gaps → escalates to research        │
 │ (max 2/day) when something important looks uncovered       │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ COVERAGE CRITIC (daily, Claude Opus) — recall audit        │
+│ Reasons about important events we are MISSING over a       │
+│ ~4-week horizon → coverage-audit.json → escalates gaps     │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ VISUAL QA (daily, Claude Sonnet) — vision review           │
+│ Screenshots the dashboard at phone+desktop widths and      │
+│ LOOKS at them → flags truncation/overflow/calm-design      │
 └────────────────────────────────────────────────────────────┘
 ```
 

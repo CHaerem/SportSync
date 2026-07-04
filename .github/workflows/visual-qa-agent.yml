@@ -1,0 +1,38 @@
+name: Visual QA agent
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 10:00 Oslo, after the morning data + editorial have landed
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-visual-qa
+  cancel-in-progress: false
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium # needed for screenshots
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-sonnet-5
+            --max-turns 40
+            --allowedTools "Read,Write,Glob,Grep,Bash(node:*),Bash(git:*),Bash(date:*),Bash(ls:*)"
+          prompt: |
+            Read scripts/agents/visual-qa.md and execute it — screenshot the
+            dashboard, LOOK at the images, and report what you see. When done, commit:
+              git add docs/data/visual-qa-log.json
+              git commit -m "visual-qa: dashboard review"
+              git push || (git pull --rebase -X theirs origin main && git push)
