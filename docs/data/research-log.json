@@ -1,28 +1,28 @@
 {
-  "runAt": "2026-07-03T19:45:00Z",
-  "eventsAdded": 12,
+  "runAt": "2026-07-04T17:33:56Z",
+  "eventsAdded": 18,
   "eventsRemoved": 0,
-  "trackedDelta": "Full rewrite (v2): +5 nye oppføringer (Kristoffer Ventura og Aryan Tari fra alwaysTrack.athletes som manglet; Genesis Scottish Open 2026; Esports World Cup 2026-sjakk; BLAST Bounty 2026 S2). Alle eksisterende oppføringer beholdt med oppdaterte reasons/evidence. Ingen utløpte fjernet (ingen var utløpt).",
+  "trackedDelta": "La til tre tournament-oppføringer (sjakk-nm-2026, swiss-open-gstaad-2026, samt oppdatert tour-de-france-2026 til å dekke alle 21 etapper) og én athlete-oppføring (havard-rain-nygaard). Oppdaterte casper-ruud (uavklart → bekreftet Gstaad), aryan-tari (→ Sjakk-NM eliteklassen), magnus-carlsen (bekreftet ingen juli-turnering). Ingen utløpte oppføringer fjernet.",
   "quality": {
     "pass": true,
-    "score": 94,
+    "score": 93,
     "failures": [
-      "TdF stages 2-5 start times depend on a single unofficial source (franceletour.com); correctly downgraded to medium and flagged for verify, but letour.fr confirmation is still outstanding",
-      "EWC chess and BLAST Bounty events use placeholder 00:00Z all-day start times; disclosed in summaries, but verify should replace them once round times publish",
-      "Static Nordea Open event (2026-07-06, within 7 days) has empty streaming and no research-log note explaining the omission",
-      "Static FIFA World Cup events other than Norway-Brazil still list US broadcaster FOX for a Norwegian audience; only one match was enriched this run"
+      "research-log.json var utdatert ved grading — nå oppdatert med korrekt runAt og eventsAdded=18. Adressert.",
+      "coverage-gaps.json (Liverpool «van Dijk-salg») dismisses nå eksplisitt i notes nedenfor. Adressert.",
+      "Observasjon (ikke trekk): EWC-sjakk-streaming «NRK» og Swiss Open Gstaad «TV 2 Play» er [verify-per-event]-kategorier i norwegian-rights — bør bekreftes av verify-agenten før eventene nærmer seg."
     ]
   },
   "notes": [
-    "Fan-out: 6 parallelle scouts (sykkel, tennis, golf, sjakk, norsk fotball, X/media-sweep) + uavhengig faktasjekk av alle 13 kandidater i to runder. Alle 12 skrevne events er bekreftet eller amendert av faktasjekker med fersk kontekst; 1 kandidat ble ikke skrevet (GCT Zagreb — ingen norsk deltakelse, Carlsen ikke i 2026-feltet).",
-    "Coverage-gap triage (3/3): «Tour de France» = REELL GAP, løst — Touren starter 4. juli i Barcelona og events.json hadde null sykkel-events; etappe 1–5 lagt inn med Uno-X-tropp (5 nordmenn) og TV 2-streaming. «Lyn» = overskriften var en overgang (Reeves til RBK Kvinner), ingen manglende event, men Lyns neste seriekamp etter VM-pausen (Strømsgodset – Lyn 25. juli) manglet og er lagt inn. «Barcelona» = falsk positiv, avvist — overskriften handlet om Froome som legger opp på et arrangement i byen Barcelona; La Liga er i ferievindu.",
-    "Faktasjekk avgjorde kildekonflikt om Esports World Cup-sjakken: 11.–15. august i Paris (offisiell EWC-side + Liquipedia; flyttet fra Riyadh 20. mai). Scout-påstanden «4.–6. august Riyadh» var utdatert/feil og ble forkastet.",
-    "Casper Ruud er UTE av Wimbledon (tap 1. runde mot Hurkacz 29. juni) — ingen Ruud-events lagt inn; finalene 11.–12. juli er lagt inn i stedet. Ruud sikter mot amerikansk hardcourt; sjekk Nordea Open Båstad-entryliste neste kjøring.",
-    "Rettighetsfunn skrevet til norwegian-rights-skillen i samme commit: Wimbledon → Max (Eurosport), ikke Viaplay (tvkampen.com + tvtilbud.no + tvguide.vg.no); TdF → TV 2 bekreftet med avtale 2026–2030; FIS-verdenscup flyttes til TV 2 + Viaplay fra 2026/27 (NTB).",
-    "Statiske events beriket (ikke duplisert): «Norway at Brazil» 5. juli — streaming rettet fra FOX (US-kanal) til NRK1/NRK TV, eksplisitt bekreftet i NRKs pressemelding om åttedelsfinalene. «Belgian Grand Prix» — streaming rettet fra Apple TV til Viaplay (eksklusive norske F1-rettigheter 2026, jf. calibration-ledger fra verify-agenten).",
-    "Tidsforbehold, notert ærlig: TdF etappe 2–5 har starttider fra én uoffisiell kilde (franceletour.com) — satt til medium selv om dato/rute er bekreftet av 2+ kilder; verify-agenten bør sjekke mot letour.fr nærmere etappedagene. EWC-sjakk og BLAST Bounty har ikke publiserte kamptidspunkter — lagt inn som heldagsvinduer med forbehold i summary; offisielle gratisstrømmer (Twitch/YouTube/BLAST.tv) oppgitt som streaming.",
-    "Wimbledon-finaletidene er «not before»-tider (tidligst 16.00 lokal/17.00 norsk) — korrekt sjekket mot tennistourcalendar + VG TV-guide.",
-    "Scout-loggen var «quiet» (ingen eskalering); kjøringen var ordinær 4-timersplan.",
-    "Graderflagg fulgt opp i notat: Nordea Open (statisk ATP-event fra 6. juli, Båstad) mangler streaming — ATP 250-rettigheter i Norge er [verify per event] i norwegian-rights og ble ikke verifisert innenfor denne kjøringens budsjett; relevant først hvis Ruud melder seg på (sjekkes neste kjøring). Øvrige VM-kamper uten norsk kanal (FOX fra ESPN-feed) bør berikes match-for-match av kommende kjøringer via NRK/TV2-fordelingen i pressemeldingene."
+    "Fokus denne kjøringen: de tre gapene coverage-critic flagget (coverage-audit.json 2026-07-04). To high-severity: (1) Tour de France etappe 6–21 manglet helt — la til alle 16; (2) Sjakk-NM 2026 eliteklassen (Aryan Tari) manglet — lagt til. Pluss Ruud-gapet: fant bekreftet neste turnering.",
+    "Tour de France etappe 6–21 (9.–26. juli): datoer og ruter høyt verifisert (Wikipedia + cyclingstage.com/Domestique, uavhengig faktasjekket). ASO har IKKE publisert eksakte starttider ennå, så tidspunkter er anslått (rulling ~13.00 CEST, mål ~17.30 CEST; Paris senere) og confidence er «medium». Hviledager 13. og 20. juli er utelatt (ikke events). Streaming: TV 2 Play + Max/Eurosport (delte norske rettigheter 2026–2030).",
+    "Sjakk-NM 2026 eliteklassen: 100. utgave, Normoria i Kristiansund 3.–11. juli. Aryan Tari toppseedet. Lagt inn som ett flerdagsevent; rundeplan i summary. Live på Lichess (15 min forsinkelse) + Direktesport. confidence high (3 kilder).",
+    "Casper Ruud: løste Ruud-gapet — bekreftet Swiss Open Gstaad (ATP 250, grus) 13.–19. juli, andreseedet, toganger vinner. Valgte Gstaad framfor Båstad. Uavhengig faktasjekk bekreftet påmelding mot Wikipedia-seedliste + turneringens spillerliste. Streaming TV 2 Play (ATP-rettigheter).",
+    "Wimbledon-finalenes streaming rettet TV 2 Play → Max (WBD/Eurosport) — de tidligere verdiene motsa både norwegian-rights-skillen og eventenes egne WBD-verifiseringskilder (media.wbdsports.com).",
+    "coverage-gaps.json: eneste oppføring var Liverpool «Åpen for van Dijk-salg» (tv2-sport) — overgangsrykte, ikke et konkret kommende event. AVVIST.",
+    "scout-log.json: alle nylige verdikter «quiet» — ingen eskaleringer å følge opp. coverage-critic klarte ikke å eskalere (manglende actions:write i sin kjøring), men gapene sto dokumentert i coverage-audit.json og er nå plukket opp.",
+    "Magnus Carlsen: verifisert ingen bekreftet turnering i juli/tidlig august 2026 før EWC-sjakken (11.–15. august, allerede sporet). Korrekt fravær.",
+    "Kristoffer Ventura: ingen bekreftet start funnet etter John Deere Classic — følg opp neste kjøring.",
+    "TODO neste kjøring: oppdatere norwegian-rights-skillen (Tour de France delte TV 2 + Max/Eurosport-rettigheter; ATP Tour → TV 2 Play) — kunne ikke skrives denne kjøringen pga. manglende write-tilgang til .claude/skills/.",
+    "Metode: fan-out med parallelle scout-subagenter (sykkel, sjakk, tennis) + uavhengig fresh-context faktasjekker på alle kandidater før skriving + uavhengig grader (score 93, pass)."
   ]
 }
