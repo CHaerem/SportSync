@@ -23,6 +23,10 @@ jobs:
           node-version: "22"
       - run: npm ci
 
+      # Governor: research is critical, so it only skips when quota is near-exhausted.
+      - id: usage
+        run: node scripts/usage-gate.js critical
+
       # Model strategy: PREFER Fable 5 (most capable at long-horizon research), but
       # it is not always available on Claude Code Max (quota / tier) — when it isn't
       # it returns is_error instantly, which the action still reports as job success.
@@ -31,9 +35,11 @@ jobs:
       # (always available on this tier). Research must never silently no-op.
       - name: Snapshot HEAD before research
         id: pre
+        if: steps.usage.outputs.run == 'true'
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Research — Fable 5 (preferred)
+        if: steps.usage.outputs.run == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
@@ -51,6 +57,7 @@ jobs:
 
       - name: Did Fable 5 do the work?
         id: gate
+        if: steps.usage.outputs.run == 'true'
         run: |
           if [ "$(git rev-parse HEAD)" != "${{ steps.pre.outputs.sha }}" ]; then
             echo "Fable 5 produced a commit — done, skipping fallback."
@@ -61,7 +68,7 @@ jobs:
           fi
 
       - name: Research — Opus 4.8 (fallback)
-        if: steps.gate.outputs.fallback == 'true'
+        if: steps.usage.outputs.run == 'true' && steps.gate.outputs.fallback == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -77,7 +84,7 @@ jobs:
               git push || (git pull --rebase -X theirs origin main && git push)
 
       - name: Fail loudly if neither model produced work
-        if: steps.gate.outputs.fallback == 'true'
+        if: steps.usage.outputs.run == 'true' && steps.gate.outputs.fallback == 'true'
         run: |
           if [ "$(git rev-parse HEAD)" = "${{ steps.pre.outputs.sha }}" ]; then
             echo "::error::Research produced no commit on Fable 5 OR Opus 4.8 — likely total Claude Code quota exhaustion. Surfacing instead of silently no-op'ing."

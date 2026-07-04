@@ -9,7 +9,7 @@ const wf = (f) => fs.readFileSync(path.resolve(process.cwd(), ".github", "workfl
 describe("v2 workflows", () => {
 	it("exactly the expected agent workflows exist (old autopilot removed)", () => {
 		const dir = fs.readdirSync(path.resolve(".github", "workflows"));
-		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml"]) {
+		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml", "usage-monitor.yml"]) {
 			expect(dir, f).toContain(f);
 		}
 		for (const f of ["claude-autopilot.yml", "update-sports-data.yml", "claude-maintenance.yml"]) {
@@ -39,6 +39,17 @@ describe("v2 workflows", () => {
 			expect(content).toContain("CLAUDE_CODE_OAUTH_TOKEN");
 			expect(content).toContain(prompt.replace("scripts/agents/", "scripts/agents/"));
 			expect(fs.existsSync(path.resolve(prompt)), prompt).toBe(true);
+		}
+	});
+
+	it("every agent gates on the usage governor, and the monitor feeds it", () => {
+		for (const f of ["research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml"]) {
+			expect(wf(f), `${f} must run the usage gate`).toContain("scripts/usage-gate.js");
+			expect(wf(f), `${f} must condition the agent on the gate`).toContain("steps.usage.outputs.run == 'true'");
+		}
+		expect(wf("usage-monitor.yml"), "monitor must write the gauge").toContain("scripts/check-usage.js");
+		for (const s of ["scripts/usage-gate.js", "scripts/check-usage.js"]) {
+			expect(fs.existsSync(path.resolve(s)), s).toBe(true);
 		}
 	});
 

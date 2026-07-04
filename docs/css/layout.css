@@ -55,3 +55,7 @@ main { padding: 8px 0 60px; }
 .site-footer a:hover { color: var(--accent); }
 /* Quiet staleness warning — only shown when data is unexpectedly old */
 .footer-stale { flex-basis: 100%; color: var(--live); font-size: 12.5px; }
+/* AI quota fuel gauge — calm by default; warns as the budget runs low */
+.footer-usage { flex-basis: 100%; color: var(--fg-3); font-size: 12.5px; }
+.footer-usage.amber { color: var(--accent); }
+.footer-usage.red { color: var(--live); }

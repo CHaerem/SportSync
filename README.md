@@ -76,6 +76,18 @@ deterministic Norwegian-rights map (`scripts/lib/norwegian-rights.js`) as the
 fallback. When the exact broadcaster isn't yet known (e.g. a World Cup match days
 out), the UI shows one honest tentative `NRK / TV 2` label rather than guessing.
 
+### Self-throttling on quota
+
+Claude Code Max quota is finite and shared with interactive use, so the agents
+watch it. A `usage-monitor` reads real account-wide usage — a minimal
+`/v1/messages` call returns the `anthropic-ratelimit-unified-*` headers (5h + 7d
+utilization + reset times) — and writes `usage-state.json`. Every agent gates on
+it: critical ones (research, verify) run unless the budget is nearly gone;
+nice-to-haves (editorial, coverage-critic, visual-qa) step aside first when it
+runs low. Research also prefers Fable 5 and auto-falls back to Opus 4.8 if Fable
+is unavailable. The dashboard shows a quiet "AI-budsjett" line. Fail-open by
+design — the governor throttles only on fresh, confident quota data.
+
 ### Transparent tracking
 
 - **`scripts/config/interests.json`** — the human's source of truth. AI never touches it.
