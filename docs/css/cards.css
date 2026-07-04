@@ -197,6 +197,18 @@
 	.ev-badge { width: 28px; height: 28px; font-size: 14px; }
 	.ev-where { max-width: 84px; font-size: 12.5px; }
 	.ev-detail { padding-left: 30px; }
+	/* Let the title wrap instead of clipping the away team to a lone flag
+	   ("United States – 🇧🇪…"). Two lines beats an unreadable name; the row
+	   grows a little, the column stays quiet. */
+	.ev-title {
+		white-space: normal;
+		overflow: visible;
+		text-overflow: clip;
+		overflow-wrap: break-word;
+		line-height: 1.3;
+	}
+	.ev { align-items: start; }
+	.ev-badge, .ev-time, .ev-where, .ev-caret { margin-top: 1px; }
 }
 
 /* AI provenance modal (kept, but invisible until asked for) */
