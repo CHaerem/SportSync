@@ -326,6 +326,26 @@ function getTournamentLogo(name) {
 	return logos[n] || null;
 }
 
+// National-team flags — clubs have crests (getTeamLogo); national sides get a flag.
+// Keyed by ESPN English names (lowercased). Flag = regional-indicator emoji.
+const NATION_FLAGS = {
+	"argentina": "🇦🇷", "brazil": "🇧🇷", "norway": "🇳🇴", "france": "🇫🇷", "spain": "🇪🇸",
+	"portugal": "🇵🇹", "belgium": "🇧🇪", "germany": "🇩🇪", "italy": "🇮🇹", "netherlands": "🇳🇱",
+	"croatia": "🇭🇷", "switzerland": "🇨🇭", "denmark": "🇩🇰", "sweden": "🇸🇪", "united states": "🇺🇸",
+	"usa": "🇺🇸", "mexico": "🇲🇽", "canada": "🇨🇦", "colombia": "🇨🇴", "paraguay": "🇵🇾",
+	"uruguay": "🇺🇾", "ghana": "🇬🇭", "morocco": "🇲🇦", "cape verde": "🇨🇻", "japan": "🇯🇵",
+	"south korea": "🇰🇷", "korea republic": "🇰🇷", "australia": "🇦🇺", "senegal": "🇸🇳", "nigeria": "🇳🇬",
+	"egypt": "🇪🇬", "cameroon": "🇨🇲", "poland": "🇵🇱", "austria": "🇦🇹", "serbia": "🇷🇸",
+	"ecuador": "🇪🇨", "iran": "🇮🇷", "saudi arabia": "🇸🇦", "qatar": "🇶🇦", "tunisia": "🇹🇳",
+	"ivory coast": "🇨🇮", "algeria": "🇩🇿", "poland": "🇵🇱",
+};
+
+function getNationFlag(name) {
+	if (!name) return null;
+	return NATION_FLAGS[name.trim().toLowerCase()] || null;
+}
+
 window.getTeamLogo = getTeamLogo;
 window.getGolferHeadshot = getGolferHeadshot;
 window.getTournamentLogo = getTournamentLogo;
+window.getNationFlag = getNationFlag;
