@@ -50,14 +50,16 @@ Two kinds of scheduled work:
 - Commits `docs/data/` directly to main, then — only when data changed — **auto-publishes** by calling `preview-deploy.yml` via `workflow_call`. (A `GITHUB_TOKEN` push can't *trigger* a workflow, so the pipeline invokes the deploy directly instead of relying on `preview-deploy`'s `push` trigger; no PAT needed. `preview-deploy` keeps `concurrency: pages-deploy`, which `workflow_call` honors, so a called deploy still serialises with merge-triggered ones — never two Pages deploys at once.)
 
 ### 2. Claude agents (Claude Code Max OAuth, scheduled)
-Four workflows run `anthropics/claude-code-action@v1` with a prompt file:
+Six workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
 | Agent | Prompt | Model | Schedule | Job |
 |---|---|---|---|---|
-| **research** | `scripts/agents/research.md` | `claude-fable-5` (experiment since 2026-07-03; fallback `claude-opus-4-8`) | every 4h | Find events static APIs miss (Norwegian sports, chess, cycling, winter sports) — fans out parallel scout subagents per in-season sport via the Task tool; append to `events.json` with `source/confidence/evidence`; rewrite `scripts/config/tracked.json`; write `research-log.json` |
-| **verify** | `scripts/agents/verify.md` | `claude-sonnet-5` | daily 05:30 UTC | Verify AI-researched events in the next 7 days via web fetch; confirm/amend/remove; write `verify-log.json` |
+| **research** | `scripts/agents/research.md` | `claude-fable-5` (experiment since 2026-07-03; fallback `claude-opus-4-8`) | every 4h | Find events static APIs miss (Norwegian sports, chess, cycling, winter sports) — fans out parallel scout subagents per in-season sport via the Task tool; append to `events.json` with `source/confidence/evidence`; rewrite `scripts/config/tracked.json`; write `research-log.json`. Prioritizes `coverage-audit.json` high-severity gaps |
+| **verify** | `scripts/agents/verify.md` | `claude-opus-4-8` | daily 05:30 UTC | Verify AI-researched + near-term tentative-channel events in the next 7 days via web fetch; confirm/amend/remove; resolve tentative `NRK / TV 2` labels; write `verify-log.json` (Opus 4.8 — this is the correctness gate) |
 | **editorial** | `scripts/agents/editorial.md` | `claude-opus-4-8` | 05:00 + 15:00 UTC | Generate `featured.json` (morning/evening brief) — narrative + structured blocks |
 | **scout** | `scripts/agents/scout.md` | `claude-haiku-4-5` | hourly 05–21 UTC | The Watchtower: triage RSS + coverage gaps; escalate to research via `gh workflow run` (max 2/day); log to `scout-log.json` |
+| **coverage-critic** | `scripts/agents/coverage-critic.md` | `claude-opus-4-8` | daily 04:00 UTC | Recall audit: reason adversarially about important events we're MISSING over a ~4-week horizon; write `coverage-audit.json`; escalate high-severity gaps to research (max 1/day) |
+| **visual-qa** | `scripts/agents/visual-qa.md` | `claude-sonnet-5` | daily 08:00 UTC | Vision QA: screenshot the dashboard at 375/393/900px, LOOK at the images, flag truncation/overflow/foreign-channel/calm-design issues; write `visual-qa-log.json` |
 
 ### Coverage & correctness loops (the core mission)
 
@@ -113,7 +115,12 @@ no dashboard grid, no competing panels.
 
 `events.json`, `featured.json`, `standings.json`, `rss-digest.json`, `recent-results.json`,
 `tracked.json` (published copy), `research-log.json`, `verify-log.json`, `meta.json`,
+`coverage-gaps.json`, `coverage-audit.json` (coverage-critic), `visual-qa-log.json` (visual-qa),
+`scout-log.json`, `calibration.json`, `tv-listings.json`,
 per-sport source files (`football.json` …), `events.ics`.
+
+New data files must be whitelisted in `.gitignore` (which ignores `docs/data/*.json`
+by default) or the agents' `git add` silently skips them.
 
 ## Development commands
 

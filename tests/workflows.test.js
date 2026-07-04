@@ -9,7 +9,7 @@ const wf = (f) => fs.readFileSync(path.resolve(process.cwd(), ".github", "workfl
 describe("v2 workflows", () => {
 	it("exactly the expected agent workflows exist (old autopilot removed)", () => {
 		const dir = fs.readdirSync(path.resolve(".github", "workflows"));
-		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml"]) {
+		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml"]) {
 			expect(dir, f).toContain(f);
 		}
 		for (const f of ["claude-autopilot.yml", "update-sports-data.yml", "claude-maintenance.yml"]) {
@@ -32,6 +32,8 @@ describe("v2 workflows", () => {
 			["verify-agent.yml", "scripts/agents/verify.md"],
 			["editorial-agent.yml", "scripts/agents/editorial.md"],
 			["scout-agent.yml", "scripts/agents/scout.md"],
+			["coverage-critic-agent.yml", "scripts/agents/coverage-critic.md"],
+			["visual-qa-agent.yml", "scripts/agents/visual-qa.md"],
 		]) {
 			const content = wf(file);
 			expect(content).toContain("CLAUDE_CODE_OAUTH_TOKEN");
@@ -41,7 +43,7 @@ describe("v2 workflows", () => {
 	});
 
 	it("agent workflows have concurrency guards", () => {
-		for (const f of ["research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "static-pipeline.yml", "scout-agent.yml"]) {
+		for (const f of ["research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "static-pipeline.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml"]) {
 			expect(wf(f), f).toContain("concurrency:");
 		}
 	});
