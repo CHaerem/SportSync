@@ -15,7 +15,9 @@ export const sportsConfig = {
 					{ code: "uefa.champions", name: "Champions League" },
 					{ code: "nor.1", name: "Eliteserien" },
 					{ code: "nor.2", name: "OBOS-ligaen" },
-					{ code: "nor.cup", name: "Norwegian Cup" },
+					// NB: ESPN has no Norwegian Cup (NM Cupen) endpoint — "nor.cup"
+					// returns HTTP 400 (nor.1/nor.2 return 200). The research agent
+					// covers NM Cupen instead. Do not re-add a nor.cup source here.
 					{ code: "fifa.world", name: "FIFA World Cup" }
 				]
 			},
