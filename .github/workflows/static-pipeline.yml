@@ -63,7 +63,20 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "Update sports data $(date -u +%H:%MZ)"
-            git push || (git pull --rebase origin ${{ github.ref_name }} && git push)
+            # A scripts/** push can race the hourly cron: two runs regenerate the
+            # same data files and both try to commit. On rejection, rebase onto
+            # the latest remote and AUTO-RESOLVE the regenerated-data conflicts
+            # in our favour (both snapshots are equally fresh) instead of failing
+            # the way a plain `pull --rebase` did. Files only the other run
+            # changed (e.g. agent outputs like featured.json) don't conflict and
+            # are preserved. Retry a few times, then fail loudly if still stuck.
+            pushed=""
+            for attempt in 1 2 3 4 5; do
+              if git push; then pushed=1; break; fi
+              echo "push rejected — rebasing onto latest ${{ github.ref_name }} (attempt $attempt)"
+              git pull --rebase -X theirs origin ${{ github.ref_name }} || git rebase --abort || true
+            done
+            [ -n "$pushed" ] || { echo "::error::could not push data after 5 attempts"; exit 1; }
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
