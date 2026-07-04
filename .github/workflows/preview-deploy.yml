@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [preview-deploy]
+  # Called by static-pipeline after it commits fresh data — a GITHUB_TOKEN push
+  # can't trigger the `push` path below, so the pipeline invokes this directly.
+  workflow_call:
   push:
     branches:
       - main
