@@ -22,6 +22,8 @@ jobs:
       contents: write
       pull-requests: write
       id-token: write
+    outputs:
+      merged: ${{ steps.automerge.outputs.merged }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -46,5 +48,42 @@ jobs:
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*),Bash(date:*),Bash(jq:*)"
           prompt: |
             Read scripts/agents/ui-fix.md and execute it — turn visual-qa findings
-            into a screenshot-verified frontend fix, then open a PR (never merge,
-            never push to main).
+            into a screenshot-verified frontend fix and open a PR (do not merge; the
+            workflow re-gates the tests and auto-merges it).
+
+      # Auto-merge the fix the agent just opened — but only after re-running the
+      # tests ourselves (a deterministic hard gate we don't delegate to the agent).
+      # If tests fail, the merge is skipped and the PR stays open + the run fails
+      # loudly, so a bad fix never reaches the live site.
+      - name: Re-gate tests + auto-merge
+        id: automerge
+        if: steps.usage.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --state open --json number,headRefName \
+                --jq '[.[] | select(.headRefName | startswith("ui-autofix/"))] | sort_by(.number) | last | .number // empty')
+          if [ -z "$PR" ]; then
+            echo "No ui-autofix PR was opened (nothing to fix / abandoned) — done."
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Re-gating PR #$PR with a fresh test run before auto-merge…"
+          gh pr checkout "$PR"
+          npm ci
+          npm test
+          gh pr merge "$PR" --merge --delete-branch
+          echo "Auto-merged PR #$PR."
+          echo "merged=true" >> "$GITHUB_OUTPUT"
+
+  # Publish the merged fix. The merge is a GITHUB_TOKEN push (can't trigger the
+  # deploy on its own), so we call preview-deploy directly — same pattern as the
+  # static pipeline. Only runs when a fix actually merged.
+  deploy:
+    needs: ui-fix
+    if: needs.ui-fix.outputs.merged == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/preview-deploy.yml

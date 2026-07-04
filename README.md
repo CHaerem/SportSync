@@ -19,8 +19,8 @@ quality at high complexity.
 
 **v2 bets on the model instead of the machinery**: seven scheduled Claude agents —
 research, verify, editorial, scout, a coverage critic (recall audit), a vision-based
-visual QA, and a UI-fix agent that self-heals rendering bugs into PRs — do real
-research, write transparent JSON, and explain their reasoning.
+visual QA, and a UI-fix agent that self-heals rendering bugs (fix → verify →
+auto-merge) — do real research, write transparent JSON, and explain their reasoning.
 
 ## Architecture
 
@@ -68,8 +68,8 @@ no databases, no paid APIs.
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ UI FIX (daily, Claude Opus) — self-heal loop               │
-│ Reads visual-qa findings → fixes the frontend on a branch  │
-│ → re-screenshots to verify → opens a PR (you merge)        │
+│ Reads visual-qa findings → fixes frontend on a branch →    │
+│ re-screenshots + tests → PR → tests re-gate → auto-merge   │
 └────────────────────────────────────────────────────────────┘
 ```
 

@@ -60,7 +60,7 @@ Seven workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **scout** | `scripts/agents/scout.md` | `claude-haiku-4-5` | hourly 05–21 UTC | The Watchtower: triage RSS + coverage gaps; escalate to research via `gh workflow run` (max 2/day); log to `scout-log.json` |
 | **coverage-critic** | `scripts/agents/coverage-critic.md` | `claude-opus-4-8` | daily 04:00 UTC | Recall audit: reason adversarially about important events we're MISSING over a ~4-week horizon; write `coverage-audit.json`; escalate high-severity gaps to research (max 1/day) |
 | **visual-qa** | `scripts/agents/visual-qa.md` | `claude-sonnet-5` | daily 08:00 UTC | Vision QA: screenshot the dashboard at 375/393/900px, LOOK at the images, flag truncation/overflow/foreign-channel/calm-design issues; write `visual-qa-log.json` |
-| **ui-fix** | `scripts/agents/ui-fix.md` | `claude-opus-4-8` | daily 09:00 UTC | Self-heal: read visual-qa findings, fix the frontend ON A BRANCH, re-screenshot to prove the fix + no regressions, `npm test`, open a **PR** (never merges, never touches the live site directly). Closes the visual-qa loop |
+| **ui-fix** | `scripts/agents/ui-fix.md` | `claude-opus-4-8` | daily 09:00 UTC | Self-heal: read visual-qa findings, fix the frontend ON A BRANCH, re-screenshot to prove the fix + no regressions, `npm test`, open a PR. The workflow then **re-runs the tests as a hard gate and auto-merges + deploys** it (fully hands-off). Fix ships only if it verifies twice; a test failure leaves the PR open + fails loudly. Closes the visual-qa loop |
 
 ### Quota governor (self-throttling on real Max usage)
 
