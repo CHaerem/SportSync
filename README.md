@@ -17,9 +17,10 @@ with an elaborate self-improving autonomy architecture (13 feedback loops, a nig
 multi-agent autopilot, 2000+ tests). It proved the concept — and produced stagnating
 quality at high complexity.
 
-**v2 bets on the model instead of the machinery**: six scheduled Claude agents —
-research, verify, editorial, scout, a coverage critic (recall audit), and a vision-based
-visual QA — do real research, write transparent JSON, and explain their reasoning.
+**v2 bets on the model instead of the machinery**: seven scheduled Claude agents —
+research, verify, editorial, scout, a coverage critic (recall audit), a vision-based
+visual QA, and a UI-fix agent that self-heals rendering bugs into PRs — do real
+research, write transparent JSON, and explain their reasoning.
 
 ## Architecture
 
@@ -64,6 +65,11 @@ no databases, no paid APIs.
 │ VISUAL QA (daily, Claude Sonnet) — vision review           │
 │ Screenshots the dashboard at phone+desktop widths and      │
 │ LOOKS at them → flags truncation/overflow/calm-design      │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│ UI FIX (daily, Claude Opus) — self-heal loop               │
+│ Reads visual-qa findings → fixes the frontend on a branch  │
+│ → re-screenshots to verify → opens a PR (you merge)        │
 └────────────────────────────────────────────────────────────┘
 ```
 

@@ -50,7 +50,7 @@ Two kinds of scheduled work:
 - Commits `docs/data/` directly to main, then — only when data changed — **auto-publishes** by calling `preview-deploy.yml` via `workflow_call`. (A `GITHUB_TOKEN` push can't *trigger* a workflow, so the pipeline invokes the deploy directly instead of relying on `preview-deploy`'s `push` trigger; no PAT needed. `preview-deploy` keeps `concurrency: pages-deploy`, which `workflow_call` honors, so a called deploy still serialises with merge-triggered ones — never two Pages deploys at once.)
 
 ### 2. Claude agents (Claude Code Max OAuth, scheduled)
-Six workflows run `anthropics/claude-code-action@v1` with a prompt file:
+Seven workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
 | Agent | Prompt | Model | Schedule | Job |
 |---|---|---|---|---|
@@ -60,6 +60,7 @@ Six workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **scout** | `scripts/agents/scout.md` | `claude-haiku-4-5` | hourly 05–21 UTC | The Watchtower: triage RSS + coverage gaps; escalate to research via `gh workflow run` (max 2/day); log to `scout-log.json` |
 | **coverage-critic** | `scripts/agents/coverage-critic.md` | `claude-opus-4-8` | daily 04:00 UTC | Recall audit: reason adversarially about important events we're MISSING over a ~4-week horizon; write `coverage-audit.json`; escalate high-severity gaps to research (max 1/day) |
 | **visual-qa** | `scripts/agents/visual-qa.md` | `claude-sonnet-5` | daily 08:00 UTC | Vision QA: screenshot the dashboard at 375/393/900px, LOOK at the images, flag truncation/overflow/foreign-channel/calm-design issues; write `visual-qa-log.json` |
+| **ui-fix** | `scripts/agents/ui-fix.md` | `claude-opus-4-8` | daily 09:00 UTC | Self-heal: read visual-qa findings, fix the frontend ON A BRANCH, re-screenshot to prove the fix + no regressions, `npm test`, open a **PR** (never merges, never touches the live site directly). Closes the visual-qa loop |
 
 ### Quota governor (self-throttling on real Max usage)
 
@@ -124,7 +125,7 @@ no dashboard grid, no competing panels.
 `events.json`, `featured.json`, `standings.json`, `rss-digest.json`, `recent-results.json`,
 `tracked.json` (published copy), `research-log.json`, `verify-log.json`, `meta.json`,
 `coverage-gaps.json`, `coverage-audit.json` (coverage-critic), `visual-qa-log.json` (visual-qa),
-`usage-state.json` (quota governor), `scout-log.json`, `calibration.json`, `tv-listings.json`,
+`ui-fix-log.json` (ui-fix), `usage-state.json` (quota governor), `scout-log.json`, `calibration.json`, `tv-listings.json`,
 per-sport source files (`football.json` …), `events.ics`.
 
 New data files must be whitelisted in `.gitignore` (which ignores `docs/data/*.json`

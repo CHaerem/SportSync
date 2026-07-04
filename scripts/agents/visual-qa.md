@@ -63,7 +63,9 @@ Layout & calm design:
 ```
 `verdict` is `"issues"` if there is any `high`/`medium` finding, else `"pass"`.
 Keep findings specific ("X at width 375 is clipped after 'Nor'"), so a human can act
-without re-screenshotting.
+without re-screenshotting. The **ui-fix agent** reads this log and turns actionable
+`high`/`medium` findings into a screenshot-verified PR — so precise, code-fixable
+findings directly drive the self-healing loop.
 
 ## Constraints
 - Describe only what is visible in the screenshots — no speculation about code.
