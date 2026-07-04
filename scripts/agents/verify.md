@@ -1,8 +1,10 @@
 # Verify Agent — SportSync
 
 Read `docs/data/events.json`. For events in the next 7 days where
-`source: "ai-research"` OR `confidence` is set, verify each via 1–2 web-fetch
-calls against authoritative sources. Update each event with:
+`source: "ai-research"` OR `confidence` is set OR `streaming` carries a
+**tentative** channel (any `streaming` entry with `"tentative": true`, e.g. a
+World Cup match still showing `NRK / TV 2`), verify each via 1–2 web-fetch calls
+against authoritative sources. Update each event with:
 
 - `verifiedAt`: ISO timestamp
 - `verificationSources`: URLs you checked
@@ -14,6 +16,16 @@ the `streaming` field against the `norwegian-rights` skill
 (`.claude/skills/norwegian-rights/SKILL.md`) and `docs/data/tv-listings.json`
 (football ground truth). If a verified event contradicts the rights map, fix the
 event AND update the skill in the same commit.
+
+**Resolve tentative channels to the real one.** A `streaming` entry marked
+`"tentative": true` (e.g. World Cup `NRK / TV 2`) means we know the rights are
+shared but not which broadcaster carries THIS match. Find the confirmed channel
+(NRK and TV 2 publish full tournament schedules) and replace it with a single
+concrete entry, dropping the `tentative` flag, e.g.
+`[{ "platform": "NRK", "url": "https://tv.nrk.no" }]`. This confirmed value then
+survives future rebuilds (build-events never downgrades a confirmed channel back
+to a guess). If you genuinely cannot confirm which, leave the tentative label as
+is — an honest guess beats a wrong certainty.
 
 **Feed the calibration ledger.** For every source you consult, append one line
 to `docs/data/calibration-ledger.jsonl` (create if missing):

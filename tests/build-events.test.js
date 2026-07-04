@@ -92,6 +92,29 @@ describe("build-events", () => {
 		expect(derby.verificationStatus).toBe("confirmed");
 	});
 
+	it("keeps a confirmed channel instead of downgrading it to a tentative guess", () => {
+		const time = future(2);
+		// A World Cup fixture — resolveStreaming would produce the tentative NRK / TV 2 label.
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "FIFA World Cup 2026", events: [
+				{ title: "Brazil vs Norway", time, homeTeam: "Brazil", awayTeam: "Norway" },
+			] }] })
+		);
+		// Previous build: verify agent confirmed the real broadcaster (no tentative flag).
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "FIFA World Cup 2026", title: "Brazil vs Norway", time,
+				  streaming: [{ platform: "NRK", url: "https://tv.nrk.no" }] },
+			])
+		);
+		const events = runBuild();
+		const match = events.find((e) => e.title === "Brazil vs Norway");
+		expect(match.streaming).toEqual([{ platform: "NRK", url: "https://tv.nrk.no" }]);
+		expect(match.streaming.some((s) => s.tentative)).toBe(false);
+	});
+
 	it("dedupes ai-research events that a static fetcher now covers", () => {
 		const time = future(2);
 		fs.writeFileSync(

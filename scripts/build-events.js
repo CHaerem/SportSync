@@ -139,13 +139,36 @@ if (Array.isArray(previousEvents)) {
 	}
 }
 
+// A previously-CONFIRMED channel (from the verify agent or a real tvkampen
+// listing) must not be downgraded to a tentative guess on the next rebuild.
+// e.g. verify resolves a World Cup match's "NRK / TV 2" to the actual "NRK";
+// without this the hourly rebuild would overwrite it with the guess again.
+const prevConfirmedStreaming = new Map();
+if (Array.isArray(previousEvents)) {
+	for (const prev of previousEvents) {
+		const s = prev.streaming;
+		if (Array.isArray(s) && s.length && !s.some((c) => c && c.tentative)) {
+			prevConfirmedStreaming.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+		}
+	}
+}
+
 // Resolve streaming to Norwegian channels — prefer REAL tvkampen.com listings
 // for football, fall back to the deterministic rights map (never FOX/ESPN).
 const tvListings = readJsonIfExists(path.join(dataDir, "tv-listings.json"))?.listings || [];
 let fromTv = 0;
+let keptConfirmed = 0;
 for (const e of all) {
 	const before = e.streaming;
-	e.streaming = resolveStreaming(e, tvListings);
+	const resolved = resolveStreaming(e, tvListings);
+	const resolvedTentative = !resolved.length || resolved.some((c) => c && c.tentative);
+	const priorConfirmed = prevConfirmedStreaming.get(`${e.sport}|${e.title}|${e.time}`);
+	if (resolvedTentative && priorConfirmed) {
+		e.streaming = priorConfirmed; // keep the confirmed channel, don't re-guess
+		keptConfirmed++;
+	} else {
+		e.streaming = resolved;
+	}
 	if (e.sport === "football" && e.streaming !== before && e.streaming.length && tvListings.length) {
 		// count football events whose channel came from a real listing match
 		fromTv++;
@@ -153,6 +176,9 @@ for (const e of all) {
 }
 if (tvListings.length) {
 	console.log(`Streaming: ${tvListings.length} tvkampen listing(s) available for football matching.`);
+}
+if (keptConfirmed > 0) {
+	console.log(`Kept ${keptConfirmed} confirmed channel(s) over a tentative re-guess.`);
 }
 
 // Relevance filter — keep only what the user actually follows, so the agenda

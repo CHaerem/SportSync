@@ -147,14 +147,21 @@ function listingStreaming(listing) {
 	const seen = new Set();
 	const out = [];
 	for (const b of listing.broadcasters || []) {
-		const name = String(b).trim();
+		let name = String(b).trim();
 		if (!NORWEGIAN_RE.test(name)) continue; // drop betting/foreign leftovers
+		// NRK's channels (NRK1/NRK2/NRK TV/NRK Sport) are interchangeable to a
+		// viewer and all live at tv.nrk.no — collapse to a single "NRK" so a match
+		// doesn't show "NRK1 +1" for what is really one broadcaster.
+		if (/^nrk/i.test(name)) name = "NRK";
 		const key = name.toLowerCase();
 		if (seen.has(key)) continue;
 		seen.add(key);
 		out.push({ platform: name, url: urlForChannel(name) });
 	}
-	return out;
+	// tvkampen pads most listings with generic aggregators (Viaplay/Eurosport/MAX)
+	// after the real broadcaster(s), which are listed primary-first. Keep the calm
+	// UI to the first two so "where to watch" stays a glance, not a sprawl.
+	return out.slice(0, 2);
 }
 
 /**
