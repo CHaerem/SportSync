@@ -30,8 +30,8 @@ class Dashboard {
 
 	async loadData() {
 		const load = (f) => fetch(`data/${f}?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-		const [events, featured, standings, results, tracked, interests, meta] = await Promise.all([
-			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('interests.json'), load('meta.json'),
+		const [events, featured, standings, results, tracked, interests, meta, usage] = await Promise.all([
+			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('interests.json'), load('meta.json'), load('usage-state.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
 		this.allEvents.forEach((e, i) => { e.id = `${e.sport}|${e.title}|${e.time}|${i}`; });
@@ -41,6 +41,7 @@ class Dashboard {
 		this.tracked = tracked;
 		this.interests = interests;
 		this.meta = meta;
+		this.usage = usage;
 	}
 
 	render() {
@@ -49,6 +50,25 @@ class Dashboard {
 		this.renderAgenda();
 		this.renderFollowed();
 		this.renderFooter();
+		this.renderUsage();
+	}
+
+	/** Quiet AI-budget line — the quota fuel gauge (from usage-state.json). */
+	renderUsage() {
+		const el = document.getElementById('footer-usage');
+		if (!el) return;
+		const u = this.usage;
+		if (!u || !u.parsed) { el.hidden = true; return; }
+		const wk = u.week?.percentUsed, se = u.session?.percentUsed;
+		if (u.skipAll) {
+			const until = u.session?.resetsAt ? new Date(u.session.resetsAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }) : '';
+			el.textContent = `⏸ AI-oppdatering pauset — kvote brukt opp${until ? `, nullstiller ${until}` : ''}`;
+		} else {
+			const conserving = u.status !== 'green' ? ' · sparer kvote' : '';
+			el.textContent = `AI-budsjett: uke ${wk ?? '?'}% · økt ${se ?? '?'}%${conserving}`;
+		}
+		el.className = `footer-usage ${u.status || ''}`;
+		el.hidden = false;
 	}
 
 	// ── Header ──────────────────────────────────────────────────────────────

@@ -22,7 +22,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
-      - uses: anthropics/claude-code-action@v1
+      - id: usage
+        run: node scripts/usage-gate.js critical # skips only if quota is near-exhausted
+      - if: steps.usage.outputs.run == 'true'
+        uses: anthropics/claude-code-action@v1
         env:
           GH_TOKEN: ${{ github.token }}
         with:

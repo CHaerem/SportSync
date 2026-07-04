@@ -1,12 +1,19 @@
 name: Usage monitor
 
-# Reads REAL Claude Code Max quota via `claude -p "/usage"` and writes
+# The fuel gauge. Reads REAL Claude Code Max quota and writes
 # docs/data/usage-state.json, which the scheduled agents gate on (skip / conserve
-# when the budget runs low) and the dashboard surfaces. This is the fuel gauge.
+# when the budget runs low) and the dashboard surfaces.
+#
+# There is NO supported quota API for a Max OAuth token (/usage is TUI-only; the
+# Usage/Cost Admin API needs an org admin key; the token is inference-scoped).
+# BUT a minimal /v1/messages call with CLAUDE_CODE_OAUTH_TOKEN returns the
+# account-wide `anthropic-ratelimit-unified-*` headers (5h + 7d utilization,
+# reset timestamps, allowed/allowed_warning/rejected status) — verified in CI and
+# matching what `/usage` shows locally. scripts/check-usage.js makes that call.
 
 on:
   schedule:
-    - cron: "20 */2 * * *" # every 2h, offset from the other jobs
+    - cron: "20 5-22 * * *" # hourly during active hours, offset from other jobs
   workflow_dispatch:
 
 concurrency:
@@ -16,7 +23,7 @@ concurrency:
 jobs:
   usage-monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     permissions:
       contents: write
     steps:
@@ -24,34 +31,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-      - name: PROBE — can we read quota headlessly?
+      - name: Read quota → usage-state.json
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          echo "=== A) undocumented GET /api/oauth/usage (Bearer OAuth) ==="
-          for beta in "oauth-2025-04-20" ""; do
-            echo "--- anthropic-beta: '${beta}' ---"
-            curl -sS -m 20 -w "\nHTTP %{http_code}\n" \
-              -H "Authorization: Bearer ${CLAUDE_CODE_OAUTH_TOKEN}" \
-              ${beta:+-H "anthropic-beta: ${beta}"} \
-              https://api.anthropic.com/api/oauth/usage 2>&1 | head -30 || true
-          done
-          echo ""
-          echo "=== B) rate-limit headers from a MINIMAL /v1/messages call ==="
-          curl -sS -m 30 -D /tmp/h.txt -o /tmp/b.txt -w "HTTP %{http_code}\n" \
-            -H "Authorization: Bearer ${CLAUDE_CODE_OAUTH_TOKEN}" \
-            -H "anthropic-version: 2023-06-01" \
-            -H "anthropic-beta: oauth-2025-04-20" \
-            -H "content-type: application/json" \
-            -d '{"model":"claude-haiku-4-5","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}' \
-            https://api.anthropic.com/v1/messages 2>&1 || true
-          echo "--- unified rate-limit headers (the prize) ---"
-          grep -i "anthropic-ratelimit-unified" /tmp/h.txt || echo "(none found)"
-          echo "--- any ratelimit headers ---"
-          grep -i "anthropic-ratelimit" /tmp/h.txt || echo "(none)"
-          echo "--- body (truncated) ---"; head -c 400 /tmp/b.txt; echo
+        run: node scripts/check-usage.js
       - name: Commit usage-state.json
         run: |
           git config user.email "action@github.com"

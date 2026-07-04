@@ -39,7 +39,10 @@ jobs:
           else
             echo "mode=evening" >> $GITHUB_OUTPUT
           fi
-      - uses: anthropics/claude-code-action@v1
+      - id: usage
+        run: node scripts/usage-gate.js optional # editorial is a nice-to-have — skip it first under quota pressure
+      - if: steps.usage.outputs.run == 'true'
+        uses: anthropics/claude-code-action@v1
         env:
           SPORTSYNC_EDITORIAL_MODE: ${{ steps.mode.outputs.mode }}
         with:
