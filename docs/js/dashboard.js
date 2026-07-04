@@ -30,8 +30,8 @@ class Dashboard {
 
 	async loadData() {
 		const load = (f) => fetch(`data/${f}?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-		const [events, featured, standings, results, tracked, meta] = await Promise.all([
-			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('meta.json'),
+		const [events, featured, standings, results, tracked, interests, meta] = await Promise.all([
+			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('interests.json'), load('meta.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
 		this.allEvents.forEach((e, i) => { e.id = `${e.sport}|${e.title}|${e.time}|${i}`; });
@@ -39,6 +39,7 @@ class Dashboard {
 		this.standings = standings;
 		this.recentResults = results;
 		this.tracked = tracked;
+		this.interests = interests;
 		this.meta = meta;
 	}
 
@@ -306,14 +307,42 @@ class Dashboard {
 		const body = document.getElementById('followed-body');
 		if (!wrap || !body) return;
 		const t = this.tracked;
-		if (!t || (!t.tournaments?.length && !t.leagues?.length && !t.athletes?.length)) { wrap.hidden = true; return; }
+		const i = this.interests;
+		const hasTracked = t && (t.tournaments?.length || t.leagues?.length || t.athletes?.length);
+		const hasInterests = i && (i.alwaysTrack || i.interests);
+		if (!hasTracked && !hasInterests) { wrap.hidden = true; return; }
+
+		// Layer 1 — DU FØLGER: what you asked for (interests.json, user-owned)
+		const chips = (items) => (items || []).length
+			? `<div class="chips-row">${items.map((x) => `<span class="chip-follow">${escapeHtml(x)}</span>`).join('')}</div>` : '';
+		let du = '';
+		if (hasInterests) {
+			const at = i.alwaysTrack || {};
+			du += `<div class="followed-layer"><div class="followed-head">Du følger</div>`;
+			du += chips(at.athletes);
+			du += chips(at.teams);
+			du += chips(at.tournaments);
+			if (Array.isArray(i.interests) && i.interests.length) {
+				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
+			}
+			du += `<div class="followed-hint">Vil du følge noe mer? Si det til Claude, så oppdateres denne lista.</div></div>`;
+		}
+
+		// Layer 2 — AI HAR FUNNET: what the research agent discovered (tracked.json)
 		const group = (label, items) => {
 			if (!items?.length) return '';
-			return `<div class="followed-group">${label}</div>` + items.map((i) =>
-				`<div class="followed-item">${escapeHtml(i.name)}${i.reason ? ` <span class="why">— ${escapeHtml(i.reason)}</span>` : ''}</div>`
+			return `<div class="followed-group">${label}</div>` + items.map((x) =>
+				`<div class="followed-item">${escapeHtml(x.name)}${x.reason ? ` <span class="why">— ${escapeHtml(x.reason)}</span>` : ''}${x.expires ? ` <span class="until">· ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}</div>`
 			).join('');
 		};
-		body.innerHTML = group('Turneringer', t.tournaments) + group('Ligaer', t.leagues) + group('Utøvere', t.athletes);
+		let ai = '';
+		if (hasTracked) {
+			ai = `<div class="followed-layer"><div class="followed-head">AI har funnet</div>`
+				+ group('Turneringer', t.tournaments) + group('Ligaer', t.leagues) + group('Utøvere', t.athletes)
+				+ `</div>`;
+		}
+
+		body.innerHTML = du + ai;
 		wrap.hidden = false;
 	}
 
