@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-07-04T16:00:24Z",
+  "widths": [375, 393, 900],
+  "verdict": "issues",
+  "findings": [
+    {
+      "width": 375,
+      "area": "agenda row — tirsdag 7. juli 02:00, United States – Belgium",
+      "issue": "Second team name is truncated to just a flag with no text at all ('United States – 🇧🇪…') — Belgium's name isn't readable, only inferable from the flag.",
+      "severity": "medium"
+    },
+    {
+      "width": 375,
+      "area": "agenda row — tirsdag 7. juli 22:00, Switzerland – Colombia",
+      "issue": "Same pattern: 'Switzerland – 🇨🇴…' shows only the opponent's flag, no name text.",
+      "severity": "medium"
+    },
+    {
+      "width": 393,
+      "area": "agenda row — tirsdag 7. juli 02:00, United States – Belgium",
+      "issue": "Still truncates to 'United States – 🇧🇪 B…' — Belgium not fully readable even at the larger phone width.",
+      "severity": "low"
+    },
+    {
+      "width": 393,
+      "area": "agenda row — tirsdag 7. juli 22:00, Switzerland – Colombia",
+      "issue": "Truncates to 'Switzerland – 🇨🇴 Col…' — Colombia not fully readable.",
+      "severity": "low"
+    },
+    {
+      "width": 375,
+      "area": "cycling stage titles (Etappe rows)",
+      "issue": "Stage titles truncate the finish town, e.g. 'Etappe 1 (lagtempo): Ba…' hides that the stage starts and ends in Barcelona, and 'Etappe 3 (fjell): Granolle…' hides the finish town Les Angles. Confirmed on desktop (900px) that the full text is 'Barcelona – Barcelona' and 'Granollers – Les Angles'.",
+      "severity": "low"
+    },
+    {
+      "width": 393,
+      "area": "cycling stage titles (Etappe rows)",
+      "issue": "Same truncation as at 375px, slightly less severe (a few more characters visible) but finish town still cut off.",
+      "severity": "low"
+    }
+  ],
+  "notes": [
+    "Norwegian-channel contract holds throughout: only NRK, TV 2 Play, NRK / TV2, and Viaplay appear as broadcasters at all three widths — no foreign broadcaster (ESPN/FOX/Sky) seen.",
+    "Flags and sport icons render correctly everywhere — no broken image icons or empty boxes.",
+    "Round labels (Åttedelsfinale, Kvartfinale) display correctly next to knockout fixtures.",
+    "No horizontal scroll or edge clipping observed at 375px; layout stays a single quiet column with generous spacing at all widths.",
+    "Header, day-group headings, 'Hva vi følger' disclosure, and footer (Oppdatert / Legg til i kalender) are all intact and aligned at every width.",
+    "The Brazil – Norway fixture (i morgen, 22:00) renders with bolder text than neighboring rows, consistent with the must-see accent for a Norwegian team, and it's the only row emphasized this way — restrained, not overused.",
+    "Placeholder bracket fixtures ('Round of 16 1 Winner – Round of 16 2 Winner') truncate identically to the named fixtures at 375/393px; not a real issue today since the names are generic placeholders, but the same truncation will apply once real team names replace them.",
+    "Could not visually confirm whether the Norway accent is implemented as a dot marker per the spec description or as bold text — resolution of the screenshots wasn't sufficient to distinguish a small dot glyph from font-weight change."
+  ]
+}
