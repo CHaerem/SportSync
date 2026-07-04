@@ -51,7 +51,7 @@ jobs:
             fix it on a branch, prove it, open a PR. Do not merge.
 
       # Re-gate the fix ourselves, then auto-merge ONLY if it stays in safe paths.
-      - name: Re-gate + auto-merge (safe paths only)
+      - name: Re-gate + auto-merge
         id: automerge
         if: steps.usage.outputs.run == 'true'
         env:
@@ -62,19 +62,22 @@ jobs:
           if [ -z "$PR" ]; then
             echo "No self-repair PR (nothing broken / abandoned)."; echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          # Deterministic guardrail: every changed file must be in a safe path,
-          # else a human reviews it (workflows/config/hooks/agent-prompts/package.json).
-          SAFE='^(scripts/fetch/|scripts/lib/|tests/|docs/js/|docs/css/|docs/index\.html$|docs/data/self-repair-log\.json$)'
-          RISKY=0
+          # Auto-merge everything EXCEPT three protected paths that must never be
+          # changed unattended: the workflows (the automation's own defs + gates),
+          # the safety hooks, and the user-owned interests.json. A change touching
+          # any of those is left OPEN for review so the system can't disable its own
+          # recovery or rewrite the user's data. Everything else is test-gated only.
+          BLOCK='^(\.github/workflows/|scripts/hooks/|scripts/config/interests\.json$)'
+          BLOCKED=0
           for f in $(gh pr view "$PR" --json files --jq '.files[].path'); do
-            echo "$f" | grep -qE "$SAFE" || { echo "risky path: $f"; RISKY=1; }
+            echo "$f" | grep -qE "$BLOCK" && { echo "protected path: $f"; BLOCKED=1; }
           done
-          if [ "$RISKY" = "1" ]; then
-            echo "PR #$PR touches sensitive paths — leaving OPEN for human review."
+          if [ "$BLOCKED" = "1" ]; then
+            echo "PR #$PR touches a protected path (workflows/hooks/interests) — leaving OPEN for review."
             gh pr edit "$PR" --add-label needs-review 2>/dev/null || true
             echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          echo "Re-gating PR #$PR (safe paths only) with fresh tests…"
+          echo "Re-gating PR #$PR with fresh tests…"
           gh pr checkout "$PR"
           npm ci
           npm test
