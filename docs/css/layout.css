@@ -6,6 +6,10 @@
 	margin: 0 auto;
 	padding: 0 22px;
 }
+/* Phones: trim the side gutter so the agenda has more room for match names. */
+@media (max-width: 460px) {
+	.wrap { padding: 0 16px; }
+}
 
 .masthead {
 	padding-top: calc(env(safe-area-inset-top) + 26px);
