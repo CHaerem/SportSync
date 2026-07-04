@@ -1,7 +1,7 @@
 {
 	"runAt": "2026-07-04T19:28:00Z",
 	"action": "opened-pr",
-	"pr": null,
+	"pr": "https://github.com/CHaerem/SportSync/pull/194",
 	"diagnosed": "The football ESPN source configured a dead league code `nor.cup` (Norwegian Cup). ESPN returns HTTP 400 for it every request (nor.1/nor.2 return 200), so every hourly pipeline run fired 7 doomed requests, logged 'ESPN: 7/8 leagues fetched (failed: Norwegian Cup)', and dinged the coverageRatio to 0.875. A valid ESPN league with no fixtures returns 200 + empty events, not 400 — confirming nor.cup is not a real endpoint (nor.nm, nor.cupen etc. also 400).",
 	"fixed": [
 		"Removed the invalid { code: 'nor.cup', name: 'Norwegian Cup' } league from scripts/config/sports-config.js and left a comment so it isn't re-added; NM Cupen coverage falls to the research agent per v2 design."
