@@ -1,0 +1,50 @@
+name: UI fix agent
+
+# Closes the self-healing UI loop: reads the visual-qa findings and, if there are
+# real rendering problems, fixes the frontend ON A BRANCH, re-screenshots to prove
+# the fix + no regressions, runs the tests, and opens a PR for a human to merge.
+# It never changes the live site directly.
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # 11:00 Oslo — an hour after visual-qa (08:00 UTC) writes its findings
+  workflow_dispatch:
+
+concurrency:
+  group: sportsync-ui-fix
+  cancel-in-progress: false
+
+jobs:
+  ui-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # full history so the agent can branch/PR cleanly
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: npm ci
+      - id: usage
+        run: node scripts/usage-gate.js optional # a nice-to-have — skip under quota pressure
+      - run: npx playwright install --with-deps chromium # for before/after screenshots
+        if: steps.usage.outputs.run == 'true'
+      - if: steps.usage.outputs.run == 'true'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-8
+            --max-turns 80
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(node:*),Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*),Bash(date:*),Bash(jq:*)"
+          prompt: |
+            Read scripts/agents/ui-fix.md and execute it — turn visual-qa findings
+            into a screenshot-verified frontend fix, then open a PR (never merge,
+            never push to main).
