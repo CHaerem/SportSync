@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY } from "./lib/helpers.js";
-import { normalizeStreaming } from "./lib/norwegian-rights.js";
+import { resolveStreaming } from "./lib/norwegian-rights.js";
 
 const dataDir = rootDataPath();
 
@@ -138,9 +138,20 @@ if (Array.isArray(previousEvents)) {
 	}
 }
 
-// Always normalize streaming to Norwegian channels (never show FOX/ESPN/etc.)
+// Resolve streaming to Norwegian channels — prefer REAL tvkampen.com listings
+// for football, fall back to the deterministic rights map (never FOX/ESPN).
+const tvListings = readJsonIfExists(path.join(dataDir, "tv-listings.json"))?.listings || [];
+let fromTv = 0;
 for (const e of all) {
-	e.streaming = normalizeStreaming(e);
+	const before = e.streaming;
+	e.streaming = resolveStreaming(e, tvListings);
+	if (e.sport === "football" && e.streaming !== before && e.streaming.length && tvListings.length) {
+		// count football events whose channel came from a real listing match
+		fromTv++;
+	}
+}
+if (tvListings.length) {
+	console.log(`Streaming: ${tvListings.length} tvkampen listing(s) available for football matching.`);
 }
 
 // Relevance filter — keep only what the user actually follows, so the agenda

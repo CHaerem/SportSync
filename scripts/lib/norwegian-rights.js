@@ -72,3 +72,69 @@ export function normalizeStreaming(ev) {
 	if (mapped.length) return mapped;
 	return (ev.streaming || []).filter((s) => NORWEGIAN_RE.test(s.platform || s));
 }
+
+// ── Real Norwegian TV listings (tvkampen.com) — actual data over the static map ──
+
+const CHANNEL_URLS = [
+	["tv 2 play", "https://play.tv2.no"], ["tv2 play", "https://play.tv2.no"],
+	["tv 2 sport", "https://play.tv2.no"], ["tv 2", "https://play.tv2.no"],
+	["viaplay", "https://viaplay.no"], ["v sport", "https://viaplay.no"],
+	["nrk", "https://tv.nrk.no"],
+	["discovery", "https://www.discoveryplus.no"], ["eurosport", "https://www.eurosport.no"],
+	["max", "https://www.max.com"], ["vg", "https://www.vg.no/sport"],
+];
+function urlForChannel(name) {
+	const k = name.trim().toLowerCase();
+	for (const [needle, url] of CHANNEL_URLS) if (k.includes(needle)) return url;
+	return "";
+}
+
+function normTeam(s) {
+	return (s || "").toLowerCase()
+		.replace(/\b(fc|fk|cf|afc|sk|if|il|bk|ff)\b/g, "")
+		.replace(/[^a-z0-9æøå ]/g, "")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+function teamsMatch(a, b) {
+	const na = normTeam(a), nb = normTeam(b);
+	return !!(na && nb && (na === nb || na.includes(nb) || nb.includes(na)));
+}
+
+/** Find the tvkampen listing for a football event by team names. */
+export function matchTvListing(ev, listings) {
+	if (!ev.homeTeam || !ev.awayTeam || !Array.isArray(listings)) return null;
+	return listings.find((l) => teamsMatch(l.homeTeam, ev.homeTeam) && teamsMatch(l.awayTeam, ev.awayTeam)) || null;
+}
+
+/** Convert a tvkampen listing's broadcasters to Norwegian streaming objects (drops foreign/betting). */
+function listingStreaming(listing) {
+	const seen = new Set();
+	const out = [];
+	for (const b of listing.broadcasters || []) {
+		const name = String(b).trim();
+		if (!NORWEGIAN_RE.test(name)) continue; // drop betting/foreign leftovers
+		const key = name.toLowerCase();
+		if (seen.has(key)) continue;
+		seen.add(key);
+		out.push({ platform: name, url: urlForChannel(name) });
+	}
+	return out;
+}
+
+/**
+ * Resolve an event's streaming, preferring REAL scraped Norwegian TV listings
+ * (tvkampen) for football, falling back to the deterministic rights map.
+ * @param {object} ev
+ * @param {Array} tvListings - tv-listings.json `listings` array
+ */
+export function resolveStreaming(ev, tvListings) {
+	if ((ev.sport || "").toLowerCase() === "football") {
+		const listing = matchTvListing(ev, tvListings);
+		if (listing) {
+			const s = listingStreaming(listing);
+			if (s.length) return s;
+		}
+	}
+	return normalizeStreaming(ev);
+}

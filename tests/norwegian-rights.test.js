@@ -33,3 +33,29 @@ describe("normalizeStreaming", () => {
 		expect(s[0].platform).toBe("Twitch");
 	});
 });
+
+import { resolveStreaming, matchTvListing } from "../scripts/lib/norwegian-rights.js";
+
+describe("tvkampen real-listing integration", () => {
+	const listings = [
+		{ homeTeam: "Liverpool", awayTeam: "Arsenal", time: "18:30", broadcasters: ["TV 2 Play", "TV 2 Sport 1", "Coolbet"] },
+		{ homeTeam: "Ranheim", awayTeam: "Stabæk", time: "19:00", broadcasters: ["TV 2 Play", "Viaplay"] },
+	];
+	it("matches a football event to its listing by team names (ignoring FC suffixes)", () => {
+		const l = matchTvListing({ homeTeam: "Liverpool FC", awayTeam: "Arsenal FC" }, listings);
+		expect(l?.homeTeam).toBe("Liverpool");
+	});
+	it("uses the real listing's Norwegian broadcasters, dropping betting sites", () => {
+		const s = resolveStreaming({ sport: "football", homeTeam: "Liverpool FC", awayTeam: "Arsenal FC", tournament: "Premier League" }, listings);
+		expect(s.map((c) => c.platform)).toEqual(["TV 2 Play", "TV 2 Sport 1"]); // Coolbet dropped
+		expect(s[0].url).toContain("tv2.no");
+	});
+	it("falls back to the rights map when no listing matches", () => {
+		const s = resolveStreaming({ sport: "football", homeTeam: "Bodø/Glimt", awayTeam: "Molde", tournament: "Eliteserien" }, listings);
+		expect(s[0].platform).toBe("TV 2 Play"); // from map, not a listing
+	});
+	it("non-football ignores listings and uses the map", () => {
+		const s = resolveStreaming({ sport: "f1", tournament: "Belgian Grand Prix" }, listings);
+		expect(s[0].platform).toBe("Viaplay");
+	});
+});
