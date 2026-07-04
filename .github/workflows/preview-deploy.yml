@@ -9,8 +9,10 @@ on:
       - main
     paths:
       - 'docs/**'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
+  # NOTE: deliberately NOT triggering on pull_request. Every PR open/sync/close
+  # used to fire a full Pages deploy that raced the push/pipeline deploys in the
+  # shared concurrency group, causing "Deployment failed, try again later".
+  # PR previews are still (re)assembled on each main deploy from all open PRs.
 
 permissions:
   contents: read
