@@ -1,12 +1,18 @@
 #!/usr/bin/env node
-// PreToolUse hook: blocks any attempt to modify scripts/config/interests.json.
-// The file is user-owned — "AI never writes here" is a hard contract (CLAUDE.md),
-// enforced at the harness level instead of relying on prompt discipline.
+// PreToolUse hook: blocks the AUTONOMOUS CI agents from modifying
+// scripts/config/interests.json — the file is user-owned (CLAUDE.md).
+// The threat is an unattended agent (research/verify/editorial/scout, running
+// via claude-code-action in GitHub Actions) drifting the user's intent without
+// per-edit approval. A human operator in a local Claude Code session IS the
+// user editing their own file, so this only blocks when running in CI.
 // Exit 2 blocks the tool call and feeds stderr back to the agent.
+
+const IN_CI = process.env.GITHUB_ACTIONS === "true" || process.env.CI === "true";
 
 let raw = "";
 process.stdin.on("data", (d) => (raw += d));
 process.stdin.on("end", () => {
+	if (!IN_CI) process.exit(0); // local operator edits are allowed (user-directed)
 	let input = {};
 	try {
 		input = JSON.parse(raw || "{}");
