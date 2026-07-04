@@ -25,6 +25,16 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Check out with a PAT so the docs/data commit this job pushes TRIGGERS
+          # preview-deploy. Pushes made with the default GITHUB_TOKEN deliberately
+          # do NOT trigger workflows (anti-recursion), which meant hourly data
+          # landed on main but never auto-published. See pages-deploy-gotchas.
+          # Falls back to github.token when DEPLOY_PAT is unset — the workflow
+          # keeps working (just without auto-deploy) until the secret is added.
+          # No loop risk: this pipeline's own push trigger watches scripts/** only,
+          # not docs/**, so a data push won't re-run the pipeline.
+          token: ${{ secrets.DEPLOY_PAT || github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
