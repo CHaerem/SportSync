@@ -3,9 +3,11 @@ import { describe, it, expect } from "vitest";
 import { norwegianRights, normalizeStreaming } from "../scripts/lib/norwegian-rights.js";
 
 describe("norwegianRights", () => {
-	it("World Cup football → NRK + TV 2, never a foreign net", () => {
+	it("World Cup football (no per-match data) → one tentative NRK / TV 2 label, never a foreign net", () => {
 		const r = norwegianRights({ sport: "football", tournament: "FIFA World Cup 2026", title: "Norway vs Brazil" });
-		expect(r.map((c) => c.platform)).toEqual(["NRK", "TV 2 Play"]);
+		expect(r.map((c) => c.platform)).toEqual(["NRK / TV 2"]); // shared rights, exact channel TBD
+		expect(r[0].tentative).toBe(true);
+		expect(JSON.stringify(r)).not.toMatch(/fox|espn/i);
 	});
 	it("F1 → Viaplay", () => {
 		expect(norwegianRights({ sport: "f1", tournament: "Belgian Grand Prix" })[0].platform).toBe("Viaplay");
@@ -21,7 +23,7 @@ describe("norwegianRights", () => {
 describe("normalizeStreaming", () => {
 	it("overrides a foreign broadcaster (FOX) with Norwegian rights", () => {
 		const s = normalizeStreaming({ sport: "football", tournament: "FIFA World Cup 2026", streaming: [{ platform: "FOX" }] });
-		expect(s.map((c) => c.platform)).toEqual(["NRK", "TV 2 Play"]);
+		expect(s.map((c) => c.platform)).toEqual(["NRK / TV 2"]);
 		expect(JSON.stringify(s)).not.toContain("FOX");
 	});
 	it("drops foreign nets when no rights mapping and keeps Norwegian ones", () => {
@@ -57,5 +59,48 @@ describe("tvkampen real-listing integration", () => {
 	it("non-football ignores listings and uses the map", () => {
 		const s = resolveStreaming({ sport: "f1", tournament: "Belgian Grand Prix" }, listings);
 		expect(s[0].platform).toBe("Viaplay");
+	});
+});
+
+describe("World Cup per-match channel resolution (English↔Norwegian nations)", () => {
+	// tvkampen lists nations in Norwegian and pads with aggregators; ESPN emits
+	// English nation names. Both bugs together made every WC match show NRK + TV 2.
+	const wcListings = [
+		{ homeTeam: "Canada", awayTeam: "Marokko", broadcasters: ["NRK1", "NRK TV", "Viaplay", "Eurosport Norge", "MAX"] },
+		{ homeTeam: "England", awayTeam: "Mexico", broadcasters: ["TV 2 Play", "TV 2 Sport 1", "Viaplay", "MAX"] },
+		{ homeTeam: "Paraguay", awayTeam: "Frankrike", broadcasters: ["Svt"] },
+	];
+
+	it("matches an English-named event to a Norwegian-named listing (Morocco↔Marokko)", () => {
+		const s = resolveStreaming(
+			{ sport: "football", tournament: "FIFA World Cup 2026", homeTeam: "Canada", awayTeam: "Morocco" },
+			wcListings
+		);
+		expect(s.map((c) => c.platform)).toEqual(["NRK"]); // one true broadcaster, aggregators dropped
+	});
+
+	it("resolves a TV 2 WC match to a single TV 2 Play (drops NRK/aggregators absent)", () => {
+		const s = resolveStreaming(
+			{ sport: "football", tournament: "FIFA World Cup 2026", homeTeam: "England", awayTeam: "Mexico" },
+			wcListings
+		);
+		expect(s.map((c) => c.platform)).toEqual(["TV 2 Play"]);
+	});
+
+	it("falls back to tentative NRK / TV 2 when the listing has no Norwegian rights holder", () => {
+		const s = resolveStreaming(
+			{ sport: "football", tournament: "FIFA World Cup 2026", homeTeam: "Paraguay", awayTeam: "France" },
+			wcListings
+		);
+		expect(s.map((c) => c.platform)).toEqual(["NRK / TV 2"]);
+		expect(s[0].tentative).toBe(true);
+	});
+
+	it("nation-vs-nation with no tournament label still resolves (never a foreign net)", () => {
+		const s = resolveStreaming(
+			{ sport: "football", tournament: "International", homeTeam: "Norway", awayTeam: "Brazil" },
+			[]
+		);
+		expect(s.map((c) => c.platform)).toEqual(["NRK / TV 2"]);
 	});
 });

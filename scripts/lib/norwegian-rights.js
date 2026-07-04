@@ -25,11 +25,45 @@ const NATIONS = new Set([
 	"egypt", "cameroon", "poland", "austria", "serbia", "ecuador", "iran", "saudi arabia",
 	"qatar", "tunisia", "ivory coast", "algeria", "england", "scotland", "wales",
 ]);
+
+// Norwegian → English canonical nation names. ESPN emits English ("Morocco"),
+// tvkampen emits Norwegian ("Marokko"); without this map the two never match
+// and every national-team fixture falls back to the shared-rights guess.
+// Keys are pre-normalized the same way normTeam() normalizes (lowercase, no
+// punctuation — so "Sør-Korea" → "sørkorea").
+const NATION_CANON = {
+	marokko: "morocco", frankrike: "france", brasil: "brazil", norge: "norway",
+	spania: "spain", tyskland: "germany", sveits: "switzerland", danmark: "denmark",
+	østerrike: "austria", island: "iceland", belgia: "belgium", nederland: "netherlands",
+	sverige: "sweden", kroatia: "croatia", sørkorea: "south korea", "korea republic": "south korea",
+	japan: "japan", mexico: "mexico", portugal: "portugal", england: "england",
+	skottland: "scotland", wales: "wales", usa: "usa", "united states": "usa",
+	"forente stater": "usa", argentina: "argentina", egypt: "egypt", colombia: "colombia",
+	canada: "canada", paraguay: "paraguay", uruguay: "uruguay", ecuador: "ecuador",
+	australia: "australia", senegal: "senegal", nigeria: "nigeria", ghana: "ghana",
+	kamerun: "cameroon", algerie: "algeria", tunisia: "tunisia", elfenbenskysten: "ivory coast",
+	kappverde: "cape verde", "kapp verde": "cape verde", saudiarabia: "saudi arabia",
+	"saudi arabia": "saudi arabia", qatar: "qatar", iran: "iran", polen: "poland",
+	serbia: "serbia", italia: "italy", sørafrika: "south africa",
+};
+
 function isNationVsNation(ev) {
-	const h = (ev.homeTeam || "").trim().toLowerCase();
-	const a = (ev.awayTeam || "").trim().toLowerCase();
+	const h = normTeam(ev.homeTeam || "");
+	const a = normTeam(ev.awayTeam || "");
 	return NATIONS.has(h) && NATIONS.has(a);
 }
+
+// A World Cup fixture — ESPN sometimes labels these only "International", so we
+// also treat any nation-vs-nation match as WC-adjacent for channel resolution.
+function isWorldCup(ev) {
+	const hay = `${ev.tournament || ""} ${ev.context || ""} ${ev.meta || ""} ${ev.title || ""}`.toLowerCase();
+	return /world cup|fifa|\bvm\b/.test(hay) || isNationVsNation(ev);
+}
+
+// Norwegian WC 2026 rights are shared by NRK + TV 2 ONLY. When we can't confirm
+// which of the two carries a specific match, this single tentative label is more
+// honest (and calmer) than two chips that read as "airs on both".
+const WC_SHARED = { platform: "NRK / TV 2", url: "https://tv.nrk.no", tentative: true };
 
 /** The confident Norwegian rights for an event, or [] when we shouldn't guess. */
 export function norwegianRights(ev) {
@@ -39,12 +73,12 @@ export function norwegianRights(ev) {
 	const hay = `${comp} ${title}`;
 
 	if (sport === "football") {
-		if (/world cup|fifa|\bvm\b/.test(hay)) return [CH.nrk, CH.tv2]; // shared per-match
+		if (/world cup|fifa|\bvm\b/.test(hay)) return [WC_SHARED]; // NRK/TV 2 shared — exact channel TBD
 		if (/premier league/.test(hay)) return [CH.tv2];
 		if (/la\s?liga/.test(hay)) return [CH.tv2];
 		if (/champions|europa|conference/.test(hay)) return [CH.tv2];
 		if (/obos|eliteserie|norwegian|cup|nm\b/.test(hay)) return [CH.tv2];
-		if (isNationVsNation(ev)) return [CH.nrk, CH.tv2]; // landskamp / WC labelled only "International"
+		if (isNationVsNation(ev)) return [WC_SHARED]; // landskamp / WC labelled only "International"
 		return [];
 	}
 	if (sport === "golf") return /masters/.test(hay) ? [CH.discovery] : [CH.viaplay];
@@ -90,11 +124,12 @@ function urlForChannel(name) {
 }
 
 function normTeam(s) {
-	return (s || "").toLowerCase()
+	const n = (s || "").toLowerCase()
 		.replace(/\b(fc|fk|cf|afc|sk|if|il|bk|ff)\b/g, "")
 		.replace(/[^a-z0-9æøå ]/g, "")
 		.replace(/\s+/g, " ")
 		.trim();
+	return NATION_CANON[n] || n; // map Norwegian nation names to English canonical
 }
 function teamsMatch(a, b) {
 	const na = normTeam(a), nb = normTeam(b);
@@ -123,6 +158,29 @@ function listingStreaming(listing) {
 }
 
 /**
+ * For a World Cup fixture, keep only the actual Norwegian rights holders
+ * (NRK / TV 2) and collapse channel variants (NRK1, NRK TV → NRK; TV 2 Sport 1
+ * → TV 2 Play). tvkampen pads WC listings with aggregators (Viaplay/Eurosport/
+ * MAX) and foreign nets (SVT) that don't hold WC rights in Norway — drop them so
+ * a match resolves to its single true broadcaster instead of a noisy list.
+ */
+function worldCupChannels(channels) {
+	const out = [];
+	const seen = new Set();
+	for (const c of channels) {
+		const p = String(c.platform || c).toLowerCase();
+		let entry = null;
+		if (/nrk/.test(p)) entry = CH.nrk;
+		else if (/tv\s?2/.test(p)) entry = CH.tv2;
+		else continue; // not a WC rights holder → drop
+		if (seen.has(entry.platform)) continue;
+		seen.add(entry.platform);
+		out.push(entry);
+	}
+	return out;
+}
+
+/**
  * Resolve an event's streaming, preferring REAL scraped Norwegian TV listings
  * (tvkampen) for football, falling back to the deterministic rights map.
  * @param {object} ev
@@ -132,7 +190,9 @@ export function resolveStreaming(ev, tvListings) {
 	if ((ev.sport || "").toLowerCase() === "football") {
 		const listing = matchTvListing(ev, tvListings);
 		if (listing) {
-			const s = listingStreaming(listing);
+			let s = listingStreaming(listing);
+			// WC: trust the real listing to say WHICH of NRK/TV 2, drop aggregator noise.
+			if (isWorldCup(ev)) s = worldCupChannels(s);
 			if (s.length) return s;
 		}
 	}
