@@ -114,8 +114,11 @@ class Dashboard {
 		const s = streams[0];
 		const p = escapeHtml(String(s.platform || s));
 		const extra = streams.length > 1 ? `<span class="ev-where-more">+${streams.length - 1}</span>` : '';
-		const inner = s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
-		return `<span class="ev-where">${inner}${extra}</span>`;
+		// Tentative (shared rights, exact channel not yet confirmed) → plain text,
+		// no link — linking to one broadcaster when it may be the other misleads.
+		const inner = (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
+		const cls = s.tentative ? 'ev-where tentative' : 'ev-where';
+		return `<span class="${cls}">${inner}${extra}</span>`;
 	}
 
 	// ── Live now (quiet line at the top) ─────────────────────────────────────
@@ -229,7 +232,8 @@ class Dashboard {
 		if (streams.length) {
 			const chans = streams.map((s) => {
 				const p = escapeHtml(String(s.platform || s));
-				return s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
+				const label = s.tentative ? `${p} <span class="tbd">(bekreftes)</span>` : p;
+				return (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
 			}).join(' · ');
 			add('Se på', chans);
 		}
