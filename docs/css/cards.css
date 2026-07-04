@@ -120,9 +120,25 @@
 	margin-right: 5px;
 }
 
-/* Must-see: a quiet accent ring on the badge — recognisable, not loud */
+/* Must-see: a quiet accent ring on the badge + warm time — recognisable, not loud */
 .ev.must .ev-title { font-weight: 600; }
 .ev.must .ev-badge { box-shadow: 0 0 0 1.5px var(--accent); }
+.ev.must .ev-time { color: var(--accent); }
+
+/* Collapsed stage race (e.g. Tour de France): past stages dimmed when expanded */
+.ev-detail .d-row.stage.past { opacity: 0.45; }
+
+/* Quiet "show the rest of the fortnight" control */
+.agenda-more {
+	display: block;
+	width: 100%;
+	margin-top: 28px;
+	padding: 10px 0;
+	font-size: 14px;
+	color: var(--fg-2);
+	text-align: center;
+}
+.agenda-more:hover { color: var(--accent); }
 
 .ai-badge { font-size: 11px; color: var(--fg-3); margin-left: 4px; vertical-align: 1px; }
 .ai-badge:hover { color: var(--accent); }

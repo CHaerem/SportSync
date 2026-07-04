@@ -119,7 +119,19 @@ class Dashboard {
 		const id = normalizeClientSportId(e.sport);
 		return SPORT_CONFIG.find((s) => s.id === id) || { emoji: '🏆', name: e.sport, color: 'var(--accent)' };
 	}
-	isMustSee(e) { return !!(e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)); }
+	isMustSee(e) {
+		if (e.isSeries) return false;
+		if (e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)) return true;
+		// Your people playing is the whole point: Norway national team, a tracked
+		// club, or a tracked athlete on the card → give it the accent.
+		const teams = [e.homeTeam || '', e.awayTeam || ''].map((t) => t.toLowerCase());
+		if (teams.some((t) => /\bnorway\b|\bnorge\b/.test(t))) return true;
+		const tracked = (this.interests?.alwaysTrack?.teams || []).map((t) => t.toLowerCase());
+		if (teams.some((t) => t && tracked.some((tt) => t.includes(tt)))) return true;
+		const hay = `${e.title || ''} ${(e.norwegianPlayers || []).map((p) => p.name || p).join(' ')}`.toLowerCase();
+		const athletes = (this.interests?.alwaysTrack?.athletes || []).map((a) => a.toLowerCase());
+		return athletes.some((a) => a && hay.includes(a));
+	}
 
 	/** Leading visual anchor: sport icon in a faint sport-coloured circle. */
 	sportBadge(e) {
@@ -181,12 +193,23 @@ class Dashboard {
 		if (!el) return;
 		const now = Date.now();
 		const start = now - 3 * SS_CONSTANTS.MS_PER_HOUR;
-		const horizon = now + 14 * SS_CONSTANTS.MS_PER_DAY;
-		const events = this.allEvents
-			.filter((e) => isEventInWindow(e, start, horizon))
-			.sort((a, b) => new Date(a.time) - new Date(b.time));
+		const maxHorizon = now + 14 * SS_CONSTANTS.MS_PER_DAY;
+		// Collapse multi-stage races (e.g. Tour de France) into ONE expandable row
+		// so 20+ near-identical "Etappe N" rows don't drown the rest of the week.
+		const items = this.collapseSeries(
+			this.allEvents.filter((e) => isEventInWindow(e, start, maxHorizon)),
+			now
+		).sort((a, b) => new Date(a.time) - new Date(b.time));
 
-		if (events.length === 0) {
+		// Default to a calm 7-day horizon; a quiet "Vis mer" reveals the full 14.
+		const cut = now + (this._fullHorizon ? 14 : 7) * SS_CONSTANTS.MS_PER_DAY;
+		const shown = this._fullHorizon ? items : items.filter((e) => isEventInWindow(e, start, cut));
+		const hasMore = items.length > shown.length;
+
+		this._eventById = new Map(this.allEvents.map((e) => [e.id, e]));
+		for (const it of items) if (it.isSeries) this._eventById.set(it.id, it);
+
+		if (shown.length === 0) {
 			el.innerHTML = `<p class="empty">Ingen kommende arrangementer akkurat nå.</p>`;
 			return;
 		}
@@ -194,7 +217,7 @@ class Dashboard {
 		const todayKey = this.osloDayKey(new Date());
 		const tomorrowKey = this.osloDayKey(new Date(now + SS_CONSTANTS.MS_PER_DAY));
 		const groups = new Map();
-		for (const e of events) {
+		for (const e of shown) {
 			// Multi-day events that started earlier but are still running belong under "I dag",
 			// not their (past) start day.
 			let key = this.osloDayKey(new Date(e.time));
@@ -203,7 +226,6 @@ class Dashboard {
 			groups.get(key).push(e);
 		}
 
-		this._eventById = new Map(this.allEvents.map((e) => [e.id, e]));
 		let html = '';
 		for (const [key, evs] of groups) {
 			let name;
@@ -212,10 +234,45 @@ class Dashboard {
 			else name = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
 			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div>${evs.map((e) => this.eventRow(e)).join('')}</section>`;
 		}
+		if (hasMore) html += `<button type="button" class="agenda-more">Vis resten av de neste to ukene ›</button>`;
 		el.innerHTML = html;
 	}
 
+	/** Fold same-tournament stage races (cycling "Etappe N", etc.) into one series item. */
+	collapseSeries(events, now) {
+		const STAGE_RE = /\betappe\b|\bstage\s*\d/i;
+		const groups = new Map();
+		const out = [];
+		for (const e of events) {
+			if (STAGE_RE.test(e.title || '')) {
+				const key = `${e.sport}||${e.tournament}`;
+				(groups.get(key) || groups.set(key, []).get(key)).push(e);
+			} else out.push(e);
+		}
+		for (const stages of groups.values()) {
+			if (stages.length < 4) { out.push(...stages); continue; } // too few — keep as normal rows
+			stages.sort((a, b) => new Date(a.time) - new Date(b.time));
+			const upcoming = stages.find((s) => (s.endTime ? Date.parse(s.endTime) : Date.parse(s.time)) >= now);
+			const next = upcoming || stages[stages.length - 1];
+			const s0 = stages[0];
+			out.push({
+				isSeries: true,
+				id: `series|${s0.sport}|${s0.tournament}`,
+				sport: s0.sport,
+				tournament: s0.tournament,
+				title: s0.tournament,
+				time: next.time,
+				endTime: stages[stages.length - 1].endTime || stages[stages.length - 1].time,
+				streaming: next.streaming || [],
+				stages,
+				nextStage: next,
+			});
+		}
+		return out;
+	}
+
 	eventRow(e) {
+		if (e.isSeries) return this.seriesRow(e);
 		const date = new Date(e.time);
 		const live = this.liveScores[e.id];
 		const where = live && live.state === 'in'
@@ -236,10 +293,39 @@ class Dashboard {
 		</div><div class="ev-detail" hidden></div></div>`;
 	}
 
+	/** A stage race collapsed to one line: next stage + count + end date, tap to expand. */
+	seriesRow(s) {
+		const date = new Date(s.nextStage.time);
+		const until = new Date(s.endTime).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
+		const m = String(s.nextStage.title || '').match(/(etappe|stage)\s*\d+/i);
+		const nextLabel = m ? m[0] : ssShortName(s.nextStage.title || '');
+		const sub = `neste: ${escapeHtml(nextLabel)} · ${s.stages.length} etapper · t.o.m. ${escapeHtml(until)}`;
+		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(s.id)}">
+			${this.sportBadge(s)}
+			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
+			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-round">${sub}</span></span>
+			${this.whereToWatch(s.nextStage)}
+			<span class="ev-caret" aria-hidden="true">›</span>
+		</div><div class="ev-detail" hidden></div></div>`;
+	}
+
+	/** Expanded series: every stage as a quiet line (past ones dimmed). */
+	seriesDetail(s) {
+		const now = Date.now();
+		return s.stages.map((st) => {
+			const d = new Date(st.time);
+			const when = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+			const ch = (st.streaming || []).map((x) => x.platform || x)[0];
+			const past = (st.endTime ? Date.parse(st.endTime) : Date.parse(st.time)) < now;
+			return `<div class="d-row stage${past ? ' past' : ''}"><span class="d-k">${escapeHtml(when)} ${escapeHtml(this.osloTime(d))}</span><span class="d-v">${escapeHtml(ssShortName(st.title))}${ch ? ` · <span class="tbd">${escapeHtml(ch)}</span>` : ''}</span></div>`;
+		}).join('');
+	}
+
 	// ── Progressive disclosure: extra context on tap (calm — hidden by default) ──
 
 	/** True only when there's genuinely more to show — flat rows stay non-interactive. */
 	hasDetail(e) {
+		if (e.isSeries) return true;
 		return !!(
 			this.footballStanding(e) ||
 			this.finishedResult(e) ||
@@ -253,6 +339,7 @@ class Dashboard {
 	}
 
 	eventDetail(e) {
+		if (e.isSeries) return this.seriesDetail(e);
 		const rows = [];
 		const add = (k, v) => { if (v) rows.push(`<div class="d-row"><span class="d-k">${k}</span><span class="d-v">${v}</span></div>`); };
 
@@ -331,6 +418,7 @@ class Dashboard {
 		agenda.addEventListener('click', (evt) => {
 			const link = evt.target.closest('a');
 			if (link) return; // let channel/source links work normally
+			if (evt.target.closest('.agenda-more')) { this._fullHorizon = true; this.renderAgenda(); return; }
 			const row = evt.target.closest('.ev.expandable');
 			if (row) toggle(row);
 		});
