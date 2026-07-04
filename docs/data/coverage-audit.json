@@ -1,0 +1,53 @@
+{
+  "auditedAt": "2026-07-04T16:00:02Z",
+  "horizonDays": 28,
+  "gaps": [
+    {
+      "interest": "Tour de France 2026 (Uno-X Mobility / norske ryttere)",
+      "whatsMissing": "Kun etappe 1–5 (4.–8. juli) ligger på dashbordet. Etappe 6 t.o.m. etappe 21 (9.–26. juli) mangler helt — inkl. fjelletappene i Pyreneene (etappe 6 Pau–Gavarnie-Gèdre 9. juli), Alpene og avslutningen i Paris.",
+      "why": "alwaysTrack.tournaments og alwaysTrack.teams (Uno-X). Rittet pågår NÅ med fem nordmenn; 16 av 21 etapper er ikke på dashbordet. Dette er den største recall-svikten i horisonten — en fan som følger Uno-X mister nesten hele Touren.",
+      "suggestedSource": "https://www.cyclingstage.com/tour-de-france-2026-route/ + https://franceletour.com/tour-de-france-2026-schedule/ (alle 21 etapper med datoer/starttider); TV 2 Play for streaming",
+      "severity": "high"
+    },
+    {
+      "interest": "Aryan Tari / Sjakk på elite-nivå",
+      "whatsMissing": "Sjakk-NM 2026 (Landsturneringen) i Kristiansund 3.–11. juli — 100. utgave — er ikke på dashbordet. Eliteklassen med Aryan Tari (og norsk toppsjakk) pågår akkurat nå.",
+      "why": "Aryan Tari er i alwaysTrack.athletes og interessen «Sjakk på elite-nivå». Norgesmesterskapet i sjakk er en kjerneinteresse for en norsk sjakkfan og er fullstendig fraværende mens det spilles.",
+      "suggestedSource": "https://sjakknm2026.no/ + https://www.sjakk.no/aktiviteter/landsturneringen-2026 (rundeplan/starttider for eliteklassen)",
+      "severity": "high"
+    },
+    {
+      "interest": "FIFA World Cup 2026 — sluttspill",
+      "whatsMissing": "Kun to kvartfinaler (9.–10. juli) ligger inne. De øvrige kvartfinalene, begge semifinaler (14.–15. juli), bronsefinalen (18. juli) og finalen (19. juli, MetLife Stadium) mangler i horisonten.",
+      "why": "alwaysTrack.tournaments, pågår nå, og Norge er fortsatt med (møter Brasil i åttedelsfinalen 5. juli). Dette er de største fotballkampene i perioden. Dekkes normalt av den statiske ESPN-pipelinen etter hvert som braketten fylles — flagges som medium fordi pipelinen trolig løser det mekanisk, men er ufullstendig nå.",
+      "suggestedSource": "https://www.espn.com/soccer/story/_/id/48939282/ (WC-terminliste) + NRK/TV 2 for norske sendinger",
+      "severity": "medium"
+    },
+    {
+      "interest": "Casper Ruud",
+      "whatsMissing": "Ingen kommende Ruud-kamp på dashbordet i horisonten. Han er ute av Wimbledon (tap 1. runde) og er IKKE påmeldt Nordea Open Båstad 2026 (13.–19. juli) — verifisert mot entrylisten. Neste start uavklart, sannsynligvis nordamerikansk hardcourt (National Bank Open Toronto sent i juli / Cincinnati i august).",
+      "why": "alwaysTrack.athletes uten et eneste event i horisonten. Toronto-uken kan ligge helt i ytterkant av 28-dagersvinduet. Fuzzy fordi Ruuds påmelding ikke er bekreftet — research bør fastslå hans faktiske neste turnering.",
+      "suggestedSource": "https://www.atptour.com/en/players/casper-ruud/ (aktivitet/entry) + National Bank Open Toronto entrylist",
+      "severity": "medium"
+    }
+  ],
+  "coveredWell": [
+    "Tour de France etappe 1–5 (4.–8. juli) — til stede med norske ryttere og TV 2-streaming",
+    "Golf: Genesis Scottish Open (Hovland, 9.–12. juli) og The Open på Royal Birkdale (Hovland, 16.–19. juli)",
+    "Wimbledon dame- og herrefinale (11.–12. juli)",
+    "F1: Belgia GP (17. juli) og Ungarn GP (24. juli)",
+    "WC åttedelsfinaler inkl. Norge–Brasil (5. juli)",
+    "CS2: BLAST Bounty S2 med 100 Thieves / rain (21.–26. juli)",
+    "OBOS-ligaen: Strømsgodset–Lyn (25. juli)",
+    "Esports World Cup sjakk med Carlsen (11.–15. august) — sporet, men like utenfor 28-dagershorisonten"
+  ],
+  "escalated": false,
+  "notes": [
+    "Sjekket og AVVIST som korrekte fravær: Casper Ruud er IKKE i Båstad-feltet 2026 (entrylisten toppes av Rublev/Darderi/Tabilo; en Ruud+Nadal-doubles-tweet stammer fra 2024 — Nadal er pensjonert). Dette hadde blitt en falsk gap uten verifisering.",
+    "Magnus Carlsen: ingen bekreftet turnering i juli 2026 funnet; Freestyle-VM ble spilt i februar 2026. Neste bekreftede er EWC-sjakken 11.–15. august (utenfor horisonten) — korrekt fravær nå.",
+    "Premier League / La Liga: sesongstart medio august (utenfor horisont). Eventuelle Liverpool/Barcelona-treningskamper sent i juli er lav prioritet.",
+    "Vinteridretter (langrenn/skiskyting/alpint): av-sesong i juli — korrekt fravær per interests.json.",
+    "Forsøkte å eskalere til research-agenten (gh workflow run research-agent.yml) for de to high-severity-gapene — Tour de France etappe 6–21 og Sjakk-NM 2026 eliteklassen — men dispatch ble blokkert (HTTP 403: token mangler actions:write i denne kjøringen). Gapene står dokumentert i denne auditen slik at research plukker dem opp uansett.",
+    "Coverage-gaps.json-signalet (Liverpool «van Dijk-salg») er overgangsnyhet, ikke et event — ingen gap."
+  ]
+}
