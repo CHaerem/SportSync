@@ -19,7 +19,10 @@ permissions:
 
 concurrency:
   group: pages-deploy
-  cancel-in-progress: true
+  # Never cancel a Pages deploy mid-flight — cancelling corrupts the github-pages
+  # environment and the next run fails "Deployment failed, try again later".
+  # Queue instead, so overlapping triggers (merge + hourly pipeline) each complete.
+  cancel-in-progress: false
 
 jobs:
   deploy:
