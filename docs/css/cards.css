@@ -98,13 +98,20 @@
 	color: var(--fg-2);
 	white-space: nowrap;
 }
+.ev-main { min-width: 0; }
 .ev-title {
-	min-width: 0;
+	display: block;
 	font-size: 15.5px;
 	color: var(--fg);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+.ev-round {
+	display: block;
+	font-size: 12px;
+	color: var(--fg-3);
+	margin-top: 1px;
 }
 .ev-logo {
 	width: 18px; height: 18px;
