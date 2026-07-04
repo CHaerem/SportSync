@@ -21,7 +21,7 @@ class Dashboard {
 		await this.loadData();
 		this.render();
 		this.startLivePolling();
-		this.bindAiBadges();
+		this.bindAgendaExpand();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.pollLiveScores();
@@ -30,12 +30,14 @@ class Dashboard {
 
 	async loadData() {
 		const load = (f) => fetch(`data/${f}?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-		const [events, featured, tracked, meta] = await Promise.all([
-			load('events.json'), load('featured.json'), load('tracked.json'), load('meta.json'),
+		const [events, featured, standings, results, tracked, meta] = await Promise.all([
+			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('meta.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
 		this.allEvents.forEach((e, i) => { e.id = `${e.sport}|${e.title}|${e.time}|${i}`; });
 		this.featured = featured;
+		this.standings = standings;
+		this.recentResults = results;
 		this.tracked = tracked;
 		this.meta = meta;
 	}
@@ -76,15 +78,31 @@ class Dashboard {
 	// ── Helpers ─────────────────────────────────────────────────────────────
 	osloTime(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }); }
 	osloDayKey(d) { return d.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' }); }
-	sportName(e) {
+	sportCfg(e) {
 		const id = normalizeClientSportId(e.sport);
-		const cfg = SPORT_CONFIG.find((s) => s.id === id);
-		return cfg ? cfg.name : e.sport;
+		return SPORT_CONFIG.find((s) => s.id === id) || { emoji: '🏆', name: e.sport, color: 'var(--accent)' };
 	}
 	isMustSee(e) { return !!(e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)); }
 
+	/** Leading visual anchor: sport icon in a faint sport-coloured circle. */
+	sportBadge(e) {
+		const cfg = this.sportCfg(e);
+		return `<span class="ev-badge" style="--sport-color:${cfg.color}" title="${escapeHtml(cfg.name)}">${cfg.emoji}</span>`;
+	}
+
+	/** Visual mark for a team: club crest if we have one, else a national flag, else nothing. */
+	teamMark(name) {
+		const url = typeof getTeamLogo === 'function' ? getTeamLogo(name) : null;
+		if (url) return `<img class="ev-logo" src="${url}" alt="" loading="lazy" onerror="this.remove()">`;
+		const flag = typeof getNationFlag === 'function' ? getNationFlag(name) : null;
+		if (flag) return `<span class="ev-flag" aria-hidden="true">${flag}</span>`;
+		return '';
+	}
+
 	eventTitle(e) {
-		if (e.homeTeam && e.awayTeam) return `${escapeHtml(ssShortName(e.homeTeam))} – ${escapeHtml(ssShortName(e.awayTeam))}`;
+		if (e.homeTeam && e.awayTeam) {
+			return `${this.teamMark(e.homeTeam)}${escapeHtml(ssShortName(e.homeTeam))} – ${this.teamMark(e.awayTeam)}${escapeHtml(ssShortName(e.awayTeam))}`;
+		}
 		return escapeHtml(e.title);
 	}
 
@@ -92,11 +110,11 @@ class Dashboard {
 	whereToWatch(e) {
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
 		if (streams.length === 0) return `<span class="ev-where unknown">–</span>`;
-		const parts = streams.slice(0, 2).map((s) => {
-			const p = escapeHtml(String(s.platform || s));
-			return s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
-		});
-		return `<span class="ev-where">${parts.join(' · ')}</span>`;
+		const s = streams[0];
+		const p = escapeHtml(String(s.platform || s));
+		const extra = streams.length > 1 ? `<span class="ev-where-more">+${streams.length - 1}</span>` : '';
+		const inner = s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
+		return `<span class="ev-where">${inner}${extra}</span>`;
 	}
 
 	// ── Live now (quiet line at the top) ─────────────────────────────────────
@@ -145,6 +163,7 @@ class Dashboard {
 			groups.get(key).push(e);
 		}
 
+		this._eventById = new Map(this.allEvents.map((e) => [e.id, e]));
 		let html = '';
 		for (const [key, evs] of groups) {
 			let name;
@@ -159,18 +178,125 @@ class Dashboard {
 	eventRow(e) {
 		const date = new Date(e.time);
 		const live = this.liveScores[e.id];
-		const sub = [this.sportName(e), e.tournament].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' · ');
 		const where = live && live.state === 'in'
 			? `<span class="ev-where ev-live">${live.home}–${live.away}</span>`
 			: this.whereToWatch(e);
-		const ai = e.source === 'ai-research'
-			? ` <button class="ai-badge" data-event-id="${escapeHtml(e.id)}" aria-label="Kilde" style="font-size:11px;color:var(--fg-3);">ⓘ</button>`
+		const expandable = this.hasDetail(e);
+		const caret = expandable ? `<span class="ev-caret" aria-hidden="true">›</span>` : `<span class="ev-caret"></span>`;
+		const attrs = expandable
+			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
 			: '';
-		return `<div class="ev${this.isMustSee(e) ? ' must' : ''}">
+		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${expandable ? ' expandable' : ''}"${attrs}>
+			${this.sportBadge(e)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}${ai}</span>${sub ? `<span class="ev-sub">${escapeHtml(sub)}</span>` : ''}</span>
+			<span class="ev-title">${this.eventTitle(e)}</span>
 			${where}
-		</div>`;
+			${caret}
+		</div><div class="ev-detail" hidden></div></div>`;
+	}
+
+	// ── Progressive disclosure: extra context on tap (calm — hidden by default) ──
+
+	/** True only when there's genuinely more to show — flat rows stay non-interactive. */
+	hasDetail(e) {
+		return !!(
+			this.footballStanding(e) ||
+			this.finishedResult(e) ||
+			this.golfContext(e) ||
+			(e.venue && e.venue !== 'TBD') ||
+			e.summary ||
+			e.norwegianPlayers?.length ||
+			(Array.isArray(e.streaming) && e.streaming.length > 1) ||
+			(e.source === 'ai-research' && e.evidence?.length)
+		);
+	}
+
+	eventDetail(e) {
+		const rows = [];
+		const add = (k, v) => { if (v) rows.push(`<div class="d-row"><span class="d-k">${k}</span><span class="d-v">${v}</span></div>`); };
+
+		const result = this.finishedResult(e);
+		if (result) add('Resultat', result);
+		add('Tabell', this.footballStanding(e));
+		add('Ledende', this.golfContext(e));
+		if (e.venue && e.venue !== 'TBD') add('Arena', escapeHtml(e.venue));
+		if (e.norwegianPlayers?.length) add('Norske', escapeHtml(e.norwegianPlayers.map((p) => p.name || p).join(', ')));
+		if (e.summary) add('Om', escapeHtml(e.summary));
+
+		const streams = Array.isArray(e.streaming) ? e.streaming : [];
+		if (streams.length) {
+			const chans = streams.map((s) => {
+				const p = escapeHtml(String(s.platform || s));
+				return s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
+			}).join(' · ');
+			add('Se på', chans);
+		}
+		if (e.source === 'ai-research' && e.evidence?.length) {
+			const links = e.evidence.map((u, i) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">kilde ${i + 1}</a>`).join(' · ');
+			add('Funnet av AI', `${links} · sikkerhet: ${escapeHtml(e.confidence || 'ukjent')}`);
+		}
+		return rows.join('');
+	}
+
+	footballStanding(e) {
+		if (e.sport !== 'football' || !e.homeTeam || !e.awayTeam) return '';
+		const tables = this.standings?.football;
+		if (!tables) return '';
+		const tour = (e.tournament || '').toLowerCase();
+		const table = tour.includes('la liga') || tour.includes('copa') ? tables.laLiga : tables.premierLeague;
+		if (!Array.isArray(table) || table.length === 0) return '';
+		const look = (name) => {
+			const n = name.toLowerCase();
+			const row = table.find((t) => t.team.toLowerCase().includes(n) || n.includes(t.team.toLowerCase()));
+			return row ? `${escapeHtml(ssShortName(row.team))} ${row.position}. (${row.points})` : null;
+		};
+		const h = look(e.homeTeam), a = look(e.awayTeam);
+		return h && a ? `${h} · ${a}` : '';
+	}
+
+	finishedResult(e) {
+		if (!e.homeTeam || !e.awayTeam) return '';
+		const fb = this.recentResults?.football;
+		if (!Array.isArray(fb)) return '';
+		const hn = e.homeTeam.toLowerCase(), an = e.awayTeam.toLowerCase();
+		const m = fb.find((r) => {
+			const rh = (r.homeTeam || '').toLowerCase(), ra = (r.awayTeam || '').toLowerCase();
+			return (rh.includes(hn) || hn.includes(rh)) && (ra.includes(an) || an.includes(ra)) && r.homeScore != null;
+		});
+		return m ? `${escapeHtml(ssShortName(m.homeTeam))} ${m.homeScore}–${m.awayScore} ${escapeHtml(ssShortName(m.awayTeam))}` : '';
+	}
+
+	golfContext(e) {
+		if (e.sport !== 'golf') return '';
+		const tour = this.standings?.golf?.pga || this.standings?.golf?.dpWorld;
+		const leader = tour?.leaderboard?.[0];
+		return leader ? `${escapeHtml(leader.player)} (${escapeHtml(leader.score)})` : '';
+	}
+
+	bindAgendaExpand() {
+		const agenda = document.getElementById('agenda');
+		if (!agenda) return;
+		const toggle = (row) => {
+			const id = row.dataset.eventId;
+			const e = this._eventById?.get(id);
+			const detail = row.parentElement.querySelector('.ev-detail');
+			if (!e || !detail) return;
+			const open = row.getAttribute('aria-expanded') === 'true';
+			if (!open && !detail.innerHTML) detail.innerHTML = this.eventDetail(e);
+			row.setAttribute('aria-expanded', String(!open));
+			detail.hidden = open;
+		};
+		agenda.addEventListener('click', (evt) => {
+			const link = evt.target.closest('a');
+			if (link) return; // let channel/source links work normally
+			const row = evt.target.closest('.ev.expandable');
+			if (row) toggle(row);
+		});
+		agenda.addEventListener('keydown', (evt) => {
+			if (evt.key !== 'Enter' && evt.key !== ' ') return;
+			const row = evt.target.closest('.ev.expandable');
+			if (row) { evt.preventDefault(); toggle(row); }
+		});
 	}
 
 	// ── "Hva vi følger" — one quiet disclosure at the bottom ──────────────────
@@ -188,25 +314,6 @@ class Dashboard {
 		};
 		body.innerHTML = group('Turneringer', t.tournaments) + group('Ligaer', t.leagues) + group('Utøvere', t.athletes);
 		wrap.hidden = false;
-	}
-
-	// ── AI provenance (hidden until asked) ───────────────────────────────────
-	bindAiBadges() {
-		document.body.addEventListener('click', (evt) => {
-			const badge = evt.target.closest('.ai-badge');
-			if (!badge) return;
-			const e = this.allEvents.find((x) => x.id === badge.dataset.eventId);
-			if (e) this.showAiModal(e);
-		});
-	}
-	showAiModal(e) {
-		document.querySelector('.modal-backdrop')?.remove();
-		const links = (e.evidence || []).map((u) => `<a class="evidence-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`).join('');
-		const b = document.createElement('div');
-		b.className = 'modal-backdrop';
-		b.innerHTML = `<div class="modal"><button class="modal-close" aria-label="Lukk">✕</button><h3>${escapeHtml(e.title)}</h3><p style="font-size:13px;color:var(--fg-2);margin-bottom:8px;">Funnet av research-agenten · sikkerhet: ${escapeHtml(e.confidence || 'ukjent')}</p>${links || '<p style="font-size:13px;color:var(--fg-2);">Ingen kilder registrert.</p>'}</div>`;
-		b.addEventListener('click', (ev) => { if (ev.target === b || ev.target.closest('.modal-close')) b.remove(); });
-		document.body.appendChild(b);
 	}
 
 	// ── Live polling (ESPN, client-side) ─────────────────────────────────────

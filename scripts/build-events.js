@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY } from "./lib/helpers.js";
+import { normalizeStreaming } from "./lib/norwegian-rights.js";
 
 const dataDir = rootDataPath();
 
@@ -137,17 +138,47 @@ if (Array.isArray(previousEvents)) {
 	}
 }
 
-// Keep events from the last 14 days + upcoming
+// Always normalize streaming to Norwegian channels (never show FOX/ESPN/etc.)
+for (const e of all) {
+	e.streaming = normalizeStreaming(e);
+}
+
+// Relevance filter — keep only what the user actually follows, so the agenda
+// isn't cluttered with, e.g., minor tennis events with no tracked player.
+const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
+const followBroadly = new Set(
+	(interests.followBroadly || ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
+);
+const trackTeams = (interests.alwaysTrack?.teams || []).map((t) => t.toLowerCase());
+const trackAthletes = (interests.alwaysTrack?.athletes || []).map((a) => a.toLowerCase());
+const trackTournaments = (interests.alwaysTrack?.tournaments || []).map((t) => t.toLowerCase());
+
+function isRelevant(e) {
+	if (followBroadly.has((e.sport || "").toLowerCase())) return true;
+	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4 || e.source === "ai-research") return true;
+	const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+		...(e.norwegianPlayers || []).map((p) => p.name || p),
+		...(e.participants || [])].join(" ").toLowerCase();
+	if (trackTournaments.some((t) => hay.includes(t))) return true;
+	if (trackTeams.some((t) => hay.includes(t))) return true;
+	if (trackAthletes.some((a) => hay.includes(a))) return true;
+	return false;
+}
+
+// Keep events from the last 14 days + upcoming, and only those we follow
 const cutoff = Date.now() - 14 * MS_PER_DAY;
+let droppedIrrelevant = 0;
 const kept = all.filter((e) => {
 	if (!e.time) return false;
 	const relevantTime = e.endTime ? Date.parse(e.endTime) : Date.parse(e.time);
-	return relevantTime >= cutoff;
+	if (relevantTime < cutoff) return false;
+	if (!isRelevant(e)) { droppedIrrelevant++; return false; }
+	return true;
 });
 kept.sort((a, b) => new Date(a.time) - new Date(b.time));
 fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(kept, null, 2));
 console.log(
-	`Aggregated ${kept.length} events (filtered ${all.length - kept.length} past) into events.json`
+	`Aggregated ${kept.length} events (filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
 
 // Publish tracked.json so the dashboard's "Hva vi følger" surface can read it

@@ -51,58 +51,89 @@
 }
 .day.is-today .day-name { color: var(--accent); }
 
-/* Event row — the whole product, distilled */
+.ev-wrap { border-bottom: 1px solid var(--line); }
+.ev-wrap:last-child { border-bottom: none; }
+
+/* Event row — icon · time · what · where. Scan by the visual anchor, not by reading. */
 .ev {
 	display: grid;
-	grid-template-columns: 54px 1fr auto;
-	gap: 14px;
-	align-items: baseline;
-	padding: 13px 0;
-	border-bottom: 1px solid var(--line);
+	grid-template-columns: 30px 44px 1fr auto 12px;
+	gap: 10px;
+	align-items: center;
+	padding: 11px 0;
 }
-.ev:last-child { border-bottom: none; }
+.ev.expandable { cursor: pointer; }
+.ev.expandable:hover .ev-title { color: var(--accent); }
+
+.ev-flag { font-size: 15px; margin-right: 6px; vertical-align: -1px; }
+.ev-caret { color: var(--fg-3); font-size: 15px; opacity: 0.5; transition: transform 0.15s; justify-self: end; }
+.ev.expandable[aria-expanded="true"] .ev-caret { transform: rotate(90deg); }
+
+/* Expanded detail — the "nice extra", quiet, only on demand */
+.ev-detail {
+	padding: 2px 0 14px 40px;
+	display: grid;
+	gap: 6px;
+	font-size: 13.5px;
+}
+.ev-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
+.ev-detail .d-k { color: var(--fg-3); min-width: 62px; flex-shrink: 0; }
+.ev-detail .d-v { color: var(--fg-2); }
+.ev-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
+.ev-detail a:hover { border-bottom-color: var(--accent); }
+
+/* Sport badge — the quick "what kind of activity" indicator */
+.ev-badge {
+	width: 30px; height: 30px;
+	border-radius: 50%;
+	display: grid; place-items: center;
+	font-size: 15px;
+	line-height: 1;
+	background: color-mix(in srgb, var(--sport-color) 15%, transparent);
+}
 
 .ev-time {
 	font-variant-numeric: tabular-nums;
-	font-size: 15px;
+	font-size: 14px;
 	color: var(--fg-2);
 	white-space: nowrap;
 }
-.ev-main { min-width: 0; }
 .ev-title {
-	display: block;
-	font-size: 16px;
+	min-width: 0;
+	font-size: 15.5px;
 	color: var(--fg);
-	line-height: 1.35;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-.ev-sub {
-	display: block;
-	font-size: 13px;
-	color: var(--fg-3);
-	margin-top: 2px;
+.ev-logo {
+	width: 18px; height: 18px;
+	object-fit: contain;
+	vertical-align: -4px;
+	margin-right: 5px;
 }
 
-/* Must-see: the gentlest possible emphasis — a small accent tick, not a card */
+/* Must-see: a quiet accent ring on the badge — recognisable, not loud */
 .ev.must .ev-title { font-weight: 600; }
-.ev.must .ev-time::before {
-	content: "";
-	display: inline-block;
-	width: 5px; height: 5px; border-radius: 50%;
-	background: var(--accent);
-	margin-right: 7px;
-	vertical-align: middle;
-}
+.ev.must .ev-badge { box-shadow: 0 0 0 1.5px var(--accent); }
 
-/* Where to watch — present but quiet, right-aligned */
+.ai-badge { font-size: 11px; color: var(--fg-3); margin-left: 4px; vertical-align: 1px; }
+.ai-badge:hover { color: var(--accent); }
+
+/* Where to watch — present but quiet, right-aligned, one primary channel */
 .ev-where {
-	font-size: 13.5px;
+	font-size: 13px;
 	color: var(--fg-2);
 	white-space: nowrap;
 	text-align: right;
+	max-width: 116px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .ev-where a { border-bottom: 1px solid transparent; }
 .ev-where a:hover { border-bottom-color: var(--fg-3); color: var(--accent); }
 .ev-where.unknown { color: var(--fg-3); }
+.ev-where-more { color: var(--fg-3); font-size: 11px; margin-left: 4px; }
 
 .ev-live {
 	color: var(--live);
