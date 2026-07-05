@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-05T12:14:15.287Z",
+  "generatedAt": "2026-07-05T12:18:42.088Z",
   "gapCount": 2,
-  "anomalyCount": 2,
+  "anomalyCount": 1,
   "gaps": [
     {
       "kind": "entity",
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/fotballvm2026/farevarsel-for-norges-skjebnekamp-_-kan-bli-kamputsettelser-1.17948011",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-05T12:14:15.125Z"
+      "detectedAt": "2026-07-05T12:18:41.901Z"
     },
     {
       "kind": "entity",
@@ -23,7 +23,7 @@
       "link": "https://www.bbc.co.uk/sport/football/articles/c2ky2x52kwlo?at_medium=RSS&amp;at_campaign=rss",
       "feed": "bbc-football",
       "matchCount": 1,
-      "detectedAt": "2026-07-05T12:14:15.125Z"
+      "detectedAt": "2026-07-05T12:18:41.901Z"
     }
   ],
   "anomalies": [
@@ -32,14 +32,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-05T12:14:15.287Z"
-    },
-    {
-      "sport": "esports",
-      "issue": "file-empty",
-      "detail": "docs/data/esports.json has no events and none on the board — source may be down or changed",
-      "severity": "low",
-      "detectedAt": "2026-07-05T12:14:15.287Z"
+      "detectedAt": "2026-07-05T12:18:42.087Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
