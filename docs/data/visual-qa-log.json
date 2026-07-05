@@ -1,53 +1,41 @@
 {
-  "checkedAt": "2026-07-04T16:00:24Z",
+  "checkedAt": "2026-07-05T00:00:00Z",
   "widths": [375, 393, 900],
   "verdict": "issues",
   "findings": [
     {
       "width": 375,
-      "area": "agenda row — tirsdag 7. juli 02:00, United States – Belgium",
-      "issue": "Second team name is truncated to just a flag with no text at all ('United States – 🇧🇪…') — Belgium's name isn't readable, only inferable from the flag.",
+      "area": "agenda row — I dag 18:00, Sjakk-NM 2026 – eliteklassen",
+      "issue": "Channel label truncates to 'Direktesport ...' with no way to see the rest.",
+      "severity": "medium"
+    },
+    {
+      "width": 900,
+      "area": "agenda row — Sjakk-NM 2026 – eliteklassen (desktop)",
+      "issue": "Same channel label still truncates to 'Direktesport (grati...' even at 900px full-page width, so this isn't a narrow-viewport space constraint — the channel column truncates regardless of available width, hiding the qualifier (looks like a '(gratis)'/free-access note).",
       "severity": "medium"
     },
     {
       "width": 375,
-      "area": "agenda row — tirsdag 7. juli 22:00, Switzerland – Colombia",
-      "issue": "Same pattern: 'Switzerland – 🇨🇴…' shows only the opponent's flag, no name text.",
+      "area": "agenda row — lørdag 11. juli 17:00, Wimbledon 2026: Damefinale",
+      "issue": "Channel label truncates to 'HBO Max (fi...' hiding the rest of the qualifier text.",
       "severity": "medium"
     },
     {
-      "width": 393,
-      "area": "agenda row — tirsdag 7. juli 02:00, United States – Belgium",
-      "issue": "Still truncates to 'United States – 🇧🇪 B…' — Belgium not fully readable even at the larger phone width.",
-      "severity": "low"
-    },
-    {
-      "width": 393,
-      "area": "agenda row — tirsdag 7. juli 22:00, Switzerland – Colombia",
-      "issue": "Truncates to 'Switzerland – 🇨🇴 Col…' — Colombia not fully readable.",
-      "severity": "low"
-    },
-    {
-      "width": 375,
-      "area": "cycling stage titles (Etappe rows)",
-      "issue": "Stage titles truncate the finish town, e.g. 'Etappe 1 (lagtempo): Ba…' hides that the stage starts and ends in Barcelona, and 'Etappe 3 (fjell): Granolle…' hides the finish town Les Angles. Confirmed on desktop (900px) that the full text is 'Barcelona – Barcelona' and 'Granollers – Les Angles'.",
-      "severity": "low"
-    },
-    {
-      "width": 393,
-      "area": "cycling stage titles (Etappe rows)",
-      "issue": "Same truncation as at 375px, slightly less severe (a few more characters visible) but finish town still cut off.",
+      "width": 900,
+      "area": "agenda row — Wimbledon 2026: Damefinale (desktop)",
+      "issue": "Same row truncates to 'HBO Max (finale g...' at 900px — confirms the channel-column truncation is width-independent, not mobile-specific.",
       "severity": "low"
     }
   ],
   "notes": [
-    "Norwegian-channel contract holds throughout: only NRK, TV 2 Play, NRK / TV2, and Viaplay appear as broadcasters at all three widths — no foreign broadcaster (ESPN/FOX/Sky) seen.",
+    "Team-name truncation flagged in the previous run (2026-07-04) for 'United States – Belgium' and 'Switzerland – Colombia' is gone today — both fixtures now wrap to a second line and show the full opponent name at 375 and 393px.",
+    "Norwegian-channel contract holds: only NRK, TV 2 Play, NRK / TV 2, Viaplay and Max (HBO Max) appear as broadcasters at all three widths — no foreign broadcaster (ESPN/FOX/Sky) seen. HBO Max/Max is the correct rights holder for Wimbledon per the norwegian-rights skill, so this is not a foreign-broadcaster flag, just a truncation issue.",
     "Flags and sport icons render correctly everywhere — no broken image icons or empty boxes.",
     "Round labels (Åttedelsfinale, Kvartfinale) display correctly next to knockout fixtures.",
     "No horizontal scroll or edge clipping observed at 375px; layout stays a single quiet column with generous spacing at all widths.",
-    "Header, day-group headings, 'Hva vi følger' disclosure, and footer (Oppdatert / Legg til i kalender) are all intact and aligned at every width.",
-    "The Brazil – Norway fixture (i morgen, 22:00) renders with bolder text than neighboring rows, consistent with the must-see accent for a Norwegian team, and it's the only row emphasized this way — restrained, not overused.",
-    "Placeholder bracket fixtures ('Round of 16 1 Winner – Round of 16 2 Winner') truncate identically to the named fixtures at 375/393px; not a real issue today since the names are generic placeholders, but the same truncation will apply once real team names replace them.",
-    "Could not visually confirm whether the Norway accent is implemented as a dot marker per the spec description or as bold text — resolution of the screenshots wasn't sufficient to distinguish a small dot glyph from font-weight change."
+    "Header, day-group headings, 'Hva vi følger' disclosure, and footer (Oppdatert / Legg til i kalender / AI-budsjett line) are all intact and aligned at every width.",
+    "Must-see accent (orange ring on the sport icon) is used sparingly — only John Deere Classic and Brazil – Norway on the first day carry it, not applied to every row.",
+    "Placeholder bracket fixtures ('Round of 16 5 Winner – Round of 16 6 Winner') read as generic text, but that's expected since those slots aren't decided yet — not a visual bug today."
   ]
 }
