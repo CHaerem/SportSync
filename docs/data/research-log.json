@@ -1,23 +1,25 @@
 {
-  "runAt": "2026-07-04T21:14:40Z",
-  "eventsAdded": 0,
+  "runAt": "2026-07-05T09:15:00Z",
+  "eventsAdded": 1,
   "eventsRemoved": 0,
-  "eventsAmended": 25,
-  "trackedDelta": "Ingen nye tracked-oppføringer; rettet aryan-tari (trakk seg fra Sjakk-NM), sjakk-nm-2026 (streaming + felt), wimbledon-2026 (streaming HBO Max), esports-world-cup-2026-chess (streaming Twitch/YouTube), tour-de-france-2026 (delt streaming), kristoffer-ventura (ingen bekreftet start), casper-ruud (andreseedet bekreftet), fifa-world-cup-2026 (kvartfinalevei).",
+  "eventsAmended": 26,
+  "trackedDelta": "La til athlete Karsten Warholm + tournament Diamond League London 2026 (400m hekk 18. juli, NRK). Oppdaterte reason/evidence for Sjakk-NM, Wimbledon, EWC-sjakk og Tour de France etter faktiske streaming-korreksjoner. Ruud/Ventura/Carlsen/Tari re-verifisert (ingen nye events). 21 tracked-oppføringer totalt.",
   "quality": {
     "pass": true,
     "score": 91,
-    "failures": ["Ikke-blokkerende: norwegian-rights-skillen lister fortsatt gamle (nå-rettede) kringkastere for Wimbledon/Sjakk-NM/EWC-sjakk/TdF fordi write-tilgang til .claude/skills/ var blokkert — korreksjonene landet i events.json, men den delte prioren er utdatert og kan gi tilbakefall neste kjøring."]
+    "failures": [
+      "Gstaad-eventet er confidence:high, men evidence-URL-ene støtter deltakelse, ikke TV 2 Play-streamingpåstanden — streaming mangler direkte kilde (arvet fra tidligere kjøring, ikke rørt).",
+      "Eurosport-streamingoppføring på Wimbledon-finalene peker url til hbomax.com/no i stedet for en Eurosport-URL (kosmetisk; Eurosport Norge ligger under WBD/Max).",
+      "norwegian-rights-skillen ble ikke oppdatert (Write/Edit til .claude/skills/ permission-blokkert) — dokumentert i notes."
+    ]
   },
   "notes": [
-    "Korreksjonskjøring: forrige kjøring (17:33Z) var fersk og dekket horisonten godt, så fokus var å rette «hvor kan jeg se det»-feil framfor å legge til nye events.",
-    "Fanet ut 5 parallelle scout-subagenter (tennis, golf, sjakk, fotball/VM, sykkel) + brukte norwegian-rights-skillen som prior.",
-    "STØRSTE FUNN: Aryan Tari trakk seg fra Sjakk-NM eliteklassen (kilde: bergensjakk.no 18. juni-oppdatering, erstattet av reserve FM Gunnar Lund). Fjernet Tari fra event-spillerlisten; beholdt eventet under «Sjakk på elite-nivå» med Amar/Hammer i toppen.",
-    "3 streaming-feil rettet i events.json: Sjakk-NM (NRK→Direktesport+Lichess), Wimbledon-finaler (TV 2 Play→HBO Max+Eurosport), EWC-sjakk (NRK→Twitch/YouTube). Forrige kjøring hevdet å ha rettet Wimbledon men events.json hadde fortsatt TV 2 Play.",
-    "21 Tour de France-etapper: la til Max (Eurosport) ved siden av TV 2 Play (delt rettighetsavtale 2026–2030, bekreftet mot NTB).",
-    "Bekreftet uendret/korrekt: Hovland i felt (Scottish Open + The Open, Viaplay), Ruud andreseedet Gstaad (TV 2 Play), Norge–Brasil søndag 22.00 NRK1, Lyn borte 25. juli TV 2 Play, TdF-ruter (Stage 6 Gavarnie-Gèdre, to Alpe d'Huez-avslutninger st.19+20), Carlsen ingen juli-event.",
-    "Kristoffer Ventura: ingen bekreftet start etter John Deere (betinget PGA-status); mulig 3M Open 20.–26. juli — følg opp.",
-    "norwegian-rights-skillen kunne IKKE oppdateres: write-tilgang til .claude/skills/ blokkert (som forrige kjøring). Endringene bør inn: Wimbledon→HBO Max [solid], TdF→+Max/Eurosport, Sjakk-NM→Direktesport/Lichess, EWC-sjakk→Twitch/YouTube.",
-    "Ingen fact-check-subagent på nye events (ingen nye events lagt til); korreksjonene er hver for seg belagt med primærkilder fra uavhengige scouts."
+    "KRITISK FUNN: BÅDE forrige research-log OG tracked-notes hevdet at streaming-korreksjonene var skrevet, men events.json hadde dem IKKE (Sjakk-NM sto «NRK», Wimbledon-finalene «TV 2 Play», EWC-sjakk «NRK»). Dette er andre kjøring på rad der korreksjonene «forsvant» — mistenker at samtidig static-pipeline-commit + rebase overskrev events.json-endringene før de landet. Denne kjøringen verifiseres events.json på origin ETTER push.",
+    "Streaming-korreksjoner FAKTISK skrevet denne kjøringen (verifisert av parallell streaming-scout mot primærkilder): Sjakk-NM NRK→Direktesport; Wimbledon-finaler TV 2 Play→HBO Max+Eurosport (finaler også gratis på REX); EWC-sjakk NRK→Chess.com/Twitch/YouTube; alle 21 Tour de France-etapper TV 2 Play→ +Max/Eurosport (delt rettighet 2026–2030, bekreftet mot tvkampen.com ground truth).",
+    "NYTT EVENT: Karsten Warholm 400m hekk, Diamond League London 18. juli (London Stadium), NRK1/NRK TV. Fyller reell recall-glippe i «Norske utøvere i internasjonal toppidrett». Egen fact-checker bekreftet dato 18. juli (ikke 19.), stevnestart ~13.00 BST/12.00 UTC; eksakt hekketid TBD. Ingebrigtsen (akillesskade) bevisst utelatt; Monaco Herculis 10. juli har ingen bekreftet norsk deltaker.",
+    "coverage-audit high-severity-gap (Tour de France etappe 6–21 + Sjakk-NM eliteklassen) er nå LØST i events.json.",
+    "Fanet ut 3 parallelle subagenter: streaming-verifiserer, recall-sweep, og fact-checker for Warholm-eventet. Grader-subagent ga pass/91.",
+    "MILJØ-PROBLEM: Write/Edit til .claude/skills/ blokkeres (permission ikke innvilget) — samme som forrige kjøring. norwegian-rights-skillen bør oppdateres (Wimbledon→HBO Max/Eurosport solid + REX, TdF→+Max/Eurosport solid, Sjakk-NM→Direktesport, ny linje friidrett/Diamond League→NRK 2025–2029).",
+    "validate-events.js: 42 events, 0 errors. tracked-schema-sjekk: 21 oppføringer OK."
   ]
 }
