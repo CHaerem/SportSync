@@ -44,7 +44,9 @@ Drop expired entries. Every entry must have a `reason` you can defend.
 **Fan out with parallel subagents.** Delegate one scout subagent per active
 domain instead of researching sequentially — e.g. one per in-season sport from
 tracked.json (golf scout, cycling scout, chess scout, winter-sports scout in
-season) plus one X/media sweep using the `x-sources` skill. Each scout returns
+season, a **CS2 scout** using the `cs2-sources` skill for 100 Thieves / rain
+matches incl. smaller tournaments) plus one X/media sweep using the `x-sources`
+skill. Each scout returns
 candidate events with sources; you reconcile, dedupe against events.json, apply
 the confidence rules, and write the outputs yourself. Intervene if a scout goes
 off track. Do not delegate Steps 1, 3 or 4 — reconciliation and file writes are
@@ -60,6 +62,9 @@ Static fetchers (ESPN-driven) miss:
 Use the **web-search** and **web-fetch** capabilities provided by your runtime. Source priority:
 - Norwegian: nrk.no/sport, tv2.no/sport, vg.no/sport, dagbladet.no/sport
 - Official: fis-ski.com, biathlonworld.com, uci.org, atptour.com, pgatour.com, espn.com
+- Esports (CS2): see the `cs2-sources` skill (`.claude/skills/cs2-sources/SKILL.md`) —
+  liquipedia.net + hltv.org for schedules, Twitch/Kick for streaming; the hourly
+  fetcher already lists scheduled 100 Thieves matches, so cover the late/X-only ones
 - Wikipedia "[sport] season 2026" for canonical calendars
 - Athlete/team official channels for last-minute info
 - X/Twitter — **indirectly via web search only** (x.com blocks fetching). Use the

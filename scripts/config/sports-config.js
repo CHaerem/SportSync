@@ -190,13 +190,25 @@ export const sportsConfig = {
 	esports: {
 		sport: "esports",
 		enabled: true,
-		source: "Curated configs + Discovery loop",
+		source: "Liquipedia matches + curated configs",
 		sources: [
+			{
+				// Ground truth for CS2 match times. The Liquipedia:Matches widget lists
+				// upcoming matches (all tiers) with exact timestamps, usually well before
+				// a team's own X post — so this catches 100 Thieves matches (majors AND
+				// smaller tournaments, kept via the focus-team filter) hourly.
+				api: "liquipedia",
+				type: "api",
+				enabled: true,
+				url: "https://liquipedia.net/counterstrike/api.php",
+				params: { action: "parse", page: "Liquipedia:Matches", format: "json" },
+				note: "MediaWiki parse API; parsed by parseLiquipediaMatches()"
+			},
 			{
 				api: "curated-configs",
 				type: "local",
 				enabled: true,
-				note: "Reads scheduled matches from bracket data in scripts/config/esports-*.json"
+				note: "Reads scheduled matches from bracket data in scripts/config/esports-*.json (optional)"
 			}
 		],
 		filters: {
@@ -209,9 +221,13 @@ export const sportsConfig = {
 			players: ["rain"],
 			filterMode: "inclusive"
 		},
+		// CS2 broadcasts are free on the tournament's own stream — usually Twitch,
+		// increasingly Kick. Generic platform pointers (honest about where, not a
+		// specific wrong channel); the cs2-sources skill has research/verify resolve
+		// the exact tournament channel when it can.
 		streaming: [
-			{ platform: "Twitch", url: "https://twitch.tv/esworldcup", type: "twitch" },
-			{ platform: "YouTube", url: "https://youtube.com/@EsportsWorldCup", type: "youtube" }
+			{ platform: "Twitch", url: "https://twitch.tv", type: "twitch" },
+			{ platform: "Kick", url: "https://kick.com", type: "kick" }
 		]
 	}
 };

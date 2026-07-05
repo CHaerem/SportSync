@@ -1,4 +1,18 @@
 import https from "https";
+import zlib from "zlib";
+
+/** Decompress a response body Buffer per its Content-Encoding (identity → unchanged). */
+function decodeBody(buffer, contentEncoding) {
+	const enc = (contentEncoding || "").toLowerCase();
+	try {
+		if (enc === "gzip") return zlib.gunzipSync(buffer);
+		if (enc === "deflate") return zlib.inflateSync(buffer);
+		if (enc === "br") return zlib.brotliDecompressSync(buffer);
+	} catch {
+		// Fall back to the raw bytes if decompression fails.
+	}
+	return buffer;
+}
 
 export class APIClient {
 	constructor(options = {}) {
@@ -40,11 +54,14 @@ export class APIClient {
 
 	makeRequest(url, options) {
 		return new Promise((resolve, reject) => {
-			const request = https.get(url, { headers: options.headers }, (response) => {
-				let body = "";
-				
-				response.on("data", chunk => body += chunk);
-				
+			// Advertise gzip so APIs that require it (e.g. Liquipedia returns 406
+			// otherwise) work; caller headers can still override.
+			const headers = { "Accept-Encoding": "gzip, deflate, br", ...options.headers };
+			const request = https.get(url, { headers }, (response) => {
+				const chunks = [];
+
+				response.on("data", chunk => chunks.push(chunk));
+
 				response.on("end", async () => {
 					if (response.statusCode >= 500 && options.retries > 0) {
 						await this.delay(options.retryDelay);
@@ -60,6 +77,10 @@ export class APIClient {
 						}
 						return;
 					}
+
+					// Collect as bytes and decompress — string concat corrupts both
+					// gzipped bodies and multibyte UTF-8 split across chunk boundaries.
+					const body = decodeBody(Buffer.concat(chunks), response.headers["content-encoding"]).toString("utf8");
 
 					if (response.statusCode >= 400) {
 						reject(new Error(`HTTP ${response.statusCode}: ${body.substring(0, 100)}`));

@@ -44,8 +44,8 @@ export function parseLiquipediaMatches(html) {
 			if (name && name !== "TBD") teamNames.push(name);
 		}
 
-		// Extract tournament name
-		const tournamentMatch = block.match(/class="match-info-tournament-name"[^>]*>(?:<a[^>]*>)?([^<]+)/);
+		// Extract tournament name (name sits in a <span> inside the <a>)
+		const tournamentMatch = block.match(/class="match-info-tournament-name"[^>]*>(?:<a[^>]*>)?(?:<span[^>]*>)?([^<]+)/);
 		const tournament = tournamentMatch ? tournamentMatch[1].trim() : "CS2 Match";
 
 		// Extract format (Bo1, Bo3, Bo5)

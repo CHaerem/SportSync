@@ -16,6 +16,8 @@ Escalation-worthy signals (any ONE suffices):
 - A schedule/time/venue CHANGE for an event we already list
 - A broadcaster/streaming announcement affecting an upcoming tracked event
 - A significant new event involving tracked athletes/teams announced in the news
+  (incl. a **100 Thieves / rain CS2 match** hint — these are announced late and are
+  easy to miss, so escalate even a terse mention of an upcoming match/tournament)
 - A coverage gap entry that clearly refers to a concrete upcoming event
 
 Noise (never escalate): match results, transfer gossip, injuries without

@@ -37,7 +37,7 @@ Two kinds of scheduled work:
 
 ### 1. Static pipeline (no AI, free, ~3 min)
 `.github/workflows/static-pipeline.yml` — hourly 05–21 UTC:
-- `scripts/fetch/index.js` — ESPN fetchers (football, golf, tennis, F1, chess, esports, cycling) + fotball.no
+- `scripts/fetch/index.js` — ESPN fetchers (football, golf, tennis, F1, chess, cycling) + fotball.no + **Liquipedia CS2 matches** (`esports.js`: hourly `Liquipedia:Matches`, keeps focus-team (100 Thieves) matches at any tier; the `APIClient` sends `Accept-Encoding: gzip` + decompresses, which Liquipedia requires)
 - `scripts/fetch-standings.js` → `standings.json` (PL table, golf leaderboards, F1)
 - `scripts/fetch-rss.js` → `rss-digest.json` (11 feeds)
 - `scripts/fetch-results.js` → `recent-results.json` (7-day history)
@@ -116,7 +116,10 @@ The product's primary goal is **correct when/where info and complete coverage**
     after every write to `docs/data/events.json` and feeds failures back to the agent
 - `.claude/skills/` holds agent playbooks with progressive disclosure (loaded when
   relevant, not stuffed into prompts): `x-sources` (X/Twitter as an indirect source —
-  account list + trust rules), `norwegian-rights` (NRK/TV2/Viaplay priors), and
+  account list + trust rules), `norwegian-rights` (NRK/TV2/Viaplay priors),
+  `cs2-sources` (CS2 schedules + streaming — Liquipedia/HLTV/official-X ground truth
+  for 100 Thieves / rain matches incl. smaller tournaments, Twitch/Kick viewing; the
+  fetcher covers scheduled matches, research/verify cover the late/X-only ones), and
   `source-quirks` (**the qualitative learning loop**: structural failure modes of
   specific sources + how to compensate, e.g. ESPN mis-dating F1 weekends — read by
   research/verify/coverage-critic, appended by `verify` when a repeated, mechanistic
