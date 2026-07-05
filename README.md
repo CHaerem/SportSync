@@ -8,6 +8,19 @@
 
 **See it live**: [chaerem.github.io/SportSync](https://chaerem.github.io/SportSync/)
 
+<!-- STATUS:START -->
+## AI-budsjett
+
+Kvoten er **konto-bred** (delt med interaktiv Claude-bruk) — samlet kvote-trykk, ikke per-agent.
+
+| Vindu | Brukt | Detaljer |
+|---|---|---|
+| Uke (7d) | **67%** 🟢 | nullstilles 2026-07-08 |
+| Sesjon (5t) | 20% | nullstilles 14:20 UTC |
+
+<sub>Oppdatert 2026-07-05 12:50 UTC av `usage-monitor` · kilde: `docs/data/usage-summary.json` · [Self-throttling on quota](#self-throttling-on-quota)</sub>
+<!-- STATUS:END -->
+
 ## The idea
 
 Sports APIs cover the big leagues. They miss most of what a Norwegian fan cares about:
