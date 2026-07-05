@@ -1,18 +1,18 @@
 {
-	"runAt": "2026-07-04T18:38:32Z",
+	"runAt": "2026-07-05T11:15:00Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/191",
+	"pr": "https://github.com/CHaerem/SportSync/pull/200",
 	"fixed": [
-		"375px (medium): away-team name truncated to a lone flag — 'United States – 🇧🇪…' now wraps to two lines and reads 'United States – Belgium'",
-		"375px (medium): 'Switzerland – 🇨🇴…' now reads 'Switzerland – Colombia'",
-		"393px (low): 'United States – 🇧🇪 B…' / 'Switzerland – 🇨🇴 Col…' now fully readable",
-		"375/393px (low): cycling stage finish towns clipped ('Etappe 3 (fjell): Granolle…') now show in full ('Granollers – Les Angles')"
+		"375px (medium): Sjakk-NM channel truncated to 'Direktesport…' — channel label now wraps, showing the full name + any qualifier",
+		"900px (medium): 'Direktesport (grati…' — channel-column truncation was width-independent; label now wraps to a quiet second line instead of ellipsis-clipping",
+		"375px (medium): Wimbledon channel truncated to 'HBO Max (fi…' — now wraps fully",
+		"900px (low): 'HBO Max (finale g…' resolved by the same wrap change"
 	],
 	"notes": [
-		"Root cause: .ev-title used single-line white-space:nowrap + text-overflow:ellipsis; on phones the 84–116px channel column starved long 'Home – Away' titles.",
-		"Fix (CSS only, scoped to @media max-width:460px): let .ev-title wrap (white-space:normal, overflow-wrap:break-word, line-height 1.3) and switch the row to align-items:start with a 1px top nudge on badge/time/channel/caret so they align to the first title line instead of floating at the vertical centre of a two-line title.",
-		"Desktop (900px) is untouched — titles still fit on one line, no regression; the fix only engages at the phone breakpoint.",
-		"Re-screenshotted at 375/393/900 and read the images: all reported names now fully readable, layout stays a calm single column, no new overflow, round labels + header + 'Hva vi følger' + footer intact, must-see (Brazil – Norway) accent still restrained.",
+		"Root cause: .ev-where used white-space:nowrap + overflow:hidden + text-overflow:ellipsis with a fixed max-width (116px desktop / 84px phone), so any channel label longer than the cap clipped regardless of available viewport width — hiding qualifiers like '(gratis)'.",
+		"Fix (CSS only, scoped to .ev-where): wrap the channel label at word boundaries (overflow-wrap:break-word, line-height 1.3) instead of clipping, so a qualifier drops to a quiet right-aligned second line. Desktop cap raised 116px→128px for extra breathing room.",
+		"Phone: kept the channel footprint at 84px (title must win the phone's width per the calm-design comment) but reduced channel font 12.5px→11.5px so the longest single channel word ('Direktesport') fits on one line without stealing title space. Verified 'eliteklassen' still wraps as a whole word — no title regression.",
+		"Verified at 375/393/900 with real data AND with '(gratis)'/'(finale gratis)' qualifiers temporarily injected to reproduce the exact finding (data reverted before commit). Layout stays a calm single column, no new overflow, header/agenda/disclosure/footer intact.",
 		"npm test: 173 passed. No data files touched."
 	]
 }
