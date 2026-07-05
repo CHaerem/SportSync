@@ -126,16 +126,13 @@ export const sportsConfig = {
 	chess: {
 		sport: "chess",
 		enabled: true,
-		source: "Curated + Lichess",
+		source: "Lichess + AI research",
+		// The old "curated" source read scripts/config/chess-tournaments.json and
+		// norwegian-chess-players.json, both removed in the v2 rebuild (chess is an
+		// API-less sport maintained by the research agent per CLAUDE.md). Keeping the
+		// source made the fetcher throw ENOENT on every pipeline run. Lichess is the
+		// only live source; upcoming/off-API events come from the research agent.
 		sources: [
-			{
-				api: "curated",
-				type: "config",
-				configFiles: {
-					tournaments: "scripts/config/chess-tournaments.json",
-					players: "scripts/config/norwegian-chess-players.json"
-				}
-			},
 			{
 				api: "lichess",
 				type: "broadcast",

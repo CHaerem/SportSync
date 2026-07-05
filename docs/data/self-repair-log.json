@@ -1,16 +1,15 @@
 {
-	"runAt": "2026-07-04T19:28:00Z",
+	"runAt": "2026-07-05T09:30:00Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/194",
-	"diagnosed": "The football ESPN source configured a dead league code `nor.cup` (Norwegian Cup). ESPN returns HTTP 400 for it every request (nor.1/nor.2 return 200), so every hourly pipeline run fired 7 doomed requests, logged 'ESPN: 7/8 leagues fetched (failed: Norwegian Cup)', and dinged the coverageRatio to 0.875. A valid ESPN league with no fixtures returns 200 + empty events, not 400 — confirming nor.cup is not a real endpoint (nor.nm, nor.cupen etc. also 400).",
+	"pr": "https://github.com/CHaerem/SportSync/pull/197",
+	"diagnosed": "The chess fetcher's config (scripts/config/sports-config.js) still declared a 'curated' source pointing at scripts/config/chess-tournaments.json and scripts/config/norwegian-chess-players.json — both removed in the v2 rebuild (chess is an API-less sport the research agent maintains per CLAUDE.md). fetchCuratedTournaments therefore threw ENOENT for both files on EVERY static-pipeline run ('Failed to load .../chess-tournaments.json: ENOENT ...' x2). It degraded gracefully (loadJsonFile falls back to []) and Lichess still returned 64 active broadcasts, so nothing failed — but the recurring error noise masks real fetch failures and the dead source references files that will never exist.",
 	"fixed": [
-		"Removed the invalid { code: 'nor.cup', name: 'Norwegian Cup' } league from scripts/config/sports-config.js and left a comment so it isn't re-added; NM Cupen coverage falls to the research agent per v2 design."
+		"Removed the dead 'curated' source from the chess config in scripts/config/sports-config.js, leaving Lichess as the only live source (plus the research agent for off-API events, per v2 design). Added a comment explaining why, and updated the source label to 'Lichess + AI research'."
 	],
-	"autoMergeEligible": false,
+	"autoMergeEligible": true,
 	"notes": [
-		"Fix touches scripts/config/** (sensitive path) so the workflow will leave the PR open for human review, not auto-merge.",
-		"Proof: football fetcher now completes with no partial-failure warning and no nor.cup/400 lines (previously logged 7/8 leagues); full npm test green (173 passing).",
-		"Ignored: the many 'Deploy Pages with Previews' failures are the transient GitHub Pages infra error 'Deployment failed, try again later.' (not our code, recent deploys succeed). The earlier 'Static data pipeline' rebase-conflict failures were already fixed by commit 409c0ae (Harden pipeline commit against concurrent-run push races); no pipeline failures since.",
-		"Noted-not-fixed: chess fetcher logs ENOENT for scripts/config/chess-tournaments.json + norwegian-chess-players.json (removed in the v2 rebuild). It degrades gracefully (loadJsonFile falls back to []) and the Lichess source still works, so this is noise rather than breakage; a proper fix would remove the dead 'curated' chess source (sensitive path, design decision) and belongs in a reviewed change."
+		"Non-protected path (scripts/config/sports-config.js, not one of the three protected paths), so the workflow may auto-merge once tests pass.",
+		"Proof: re-ran node scripts/fetch/index.js — the two chess ENOENT lines are gone, Lichess still reports '64 active, 0 upcoming'. Full npm test green (173 passing). node scripts/validate-events.js: 44 events, 0 errors. Regenerated docs/data/*.json were reverted (pipeline-owned content, not part of this fix).",
+		"Ignored (not breakage): the 'Deploy Pages with Previews' failures on 2026-07-04 are the transient GitHub Pages infra error 'Deployment failed, try again later.' — all 2026-07-05 deploys succeed. The earlier 'Static data pipeline' rebase-conflict failures were already fixed by commit 409c0ae3 (Harden pipeline commit against concurrent-run push races); every pipeline run since is green. All agent workflows (research/verify/editorial/scout/coverage-critic/visual-qa/ui-fix/improve/usage-monitor) are green. Usage state is green (session 7%, week 64%), so no quota-driven skips."
 	]
 }
