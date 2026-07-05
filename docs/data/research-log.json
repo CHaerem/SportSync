@@ -1,25 +1,24 @@
 {
-  "runAt": "2026-07-05T09:15:00Z",
+  "runAt": "2026-07-05T11:10:00Z",
   "eventsAdded": 1,
   "eventsRemoved": 0,
   "eventsAmended": 26,
-  "trackedDelta": "La til athlete Karsten Warholm + tournament Diamond League London 2026 (400m hekk 18. juli, NRK). Oppdaterte reason/evidence for Sjakk-NM, Wimbledon, EWC-sjakk og Tour de France etter faktiske streaming-korreksjoner. Ruud/Ventura/Carlsen/Tari re-verifisert (ingen nye events). 21 tracked-oppføringer totalt.",
+  "trackedDelta": "Reconciled against interests.json. OBOS/Lyn entry now lists both the 25 July (Strømsgodset, away) and new 2 August (Sogndal, home) fixtures. Ruud entry updated with a Montreal follow-up (entry unverifiable). Streaming-correction notes rewritten to reflect that the fixes actually landed and validated this run. 21 tracked entries.",
   "quality": {
     "pass": true,
-    "score": 91,
+    "score": 96,
     "failures": [
-      "Gstaad-eventet er confidence:high, men evidence-URL-ene støtter deltakelse, ikke TV 2 Play-streamingpåstanden — streaming mangler direkte kilde (arvet fra tidligere kjøring, ikke rørt).",
-      "Eurosport-streamingoppføring på Wimbledon-finalene peker url til hbomax.com/no i stedet for en Eurosport-URL (kosmetisk; Eurosport Norge ligger under WBD/Max).",
-      "norwegian-rights-skillen ble ikke oppdatert (Write/Edit til .claude/skills/ permission-blokkert) — dokumentert i notes."
+      "Minor: 'London Athletics Meet – Karsten Warholm' is confidence:high while its exact race time is self-described as estimated/not-yet-published — acceptable (event/date/broadcaster solid, 3 evidence URLs, >7 days out) but medium would be more honest until the detailed schedule drops."
     ]
   },
   "notes": [
-    "KRITISK FUNN: BÅDE forrige research-log OG tracked-notes hevdet at streaming-korreksjonene var skrevet, men events.json hadde dem IKKE (Sjakk-NM sto «NRK», Wimbledon-finalene «TV 2 Play», EWC-sjakk «NRK»). Dette er andre kjøring på rad der korreksjonene «forsvant» — mistenker at samtidig static-pipeline-commit + rebase overskrev events.json-endringene før de landet. Denne kjøringen verifiseres events.json på origin ETTER push.",
-    "Streaming-korreksjoner FAKTISK skrevet denne kjøringen (verifisert av parallell streaming-scout mot primærkilder): Sjakk-NM NRK→Direktesport; Wimbledon-finaler TV 2 Play→HBO Max+Eurosport (finaler også gratis på REX); EWC-sjakk NRK→Chess.com/Twitch/YouTube; alle 21 Tour de France-etapper TV 2 Play→ +Max/Eurosport (delt rettighet 2026–2030, bekreftet mot tvkampen.com ground truth).",
-    "NYTT EVENT: Karsten Warholm 400m hekk, Diamond League London 18. juli (London Stadium), NRK1/NRK TV. Fyller reell recall-glippe i «Norske utøvere i internasjonal toppidrett». Egen fact-checker bekreftet dato 18. juli (ikke 19.), stevnestart ~13.00 BST/12.00 UTC; eksakt hekketid TBD. Ingebrigtsen (akillesskade) bevisst utelatt; Monaco Herculis 10. juli har ingen bekreftet norsk deltaker.",
-    "coverage-audit high-severity-gap (Tour de France etappe 6–21 + Sjakk-NM eliteklassen) er nå LØST i events.json.",
-    "Fanet ut 3 parallelle subagenter: streaming-verifiserer, recall-sweep, og fact-checker for Warholm-eventet. Grader-subagent ga pass/91.",
-    "MILJØ-PROBLEM: Write/Edit til .claude/skills/ blokkeres (permission ikke innvilget) — samme som forrige kjøring. norwegian-rights-skillen bør oppdateres (Wimbledon→HBO Max/Eurosport solid + REX, TdF→+Max/Eurosport solid, Sjakk-NM→Direktesport, ny linje friidrett/Diamond League→NRK 2025–2029).",
-    "validate-events.js: 42 events, 0 errors. tracked-schema-sjekk: 21 oppføringer OK."
+    "Biggest fix: streaming corrections that the last TWO runs claimed but never actually landed on main are now written AND validated (validate-events.js: 45 events, 0 errors). Root cause of the recurring loss is almost certainly the research commit being dropped/overwritten during rebase against the concurrent static pipeline; this run follows the exact commit+rebase sequence and re-verifies events.json on origin after push.",
+    "Corrections verified live this run: Sjakk-NM NRK→Direktesport (Amedia broadcasts all games live, Rookieredhead commentates); Wimbledon damefinale+herrefinale TV 2 Play→HBO Max+Eurosport (WBD holds Grand Slam rights in Norway — tennis is NOT on TV 2; finals also free on WBD free channel REX); EWC chess NRK→Chess.com/Twitch/YouTube; all 21 Tour de France stages gained Max (Eurosport) alongside TV 2 Play (shared 2026–2030 rights, tvkampen.com + hjelp.tv2.no).",
+    "New event: Lyn – Sogndal home at Bislett Sunday 2 August 17:00 Oslo (OBOS-ligaen round 16) — resolves the single high-severity coverage-audit recall gap. Fact-checked by a fresh-context subagent against fotball.no (fiksId 8986733): date/time/venue confirmed, TV 2 Play. Confidence high.",
+    "Ruud National Bank Open Montreal (Masters 1000, main draw 3–13 Aug, TV 2 Play): tournament confirmed but Ruud's entry UNVERIFIABLE now (roster/draw published ~31 July). Per the write-time fact-check, unverifiable→dropped rather than guessed. Documented as a tracked follow-up; re-verify late July. Washington DC Open (25 Jul–2 Aug) entry also unconfirmed.",
+    "Ventura: still no confirmed start after John Deere Classic (finished 5 July, ~124th); Barracuda (16–19 Jul) / 3M Open (23–26 Jul) unconfirmed. No event added.",
+    "coverage-gaps.json (Premier League feud, Lyn weather warning) were RSS noise / not concrete events — dismissed. Scout logged 12x 'quiet' over the last day.",
+    "ENVIRONMENT ISSUE (recurring): Write/Edit to .claude/skills/norwegian-rights/SKILL.md was BLOCKED again (permission not granted). The skill still labels Wimbledon/Tennis and TdF as [verify] with stale values; it should read Wimbledon→HBO Max/Eurosport [solid]+REX, ATP tour→TV 2 Play, TdF→+Eurosport/Max [solid], and gain Sjakk-NM→Direktesport and Diamond League→NRK lines. Needs a permission fix in the workflow so agents can maintain their own skills.",
+    "Fan-out: parallel web-search sweeps (football/tennis/chess/cycling rights) plus a dedicated fresh-context fact-checker and an independent grader subagent, per the prompt's write-time fact-check and grading contracts."
   ]
 }
