@@ -1,6 +1,13 @@
 // detect-coverage-gaps.js: recall watch — entities in the news with no upcoming event.
 import { describe, it, expect } from "vitest";
-import { buildWatchlist, hasUpcomingEvent, detectGaps, containsName } from "../scripts/detect-coverage-gaps.js";
+import {
+	buildWatchlist,
+	hasUpcomingEvent,
+	detectGaps,
+	containsName,
+	headlineIsImminent,
+	detectSourceAnomalies,
+} from "../scripts/detect-coverage-gaps.js";
 
 const NOW = Date.parse("2026-07-03T12:00:00Z");
 const interests = { alwaysTrack: { athletes: ["Viktor Hovland"], teams: ["Lyn"], tournaments: [] } };
@@ -67,5 +74,115 @@ describe("detectGaps", () => {
 
 	it("handles missing inputs gracefully", () => {
 		expect(detectGaps({ rss: null, events: [], interests: null, tracked: null, now: NOW })).toEqual([]);
+	});
+});
+
+describe("headlineIsImminent", () => {
+	it("recognises Norwegian and English 'happening now' language", () => {
+		expect(headlineIsImminent("Formel 1: British GP i dag på Silverstone")).toBe(true);
+		expect(headlineIsImminent("Live: landskampen mot Sverige")).toBe(true);
+		expect(headlineIsImminent("Ruud klar for turnering neste uke")).toBe(false);
+	});
+});
+
+describe("detectGaps — imminence (entity has a later event but nothing soon)", () => {
+	it("flags an entity the news says plays today while our next event is far out", () => {
+		// Hovland's next event is 12 days out (covered at 14d, not at 4d); news says "i dag".
+		const events = [
+			{ title: "Genesis Scottish Open", norwegianPlayers: [{ name: "Viktor Hovland" }], time: "2026-07-15T10:00:00Z" },
+		];
+		const rss = { items: [{ title: "Viktor Hovland spiller i dag", link: "https://nrk.no/h" }] };
+		const gaps = detectGaps({ rss, events, interests, tracked, now: NOW });
+		const g = gaps.find((x) => x.entity === "Viktor Hovland");
+		expect(g).toBeTruthy();
+		expect(g.type).toBe("imminent");
+		expect(g.imminent).toBe(true);
+	});
+
+	it("does NOT flag imminence when the entity already has an event in the next few days", () => {
+		const events = [
+			{ title: "The Open R1", norwegianPlayers: [{ name: "Viktor Hovland" }], time: "2026-07-04T08:00:00Z" },
+		];
+		const rss = { items: [{ title: "Viktor Hovland spiller i dag" }] };
+		const gaps = detectGaps({ rss, events, interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.entity === "Viktor Hovland")).toBeUndefined();
+	});
+});
+
+describe("detectGaps — sport-level blind spot (the F1 case)", () => {
+	it("flags a followed sport that is imminent in the news but absent from the board soon", () => {
+		// F1 in the news happening today; board only has a race 14 days out (the real bug).
+		const events = [{ sport: "f1", title: "Belgian Grand Prix", time: "2026-07-17T11:30:00Z" }];
+		const rss = { items: [{ title: "Formel 1: British Grand Prix i dag", link: "https://f1.no/gp" }] };
+		const gaps = detectGaps({ rss, events, interests, tracked, now: NOW });
+		const g = gaps.find((x) => x.kind === "sport" && x.sport === "f1");
+		expect(g).toBeTruthy();
+		expect(g.type).toBe("imminent");
+	});
+
+	it("does not flag the sport when an event is actually on the board soon", () => {
+		const events = [{ sport: "f1", title: "British Grand Prix", time: "2026-07-05T14:00:00Z" }];
+		const rss = { items: [{ title: "Formel 1: British Grand Prix i dag" }] };
+		const gaps = detectGaps({ rss, events, interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.kind === "sport" && x.sport === "f1")).toBeUndefined();
+	});
+
+	it("requires imminence language, not just a sport mention", () => {
+		const events = [];
+		const rss = { items: [{ title: "Formel 1: sesongen oppsummert så langt" }] };
+		const gaps = detectGaps({ rss, events, interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.kind === "sport" && x.sport === "f1")).toBeUndefined();
+	});
+});
+
+describe("detectSourceAnomalies", () => {
+	const healthy = () => {
+		const s = {};
+		for (const sport of ["football", "golf", "tennis", "f1", "chess", "esports", "cycling"]) {
+			s[sport] = { tournaments: [{ events: [{ time: "2026-07-05T10:00:00Z" }] }] };
+		}
+		return s;
+	};
+	const boardWithAll = () =>
+		["football", "golf", "tennis", "f1", "chess", "esports", "cycling"].map((sport) => ({
+			sport,
+			time: "2026-07-05T10:00:00Z",
+		}));
+
+	it("is quiet when every source is healthy and on the board", () => {
+		expect(detectSourceAnomalies({ sources: healthy(), events: boardWithAll(), now: NOW })).toEqual([]);
+	});
+
+	it("stays quiet when the fetcher file is empty but the board is covered (AI research)", () => {
+		// chess/cycling have no API and are filled by research — an empty file is expected.
+		const s = healthy();
+		s.chess = { tournaments: [] };
+		const a = detectSourceAnomalies({ sources: s, events: boardWithAll(), now: NOW });
+		expect(a.find((x) => x.sport === "chess")).toBeUndefined();
+	});
+
+	it("flags a missing fetcher file only when the board also lacks the sport", () => {
+		const s = healthy();
+		s.f1 = null;
+		const board = boardWithAll().filter((e) => e.sport !== "f1");
+		const a = detectSourceAnomalies({ sources: s, events: board, now: NOW });
+		expect(a.find((x) => x.sport === "f1")?.issue).toBe("file-missing");
+	});
+
+	it("flags an empty fetcher file when the board lacks the sport", () => {
+		const s = healthy();
+		s.chess = { tournaments: [] };
+		const board = boardWithAll().filter((e) => e.sport !== "chess");
+		const a = detectSourceAnomalies({ sources: s, events: board, now: NOW });
+		expect(a.find((x) => x.sport === "chess")?.issue).toBe("file-empty");
+	});
+
+	it("flags (high) events present in the source but dropped from the board", () => {
+		const s = healthy();
+		const board = boardWithAll().filter((e) => e.sport !== "f1"); // f1 has source events but none on board
+		const a = detectSourceAnomalies({ sources: s, events: board, now: NOW });
+		const f1 = a.find((x) => x.sport === "f1");
+		expect(f1?.issue).toBe("dropped-in-build");
+		expect(f1?.severity).toBe("high");
 	});
 });
