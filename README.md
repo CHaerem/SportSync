@@ -49,9 +49,9 @@ no databases, no paid APIs.
 ```
 ┌────────────────────────────────────────────────────────────┐
 │ STATIC PIPELINE (hourly, no AI, ~3 min)                    │
-│ ESPN + fotball.no fetchers → standings, RSS, results,      │
-│ tvkampen TV listings → build-events.js → events.json       │
-│ (+ preserves AI events, resolves Norwegian channels)       │
+│ ESPN + fotball.no + Liquipedia CS2 → standings, RSS,       │
+│ results, tvkampen TV listings → build-events.js →          │
+│ events.json (preserves AI events, Norwegian channels)      │
 │ → auto-publishes to Pages on change (workflow_call)        │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
@@ -77,8 +77,9 @@ no databases, no paid APIs.
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ COVERAGE CRITIC (daily, Claude Opus) — recall audit        │
-│ Reasons about important events we are MISSING over a       │
-│ ~4-week horizon → coverage-audit.json → escalates gaps     │
+│ Trusts no single source: an imminent pass (is this         │
+│ weekend on the board? verify vs the web) + a 4-week        │
+│ horizon → coverage-audit.json → escalates gaps             │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ VISUAL QA (daily, Claude Sonnet) — vision review           │
