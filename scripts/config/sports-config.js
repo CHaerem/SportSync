@@ -203,12 +203,6 @@ export const sportsConfig = {
 				url: "https://liquipedia.net/counterstrike/api.php",
 				params: { action: "parse", page: "Liquipedia:Matches", format: "json" },
 				note: "MediaWiki parse API; parsed by parseLiquipediaMatches()"
-			},
-			{
-				api: "curated-configs",
-				type: "local",
-				enabled: true,
-				note: "Reads scheduled matches from bracket data in scripts/config/esports-*.json (optional)"
 			}
 		],
 		filters: {
