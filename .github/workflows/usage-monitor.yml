@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add docs/data/usage-state.json 2>/dev/null || true
+          git add docs/data/usage-state.json docs/data/usage-history.jsonl docs/data/usage-summary.json 2>/dev/null || true
           if ! git diff --staged --quiet; then
             git commit -m "usage-monitor: refresh quota state"
             git push || (git pull --rebase -X theirs origin ${{ github.ref_name }} && git push)

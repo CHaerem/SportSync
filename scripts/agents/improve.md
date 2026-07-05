@@ -15,7 +15,12 @@ meaningfully gate it.
   `visual-qa-log.json`, `scout-log.json`, `self-repair-log.json` — what the agents
   have been finding, missing, fixing, and failing at
 - `docs/data/calibration.json` — which sources have proven reliable vs not
-- `docs/data/usage-state.json` — quota pressure (is anything getting starved?)
+- `docs/data/usage-state.json` — current quota pressure (is anything getting starved?)
+- `docs/data/usage-summary.json` — the quota TREND (7d/30d peak & avg week
+  utilization, hours spent conserving, 24h direction). Use it to judge whether the
+  agent schedule fits the budget: sustained high `avgWeekPct` or many `amberHours`/
+  `redHours` → an optional agent runs too often; consistently low → we have headroom.
+  Cross-reference agent run frequency (`gh run list`) to attribute the pressure.
 - `docs/data/events.json`, `recent-results.json` — the actual output quality
 
 ## Look for a real, evidenced improvement
@@ -27,6 +32,9 @@ Patterns worth acting on (pick the ONE with the best evidence + payoff):
 - **Repeated self-repair of the same thing** → propose the durable root-cause fix.
 - A **prompt or threshold that's misfiring** (e.g. confidence rules, governor
   thresholds, relevance filter) → propose a tuning, with the evidence.
+- A **schedule that doesn't fit the budget** (from `usage-summary.json`): an agent's
+  cron is too frequent for its payoff when the week runs hot, or there's headroom to
+  run something more often → propose the cron change, citing the trend.
 - An **interest that's under-served** by the current fetchers/agents.
 
 ## The bias that keeps this from becoming v1

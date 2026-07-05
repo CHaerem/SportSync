@@ -86,7 +86,7 @@ commit; a test failure leaves the PR open and fails the run loudly.
 Claude Code Max quota is finite and shared with interactive use. Two mechanisms keep the agents from silently dying when it runs low:
 
 - **Model fallback** — `research-agent.yml` tries `claude-fable-5`, detects if it produced no commit (quota/unavailable), and re-runs on `claude-opus-4-8`; fails loudly only if both do nothing. (Fable 5 errors instantly on this OAuth tier, so this is load-bearing.)
-- **`usage-monitor.yml`** (hourly, no prompt) — runs `scripts/check-usage.js`, which reads REAL account-wide quota. There is no supported quota API for a Max OAuth token, but a **minimal `/v1/messages` call with `CLAUDE_CODE_OAUTH_TOKEN` returns the `anthropic-ratelimit-unified-*` headers** (5h + 7d utilization, reset epochs, allowed/allowed_warning/rejected). It writes `usage-state.json` (green/amber/red + skipAll/skipNiceToHave).
+- **`usage-monitor.yml`** (hourly, no prompt) — runs `scripts/check-usage.js`, which reads REAL account-wide quota. There is no supported quota API for a Max OAuth token, but a **minimal `/v1/messages` call with `CLAUDE_CODE_OAUTH_TOKEN` returns the `anthropic-ratelimit-unified-*` headers** (5h + 7d utilization, reset epochs, allowed/allowed_warning/rejected). It writes `usage-state.json` (green/amber/red + skipAll/skipNiceToHave), **appends the reading to `usage-history.jsonl`** (append-only, trimmed to ~100 days), and rolls that into **`usage-summary.json`** (latest + 24h trend + 7d/30d peak/avg week utilization + hours spent conserving). NB: the headers are **account-wide** (shared with interactive use) — this is total quota pressure, not per-agent attribution. The `improve` agent mines `usage-summary.json` (+ `gh run list` for per-agent frequency) to tune schedules/thresholds to the budget.
 - **Gate** — every agent runs `scripts/usage-gate.js <critical|optional>` as a pre-flight step and only proceeds `if: steps.usage.outputs.run == 'true'`. `critical` (research, verify, scout) skip only when `skipAll` (session near-exhausted / rejected); `optional` (editorial, coverage-critic, visual-qa) also skip when amber/red. **Fail-open**: missing/stale (>3h)/unparsed state ⇒ run. The dashboard shows a quiet "AI-budsjett" line from `usage-state.json`.
 
 ### Coverage & correctness loops (the core mission)
@@ -153,7 +153,8 @@ no dashboard grid, no competing panels.
 `tracked.json` (published copy), `research-log.json`, `verify-log.json`, `meta.json`,
 `coverage-gaps.json`, `coverage-audit.json` (coverage-critic), `visual-qa-log.json` (visual-qa),
 `ui-fix-log.json` (ui-fix), `self-repair-log.json` (self-repair), `improve-log.json` (improve),
-`usage-state.json` (quota governor), `scout-log.json`, `calibration.json`, `tv-listings.json`,
+`usage-state.json` + `usage-history.jsonl` + `usage-summary.json` (quota governor: snapshot, append-only history, digest),
+`scout-log.json`, `calibration.json` + `calibration-ledger.jsonl`, `tv-listings.json`,
 per-sport source files (`football.json` …), `events.ics`.
 
 New data files must be whitelisted in `.gitignore` (which ignores `docs/data/*.json`
