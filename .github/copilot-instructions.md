@@ -1,6 +1,6 @@
 <!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
 
-This project is a calm, static sports dashboard for a Norwegian sports fan, hosted on GitHub Pages (no build step). Data comes from an hourly static pipeline (ESPN + fotball.no + tvkampen TV listings) plus four scheduled Claude agents (research, verify, editorial, scout) that run on GitHub Actions — see [CLAUDE.md](../CLAUDE.md) for the full architecture. The frontend is vanilla JS (no framework); Norwegian-language UI, Europe/Oslo timezone.
+This project is a calm, static sports dashboard for a Norwegian sports fan, hosted on GitHub Pages (no build step). Data comes from an hourly static pipeline (ESPN + fotball.no + Liquipedia CS2 + tvkampen TV listings) plus nine scheduled Claude agents (research, verify, editorial, scout, coverage-critic, visual-qa, ui-fix, self-repair, improve) that run on GitHub Actions — see [CLAUDE.md](../CLAUDE.md) for the full architecture. The frontend is vanilla JS (no framework); Norwegian-language UI, Europe/Oslo timezone.
 
 Key frontend files:
 - `docs/js/dashboard.js` — controller (data load, the day-grouped agenda, live polling)

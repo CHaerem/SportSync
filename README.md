@@ -116,12 +116,14 @@ out), the UI shows one honest tentative `NRK / TV 2` label rather than guessing.
 Claude Code Max quota is finite and shared with interactive use, so the agents
 watch it. A `usage-monitor` reads real account-wide usage — a minimal
 `/v1/messages` call returns the `anthropic-ratelimit-unified-*` headers (5h + 7d
-utilization + reset times) — and writes `usage-state.json`. Every agent gates on
-it: critical ones (research, verify) run unless the budget is nearly gone;
-nice-to-haves (editorial, coverage-critic, visual-qa) step aside first when it
-runs low. Research also prefers Fable 5 and auto-falls back to Opus 4.8 if Fable
-is unavailable. The dashboard shows a quiet "AI-budsjett" line. Fail-open by
-design — the governor throttles only on fresh, confident quota data.
+utilization + reset times) — writes `usage-state.json`, keeps an append-only
+`usage-history.jsonl`, and rolls it into the trend shown in the **AI-budsjett**
+block at the top of this README. Every agent gates on it: critical ones (research,
+verify, scout) run unless the budget is nearly gone; nice-to-haves (editorial,
+coverage-critic, visual-qa) step aside first when it runs low. Research also
+prefers Fable 5 and auto-falls back to Opus 4.8 if Fable is unavailable. The
+dashboard shows a quiet "AI-budsjett" line too. Fail-open by design — the governor
+throttles only on fresh, confident quota data.
 
 ### Transparent tracking
 
@@ -134,9 +136,10 @@ design — the governor throttles only on fresh, confident quota data.
 
 ### Portability
 
-Vendor lock-in is confined to the three agent workflow files
-(`anthropics/claude-code-action@v1`). The prompts in `scripts/agents/*.md` are
-capability-described — swap the AI provider by replacing workflow YAML only.
+Vendor lock-in is confined to the nine agent workflow files
+(`.github/workflows/*-agent.yml`, using `anthropics/claude-code-action@v1`). The
+prompts in `scripts/agents/*.md` are capability-described — swap the AI provider by
+replacing workflow YAML only.
 
 ## Frontend
 
