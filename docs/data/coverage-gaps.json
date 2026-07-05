@@ -1,27 +1,15 @@
 {
-  "generatedAt": "2026-07-05T19:38:40.221Z",
-  "gapCount": 1,
+  "generatedAt": "2026-07-05T20:56:48.673Z",
+  "gapCount": 0,
   "anomalyCount": 1,
-  "gaps": [
-    {
-      "kind": "entity",
-      "entity": "Lyn",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Fifa med væroppdatering på Norges kamp - vurderer faren for utsettelse som lav",
-      "link": "https://www.nrk.no/fotballvm2026/fifa-med-vaeroppdatering-pa-norges-kamp---vurderer-faren-for-utsettelse-som-lav-1.17948011",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-05T19:38:40.034Z"
-    }
-  ],
+  "gaps": [],
   "anomalies": [
     {
       "sport": "chess",
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-05T19:38:40.220Z"
+      "detectedAt": "2026-07-05T20:56:48.672Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
