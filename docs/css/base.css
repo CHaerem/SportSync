@@ -4,42 +4,54 @@
    restrained accent used only where it earns attention (live, must-see). */
 
 :root {
-	/* Dark — quiet, near-black */
-	--bg: #0c0e11;
-	--surface: #14171b;
-	--fg: #eceef1;
-	--fg-2: #9298a1;
-	--fg-3: #5f656e;
-	--line: #21252b;
-	--accent: #e8825a;   /* warm, low-saturation — a whisper, not a shout */
-	--live: #f0564b;
+	/* Tekst-TV, reborn — a premium modern take on NRK teletext sport pages:
+	   near-black "page", monospace, the teletext colour language led by amber. */
+	/* Dark (default) — the page */
+	--bg: #08090c;
+	--surface: #111318;
+	--fg: #e9ecef;
+	--fg-2: #949aa3;
+	--fg-3: #5b616b;
+	--line: rgba(255, 255, 255, 0.09);
+	--accent: #ffb454;        /* teletext amber — leads the palette */
+	--accent-ink: #08090c;    /* dark text on an amber block */
+	--accent-wash: rgba(255, 180, 84, 0.13);
+	--cyan: #66d0ff;          /* teletext cyan — secondary / links */
+	--live: #ff5b54;          /* teletext red — live */
 
-	--font: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-	--max-w: 640px;
+	--font: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, "Cascadia Mono", monospace;
+	--display: var(--font);
+	--max-w: 680px;
 }
 
 :root[data-theme="light"] {
-	--bg: #f6f3 ec;
-	--bg: #f6f3ec;
-	--surface: #fffdf9;
-	--fg: #1c1915;
-	--fg-2: #6e6960;
-	--fg-3: #a29c90;
-	--line: #e7e2d7;
-	--accent: #c25a34;
-	--live: #cf3b30;
+	/* A clean "paper" sibling — same mono + structure carries the identity */
+	--bg: #f4f4f1;
+	--surface: #ffffff;
+	--fg: #14161a;
+	--fg-2: #5a616b;
+	--fg-3: #9aa0a8;
+	--line: rgba(20, 24, 34, 0.12);
+	--accent: #b26a12;
+	--accent-ink: #ffffff;
+	--accent-wash: rgba(178, 106, 18, 0.12);
+	--cyan: #0e7fb8;
+	--live: #d33a30;
 }
 
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme="dark"]) {
-		--bg: #f6f3ec;
-		--surface: #fffdf9;
-		--fg: #1c1915;
-		--fg-2: #6e6960;
-		--fg-3: #a29c90;
-		--line: #e7e2d7;
-		--accent: #c25a34;
-		--live: #cf3b30;
+		--bg: #f4f4f1;
+		--surface: #ffffff;
+		--fg: #14161a;
+		--fg-2: #5a616b;
+		--fg-3: #9aa0a8;
+		--line: rgba(20, 24, 34, 0.12);
+		--accent: #b26a12;
+		--accent-ink: #ffffff;
+		--accent-wash: rgba(178, 106, 18, 0.12);
+		--cyan: #0e7fb8;
+		--live: #d33a30;
 	}
 }
 
@@ -50,7 +62,7 @@ body {
 	background: var(--bg);
 	color: var(--fg);
 	font-family: var(--font);
-	font-size: 16px;
+	font-size: 15px;
 	line-height: 1.5;
 	font-weight: 400;
 	font-feature-settings: "tnum" 1;   /* tabular numerals — times line up */
