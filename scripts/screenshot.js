@@ -33,6 +33,7 @@ const positional = args.filter((a) => !a.startsWith("--"));
 const outputPath = path.resolve(positional[0] || path.join(rootDataPath(), "screenshot.png"));
 const width = parseInt(flags.find((f) => f.startsWith("--width="))?.split("=")[1] || "480", 10);
 const fullPage = flags.includes("--full-page");
+const colorScheme = flags.includes("--dark") ? "dark" : "light"; // --dark renders the OLED theme
 
 const docsDir = path.resolve(process.cwd(), "docs");
 
@@ -75,6 +76,7 @@ const { chromium } = require('playwright');
 	const page = await browser.newPage({
 		viewport: { width: ${width}, height: 900 },
 		deviceScaleFactor: 2,
+		colorScheme: ${JSON.stringify(colorScheme)},
 	});
 	await page.goto(${JSON.stringify(url)}, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(() => {});
 	await page.waitForTimeout(3000);

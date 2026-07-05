@@ -15,7 +15,7 @@
 	<title>SportSync</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<link rel="stylesheet" href="css/cards.css">
@@ -23,14 +23,17 @@
 <body>
 	<header class="masthead">
 		<div class="wrap masthead-inner">
-			<span class="wordmark">SportSync</span>
-			<span class="masthead-date" id="header-date"></span>
+			<span class="wordmark">SportSync<span class="tt-page">285</span></span>
+			<span class="masthead-clock" id="masthead-clock" aria-hidden="true"></span>
 			<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
 		</div>
 	</header>
 
 	<main class="wrap">
-		<p class="today-line" id="today-line" hidden></p>
+		<section class="hero" id="hero">
+			<p class="hero-eyebrow" id="hero-date"></p>
+			<h1 class="hero-headline" id="hero-headline"></h1>
+		</section>
 		<div class="live-now" id="live-now" hidden></div>
 		<div id="agenda"></div>
 		<details class="followed" id="followed" hidden>

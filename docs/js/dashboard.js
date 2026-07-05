@@ -18,6 +18,7 @@ class Dashboard {
 	async init() {
 		this.initTheme();
 		this.renderDate();
+		this.startClock();
 		await this.loadData();
 		this.render();
 		this.startLivePolling();
@@ -71,20 +72,48 @@ class Dashboard {
 		el.hidden = false;
 	}
 
-	// ── Header ──────────────────────────────────────────────────────────────
+	// ── Hero (the editorial brief) ────────────────────────────────────────────
 	renderDate() {
-		const el = document.getElementById('header-date');
+		const el = document.getElementById('hero-date');
 		if (el) el.textContent = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
 	}
 
-	/** One quiet editorial line under the date — the "nice extra", never a section. */
-	renderTodayLine() {
-		const el = document.getElementById('today-line');
+	/** Teletext-style ticking clock in the header. */
+	startClock() {
+		const el = document.getElementById('masthead-clock');
 		if (!el) return;
-		const headline = this.featured?.blocks?.find((b) => b.type === 'headline')?.text;
-		if (!headline) { el.hidden = true; return; }
-		el.textContent = headline;
-		el.hidden = false;
+		const tick = () => {
+			el.textContent = new Date().toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Oslo' });
+		};
+		tick();
+		clearInterval(this._clockInterval);
+		this._clockInterval = setInterval(tick, 1000);
+	}
+
+	/** The hero headline — the editorial brief, set large in the display serif. */
+	renderTodayLine() {
+		const el = document.getElementById('hero-headline');
+		if (!el) return;
+		const headline = this.featured?.blocks?.find((b) => b.type === 'headline')?.text || this.heroFallback();
+		el.innerHTML = this.emphasize(escapeHtml(headline));
+	}
+
+	/** Calm fallback when the editorial agent hasn't written a headline yet. */
+	heroFallback() {
+		return 'Sporten du følger — når det skjer, og hvor du ser det.';
+	}
+
+	/** Italic-accent the first Norwegian/tracked keyword — one editorial pop in the deck. */
+	emphasize(safe) {
+		const names = ['Norge', 'Norway', ...(this.interests?.alwaysTrack?.athletes || []), ...(this.interests?.alwaysTrack?.teams || [])];
+		const lower = safe.toLowerCase();
+		let best = -1, bestLen = 0;
+		for (const n of names) {
+			const i = lower.indexOf(n.toLowerCase());
+			if (i >= 0 && (best === -1 || i < best)) { best = i; bestLen = n.length; }
+		}
+		if (best === -1) return safe;
+		return safe.slice(0, best) + '<span class="em">' + safe.slice(best, best + bestLen) + '</span>' + safe.slice(best + bestLen);
 	}
 
 	renderFooter() {
@@ -232,10 +261,14 @@ class Dashboard {
 			if (key === todayKey) name = 'I dag';
 			else if (key === tomorrowKey) name = 'I morgen';
 			else name = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
-			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div>${evs.map((e) => this.eventRow(e)).join('')}</section>`;
+			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div><div class="day-card">${evs.map((e) => this.eventRow(e)).join('')}</div></section>`;
 		}
 		if (hasMore) html += `<button type="button" class="agenda-more">Vis resten av de neste to ukene ›</button>`;
 		el.innerHTML = html;
+		// Play the entrance reveal ONCE on first load — not on every live-poll
+		// re-render (which would re-flash the whole agenda each minute).
+		if (!this._revealed) { el.classList.add('reveal'); this._revealed = true; }
+		else { el.classList.remove('reveal'); }
 	}
 
 	/** Fold same-tournament stage races (cycling "Etappe N", etc.) into one series item. */
