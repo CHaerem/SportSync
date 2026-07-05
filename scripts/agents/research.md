@@ -8,15 +8,21 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
 - `scripts/config/tracked.json` — what AI currently tracks (prior state)
 - `docs/data/events.json` — what the static pipeline already found
 - `docs/data/rss-digest.json` — last 24h Norwegian + international headlines
-- `docs/data/coverage-gaps.json` — entities in the news with NO upcoming event
-  on the dashboard. **Triage these first** — each is a potential missed event
-  (recall failures are the worst failure mode). Noise is expected; dismiss fast.
+- `docs/data/coverage-gaps.json` — mechanical recall watch: `gaps[]` (an entity or
+  a followed sport in the news but missing/not-imminent on the board — note
+  `imminent` and `kind: "sport"`) and `anomalies[]` (a fetcher's own data looks
+  unreliable). **Triage these first** — each is a potential missed event (recall
+  failures are the worst failure mode). Noise is expected; dismiss fast.
 - `docs/data/coverage-audit.json` — the coverage-critic's reasoned recall audit.
   Its `gaps[]` (esp. `severity: "high"`) are events it believes we're MISSING,
   each with a `suggestedSource`. **Treat high-severity gaps as priority work** —
   go find and add those events. This is a smarter signal than coverage-gaps.json.
 - `docs/data/calibration.json` — per-source trust stats from past verifications.
   Prefer sources with high reliability for the sport at hand; distrust repeat offenders.
+- `.claude/skills/source-quirks/SKILL.md` — structural failure modes of specific
+  sources and how to compensate (e.g. ESPN mis-dates F1 weekends, so confirm the
+  current race against the official calendar, not the feed). Read it before trusting
+  a source's dates/status for an event you're adding.
 - `docs/data/tv-listings.json` — tvkampen.com ground truth for Norwegian football
   TV/streaming (times are Oslo-local HH:MM without dates — match by team names)
 - `docs/data/scout-log.json` — the hourly scout's verdicts. If a recent entry

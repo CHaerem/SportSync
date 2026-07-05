@@ -33,6 +33,18 @@ to `docs/data/calibration-ledger.jsonl` (create if missing):
 `agreed` = did the source match what we had? These records aggregate mechanically
 into `calibration.json`, which teaches the research agent who to trust.
 
+**Compensate for known source quirks, and capture new ones.** Read the
+`source-quirks` skill (`.claude/skills/source-quirks/SKILL.md`) first — it lists
+*structural* ways specific sources fail (e.g. ESPN dates F1 weekends to Friday, so
+the current race silently drops) and how to compensate. Apply those compensations
+when you verify. When a disagreement you find is not a one-off but a **repeated,
+mechanistic** pattern (a source consistently mis-dates a round, omits a category,
+marks events FINAL early), **append an entry** to that skill in the same commit,
+following its format and its bar for admission. This is how the system learns a
+source's failure mode once instead of rediscovering it every week. (Quantitative
+"how often is it wrong" stays in the calibration ledger; the skill is for the
+mechanism + the fix.)
+
 If `verificationStatus` is `removed` (the event demonstrably does not exist or
 was cancelled), drop the event from events.json entirely.
 
@@ -43,6 +55,8 @@ than 14 days out (APIs are reliable near-term; long-range schedules drift).
 1. Updated `docs/data/events.json`
 2. Appended `docs/data/calibration-ledger.jsonl` (one line per source check)
 3. `docs/data/verify-log.json`: `{ "runAt": ISO, "checked": n, "confirmed": n, "amended": n, "removed": n, "notes": ["..."] }`
+4. Optionally, an updated `.claude/skills/norwegian-rights/SKILL.md` or
+   `.claude/skills/source-quirks/SKILL.md` when you learned something durable
 
 After writing files, run `node scripts/validate-events.js` and fix any errors it reports.
 

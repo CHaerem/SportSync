@@ -115,10 +115,15 @@ The product's primary goal is **correct when/where info and complete coverage**
   - **PostToolUse** `scripts/hooks/validate-after-write.js` — runs `validate-events.js`
     after every write to `docs/data/events.json` and feeds failures back to the agent
 - `.claude/skills/` holds agent playbooks with progressive disclosure (loaded when
-  relevant, not stuffed into prompts). First skill: `x-sources` (X/Twitter as an
-  indirect source — account list + trust rules). Agents update their own skills
-  when they learn something durable; tests enforce frontmatter and that prompt
-  references point at existing skills.
+  relevant, not stuffed into prompts): `x-sources` (X/Twitter as an indirect source —
+  account list + trust rules), `norwegian-rights` (NRK/TV2/Viaplay priors), and
+  `source-quirks` (**the qualitative learning loop**: structural failure modes of
+  specific sources + how to compensate, e.g. ESPN mis-dating F1 weekends — read by
+  research/verify/coverage-critic, appended by `verify` when a repeated, mechanistic
+  quirk is confirmed. This is where a source's failure mode is learned *once* instead
+  of rediscovered weekly; distinct from `calibration.json`, which is the quantitative
+  "how much to trust" side). Agents update their own skills when they learn something
+  durable; tests enforce frontmatter and that prompt references point at existing skills.
 
 ### Config model
 

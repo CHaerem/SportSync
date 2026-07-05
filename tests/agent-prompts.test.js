@@ -75,6 +75,17 @@ describe("agent prompts", () => {
 		expect(read("verify.md")).toContain(".claude/skills/x-sources/SKILL.md");
 	});
 
+	it("the source-quirks learning loop is wired: read by the correctness agents, written by verify", () => {
+		const ref = ".claude/skills/source-quirks/SKILL.md";
+		expect(fs.existsSync(path.resolve(ref)), "source-quirks skill missing").toBe(true);
+		// Read by every agent that trusts a source's dates/status/coverage.
+		for (const f of ["research.md", "verify.md", "coverage-critic.md"]) {
+			expect(read(f), `${f} should reference source-quirks`).toContain(ref);
+		}
+		// verify is the writer: it must instruct appending a durable quirk.
+		expect(read("verify.md").toLowerCase()).toContain("append an entry");
+	});
+
 	it("skills have valid frontmatter (name + description)", () => {
 		const skillsDir = path.resolve(".claude", "skills");
 		const dirs = fs

@@ -11,14 +11,14 @@ sharp, defensible audit of gaps and escalate the urgent ones.
 ## The core assumption you must reject: "our sources are right"
 
 Every upstream source can be wrong, stale, or silently broken, and a plausible-looking
-board can still be missing the very thing happening this weekend. Known failure modes
-you have already been burned by:
+board can still be missing the very thing happening this weekend. **Read the
+`source-quirks` skill (`.claude/skills/source-quirks/SKILL.md`) first** — it is the
+system's memory of *structural* source failures and how to compensate (e.g. ESPN dates
+F1 weekends to Friday and marks them FINAL early, so the race happening right now is
+silently dropped while later races survive — a "covered"-looking board with the current
+race missing). Generalise it: **any API can mis-date or prematurely finalise the current
+round.** Other failure modes:
 
-- **ESPN mis-dates F1 weekends.** It stamps a Grand Prix at the **Friday** session and
-  can mark it `STATUS_FINAL` early, so our `date > now` filter **drops the race that is
-  happening right now** while later races survive. The board looked "covered" (2 future
-  F1 races) while *this weekend's* race was gone. Generalise this: **any API can
-  mis-date or prematurely finalise the current round.**
 - A fetcher can return **empty or stale** data and the board keeps yesterday's picture.
 - A single feed can be **down or wrong** about time/channel.
 
