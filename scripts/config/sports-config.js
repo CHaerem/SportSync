@@ -208,7 +208,9 @@ export const sportsConfig = {
 		filters: {
 			timeRange: 14,
 			maxEvents: 10,
-			teams: ["100 Thieves", "100T", "Team Liquid", "NAVI", "G2", "Astralis"]
+			// Owner interest: CS2 only matters when 100 Thieves (rain) plays. This is
+			// the sole focus-team filter — matches without 100 Thieves are dropped.
+			teams: ["100 Thieves", "100T"]
 		},
 		norwegian: {
 			teams: ["100 Thieves", "100T"],

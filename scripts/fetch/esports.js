@@ -3,16 +3,6 @@ import { sportsConfig } from "../config/sports-config.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
 import { EventFilters } from "../lib/filters.js";
 
-// Top-tier CS2 events to always include for general coverage
-const MAJOR_CS2_PATTERNS = [
-	/major/i, /iem/i, /esl pro/i, /blast/i, /world cup/i,
-	/pgl/i, /dreamhack/i, /champions/i, /pro league/i, /draculan/i
-];
-
-function isMajorEvent(name) {
-	return MAJOR_CS2_PATTERNS.some(p => p.test(name || ""));
-}
-
 /**
  * Parse Liquipedia Matches HTML into structured match objects.
  * The HTML comes from Liquipedia's MediaWiki parse API (action=parse&page=Liquipedia:Matches).
@@ -116,15 +106,17 @@ export class EsportsFetcher extends BaseFetcher {
 
 			const focusTeams = this.config.filters?.teams || [];
 
-			const filtered = parsed.filter(match => {
-				const hasFocusTeam = focusTeams.some(team =>
+			// Owner interest: CS2 is only relevant when the focus team (100 Thieves /
+			// rain) plays. Everything else — even top-tier majors without 100 Thieves —
+			// is intentionally dropped.
+			const filtered = parsed.filter(match =>
+				focusTeams.some(team =>
 					match.team1.toLowerCase().includes(team.toLowerCase()) ||
 					match.team2.toLowerCase().includes(team.toLowerCase())
-				);
-				return hasFocusTeam || isMajorEvent(match.tournament);
-			});
+				)
+			);
 
-			console.log(`Filtered to ${filtered.length} matches (focus teams + major events)`);
+			console.log(`Filtered to ${filtered.length} matches (focus team only: ${focusTeams.join(", ")})`);
 
 			for (const match of filtered.slice(0, 10)) {
 				matches.push({
