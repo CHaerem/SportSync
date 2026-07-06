@@ -89,6 +89,24 @@ function ssExtractAggregate(meta) {
 	return null;
 }
 
+/** Display name of an alwaysTrack entry (bare string or {name, aliases} object). */
+function ssEntityName(entry) {
+	return typeof entry === 'string' ? entry : (entry && entry.name) || '';
+}
+
+/** Flatten alwaysTrack entries into match terms (name + aliases), string or object. */
+function trackedTerms(entries) {
+	const out = [];
+	for (const e of entries || []) {
+		if (typeof e === 'string') { if (e) out.push(e); }
+		else if (e && e.name) {
+			out.push(e.name);
+			if (Array.isArray(e.aliases)) for (const a of e.aliases) if (a) out.push(a);
+		}
+	}
+	return out;
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.SS_CONSTANTS = Object.freeze({
 	MS_PER_MINUTE,
@@ -104,3 +122,5 @@ window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;
 window.ssTeamMatch = ssTeamMatch;
 window.ssExtractAggregate = ssExtractAggregate;
+window.ssEntityName = ssEntityName;
+window.trackedTerms = trackedTerms;

@@ -28,6 +28,16 @@ describe("tracked.json", () => {
 		}
 	});
 
+	it("every entry cites its user-owned basis (interests.json# provenance)", () => {
+		const entries = [...tracked.leagues, ...tracked.athletes, ...tracked.tournaments];
+		for (const entry of entries) {
+			const hasProvenance = (entry.evidence || []).some(
+				(e) => typeof e === "string" && e.startsWith("interests.json#")
+			);
+			expect(hasProvenance, `${entry.id}: evidence must cite an interests.json# basis`).toBe(true);
+		}
+	});
+
 	it("expires timestamps, when present, are valid dates", () => {
 		const entries = [...tracked.leagues, ...tracked.athletes, ...tracked.tournaments];
 		for (const entry of entries) {

@@ -22,7 +22,10 @@
 
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeEntity, entityTerms } from "./lib/helpers.js";
+
+// Re-export so existing importers (tests) keep resolving containsName from here.
+export { containsName };
 
 /** How soon counts as "imminent" — the window the news is usually shouting about. */
 export const IMMINENT_DAYS = 4;
@@ -57,11 +60,14 @@ export const IMMINENCE_MARKERS = [
 	"this weekend", "today", "tonight", "kickoff", "race day",
 ];
 
-/** Build the watchlist: names worth spotting in headlines. */
+/** Build the watchlist: names (and aliases) worth spotting in headlines. */
 export function buildWatchlist(interests, tracked) {
 	const names = new Set();
 	for (const group of ["athletes", "teams", "tournaments"]) {
-		for (const n of interests?.alwaysTrack?.[group] || []) names.add(n);
+		for (const raw of interests?.alwaysTrack?.[group] || []) {
+			const e = normalizeEntity(raw);
+			if (e) for (const term of entityTerms(e)) names.add(term);
+		}
 	}
 	for (const group of ["athletes", "tournaments", "leagues"]) {
 		for (const entry of tracked?.[group] || []) {
@@ -71,38 +77,22 @@ export function buildWatchlist(interests, tracked) {
 	return [...names].filter((n) => n && n.length >= 3);
 }
 
-function normalize(s) {
-	return (s || "").toLowerCase();
-}
-
-/**
- * Word-boundary containment check. Plain substring matching makes short names
- * like "Lyn" match "lynnedslag" — boundaries kill that class of false positive.
- */
-export function containsName(haystack, name) {
-	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu").test(haystack);
-}
-
 /** Does the headline carry "happening now/soon" language? */
 export function headlineIsImminent(headline) {
-	const h = normalize(headline);
-	return IMMINENCE_MARKERS.some((m) => containsName(h, m));
+	return IMMINENCE_MARKERS.some((m) => containsName(headline, m));
 }
 
 /** Does this event mention the given name (title, teams, tournament, players)? */
 function eventMentionsName(event, name) {
-	const haystack = normalize(
-		[
-			event.title,
-			event.tournament,
-			event.homeTeam,
-			event.awayTeam,
-			...(event.norwegianPlayers || []).map((p) => p.name || p),
-			...(event.participants || []),
-		].join(" ")
-	);
-	return containsName(haystack, normalize(name));
+	const haystack = [
+		event.title,
+		event.tournament,
+		event.homeTeam,
+		event.awayTeam,
+		...(event.norwegianPlayers || []).map((p) => p.name || p),
+		...(event.participants || []),
+	].join(" ");
+	return containsName(haystack, name);
 }
 
 /** Does any event within `days` (and not already past) mention this name? */
@@ -134,14 +124,13 @@ export function detectGaps({ rss, events, interests, tracked, now = Date.now() }
 	const watchlist = buildWatchlist(interests, tracked);
 	const items = (rss?.items || []).map((item) => ({
 		item,
-		text: normalize(`${item.title || ""} ${item.description || ""}`),
+		text: `${item.title || ""} ${item.description || ""}`,
 	}));
 	const gaps = [];
 
 	// (1) + partial (imminent) — per tracked entity.
 	for (const name of watchlist) {
-		const n = normalize(name);
-		const matches = items.filter(({ text }) => containsName(text, n));
+		const matches = items.filter(({ text }) => containsName(text, name));
 		if (matches.length === 0) continue;
 
 		const hasUpcoming = hasEventWithin(name, events, now, UPCOMING_DAYS);

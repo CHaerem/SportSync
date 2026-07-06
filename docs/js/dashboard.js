@@ -105,7 +105,7 @@ class Dashboard {
 
 	/** Italic-accent the first Norwegian/tracked keyword — one editorial pop in the deck. */
 	emphasize(safe) {
-		const names = ['Norge', 'Norway', ...(this.interests?.alwaysTrack?.athletes || []), ...(this.interests?.alwaysTrack?.teams || [])];
+		const names = ['Norge', 'Norway', ...trackedTerms(this.interests?.alwaysTrack?.athletes), ...trackedTerms(this.interests?.alwaysTrack?.teams)];
 		const lower = safe.toLowerCase();
 		let best = -1, bestLen = 0;
 		for (const n of names) {
@@ -155,10 +155,10 @@ class Dashboard {
 		// club, or a tracked athlete on the card → give it the accent.
 		const teams = [e.homeTeam || '', e.awayTeam || ''].map((t) => t.toLowerCase());
 		if (teams.some((t) => /\bnorway\b|\bnorge\b/.test(t))) return true;
-		const tracked = (this.interests?.alwaysTrack?.teams || []).map((t) => t.toLowerCase());
+		const tracked = trackedTerms(this.interests?.alwaysTrack?.teams).map((t) => t.toLowerCase());
 		if (teams.some((t) => t && tracked.some((tt) => t.includes(tt)))) return true;
 		const hay = `${e.title || ''} ${(e.norwegianPlayers || []).map((p) => p.name || p).join(' ')}`.toLowerCase();
-		const athletes = (this.interests?.alwaysTrack?.athletes || []).map((a) => a.toLowerCase());
+		const athletes = trackedTerms(this.interests?.alwaysTrack?.athletes).map((a) => a.toLowerCase());
 		return athletes.some((a) => a && hay.includes(a));
 	}
 
@@ -475,7 +475,7 @@ class Dashboard {
 
 		// Layer 1 — DU FØLGER: what you asked for (interests.json, user-owned)
 		const chips = (items) => (items || []).length
-			? `<div class="chips-row">${items.map((x) => `<span class="chip-follow">${escapeHtml(x)}</span>`).join('')}</div>` : '';
+			? `<div class="chips-row">${items.map((x) => `<span class="chip-follow">${escapeHtml(ssEntityName(x))}</span>`).join('')}</div>` : '';
 		let du = '';
 		if (hasInterests) {
 			const at = i.alwaysTrack || {};
@@ -486,7 +486,7 @@ class Dashboard {
 			if (Array.isArray(i.interests) && i.interests.length) {
 				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
 			}
-			du += `<div class="followed-hint">Vil du følge noe mer? Si det til Claude, så oppdateres denne lista.</div></div>`;
+			du += `<div class="followed-hint">Vil du følge noe mer, eller få varsel før noe? <a class="followed-edit" href="https://github.com/CHaerem/SportSync/edit/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den.</div></div>`;
 		}
 
 		// Layer 2 — AI HAR FUNNET: what the research agent discovered (tracked.json)

@@ -2,15 +2,14 @@ import { ESPNAdapter } from "../lib/adapters/espn-adapter.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { fetchOBOSLigaenFromFotballNo } from "./fotball-no.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
-import { readJsonIfExists } from "../lib/helpers.js";
+import { readJsonIfExists, matchInterest } from "../lib/helpers.js";
 import { fileURLToPath } from "url";
 import path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const interestsPath = path.join(__dirname, "..", "config", "interests.json");
 const interests = readJsonIfExists(interestsPath) || {};
-const FAVORITE_TEAMS = (interests.alwaysTrack?.teams || ["Barcelona", "Liverpool", "Lyn"])
-	.map(t => t.toLowerCase());
+const FAVORITE_TEAMS = interests.alwaysTrack?.teams || ["Barcelona", "Liverpool", "Lyn"];
 
 export class FootballFetcher extends ESPNAdapter {
 	constructor() {
@@ -87,9 +86,8 @@ export class FootballFetcher extends ESPNAdapter {
 	}
 
 	checkFavorite(homeTeam, awayTeam) {
-		const home = (homeTeam || "").toLowerCase();
-		const away = (awayTeam || "").toLowerCase();
-		return FAVORITE_TEAMS.some(fav => home.includes(fav) || away.includes(fav));
+		const hay = `${homeTeam || ""} ${awayTeam || ""}`;
+		return matchInterest(hay, FAVORITE_TEAMS, { sport: "football" }) != null;
 	}
 
 	applyCustomFilters(events) {

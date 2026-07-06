@@ -126,6 +126,12 @@ a wrong one.
 ### Step 4 — Update tracked.json
 Rewrite it from scratch using your reasoning. Every entry needs:
 `reason`, `addedAt`, `addedBy: "research-agent"`, `evidence`, optional `expires`.
+**Provenance is mandatory**: `evidence` MUST begin with a pointer to the
+user-owned basis this entry traces to — either an `alwaysTrack` path
+(`interests.json#alwaysTrack.athletes` / `.teams` / `.tournaments`) or the
+freeform brief (`interests.json#interests`) — then the corroborating URLs. Never
+track something you can't tie back to why the user follows it. (CI enforces this,
+so a missing pointer fails the run.)
 Keep the top-level shape: `{ lastUpdated, lastUpdatedBy, version, leagues, athletes, tournaments, notes }`.
 
 ### Step 5 — Grade your own run (independent grader)

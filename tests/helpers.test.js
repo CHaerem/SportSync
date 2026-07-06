@@ -3,7 +3,8 @@ import { describe, it, expect } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { isEventInWindow, retainLastGood, hasEvents, normalizeToUTC, MS_PER_DAY } from "../scripts/lib/helpers.js";
+import { isEventInWindow, retainLastGood, hasEvents, normalizeToUTC, MS_PER_DAY,
+	normalizeText, containsName, normalizeEntity, matchInterest } from "../scripts/lib/helpers.js";
 
 describe("isEventInWindow", () => {
 	const day = (n) => new Date(Date.parse("2026-07-02T00:00:00Z") + n * MS_PER_DAY);
@@ -46,6 +47,47 @@ describe("retainLastGood", () => {
 		expect(result.kept).toBe(false);
 		expect(JSON.parse(fs.readFileSync(file, "utf-8")).tournaments[0].events[0].title).toBe("new");
 		fs.rmSync(dir, { recursive: true, force: true });
+	});
+});
+
+describe("interest entity matching", () => {
+	it("normalizeText lowercases and strips diacritics", () => {
+		expect(normalizeText("Barça")).toBe("barca");
+		expect(normalizeText("Vålerenga")).toBe("valerenga");
+	});
+
+	it("containsName matches whole names at word boundaries, accent-insensitive", () => {
+		expect(containsName("Lyn slo VIF", "Lyn")).toBe(true);
+		expect(containsName("kraftig lynnedslag", "Lyn")).toBe(false);
+		expect(containsName("Barça vant 3-0", "Barca")).toBe(true); // haystack accented, needle not
+		expect(containsName("FC Barca vant", "Barça")).toBe(true); // needle accented, haystack not
+		// "barca" is a different token from "barcelona" — no fuzzy substring match.
+		// This is exactly why the entity aliases exist to bridge the two.
+		expect(containsName("FC Barcelona vant", "Barça")).toBe(false);
+	});
+
+	it("normalizeEntity coerces strings and objects into a uniform shape", () => {
+		expect(normalizeEntity("Liverpool")).toEqual({ name: "Liverpool", aliases: [], sport: null, notify: true });
+		expect(normalizeEntity({ name: "F1 World Championship", aliases: ["F1"], sport: "f1", notify: true }))
+			.toEqual({ name: "F1 World Championship", aliases: ["F1"], sport: "f1", notify: true });
+		expect(normalizeEntity("PL", { defaultNotify: false }).notify).toBe(false);
+		expect(normalizeEntity(null)).toBeNull();
+	});
+
+	it("matchInterest matches by canonical name or alias and returns the entity", () => {
+		const teams = [{ name: "Barcelona", aliases: ["FC Barcelona", "Barça", "Barca"], sport: "football" }];
+		expect(matchInterest("Barca held to a draw", teams)?.name).toBe("Barcelona"); // alias hit
+		expect(matchInterest("Real Madrid won", teams)).toBeNull();
+	});
+
+	it("matchInterest can scope by sport to avoid cross-sport false hits", () => {
+		const entities = [{ name: "US Open", aliases: [], sport: "golf" }];
+		expect(matchInterest("US Open final", entities, { sport: "tennis" })).toBeNull();
+		expect(matchInterest("US Open final", entities, { sport: "golf" })?.name).toBe("US Open");
+	});
+
+	it("tolerates a stray bare string without crashing (defensive)", () => {
+		expect(matchInterest("Liverpool won", ["Liverpool"])?.name).toBe("Liverpool");
 	});
 });
 
