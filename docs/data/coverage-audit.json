@@ -1,50 +1,68 @@
 {
-  "auditedAt": "2026-07-05T07:25:47Z",
+  "auditedAt": "2026-07-06T08:24:00Z",
   "horizonDays": 28,
   "gaps": [
     {
-      "interest": "Lyn (OBOS-ligaen)",
-      "whatsMissing": "Lyn – Sogndal søndag 2. august kl. 17.00 på Bislett (OBOS-ligaen runde 16) mangler. Kun forrige kamp (borte mot Strømsgodset 25. juli) ligger inne.",
-      "why": "Lyn er alwaysTrack.teams. Kampen er bekreftet i terminlisten og faller innenfor 28-dagersvinduet (til 2. august). Dette er nettopp recall-glippen kritikeren finnes for å fange: lagets neste kamp etter den ene som allerede ligger inne.",
-      "suggestedSource": "https://obosligaenkamper.com/lyn/",
+      "interest": "FIFA World Cup 2026 — semifinaler, bronsefinale & finale",
+      "whatsMissing": "Ingen av sluttspillets siste runder ligger på tavla: semifinaler tir. 14. + ons. 15. juli (AT&T Stadium, Arlington og Mercedes-Benz Stadium, Atlanta), bronsefinale lør. 18. juli (Hard Rock Stadium, Miami Gardens) og FINALEN søn. 19. juli (MetLife Stadium, East Rutherford). Kickoff ca. 15.00 ET (~21.00 norsk tid). Tavla stopper ved kvartfinalene (9.–12. juli).",
+      "why": "Den statiske ESPN-pipelinen har foreløpig bare materialisert åttedels- og kvartfinaler som events (bracket-plassholdere); semifinaler/finale er ennå ikke emittert. tracked.json ANTAR at pipelinen dekker dem, men de er faktisk fraværende NÅ — og forrige coverage-audit listet dem feilaktig som «coveredWell». Dette er sommerens største kamper, og Norge er ÉN kvartfinaleseier (mot England lør. 11. juli) unna sin første VM-semifinale noensinne. Bekreftet på Wikipedia (knockout stage), FWC og ESPN.",
+      "corroboration": [
+        "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage",
+        "https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket",
+        "https://fwclive.us/schedule/semi-final/"
+      ],
+      "suggestedSource": "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage",
       "severity": "high"
     },
     {
-      "interest": "Casper Ruud",
-      "whatsMissing": "Ingen turnering for Ruud etter Swiss Open Gstaad (avsluttes 19. juli). Den nordamerikanske hardcourt-svingen begynner innenfor vinduet: Mubadala Citi DC Open i Washington (ATP 500, ca. 27. juli) og National Bank Open (Masters 1000, Montreal, 1.–13. august).",
-      "why": "Ruud er alwaysTrack.athletes. Den offisielle siden hans lister foreløpig kun Gstaad, men et Masters 1000 like etterpå er høyverdig og starter innenfor vinduet. Påmelding er ubekreftet — verifiser om Ruud er i feltet i Washington og/eller Montreal.",
-      "suggestedSource": "https://www.atptour.com/en/players/casper-ruud/rh16/player-activity",
-      "severity": "medium"
+      "interest": "F1 — Belgias GP (Spa) & Ungarns GP",
+      "whatsMissing": "Begge F1-eventene på tavla er datert til FREDAGENS trening, ikke løpet: «Belgian Grand Prix» ligger på fre. 17. juli kl. 11.30 UTC og «Hungarian Grand Prix» på fre. 24. juli kl. 11.30 UTC. De faktiske løpene kjøres SØNDAG 19. juli og søndag 26. juli, begge ca. kl. 15.00 CEST (13.00 UTC). Riktig løpsdag/-tid mangler dermed.",
+      "why": "Kjent ESPN-F1-kvirk (se source-quirks): ESPN stempler et GP-helg til fredagens økt. Base-adapteren filtrerer date > now−4h, så det fredag-daterte eventet DROPPER av tavla lørdag i løpshelga og søndagens race forsvinner stille — akkurat slik British GP forsvant 5. juli. Løpsdag søn. 19. juli bekreftet på formula1.com og RacingNews365. tracked.json har arvet samme feil (oppgir «Belgia GP 17. juli»).",
+      "corroboration": [
+        "https://www.formula1.com/en/racing/2026/belgium",
+        "https://racingnews365.com/f1/races/belgian-gp"
+      ],
+      "suggestedSource": "https://www.formula1.com/en/racing/2026/belgium",
+      "severity": "high"
+    }
+  ],
+  "sourceIssues": [
+    {
+      "source": "ESPN F1 scoreboard",
+      "issue": "mis-daterer GP-helger til fredagens trening (Belgia → fre. 17. juli, Ungarn → fre. 24. juli i stedet for søndagsløpene 19. og 26. juli)",
+      "impact": "det fredag-daterte eventet dropper av tavla lørdag i løpshelga; søndagens race forsvinner stille — samme mekanisme som ga bortfall av British GP 5. juli",
+      "severity": "high"
     },
     {
-      "interest": "Kristoffer Ventura",
-      "whatsMissing": "Ingen bekreftet neste start etter John Deere Classic (avsluttet i dag 5. juli). Kandidater innenfor vinduet: Barracuda Championship (16.–19. juli) og 3M Open (23.–26. juli).",
-      "why": "Ventura er alwaysTrack.athletes på betinget PGA Tour-status. Uten en bekreftet start har vi ingen oppføring for ham i horisonten. Verifiser feltet for Barracuda/3M Open og legg til om han er påmeldt.",
-      "suggestedSource": "https://www.pgatour.com/players/player.35658.kristoffer-ventura.html",
-      "severity": "medium"
+      "source": "ESPN VM-bracket",
+      "issue": "materialiserer bare nærliggende runder (åttedels- + kvartfinaler); semifinaler (14.–15. juli), bronsefinale (18. juli) og finale (19. juli) er ikke emittert som events ennå",
+      "impact": "sommerens største kamper mangler helt på tavla til bracketen oppdateres nærmere",
+      "severity": "high"
+    },
+    {
+      "source": "ESPN VM-bracket",
+      "issue": "duplikat kvartfinale: både løst «Norge – England» (ai-research) og uløst plassholder «Round of 16 4 Winner at Round of 16 3 Winner» ligger på samme slot (Hard Rock Stadium, 11. juli 21.00 UTC)",
+      "impact": "samme kamp vises to ganger — verify bør fjerne den minst lesbare (plassholderen), jf. notatet i tracked.json",
+      "severity": "low"
     }
   ],
   "coveredWell": [
-    "Tour de France 2026 — alle 21 etapper (4.–26. juli) med Uno-X-ryttere og delt TV 2 Play/Max-streaming",
-    "FIFA VM 2026 — åttedels-, kvart-, semifinaler og finale (Norge–Brasil 5. juli, finale 19. juli)",
-    "Viktor Hovland — Genesis Scottish Open (9.–12. juli) + The Open på Royal Birkdale (16.–19. juli)",
-    "Casper Ruud — Swiss Open Gstaad (13.–19. juli)",
-    "Wimbledon-finalene (11.–12. juli)",
-    "Karsten Warholm — Diamond League London 400 m hekk (18. juli)",
-    "F1 — Belgia GP (17. juli) + Ungarn GP (24. juli)",
-    "Sjakk-NM eliteklassen i Kristiansund (3.–11. juli)",
-    "BLAST Bounty S2 med 100 Thieves/rain (online 21.–26. juli)",
-    "Lyn — borte mot Strømsgodset 25. juli (runde 15)"
+    "Tour de France 2026 — alle 21 etapper til stede med Uno-X-tropp og korrekt delt streaming (TV 2 Play + Max)",
+    "Golf — Genesis Scottish Open (9.–12. juli) og The Open på Royal Birkdale (16.–19. juli), begge med Hovland",
+    "Wimbledon — dame- og herrefinalen (11.–12. juli) med korrekt Max/Eurosport-rettighet",
+    "Tennis — Swiss Open Gstaad (13.–19. juli), Ruuds comeback, andreseedet",
+    "Sjakk-NM 2026 i Kristiansund (3.–11. juli) med Direktesport/Lichess-strøm",
+    "VM 2026 til og med kvartfinalene, inkl. Norge – England lør. 11. juli",
+    "Diamond League London (18. juli) — Warholm 400 m hekk på NRK",
+    "BLAST Bounty S2 (100 Thieves / rain, 21.–26. juli) og Esports World Cup-sjakk (Carlsen, 11.–15. aug)"
   ],
   "escalated": false,
   "notes": [
-    "Bevisst avvist som korrekt fravær: Diamond League har ingen stevne mellom London (18. juli) og 2. august — neste er Lausanne (21. aug) og Silesia (23. aug), begge utenfor vinduet. Monaco Herculis (10. juli) har ingen bekreftet norsk deltaker. Athletics-dekningen (Warholm) er dermed komplett for horisonten.",
-    "F1 går i sommerpause etter Ungarn GP (24. juli); neste løp er sent i august — korrekt fravær.",
-    "Magnus Carlsen har ingen bekreftet turnering i juli; neste er Esports World Cup-sjakken 11.–15. august (utenfor 28-dagersvinduet, allerede tracket). Aryan Tari trakk seg fra Sjakk-NM — ingen annen bekreftet turnering. Begge korrekte fravær.",
-    "Premier League / La Liga / Champions League er i sesongpause til medio august — korrekt fravær. Barcelona/Liverpool får oppføringer når terminlistene nærmer seg.",
-    "Vinteridretter (langrenn, skiskyting, alpint) er av-sesong i juli — korrekt fravær.",
-    "100 Thieves BLAST Bounty LAN-finaler i Malta (30. juli–2. aug) faller i vinduet, men dekkes av samme tracket turnering; separat oppføring avhenger av at laget kvalifiserer fra online-stadiet.",
-    "Forrige kjørings high-severity-glipper (Tour de France etappe 6–21 + Sjakk-NM eliteklassen) er nå løst i events.json.",
-    "Forsøkte å eskalere til research-agent (gh workflow run research-agent.yml) for den ene high-severity-glippen (Lyn–Sogndal 2. august), men dispatch ble blokkert (HTTP 403: token mangler actions:write i denne kjøringen — samme som forrige kjøring). Gapen står dokumentert her slik at research plukker den opp uansett; research kjører hvert 4. døgn. Ruud- og Ventura-glippene (medium, ubekreftet påmelding) tas i samme kjøring."
+    "Imminent-pass (neste ~4 dager): tavla er godt dekket. TdF etappe 3 kjøres i dag; VM-åttedels/kvartfinaler 6.–12. juli til stede; Sjakk-NM pågår; golf/tennis/Warholm på plass. Ingen imminent recall-glipp funnet.",
+    "F1 sjekket hver kjøring (kjent blindsone): British GP kjørt 5. juli. Ingen F1 denne helga (mellom løp). Neste race-helg er 17.–19. juli (Belgia) — men datoen på tavla er feil (fredag-datert, se gaps/sourceIssues). Ingen sommerpause før etter Ungarn 26. juli.",
+    "Lyn OBOS-ligaen verifisert mot obosligaenkamper.com: INGEN Lyn-kamp mellom 6. og 25. juli (VM-pause). Neste er borte mot Strømsgodset 25. juli, deretter hjemme mot Sogndal 2. aug — begge på tavla. Forrige kjørings Lyn–Sogndal-glipp er dermed løst. Korrekt fravær nå, ikke en glipp.",
+    "Carlsen: ingen bekreftet turnering i juli (spiller ikke GCT Zagreb, ingen Freestyle-etappe); neste er EWC-sjakk 11.–15. aug (på tavla). Korrekt fravær. Tari trakk seg fra Sjakk-NM — ingen event. Ventura uten bekreftet PGA-start (Barracuda finnes ikke i 2026-terminlista, Corales/3M-felt ikke publisert) — nedgradert fra forrige kjørings medium til korrekt fravær inntil felt publiseres. Ruuds USA-sving (Washington/Montreal) fortsatt skadeavhengig og ubekreftet — bevisst ikke flagget som konkret event.",
+    "Korrekte fravær: Premier League / La Liga / Champions League er utenfor sesong (start medio august); vinteridretter (langrenn/skiskyting/alpint) er av-sesong i juli; cricket/rugby er neverTrack. coverage-gaps.json meldte kun én low chess file-empty-anomali (chess.json tom, av-sesong for statisk fetcher; Sjakk-NM er ai-research og ligger inne) — avvist.",
+    "To high-severity glipper (VM-semifinaler/bronsefinale/finale + F1-datering Belgia/Ungarn) → forsøkte eskalering til research-agent (gh workflow run research-agent.yml), men dispatch ble BLOKKERT (HTTP 403: «Resource not accessible by integration» — token mangler actions:write i denne kjøringen, samme som forrige kjøring). escalated satt til false siden dispatch faktisk ikke gikk gjennom. Begge glippene står grundig dokumentert her med korroborerte kilder, så research plukker dem opp neste kjøring uansett (hver 4. time). Anbefaling til drift: gi coverage-critic-workflowen actions:write slik at high-severity-glipper kan eskaleres umiddelbart."
   ]
 }
