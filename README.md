@@ -47,71 +47,39 @@ Everything runs on **GitHub Actions + Claude Code Max + GitHub Pages**. No serve
 no databases, no paid APIs.
 
 ```mermaid
-flowchart TB
-    you(["👤 You edit interests.json"]):::human
+flowchart LR
+    you(["👤 You<br/>interests.json"]):::human
 
-    subgraph ingest["Ingest — hourly, no AI (~3 min)"]
-        fetch["Fetchers:<br/>ESPN · fotball.no · Liquipedia CS2<br/>· tvkampen · RSS"]
+    subgraph build["Build the board · scheduled"]
+        direction TB
+        pipe["Static pipeline · hourly<br/>ESPN, fotball.no, Liquipedia,<br/>tvkampen, RSS"]
+        research["Research · every 4h<br/>finds what the APIs miss"]
+        gaps["Scout + Coverage critic<br/>spot what's missing"]
+        verify["Verify · daily<br/>correctness gate"]
     end
 
-    board[("events.json<br/>+ coverage-gaps, standings, results")]:::store
-
-    subgraph agents["Scheduled Claude agents"]
-        research["Research — every 4h<br/>finds events the APIs miss"]
-        scout["Scout — hourly"]
-        critic["Coverage critic — daily<br/>what are we MISSING?"]
-        verify["Verify — daily<br/>correctness gate"]
-        editorial["Editorial — 2x/day"]
-    end
-
-    trust[("calibration + source-quirks<br/>who to trust · how sources fail")]:::store
-    feat[("featured.json")]:::store
-    pages(["🖥️ GitHub Pages<br/>the calm dashboard"]):::out
-
-    subgraph heal["Self-maintenance — fix on branch, test-gate, auto-merge"]
-        visualqa["Visual QA — daily<br/>looks at screenshots"]
-        uifix["UI-fix — daily"]
-        selfrepair["Self-repair — daily"]
-        improve["Improve — weekly"]
-    end
-
-    governor{{"Usage monitor — hourly<br/>quota governor"}}:::gov
+    board[("events.json<br/>the shared board")]:::store
+    pages(["🖥️ Calm dashboard<br/>GitHub Pages"]):::out
 
     you --> research
-    fetch --> board
-    scout -->|escalate| research
-    critic -->|escalate| research
-    board --> critic
-    board --> verify
+    gaps -->|escalate| research
+    pipe --> board
     research --> board
-    verify --> board
-    verify --> trust
-    trust -. informs .-> research
-    trust -. informs .-> critic
+    verify -->|checks & amends| board
     board --> pages
-    editorial --> feat
-    feat --> pages
-    pages -. screenshots .-> visualqa
-    visualqa -->|findings| uifix
-    uifix --> pages
-    selfrepair --> repo[/"codebase (PRs)"/]
-    improve --> repo
-    governor -. gates .-> agents
-    governor -. gates .-> heal
 
     classDef human fill:#fff3bf,stroke:#f08c00,color:#111
     classDef store fill:#e7f5ff,stroke:#1c7ed6,color:#111
     classDef out fill:#ebfbee,stroke:#2f9e44,color:#111
-    classDef gov fill:#fff0f6,stroke:#c2255c,color:#111
 ```
 
-**Reading it:** you own `interests.json`; the hourly static pipeline and the every-4h
-research agent both write the shared board (`events.json`); scout and the coverage
-critic nudge research toward what's missing; verify is the correctness gate and feeds a
-trust layer (calibration + source-quirks) back into research and the critic; the board
-plus the editorial brief publish to the calm dashboard; a self-maintenance ring
-(visual-QA → UI-fix, self-repair, improve) keeps the code and UI healthy behind the test
-gate; and the usage-monitor gates every agent on real quota.
+**Reading it, left to right:** you own `interests.json`; the hourly static pipeline and
+the every-4h research agent both write the shared board (`events.json`) — scout and the
+coverage critic point research at what's missing, and verify corrects it — and the board
+publishes to the calm dashboard. Two support systems aren't drawn here (they keep the
+system healthy without touching this flow): the **self-maintenance loops** (visual-QA →
+UI-fix, self-repair, improve) and the **quota governor** that gates every agent. All
+eleven scheduled jobs, with their models, are in the table below.
 
 ### The scheduled jobs
 
