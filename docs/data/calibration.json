@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-06T08:59:18.745Z",
+  "generatedAt": "2026-07-06T12:55:04.846Z",
   "windowDays": 180,
   "records": {
-    "used": 19,
+    "used": 24,
     "skipped": 0
   },
   "sources": {
@@ -187,21 +187,21 @@
       "reliability": null
     },
     "nrk.no": {
-      "checks": 1,
+      "checks": 2,
       "agreed": 1,
       "bySport": {
         "football": {
-          "checks": 1,
+          "checks": 2,
           "agreed": 1
         }
       },
       "byField": {
         "streaming": {
-          "checks": 1,
+          "checks": 2,
           "agreed": 1
         }
       },
-      "lastChecked": "2026-07-05T08:27:09.000Z",
+      "lastChecked": "2026-07-06T12:00:00.000Z",
       "reliability": null
     },
     "sjakknm2026.no": {
@@ -241,10 +241,54 @@
       "reliability": null
     },
     "en.wikipedia.org": {
+      "checks": 2,
+      "agreed": 2,
+      "bySport": {
+        "cycling": {
+          "checks": 1,
+          "agreed": 1
+        },
+        "tennis": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "existence": {
+          "checks": 2,
+          "agreed": 2
+        }
+      },
+      "lastChecked": "2026-07-06T12:00:00.000Z",
+      "reliability": null
+    },
+    "nettavisen.no": {
+      "checks": 2,
+      "agreed": 1,
+      "bySport": {
+        "football": {
+          "checks": 2,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "streaming": {
+          "checks": 1,
+          "agreed": 0
+        },
+        "existence": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-06T12:00:00.000Z",
+      "reliability": null
+    },
+    "swissopengstaad.ch": {
       "checks": 1,
       "agreed": 1,
       "bySport": {
-        "cycling": {
+        "tennis": {
           "checks": 1,
           "agreed": 1
         }
@@ -255,7 +299,7 @@
           "agreed": 1
         }
       },
-      "lastChecked": "2026-07-05T08:27:09.000Z",
+      "lastChecked": "2026-07-06T12:00:00.000Z",
       "reliability": null
     }
   }
