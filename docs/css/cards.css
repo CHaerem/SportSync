@@ -124,13 +124,16 @@
 	white-space: nowrap;
 }
 .ev-main { min-width: 0; }
+/* Let a long title (e.g. an unresolved bracket "Round of 16 5 Winner – …")
+   wrap onto a second line rather than clip mid-word with an ellipsis. Phones
+   already wrapped; this makes wide screens behave the same, so the full name
+   always reads. Short, everyday fixtures still sit on one line. */
 .ev-title {
 	display: block;
 	font-size: 15.5px;
 	color: var(--fg);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	overflow-wrap: break-word;
+	line-height: 1.3;
 }
 .ev-round {
 	display: block;

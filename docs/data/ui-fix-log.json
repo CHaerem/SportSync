@@ -1,18 +1,13 @@
 {
-	"runAt": "2026-07-05T11:15:00Z",
+	"runAt": "2026-07-06T12:58:00Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/200",
+	"pr": null,
 	"fixed": [
-		"375px (medium): Sjakk-NM channel truncated to 'Direktesport…' — channel label now wraps, showing the full name + any qualifier",
-		"900px (medium): 'Direktesport (grati…' — channel-column truncation was width-independent; label now wraps to a quiet second line instead of ellipsis-clipping",
-		"375px (medium): Wimbledon channel truncated to 'HBO Max (fi…' — now wraps fully",
-		"900px (low): 'HBO Max (finale g…' resolved by the same wrap change"
+		"Low (900px): long bracket-placeholder titles ('Round of 16 5 Winner – Round of 16 6 Winner') clipped mid-word with an ellipsis while the same text wrapped in full on phones. Made .ev-title wrap at all widths (overflow-wrap: break-word) instead of nowrap+ellipsis, so the full name always reads."
 	],
 	"notes": [
-		"Root cause: .ev-where used white-space:nowrap + overflow:hidden + text-overflow:ellipsis with a fixed max-width (116px desktop / 84px phone), so any channel label longer than the cap clipped regardless of available viewport width — hiding qualifiers like '(gratis)'.",
-		"Fix (CSS only, scoped to .ev-where): wrap the channel label at word boundaries (overflow-wrap:break-word, line-height 1.3) instead of clipping, so a qualifier drops to a quiet right-aligned second line. Desktop cap raised 116px→128px for extra breathing room.",
-		"Phone: kept the channel footprint at 84px (title must win the phone's width per the calm-design comment) but reduced channel font 12.5px→11.5px so the longest single channel word ('Direktesport') fits on one line without stealing title space. Verified 'eliteklassen' still wraps as a whole word — no title regression.",
-		"Verified at 375/393/900 with real data AND with '(gratis)'/'(finale gratis)' qualifiers temporarily injected to reproduce the exact finding (data reverted before commit). Layout stays a calm single column, no new overflow, header/agenda/disclosure/footer intact.",
-		"npm test: 173 passed. No data files touched."
+		"The three high-severity 'Norway – England' duplicate-row findings are a DATA problem, not a rendering bug, so they are out of scope for ui-fix (which may only touch the frontend). events.json holds two separate records for the same match: 'England at Norway' (static ESPN, no source) and 'Norge – England' (source: ai-research), both sport=football, time=2026-07-11T21:00, homeTeam=Norway/awayTeam=England. build-events.js dedupes on 'sport|title|time' and misses them because the title strings differ; both then render identically via homeTeam/awayTeam. The durable fix belongs in the data layer (build-events dedup on match identity incl. teams) — left for self-repair / the pipeline, deliberately NOT band-aided in the client.",
+		"CSS fix verified with before/after screenshots at 375/393/900px: the ellipsis clip is gone at 900px and placeholder titles wrap to a full second line; 375/393 unchanged (they already wrapped); no new overflow/truncation; layout stays a calm single column with header/agenda/'Hva vi følger'/footer intact.",
+		"npm test: 207 tests passing."
 	]
 }
