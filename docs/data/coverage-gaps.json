@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T20:36:07.713Z",
+  "generatedAt": "2026-07-06T20:51:22.351Z",
   "gapCount": 2,
   "anomalyCount": 2,
   "gaps": [
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/oliver-glasner-tar-over-nottingham-forest-1.17948780",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-06T20:36:07.404Z"
+      "detectedAt": "2026-07-06T20:51:22.042Z"
     },
     {
       "kind": "entity",
@@ -23,7 +23,7 @@
       "link": "https://www.nrk.no/sport/mbappe-ut-mot-paraguayansk-senator_-_-vil-aldri-tillate-henne-a-spre-rasisme-1.17949746",
       "feed": "nrk-sport",
       "matchCount": 4,
-      "detectedAt": "2026-07-06T20:36:07.404Z"
+      "detectedAt": "2026-07-06T20:51:22.042Z"
     }
   ],
   "anomalies": [
@@ -32,14 +32,14 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-06T20:36:07.713Z"
+      "detectedAt": "2026-07-06T20:51:22.351Z"
     },
     {
       "sport": "esports",
       "issue": "file-empty",
       "detail": "docs/data/esports.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-06T20:36:07.713Z"
+      "detectedAt": "2026-07-06T20:51:22.351Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
