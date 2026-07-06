@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-06T16:00:00Z",
+  "lastUpdated": "2026-07-06T18:45:00Z",
   "lastUpdatedBy": "research-agent",
   "version": 2,
   "leagues": [
@@ -10,7 +10,9 @@
       "reason": "alwaysTrack.tournaments + interesse for generell oversikt og Liverpool. Sesongstart medio august 2026 — statiske ESPN-fetchere dekker kampene når terminlisten publiseres. Overgangsstøy nå (van Dijk-/Dumfries-rykter i RSS) er ikke events.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments"
+      ],
       "priority": "high"
     },
     {
@@ -20,7 +22,10 @@
       "reason": "alwaysTrack.tournaments med fokus på Barcelona (alwaysTrack.teams). Sesongstart august 2026; ferievindu nå.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "interests.json#alwaysTrack.teams"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "interests.json#alwaysTrack.teams"
+      ],
       "priority": "high"
     },
     {
@@ -30,7 +35,11 @@
       "reason": "Lyn er i alwaysTrack.teams. To ai-research-events ligger inne: borte mot Strømsgodset lørdag 25. juli kl. 18.00 (Marienlyst, runde 15) og HJEMME mot Sogndal søndag 2. august kl. 17.00 på Bislett (runde 16). Begge verifisert mot fotball.no. Streaming TV 2 Play. Alle high-severity recall-glipper fra coverage-audit (inkl. Lyn–Sogndal 2. aug) er dermed løst.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.teams", "https://www.fotball.no/fotballdata/kamp/?fiksId=8986733", "https://obosligaenkamper.com/lyn/"],
+      "evidence": [
+        "interests.json#alwaysTrack.teams",
+        "https://www.fotball.no/fotballdata/kamp/?fiksId=8986733",
+        "https://obosligaenkamper.com/lyn/"
+      ],
       "priority": "high"
     }
   ],
@@ -42,7 +51,11 @@
       "reason": "alwaysTrack.athletes. Bekreftet i feltet til Genesis Scottish Open 9.–12. juli (Renaissance Club, DP World Tour) og The Open på Royal Birkdale 16.–19. juli (fullt fritatt via OWGR topp-50). Begge ai-research-events med Viaplay-streaming (verifisert på ny 6. juli — ingen endring). Spilte ikke John Deere Classic.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://www.todays-golfer.com/news-and-events/tour-news/2026-genesis-scottish-open-field/", "https://www.golfdigest.com/story/british-open-2026-everybody-in-the-field-royal-birkdale-full-field"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://www.todays-golfer.com/news-and-events/tour-news/2026-genesis-scottish-open-field/",
+        "https://www.golfdigest.com/story/british-open-2026-everybody-in-the-field-royal-birkdale-full-field"
+      ],
       "priority": "high"
     },
     {
@@ -52,7 +65,12 @@
       "reason": "Dekker «Norske utøvere i internasjonal toppidrett». Bekreftet i 400 m hekk på Wanda Diamond League London Athletics Meet lørdag 18. juli (London Stadium) — første London-opptreden på sju år. Ai-research-event med NRK-streaming (NRK har eksklusive DL-rettigheter 2025–2029). Eksakt hekketid publiseres når detaljprogrammet slippes.",
       "addedAt": "2026-07-05T09:10:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#interests", "https://www.diamondleague.com/warholm-cant-wait-for-london-return/", "https://london.diamondleague.com/about/meeting-information/", "https://kommunikasjon.ntb.no/pressemelding/18535635/nrk-sikrer-seg-diamond-league-til-2029"],
+      "evidence": [
+        "interests.json#interests",
+        "https://www.diamondleague.com/warholm-cant-wait-for-london-return/",
+        "https://london.diamondleague.com/about/meeting-information/",
+        "https://kommunikasjon.ntb.no/pressemelding/18535635/nrk-sikrer-seg-diamond-league-til-2029"
+      ],
       "expires": "2026-07-19T23:59:59Z",
       "priority": "high"
     },
@@ -63,7 +81,11 @@
       "reason": "alwaysTrack.athletes. Misset cut i John Deere Classic (2.–5. juli). På betinget PGA Tour-status 2026. INGEN bekreftet neste start (re-verifisert 6. juli). «Barracuda Championship» finnes IKKE på 2026-terminlisten (mistet tittelsponsor; motsatt-uke-turneringen The Open-uka er Corales Puntacana Championship 16.–19. juli). Verken Corales- eller 3M Open-feltet (23.–26. juli) er publisert (3mopen.com ga HTTP 403); Ventura ikke bekreftet i noen tilgjengelig feltliste. Ingen event lagt til; følg opp når feltene slippes.",
       "addedAt": "2026-07-03T19:45:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://www.espn.com/golf/player/results/_/id/4351896/kristoffer-ventura", "https://nevadasportsnet.com/news/reporters/local-tournament-barracuda-championship-not-on-pga-tours-2026-schedule-release"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://www.espn.com/golf/player/results/_/id/4351896/kristoffer-ventura",
+        "https://nevadasportsnet.com/news/reporters/local-tournament-barracuda-championship-not-on-pga-tours-2026-schedule-release"
+      ],
       "priority": "medium"
     },
     {
@@ -73,7 +95,11 @@
       "reason": "alwaysTrack.athletes. Ruud pådro seg kneskade i Roland-Garros og trakk seg fra Wimbledon; Gstaad (EFG Swiss Open, ATP 250, grus, 13.–19. juli — andreseedet) er comeback-turneringen og ligger inne som ai-research-event (TV 2 Play). Nordamerikansk hardcourt-sving: Montreal (National Bank Open, Masters 1000, 1.–13. aug) har en spillerside for Ruud (trolig påmeldt), men feltet er ikke ferdigstilt; Washington (ATP 500, ~25. juli–2. aug) fant IKKE Ruud på publisert påmeldingsliste. Alt er skadeavhengig. Ingen event lagt til for USA-svingen; re-verifiser sent i juli (Montreal-trekning ~31. juli).",
       "addedAt": "2026-07-04T17:33:56Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://en.wikipedia.org/wiki/2026_Swiss_Open_Gstaad", "https://nationalbankopen.com/matches-players/players/casper.ruud-2"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://en.wikipedia.org/wiki/2026_Swiss_Open_Gstaad",
+        "https://nationalbankopen.com/matches-players/players/casper.ruud-2"
+      ],
       "expires": "2026-08-14T23:59:59Z",
       "priority": "high"
     },
@@ -84,7 +110,11 @@
       "reason": "alwaysTrack.athletes. Ingen bekreftet turnering i juli/tidlig august 2026 (re-verifisert 6. juli: spiller ikke Grand Chess Tour Zagreb 1.–5. juli; ingen Freestyle-etappe i juli). Neste bekreftede: Esports World Cup-sjakken 11.–15. august i Paris (tittelforsvarer, ai-research-event). Streaming = offisielle Chess.com/Twitch/YouTube-strømmer (ingen norsk TV-rettighet). Carlsen annonserer noen ganger sent — verify bør re-sjekke i slutten av juli.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://grandchesstour.org/tours/2026/tournaments/2026-super-rapid-blitz-croatia/", "https://liquipedia.net/chess/Esports_World_Cup/2026"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://grandchesstour.org/tours/2026/tournaments/2026-super-rapid-blitz-croatia/",
+        "https://liquipedia.net/chess/Esports_World_Cup/2026"
+      ],
       "priority": "high"
     },
     {
@@ -94,7 +124,10 @@
       "reason": "alwaysTrack.athletes. TRAKK SEG fra eliteklassen i Sjakk-NM 2026 (erstattet av reserve) — verifisert mot bergensjakk.no. Spiller altså IKKE i Kristiansund 3.–11. juli. Ingen annen bekreftet turnering funnet nå; ingen event å legge til. Følg opp.",
       "addedAt": "2026-07-04T21:14:40Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://bergensjakk.no/2026/06/18/endringer-i-eliteklassen-i-landsturneringen-2026/"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://bergensjakk.no/2026/06/18/endringer-i-eliteklassen-i-landsturneringen-2026/"
+      ],
       "priority": "medium"
     },
     {
@@ -104,7 +137,11 @@
       "reason": "alwaysTrack.athletes. Spiller for 100 Thieves (alwaysTrack.teams). Neste event: BLAST Bounty S2 online-stadiet 21.–26. juli (ai-research-event, gratis på BLAST.tv/Twitch/YouTube). Kamptider/motstandere ikke publisert (bracket slippes typisk 1–3 dager før). Ingen andre 100 Thieves-kamper funnet før ~10. august (re-verifisert 6. juli). Dekker CS2-interessen når 100 Thieves/rain er aktive.",
       "addedAt": "2026-07-04T17:33:56Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.athletes", "https://liquipedia.net/counterstrike/100_Thieves", "https://www.hltv.org/events/9154/blast-bounty-2026-season-2"],
+      "evidence": [
+        "interests.json#alwaysTrack.athletes",
+        "https://liquipedia.net/counterstrike/100_Thieves",
+        "https://www.hltv.org/events/9154/blast-bounty-2026-season-2"
+      ],
       "expires": "2026-08-03T23:59:59Z",
       "priority": "medium"
     }
@@ -117,7 +154,12 @@
       "reason": "alwaysTrack.tournaments, pågår nå. Norge slo Brasil 2–1 i åttedelsfinalen (Haaland to mål) og møter England i sin FØRSTE VM-kvartfinale lør. 11. juli kl. 23.00 norsk tid (Hard Rock Stadium, Miami). Den ai-research-dupen «Norge – England» er FJERNET denne kjøringen: ESPN har nå løst bracket-plassholderen til et statisk event «England at Norway» (homeTeam Norway, norwegian:true, TV 2) på samme slot — statisk pipeline dekker kampen durabelt, så vi unngår dobbeltvisning. RESOLVED HIGH-SEVERITY-GLIPP (coverage-audit 6. juli): semifinaler (tir. 14. + ons. 15. juli, Dallas/Atlanta, TV 2), bronsefinale (lør. 18. juli, Miami, NRK) og FINALEN (søn. 19. juli, MetLife, NRK) var IKKE emittert av ESPN-pipelinen og er nå lagt til som ai-research-events med bekreftede datoer/venue/tider (ESPN+Wikipedia) og norske rettigheter (VG/oddspodden: TV 2 tar semifinalene, NRK bronsefinale+finale). Vinneren av Norge–England går til semifinale 2 (Atlanta) — Norges vei til en historisk semifinale. NB verify/coverage-critic: når ESPN materialiserer sene-runde-plassholdere kan det oppstå nye duplikater mot disse ai-research-eventene.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage", "https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket", "https://www.oddspodden.com/news/slik-sendes-fotball-vm-nrk-tv-2-dato-klokkeslett/"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage",
+        "https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket",
+        "https://www.oddspodden.com/news/slik-sendes-fotball-vm-nrk-tv-2-dato-klokkeslett/"
+      ],
       "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
     },
@@ -128,7 +170,11 @@
       "reason": "alwaysTrack.tournaments + Uno-X Mobility (alwaysTrack.teams). Alle 21 etapper (4.–26. juli) ligger som ai-research-events. Uno-X stiller med fem nordmenn; Tobias Halland Johannessen er GC-kaptein. SKOGBRANN-OPPDATERING (6. juli): etappe 3 (Granollers–Les Angles) KJØRES som planlagt, men UTEN publikum langs siste ~40 km (ASO-beslutning 5. juli); ingen tid/rute endret. Etappe 4 (7. juli) ikke avlyst, men på varsel pga. ekstrem varme (~41°C) — verify må sjekke morgenen 7. juli. Norske rettigheter DELT: TV 2 Play/Direkte + Max/Eurosport Norge (WBD 2026–2030; kun Max/Eurosport viser første time av hver etappe). Streaming nå durabelt korrekt via rights-map (se notes).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://cyclinguptodate.com/cycling/update-stage-3-of-2026-tour-de-france-to-go-ahead-without-spectators-as-wildfire-emergency-forces-major-restrictions", "https://hjelp.tv2.no/hovedkategori/sport/tour-de-france"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "https://cyclinguptodate.com/cycling/update-stage-3-of-2026-tour-de-france-to-go-ahead-without-spectators-as-wildfire-emergency-forces-major-restrictions",
+        "https://hjelp.tv2.no/hovedkategori/sport/tour-de-france"
+      ],
       "expires": "2026-07-27T23:59:59Z",
       "priority": "high"
     },
@@ -139,7 +185,11 @@
       "reason": "Dekker «Norske utøvere i internasjonal toppidrett». Warholm bekreftet i 400 m hekk lørdag 18. juli (London Stadium). NRK-streaming (eksklusive DL-rettigheter 2025–2029). Monaco Herculis 10. juli har ingen bekreftet norsk deltaker.",
       "addedAt": "2026-07-05T09:10:00Z",
       "addedBy": "research-agent",
-      "evidence": ["https://london.diamondleague.com/about/meeting-information/", "https://www.diamondleague.com/warholm-cant-wait-for-london-return/", "https://kommunikasjon.ntb.no/pressemelding/18535635/nrk-sikrer-seg-diamond-league-til-2029"],
+      "evidence": [
+        "https://london.diamondleague.com/about/meeting-information/",
+        "https://www.diamondleague.com/warholm-cant-wait-for-london-return/",
+        "https://kommunikasjon.ntb.no/pressemelding/18535635/nrk-sikrer-seg-diamond-league-til-2029"
+      ],
       "expires": "2026-07-19T23:59:59Z",
       "priority": "high"
     },
@@ -150,7 +200,11 @@
       "reason": "Dekker «Norske utøvere i internasjonal toppidrett». Norske Sigrid Borge er i deltakerlista i spydkast (fredag 10. juli, Stade Louis-II) — bekreftet mot offisielt Monaco-program. Spyd starter 17.30 CEST (15.30 UTC); hovedprogrammet fra 20.00 CEST. ai-research-event (medium — Borge-påmelding fra én kilde). NRK-streaming (eksklusive Diamond League-rettigheter 2025–2029). Jakob Ingebrigtsens mulige comeback (agent nevnte Monaco som ett av tre alternativ) er FORELØPIG IKKE bekreftet — bevisst ikke lagt til.",
       "addedAt": "2026-07-06T16:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#interests", "https://monaco.diamondleague.com/en/programme-results/", "https://tv.nrk.no/serie/friidrett-diamond-league/sesong/2026"],
+      "evidence": [
+        "interests.json#interests",
+        "https://monaco.diamondleague.com/en/programme-results/",
+        "https://tv.nrk.no/serie/friidrett-diamond-league/sesong/2026"
+      ],
       "expires": "2026-07-11T23:59:59Z",
       "priority": "medium"
     },
@@ -161,7 +215,11 @@
       "reason": "Dekker «Sjakk på elite-nivå». 100. utgave, eliteklassen i Normoria, Kristiansund 3.–11. juli. Aryan Tari trakk seg — feltet toppes av Elham Amar og Jon Ludvig Hammer. Streaming Direktesport (Amedia, video m/kommentar) + Lichess (gratis, ~15 min forsinkelse). IKKE på NRK — re-bekreftet 6. juli. Streaming nå durabelt korrekt (rights-map-fix). Én runde per dag (R3→ kl. 10.30), siste runde 11. juli.",
       "addedAt": "2026-07-04T17:33:56Z",
       "addedBy": "research-agent",
-      "evidence": ["https://sjakknm2026.no/program.php", "https://bergensjakk.no/2026/06/03/uttak-av-eliteklassen-i-landsturneringen-2026/", "https://www.sjakk.no/spillesteder/lichess-online"],
+      "evidence": [
+        "https://sjakknm2026.no/program.php",
+        "https://bergensjakk.no/2026/06/03/uttak-av-eliteklassen-i-landsturneringen-2026/",
+        "https://www.sjakk.no/spillesteder/lichess-online"
+      ],
       "expires": "2026-07-12T23:59:59Z",
       "priority": "high"
     },
@@ -172,7 +230,10 @@
       "reason": "Casper Ruuds comeback-turnering etter kneskade/Wimbledon-forfall (ATP 250, grus) 13.–19. juli — dekker «Tennis grand slams + Casper Ruud kamper». Ruud er andreseedet og toganger vinner. Streaming TV 2 Play (TV 2 holder ATP Tour ikke-slam-rettigheter, re-bekreftet 6. juli). ai-research-event.",
       "addedAt": "2026-07-04T17:33:56Z",
       "addedBy": "research-agent",
-      "evidence": ["https://en.wikipedia.org/wiki/2026_Swiss_Open_Gstaad", "https://hjelp.tv2.no/hovedkategori/sport/tennis"],
+      "evidence": [
+        "https://en.wikipedia.org/wiki/2026_Swiss_Open_Gstaad",
+        "https://hjelp.tv2.no/hovedkategori/sport/tennis"
+      ],
       "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
     },
@@ -183,7 +244,11 @@
       "reason": "Major i alwaysTrack.tournaments, 16.–19. juli på Royal Birkdale. Hovland fullt fritatt (OWGR topp-50). ai-research-event med Viaplay-streaming (The Open + US Open + PGA/DP World Tour = Viaplay i Norge).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://en.wikipedia.org/wiki/2026_Open_Championship", "https://www.golfdigest.com/story/british-open-2026-everybody-in-the-field-royal-birkdale-full-field"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "https://en.wikipedia.org/wiki/2026_Open_Championship",
+        "https://www.golfdigest.com/story/british-open-2026-everybody-in-the-field-royal-birkdale-full-field"
+      ],
       "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
     },
@@ -194,7 +259,10 @@
       "reason": "Hovlands neste start (9.–12. juli, Renaissance Club) — dekker «Golf — særlig når Hovland spiller». Bekreftet i feltet (DP World Tour, re-verifisert 6. juli). ai-research-event med Viaplay-streaming.",
       "addedAt": "2026-07-03T19:45:00Z",
       "addedBy": "research-agent",
-      "evidence": ["https://www.europeantour.com/dpworld-tour/genesis-scottish-open-2026/", "https://www.todays-golfer.com/news-and-events/tour-news/2026-genesis-scottish-open-field/"],
+      "evidence": [
+        "https://www.europeantour.com/dpworld-tour/genesis-scottish-open-2026/",
+        "https://www.todays-golfer.com/news-and-events/tour-news/2026-genesis-scottish-open-field/"
+      ],
       "expires": "2026-07-13T23:59:59Z",
       "priority": "high"
     },
@@ -205,7 +273,12 @@
       "reason": "alwaysTrack.tournaments, hele sesongen (kvalifisering + race). British GP kjørt 5. juli (Leclerc vant). Neste RACE-dager: Belgia GP SØN. 19. juli kl. 13.00 UTC (Spa) og Ungarn GP SØN. 26. juli kl. 13.00 UTC (Hungaroring) — begge bekreftet mot formula1.com/RacingNews365 (15.00 CEST). RESOLVED: coverage-audit (08:24) flagget begge som fredag-daterte (ESPN-F1-kvirk, se source-quirks) med fare for at søndagsløpet forsvant stille — men den statiske pipelinen viser dem NÅ korrekt på søndag (verifisert på tavla 6. juli 15:57 UTC). Ingen ai-research-event nødvendig. Streaming Viaplay/V Sport 1 (eksklusive norske F1-rettigheter t.o.m. 2029). Sommerpause ETTER Ungarn (ingen løp før Nederland sent i august).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.formula1.com/en/racing/2026/belgium", "https://www.formula1.com/en/racing/2026/hungary", "https://viaplay.no/no-nb/formel-1-guide"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "https://www.formula1.com/en/racing/2026/belgium",
+        "https://www.formula1.com/en/racing/2026/hungary",
+        "https://viaplay.no/no-nb/formel-1-guide"
+      ],
       "expires": "2026-12-31T23:59:59Z",
       "priority": "high"
     },
@@ -216,7 +289,11 @@
       "reason": "Grand slam i alwaysTrack.tournaments, pågår til 12. juli. Ruud er ute (kneskade), men finalene 11.–12. juli (tidligst kl. 17.00 norsk tid) er ai-research-events. Norske rettigheter: HBO Max (Max) + Eurosport (WBD holder alle Grand Slam-rettigheter i Norge — re-bekreftet 6. juli) — IKKE TV 2. Finalene også gratis på WBDs frikanal REX. Streaming nå durabelt korrekt (rights-map-fix, tidligere feilaktig TV 2 Play).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://media.wbdsports.com/post/warner-bros-discovery-brings-wimbledon-2026-to-fans-across-12-ma", "https://www.hbomax.com/no/no/sports"],
+      "evidence": [
+        "interests.json#alwaysTrack.tournaments",
+        "https://media.wbdsports.com/post/warner-bros-discovery-brings-wimbledon-2026-to-fans-across-12-ma",
+        "https://www.hbomax.com/no/no/sports"
+      ],
       "expires": "2026-07-13T23:59:59Z",
       "priority": "medium"
     },
@@ -227,7 +304,10 @@
       "reason": "Magnus Carlsen forsvarer tittelen 11.–15. august i Paris (22 spillere, $1,5 mill.). Dekker «Sjakk på elite-nivå». Streaming = offisielle Chess.com/Twitch/YouTube-strømmer (ingen norsk TV-rettighet — re-bekreftet 6. juli). Streaming nå durabelt korrekt (rights-map-fix, tidligere feilaktig NRK).",
       "addedAt": "2026-07-03T19:45:00Z",
       "addedBy": "research-agent",
-      "evidence": ["https://liquipedia.net/chess/Esports_World_Cup/2026", "https://www.chess.com/news/view/announcing-esports-world-cup-chess-finals-2026"],
+      "evidence": [
+        "https://liquipedia.net/chess/Esports_World_Cup/2026",
+        "https://www.chess.com/news/view/announcing-esports-world-cup-chess-finals-2026"
+      ],
       "expires": "2026-08-16T23:59:59Z",
       "priority": "high"
     },
@@ -238,18 +318,39 @@
       "reason": "100 Thieves (alwaysTrack.teams) gjør tier-1-debut som wildcard; online-stadiet 21.–26. juli, LAN-finaler i Malta 30. juli–2. august. Nordmannen Håvard «rain» Nygaard på laget. Streaming gratis på BLAST.tv/Twitch/YouTube. Kamptider ikke publisert (bracket slippes 1–3 dager før) — følg opp fra ~20. juli.",
       "addedAt": "2026-07-03T19:45:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.teams", "https://www.hltv.org/events/9154/blast-bounty-2026-season-2", "https://blast.tv/cs/tournaments/bounty-2026-season-2"],
+      "evidence": [
+        "interests.json#alwaysTrack.teams",
+        "https://www.hltv.org/events/9154/blast-bounty-2026-season-2",
+        "https://blast.tv/cs/tournaments/bounty-2026-season-2"
+      ],
       "expires": "2026-08-03T23:59:59Z",
+      "priority": "medium"
+    },
+    {
+      "id": "nm-friidrett-2026",
+      "name": "NM friidrett 2026 (Trondheim)",
+      "sport": "athletics",
+      "reason": "Dekker «Norske utøvere i internasjonal toppidrett» — senior-NM i friidrett, Trondheim Stadion 23.–25. juli. Lagt til denne kjøringen (var forrige kjøring notert som «like utenfor 2-ukers-vindu»). Datoer/venue/NRK-rettighet trippel-bekreftet (nmfriidrett2026.no + no.wikipedia + NRKs 2026-program) av scout + uavhengig fact-checker. Eksakt dagsprogram/starttider ikke publisert ennå (event-tid = dag 1, foreløpig anslag). Stjernedeltakelse (Warholm/Ingebrigtsen/Skotheim) IKKE bekreftet ennå — startlister slippes nærmere. NRK sender (NFIF-medierettigheter).",
+      "addedAt": "2026-07-06T18:45:00Z",
+      "addedBy": "research-agent",
+      "evidence": [
+        "interests.json#interests",
+        "https://www.nmfriidrett2026.no/",
+        "https://no.wikipedia.org/wiki/NM_i_friidrett_2026",
+        "https://www.nrk.no/sport/program-for-friidrett-i-2026_-full-oversikt-over-sendetider_-ovingar-og-utovarar-1.17804122"
+      ],
+      "expires": "2026-07-26T23:59:59Z",
       "priority": "medium"
     }
   ],
   "notes": [
-    "Kjøring 2026-07-06T16:00Z: LØSTE begge high-severity-glippene fra coverage-audit (08:24). (1) VM sene runder: semifinaler (14.+15. juli, Dallas/Atlanta), bronsefinale (18. juli, Miami) og FINALEN (19. juli, MetLife) var IKKE emittert av ESPN-pipelinen. Lagt til fire ai-research-events med datoer/venue/tider bekreftet mot ESPN+Wikipedia (fan-out scout + uavhengig fact-checker), og norske rettigheter bekreftet mot VG/oddspodden: TV 2 tar semifinalene, NRK bronsefinale + finale. (2) F1 Belgia/Ungarn: coverage-audit fant dem fredag-daterte (ESPN-F1-kvirk); men tavla viste dem KORREKT på søndag da jeg sjekket (Belgia 19. juli, Ungarn 26. juli, begge 13:00 UTC — bekreftet mot formula1.com/RacingNews365). Ingen F1-event nødvendig; oppdatert f1-tracked-reason.",
-    "VM-DUPLIKAT RYDDET: ESPN har nå løst bracket-plassholderen til et statisk event «England at Norway» (homeTeam Norway, awayTeam England, norwegian:true, TV 2) på Norge–England-slotten (11. juli 21:00 UTC). Fjernet derfor min ai-research-dup «Norge – England» (eventsRemoved: 1) — statisk pipeline dekker kampen durabelt, og build-events gjenoppretter ikke en slettet ai-research-oppføring. Regelen «fjern aldri statiske pipeline-events» respektert (fjernet kun min egen ai-research).",
-    "NY ATLETIKK-EVENT: Diamond League Monaco (Herculis EBS) fre. 10. juli — norske Sigrid Borge i spyd (start 17.30 CEST / 15.30 UTC; hovedprogram fra 20.00 CEST). NRK. Medium confidence (Borge-påmelding fra offisielt program, én kilde). Jakob Ingebrigtsens mulige comeback (agenten nevnte Monaco/Ungarn-Budapest/London) er UBEKREFTET — bevisst ikke lagt til før det er bekreftet. Monaco DL var Diamond League uten athletics/DL-linje i norwegian-rights-skillen (NRK har DL 2025–2029) — verdt å legge til i skillen.",
-    "TdF (pågår): skogbrann i Pyrénées-Orientales påvirket etappe 3 (6. juli, kjørt uten publikum siste ~40 km, ingen tid/rute-endring). Etappe 4 (7. juli) på Code Red varme-varsel (~41°C, UCI-varmeprotokoll på standby) — INGEN endring bekreftet 6. juli ettermiddag. Verify må sjekke etappe 4-status morgenen 7. juli. Alle 21 etapper ligger inne med korrekt delt streaming (TV 2 Play + Max).",
-    "Golf/tennis/sjakk/CS2 uendret siden 10:15-kjøringen: Hovland i Scottish Open + The Open; Ruud comeback i Gstaad (andreseedet), USA-svingen fortsatt skadeavhengig/ubekreftet; Ventura uten bekreftet PGA-start; Sjakk-NM pågår (Tari trakk seg); Carlsen ingen turnering før EWC-sjakk 11.–15. aug; rain/100 Thieves BLAST Bounty S2 21.–26. juli (kamptider fortsatt ikke publisert). Ingen nye events her denne kjøringen.",
-    "coverage-gaps.json: én low-severity chess file-empty-anomali (chess.json tom — av-sesong for statisk fetcher; Sjakk-NM er ai-research og ligger inne) + én ikke-imminent PL-entity-gap (Glasner→Forest, trenernyhet, ikke event) — begge avvist. scout 21x «quiet» siste døgn (overgangsrykter + resultater) — ingen eskalering.",
-    "Utenfor vindu / følges opp: NM friidrett Trondheim 23.–25. juli (like utenfor 2-ukers-vindu, legges til neste kjøring). Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League er utenfor sesong; PL/La Liga starter medio august; vinteridretter av-sesong."
+    "Kjøring 2026-07-06T18:45Z: rolig kjøring 2,5t etter 16:00-kjøringen som løste begge high-severity-glippene (VM sene runder + F1-datering). Tavla er godt dekket. ÉN ny event lagt til: NM friidrett 2026 (Trondheim, 23.–25. juli, NRK) — forrige kjørings pending-punkt. Datoer/venue/NRK trippel-bekreftet av scout + uavhengig fact-checker; eksakt dagsprogram ikke publisert (tid = dag 1, foreløpig). eventsAdded: 1, eventsRemoved: 0.",
+    "FANOUT: athletics-scout + late-additions-scout + fact-checker. INGEN andre nye bekreftede events. Ruud: ingen bekreftet Nord-Amerika-hardcourt (Washington ~25. juli / Montreal 1.–13. aug) — Gstaad forblir eneste bekreftede; USA-svingen fortsatt skadeavhengig/ubekreftet. Ventura: kun ALTERNATE på 3M Open (20.–26. juli), ikke i hovedfeltet; ingen bekreftet start (Corales heller ikke bekreftet). Carlsen: ingen ny turnering juli/tidlig aug (neste = EWC-sjakk 11.–15. aug). 100 Thieves: BLAST Bounty S2 online 21.–26. juli står; bracket/kamptider fortsatt ikke publisert (slippes 1–3 dager før). NY note: LAN-finalene i Malta (BLAST Arena Studios) 30. juli–2. aug — 100 Thieves spiller DER kun ved avansement (tentativt).",
+    "WATCH (til verify/scout): Jakob Ingebrigtsen-comeback fortsatt UBEKREFTET (achilles-operasjon feb. 2026; agent nevner mulig retur fra midten av juli). Off-board-kandidat er Hungarian Athletics Grand Prix, Budapest 14. juli — IKKE lagt til (ingen bekreftet påmelding). Monaco (10. juli) + London (18. juli) står allerede på tavla. Re-sjekk når returen konkretiseres.",
+    "TdF etappe 4 (7. juli, Carcassonne–Foix): INGEN bekreftet tidsendring. NB: enkelte US-aggregatorer viser «7:10 a.m.» = Eastern Time, IKKE lokal start (~13.25 CEST). Etappen kjøres under Code Red varmevarsel (~40–41°C) og er i reell fare (UCI-varmeprotokoll på standby), men ingen offisiell endring pr. 6. juli kveld. Etappe 3 (6. juli) ble kjørt uten publikum siste ~40 km pga. skogbrann. VERIFY MÅ SJEKKE etappe 4-status morgenen 7. juli.",
+    "Golf/tennis/sjakk uendret siden 16:00: Hovland i Scottish Open (9.–12.) + The Open (16.–19.); Ruud comeback Gstaad (13.–19., andreseedet); Sjakk-NM Kristiansund pågår til 11. juli (Tari trakk seg); Wimbledon-finaler 11.–12. juli (Max/Eurosport). VM sene runder (semi 14.–15. TV 2, bronse 18. NRK, finale 19. NRK) og F1 Belgia/Ungarn (19./26. juli, søndags-datert korrekt på statisk tavle) står. Ingen nye events her.",
+    "coverage-gaps.json (17:41): én ikke-imminent PL-entity-gap (Glasner→Nottingham Forest, trenernyhet) + to low file-empty-anomalier (chess.json + esports.json tomme — av-sesong/hendelsesstyrt for statiske fetchere; Sjakk-NM og BLAST er ai-research og ligger inne). Alle avvist. scout-log: 21x «quiet» siste døgn. coverage-audit er fra 08:24 (før 16:00-kjøringen løste begge glippene).",
+    "SKILL-EDIT FORSØKT MEN BLOKKERT (3. kjøring på rad): ønsket å legge til Athletics/Diamond League-linje (NRK, eksklusive rettigheter 2025–2029) + NM friidrett→NRK i norwegian-rights-skillen, samt oppdatere F1-linjen (Viaplay/V Sport 1, t.o.m. 2029) og TdF (delt TV 2 Play + Max/Eurosport). Skriving til .claude/skills/ ble nektet av permission-mode (ikke hooken). Runtime er uansett korrekt: events bærer sine egne NRK-verdier, og norwegian-rights.js overstyrer ikke friidrett. ANBEFALING til drift: gi research-workflowen skrivetilgang til .claude/skills/ slik at den kvalitative læringssløyfen ikke stopper.",
+    "Utenfor vindu / følges opp: Ruud USA-sving (Montreal-trekning ~31. juli); 100 Thieves Malta-LAN 30. juli–2. aug (ved avansement); Ingebrigtsen-retur. PL/La Liga starter medio august; Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League utenfor sesong; vinteridretter av-sesong."
   ]
 }

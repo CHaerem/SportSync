@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T17:41:26.533Z",
+  "generatedAt": "2026-07-06T18:53:56.915Z",
   "gapCount": 1,
   "anomalyCount": 2,
   "gaps": [
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/oliver-glasner-tar-over-nottingham-forest-1.17948780",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-06T17:41:26.383Z"
+      "detectedAt": "2026-07-06T18:53:56.776Z"
     }
   ],
   "anomalies": [
@@ -21,14 +21,14 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-06T17:41:26.533Z"
+      "detectedAt": "2026-07-06T18:53:56.915Z"
     },
     {
       "sport": "esports",
       "issue": "file-empty",
       "detail": "docs/data/esports.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-06T17:41:26.533Z"
+      "detectedAt": "2026-07-06T18:53:56.915Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
