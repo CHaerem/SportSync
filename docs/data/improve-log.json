@@ -1,7 +1,7 @@
 {
 	"runAt": "2026-07-06T11:50:00Z",
 	"action": "opened-pr",
-	"pr": null,
+	"pr": "https://github.com/CHaerem/SportSync/pull/201",
 	"proposal": "Fix the recurring ESPN F1 mis-dating quirk at the source: f1.js now re-stamps each near-term Grand Prix with its actual RACE session date/time (from ESPN's core-API session list) instead of the Friday FP1 date ESPN puts on the scoreboard, and clears the premature FINAL status. Fail-open + bounded to the ~35-day window the pipeline keeps. Adds tests/f1-fetcher.test.js (5 cases).",
 	"evidence": [
 		"coverage-audit.json (2026-07-06): TWO high-severity F1 gaps — Belgian GP board-dated fre. 17. juli 11:30 and Hungarian GP fre. 24. juli 11:30 (FP1) instead of the Sunday races 19./26. juli. sourceIssues flags 'ESPN F1 scoreboard mis-daterer GP-helger til fredagens trening'.",
