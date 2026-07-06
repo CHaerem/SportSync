@@ -1,16 +1,16 @@
 {
-  "runAt": "2026-07-05T08:27:09.000Z",
-  "checked": 17,
-  "confirmed": 4,
-  "amended": 10,
+  "runAt": "2026-07-06T12:00:00.000Z",
+  "checked": 4,
+  "confirmed": 1,
+  "amended": 3,
   "removed": 0,
   "notes": [
-    "World Cup R16: resolved 6 tentative NRK/TV2 labels from the official NTB press release + NRK programside — Brasil–Norge NRK, Mexico–England TV2, Portugal–Spania TV2, USA–Belgia NRK, Argentina–Egypt TV2, Sveits–Colombia NRK.",
-    "World Cup quarterfinals: NRK programside explicitly assigns the July 11 Miami QF to TV 2 — resolved that one. The other three QF splits (Jul 9 Boston Morocco–France, Jul 10 LA, Jul 12 Kansas City) are not yet published, so their NRK/TV2 labels were left tentative (an honest guess beats a wrong certainty).",
-    "Sjakk-NM 2026 (Landsturneringen): streaming was wrongly listed as NRK — the tournament is shown live on Direktesport (+ Lichess relay), confirmed by sjakknm2026.no and the bergensjakk day-1 report. Corrected to Direktesport.",
-    "Wimbledon finals: both were wrongly listed as TV 2 Play. Norway rights are HBO Max/Eurosport with the singles finals free-to-air on REX (official WBD press release). Corrected both women's and men's final to HBO Max/REX. (The prior run's log already flagged the REX finding but the field had reverted to TV 2 Play.)",
-    "Tour de France stages 6–9: route, dates and stage types confirmed via Wikipedia; streaming (TV 2 Play) correct. Exact ASO start times are still unpublished, so the estimated times were retained and each stage marked confirmed.",
+    "World Cup QF Norge–England (ai-research event, lør 11. juli 23:00 norsk, Hard Rock Stadium Miami): resolved the tentative NRK/TV 2 label to a confirmed single channel — NRK's own programside explicitly assigns the July 11 Miami quarterfinal to TV 2, corroborated by Nettavisen's sendeskjema. Amended streaming to TV 2 (play.tv2.no) and updated the summary from 'kanal ikke bekreftet' to 'vises på TV 2'.",
+    "Applied the same TV 2 resolution to the ESPN duplicate 'England at Norway' (same match/time, venue 'Hard Rock Stadium') so the board is consistent until the next static build. NOTE: there are two events for this match — the ai-research 'Norge – England' (rich, favorite, importance 5) and an ESPN placeholder 'England at Norway'. build-events won't dedupe them (different titles), and the ESPN one is regenerated each build so its channel edit will revert to tentative. Flagging for research/improve to reconcile the duplicate.",
+    "World Cup France–Morocco QF (Thu 9 July, 20:00 UTC / 22:00 norsk, Gillette/Boston): existence + time confirmed against NRK/Nettavisen schedules (matches events.json). The NRK/TV 2 channel split for this QF is NOT yet published, so the tentative label was left as an honest guess. Same for the two team-less QF placeholders (Jul 10 LA, Jul 12 Kansas City) — left tentative.",
+    "Swiss Open Gstaad (ATP 250, Casper Ruud): verified via Wikipedia + official swissopengstaad.ch — main draw 13.–19. juli 2026 at Roy Emerson Arena, matches events.json. Corrected the summary: Ruud is listed as TOP seed (toppseedet), not andreseedet. Norway streaming (TV 2 Play) could not be independently confirmed on the official sources; retained per the norwegian-rights ATP prior.",
     "No events removed — every checked event demonstrably exists.",
-    "SKILL UPDATE BLOCKED BY PERMISSIONS (same as prior run): writes to .claude/skills/norwegian-rights/SKILL.md were denied by the harness in this environment (docs/data/* edits succeeded). Intended edits: Wimbledon → HBO Max/Eurosport [solid] + finals free on REX (NOT TV 2); add Sjakk-NM/Landsturneringen → Direktesport (free) [solid] (NOT NRK). The events.json changes and this log capture the facts; the skill file needs a session with .claude/ write access to apply them."
+    "Already-verified near-term events (TdF stages 3–9, Genesis Scottish Open, both Wimbledon finals) were re-checked against the 2026-07-05 ledger and needed no change this run.",
+    "SKILL UPDATE BLOCKED BY PERMISSIONS (persists from prior runs): writes to .claude/skills/norwegian-rights/SKILL.md were denied by the harness in this environment (docs/data/* edits succeeded). Intended edits, still unapplied: (a) FIFA World Cup line — record confirmed R16/QF splits, esp. Norge–England QF Jul 11 → TV 2 [solid]; (b) Wimbledon → Max (HBO Max)/Eurosport [solid] with singles finals free-to-air on REX (NOT Viaplay/TV 2); (c) add Chess: Sjakk-NM / Landsturneringen → Direktesport (free, + Lichess relay) [solid]. events.json + this log capture the facts; the skill needs a session with .claude/ write access."
   ]
 }
