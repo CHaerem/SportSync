@@ -46,63 +46,92 @@ opposite of v1's sprawling autopilot.
 Everything runs on **GitHub Actions + Claude Code Max + GitHub Pages**. No servers,
 no databases, no paid APIs.
 
+```mermaid
+flowchart TB
+    you(["👤 You edit interests.json"]):::human
+
+    subgraph ingest["Ingest — hourly, no AI (~3 min)"]
+        fetch["Fetchers:<br/>ESPN · fotball.no · Liquipedia CS2<br/>· tvkampen · RSS"]
+    end
+
+    board[("events.json<br/>+ coverage-gaps, standings, results")]:::store
+
+    subgraph agents["Scheduled Claude agents"]
+        research["Research — every 4h<br/>finds events the APIs miss"]
+        scout["Scout — hourly"]
+        critic["Coverage critic — daily<br/>what are we MISSING?"]
+        verify["Verify — daily<br/>correctness gate"]
+        editorial["Editorial — 2x/day"]
+    end
+
+    trust[("calibration + source-quirks<br/>who to trust · how sources fail")]:::store
+    feat[("featured.json")]:::store
+    pages(["🖥️ GitHub Pages<br/>the calm dashboard"]):::out
+
+    subgraph heal["Self-maintenance — fix on branch, test-gate, auto-merge"]
+        visualqa["Visual QA — daily<br/>looks at screenshots"]
+        uifix["UI-fix — daily"]
+        selfrepair["Self-repair — daily"]
+        improve["Improve — weekly"]
+    end
+
+    governor{{"Usage monitor — hourly<br/>quota governor"}}:::gov
+
+    you --> research
+    fetch --> board
+    scout -->|escalate| research
+    critic -->|escalate| research
+    board --> critic
+    board --> verify
+    research --> board
+    verify --> board
+    verify --> trust
+    trust -. informs .-> research
+    trust -. informs .-> critic
+    board --> pages
+    editorial --> feat
+    feat --> pages
+    pages -. screenshots .-> visualqa
+    visualqa -->|findings| uifix
+    uifix --> pages
+    selfrepair --> repo[/"codebase (PRs)"/]
+    improve --> repo
+    governor -. gates .-> agents
+    governor -. gates .-> heal
+
+    classDef human fill:#fff3bf,stroke:#f08c00,color:#111
+    classDef store fill:#e7f5ff,stroke:#1c7ed6,color:#111
+    classDef out fill:#ebfbee,stroke:#2f9e44,color:#111
+    classDef gov fill:#fff0f6,stroke:#c2255c,color:#111
 ```
-┌────────────────────────────────────────────────────────────┐
-│ STATIC PIPELINE (hourly, no AI, ~3 min)                    │
-│ ESPN + fotball.no + Liquipedia CS2 → standings, RSS,       │
-│ results, tvkampen TV listings → build-events.js →          │
-│ events.json (preserves AI events, Norwegian channels)      │
-│ → auto-publishes to Pages on change (workflow_call)        │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ RESEARCH AGENT (every 4h, Claude + web search)             │
-│ Reads interests.json → finds events APIs miss →            │
-│ appends to events.json with confidence + evidence URLs →   │
-│ rewrites tracked.json with a reason per entry              │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ VERIFY AGENT (daily)                                       │
-│ Re-checks AI-researched events against the web →           │
-│ confirms / amends / removes; logs a calibration ledger     │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ EDITORIAL AGENT (07:00 + 17:00 Oslo)                       │
-│ Writes the morning/evening brief: one quiet headline       │
-│ line the client resolves against live data                 │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ SCOUT AGENT (hourly, Claude Haiku) — the Watchtower        │
-│ Triages RSS + coverage gaps → escalates to research        │
-│ (max 2/day) when something important looks uncovered       │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ COVERAGE CRITIC (daily, Claude Opus) — recall audit        │
-│ Trusts no single source: an imminent pass (is this         │
-│ weekend on the board? verify vs the web) + a 4-week        │
-│ horizon → coverage-audit.json → escalates gaps             │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ VISUAL QA (daily, Claude Sonnet) — vision review           │
-│ Screenshots the dashboard at phone+desktop widths and      │
-│ LOOKS at them → flags truncation/overflow/calm-design      │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ UI FIX (daily, Claude Opus) — self-heal loop               │
-│ Reads visual-qa findings → fixes frontend on a branch →    │
-│ re-screenshots + tests → PR → tests re-gate → auto-merge   │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ SELF-REPAIR (daily, Claude Opus) — the mechanic            │
-│ Detects failed runs / broken tests / fetchers → fixes on   │
-│ a branch → re-gates tests → auto-merges (except workflows/ │
-│ hooks/interests, which wait for review)                    │
-└────────────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────────────┐
-│ IMPROVE (weekly, Claude Opus) — evolution                  │
-│ Mines the logs for one evidenced improvement → PR →        │
-│ tests re-gate → auto-merges (except protected paths)       │
-└────────────────────────────────────────────────────────────┘
-```
+
+**Reading it:** you own `interests.json`; the hourly static pipeline and the every-4h
+research agent both write the shared board (`events.json`); scout and the coverage
+critic nudge research toward what's missing; verify is the correctness gate and feeds a
+trust layer (calibration + source-quirks) back into research and the critic; the board
+plus the editorial brief publish to the calm dashboard; a self-maintenance ring
+(visual-QA → UI-fix, self-repair, improve) keeps the code and UI healthy behind the test
+gate; and the usage-monitor gates every agent on real quota.
+
+### The scheduled jobs
+
+| Job | When | Model | What it does |
+|---|---|---|---|
+| **Static pipeline** | hourly | — | Fetch ESPN · fotball.no · Liquipedia CS2 · tvkampen · RSS → `events.json`; auto-publish to Pages on change |
+| **Research** | every 4h | Fable 5 → Opus 4.8 | Find events the APIs miss; append to `events.json`, rewrite `tracked.json` with a reason per entry |
+| **Scout** | hourly | Haiku | Triage RSS + coverage gaps → escalate to research (max 2/day) |
+| **Coverage critic** | daily | Opus | Audit what's missing — an imminent pass + a 4-week horizon, trusting no single source |
+| **Verify** | daily | Opus | Re-check events against the web; log the calibration ledger + source-quirks |
+| **Editorial** | 2×/day | Opus | Morning/evening brief → `featured.json` |
+| **Visual QA** | daily | Sonnet | Screenshot the dashboard and *look* → flag truncation/overflow/calm-design |
+| **UI-fix** | daily | Opus | Fix the frontend from QA findings → re-screenshot + test → auto-merge |
+| **Self-repair** | daily | Opus | Fix broken runs/tests/fetchers → auto-merge |
+| **Improve** | weekly | Opus | Mine the logs for one evidenced improvement → auto-merge |
+| **Usage monitor** | hourly | — | Real account-wide quota gauge; gates every agent |
+
+The self-fixing loops (UI-fix, self-repair, improve) auto-merge behind a re-run test
+gate, stopping only at three **protected paths** that always wait for review:
+`.github/workflows/**`, `scripts/hooks/**`, and `scripts/config/interests.json`.
 
 ### Correct "where to watch"
 
