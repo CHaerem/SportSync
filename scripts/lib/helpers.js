@@ -58,6 +58,116 @@ export function isEventInWindow(event, windowStart, windowEnd) {
 	return start < we && end >= ws;
 }
 
+// --- Interest entity matching (shared, deterministic) ---
+// alwaysTrack entries may be a bare string OR { name, aliases, sport, notify }.
+// normalizeEntity upgrades either into a uniform shape so a stray string never
+// crashes the pipeline. matchInterest is the ONE matcher used everywhere
+// (fetchers, results, coverage gaps, relevance filter, must-watch/notify) so a
+// name is matched the same way in every code path — same input, same output.
+
+/** Lowercase + strip diacritics so "Barça" and "Barca" compare equal. */
+export function normalizeText(s) {
+	return (s || "")
+		.normalize("NFD")
+		.replace(/\p{M}/gu, "")
+		.toLowerCase();
+}
+
+/**
+ * Word-boundary, accent-insensitive containment. "Lyn" matches "Lyn Oslo" and
+ * "Vålerenga-Lyn" but NOT "Brooklyn"/"lynnedslag" — boundaries kill the class of
+ * false positive that plain substring matching produces.
+ */
+export function containsName(haystack, name) {
+	const n = normalizeText(name).trim();
+	if (!n) return false;
+	const h = normalizeText(haystack);
+	const escaped = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu").test(h);
+}
+
+/**
+ * Coerce an alwaysTrack entry into { name, aliases, sport, notify }.
+ * Accepts a bare string (defensive: never crash) or an object; returns null for
+ * anything without a usable name. `defaultNotify` sets `notify` when the entry
+ * doesn't specify it (teams/athletes default true, tournaments false).
+ */
+export function normalizeEntity(entry, { defaultNotify = true } = {}) {
+	if (typeof entry === "string") {
+		const name = entry.trim();
+		return name ? { name, aliases: [], sport: null, notify: defaultNotify } : null;
+	}
+	if (entry && typeof entry === "object" && entry.name) {
+		return {
+			name: entry.name,
+			aliases: Array.isArray(entry.aliases) ? entry.aliases.filter(Boolean) : [],
+			sport: entry.sport || null,
+			notify: entry.notify != null ? Boolean(entry.notify) : defaultNotify,
+		};
+	}
+	return null;
+}
+
+/** Every string an entity can be recognised by: its name plus all aliases. */
+export function entityTerms(entity) {
+	return entity ? [entity.name, ...(entity.aliases || [])].filter(Boolean) : [];
+}
+
+/** Does `haystack` mention this entity (by canonical name or any alias)? */
+export function matchesEntity(haystack, entity) {
+	return entityTerms(entity).some((term) => containsName(haystack, term));
+}
+
+/**
+ * Return the first entity whose name/alias appears in `haystack`, else null.
+ * `entries` may hold bare strings or objects (normalized defensively). Pass
+ * `opts.sport` to skip entities tagged to a different sport (a golf "US Open"
+ * entity won't match a tennis event).
+ */
+export function matchInterest(haystack, entries, opts = {}) {
+	const { sport } = opts;
+	for (const raw of entries || []) {
+		const e = normalizeEntity(raw, opts);
+		if (!e) continue;
+		if (sport && e.sport && normalizeText(e.sport) !== normalizeText(sport)) continue;
+		if (matchesEntity(haystack, e)) return e;
+	}
+	return null;
+}
+
+/**
+ * The tracked entities that should trigger a reminder/alarm ("must-watch").
+ * Teams + athletes alarm by default; tournaments only when notify:true — so
+ * following "Premier League" broadly doesn't alarm on every match, but Liverpool
+ * (a followed team) or F1 (a tournament flagged notify:true) does. This keys ONLY
+ * off the user-owned interests.json — never off an event's own isFavorite/importance
+ * (which the AI can write), so what interrupts the user stays user-governed.
+ */
+export function notifyEntities(interests) {
+	const at = interests?.alwaysTrack || {};
+	const out = [];
+	for (const raw of [...(at.teams || []), ...(at.athletes || [])]) {
+		const e = normalizeEntity(raw, { defaultNotify: true });
+		if (e && e.notify) out.push(e);
+	}
+	for (const raw of at.tournaments || []) {
+		const e = normalizeEntity(raw, { defaultNotify: false });
+		if (e && e.notify) out.push(e);
+	}
+	return out;
+}
+
+/** Which notify-entity (if any) makes this event a must-watch — else null. */
+export function mustWatchEntity(event, interests) {
+	if (!event) return null;
+	const hay = [
+		event.title, event.tournament, event.homeTeam, event.awayTeam,
+		...((event.norwegianPlayers || []).map((p) => p.name || p)),
+		...(event.participants || []),
+	].join(" ");
+	return matchInterest(hay, notifyEntities(interests));
+}
+
 export function normalizeToUTC(dateString) {
 	// Handle various date formats from APIs and ensure proper UTC conversion
 	if (!dateString) return new Date().toISOString();

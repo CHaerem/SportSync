@@ -1,37 +1,40 @@
 {
-  "$schema": "Source of truth — you (the human) edit this. AI never writes here.",
+  "$schema": "Source of truth — you (the human) edit this. AI never writes here. alwaysTrack entries are { name, aliases, sport, notify }. Teams/athletes notify by default; a tournament only notifies when notify:true.",
   "language": "nb-NO",
   "timezone": "Europe/Oslo",
   "alwaysTrack": {
     "athletes": [
-      "Viktor Hovland",
-      "Casper Ruud",
-      "Magnus Carlsen",
-      "Aryan Tari",
-      "Kristoffer Ventura",
-      "Håvard Nygaard"
+      { "name": "Viktor Hovland", "aliases": ["Hovland"], "sport": "golf" },
+      { "name": "Casper Ruud", "aliases": ["Ruud"], "sport": "tennis" },
+      { "name": "Magnus Carlsen", "aliases": ["Carlsen"], "sport": "chess" },
+      { "name": "Aryan Tari", "aliases": ["Tari"], "sport": "chess" },
+      { "name": "Kristoffer Ventura", "aliases": ["Ventura"], "sport": "golf" },
+      { "name": "Håvard Nygaard", "aliases": [], "sport": "esports" }
     ],
     "teams": [
-      "Barcelona",
-      "Liverpool",
-      "Lyn",
-      "100 Thieves",
-      "Uno-X Mobility"
+      { "name": "Barcelona", "aliases": ["FC Barcelona", "Barça", "Barca"], "sport": "football" },
+      { "name": "Liverpool", "aliases": ["Liverpool FC", "LFC"], "sport": "football" },
+      { "name": "Lyn", "aliases": ["Lyn Oslo", "Lyn Fotball"], "sport": "football" },
+      { "name": "100 Thieves", "aliases": ["100T"], "sport": "esports" },
+      { "name": "Uno-X Mobility", "aliases": ["Uno-X", "Uno-X Pro Cycling"], "sport": "cycling" }
     ],
     "tournaments": [
-      "Premier League",
-      "La Liga",
-      "UEFA Champions League",
-      "Tour de France",
-      "Masters Tournament",
-      "PGA Championship",
-      "The Open Championship",
-      "US Open Golf",
-      "Roland-Garros",
-      "Wimbledon",
-      "F1 World Championship",
-      "FIFA World Cup 2026"
+      { "name": "Premier League", "aliases": ["EPL"], "sport": "football" },
+      { "name": "La Liga", "aliases": ["LaLiga"], "sport": "football" },
+      { "name": "UEFA Champions League", "aliases": ["Champions League", "Mesterligaen"], "sport": "football" },
+      { "name": "Tour de France", "aliases": ["TdF"], "sport": "cycling", "notify": true },
+      { "name": "Masters Tournament", "aliases": ["The Masters", "US Masters"], "sport": "golf" },
+      { "name": "PGA Championship", "aliases": [], "sport": "golf" },
+      { "name": "The Open Championship", "aliases": ["The Open", "British Open"], "sport": "golf" },
+      { "name": "US Open Golf", "aliases": ["U.S. Open Golf"], "sport": "golf" },
+      { "name": "Roland-Garros", "aliases": ["French Open"], "sport": "tennis" },
+      { "name": "Wimbledon", "aliases": [], "sport": "tennis" },
+      { "name": "F1 World Championship", "aliases": ["Formula 1", "Formula One", "Formel 1", "F1"], "sport": "f1", "notify": true },
+      { "name": "FIFA World Cup 2026", "aliases": ["World Cup 2026", "VM 2026", "Fotball-VM"], "sport": "football" }
     ]
+  },
+  "notify": {
+    "leadMinutes": 30
   },
   "interests": [
     "Norske utøvere i internasjonal toppidrett",

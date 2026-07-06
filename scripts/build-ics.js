@@ -1,11 +1,18 @@
 #!/usr/bin/env node
-// Generate an iCalendar (.ics) file from aggregated events.json
+// Generate iCalendar (.ics) files from aggregated events.json:
+//   events.ics            — everything you follow; a reminder (VALARM) is attached
+//                           only to must-watch events so the feed doesn't nag.
+//   events-must-watch.ics — only must-watch events (each with a reminder), for a
+//                           calm "just my teams/athletes" subscription.
+// Must-watch is computed deterministically from the user-owned interests.json
+// (notifyEntities/mustWatchEntity) — never from an event's own isFavorite/importance.
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { rootDataPath } from "./lib/helpers.js";
+import { rootDataPath, readJsonIfExists, mustWatchEntity } from "./lib/helpers.js";
 
 const dataDir = rootDataPath();
+const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 const eventsFile = path.join(dataDir, "events.json");
 if (!fs.existsSync(eventsFile)) {
 	console.error("events.json not found. Run build-events.js first.");
@@ -22,6 +29,11 @@ if (!Array.isArray(events)) {
 	console.error("events.json must be an array");
 	process.exit(1);
 }
+
+const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
+const leadMinutes = Number(interests?.notify?.leadMinutes) > 0
+	? Math.round(Number(interests.notify.leadMinutes))
+	: 30;
 
 function formatDateTime(dt) {
 	const d = new Date(dt);
@@ -42,19 +54,12 @@ function esc(str = "") {
 }
 
 const nowStamp = formatDateTime(new Date().toISOString());
-let ics = [];
-ics.push("BEGIN:VCALENDAR");
-ics.push("VERSION:2.0");
-ics.push("PRODID:-//SportSync//EN");
-ics.push("CALSCALE:GREGORIAN");
-ics.push("METHOD:PUBLISH");
 
-for (const ev of events) {
-	if (!ev.time) continue; // skip invalid
+/** Build the VEVENT lines for one event; attach a VALARM when `withAlarm`. */
+function vevent(ev, withAlarm) {
 	const dtStart = formatDateTime(ev.time);
 	const uidSeed = `${ev.sport}|${ev.tournament}|${ev.title}|${ev.time}`;
-	const uid =
-		crypto.createHash("sha1").update(uidSeed).digest("hex") + "@sportsync";
+	const uid = crypto.createHash("sha1").update(uidSeed).digest("hex") + "@sportsync";
 	const summary = esc(ev.title);
 	const lines = [];
 	lines.push("BEGIN:VEVENT");
@@ -76,12 +81,40 @@ for (const ev of events) {
 	const description = esc(parts.join("\n"));
 	lines.push(`SUMMARY:${summary}`);
 	if (description) lines.push(`DESCRIPTION:${description}`);
+	if (withAlarm) {
+		lines.push("BEGIN:VALARM");
+		lines.push("ACTION:DISPLAY");
+		lines.push(`DESCRIPTION:${summary}`);
+		lines.push(`TRIGGER:-PT${leadMinutes}M`);
+		lines.push("END:VALARM");
+	}
 	lines.push("END:VEVENT");
-	ics.push(...lines);
+	return lines;
 }
 
-ics.push("END:VCALENDAR");
+/** Wrap a set of events into a full VCALENDAR string. */
+function calendar(list, { alarms }) {
+	const ics = [
+		"BEGIN:VCALENDAR",
+		"VERSION:2.0",
+		"PRODID:-//SportSync//EN",
+		"CALSCALE:GREGORIAN",
+		"METHOD:PUBLISH",
+	];
+	for (const ev of list) {
+		if (!ev.time) continue; // skip invalid
+		ics.push(...vevent(ev, alarms && ev._mustWatch));
+	}
+	ics.push("END:VCALENDAR");
+	return ics.join("\n");
+}
 
-const outFile = path.join(dataDir, "events.ics");
-fs.writeFileSync(outFile, ics.join("\n"));
-console.log(`Wrote ${outFile} with ${events.length} events.`);
+// Tag each event with its deterministic must-watch status once.
+for (const ev of events) ev._mustWatch = mustWatchEntity(ev, interests) != null;
+const mustWatch = events.filter((ev) => ev.time && ev._mustWatch);
+
+fs.writeFileSync(path.join(dataDir, "events.ics"), calendar(events, { alarms: true }));
+fs.writeFileSync(path.join(dataDir, "events-must-watch.ics"), calendar(mustWatch, { alarms: true }));
+console.log(
+	`Wrote events.ics (${events.length} events) and events-must-watch.ics (${mustWatch.length} must-watch, reminder -${leadMinutes}m).`
+);

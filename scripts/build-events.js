@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 
 const dataDir = rootDataPath();
@@ -187,20 +187,19 @@ const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {}
 const followBroadly = new Set(
 	(interests.followBroadly || ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
 );
-const trackTeams = (interests.alwaysTrack?.teams || []).map((t) => t.toLowerCase());
-const trackAthletes = (interests.alwaysTrack?.athletes || []).map((a) => a.toLowerCase());
-const trackTournaments = (interests.alwaysTrack?.tournaments || []).map((t) => t.toLowerCase());
+const trackedEntities = [
+	...(interests.alwaysTrack?.teams || []),
+	...(interests.alwaysTrack?.athletes || []),
+	...(interests.alwaysTrack?.tournaments || []),
+];
 
 function isRelevant(e) {
 	if (followBroadly.has((e.sport || "").toLowerCase())) return true;
 	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4 || e.source === "ai-research") return true;
 	const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
 		...(e.norwegianPlayers || []).map((p) => p.name || p),
-		...(e.participants || [])].join(" ").toLowerCase();
-	if (trackTournaments.some((t) => hay.includes(t))) return true;
-	if (trackTeams.some((t) => hay.includes(t))) return true;
-	if (trackAthletes.some((a) => hay.includes(a))) return true;
-	return false;
+		...(e.participants || [])].join(" ");
+	return matchInterest(hay, trackedEntities) != null;
 }
 
 // Keep events from the last 14 days + upcoming, and only those we follow

@@ -13,7 +13,7 @@
  */
 
 import path from "path";
-import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY } from "./lib/helpers.js";
+import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest } from "./lib/helpers.js";
 import { validateESPNScoreboard } from "./lib/response-validator.js";
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
@@ -32,15 +32,11 @@ function loadUserContext() {
 }
 
 export function isFavoriteTeam(teamName, userContext) {
-	const favorites = (userContext.favoriteTeams || []).map(t => t.toLowerCase());
-	const name = (teamName || "").toLowerCase();
-	return favorites.some(fav => name.includes(fav) || fav.includes(name));
+	return matchInterest(teamName || "", userContext.favoriteTeams || []) != null;
 }
 
 export function isFavoritePlayer(playerName, userContext) {
-	const favorites = (userContext.favoritePlayers || []).map(p => p.toLowerCase());
-	const name = (playerName || "").toLowerCase();
-	return favorites.some(fav => name.includes(fav) || fav.includes(name));
+	return matchInterest(playerName || "", userContext.favoritePlayers || []) != null;
 }
 
 // --- Write-time validation ---
@@ -303,12 +299,14 @@ export async function fetchGolfResults(options = {}) {
 				thru: c.status?.thru?.toString() || "-",
 			}));
 
-			// Find Norwegian players (or any favorite players)
-			const favoritePlayers = (ctx.favoritePlayers || []).map(p => p.toLowerCase());
+			// Find Norwegian players (or any favorite players). Surname-only hits
+			// (e.g. "Hovland") come from the entity's aliases, matched at word
+			// boundaries by matchInterest.
+			const favoritePlayers = ctx.favoritePlayers || [];
 			const norwegianPlayers = competitors
 				.filter(c => {
-					const name = (c.athlete?.displayName || c.athlete?.fullName || "").toLowerCase();
-					return favoritePlayers.some(fav => name.includes(fav.split(" ").pop()));
+					const name = c.athlete?.displayName || c.athlete?.fullName || "";
+					return matchInterest(name, favoritePlayers) != null;
 				})
 				.map((c, idx) => ({
 					position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
