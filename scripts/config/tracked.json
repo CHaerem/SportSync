@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-06T10:15:00Z",
+  "lastUpdated": "2026-07-06T16:00:00Z",
   "lastUpdatedBy": "research-agent",
   "version": 2,
   "leagues": [
@@ -114,10 +114,10 @@
       "id": "fifa-world-cup-2026",
       "name": "FIFA World Cup 2026",
       "sport": "football",
-      "reason": "alwaysTrack.tournaments, pågår nå. STOR NYHET: Norge slo Brasil 2–1 i åttedelsfinalen 5. juli (Haaland to mål, Nyland reddet straffe) og er i sin FØRSTE VM-kvartfinale noensinne — mot England lørdag 11. juli kl. 23.00 norsk tid på Hard Rock Stadium, Miami. Lagt til som ai-research-event «Norge – England» (norsk kanal NRK/TV 2 ikke bekreftet — tentativt merke, verify avklarer). Øvrige kvart- (9.–11. juli), semifinaler (14.–15. juli), bronsefinale (18. juli) og finale (19. juli) dekkes av statisk ESPN-pipeline.",
+      "reason": "alwaysTrack.tournaments, pågår nå. Norge slo Brasil 2–1 i åttedelsfinalen (Haaland to mål) og møter England i sin FØRSTE VM-kvartfinale lør. 11. juli kl. 23.00 norsk tid (Hard Rock Stadium, Miami). Den ai-research-dupen «Norge – England» er FJERNET denne kjøringen: ESPN har nå løst bracket-plassholderen til et statisk event «England at Norway» (homeTeam Norway, norwegian:true, TV 2) på samme slot — statisk pipeline dekker kampen durabelt, så vi unngår dobbeltvisning. RESOLVED HIGH-SEVERITY-GLIPP (coverage-audit 6. juli): semifinaler (tir. 14. + ons. 15. juli, Dallas/Atlanta, TV 2), bronsefinale (lør. 18. juli, Miami, NRK) og FINALEN (søn. 19. juli, MetLife, NRK) var IKKE emittert av ESPN-pipelinen og er nå lagt til som ai-research-events med bekreftede datoer/venue/tider (ESPN+Wikipedia) og norske rettigheter (VG/oddspodden: TV 2 tar semifinalene, NRK bronsefinale+finale). Vinneren av Norge–England går til semifinale 2 (Atlanta) — Norges vei til en historisk semifinale. NB verify/coverage-critic: når ESPN materialiserer sene-runde-plassholdere kan det oppstå nye duplikater mot disse ai-research-eventene.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.aljazeera.com/sports/2026/7/5/haaland-scores-twice-as-norway-stun-brazil-2-1-in-world-cup-2026-last-16", "https://www.olympics.com/en/news/fifa-world-cup-2026-bracket-quarter-finals-full-schedule-live-updates"],
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage", "https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket", "https://www.oddspodden.com/news/slik-sendes-fotball-vm-nrk-tv-2-dato-klokkeslett/"],
       "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
     },
@@ -142,6 +142,17 @@
       "evidence": ["https://london.diamondleague.com/about/meeting-information/", "https://www.diamondleague.com/warholm-cant-wait-for-london-return/", "https://kommunikasjon.ntb.no/pressemelding/18535635/nrk-sikrer-seg-diamond-league-til-2029"],
       "expires": "2026-07-19T23:59:59Z",
       "priority": "high"
+    },
+    {
+      "id": "diamond-league-monaco-2026",
+      "name": "Diamond League Monaco (Herculis EBS)",
+      "sport": "athletics",
+      "reason": "Dekker «Norske utøvere i internasjonal toppidrett». Norske Sigrid Borge er i deltakerlista i spydkast (fredag 10. juli, Stade Louis-II) — bekreftet mot offisielt Monaco-program. Spyd starter 17.30 CEST (15.30 UTC); hovedprogrammet fra 20.00 CEST. ai-research-event (medium — Borge-påmelding fra én kilde). NRK-streaming (eksklusive Diamond League-rettigheter 2025–2029). Jakob Ingebrigtsens mulige comeback (agent nevnte Monaco som ett av tre alternativ) er FORELØPIG IKKE bekreftet — bevisst ikke lagt til.",
+      "addedAt": "2026-07-06T16:00:00Z",
+      "addedBy": "research-agent",
+      "evidence": ["interests.json#interests", "https://monaco.diamondleague.com/en/programme-results/", "https://tv.nrk.no/serie/friidrett-diamond-league/sesong/2026"],
+      "expires": "2026-07-11T23:59:59Z",
+      "priority": "medium"
     },
     {
       "id": "sjakk-nm-2026",
@@ -191,10 +202,10 @@
       "id": "f1-world-championship-2026",
       "name": "Formula 1 World Championship 2026",
       "sport": "f1",
-      "reason": "alwaysTrack.tournaments, hele sesongen (kvalifisering + race). British GP kjørt 5. juli (Leclerc vant). Neste: Belgia GP 17. juli, deretter Ungarn GP 24. juli (statiske events; streaming Viaplay som holder eksklusive norske F1-rettigheter 2026). Sommerpause etter Ungarn.",
+      "reason": "alwaysTrack.tournaments, hele sesongen (kvalifisering + race). British GP kjørt 5. juli (Leclerc vant). Neste RACE-dager: Belgia GP SØN. 19. juli kl. 13.00 UTC (Spa) og Ungarn GP SØN. 26. juli kl. 13.00 UTC (Hungaroring) — begge bekreftet mot formula1.com/RacingNews365 (15.00 CEST). RESOLVED: coverage-audit (08:24) flagget begge som fredag-daterte (ESPN-F1-kvirk, se source-quirks) med fare for at søndagsløpet forsvant stille — men den statiske pipelinen viser dem NÅ korrekt på søndag (verifisert på tavla 6. juli 15:57 UTC). Ingen ai-research-event nødvendig. Streaming Viaplay/V Sport 1 (eksklusive norske F1-rettigheter t.o.m. 2029). Sommerpause ETTER Ungarn (ingen løp før Nederland sent i august).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
-      "evidence": ["interests.json#alwaysTrack.tournaments", "https://viaplay.no/no-nb/formel-1-guide"],
+      "evidence": ["interests.json#alwaysTrack.tournaments", "https://www.formula1.com/en/racing/2026/belgium", "https://www.formula1.com/en/racing/2026/hungary", "https://viaplay.no/no-nb/formel-1-guide"],
       "expires": "2026-12-31T23:59:59Z",
       "priority": "high"
     },
@@ -233,13 +244,12 @@
     }
   ],
   "notes": [
-    "Kjøring 2026-07-06T10:15Z: ROT-ÅRSAK til de tilbakevendende streaming-feilene ENDELIG funnet og fikset. Tidligere kjøringer trodde feilen skyldtes at research-commiten ikke landet på main (rebase-konflikt). FEIL diagnose. Den EKTE årsaken: build-events.js kjører resolveStreaming() på ALLE events (også ai-research) hver time, og norwegianRights()-kartet i scripts/lib/norwegian-rights.js hadde utdaterte verdier (chess→NRK, Wimbledon→TV 2, TdF→kun TV 2) som OVERSKREV de riktige verdiene ved hver bygging. Derfor kom feilene tilbake uansett hvor mange ganger events.json ble patchet. FIX denne kjøringen: (1) rettet norwegian-rights.js — chess faller nå gjennom til event-egen gratisstrøm (Direktesport/Lichess, Chess.com/Twitch), Wimbledon → Max + Eurosport, TdF → TV 2 Play + Max; (2) patchet events.json (25 felt) slik at det er riktig umiddelbart. npm-testene (norwegian-rights + øvrige) verifisert grønne mot endringene. NB: norwegian-rights.js er utenfor research-agentens vanlige output-kontrakt (lib-fil), men er IKKE en beskyttet sti, og var eneste durable måte å innfri streaming-kontrakten på — inkludert i commit med npm test som gate.",
-    "STØRSTE FUNN: Norge slo Brasil 2–1 i VM-åttedelsfinalen 5. juli (Haaland to mål, Nyland straffemirakel) og er i sin FØRSTE VM-kvartfinale noensinne — mot England lør. 11. juli kl. 23.00 norsk tid, Hard Rock Stadium, Miami (21:00 UTC). Lagt til som ai-research-event «Norge – England» fordi den statiske ESPN-plassen fortsatt viste kryptisk «Round of 16 X Winner» og norsk kanal ikke er bestemt. NB for verify/coverage-critic: når ESPN oppdaterer bracketen kan det oppstå en duplikat mot en engelskspråklig «England at Norway»/«Norway at England»-oppføring — fjern da den minst lesbare. Streaming er tentativt «NRK / TV 2»; verify avklarer (én kilde antydet TV 2, men tv2.no viste «(ikke bestemt)»).",
-    "TdF skogbrann (Pyrénées-Orientales, ~1500 ha, ~700 brannmenn): etappe 3 (6. juli, Granollers–Les Angles) KJØRES som planlagt, men uten publikum langs siste ~40 km og uten reklamekaravane på fransk jord (ASO 5. juli). Ingen tid/rute endret. Etappe 4 (7. juli) ikke avlyst, men på varsel pga. varme (~41°C). Verify må sjekke etappe 4-status morgenen 7. juli.",
-    "Golf/tennis re-verifisert 6. juli: Hovland bekreftet i Scottish Open + The Open (uendret). Ventura fortsatt uten bekreftet start — Barracuda finnes ikke på 2026-terminlisten, Corales/3M-feltene ikke publisert (3mopen.com HTTP 403). Ruud: Gstaad solid (andreseedet); Montreal trolig påmeldt (spillerside finnes) men ikke ferdigstilt felt; Washington IKKE på publisert liste. USA-svingen er skadeavhengig — bevisst ikke lagt til (unverifiable). Dette dekker coverage-audit medium-glippene for Ruud og Ventura.",
-    "Chess/CS2 re-verifisert 6. juli: Carlsen har ingen turnering i juli (spiller ikke GCT Zagreb 1.–5. juli, ingen Freestyle-etappe); neste er EWC-sjakk 11.–15. aug. rain/100 Thieves: BLAST Bounty S2 kamptider fortsatt ikke publisert; ingen andre 100T-kamper før ~10. aug.",
-    "norwegian-rights-skillen oppdatert denne kjøringen: chess-linjen (ingen norsk TV; Direktesport/Lichess for norsk sjakk, Chess.com/Twitch/YouTube for internasjonal), Wimbledon/Grand Slam → Max + Eurosport + REX, TdF → delt TV 2 Play + Max/Eurosport (WBD har første time). source-quirks har fra før ESPN-F1-dating; norwegian-rights.js-overskrivingen er nå dokumentert her som lærdom.",
-    "coverage-gaps.json (kun én low-severity chess file-empty-anomali — chess.json tom, av-sesong for statisk fetcher; Sjakk-NM er ai-research og ligger inne) og scout 19x «quiet» siste døgn er støy/av-sesong — avvist.",
-    "Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League i alwaysTrack er utenfor sesong/vindu og får oppføringer når de nærmer seg. Vinteridretter trackes ikke nå (av-sesong)."
+    "Kjøring 2026-07-06T16:00Z: LØSTE begge high-severity-glippene fra coverage-audit (08:24). (1) VM sene runder: semifinaler (14.+15. juli, Dallas/Atlanta), bronsefinale (18. juli, Miami) og FINALEN (19. juli, MetLife) var IKKE emittert av ESPN-pipelinen. Lagt til fire ai-research-events med datoer/venue/tider bekreftet mot ESPN+Wikipedia (fan-out scout + uavhengig fact-checker), og norske rettigheter bekreftet mot VG/oddspodden: TV 2 tar semifinalene, NRK bronsefinale + finale. (2) F1 Belgia/Ungarn: coverage-audit fant dem fredag-daterte (ESPN-F1-kvirk); men tavla viste dem KORREKT på søndag da jeg sjekket (Belgia 19. juli, Ungarn 26. juli, begge 13:00 UTC — bekreftet mot formula1.com/RacingNews365). Ingen F1-event nødvendig; oppdatert f1-tracked-reason.",
+    "VM-DUPLIKAT RYDDET: ESPN har nå løst bracket-plassholderen til et statisk event «England at Norway» (homeTeam Norway, awayTeam England, norwegian:true, TV 2) på Norge–England-slotten (11. juli 21:00 UTC). Fjernet derfor min ai-research-dup «Norge – England» (eventsRemoved: 1) — statisk pipeline dekker kampen durabelt, og build-events gjenoppretter ikke en slettet ai-research-oppføring. Regelen «fjern aldri statiske pipeline-events» respektert (fjernet kun min egen ai-research).",
+    "NY ATLETIKK-EVENT: Diamond League Monaco (Herculis EBS) fre. 10. juli — norske Sigrid Borge i spyd (start 17.30 CEST / 15.30 UTC; hovedprogram fra 20.00 CEST). NRK. Medium confidence (Borge-påmelding fra offisielt program, én kilde). Jakob Ingebrigtsens mulige comeback (agenten nevnte Monaco/Ungarn-Budapest/London) er UBEKREFTET — bevisst ikke lagt til før det er bekreftet. Monaco DL var Diamond League uten athletics/DL-linje i norwegian-rights-skillen (NRK har DL 2025–2029) — verdt å legge til i skillen.",
+    "TdF (pågår): skogbrann i Pyrénées-Orientales påvirket etappe 3 (6. juli, kjørt uten publikum siste ~40 km, ingen tid/rute-endring). Etappe 4 (7. juli) på Code Red varme-varsel (~41°C, UCI-varmeprotokoll på standby) — INGEN endring bekreftet 6. juli ettermiddag. Verify må sjekke etappe 4-status morgenen 7. juli. Alle 21 etapper ligger inne med korrekt delt streaming (TV 2 Play + Max).",
+    "Golf/tennis/sjakk/CS2 uendret siden 10:15-kjøringen: Hovland i Scottish Open + The Open; Ruud comeback i Gstaad (andreseedet), USA-svingen fortsatt skadeavhengig/ubekreftet; Ventura uten bekreftet PGA-start; Sjakk-NM pågår (Tari trakk seg); Carlsen ingen turnering før EWC-sjakk 11.–15. aug; rain/100 Thieves BLAST Bounty S2 21.–26. juli (kamptider fortsatt ikke publisert). Ingen nye events her denne kjøringen.",
+    "coverage-gaps.json: én low-severity chess file-empty-anomali (chess.json tom — av-sesong for statisk fetcher; Sjakk-NM er ai-research og ligger inne) + én ikke-imminent PL-entity-gap (Glasner→Forest, trenernyhet, ikke event) — begge avvist. scout 21x «quiet» siste døgn (overgangsrykter + resultater) — ingen eskalering.",
+    "Utenfor vindu / følges opp: NM friidrett Trondheim 23.–25. juli (like utenfor 2-ukers-vindu, legges til neste kjøring). Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League er utenfor sesong; PL/La Liga starter medio august; vinteridretter av-sesong."
   ]
 }
