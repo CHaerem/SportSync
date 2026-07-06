@@ -83,14 +83,20 @@ export function norwegianRights(ev) {
 	}
 	if (sport === "golf") return /masters/.test(hay) ? [CH.discovery] : [CH.viaplay];
 	if (sport === "f1" || sport === "formula1") return [CH.viaplay];
-	if (sport === "cycling") return /tour de france/.test(hay) ? [CH.tv2] : [];
+	// Tour de France 2026 rights are SHARED: TV 2 (Play/Direkte) + WBD (Max/Eurosport,
+	// which alone carries the first hour of each stage). Both are valid "where to watch".
+	if (sport === "cycling") return /tour de france/.test(hay) ? [CH.tv2, CH.max] : [];
 	if (sport === "tennis") {
-		if (/wimbledon/.test(hay)) return [CH.tv2];
+		// Wimbledon (like all Grand Slams) is Warner Bros. Discovery in Norway —
+		// HBO Max + Eurosport, NOT TV 2. Finals are also free on WBD's REX channel.
+		if (/wimbledon/.test(hay)) return [CH.max, CH.eurosport];
 		if (/roland|french open|australian open|us open/.test(hay)) return [CH.discovery, CH.eurosport];
 		return [];
 	}
 	if (/biathlon|skiskyting|cross-country|langrenn|nordic|ski jump|hopp|alpine|alpint/.test(`${sport} ${hay}`)) return [CH.nrk];
-	if (sport === "chess") return [CH.nrk];
+	// chess has no Norwegian TV rights — Sjakk-NM streams on Direktesport/Lichess,
+	// international chess (EWC etc.) on Chess.com/Twitch/YouTube. Keep the event's
+	// own free streams (handled in normalizeStreaming) rather than guessing a channel.
 	return [];
 }
 
@@ -101,7 +107,11 @@ export function norwegianRights(ev) {
  *   3. esports keeps its (free, platform-agnostic) streams as-is.
  */
 export function normalizeStreaming(ev) {
-	if ((ev.sport || "").toLowerCase() === "esports") return ev.streaming || [];
+	const sport = (ev.sport || "").toLowerCase();
+	// esports and chess are watched on event-specific free streams (BLAST.tv /
+	// Twitch / YouTube; Lichess / Chess.com / Direktesport), not Norwegian TV —
+	// keep whatever the event/researcher supplied rather than forcing a channel.
+	if (sport === "esports" || sport === "chess") return ev.streaming || [];
 	const mapped = norwegianRights(ev);
 	if (mapped.length) return mapped;
 	return (ev.streaming || []).filter((s) => NORWEGIAN_RE.test(s.platform || s));
