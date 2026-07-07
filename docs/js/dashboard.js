@@ -50,6 +50,7 @@ class Dashboard {
 	render() {
 		this.renderTodayLine();
 		this.renderLive();
+		this.renderNextUp();
 		this.renderAgenda();
 		this.renderFollowed();
 		this.renderFooter();
@@ -588,6 +589,36 @@ class Dashboard {
 		});
 	}
 
+	// ── "Dine neste" — the compact, central answer to "when's X next?" ────────
+	// A capped, nearest-first glance across the athletes/teams you follow,
+	// upcoming-only. Kept deliberately small so it tops the agenda without
+	// burying it; the full list (incl. "ikke satt opp ennå" + tournaments +
+	// editing) stays in the "Hva vi følger" disclosure at the bottom.
+	/** Followed athletes/teams that have an upcoming event, nearest first. The
+	 *  pure selection behind "Dine neste" (upcoming-only; gaps live at the bottom). */
+	nextUpEntries() {
+		const at = this.interests && this.interests.alwaysTrack;
+		if (!at) return [];
+		return [...(at.athletes || []), ...(at.teams || [])]
+			.map((entry) => ({ entry, next: this.nextEventForEntity(entry) }))
+			.filter((x) => x.next)
+			.sort((a, b) => new Date(a.next.time) - new Date(b.next.time));
+	}
+
+	renderNextUp() {
+		const el = document.getElementById('next-up');
+		if (!el) return;
+		const all = this.nextUpEntries();
+		if (!all.length) { el.hidden = true; return; }
+		const MAX = 5;
+		const shown = all.slice(0, MAX);
+		const more = all.length - shown.length;
+		el.innerHTML = '<div class="nu-label">Dine neste</div>'
+			+ `<ul class="follow-next">${shown.map((x) => this.followRow(x.entry, true)).join('')}</ul>`
+			+ (more > 0 ? `<button type="button" class="nu-more">+ ${more} til i «Hva vi følger»</button>` : '');
+		el.hidden = false;
+	}
+
 	// ── "Hva vi følger" — one quiet disclosure at the bottom ──────────────────
 	// It answers the recurring "when's X next?" question, entity-first: for each
 	// athlete/team you follow, the next known event — UNWINDOWED (ignores the
@@ -700,10 +731,10 @@ class Dashboard {
 		return rows.join('');
 	}
 
-	/** Tap/keyboard expand for the "neste" index rows (delegated, survives re-render). */
+	/** Tap/keyboard expand for the "neste" index rows in BOTH the top "Dine
+	 *  neste" section and the bottom disclosure (delegated, survives re-render). */
 	bindFollowed() {
-		const body = document.getElementById('followed-body');
-		if (!body || this._followedBound) return;
+		if (this._followedBound) return;
 		this._followedBound = true;
 		const toggle = (row) => {
 			const detail = row.parentElement.querySelector('.fn-detail');
@@ -712,16 +743,27 @@ class Dashboard {
 			row.setAttribute('aria-expanded', String(!open));
 			detail.hidden = open;
 		};
-		body.addEventListener('click', (evt) => {
+		const onClick = (evt) => {
 			if (evt.target.closest('a')) return; // let channel/source links work
+			if (evt.target.closest('.nu-more')) {
+				const d = document.getElementById('followed');
+				if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+				return;
+			}
 			const row = evt.target.closest('.fn-item.has-event .fn-row');
 			if (row) toggle(row);
-		});
-		body.addEventListener('keydown', (evt) => {
+		};
+		const onKey = (evt) => {
 			if (evt.key !== 'Enter' && evt.key !== ' ') return;
 			const row = evt.target.closest('.fn-item.has-event .fn-row');
 			if (row) { evt.preventDefault(); toggle(row); }
-		});
+		};
+		for (const id of ['next-up', 'followed-body']) {
+			const c = document.getElementById(id);
+			if (!c) continue;
+			c.addEventListener('click', onClick);
+			c.addEventListener('keydown', onKey);
+		}
 	}
 
 	// ── Live polling (ESPN, client-side) ─────────────────────────────────────
