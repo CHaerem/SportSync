@@ -55,6 +55,10 @@ async function main() {
 			time: m.time,
 			league: m.league,
 			broadcasters: m.broadcasters,
+			// Per-match tvkampen page (lists every Norwegian broadcaster for THIS
+			// match) — a real "where to watch" deep link, esp. for shared/tentative
+			// rights. Agents may set it as an event's streaming url (see norwegian-rights skill).
+			url: m.matchUrl,
 		})),
 	});
 	console.log(`tvkampen: ${listings.length} listings → tv-listings.json`);

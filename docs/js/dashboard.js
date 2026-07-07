@@ -390,6 +390,7 @@ class Dashboard {
 		const rows = [];
 		const add = (k, v) => { if (v) rows.push(`<div class="d-row"><span class="d-k">${k}</span><span class="d-v">${v}</span></div>`); };
 
+		add('Hvorfor', this.whyShown(e));
 		const result = this.finishedResult(e);
 		if (result) add('Resultat', result);
 		add('Tabell', this.footballStanding(e));
@@ -412,10 +413,41 @@ class Dashboard {
 			add('Funnet av AI', `${links} · sikkerhet: ${escapeHtml(e.confidence || 'ukjent')}`);
 		}
 		let html = rows.join('');
-		if (typeof navigator !== 'undefined' && navigator.share) {
-			html += `<div class="d-share"><button type="button" class="ev-share" data-event-id="${escapeHtml(e.id)}">Del</button></div>`;
-		}
+		const acts = [];
+		if (typeof navigator !== 'undefined' && navigator.share) acts.push(`<button type="button" class="ev-act ev-share" data-event-id="${escapeHtml(e.id)}">Del</button>`);
+		acts.push(`<button type="button" class="ev-act ev-report" data-event-id="${escapeHtml(e.id)}">Meld feil</button>`);
+		html += `<div class="d-actions">${acts.join('')}</div>`;
 		return html;
+	}
+
+	/** Why this event is on your board — the deterministic relevance reason. */
+	whyShown(e) {
+		const at = this.interests?.alwaysTrack || {};
+		const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+			...(e.norwegianPlayers || []).map((p) => p.name || p), ...(e.participants || [])].filter(Boolean).join(' ');
+		// Sport-scoped so e.g. FC Barcelona doesn't match a Tour stage in the city Barcelona.
+		const firstHit = (entries) => {
+			for (const x of entries || []) {
+				const sport = (x && typeof x === 'object') ? x.sport : null;
+				if (sport && e.sport && sport !== e.sport) continue;
+				if (trackedTerms([x]).some((t) => ssContainsTerm(hay, t))) return ssEntityName(x);
+			}
+			return null;
+		};
+		const athlete = firstHit(at.athletes);
+		const team = firstHit(at.teams);
+		const tourn = firstHit(at.tournaments);
+		const SPORT = { football: 'fotball', golf: 'golf', f1: 'Formel 1', cycling: 'sykkel', tennis: 'tennis', chess: 'sjakk', esports: 'esport', athletics: 'friidrett', biathlon: 'skiskyting', 'cross-country': 'langrenn', alpine: 'alpint' };
+		let why;
+		if (athlete) why = `Du følger <strong>${escapeHtml(athlete)}</strong>`;
+		else if (team) why = `Du følger <strong>${escapeHtml(team)}</strong>`;
+		else if (tourn) why = `Du følger <strong>${escapeHtml(tourn)}</strong>`;
+		else if (e.source === 'ai-research') why = 'AI-research fant dette for deg';
+		else if (e.norwegian) why = 'Norsk deltakelse';
+		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
+		else why = 'Passer interessene dine';
+		if (e.mustWatch) why += ' · 🔔 gir deg varsel';
+		return why;
 	}
 
 	/** Native share sheet for an event (when · what · where). */
@@ -426,6 +458,22 @@ class Dashboard {
 		const chan = (Array.isArray(e.streaming) && e.streaming[0] && e.streaming[0].platform) || '';
 		const text = [e.title, `${day} ${this.osloTime(d)}`, chan].filter(Boolean).join(' · ');
 		navigator.share({ title: e.title, text, url: location.href }).catch(() => {});
+	}
+
+	/** Report a problem with an event → a prefilled GitHub feedback issue. */
+	reportEvent(e) {
+		if (!e) return;
+		const d = new Date(e.time);
+		const local = d.toLocaleString('nb-NO', { timeZone: 'Europe/Oslo' });
+		const chan = (Array.isArray(e.streaming) ? e.streaming.map((s) => s.platform || s).join(', ') : '') || '–';
+		const body = [
+			'### Hva er galt?', '<!-- feil tid, feil kanal, skal ikke være her, noe mangler … -->', '',
+			'### Event',
+			`- Sport: ${e.sport}`, `- Tittel: ${e.title}`, `- Tid: ${local}`,
+			`- Kanal: ${chan}`, `- Kilde: ${e.source || 'statisk'}${e.confidence ? ` (${e.confidence})` : ''}`,
+		].join('\n');
+		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${e.title}`, body });
+		window.open(`https://github.com/CHaerem/SportSync/issues/new?${p.toString()}`, '_blank', 'noopener');
 	}
 
 	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —
@@ -500,6 +548,8 @@ class Dashboard {
 			if (link) return; // let channel/source links work normally
 			const share = evt.target.closest('.ev-share');
 			if (share) { this.shareEvent(this._eventById?.get(share.dataset.eventId)); return; }
+			const report = evt.target.closest('.ev-report');
+			if (report) { this.reportEvent(this._eventById?.get(report.dataset.eventId)); return; }
 			if (evt.target.closest('.agenda-more')) { this._fullHorizon = true; this.renderAgenda(); return; }
 			const row = evt.target.closest('.ev.expandable');
 			if (row) toggle(row);

@@ -107,6 +107,19 @@ function trackedTerms(entries) {
 	return out;
 }
 
+/** Lowercase + strip diacritics (mirrors the server's normalizeText). */
+function ssNormalize(s) {
+	return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+/** Word-boundary, accent-insensitive containment (mirrors server containsName). */
+function ssContainsTerm(haystack, term) {
+	const n = ssNormalize(term).trim();
+	if (!n) return false;
+	const esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${esc}(?:[^\\p{L}\\p{N}]|$)`, 'iu').test(ssNormalize(haystack));
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.SS_CONSTANTS = Object.freeze({
 	MS_PER_MINUTE,
@@ -124,3 +137,4 @@ window.ssTeamMatch = ssTeamMatch;
 window.ssExtractAggregate = ssExtractAggregate;
 window.ssEntityName = ssEntityName;
 window.trackedTerms = trackedTerms;
+window.ssContainsTerm = ssContainsTerm;

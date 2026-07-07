@@ -94,9 +94,9 @@
 /* Quiet marker: this event is in the must-watch reminder feed. */
 .ev-bell { font-size: 11px; opacity: 0.75; margin-left: 6px; vertical-align: 1px; cursor: default; }
 /* "Del" (native share) button inside an expanded event's detail. */
-.d-share { margin-top: 10px; }
-.ev-share { font-size: 12.5px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg-2); cursor: pointer; }
-.ev-share:hover { border-color: var(--accent); color: var(--accent); }
+.d-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.ev-act { font-size: 12.5px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg-2); cursor: pointer; }
+.ev-act:hover { border-color: var(--accent); color: var(--accent); }
 .ev.expandable[aria-expanded="true"] .ev-caret { transform: rotate(90deg); }
 
 /* Expanded detail — the "nice extra", quiet, only on demand */
@@ -211,8 +211,9 @@
 	overflow-wrap: break-word;
 	line-height: 1.3;
 }
-.ev-where a { border-bottom: 1px solid transparent; }
-.ev-where a:hover { border-bottom-color: var(--fg-3); color: var(--accent); }
+/* Faint dotted underline signals the channel is tappable (opens where to watch). */
+.ev-where a { border-bottom: 1px dotted var(--fg-3); }
+.ev-where a:hover { border-bottom: 1px solid var(--accent); color: var(--accent); }
 .ev-where.unknown { color: var(--fg-3); }
 .ev-where.tentative { color: var(--fg-3); font-style: italic; }
 .ev-where-more { color: var(--fg-3); font-size: 11px; margin-left: 4px; }

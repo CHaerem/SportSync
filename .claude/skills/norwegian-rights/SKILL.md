@@ -11,6 +11,18 @@ watch in Norway**. This map is the prior; `docs/data/tv-listings.json`
 
 Confidence key: `[solid]` = well-established, `[verify]` = check before relying on it.
 
+## Streaming URL (the tappable deep link in `streaming[].url`)
+The dashboard makes each streaming option's `url` tappable — "open where to watch"
+(on mobile it opens the broadcaster's app). Fill it with the most specific *safe* URL:
+- **Football:** `docs/data/tv-listings.json` now carries a per-match `url` (the
+  tvkampen match page listing every Norwegian broadcaster for THAT match). When an
+  event matches a listing (by team names), set `streaming[].url` to that match `url`.
+  It's the best "where to watch this match" link — and the ONLY good link for
+  **shared/tentative** rights (e.g. WC "NRK / TV 2"), where pointing at one
+  broadcaster would mislead.
+- **Everything else:** use the service landing URL from the map below (it opens the
+  app). Do NOT invent per-match broadcaster paths (`play.tv2.no/…/<match>`) — they 404.
+
 ## Football
 - Premier League → **TV 2 Play / TV 2 Sport Premium** [solid]
 - La Liga → **TV 2 Play** [verify]
