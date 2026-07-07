@@ -295,35 +295,26 @@
 .fn-detail a:hover { border-bottom-color: var(--accent); }
 
 /* ── "Dine neste": the compact top glance ─────────────────────────────────
-   A distinct "this is yours" shelf — a warm amber-tinted panel (the same
-   language as a must-see event), clearly a different material from the
-   agenda's neutral day cards, with a firm divider + air below so the two
-   zones never blur together. Upcoming-only, tight rows, bells omitted. */
+   Deliberately calm — a quiet borderless list under a muted label, so amber
+   and boxes stay the agenda's own language. A single hairline + air below
+   sets it apart from the schedule without adding another framed card.
+   Upcoming-only, tight rows, bells omitted. */
 .next-up {
-	margin: 24px 0 24px;
-	padding-bottom: 22px;
+	margin: 22px 0 22px;
+	padding-bottom: 20px;
 	border-bottom: 1px solid var(--line);
 }
 .nu-label {
-	font-size: 12px; font-weight: 600; color: var(--accent);
-	letter-spacing: 0.10em; text-transform: uppercase;
-	margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;
+	font-size: 11px; font-weight: 600; color: var(--fg-3);
+	letter-spacing: 0.08em; text-transform: uppercase;
+	margin: 0 0 4px 0;
 }
-.nu-label::before { content: ""; width: 9px; height: 13px; background: var(--accent); }
-.next-up .follow-next {
-	border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
-	border-radius: 8px;
-	background: var(--accent-wash);
-	padding: 2px 13px;
-	overflow: hidden;
-}
-.next-up .fn-item { border-top-color: color-mix(in srgb, var(--accent) 14%, var(--line)); }
 .next-up .fn-row { padding: 7px 4px; grid-template-columns: 22px 1fr auto; gap: 9px; }
-.next-up .fn-row .ev-badge { width: 22px; height: 22px; font-size: 11px; background: color-mix(in srgb, var(--fg) 5%, transparent); }
+.next-up .fn-row .ev-badge { width: 22px; height: 22px; font-size: 11px; }
 .next-up .fn-logo { width: 20px; height: 20px; }
 .next-up .fn-when { font-size: 12.5px; }
 .next-up .chip-bell { display: none; } /* declutter — bells live in the full list below */
-.nu-more { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--fg-2); background: none; border: none; padding: 2px; cursor: pointer; }
+.nu-more { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--fg-2); background: none; border: none; padding: 2px; cursor: pointer; }
 .nu-more:hover { color: var(--accent); }
 .followed-note { font-size: 12.5px; color: var(--fg-3); line-height: 1.5; margin-top: 4px; }
 .followed-hint { font-size: 12.5px; color: var(--fg-3); font-style: italic; margin-top: 10px; }
