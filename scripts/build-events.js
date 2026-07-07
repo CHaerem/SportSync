@@ -105,8 +105,14 @@ const CARRY_FORWARD_FIELDS = [
 const previousEvents = readJsonIfExists(path.join(dataDir, "events.json"));
 if (Array.isArray(previousEvents)) {
 	const byKey = new Map(all.map((e) => [`${e.sport}|${e.title}|${e.time}`, e]));
+	// A live match can drop out of the ESPN fetch the moment it kicks off; if we
+	// rebuild purely from the fetch, a verified in-progress event vanishes from
+	// the board mid-play (see (c) below for the rescue).
+	const now = Date.now();
+	const LIVE_GRACE_MS = 3 * 60 * 60 * 1000; // match length + buffer, for events with no endTime
 	let preserved = 0;
 	let carried = 0;
+	let rescuedLive = 0;
 	for (const prev of previousEvents) {
 		const key = `${prev.sport}|${prev.title}|${prev.time}`;
 		const current = byKey.get(key);
@@ -126,13 +132,31 @@ if (Array.isArray(previousEvents)) {
 			}
 			continue;
 		}
-		if (prev.source !== "ai-research") continue;
-		byKey.set(key, prev);
-		all.push(prev);
-		preserved++;
+		// (a) AI-research events no static fetcher knows about must survive rebuilds.
+		if (prev.source === "ai-research") {
+			byKey.set(key, prev);
+			all.push(prev);
+			preserved++;
+			continue;
+		}
+		// (c) A STATIC event that is happening RIGHT NOW but fell out of the latest
+		//     fetch (ESPN stops returning a match once it goes live) must not
+		//     disappear from the board mid-play. Rescue ONLY currently-live events —
+		//     a *future* static event missing from the fetch may be genuinely
+		//     cancelled or rescheduled, so those are still dropped as before.
+		const start = Date.parse(prev.time);
+		const end = prev.endTime ? Date.parse(prev.endTime) : start + LIVE_GRACE_MS;
+		if (Number.isFinite(start) && start <= now && now <= end) {
+			byKey.set(key, prev);
+			all.push(prev);
+			rescuedLive++;
+		}
 	}
 	if (preserved > 0) {
 		console.log(`Preserved ${preserved} AI-research event(s) from previous build.`);
+	}
+	if (rescuedLive > 0) {
+		console.log(`Rescued ${rescuedLive} in-progress static event(s) missing from the latest fetch.`);
 	}
 	if (carried > 0) {
 		console.log(`Carried forward ${carried} agent amendment(s) onto re-fetched static events.`);

@@ -68,6 +68,33 @@ describe("build-events", () => {
 		expect(events.find((e) => e.title === "Old static event")).toBeUndefined();
 	});
 
+	it("rescues an in-progress static event that dropped out of the latest fetch", () => {
+		const startedAgo = new Date(Date.now() - 60 * 60000).toISOString(); // kicked off 1h ago → live
+		// The live match is NOT in the current fetch (ESPN stops returning it once
+		// it goes live) — only the later, not-yet-started match is.
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "FIFA World Cup", events: [
+				{ title: "Later match", time: future(1), homeTeam: "A", awayTeam: "B" },
+			] }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "FIFA World Cup", title: "Egypt at Argentina", time: startedAgo,
+				  homeTeam: "Argentina", awayTeam: "Egypt", streaming: [{ platform: "TV 2 Play" }],
+				  verifiedAt: "2026-07-05T08:27:09Z", verificationStatus: "amended" },
+				// A FUTURE static event missing from the fetch stays dropped (may be cancelled/moved).
+				{ sport: "football", tournament: "FIFA World Cup", title: "Cancelled future", time: future(3), homeTeam: "C", awayTeam: "D" },
+			])
+		);
+		const events = runBuild();
+		const live = events.find((e) => e.title === "Egypt at Argentina");
+		expect(live).toBeDefined();                       // the live match survived the rebuild
+		expect(live.streaming).toEqual([{ platform: "TV 2 Play" }]); // with its verified channel
+		expect(events.find((e) => e.title === "Cancelled future")).toBeUndefined(); // future drop stays dropped
+	});
+
 	it("carries agent amendments (streaming, verification) onto re-fetched static events", () => {
 		const time = future(2);
 		fs.writeFileSync(
