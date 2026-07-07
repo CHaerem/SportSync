@@ -506,7 +506,7 @@ class Dashboard {
 				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
 			}
 			du += `<div class="followed-note followed-notify">🔔 = du får kalendervarsel ${this.notifyLead()} min før start (samme 🔔 i agendaen). Kalenderen nederst inneholder alt du følger; kun 🔔-tingene pinger deg.</div>`;
-			du += `<div class="followed-hint">Vil du følge noe mer, eller endre hva som varsler? <a class="followed-edit" href="https://github.com/CHaerem/SportSync/edit/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den.</div></div>`;
+			du += `<div class="followed-hint">Vil du følge noe mer, eller endre hva som varsler? <a class="followed-edit" href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den (redigereren gir deg autofullføring + feilsjekk).</div></div>`;
 		}
 
 		// Layer 2 — AI HAR FUNNET: what the research agent discovered (tracked.json)

@@ -41,8 +41,10 @@ npm-debug.log*
 !/docs/data/esports.json
 !/docs/data/cycling.json
 
-# VSCode
-.vscode/
+# VSCode — ignore local editor files except the shared JSON-schema binding
+# that gives github.dev autocomplete/validation on interests.json
+.vscode/*
+!.vscode/settings.json
 
 # OS
 Thumbs.db
