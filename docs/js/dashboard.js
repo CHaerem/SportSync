@@ -320,23 +320,36 @@ class Dashboard {
 		return out;
 	}
 
+	/** A cancelled/postponed match stays on the board, clearly labelled — it must
+	 *  never silently vanish (the same failure as a live match dropping off).
+	 *  Returns the Norwegian label or null. */
+	statusLabel(e) {
+		const s = String(e.status || '').toLowerCase();
+		if (s === 'cancelled' || s === 'canceled') return 'Avlyst';
+		if (s === 'postponed') return 'Utsatt';
+		return null;
+	}
+
 	eventRow(e) {
 		if (e.isSeries) return this.seriesRow(e);
 		const date = new Date(e.time);
 		const live = this.liveScores[e.id];
-		const where = live && live.state === 'in'
-			? `<span class="ev-where ev-live">${live.home}–${live.away}</span>`
-			: this.whereToWatch(e);
+		const status = this.statusLabel(e);
+		const where = status
+			? `<span class="ev-status">${escapeHtml(status)}</span>`
+			: (live && live.state === 'in'
+				? `<span class="ev-where ev-live">${live.home}–${live.away}</span>`
+				: this.whereToWatch(e));
 		const expandable = this.hasDetail(e);
 		const caret = expandable ? `<span class="ev-caret" aria-hidden="true">›</span>` : `<span class="ev-caret"></span>`;
 		const attrs = expandable
 			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
 			: '';
 		const round = e.round ? `<span class="ev-round">${escapeHtml(e.round)}</span>` : '';
-		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${expandable ? ' expandable' : ''}"${attrs}>
+		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.sportBadge(e)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${this.notifyMark(e.mustWatch)}</span>
+			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${status ? '' : this.notifyMark(e.mustWatch)}</span>
 			${where}
 			${caret}
 		</div><div class="ev-detail" hidden></div></div>`;

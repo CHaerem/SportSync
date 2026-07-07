@@ -95,6 +95,25 @@ describe("build-events", () => {
 		expect(events.find((e) => e.title === "Cancelled future")).toBeUndefined(); // future drop stays dropped
 	});
 
+	it("keeps an agent-marked cancelled event on the board instead of dropping it", () => {
+		// The cancelled match is gone from the fetch; only an unrelated match remains.
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "PL", events: [{ title: "Other", time: future(2) }] }] })
+		);
+		// Previous build: verify marked a real fixture cancelled (kept, not removed).
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "PL", title: "Cancelled match", time: future(1), status: "cancelled", verificationStatus: "amended" },
+			])
+		);
+		const events = runBuild();
+		const c = events.find((e) => e.title === "Cancelled match");
+		expect(c).toBeDefined();          // it stays on the board...
+		expect(c.status).toBe("cancelled"); // ...still labelled cancelled
+	});
+
 	it("carries agent amendments (streaming, verification) onto re-fetched static events", () => {
 		const time = future(2);
 		fs.writeFileSync(
