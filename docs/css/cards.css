@@ -215,6 +215,11 @@
 .ev-where a { border-bottom: 1px dotted var(--fg-3); }
 .ev-where a:hover { border-bottom: 1px solid var(--accent); color: var(--accent); }
 .ev-where.unknown { color: var(--fg-3); }
+/* Cancelled/postponed: stays on the board but clearly faded — "not happening",
+   so it recedes rather than shouts (never the live red). */
+.ev.cancelled { opacity: 0.6; }
+.ev.cancelled .ev-title { text-decoration: line-through; text-decoration-color: var(--fg-3); }
+.ev-status { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-2); text-align: right; white-space: nowrap; justify-self: end; }
 .ev-where.tentative { color: var(--fg-3); font-style: italic; }
 .ev-where-more { color: var(--fg-3); font-size: 11px; margin-left: 4px; }
 .d-v .tbd { color: var(--fg-3); font-style: italic; }

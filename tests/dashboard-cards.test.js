@@ -70,6 +70,24 @@ describe("agenda event row", () => {
 	});
 });
 
+describe("cancelled / postponed matches stay on the board, labelled", () => {
+	it("shows a cancelled match faded with an 'Avlyst' label instead of a channel", () => {
+		const html = dash.eventRow({ id: "c", sport: "football", title: "Barcelona vs X", time: soon(), status: "cancelled", streaming: [{ platform: "TV3" }] });
+		expect(html).toContain("Avlyst");
+		expect(html).toContain("cancelled");   // dims the row
+		expect(html).not.toContain("TV3");      // channel is moot when cancelled
+	});
+	it("labels a postponed match 'Utsatt'", () => {
+		const html = dash.eventRow({ id: "p", sport: "football", title: "Y", time: soon(), status: "postponed" });
+		expect(html).toContain("Utsatt");
+	});
+	it("leaves a normal match unaffected", () => {
+		const html = dash.eventRow({ id: "n", sport: "football", title: "Z", time: soon(), streaming: [{ platform: "NRK" }] });
+		expect(html).not.toContain("cancelled");
+		expect(html).toContain("NRK");
+	});
+});
+
 describe("progressive disclosure detail", () => {
 	it("only marks rows expandable when there's genuinely more to show", () => {
 		const bare = { id: "b", sport: "chess", title: "Round 3", time: soon() };

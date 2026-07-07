@@ -98,6 +98,7 @@ if (fs.existsSync(configDir)) {
 // Dedupe key: sport|title|time.
 const CARRY_FORWARD_FIELDS = [
 	"streaming",
+	"status", // a "cancelled"/"postponed" mark from the verify agent must survive the hourly rebuild
 	"verifiedAt",
 	"verificationStatus",
 	"verificationSources",
@@ -112,7 +113,7 @@ if (Array.isArray(previousEvents)) {
 	const LIVE_GRACE_MS = 3 * 60 * 60 * 1000; // match length + buffer, for events with no endTime
 	let preserved = 0;
 	let carried = 0;
-	let rescuedLive = 0;
+	let keptOnBoard = 0;
 	for (const prev of previousEvents) {
 		const key = `${prev.sport}|${prev.title}|${prev.time}`;
 		const current = byKey.get(key);
@@ -139,24 +140,33 @@ if (Array.isArray(previousEvents)) {
 			preserved++;
 			continue;
 		}
-		// (c) A STATIC event that is happening RIGHT NOW but fell out of the latest
-		//     fetch (ESPN stops returning a match once it goes live) must not
-		//     disappear from the board mid-play. Rescue ONLY currently-live events —
-		//     a *future* static event missing from the fetch may be genuinely
-		//     cancelled or rescheduled, so those are still dropped as before.
+		// (c) A STATIC event missing from the latest fetch is normally rebuilt
+		//     from source — but keep it when dropping it would make it silently
+		//     vanish from the board at the wrong moment:
+		//       • it's happening RIGHT NOW (ESPN stops returning a match once it
+		//         goes live), or
+		//       • an agent marked it cancelled/postponed — verify keeps such a
+		//         match on the board as "Avlyst"/"Utsatt" instead of removing it,
+		//         and that annotation must survive the hourly rebuild.
+		//     A plain *future* static event missing from the fetch is still dropped
+		//     (may be genuinely cancelled/rescheduled — we only keep it once an
+		//     agent has confirmed the status, which also avoids reschedule ghosts).
 		const start = Date.parse(prev.time);
 		const end = prev.endTime ? Date.parse(prev.endTime) : start + LIVE_GRACE_MS;
-		if (Number.isFinite(start) && start <= now && now <= end) {
+		const isLiveNow = Number.isFinite(start) && start <= now && now <= end;
+		const sticky = ["cancelled", "canceled", "postponed"].includes(String(prev.status || "").toLowerCase());
+		const stickyStillRelevant = sticky && Number.isFinite(end) && now <= end + MS_PER_DAY;
+		if (isLiveNow || stickyStillRelevant) {
 			byKey.set(key, prev);
 			all.push(prev);
-			rescuedLive++;
+			keptOnBoard++;
 		}
 	}
 	if (preserved > 0) {
 		console.log(`Preserved ${preserved} AI-research event(s) from previous build.`);
 	}
-	if (rescuedLive > 0) {
-		console.log(`Rescued ${rescuedLive} in-progress static event(s) missing from the latest fetch.`);
+	if (keptOnBoard > 0) {
+		console.log(`Kept ${keptOnBoard} in-progress / cancelled static event(s) missing from the latest fetch.`);
 	}
 	if (carried > 0) {
 		console.log(`Carried forward ${carried} agent amendment(s) onto re-fetched static events.`);

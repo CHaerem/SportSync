@@ -45,8 +45,16 @@ source's failure mode once instead of rediscovering it every week. (Quantitative
 "how often is it wrong" stays in the calibration ledger; the skill is for the
 mechanism + the fix.)
 
-If `verificationStatus` is `removed` (the event demonstrably does not exist or
-was cancelled), drop the event from events.json entirely.
+**Cancelled / postponed ≠ removed.** If a real, scheduled event is **cancelled
+or postponed**, do NOT delete it — a match that silently vanishes is exactly as
+confusing to the user as one that disappears mid-play. Instead **keep it on the
+board** and set `status: "cancelled"` (or `"postponed"`), plus
+`verificationStatus: "amended"` and the source URL. The dashboard then shows it
+as «Avlyst»/«Utsatt» (faded, no channel) rather than dropping it. If it was
+merely **rescheduled**, keep it and correct `time` (don't mark it cancelled).
+Only when `verificationStatus` is `removed` — the event **demonstrably never
+existed** (a bogus/duplicate listing, not a real fixture that fell through) —
+drop it from events.json entirely.
 
 For `source: "espn"` / static-pipeline events, only verify if `time` is more
 than 14 days out (APIs are reliable near-term; long-range schedules drift).
