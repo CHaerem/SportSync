@@ -438,10 +438,12 @@ class Dashboard {
 		const team = firstHit(at.teams);
 		const tourn = firstHit(at.tournaments);
 		const SPORT = { football: 'fotball', golf: 'golf', f1: 'Formel 1', cycling: 'sykkel', tennis: 'tennis', chess: 'sjakk', esports: 'esport', athletics: 'friidrett', biathlon: 'skiskyting', 'cross-country': 'langrenn', alpine: 'alpint' };
+		// "spiller" for ball/racket/board sports; "er med" for endurance sports.
+		const plays = ['cycling', 'athletics', 'biathlon', 'cross-country', 'alpine', 'nordic', 'ski jumping'].includes(e.sport) ? 'er med' : 'spiller';
 		let why;
-		if (athlete) why = `Du følger <strong>${escapeHtml(athlete)}</strong>`;
-		else if (team) why = `Du følger <strong>${escapeHtml(team)}</strong>`;
-		else if (tourn) why = `Du følger <strong>${escapeHtml(tourn)}</strong>`;
+		if (athlete) why = `Fordi <strong>${escapeHtml(athlete)}</strong> ${plays}`;
+		else if (team) why = `Fordi <strong>${escapeHtml(team)}</strong> ${plays}`;
+		else if (tourn) why = `Del av <strong>${escapeHtml(tourn)}</strong>, som du følger`;
 		else if (e.source === 'ai-research') why = 'AI-research fant dette for deg';
 		else if (e.norwegian) why = 'Norsk deltakelse';
 		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
