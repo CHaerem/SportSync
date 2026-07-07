@@ -444,12 +444,36 @@ class Dashboard {
 		if (athlete) why = `Fordi <strong>${escapeHtml(athlete)}</strong> ${plays}`;
 		else if (team) why = `Fordi <strong>${escapeHtml(team)}</strong> ${plays}`;
 		else if (tourn) why = `Del av <strong>${escapeHtml(tourn)}</strong>, som du følger`;
-		else if (e.source === 'ai-research') why = 'AI-research fant dette for deg';
+		else if (e.source === 'ai-research') {
+			const r = this.trackedReasonFor(e);
+			why = r ? `AI valgte dette: ${escapeHtml(this.shortReason(r))}` : 'AI-research fant dette for deg';
+		}
 		else if (e.norwegian) why = 'Norsk deltakelse';
 		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
 		else why = 'Passer interessene dine';
 		if (e.mustWatch) why += ' · 🔔 gir deg varsel';
 		return why;
+	}
+
+	/** Trim an agent reason to a one-line gist (drops the provenance prefix). */
+	shortReason(r) {
+		if (!r) return '';
+		let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').replace(/^[,.\s]+/, '').trim();
+		if (s.length > 95) s = s.slice(0, 93).replace(/\s+\S*$/, '') + '…';
+		return s;
+	}
+
+	/** The research agent's reason for tracking the thing this ai-research event belongs to. */
+	trackedReasonFor(e) {
+		const t = this.tracked;
+		if (!t) return null;
+		const hay = `${e.title || ''} ${e.tournament || ''} ${(e.norwegianPlayers || []).map((p) => p.name || p).join(' ')}`;
+		for (const entry of [...(t.tournaments || []), ...(t.leagues || []), ...(t.athletes || [])]) {
+			if (!entry?.name || !entry.reason) continue;
+			const core = entry.name.replace(/\s*\d{4}(?:\/\d{2})?/g, '').replace(/\s*\(.*?\)/g, '').trim();
+			if (core.length >= 3 && ssContainsTerm(hay, core)) return entry.reason;
+		}
+		return null;
 	}
 
 	/** Native share sheet for an event (when · what · where). */
@@ -602,16 +626,10 @@ class Dashboard {
 
 		// Layer 2 — AI SPORER FOR DEG: what the research agent discovered (tracked.json).
 		// Reasons are agent notes — show a short gist; full text on hover (title).
-		const shortWhy = (r) => {
-			if (!r) return '';
-			let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').trim();
-			if (s.length > 95) s = s.slice(0, 93).replace(/\s+\S*$/, '') + '…';
-			return s;
-		};
 		const group = (label, items) => {
 			if (!items?.length) return '';
 			return `<div class="followed-group">${label}</div>` + items.map((x) =>
-				`<div class="followed-item"><span class="followed-item-name">${escapeHtml(x.name)}</span>${x.expires ? `<span class="until">følges til ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}${x.reason ? `<div class="why" title="${escapeHtml(x.reason)}">${escapeHtml(shortWhy(x.reason))}</div>` : ''}</div>`
+				`<div class="followed-item"><span class="followed-item-name">${escapeHtml(x.name)}</span>${x.expires ? `<span class="until">følges til ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}${x.reason ? `<div class="why" title="${escapeHtml(x.reason)}">${escapeHtml(this.shortReason(x.reason))}</div>` : ''}</div>`
 			).join('');
 		};
 		let ai = '';
