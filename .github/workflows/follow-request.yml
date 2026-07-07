@@ -17,7 +17,14 @@ concurrency:
 
 jobs:
   apply:
-    if: contains(join(github.event.issue.labels.*.name, ','), 'follow-request')
+    # Only the repo OWNER's own follow-request issues may edit interests.json.
+    # The repo is public, so anyone can open an issue (and the template applies
+    # the label) — but author_association is set by GitHub from the real author's
+    # relationship to the repo and can't be forged, so a stranger's issue is
+    # ignored. This is the control boundary (essential before any auto-merge).
+    if: >-
+      github.event.issue.author_association == 'OWNER' &&
+      contains(join(github.event.issue.labels.*.name, ','), 'follow-request')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
