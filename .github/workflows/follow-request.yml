@@ -1,0 +1,55 @@
+name: Follow request to PR
+
+# A "follow-request" Issue Form submission → a PR that edits interests.json.
+# The user reviews the diff and merges; nothing lands on main until they do.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: follow-request-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: contains(join(github.event.issue.labels.*.name, ','), 'follow-request')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Apply the request to interests.json
+        id: apply
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: node scripts/apply-follow-request.js
+      - name: Open a Pull Request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: ${{ steps.apply.outputs.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "SportSync bot"
+          git config user.email "action@github.com"
+          BRANCH="follow-request/${ISSUE_NUMBER}"
+          git checkout -b "$BRANCH"
+          git add scripts/config/interests.json
+          git commit -m "${PR_TITLE} (closes #${ISSUE_NUMBER})"
+          git push -u origin "$BRANCH" --force
+          gh pr create --base main --head "$BRANCH" --title "$PR_TITLE" --body-file pr-body.md
+          gh issue comment "$ISSUE_NUMBER" --body "Laget en Pull Request du kan se over og merge. Ingenting endres før du merger."
+      - name: Report failure on the issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "Kunne ikke behandle forespørselen automatisk. Sjekk at feltene stemmer, eller rediger interests.json direkte. Detaljer i Actions-loggen."

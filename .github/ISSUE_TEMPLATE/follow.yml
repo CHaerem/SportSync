@@ -1,0 +1,70 @@
+name: Følg noe nytt / endre varsel
+description: Legg til, fjern eller endre kalendervarsel for noe du følger. En bot lager en Pull Request du ser over og merger — ingenting lander før du gjør det.
+title: "[følg] "
+labels: ["follow-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fyll ut, så lager en bot en **Pull Request** som endrer `interests.json`.
+        Du ser over diffen og **merger selv** — ingenting endres før du gjør det.
+  - type: dropdown
+    id: action
+    attributes:
+      label: Handling
+      options:
+        - Legg til
+        - Fjern
+        - Endre varsel
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      options:
+        - Lag
+        - Utøver
+        - Turnering
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Navn
+      placeholder: f.eks. Brann
+    validations:
+      required: true
+  - type: input
+    id: aliases
+    attributes:
+      label: Aliaser (komma-separert, valgfritt)
+      placeholder: SK Brann, Brann Bergen
+  - type: dropdown
+    id: sport
+    attributes:
+      label: Sport (valgfritt, men hjelper matchingen)
+      options:
+        - (ikke satt)
+        - football
+        - golf
+        - tennis
+        - f1
+        - cycling
+        - chess
+        - esports
+        - athletics
+        - biathlon
+        - cross-country
+        - alpine
+        - nordic
+        - ski jumping
+  - type: dropdown
+    id: notify
+    attributes:
+      label: Kalendervarsel?
+      description: Lag/utøvere varsler som standard. Turneringer varsler bare hvis du velger Ja.
+      options:
+        - Standard
+        - Ja
+        - Nei
