@@ -146,6 +146,32 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 	});
 });
 
+describe("'Dine neste' top glance — upcoming-only, nearest first", () => {
+	const inDays = (n) => new Date(Date.now() + n * 86400000).toISOString();
+
+	it("keeps only followed entities with an upcoming event, sorted soonest-first", () => {
+		dash.interests = { alwaysTrack: {
+			athletes: [
+				{ name: "Casper Ruud", aliases: ["Ruud"], sport: "tennis" },
+				{ name: "Aryan Tari", aliases: ["Tari"], sport: "chess" }, // no event → excluded
+			],
+			teams: [{ name: "Lyn", sport: "football" }],
+		} };
+		dash.allEvents = [
+			{ sport: "football", title: "Strømsgodset – Lyn", homeTeam: "Strømsgodset", awayTeam: "Lyn", time: inDays(18) },
+			{ sport: "tennis", title: "Swiss Open (Casper Ruud)", time: inDays(6) },
+		];
+		const rows = dash.nextUpEntries();
+		expect(rows.map((r) => r.entry.name)).toEqual(["Casper Ruud", "Lyn"]); // Tari dropped, Ruud (6d) before Lyn (18d)
+	});
+
+	it("returns nothing when no followed entity has an upcoming event (section stays hidden)", () => {
+		dash.interests = { alwaysTrack: { athletes: [{ name: "Aryan Tari", sport: "chess" }], teams: [] } };
+		dash.allEvents = [];
+		expect(dash.nextUpEntries()).toEqual([]);
+	});
+});
+
 describe("must-see selection follows the goal's priorities", () => {
 	it("favorite, importance>=4, or Norwegian participation", () => {
 		expect(dash.isMustSee({ isFavorite: true })).toBe(true);
