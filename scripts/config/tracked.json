@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-07T11:35:00Z",
+  "lastUpdated": "2026-07-07T18:05:00Z",
   "lastUpdatedBy": "research-agent",
   "version": 2,
   "leagues": [
@@ -346,14 +346,30 @@
       ],
       "expires": "2026-07-26T23:59:59Z",
       "priority": "medium"
+    },
+    {
+      "id": "em-friidrett-2026",
+      "name": "EM friidrett 2026 (Birmingham)",
+      "sport": "athletics",
+      "reason": "Dekker «Norske utøvere i internasjonal toppidrett» — det 27. friidretts-EM (frittstående mesterskap), Alexander Stadium, Birmingham 10.–16. august. NY denne kjøringen: la til som ai-research-event etter uavhengig fact-check (datoer/venue bekreftet mot Wikipedia + offisiell terminliste; NRK holder EM-friidrettsrettighetene 2026/2028/2030, bekreftet mot nrk.no). Marquee-event for norske fans (Warholm regjerende europamester 400 m hekk; Ingebrigtsen-brødrene + mangekamp-utøverne Skotheim/Rooth pleier å stille). Startlister/norsk deltakelse ikke publisert ennå — event ligger inne, individuelle utøvere fylles på når listene slippes. ~5 uker ut (like utenfor coverage-critics 4-ukers-horisont), lagt inn nå for å unngå framtidig recall-glipp.",
+      "addedAt": "2026-07-07T18:05:00Z",
+      "addedBy": "research-agent",
+      "evidence": [
+        "interests.json#interests",
+        "https://en.wikipedia.org/wiki/2026_European_Athletics_Championships",
+        "https://www.nrk.no/sport/program-for-friidrett-i-2026_-full-oversikt-over-sendetider_-ovingar-og-utovarar-1.17804122"
+      ],
+      "expires": "2026-08-17T23:59:59Z",
+      "priority": "high"
     }
   ],
   "notes": [
-    "Kjøring 2026-07-07T11:35Z: rolig, fokusert kjøring. Coverage-audit (07:42) melder null high/medium recall-glipp; scout 21x «quiet» siste døgn. Fanet ut 5 parallelle scouts (golf/Ventura, tennis/Ruud, friidrett/Ingebrigtsen, CS2/100T, late-additions/X). INGEN nye bekreftede events å legge til. eventsAdded: 0, eventsRemoved: 1.",
-    "ENDRINGER I events.json: (1) NM friidrett 2026 starttid strammet fra 14.00Z til 11.00Z (dag 1s åpning 13.00 norsk, bekreftet mot offisielt dagsprogram nmfriidrett2026.no/dagsprogram). (2) FJERNET stale ai-research-event «British Grand Prix» (2026-07-05, i fortiden) — flagget i forrige kjørings grader; klientens vindusfilter skjulte den, men ryddet for hygiene.",
+    "Kjøring 2026-07-07T18:05Z: rolig ettermiddagskjøring. Coverage-audit (07:42) melder null high/medium recall-glipp; scout 30x «quiet» siste døgn. Fanet ut 4 parallelle scouts (golf/Ventura+Hovland, friidrett/Ingebrigtsen+DL, CS2/100T, late-additions+tennis/Ruud+sjakk). ÉN ny bekreftet event lagt til: EM friidrett 2026 (Birmingham, 10.–16. aug) — se under. eventsAdded: 1, eventsRemoved: 0.",
+    "NY EVENT (eventsAdded: 1): EM friidrett 2026 (European Athletics Championships), Alexander Stadium Birmingham 10.–16. august. Overflatet av late-additions-scouten, deretter UAVHENGIG fact-checket (fersk kontekst): datoer/venue bekreftet (frittstående 27. utgave, ikke multisport-formatet) mot Wikipedia + offisiell terminliste; NRK bekreftet som norsk rettighetshaver (holder EM-friidrett 2026/2028/2030) direkte på nrk.no; dag 1 morgenøkt ~10.30 BST (09.30 UTC), kveldsøkt ~19.00 BST. high-confidence (3 evidens-URLer). norwegianPlayers tom — startlister ikke publisert; Warholm/Ingebrigtsen/Skotheim/Rooth ventes men ikke bekreftet, disclosed i summary. Fyller reell dekningsluke ~5 uker ut (like utenfor coverage-critics 4-ukers-horisont).",
+    "IKKE lagt til: EM svømming/aquatics Paris (31. juli–16. aug) — ingen bekreftet norsk relevans (Norge ikke svømmenasjon) og uverifisert streaming; utelatt for rolig tavle (ingen gjetting).",
     "SCOUT-FUNN (alle WATCH-punkter fortsatt UBEKREFTET): Ventura — kun ALTERNATE på 3M Open (23.–26. juli); Corales Puntacana-felt (16.–19. juli) ikke publisert; ingen bekreftet start (følg opp Corales ~10. juli, 3M ~17. juli). Ruud — IKKE på DC Open-påmeldingslista (publisert 1. juli); Montreal (ikke Toronto!) 1.–13. aug, trekning ~31. juli, ikke publisert; kun Gstaad bekreftet. Jakob Ingebrigtsen — comeback fortsatt UBEKREFTET, IKKE i Monaco-startlista; agent sier «mulig fra midten av juli» men ingen påmelding (Monaco 10. / Budapest 14. / London 18. juli kun spekulert). Carlsen — ingen ny juli-turnering (neste EWC-sjakk 11.–15. aug). 100 Thieves — BLAST Bounty S2-bracket/map pool alt TBD (slippes 1–3 dager før); ingen annen kamp før ~10. aug.",
     "TdF etappe 4 (7. juli, Carcassonne–Foix): kjøres som planlagt (181,9 km) under Code Red varme (~40–41°C), UCI-varmeprotokoll på standby — ingen offisiell endring. Startidsavvik i aggregatorer: départ fictif ~13.10 CEST vs. reell start ~13.25 CEST; US-sider viser Eastern Time. VERIFY sjekker daglig. F1 Belgia (19.) + Ungarn (26. juli) og VM-semi/bronse/finale re-bekreftet uten endring (søndags-/kveldsslott korrekt).",
-    "SKILL-EDIT FORSØKT MEN BLOKKERT (4. kjøring på rad): ønsket Athletics/Diamond League-seksjon i norwegian-rights-skillen (DL alle stevner → NRK 2025–2029; NM friidrett → NRK). Skriving til .claude/skills/ nektet av permission-mode (ikke hooken). Runtime uansett korrekt: events bærer sine egne NRK-verdier. ANBEFALING til drift: gi research-workflowen skrivetilgang til .claude/skills/ så den kvalitative læringssløyfen kan persisteres.",
+    "SKILL-EDIT FORSØKT MEN BLOKKERT (5. kjøring på rad): ønsket Athletics-seksjon i norwegian-rights-skillen (DL alle stevner → NRK 2025–2029; EM friidrett → NRK 2026/2028/2030; NM friidrett → NRK). Skriving til .claude/skills/ nektet av permission-mode (ikke hooken), selv om commit-steget lister .claude/skills/. Runtime uansett korrekt: events bærer sine egne NRK-verdier. ANBEFALING til drift: gi research-workflowen faktisk skrivetilgang til .claude/skills/ så den kvalitative læringssløyfen kan persisteres.",
     "coverage-gaps.json (11:13): én ikke-imminent entity-gap (Mbappé-sitat-sak, nyhetsstøy) + én low chess.json file-empty-anomali (av-sesong for statisk fetcher; Sjakk-NM er ai-research og ligger inne). Begge avvist. calibration.json: cyclingstage.com lavest (0.40, 5 sjekker) — TdF-tider bør fortsatt kryss-sjekkes.",
     "Utenfor vindu / følges opp: Ruud USA-sving (Montreal-trekning ~31. juli); 100 Thieves Malta-LAN 30. juli–2. aug (ved avansement); Ingebrigtsen-retur (re-sjekk om 3–4 dager, kan firme opp Budapest/London). PL/La Liga starter medio august; Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League utenfor sesong; vinteridretter av-sesong."
   ]
