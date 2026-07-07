@@ -103,6 +103,28 @@ const CARRY_FORWARD_FIELDS = [
 	"verificationStatus",
 	"verificationSources",
 ];
+// Fuzzy "same event" check, to de-dupe an ai-research event against a static one
+// when their exact start times disagree — common for multi-day golf/stage events
+// (ESPN says 04:00, the research agent wrote 06:00, so a sport|title|time key
+// misses it and both survive). Same sport + ≥2 shared title words (or one title's
+// words ⊆ the other) + overlapping date range ⇒ the same event.
+const TITLE_STOP = new Set(["the", "at", "in", "of", "and", "a", "vs", "v"]);
+function titleTokens(s) {
+	return String(s || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/)
+		.filter((w) => w.length > 1 && !TITLE_STOP.has(w) && !/^\d+(st|nd|rd|th)?$/.test(w));
+}
+function sameFuzzyEvent(a, b) {
+	if (!a || !b || a.sport !== b.sport) return false;
+	const at = titleTokens(a.title), bset = new Set(titleTokens(b.title));
+	const shared = at.filter((w) => bset.has(w));
+	const subset = at.length > 0 && at.every((w) => bset.has(w));
+	if (shared.length < 2 && !subset) return false;
+	const s1 = Date.parse(a.time), e1 = a.endTime ? Date.parse(a.endTime) : s1;
+	const s2 = Date.parse(b.time), e2 = b.endTime ? Date.parse(b.endTime) : s2;
+	if (!Number.isFinite(s1) || !Number.isFinite(s2)) return false;
+	return s1 <= e2 && s2 <= e1; // date ranges overlap
+}
+
 const previousEvents = readJsonIfExists(path.join(dataDir, "events.json"));
 if (Array.isArray(previousEvents)) {
 	const byKey = new Map(all.map((e) => [`${e.sport}|${e.title}|${e.time}`, e]));
@@ -133,8 +155,15 @@ if (Array.isArray(previousEvents)) {
 			}
 			continue;
 		}
-		// (a) AI-research events no static fetcher knows about must survive rebuilds.
+		// (a) AI-research events no static fetcher knows about must survive rebuilds
+		//     — UNLESS a static fetcher already covers the same multi-day event under
+		//     a slightly different start time (e.g. the Genesis Scottish Open, which
+		//     ESPN lists at 04:00 and the agent re-added at 06:00). Prefer the static
+		//     one (it carries the ESPN field + tee times) and drop the AI duplicate.
 		if (prev.source === "ai-research") {
+			if (all.some((cur) => cur.source !== "ai-research" && sameFuzzyEvent(cur, prev))) {
+				continue;
+			}
 			byKey.set(key, prev);
 			all.push(prev);
 			preserved++;

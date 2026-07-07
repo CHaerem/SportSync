@@ -176,6 +176,30 @@ describe("build-events", () => {
 		expect(events[0].source).toBeUndefined();
 	});
 
+	it("de-dupes an ai-research event a static fetcher already covers under a different start time", () => {
+		const base = new Date(Date.now() + 2 * 86400000);
+		const at = (h) => { const d = new Date(base); d.setUTCHours(h, 0, 0, 0); return d.toISOString(); };
+		const end = () => { const d = new Date(base.getTime() + 3 * 86400000); d.setUTCHours(20, 0, 0, 0); return d.toISOString(); };
+		// Static ESPN event at 04:00 with the field data.
+		fs.writeFileSync(
+			path.join(dataDir, "golf.json"),
+			JSON.stringify({ tournaments: [{ name: "PGA Tour", events: [
+				{ title: "Genesis Scottish Open", time: at(4), endTime: end(), norwegian: true, norwegianPlayers: [{ name: "Viktor Hovland", teeTime: "09:39" }] },
+			] }] })
+		);
+		// Previous build: the research agent re-added the SAME tournament at 06:00.
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "golf", tournament: "DP World Tour / PGA Tour", title: "Genesis Scottish Open", time: at(6), endTime: end(), source: "ai-research", confidence: "high", evidence: ["a", "b"] },
+			])
+		);
+		const events = runBuild();
+		const scottish = events.filter((e) => e.title === "Genesis Scottish Open");
+		expect(scottish).toHaveLength(1);            // not two rows for the same tournament
+		expect(scottish[0].source).toBeUndefined();  // kept the static one (carries the field/tee times)
+	});
+
 	it("filters out events older than 14 days", () => {
 		fs.writeFileSync(
 			path.join(dataDir, "football.json"),

@@ -418,6 +418,37 @@ class Dashboard {
 
 	// ── Progressive disclosure: extra context on tap (calm — hidden by default) ──
 
+	/** Golf detail: each Norwegian in the field on its own line — tee time (Oslo)
+	 *  + who they're out with (the marquee/featured group), plus the field size. */
+	addGolfField(e, add) {
+		const players = e.norwegianPlayers || [];
+		const groups = e.featuredGroups || [];
+		const groupFor = (name) => groups.find((g) => String(g.player || '').toLowerCase() === String(name || '').toLowerCase());
+		let listed = false;
+		for (const p of players) {
+			const name = p.name || p;
+			const g = groupFor(name);
+			const tee = p.teeTime || g?.teeTime;
+			const mates = (g?.groupmates || []).map((m) => escapeHtml(m.name || m)).join(', ');
+			const parts = [];
+			if (tee) parts.push(`<span class="tbd">${escapeHtml(tee)}</span>`);
+			if (mates) parts.push(`med ${mates}`);
+			add(escapeHtml(name), parts.length ? parts.join(' · ') : 'i feltet');
+			listed = true;
+		}
+		// A featured group whose Norwegian isn't in norwegianPlayers (defensive).
+		for (const g of groups) {
+			if (players.some((p) => String(p.name || p).toLowerCase() === String(g.player || '').toLowerCase())) continue;
+			const mates = (g.groupmates || []).map((m) => escapeHtml(m.name || m)).join(', ');
+			const parts = [];
+			if (g.teeTime) parts.push(`<span class="tbd">${escapeHtml(g.teeTime)}</span>`);
+			if (mates) parts.push(`med ${mates}`);
+			if (parts.length) { add(escapeHtml(g.player), parts.join(' · ')); listed = true; }
+		}
+		if (!listed && players.length) add('Norske', escapeHtml(players.map((p) => p.name || p).join(', ')));
+		if (e.totalPlayers) add('Felt', `${e.totalPlayers} i feltet`);
+	}
+
 	/** True only when there's genuinely more to show — flat rows stay non-interactive. */
 	hasDetail(e) {
 		if (e.isSeries) return true;
@@ -428,6 +459,7 @@ class Dashboard {
 			(e.venue && e.venue !== 'TBD') ||
 			e.summary ||
 			e.norwegianPlayers?.length ||
+			e.featuredGroups?.length ||
 			(Array.isArray(e.streaming) && e.streaming.length > 1) ||
 			(e.source === 'ai-research' && e.evidence?.length)
 		);
@@ -444,7 +476,11 @@ class Dashboard {
 		add('Tabell', this.footballStanding(e));
 		add('Ledende', this.golfContext(e));
 		if (e.venue && e.venue !== 'TBD') add('Arena', escapeHtml(e.venue));
-		if (e.norwegianPlayers?.length) add('Norske', escapeHtml(e.norwegianPlayers.map((p) => p.name || p).join(', ')));
+		if (e.sport === 'golf' && (e.norwegianPlayers?.length || e.featuredGroups?.length)) {
+			this.addGolfField(e, add);
+		} else if (e.norwegianPlayers?.length) {
+			add('Norske', escapeHtml(e.norwegianPlayers.map((p) => p.name || p).join(', ')));
+		}
 		if (e.summary) add('Om', escapeHtml(e.summary));
 
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
