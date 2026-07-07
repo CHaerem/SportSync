@@ -88,6 +88,7 @@ main { padding: 14px 0 72px; }
 }
 .site-footer a { color: var(--fg-2); }
 .site-footer a:hover { color: var(--accent); }
+.site-footer a.footer-alt { color: var(--fg-3); font-size: 0.85em; }
 /* Quiet staleness warning — only shown when data is unexpectedly old */
 .footer-stale { flex-basis: 100%; color: var(--live); font-size: 12.5px; }
 /* AI quota fuel gauge — calm by default; warns as the budget runs low */
