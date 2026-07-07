@@ -1,15 +1,16 @@
-name: Follow request to PR
+name: Follow request
 
-# A "follow-request" Issue Form submission → a PR that edits interests.json.
-# The user reviews the diff and merges; nothing lands on main until they do.
+# A "follow-request" Issue Form submission edits interests.json directly on main
+# (OWNER-gated) and triggers the static pipeline to republish + deploy. Auto-apply:
+# no PR, no merge step. The owner gate is what keeps strangers from triggering it.
 on:
   issues:
     types: [opened]
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
+  actions: write # to dispatch the static pipeline (republish + deploy)
 
 concurrency:
   group: follow-request-${{ github.event.issue.number }}
@@ -38,31 +39,26 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: node scripts/apply-follow-request.js
-      # Push the change to a branch, then open a PR automatically. That needs the
-      # repo setting "Allow GitHub Actions to create and approve pull requests"
-      # (Settings → Actions → General → Workflow permissions). If it's off, gh pr
-      # create fails and we fall back to commenting a one-click compare link — so
-      # this works either way, and upgrades to auto-PR the moment the box is ticked.
-      - name: Open a Pull Request (fall back to a review link)
+      # Auto-apply: commit the change straight to main, then kick the static
+      # pipeline to republish docs/data + deploy. (A GITHUB_TOKEN push doesn't
+      # trigger other workflows, so we dispatch it explicitly.) Safe because the
+      # job only runs for the OWNER's own issues (see the if-gate above).
+      - name: Commit to main and trigger rebuild + deploy
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: ${{ steps.apply.outputs.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
-          REPO: ${{ github.repository }}
         run: |
           git config user.name "SportSync bot"
           git config user.email "action@github.com"
-          BRANCH="follow-request/${ISSUE_NUMBER}"
-          git checkout -b "$BRANCH"
           git add scripts/config/interests.json
-          git commit -m "${PR_TITLE} (closes #${ISSUE_NUMBER})"
-          git push -u origin "$BRANCH" --force
-          if PR_URL=$(gh pr create --base main --head "$BRANCH" --title "$PR_TITLE" --body-file pr-body.md 2>/dev/null); then
-            gh issue comment "$ISSUE_NUMBER" --body "Laget en Pull Request du kan se over og merge: ${PR_URL}"
-          else
-            COMPARE="https://github.com/${REPO}/compare/main...${BRANCH}?expand=1"
-            gh issue comment "$ISSUE_NUMBER" --body "Klar til gjennomgang: **${PR_TITLE}**. Åpne lenka, se over diffen, «Create pull request» → «Merge»: ${COMPARE}"
-          fi
+          git commit -m "${PR_TITLE} (from #${ISSUE_NUMBER})"
+          git pull --rebase origin main
+          git push origin main
+          SHA=$(git rev-parse --short HEAD)
+          gh workflow run "Static data pipeline"
+          gh issue comment "$ISSUE_NUMBER" --body "✅ Lagt inn: **${PR_TITLE}** (commit \`${SHA}\`). Siden bygges om og oppdaterer seg om et par minutter."
+          gh issue close "$ISSUE_NUMBER"
       - name: Report failure on the issue
         if: failure()
         env:

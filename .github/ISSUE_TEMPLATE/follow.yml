@@ -1,13 +1,13 @@
 name: Følg noe nytt / endre varsel
-description: Legg til, fjern eller endre kalendervarsel for noe du følger. En bot lager en Pull Request du ser over og merger — ingenting lander før du gjør det.
+description: Legg til, fjern eller endre kalendervarsel for noe du følger. Når du sender inn, oppdaterer boten lista automatisk og bygger om siden (~et par minutter).
 title: "[følg] "
 labels: ["follow-request"]
 body:
   - type: markdown
     attributes:
       value: |
-        Fyll ut, så lager en bot en **Pull Request** som endrer `interests.json`.
-        Du ser over diffen og **merger selv** — ingenting endres før du gjør det.
+        Fyll ut og send inn — boten oppdaterer `interests.json` automatisk og
+        bygger om siden. Kun du kan gjøre dette (issues fra andre ignoreres).
   - type: dropdown
     id: action
     attributes:

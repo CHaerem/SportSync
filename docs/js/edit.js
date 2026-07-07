@@ -20,7 +20,7 @@ function escapeHtml(s) {
 // triggers the workflow. Everything arrives filled in; the user just submits.
 function issueUrl(f) {
 	const lines = [
-		'Send inn dette, så lager en bot en Pull Request du ser over og merger.',
+		'Send inn dette, så oppdaterer boten lista automatisk og bygger om siden.',
 		`### Handling\n\n${f.action}`,
 		`### Type\n\n${f.kind}`,
 		`### Navn\n\n${f.name}`,
