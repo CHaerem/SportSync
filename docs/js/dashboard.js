@@ -509,7 +509,7 @@ class Dashboard {
 				du += `<div class="chip-group-label followed-broad-label">Brede interesser <span class="followed-sub-hint">— AI leter etter events fra disse</span></div>`;
 				du += `<ul class="followed-broad">${i.interests.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`;
 			}
-			du += `<div class="followed-hint">«Rediger» åpner et lite skjema — en bot lager en PR du ser over og merger. Eller <a class="followed-edit" href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">rediger fila direkte</a>. Kun du kan endre den.</div></div>`;
+			du += `<div class="followed-hint"><a class="followed-edit" href="rediger.html">Rediger det du følger</a> — endre med ett trykk (hver endring blir en PR du merger). Kun du kan endre den.</div></div>`;
 		}
 
 		// Layer 2 — AI SPORER FOR DEG: what the research agent discovered (tracked.json).

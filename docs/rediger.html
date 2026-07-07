@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+	<meta name="description" content="Rediger det du følger i SportSync.">
+	<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>Rediger · SportSync</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/layout.css">
+	<style>
+		.edit-lead { color: var(--fg-2); font-size: 13.5px; line-height: 1.6; margin: 0 0 24px; }
+		.edit-back { display: inline-block; color: var(--fg-3); font-size: 13px; margin-bottom: 18px; text-decoration: none; }
+		.edit-back:hover { color: var(--accent); }
+		.edit-group { margin-bottom: 28px; }
+		.edit-group h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin: 0 0 10px; }
+		.edit-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+		.edit-row:last-child { border-bottom: none; }
+		.edit-title { font-size: 15px; font-weight: 500; }
+		.bell { margin-left: 5px; font-size: 12px; }
+		.tag { margin-left: 7px; font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.04em; }
+		.edit-alias { font-size: 12px; color: var(--fg-3); margin-top: 3px; }
+		.edit-actions { display: flex; gap: 8px; flex-shrink: 0; }
+		.btn { font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration: none; white-space: nowrap; transition: border-color 0.12s, color 0.12s; }
+		.btn:hover { border-color: var(--accent); color: var(--accent); }
+		.btn-danger:hover { border-color: #c0483a; color: #c0483a; }
+		.btn-add { display: inline-block; margin: 4px 0 22px; border-style: dashed; }
+		.muted { color: var(--fg-3); font-size: 13px; }
+		.edit-foot { margin-top: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+		.edit-foot a { color: var(--accent); }
+	</style>
+</head>
+<body>
+	<header class="masthead">
+		<div class="wrap masthead-inner">
+			<span class="wordmark">SportSync</span>
+		</div>
+	</header>
+
+	<main class="wrap">
+		<a class="edit-back" href="index.html">‹ Tilbake til oversikten</a>
+		<h1>Rediger det du følger</h1>
+		<p class="edit-lead">Trykk for å endre det som allerede står her — ingen skriving, ingen JSON. Hver endring blir en <strong>Pull Request du ser over og merger</strong>; ingenting lagres direkte. 🔔 = du får kalendervarsel før start.</p>
+
+		<div id="edit-root"><p class="muted">Laster …</p></div>
+
+		<a class="btn btn-add" href="https://github.com/CHaerem/SportSync/issues/new?template=follow.yml" target="_blank" rel="noopener">+ Legg til noe nytt</a>
+
+		<div class="edit-foot">
+			<p class="muted">Endringer vises her når PR-en er merget og dataene er oppdatert. Vil du endre alt for hånd (aliaser, varsel-tid m.m.)? <a href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a>.</p>
+		</div>
+	</main>
+
+	<script src="js/edit.js"></script>
+</body>
+</html>
