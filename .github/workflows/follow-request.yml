@@ -31,12 +31,12 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: node scripts/apply-follow-request.js
-      # Push the change to a branch and comment a one-click "create PR" link. We
-      # DON'T have the Action open the PR itself (that needs the repo setting
-      # "Allow GitHub Actions to create and approve pull requests", off by default)
-      # — instead the user opens it from the compare link, reviews the diff, and
-      # merges. Nothing lands until they do.
-      - name: Push a branch and link it for review
+      # Push the change to a branch, then open a PR automatically. That needs the
+      # repo setting "Allow GitHub Actions to create and approve pull requests"
+      # (Settings → Actions → General → Workflow permissions). If it's off, gh pr
+      # create fails and we fall back to commenting a one-click compare link — so
+      # this works either way, and upgrades to auto-PR the moment the box is ticked.
+      - name: Open a Pull Request (fall back to a review link)
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: ${{ steps.apply.outputs.title }}
@@ -50,8 +50,12 @@ jobs:
           git add scripts/config/interests.json
           git commit -m "${PR_TITLE} (closes #${ISSUE_NUMBER})"
           git push -u origin "$BRANCH" --force
-          COMPARE="https://github.com/${REPO}/compare/main...${BRANCH}?expand=1"
-          gh issue comment "$ISSUE_NUMBER" --body "Klar til gjennomgang: **${PR_TITLE}**. Åpne lenka, se over diffen, og trykk «Create pull request» → «Merge». Ingenting endres før du merger: ${COMPARE}"
+          if PR_URL=$(gh pr create --base main --head "$BRANCH" --title "$PR_TITLE" --body-file pr-body.md 2>/dev/null); then
+            gh issue comment "$ISSUE_NUMBER" --body "Laget en Pull Request du kan se over og merge: ${PR_URL}"
+          else
+            COMPARE="https://github.com/${REPO}/compare/main...${BRANCH}?expand=1"
+            gh issue comment "$ISSUE_NUMBER" --body "Klar til gjennomgang: **${PR_TITLE}**. Åpne lenka, se over diffen, «Create pull request» → «Merge»: ${COMPARE}"
+          fi
       - name: Report failure on the issue
         if: failure()
         env:
