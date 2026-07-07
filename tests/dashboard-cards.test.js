@@ -88,6 +88,32 @@ describe("cancelled / postponed matches stay on the board, labelled", () => {
 	});
 });
 
+describe("finished matches show their result, not a channel", () => {
+	const hoursAgo = (h) => new Date(Date.now() - h * 3600000).toISOString();
+	it("shows 'Ferdig' + the score for a completed football match", () => {
+		dash.liveScores = {};
+		dash.recentResults = { football: [{ homeTeam: "Argentina", awayTeam: "Egypt", homeScore: 2, awayScore: 1 }] };
+		const html = dash.eventRow({ id: "f1", sport: "football", title: "Argentina vs Egypt", homeTeam: "Argentina", awayTeam: "Egypt", time: hoursAgo(2), streaming: [{ platform: "TV 2 Play" }] });
+		expect(html).toContain("Ferdig");
+		expect(html).toContain("2–1");
+		expect(html).toContain("done");
+		expect(html).not.toContain("TV 2 Play"); // it's over — not "watch here"
+	});
+	it("marks a clearly-ended football match finished even without a score", () => {
+		dash.liveScores = {};
+		dash.recentResults = { football: [] };
+		const html = dash.eventRow({ id: "f2", sport: "football", title: "A vs B", homeTeam: "A", awayTeam: "B", time: hoursAgo(3) });
+		expect(html).toContain("Ferdig");
+		expect(html).toContain("done");
+	});
+	it("does not guess 'finished' for an open-ended entry (non-football, no endTime)", () => {
+		dash.liveScores = {};
+		dash.recentResults = null;
+		const html = dash.eventRow({ id: "f3", sport: "tennis", title: "Some tournament", time: hoursAgo(5) });
+		expect(html).not.toContain("done");
+	});
+});
+
 describe("progressive disclosure detail", () => {
 	it("only marks rows expandable when there's genuinely more to show", () => {
 		const bare = { id: "b", sport: "chess", title: "Round 3", time: soon() };

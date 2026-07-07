@@ -330,26 +330,59 @@ class Dashboard {
 		return null;
 	}
 
+	/** Is this event over? Returns { score } ("2–1", event-oriented) or { score: null }
+	 *  (finished, score unknown), or null (not finished). A finished match stays on
+	 *  the board briefly showing its result — never a "watch here" channel. */
+	finishedInfo(e) {
+		const live = this.liveScores[e.id];
+		if (live && live.state === 'post') return { score: `${live.home}–${live.away}` };
+		const score = this.finishedScore(e);
+		if (score) return { score };
+		// Time fallback only where the end is boundable: an explicit endTime, or a
+		// football fixture (~2.5h). Never guess "finished" for open-ended entries.
+		const start = new Date(e.time).getTime();
+		if (!Number.isFinite(start)) return null;
+		let end = null;
+		if (e.endTime) end = new Date(e.endTime).getTime();
+		else if (e.sport === 'football') end = start + 2.5 * SS_CONSTANTS.MS_PER_HOUR;
+		if (end != null && Date.now() > end) return { score: null };
+		return null;
+	}
+
+	/** Event-oriented final score ("2–1") from recent-results, or null. */
+	finishedScore(e) {
+		if (!e.homeTeam || !e.awayTeam) return null;
+		const fb = this.recentResults?.football;
+		if (!Array.isArray(fb)) return null;
+		const hn = e.homeTeam.toLowerCase(), an = e.awayTeam.toLowerCase();
+		const m = fb.find((r) => {
+			const rh = (r.homeTeam || '').toLowerCase(), ra = (r.awayTeam || '').toLowerCase();
+			return (rh.includes(hn) || hn.includes(rh)) && (ra.includes(an) || an.includes(ra)) && r.homeScore != null;
+		});
+		return m ? `${m.homeScore}–${m.awayScore}` : null;
+	}
+
 	eventRow(e) {
 		if (e.isSeries) return this.seriesRow(e);
 		const date = new Date(e.time);
 		const live = this.liveScores[e.id];
 		const status = this.statusLabel(e);
-		const where = status
-			? `<span class="ev-status">${escapeHtml(status)}</span>`
-			: (live && live.state === 'in'
-				? `<span class="ev-where ev-live">${live.home}–${live.away}</span>`
-				: this.whereToWatch(e));
+		const done = (!status && !(live && live.state === 'in')) ? this.finishedInfo(e) : null;
+		let where;
+		if (status) where = `<span class="ev-status">${escapeHtml(status)}</span>`;
+		else if (live && live.state === 'in') where = `<span class="ev-where ev-live">${live.home}–${live.away}</span>`;
+		else if (done) where = `<span class="ev-done">Ferdig${done.score ? `<span class="ev-done-score">${escapeHtml(done.score)}</span>` : ''}</span>`;
+		else where = this.whereToWatch(e);
 		const expandable = this.hasDetail(e);
 		const caret = expandable ? `<span class="ev-caret" aria-hidden="true">›</span>` : `<span class="ev-caret"></span>`;
 		const attrs = expandable
 			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
 			: '';
 		const round = e.round ? `<span class="ev-round">${escapeHtml(e.round)}</span>` : '';
-		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${expandable ? ' expandable' : ''}"${attrs}>
+		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${done ? ' done' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.sportBadge(e)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${status ? '' : this.notifyMark(e.mustWatch)}</span>
+			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${(status || done) ? '' : this.notifyMark(e.mustWatch)}</span>
 			${where}
 			${caret}
 		</div><div class="ev-detail" hidden></div></div>`;
