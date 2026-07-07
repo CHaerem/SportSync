@@ -1,16 +1,16 @@
 {
-  "lastUpdated": "2026-07-05T22:01:55.963Z",
+  "lastUpdated": "2026-07-07T14:25:35.715Z",
   "source": "ESPN + PGA Tour",
   "tournaments": [
     {
       "name": "PGA Tour",
       "events": [
         {
-          "title": "John Deere Classic",
+          "title": "Genesis Scottish Open",
           "meta": "PGA Tour",
           "tournament": "PGA Tour",
-          "time": "2026-07-02T04:00:00.000Z",
-          "endTime": "2026-07-05T20:00:00.000Z",
+          "time": "2026-07-09T04:00:00.000Z",
+          "endTime": "2026-07-12T20:00:00.000Z",
           "venue": "TBD",
           "sport": "golf",
           "streaming": [
@@ -28,21 +28,51 @@
           "norwegian": true,
           "norwegianPlayers": [
             {
-              "name": "Kris Ventura",
-              "teeTime": null,
-              "teeTimeUTC": null,
+              "name": "Kristoffer Reitan",
+              "teeTime": "09:06",
+              "teeTimeUTC": "2026-07-09T07:06:00.000Z",
+              "status": null
+            },
+            {
+              "name": "Viktor Hovland",
+              "teeTime": "09:39",
+              "teeTimeUTC": "2026-07-09T07:39:00.000Z",
               "status": null
             }
           ],
-          "featuredGroups": [],
-          "totalPlayers": 144
+          "featuredGroups": [
+            {
+              "player": "Kristoffer Reitan",
+              "teeTime": "09:06",
+              "groupmates": [
+                {
+                  "name": "Xander Schauffele",
+                  "teeTime": "09:06"
+                },
+                {
+                  "name": "Adam Scott",
+                  "teeTime": "09:06"
+                }
+              ]
+            },
+            {
+              "player": "Viktor Hovland",
+              "teeTime": "09:39",
+              "groupmates": [
+                {
+                  "name": "Wyndham Clark",
+                  "teeTime": "09:39"
+                },
+                {
+                  "name": "Eugenio Chacarra",
+                  "teeTime": "09:39"
+                }
+              ]
+            }
+          ],
+          "totalPlayers": 156
         }
       ]
     }
-  ],
-  "_retained": {
-    "since": "2026-07-06T08:59:01.750Z",
-    "consecutiveRetains": 15,
-    "lastFreshFetch": "2026-07-05T22:01:55.963Z"
-  }
+  ]
 }
