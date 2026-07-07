@@ -31,7 +31,16 @@
 		.btn { font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration: none; white-space: nowrap; transition: border-color 0.12s, color 0.12s; }
 		.btn:hover { border-color: var(--accent); color: var(--accent); }
 		.btn-danger:hover { border-color: #c0483a; color: #c0483a; }
-		.btn-add { display: inline-block; margin: 4px 0 22px; border-style: dashed; }
+		.add-box { margin: 4px 0 26px; }
+		.add-box h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin: 0 0 10px; }
+		.add-search { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); }
+		.add-search:focus { outline: none; border-color: var(--accent); }
+		.add-suggestions { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+		.suggestion { display: flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); text-decoration: none; }
+		.suggestion:hover { border-color: var(--accent); }
+		.suggestion .s-sport { font-size: 11px; color: var(--fg-3); }
+		.suggestion .s-kind { font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.04em; margin-left: auto; white-space: nowrap; }
+		.suggestion.manual { border-style: dashed; color: var(--fg-2); }
 		.muted { color: var(--fg-3); font-size: 13px; }
 		.edit-foot { margin-top: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
 		.edit-foot a { color: var(--accent); }
@@ -52,13 +61,18 @@
 
 		<div id="edit-root"><p class="muted">Laster …</p></div>
 
-		<a class="btn btn-add" href="https://github.com/CHaerem/SportSync/issues/new?template=follow.yml" target="_blank" rel="noopener">+ Legg til noe nytt</a>
+		<section class="add-box">
+			<h2>Legg til noe nytt</h2>
+			<input type="search" id="add-search" class="add-search" placeholder="Søk etter lag, utøver eller turnering…" autocomplete="off" autocapitalize="off">
+			<div id="add-suggestions" class="add-suggestions"></div>
+		</section>
 
 		<div class="edit-foot">
 			<p class="muted">Endringer vises her når siden er bygd om (~et par minutter etter innsending). Vil du endre alt for hånd (aliaser, varsel-tid m.m.)? <a href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a>.</p>
 		</div>
 	</main>
 
+	<script src="js/shared-constants.js"></script>
 	<script src="js/edit.js"></script>
 </body>
 </html>

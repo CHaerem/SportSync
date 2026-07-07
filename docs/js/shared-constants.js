@@ -138,3 +138,4 @@ window.ssExtractAggregate = ssExtractAggregate;
 window.ssEntityName = ssEntityName;
 window.trackedTerms = trackedTerms;
 window.ssContainsTerm = ssContainsTerm;
+window.ssNormalize = ssNormalize;
