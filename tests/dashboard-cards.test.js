@@ -161,6 +161,16 @@ describe("whereToWatch — the core 'hvor kan jeg se det'", () => {
 		expect(html).toContain("NRK 1");
 		expect(html).toContain("tv.nrk.no");
 	});
+	it("only links a tentative (shared-rights) channel to a tvkampen guide, never to one broadcaster", () => {
+		expect(dash.streamLink({ platform: "TV 2 Play", url: "https://play.tv2.no/sport" })).toBe(true);           // confirmed → link
+		expect(dash.streamLink({ platform: "NRK / TV 2", url: "https://tv.nrk.no", tentative: true })).toBe(false); // tentative broadcaster → don't link (misleads)
+		expect(dash.streamLink({ platform: "NRK / TV 2", url: "https://www.tvkampen.com/kamp/x-1", tentative: true })).toBe(true); // tentative guide → link
+	});
+	it("renders a tentative WC chip as a tappable tvkampen guide link", () => {
+		const html = dash.whereToWatch({ streaming: [{ platform: "NRK / TV 2", url: "https://www.tvkampen.com/kamp/x-1", tentative: true }] });
+		expect(html).toContain("tvkampen.com/kamp/x-1");
+		expect(html).toContain("<a ");
+	});
 	it("shows a faint dash when the channel is unknown (honest, not noisy)", () => {
 		const html = dash.whereToWatch({ streaming: [] });
 		expect(html).toContain("ev-where unknown");

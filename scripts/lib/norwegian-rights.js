@@ -213,7 +213,22 @@ export function resolveStreaming(ev, tvListings) {
 			let s = listingStreaming(listing);
 			// WC: trust the real listing to say WHICH of NRK/TV 2, drop aggregator noise.
 			if (isWorldCup(ev)) s = worldCupChannels(s);
-			if (s.length) return s;
+			if (s.length) {
+				// Point TV 2 / Viaplay at the tvkampen MATCH page — a per-match
+				// "when & where" guide — since they don't expose linkable per-match
+				// app URLs. Keep NRK's own URL (tv.nrk.no), which opens the NRK app.
+				if (listing.url) {
+					s = s.map((c) => {
+						const isNrk = /nrk/i.test(c.platform || "") || /tv\.nrk\.no/.test(c.url || "");
+						return isNrk ? c : { ...c, url: listing.url };
+					});
+				}
+				return s;
+			}
+			// Listing exists but no confirmable Norwegian rights holder (e.g. only
+			// SVT): still offer the match's tvkampen page as a linkable guide so the
+			// user can at least see when & on which channel it airs.
+			if (isWorldCup(ev) && listing.url) return [{ ...WC_SHARED, url: listing.url }];
 		}
 	}
 	return normalizeStreaming(ev);

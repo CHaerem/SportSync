@@ -21,10 +21,12 @@ specific *safe* URL — one you actually reached, never an invented path:
   use the real `https://tv.nrk.no/serie/…`, `/program/…`, or `/direkte/…` page for
   THIS broadcast when you find it. This is the gold standard.
 - **Football:** `docs/data/tv-listings.json` carries a per-match `url` (the tvkampen
-  match page listing every Norwegian broadcaster for THAT match). When an event
-  matches a listing (by team names), set `streaming[].url` to that match `url`.
-  It's the best link for football — and the ONLY good link for **shared/tentative**
-  rights (e.g. WC "NRK / TV 2"), where pointing at one broadcaster would mislead.
+  match page listing every Norwegian broadcaster for THAT match). `build-events` now
+  applies this automatically — it points TV 2 / Viaplay football options at the
+  tvkampen match page (their per-match app URLs 404), keeps NRK football on its own
+  `tv.nrk.no` URL (opens the app), and makes the shared/tentative "NRK / TV 2" chip
+  link to the tvkampen guide (the ONLY safe link when the broadcaster is unresolved).
+  You don't need to set football URLs by hand — but do deep-link NRK per the point above.
 - **TV 2 Play / Viaplay & the rest:** do NOT invent per-match paths
   (`play.tv2.no/…/<match>`) — they 404 (auth-gated). Use the service's **sport-section
   landing** (the map's fallback: `play.tv2.no/sport`, `tv.nrk.no/direkte`, `viaplay.no`),

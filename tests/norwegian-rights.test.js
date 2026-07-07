@@ -70,6 +70,31 @@ describe("tvkampen real-listing integration", () => {
 	});
 });
 
+describe("tvkampen per-match link (per-match 'when & where')", () => {
+	const withUrl = [
+		{ homeTeam: "Liverpool", awayTeam: "Arsenal", broadcasters: ["TV 2 Play"], url: "https://www.tvkampen.com/kamp/liverpool-arsenal-1" },
+		{ homeTeam: "Canada", awayTeam: "Marokko", broadcasters: ["NRK1", "NRK TV"], url: "https://www.tvkampen.com/kamp/canada-marokko-2" },
+		{ homeTeam: "Paraguay", awayTeam: "Frankrike", broadcasters: ["Svt"], url: "https://www.tvkampen.com/kamp/paraguay-frankrike-3" },
+	];
+	it("points TV 2 at the tvkampen match page (no linkable per-match app URL)", () => {
+		const s = resolveStreaming({ sport: "football", homeTeam: "Liverpool", awayTeam: "Arsenal", tournament: "Premier League" }, withUrl);
+		expect(s[0].platform).toBe("TV 2 Play");
+		expect(s[0].url).toBe("https://www.tvkampen.com/kamp/liverpool-arsenal-1");
+	});
+	it("keeps NRK's own URL (opens the NRK app), not the tvkampen page", () => {
+		const s = resolveStreaming({ sport: "football", tournament: "FIFA World Cup 2026", homeTeam: "Canada", awayTeam: "Morocco" }, withUrl);
+		expect(s[0].platform).toBe("NRK");
+		expect(s[0].url).toContain("tv.nrk.no");
+		expect(s[0].url).not.toContain("tvkampen");
+	});
+	it("offers the tvkampen guide when no Norwegian rights holder is confirmable (SVT only)", () => {
+		const s = resolveStreaming({ sport: "football", tournament: "FIFA World Cup 2026", homeTeam: "Paraguay", awayTeam: "France" }, withUrl);
+		expect(s[0].platform).toBe("NRK / TV 2");
+		expect(s[0].tentative).toBe(true);
+		expect(s[0].url).toBe("https://www.tvkampen.com/kamp/paraguay-frankrike-3");
+	});
+});
+
 describe("World Cup per-match channel resolution (English↔Norwegian nations)", () => {
 	// tvkampen lists nations in Norwegian and pads with aggregators; ESPN emits
 	// English nation names. Both bugs together made every WC match show NRK + TV 2.

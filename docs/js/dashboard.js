@@ -200,6 +200,13 @@ class Dashboard {
 		return escapeHtml(e.title);
 	}
 
+	/** A channel is tappable when it has a URL — but a TENTATIVE (shared-rights)
+	 *  entry only links to a tvkampen match GUIDE, never to one broadcaster (which
+	 *  would mislead when it might be the other). */
+	streamLink(s) {
+		return !!(s && s.url && (!s.tentative || /tvkampen\.com/.test(s.url)));
+	}
+
 	/** Where to watch — quiet, honest. First 1–2 Norwegian channels; faint dash if unknown. */
 	whereToWatch(e) {
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
@@ -209,7 +216,7 @@ class Dashboard {
 		const extra = streams.length > 1 ? `<span class="ev-where-more">+${streams.length - 1}</span>` : '';
 		// Tentative (shared rights, exact channel not yet confirmed) → plain text,
 		// no link — linking to one broadcaster when it may be the other misleads.
-		const inner = (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
+		const inner = this.streamLink(s) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : p;
 		const cls = s.tentative ? 'ev-where tentative' : 'ev-where';
 		return `<span class="${cls}">${inner}${extra}</span>`;
 	}
@@ -488,7 +495,7 @@ class Dashboard {
 			const chans = streams.map((s) => {
 				const p = escapeHtml(String(s.platform || s));
 				const label = s.tentative ? `${p} <span class="tbd">(bekreftes)</span>` : p;
-				return (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
+				return this.streamLink(s) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
 			}).join(' · ');
 			add('Se på', chans);
 		}
@@ -801,7 +808,7 @@ class Dashboard {
 			? streams.map((s) => {
 				const p = escapeHtml(String(s.platform || s));
 				const label = s.tentative ? `${p} <span class="tbd">(bekreftes)</span>` : p;
-				return (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
+				return this.streamLink(s) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
 			}).join(' · ')
 			: '<span class="tbd">–</span>';
 		const rows = [
