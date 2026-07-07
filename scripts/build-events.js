@@ -242,6 +242,24 @@ function withDeepUrls(streaming, prevStreaming) {
 	});
 }
 
+// A bare broadcaster homepage → its sport/live section (closer to the broadcast,
+// likelier to be claimed by the app's universal links). Only exact homepages are
+// rewritten, so a deeper per-event URL is never downgraded. Catches agent-set
+// URLs that bypass the rights map (e.g. a verified WC channel written as
+// "https://tv.nrk.no").
+const LANDING_UPGRADE = {
+	"https://tv.nrk.no": "https://tv.nrk.no/direkte",
+	"https://play.tv2.no": "https://play.tv2.no/sport",
+};
+function upgradeLanding(streaming) {
+	if (!Array.isArray(streaming)) return streaming;
+	return streaming.map((c) => {
+		if (!c || !c.url) return c;
+		const bare = c.url.replace(/\/+$/, "");
+		return LANDING_UPGRADE[bare] ? { ...c, url: LANDING_UPGRADE[bare] } : c;
+	});
+}
+
 // Resolve streaming to Norwegian channels — prefer REAL tvkampen.com listings
 // for football, fall back to the deterministic rights map (never FOX/ESPN).
 const tvListings = readJsonIfExists(path.join(dataDir, "tv-listings.json"))?.listings || [];
@@ -259,8 +277,9 @@ for (const e of all) {
 	} else {
 		e.streaming = resolved;
 	}
-	// Upgrade generic landing URLs to a deeper per-event URL we already knew.
-	e.streaming = withDeepUrls(e.streaming, prevStreamingByKey.get(key));
+	// Upgrade generic landing URLs to a deeper per-event URL we already knew,
+	// then lift any bare homepage to the broadcaster's sport/live section.
+	e.streaming = upgradeLanding(withDeepUrls(e.streaming, prevStreamingByKey.get(key)));
 	if (e.sport === "football" && e.streaming !== before && e.streaming.length && tvListings.length) {
 		// count football events whose channel came from a real listing match
 		fromTv++;

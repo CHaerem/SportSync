@@ -158,6 +158,27 @@ describe("build-events", () => {
 		expect(sprint.streaming[0].url).toBe("https://tv.nrk.no/serie/skiskyting/sprint-abc"); // deep URL survived, not clobbered by /direkte
 	});
 
+	it("lifts a bare broadcaster homepage to its sport/live section", () => {
+		const time = future(2);
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "FIFA World Cup", events: [
+				{ title: "Norway vs Brazil", time, homeTeam: "Norway", awayTeam: "Brazil" },
+			] }] })
+		);
+		// Previous build: verify confirmed NRK but wrote the bare homepage URL.
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "FIFA World Cup", title: "Norway vs Brazil", time, homeTeam: "Norway", awayTeam: "Brazil",
+				  streaming: [{ platform: "NRK", url: "https://tv.nrk.no" }] },
+			])
+		);
+		const events = runBuild();
+		const m = events.find((e) => e.title === "Norway vs Brazil");
+		expect(m.streaming[0].url).toBe("https://tv.nrk.no/direkte"); // homepage → sport/live section
+	});
+
 	it("keeps a confirmed channel instead of downgrading it to a tentative guess", () => {
 		const time = future(2);
 		// A World Cup fixture — resolveStreaming would produce the tentative NRK / TV 2 label.
@@ -177,7 +198,9 @@ describe("build-events", () => {
 		);
 		const events = runBuild();
 		const match = events.find((e) => e.title === "Brazil vs Norway");
-		expect(match.streaming).toEqual([{ platform: "NRK", url: "https://tv.nrk.no" }]);
+		// Confirmed NRK is kept (not downgraded to the tentative NRK/TV 2 guess);
+		// the bare homepage is lifted to NRK's live section.
+		expect(match.streaming).toEqual([{ platform: "NRK", url: "https://tv.nrk.no/direkte" }]);
 		expect(match.streaming.some((s) => s.tentative)).toBe(false);
 	});
 
