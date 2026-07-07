@@ -592,16 +592,12 @@ class Dashboard {
 		const wrap = document.getElementById('followed');
 		const body = document.getElementById('followed-body');
 		if (!wrap || !body) return;
-		const t = this.tracked;
-		const i = this.interests;
-		const hasTracked = t && (t.tournaments?.length || t.leagues?.length || t.athletes?.length);
-		const hasInterests = i && (i.alwaysTrack || i.interests);
-		if (!hasTracked && !hasInterests) { wrap.hidden = true; return; }
+		const at = this.interests && this.interests.alwaysTrack;
+		if (!at) { wrap.hidden = true; return; }
 
-		// Layer 1 — DU FØLGER: what you asked for (interests.json, user-owned).
-		// A 🔔 on a chip means that thing gives you a reminder — so the rule is
-		// visible in the list itself, not a hidden heuristic. Teams/athletes
-		// notify by default; a tournament only when notify:true.
+		// Calm teaser only: chips of what you follow (🔔 = it reminds you). The full
+		// picture (broad interests, AI discoveries) and ALL editing live on the hub
+		// page (rediger.html) — keeps the dashboard an agenda, not a console.
 		const chip = (x, notifyDefault) => {
 			const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyDefault;
 			return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
@@ -609,37 +605,12 @@ class Dashboard {
 		const chipGroup = (label, items, notifyDefault) => (items || []).length
 			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x, notifyDefault)).join('')}</div></div>`
 			: '';
-		let du = '';
-		if (hasInterests) {
-			const at = i.alwaysTrack || {};
-			du += `<div class="followed-layer"><div class="followed-head">Du følger</div>`;
-			du += chipGroup('Utøvere', at.athletes, true);
-			du += chipGroup('Lag', at.teams, true);
-			du += chipGroup('Turneringer', at.tournaments, false);
-			du += `<div class="followed-notify">🔔 = kalendervarsel ${this.notifyLead()} min før start (samme merke i agendaen).</div>`;
-			if (Array.isArray(i.interests) && i.interests.length) {
-				du += `<div class="chip-group-label followed-broad-label">Brede interesser <span class="followed-sub-hint">— AI leter etter events fra disse</span></div>`;
-				du += `<ul class="followed-broad">${i.interests.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`;
-			}
-			du += `<div class="followed-hint"><a class="followed-edit" href="rediger.html">Rediger det du følger</a> — endre med ett trykk (hver endring blir en PR du merger). Kun du kan endre den.</div></div>`;
-		}
-
-		// Layer 2 — AI SPORER FOR DEG: what the research agent discovered (tracked.json).
-		// Reasons are agent notes — show a short gist; full text on hover (title).
-		const group = (label, items) => {
-			if (!items?.length) return '';
-			return `<div class="followed-group">${label}</div>` + items.map((x) =>
-				`<div class="followed-item"><span class="followed-item-name">${escapeHtml(x.name)}</span>${x.expires ? `<span class="until">følges til ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}${x.reason ? `<div class="why" title="${escapeHtml(x.reason)}">${escapeHtml(this.shortReason(x.reason))}</div>` : ''}</div>`
-			).join('');
-		};
-		let ai = '';
-		if (hasTracked) {
-			ai = `<div class="followed-layer"><div class="followed-head">AI sporer for deg</div>`
-				+ group('Turneringer', t.tournaments) + group('Ligaer', t.leagues) + group('Utøvere', t.athletes)
-				+ `</div>`;
-		}
-
-		body.innerHTML = du + ai;
+		body.innerHTML = '<div class="followed-layer">'
+			+ chipGroup('Utøvere', at.athletes, true)
+			+ chipGroup('Lag', at.teams, true)
+			+ chipGroup('Turneringer', at.tournaments, false)
+			+ `<div class="followed-hint">🔔 = kalendervarsel ${this.notifyLead()} min før start. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
+			+ '</div>';
 		wrap.hidden = false;
 	}
 

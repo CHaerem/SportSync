@@ -68,7 +68,27 @@ function briefRow(s) {
 	return `<div class="edit-row"><div class="edit-name"><span class="edit-brief">${escapeHtml(s)}</span></div><div class="edit-actions"><a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a></div></div>`;
 }
 
-function render(interests) {
+/** Trim an agent reason to a one-line gist (drops the provenance prefix). */
+function shortReason(r) {
+	if (!r) return '';
+	let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').replace(/^[,.\s]+/, '').trim();
+	if (s.length > 130) s = s.slice(0, 128).replace(/\s+\S*$/, '') + '…';
+	return s;
+}
+/** Strip trailing year / parenthetical from a tracked name for a clean follow. */
+function coreName(name) {
+	return String(name).replace(/\s*\d{4}(?:\/\d{2})?/g, '').replace(/\s*\(.*?\)/g, '').trim();
+}
+
+/** "AI har funnet" row: a discovery, name + why + expiry, with a "Følg 🔔" action. */
+function aiRow(x, kind) {
+	const until = x.expires ? `<span class="tag">ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : '';
+	const why = x.reason ? `<div class="edit-alias" title="${escapeHtml(x.reason)}">${escapeHtml(shortReason(x.reason))}</div>` : '';
+	const followUrl = issueUrl({ action: 'Legg til', kind, name: coreName(x.name), sport: x.sport || '', notify: 'Ja' });
+	return `<div class="edit-row"><div class="edit-name"><span class="edit-title">${escapeHtml(x.name)}</span>${until}${why}</div><div class="edit-actions"><a class="btn" href="${followUrl}" target="_blank" rel="noopener">Følg 🔔</a></div></div>`;
+}
+
+function render(interests, tracked) {
 	const at = interests.alwaysTrack || {};
 	const root = document.getElementById('edit-root');
 	let html = KINDS.map(([key, kindLabel, groupLabel]) => {
@@ -82,6 +102,15 @@ function render(interests) {
 	if (briefs.length) {
 		html += `<section class="edit-group"><h2>Brede interesser</h2><p class="muted brief-note">Fritekst AI-en leter events fra. Legg til en sport via søket under.</p>${briefs.map(briefRow).join('')}</section>`;
 	}
+	// AI har funnet — the research agent's discoveries; promote any to a real follow.
+	const followed = ['teams', 'athletes', 'tournaments'].flatMap((k) => trackedTerms(at[k] || []));
+	const isFollowed = (name) => followed.some((t) => ssContainsTerm(name, t) || ssContainsTerm(t, coreName(name)));
+	const trk = (label, items, kind) => {
+		const disc = (items || []).filter((x) => x?.name && !isFollowed(x.name)); // only genuine discoveries
+		return disc.length ? `<div class="edit-subhead">${label}</div>` + disc.map((x) => aiRow(x, kind)).join('') : '';
+	};
+	const aiHtml = trk('Turneringer', tracked?.tournaments, 'Turnering') + trk('Ligaer', tracked?.leagues, 'Turnering') + trk('Utøvere', tracked?.athletes, 'Utøver');
+	if (aiHtml) html += `<section class="edit-group"><h2>AI har funnet for deg</h2><p class="muted brief-note">Ting AI-en fant utover lista di. Trykk «Følg» for å få det som fast følge med varsel.</p>${aiHtml}</section>`;
 	root.innerHTML = html;
 }
 
@@ -173,8 +202,9 @@ Promise.all([
 	fetch('data/interests.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
 	fetch('data/events.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => []),
 	fetch('data/standings.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-]).then(([interests, events, standings]) => {
-	render(interests);
+	fetch('data/tracked.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
+]).then(([interests, events, standings, tracked]) => {
+	render(interests, tracked);
 	localCandidates = buildLocalCandidates(events, standings, interests);
 	document.getElementById('add-search')?.addEventListener('input', (e) => onSearch(e.target.value));
 }).catch(() => {
