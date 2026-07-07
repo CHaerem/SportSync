@@ -1,5 +1,5 @@
 // SportSync v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportsync-v2-10';
+const CACHE_NAME = 'sportsync-v2-11';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -39,14 +39,25 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Data files: always fresh from network
+    // Data files: fresh from network when online; cache the last-good copy and
+    // fall back to it offline so the agenda still opens with no signal. Keyed
+    // without the ?t= cache-buster so the fallback matches the next load.
     if (url.pathname.includes(DATA_PATH_FRAGMENT)) {
+        const key = url.origin + url.pathname;
         event.respondWith(
-            fetch(event.request, { cache: 'no-cache' }).catch(
-                () => new Response('{"error": "Network unavailable"}', {
-                    headers: { 'Content-Type': 'application/json' }
+            fetch(event.request, { cache: 'no-cache' })
+                .then((response) => {
+                    if (response && response.status === 200) {
+                        const copy = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(key, copy));
+                    }
+                    return response;
                 })
-            )
+                .catch(() => caches.match(key).then((cached) =>
+                    cached || new Response('{"error":"offline"}', {
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                ))
         );
         return;
     }

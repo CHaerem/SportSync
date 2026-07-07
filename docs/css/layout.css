@@ -89,6 +89,10 @@ main { padding: 14px 0 72px; }
 .site-footer a { color: var(--fg-2); }
 .site-footer a:hover { color: var(--accent); }
 .site-footer a.footer-alt { color: var(--fg-3); font-size: 0.85em; }
+/* Quiet, dismissible iOS "add to Home Screen" hint (shown only when relevant). */
+.install-hint { margin: 0 0 18px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg-2); font-size: 12.5px; line-height: 1.55; }
+.install-dismiss { margin-left: 6px; border: none; background: none; color: var(--fg-3); font-size: 12px; cursor: pointer; text-decoration: underline; padding: 0; }
+.install-dismiss:hover { color: var(--accent); }
 /* Quiet staleness warning — only shown when data is unexpectedly old */
 .footer-stale { flex-basis: 100%; color: var(--live); font-size: 12.5px; }
 /* AI quota fuel gauge — calm by default; warns as the budget runs low */

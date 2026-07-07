@@ -23,6 +23,7 @@ class Dashboard {
 		this.render();
 		this.startLivePolling();
 		this.bindAgendaExpand();
+		this.maybeShowInstallHint();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.pollLiveScores();
@@ -410,7 +411,40 @@ class Dashboard {
 			const links = e.evidence.map((u, i) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">kilde ${i + 1}</a>`).join(' · ');
 			add('Funnet av AI', `${links} · sikkerhet: ${escapeHtml(e.confidence || 'ukjent')}`);
 		}
-		return rows.join('');
+		let html = rows.join('');
+		if (typeof navigator !== 'undefined' && navigator.share) {
+			html += `<div class="d-share"><button type="button" class="ev-share" data-event-id="${escapeHtml(e.id)}">Del</button></div>`;
+		}
+		return html;
+	}
+
+	/** Native share sheet for an event (when · what · where). */
+	shareEvent(e) {
+		if (!e || typeof navigator === 'undefined' || !navigator.share) return;
+		const d = new Date(e.time);
+		const day = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+		const chan = (Array.isArray(e.streaming) && e.streaming[0] && e.streaming[0].platform) || '';
+		const text = [e.title, `${day} ${this.osloTime(d)}`, chan].filter(Boolean).join(' · ');
+		navigator.share({ title: e.title, text, url: location.href }).catch(() => {});
+	}
+
+	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —
+	 *  installing unlocks calendar reminders + offline. Can't auto-prompt on iOS. */
+	maybeShowInstallHint() {
+		const el = document.getElementById('install-hint');
+		if (!el || typeof navigator === 'undefined') return;
+		const ua = navigator.userAgent || '';
+		const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+		const installed = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+		let dismissed = false;
+		try { dismissed = localStorage.getItem('ss-install-hint') === 'off'; } catch { /* ignore */ }
+		if (!isIOS || installed || dismissed) return;
+		el.innerHTML = 'Legg SportSync på Hjem-skjermen for varsler + offline: trykk Del-knappen nederst i Safari → «Legg til på Hjem-skjerm». <button type="button" class="install-dismiss" aria-label="Skjul">Skjul</button>';
+		el.hidden = false;
+		el.querySelector('.install-dismiss')?.addEventListener('click', () => {
+			el.hidden = true;
+			try { localStorage.setItem('ss-install-hint', 'off'); } catch { /* ignore */ }
+		});
 	}
 
 	footballStanding(e) {
@@ -464,6 +498,8 @@ class Dashboard {
 		agenda.addEventListener('click', (evt) => {
 			const link = evt.target.closest('a');
 			if (link) return; // let channel/source links work normally
+			const share = evt.target.closest('.ev-share');
+			if (share) { this.shareEvent(this._eventById?.get(share.dataset.eventId)); return; }
 			if (evt.target.closest('.agenda-more')) { this._fullHorizon = true; this.renderAgenda(); return; }
 			const row = evt.target.closest('.ev.expandable');
 			if (row) toggle(row);
