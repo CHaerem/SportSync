@@ -165,7 +165,10 @@ export function mustWatchEntity(event, interests) {
 		...((event.norwegianPlayers || []).map((p) => p.name || p)),
 		...(event.participants || []),
 	].join(" ");
-	return matchInterest(hay, notifyEntities(interests));
+	// Sport-scope so a sport-tagged entity (e.g. FC Barcelona) can't match a
+	// different sport's event that merely mentions the name (a Tour de France
+	// stage in the city of Barcelona). Untagged entities/events still match freely.
+	return matchInterest(hay, notifyEntities(interests), { sport: event.sport });
 }
 
 export function normalizeToUTC(dateString) {

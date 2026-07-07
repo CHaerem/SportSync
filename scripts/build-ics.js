@@ -109,8 +109,9 @@ function calendar(list, { alarms }) {
 	return ics.join("\n");
 }
 
-// Tag each event with its deterministic must-watch status once.
-for (const ev of events) ev._mustWatch = mustWatchEntity(ev, interests) != null;
+// Prefer the flag build-events already persisted; recompute only if absent
+// (standalone runs / older data) so this stays the same deterministic set.
+for (const ev of events) ev._mustWatch = ev.mustWatch != null ? ev.mustWatch : mustWatchEntity(ev, interests) != null;
 const mustWatch = events.filter((ev) => ev.time && ev._mustWatch);
 
 fs.writeFileSync(path.join(dataDir, "events.ics"), calendar(events, { alarms: true }));

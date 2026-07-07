@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 
 const dataDir = rootDataPath();
@@ -213,9 +213,17 @@ const kept = all.filter((e) => {
 	return true;
 });
 kept.sort((a, b) => new Date(a.time) - new Date(b.time));
+// Tag must-watch deterministically from interests.json — the single source of
+// truth for "you'll get a reminder for this". The client reads e.mustWatch to
+// mark rows; build-ics reads it to decide VALARM + the must-watch feed.
+let mustWatchCount = 0;
+for (const e of kept) {
+	e.mustWatch = mustWatchEntity(e, interests) != null;
+	if (e.mustWatch) mustWatchCount++;
+}
 fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(kept, null, 2));
 console.log(
-	`Aggregated ${kept.length} events (filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
+	`Aggregated ${kept.length} events (${mustWatchCount} must-watch; filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
 
 // Publish tracked.json + interests.json so the dashboard's "Hva vi følger"

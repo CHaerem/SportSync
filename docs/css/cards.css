@@ -91,6 +91,8 @@
 
 .ev-flag { font-size: 15px; margin-right: 6px; vertical-align: -1px; }
 .ev-caret { color: var(--fg-3); font-size: 15px; opacity: 0.5; transition: transform 0.15s; justify-self: end; }
+/* Quiet marker: this event is in the must-watch reminder feed. */
+.ev-bell { font-size: 11px; opacity: 0.75; margin-left: 6px; vertical-align: 1px; cursor: default; }
 .ev.expandable[aria-expanded="true"] .ev-caret { transform: rotate(90deg); }
 
 /* Expanded detail — the "nice extra", quiet, only on demand */

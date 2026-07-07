@@ -162,6 +162,19 @@ class Dashboard {
 		return athletes.some((a) => a && hay.includes(a));
 	}
 
+	/** Reminder lead time (min) from interests.notify — the VALARM offset. */
+	notifyLead() {
+		const m = Number(this.interests?.notify?.leadMinutes);
+		return m > 0 ? Math.round(m) : 30;
+	}
+
+	/** A quiet bell on events that are in the must-watch reminder feed. */
+	notifyMark(on) {
+		return on
+			? `<span class="ev-bell" title="Kalendervarsel ${this.notifyLead()} min før" aria-label="Du får kalendervarsel">🔔</span>`
+			: '';
+	}
+
 	/** Leading visual anchor: sport icon in a faint sport-coloured circle. */
 	sportBadge(e) {
 		const cfg = this.sportCfg(e);
@@ -320,7 +333,7 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.sportBadge(e)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}</span>
+			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${this.notifyMark(e.mustWatch)}</span>
 			${where}
 			${caret}
 		</div><div class="ev-detail" hidden></div></div>`;
@@ -336,7 +349,7 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(s.id)}">
 			${this.sportBadge(s)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-round">${sub}</span></span>
+			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-round">${sub}</span>${this.notifyMark(s.stages && s.stages.some((st) => st.mustWatch))}</span>
 			${this.whereToWatch(s.nextStage)}
 			<span class="ev-caret" aria-hidden="true">›</span>
 		</div><div class="ev-detail" hidden></div></div>`;
@@ -486,7 +499,12 @@ class Dashboard {
 			if (Array.isArray(i.interests) && i.interests.length) {
 				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
 			}
-			du += `<div class="followed-hint">Vil du følge noe mer, eller få varsel før noe? <a class="followed-edit" href="https://github.com/CHaerem/SportSync/edit/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den.</div></div>`;
+			const notifyTours = (at.tournaments || [])
+				.filter((x) => x && typeof x === 'object' && x.notify)
+				.map((x) => escapeHtml(x.name));
+			const extra = notifyTours.length ? `, samt ${notifyTours.join(' og ')}` : '';
+			du += `<div class="followed-note followed-notify">🔔 Kalendervarsel ${this.notifyLead()} min før alt med lagene og utøverne dine${extra} (merket 🔔 i agendaen). <a href="data/events-must-watch.ics" download>Abonnér på varsel-kalenderen</a>.</div>`;
+			du += `<div class="followed-hint">Vil du følge noe mer, eller endre hva som varsler? <a class="followed-edit" href="https://github.com/CHaerem/SportSync/edit/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den.</div></div>`;
 		}
 
 		// Layer 2 — AI HAR FUNNET: what the research agent discovered (tracked.json)
