@@ -1,16 +1,16 @@
 {
-  "runAt": "2026-07-06T12:00:00.000Z",
-  "checked": 4,
-  "confirmed": 1,
+  "runAt": "2026-07-07T05:30:00.000Z",
+  "checked": 5,
+  "confirmed": 2,
   "amended": 3,
   "removed": 0,
   "notes": [
-    "World Cup QF Norge–England (ai-research event, lør 11. juli 23:00 norsk, Hard Rock Stadium Miami): resolved the tentative NRK/TV 2 label to a confirmed single channel — NRK's own programside explicitly assigns the July 11 Miami quarterfinal to TV 2, corroborated by Nettavisen's sendeskjema. Amended streaming to TV 2 (play.tv2.no) and updated the summary from 'kanal ikke bekreftet' to 'vises på TV 2'.",
-    "Applied the same TV 2 resolution to the ESPN duplicate 'England at Norway' (same match/time, venue 'Hard Rock Stadium') so the board is consistent until the next static build. NOTE: there are two events for this match — the ai-research 'Norge – England' (rich, favorite, importance 5) and an ESPN placeholder 'England at Norway'. build-events won't dedupe them (different titles), and the ESPN one is regenerated each build so its channel edit will revert to tentative. Flagging for research/improve to reconcile the duplicate.",
-    "World Cup France–Morocco QF (Thu 9 July, 20:00 UTC / 22:00 norsk, Gillette/Boston): existence + time confirmed against NRK/Nettavisen schedules (matches events.json). The NRK/TV 2 channel split for this QF is NOT yet published, so the tentative label was left as an honest guess. Same for the two team-less QF placeholders (Jul 10 LA, Jul 12 Kansas City) — left tentative.",
-    "Swiss Open Gstaad (ATP 250, Casper Ruud): verified via Wikipedia + official swissopengstaad.ch — main draw 13.–19. juli 2026 at Roy Emerson Arena, matches events.json. Corrected the summary: Ruud is listed as TOP seed (toppseedet), not andreseedet. Norway streaming (TV 2 Play) could not be independently confirmed on the official sources; retained per the norwegian-rights ATP prior.",
-    "No events removed — every checked event demonstrably exists.",
-    "Already-verified near-term events (TdF stages 3–9, Genesis Scottish Open, both Wimbledon finals) were re-checked against the 2026-07-05 ledger and needed no change this run.",
-    "SKILL UPDATE BLOCKED BY PERMISSIONS (persists from prior runs): writes to .claude/skills/norwegian-rights/SKILL.md were denied by the harness in this environment (docs/data/* edits succeeded). Intended edits, still unapplied: (a) FIFA World Cup line — record confirmed R16/QF splits, esp. Norge–England QF Jul 11 → TV 2 [solid]; (b) Wimbledon → Max (HBO Max)/Eurosport [solid] with singles finals free-to-air on REX (NOT Viaplay/TV 2); (c) add Chess: Sjakk-NM / Landsturneringen → Direktesport (free, + Lichess relay) [solid]. events.json + this log capture the facts; the skill needs a session with .claude/ write access."
+    "Resolved the three tentative 'NRK / TV 2' World Cup quarterfinal channels that the 2026-07-06 run left as honest guesses — the split is now published. Via the authoritative NTB press release ('Slik sendes resten av fotball-VM på NRK og TV 2') cross-checked with the NRK VM program guide: France–Morocco (9 Jul, 20:00 UTC) → NRK; Spain–Belgium (10 Jul, 19:00 UTC) → TV 2; R16 7v8-winners QF (12 Jul 03:00 norsk / 01:00 UTC) → NRK. Both sources agree; dropped the tentative flags and set concrete single channels.",
+    "Confirmed VM-semifinale 1 (14 Jul) on TV 2 — NTB release states both semifinals air on TV 2 Play/TV 2 Direkte; bronsefinale + finalen on NRK (both already correct on the board).",
+    "Confirmed Diamond League Monaco (Meeting Herculis EBS): date Fri 10 July 2026 at Stade Louis-II and Sigrid Borge's women's-javelin entry via the official Diamond League site. NRK streaming retained (NRK holds Diamond League rights through 2029).",
+    "England–Norway QF (11 Jul) already correctly labelled TV 2 (TV 2 secured the Norway match) — no tentative flag, left as is; corroborated by the same NTB release.",
+    "SKILL UPDATE BLOCKED BY PERMISSIONS (persists from prior runs): the intended edit to .claude/skills/norwegian-rights/SKILL.md — adding the confirmed FIFA WC QF/semifinal/final NRK–TV 2 split (QF: France–Morocco NRK, Spain–Belgium TV 2, Norge–England TV 2, 12 Jul QF NRK; both semis TV 2; bronse + finale NRK) — was denied by the harness. events.json + this log + the calibration ledger capture the facts; the skill needs a session with .claude/ write access.",
+    "Did not re-verify the Tour de France stages (already bulk-confirmed against Wikipedia; TV 2 Play streaming solid per norwegian-rights) or the two 7 July 'Åttedelsfinale' entries (Egypt–Argentina, Colombia–Switzerland), which carry no ai-research/confidence/tentative markers and were verified 05 Jul. Those two dated 7 July as round-of-16 look stale vs the real bracket (R16 ended earlier) — flagging for coverage-critic/research, not touched here.",
+    "No events removed."
   ]
 }
