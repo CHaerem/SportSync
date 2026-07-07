@@ -86,9 +86,11 @@ export function norwegianRights(ev) {
 	}
 	if (sport === "golf") return /masters/.test(hay) ? [CH.discovery] : [CH.viaplay];
 	if (sport === "f1" || sport === "formula1") return [CH.viaplay];
-	// Tour de France 2026 rights are SHARED: TV 2 (Play/Direkte) + WBD (Max/Eurosport,
-	// which alone carries the first hour of each stage). Both are valid "where to watch".
-	if (sport === "cycling") return /tour de france/.test(hay) ? [CH.tv2, CH.max] : [];
+	// Tour de France 2026 rights are shared: TV 2 (Play/Direkte) + WBD (Max/Eurosport
+	// carries the first hour of each stage). The owner follows the Tour on TV 2 Play,
+	// so we show that single channel rather than a "+1" — a viewing preference, not a
+	// rights claim (Max still carries the opening hour).
+	if (sport === "cycling") return /tour de france/.test(hay) ? [CH.tv2] : [];
 	if (sport === "tennis") {
 		// Wimbledon (like all Grand Slams) is Warner Bros. Discovery in Norway —
 		// HBO Max + Eurosport, NOT TV 2. Finals are also free on WBD's REX channel.
