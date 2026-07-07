@@ -8,6 +8,8 @@
 	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<title>Rediger · SportSync</title>
+	<!-- Apply the chosen theme before paint so it matches the dashboard (no flash). -->
+	<script>try { var t = localStorage.getItem('ss-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,6 +41,7 @@
 	<header class="masthead">
 		<div class="wrap masthead-inner">
 			<span class="wordmark">SportSync</span>
+			<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
 		</div>
 	</header>
 

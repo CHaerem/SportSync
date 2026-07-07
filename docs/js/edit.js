@@ -78,3 +78,11 @@ fetch('data/interests.json', { cache: 'no-store' })
 	.catch(() => {
 		document.getElementById('edit-root').innerHTML = '<p class="muted">Kunne ikke laste lista. Prøv å laste siden på nytt.</p>';
 	});
+
+// Theme toggle — parity with the dashboard (same localStorage key).
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+	const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+	const next = cur === 'dark' ? 'light' : 'dark';
+	document.documentElement.dataset.theme = next;
+	try { localStorage.setItem('ss-theme', next); } catch (e) { /* ignore */ }
+});
