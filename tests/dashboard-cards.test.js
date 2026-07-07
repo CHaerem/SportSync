@@ -105,6 +105,47 @@ describe("whereToWatch — the core 'hvor kan jeg se det'", () => {
 	});
 });
 
+describe("followed 'neste' index — answers 'when's X next?'", () => {
+	const inDays = (n) => new Date(Date.now() + n * 86400000).toISOString();
+
+	it("finds the next upcoming event for a followed entity, ignoring the agenda window", () => {
+		dash.allEvents = [
+			{ sport: "tennis", title: "Wimbledon final (Casper Ruud)", time: inDays(40) },
+			{ sport: "tennis", title: "Swiss Open Gstaad (Casper Ruud)", time: inDays(6) },
+		];
+		const next = dash.nextEventForEntity({ name: "Casper Ruud", aliases: ["Ruud"], sport: "tennis" });
+		expect(next.title).toContain("Swiss Open"); // the nearer one, though both are far out
+	});
+
+	it("is sport-scoped so a name collision in another sport doesn't match", () => {
+		dash.allEvents = [{ sport: "cycling", title: "Etappe 5: Barcelona – Girona", time: inDays(1) }];
+		expect(dash.nextEventForEntity({ name: "Barcelona", sport: "football" })).toBe(null);
+	});
+
+	it("renders an honest 'ikke satt opp ennå' when nothing is scheduled", () => {
+		dash.allEvents = [];
+		const html = dash.followRow({ name: "Aryan Tari", aliases: ["Tari"], sport: "chess" }, true);
+		expect(html).toContain("no-event");
+		expect(html).toContain("ikke satt opp ennå");
+		expect(html).not.toContain("fn-detail");
+	});
+
+	it("renders a tappable row with a relative 'neste' + expandable detail when scheduled", () => {
+		dash.allEvents = [{ sport: "esports", title: "BLAST Bounty – 100 Thieves", time: inDays(13), streaming: [{ platform: "Twitch" }] }];
+		const html = dash.followRow({ name: "100 Thieves", aliases: ["100T"], sport: "esports" }, true);
+		expect(html).toContain("has-event");
+		expect(html).toMatch(/om \d+ dager/);
+		expect(html).toContain("fn-detail");
+		expect(html).toContain("Twitch");
+	});
+
+	it("escapes HTML in entity names", () => {
+		dash.allEvents = [];
+		const html = dash.followRow({ name: "<script>x</script>", sport: "chess" }, false);
+		expect(html).not.toContain("<script>x");
+	});
+});
+
 describe("must-see selection follows the goal's priorities", () => {
 	it("favorite, importance>=4, or Norwegian participation", () => {
 		expect(dash.isMustSee({ isFavorite: true })).toBe(true);

@@ -23,6 +23,7 @@ class Dashboard {
 		this.render();
 		this.startLivePolling();
 		this.bindAgendaExpand();
+		this.bindFollowed();
 		this.maybeShowInstallHint();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
@@ -588,6 +589,10 @@ class Dashboard {
 	}
 
 	// ── "Hva vi følger" — one quiet disclosure at the bottom ──────────────────
+	// It answers the recurring "when's X next?" question, entity-first: for each
+	// athlete/team you follow, the next known event — UNWINDOWED (ignores the
+	// agenda's 14-day cap) so a match months out still shows, and honestly says
+	// "ikke satt opp ennå" when there's nothing scheduled. Tournaments stay chips.
 	renderFollowed() {
 		const wrap = document.getElementById('followed');
 		const body = document.getElementById('followed-body');
@@ -595,9 +600,6 @@ class Dashboard {
 		const at = this.interests && this.interests.alwaysTrack;
 		if (!at) { wrap.hidden = true; return; }
 
-		// Calm teaser only: chips of what you follow (🔔 = it reminds you). The full
-		// picture (broad interests, AI discoveries) and ALL editing live on the hub
-		// page (rediger.html) — keeps the dashboard an agenda, not a console.
 		const chip = (x, notifyDefault) => {
 			const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyDefault;
 			return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
@@ -605,13 +607,121 @@ class Dashboard {
 		const chipGroup = (label, items, notifyDefault) => (items || []).length
 			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x, notifyDefault)).join('')}</div></div>`
 			: '';
+		const nextGroup = (label, items, notifyDefault) => (items || []).length
+			? `<div class="chip-group"><div class="chip-group-label">${label}</div><ul class="follow-next">${items.map((x) => this.followRow(x, notifyDefault)).join('')}</ul></div>`
+			: '';
 		body.innerHTML = '<div class="followed-layer">'
-			+ chipGroup('Utøvere', at.athletes, true)
-			+ chipGroup('Lag', at.teams, true)
+			+ nextGroup('Utøvere', at.athletes, true)
+			+ nextGroup('Lag', at.teams, true)
 			+ chipGroup('Turneringer', at.tournaments, false)
-			+ `<div class="followed-hint">🔔 = kalendervarsel ${this.notifyLead()} min før start. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
+			+ `<div class="followed-hint">🔔 = kalendervarsel ${this.notifyLead()} min før start · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
 			+ '</div>';
 		wrap.hidden = false;
+	}
+
+	/** The next upcoming event for a followed entity, searched across ALL events
+	 *  (not the agenda window). Sport-scoped so "Barcelona" (football) never
+	 *  matches a Tour stage through the city. Returns the event or null. */
+	nextEventForEntity(entry) {
+		const terms = trackedTerms([entry]).map((t) => t.toLowerCase()).filter(Boolean);
+		if (!terms.length) return null;
+		const sport = (entry && typeof entry === 'object') ? entry.sport : null;
+		const floor = Date.now() - 3 * SS_CONSTANTS.MS_PER_HOUR;
+		let best = null, bestStart = Infinity;
+		for (const e of this.allEvents) {
+			if (sport && e.sport && e.sport !== sport) continue;
+			const start = new Date(e.time).getTime();
+			const end = e.endTime ? new Date(e.endTime).getTime() : start;
+			if (!(end >= floor)) continue; // already over
+			const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+				...(e.norwegianPlayers || []).map((p) => p.name || p),
+				...(e.participants || [])].filter(Boolean).join(' ');
+			if (!terms.some((t) => ssContainsTerm(hay, t))) continue;
+			if (start < bestStart) { best = e; bestStart = start; }
+		}
+		return best;
+	}
+
+	/** Calm relative-day label in Oslo terms. */
+	relDay(e) {
+		const now = Date.now();
+		const start = new Date(e.time).getTime();
+		const end = e.endTime ? new Date(e.endTime).getTime() : start;
+		if (start <= now && end >= now) return 'pågår nå';
+		const days = Math.round((Date.parse(this.osloDayKey(new Date(e.time))) - Date.parse(this.osloDayKey(new Date(now)))) / SS_CONSTANTS.MS_PER_DAY);
+		if (days <= 0) return 'i dag';
+		if (days === 1) return 'i morgen';
+		return `om ${days} dager`;
+	}
+
+	/** Leading mark for an entity: club crest if we have one, else the sport badge. */
+	entityMark(entry) {
+		const name = ssEntityName(entry);
+		const url = typeof getTeamLogo === 'function' ? getTeamLogo(name) : null;
+		if (url) return `<img class="fn-logo" src="${url}" alt="" loading="lazy" onerror="this.remove()">`;
+		return this.sportBadge({ sport: (entry && typeof entry === 'object') ? entry.sport : '' });
+	}
+
+	/** One row in the "neste" index: name + next event (or an honest gap). */
+	followRow(entry, notifyDefault) {
+		const name = escapeHtml(ssEntityName(entry));
+		const notify = (entry && typeof entry === 'object' && entry.notify != null) ? entry.notify : notifyDefault;
+		const bell = notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : '';
+		const mark = this.entityMark(entry);
+		const next = this.nextEventForEntity(entry);
+		if (!next) {
+			return `<li class="fn-item no-event"><div class="fn-row">${mark}<span class="fn-name">${name}${bell}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
+		}
+		return `<li class="fn-item has-event"><div class="fn-row" role="button" tabindex="0" aria-expanded="false">
+			${mark}<span class="fn-name">${name}${bell}</span>
+			<span class="fn-when">${escapeHtml(this.relDay(next))}<span class="fn-caret" aria-hidden="true">›</span></span>
+		</div><div class="fn-detail" hidden>${this.followDetail(next)}</div></li>`;
+	}
+
+	/** The expanded when·what·where for a followed entity's next event. */
+	followDetail(e) {
+		const d = new Date(e.time);
+		const when = `${d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' })} ${this.osloTime(d)}`;
+		const what = (e.homeTeam && e.awayTeam) ? `${ssShortName(e.homeTeam)} – ${ssShortName(e.awayTeam)}` : (e.title || '');
+		const streams = Array.isArray(e.streaming) ? e.streaming : [];
+		const chans = streams.length
+			? streams.map((s) => {
+				const p = escapeHtml(String(s.platform || s));
+				const label = s.tentative ? `${p} <span class="tbd">(bekreftes)</span>` : p;
+				return (s.url && !s.tentative) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
+			}).join(' · ')
+			: '<span class="tbd">–</span>';
+		const rows = [
+			`<div class="d-row"><span class="d-k">Når</span><span class="d-v">${escapeHtml(when)}</span></div>`,
+			`<div class="d-row"><span class="d-k">Hva</span><span class="d-v">${escapeHtml(what)}</span></div>`,
+		];
+		if (e.tournament && e.tournament !== what) rows.push(`<div class="d-row"><span class="d-k">Turnering</span><span class="d-v">${escapeHtml(e.tournament)}</span></div>`);
+		rows.push(`<div class="d-row"><span class="d-k">Se på</span><span class="d-v">${chans}</span></div>`);
+		return rows.join('');
+	}
+
+	/** Tap/keyboard expand for the "neste" index rows (delegated, survives re-render). */
+	bindFollowed() {
+		const body = document.getElementById('followed-body');
+		if (!body || this._followedBound) return;
+		this._followedBound = true;
+		const toggle = (row) => {
+			const detail = row.parentElement.querySelector('.fn-detail');
+			if (!detail) return;
+			const open = row.getAttribute('aria-expanded') === 'true';
+			row.setAttribute('aria-expanded', String(!open));
+			detail.hidden = open;
+		};
+		body.addEventListener('click', (evt) => {
+			if (evt.target.closest('a')) return; // let channel/source links work
+			const row = evt.target.closest('.fn-item.has-event .fn-row');
+			if (row) toggle(row);
+		});
+		body.addEventListener('keydown', (evt) => {
+			if (evt.key !== 'Enter' && evt.key !== ' ') return;
+			const row = evt.target.closest('.fn-item.has-event .fn-row');
+			if (row) { evt.preventDefault(); toggle(row); }
+		});
 	}
 
 	// ── Live polling (ESPN, client-side) ─────────────────────────────────────
