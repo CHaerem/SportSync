@@ -130,6 +130,31 @@ describe("progressive disclosure detail", () => {
 	});
 });
 
+describe("golf detail: who plays, tee times, featured group", () => {
+	it("lists each Norwegian with tee time and their marquee groupmates", () => {
+		const html = dash.eventDetail({
+			sport: "golf", title: "Genesis Scottish Open", time: soon(),
+			norwegianPlayers: [{ name: "Viktor Hovland", teeTime: "09:39" }, { name: "Kristoffer Reitan", teeTime: "09:06" }],
+			featuredGroups: [
+				{ player: "Viktor Hovland", teeTime: "09:39", groupmates: [{ name: "Wyndham Clark" }, { name: "Eugenio Chacarra" }] },
+				{ player: "Kristoffer Reitan", teeTime: "09:06", groupmates: [{ name: "Xander Schauffele" }, { name: "Adam Scott" }] },
+			],
+			totalPlayers: 156,
+		});
+		expect(html).toContain("Viktor Hovland");
+		expect(html).toContain("09:39");                 // tee time
+		expect(html).toContain("Wyndham Clark");          // groupmate
+		expect(html).toContain("Eugenio Chacarra");
+		expect(html).toContain("Kristoffer Reitan");
+		expect(html).toContain("156");                    // field size
+	});
+	it("shows a Norwegian without tee data as simply in the field", () => {
+		const html = dash.eventDetail({ sport: "golf", title: "US Open", time: soon(), norwegianPlayers: [{ name: "Kristoffer Ventura" }] });
+		expect(html).toContain("Kristoffer Ventura");
+		expect(html).toContain("i feltet");
+	});
+});
+
 describe("whereToWatch — the core 'hvor kan jeg se det'", () => {
 	it("links a channel when a url is present", () => {
 		const html = dash.whereToWatch({ streaming: [{ platform: "NRK 1", url: "https://tv.nrk.no" }] });
