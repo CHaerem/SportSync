@@ -1,5 +1,5 @@
 // SportSync v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportsync-v2-11';
+const CACHE_NAME = 'sportsync-v2-12';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -17,7 +17,9 @@ const SHELL_FILES = [
     '/SportSync/js/shared-constants.js',
     '/SportSync/js/sport-config.js',
     '/SportSync/js/asset-maps.js',
-    '/SportSync/js/dashboard.js'
+    '/SportSync/js/dashboard.js',
+    '/SportSync/rediger.html',
+    '/SportSync/js/edit.js'
 ];
 
 self.addEventListener('install', (event) => {
