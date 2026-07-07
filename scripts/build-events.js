@@ -207,13 +207,39 @@ if (Array.isArray(previousEvents)) {
 // e.g. verify resolves a World Cup match's "NRK / TV 2" to the actual "NRK";
 // without this the hourly rebuild would overwrite it with the guess again.
 const prevConfirmedStreaming = new Map();
+const prevStreamingByKey = new Map();
 if (Array.isArray(previousEvents)) {
 	for (const prev of previousEvents) {
 		const s = prev.streaming;
-		if (Array.isArray(s) && s.length && !s.some((c) => c && c.tentative)) {
-			prevConfirmedStreaming.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+		if (Array.isArray(s) && s.length) {
+			prevStreamingByKey.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+			if (!s.some((c) => c && c.tentative)) {
+				prevConfirmedStreaming.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+			}
 		}
 	}
+}
+
+// Keep the most specific known viewing URL per broadcaster. A deep per-event URL
+// (e.g. a verify-found NRK program page tv.nrk.no/serie/…, which opens the app on
+// the actual broadcast) must survive the hourly rebuild — otherwise resolveStreaming
+// re-derives the generic sport-section landing from the rights map and clobbers it.
+// Match by host, prefer the deeper path.
+function hostOf(u) { try { return new URL(u).host; } catch { return ""; } }
+function pathDepth(u) { try { return new URL(u).pathname.replace(/\/+$/, "").split("/").filter(Boolean).length; } catch { return -1; } }
+function withDeepUrls(streaming, prevStreaming) {
+	if (!Array.isArray(streaming) || !Array.isArray(prevStreaming) || !prevStreaming.length) return streaming;
+	const bestByHost = new Map();
+	for (const p of prevStreaming) {
+		if (!p || !p.url || p.tentative) continue;
+		const h = hostOf(p.url);
+		if (h && (!bestByHost.has(h) || pathDepth(p.url) > pathDepth(bestByHost.get(h)))) bestByHost.set(h, p.url);
+	}
+	return streaming.map((c) => {
+		if (!c || !c.url) return c;
+		const deeper = bestByHost.get(hostOf(c.url));
+		return (deeper && pathDepth(deeper) > pathDepth(c.url)) ? { ...c, url: deeper } : c;
+	});
 }
 
 // Resolve streaming to Norwegian channels — prefer REAL tvkampen.com listings
@@ -223,15 +249,18 @@ let fromTv = 0;
 let keptConfirmed = 0;
 for (const e of all) {
 	const before = e.streaming;
+	const key = `${e.sport}|${e.title}|${e.time}`;
 	const resolved = resolveStreaming(e, tvListings);
 	const resolvedTentative = !resolved.length || resolved.some((c) => c && c.tentative);
-	const priorConfirmed = prevConfirmedStreaming.get(`${e.sport}|${e.title}|${e.time}`);
+	const priorConfirmed = prevConfirmedStreaming.get(key);
 	if (resolvedTentative && priorConfirmed) {
 		e.streaming = priorConfirmed; // keep the confirmed channel, don't re-guess
 		keptConfirmed++;
 	} else {
 		e.streaming = resolved;
 	}
+	// Upgrade generic landing URLs to a deeper per-event URL we already knew.
+	e.streaming = withDeepUrls(e.streaming, prevStreamingByKey.get(key));
 	if (e.sport === "football" && e.streaming !== before && e.streaming.length && tvListings.length) {
 		// count football events whose channel came from a real listing match
 		fromTv++;

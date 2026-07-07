@@ -27,6 +27,16 @@ survives future rebuilds (build-events never downgrades a confirmed channel back
 to a guess). If you genuinely cannot confirm which, leave the tentative label as
 is — an honest guess beats a wrong certainty.
 
+**Deep-link the URL to the actual broadcast when you can.** Prefer the specific
+programme/live page over the broadcaster's front page — it opens the app on THIS
+event, not its home screen. NRK is the easiest and most reliable: use the real
+programme/live URL (`https://tv.nrk.no/serie/…`, `/program/…`, or `/direkte/…`)
+that you land on when you find the broadcast. TV 2 Play / Viaplay per-event pages
+too when stable. A deep URL you set for an event **survives rebuilds** (build-events
+keeps the most specific known URL per broadcaster); the rights map's generic
+sport-section landing is only the fallback. Never invent a URL — only use one you
+actually reached.
+
 **Feed the calibration ledger.** For every source you consult, append one line
 to `docs/data/calibration-ledger.jsonl` (create if missing):
 `{ "checkedAt": ISO, "sport": "...", "source": "domain.tld", "field": "time"|"streaming"|"existence", "agreed": true|false, "note": "..." }`

@@ -138,6 +138,26 @@ describe("build-events", () => {
 		expect(derby.verificationStatus).toBe("confirmed");
 	});
 
+	it("upgrades a generic landing URL to a deeper per-event URL from the previous build", () => {
+		const time = future(2);
+		// biathlon → rights map returns the NRK sport-section landing (tv.nrk.no/direkte, depth 1).
+		fs.writeFileSync(
+			path.join(configDir, "biathlon.json"),
+			JSON.stringify({ sport: "biathlon", name: "IBU World Cup", events: [{ title: "Sprint", time }] })
+		);
+		// Previous build: verify found the real NRK programme page (deeper).
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "biathlon", tournament: "IBU World Cup", title: "Sprint", time,
+				  streaming: [{ platform: "NRK", url: "https://tv.nrk.no/serie/skiskyting/sprint-abc" }] },
+			])
+		);
+		const events = runBuild();
+		const sprint = events.find((e) => e.title === "Sprint");
+		expect(sprint.streaming[0].url).toBe("https://tv.nrk.no/serie/skiskyting/sprint-abc"); // deep URL survived, not clobbered by /direkte
+	});
+
 	it("keeps a confirmed channel instead of downgrading it to a tentative guess", () => {
 		const time = future(2);
 		// A World Cup fixture — resolveStreaming would produce the tentative NRK / TV 2 label.

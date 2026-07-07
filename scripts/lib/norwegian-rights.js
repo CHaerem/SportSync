@@ -3,10 +3,13 @@
 // broadcaster like FOX/ESPN. The verify agent refines per-event on top of this;
 // this guarantees a correct default. Mirrors .claude/skills/norwegian-rights.
 
+// Fallback landing URLs — the sport/live section, not the bare homepage, so a tap
+// lands closer to the broadcast and is likelier to be claimed by the app's
+// universal links (deep per-event URLs from the verify agent override these).
 const CH = {
 	viaplay: { platform: "Viaplay", url: "https://viaplay.no" },
-	tv2: { platform: "TV 2 Play", url: "https://play.tv2.no" },
-	nrk: { platform: "NRK", url: "https://tv.nrk.no" },
+	tv2: { platform: "TV 2 Play", url: "https://play.tv2.no/sport" },
+	nrk: { platform: "NRK", url: "https://tv.nrk.no/direkte" },
 	discovery: { platform: "Discovery+", url: "https://www.discoveryplus.no" },
 	eurosport: { platform: "Eurosport", url: "https://www.eurosport.no" },
 	max: { platform: "Max", url: "https://www.max.com" },
@@ -120,10 +123,10 @@ export function normalizeStreaming(ev) {
 // ── Real Norwegian TV listings (tvkampen.com) — actual data over the static map ──
 
 const CHANNEL_URLS = [
-	["tv 2 play", "https://play.tv2.no"], ["tv2 play", "https://play.tv2.no"],
-	["tv 2 sport", "https://play.tv2.no"], ["tv 2", "https://play.tv2.no"],
+	["tv 2 play", "https://play.tv2.no/sport"], ["tv2 play", "https://play.tv2.no/sport"],
+	["tv 2 sport", "https://play.tv2.no/sport"], ["tv 2", "https://play.tv2.no/sport"],
 	["viaplay", "https://viaplay.no"], ["v sport", "https://viaplay.no"],
-	["nrk", "https://tv.nrk.no"],
+	["nrk", "https://tv.nrk.no/direkte"],
 	["discovery", "https://www.discoveryplus.no"], ["eurosport", "https://www.eurosport.no"],
 	["max", "https://www.max.com"], ["vg", "https://www.vg.no/sport"],
 ];

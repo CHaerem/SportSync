@@ -115,6 +115,10 @@ Use the `norwegian-rights` skill (`.claude/skills/norwegian-rights/SKILL.md`) as
 the prior, `docs/data/tv-listings.json` as ground truth for football, and web
 search for confirmation. If genuinely unknown after checking, write
 `"streaming": []` and mention it in research-log notes — never guess a channel.
+**Prefer a deep per-event `url`** — the specific programme/live page (esp. NRK:
+`https://tv.nrk.no/serie/…` / `/direkte/…`) that opens the app on THIS broadcast,
+not the broadcaster's homepage. Use the homepage only when you can't reach a
+deeper page; never invent a URL.
 
 Confidence:
 - `high` = 2+ authoritative sources agree on date/time/venue
