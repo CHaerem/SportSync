@@ -250,6 +250,7 @@ function withDeepUrls(streaming, prevStreaming) {
 const LANDING_UPGRADE = {
 	"https://tv.nrk.no": "https://tv.nrk.no/direkte",
 	"https://play.tv2.no": "https://play.tv2.no/sport",
+	"https://viaplay.no": "https://viaplay.no/no-no/sport",
 };
 function upgradeLanding(streaming) {
 	if (!Array.isArray(streaming)) return streaming;
