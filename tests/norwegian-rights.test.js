@@ -38,6 +38,18 @@ describe("normalizeStreaming", () => {
 
 import { resolveStreaming, matchTvListing } from "../scripts/lib/norwegian-rights.js";
 
+describe("Viaplay sports (golf, F1) link to the sport section, not the homepage", () => {
+	it("F1 resolves to Viaplay's sport section", () => {
+		const s = normalizeStreaming({ sport: "f1", tournament: "Belgian Grand Prix" });
+		expect(s[0].platform).toBe("Viaplay");
+		expect(s[0].url).toBe("https://viaplay.no/no-no/sport");
+	});
+	it("golf resolves to Viaplay's sport section", () => {
+		const s = normalizeStreaming({ sport: "golf", tournament: "PGA Tour" });
+		expect(s[0].url).toBe("https://viaplay.no/no-no/sport");
+	});
+});
+
 describe("tvkampen real-listing integration", () => {
 	const listings = [
 		{ homeTeam: "Liverpool", awayTeam: "Arsenal", time: "18:30", broadcasters: ["TV 2 Play", "TV 2 Sport 1", "Coolbet"] },

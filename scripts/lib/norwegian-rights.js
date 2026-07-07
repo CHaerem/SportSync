@@ -7,7 +7,7 @@
 // lands closer to the broadcast and is likelier to be claimed by the app's
 // universal links (deep per-event URLs from the verify agent override these).
 const CH = {
-	viaplay: { platform: "Viaplay", url: "https://viaplay.no" },
+	viaplay: { platform: "Viaplay", url: "https://viaplay.no/no-no/sport" },
 	tv2: { platform: "TV 2 Play", url: "https://play.tv2.no/sport" },
 	nrk: { platform: "NRK", url: "https://tv.nrk.no/direkte" },
 	discovery: { platform: "Discovery+", url: "https://www.discoveryplus.no" },
@@ -125,7 +125,7 @@ export function normalizeStreaming(ev) {
 const CHANNEL_URLS = [
 	["tv 2 play", "https://play.tv2.no/sport"], ["tv2 play", "https://play.tv2.no/sport"],
 	["tv 2 sport", "https://play.tv2.no/sport"], ["tv 2", "https://play.tv2.no/sport"],
-	["viaplay", "https://viaplay.no"], ["v sport", "https://viaplay.no"],
+	["viaplay", "https://viaplay.no/no-no/sport"], ["v sport", "https://viaplay.no/no-no/sport"],
 	["nrk", "https://tv.nrk.no/direkte"],
 	["discovery", "https://www.discoveryplus.no"], ["eurosport", "https://www.eurosport.no"],
 	["max", "https://www.max.com"], ["vg", "https://www.vg.no/sport"],
