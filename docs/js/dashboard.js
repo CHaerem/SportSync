@@ -490,35 +490,45 @@ class Dashboard {
 		// A 🔔 on a chip means that thing gives you a reminder — so the rule is
 		// visible in the list itself, not a hidden heuristic. Teams/athletes
 		// notify by default; a tournament only when notify:true.
-		const chips = (items, notifyByDefault) => (items || []).length
-			? `<div class="chips-row">${items.map((x) => {
-				const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyByDefault;
-				return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
-			}).join('')}</div>` : '';
+		const chip = (x, notifyDefault) => {
+			const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyDefault;
+			return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
+		};
+		const chipGroup = (label, items, notifyDefault) => (items || []).length
+			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x, notifyDefault)).join('')}</div></div>`
+			: '';
 		let du = '';
 		if (hasInterests) {
 			const at = i.alwaysTrack || {};
 			du += `<div class="followed-layer"><div class="followed-head">Du følger</div>`;
-			du += chips(at.athletes, true);
-			du += chips(at.teams, true);
-			du += chips(at.tournaments, false);
+			du += chipGroup('Utøvere', at.athletes, true);
+			du += chipGroup('Lag', at.teams, true);
+			du += chipGroup('Turneringer', at.tournaments, false);
+			du += `<div class="followed-notify">🔔 = kalendervarsel ${this.notifyLead()} min før start (samme merke i agendaen).</div>`;
 			if (Array.isArray(i.interests) && i.interests.length) {
-				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
+				du += `<div class="chip-group-label followed-broad-label">Brede interesser <span class="followed-sub-hint">— AI leter etter events fra disse</span></div>`;
+				du += `<ul class="followed-broad">${i.interests.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`;
 			}
-			du += `<div class="followed-note followed-notify">🔔 = du får kalendervarsel ${this.notifyLead()} min før start (samme 🔔 i agendaen). Kalenderen nederst inneholder alt du følger; kun 🔔-tingene pinger deg.</div>`;
-			du += `<div class="followed-hint">«Rediger» åpner et lite skjema — en bot lager en Pull Request du ser over og merger (ingenting endres før du merger). Vil du heller endre alt for hånd? <a class="followed-edit" href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a> (autofullføring + feilsjekk). Kun du kan endre den.</div></div>`;
+			du += `<div class="followed-hint">«Rediger» åpner et lite skjema — en bot lager en PR du ser over og merger. Eller <a class="followed-edit" href="https://github.dev/CHaerem/SportSync/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">rediger fila direkte</a>. Kun du kan endre den.</div></div>`;
 		}
 
-		// Layer 2 — AI HAR FUNNET: what the research agent discovered (tracked.json)
+		// Layer 2 — AI SPORER FOR DEG: what the research agent discovered (tracked.json).
+		// Reasons are agent notes — show a short gist; full text on hover (title).
+		const shortWhy = (r) => {
+			if (!r) return '';
+			let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').trim();
+			if (s.length > 95) s = s.slice(0, 93).replace(/\s+\S*$/, '') + '…';
+			return s;
+		};
 		const group = (label, items) => {
 			if (!items?.length) return '';
 			return `<div class="followed-group">${label}</div>` + items.map((x) =>
-				`<div class="followed-item">${escapeHtml(x.name)}${x.reason ? ` <span class="why">— ${escapeHtml(x.reason)}</span>` : ''}${x.expires ? ` <span class="until">· ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}</div>`
+				`<div class="followed-item"><span class="followed-item-name">${escapeHtml(x.name)}</span>${x.expires ? `<span class="until">følges til ${escapeHtml(x.expires.slice(0, 10))}</span>` : ''}${x.reason ? `<div class="why" title="${escapeHtml(x.reason)}">${escapeHtml(shortWhy(x.reason))}</div>` : ''}</div>`
 			).join('');
 		};
 		let ai = '';
 		if (hasTracked) {
-			ai = `<div class="followed-layer"><div class="followed-head">AI har funnet</div>`
+			ai = `<div class="followed-layer"><div class="followed-head">AI sporer for deg</div>`
 				+ group('Turneringer', t.tournaments) + group('Ligaer', t.leagues) + group('Utøvere', t.athletes)
 				+ `</div>`;
 		}
