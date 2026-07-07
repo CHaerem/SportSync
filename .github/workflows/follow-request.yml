@@ -31,11 +31,17 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: node scripts/apply-follow-request.js
-      - name: Open a Pull Request
+      # Push the change to a branch and comment a one-click "create PR" link. We
+      # DON'T have the Action open the PR itself (that needs the repo setting
+      # "Allow GitHub Actions to create and approve pull requests", off by default)
+      # — instead the user opens it from the compare link, reviews the diff, and
+      # merges. Nothing lands until they do.
+      - name: Push a branch and link it for review
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: ${{ steps.apply.outputs.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
         run: |
           git config user.name "SportSync bot"
           git config user.email "action@github.com"
@@ -44,8 +50,8 @@ jobs:
           git add scripts/config/interests.json
           git commit -m "${PR_TITLE} (closes #${ISSUE_NUMBER})"
           git push -u origin "$BRANCH" --force
-          gh pr create --base main --head "$BRANCH" --title "$PR_TITLE" --body-file pr-body.md
-          gh issue comment "$ISSUE_NUMBER" --body "Laget en Pull Request du kan se over og merge. Ingenting endres før du merger."
+          COMPARE="https://github.com/${REPO}/compare/main...${BRANCH}?expand=1"
+          gh issue comment "$ISSUE_NUMBER" --body "Klar til gjennomgang: **${PR_TITLE}**. Åpne lenka, se over diffen, og trykk «Create pull request» → «Merge». Ingenting endres før du merger: ${COMPARE}"
       - name: Report failure on the issue
         if: failure()
         env:
