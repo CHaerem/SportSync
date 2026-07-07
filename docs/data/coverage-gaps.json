@@ -1,8 +1,19 @@
 {
-  "generatedAt": "2026-07-07T21:21:38.379Z",
-  "gapCount": 1,
+  "generatedAt": "2026-07-07T22:26:17.196Z",
+  "gapCount": 2,
   "anomalyCount": 1,
   "gaps": [
+    {
+      "kind": "entity",
+      "entity": "Uno-X",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Norsk suksess på «alle» områder forbløffer og irriterer",
+      "link": "https://www.tv2.no/a/19024145",
+      "feed": "tv2-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-07T22:26:16.931Z"
+    },
     {
       "kind": "entity",
       "entity": "Premier League",
@@ -12,7 +23,7 @@
       "link": "https://www.bbc.co.uk/sport/football/articles/c5yz3g5pmzyo?at_medium=RSS&amp;at_campaign=rss",
       "feed": "bbc-football",
       "matchCount": 1,
-      "detectedAt": "2026-07-07T21:21:38.116Z"
+      "detectedAt": "2026-07-07T22:26:16.931Z"
     }
   ],
   "anomalies": [
@@ -21,7 +32,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-07T21:21:38.379Z"
+      "detectedAt": "2026-07-07T22:26:17.196Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
