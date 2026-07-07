@@ -14,13 +14,23 @@ function escapeHtml(s) {
 	return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-/** Prefill the follow.yml Issue Form via query params (keys = form field ids). */
+// GitHub Issue Forms DON'T prefill dropdowns from the URL — only text fields — so
+// prefilling the template left Handling/Type unset. Instead compose the whole
+// structured body (which the workflow's parser reads) and apply the label that
+// triggers the workflow. Everything arrives filled in; the user just submits.
 function issueUrl(f) {
-	const p = new URLSearchParams({ template: 'follow.yml' });
-	p.set('action', f.action);
-	p.set('kind', f.kind);
-	p.set('name', f.name);
-	if (f.notify) p.set('notify', f.notify);
+	const lines = [
+		'Send inn dette, så lager en bot en Pull Request du ser over og merger.',
+		`### Handling\n\n${f.action}`,
+		`### Type\n\n${f.kind}`,
+		`### Navn\n\n${f.name}`,
+	];
+	if (f.notify) lines.push(`### Kalendervarsel?\n\n${f.notify}`);
+	const p = new URLSearchParams({
+		labels: 'follow-request',
+		title: `[følg] ${f.action}: ${f.name}`,
+		body: lines.join('\n\n'),
+	});
 	return `https://github.com/${REPO}/issues/new?${p.toString()}`;
 }
 
