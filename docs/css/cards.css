@@ -220,6 +220,11 @@
 .ev.cancelled { opacity: 0.6; }
 .ev.cancelled .ev-title { text-decoration: line-through; text-decoration-color: var(--fg-3); }
 .ev-status { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-2); text-align: right; white-space: nowrap; justify-self: end; }
+/* Finished: stays briefly with its result, gently dimmed (it happened — not
+   cancelled, so no strikethrough). */
+.ev.done { opacity: 0.72; }
+.ev-done { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-3); text-align: right; white-space: nowrap; justify-self: end; }
+.ev-done-score { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; margin-left: 5px; }
 .ev-where.tentative { color: var(--fg-3); font-style: italic; }
 .ev-where-more { color: var(--fg-3); font-size: 11px; margin-left: 4px; }
 .d-v .tbd { color: var(--fg-3); font-style: italic; }
