@@ -267,6 +267,32 @@
 .followed-item .until { margin-left: 8px; }
 .followed-item .why { display: block; margin-top: 2px; line-height: 1.45; }
 .chip-bell { font-size: 9px; margin-left: 4px; opacity: 0.8; vertical-align: 1px; }
+
+/* ── "Neste" index: one quiet row per followed athlete/team ────────────────
+   Answers "when's X next?" at a glance. A muted right-aligned relative day,
+   tap to expand when·what·where; an honest "ikke satt opp ennå" when empty. */
+.follow-next { list-style: none; margin: 0; padding: 0; }
+.fn-item { border-top: 1px solid var(--line); }
+.fn-item:first-child { border-top: none; }
+.fn-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center; padding: 8px 4px; margin: 0 -4px; border-radius: 6px; }
+.fn-item.has-event .fn-row { cursor: pointer; transition: background 0.12s; }
+.fn-item.has-event .fn-row:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.fn-item.has-event .fn-row:hover .fn-name { color: var(--accent); }
+.fn-row .ev-badge { width: 24px; height: 24px; font-size: 12px; }
+.fn-logo { width: 22px; height: 22px; object-fit: contain; }
+.fn-name { font-size: 14px; color: var(--fg); min-width: 0; overflow-wrap: break-word; }
+/* Honest gap, calm: sits under the name so it never crowds or clips the row. */
+.fn-sub { display: block; font-size: 11.5px; color: var(--fg-3); font-style: italic; margin-top: 1px; }
+.fn-when { font-size: 12.5px; color: var(--fg-2); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: 4px; }
+.fn-caret { color: var(--fg-3); font-size: 14px; opacity: 0.5; transition: transform 0.15s; }
+.fn-item.has-event .fn-row[aria-expanded="true"] .fn-caret { transform: rotate(90deg); }
+.fn-detail { padding: 2px 4px 12px 34px; display: grid; gap: 6px; font-size: 13px; }
+.fn-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
+.fn-detail .d-k { color: var(--fg-3); min-width: 44px; flex-shrink: 0; }
+.fn-detail .d-v { color: var(--fg-2); }
+.fn-detail .tbd { color: var(--fg-3); font-style: italic; }
+.fn-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
+.fn-detail a:hover { border-bottom-color: var(--accent); }
 .followed-note { font-size: 12.5px; color: var(--fg-3); line-height: 1.5; margin-top: 4px; }
 .followed-hint { font-size: 12.5px; color: var(--fg-3); font-style: italic; margin-top: 10px; }
 .followed-group { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-3); margin: 12px 0 5px; }

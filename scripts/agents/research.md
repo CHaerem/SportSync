@@ -59,6 +59,19 @@ Static fetchers (ESPN-driven) miss:
 - Olympic / multi-sport events when active games run
 - Cross-sport notable moments
 
+**Next-fixture coverage per followed entity.** The dashboard answers "when is X
+next?" for every `alwaysTrack` athlete/team — UNWINDOWED (even months out). So for
+each one, make sure `events.json` holds at least their **next known dated fixture**;
+it need not fall inside any horizon. A followed entity with nothing upcoming shows
+the user an honest "ikke satt opp ennå" — treat that as a gap to investigate (e.g.
+Barcelona pre-season friendlies, Uno-X's next stage race, Ruud's next tournament,
+100 Thieves' next match). If after real searching there is genuinely no scheduled
+fixture, leave it — never invent one to fill the blank. So a per-entity row actually
+resolves, **name the relevant people/teams on the event**: put athletes in
+`norwegianPlayers` (or `participants`) and set `homeTeam`/`awayTeam` for matches —
+e.g. list Håvard Nygaard on a 100 Thieves match so his row resolves too, not just
+the club's.
+
 Use the **web-search** and **web-fetch** capabilities provided by your runtime. Source priority:
 - Norwegian: nrk.no/sport, tv2.no/sport, vg.no/sport, dagbladet.no/sport
 - Official: fis-ski.com, biathlonworld.com, uci.org, atptour.com, pgatour.com, espn.com
