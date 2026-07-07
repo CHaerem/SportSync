@@ -47,9 +47,30 @@ export function fieldsFromForm(body) {
 
 /** Apply one add/remove/notify change to interests. Throws on invalid requests. */
 export function applyChange(interests, f) {
+	if (!f.name) throw new Error("Navn mangler");
+
+	// "Sport" → the free-text interests[] brief (what the research agent explores),
+	// not alwaysTrack — that's how the AI starts covering a whole new sport.
+	if (f.kind === "Sport") {
+		const c = JSON.parse(JSON.stringify(interests));
+		c.interests = c.interests || [];
+		const norm = (s) => String(s).trim().toLowerCase();
+		const idx = c.interests.findIndex((s) => norm(s).includes(norm(f.name)));
+		if (f.action === "Legg til") {
+			if (idx !== -1) throw new Error(`«${f.name}» dekkes allerede av en interesse`);
+			c.interests.push(f.name);
+			return { interests: c, summary: `Legg til interesse: ${f.name}` };
+		}
+		if (f.action === "Fjern") {
+			if (idx === -1) throw new Error(`Fant ikke interessen «${f.name}»`);
+			c.interests.splice(idx, 1);
+			return { interests: c, summary: `Fjern interesse: ${f.name}` };
+		}
+		throw new Error("«Endre varsel» gjelder ikke en sport/interesse");
+	}
+
 	const arrKey = KIND_ARRAY[f.kind];
 	if (!arrKey) throw new Error(`Ukjent type: "${f.kind}"`);
-	if (!f.name) throw new Error("Navn mangler");
 
 	const clone = JSON.parse(JSON.stringify(interests));
 	clone.alwaysTrack = clone.alwaysTrack || {};

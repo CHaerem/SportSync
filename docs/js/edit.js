@@ -62,16 +62,27 @@ function row(entry, kindKey, kindLabel) {
 	</div>`;
 }
 
+/** A free-text interest line (e.g. an added sport) with a remove button. */
+function briefRow(s) {
+	const removeUrl = issueUrl({ action: 'Fjern', kind: 'Sport', name: s });
+	return `<div class="edit-row"><div class="edit-name"><span class="edit-brief">${escapeHtml(s)}</span></div><div class="edit-actions"><a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a></div></div>`;
+}
+
 function render(interests) {
 	const at = interests.alwaysTrack || {};
 	const root = document.getElementById('edit-root');
-	root.innerHTML = KINDS.map(([key, kindLabel, groupLabel]) => {
+	let html = KINDS.map(([key, kindLabel, groupLabel]) => {
 		const items = at[key] || [];
 		const rows = items.length
 			? items.map((e) => row(e, key, kindLabel)).join('')
 			: '<p class="muted">Ingenting her ennå.</p>';
 		return `<section class="edit-group"><h2>${groupLabel}</h2>${rows}</section>`;
 	}).join('');
+	const briefs = interests.interests || [];
+	if (briefs.length) {
+		html += `<section class="edit-group"><h2>Brede interesser</h2><p class="muted brief-note">Fritekst AI-en leter events fra. Legg til en sport via søket under.</p>${briefs.map(briefRow).join('')}</section>`;
+	}
+	root.innerHTML = html;
 }
 
 // ── Add: search local data + TheSportsDB (teams) → prefilled "Legg til" issue ──
@@ -79,6 +90,8 @@ function render(interests) {
 // broadens teams reliably (CORS-ok, sport-specific). Its player search is football-
 // skewed/unreliable, so athletes/tournaments come from local + a manual fallback.
 const SPORT_MAP = { Soccer: 'football', Golf: 'golf', Tennis: 'tennis', Cycling: 'cycling', Motorsport: 'f1', Athletics: 'athletics', Esports: 'esports' };
+// Sports a user might add as a free-text interest (the AI then researches them).
+const SPORTS_NB = ['Håndball', 'Ishockey', 'Friidrett', 'Langrenn', 'Skiskyting', 'Alpint', 'Skihopp', 'Kombinert', 'Svømming', 'Roing', 'Bryting', 'Boksing', 'MMA', 'Basketball', 'Volleyball', 'Bordtennis', 'Badminton', 'Padel', 'Motorsport', 'Rally', 'Sjakk', 'Esport', 'Golf', 'Tennis', 'Sykkel', 'Fotball'];
 let localCandidates = [];
 
 function buildLocalCandidates(events, standings, interests) {
@@ -125,7 +138,7 @@ function dedupe(list) {
 }
 
 function suggestionEl(c) {
-	const url = issueUrl({ action: 'Legg til', kind: c.kind, name: c.name, sport: c.sport, notify: 'Standard' });
+	const url = issueUrl({ action: 'Legg til', kind: c.kind, name: c.name, sport: c.sport, notify: c.kind === 'Sport' ? undefined : 'Standard' });
 	const sport = c.sport ? `<span class="s-sport">${escapeHtml(c.sport)}</span>` : '';
 	return `<a class="suggestion" href="${url}" target="_blank" rel="noopener"><span>${escapeHtml(c.name)}</span>${sport}<span class="s-kind">${escapeHtml(c.kind)}${c.source === 'ekstern' ? ' · søk' : ''}</span></a>`;
 }
@@ -146,12 +159,13 @@ function onSearch(q) {
 	if (q.length < 2) { box.innerHTML = ''; return; }
 	const nq = ssNormalize(q);
 	const local = localCandidates.filter((c) => ssNormalize(c.name).includes(nq));
-	renderSuggestions(dedupe(local), q); // instant
+	const sports = SPORTS_NB.filter((s) => ssNormalize(s).includes(nq)).map((s) => ({ name: s, kind: 'Sport', sport: '', source: 'sport' }));
+	renderSuggestions(dedupe([...local, ...sports]), q); // instant
 	clearTimeout(searchTimer);
 	searchTimer = setTimeout(async () => {
 		const ext = await searchTeamsExternal(q);
 		if ((document.getElementById('add-search')?.value || '').trim() !== q) return; // stale query
-		renderSuggestions(dedupe([...local, ...ext]), q);
+		renderSuggestions(dedupe([...local, ...sports, ...ext]), q);
 	}, 300);
 }
 

@@ -79,6 +79,20 @@ describe("applyChange", () => {
 		expect(interests.alwaysTrack.teams.find((t) => t.name === "Liverpool")).toBeUndefined();
 	});
 
+	it("adds a Sport to the free-text interests[] brief (not alwaysTrack)", () => {
+		const f = fieldsFromForm(formBody({ action: "Legg til", kind: "Sport", name: "Håndball" }));
+		const { interests } = applyChange(base(), f);
+		expect(interests.interests).toContain("Håndball");
+		expect(interests.alwaysTrack.teams.some((t) => t.name === "Håndball")).toBe(false);
+		expect(validateAgainstSchema(interests, schema, schema)).toEqual([]);
+	});
+
+	it("removes an interest line, and rejects adding one already covered", () => {
+		const rm = fieldsFromForm(formBody({ action: "Fjern", kind: "Sport", name: "Norsk idrett" }));
+		expect(applyChange(base(), rm).interests.interests).not.toContain("Norsk idrett");
+		expect(() => applyChange(base(), fieldsFromForm(formBody({ action: "Legg til", kind: "Sport", name: "Norsk" })))).toThrow();
+	});
+
 	it("changes notify on an existing entry", () => {
 		const f = fieldsFromForm(formBody({ action: "Endre varsel", kind: "Lag", name: "Liverpool", notify: "Nei" }));
 		const { interests } = applyChange(base(), f);
