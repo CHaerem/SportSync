@@ -12,6 +12,9 @@ on:
       - "scripts/fetch-standings.js"
       - "scripts/fetch-rss.js"
       - "scripts/fetch-results.js"
+      # A merged follow-request edits interests.json — rebuild so the published
+      # copy + the board (relevance, must-watch tags) refresh and the site deploys.
+      - "scripts/config/interests.json"
 
 concurrency:
   group: sportsync-static-pipeline
