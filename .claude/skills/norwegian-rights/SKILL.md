@@ -62,7 +62,7 @@ known URL per broadcaster and won't clobber it with the generic landing.
 - Alpine (FIS World Cup) → **Viaplay** [verify]
 
 ## Cycling
-- Tour de France → **TV 2 Play** [solid] (TV 2 deal covers 2026–2030 per NTB press release; hjelp.tv2.no confirms TV 2 Direkte + TV 2 Play; Eurosport Norge reportedly shares 2026 rights per cyclingweekly.com [verify]; confirmed 2026-07-03)
+- Tour de France → **TV 2 Play** [solid] (TV 2 deal covers 2026–2030 per NTB press release; hjelp.tv2.no confirms TV 2 Direkte + TV 2 Play; Eurosport Norge reportedly shares 2026 rights per cyclingweekly.com [verify]; confirmed 2026-07-03). **Owner preference: show TV 2 Play only** for the Tour — don't re-add Max/Eurosport as a "+1" even though WBD carries the opening hour (they follow it on TV 2 Play).
 - Other UCI races → [verify per event]
 
 ## Chess

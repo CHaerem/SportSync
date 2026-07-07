@@ -50,6 +50,14 @@ describe("Viaplay sports (golf, F1) link to the sport section, not the homepage"
 	});
 });
 
+describe("cycling: the Tour is shown on TV 2 Play only (owner preference)", () => {
+	it("Tour de France → TV 2 Play, no Max '+1'", () => {
+		const s = normalizeStreaming({ sport: "cycling", tournament: "Tour de France", title: "Etappe 5" });
+		expect(s.map((c) => c.platform)).toEqual(["TV 2 Play"]);
+		expect(s[0].url).toContain("play.tv2.no");
+	});
+});
+
 describe("tvkampen real-listing integration", () => {
 	const listings = [
 		{ homeTeam: "Liverpool", awayTeam: "Arsenal", time: "18:30", broadcasters: ["TV 2 Play", "TV 2 Sport 1", "Coolbet"] },
