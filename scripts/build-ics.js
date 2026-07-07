@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-// Generate iCalendar (.ics) files from aggregated events.json:
-//   events.ics            — everything you follow; a reminder (VALARM) is attached
-//                           only to must-watch events so the feed doesn't nag.
-//   events-must-watch.ics — only must-watch events (each with a reminder), for a
-//                           calm "just my teams/athletes" subscription.
+// Generate one iCalendar (.ics) from aggregated events.json:
+//   events.ics — everything you follow; a reminder (VALARM) is attached only to
+//                must-watch events, so the calendar has it all but only the
+//                things you follow ping you.
 // Must-watch is computed deterministically from the user-owned interests.json
 // (notifyEntities/mustWatchEntity) — never from an event's own isFavorite/importance.
 import fs from "fs";
@@ -112,10 +111,11 @@ function calendar(list, { alarms }) {
 // Prefer the flag build-events already persisted; recompute only if absent
 // (standalone runs / older data) so this stays the same deterministic set.
 for (const ev of events) ev._mustWatch = ev.mustWatch != null ? ev.mustWatch : mustWatchEntity(ev, interests) != null;
-const mustWatch = events.filter((ev) => ev.time && ev._mustWatch);
+const mustWatchCount = events.filter((ev) => ev.time && ev._mustWatch).length;
 
+// One calendar: everything you follow, with a reminder (VALARM) only on the
+// must-watch events. Non-must-watch events are in the calendar but stay silent.
 fs.writeFileSync(path.join(dataDir, "events.ics"), calendar(events, { alarms: true }));
-fs.writeFileSync(path.join(dataDir, "events-must-watch.ics"), calendar(mustWatch, { alarms: true }));
 console.log(
-	`Wrote events.ics (${events.length} events) and events-must-watch.ics (${mustWatch.length} must-watch, reminder -${leadMinutes}m).`
+	`Wrote events.ics (${events.length} events, ${mustWatchCount} with a -${leadMinutes}m reminder).`
 );

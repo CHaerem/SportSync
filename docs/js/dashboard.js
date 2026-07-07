@@ -486,24 +486,26 @@ class Dashboard {
 		const hasInterests = i && (i.alwaysTrack || i.interests);
 		if (!hasTracked && !hasInterests) { wrap.hidden = true; return; }
 
-		// Layer 1 — DU FØLGER: what you asked for (interests.json, user-owned)
-		const chips = (items) => (items || []).length
-			? `<div class="chips-row">${items.map((x) => `<span class="chip-follow">${escapeHtml(ssEntityName(x))}</span>`).join('')}</div>` : '';
+		// Layer 1 — DU FØLGER: what you asked for (interests.json, user-owned).
+		// A 🔔 on a chip means that thing gives you a reminder — so the rule is
+		// visible in the list itself, not a hidden heuristic. Teams/athletes
+		// notify by default; a tournament only when notify:true.
+		const chips = (items, notifyByDefault) => (items || []).length
+			? `<div class="chips-row">${items.map((x) => {
+				const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyByDefault;
+				return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
+			}).join('')}</div>` : '';
 		let du = '';
 		if (hasInterests) {
 			const at = i.alwaysTrack || {};
 			du += `<div class="followed-layer"><div class="followed-head">Du følger</div>`;
-			du += chips(at.athletes);
-			du += chips(at.teams);
-			du += chips(at.tournaments);
+			du += chips(at.athletes, true);
+			du += chips(at.teams, true);
+			du += chips(at.tournaments, false);
 			if (Array.isArray(i.interests) && i.interests.length) {
 				du += `<div class="followed-note">${i.interests.map((s) => escapeHtml(s)).join(' · ')}</div>`;
 			}
-			const notifyTours = (at.tournaments || [])
-				.filter((x) => x && typeof x === 'object' && x.notify)
-				.map((x) => escapeHtml(x.name));
-			const extra = notifyTours.length ? `, samt ${notifyTours.join(' og ')}` : '';
-			du += `<div class="followed-note followed-notify">🔔 Kalendervarsel ${this.notifyLead()} min før alt med lagene og utøverne dine${extra} (merket 🔔 i agendaen). <a href="data/events-must-watch.ics" download>Abonnér på varsel-kalenderen</a>.</div>`;
+			du += `<div class="followed-note followed-notify">🔔 = du får kalendervarsel ${this.notifyLead()} min før start (samme 🔔 i agendaen). Kalenderen nederst inneholder alt du følger; kun 🔔-tingene pinger deg.</div>`;
 			du += `<div class="followed-hint">Vil du følge noe mer, eller endre hva som varsler? <a class="followed-edit" href="https://github.com/CHaerem/SportSync/edit/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger lista</a> — kun du kan endre den.</div></div>`;
 		}
 
