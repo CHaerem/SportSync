@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T10:14:02.835Z",
+  "generatedAt": "2026-07-08T12:18:51.521Z",
   "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
@@ -12,7 +12,7 @@
       "link": "https://www.tv2.no/a/19024145",
       "feed": "tv2-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-08T10:14:02.553Z"
+      "detectedAt": "2026-07-08T12:18:51.299Z"
     },
     {
       "kind": "entity",
@@ -23,7 +23,7 @@
       "link": "https://www.nrk.no/sport/arbeloa-tar-over-fulham-1.17951177",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-08T10:14:02.553Z"
+      "detectedAt": "2026-07-08T12:18:51.299Z"
     },
     {
       "kind": "entity",
@@ -34,7 +34,7 @@
       "link": "https://www.nrk.no/sport/fotballfeber-i-usa-_-tv-rekord-da-usa-spilte-mot-belgia-1.17951231",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-08T10:14:02.553Z"
+      "detectedAt": "2026-07-08T12:18:51.299Z"
     }
   ],
   "anomalies": [
@@ -43,7 +43,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-08T10:14:02.835Z"
+      "detectedAt": "2026-07-08T12:18:51.521Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
