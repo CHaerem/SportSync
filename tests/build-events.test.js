@@ -243,6 +243,45 @@ describe("build-events", () => {
 		expect(scottish[0].source).toBeUndefined();  // kept the static one (carries the field/tee times)
 	});
 
+	it("grafts ai-research enrichment onto a bare static stub it dedupes against", () => {
+		// Regression: ESPN's tennis feed lists "EFG Swiss Open Gstaad" as a bare
+		// stub (no player, not norwegian) — off-interest, so the relevance filter
+		// would drop it. The research agent's copy carries Casper Ruud + TV 2 Play.
+		// The fuzzy-dedupe must merge that enrichment onto the stub, else BOTH copies
+		// vanish (the real-world Gstaad / Ruud silent drop).
+		const base = new Date(Date.now() + 3 * 86400000);
+		const at = (h) => { const d = new Date(base); d.setUTCHours(h, 0, 0, 0); return d.toISOString(); };
+		const end = () => { const d = new Date(base.getTime() + 6 * 86400000); d.setUTCHours(16, 0, 0, 0); return d.toISOString(); };
+		fs.writeFileSync(
+			path.join(dataDir, "tennis.json"),
+			JSON.stringify({ tournaments: [{ name: "ATP/WTA Tour", events: [
+				{ title: "EFG Swiss Open Gstaad", time: at(4), endTime: end() },
+			] }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "tennis", title: "Swiss Open Gstaad 2026 (Casper Ruud)", time: at(9), endTime: end(),
+					norwegian: true, norwegianPlayers: [{ name: "Casper Ruud" }],
+					streaming: [{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }],
+					source: "ai-research", confidence: "high", evidence: ["a", "b"] },
+			])
+		);
+		const events = runBuild();
+		const gstaad = events.filter((e) => /gstaad/i.test(e.title));
+		expect(gstaad).toHaveLength(1);                              // survives, not dropped
+		expect(gstaad[0].norwegian).toBe(true);                     // enrichment grafted on
+		expect(gstaad[0].norwegianPlayers).toEqual([{ name: "Casper Ruud" }]);
+		expect(gstaad[0].streaming).toEqual([{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }]);
+		// And it must PERSIST: the next rebuild re-fetches the bare stub, so the
+		// grafted enrichment has to carry forward or the event vanishes an hour later.
+		const rebuilt = runBuild().filter((e) => /gstaad/i.test(e.title));
+		expect(rebuilt).toHaveLength(1);
+		expect(rebuilt[0].norwegian).toBe(true);
+		expect(rebuilt[0].norwegianPlayers).toEqual([{ name: "Casper Ruud" }]);
+		expect(rebuilt[0].streaming).toEqual([{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }]);
+	});
+
 	it("filters out events older than 14 days", () => {
 		fs.writeFileSync(
 			path.join(dataDir, "football.json"),

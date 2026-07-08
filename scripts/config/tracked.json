@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-08T10:45:00Z",
+  "lastUpdated": "2026-07-08T18:10:00Z",
   "lastUpdatedBy": "research-agent",
   "version": 2,
   "leagues": [
@@ -229,13 +229,14 @@
       "id": "swiss-open-gstaad-2026",
       "name": "Swiss Open Gstaad 2026",
       "sport": "tennis",
-      "reason": "Casper Ruuds neste turnering etter Wimbledon-exit (ATP 250, grus) 13.–19. juli på Roy Emerson Arena — dekker «Tennis grand slams + Casper Ruud kamper». Ruud er andreseedet og toganger vinner (2021+2022). STILLE DROP RETTET 8. juli: eventet forsvant fra events.json mellom 7.–8. juli enda tracked.json/forrige audit hevdet det lå inne (høy-alvorlig coverage-audit-gap). Re-lagt til denne kjøringen, uavhengig fact-checket (Wikipedia + swissopengstaad.ch + ATP → verdict «confirmed»). Streaming TV 2 Play (TV 2 holder ATP Tour ikke-slam-rettigheter). Spilleoppsett ikke publisert; som topp-4-seedet får Ruud trolig walkover i 1. runde og åpner tirsdag–onsdag. ai-research-event.",
+      "reason": "Casper Ruuds neste turnering etter Wimbledon-exit (ATP 250, grus) 13.–19. juli på Roy Emerson Arena — dekker «Tennis grand slams + Casper Ruud kamper». RE-VERIFISERT 8. juli 18:00 mot Wikipedia + ATP: Ruud er ANDRESEEDET (rank 12, bak toppseed Bublik) og tidligere vinner (2021 og 2022). ROTÅRSAK TIL STILLE DROP FUNNET OG FIKSET denne kjøringen: eventet forsvant ikke tilfeldig — ESPN-tennisfetcheren begynte å liste turneringen som en bar statisk stub («EFG Swiss Open Gstaad», uten Ruud/norsk-flagg), og build-events sin fuzzy-dedupe droppet ai-research-kopien til fordel for stubben, som så falt ut av relevansfilteret → begge forsvant hver time. Fikset: build-events grafter nå ai-eventets berikelse (norwegianPlayers/norwegian/streaming) over på stubben før dedupe (mergeEnrichment + regresjonstest). Eventet ligger nå stabilt på tavla (beriket statisk event, must-watch). Streaming TV 2 Play (TV 2 holder ATP-rettigheter i Norge t.o.m. 2026, særlig når Ruud spiller — bekreftet mot sportcal).",
       "addedAt": "2026-07-04T17:33:56Z",
       "addedBy": "research-agent",
       "evidence": [
         "interests.json#alwaysTrack.athletes",
         "https://en.wikipedia.org/wiki/2026_Swiss_Open_Gstaad",
-        "https://hjelp.tv2.no/hovedkategori/sport/tennis"
+        "https://www.atptour.com/en/tournaments/gstaad/314/overview",
+        "https://www.sportcal.com/media/tv2-snaps-up-atp-tour-rights-in-norway-until-2026/"
       ],
       "expires": "2026-07-20T23:59:59Z",
       "priority": "high"
@@ -335,13 +336,13 @@
       "id": "nm-friidrett-2026",
       "name": "NM friidrett 2026 (Trondheim)",
       "sport": "athletics",
-      "reason": "Dekker «Norske utøvere i internasjonal toppidrett» — senior-NM i friidrett, Trondheim Stadion 23.–25. juli. Datoer/venue/NRK-rettighet trippel-bekreftet. STARTTID STRAMMET INN denne kjøringen: offisielt dagsprogram (nmfriidrett2026.no/dagsprogram) sier konkurransen avvikles 13.00–23.00 lokal tid alle tre dager, så event-tid endret fra foreløpig 14.00Z til dag 1s åpning 11.00Z (13.00 norsk). Eksakt øvelsesprogram publiseres kun som bilder ennå. Stjernedeltakelse (Warholm/Ingebrigtsen/Skotheim) IKKE bekreftet — startlister slippes nærmere. NRK sender (NFIF-medierettigheter).",
+      "reason": "Dekker «Norske utøvere i internasjonal toppidrett» — senior-NM i friidrett, Trondheim Stadion 23.–25. juli. Datoer/venue/NRK-rettighet trippel-bekreftet. STARTTID STRAMMET INN denne kjøringen: offisielt dagsprogram (nmfriidrett2026.no/dagsprogram) sier konkurransen avvikles 13.00–23.00 lokal tid alle tre dager, så event-tid endret fra foreløpig 14.00Z til dag 1s åpning 11.00Z (13.00 norsk). Eksakt øvelsesprogram publiseres kun som bilder ennå. STJERNEFRAVÆR OPPDATERT 8. juli: Jakob Ingebrigtsen stiller IKKE (skade/sykdom — akilles-operasjon tidlig 2026), bekreftet mot NRK/Adresseavisen. Warholm/Skotheim ikke bekreftet ennå — startlister slippes nærmere. Selve mesterskapet går som planlagt (ingen event-endring). NRK sender (NFIF-medierettigheter).",
       "addedAt": "2026-07-06T18:45:00Z",
       "addedBy": "research-agent",
       "evidence": [
         "interests.json#interests",
         "https://www.nmfriidrett2026.no/dagsprogram",
-        "https://no.wikipedia.org/wiki/NM_i_friidrett_2026",
+        "https://www.nrk.no/trondelag/jakob-ingebrigtsen-stiller-ikke-i-nm-i-trondheim-1.17951674",
         "https://www.nrk.no/sport/program-for-friidrett-i-2026_-full-oversikt-over-sendetider_-ovingar-og-utovarar-1.17804122"
       ],
       "expires": "2026-07-26T23:59:59Z",
@@ -365,15 +366,13 @@
     }
   ],
   "notes": [
-    "Kjøring 2026-07-08T10:45Z: rolig formiddagskjøring. Fanet ut 4 parallelle scouts (tennis/Ruud, golf/Hovland+Ventura+Reitan, CS2/100T, late-additions+friidrett+sjakk). ÉN event RE-LAGT TIL (høy-alvorlig coverage-audit-gap) + ÉN enrichment. eventsAdded: 1, eventsRemoved: 0.",
-    "HØY-ALVORLIG GAP LØST (eventsAdded: 1): Swiss Open Gstaad 2026 (Casper Ruud). Coverage-audit (06:29) flagget dette som eneste high-severity gap: Ruuds turnering (13.–19. juli, ATP 250 grus, Roy Emerson Arena) var STILLE DROPPET fra events.json mellom 7.–8. juli, enda tracked.json + forrige audit hevdet det lå inne — troen maskerte fraværet. Re-lagt til denne kjøringen; uavhengig fact-checket i fersk kontekst (Wikipedia + swissopengstaad.ch + ATP → verdict «confirmed»): 13.–19. juli, Ruud andreseedet + toganger vinner (2021+2022). Streaming TV 2 Play (TV 2 har ATP-rettigheter utenom Grand Slam). high-confidence (3 evidens-URLer).",
-    "NARRATIV RETTET: Ruud SPILTE Wimbledon 2026 og røk ut i 1. runde mot Hurkacz — den gamle «kneskade/Wimbledon-forfall»-formuleringen i tracked.json var en 2025-forveksling (motsagt av events.json' egen Wimbledon-summary + fersk scout-research). Rettet i både casper-ruud- og swiss-open-gstaad-entriene. Gstaad er dermed Ruuds neste turnering, ikke en «comeback etter skade».",
-    "ENRICHMENT: EM friidrett 2026 (Birmingham) — Karsten Warholm nå BEKREFTET for Norges mixed 4x400 m stafett på åpningskvelden 10. aug (birmingham26.com); lagt til i norwegianPlayers (var tom). Løser samtidig en per-entitet-rad for Warholm ~5 uker ut.",
-    "SCOUT-FUNN (WATCH, uendret): Golf-scout bekreftet Hovland+Reitan i Genesis Scottish Open (9.–12. juli) og Hovland i The Open (16.–19.) — begge allerede på tavla; Ventura i ISCO Championship denne uka (allerede på tavla). Ventura Corales Puntacana-felt (16.–19. juli) ikke publisert; 3M Open (23.–26.) ikke bekreftet i hovedfelt — følg opp ~10./17. juli. NB: PGA Tours auto-genererte betting-profil-sider er IKKE bevis for feltdeltakelse (Ventura feilaktig antydet i Scottish Open — kryss-sjekk alltid publisert feltliste).",
-    "SCOUT-FUNN forts.: Ruud IKKE på DC Open-påmeldingslista (publisert 1. juli); Montreal (ikke Toronto!) 1.–13. aug, trekning ~31. juli, ikke publisert. Jakob Ingebrigtsen — comeback fortsatt UBEKREFTET; agent sier «mulig fra midten av juli» men ingen påmelding (Monaco har uansett ikke 1500 m i år → gammel «Jakob i Monaco»-påstand er feil). Carlsen — ingen ny juli-turnering (neste EWC-sjakk 11.–15. aug, datoer bekreftet). 100 Thieves — BLAST Bounty S2 (online 21.–26. juli, Malta-LAN 30. juli–2. aug) bracket/kamptider alt TBD (slippes 1–3 dager før); ingen annen kamp før ~10. aug.",
-    "coverage-gaps.json (10:14) triagert: Uno-X entity-gap = TV 2-featureartikkel om norsk suksess (TdF dekket, ikke-imminent) — avvist. Premier League entity-gap = Arbeloa-til-Fulham-trenernyhet (sesongstart medio aug, av-sesong) — avvist. Fotball-VM entity-gap = TV-rekord-artikkel (post-match, ikke-imminent) — avvist. chess.json file-empty-anomali = statisk fetcher av-sesong; Sjakk-NM er ai-research og ligger inne — avvist.",
-    "SKILL-EDIT ANBEFALING (uendret): ønsket Athletics/Diamond-League-seksjon i norwegian-rights-skillen (DL alle stevner → NRK 2025–2029; EM/NM friidrett → NRK). Skriving til .claude/skills/ har blitt nektet av permission-mode tidligere kjøringer. Runtime uansett korrekt: events bærer egne NRK-verdier. Forsøkes igjen ved neste anledning.",
-    "calibration.json: cyclingstage.com lavest reliability (0.40, 5 sjekker) — TdF-tider bør fortsatt kryss-sjekkes; øvrige har for få sjekker for reliability. Ingen kilde markert høyt-upålitelig for de nye eventene.",
-    "Utenfor vindu / følges opp: Ruud USA-sving (Montreal-trekning ~31. juli); 100 Thieves Malta-LAN 30. juli–2. aug (ved avansement) + BLAST-bracket ~18.–20. juli; Ventura Corales/3M-felt (~10./17. juli); Ingebrigtsen-retur (re-sjekk om noen dager). PL/La Liga starter medio august; Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League utenfor sesong; vinteridretter av-sesong."
+    "Kjøring 2026-07-08T18:10Z: rolig ettermiddagskjøring (forrige fulle kjøring 10:45). Hovedfunn: ROTÅRSAKEN til Gstaad-stille-dropet ble diagnostisert og FIKSET i kode (build-events.js). eventsAdded: 1 (Gstaad, tilbake på tavla for godt), eventsRemoved: 0.",
+    "ROTÅRSAK FUNNET + FIKSET (build-events.js): Swiss Open Gstaad (Casper Ruud) forsvant IKKE tilfeldig mellom kjøringene — det var en reell preserverings-bug. ESPN-tennisfetcheren begynte 8. juli å liste turneringen som en bar statisk stub («EFG Swiss Open Gstaad» kl. 04:00, uten Ruud/norsk-flagg). build-events sin fuzzy-dedupe (sameFuzzyEvent: delte tokens swiss/open/gstaad) droppet ai-research-kopien til fordel for den statiske stubben — men stubben falt så ut av relevansfilteret (isRelevant: ikke fulgt sport, ingen tracket spiller) → BEGGE forsvant, hver time. Derfor var 10:45-re-tillegget nytteløst (droppet igjen 12:18). Fiks: ny mergeEnrichment() grafter ai-eventets norwegianPlayers/norwegian/streaming/summary over på den statiske stubben FØR dedupe, så den overlever relevansfilteret. Regresjonstest lagt til (tests/build-events.test.js). npm test grønt (256 tester), validate-events 0 feil. Gstaad ligger nå som beriket statisk event (Casper Ruud, TV 2 Play, must-watch).",
+    "GSTAAD RE-VERIFISERT (fersk web, 18:00): 13.–19. juli, Roy Emerson Arena; Ruud ANDRESEEDET (rank 12, bak toppseed/tittelforsvarer Bublik) og tidligere vinner (2021+2022) — Wikipedia + ATP. Streaming TV 2 Play bekreftet: TV 2 har ATP-rettigheter i Norge t.o.m. 2026, ATP 250 inkludert «særlig når Ruud spiller» (sportcal). high-confidence.",
+    "JAKOB INGEBRIGTSEN OUT AV NM (nytt siden 10:45): NRK/Adresseavisen melder 8. juli at Jakob IKKE stiller i NM friidrett Trondheim (23.–25. juli) pga. skade/sykdom (akilles-op tidlig 2026). NM-eventet går som planlagt — ingen event-endring, kun oppdatert stjernefravær i nm-friidrett-entryen. Comeback fortsatt uten bekreftet løp.",
+    "SCOUT/WEB-SWEEP (uendret, WATCH): Ventura — verken Corales Puntacana (16.–19. juli) eller 3M Open (23.–26.) publisert hovedfelt bekrefter deltakelse ennå (kun historikk på datagolf) → ingen event, følg opp ~10./17. juli (bruk publisert feltliste, ikke betting-profil-sider). 100 Thieves — BLAST Bounty S2 online 21.–26. juli / Malta-LAN 30. juli–2. aug bekreftet (single-elim Bo3, wildcard-debut), men bracket/kamptider fortsatt TBD (slippes 1–3 dager før) → ingen kampevent. Carlsen — ingen ny juli-turnering (neste EWC-sjakk 11.–15. aug). Ruud USA-sving — Montreal (1.–13. aug) påmeldingsliste ikke publisert (trekning ~31. juli).",
+    "coverage-gaps.json (17:26) triagert: Uno-X entity-gap = NRK-feature om Træens astma/dramatisk etappeavslutning (TdF dekket, ikke-imminent) — avvist. Fotball-VM entity-gap = NRK TV-rekord-artikkel (USA–Belgia, post-match) — avvist. chess.json file-empty-anomali = statisk fetcher av-sesong; Sjakk-NM er ai-research og ligger inne (siste runde 11. juli) — avvist.",
+    "calibration.json: cyclingstage.com lavest reliability (0.40, 5 sjekker) — TdF-tider bør fortsatt kryss-sjekkes; øvrige har for få sjekker for reliability. Ingen kilde markert høyt-upålitelig for Gstaad (Wikipedia 2/2, ATP ubrukt tidligere).",
+    "Utenfor vindu / følges opp: Ruud USA-sving (Montreal-trekning ~31. juli); 100 Thieves Malta-LAN 30. juli–2. aug (ved avansement) + BLAST-bracket ~18.–20. juli; Ventura Corales/3M-felt (~10./17. juli); Ingebrigtsen-retur (uten bekreftet løp). PL/La Liga starter medio august; Roland-Garros/US Open Golf/Masters/PGA Championship/Champions League utenfor sesong; vinteridretter av-sesong."
   ]
 }

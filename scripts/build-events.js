@@ -102,6 +102,13 @@ const CARRY_FORWARD_FIELDS = [
 	"verifiedAt",
 	"verificationStatus",
 	"verificationSources",
+	// Agent enrichment grafted onto a bare static stub (see mergeEnrichment) must
+	// survive the NEXT re-fetch too — the fetcher regenerates the stub empty every
+	// hour, and without these the tracked player/context is lost and the event
+	// drops out of the relevance filter again (the Gstaad / Ruud silent drop).
+	"norwegianPlayers",
+	"participants",
+	"summary",
 ];
 // Fuzzy "same event" check, to de-dupe an ai-research event against a static one
 // when their exact start times disagree — common for multi-day golf/stage events
@@ -123,6 +130,31 @@ function sameFuzzyEvent(a, b) {
 	const s2 = Date.parse(b.time), e2 = b.endTime ? Date.parse(b.endTime) : s2;
 	if (!Number.isFinite(s1) || !Number.isFinite(s2)) return false;
 	return s1 <= e2 && s2 <= e1; // date ranges overlap
+}
+
+// When an ai-research event is dropped in favour of a fuzzy-matched static event,
+// graft the AI event's enrichment onto the static stub first. ESPN's tennis feed
+// lists events as bare tournament names ("EFG Swiss Open Gstaad") with no player
+// on them — so the AI event's tracked player + norwegian flag are exactly what the
+// relevance filter needs to keep the event on the board. Without this carry-over
+// the static stub silently fails isRelevant() and BOTH copies vanish (the Gstaad /
+// Casper Ruud silent drop). Static wins on dates/venue; the AI event fills only
+// fields the static stub left empty.
+function mergeEnrichment(target, ai) {
+	if (ai.norwegian) target.norwegian = true;
+	const fillIfEmpty = (field) => {
+		const cur = target[field];
+		const empty = cur == null || (Array.isArray(cur) && cur.length === 0);
+		const aiHas = ai[field] != null && (!Array.isArray(ai[field]) || ai[field].length > 0);
+		if (empty && aiHas) target[field] = ai[field];
+	};
+	fillIfEmpty("norwegianPlayers");
+	fillIfEmpty("participants");
+	fillIfEmpty("streaming");
+	fillIfEmpty("summary");
+	fillIfEmpty("homeTeam");
+	fillIfEmpty("awayTeam");
+	if (target.importance == null && ai.importance != null) target.importance = ai.importance;
 }
 
 const previousEvents = readJsonIfExists(path.join(dataDir, "events.json"));
@@ -153,15 +185,28 @@ if (Array.isArray(previousEvents)) {
 					carried++;
 				}
 			}
+			// The norwegian flag is agent enrichment (a bare ESPN stub has it false);
+			// once set true it must survive re-fetches so the event keeps its
+			// must-watch / accent treatment. A boolean isn't "empty", so the loop
+			// above skips it — carry it explicitly.
+			if (!current.norwegian && prev.norwegian) {
+				current.norwegian = true;
+				carried++;
+			}
 			continue;
 		}
 		// (a) AI-research events no static fetcher knows about must survive rebuilds
 		//     — UNLESS a static fetcher already covers the same multi-day event under
 		//     a slightly different start time (e.g. the Genesis Scottish Open, which
 		//     ESPN lists at 04:00 and the agent re-added at 06:00). Prefer the static
-		//     one (it carries the ESPN field + tee times) and drop the AI duplicate.
+		//     one (it carries the ESPN field + tee times) but GRAFT the AI event's
+		//     enrichment onto it first — the static stub often lacks the tracked
+		//     player / norwegian flag that the relevance filter needs, so dropping
+		//     the AI copy outright made the whole event vanish (Gstaad / Ruud).
 		if (prev.source === "ai-research") {
-			if (all.some((cur) => cur.source !== "ai-research" && sameFuzzyEvent(cur, prev))) {
+			const staticMatch = all.find((cur) => cur.source !== "ai-research" && sameFuzzyEvent(cur, prev));
+			if (staticMatch) {
+				mergeEnrichment(staticMatch, prev);
 				continue;
 			}
 			byKey.set(key, prev);
