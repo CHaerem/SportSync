@@ -223,6 +223,24 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		const html = dash.followRow({ name: "<script>x</script>", sport: "chess" }, false);
 		expect(html).not.toContain("<script>x");
 	});
+
+	it("surfaces a golfer's own tee time in the 'neste' row + detail", () => {
+		dash.allEvents = [{
+			sport: "golf", title: "Genesis Scottish Open", time: inDays(2),
+			norwegianPlayers: [{ name: "Viktor Hovland", teeTime: "09:39" }],
+			featuredGroups: [{ player: "Viktor Hovland", teeTime: "09:39", groupmates: [{ name: "Wyndham Clark" }] }],
+		}];
+		const html = dash.followRow({ name: "Viktor Hovland", aliases: ["Hovland"], sport: "golf" }, true);
+		expect(html).toContain("09:39");        // tee time inline in the when-label
+		expect(html).toContain("Tee-tid");      // and as a detail row
+		expect(html).toContain("Wyndham Clark"); // marquee groupmate
+	});
+
+	it("omits the tee-tid row for a golfer with no tee time yet", () => {
+		dash.allEvents = [{ sport: "golf", title: "US Open", time: inDays(3), norwegianPlayers: [{ name: "Kristoffer Ventura" }] }];
+		const html = dash.followRow({ name: "Kristoffer Ventura", sport: "golf" }, true);
+		expect(html).not.toContain("Tee-tid");
+	});
 });
 
 describe("'Dine neste' top glance — upcoming-only, nearest first", () => {
