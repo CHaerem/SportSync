@@ -1,5 +1,5 @@
 // SportSync v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportsync-v2-15';
+const CACHE_NAME = 'sportsync-v2-16';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [

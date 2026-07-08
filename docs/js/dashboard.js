@@ -21,14 +21,32 @@ class Dashboard {
 		this.startClock();
 		await this.loadData();
 		this.render();
+		this._lastRefresh = Date.now();
 		this.startLivePolling();
 		this.bindAgendaExpand();
 		this.bindFollowed();
 		this.maybeShowInstallHint();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
-			if (this._liveVisible) this.pollLiveScores();
+			if (this._liveVisible) this.onResume();
 		});
+	}
+
+	/** Brought back to the foreground. On iOS a home-screen PWA resumes the old
+	 *  page instead of reloading, so data is fetched only once (in init) and the
+	 *  board would keep showing yesterday. Re-pull data + re-stamp the date so a
+	 *  reopen always reflects today. Throttled so quick tab-switches don't refetch. */
+	async onResume() {
+		const now = Date.now();
+		if (this._lastRefresh && now - this._lastRefresh < 30 * 1000) {
+			this.pollLiveScores();
+			return;
+		}
+		this._lastRefresh = now;
+		this.renderDate();   // the day may have rolled over since it was opened
+		try { await this.loadData(); } catch { /* keep showing what we have */ }
+		this.render();
+		this.pollLiveScores();
 	}
 
 	async loadData() {
