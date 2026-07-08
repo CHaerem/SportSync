@@ -59,7 +59,24 @@
 	<script>
 		if ('serviceWorker' in navigator) {
 			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('sw.js').catch(() => {});
+				navigator.serviceWorker.register('sw.js').then((reg) => {
+					reg.update();
+					// Re-check for a new version when the app returns to the foreground
+					// (iOS home-screen PWAs resume without reloading).
+					document.addEventListener('visibilitychange', () => {
+						if (!document.hidden) reg.update();
+					});
+				}).catch(() => {});
+				// If the page was already controlled, reload once when a new worker
+				// takes over so a shipped update lands without a manual refresh.
+				if (navigator.serviceWorker.controller) {
+					let reloaded = false;
+					navigator.serviceWorker.addEventListener('controllerchange', () => {
+						if (reloaded) return;
+						reloaded = true;
+						window.location.reload();
+					});
+				}
 			});
 		}
 	</script>
