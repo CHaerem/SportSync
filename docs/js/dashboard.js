@@ -800,6 +800,22 @@ class Dashboard {
 		return this.sportBadge({ sport: (entry && typeof entry === 'object') ? entry.sport : '' });
 	}
 
+	/** For a golf event + a followed golfer entity, that player's own tee time
+	 *  (already Oslo-formatted for display) and marquee groupmates. Golf's real
+	 *  "when" is the individual tee time, not the tournament's Thursday start —
+	 *  so "Dine neste" surfaces it for golfers. Returns { tee, groupmates } or null. */
+	golfTeeForEntity(e, entry) {
+		if (!e || e.sport !== 'golf' || !entry) return null;
+		const terms = trackedTerms([entry]).map((t) => t.toLowerCase()).filter(Boolean);
+		if (!terms.length) return null;
+		const hit = (name) => terms.some((t) => ssContainsTerm(String(name || ''), t));
+		const p = (e.norwegianPlayers || []).find((pl) => hit(pl.name || pl));
+		const g = (e.featuredGroups || []).find((gr) => hit(gr.player));
+		const tee = (p && p.teeTime) || (g && g.teeTime) || null;
+		if (!tee) return null;
+		return { tee, groupmates: ((g && g.groupmates) || []).map((m) => m.name || m).filter(Boolean) };
+	}
+
 	/** One row in the "neste" index: name + next event (or an honest gap). */
 	followRow(entry, notifyDefault) {
 		const name = escapeHtml(ssEntityName(entry));
@@ -810,17 +826,21 @@ class Dashboard {
 		if (!next) {
 			return `<li class="fn-item no-event"><div class="fn-row">${mark}<span class="fn-name">${name}${bell}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
 		}
+		const tee = this.golfTeeForEntity(next, entry);
+		const when = tee ? `${this.relDay(next)} · ${tee.tee}` : this.relDay(next);
 		return `<li class="fn-item has-event"><div class="fn-row" role="button" tabindex="0" aria-expanded="false">
 			${mark}<span class="fn-name">${name}${bell}</span>
-			<span class="fn-when">${escapeHtml(this.relDay(next))}<span class="fn-caret" aria-hidden="true">›</span></span>
-		</div><div class="fn-detail" hidden>${this.followDetail(next)}</div></li>`;
+			<span class="fn-when">${escapeHtml(when)}<span class="fn-caret" aria-hidden="true">›</span></span>
+		</div><div class="fn-detail" hidden>${this.followDetail(next, entry)}</div></li>`;
 	}
 
-	/** The expanded when·what·where for a followed entity's next event. */
-	followDetail(e) {
+	/** The expanded when·what·where for a followed entity's next event.
+	 *  For golfers, `entry` lets us surface that player's own tee time + group. */
+	followDetail(e, entry) {
 		const d = new Date(e.time);
 		const when = `${d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' })} ${this.osloTime(d)}`;
 		const what = (e.homeTeam && e.awayTeam) ? `${ssShortName(e.homeTeam)} – ${ssShortName(e.awayTeam)}` : (e.title || '');
+		const tee = this.golfTeeForEntity(e, entry);
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
 		const chans = streams.length
 			? streams.map((s) => {
@@ -833,6 +853,10 @@ class Dashboard {
 			`<div class="d-row"><span class="d-k">Når</span><span class="d-v">${escapeHtml(when)}</span></div>`,
 			`<div class="d-row"><span class="d-k">Hva</span><span class="d-v">${escapeHtml(what)}</span></div>`,
 		];
+		if (tee) {
+			const mates = tee.groupmates.length ? ` <span class="tbd">med ${escapeHtml(tee.groupmates.join(', '))}</span>` : '';
+			rows.push(`<div class="d-row"><span class="d-k">Tee-tid</span><span class="d-v">${escapeHtml(tee.tee)}${mates}</span></div>`);
+		}
 		if (e.tournament && e.tournament !== what) rows.push(`<div class="d-row"><span class="d-k">Turnering</span><span class="d-v">${escapeHtml(e.tournament)}</span></div>`);
 		rows.push(`<div class="d-row"><span class="d-k">Se på</span><span class="d-v">${chans}</span></div>`);
 		return rows.join('');
