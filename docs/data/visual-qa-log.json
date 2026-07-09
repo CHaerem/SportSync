@@ -1,41 +1,18 @@
 {
-  "checkedAt": "2026-07-06T12:00:00Z",
+  "checkedAt": "2026-07-09T11:04:01Z",
   "widths": [375, 393, 900],
-  "verdict": "issues",
-  "findings": [
-    {
-      "width": 375,
-      "area": "agenda row — lørdag 11. juli, 23:00 Norway – England (Kvartfinale)",
-      "issue": "The 'Norway – England' Kvartfinale fixture at 23:00 is shown as two identical, back-to-back accented rows (same time, same teams, same round, same 'TV 2' channel) directly under the Wimbledon damefinale row. Reads as a duplicate event, not two different matches.",
-      "severity": "high"
-    },
-    {
-      "width": 393,
-      "area": "agenda row — lørdag 11. juli, 23:00 Norway – England (Kvartfinale)",
-      "issue": "Same duplicate 'Norway – England' 23:00 Kvartfinale row appears twice, confirming this is not a 375px-only rendering artifact.",
-      "severity": "high"
-    },
-    {
-      "width": 900,
-      "area": "agenda row — lørdag 11. juli, 23:00 Norway – England (Kvartfinale)",
-      "issue": "Duplicate row confirmed again at desktop width — two stacked accented rows, identical content, for the same 23:00 fixture.",
-      "severity": "high"
-    },
-    {
-      "width": 900,
-      "area": "agenda rows — fredag 10. juli 21:00 and søndag 12. juli 03:00, 'Round of 16 ... Winner' fixtures",
-      "issue": "At 900px the placeholder bracket text ('Round of 16 5 Winner – Round of 16 6 Winner' / 'Round of 16 7 Winner – Round of 16 8 Winner') is clipped mid-word with an ellipsis ('...Wi...'), even though the identical text wraps onto a second line and shows in full at 375/393px. Low severity since the content is a generic placeholder, not a real team/athlete name, but it is width-dependent truncation worth a look.",
-      "severity": "low"
-    }
-  ],
+  "verdict": "pass",
+  "findings": [],
   "notes": [
-    "No horizontal scroll or edge clipping at 375px; layout holds as a single quiet column with generous spacing at all three widths.",
-    "Norwegian-channel contract holds: only NRK, TV 2, TV 2 Play, Viaplay, Max and the honest '–' placeholder appear — no foreign broadcaster (ESPN/FOX/Sky) seen at any width.",
-    "Tentative-channel styling ('NRK / TV 2' in italics) renders consistently for not-yet-confirmed knockout fixtures — reads as intentionally provisional, not a bug.",
-    "Flags and sport icons render correctly everywhere — no broken image icons or empty boxes.",
-    "Round labels (Åttedelsfinale, Kvartfinale) display correctly next to knockout fixtures at all widths.",
-    "Header, day-group headings, 'Hva vi følger' disclosure, and footer (Oppdatert / Legg til i kalender / AI-budsjett line) are intact and aligned at every width.",
-    "Must-see accent (orange left border + shaded background) is used sparingly — applied to Sjakk-NM, Genesis Scottish Open, the Norway – England fixture(s), and Swiss Open Gstaad, not to every row.",
-    "Team names read in full at 375/393px, including the fixtures flagged as truncated in a prior review (United States – Belgium, Switzerland – Colombia) — no truncation of team/athlete names observed today."
+    "Previously-flagged 'Norway – England' duplicate row (lørdag 11. juli, 23:00) is gone — the fixture now appears exactly once at all three widths.",
+    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all widths, including the longest headline/event rows (e.g. 'Diamond League Monaco (Herculis EBS)', 'Tour de France 2026' subtitle).",
+    "Match/fixture names read in full and unambiguous, including Norwegian-relevant ones: France – Morocco, Spain – Belgium, Norway – England, Argentina – Switzerland — no truncation hiding a side of a fixture.",
+    "Norwegian-channel contract holds: only NRK, NRK 1, TV 2, TV 2 Play, Viaplay, Max +1, Direktesport +1 appear as 'where to watch' — no foreign broadcaster (ESPN/FOX/Sky) seen at any width.",
+    "Round labels (Kvartfinale, Semifinale, Damefinale, Herrefinale) show correctly next to knockout/final fixtures at all widths.",
+    "National flag emoji (France, Morocco, Spain, Belgium, Norway, England, Argentina, Switzerland) render as real flags, not broken-image boxes.",
+    "Must-see accent (left border + tinted background) is applied selectively — Sjakk-NM, Genesis Scottish Open, ISCO Championship, Diamond League Monaco, Norway–England, Swiss Open Gstaad, VM-semifinaler, The Open — not to every row, consistent with 'sparingly'.",
+    "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'Rediger' links, and footer (Oppdatert / Abonner i kalender / AI-budsjett) are intact and aligned at every width.",
+    "Could not assess clearly: the tennis icon (Casper Ruud, Wimbledon, Swiss Open Gstaad rows) reads ambiguously — looks closer to a magnifying-glass glyph than a clear tennis pictograph at all widths; not clipped or broken-image, just visually unclear which sport it signals at a glance.",
+    "No event showed the honest empty '–' channel placeholder in this data snapshot, so that path could not be exercised."
   ]
 }
