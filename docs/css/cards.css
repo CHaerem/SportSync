@@ -26,7 +26,22 @@
 	font-size: 16px;
 }
 .live-item .live-score { font-weight: 600; font-variant-numeric: tabular-nums; }
-.live-item .live-meta { color: var(--fg-2); font-size: 14px; margin-left: auto; }
+.live-item .live-meta { color: var(--fg-2); font-size: 14px; margin-left: auto; white-space: nowrap; }
+
+/* Live golf/F1: a quiet line — leader on the right, your athletes' live position
+   under the name — that expands to the top of the leaderboard on tap. */
+.live-body { display: flex; flex-direction: column; min-width: 0; }
+.live-you { font-size: 12.5px; color: var(--fg-2); margin-top: 2px; overflow-wrap: anywhere; }
+.live-you .live-pos { color: var(--fg-3); }
+.live-item.live-expand { cursor: pointer; }
+.live-caret { color: var(--fg-3); font-size: 13px; opacity: 0.55; margin-left: 6px; display: inline-block; transition: transform 0.15s; }
+.live-item.live-expand[aria-expanded="true"] .live-caret { transform: rotate(90deg); }
+.live-detail { padding: 6px 0 8px 15px; display: grid; gap: 3px; }
+.lb-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: baseline; font-size: 13.5px; }
+.lb-pos { color: var(--fg-3); font-variant-numeric: tabular-nums; text-align: right; }
+.lb-name { color: var(--fg-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-x { color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-row.mine .lb-name, .lb-row.mine .lb-x { color: var(--accent); font-weight: 600; }
 
 .live-dot {
 	width: 7px; height: 7px; border-radius: 50%;
