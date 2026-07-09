@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-09T18:55:00Z",
+  "lastUpdated": "2026-07-09T22:15:00Z",
   "lastUpdatedBy": "research-agent",
   "version": 2,
   "leagues": [
@@ -184,7 +184,7 @@
       "id": "fifa-world-cup-2026",
       "name": "FIFA World Cup 2026",
       "sport": "football",
-      "reason": "alwaysTrack.tournaments, pågår nå. Norge møter England i sin FØRSTE VM-kvartfinale lør. 11. juli kl. 23.00 norsk tid (Hard Rock Stadium, Miami) — statisk event dekker kampen (TV 2). Sene runder ligger inne som ai-research-events med bekreftede tider/venue: kvartfinaler 9.–12. juli (Frankrike–Marokko NRK 9. juli, Spania–Belgia TV 2 10. juli, Argentina–Sveits NRK 12. juli), semifinaler tir. 14. + ons. 15. juli kl. 21.00 CEST (Arlington/Atlanta, TV 2), bronsefinale lør. 18. juli (Miami, NRK) og FINALEN søn. 19. juli kl. 21.00 CEST (MetLife, NRK).",
+      "reason": "alwaysTrack.tournaments, pågår nå. Norge møter England i sin FØRSTE VM-kvartfinale lør. 11. juli kl. 23.00 norsk tid (Hard Rock Stadium, Miami) — statisk event dekker kampen (TV 2; re-sjekket 9. juli kveld: ingen tids-/kanalendring). KVARTFINALE 1 AVGJORT 9. juli: Frankrike slo Marokko 2–0 (Mbappé 59', Dembélé 65') og er klar for semifinale 1 — semifinale 1-summary oppdatert (fakta-sjekket, 2+ kilder). Øvrige runder som ai-research-events med bekreftede tider/venue: Spania–Belgia TV 2 10. juli, Argentina–Sveits NRK 12. juli, semifinaler tir. 14. + ons. 15. juli kl. 21.00 CEST (Arlington/Atlanta, TV 2), bronsefinale lør. 18. juli (Miami, NRK) og FINALEN søn. 19. juli kl. 21.00 CEST (MetLife, NRK).",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
       "evidence": [
@@ -200,14 +200,15 @@
       "id": "tour-de-france-2026",
       "name": "Tour de France 2026",
       "sport": "cycling",
-      "reason": "alwaysTrack.tournaments + Uno-X Mobility (alwaysTrack.teams). Alle 21 etapper (4.–26. juli) ligger som ai-research-events. STATUS etter etappe 6 (9. juli): Pogačar vant etappen og tok gul (Vingegaard +2.42, del Toro +3.27); Torstein Træen (Uno-X) veltet stygt i gul trøye på Tourmalet-utforkjøringen, fullførte ~30 min bak — UKLART om han starter etappe 7 (røntgen torsdag kveld; sjekk fredag morgen). Tobias Halland Johannessen beste nordmann, nr. 13 (+9.42, sluppet før Tourmalet-toppen). Etappe 7–9-summaries oppdatert med sammenlagt-linje (uavhengig fakta-sjekket). NB startidsavvik i aggregatorer (US-sider viser Eastern Time); etappetider anslått. Norske rettigheter: TV 2 Play/Direkte (owner-preferanse: kun TV 2 Play). VERIFY sjekker etappe-status daglig.",
+      "reason": "alwaysTrack.tournaments + Uno-X Mobility (alwaysTrack.teams). Alle 21 etapper (4.–26. juli) ligger som ai-research-events. AVKLART 9. juli kveld: Torstein Træen BRYTER touren (DNS etappe 7) — hjernerystelse + flere ribbeinsbrudd etter velten på etappe 6, bekreftet av Uno-X selv (Hushovd) + NRK/TV 2/France24. Seks nordmenn fortsatt i rittet: Uno-X-kvintetten (Tobias + Anders Halland Johannessen, Abrahamsen, Wærenskjold, Skaarseth) + Per Strand Hagenes (Visma, tour-debutant — fakta-sjekker-funn; manglet i rosterne, nå lagt til på etappe 7–21). Sammenlagt: Pogačar i gult (Vingegaard +2.42, del Toro +3.27); Tobias Halland Johannessen beste nordmann nr. 13 (+9.42); Pedersen grønn, del Toro hvit. Etappe 7-start OFFISIELL 13.15 CEST (tavla oppdatert fra anslått 13.00, confidence high). Norske rettigheter: TV 2 Play/Direkte (owner-preferanse: kun TV 2 Play). VERIFY sjekker etappe-status daglig.",
       "addedAt": "2026-07-02T00:00:00Z",
       "addedBy": "research-agent",
       "evidence": [
         "interests.json#alwaysTrack.tournaments",
         "https://en.wikipedia.org/wiki/2026_Tour_de_France",
+        "https://www.unoxteam.com/news/tren-withdraws-from-tour-de-france-after-stage-6-crash",
         "https://www.nrk.no/sport/tour-de-france_-torstein-traeen-i-stygg-velt-_-mistet-den-gule-troya-1.17953454",
-        "https://www.nbcsports.com/cycling/news/2026-tour-de-france-standings",
+        "https://cyclingflash.com/news/per-strand-hagenes-makes-history-with-tour-debut-news-came-as-a-big-surprise",
         "https://hjelp.tv2.no/hovedkategori/sport/tour-de-france"
       ],
       "expires": "2026-07-27T23:59:59Z",
@@ -401,14 +402,15 @@
     }
   ],
   "notes": [
-    "Kjøring 2026-07-09T18:55Z (kveld): eventsAdded: 0, eventsRemoved: 0 — men VIKTIG oppdatering av TdF-sammenlagt-linja etter dramaet på etappe 6. Tre parallelle scouts (sykkel / golf / sjakk+CS2+X) + uavhengig fakta-sjekker.",
-    "TDF ETAPPE 6-DRAMA (hovedfunn): Pogačar vant etappe 6 (Pau–Gavarnie-Gèdre) solo etter Tourmalet-angrep og tok den gule trøya (Vingegaard +2.42, del Toro +3.27). Torstein Træen (Uno-X) veltet stygt i gul trøye på utforkjøringen (traff Anders Halland Johannessens bakhjul), fullførte ~30 min bak — hodepine + vondt i ribbeina, røntgen torsdag kveld, UKLART om han starter etappe 7. Tobias Halland Johannessen sluppet før toppen, nå beste nordmann som nr. 13 (+9.42). Grønn trøye: Mads Pedersen; hvit: del Toro. Etappe 7–9-summaries oppdatert med denne sammenlagt-linja; alle seks påstander uavhengig fakta-sjekket (5 confirmed, 1 amended: Træen kjører for Uno-X, ikke Bahrain). VERIFY/neste research-kjøring MÅ sjekke Træen-status fredag morgen (starter/bryter) og oppdatere etappe-summaries + norwegianPlayers ved brudd.",
-    "GOLF-FØLGEOPP: Corales Puntacana-feltet (16.–19. juli) FORTSATT ikke publisert per 9. juli kveld (pgatour.com-feltside tom, Rotowire 'Pre-Tourney'); commitment-frist fre. ~17 ET → sjekk sent fre. 10. / lør. 11. juli om Ventura står der. 3M Open-felt ventes ~17. juli. Hovland + Reitan: ingen forfall — begge spilte R1 i Scottish Open i dag (Hovland «hevet seg etter trå start», NRK) og står i The Open-feltet. KILDEFELLE notert i source-quirks: pgatour.com auto-genererte betting-profilsider påstår feilaktig Ventura i Scottish Open — templated boilerplate, aldri deltakelses-bevis (live ISCO-leaderboard bekrefter ham i Louisville).",
-    "CS2/SJAKK-DELTA-SVEIP (ingen endring): BLAST Bounty S2 bracket/kamptider fortsatt TBD per 9. juli kveld (BLAST.tv-siden lister 32 lag inkl. 100T wildcard, null kamper); format er bounty pick draft der lavere seedede velger motstander — følg opp ~18.–20. juli. Carlsen: ingen ny turnering; lead notert (Total Chess WC-pilot 3.–15. okt, invitasjoner ikke akseptert — ikke board-ready). Tari: ingenting funnet. Ingen norske rettighetsnyheter i sjakk/CS2.",
-    "coverage-gaps.json (9. juli 17:21) triagert: Uno-X entity-gap = TV 2-sak om etappe 6-marerittet (TdF dekket, summaries nå oppdatert) — HÅNDTERT denne kjøringen. Premier League entity-gap = PL-profil kjørte på syklist (ikke-event) — avvist. Fotball-VM entity-gap = regelendringer i Eliteserien (ikke-event) — avvist. chess.json file-empty-anomali = statisk fetcher av-sesong; Sjakk-NM (ai-research) går til 11. juli — avvist.",
-    "coverage-audit.json (8. juli 06:29): Gstaad-gapet fortsatt løst (beriket statisk event på tavla). Scout-loggen 9. juli: tre 'quiet'-verdikt — konsistent med at dette var en oppdaterings-, ikke funn-kjøring.",
-    "VM-KNOCKOUT-DUPLIKATER (kjent, ikke min jobb å fjerne): static pipeline har re-lagt inn ESPN-semifinale-placeholders (14.+15. juli) som verify fjernet 9. juli morgen — build-events-dedupe-gap, ligger hos self-repair/improve. Norge–England kvartfinale lør. 11. juli 23.00 (TV 2) ligger korrekt.",
-    "calibration.json: cyclingstage.com lavest reliability (0.40, 5 sjekker) — TdF-tider kryss-sjekket mot ProCyclingUK/NBC/Wikipedia denne kjøringen; etappe 7-start ~13.15–13.25 CEST (beholdt 13.00-anslaget på tavla, innenfor «anslått»-merkingen).",
-    "Utenfor vindu / følges opp: Træen-status fredag morgen (VIKTIGST); Ventura Corales-felt (fre./lør. 10.–11. juli); Barcelona La Liga-åpning (avspark ~2 uker før 15.–16. aug); Joan Gamper (ubekreftet); Ruud USA-sving (Montreal-trekning ~31. juli); BLAST-bracket ~18.–20. juli + Malta-LAN ved avansement; Ingebrigtsen-retur (ubekreftet). PL/La Liga medio august; majors/RG/UCL utenfor sesong; vinteridretter av-sesong."
+    "Kjøring 2026-07-09T22:15Z (sen kveld): eventsAdded: 0, eventsRemoved: 0 — delta-kjøring 3t etter forrige: to hovedavklaringer (Træen bryter TdF; Frankrike til VM-semifinale) + roster-fiks. To parallelle scouts (sykkel / fotball-VM) + uavhengig fakta-sjekker (4 confirmed, 1 amended). Golf/sjakk/CS2 bevisst hoppet over — fullsveipet 18:55Z med «ingen endring», følgeoppene deres er datert fredag/18.–20. juli.",
+    "TRÆEN BRYTER (hovedfunn 1): Uno-X bekreftet torsdag kveld at Torstein Træen IKKE starter etappe 7 (DNS) — hjelmsensor + røntgen påviste hjernerystelse og flere ribbeinsbrudd etter Tourmalet-velten (Hushovd: «could not continue»). Bekreftet: unoxteam.com + NRK + VG + TV 2 + France24. Etappe 7-summary omskrevet; Træen fjernet fra norwegianPlayers på etappe 7–21.",
+    "ROSTER-FIKS (fakta-sjekker-funn): Anders Halland Johannessen (Uno-X, erstattet syke Kron før start) OG Per Strand Hagenes (Visma | Lease a Bike, tour-debutant, erstattet Laporte) manglet begge i norwegianPlayers — begge lagt til på etappe 7–21. Seks nordmenn fortsatt i rittet. Etappe 7-start også korrigert til OFFISIELL 13.15 CEST (var anslått 13.00; inrng + franceletour + procyclinguk), confidence hevet til high.",
+    "FRANKRIKE TIL SEMIFINALE (hovedfunn 2): Frankrike–Marokko 2–0 (Mbappé 59, Dembélé 65; Bounou reddet Mbappé-straffe i 1. omgang; Gillette Stadium, Foxborough). Fulltid bekreftet TV 2 livesport + sporten.com + CBS/Yahoo. VM-semifinale 1-summary oppdatert: Frankrike møter vinneren av Spania–Belgia (fre. 10. juli 21.00, SoFi). Norge–England lør. 11. juli 23.00 TV 2 — re-sjekket, ingen endring. KILDEFELLE: sportsidioten.no viste stale 0–0-fulltid — ikke bruk for live-status.",
+    "GOLF-FØLGEOPP (uendret fra 18:55Z, ikke re-sveipet): Corales Puntacana-feltet ventes sent fre. 10. / lør. 11. juli (sjekk om Ventura står der); 3M Open-felt ~17. juli. Hovland + Reitan i Scottish Open (pågår) og The Open-feltet. NB pgatour.com betting-profilsider = aldri deltakelses-bevis.",
+    "CS2/SJAKK (uendret, ikke re-sveipet — 3t gammelt funn står): BLAST Bounty S2 bracket TBD, følg opp ~18.–20. juli; Carlsen ingen ny turnering (Total Chess WC-pilot-lead okt.); Tari ingenting.",
+    "coverage-gaps.json (9. juli 21:20) triagert: Uno-X entity-gap = TV 2-sak om Træen/etappe 6 («Kan ikke bli verre») — HÅNDTERT (bruddet nå på tavla). Fotball-VM entity-gap = fransk dommer til Norge-kampen (ikke-event) — avvist. chess.json file-empty-anomali = statisk fetcher av-sesong; Sjakk-NM (ai-research) går til 11. juli — avvist. coverage-audit (8. juli): Gstaad-gapet fortsatt løst.",
+    "VM-KNOCKOUT-DUPLIKATER (kjent, ikke min jobb å fjerne): static pipeline har re-lagt inn ESPN-semifinale-placeholders (14.+15. juli) — build-events-dedupe-gap, ligger hos self-repair/improve. NB: Frankrike–Marokko-eventet (9. juli 20:00Z) er nå spilt og roterer av tavla naturlig.",
+    "calibration.json: cyclingstage.com lavest reliability (0.40, 5 sjekker) — etappe 7-tida denne kjøringen tatt fra inrng/franceletour/procyclinguk, ikke cyclingstage alene.",
+    "Utenfor vindu / følges opp: Spania–Belgia-resultat fre. kveld → oppdater semifinale 1-summary med motstander; Argentina–Sveits natt til søn.; Ventura Corales-felt (fre./lør.); TdF etappe 8/9-starttider (fortsatt anslått); Barcelona La Liga-åpning (avspark ~2 uker før 15.–16. aug); Ruud USA-sving (Montreal-trekning ~31. juli); BLAST-bracket ~18.–20. juli; Ingebrigtsen-retur (ubekreftet). PL/La Liga medio august; majors/RG/UCL utenfor sesong; vinteridretter av-sesong."
   ]
 }
