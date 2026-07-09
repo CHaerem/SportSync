@@ -11,6 +11,7 @@ class Dashboard {
 		this.meta = null;
 		this.liveScores = {};
 		this.liveLeaderboard = null;
+		this.liveF1 = null;
 		this._liveInterval = null;
 		this._liveVisible = !document.hidden;
 	}
@@ -25,6 +26,7 @@ class Dashboard {
 		this.startLivePolling();
 		this.bindAgendaExpand();
 		this.bindFollowed();
+		this.bindLive();
 		this.maybeShowInstallHint();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
@@ -243,18 +245,68 @@ class Dashboard {
 	renderLive() {
 		const box = document.getElementById('live-now');
 		if (!box) return;
-		const rows = [];
+		const items = [];
 		for (const [id, live] of Object.entries(this.liveScores)) {
 			if (live.state !== 'in') continue;
-			rows.push(`<div class="live-item"><span class="live-dot"></span><span>${escapeHtml(ssShortName(live.homeName))} <span class="live-score">${live.home}–${live.away}</span> ${escapeHtml(ssShortName(live.awayName))}</span><span class="live-meta">${escapeHtml(live.clock || '')}</span></div>`);
+			items.push(`<div class="live-wrap"><div class="live-item"><span class="live-dot"></span><span class="live-body"><span class="live-name">${escapeHtml(ssShortName(live.homeName))} <span class="live-score">${live.home}–${live.away}</span> ${escapeHtml(ssShortName(live.awayName))}</span></span><span class="live-meta">${escapeHtml(live.clock || '')}</span></div></div>`);
 		}
-		if (this.liveLeaderboard?.state === 'in' && this.liveLeaderboard.players?.length) {
-			const p = this.liveLeaderboard.players[0];
-			rows.push(`<div class="live-item"><span class="live-dot"></span><span>${escapeHtml(this.liveLeaderboard.name)}</span><span class="live-meta">${escapeHtml(p.player)} ${escapeHtml(p.score)}</span></div>`);
-		}
-		if (rows.length === 0) { box.hidden = true; return; }
-		box.innerHTML = `<div class="live-label"><span class="live-dot"></span>Direkte nå</div>${rows.join('')}`;
+		if (this.liveLeaderboard?.state === 'in' && this.liveLeaderboard.top?.length) items.push(this.liveGolfItem(this.liveLeaderboard));
+		if (this.liveF1?.state === 'in' && this.liveF1.top?.length) items.push(this.liveF1Item(this.liveF1));
+		if (items.length === 0) { box.hidden = true; return; }
+		box.innerHTML = `<div class="live-label"><span class="live-dot"></span>Direkte nå</div>${items.join('')}`;
 		box.hidden = false;
+	}
+
+	/** One leaderboard row (position · name · trailing value), your player highlighted. */
+	lbRow(pos, name, trail, mine) {
+		return `<div class="lb-row${mine ? ' mine' : ''}"><span class="lb-pos">${escapeHtml(String(pos ?? ''))}</span><span class="lb-name">${mine ? '🇳🇴 ' : ''}${escapeHtml(ssShortName(name || ''))}</span><span class="lb-x">${escapeHtml(String(trail ?? ''))}</span></div>`;
+	}
+
+	/** Golf live: quiet line (tournament + leader + your Norwegians' live position),
+	 *  tap to expand the top of the leaderboard (with your players appended if lower). */
+	liveGolfItem(g) {
+		const open = !!(this._liveOpen && this._liveOpen.golf);
+		const leader = g.top[0];
+		const you = (g.tracked || []).map((t) => `🇳🇴 ${escapeHtml(ssShortName(t.player))} ${escapeHtml(t.score)} <span class="live-pos">${escapeHtml(String(t.pos))}.</span>`).join(' · ');
+		const board = g.top.map((r) => this.lbRow(r.pos, r.player, r.score, false))
+			.concat((g.tracked || []).filter((t) => !g.top.some((r) => r.player === t.player)).map((t) => this.lbRow(t.pos, t.player, t.score, true)))
+			.join('');
+		return `<div class="live-wrap"><div class="live-item live-expand" role="button" tabindex="0" aria-expanded="${open}" data-live="golf">
+			<span class="live-dot"></span>
+			<span class="live-body"><span class="live-name">${escapeHtml(g.name)}</span>${you ? `<span class="live-you">${you}</span>` : ''}</span>
+			<span class="live-meta">${escapeHtml(leader.player)} ${escapeHtml(leader.score)}<span class="live-caret">›</span></span>
+		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}</div></div>`;
+	}
+
+	/** F1 live: quiet line (GP + session + leader), tap to expand the running order. */
+	liveF1Item(f) {
+		const open = !!(this._liveOpen && this._liveOpen.f1);
+		const leader = f.top[0];
+		const board = f.top.map((r) => this.lbRow(r.pos, r.player, r.team, false)).join('');
+		return `<div class="live-wrap"><div class="live-item live-expand" role="button" tabindex="0" aria-expanded="${open}" data-live="f1">
+			<span class="live-dot"></span>
+			<span class="live-body"><span class="live-name">${escapeHtml(f.name)}</span>${f.session ? `<span class="live-you">${escapeHtml(f.session)}</span>` : ''}</span>
+			<span class="live-meta">${escapeHtml(leader.player)}<span class="live-caret">›</span></span>
+		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}</div></div>`;
+	}
+
+	/** Tap/keyboard expand for a live leaderboard; remembers open state across the
+	 *  60s re-render so a poll doesn't collapse what you're reading. */
+	bindLive() {
+		const box = document.getElementById('live-now');
+		if (!box || this._liveBound) return;
+		this._liveBound = true;
+		const toggle = (row) => {
+			const detail = row.parentElement.querySelector('.live-detail');
+			if (!detail) return;
+			const open = row.getAttribute('aria-expanded') === 'true';
+			row.setAttribute('aria-expanded', String(!open));
+			detail.hidden = open;
+			this._liveOpen = this._liveOpen || {};
+			this._liveOpen[row.dataset.live] = !open;
+		};
+		box.addEventListener('click', (e) => { const r = e.target.closest('.live-item.live-expand'); if (r) toggle(r); });
+		box.addEventListener('keydown', (e) => { if (e.key !== 'Enter' && e.key !== ' ') return; const r = e.target.closest('.live-item.live-expand'); if (r) { e.preventDefault(); toggle(r); } });
 	}
 
 	// ── The agenda: one list, grouped by day ─────────────────────────────────
@@ -908,13 +960,13 @@ class Dashboard {
 		return this.allEvents.some((e) => {
 			const start = new Date(e.time).getTime();
 			const end = e.endTime ? new Date(e.endTime).getTime() : start + 4 * SS_CONSTANTS.MS_PER_HOUR;
-			return start <= now && now <= end && (e.sport === 'football' || e.sport === 'golf');
+			return start <= now && now <= end && ['football', 'golf', 'f1'].includes(e.sport);
 		});
 	}
 	async pollLiveScores() {
 		if (!this._liveVisible || !this.hasLiveEvents()) return;
 		try {
-			await Promise.all([this.pollFootballScores(), this.pollGolfScores()]);
+			await Promise.all([this.pollFootballScores(), this.pollGolfScores(), this.pollF1Scores()]);
 			this.renderLive();
 			this.renderAgenda();
 		} catch { /* live scores are best-effort */ }
@@ -948,13 +1000,38 @@ class Dashboard {
 			const data = await resp.json();
 			const ev = data.events?.[0], comp = ev?.competitions?.[0], state = ev?.status?.type?.state;
 			if (!comp || state === 'pre') return;
-			this.liveLeaderboard = {
-				name: ev.name || '', state,
-				players: (comp.competitors || []).slice(0, 5).map((c, i) => ({
-					player: c.athlete?.displayName || c.athlete?.fullName || '—',
-					score: typeof c.score === 'object' ? (c.score?.displayValue || 'E') : (c.score?.toString() || 'E'),
-				})),
-			};
+			const row = (c) => ({
+				pos: c.status?.position?.displayName || (c.order != null ? String(c.order) : ''),
+				player: c.athlete?.displayName || c.athlete?.fullName || '—',
+				score: typeof c.score === 'object' ? (c.score?.displayValue || 'E') : (c.score?.toString() || 'E'),
+			});
+			const comps = comp.competitors || [];
+			// Your tracked Norwegian golfers' live positions — the thing you actually want.
+			const terms = trackedTerms((this.interests?.alwaysTrack?.athletes || []).filter((a) => (a && a.sport) === 'golf')).map((t) => t.toLowerCase());
+			const tracked = comps.map(row).filter((r) => terms.some((t) => ssContainsTerm(r.player, t)));
+			this.liveLeaderboard = { name: ev.name || '', state, top: comps.slice(0, 8).map(row), tracked };
+		} catch { /* ignore */ }
+	}
+
+	/** F1 live: during a session (practice/quali/race), the running order. ESPN's
+	 *  F1 scoreboard nests each session under the GP weekend's competitions. */
+	async pollF1Scores() {
+		const now = Date.now();
+		if (!this.allEvents.some((e) => { if (e.sport !== 'f1') return false; const s = new Date(e.time).getTime(); const end = e.endTime ? new Date(e.endTime).getTime() : s + 4 * SS_CONSTANTS.MS_PER_HOUR; return s <= now && now <= end; })) return;
+		try {
+			const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard');
+			if (!resp.ok) return;
+			const data = await resp.json();
+			const ev = data.events?.[0];
+			const live = (ev?.competitions || []).find((c) => c.status?.type?.state === 'in');
+			if (!ev || !live) { this.liveF1 = null; return; }
+			const row = (c) => ({
+				pos: c.order != null ? String(c.order) : '',
+				player: c.athlete?.displayName || c.athlete?.shortName || '—',
+				team: c.athlete?.team?.name || c.athlete?.team?.abbreviation || '',
+			});
+			const top = (live.competitors || []).slice(0, 8).map(row).filter((r) => r.player !== '—');
+			this.liveF1 = top.length ? { name: ev.shortName || ev.name || 'Formel 1', session: live.type?.text || live.type?.abbreviation || '', state: 'in', top } : null;
 		} catch { /* ignore */ }
 	}
 

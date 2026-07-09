@@ -269,6 +269,29 @@ describe("'Dine neste' top glance — upcoming-only, nearest first", () => {
 	});
 });
 
+describe("live leaderboard (golf/F1) — quiet line + expandable board", () => {
+	it("golf: leader on the line, your Norwegians' live position, full board on expand", () => {
+		const html = dash.liveGolfItem({
+			name: "Genesis Scottish Open", state: "in",
+			top: [{ pos: "1", player: "Tom Kim", score: "-5" }, { pos: "2", player: "Rory McIlroy", score: "-5" }],
+			tracked: [{ pos: "26", player: "Viktor Hovland", score: "-2" }],
+		});
+		expect(html).toContain("Genesis Scottish Open");
+		expect(html).toContain("Tom Kim");          // leader
+		expect(html).toContain("Viktor Hovland");     // your player's live position
+		expect(html).toContain("-2");
+		expect(html).toContain('data-live="golf"');
+		expect(html).toContain("mine");               // tracked player highlighted in the board
+	});
+	it("F1: session + leader on the line, running order on expand", () => {
+		const html = dash.liveF1Item({ name: "Belgian GP", state: "in", session: "Race", top: [{ pos: "1", player: "Max Verstappen", team: "Red Bull" }] });
+		expect(html).toContain("Belgian GP");
+		expect(html).toContain("Race");
+		expect(html).toContain("Max Verstappen");
+		expect(html).toContain('data-live="f1"');
+	});
+});
+
 describe("must-see selection follows the goal's priorities", () => {
 	it("favorite, importance>=4, or Norwegian participation", () => {
 		expect(dash.isMustSee({ isFavorite: true })).toBe(true);
