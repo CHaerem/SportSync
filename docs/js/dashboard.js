@@ -528,12 +528,27 @@ class Dashboard {
 	}
 
 	/** True only when there's genuinely more to show — flat rows stay non-interactive. */
+	/** F1 detail: the championship top + the last race's podium — context we
+	 *  already fetch (standings.f1 + recent-results.f1) but never surfaced. */
+	addF1Context(add) {
+		const drivers = this.standings?.f1?.drivers;
+		if (Array.isArray(drivers) && drivers.length) {
+			add('VM-stilling', drivers.slice(0, 5).map((d) => `${d.position}. ${escapeHtml(ssShortName(d.driver))} <span class="tbd">${d.points}</span>`).join(' · '));
+		}
+		const last = this.recentResults?.f1?.[0];
+		if (last && Array.isArray(last.topDrivers) && last.topDrivers.length) {
+			const podium = last.topDrivers.slice(0, 3).map((d) => `${d.position}. ${escapeHtml(ssShortName(d.driver))}`).join(' · ');
+			add('Forrige løp', `${escapeHtml(ssShortName(last.raceName || ''))} — ${podium}`);
+		}
+	}
+
 	hasDetail(e) {
 		if (e.isSeries) return true;
 		return !!(
 			this.footballStanding(e) ||
 			this.finishedResult(e) ||
 			this.golfContext(e) ||
+			(e.sport === 'f1' && (this.standings?.f1?.drivers?.length || this.recentResults?.f1?.length)) ||
 			(e.venue && e.venue !== 'TBD') ||
 			e.summary ||
 			e.norwegianPlayers?.length ||
@@ -553,6 +568,7 @@ class Dashboard {
 		if (result) add('Resultat', result);
 		add('Tabell', this.footballStanding(e));
 		add('Ledende', this.golfContext(e));
+		if (e.sport === 'f1') this.addF1Context(add);
 		if (e.venue && e.venue !== 'TBD') add('Arena', escapeHtml(e.venue));
 		if (e.sport === 'golf' && (e.norwegianPlayers?.length || e.featuredGroups?.length)) {
 			this.addGolfField(e, add);

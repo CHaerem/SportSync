@@ -155,6 +155,25 @@ describe("golf detail: who plays, tee times, featured group", () => {
 	});
 });
 
+describe("F1 detail: championship + last race (data we already fetch)", () => {
+	it("shows the F1 standings top and the previous race podium", () => {
+		dash.standings = { f1: { drivers: [
+			{ position: 1, driver: "Kimi Antonelli", team: "Mercedes", points: 179 },
+			{ position: 2, driver: "George Russell", team: "Mercedes", points: 154 },
+		] } };
+		dash.recentResults = { f1: [{ raceName: "British Grand Prix", topDrivers: [
+			{ position: 1, driver: "Charles Leclerc" }, { position: 2, driver: "George Russell" }, { position: 3, driver: "Lewis Hamilton" },
+		] }] };
+		const html = dash.eventDetail({ sport: "f1", title: "Belgian GP", time: soon() });
+		expect(html).toContain("VM-stilling");
+		expect(html).toContain("Kimi Antonelli");
+		expect(html).toContain("179");
+		expect(html).toContain("Forrige løp");
+		expect(html).toContain("Charles Leclerc");
+		expect(dash.hasDetail({ sport: "f1", title: "Belgian GP", time: soon() })).toBe(true);
+	});
+});
+
 describe("whereToWatch — the core 'hvor kan jeg se det'", () => {
 	it("links a channel when a url is present", () => {
 		const html = dash.whereToWatch({ streaming: [{ platform: "NRK 1", url: "https://tv.nrk.no" }] });
