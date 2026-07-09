@@ -1,8 +1,19 @@
 {
-  "generatedAt": "2026-07-09T14:52:03.432Z",
-  "gapCount": 2,
+  "generatedAt": "2026-07-09T17:21:27.807Z",
+  "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
+    {
+      "kind": "entity",
+      "entity": "Uno-X",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Alt gikk galt for Uno-X: – Kan ikke bli verre",
+      "link": "https://www.tv2.no/a/19033520",
+      "feed": "tv2-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-09T17:21:27.597Z"
+    },
     {
       "kind": "entity",
       "entity": "Premier League",
@@ -12,7 +23,7 @@
       "link": "https://www.nrk.no/sport/premier-league-profil-kjorte-pa-syklist-1.17952775",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-09T14:52:03.214Z"
+      "detectedAt": "2026-07-09T17:21:27.597Z"
     },
     {
       "kind": "entity",
@@ -23,7 +34,7 @@
       "link": "https://www.tv2.no/a/19031309",
       "feed": "tv2-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-09T14:52:03.214Z"
+      "detectedAt": "2026-07-09T17:21:27.597Z"
     }
   ],
   "anomalies": [
@@ -32,7 +43,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-09T14:52:03.432Z"
+      "detectedAt": "2026-07-09T17:21:27.807Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
