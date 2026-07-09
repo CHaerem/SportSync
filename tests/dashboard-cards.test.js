@@ -155,6 +155,21 @@ describe("golf detail: who plays, tee times, featured group", () => {
 	});
 });
 
+describe("stage-race detail (TdF): Norwegian squad + current context", () => {
+	it("surfaces the Norwegian riders (deduped) and the current-stage note", () => {
+		const stages = [
+			{ title: "Etappe 1", time: new Date(Date.now() - 86400000).toISOString(), norwegianPlayers: [{ name: "Tobias Halland Johannessen" }, { name: "Jonas Abrahamsen" }] },
+			{ title: "Etappe 2", time: new Date(Date.now() + 86400000).toISOString(), norwegianPlayers: [{ name: "Tobias Halland Johannessen" }, { name: "Søren Wærenskjold" }], summary: "Uno-X jakter etappeseier; Johannessen 4. sammenlagt." },
+		];
+		const html = dash.seriesDetail({ isSeries: true, stages, nextStage: stages[1] });
+		expect(html).toContain("Norske");
+		expect(html).toContain("Tobias Halland Johannessen");
+		expect(html).toContain("Søren Wærenskjold"); // union across stages
+		expect(html).toContain("Nå");
+		expect(html).toContain("sammenlagt");          // current context from the summary
+	});
+});
+
 describe("F1 detail: championship + last race (data we already fetch)", () => {
 	it("shows the F1 standings top and the previous race podium", () => {
 		dash.standings = { f1: { drivers: [

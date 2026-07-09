@@ -59,6 +59,14 @@ Static fetchers (ESPN-driven) miss:
 - Olympic / multi-sport events when active games run
 - Cross-sport notable moments
 
+**Stage races (Tour de France etc.) — keep the `summary` a live stat line.** For an
+in-progress stage race, write the current standings context into each near-term
+stage's `summary`: the overall (sammenlagt/GC) leader + the tracked Norwegians'
+GC position, and the current jersey holders (gul/grønn/prikket/hvit) when known.
+The dashboard surfaces the next stage's `summary` as the "Nå" line, so this is
+where TdF live-ish stats live (there's no cycling standings API). Keep it short
+and factual; cite in `evidence`.
+
 **Next-fixture coverage per followed entity.** The dashboard answers "when is X
 next?" for every `alwaysTrack` athlete/team — UNWINDOWED (even months out). So for
 each one, make sure `events.json` holds at least their **next known dated fixture**;
