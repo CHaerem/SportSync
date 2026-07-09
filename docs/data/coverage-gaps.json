@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-09T19:41:18.758Z",
-  "gapCount": 3,
+  "generatedAt": "2026-07-09T21:20:54.575Z",
+  "gapCount": 2,
   "anomalyCount": 1,
   "gaps": [
     {
@@ -12,18 +12,7 @@
       "link": "https://www.tv2.no/a/19033520",
       "feed": "tv2-sport",
       "matchCount": 2,
-      "detectedAt": "2026-07-09T19:41:18.597Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Premier League",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Premier League-profil kjørte på syklist",
-      "link": "https://www.nrk.no/sport/premier-league-profil-kjorte-pa-syklist-1.17952775",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-09T19:41:18.597Z"
+      "detectedAt": "2026-07-09T21:20:54.364Z"
     },
     {
       "kind": "entity",
@@ -34,7 +23,7 @@
       "link": "https://www.nrk.no/fotballvm2026/fransk-dommer-i-norges-vm-kvartfinale-mot-england-1.17953666",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-09T19:41:18.597Z"
+      "detectedAt": "2026-07-09T21:20:54.364Z"
     }
   ],
   "anomalies": [
@@ -43,7 +32,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-09T19:41:18.758Z"
+      "detectedAt": "2026-07-09T21:20:54.574Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
