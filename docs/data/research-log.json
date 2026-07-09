@@ -1,23 +1,25 @@
 {
-  "runAt": "2026-07-09T04:40:00Z",
-  "eventsAdded": 1,
+  "runAt": "2026-07-09T19:05:00Z",
+  "eventsAdded": 0,
   "eventsRemoved": 0,
-  "trackedDelta": "Added fc-barcelona (next fixture: Birmingham City friendly 31 Jul) and kristoffer-reitan (was missing from tracked despite being in interests.alwaysTrack.athletes). Refreshed hovland/ventura/carlsen/tari/rain/ruud statuses. Enriched la-liga-2026-27 with MD1 (Athletic Club, ~16 Aug, kickoff TBA). Tagged Reitan on The Open event's norwegianPlayers.",
+  "trackedDelta": "No entries added/removed (reconciled at 04:40Z run). Refreshed tour-de-france-2026 (stage 6 drama: Pogačar took yellow, Træen crashed — start uncertain), kristoffer-ventura (Corales field still unpublished, re-check 10-11 Jul; pgatour.com betting-page trap documented), havard-rain-nygaard + blast-bounty (bracket still TBD, bounty-pick-draft format noted), magnus-carlsen (Total Chess WC pilot lead noted, not board-ready). Rewrote run notes.",
   "quality": {
     "pass": true,
-    "score": 97,
+    "score": 93,
     "failures": [
-      "Minor: Barcelona friendly ships with streaming [] (no Norwegian channel confirmed) — acceptable and honestly noted, but leaves a 'where to watch' gap to resolve as 31 July approaches."
+      "Board shows each WC semifinal twice: static-pipeline ESPN placeholders alongside ai-research VM-semifinale events (build-events dedupe gap — pipeline re-added what verify removed this morning; flagged for self-repair/improve, not removable by research per contract).",
+      "Source-quirk learning (pgatour.com betting-page trap) not persisted to .claude/skills/ (write permission-denied this session); documented in tracked.json + this log for verify to append."
     ]
   },
   "notes": [
-    "Quiet early-morning run; board already comprehensively covered for the current window. Fanned out 3 parallel scouts (football / golf / chess+CS2) plus an independent write-time fact-checker and an independent grader.",
-    "Filled the one real per-entity gap: FC Barcelona had nothing on the board. Added Birmingham City–Barcelona pre-season friendly (Fri 31 Jul 2026, 18:45 UTC / 20:45 CEST, St Andrew's). Confidence high — verified against fcbarcelona.com official match page + club news + BCFC + ESPN, then independently fact-checked (confirmed date/time/venue). Streaming left [] (no Norwegian broadcaster confirmed for the friendly; often Barça One).",
-    "La Liga 2026/27 opener (Barcelona v Athletic Club, ~16 Aug, Camp Nou) is a confirmed fixture but kickoff is unpublished — deliberately NOT added to the board to avoid a guessed time; recorded in tracked (la-liga + fc-barcelona) for follow-up.",
-    "Reconciliation fixes: Kristoffer Reitan was missing from tracked.json entirely (he is in interests.alwaysTrack.athletes) — added; also added him to norwegianPlayers on the existing The Open event so his row resolves (was Hovland-only).",
-    "Aryan Tari lead (Andorra Open 18-26 Jul, defending champion) REJECTED: the chess-results startlist (tnr1338669) does not contain Tari (only a U16 Norwegian junior). The search summary that 'confirmed' him was an artifact. No event added — a missing event beats a wrong one.",
-    "No new events for Ventura (Corales/3M fields unpublished), Carlsen (no July tournament; not in Grand Chess Tour 2026), or 100 Thieves (no match before 21 Jul; BLAST Bounty bracket still TBD).",
-    "coverage-audit high-severity Gstaad gap already resolved pre-run (enriched static event on board via build-events mergeEnrichment fix). coverage-gaps (Uno-X, Bieber pauseshow, chess file-empty) all triaged and dismissed as non-imminent / off-season / already covered.",
-    "validate-events.js: 48 events, 0 errors, 7 enriched."
+    "Evening delta run (last run 04:40Z). Fanned out 3 parallel scouts (TdF/cycling, golf next-starts, chess+CS2+X sweep) + independent fact-checker. Zero new events — correct outcome: Corales field unpublished, BLAST bracket TBD, no new Carlsen/Tari events. The run's value was updating the TdF live stat line after today's stage 6 drama.",
+    "TDF STAGE 6 (main work): Pogačar won stage 6 solo (Tourmalet attack) and took yellow (Vingegaard +2'42\", del Toro +3'27\"). Torstein Træen (Uno-X) crashed hard on the descent while in yellow, finished ~30 min down (headache + rib pain, X-rays Thursday evening) — stage 7 start UNCERTAIN. Tobias Halland Johannessen dropped before the summit, now best Norwegian at 13th (+9'42\"). Green: Mads Pedersen; white: del Toro. Updated summaries on stages 7-9 with this GC line per the stage-race contract; evidence URLs (NRK + NBC standings) appended to those events.",
+    "FACT-CHECK: independent fresh-context checker verified all 6 stat-line claims — 5 confirmed, 1 amended (Træen rides for Uno-X Mobility, not Bahrain Victorious as one scout prompt mistakenly said; corrected before writing). No unverifiable claims reached the board.",
+    "FOLLOW-UP FOR NEXT RUNS (priority): Træen start/abandon decision Friday morning — update stage summaries and norwegianPlayers if he abandons. Then: Ventura Corales field late Fri 10 / Sat 11 Jul (commitment deadline Fri ~17:00 ET); BLAST Bounty bracket ~18-20 Jul; 3M Open field ~17 Jul.",
+    "GOLF: Hovland + Reitan both played Scottish Open R1 today (no withdrawals), both confirmed in The Open field. Ventura confirmed at ISCO (live leaderboard, R1 tee 18:01 ET). Stage-7 start time cross-check: ProCyclingUK says 13:15 CEST neutralised (one source 13:25); board keeps 13:00 CEST marked 'anslått' — within the flagged uncertainty, not amended (cyclingstage reliability 0.40 per calibration; verify re-checks daily).",
+    "SOURCE QUIRK LEARNED (could not write skill — .claude/skills/ write was permission-denied this run): pgatour.com auto-generated betting-profile pages pair players with tournaments they are not playing (Ventura 'at Scottish Open' while the live ISCO leaderboard had him in Louisville). Compensation: never accept betting/odds pages as participation evidence — field lists and live leaderboards only. Documented in tracked.json notes + ventura entry; verify should append it to source-quirks/SKILL.md on its next run.",
+    "TRIAGE: coverage-gaps (17:21Z): Uno-X gap = stage 6 nightmare story — HANDLED via summary updates; PL gap (player hit cyclist) + VM gap (Eliteserien rule change) = non-events, dismissed; chess.json file-empty = off-season static fetcher, Sjakk-NM (ai-research) on board to 11 Jul, dismissed. coverage-audit (8 Jul): no open high-severity gaps (Gstaad resolved). Scout verdicts today: 3x quiet — consistent with an update-run, not a discovery-run.",
+    "KNOWN ISSUE (not mine to fix): static pipeline re-added the two ESPN WC-semifinal placeholders that verify removed this morning (build-events dedup gap, sport|title|time keys differ from the Norwegian-titled ai-research events. Flagged in verify-log for self-repair/improve).",
+    "validate-events.js: 49 events, 0 errors, 7 enriched. tracked.json schema contract checked manually (26 entries, provenance OK); npm test not runnable in this session (permission-denied) — the workflow's test gate covers it."
   ]
 }
