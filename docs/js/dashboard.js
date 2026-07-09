@@ -485,13 +485,26 @@ class Dashboard {
 	/** Expanded series: every stage as a quiet line (past ones dimmed). */
 	seriesDetail(s) {
 		const now = Date.now();
-		return s.stages.map((st) => {
+		// Header: the Norwegian squad + the current-stage context. A stage race (TdF)
+		// has no standings feed, but the research agent captures the riders and a
+		// per-stage note — surface those instead of leaving the detail a bare list.
+		let head = '';
+		const riders = [];
+		const seen = new Set();
+		for (const st of s.stages) for (const p of (st.norwegianPlayers || [])) {
+			const n = (p && p.name) || p;
+			if (n && !seen.has(n)) { seen.add(n); riders.push(n); }
+		}
+		if (riders.length) head += `<div class="d-row"><span class="d-k">Norske</span><span class="d-v">${escapeHtml(riders.join(', '))}</span></div>`;
+		if (s.nextStage?.summary) head += `<div class="d-row"><span class="d-k">Nå</span><span class="d-v">${escapeHtml(s.nextStage.summary)}</span></div>`;
+		const rows = s.stages.map((st) => {
 			const d = new Date(st.time);
 			const when = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
 			const ch = (st.streaming || []).map((x) => x.platform || x)[0];
 			const past = (st.endTime ? Date.parse(st.endTime) : Date.parse(st.time)) < now;
 			return `<div class="d-row stage${past ? ' past' : ''}"><span class="d-k">${escapeHtml(when)} ${escapeHtml(this.osloTime(d))}</span><span class="d-v">${escapeHtml(ssShortName(st.title))}${ch ? ` · <span class="tbd">${escapeHtml(ch)}</span>` : ''}</span></div>`;
 		}).join('');
+		return head + rows;
 	}
 
 	// ── Progressive disclosure: extra context on tap (calm — hidden by default) ──
