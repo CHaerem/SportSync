@@ -1,24 +1,23 @@
 {
-  "runAt": "2026-07-08T18:15:00Z",
+  "runAt": "2026-07-09T04:40:00Z",
   "eventsAdded": 1,
   "eventsRemoved": 0,
-  "trackedDelta": "Antall entries uendret (24 → 24). Oppdaterte swiss-open-gstaad-2026 (rotårsak til stille-drop dokumentert + re-verifisert seeding/streaming), casper-ruud (samme), og nm-friidrett-2026 (Jakob Ingebrigtsen bekreftet ute pga. skade/sykdom). Ny lastUpdated 2026-07-08T18:10Z.",
+  "trackedDelta": "Added fc-barcelona (next fixture: Birmingham City friendly 31 Jul) and kristoffer-reitan (was missing from tracked despite being in interests.alwaysTrack.athletes). Refreshed hovland/ventura/carlsen/tari/rain/ruud statuses. Enriched la-liga-2026-27 with MD1 (Athletic Club, ~16 Aug, kickoff TBA). Tagged Reitan on The Open event's norwegianPlayers.",
   "quality": {
     "pass": true,
-    "score": 94,
+    "score": 97,
     "failures": [
-      "Uavhengig grader kunne IKKE kjøres denne kjøringen: subagent-spawn feilet to ganger med API 529 Overloaded (server-side). Fail-open per prompt — selv-vurdert mot research-rubric.md i stedet: ingen hard failures (validate-events 0 feil bekrefter high-confidence ⇒ 2+ evidens; ingen tz-tvetydige tider; TV 2 Play for Gstaad stemmer med ATP-rettigheter i Norge; alle 24 tracked-entries har reason/addedBy/evidence; Gstaad vises nå kun ÉN gang – dobbeltføring eliminert). Ingen past-dated expires. Bør re-graderes av verify/coverage-critic ved neste anledning.",
-      "Mindre: det bevarte Gstaad-eventet arver ESPN-stubbens tittel «EFG Swiss Open Gstaad» (uten «(Casper Ruud)»); Ruud vises via norwegianPlayers + accent-dot/must-watch, så raden løser seg – ærlig og korrekt, men mindre selvforklarende enn den tidligere ai-tittelen."
+      "Minor: Barcelona friendly ships with streaming [] (no Norwegian channel confirmed) — acceptable and honestly noted, but leaves a 'where to watch' gap to resolve as 31 July approaches."
     ]
   },
   "notes": [
-    "ROTÅRSAK TIL GSTAAD-STILLE-DROPET FUNNET OG FIKSET I KODE (build-events.js). Dette er kjøringens hovedleveranse, ikke bare et data-tillegg. Diagnose: ESPN-tennisfetcheren begynte 8. juli å liste turneringen som en bar statisk stub («EFG Swiss Open Gstaad», kl. 04:00, uten Ruud/norsk-flagg). build-events sin fuzzy-dedupe (sameFuzzyEvent, delte tokens swiss/open/gstaad) droppet ai-research-kopien til fordel for stubben — men stubben falt så ut av relevansfilteret (isRelevant: tennis ikke fulgt bredt, ingen tracket spiller på stubben) → BEGGE forsvant, hver time. Derfor var 10:45-re-tillegget nytteløst (droppet igjen av 12:18-pipeline). Verifisert via git: commit 2d2fb88 (10:45) hadde 47 events m/Gstaad; 1090a40 (12:18) hadde 46 uten.",
-    "FIKS (to deler, begge nødvendige): (1) ny mergeEnrichment() grafter ai-eventets norwegianPlayers/norwegian/streaming/summary/participants over på den statiske stubben FØR ai-kopien droppes i dedupe — så stubben overlever relevansfilteret. (2) norwegianPlayers/participants/summary lagt til CARRY_FORWARD_FIELDS + eksplisitt carry av norwegian-boolean — ellers mistet den berikede stubben dataene ved NESTE re-fetch (bekreftet: uten (2) forsvant Gstaad igjen på 2. bygg). Testet: 4 påfølgende bygg beholder Gstaad stabilt (Casper Ruud, TV 2 Play, must-watch).",
-    "REGRESJONSTEST lagt til (tests/build-events.test.js): «grafts ai-research enrichment onto a bare static stub it dedupes against» — dekker både transisjonen OG persistens over re-bygg. npm test: 256 grønne (var 255). validate-events: 47 events, 0 feil.",
-    "GSTAAD RE-VERIFISERT (fersk web, 18:00): EFG Swiss Open Gstaad 13.–19. juli, Roy Emerson Arena; Casper Ruud ANDRESEEDET (rank 12, bak toppseed/tittelforsvarer Bublik), tidligere vinner (2021+2022) — Wikipedia + ATP. Streaming TV 2 Play: TV 2 har ATP-rettigheter i Norge t.o.m. 2026, ATP 250 inkl. «særlig når Ruud spiller» (sportcal). high-confidence.",
-    "JAKOB INGEBRIGTSEN UTE AV NM (nytt siden 10:45): NRK/Adresseavisen 8. juli — Jakob stiller IKKE i NM friidrett Trondheim (23.–25. juli) pga. skade/sykdom. Mesterskapet går som planlagt (ingen event-endring); oppdatert stjernefravær i nm-friidrett-entryen. Comeback fortsatt uten bekreftet løp.",
-    "WEB-SWEEP (ingen nye events): Ventura — verken Corales Puntacana (16.–19. juli) eller 3M Open (23.–26.) publisert hovedfelt bekrefter deltakelse ennå → følg opp ~10./17. juli (bruk publisert feltliste, ikke betting-profilsider). 100 Thieves BLAST Bounty S2 (online 21.–26. juli, Malta-LAN 30. juli–2. aug) bekreftet men bracket/kamptider fortsatt TBD. Carlsen ingen ny juli-turnering (EWC-sjakk 11.–15. aug). Ruud USA-sving (Montreal 1.–13. aug) påmeldingsliste ikke publisert.",
-    "coverage-gaps.json (17:26) triagert: Uno-X entity-gap = NRK-feature om Træens astma (TdF dekket, ikke-imminent) — avvist. Fotball-VM entity-gap = NRK TV-rekord-artikkel (post-match) — avvist. chess.json file-empty-anomali = statisk fetcher av-sesong; Sjakk-NM er ai-research og ligger inne — avvist.",
-    "MERK for drift: koden i build-events.js er endret denne kjøringen (utenfor det vanlige research-output-kontraktet). Den er ikke en protected path, npm test er grønt, og fiksen tjener kjerneoppdraget (korrekt/komplett data). Uavhengig fact-checker + grader kunne ikke spawnes pga. API 529 — web-verifiseringen ble gjort direkte med web-search/web-fetch i stedet."
+    "Quiet early-morning run; board already comprehensively covered for the current window. Fanned out 3 parallel scouts (football / golf / chess+CS2) plus an independent write-time fact-checker and an independent grader.",
+    "Filled the one real per-entity gap: FC Barcelona had nothing on the board. Added Birmingham City–Barcelona pre-season friendly (Fri 31 Jul 2026, 18:45 UTC / 20:45 CEST, St Andrew's). Confidence high — verified against fcbarcelona.com official match page + club news + BCFC + ESPN, then independently fact-checked (confirmed date/time/venue). Streaming left [] (no Norwegian broadcaster confirmed for the friendly; often Barça One).",
+    "La Liga 2026/27 opener (Barcelona v Athletic Club, ~16 Aug, Camp Nou) is a confirmed fixture but kickoff is unpublished — deliberately NOT added to the board to avoid a guessed time; recorded in tracked (la-liga + fc-barcelona) for follow-up.",
+    "Reconciliation fixes: Kristoffer Reitan was missing from tracked.json entirely (he is in interests.alwaysTrack.athletes) — added; also added him to norwegianPlayers on the existing The Open event so his row resolves (was Hovland-only).",
+    "Aryan Tari lead (Andorra Open 18-26 Jul, defending champion) REJECTED: the chess-results startlist (tnr1338669) does not contain Tari (only a U16 Norwegian junior). The search summary that 'confirmed' him was an artifact. No event added — a missing event beats a wrong one.",
+    "No new events for Ventura (Corales/3M fields unpublished), Carlsen (no July tournament; not in Grand Chess Tour 2026), or 100 Thieves (no match before 21 Jul; BLAST Bounty bracket still TBD).",
+    "coverage-audit high-severity Gstaad gap already resolved pre-run (enriched static event on board via build-events mergeEnrichment fix). coverage-gaps (Uno-X, Bieber pauseshow, chess file-empty) all triaged and dismissed as non-imminent / off-season / already covered.",
+    "validate-events.js: 48 events, 0 errors, 7 enriched."
   ]
 }
