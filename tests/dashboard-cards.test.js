@@ -283,6 +283,17 @@ describe("live leaderboard (golf/F1) — quiet line + expandable board", () => {
 		expect(html).toContain('data-live="golf"');
 		expect(html).toContain("mine");               // tracked player highlighted in the board
 	});
+	it("golf: shows the projected cut and flags a Norwegian outside it", () => {
+		const html = dash.liveGolfItem({
+			name: "X Open", state: "in",
+			top: [{ pos: "1", player: "A Player", score: "-5" }],
+			tracked: [{ pos: "95", player: "Kristoffer Reitan", score: "+1", out: true }],
+			cut: { n: -1, label: "-1" },
+		});
+		expect(html).toContain("Antatt cut");
+		expect(html).toContain("-1");
+		expect(html).toContain("utenfor");   // Reitan flagged outside the cut
+	});
 	it("F1: session + leader on the line, running order on expand", () => {
 		const html = dash.liveF1Item({ name: "Belgian GP", state: "in", session: "Race", top: [{ pos: "1", player: "Max Verstappen", team: "Red Bull" }] });
 		expect(html).toContain("Belgian GP");

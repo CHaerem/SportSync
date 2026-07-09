@@ -267,15 +267,16 @@ class Dashboard {
 	liveGolfItem(g) {
 		const open = !!(this._liveOpen && this._liveOpen.golf);
 		const leader = g.top[0];
-		const you = (g.tracked || []).map((t) => `🇳🇴 ${escapeHtml(ssShortName(t.player))} ${escapeHtml(t.score)} <span class="live-pos">${escapeHtml(String(t.pos))}.</span>`).join(' · ');
+		const you = (g.tracked || []).map((t) => `🇳🇴 ${escapeHtml(ssShortName(t.player))} ${escapeHtml(t.score)} <span class="live-pos">${escapeHtml(String(t.pos))}.</span>${t.out ? ' <span class="live-out">utenfor</span>' : ''}`).join(' · ');
 		const board = g.top.map((r) => this.lbRow(r.pos, r.player, r.score, false))
 			.concat((g.tracked || []).filter((t) => !g.top.some((r) => r.player === t.player)).map((t) => this.lbRow(t.pos, t.player, t.score, true)))
 			.join('');
+		const cutRow = g.cut ? `<div class="lb-cut">Antatt cut · ${escapeHtml(g.cut.label)} (topp 65)</div>` : '';
 		return `<div class="live-wrap"><div class="live-item live-expand" role="button" tabindex="0" aria-expanded="${open}" data-live="golf">
 			<span class="live-dot"></span>
 			<span class="live-body"><span class="live-name">${escapeHtml(g.name)}</span>${you ? `<span class="live-you">${you}</span>` : ''}</span>
 			<span class="live-meta">${escapeHtml(leader.player)} ${escapeHtml(leader.score)}<span class="live-caret">›</span></span>
-		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}</div></div>`;
+		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}${cutRow}</div></div>`;
 	}
 
 	/** F1 live: quiet line (GP + session + leader), tap to expand the running order. */
@@ -1006,10 +1007,25 @@ class Dashboard {
 				score: typeof c.score === 'object' ? (c.score?.displayValue || 'E') : (c.score?.toString() || 'E'),
 			});
 			const comps = comp.competitors || [];
-			// Your tracked Norwegian golfers' live positions — the thing you actually want.
+			const toNum = (s) => { const v = String(s).trim(); if (/^e$/i.test(v)) return 0; const n = parseInt(v, 10); return Number.isFinite(n) ? n : null; };
+			// Projected 36-hole cut (top 65 & ties — the common rule). ESPN's feed
+			// doesn't expose a cut line, so derive it from the field: the score at
+			// the 65th position. Only meaningful rounds 1–2; label it "antatt".
+			const round = Number(ev?.status?.period || comp?.status?.period || 1);
+			let cut = null;
+			if (round <= 2) {
+				const scored = comps.map((c) => toNum(row(c).score)).filter((n) => n != null).sort((a, b) => a - b);
+				if (scored.length > 65) {
+					const n = scored[64];
+					cut = { n, label: n > 0 ? `+${n}` : (n === 0 ? 'E' : String(n)) };
+				}
+			}
+			// Your tracked Norwegian golfers' live positions — the thing you actually
+			// want — flagged inside/outside the projected cut.
 			const terms = trackedTerms((this.interests?.alwaysTrack?.athletes || []).filter((a) => (a && a.sport) === 'golf')).map((t) => t.toLowerCase());
-			const tracked = comps.map(row).filter((r) => terms.some((t) => ssContainsTerm(r.player, t)));
-			this.liveLeaderboard = { name: ev.name || '', state, top: comps.slice(0, 8).map(row), tracked };
+			const tracked = comps.map(row).filter((r) => terms.some((t) => ssContainsTerm(r.player, t)))
+				.map((r) => ({ ...r, out: cut != null && toNum(r.score) != null && toNum(r.score) > cut.n }));
+			this.liveLeaderboard = { name: ev.name || '', state, top: comps.slice(0, 8).map(row), tracked, cut, round };
 		} catch { /* ignore */ }
 	}
 
