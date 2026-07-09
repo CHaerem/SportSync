@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T21:04:35.865Z",
+  "generatedAt": "2026-07-09T08:25:23.026Z",
   "gapCount": 2,
   "anomalyCount": 1,
   "gaps": [
@@ -12,18 +12,18 @@
       "link": "https://www.nrk.no/sport/norges-tour-de-france-helt-torstein-traeen-apner-opp-om-astmautfordringene-1.17951737",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-08T21:04:35.657Z"
+      "detectedAt": "2026-07-09T08:25:22.747Z"
     },
     {
       "kind": "entity",
       "entity": "Fotball-VM",
       "type": "missing",
       "imminent": false,
-      "headline": "Bieber blir pauseunderholdning",
-      "link": "https://www.nrk.no/sport/bieber-blir-pauseunderholdning-1.17952500",
-      "feed": "nrk-sport",
+      "headline": "VM-regler innføres i Eliteserien – dette er nytt etter sommerpausen",
+      "link": "https://www.tv2.no/a/19031309",
+      "feed": "tv2-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-08T21:04:35.657Z"
+      "detectedAt": "2026-07-09T08:25:22.747Z"
     }
   ],
   "anomalies": [
@@ -32,7 +32,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-08T21:04:35.864Z"
+      "detectedAt": "2026-07-09T08:25:23.026Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
