@@ -1,7 +1,7 @@
 {
 	"runAt": "2026-07-10T10:04:00.000Z",
 	"action": "opened-pr",
-	"pr": null,
+	"pr": "https://github.com/CHaerem/SportSync/pull/231",
 	"diagnosed": "Research agent workflow fails ~50% of runs (7 of the last ~25) at the 'Fail loudly if neither model produced work' step. Triaged: quota is green (session 15%, week 8%), and the failing runs show the agent running full turns at real cost (is_error:false, 17-19 turns, $2.50-$7.79) yet producing no commit. Since the workflow stages research-log.json in `git add` and HEAD stays unchanged, the agent is NOT writing research-log.json on 'found nothing new' runs. No write => no commit => the workflow misreads it as total quota exhaustion and exits 1.",
 	"fixed": [
 		"scripts/agents/research.md: made research-log.json an unconditional always-write (even a no-op run with eventsAdded:0), with the why (no-commit is read as quota exhaustion) so a genuine run always commits and 'no commit' reliably means the agent never ran."
