@@ -107,7 +107,8 @@ Distinguish a genuine gap from a correct absence. "No cricket" is correct (`neve
 - Keep gaps concrete and actionable — each should tell the research agent exactly what to find.
 
 2. **Escalate** when there is at least one `high`-severity gap: run
-   `gh workflow run research-agent.yml` so research fills them, and set
+   `gh workflow run research-agent.yml -f tier=deep` (a high-severity gap warrants
+   the deep tier — Fable 5) so research fills them, and set
    `"escalated": true`. **Max 1 escalation per run** (this agent runs daily). If nothing
    is high-severity, do not escalate — write the audit and stop.
 
