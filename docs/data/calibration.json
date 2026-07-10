@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-10T08:19:50.784Z",
+  "generatedAt": "2026-07-10T11:48:56.485Z",
   "windowDays": 180,
   "records": {
-    "used": 35,
+    "used": 39,
     "skipped": 0
   },
   "sources": {
@@ -43,39 +43,47 @@
       "reliability": null
     },
     "cyclingstage.com": {
-      "checks": 5,
-      "agreed": 2,
+      "checks": 7,
+      "agreed": 3,
       "bySport": {
         "cycling": {
-          "checks": 5,
-          "agreed": 2
+          "checks": 7,
+          "agreed": 3
         }
       },
       "byField": {
         "time": {
-          "checks": 5,
+          "checks": 6,
           "agreed": 2
+        },
+        "existence": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-04T13:30:00.000Z",
-      "reliability": 0.4
+      "lastChecked": "2026-07-10T09:30:00.000Z",
+      "reliability": 0.43
     },
     "tvkampen.com": {
-      "checks": 1,
-      "agreed": 0,
+      "checks": 2,
+      "agreed": 1,
       "bySport": {
         "cycling": {
           "checks": 1,
           "agreed": 0
+        },
+        "football": {
+          "checks": 1,
+          "agreed": 1
         }
       },
       "byField": {
         "streaming": {
-          "checks": 1,
-          "agreed": 0
+          "checks": 2,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-04T13:30:00.000Z",
+      "lastChecked": "2026-07-10T09:30:00.000Z",
       "reliability": null
     },
     "m24.no (ntb)": {
@@ -187,11 +195,11 @@
       "reliability": null
     },
     "nrk.no": {
-      "checks": 4,
+      "checks": 5,
       "agreed": 3,
       "bySport": {
         "football": {
-          "checks": 4,
+          "checks": 5,
           "agreed": 3
         }
       },
@@ -199,10 +207,14 @@
         "streaming": {
           "checks": 4,
           "agreed": 3
+        },
+        "existence": {
+          "checks": 1,
+          "agreed": 0
         }
       },
-      "lastChecked": "2026-07-09T05:30:00.000Z",
-      "reliability": null
+      "lastChecked": "2026-07-10T09:30:00.000Z",
+      "reliability": 0.6
     },
     "sjakknm2026.no": {
       "checks": 1,
