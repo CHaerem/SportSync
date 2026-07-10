@@ -1,18 +1,17 @@
 {
-  "checkedAt": "2026-07-09T11:04:01Z",
+  "checkedAt": "2026-07-10T10:49:41Z",
   "widths": [375, 393, 900],
   "verdict": "pass",
   "findings": [],
   "notes": [
-    "Previously-flagged 'Norway – England' duplicate row (lørdag 11. juli, 23:00) is gone — the fixture now appears exactly once at all three widths.",
-    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all widths, including the longest headline/event rows (e.g. 'Diamond League Monaco (Herculis EBS)', 'Tour de France 2026' subtitle).",
-    "Match/fixture names read in full and unambiguous, including Norwegian-relevant ones: France – Morocco, Spain – Belgium, Norway – England, Argentina – Switzerland — no truncation hiding a side of a fixture.",
-    "Norwegian-channel contract holds: only NRK, NRK 1, TV 2, TV 2 Play, Viaplay, Max +1, Direktesport +1 appear as 'where to watch' — no foreign broadcaster (ESPN/FOX/Sky) seen at any width.",
+    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, including longer rows ('Diamond League Monaco (Herculis EBS)', 'Tour de France 2026' subtitle).",
+    "Match/fixture names read in full and unambiguous: Spain – Belgium, Norway – England, Argentina – Switzerland — no truncation hiding either side of a fixture.",
+    "Norwegian-channel contract holds: only NRK, NRK 1, TV 2, TV 2 Play, Viaplay, Max +1, Direktesport +1 appear as 'where to watch' — no foreign broadcaster (ESPN/FOX/Sky) at any width.",
     "Round labels (Kvartfinale, Semifinale, Damefinale, Herrefinale) show correctly next to knockout/final fixtures at all widths.",
-    "National flag emoji (France, Morocco, Spain, Belgium, Norway, England, Argentina, Switzerland) render as real flags, not broken-image boxes.",
-    "Must-see accent (left border + tinted background) is applied selectively — Sjakk-NM, Genesis Scottish Open, ISCO Championship, Diamond League Monaco, Norway–England, Swiss Open Gstaad, VM-semifinaler, The Open — not to every row, consistent with 'sparingly'.",
-    "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'Rediger' links, and footer (Oppdatert / Abonner i kalender / AI-budsjett) are intact and aligned at every width.",
-    "Could not assess clearly: the tennis icon (Casper Ruud, Wimbledon, Swiss Open Gstaad rows) reads ambiguously — looks closer to a magnifying-glass glyph than a clear tennis pictograph at all widths; not clipped or broken-image, just visually unclear which sport it signals at a glance.",
+    "National flag emoji (Spain, Belgium, Norway, England, Argentina, Switzerland) render as real flags, not broken-image boxes.",
+    "Must-see accent (left border + tinted background) applied to a meaningful subset tied to followed favorites/importance (Sjakk-NM, Genesis Scottish Open, ISCO Championship, Diamond League Monaco, Norway–England, EFG Swiss Open Gstaad, VM-semifinaler, The Open) rather than every row.",
+    "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'Rediger' links, and footer (Oppdatert / Abonner i kalender / AI-budsjett) intact and aligned at every width.",
+    "Could not assess clearly: the tennis icon (Casper Ruud, Wimbledon rows) reads closer to a magnifying-glass glyph than an obvious tennis pictograph at all widths — not clipped or broken, just visually ambiguous which sport it signals at a glance.",
     "No event showed the honest empty '–' channel placeholder in this data snapshot, so that path could not be exercised."
   ]
 }
