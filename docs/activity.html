@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Hva automatikken bak SportSync har gjort — forbedringer, reparasjoner og research, med lenke til hver endring.">
+	<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>SportSync · Aktivitet</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/layout.css">
+	<style>
+		/* Activity — an ops/log view. Same calm tokens as the dashboard, but this is
+		   the "back office": denser than the agenda, still quiet. Not linked into the
+		   main flow — reached from the footer. */
+		.act-intro { color: var(--fg-2); font-size: 0.9rem; line-height: 1.5; margin: 0 0 28px; }
+		.act-section { margin: 0 0 34px; }
+		.act-section > h2 {
+			font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em;
+			color: var(--fg-3); font-weight: 600; margin: 0 0 12px; padding-bottom: 6px;
+			border-bottom: 1px solid var(--line);
+		}
+		.act-empty { color: var(--fg-3); font-size: 0.85rem; font-style: italic; }
+
+		/* Change feed (merged PRs) */
+		.change { display: flex; gap: 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); }
+		.change:last-child { border-bottom: 0; }
+		.change-when { color: var(--fg-3); font-size: 0.78rem; white-space: nowrap; min-width: 4.5em; }
+		.change-title { color: var(--fg); font-size: 0.9rem; line-height: 1.4; }
+		.change-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
+		.change-title a:hover { color: var(--accent); border-color: var(--accent); }
+
+		/* Agent run cards */
+		.run { padding: 12px 0; border-bottom: 1px solid var(--line); }
+		.run:last-child { border-bottom: 0; }
+		.run-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+		.run-agent {
+			font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+			color: var(--accent-ink); background: var(--accent); padding: 2px 7px; border-radius: 3px;
+		}
+		.run-when { color: var(--fg-3); font-size: 0.78rem; margin-left: auto; }
+		.run-title { color: var(--fg); font-size: 0.92rem; line-height: 1.45; margin: 7px 0 0; }
+		.run-pr { font-size: 0.8rem; }
+		.run-pr a { color: var(--cyan); text-decoration: none; }
+		.run-pr a:hover { text-decoration: underline; }
+		.run-notes { margin: 8px 0 0; padding: 0; list-style: none; }
+		.run-notes li {
+			color: var(--fg-2); font-size: 0.82rem; line-height: 1.5; padding-left: 14px; position: relative;
+			margin: 3px 0;
+		}
+		.run-notes li::before { content: "·"; position: absolute; left: 2px; color: var(--fg-3); }
+		.run details > summary { cursor: pointer; color: var(--fg-3); font-size: 0.78rem; margin-top: 6px; list-style: none; }
+		.run details > summary::-webkit-details-marker { display: none; }
+		.run details > summary::before { content: "+ "; }
+		.run details[open] > summary::before { content: "– "; }
+		.back-link { color: var(--fg-2); text-decoration: none; font-size: 0.82rem; }
+		.back-link:hover { color: var(--accent); }
+	</style>
+</head>
+<body>
+	<header class="masthead">
+		<div class="wrap masthead-inner">
+			<span class="wordmark">SportSync</span>
+			<span class="masthead-clock" aria-hidden="true">aktivitet</span>
+			<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
+		</div>
+	</header>
+
+	<main class="wrap">
+		<p class="act-intro">
+			SportSync vedlikeholder seg selv. Under ser du hva automatikken har gjort —
+			forbedringer, selv-reparasjoner, UI-fikser og research — med lenke til hver
+			endring. <a class="back-link" href="./">← tilbake til oversikten</a>
+		</p>
+
+		<section class="act-section" id="changes-section">
+			<h2>Nylig endret</h2>
+			<div id="changes"><p class="act-empty">Laster …</p></div>
+		</section>
+
+		<section class="act-section" id="runs-section">
+			<h2>Siste kjøring per agent</h2>
+			<div id="runs"><p class="act-empty">Laster …</p></div>
+		</section>
+	</main>
+
+	<footer class="site-footer wrap">
+		<a class="back-link" href="./">← oversikten</a>
+	</footer>
+
+	<script>
+		// Theme — share the dashboard's key so the choice carries across pages.
+		(function () {
+			try {
+				const stored = localStorage.getItem('ss-theme');
+				if (stored) document.documentElement.setAttribute('data-theme', stored);
+			} catch { /* ignore */ }
+			document.getElementById('theme-toggle')?.addEventListener('click', () => {
+				const cur = document.documentElement.getAttribute('data-theme')
+					|| (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+				const next = cur === 'light' ? 'dark' : 'light';
+				document.documentElement.setAttribute('data-theme', next);
+				try { localStorage.setItem('ss-theme', next); } catch { /* ignore */ }
+			});
+		})();
+
+		const REPO = 'CHaerem/SportSync';
+
+		function escapeHtml(s) {
+			return String(s ?? '').replace(/[&<>"']/g, c => (
+				{ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+			));
+		}
+		function timeAgo(iso) {
+			const t = Date.parse(iso);
+			if (!Number.isFinite(t)) return '';
+			const s = Math.max(0, (Date.now() - t) / 1000);
+			if (s < 90) return 'nå nettopp';
+			const m = s / 60; if (m < 60) return Math.round(m) + ' min siden';
+			const h = m / 60; if (h < 24) return Math.round(h) + ' t siden';
+			const d = h / 24; if (d < 14) return Math.round(d) + ' d siden';
+			return new Date(t).toLocaleDateString('nb-NO', { day: 'numeric', month: 'short' });
+		}
+		async function loadJSON(path) {
+			try {
+				const r = await fetch(path, { cache: 'no-cache' });
+				if (!r.ok) return null;
+				return await r.json();
+			} catch { return null; }
+		}
+		// A PR reference in a log can be a number, a URL, or "#231" — normalise to a link.
+		function prLink(pr) {
+			if (pr === undefined || pr === null || pr === '' || pr === false) return '';
+			const s = String(pr);
+			if (/^https?:\/\//.test(s)) {
+				const n = s.match(/\/pull\/(\d+)/);
+				return `<span class="run-pr"><a href="${escapeHtml(s)}" target="_blank" rel="noopener">PR${n ? ' #' + n[1] : ''}</a></span>`;
+			}
+			const num = s.replace(/[^0-9]/g, '');
+			if (!num) return '';
+			return `<span class="run-pr"><a href="https://github.com/${REPO}/pull/${num}" target="_blank" rel="noopener">PR #${num}</a></span>`;
+		}
+		function notesList(arr, keep = 2) {
+			const items = (Array.isArray(arr) ? arr : []).filter(x => typeof x === 'string' && x.trim());
+			if (!items.length) return '';
+			const head = items.slice(0, keep).map(n => `<li>${escapeHtml(n)}</li>`).join('');
+			const rest = items.slice(keep);
+			let html = `<ul class="run-notes">${head}</ul>`;
+			if (rest.length) {
+				html += `<details><summary>${rest.length} til</summary><ul class="run-notes">`
+					+ rest.map(n => `<li>${escapeHtml(n)}</li>`).join('') + `</ul></details>`;
+			}
+			return html;
+		}
+
+		// ---- Recent merged PRs = the real changelog (public API, no auth needed) ----
+		async function renderChanges() {
+			const el = document.getElementById('changes');
+			let prs = null;
+			try {
+				const r = await fetch(`https://api.github.com/repos/${REPO}/pulls?state=closed&sort=updated&direction=desc&per_page=20`);
+				if (r.ok) prs = await r.json();
+			} catch { /* offline / rate-limited — fall through */ }
+			if (!Array.isArray(prs)) {
+				el.innerHTML = `<p class="act-empty">Kunne ikke hente endringslista akkurat nå. Se <a class="back-link" href="https://github.com/${REPO}/pulls?q=is%3Apr+is%3Amerged" target="_blank" rel="noopener">merget på GitHub</a>.</p>`;
+				return;
+			}
+			const merged = prs.filter(p => p.merged_at).sort((a, b) => Date.parse(b.merged_at) - Date.parse(a.merged_at)).slice(0, 15);
+			if (!merged.length) { el.innerHTML = `<p class="act-empty">Ingen nylige endringer.</p>`; return; }
+			el.innerHTML = merged.map(p => `
+				<div class="change">
+					<span class="change-when">${escapeHtml(timeAgo(p.merged_at))}</span>
+					<span class="change-title"><a href="${escapeHtml(p.html_url)}" target="_blank" rel="noopener">${escapeHtml(p.title)}</a></span>
+				</div>`).join('');
+		}
+
+		// ---- Latest run per agent (from the committed *-log.json files) ----
+		// Each log holds only the most recent run; the full history is the change feed above.
+		async function renderRuns() {
+			const el = document.getElementById('runs');
+			const specs = [
+				{ file: 'improve-log',       label: 'improve',    when: d => d.runAt,     title: d => d.proposal || d.action, notes: d => d.evidence },
+				{ file: 'self-repair-log',   label: 'self-repair', when: d => d.runAt,    title: d => d.diagnosed || d.action, notes: d => [].concat(d.fixed || [], d.notes || []) },
+				{ file: 'ui-fix-log',        label: 'ui-fix',     when: d => d.runAt,     title: d => d.action || (Array.isArray(d.fixed) && d.fixed[0]), notes: d => [].concat(d.fixed || [], d.notes || []) },
+				{ file: 'research-log',      label: 'research',   when: d => d.runAt,     title: d => `+${d.eventsAdded ?? 0} / −${d.eventsRemoved ?? 0} events`, notes: d => d.notes },
+				{ file: 'verify-log',        label: 'verify',     when: d => d.runAt,     title: d => `sjekket ${d.checked ?? 0}, bekreftet ${d.confirmed ?? 0}, endret ${d.amended ?? 0}, fjernet ${d.removed ?? 0}`, notes: d => d.notes },
+				{ file: 'coverage-audit',    label: 'coverage',   when: d => d.auditedAt, title: d => `${(d.gaps || []).length} mangel(er), ${(d.coveredWell || []).length} godt dekket`, notes: d => d.notes },
+				{ file: 'visual-qa-log',     label: 'visual-qa',  when: d => d.checkedAt, title: d => d.verdict || `${(d.findings || []).length} funn`, notes: d => d.notes },
+			];
+			const loaded = await Promise.all(specs.map(async s => {
+				const d = await loadJSON(`data/${s.file}.json`);
+				if (!d) return null;
+				const when = s.when(d);
+				return { label: s.label, when, ts: Date.parse(when) || 0, title: s.title(d), notes: s.notes(d), pr: d.pr };
+			}));
+			const runs = loaded.filter(Boolean).sort((a, b) => b.ts - a.ts);
+			if (!runs.length) { el.innerHTML = `<p class="act-empty">Ingen kjøringer å vise ennå.</p>`; return; }
+			el.innerHTML = runs.map(r => `
+				<div class="run">
+					<div class="run-head">
+						<span class="run-agent">${escapeHtml(r.label)}</span>
+						${prLink(r.pr)}
+						<span class="run-when">${escapeHtml(timeAgo(r.when))}</span>
+					</div>
+					${r.title ? `<p class="run-title">${escapeHtml(r.title)}</p>` : ''}
+					${notesList(r.notes)}
+				</div>`).join('');
+		}
+
+		renderChanges();
+		renderRuns();
+	</script>
+</body>
+</html>
