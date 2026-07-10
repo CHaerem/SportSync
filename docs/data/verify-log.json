@@ -1,15 +1,14 @@
 {
-  "runAt": "2026-07-09T05:30:00.000Z",
-  "checked": 5,
-  "confirmed": 3,
-  "amended": 0,
+  "runAt": "2026-07-10T09:30:00.000Z",
+  "checked": 4,
+  "confirmed": 1,
+  "amended": 1,
   "removed": 2,
   "notes": [
-    "Confirmed the Norway–England quarterfinal (11 Jul, 23:00 norsk / 21:00 UTC) on TV 2 via NRK's official WC program guide. The same guide reconfirms the full knockout split: QF France–Morocco NRK1, Spain–Belgium TV 2, Norway–England TV 2, Argentina–Switzerland NRK1; both semifinals (14 + 15 Jul) TV 2; bronsefinalen (18 Jul) + finalen (19 Jul) NRK1. All match events.json.",
-    "Confirmed The 154th Open Championship (16–19 Jul, Royal Birkdale) via theopen.com + Wikipedia — dates match events.json. Streaming Viaplay per norwegian-rights [solid] (majors incl. The Open → Viaplay).",
-    "Confirmed Tour de France stage 12 (16 Jul, Circuit de Nevers Magny-Cours – Chalon-sur-Saône, flat) against Wikipedia; stages 11 and 13 also match. Start time remains anslått (ASO detailed times unpublished) — noted in the event summary.",
-    "Removed TWO duplicate ESPN semifinal placeholders re-added by the static pipeline: 'Quarterfinal 2 Winner at Quarterfinal 1 Winner' (14 Jul 19:00 UTC, AT&T Stadium) and 'Quarterfinal 4 Winner at Quarterfinal 3 Winner' (15 Jul 19:00 UTC, Mercedes-Benz Stadium). Each duplicates an ai-research VM-semifinale event (same time/venue, Norwegian title, confirmed TV 2). This is the recurring WC-knockout duplication flagged in the 08 Jul log — the pipeline keeps re-adding the ESPN placeholders (with tentative 'NRK / TV 2') because build-events dedupes by sport|title|time and the titles differ. Needs a build-events dedup fix (or coverage-critic follow-up) rather than weekly manual removal.",
-    "Did NOT re-verify events confirmed within the last 24–72h and unchanged: Sjakk-NM (ends 11 Jul), Wimbledon finals (11–12 Jul), Diamond League Monaco (10 Jul), the France/Spain/Argentina QFs, VM-semifinale 1 & 2 (both TV 2), and TdF stages 6–11 (all confirmed 05–08 Jul).",
-    "Skill unchanged: no new mechanistic quirk beyond the already-logged ESPN WC-placeholder re-add (a build-events dedup gap, not a source failure mode). norwegian-rights WC split already correct in practice; the 'verify per match' note stands."
+    "Confirmed today's WC quarterfinal Spain–Belgia (10 Jul, 21:00 norsk) on TV 2 / TV 2 Play via the tvkampen match article + VG/NRK guides — matches events.json. NB: tv-listings.json (tvkampen JSON) listed only 'Svt' for this match; that is an incomplete Nordic-aggregate entry, not a rights change — the Norwegian broadcaster is TV 2.",
+    "Amended TdF stage 13 (Dole–Belfort, 17 Jul): start is 13:00 CEST = 11:00 UTC per cyclingstage; events.json had 10:30 UTC — corrected to 11:00 UTC (now matches published start and the neighbouring stages). Route (205.8 km, Col des Croix + Ballon d'Alsace 30 km from finish) confirmed. verificationStatus=amended.",
+    "Removed TWO duplicate ESPN semifinal placeholders re-added by the static pipeline: 'Quarterfinal 2 Winner at France' (14 Jul 19:00 UTC, AT&T Stadium) and 'Quarterfinal 4 Winner at Quarterfinal 3 Winner' (15 Jul 19:00 UTC, Mercedes-Benz Stadium), both carrying tentative 'NRK / TV 2'. Each duplicates an ai-research VM-semifinale (same time/venue, TV 2 confirmed via NRK's guide 09 Jul). This is the recurring WC-knockout duplication (removed 09 Jul too): build-events dedupes by sport|title|time and the ESPN placeholder titles differ from the Norwegian ai-research titles, so the placeholders keep coming back. Still needs a build-events dedup fix rather than weekly manual removal.",
+    "Did NOT re-verify events confirmed within the last 24–72h and unchanged: Sjakk-NM (ends 11 Jul), Wimbledon finals (11–12 Jul), Diamond League Monaco (10 Jul), the England–Norway QF (11 Jul, TV 2) and Argentina–Switzerland QF (12 Jul, NRK), VM-semifinale 1 & 2 (both TV 2, confirmed 07–08 Jul via NRK guide), The 154th Open (16–19 Jul), and TdF stages 6–12 (all confirmed 05–09 Jul).",
+    "Skills unchanged: the recurring ESPN WC-placeholder re-add is a build-events dedup gap, not a source failure mode, so it stays out of source-quirks (per 09 Jul reasoning). norwegian-rights WC split (NRK1/TV 2 per match) already correct; the 'verify per match' note stands."
   ]
 }
