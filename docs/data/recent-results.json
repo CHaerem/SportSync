@@ -1,6 +1,30 @@
 {
-  "lastUpdated": "2026-07-09T21:20:47.409Z",
+  "lastUpdated": "2026-07-10T08:19:46.422Z",
   "football": [
+    {
+      "homeTeam": "France",
+      "awayTeam": "Morocco",
+      "homeScore": 2,
+      "awayScore": 0,
+      "date": "2026-07-09T20:00Z",
+      "league": "FIFA World Cup",
+      "leagueCode": "fifa.world",
+      "venue": "Gillette Stadium",
+      "goalScorers": [
+        {
+          "player": "Kylian Mbappé",
+          "team": "France",
+          "minute": "60'"
+        },
+        {
+          "player": "Ousmane Dembélé",
+          "team": "France",
+          "minute": "66'"
+        }
+      ],
+      "recapHeadline": "Bryter Tour de France",
+      "isFavorite": false
+    },
     {
       "homeTeam": "Switzerland",
       "awayTeam": "Colombia",
@@ -374,98 +398,45 @@
       ],
       "recapHeadline": null,
       "isFavorite": false
-    },
-    {
-      "homeTeam": "Switzerland",
-      "awayTeam": "Algeria",
-      "homeScore": 2,
-      "awayScore": 0,
-      "date": "2026-07-03T03:00Z",
-      "league": "FIFA World Cup",
-      "leagueCode": "fifa.world",
-      "venue": "BC Place",
-      "goalScorers": [
-        {
-          "player": "Breel Embolo",
-          "team": "Switzerland",
-          "minute": "10'"
-        },
-        {
-          "player": "Dan Ndoye",
-          "team": "Switzerland",
-          "minute": "46'"
-        }
-      ],
-      "recapHeadline": null,
-      "isFavorite": false
-    },
-    {
-      "homeTeam": "Portugal",
-      "awayTeam": "Croatia",
-      "homeScore": 2,
-      "awayScore": 1,
-      "date": "2026-07-02T23:00Z",
-      "league": "FIFA World Cup",
-      "leagueCode": "fifa.world",
-      "venue": "BMO Field",
-      "goalScorers": [
-        {
-          "player": "Ivan Perisic",
-          "team": "Croatia",
-          "minute": "53'"
-        },
-        {
-          "player": "Cristiano Ronaldo",
-          "team": "Portugal",
-          "minute": "68'"
-        },
-        {
-          "player": "Gonçalo Ramos",
-          "team": "Portugal",
-          "minute": "90'+4'"
-        }
-      ],
-      "recapHeadline": null,
-      "isFavorite": false
     }
   ],
   "golf": {
     "pga": {
       "tournamentName": "Genesis Scottish Open",
       "status": "in_progress",
-      "completedRound": 2,
+      "completedRound": 3,
       "topPlayers": [
         {
           "position": 1,
+          "player": "Jordan Smith",
+          "score": "-6",
+          "roundScore": "-",
+          "thru": "-"
+        },
+        {
+          "position": 2,
+          "player": "Rasmus Højgaard",
+          "score": "-6",
+          "roundScore": "-",
+          "thru": "-"
+        },
+        {
+          "position": 3,
           "player": "Tom Kim",
           "score": "-5",
           "roundScore": "-",
           "thru": "-"
         },
         {
-          "position": 2,
+          "position": 4,
           "player": "Bernd Wiesberger",
           "score": "-5",
           "roundScore": "-",
           "thru": "-"
         },
         {
-          "position": 3,
-          "player": "Patrick Cantlay",
-          "score": "-5",
-          "roundScore": "-",
-          "thru": "-"
-        },
-        {
-          "position": 4,
-          "player": "Rory McIlroy",
-          "score": "-5",
-          "roundScore": "-",
-          "thru": "-"
-        },
-        {
           "position": 5,
-          "player": "Rasmus Højgaard",
+          "player": "Patrick Cantlay",
           "score": "-5",
           "roundScore": "-",
           "thru": "-"
@@ -473,14 +444,14 @@
       ],
       "norwegianPlayers": [
         {
-          "position": 36,
+          "position": 56,
           "player": "Viktor Hovland",
           "score": "-2",
           "roundScore": "-",
           "thru": "-"
         },
         {
-          "position": 102,
+          "position": 117,
           "player": "Kristoffer Reitan",
           "score": "+1",
           "roundScore": "-",
@@ -674,8 +645,8 @@
     }
   ],
   "validationMetrics": {
-    "totalResults": 17,
-    "validResults": 15,
+    "totalResults": 16,
+    "validResults": 14,
     "issueCount": 2
   }
 }
