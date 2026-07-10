@@ -172,6 +172,13 @@ log honestly, never loop).
 2. Updated `scripts/config/tracked.json` (full transparent rewrite)
 3. `docs/data/research-log.json`: `{ "runAt": ISO, "eventsAdded": n, "eventsRemoved": n, "trackedDelta": "...", "quality": { "pass": bool, "score": n, "failures": [] }, "notes": ["..."] }`
 
+**Always write `research-log.json` — every run, even a no-op.** If you found nothing
+new (no events added or removed), still write it with `eventsAdded: 0` and a `notes`
+entry saying what you checked and why nothing changed. A run that ran but wrote no
+files produces no commit, and the workflow reads "no commit" as total quota
+exhaustion and fails loudly. The log is your proof the run happened, so it must never
+be skipped.
+
 After writing files, run `node scripts/validate-events.js` and fix any errors it reports.
 
 **Concurrency:** the hourly static pipeline commits events.json too. Just before

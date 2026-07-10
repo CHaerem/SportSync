@@ -1,15 +1,16 @@
 {
-	"runAt": "2026-07-05T09:30:00Z",
+	"runAt": "2026-07-10T10:04:00.000Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/197",
-	"diagnosed": "The chess fetcher's config (scripts/config/sports-config.js) still declared a 'curated' source pointing at scripts/config/chess-tournaments.json and scripts/config/norwegian-chess-players.json — both removed in the v2 rebuild (chess is an API-less sport the research agent maintains per CLAUDE.md). fetchCuratedTournaments therefore threw ENOENT for both files on EVERY static-pipeline run ('Failed to load .../chess-tournaments.json: ENOENT ...' x2). It degraded gracefully (loadJsonFile falls back to []) and Lichess still returned 64 active broadcasts, so nothing failed — but the recurring error noise masks real fetch failures and the dead source references files that will never exist.",
+	"pr": null,
+	"diagnosed": "Research agent workflow fails ~50% of runs (7 of the last ~25) at the 'Fail loudly if neither model produced work' step. Triaged: quota is green (session 15%, week 8%), and the failing runs show the agent running full turns at real cost (is_error:false, 17-19 turns, $2.50-$7.79) yet producing no commit. Since the workflow stages research-log.json in `git add` and HEAD stays unchanged, the agent is NOT writing research-log.json on 'found nothing new' runs. No write => no commit => the workflow misreads it as total quota exhaustion and exits 1.",
 	"fixed": [
-		"Removed the dead 'curated' source from the chess config in scripts/config/sports-config.js, leaving Lichess as the only live source (plus the research agent for off-API events, per v2 design). Added a comment explaining why, and updated the source label to 'Lichess + AI research'."
+		"scripts/agents/research.md: made research-log.json an unconditional always-write (even a no-op run with eventsAdded:0), with the why (no-commit is read as quota exhaustion) so a genuine run always commits and 'no commit' reliably means the agent never ran."
 	],
 	"autoMergeEligible": true,
 	"notes": [
-		"Non-protected path (scripts/config/sports-config.js, not one of the three protected paths), so the workflow may auto-merge once tests pass.",
-		"Proof: re-ran node scripts/fetch/index.js — the two chess ENOENT lines are gone, Lichess still reports '64 active, 0 upcoming'. Full npm test green (173 passing). node scripts/validate-events.js: 44 events, 0 errors. Regenerated docs/data/*.json were reverted (pipeline-owned content, not part of this fix).",
-		"Ignored (not breakage): the 'Deploy Pages with Previews' failures on 2026-07-04 are the transient GitHub Pages infra error 'Deployment failed, try again later.' — all 2026-07-05 deploys succeed. The earlier 'Static data pipeline' rebase-conflict failures were already fixed by commit 409c0ae3 (Harden pipeline commit against concurrent-run push races); every pipeline run since is green. All agent workflows (research/verify/editorial/scout/coverage-critic/visual-qa/ui-fix/improve/usage-monitor) are green. Usage state is green (session 7%, week 64%), so no quota-driven skips."
+		"Not touched (deliberately): research-agent.yml (protected .github/workflows/**) — the prompt fix is the root cause and lives in a non-protected, auto-mergeable path.",
+		"Ignored as non-bugs: Deploy Pages failures ('Deployment failed, try again later' = transient GitHub infra); Static pipeline failure (its deploy sub-job, same transient Pages issue); Coverage-critic 29001983640 (conclusion: cancelled via concurrency, not a failure); Follow-request 28860312429 ('GitHub Actions is not permitted to create or approve pull requests' = a repo setting, not code, one-off).",
+		"Verified healthy: npm test (261 pass), validate-events.js (0 errors), all sport data files parse, and every deterministic pipeline script (build-events, build-ics, detect-coverage-gaps, aggregate-calibration) runs clean.",
+		"Proof limitation: the end-to-end effect depends on the research agent's runtime behavior and can't be reproduced in CI; the coherence gate (tests/agent-prompts.test.js) and full npm test pass, confirming the contract stays intact and nothing regresses."
 	]
 }
