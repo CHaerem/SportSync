@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-10T21:59:17.150Z",
-  "gapCount": 2,
+  "generatedAt": "2026-07-11T07:10:30.206Z",
+  "gapCount": 1,
   "anomalyCount": 1,
   "gaps": [
     {
@@ -12,18 +12,7 @@
       "link": "https://www.nrk.no/sport/waerenskjold-pa-pallen-etter-massespurt-_-hushovd-_klikka_-1.17954574",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-10T21:59:16.867Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Premier League",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Tidligere Premier League-stjerne pågrepet – kobles til kriminelt nettverk",
-      "link": "https://www.nrk.no/sport/tidligere-premier-league-stjerne-pagrepet-_-kobles-til-kriminelt-nettverk-1.17954392",
-      "feed": "nrk-sport",
-      "matchCount": 2,
-      "detectedAt": "2026-07-10T21:59:16.867Z"
+      "detectedAt": "2026-07-11T07:10:29.925Z"
     }
   ],
   "anomalies": [
@@ -32,7 +21,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-10T21:59:17.150Z"
+      "detectedAt": "2026-07-11T07:10:30.206Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
