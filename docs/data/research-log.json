@@ -1,21 +1,23 @@
 {
-  "runAt": "2026-07-11T17:05:00Z",
+  "runAt": "2026-07-11T21:15:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 1,
-  "trackedDelta": "0 lagt til / 0 fjernet. Oppdaterte reason på tour-de-france-2026 (etappe 8-resultat + etappe 9 varme-nedkorting), magnus-carlsen + esports-world-cup-2026-chess (EWC-dato-sprik oppklart: «4.–6. aug» var Last Chance Qualifier, ikke hovedturneringen), la-liga-2026-27 + fc-barcelona (offisiell åpningsartikkel 4528913 med VM-forbehold; Joan Gamper-motstander sprik), premier-league + obos-ligaen (RSS-triage-notater). lastUpdated → 2026-07-11T17:05:00Z.",
+  "eventsAmended": 2,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert 6 entries (timestamps + fersk status): casper-ruud + swiss-open-gstaad-2026 (Gstaad-trekningen nå kjent — Ruud vs. vinneren av Faria–Wawrinka i R16), viktor-hovland (R3 ~-4 i Scottish Open), aryan-tari (Andorra Open-datoene 18.–26. juli bekreftet offisielt, Tari-deltakelse fortsatt ubekreftet → ingen event), fifa-world-cup-2026 (Norge–England i gang, resultat pending), premier-league (uendret). lastUpdated → 21:15Z.",
   "quality": {
     "pass": true,
-    "score": 97,
-    "failures": []
+    "score": 95,
+    "failures": [
+      "Non-blocking (ADDRESSERT denne kjøringen): Corales Puntacana-eventet hadde streaming 'Viaplay' i strid med egen summary + evidence (WBD overtok vanlige PGA Tour-eventer i Norge 2026 → HBO Max/Eurosport). streaming-feltet rettet til HBO Max / Eurosport Norge.",
+      "Non-blocking (IKKE rørt): VM-semifinalene vises som to rader hver (statisk placeholder + ai-research 'VM-semifinale 1/2'); ulike titler unngår sport|title|time-dedupe. Statiske events skal ikke fjernes, og oppsettene er ikke endelig avgjort ennå — overlatt til verify/improve-loopen."
+    ]
   },
   "notes": [
-    "Standard-tier Opus, lør. 17.05Z, ~3t etter forrige run (14.00Z). Brettet var komplett og ferskt (48 events, 0 valideringsfeil); coverage-audit 06:12Z fant kun Gstaad-hullet som allerede var fikset. Fan-out: 2 parallelle scout-subagenter (golf/tennis + esports/sjakk/fotball) + egen web-verifisering av TdF-endringen + 1 uavhengig grader.",
-    "ENESTE ENDRING: TdF etappe 9 (søn. 12. juli, Malemort–Ussel) amendet — kortet ned tre mil (185,5→155,5 km) etter rødt farevarsel for ekstremvarme i Corrèze (NRK, siterer offisiell Tour-side + franske meteorologer, publ. 16:40Z). Tid korrigert til 13.45 CEST (11.45 UTC, «som planlagt» pr. NRK; tavla hadde 13.35), endTime → 15.45Z, summary + NRK-evidence oppdatert. Sammenlagt uendret etter flate etappe 8 (Merlier vant, Wærenskjold nr. 2).",
-    "INGEN NYE EVENTS — bevisste ikke-tillegg (missing > wrong): Joan Gamper Trophy (rapportert 19. aug Camp Nou, men motstander SPRIKER Al Ahly vs Ajax, ikke offisielt klubb-bekreftet, ingen tid/NO-kanal); The Open + Corales tee-tider (ikke publisert, R&A ~14.–15. juli); Gstaad order-of-play/Ruud R16-motstander (ikke ute — atptour.com uten kamper, spill starter man. 13.); BLAST Bounty-bracket (TBD ~18.–20. juli).",
-    "DATO-SPRIK OPPKLART: EWC-sjakkens «4.–6. aug» = Last Chance Qualifier (separat kval., 4 finalister til Paris), hovedturneringen fast 11.–15. aug (Liquipedia + chess.com). Flagget fjernet fra Carlsen/EWC-entryene.",
-    "BARCELONA: fersk offisiell fcbarcelona.com-artikkel (4528913) bekrefter La Liga-åpning mot Athletic Club i runden fra 16. aug MEN med forbehold om at Barças kamp kan skyves en uke ved VM-semi/finale-avansement. Avspark-tid ikke satt → ikke på tavla.",
-    "TRIAGE avvist: coverage-gaps (16:54Z) = PL entity-gap (Man City henter Jeremy Monga (17) fra Leicester — overgangsstøy) + chess file-empty (av-sesong, low). scout-log siste (16:00Z) quiet. RSS (40): Eliteserien tilbake (ikke fulgt — kun Lyn i OBOS), orienterings-VM-bronse, Jayden Adams død (ikke-event), overgangsnytt — ingenting med schedule-/broadcaster-endring for fulgte entiteter utover TdF.",
-    "validate-events.js: Validated 48 events with 0 error(s). 8 enriched."
+    "Rutinemessig vedlikeholdskjøring lør. 11. juli 21.15Z (23.15 Oslo), standard-tier Opus, ~4t etter forrige run (17.05Z). Brettet var allerede komplett og ferskt (48 events, 40 ai-research). Fan-out med 2 parallelle scout-subagenter (golf/tennis + cycling/fotball/esports/sjakk) med ekte web-søk. INGEN nye events funnet — alt utestående er dato-gated eller pågår.",
+    "ÉN meningsfull berikelse: EFG Swiss Open Gstaad (Ruud). Trekningen (satt 11. juli 13.00 CEST) er nå gjengitt i tennismedier — Ruud (andreseedet, fri i 1. runde) møter vinneren av Jaime Faria–Stan Wawrinka i R16 (Wawrinka en frisk historie). Event-summary beriket med motstander-path; venue satt til 'Roy Emerson Arena, Gstaad'. Dato-satt order-of-play ennå ikke publisert på atptour.com → eksakt kampdag (tir. 14./ons. 15. juli) bekreftes av verify når R1 er spilt.",
+    "ÉN korreksjon (fra grader-funn): Corales Puntacana streaming-felt rettet fra Viaplay til HBO Max/Eurosport Norge — matcher nå eventets egen summary + evidence (WBD overtok vanlige PGA Tour-eventer i Norge 2026; majors/DP World Tour fortsatt Viaplay). NB: norwegian-rights-skillen lister fortsatt PGA Tour → Viaplay [solid]; 2026-endringen bør vurderes tatt inn i skillen av en senere run/verify.",
+    "SCOUT-SVEIP (bekreftet uendret): Golf — The Open + Corales tee-tider ennå ikke publisert (R&A ~14.–15. juli); Hovland ~-4 etter R3 i Scottish Open, spiller finalerunden søn. Tennis — Wimbledon damefinale ferdig (Noskova slo Muchova 6-2, 5-7, 6-3), herrefinale Sinner–Zverev søn. bekreftet. Cycling — TdF etappe 9 (søn.) re-bekreftet nedkortet til 155,5 km pga. varme; GC uendret (Pogačar gult, Vingegaard +2.42, del Toro +3.27). Fotball — Norge–England kvartfinale i gang 21.00Z, resultat pending → SF2-motstander åpen. Esports — BLAST Bounty S2 bracket/kamptider fortsatt TBD (~18.–20. juli). Sjakk — ingen ny Carlsen-turnering før EWC (Global Chess League er sept.); Andorra Open-datoene bekreftet, Tari ubekreftet.",
+    "TRIAGE (alt avvist): coverage-gaps.json (20:07Z) = (1) Premier League entity-gap: NRK-sak «Man City henter 17-åring (Jeremy Monga) fra Leicester» — overgangsstøy, ikke-event; (2) chess file-empty-anomali (low): statisk sjakk-fetcher av-sesong i juli, Sjakk-NM (ai-research) avsluttet i dag + Carlsen/EWC dekkes via ai-research — coverage-first, avvist. coverage-audit.json (06:12Z): eneste high-severity gap (Gstaad/Ruud) er RESOLVED — eventet ligger på tavla. scout-log quiet. RSS (40 items): dominert av Norge–England-VM (tracked), Eliteserien-resultater (ikke fulgt), TdF etappe 8/9 (håndtert) — ingen schedule-/broadcaster-endring for fulgte entiteter.",
+    "FØLGES OPP (dato-styrt): Norge–England-resultat → SF2-motstander; Gstaad order-of-play → Ruuds R16-kampdag; The Open + Corales tee-tider (~14.–15. juli); BLAST pick-show (~18.–20. juli); Ruud Montreal-trekning (~31. juli); Barcelona La Liga-avspark; Andorra Open Tari-påmelding."
   ]
 }
