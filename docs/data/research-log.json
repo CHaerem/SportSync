@@ -1,22 +1,21 @@
 {
-  "runAt": "2026-07-11T14:00:00Z",
+  "runAt": "2026-07-11T17:05:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
   "eventsAmended": 1,
-  "trackedDelta": "Ingen nye/fjernede tracked-entries (brettet var komplett og ferskt fra morgenkjøringen 03:58Z + coverage-audit 06:12Z). Oppdaterte casper-ruud + swiss-open-gstaad-2026 med den nå-slupne Gstaad-trekningen og loggførte konverteringen av Gstaad-eventet til ekte ai-research-form. lastUpdated bumpet til 14:00Z.",
+  "trackedDelta": "0 lagt til / 0 fjernet. Oppdaterte reason på tour-de-france-2026 (etappe 8-resultat + etappe 9 varme-nedkorting), magnus-carlsen + esports-world-cup-2026-chess (EWC-dato-sprik oppklart: «4.–6. aug» var Last Chance Qualifier, ikke hovedturneringen), la-liga-2026-27 + fc-barcelona (offisiell åpningsartikkel 4528913 med VM-forbehold; Joan Gamper-motstander sprik), premier-league + obos-ligaen (RSS-triage-notater). lastUpdated → 2026-07-11T17:05:00Z.",
   "quality": {
     "pass": true,
-    "score": 92,
-    "failures": [
-      "MINOR (adressert etter grading): Gstaad-eventets time var 2026-07-11T04:00Z (arv fra gammel statisk ESPN-stub) mens hovedtrekningen starter man. 13. juli — rettet til 2026-07-13T08:30Z så dashboardet ikke viser turneringen som «i dag» to dager for tidlig.",
-      "MINOR: ingen harde feil; solid lavrisiko-lettkjøring."
-    ]
+    "score": 97,
+    "failures": []
   },
   "notes": [
-    "Lettkjøring ~10t etter morgenkjøringen (03:58Z) og ~7,5t etter coverage-audit (06:12Z). Fan-out med 2 parallelle scout-subagenter (tennis-draw + norsk multi-idrett-sveip) + 1 uavhengig fresh-context grader. Ingen skrevet-tids-faktasjekker denne gangen (ingen NYE kandidat-events — kun berikelse/korreksjon av eksisterende event mot ATP + Wikipedia + swissopengstaad.ch).",
-    "ENESTE ENDRING (eventsAmended: 1) — Gstaad/Ruud, en kjerneretting: EFG Swiss Open Gstaad lå i events.json i STATISK ESPN-form UTEN source: ai-research / evidence / confidence (trolig skrevet slik av 06:30Z-kjøringen som fikset coverage-audit-recall-hullet). Ikke i tennis.json → statisk fetcher lager den ikke. Den overlevde build-events bare tilfeldig via isLiveNow-grenen (flerdagersvinduet dekket «nå»); ved en tidsjustering/vindu-utløp ville den falt ut igjen — nøyaktig recall-hullet coverage-audit fanget i morges. KONVERTERT til ekte ai-research-event (source/confidence:high/evidence[ATP, Wikipedia, swissopengstaad.ch]/researchedAt) → build-events bevarer den nå robust via gren (a), og dashboardet får ⓘ-provenansmodal. Beriket summary med trekningen (sluppet 11. juli 13.00 CEST): Ruud har bekreftet fri i 1. runde (toppseedet i 28-trekning) → starter i 2. runde (R16), første kamp ventet tir. 14./ons. 15. juli. Eksakt R16-motstander/kampdag BEVISST IKKE skrevet som fakta (order-of-play ikke ute per 14.00Z; én enkeltkilde nevnte Stricker/Herbert-vinneren — overlatt til verify).",
-    "SCOUT — multi-idrett-sveip (INGENTING NYTT): Golf: The Open tee-tider/pairings ikke sluppet (R&A ~14.–15. juli); Corales tee-tider heller ikke. Sjakk: ingen ny Carlsen-turnering før EWC (11.–15. aug); Tari ingen bekreftet turnering; EWC-sjakk-datosprik (4.–6. vs 11.–15. aug) fortsatt flagget for verify. Esports: BLAST-bracket/kamptider TBD (~18.–20. juli). Fotball: Barcelona La Liga-åpning 16. aug avspark fortsatt TBA; Lyn-kampene (Strømsgodset 25/7, Sogndal 2/8) uendret mot fotball.no.",
-    "TRIAGE — coverage-gaps (13:12Z): (1) Premier League entity-gap = NRK «Man City henter 17-åring fra Leicester» — overgangsstøy, ikke-event, avvist; (2) chess file-empty (low) = statisk sjakk-fetcher av-sesong, Sjakk-NM (ai-research) avsluttes i dag + Carlsen/EWC via ai-research — coverage-first, avvist. scout-log siste 11:03Z quiet. RSS (40 items): VM-oppkjøring (Norge–England i kveld 21.00Z, dekket), overganger (Nypan→Lommel, Hjulmand→Atlético, Monga→Man City), VM-spiller Jayden Adams død (ikke-event), golf Firestone/Kaulig (ikke-fulgt felt) — ingen schedule-/broadcaster-endring for fulgte entiteter.",
-    "FØLGES OPP (dato-styrt, kjent — ikke gaps): Gstaad order-of-play → Ruuds R16-motstander/kampdag (verify, ~12.–13. juli); The Open + Corales tee-tider (~14.–15. juli); BLAST pick-show/bracket (~18.–20. juli); Spa F1-starttid (nærmere 19. juli); Barcelona La Liga-avspark (~2 uker før 16. aug); Ruud National Bank Open Montreal-trekning (~31. juli); EWC-sjakk eksakte datoer (verify). Norge–England VM-kvartfinale i kveld 21.00Z (TV 2) — kan generere semifinale-oppfølging."
+    "Standard-tier Opus, lør. 17.05Z, ~3t etter forrige run (14.00Z). Brettet var komplett og ferskt (48 events, 0 valideringsfeil); coverage-audit 06:12Z fant kun Gstaad-hullet som allerede var fikset. Fan-out: 2 parallelle scout-subagenter (golf/tennis + esports/sjakk/fotball) + egen web-verifisering av TdF-endringen + 1 uavhengig grader.",
+    "ENESTE ENDRING: TdF etappe 9 (søn. 12. juli, Malemort–Ussel) amendet — kortet ned tre mil (185,5→155,5 km) etter rødt farevarsel for ekstremvarme i Corrèze (NRK, siterer offisiell Tour-side + franske meteorologer, publ. 16:40Z). Tid korrigert til 13.45 CEST (11.45 UTC, «som planlagt» pr. NRK; tavla hadde 13.35), endTime → 15.45Z, summary + NRK-evidence oppdatert. Sammenlagt uendret etter flate etappe 8 (Merlier vant, Wærenskjold nr. 2).",
+    "INGEN NYE EVENTS — bevisste ikke-tillegg (missing > wrong): Joan Gamper Trophy (rapportert 19. aug Camp Nou, men motstander SPRIKER Al Ahly vs Ajax, ikke offisielt klubb-bekreftet, ingen tid/NO-kanal); The Open + Corales tee-tider (ikke publisert, R&A ~14.–15. juli); Gstaad order-of-play/Ruud R16-motstander (ikke ute — atptour.com uten kamper, spill starter man. 13.); BLAST Bounty-bracket (TBD ~18.–20. juli).",
+    "DATO-SPRIK OPPKLART: EWC-sjakkens «4.–6. aug» = Last Chance Qualifier (separat kval., 4 finalister til Paris), hovedturneringen fast 11.–15. aug (Liquipedia + chess.com). Flagget fjernet fra Carlsen/EWC-entryene.",
+    "BARCELONA: fersk offisiell fcbarcelona.com-artikkel (4528913) bekrefter La Liga-åpning mot Athletic Club i runden fra 16. aug MEN med forbehold om at Barças kamp kan skyves en uke ved VM-semi/finale-avansement. Avspark-tid ikke satt → ikke på tavla.",
+    "TRIAGE avvist: coverage-gaps (16:54Z) = PL entity-gap (Man City henter Jeremy Monga (17) fra Leicester — overgangsstøy) + chess file-empty (av-sesong, low). scout-log siste (16:00Z) quiet. RSS (40): Eliteserien tilbake (ikke fulgt — kun Lyn i OBOS), orienterings-VM-bronse, Jayden Adams død (ikke-event), overgangsnytt — ingenting med schedule-/broadcaster-endring for fulgte entiteter utover TdF.",
+    "validate-events.js: Validated 48 events with 0 error(s). 8 enriched."
   ]
 }
