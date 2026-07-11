@@ -1,17 +1,17 @@
 {
-  "checkedAt": "2026-07-10T10:49:41Z",
+  "checkedAt": "2026-07-11T11:25:00Z",
   "widths": [375, 393, 900],
   "verdict": "pass",
   "findings": [],
   "notes": [
-    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, including longer rows ('Diamond League Monaco (Herculis EBS)', 'Tour de France 2026' subtitle).",
-    "Match/fixture names read in full and unambiguous: Spain – Belgium, Norway – England, Argentina – Switzerland — no truncation hiding either side of a fixture.",
-    "Norwegian-channel contract holds: only NRK, NRK 1, TV 2, TV 2 Play, Viaplay, Max +1, Direktesport +1 appear as 'where to watch' — no foreign broadcaster (ESPN/FOX/Sky) at any width.",
-    "Round labels (Kvartfinale, Semifinale, Damefinale, Herrefinale) show correctly next to knockout/final fixtures at all widths.",
-    "National flag emoji (Spain, Belgium, Norway, England, Argentina, Switzerland) render as real flags, not broken-image boxes.",
-    "Must-see accent (left border + tinted background) applied to a meaningful subset tied to followed favorites/importance (Sjakk-NM, Genesis Scottish Open, ISCO Championship, Diamond League Monaco, Norway–England, EFG Swiss Open Gstaad, VM-semifinaler, The Open) rather than every row.",
+    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, including longer rows ('Sjakk-NM 2026 – eliteklassen' wraps to 3 lines but stays fully readable).",
+    "Fixture names read in full, neither side hidden: Norway – England, Argentina – Switzerland — no truncation.",
+    "Norwegian-channel contract holds: only Direktesport +1, Viaplay, TV 2 Play, Max +1, TV 2, NRK, HBO Max appear as 'where to watch' — no ESPN/FOX/Sky at any width.",
+    "Round labels (Kvartfinale, Semifinale, Damefinale, Herrefinale) show correctly next to knockout fixtures at all widths.",
+    "National flag emoji (Norway, Argentina, Switzerland, England) render as real flags, not broken-image boxes.",
+    "Must-see accent (left border + tinted wash) is selective, not universal: 5 of 7 events in 'I dag' are accented (Sjakk-NM, three golf majors with tracked Norwegian golfers, Norway–England) while Tour de France 2026 and Wimbledon Damefinale stay unaccented — ties to tracked favorites/importance rather than blanket-applied.",
     "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'Rediger' links, and footer (Oppdatert / Abonner i kalender / AI-budsjett) intact and aligned at every width.",
-    "Could not assess clearly: the tennis icon (Casper Ruud, Wimbledon rows) reads closer to a magnifying-glass glyph than an obvious tennis pictograph at all widths — not clipped or broken, just visually ambiguous which sport it signals at a glance.",
-    "No event showed the honest empty '–' channel placeholder in this data snapshot, so that path could not be exercised."
+    "Could not assess clearly: the icon on Casper Ruud / Wimbledon rows still reads as a magnifying glass rather than an obvious tennis pictograph at all three widths — same ambiguity noted in the prior review, not clipped or broken.",
+    "No event showed the honest empty '–' channel placeholder in this snapshot, so that path could not be exercised."
   ]
 }
