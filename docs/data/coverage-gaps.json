@@ -1,27 +1,15 @@
 {
-  "generatedAt": "2026-07-11T07:10:30.206Z",
-  "gapCount": 1,
+  "generatedAt": "2026-07-11T09:25:58.502Z",
+  "gapCount": 0,
   "anomalyCount": 1,
-  "gaps": [
-    {
-      "kind": "entity",
-      "entity": "Uno-X",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Wærenskjold på pallen etter massespurt – Hushovd «klikka»",
-      "link": "https://www.nrk.no/sport/waerenskjold-pa-pallen-etter-massespurt-_-hushovd-_klikka_-1.17954574",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-11T07:10:29.925Z"
-    }
-  ],
+  "gaps": [],
   "anomalies": [
     {
       "sport": "chess",
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-11T07:10:30.206Z"
+      "detectedAt": "2026-07-11T09:25:58.501Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
