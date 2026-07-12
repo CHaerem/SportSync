@@ -1,38 +1,10 @@
 {
-  "lastUpdated": "2026-07-11T21:45:25.457Z",
+  "lastUpdated": "2026-07-12T07:27:10.030Z",
   "source": "ESPN API + fotball.no",
   "tournaments": [
     {
       "name": "FIFA World Cup",
       "events": [
-        {
-          "id": "football-switzerland-at-argentina-1783818000000",
-          "title": "Switzerland at Argentina",
-          "time": "2026-07-12T01:00:00.000Z",
-          "venue": "GEHA Field at Arrowhead Stadium",
-          "sport": "football",
-          "meta": "FIFA World Cup",
-          "tournament": "FIFA World Cup",
-          "streaming": [
-            {
-              "platform": "FOX",
-              "url": "",
-              "type": "tv"
-            }
-          ],
-          "norwegian": false,
-          "homeTeam": "Argentina",
-          "awayTeam": "Switzerland",
-          "participants": [],
-          "norwegianPlayers": null,
-          "totalPlayers": null,
-          "isFavorite": false,
-          "round": "Kvartfinale",
-          "additional": {
-            "status": "STATUS_SCHEDULED",
-            "round": "Kvartfinale"
-          }
-        },
         {
           "id": "football-spain-at-france-1784055600000",
           "title": "Spain at France",
@@ -62,8 +34,8 @@
           }
         },
         {
-          "id": "football-quarterfinal-4-winner-at-quarterfinal-3-winner-1784142000000",
-          "title": "Quarterfinal 4 Winner at Quarterfinal 3 Winner",
+          "id": "football-argentina-at-england-1784142000000",
+          "title": "Argentina at England",
           "time": "2026-07-15T19:00:00.000Z",
           "venue": "Mercedes-Benz Stadium",
           "sport": "football",
@@ -77,8 +49,8 @@
             }
           ],
           "norwegian": false,
-          "homeTeam": "Quarterfinal 3 Winner",
-          "awayTeam": "Quarterfinal 4 Winner",
+          "homeTeam": "England",
+          "awayTeam": "Argentina",
           "participants": [],
           "norwegianPlayers": null,
           "totalPlayers": null,
@@ -87,6 +59,32 @@
           "additional": {
             "status": "STATUS_SCHEDULED",
             "round": "Semifinale"
+          }
+        },
+        {
+          "id": "football-semifinal-2-loser-at-semifinal-1-loser-1784408400000",
+          "title": "Semifinal 2 Loser at Semifinal 1 Loser",
+          "time": "2026-07-18T21:00:00.000Z",
+          "venue": "Hard Rock Stadium",
+          "sport": "football",
+          "meta": "FIFA World Cup",
+          "tournament": "FIFA World Cup",
+          "streaming": [
+            {
+              "platform": "FOX",
+              "url": "",
+              "type": "tv"
+            }
+          ],
+          "norwegian": false,
+          "homeTeam": "Semifinal 1 Loser",
+          "awayTeam": "Semifinal 2 Loser",
+          "participants": [],
+          "norwegianPlayers": null,
+          "totalPlayers": null,
+          "isFavorite": false,
+          "additional": {
+            "status": "STATUS_SCHEDULED"
           }
         }
       ]
