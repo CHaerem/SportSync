@@ -1,16 +1,15 @@
 {
-  "runAt": "2026-07-11T09:30:00.000Z",
-  "checked": 8,
-  "confirmed": 5,
+  "runAt": "2026-07-12T09:30:00.000Z",
+  "checked": 5,
+  "confirmed": 2,
   "amended": 1,
   "removed": 2,
   "notes": [
-    "Confirmed TdF 2026 stages 8 (Périgueux–Bergerac, flat, 11 Jul), 9 (Malemort–Ussel, hilly, 12 Jul) and 14 (Mulhouse–Le Markstein/Fellering, mountain, 18 Jul) vs Wikipedia — route/date/type all match, plus GC leader Pogačar (+2:42 Vingegaard) and Træen's withdrawal after the stage-6 crash. Stages 8/9 had official route times; stage 14 start time is still estimated so confidence left at medium.",
-    "AMENDED golf Corales Puntacana Championship (16–19 Jul): streaming corrected Viaplay → HBO Max / Eurosport Norge. WBD took over ordinary PGA Tour events in Norway from 2026 (majors + DP World Tour stay Viaplay). Confirmed on hbomax.com/no/no/sports/pga-tour, which lists all four rounds. The event summary already described this; the streaming field was the stale part.",
-    "Confirmed London Athletics Meet (Diamond League), Sat 18 Jul: men's 400m hurdles 14:03 BST = 13:03 UTC on the British Athletics timetable — matches the Warholm event time/endTime. On NRK (Diamond League rights to 2029).",
-    "REMOVED 2 duplicate ESPN semifinal placeholders re-added by the static pipeline: 'Spain at France' (14 Jul 19:00 UTC, AT&T Stadium) and 'Quarterfinal 4 Winner at Quarterfinal 3 Winner' (15 Jul 19:00 UTC, Mercedes-Benz Stadium), both tentative 'NRK / TV 2'. Each duplicates an ai-research VM-semifinale (same time/venue). WC semifinals confirmed on TV 2 (VG/NRK/TV 2 guides). Same recurring build-events dedup gap noted 09+10 Jul — differing titles evade the sport|title|time dedup, so they keep returning; needs a build-events fix, not weekly manual removal.",
-    "Confirmed VM-bronsefinale (18 Jul) on NRK (VG guide + NTB press release: NRK carries bronze final + final; TV 2 carries the two semifinals).",
-    "Did NOT re-verify events confirmed in the last 24–72h and unchanged: Sjakk-NM (ends 11 Jul), Wimbledon finals (11–12 Jul), the England–Norway QF (11 Jul, TV 2) and Argentina–Switzerland QF (12 Jul, NRK), VM-semifinale 1 & 2 (both TV 2), The 154th Open (16–19 Jul, Viaplay major), and TdF stages 10–13.",
-    "SKILL NOT PERSISTED: the golf rights move (regular PGA Tour → HBO Max/Eurosport) should update the norwegian-rights skill Golf section, but .claude/skills/ writes were permission-gated this run. Recorded in the calibration ledger instead; the skill still lists Viaplay for all golf and should be corrected next run."
+    "WC 2026 broadcast split confirmed via NTB press release: both semifinals (Spain-France 14 Jul, Argentina-England 15 Jul, 21:00 norsk tid) on TV 2 / TV 2 Play; bronze final (18 Jul, 23:00) and final (19 Jul, 21:00) on NRK1 / NRK TV.",
+    "AMENDED 'Argentina at England' (VM-semifinale 2, 15 Jul): resolved tentative 'NRK / TV 2' chip -> TV 2. This event has no ai-research counterpart, so kept + channel-resolved rather than removed.",
+    "CONFIRMED VM-finalen 2026 (19 Jul) on NRK1 / NRK TV, 21:00 norsk tid; added verification metadata (was previously unverified).",
+    "CONFIRMED EFG Swiss Open Gstaad (Ruud, 13-19 Jul): draw made 11 Jul, Ruud No. 2 seed with R1 bye, faces winner of Jaime Faria vs Stan Wawrinka (Wawrinka's final Gstaad) in R2. TV 2 Play streaming retained (ATP rights in Norway through 2026, per rights map).",
+    "REMOVED 2 duplicate ESPN semifinal/bronze placeholders re-added by the static pipeline: 'Spain at France' (14 Jul 19:00, AT&T Stadium) duplicates ai-research 'VM-semifinale 1' (TV 2), and 'Semifinal 2 Loser at Semifinal 1 Loser' (18 Jul 21:00, Hard Rock Stadium) duplicates ai-research 'VM-bronsefinale' (NRK). Same recurring build-events dedup gap flagged 09/10/11 Jul — differing titles evade the sport|title|time dedup key, so the ESPN placeholders keep returning each build. Needs a build-events fix (e.g. dedup by sport|time|venue for World Cup knockouts), not daily manual removal.",
+    "Did NOT re-verify events confirmed in the last 24-72h and unchanged: TdF stages 9-15 (route-confirmed vs ASO/Wikipedia), Wimbledon finals (11-12 Jul), The 154th Open (16-19 Jul), London Athletics Meet (18 Jul, Warholm), Corales Puntacana (16-19 Jul), VM-semifinale 1 (TV 2) and VM-bronsefinale (NRK)."
   ]
 }
