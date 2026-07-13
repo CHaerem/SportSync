@@ -1,10 +1,22 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 
 const dataDir = rootDataPath();
+
+// Stable event ID: first 12 hex chars of a sha256 hash of the same dedupe key
+// used throughout this file (`${sport}|${title}|${time}`, see the preservation
+// pass below). Known limitation, accepted by design: if the verify agent later
+// amends an event's title or time, the NEXT build computes a DIFFERENT id for
+// it — a client/notification diff then sees remove+add rather than an
+// in-place update. That's fine; it's still far more stable than the old
+// client-side `array-index` synthesis, which changed on every reorder.
+function computeEventId(sport, title, time) {
+	return crypto.createHash("sha256").update(`${sport}|${title}|${time}`).digest("hex").slice(0, 12);
+}
 
 // Auto-discover sport files by convention: any JSON with a { tournaments: [...] } structure
 const dataFiles = fs.readdirSync(dataDir).filter((f) => f.endsWith(".json"));
@@ -41,6 +53,12 @@ function pushEvent(ev, sport, tournament) {
 		isFavorite: ev.isFavorite || false,
 		round: ev.round || null,
 	};
+	// See computeEventId() above for the stability contract. This covers events
+	// built fresh in this pass; the final normalization loop before write (see
+	// "kept" below) recomputes it for every output event regardless of path, so
+	// preserved ai-research / kept-on-board events (pushed directly from a
+	// previous events.json, which may predate this field) get one too.
+	event.id = computeEventId(event.sport, event.title, event.time);
 	if (ev.format) event.format = ev.format;
 	if (ev.stage) event.stage = ev.stage;
 	if (ev.result) event.result = ev.result;
@@ -420,6 +438,13 @@ let mustWatchCount = 0;
 for (const e of kept) {
 	e.mustWatch = mustWatchEntity(e, interests) != null;
 	if (e.mustWatch) mustWatchCount++;
+	// Recompute the stable id from the event's CURRENT sport|title|time so every
+	// output path emits one — including preserved ai-research / kept-on-board
+	// events pushed directly from a previous events.json (which may predate
+	// this field, or carry a stale id if an upstream agent amended title/time
+	// without recomputing it). Idempotent for unchanged events: same inputs,
+	// same hash, same id across consecutive builds.
+	e.id = computeEventId(e.sport, e.title, e.time);
 }
 fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(kept, null, 2));
 console.log(
