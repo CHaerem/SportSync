@@ -47,7 +47,7 @@ mennesket, aldri av en agent.
 | WP-15 | NotificationPlanner | 0B | WP-13 | todo |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | todo |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
-| WP-26 | Nytt navn (engelsk/generisk) | 0C | – | shortlist levert — venter valg |
+| WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | todo |
 | WP-28 | Repo-splitt (privat motor / public site) | 0C | WP-27 | todo |
 | WP-29 | Self-hosted runner (kun privat repo) | 0C | WP-28 | todo |
@@ -196,12 +196,12 @@ mens alt er stabilt, og repostrukturen kan endres usynlig bak domenet etterpå.
   Tekst-TV-identiteten visuelt. Internasjonal ekspansjon er premiss.
 - **Prosess:** navneøkt → shortlist → domene-/varemerke-/App Store-sjekk per kandidat.
 - **Beslutning:** menneske. Agent kan generere/sjekke kandidater.
-- **Status (13.07.2026):** ~340 domener sjekket over hele jakten; full logg i
-  privat artifact (holdes utenfor offentlig repo — sniping-risiko). **Beslutning:
-  primærkandidat valgt; eier sikrer domenesuiten** (betinget formell
-  varemerkesjekk i klasse 9/41/42 — én registrert US-søknad i naboklasse skal
-  vurderes eksplisitt). Parallelt prises 3–4 ettermarked-alternativer; endelig
-  navnelås før WP-27-cutover.
+- **Status (13.07.2026): ✅ NAVN VALGT — primærdomene sikret** (kjøpt av eier).
+  Full logg i privat artifact (holdes utenfor offentlig repo). Gjenstår før
+  navnet brukes offentlig: (1) formell varemerkesjekk EUIPO/USPTO kl. 9/41/42
+  + eksplisitt vurdering av én US-søknad i naboklasse, (2) defensive domener
+  (.no/.tv) kjøpes FØR offentliggjøring, (3) navnet holdes utenfor dette repoet
+  til flyttedagen (WP-27/28).
   - Biprodukt av jakten: to nære konkurrenter avdekket (Fixtured, Fixture
     Calendar) — ført inn i dossier P200.
 
