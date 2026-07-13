@@ -57,7 +57,13 @@ class Dashboard {
 			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('interests.json'), load('meta.json'), load('usage-state.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
-		this.allEvents.forEach((e, i) => { e.id = `${e.sport}|${e.title}|${e.time}|${i}`; });
+		// Prefer the server's stable id (build-events.js, WP-02) — a hash of
+		// sport|title|time that survives re-renders/reorders. Fall back to the
+		// old array-index synthesis only for a payload from before this field
+		// existed (backward-compatible until the next rebuild republishes
+		// events.json with ids). The live-score overlay (this.liveScores) keys
+		// on this same e.id, so either source stays internally consistent.
+		this.allEvents.forEach((e, i) => { if (!e.id) e.id = `${e.sport}|${e.title}|${e.time}|${i}`; });
 		this.featured = featured;
 		this.standings = standings;
 		this.recentResults = results;

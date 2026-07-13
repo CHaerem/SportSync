@@ -345,3 +345,48 @@ describe("must-see selection follows the goal's priorities", () => {
 		expect(dash.isMustSee({ importance: 2 })).toBe(false);
 	});
 });
+
+// WP-02: loadData() must prefer the server's stable id (build-events.js hash)
+// and only fall back to the old index-based synthesis for a payload from
+// before that field existed. Uses its own sandbox so the stubbed fetch/response
+// doesn't interfere with the shared `dash` instance used above.
+describe("loadData: stable id from the server, index fallback for old payloads", () => {
+	function sandboxWithEvents(events) {
+		const sandbox = createClientSandbox();
+		loadClientScript(sandbox, "shared-constants.js");
+		loadClientScript(sandbox, "sport-config.js");
+		loadClientScript(sandbox, "asset-maps.js");
+		loadClientScript(sandbox, "dashboard.js");
+		sandbox.fetch = (url) => {
+			const name = String(url).split("data/")[1]?.split("?")[0];
+			if (name === "events.json") return Promise.resolve({ ok: true, json: () => Promise.resolve(events) });
+			return Promise.resolve({ ok: false });
+		};
+		return sandbox.window.dashboard;
+	}
+
+	it("uses e.id from data when the server already sent one", async () => {
+		const d = sandboxWithEvents([{ id: "abc123def456", sport: "football", title: "X", time: soon() }]);
+		await d.loadData();
+		expect(d.allEvents[0].id).toBe("abc123def456");
+	});
+
+	it("falls back to the index-based synthesis when a payload has no id (pre-WP-02)", async () => {
+		const time = soon();
+		const d = sandboxWithEvents([{ sport: "football", title: "Y", time }]);
+		await d.loadData();
+		expect(d.allEvents[0].id).toBe(`football|Y|${time}|0`);
+	});
+
+	it("keeps the live-score overlay keyed on the same id loadData assigned", async () => {
+		// The live poller (pollFootballScores etc.) writes this.liveScores[matched.id]
+		// using the SAME e.id set here — so whichever id source loadData picked
+		// (server-sent or synthesized fallback), lookups by e.id must line up.
+		const d = sandboxWithEvents([{ id: "liveid1", sport: "football", title: "Live match", time: soon() }]);
+		await d.loadData();
+		const id = d.allEvents[0].id;
+		d.liveScores[id] = { home: 1, away: 0, state: "in" };
+		const html = d.eventRow(d.allEvents[0]);
+		expect(html).toContain("1–0"); // eventRow reads this.liveScores[e.id] and rendered the live score
+	});
+});
