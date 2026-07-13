@@ -78,7 +78,11 @@ fixture, leave it — never invent one to fill the blank. So a per-entity row ac
 resolves, **name the relevant people/teams on the event**: put athletes in
 `norwegianPlayers` (or `participants`) and set `homeTeam`/`awayTeam` for matches —
 e.g. list Håvard Nygaard on a 100 Thieves match so his row resolves too, not just
-the club's.
+the club's. **Canonical form only (WP-04):** every `norwegianPlayers`/`participants`
+entry is an object with at least `"name"` — `{ "name": "Håvard Nygaard" }` — never a
+bare string, never `null`. `norwegianPlayers` may also carry optional golf tee-time/
+status fields (`teeTime`, `teeTimeUTC`, `status`); leave the field out entirely (or
+`[]`) rather than writing a string or null when there's no one to name.
 
 Use the **web-search** and **web-fetch** capabilities provided by your runtime. Source priority:
 - Norwegian: nrk.no/sport, tv2.no/sport, vg.no/sport, dagbladet.no/sport

@@ -621,7 +621,7 @@ class Dashboard {
 	whyShown(e) {
 		const at = this.interests?.alwaysTrack || {};
 		const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
-			...(e.norwegianPlayers || []).map((p) => p.name || p), ...(e.participants || [])].filter(Boolean).join(' ');
+			...(e.norwegianPlayers || []).map((p) => p.name || p), ...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
 		// Sport-scoped so e.g. FC Barcelona doesn't match a Tour stage in the city Barcelona.
 		const firstHit = (entries) => {
 			for (const x of entries || []) {
@@ -861,7 +861,7 @@ class Dashboard {
 			if (!(end >= floor)) continue; // already over
 			const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
 				...(e.norwegianPlayers || []).map((p) => p.name || p),
-				...(e.participants || [])].filter(Boolean).join(' ');
+				...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
 			if (!terms.some((t) => ssContainsTerm(hay, t))) continue;
 			if (start < bestStart) { best = e; bestStart = start; }
 		}

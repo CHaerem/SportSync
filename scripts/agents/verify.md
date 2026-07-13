@@ -11,6 +11,13 @@ against authoritative sources. Update each event with:
 - `verificationStatus`: `"confirmed"` | `"amended"` | `"removed"`
 - Amend `time`, `venue`, `streaming` in place if sources contradict the original
 
+**Canonical participation form (WP-04).** If you add or correct `norwegianPlayers`
+or `participants` (e.g. naming a player you found while verifying), every entry
+must be an object with at least `"name"` — `{ "name": "Casper Ruud" }` — never a
+bare string, never `null`. `norwegianPlayers` may also carry golf's optional
+`teeTime`/`teeTimeUTC`/`status`. Leave the field as `[]` rather than writing a
+string/null when there's no one to name.
+
 **Verify streaming, not just time.** "Hvor kan jeg se det" must be right: check
 the `streaming` field against the `norwegian-rights` skill
 (`.claude/skills/norwegian-rights/SKILL.md`) and `docs/data/tv-listings.json`

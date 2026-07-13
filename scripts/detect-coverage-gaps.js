@@ -89,8 +89,8 @@ function eventMentionsName(event, name) {
 		event.tournament,
 		event.homeTeam,
 		event.awayTeam,
-		...(event.norwegianPlayers || []).map((p) => p.name || p),
-		...(event.participants || []),
+		...(event.norwegianPlayers || []).map((p) => p?.name || p),
+		...(event.participants || []).map((p) => p?.name || p),
 	].join(" ");
 	return containsName(haystack, name);
 }

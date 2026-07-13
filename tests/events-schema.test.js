@@ -91,16 +91,43 @@ describe("events.schema.json — the validator actually catches violations (so t
 		expect(validate(event).length).toBeGreaterThan(0);
 	});
 
-	it("tolerates today's norwegianPlayers polymorphism (string | {name} | {name, teeTime, teeTimeUTC, status} | null) — tightening this is WP-04", () => {
+	it("WP-04: rejects the old norwegianPlayers polymorphism (bare strings/null are no longer valid)", () => {
 		const event = {
 			...base(),
 			norwegianPlayers: ["Casper Ruud", { name: "Viktor Hovland" }, { name: "Kris Ventura", teeTime: "14:20", teeTimeUTC: null, status: null }, null],
+		};
+		const errors = validate(event);
+		expect(errors.length).toBeGreaterThan(0);
+		// The one canonical-object entry must still validate fine on its own —
+		// only the string/null entries should be flagged.
+		expect(validate({ ...base(), norwegianPlayers: [{ name: "Viktor Hovland" }] })).toEqual([]);
+	});
+
+	it("WP-04: accepts only the canonical object form for norwegianPlayers", () => {
+		const event = {
+			...base(),
+			norwegianPlayers: [{ name: "Kris Ventura", teeTime: "14:20", teeTimeUTC: null, status: null }],
 		};
 		expect(validate(event)).toEqual([]);
 	});
 
 	it("catches a malformed norwegianPlayers entry (object missing name)", () => {
 		const event = { ...base(), norwegianPlayers: [{ teeTime: "14:20" }] };
+		expect(validate(event).length).toBeGreaterThan(0);
+	});
+
+	it("WP-04: rejects a bare-string participants entry (canonical form is {name})", () => {
+		const event = { ...base(), participants: ["Casper Ruud"] };
+		expect(validate(event).length).toBeGreaterThan(0);
+	});
+
+	it("WP-04: accepts the canonical {name} form for participants", () => {
+		const event = { ...base(), participants: [{ name: "Casper Ruud" }] };
+		expect(validate(event)).toEqual([]);
+	});
+
+	it("catches a malformed participants entry (object missing name)", () => {
+		const event = { ...base(), participants: [{ foo: "bar" }] };
 		expect(validate(event).length).toBeGreaterThan(0);
 	});
 });

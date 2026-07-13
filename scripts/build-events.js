@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
 
@@ -43,8 +43,13 @@ function pushEvent(ev, sport, tournament) {
 		meta: ev.meta,
 		norwegian: ev.norwegian || false,
 		streaming: ev.streaming || [],
-		participants: ev.participants || [],
-		norwegianPlayers: ev.norwegianPlayers || [],
+		// WP-04: canonical form — [{name}] / [{name, teeTime?, teeTimeUTC?,
+		// status?}], never bare strings and never null. Fetchers are cleaned up at
+		// the source too (scripts/lib/event-normalizer.js), but this is the
+		// guarantee: every event built fresh in THIS pass goes through here
+		// regardless of which fetcher/curated-config produced it.
+		participants: normalizeParticipants(ev.participants),
+		norwegianPlayers: normalizeNorwegianPlayers(ev.norwegianPlayers),
 		totalPlayers: ev.totalPlayers || null,
 		link: ev.link || null,
 		status: ev.status || null,
@@ -416,8 +421,8 @@ function isRelevant(e) {
 	if (followBroadly.has((e.sport || "").toLowerCase())) return true;
 	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4 || e.source === "ai-research") return true;
 	const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
-		...(e.norwegianPlayers || []).map((p) => p.name || p),
-		...(e.participants || [])].join(" ");
+		...(e.norwegianPlayers || []).map((p) => p?.name || p),
+		...(e.participants || []).map((p) => p?.name || p)].join(" ");
 	return matchInterest(hay, trackedEntities) != null;
 }
 
@@ -437,6 +442,14 @@ kept.sort((a, b) => new Date(a.time) - new Date(b.time));
 // mark rows; build-ics reads it to decide VALARM + the must-watch feed.
 let mustWatchCount = 0;
 for (const e of kept) {
+	// WP-04: recompute canonical participation form for every output event —
+	// same rationale as the id recompute below. Preserved ai-research /
+	// kept-on-board events are pushed straight from a previous events.json
+	// (bypassing pushEvent() entirely — see the preservation pass above), so
+	// they may still carry a pre-WP-04 shape: a bare string, a lone null, or
+	// the field missing. Idempotent for already-canonical events.
+	e.participants = normalizeParticipants(e.participants);
+	e.norwegianPlayers = normalizeNorwegianPlayers(e.norwegianPlayers);
 	e.mustWatch = mustWatchEntity(e, interests) != null;
 	if (e.mustWatch) mustWatchCount++;
 	// Recompute the stable id from the event's CURRENT sport|title|time so every

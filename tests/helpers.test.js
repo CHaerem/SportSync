@@ -4,7 +4,8 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { isEventInWindow, retainLastGood, hasEvents, normalizeToUTC, MS_PER_DAY,
-	normalizeText, containsName, normalizeEntity, matchInterest } from "../scripts/lib/helpers.js";
+	normalizeText, containsName, normalizeEntity, matchInterest, mustWatchEntity,
+	normalizeParticipants, normalizeNorwegianPlayers } from "../scripts/lib/helpers.js";
 
 describe("isEventInWindow", () => {
 	const day = (n) => new Date(Date.parse("2026-07-02T00:00:00Z") + n * MS_PER_DAY);
@@ -94,5 +95,53 @@ describe("interest entity matching", () => {
 describe("normalizeToUTC", () => {
 	it("normalizes parseable dates to ISO", () => {
 		expect(normalizeToUTC("2026-07-02T12:00:00+02:00")).toBe("2026-07-02T10:00:00.000Z");
+	});
+});
+
+// WP-04: canonical participation form — [{name, ...}], never strings/null.
+describe("normalizeParticipants", () => {
+	it("coerces bare strings into {name} objects", () => {
+		expect(normalizeParticipants(["Casper Ruud", "Viktor Hovland"]))
+			.toEqual([{ name: "Casper Ruud" }, { name: "Viktor Hovland" }]);
+	});
+
+	it("drops null/empty entries and passes through already-canonical objects", () => {
+		expect(normalizeParticipants([null, { name: "Magnus Carlsen" }, ""])).toEqual([{ name: "Magnus Carlsen" }]);
+	});
+
+	it("returns [] for null, undefined, or a non-array", () => {
+		expect(normalizeParticipants(null)).toEqual([]);
+		expect(normalizeParticipants(undefined)).toEqual([]);
+		expect(normalizeParticipants("not an array")).toEqual([]);
+	});
+});
+
+describe("normalizeNorwegianPlayers", () => {
+	it("coerces bare strings into {name} objects", () => {
+		expect(normalizeNorwegianPlayers(["Viktor Hovland"])).toEqual([{ name: "Viktor Hovland" }]);
+	});
+
+	it("drops a lone null entry (the pre-WP-04 shape) and returns [] for a null field", () => {
+		expect(normalizeNorwegianPlayers(null)).toEqual([]);
+		expect(normalizeNorwegianPlayers([null])).toEqual([]);
+	});
+
+	it("preserves golf's optional teeTime/teeTimeUTC/status fields on object entries", () => {
+		const players = [{ name: "Kristoffer Ventura", teeTime: "14:20", teeTimeUTC: "12:20Z", status: "Confirmed" }];
+		expect(normalizeNorwegianPlayers(players)).toEqual(players);
+	});
+});
+
+describe("mustWatchEntity with canonical + legacy participation shapes", () => {
+	const interests = { alwaysTrack: { athletes: ["Casper Ruud"] } };
+
+	it("matches a tracked athlete found only in participants (canonical {name} form)", () => {
+		const event = { sport: "tennis", title: "R32", participants: [{ name: "Casper Ruud" }, { name: "Someone Else" }] };
+		expect(mustWatchEntity(event, interests)?.name).toBe("Casper Ruud");
+	});
+
+	it("still matches the pre-WP-04 bare-string shape (defensive, one release of tolerance)", () => {
+		const event = { sport: "tennis", title: "R32", participants: ["Casper Ruud", "Someone Else"] };
+		expect(mustWatchEntity(event, interests)?.name).toBe("Casper Ruud");
 	});
 });

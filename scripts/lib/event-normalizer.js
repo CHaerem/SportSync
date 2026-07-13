@@ -1,4 +1,4 @@
-import { normalizeToUTC } from "./helpers.js";
+import { normalizeToUTC, normalizeParticipants, normalizeNorwegianPlayers } from "./helpers.js";
 
 export class EventNormalizer {
 	static normalize(event, sport) {
@@ -24,8 +24,13 @@ export class EventNormalizer {
 				norwegian: Boolean(event.norwegian),
 				homeTeam: this.sanitizeString(event.homeTeam),
 				awayTeam: this.sanitizeString(event.awayTeam),
-				participants: this.normalizeParticipants(event.participants),
-				norwegianPlayers: event.norwegianPlayers || null,
+				// WP-04: canonical form — [{name}] / [{name, teeTime?, teeTimeUTC?,
+				// status?}], never bare strings and never null (empty array instead).
+				// The chess curated/Lichess paths in particular only ever set
+				// `participants` as an array of plain name strings; they used to come
+				// out here as `norwegianPlayers: null` + un-objectified participants.
+				participants: normalizeParticipants(event.participants),
+				norwegianPlayers: normalizeNorwegianPlayers(event.norwegianPlayers),
 				totalPlayers: event.totalPlayers || null,
 				isFavorite: Boolean(event.isFavorite),
 				round: event.round ? this.sanitizeString(event.round) : undefined,
@@ -63,16 +68,6 @@ export class EventNormalizer {
 				type: this.sanitizeString(stream.type || "unknown")
 			};
 		}).filter(s => s.platform);
-	}
-
-	static normalizeParticipants(participants) {
-		if (!participants) return [];
-		if (!Array.isArray(participants)) return [];
-		
-		return participants
-			.map(p => this.sanitizeString(p))
-			.filter(p => p.length > 0)
-			.slice(0, 50);
 	}
 
 	static extractAdditional(event) {

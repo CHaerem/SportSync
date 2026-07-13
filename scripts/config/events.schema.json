@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"title": "Zenji – event",
-	"description": "Skjemaet for ETT event-objekt i docs/data/events.json (som selv er et flatt array av slike objekter — hvert element valideres mot dette skjemaet). Feltunionen er hentet fra pushEvent() (scripts/build-events.js) + de betingede AI-research-feltene i scripts/validate-events.js. Validert med den hjemmelagde scripts/lib/validate-schema.js, som kun støtter: type, required, properties, additionalProperties, items, enum, minimum, anyOf, lokal $ref — ingen maximum/minItems/format-nøkkelord, derfor brukes enum der en øvre grense trengs (f.eks. importance). norwegianPlayers er bevisst polymorf i dag (streng | {name} | {name, teeTime, teeTimeUTC, status} | null) — innstramming til én kanonisk form er WP-04, ikke dette skjemaet.",
+	"description": "Skjemaet for ETT event-objekt i docs/data/events.json (som selv er et flatt array av slike objekter — hvert element valideres mot dette skjemaet). Feltunionen er hentet fra pushEvent() (scripts/build-events.js) + de betingede AI-research-feltene i scripts/validate-events.js. Validert med den hjemmelagde scripts/lib/validate-schema.js, som kun støtter: type, required, properties, additionalProperties, items, enum, minimum, anyOf, lokal $ref — ingen maximum/minItems/format-nøkkelord, derfor brukes enum der en øvre grense trengs (f.eks. importance). WP-04: norwegianPlayers/participants har ÉN kanonisk form — objekter med minst \"name\" — aldri strenger, aldri null; håndhevet her og normalisert i pushEvent()/build-events.js sin avsluttende pass og i scripts/lib/event-normalizer.js.",
 	"type": "object",
 	"required": ["time", "title", "sport"],
 	"additionalProperties": false,
@@ -49,12 +49,12 @@
 		},
 		"participants": {
 			"type": "array",
-			"description": "Deltakernavn (individuelle idretter/turneringer).",
-			"items": { "type": "string" }
+			"description": "Deltakere (individuelle idretter/turneringer). Kanonisk form (WP-04): objekt med \"name\" — aldri en ren streng.",
+			"items": { "type": "object", "required": ["name"], "properties": { "name": { "type": "string" } } }
 		},
 		"norwegianPlayers": {
 			"type": "array",
-			"description": "Norske utøvere involvert i eventet. Se definitions/norwegianPlayer for dagens polymorfi.",
+			"description": "Norske utøvere involvert i eventet. Kanonisk form (WP-04): se definitions/norwegianPlayer — aldri en ren streng eller null.",
 			"items": { "$ref": "#/definitions/norwegianPlayer" }
 		},
 		"totalPlayers": {
@@ -169,21 +169,15 @@
 			}
 		},
 		"norwegianPlayer": {
-			"description": "Bevisst polymorf (WP-04 er innstrammingen til én kanonisk form, ikke dette skjemaet): en ren streng, null, eller et objekt med minst \"name\" og valgfrie tee-time/status-felter (golf).",
-			"anyOf": [
-				{ "type": "string" },
-				{ "enum": [null] },
-				{
-					"type": "object",
-					"required": ["name"],
-					"properties": {
-						"name": { "type": "string" },
-						"teeTime": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
-						"teeTimeUTC": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
-						"status": { "anyOf": [{ "type": "string" }, { "enum": [null] }] }
-					}
-				}
-			]
+			"description": "Kanonisk form (WP-04 strammet inn den tidligere polymorfien streng | {name} | {name, teeTime, teeTimeUTC, status} | null til bare objekt-formen): et objekt med minst \"name\" og valgfrie tee-time/status-felter (golf). Aldri en ren streng eller null.",
+			"type": "object",
+			"required": ["name"],
+			"properties": {
+				"name": { "type": "string" },
+				"teeTime": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+				"teeTimeUTC": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+				"status": { "anyOf": [{ "type": "string" }, { "enum": [null] }] }
+			}
 		},
 		"featuredGroup": {
 			"description": "Golf: en fremhevet gruppe rundt en norsk spiller.",

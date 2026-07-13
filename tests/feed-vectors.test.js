@@ -46,11 +46,13 @@ function loadVectors() {
 const VECTORS = loadVectors();
 
 // --- Server reference: relevance (feed inclusion) ----------------------------
-// Mirrors scripts/build-events.js:405-432 verbatim:
-//   • the default followBroadly list (build-events.js:406)
-//   • isRelevant() (build-events.js:414-421) — NOTE: matchInterest is called
-//     WITHOUT a sport scope here, unlike mustWatchEntity (see DIVERGENCES.md)
-//   • the 14-day retention cutoff (build-events.js:424-432), which keys off
+// Mirrors scripts/build-events.js:411-436 verbatim:
+//   • the default followBroadly list (build-events.js:411)
+//   • isRelevant() (build-events.js:420-427) — NOTE: matchInterest is called
+//     WITHOUT a sport scope here, unlike mustWatchEntity (see DIVERGENCES.md).
+//     WP-04: norwegianPlayers/participants are canonical {name} objects now, so
+//     the hay-building maps both through `p.name || p` (kept for pre-WP-04 data).
+//   • the 14-day retention cutoff (build-events.js:430-436), which keys off
 //     endTime when present, else start.
 const DEFAULT_FOLLOW_BROADLY = [
 	"football", "golf", "f1", "cycling", "chess", "esports",
@@ -76,7 +78,7 @@ function serverRelevant(event, interests, nowMs) {
 	const hay = [
 		event.title, event.tournament, event.homeTeam, event.awayTeam,
 		...(event.norwegianPlayers || []).map((p) => p.name || p),
-		...(event.participants || []),
+		...(event.participants || []).map((p) => p.name || p),
 	].join(" ");
 	return matchInterest(hay, trackedEntities) != null; // NOT sport-scoped
 }
