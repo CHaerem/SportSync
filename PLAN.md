@@ -48,7 +48,7 @@ mennesket, aldri av en agent.
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | todo |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
-| WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | todo |
+| WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 
