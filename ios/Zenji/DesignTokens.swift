@@ -44,6 +44,13 @@ enum ZenjiTokens {
     static var background: Color { .zenji(dark: Dark.background, light: Light.background) }
     /// Body text, adapted to the current system colour scheme.
     static var foreground: Color { .zenji(dark: Dark.foreground, light: Light.foreground) }
+
+    /// DIFF colours for the FM-lekegrind's proposed-change view (WP-16): green
+    /// for add/keep, red for remove, legible on both the near-black and
+    /// warm-paper pages. "Changed" (update) reuses `accent` (amber) so the
+    /// palette stays the one restrained accent + these two signal colours.
+    static var diffAdd: Color { .zenji(dark: Color(hex: 0x3FB950), light: Color(hex: 0x1A7F37)) }
+    static var diffRemove: Color { .zenji(dark: Color(hex: 0xF85149), light: Color(hex: 0xB3261E)) }
 }
 
 extension Color {

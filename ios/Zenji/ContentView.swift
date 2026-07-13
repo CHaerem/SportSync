@@ -27,6 +27,8 @@ struct ContentView: View {
 
     @State private var viewModel: AgendaViewModel
     @State private var now = Date()
+    /// WP-16: the FM-lekegrind, reached from the header glyph below.
+    @State private var showingAssistant = false
 
     /// Ticks once a second — the "tikkende klokke-følelse" in the header,
     /// same idea as the web masthead's clock (dashboard.js `startClock`), just
@@ -77,6 +79,9 @@ struct ContentView: View {
             await refresh()
         }
         .onReceive(clock) { now = $0 }
+        .sheet(isPresented: $showingAssistant) {
+            AssistantView()
+        }
     }
 
     /// Loads whatever is already cached immediately (so the agenda isn't
@@ -112,6 +117,15 @@ struct ContentView: View {
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
             }
             Spacer()
+            Button {
+                showingAssistant = true
+            } label: {
+                Image(systemName: "text.bubble")
+                    .font(.system(size: 15, design: .monospaced))
+                    .foregroundStyle(ZenjiTokens.accent.opacity(0.8))
+            }
+            .accessibilityLabel("Assistent")
+            .padding(.trailing, 12)
             Text(clockLabel)
                 .font(.zenjiMono(size: 13))
                 .monospacedDigit()

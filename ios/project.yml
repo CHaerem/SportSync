@@ -128,6 +128,14 @@ targets:
       - path: Zenji/DesignTokens.swift
       - path: Zenji/Agenda
       - path: Zenji/Widget
+      # WP-16: the FM-lekegrind's sources — the pure pipeline (grounding, diff,
+      # persistence, the mock parser) plus the FoundationModels-backed assistant
+      # and its @Generable schema. Compiled directly into the hostless bundle
+      # (same "no @testable import" pattern). FoundationModels is present in the
+      # Simulator SDK so this compiles fine; the tests drive MockInterestAssistant
+      # only (Apple Intelligence can't run in CI/Simulator — see AssistantView's
+      # header and ios/README.md).
+      - path: Zenji/Assistant
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen
@@ -151,6 +159,75 @@ targets:
         PRODUCT_NAME: ZenjiTests
         PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.tests
 
+  # WP-16: a device-flavoured build of the SAME app sources (path: Zenji — so it
+  # includes Assistant/ and its on-device FoundationModels code) for running on
+  # a PHYSICAL iPhone under a FREE personal Apple Developer team. It handles two
+  # free-account constraints WITHOUT touching the Simulator setup:
+  #   (a) App Groups are unavailable on a free team, so this target uses an EMPTY
+  #       entitlements file (no com.apple.security.application-groups). CacheStore
+  #       then falls back to its Application Support directory (its built-in
+  #       fallback, see CacheStore.swift), and ProfileStore (WP-16) already uses
+  #       Application Support unconditionally.
+  #   (b) A previous device attempt failed with "Embedded binary is not signed
+  #       with the same certificate as the parent app" — so this target does NOT
+  #       depend on / embed ZenjiWidgetExtension. The widget stays Simulator-only
+  #       until a paid account (WP-17).
+  # The Simulator `Zenji` target + scheme and every existing test are unchanged;
+  # this target is purely additive and lives in its own `ZenjiDeviceDev` scheme.
+  ZenjiDeviceDev:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Zenji
+        # This target's own Info.plist lives at ZenjiDeviceDev/Info.plist (below),
+        # so XcodeGen would otherwise treat the app's Zenji/Info.plist as an
+        # ordinary resource and copy it into the bundle — colliding with the
+        # processed Info.plist ("Multiple commands produce …/Info.plist"). The
+        # Simulator `Zenji` target doesn't hit this because its info.path IS
+        # Zenji/Info.plist (auto-excluded). Exclude it explicitly here.
+        excludes:
+          - Info.plist
+    info:
+      path: ZenjiDeviceDev/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: nb
+        CFBundleDisplayName: Zenji
+        CFBundlePackageType: APPL
+        LSRequiresIPhoneOS: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        BGTaskSchedulerPermittedIdentifiers:
+          - app.zenji.refresh
+        UIBackgroundModes:
+          - fetch
+    settings:
+      base:
+        # Distinct PRODUCT_NAME → distinct `ZenjiDeviceDev.app` output, so it
+        # never collides with the Simulator `Zenji` target's `Zenji.app` (the new
+        # build system flags a shared output path project-wide, even across
+        # schemes). The home-screen name stays "Zenji" via CFBundleDisplayName
+        # above; only the on-disk product bundle name differs.
+        PRODUCT_NAME: ZenjiDeviceDev
+        # Reuses the app's own bundle id (NOT a distinct one): the free personal
+        # team already has a valid "iOS Team Provisioning Profile: app.zenji.ios"
+        # covering this device, and a free account can't provision an unlimited
+        # number of new App IDs — so the device build signs against the existing
+        # profile. The Simulator `Zenji` target shares this id but never signs
+        # (CODE_SIGNING_ALLOWED=NO), so the two don't collide at install time
+        # (only one is ever installed per destination). Xcode may warn about the
+        # shared id; that's expected and harmless here.
+        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios
+        CODE_SIGN_ENTITLEMENTS: ZenjiDeviceDev/ZenjiDeviceDev.entitlements
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        CODE_SIGNING_REQUIRED: YES
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: "9LVCB72DT8"
+
 schemes:
   Zenji:
     build:
@@ -170,6 +247,16 @@ schemes:
     build:
       targets:
         ZenjiWidgetExtension: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  # WP-16: builds only the widget-free, App-Group-free device app (see the
+  # ZenjiDeviceDev target above). Used for the physical-iPhone build/install.
+  ZenjiDeviceDev:
+    build:
+      targets:
+        ZenjiDeviceDev: all
     run:
       config: Debug
     archive:
