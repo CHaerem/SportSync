@@ -37,7 +37,7 @@ mennesket, aldri av en agent.
 | WP-02 | Stabil event-ID | 0A | – | ✅ merget (#234) |
 | WP-03 | manifest.json | 0A | – | ✅ merget (#236) |
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | PR åpnet |
-| WP-05 | Entitets-indeks | 0A | WP-01 | PR åpnet |
+| WP-05 | Entitets-indeks | 0A | WP-01 | ✅ merget (#240) |
 | WP-06 | Gylne feed-vektorer | 0A | WP-02 | ✅ merget (#238) |
 | WP-10 | iOS-scaffold | 0B | – | ✅ merget (#237) — xcodebuild-bevis venter på Xcode-installasjon |
 | WP-11 | Codable-modeller | 0B | WP-01, WP-10 | todo |
@@ -54,7 +54,7 @@ mennesket, aldri av en agent.
 
 ---
 
-## FASE 0A · Kontrakt-herding i repoet (dossier P300/P310/P320/P340)
+## FASE 0A · Kontrakt-herding i repoet (dossier P300/P310/P320/P340) — ✅ KOMPLETT 13.07.2026
 
 Bakgrunn (kartlagt 13.07.2026): kontrakten har fire hull for en Swift-klient —
 ingen stabil ID (klienten syntetiserer med array-indeks, `docs/js/dashboard.js:60`),
