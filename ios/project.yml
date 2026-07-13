@@ -89,7 +89,8 @@ targets:
   # sources directly into the test bundle (same pattern the widget extension
   # already uses for DesignTokens.swift above) rather than linking the app
   # binary, so it needs no `@testable import`. WP-12 adds Zenji/Sync the same
-  # way, for SyncClient/CacheStore/DataStore's own hostless tests.
+  # way, for SyncClient/CacheStore/DataStore's own hostless tests; WP-13 adds
+  # Zenji/Feed for the FeedCompiler predicate + golden-vector tests.
   ZenjiTests:
     type: bundle.unit-test
     platform: iOS
@@ -98,6 +99,19 @@ targets:
       - path: ZenjiTests
       - path: Zenji/Models
       - path: Zenji/Sync
+      - path: Zenji/Feed
+      # WP-13: the SAME golden feed-vector fixtures the JS reference test
+      # (tests/feed-vectors.test.js) replays — referenced directly at the repo
+      # root, never copied, so the two runners can never drift. XcodeGen
+      # resolves this relative to project.yml (ios/) and supports source paths
+      # outside it; `buildPhase: resources` bundles the *.json (and the README/
+      # DIVERGENCES docs) so FeedVectorTests can load them from the test bundle
+      # at runtime. `type: folder` keeps the folder as a bundle subdirectory
+      # ("feed-vectors") so the vector JSONs never collide with the WP-11
+      # Fixtures JSONs already flattened into the bundle root.
+      - path: ../tests/fixtures/feed-vectors
+        buildPhase: resources
+        type: folder
     resources:
       - path: ZenjiTests/Fixtures
     info:
