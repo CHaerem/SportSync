@@ -196,20 +196,14 @@ mens alt er stabilt, og repostrukturen kan endres usynlig bak domenet etterpå.
   Tekst-TV-identiteten visuelt. Internasjonal ekspansjon er premiss.
 - **Prosess:** navneøkt → shortlist → domene-/varemerke-/App Store-sjekk per kandidat.
 - **Beslutning:** menneske. Agent kan generere/sjekke kandidater.
-- **Shortlist (levert 13.07.2026):**
-  1. **Ambercast** — anbefalt: coinage (sterk varemerkeposisjon), teletext-amber +
-     kringkastingsarv, ingen kollisjoner funnet; `ambercast.app` + `ambercast.tv`
-     ledige (.com opptatt, intet aktivt produkt funnet).
-  2. **Sportspage / Sportpage** — varm avis-/teletext-side-identitet; `.app` ledige;
-     NB «Sportspage Feeds» (B2B-API) eksisterer; deskriptivt → svakt varemerke.
-  3. **Sportlist** — `.app` ledig; funksjonelt men svak brand.
-  4. **Inseason** — vakkert konsept, kun `.tv` ledig → svak posisjon (benk).
-  - Drept i sjekkene: Matchday (varemerker + apper), Startlist (startlist.app
-    eksisterer), Fixtures (**Fixtured**-appen — også relevant konkurrent-intel,
-    lagt inn i dossier P200), Sportext (fransk bokmesse + .com), Airdate/Watchday/
-    Sportdesk/Telecast/Touchline/Gameweek/Teamsheet (domener opptatt).
-  - **Neste:** menneskelig valg → formell varemerkesjekk (EUIPO + USPTO, klasse 9/41/42)
-    → kjøp domener → WP-27.
+- **Status:** flere genererings-/sjekkerunder gjennomført (~170 domener, RDAP).
+  Kandidater, domenestatus og drapsgrunner føres i en **privat navnejakt-logg**
+  (holdes utenfor det offentlige repoet — ledige kandidater her ville invitere
+  domene-sniping). Eier har loggen som privat artifact.
+  - **Neste:** smaks-seeds fra eier → målrettet runde → menneskelig valg →
+    formell varemerkesjekk (EUIPO + USPTO, klasse 9/41/42) → kjøp domener → WP-27.
+  - Biprodukt av jakten: to nære konkurrenter avdekket (Fixtured, Fixture
+    Calendar) — ført inn i dossier P200.
 
 ### WP-27 · 💰 Domene + DNS-cutover (etter WP-26)
 Kjøp domene (~150 kr/år); CNAME + custom domain på NÅVÆRENDE Pages; verifiser
