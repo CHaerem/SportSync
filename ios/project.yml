@@ -76,12 +76,41 @@ targets:
         CODE_SIGN_ENTITLEMENTS: ZenjiWidget/ZenjiWidget.entitlements
         SKIP_INSTALL: YES
 
+  # WP-11: standalone (hostless) logic-test bundle for the Codable models in
+  # Zenji/Models — no TEST_HOST/BUNDLE_LOADER, since these are pure decoding
+  # tests with no dependency on the app's UI/runtime. Compiles the Models
+  # sources directly into the test bundle (same pattern the widget extension
+  # already uses for DesignTokens.swift above) rather than linking the app
+  # binary, so it needs no `@testable import`.
+  ZenjiTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ZenjiTests
+      - path: Zenji/Models
+    resources:
+      - path: ZenjiTests/Fixtures
+    info:
+      path: ZenjiTests/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: nb
+    settings:
+      base:
+        PRODUCT_NAME: ZenjiTests
+        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.tests
+
 schemes:
   Zenji:
     build:
       targets:
         Zenji: all
         ZenjiWidgetExtension: all
+        ZenjiTests: [test]
+    test:
+      config: Debug
+      targets:
+        - ZenjiTests
     run:
       config: Debug
     archive:
