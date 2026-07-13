@@ -1,13 +1,14 @@
-# Zenji — iOS app (WP-10 scaffold + WP-11 models + WP-12 sync + WP-13 feed + WP-15 notifications)
+# Zenji — iOS app (WP-10 scaffold → WP-11 models → WP-12 sync → WP-13 feed → WP-14 agenda/widget → WP-15 notifications)
 
 SwiftUI app **Zenji** + WidgetKit extension **ZenjiWidget**, generated with
 [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`. WP-10
 was the scaffold only (a Tekst-TV shell with no data, no networking, no feed
 logic). WP-11 (see PLAN.md) added the Codable models that mirror the data
-contract. WP-12 adds the sync layer — the app now actually fetches and
-caches real data. WP-13 adds the FeedCompiler (the personalisation
-predicates). WP-15 (below) adds local push reminders on top of it. Real
-day-grouped agenda rendering (WP-14) is still not implemented here.
+contract. WP-12 added the sync layer — the app fetches and caches real data.
+WP-13 added `FeedCompiler`, the Swift port of the personalisation semantics.
+WP-14 is the payoff: a real, day-grouped Tekst-TV agenda + a home screen
+widget, both reading the same synced cache — no more placeholder row. WP-15
+(below) adds local push reminders on top of it all.
 
 ## Generate, open, build
 
@@ -82,6 +83,29 @@ Simulator' build` exit 0, and `xcodebuild test -project Zenji.xcodeproj
 see "Notifications (WP-15)" below). `npm test` (369 tests, 29 files) is
 unaffected — this package touches only `ios/`.
 
+**Update (WP-14):** this worktree (rebased onto WP-15, which landed in
+parallel) also had full Xcode 26.6 + the iOS 26.5 Simulator runtime, so this
+PR's own additions were proven fully end-to-end, never by substitute:
+
+- `xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator'
+  build` and `xcodebuild -scheme ZenjiWidgetExtension -destination
+  'generic/platform=iOS Simulator' build` both exit 0.
+- `xcodebuild test -project Zenji.xcodeproj -scheme Zenji -destination
+  'platform=iOS Simulator,name=iPhone 17 Pro'` **passes all 102 tests** — the
+  49 WP-10/11/12/13 baseline, 20 from WP-15 (`NotificationPlannerTests` + 3
+  `DataStoreTests`), plus 33 new from this package (`AgendaFormatTests`,
+  `AgendaViewModelTests`, `WidgetTimelineBuilderTests`).
+- Booted `iPhone 17 Pro` (`xcrun simctl boot`), installed and launched the
+  real app (`xcrun simctl install` / `launch`), and screenshotted it
+  (`xcrun simctl io … screenshot`) against the **real, live** `zenji.app`
+  data — see `docs/agenda-screenshot.png` and "Visual proof (WP-14)" below.
+- The widget target builds and its `WidgetTimelineBuilder` is unit-tested,
+  but actually adding the widget to a Simulator home screen has no scriptable
+  `simctl` path (it needs interactive long-press-to-add UI, or a dedicated
+  XCUITest target this project doesn't have) — **not captured as a
+  screenshot**; noted rather than faked, per the WP-14 brief's own
+  "ellers noter" ("otherwise, note it") allowance.
+
 ### Deployment target: iOS 26.0
 
 Chosen as "iOS 26 if the SDK on this machine supports it, else newest
@@ -106,11 +130,11 @@ and filling in a team ID — the entitlements are already wired.
 ### App Group
 
 `group.app.zenji`, declared in both `Zenji/Zenji.entitlements` and
-`ZenjiWidget/ZenjiWidget.entitlements`. WP-12's `CacheStore` now uses this as
-its preferred cache location (falling back to Application Support when the
-container isn't available — see "Sync layer (WP-12)" below), so the widget
-extension will be able to read the same synced cache once it needs to
-(WP-14) with no further project-structure change.
+`ZenjiWidget/ZenjiWidget.entitlements`. WP-12's `CacheStore` uses this as its
+preferred cache location (falling back to Application Support when the
+container isn't available — see "Sync layer (WP-12)" below); WP-14's widget
+extension reads the same synced cache through it, no further
+project-structure change needed.
 
 ## Directory layout
 
@@ -119,9 +143,9 @@ ios/
 ├── project.yml                    XcodeGen spec — source of truth, checked in
 ├── .gitignore                     scoped to ios/: *.xcodeproj, xcuserdata, DerivedData
 ├── Zenji/                         app target
-│   ├── ZenjiApp.swift             @main entry point
-│   ├── ContentView.swift          Tekst-TV header + empty day-grouped agenda shell
-│   ├── DesignTokens.swift         shared design tokens (also used by ZenjiWidget)
+│   ├── ZenjiApp.swift             @main entry point (untouched since WP-12 — see WP-14/15 notes)
+│   ├── ContentView.swift          Tekst-TV header (WP-14: ZENJI · dato · ticking clock) + AgendaView
+│   ├── DesignTokens.swift         shared design tokens (also used by ZenjiWidget/ZenjiTests)
 │   ├── Models/                    WP-11: Codable models mirroring the data contract
 │   │   ├── ZenjiJSON.swift        shared JSONDecoder factory (dual ISO 8601 dates)
 │   │   ├── Event.swift            events.schema.json, field-for-field
@@ -138,31 +162,43 @@ ios/
 │   │   ├── CacheStore.swift       App Group cache, auto-fallback to Application Support
 │   │   ├── SyncState.swift        persisted etag + reconciled per-file manifest snapshot
 │   │   ├── Checksum.swift         Data.sha256Hex (CryptoKit) — verifies downloads
-│   │   ├── DataStore.swift        read-only facade: loadEvents()/loadEntities()/loadInterests()/…
+│   │   ├── DataStore.swift        read-only facade: loadEvents()/…/loadInterests() (WP-15)
 │   │   ├── BackgroundRefreshScheduling.swift   pure "when's the next refresh" function
 │   │   └── BackgroundRefreshScheduler.swift    thin BGTaskScheduler wrapper (untested)
-│   ├── Feed/                      WP-13: the FeedCompiler personalisation predicates
-│   │   ├── FeedEvent.swift        small pure-data input the predicates read
-│   │   ├── Interests.swift        Swift mirror of interests.json's predicate-relevant fields
-│   │   ├── TextMatch.swift        normalize/containsName — the server text-matchers, ported
-│   │   └── FeedCompiler.swift     isRelevant/mustWatch/isMustSee/isEventInWindow/collapseSeries
+│   ├── Feed/                      WP-13: FeedCompiler + WP-14's shared formatting helpers
+│   │   ├── FeedEvent.swift        the small input the five predicates read
+│   │   ├── Interests.swift        Swift mirror of scripts/config/interests.json
+│   │   ├── TextMatch.swift        server normalize/containsName port
+│   │   ├── FeedCompiler.swift     the five predicates + compile() facade
+│   │   ├── AgendaFormat.swift     WP-14: när/hva/hvor + day-label + series-summary formatting
+│   │   └── EventBridge.swift      WP-14: [Event] → [FeedEvent] bridge + id lookup
+│   ├── Agenda/                    WP-14: the real agenda (app-only, not in the widget target)
+│   │   ├── AgendaModels.swift     AgendaSection/AgendaItem/AgendaEventRow/AgendaSeriesRow
+│   │   ├── AgendaViewModel.swift  @MainActor view model; buildSections() is the pure core
+│   │   ├── AgendaView.swift       day-sectioned List + EventRowView/SeriesRowView
+│   │   ├── EventDetailSheet.swift venue/summary/streaming links/AI provenance
+│   │   └── SeriesDetailSheet.swift expanded stage-race detail
+│   ├── Widget/                    WP-14: the widget's own pure timeline logic
+│   │   └── WidgetTimelineBuilder.swift   no `import WidgetKit` — see its own header
 │   ├── Notifications/             WP-15: local push reminders for must-watch events
 │   │   ├── NotificationOperation.swift   NotificationRequest + the scheduleNew/reschedule/cancel plan
 │   │   ├── NotificationScheduling.swift  thin UNUserNotificationCenter wrapper behind a protocol
 │   │   └── NotificationPlanner.swift     the pure plan(...) diff + the impure reconcile(...)
 │   ├── Info.plist                 generated by xcodegen from project.yml properties
-│   ├── Zenji.entitlements         App Group (group.app.zenji — now in active use, WP-12)
+│   ├── Zenji.entitlements         App Group (group.app.zenji — in active use since WP-12)
 │   └── Assets.xcassets/
 ├── ZenjiWidget/                   WidgetKit extension target
 │   ├── ZenjiWidgetBundle.swift    @main WidgetBundle entry point
-│   ├── ZenjiWidget.swift          static placeholder timeline + view
+│   ├── ZenjiWidget.swift          WP-14: real TimelineProvider (WidgetTimelineBuilder + DataStore)
 │   ├── Info.plist                 generated (NSExtension → com.apple.widgetkit-extension)
-│   ├── ZenjiWidget.entitlements   App Group placeholder
+│   ├── ZenjiWidget.entitlements   App Group (shares the app's synced cache)
 │   └── Assets.xcassets/
 └── ZenjiTests/                    hostless logic-test bundle (Zenji/Models + Zenji/Sync +
-    │                              Zenji/Feed + Zenji/Notifications sources compiled directly
-    │                              in — no @testable import, no TEST_HOST)
+    │                              Zenji/Feed + Zenji/Agenda + Zenji/Widget + Zenji/Notifications
+    │                              sources compiled directly in — no @testable import, no TEST_HOST)
     ├── Fixture.swift              loads the JSON fixtures below (WP-11)
+    ├── EventBuilder.swift         WP-14: builds `Event` values (via JSON) for focused agenda/widget tests
+    ├── EventFixtureBuilder.swift  WP-15: builds `Event` values (via JSON) for NotificationPlanner tests
     ├── EventDecodingTests.swift                     (WP-11)
     ├── SupportingModelDecodingTests.swift            (WP-11)
     ├── ForwardCompatibilityTests.swift               (WP-11)
@@ -173,14 +209,16 @@ ios/
     ├── DataStoreTests.swift       never-throws facade behaviour, incl. loadInterests() (WP-12/15)
     ├── BackgroundRefreshSchedulingTests.swift        pure scheduling function (WP-12)
     ├── FeedCompilerUnitTests.swift + FeedVectorTests.swift    predicates + golden vectors (WP-13)
-    ├── EventFixtureBuilder.swift   builds a minimal Event via JSON round-trip, for tests (WP-15)
+    ├── AgendaFormatTests.swift     när/hva/hvor + day-label + series-summary rules (WP-14)
+    ├── AgendaViewModelTests.swift  buildSections(): hand-built + real-fixture cases (WP-14)
+    ├── WidgetTimelineBuilderTests.swift   ticks/nextHighlight/buildEntries (WP-14)
     ├── RecordingNotificationScheduler.swift   recording NotificationScheduling double (WP-15)
     ├── NotificationPlannerTests.swift          plan()/reconcile() acceptance tests (WP-15)
     ├── Info.plist                 generated by xcodegen
     └── Fixtures/                  FRESH snapshots, see "Model fixtures" below
         ├── events.json
         ├── entities.json
-        ├── interests.json
+        ├── interests.json         WP-14/15
         ├── manifest.json
         └── tracked.json
 ```
@@ -214,8 +252,7 @@ future work, out of scope for this package.
 (WP-05), `docs/data/manifest.json` (WP-03), and `scripts/config/tracked.json`.
 No networking or feed logic lives here — this package only turns the raw
 JSON bytes into typed Swift values; `Zenji/Sync/` (WP-12, below) is what
-actually fetches them, WP-13 (FeedCompiler) is what will turn them into a
-feed.
+actually fetches them, `Zenji/Feed/` (WP-13) is what turns them into a feed.
 
 - **`ZenjiJSON.decoder`** — the one shared `JSONDecoder` every model decodes
   through. Its only job beyond the default is dates: the pipeline emits ISO
@@ -249,8 +286,10 @@ feed.
 
 `ZenjiTests/Fixtures/` holds **checked-in, deliberately-frozen snapshots** of
 the real `docs/data/events.json`, `docs/data/entities.json`,
-`docs/data/manifest.json` and `scripts/config/tracked.json`, taken fresh when
-this package was written. They are the Swift side's fasit for the contract —
+`docs/data/manifest.json`, `scripts/config/tracked.json`, and
+`docs/data/interests.json` (the last verified byte-identical to the live
+site's copy via sha256 at the time it was added), taken fresh when this
+package was written. They are the Swift side's fasit for the contract —
 update them by deliberately re-copying the live files and committing the
 diff (e.g. when the schema changes in a later WP), never by an automated
 job. `ZenjiTests/` itself is a hostless unit-test bundle (no `TEST_HOST`,
@@ -287,9 +326,10 @@ and lets the rest of the app read them back out as typed models.
    matters). Only files that (a) actually changed and (b) are in
    `filesOfInterest` (default `events.json` / `entities.json` /
    `tracked.json` / `interests.json` — the last added by WP-15 so
-   `NotificationPlanner` has the real notify-config to plan against; the
-   ~24 other manifest entries are agent logs, calibration data, per-sport
-   source files, … irrelevant to this client) are fetched.
+   `NotificationPlanner` has the real notify-config to plan against, and
+   equally needed by WP-14's `FeedCompiler.compile()`; the ~24 other
+   manifest entries are agent logs, calibration data, per-sport source
+   files, … irrelevant to this client) are fetched.
 4. Each fetched file's bytes are **verified against the manifest's declared
    sha256** (via `Data.sha256Hex`, `Checksum.swift`, CryptoKit) before being
    trusted. A mismatch (truncated/corrupt download) or a network hiccup
@@ -312,13 +352,12 @@ and lets the rest of the app read them back out as typed models.
 ### Cache location
 
 `CacheStore` prefers the `group.app.zenji` App Group container so the widget
-extension (WP-14) can read the same synced cache later, falling back
-automatically to this process's own Application Support directory when the
-App Group container genuinely isn't available (e.g. a real device build
-before WP-17 wires up a real provisioning profile). Data files are stored
-as-is, byte-for-byte what the server sent, alongside one small
-`sync-state.json` (`etag`, the reconciled `appliedFiles` manifest snapshot,
-`lastSync`).
+extension (WP-14) can read the same synced cache, falling back automatically
+to this process's own Application Support directory when the App Group
+container genuinely isn't available (e.g. a real device build before WP-17
+wires up a real provisioning profile). Data files are stored as-is,
+byte-for-byte what the server sent, alongside one small `sync-state.json`
+(`etag`, the reconciled `appliedFiles` manifest snapshot, `lastSync`).
 
 One environment note from writing this: the iOS **Simulator** resolves the
 `group.app.zenji` container readily even for a completely unsigned,
@@ -339,7 +378,11 @@ empty list (or `nil`). `DataStore.lastSync` (from `sync-state.json`) is the
 apart from "synced fine, zero events right now" (a legitimate state, e.g. an
 off-season day) — WP-15's `NotificationPlanner` also reads it directly, as
 the "how stale is what I'm about to plan from" signal (see "Notifications"
-below).
+below). Every `loadInterests()` call site (WP-14's `AgendaViewModel`, the
+widget, WP-15's `ContentView` hook) falls back to an empty `Interests()`
+when it's `nil` — `FeedCompiler.compile` already has its own default
+`followBroadly` list for exactly that case, so nothing goes blank just
+because `interests.json` hasn't synced yet.
 
 ### BGAppRefreshTask
 
@@ -364,15 +407,6 @@ A deliberately thin, separate layer, split in two:
   both set in `project.yml`'s `Zenji` target `info.properties` (regenerate
   with `xcodegen generate` after any change there; editing the generated
   `Info.plist` directly gets overwritten).
-
-### Minimal UI coupling
-
-`ContentView` calls `syncClient.sync()` from a `.task` on first appearance
-(WP-12's "sync at app start"), then reloads from `DataStore` before and after
-— so the header shows "Sist synket: aldri" (never) or a time + event count
-immediately from whatever's cached, without waiting on the network. The
-agenda itself is still the WP-10 placeholder row; real day-grouped rendering
-is WP-13 (FeedCompiler) + WP-14 (Agenda UI), not touched here.
 
 ### Tests
 
@@ -439,13 +473,16 @@ is pinned behaviour.
   `"time": null` case; `FeedEvent.time` is `Date?` so that decodes and the
   predicates return the same `false` the JS does. `init(from event: Event)`
   bridges the real cached `[Event]` (from `DataStore`) into the compiler for
-  WP-14.
+  WP-14 (see `EventBridge` below).
 - `Interests.swift` — the personalisation config the vectors embed (a Swift
   mirror of the fields of `scripts/config/interests.json` the predicates read).
 - `FeedCompiler.swift` — the five predicates + the `compile(events:interests:
   now:)` facade (relevance filter → bell/accent annotation → series collapse →
   Europe/Oslo day grouping). The day grouping is **not** vector-covered (kept
   simple, unit-tested separately in `FeedCompilerUnitTests`).
+- `AgendaFormat.swift` / `EventBridge.swift` (WP-14) — see "Agenda UI +
+  widget (WP-14)" below for why these two live in `Feed/` rather than
+  `Agenda/`.
 
 ### Running the vectors
 
@@ -464,9 +501,190 @@ and escalated, never "fixed" by editing the fixture.
 cd ios && xcodegen generate
 xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
-# 69 tests: 49 WP-10/11/12/13 baseline + 20 WP-15
-#   (17 NotificationPlannerTests + 3 DataStoreTests loadInterests() cases)
+# 102 tests: 49 WP-10/11/12/13 baseline + 20 WP-15 + 33 WP-14
 ```
+
+## Agenda UI + widget (WP-14)
+
+The payoff package: a real, day-grouped Tekst-TV agenda (`ContentView` now
+hosts `AgendaView` instead of a placeholder row) and a home screen widget
+showing "neste must-see" — both pure consumers of WP-12's synced cache and
+WP-13's `FeedCompiler`, with no feed logic of their own.
+
+### The interests source (`interests.json` decoding)
+
+`SyncClient.defaultFilesOfInterest` (`Sync/SyncClient.swift`) includes
+`"interests.json"` alongside events/entities/tracked (added independently by
+both this package and WP-15 — `NotificationPlanner` needs the exact same
+file), and `DataStore.loadInterests() -> Interests?` (`Sync/DataStore.swift`,
+WP-15) is the "little decoder" for it: the published `docs/data/interests
+.json` (checked in at `ZenjiTests/Fixtures/interests.json`, byte-identical to
+the live site at the time of writing — verified by sha256) already carries
+`followBroadly` / `alwaysTrack` / `notify` field-for-field matching WP-13's
+`Interests` `CodingKeys`, so ordinary Codable name-based decoding **is** the
+mapping — no translation layer needed. The extra human-facing fields the
+real file also carries (`$schema`, `language`, `timezone`, the free-text
+`interests`/`neverTrack` lists, `notes`) are ignored automatically, the same
+forward-compatibility story `Event.swift` already relies on. Every call site
+in this package (`AgendaViewModel`, the widget) falls back to an empty
+`Interests()` when the result is `nil` — `FeedCompiler.compile` already has
+its own default `followBroadly` list for exactly this case, so the agenda
+never goes blank just because `interests.json` hasn't synced yet.
+
+### AgendaViewModel — the pure pipeline
+
+`Zenji/Agenda/AgendaViewModel.swift` is `@MainActor @Observable` (it drives
+SwiftUI state directly), but its actual logic is a `nonisolated static`
+function, per this codebase's usual pure-core/thin-wrapper split
+(`FeedCompiler`'s predicates, `BackgroundRefreshScheduling`):
+
+```
+AgendaViewModel.buildSections(events: [Event], interests: Interests, now: Date) -> [AgendaSection]
+```
+
+The chain is exactly DataStore → FeedEvent-bridge → `FeedCompiler.compile()`
+→ day sections, per the WP-14 brief:
+
+1. **`EventBridge.bridge(_:)`** (`Zenji/Feed/EventBridge.swift` — lives in
+   `Feed/`, not `Agenda/`, so the widget target picks it up for free
+   alongside `FeedCompiler`) turns `[Event]` into WP-13's `[FeedEvent]` AND
+   returns a `[String: Event]` lookup back to the source `Event` — needed
+   because `FeedCompiler.compile()`'s output no longer has positional
+   correspondence to the input, but the row/detail sheet still need fields
+   `FeedEvent` deliberately omits (`streaming`, `venue`, `summary`,
+   `evidence`, …). The lookup key is `Event.id` (WP-02) when present, else a
+   deterministic `sport|title|time` fallback — the same idea as
+   dashboard.js's own client-side id fallback.
+2. **`FeedCompiler.compile(events:interests:now:)`** (WP-13, untouched)
+   does the actual relevance filter → bell/accent annotation → series
+   collapse → Europe/Oslo day grouping.
+3. **`AgendaFormat`** (`Zenji/Feed/AgendaFormat.swift` — same "lives in
+   Feed/ so the widget gets it for free" reasoning as `EventBridge`) turns
+   the compiled, annotated data into the actual row text: `timeLabel`
+   ("HH:mm", or a compact "16.–19. juli" WINDOW for a multi-day event —
+   never a misleading bare start time), `title` ("Home – Away" for a team
+   match, else the event's own title), `channelLabel` (first streaming
+   platform, or an honest "–"), `dayLabel` ("I DAG" / "I MORGEN" / else
+   "TIRSDAG 14. JULI" — the same `"EEEE d. MMMM".uppercased()` convention
+   `ContentView`'s header already used, just Europe/Oslo-scoped), and
+   `seriesSummary` ("Tour de France — 21 etapper", plus a quiet "denne uka"
+   qualifier when the last stage falls in the current Oslo ISO week).
+4. `AgendaViewModel.buildSections` assembles `AgendaSection`/`AgendaItem`/
+   `AgendaEventRow`/`AgendaSeriesRow` (`Zenji/Agenda/AgendaModels.swift`) —
+   plain, `Equatable` view-ready data, computed once, not per render.
+
+`AgendaViewModelTests` drives `buildSections` directly (no DataStore, no
+disk) with both hand-built `EventBuilder`-constructed fixtures (one rule per
+test: day grouping, channel selection + "–" fallback, must-see/must-watch
+passthrough, series collapse + summary text) AND the real, checked-in
+`events.json`/`interests.json` fixtures end-to-end (proves the real Tour de
+France fixture — 21 stages — collapses into exactly one series row, and that
+"Lyn – Sogndal" comes out must-watch with channel "TV 2 Play").
+
+### AgendaView — the SwiftUI layer
+
+`Zenji/Agenda/AgendaView.swift` is a `List` of day `Section`s (label = the
+Norwegian day header), each row either an `EventRowView` or a
+`SeriesRowView` — must-see gets the gentlest possible emphasis (a 6pt amber
+dot, CLAUDE.md's own phrase), must-watch gets a small 🔔, the channel column
+is quiet, an honest "–" when unknown. Pull-to-refresh (`.refreshable`) calls
+`AgendaViewModel.refresh()`, which re-syncs then recompiles (this path does
+NOT run WP-15's notification reconcile — see "ContentView" below). Tapping a
+row opens a `.sheet`:
+
+- **`EventDetailSheet`** — venue, summary, every streaming option as a real
+  `Link` (never a fake link when there's no URL), and — only when
+  `event.source == "ai-research"` — the provenance block: confidence
+  (høy/middels/lav/ukjent) + every evidence URL as its own link. "Åpenhet er
+  en funksjon" (CLAUDE.md): this ⓘ is how the app earns trust for events a
+  human didn't curate.
+- **`SeriesDetailSheet`** — the "kan ekspanderes" half of a collapsed stage
+  race: every Norwegian rider across all stages (de-duplicated), the next
+  stage's own summary, and every stage as its own date/title/channel line
+  (mirrors dashboard.js `seriesDetail`).
+
+### ContentView — the header + the one shared sync hook
+
+`ContentView.swift` keeps its exact pre-WP-14 public signature
+(`init(syncClient:dataStore:notificationPlanner:)`, the third parameter added
+by WP-15 with a default so `ZenjiApp.swift` needs zero edits) — it now just
+constructs an `AgendaViewModel` and hosts `AgendaView` below a header that's
+genuinely "ZENJI · dato · en stille tikkende klokke" (a
+`Timer.publish(every: 1, …)` ticks a `HH:mm:ss` clock, Europe/Oslo, no other
+chrome) instead of the WP-12 scaffold's "Sist synket: …" debug line.
+`ContentView.refresh()` (called once from `.task` at app start) orchestrates
+BOTH packages' hooks in the one place they need to interleave: it reloads
+`AgendaViewModel` from cache, snapshots `dataStore.loadEvents()`, syncs,
+reloads `AgendaViewModel` from cache again, then calls WP-15's
+`notificationPlanner.reconcile(previousEvents:newEvents:interests:lastSync:)`
+with the before/after snapshots — see "Notifications (WP-15)" below for what
+that call does. **Deliberately zero changes to `ZenjiApp.swift`** — both
+WP-14 and WP-15 landed in parallel and the brief for each asked to keep that
+file untouched to avoid a merge conflict; `ZenjiApp.swift` still constructs
+`ContentView(syncClient:dataStore:)` with two arguments.
+
+### The widget — pre-computed timeline, no network
+
+`Zenji/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
+`import WidgetKit` at all — that's deliberate, see the file's own header):
+given `[Event]` + `Interests` + "now", it returns one `Entry` per "clock
+strike" (every full hour remaining in the Europe/Oslo day, plus "now"
+itself) — each entry is "the next must-see event as of that moment, else
+the nearest merely-relevant upcoming one, else an honest 'Ingenting i dag'".
+`ZenjiWidget.swift` (the actual `TimelineProvider`) is the thin WidgetKit
+wrapper around it: reads `DataStore` (cache only — **no network call
+anywhere in the widget target**, by construction: its project.yml sources
+include `Sync/CacheStore.swift`/`SyncState.swift`/`DataStore.swift` but
+deliberately NOT `SyncClient.swift`/`Checksum.swift`, so there is no
+network-capable code to accidentally call), builds the day's entries once,
+and hands WidgetKit a `Timeline` that reloads itself shortly after the last
+pre-computed entry — the OS swaps entries on its own schedule with zero
+further app/widget activity. `systemSmall` + `systemMedium`, same Tekst-TV
+tokens (`DesignTokens.swift`) as the app.
+
+`WidgetTimelineBuilderTests` covers `ticks(from:)` (always starts at `now`,
+strictly increasing, correctly empty-but-`now` in the last minutes of the
+day) and `nextHighlight`/`buildEntries` (prefers a must-see match over an
+earlier plain event, falls back to nearest-upcoming, excludes finished
+events, reflects the paired `Event`'s own `streaming` for the channel).
+
+### project.yml — what each target actually compiles
+
+- **`Zenji`** (app): unchanged — it already lists the whole `Zenji/` tree, so
+  the new `Agenda/` and `Widget/` folders are picked up automatically.
+- **`ZenjiWidgetExtension`**: gained `Zenji/Models`, `Zenji/Feed` (which is
+  where `AgendaFormat`/`EventBridge` live — see above), and just the
+  **read** half of `Sync` (`CacheStore.swift`/`SyncState.swift`/
+  `DataStore.swift`, NOT `SyncClient.swift`/`Checksum.swift`) plus
+  `Zenji/Widget/WidgetTimelineBuilder.swift` — the exact "Models/Sync-read/
+  Feed" set the WP-14 brief asked for, same pattern as the pre-existing
+  `DesignTokens.swift` entry.
+- **`ZenjiTests`**: gained `Zenji/DesignTokens.swift` (Agenda's SwiftUI views
+  reference `ZenjiTokens`/`.zenjiMono` directly), `Zenji/Agenda`, and
+  `Zenji/Widget` — same "no `@testable import`, compile the real sources
+  directly into the hostless bundle" pattern as Models/Sync/Feed already use.
+
+### Visual proof (WP-14)
+
+`docs/agenda-screenshot.png` — `iPhone 17 Pro` Simulator (iOS 26.5),
+installed and launched via `xcrun simctl install`/`launch`, screenshotted via
+`xcrun simctl io … screenshot`, running against **real, live** `zenji.app`
+data (the Simulator's cache was seeded with the checked-in
+`ZenjiTests/Fixtures/{events,entities,tracked,interests}.json` — verified
+byte-identical to what `zenji.app` currently serves via `sha256`, sidestepping
+an unrelated, pre-existing production issue where the live site's
+`manifest.json` and its actually-served `events.json` are momentarily out of
+sync/stale relative to each other — a CDN/deploy-cache-coherency issue on the
+live site, NOT a bug in this PR's `SyncClient`, which correctly detected the
+sha256 mismatch and safely discarded the corrupt download per its own
+WP-12 contract). Shows: the header (wordmark · Oslo date · ticking clock),
+several real day sections ("FREDAG 3. JULI" … "I DAG" … "I MORGEN"),
+must-see dots, 🔔 must-watch marks, real channels, an honest "–" where a
+channel isn't known, and a multi-day window ("13.–20. juli") rendering on one
+line. The widget gallery screenshot was **not practically possible** in this
+headless environment (no scriptable `simctl` path to add a widget to a
+Simulator home screen — see "Build verification performed for this PR" above)
+— noted rather than faked, per the WP-14 brief's own allowance.
 
 ## Notifications (WP-15)
 
@@ -536,28 +754,27 @@ a sync that only cancels or changes nothing.
 ### The sync hook
 
 `ContentView.refresh()` (the same function WP-12 wired to call
-`syncClient.sync()` at app start) is the **one** WP-15 touch in that file: it
-snapshots `dataStore.loadEvents()` *before* calling `sync()`, then — after the
-sync completes and the cache reflects the new data — calls
+`syncClient.sync()` at app start, and WP-14 rebuilt to also drive
+`AgendaViewModel` — see "Agenda UI + widget (WP-14)" above) is where WP-15
+plugs in: it snapshots `dataStore.loadEvents()` *before* calling `sync()`,
+then — after the sync completes and the cache reflects the new data — calls
 `notificationPlanner.reconcile(previousEvents:newEvents:interests:lastSync:)`
-with the before/after snapshots, `dataStore.loadInterests()` (WP-15 added
-`interests.json` to `SyncClient.defaultFilesOfInterest` for exactly this), and
-`dataStore.lastSync` (which `SyncClient` only refreshes to "now" on an actual
-data change — a `.upToDate` 304 leaves it at whatever the last real fetch was,
-which is precisely the "how stale is this" signal gate (b) above needs). No
-other file in the agenda/UI surface is touched — WP-14 owns the rest of
-`ContentView` and all of `ZenjiWidget`.
+with the before/after snapshots, `dataStore.loadInterests() ?? Interests()`
+(WP-15 added `interests.json` to `SyncClient.defaultFilesOfInterest` for
+exactly this), and `dataStore.lastSync` (which `SyncClient` only refreshes to
+"now" on an actual data change — a `.upToDate` 304 leaves it at whatever the
+last real fetch was, which is precisely the "how stale is this" signal gate
+(b) above needs). Note this reconcile call happens only on the app-start
+`.task`, not on `AgendaView`'s pull-to-refresh (WP-14) — a manual refresh
+re-syncs and recompiles the agenda but doesn't re-run the notification diff.
 
 ## Architecture (what plugs in next)
 
-WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache +
-background refresh, WP-13 added the FeedCompiler, WP-15 (above) added the
-NotificationPlanner. The pieces below are still separate work packages — **not
-implemented here**:
+WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache
++ background refresh, WP-13 added the FeedCompiler, WP-14 added the real
+agenda UI + widget, WP-15 added the NotificationPlanner. The pieces below are
+still separate work packages — **not implemented here**:
 
-- **Agenda UI + widget (WP-14)** — replaces `ContentView`'s placeholder row
-  and `ZenjiWidget`'s static timeline with real day-grouped data, reading
-  from the same `group.app.zenji` cache `CacheStore` already writes to.
 - **FM playground (WP-16)** — conversational interest-rule editing via Apple
   Intelligence `@Generable`, gated on a physical device.
 
@@ -587,9 +804,9 @@ infrastructure constraint in `CLAUDE.md`.
 - **Interests:** `docs/data/interests.json` — the user-owned source of truth
   (`scripts/config/interests.json` on the server; `CLAUDE.md`: "the human
   edits this, AI never writes here"). Mirrored by `Interests.swift` (WP-13),
-  synced by `SyncClient` and read via `DataStore.loadInterests()` (both WP-15
-  additions) — this is what `FeedCompiler.mustWatch` and
-  `NotificationPlanner` key off.
+  synced by `SyncClient` and read via `DataStore.loadInterests()` (both
+  WP-15 additions) — this is what `FeedCompiler.compile`/`mustWatch`
+  (WP-13/14, the agenda + widget) and `NotificationPlanner` (WP-15) key off.
 
 `Zenji/Sync/` (WP-12, above) is what actually fetches these now; before this
 package the app read nothing at all.

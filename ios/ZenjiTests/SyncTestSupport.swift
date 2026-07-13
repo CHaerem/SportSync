@@ -53,8 +53,8 @@ enum SyncTestSupport {
     }
 
     /// Runs an initial, "everything is new" sync against the real manifest +
-    /// events/entities/tracked fixtures, on a fresh cache. This is the
-    /// baseline every other scenario builds on (a changed manifest, a
+    /// events/entities/tracked/interests fixtures, on a fresh cache. This is
+    /// the baseline every other scenario builds on (a changed manifest, a
     /// dropped connection, a corrupt download all assume something was
     /// already successfully synced once).
     @discardableResult
