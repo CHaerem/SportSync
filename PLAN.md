@@ -43,7 +43,7 @@ mennesket, aldri av en agent.
 | WP-11 | Codable-modeller | 0B | WP-01, WP-10 | ✅ merget (#241) — TEST SUCCEEDED 11/11 |
 | WP-12 | SyncClient | 0B | WP-03, WP-11 | ✅ merget (#242) — 37/37 tester |
 | WP-13 | FeedCompiler (Swift) | 0B | WP-06, WP-11 | ✅ merget (#243) — 13/13 vektorer bit-likt |
-| WP-14 | Agenda-UI + widget | 0B | WP-13 | PR åpnet — 102/102 tester grønt (49 baseline + 20 WP-15 + 33 nye) |
+| WP-14 | Agenda-UI + widget | 0B | WP-13 | ✅ merget (#245) — 102/102 tester + screenshot-bevis |
 | WP-15 | NotificationPlanner | 0B | WP-13 | ✅ merget (#244) — 69/69 tester |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | todo |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
