@@ -47,6 +47,10 @@ mennesket, aldri av en agent.
 | WP-15 | NotificationPlanner | 0B | WP-13 | todo |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | todo |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
+| WP-26 | Nytt navn (engelsk/generisk) | 0C | – | todo — kritisk sti |
+| WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | todo |
+| WP-28 | Repo-splitt (privat motor / public site) | 0C | WP-27 | todo |
+| WP-29 | Self-hosted runner (kun privat repo) | 0C | WP-28 | todo |
 
 ---
 
@@ -179,6 +183,47 @@ Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.
 
 ---
 
+## FASE 0C · Flyttedagen: rebrand + repo-splitt (besluttet 13.07.2026)
+
+Utføres som én samlet migrering, i denne rekkefølgen — WP-26 er blokkeren for alt annet.
+Nøkkeltrikset: custom domain settes på DAGENS repo før splitten (Pages redirecter
+github.io → domenet automatisk), så PWA-installasjoner og ICS-abonnenter migreres
+mens alt er stabilt, og repostrukturen kan endres usynlig bak domenet etterpå.
+
+### WP-26 · Nytt navn (kritisk sti — gratis, start nå)
+- **Kriterier:** engelsk · generisk-men-brandbart · fungerer som App Store-navn ·
+  domene ledig (.com/.app) · varemerke-rent i sport/software-klassene · rom for
+  Tekst-TV-identiteten visuelt. Internasjonal ekspansjon er premiss.
+- **Prosess:** navneøkt → shortlist → domene-/varemerke-/App Store-sjekk per kandidat.
+- **Beslutning:** menneske. Agent kan generere/sjekke kandidater.
+
+### WP-27 · 💰 Domene + DNS-cutover (etter WP-26)
+Kjøp domene (~150 kr/år); CNAME + custom domain på NÅVÆRENDE Pages; verifiser
+redirect fra chaerem.github.io/SportSync; oppdater PWA-manifest, ICS-lenker og
+interne absolutte URL-er til domenet.
+**Aksept:** gammel URL redirecter; PWA re-registrerer service worker på nytt domene;
+ICS-abonnement følger redirect.
+
+### WP-28 · Repo-splitt (etter WP-27)
+Nytt offentlig site-repo (brandnavnet): kun bygget `docs/`-innhold, Pages «deploy
+from branch», samme custom domain, INGEN workflows og ALDRI self-hosted runner
+(offentlig repo + self-hosted = fremmed PR-kode på egen maskin — hard grense).
+Dagens repo → privat motor-repo; deploy key (scopet til site-repoet) erstatter
+dagens `preview-deploy`-mekanisme med cross-repo-push av `docs/`.
+**Aksept:** site serveres fra nytt repo på samme domene; motor-repo privat;
+hele pipeline-løpet (build → push → publisert) verifisert ende-til-ende.
+
+### WP-29 · Self-hosted runner i motor-repoet (etter WP-28)
+- Kun i det PRIVATE repoet. Ephemeral + containerisert (`--ephemeral`, Docker/VM);
+  nettverkssegmentert fra hjemmenettet (egen VLAN/dedikert boks — agentene kjører
+  AI-generert kode, runneren må behandles deretter).
+- **Hybrid:** behold `ubuntu-latest` for korte/hyppige jobber (scout, usage-monitor)
+  innenfor 2 000 gratis-min; self-hosted for tunge agent-kjøringer.
+- **Aksept:** en full agent-syklus (research → verify → pipeline → publish) kjørt
+  på runneren; overage-forbruk ~0; runner-nedetid gir køede (ikke tapte) runs.
+
+---
+
 ## 🚪 GATE G1 · Lakmustesten (dossier P500 Fase 0)
 
 Etter ~4 uker TestFlight: åpner folk appen daglig uten push-mas? D7-retention?
@@ -199,16 +244,6 @@ Alt under denne linjen er skisse som re-planlegges ved gaten.
 - **WP-23 · Gap-voting v1** (P330): anonymt signal + server-kø under budsjett.
 - **WP-24 · Live Activities** via broadcast-kanaler (P340) — krever WP-17.
 - **WP-25 · Lansering ved vintersesongstart** — Gate G2: 5 000 brukere, D30 > 30 %.
-- **WP-26 · 💰 Rebranding + domene** («SportSync» kolliderer med eksisterende
-  produkter/varemerker): nytt navn + varemerkesjekk, kjøp domene (~150 kr/år),
-  custom domain på Pages (CNAME) — gjør URL-en flytte-sikker for PWA-installasjoner
-  og ICS-abonnenter. MÅ skje før lansering og før WP-27.
-- **WP-27 · 💰 Repo-splitt**: privat motor-repo (agenter, prompts, quirks/kalibrering,
-  fetchere, strategi) + offentlig site-repo (kun bygget docs/, Pages-hostet);
-  deploy key for cross-repo-push. NB: private repos har 2 000 gratis
-  Actions-min/mnd — dagens automasjon bruker est. 4–7 000 → overage (~15–45 USD/mnd),
-  slankere skjemaer eller self-hosted runner. Beslutning tas sammen med WP-21.
-  Utføres som ÉN samlet migrering med WP-26 («flyttedagen»).
 
 ## FASE 2 · Inntekt (vår 2027) — skisse
 Affiliate-avtaler (Viaplay/TV 2/Discovery+) → Pro-tier 59 kr/mnd (frontier-brief,
