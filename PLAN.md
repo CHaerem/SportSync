@@ -49,8 +49,8 @@ mennesket, aldri av en agent.
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | todo |
-| WP-28 | Repo-splitt (privat motor / public site) | 0C | WP-27 | todo |
-| WP-29 | Self-hosted runner (kun privat repo) | 0C | WP-28 | todo |
+| WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
+| WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 
 ---
 
@@ -222,16 +222,28 @@ interne absolutte URL-er til domenet.
 **Aksept:** gammel URL redirecter; PWA re-registrerer service worker på nytt domene;
 ICS-abonnement følger redirect.
 
-### WP-28 · Repo-splitt (etter WP-27)
-Nytt offentlig site-repo (brandnavnet): kun bygget `docs/`-innhold, Pages «deploy
-from branch», samme custom domain, INGEN workflows og ALDRI self-hosted runner
+### WP-28 · Repo-splitt — UTSATT, trigger-basert (besluttet 13.07.2026)
+**Hvorfor utsatt:** splitten koster de ubegrensede gratis Actions-minuttene
+(offentlig repo = hele økonomien i automasjonen) mot begrenset gevinst nå:
+calibration/datafiler er offentlige by design (serveres fra CDN), strategien bor
+i private artifacts, secrets er trygge i Actions-secrets, og den reelle moaten
+er løkka-som-løper + akkumulert historikk — ikke prompt-teksten. Å bygge åpent
+er en ressurs i denne fasen.
+**Triggere (én holder):** (1) kommersiell lansering nærmer seg og prompts/skills
+utgjør reell konkurransefordel, (2) inntekt skaper kopist-insentiv, (3) B2B-/
+partnersamtaler krever IP-hygiene.
+**Design når den utføres (invertert etter renamen):** `zenji.app` BEHOLDES
+offentlig og strippes til kun site-innhold (`docs/`) — Pages/URL uavbrutt; nytt
+PRIVAT `zenji-engine` får motoren (agenter, prompts, quirks, fetchere, tester,
+workflows + secrets); deploy key scopet til site-repoet gir cross-repo-push av
+bygget `docs/`. Site-repoet: INGEN workflows og ALDRI self-hosted runner
 (offentlig repo + self-hosted = fremmed PR-kode på egen maskin — hard grense).
-Dagens repo → privat motor-repo; deploy key (scopet til site-repoet) erstatter
-dagens `preview-deploy`-mekanisme med cross-repo-push av `docs/`.
-**Aksept:** site serveres fra nytt repo på samme domene; motor-repo privat;
-hele pipeline-løpet (build → push → publisert) verifisert ende-til-ende.
+**Aksept:** site uavbrutt på samme URL; motor privat; full syklus
+(research → verify → pipeline → cross-repo-push → publisert) bevist.
 
-### WP-29 · Self-hosted runner i motor-repoet (etter WP-28)
+### WP-29 · Self-hosted runner i motor-repoet (etter WP-28 — utsatt med den)
+- **Hodestart:** eier har allerede kjørt en dockerisert runner på ServerPi
+  (`sportsync-runner` i docker-compose) — dette er gjenbruk, ikke nybygg.
 - Kun i det PRIVATE repoet. Ephemeral + containerisert (`--ephemeral`, Docker/VM);
   nettverkssegmentert fra hjemmenettet (egen VLAN/dedikert boks — agentene kjører
   AI-generert kode, runneren må behandles deretter).
