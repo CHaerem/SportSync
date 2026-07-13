@@ -271,14 +271,16 @@ describe("build-events", () => {
 		const gstaad = events.filter((e) => /gstaad/i.test(e.title));
 		expect(gstaad).toHaveLength(1);                              // survives, not dropped
 		expect(gstaad[0].norwegian).toBe(true);                     // enrichment grafted on
-		expect(gstaad[0].norwegianPlayers).toEqual([{ name: "Casper Ruud" }]);
+		// WP-05: "Casper Ruud" is a real tracked athlete entity (sport tennis), so
+		// the enrichment pass stamps entityId — expected, not a regression.
+		expect(gstaad[0].norwegianPlayers).toEqual([{ name: "Casper Ruud", entityId: "casper-ruud" }]);
 		expect(gstaad[0].streaming).toEqual([{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }]);
 		// And it must PERSIST: the next rebuild re-fetches the bare stub, so the
 		// grafted enrichment has to carry forward or the event vanishes an hour later.
 		const rebuilt = runBuild().filter((e) => /gstaad/i.test(e.title));
 		expect(rebuilt).toHaveLength(1);
 		expect(rebuilt[0].norwegian).toBe(true);
-		expect(rebuilt[0].norwegianPlayers).toEqual([{ name: "Casper Ruud" }]);
+		expect(rebuilt[0].norwegianPlayers).toEqual([{ name: "Casper Ruud", entityId: "casper-ruud" }]);
 		expect(rebuilt[0].streaming).toEqual([{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }]);
 	});
 

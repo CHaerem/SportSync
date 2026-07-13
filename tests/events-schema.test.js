@@ -130,4 +130,22 @@ describe("events.schema.json — the validator actually catches violations (so t
 		const event = { ...base(), participants: [{ foo: "bar" }] };
 		expect(validate(event).length).toBeGreaterThan(0);
 	});
+
+	// WP-05: entityId / homeTeamEntityId / awayTeamEntityId — optional fields
+	// stamped by build-events.js when norwegianPlayers/homeTeam/awayTeam match a
+	// known entity in docs/data/entities.json.
+	it("WP-05: accepts homeTeamEntityId and awayTeamEntityId", () => {
+		const event = { ...base(), homeTeam: "Lyn", awayTeam: "Sogndal", homeTeamEntityId: "fk-lyn-oslo", awayTeamEntityId: "sogndal" };
+		expect(validate(event)).toEqual([]);
+	});
+
+	it("WP-05: accepts entityId on a norwegianPlayers entry", () => {
+		const event = { ...base(), norwegianPlayers: [{ name: "Viktor Hovland", entityId: "viktor-hovland" }] };
+		expect(validate(event)).toEqual([]);
+	});
+
+	it("WP-05: still validates fine without any entityId fields (optional)", () => {
+		const event = { ...base(), homeTeam: "Lyn", awayTeam: "Sogndal", norwegianPlayers: [{ name: "Viktor Hovland" }] };
+		expect(validate(event)).toEqual([]);
+	});
 });

@@ -82,6 +82,14 @@
 			"anyOf": [{ "type": "string" }, { "enum": [null] }],
 			"description": "Bortelag (kamp-sporter)."
 		},
+		"homeTeamEntityId": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "WP-05: stabil entitets-id (docs/data/entities.json) for hjemmelaget, satt av build-events.js når homeTeam word-boundary-matcher en kjent team/league-entitet."
+		},
+		"awayTeamEntityId": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "WP-05: stabil entitets-id for bortelaget, se homeTeamEntityId."
+		},
 		"isFavorite": {
 			"type": "boolean",
 			"description": "Agent-/config-flagget favoritt."
@@ -176,7 +184,11 @@
 				"name": { "type": "string" },
 				"teeTime": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
 				"teeTimeUTC": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
-				"status": { "anyOf": [{ "type": "string" }, { "enum": [null] }] }
+				"status": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+				"entityId": {
+					"anyOf": [{ "type": "string" }, { "enum": [null] }],
+					"description": "WP-05: stabil entitets-id (docs/data/entities.json), satt av build-events.js når navnet word-boundary-matcher en kjent athlete-entitet."
+				}
 			}
 		},
 		"featuredGroup": {
