@@ -1,4 +1,4 @@
-# SportSync → personlig sportsfeed: implementeringsplan
+# Zenji (tidl. SportSync) → personlig sportsfeed: implementeringsplan
 
 Arbeidsdokument for å delegere arbeid til agenter. Strategien («hvorfor») ligger i
 [kommersialiserings-dossieret](https://claude.ai/code/artifact/21c2971d-238a-48fe-b870-1c57218bd661)
@@ -33,8 +33,8 @@ mennesket, aldri av en agent.
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
-| WP-01 | events.schema.json | 0A | – | PR åpnet |
-| WP-02 | Stabil event-ID | 0A | – | PR åpnet |
+| WP-01 | events.schema.json | 0A | – | ✅ merget (#235) |
+| WP-02 | Stabil event-ID | 0A | – | ✅ merget (#234) |
 | WP-03 | manifest.json | 0A | – | todo |
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | todo |
 | WP-05 | Entitets-indeks | 0A | WP-01 | todo |
@@ -184,6 +184,16 @@ Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.
 ---
 
 ## FASE 0C · Flyttedagen: rebrand + repo-splitt (besluttet 13.07.2026)
+
+**Statusnote 13.07.2026:** Navnet er Zenji; eier kjøpte zenji.app og valgte å
+rename repoet umiddelbart (billigste tidspunkt — null brukere å brekke). Gjort:
+repo → `CHaerem/zenji.app`, alle serverte stier/brand-strenger oppdatert
+(manifest, sw.js, HTML, README, package.json). Konsekvens: **navnet er nå
+offentlig** → zenji.no/.tv bør kjøpes STRAKS; formell varemerkesjekk står
+fortsatt åpen; gamle PWA-installasjoner/ICS-abonnement på /SportSync/-URL-en er
+brutt (re-installer). WP-27 reduseres til domene/DNS på det RENAMEDE repoet;
+WP-28 (splitt) står som før. CLAUDE.md + agent-prompter refererer fortsatt
+SportSync internt — koordinert oppdatering er en egen liten pakke.
 
 Utføres som én samlet migrering, i denne rekkefølgen — WP-26 er blokkeren for alt annet.
 Nøkkeltrikset: custom domain settes på DAGENS repo før splitten (Pages redirecter
