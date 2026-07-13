@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
+import { writeManifest } from "./build-manifest.js";
 
 const dataDir = rootDataPath();
 
@@ -460,3 +461,9 @@ for (const name of ["tracked.json", "interests.json"]) {
 		console.log(`Published ${name} to docs/data/`);
 	}
 }
+
+// WP-03: publish manifest.json (bytes + sha256 per published data file) —
+// last thing this script does, so it reflects everything build-events.js
+// itself just wrote (events.json, tracked.json, interests.json).
+const manifest = writeManifest(dataDir);
+console.log(`Wrote manifest.json (${Object.keys(manifest.files).length} file(s)).`);

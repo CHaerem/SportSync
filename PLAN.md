@@ -35,7 +35,7 @@ mennesket, aldri av en agent.
 |---|---|---|---|---|
 | WP-01 | events.schema.json | 0A | – | ✅ merget (#235) |
 | WP-02 | Stabil event-ID | 0A | – | ✅ merget (#234) |
-| WP-03 | manifest.json | 0A | – | todo |
+| WP-03 | manifest.json | 0A | – | PR åpnet |
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | todo |
 | WP-05 | Entitets-indeks | 0A | WP-01 | todo |
 | WP-06 | Gylne feed-vektorer | 0A | WP-02 | todo |
