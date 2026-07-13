@@ -1,0 +1,64 @@
+{
+	"name": "AI-research events stay on the board regardless of confidence; empty streaming never drops an event",
+	"description": "source:'ai-research' makes an event relevant on its own — even a low-confidence one in a sport that is not broadly followed and with no tracked entity. confidence does NOT gate feed inclusion today (a notification planner, WP-15, may gate low confidence later — the FEED does not). Empty streaming is a 'where to watch unknown' rendering state, never a reason to drop. The accent still follows the ordinary must-see rules, so a low-confidence Norwegian biathlon sprint with a Norwegian in the field is accented while a bare tennis challenger is not.",
+	"input": {
+		"now": "2026-07-13T12:00:00Z",
+		"interests": {
+			"followBroadly": ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine"],
+			"alwaysTrack": {
+				"athletes": [
+					{ "name": "Viktor Hovland", "aliases": ["Hovland"], "sport": "golf" },
+					{ "name": "Casper Ruud", "aliases": ["Ruud"], "sport": "tennis" },
+					{ "name": "Magnus Carlsen", "aliases": ["Carlsen"], "sport": "chess" }
+				],
+				"teams": [
+					{ "name": "Barcelona", "aliases": ["FC Barcelona", "Barça", "Barca"], "sport": "football" },
+					{ "name": "Lyn", "aliases": ["Lyn Oslo"], "sport": "football" },
+					{ "name": "100 Thieves", "aliases": ["100T"], "sport": "esports" }
+				],
+				"tournaments": [
+					{ "name": "Premier League", "aliases": ["EPL"], "sport": "football" },
+					{ "name": "F1 World Championship", "aliases": ["Formula 1", "F1", "Formel 1"], "sport": "f1", "notify": true },
+					{ "name": "Tour de France", "aliases": ["TdF"], "sport": "cycling", "notify": true }
+				]
+			},
+			"notify": { "leadMinutes": 30 }
+		},
+		"events": [
+			{
+				"id": "ai-low-tennis",
+				"sport": "tennis",
+				"title": "Oslo Challenger — first round",
+				"time": "2026-07-20T10:00:00Z",
+				"source": "ai-research",
+				"confidence": "low",
+				"evidence": ["https://example.no/a"],
+				"streaming": []
+			},
+			{
+				"id": "ai-low-norsk",
+				"sport": "biathlon",
+				"title": "Sprint kvinner",
+				"time": "2026-07-21T13:00:00Z",
+				"source": "ai-research",
+				"confidence": "low",
+				"evidence": ["https://example.no/b"],
+				"norwegian": true,
+				"norwegianPlayers": [{ "name": "Ingrid Landmark Tandrevold" }],
+				"streaming": []
+			},
+			{
+				"id": "plain-empty",
+				"sport": "golf",
+				"title": "Local Open — round 1",
+				"time": "2026-07-20T06:00:00Z",
+				"streaming": []
+			}
+		]
+	},
+	"expected": {
+		"relevant": ["ai-low-norsk", "ai-low-tennis", "plain-empty"],
+		"mustWatch": [],
+		"mustSee": ["ai-low-norsk"]
+	}
+}

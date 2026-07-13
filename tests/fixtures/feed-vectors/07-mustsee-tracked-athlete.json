@@ -1,0 +1,55 @@
+{
+	"name": "A tracked athlete on the card aligns all three predicates",
+	"description": "When a tracked notify-athlete appears (in the title or in norwegianPlayers), the event is relevant, accented (client isMustSee athlete path) and belled (server mustWatchEntity). A tennis event (not broadly followed) is even pulled onto the board purely because Casper Ruud is on it. The client accent path reads norwegianPlayers names + title but NOT participants.",
+	"input": {
+		"now": "2026-07-13T12:00:00Z",
+		"interests": {
+			"followBroadly": ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine"],
+			"alwaysTrack": {
+				"athletes": [
+					{ "name": "Viktor Hovland", "aliases": ["Hovland"], "sport": "golf" },
+					{ "name": "Casper Ruud", "aliases": ["Ruud"], "sport": "tennis" },
+					{ "name": "Magnus Carlsen", "aliases": ["Carlsen"], "sport": "chess" }
+				],
+				"teams": [
+					{ "name": "Barcelona", "aliases": ["FC Barcelona", "Barça", "Barca"], "sport": "football" },
+					{ "name": "Lyn", "aliases": ["Lyn Oslo"], "sport": "football" },
+					{ "name": "100 Thieves", "aliases": ["100T"], "sport": "esports" }
+				],
+				"tournaments": [
+					{ "name": "Premier League", "aliases": ["EPL"], "sport": "football" },
+					{ "name": "F1 World Championship", "aliases": ["Formula 1", "F1", "Formel 1"], "sport": "f1", "notify": true },
+					{ "name": "Tour de France", "aliases": ["TdF"], "sport": "cycling", "notify": true }
+				]
+			},
+			"notify": { "leadMinutes": 30 }
+		},
+		"events": [
+			{
+				"id": "scottish",
+				"sport": "golf",
+				"title": "Genesis Scottish Open",
+				"time": "2026-07-16T08:00:00Z",
+				"norwegian": false,
+				"norwegianPlayers": [{ "name": "Viktor Hovland" }]
+			},
+			{
+				"id": "carlsen",
+				"sport": "chess",
+				"title": "Magnus Carlsen vs Hikaru Nakamura",
+				"time": "2026-07-17T15:00:00Z"
+			},
+			{
+				"id": "ruud-tennis",
+				"sport": "tennis",
+				"title": "Casper Ruud vs Alexander Zverev",
+				"time": "2026-07-17T13:00:00Z"
+			}
+		]
+	},
+	"expected": {
+		"relevant": ["carlsen", "ruud-tennis", "scottish"],
+		"mustSee": ["carlsen", "ruud-tennis", "scottish"],
+		"mustWatch": ["carlsen", "ruud-tennis", "scottish"]
+	}
+}
