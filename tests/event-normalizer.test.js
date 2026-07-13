@@ -26,4 +26,24 @@ describe("EventNormalizer", () => {
 		expect(event.streaming).toHaveLength(1);
 		expect(event.streaming[0].platform).toBe("NRK");
 	});
+
+	// WP-04: the chess curated/Lichess fetch paths set participants as bare name
+	// strings and never set norwegianPlayers — this used to come out here as
+	// `norwegianPlayers: null` (never valid) with un-objectified participants.
+	it("normalizes participants to canonical {name} objects and a missing norwegianPlayers to []", () => {
+		const event = EventNormalizer.normalize(
+			{ title: "Round 1", time: "2026-08-15T14:00:00Z", participants: ["Johan-Sebastian Christiansen"] },
+			"chess"
+		);
+		expect(event.participants).toEqual([{ name: "Johan-Sebastian Christiansen" }]);
+		expect(event.norwegianPlayers).toEqual([]);
+	});
+
+	it("normalizes a null norwegianPlayers field to []", () => {
+		const event = EventNormalizer.normalize(
+			{ title: "x", time: "2026-08-15T14:00:00Z", norwegianPlayers: null },
+			"chess"
+		);
+		expect(event.norwegianPlayers).toEqual([]);
+	});
 });

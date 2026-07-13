@@ -39,6 +39,18 @@ describe("agent prompts", () => {
 		expect(p).toContain("norwegian-rights");
 	});
 
+	it("WP-04: research and verify document the canonical norwegianPlayers/participants form", () => {
+		for (const f of ["research.md", "verify.md"]) {
+			const p = read(f);
+			expect(p, `${f} should document norwegianPlayers/participants`).toContain("norwegianPlayers");
+			expect(p, `${f} should document norwegianPlayers/participants`).toContain("participants");
+			// The contract is object-shaped ({ "name": ... }), never a bare string/null —
+			// pin the example so the prose can't silently drift back to the old polymorphism.
+			expect(p, `${f} should show the canonical { "name": ... } object form`).toMatch(/\{\s*"name":/);
+			expect(p.toLowerCase(), `${f} should call out canonical/never-a-string form`).toMatch(/never a bare string|canonical/);
+		}
+	});
+
 	it("scout prompt exists with escalation cap and log contract", () => {
 		const p = read("scout.md");
 		expect(p).toContain("scout-log.json");

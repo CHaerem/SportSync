@@ -162,13 +162,70 @@ export function mustWatchEntity(event, interests) {
 	if (!event) return null;
 	const hay = [
 		event.title, event.tournament, event.homeTeam, event.awayTeam,
-		...((event.norwegianPlayers || []).map((p) => p.name || p)),
-		...(event.participants || []),
+		...((event.norwegianPlayers || []).map((p) => p?.name || p)),
+		...((event.participants || []).map((p) => p?.name || p)),
 	].join(" ");
 	// Sport-scope so a sport-tagged entity (e.g. FC Barcelona) can't match a
 	// different sport's event that merely mentions the name (a Tour de France
 	// stage in the city of Barcelona). Untagged entities/events still match freely.
 	return matchInterest(hay, notifyEntities(interests), { sport: event.sport });
+}
+
+// --- Participation normalization (WP-04) ---
+// Canonical form, enforced everywhere in the pipeline: `norwegianPlayers` and
+// `participants` are always an array of { name, ... } objects — never bare
+// strings, never a lone null, never a missing/null field (empty array instead).
+// Older fetchers and events preserved from a pre-WP-04 events.json may still
+// carry the old polymorphism (a plain string, `null` entries, or the whole
+// field missing); these two functions coerce any of those into the canonical
+// shape so every downstream consumer (schema validation, hay-building for
+// relevance/must-watch, the client, the ICS export) can assume `.name`
+// unconditionally. Applied at the fetcher layer (event-normalizer.js) AND in
+// build-events.js (pushEvent + the final pass over `kept`) — see the comments
+// there for why both call sites are needed.
+
+/** Coerce one participant-ish entry (string | {name, ...} | null) to {name} or null. */
+function normalizeNameEntry(p) {
+	if (p == null) return null;
+	if (typeof p === "string") {
+		const name = p.trim();
+		return name ? { name } : null;
+	}
+	if (typeof p === "object" && typeof p.name === "string" && p.name.trim()) {
+		return p;
+	}
+	return null;
+}
+
+/** Canonical `participants`: [{name}], never strings/null; [] when none. */
+export function normalizeParticipants(list) {
+	if (!Array.isArray(list)) return [];
+	return list
+		.map((p) => {
+			const e = normalizeNameEntry(p);
+			return e ? { name: e.name } : null;
+		})
+		.filter(Boolean);
+}
+
+/**
+ * Canonical `norwegianPlayers`: [{name, teeTime?, teeTimeUTC?, status?}], never
+ * strings/null; [] when none. Preserves the optional golf tee-time/status
+ * fields when the source already supplied an object.
+ */
+export function normalizeNorwegianPlayers(list) {
+	if (!Array.isArray(list)) return [];
+	return list
+		.map((p) => {
+			const e = normalizeNameEntry(p);
+			if (!e) return null;
+			const out = { name: e.name };
+			if (e.teeTime != null) out.teeTime = e.teeTime;
+			if (e.teeTimeUTC != null) out.teeTimeUTC = e.teeTimeUTC;
+			if (e.status != null) out.status = e.status;
+			return out;
+		})
+		.filter(Boolean);
 }
 
 export function normalizeToUTC(dateString) {

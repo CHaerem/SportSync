@@ -71,7 +71,7 @@ function vevent(ev, withAlarm) {
 	if (ev.tournament) parts.push(ev.tournament);
 	if (ev.meta && ev.meta !== ev.tournament) parts.push(ev.meta);
 	if (Array.isArray(ev.participants) && ev.participants.length)
-		parts.push("Participants: " + ev.participants.join(", "));
+		parts.push("Participants: " + ev.participants.map((p) => p?.name || p).join(", "));
 	if (ev.streaming && ev.streaming.length)
 		parts.push("Streaming: " + ev.streaming.map((s) => s.platform).join("/"));
 	if (ev.norwegian) parts.push("Norwegian focus");

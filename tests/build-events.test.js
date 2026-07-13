@@ -358,4 +358,61 @@ describe("build-events", () => {
 		runBuild();
 		expect(fs.existsSync(path.join(dataDir, "tracked.json"))).toBe(true);
 	});
+
+	// WP-04: participation-form normalization.
+	it("normalizes a freshly-built event's participation to canonical form (pushEvent)", () => {
+		// Regression: the chess fetcher path used to emit norwegianPlayers: null and
+		// bare-string participants (scripts/lib/event-normalizer.js). build-events.js's
+		// own pushEvent() must guarantee the canonical shape regardless of what any
+		// sport file emits.
+		fs.writeFileSync(
+			path.join(dataDir, "chess.json"),
+			JSON.stringify({ tournaments: [{ name: "Sant Martí", events: [
+				{ title: "Round 1", time: future(1), participants: ["Johan-Sebastian Christiansen"], norwegianPlayers: null },
+			] }] })
+		);
+		const events = runBuild();
+		const ev = events.find((e) => e.title === "Round 1");
+		expect(ev).toBeDefined();
+		expect(ev.participants).toEqual([{ name: "Johan-Sebastian Christiansen" }]);
+		expect(ev.norwegianPlayers).toEqual([]);
+	});
+
+	it("normalizes a preserved ai-research event's participation to canonical form (bypasses pushEvent)", () => {
+		// Regression: preserved ai-research / kept-on-board events are pushed
+		// straight from a previous events.json (see the preservation pass), so they
+		// never go through pushEvent(). The final pass over `kept` must catch them.
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "biathlon", title: "Mixed relay", time: future(5), source: "ai-research", confidence: "high", evidence: ["a", "b"],
+				  participants: ["Johannes Thingnes Bø"], norwegianPlayers: null },
+			])
+		);
+		const events = runBuild();
+		const ev = events.find((e) => e.title === "Mixed relay");
+		expect(ev).toBeDefined();
+		expect(ev.participants).toEqual([{ name: "Johannes Thingnes Bø" }]);
+		expect(ev.norwegianPlayers).toEqual([]);
+	});
+
+	it("keeps a non-broadly-followed event relevant when a tracked athlete appears only in participants", () => {
+		// Regression: isRelevant()'s hay-building used to spread raw participants
+		// strings; once participants became canonical {name} objects, a naive spread
+		// would embed "[object Object]" instead of the name and silently break
+		// interest matching for any event relying purely on participants (tennis,
+		// chess) rather than norwegianPlayers/homeTeam/awayTeam.
+		fs.writeFileSync(
+			path.join(configDir, "interests.json"),
+			JSON.stringify({ alwaysTrack: { athletes: ["Casper Ruud"] } })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "tennis.json"),
+			JSON.stringify({ tournaments: [{ name: "ATP Tour", events: [
+				{ title: "R32 Match", time: future(2), participants: ["Casper Ruud", "Someone Else"] },
+			] }] })
+		);
+		const events = runBuild();
+		expect(events.find((e) => e.title === "R32 Match")).toBeDefined();
+	});
 });
