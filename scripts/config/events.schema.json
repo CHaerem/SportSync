@@ -6,6 +6,10 @@
 	"required": ["time", "title", "sport"],
 	"additionalProperties": false,
 	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Stabil, servergenerert ID (WP-02): første 12 hex-tegn av sha256 over dedupe-nøkkelen sport|title|time. Ikke required — eldre payloads mangler den; klienten har fallback."
+		},
 		"sport": {
 			"type": "string",
 			"description": "Sport-nøkkel, f.eks. \"football\", \"golf\", \"chess\"."
