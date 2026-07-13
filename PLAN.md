@@ -39,7 +39,7 @@ mennesket, aldri av en agent.
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | PR åpnet |
 | WP-05 | Entitets-indeks | 0A | WP-01 | ✅ merget (#240) |
 | WP-06 | Gylne feed-vektorer | 0A | WP-02 | ✅ merget (#238) |
-| WP-10 | iOS-scaffold | 0B | – | ✅ merget (#237) — xcodebuild-bevis venter på Xcode-installasjon |
+| WP-10 | iOS-scaffold | 0B | – | ✅ merget (#237) + bygg bevist (Xcode 26.6, iOS 26.5-SDK) |
 | WP-11 | Codable-modeller | 0B | WP-01, WP-10 | todo |
 | WP-12 | SyncClient | 0B | WP-03, WP-11 | todo |
 | WP-13 | FeedCompiler (Swift) | 0B | WP-06, WP-11 | todo |
