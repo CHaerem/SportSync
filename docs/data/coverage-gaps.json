@@ -1,8 +1,20 @@
 {
-  "generatedAt": "2026-07-13T08:14:58.262Z",
-  "gapCount": 0,
+  "generatedAt": "2026-07-13T11:58:45.022Z",
+  "gapCount": 1,
   "anomalyCount": 0,
-  "gaps": [],
+  "gaps": [
+    {
+      "kind": "entity",
+      "entity": "Premier League",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Ryktes til Premier League",
+      "link": "https://www.tv2.no/a/19043908",
+      "feed": "tv2-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-13T11:58:44.758Z"
+    }
+  ],
   "anomalies": [],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
 }
