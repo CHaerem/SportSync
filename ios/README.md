@@ -357,16 +357,93 @@ the frozen fixture doesn't represent (a changed file, a corrupt download),
 manifest and mutates exactly one entry, computing its sha256 with the same
 `Data.sha256Hex` `SyncClient` itself uses.
 
+## Feed compiler (WP-13)
+
+`Zenji/Feed/` is the Swift port of the personalisation semantics — **which**
+events reach the feed, which get the reminder bell, which get the visual
+accent, how the agenda time window behaves, and how stage races collapse. Its
+one hard acceptance criterion: it reproduces **every** golden feed-vector
+(`tests/fixtures/feed-vectors/`, WP-06) **bit-for-bit**, including the four
+pinned server/client divergences (`DIVERGENCES.md`) — those are *reproduced*,
+never "fixed".
+
+### There is no single "special?" predicate — there are five
+
+Each answers a different product question and is ported faithful to the side
+that owns it (the web duplicates this logic across server and client, and the
+two are *intended* to differ):
+
+| Predicate | Question | Ported from | Semantics the port preserves |
+|---|---|---|---|
+| `isRelevant` | In the feed at all? | **server** `build-events.js` `isRelevant` + 14-day cutoff | `sport ∈ followBroadly` OR norwegian/isFavorite/importance≥4/ai-research OR a tracked entity matches — the entity match is **NOT sport-scoped**. Cutoff keys off `endTime ?? time` (multi-day events survive on their end); boundary inclusive. |
+| `mustWatch` | Reminder bell 🔔? | **server** `helpers.js` `mustWatchEntity` | Keyed **only** off `interests.json` notify-entities (teams+athletes by default, tournaments only when `notify:true`); **sport-scoped**; word-boundary + diacritic-folding matching. |
+| `isMustSee` | Quiet visual accent? | **client** `dashboard.js` `isMustSee` | isFavorite/importance≥4/(norwegian+players), national-team regex, then **naive lowercase-substring** team/athlete matching — the pinned substring behaviour (`"Brooklyn".contains("lyn")` fires) is kept deliberately. Reads title + player names, **not** participants/tournament. |
+| `isEventInWindow` | Overlaps the agenda window? | **server & client, byte-identical** | `s = time`, `e = endTime ?? time`; overlaps `[start,end)` iff `s < end && e >= start`; no time → false. |
+| `collapseSeries` | How do stage races fold? | **client** `dashboard.js` `collapseSeries` | Groups titles matching `/\betappe\b|\bstage\s*\d/i` by `sport||tournament`; **4 or more** fold into one synthetic row; next stage = first with `endTime ?? time >= now`, else the last. |
+
+The four pinned divergences the port reproduces: relevance is unscoped while the
+bell is sport-scoped (a football "Barcelona" pulls a tennis "Barcelona Open"
+onto the board but rings no bell); the accent's naive substring vs the bell's
+word boundary (`"Brooklyn FC"` gets the accent, not the bell); bell ≠ accent in
+general (favorite/national-team/golf-lens accent without a bell; F1/TdF bell
+without an accent); and `confidence` does **not** gate feed inclusion.
+
+### The dangerous part: text matching
+
+`TextMatch.swift` ports the server matchers as pure functions:
+`normalize` (NFD-decompose → strip Unicode Marks `\p{M}` → lowercase, so
+"Barça" ≡ "Barca", "Vålerenga" → "valerenga") and `containsName`
+(word-boundary, accent-insensitive containment via
+`(?:^|[^\p{L}\p{N}])name(?:[^\p{L}\p{N}]|$)`). These are the exact JS
+semantics from `scripts/lib/helpers.js`; `FeedCompilerUnitTests` guards them
+with named minimal cases. The client accent's **naive** `lowercased()` +
+substring `contains` deliberately does **not** route through this file — it
+lives inline in `FeedCompiler.isMustSee` because its lack of folding/boundaries
+is pinned behaviour.
+
+### Types
+
+- `FeedEvent.swift` — the small pure-data input the predicates read (only the
+  fields they use). Separate from WP-11's `Event` for one concrete reason:
+  `Event.time` is a **non-optional** `Date`, but the vectors include a pinned
+  `"time": null` case; `FeedEvent.time` is `Date?` so that decodes and the
+  predicates return the same `false` the JS does. `init(from event: Event)`
+  bridges the real cached `[Event]` (from `DataStore`) into the compiler for
+  WP-14.
+- `Interests.swift` — the personalisation config the vectors embed (a Swift
+  mirror of the fields of `scripts/config/interests.json` the predicates read).
+- `FeedCompiler.swift` — the five predicates + the `compile(events:interests:
+  now:)` facade (relevance filter → bell/accent annotation → series collapse →
+  Europe/Oslo day grouping). The day grouping is **not** vector-covered (kept
+  simple, unit-tested separately in `FeedCompilerUnitTests`).
+
+### Running the vectors
+
+`FeedVectorTests` decodes the **same** files the JS reference
+(`tests/feed-vectors.test.js`) replays — the repo-root
+`tests/fixtures/feed-vectors` folder is referenced directly from
+`project.yml` as a bundled folder reference (`buildPhase: resources`,
+`type: folder`, an out-of-`ios/` path XcodeGen resolves relative to
+`project.yml`), never copied, so the two runners can never drift. At runtime
+the tests enumerate the bundled `feed-vectors/*.json`, decode each into the
+`FeedEvent`/`Interests` models, and assert each declared expectation as an
+unordered id set. **The fixtures are frozen** — a failing vector is left red
+and escalated, never "fixed" by editing the fixture.
+
+```
+cd ios && xcodegen generate
+xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+# 49 tests: 37 WP-10/11/12 baseline + 12 WP-13
+#   (6 FeedVectorTests over all 13 vectors + 6 FeedCompilerUnitTests)
+```
+
 ## Architecture (what plugs in next)
 
-WP-10 was the shell, WP-11 added the Codable models, WP-12 (above) added
-sync + cache + background refresh. The pieces below are still separate work
-packages — **not implemented here**:
+WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache +
+background refresh, WP-13 (above) added the FeedCompiler. The pieces below are
+still separate work packages — **not implemented here**:
 
-- **FeedCompiler (WP-13)** — the Swift port of the server's personalization
-  logic (interest match → weighting → buckets → day grouping), proven against
-  the golden feed vectors from WP-06, consuming `DataStore.loadEvents()` /
-  `.loadEntities()`.
 - **NotificationPlanner (WP-15)** — diffs event IDs (WP-02) after each sync and
   (re)schedules local notifications from the must-see rules.
 - **Agenda UI + widget (WP-14)** — replaces `ContentView`'s placeholder row
