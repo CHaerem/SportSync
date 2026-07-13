@@ -2,14 +2,20 @@
 //  ContentView.swift
 //  Zenji
 //
-//  WP-10 scaffold: a Tekst-TV header + an empty, day-grouped agenda shell
-//  with a single placeholder row. WP-12 wires in the sync status line below
-//  the date ("Sist synket: … · N events") and triggers a sync at app start;
-//  the agenda itself is still a placeholder — FeedCompiler (WP-13) and the
-//  real day-grouped rendering (WP-14) populate it later. WP-15 adds the one
-//  NotificationPlanner hook in `refresh()` below (the "after a successful
-//  sync" reconcile point) — deliberately the ONLY WP-15 touch in this file;
-//  the real agenda rendering stays WP-14's. Norwegian UI per project convention.
+//  WP-10 scaffold → WP-12 wired in sync → WP-14 replaces the placeholder
+//  agenda with the real one: a Tekst-TV header (ZENJI · dato · a quietly
+//  ticking clock, no other chrome — CLAUDE.md "Calm dashboard") above
+//  AgendaView, which does the actual day-grouped rendering. WP-15 adds the
+//  one NotificationPlanner hook in `refresh()` below (the "after a
+//  successful sync" reconcile point) — deliberately the ONLY WP-15 touch in
+//  this file; the real agenda rendering is WP-14's.
+//
+//  Deliberately keeps its public `init(syncClient:dataStore:)` call
+//  compatible with the WP-12 scaffold (the third parameter,
+//  `notificationPlanner`, defaults): WP-15 (NotificationPlanner) landed in
+//  parallel and the brief asked to keep `ZenjiApp.swift` changes to an
+//  absolute minimum to avoid a merge conflict — `ZenjiApp.swift` constructs
+//  this view with just `syncClient`/`dataStore` and needs zero edits.
 //
 
 import SwiftUI
@@ -19,8 +25,13 @@ struct ContentView: View {
     let dataStore: DataStore
     let notificationPlanner: NotificationPlanner
 
-    @State private var lastSync: Date?
-    @State private var eventCount: Int = 0
+    @State private var viewModel: AgendaViewModel
+    @State private var now = Date()
+
+    /// Ticks once a second — the "tikkende klokke-følelse" in the header,
+    /// same idea as the web masthead's clock (dashboard.js `startClock`), just
+    /// quieter (no seconds ticking sound, obviously — just the digits).
+    private let clock = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(
         syncClient: SyncClient = SyncClient(),
@@ -30,25 +41,27 @@ struct ContentView: View {
         self.syncClient = syncClient
         self.dataStore = dataStore
         self.notificationPlanner = notificationPlanner
+        self._viewModel = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient))
     }
 
-    private let today = Date()
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "nb_NO")
+        f.timeZone = FeedCompiler.osloTimeZone
+        f.dateFormat = "EEEE d. MMMM"
+        return f
+    }()
 
-    private var dateLabel: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "nb_NO")
-        formatter.dateFormat = "EEEE d. MMMM"
-        return formatter.string(from: today).uppercased()
-    }
+    private static let clockFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "nb_NO")
+        f.timeZone = FeedCompiler.osloTimeZone
+        f.dateFormat = "HH:mm:ss"
+        return f
+    }()
 
-    private var syncStatusLabel: String {
-        guard let lastSync else { return "Sist synket: aldri" }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "nb_NO")
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return "Sist synket: \(formatter.string(from: lastSync)) · \(eventCount) events"
-    }
+    private var dateLabel: String { Self.dateFormatter.string(from: now).uppercased() }
+    private var clockLabel: String { Self.clockFormatter.string(from: now) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -56,25 +69,29 @@ struct ContentView: View {
             Rectangle()
                 .fill(ZenjiTokens.accent.opacity(0.35))
                 .frame(height: 1)
-            agenda
+            AgendaView(viewModel: viewModel)
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
         .task {
             await refresh()
         }
+        .onReceive(clock) { now = $0 }
     }
 
-    /// Loads whatever is already cached immediately (so the status line
-    /// isn't blank while the network round-trip is in flight), then syncs
-    /// and reloads — this is the "kall sync ved app-start" hook from WP-12.
-    /// WP-15: reconciles local notifications after the sync completes,
-    /// diffing whatever was cached before against whatever is cached now.
+    /// Loads whatever is already cached immediately (so the agenda isn't
+    /// blank while the network round-trip is in flight — WP-12's "kall sync
+    /// ved app-start" hook), then syncs and reloads. WP-15: reconciles local
+    /// notifications after the sync completes, diffing whatever was cached
+    /// before against whatever is cached now — this orchestration (rather
+    /// than delegating straight to `viewModel.refresh(now:)`) is what lets
+    /// the "previous events" snapshot land exactly between the two cache
+    /// reloads, same shape as the WP-15 original.
     private func refresh() async {
-        reloadFromCache()
+        viewModel.reloadFromCache(now: now)
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
-        reloadFromCache()
+        viewModel.reloadFromCache(now: now)
         await notificationPlanner.reconcile(
             previousEvents: previousEvents,
             newEvents: dataStore.loadEvents(),
@@ -83,56 +100,25 @@ struct ContentView: View {
         )
     }
 
-    private func reloadFromCache() {
-        lastSync = dataStore.lastSync
-        eventCount = dataStore.loadEvents().count
-    }
-
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("ZENJI")
-                .font(.zenjiMono(size: 28, weight: .bold))
-                .foregroundStyle(ZenjiTokens.accent)
-                .tracking(2)
-            Text(dateLabel)
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("ZENJI")
+                    .font(.zenjiMono(size: 26, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.accent)
+                    .tracking(2)
+                Text(dateLabel)
+                    .font(.zenjiMono(size: 13))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
+            }
+            Spacer()
+            Text(clockLabel)
                 .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
-            Text(syncStatusLabel)
-                .font(.zenjiMono(size: 11))
+                .monospacedDigit()
                 .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    /// Day-grouped agenda shell. Today there is exactly one group ("I DAG")
-    /// holding the placeholder row — real grouping arrives with WP-12/WP-13.
-    private var agenda: some View {
-        List {
-            Section {
-                placeholderRow
-            } header: {
-                Text("I DAG")
-                    .font(.zenjiMono(size: 12, weight: .semibold))
-                    .foregroundStyle(ZenjiTokens.accent)
-            }
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .background(ZenjiTokens.background)
-    }
-
-    private var placeholderRow: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Text("–")
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.4))
-            Text("Ingen events lastet — sync kommer i WP-12")
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
-        }
-        .listRowBackground(ZenjiTokens.background)
-        .padding(.vertical, 6)
     }
 }
 

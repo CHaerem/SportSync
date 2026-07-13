@@ -69,6 +69,19 @@ targets:
     sources:
       - path: ZenjiWidget
       - path: Zenji/DesignTokens.swift
+      # WP-14: the widget's own timeline logic (WidgetTimelineBuilder.swift,
+      # no import WidgetKit — see that file's header) needs the Codable
+      # models, the FeedCompiler predicates + AgendaFormat/EventBridge
+      # (bundled in Feed/, see AgendaFormat.swift's header on why), and just
+      # the READ half of Sync — CacheStore + SyncState + DataStore, NOT
+      # SyncClient.swift/Checksum.swift, so the widget target has no
+      # network-capable code at all (INGEN nettverk i widgeten, per brief).
+      - path: Zenji/Models
+      - path: Zenji/Feed
+      - path: Zenji/Sync/CacheStore.swift
+      - path: Zenji/Sync/SyncState.swift
+      - path: Zenji/Sync/DataStore.swift
+      - path: Zenji/Widget/WidgetTimelineBuilder.swift
     info:
       path: ZenjiWidget/Info.plist
       properties:
@@ -104,6 +117,17 @@ targets:
       - path: Zenji/Sync
       - path: Zenji/Feed
       - path: Zenji/Notifications
+      # WP-14: AgendaViewModel + its SwiftUI views (day-grouped agenda,
+      # detail sheets) and the widget's pure timeline builder — compiled
+      # directly into this hostless bundle, same "no @testable import"
+      # pattern as Models/Sync/Feed above, so AgendaViewModelTests and
+      # WidgetTimelineBuilderTests can drive them with no running app.
+      # DesignTokens.swift is needed here too: Agenda's SwiftUI views
+      # reference ZenjiTokens/.zenjiMono directly (same reason
+      # ZenjiWidgetExtension already lists it explicitly, above).
+      - path: Zenji/DesignTokens.swift
+      - path: Zenji/Agenda
+      - path: Zenji/Widget
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen
