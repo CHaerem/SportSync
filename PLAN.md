@@ -35,11 +35,11 @@ mennesket, aldri av en agent.
 |---|---|---|---|---|
 | WP-01 | events.schema.json | 0A | – | ✅ merget (#235) |
 | WP-02 | Stabil event-ID | 0A | – | ✅ merget (#234) |
-| WP-03 | manifest.json | 0A | – | PR åpnet |
+| WP-03 | manifest.json | 0A | – | ✅ merget (#236) |
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | todo |
 | WP-05 | Entitets-indeks | 0A | WP-01 | todo |
-| WP-06 | Gylne feed-vektorer | 0A | WP-02 | PR åpnet |
-| WP-10 | iOS-scaffold | 0B | – | PR åpnet |
+| WP-06 | Gylne feed-vektorer | 0A | WP-02 | ✅ merget (#238) |
+| WP-10 | iOS-scaffold | 0B | – | ✅ merget (#237) — xcodebuild-bevis venter på Xcode-installasjon |
 | WP-11 | Codable-modeller | 0B | WP-01, WP-10 | todo |
 | WP-12 | SyncClient | 0B | WP-03, WP-11 | todo |
 | WP-13 | FeedCompiler (Swift) | 0B | WP-06, WP-11 | todo |

@@ -9,6 +9,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { rootDataPath, readJsonIfExists, mustWatchEntity } from "./lib/helpers.js";
+import { writeManifest } from "./build-manifest.js";
 
 const dataDir = rootDataPath();
 const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
@@ -119,3 +120,9 @@ fs.writeFileSync(path.join(dataDir, "events.ics"), calendar(events, { alarms: tr
 console.log(
 	`Wrote events.ics (${events.length} events, ${mustWatchCount} with a -${leadMinutes}m reminder).`
 );
+
+// Regenerate the manifest so events.ics (written above, AFTER build-events'
+// manifest pass in the pipeline order) is always fresh in it — closes the
+// one-cycle lag flagged in WP-03.
+const manifest = writeManifest(dataDir);
+console.log(`Refreshed manifest.json (${Object.keys(manifest.files).length} file(s)).`);
