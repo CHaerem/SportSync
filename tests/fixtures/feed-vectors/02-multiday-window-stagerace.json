@@ -1,0 +1,59 @@
+{
+	"name": "Grand tour + a single stage against today's agenda window",
+	"description": "A three-week stage race (endTime weeks out) overlaps TODAY's window even though it started days ago; today's stage overlaps; a stage that already finished does NOT overlap today's window but is STILL relevant (kept in the feed under the 14-day retention floor). Separates the agenda's day-window (isEventInWindow) from the server retention cutoff.",
+	"input": {
+		"now": "2026-07-13T12:00:00Z",
+		"window": { "start": "2026-07-13T00:00:00Z", "end": "2026-07-14T00:00:00Z" },
+		"interests": {
+			"followBroadly": ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine"],
+			"alwaysTrack": {
+				"athletes": [
+					{ "name": "Viktor Hovland", "aliases": ["Hovland"], "sport": "golf" },
+					{ "name": "Casper Ruud", "aliases": ["Ruud"], "sport": "tennis" },
+					{ "name": "Magnus Carlsen", "aliases": ["Carlsen"], "sport": "chess" }
+				],
+				"teams": [
+					{ "name": "Barcelona", "aliases": ["FC Barcelona", "Barça", "Barca"], "sport": "football" },
+					{ "name": "Lyn", "aliases": ["Lyn Oslo"], "sport": "football" },
+					{ "name": "100 Thieves", "aliases": ["100T"], "sport": "esports" }
+				],
+				"tournaments": [
+					{ "name": "Premier League", "aliases": ["EPL"], "sport": "football" },
+					{ "name": "F1 World Championship", "aliases": ["Formula 1", "F1", "Formel 1"], "sport": "f1", "notify": true },
+					{ "name": "Tour de France", "aliases": ["TdF"], "sport": "cycling", "notify": true }
+				]
+			},
+			"notify": { "leadMinutes": 30 }
+		},
+		"events": [
+			{
+				"id": "tdf",
+				"sport": "cycling",
+				"title": "Tour de France 2026",
+				"tournament": "Tour de France",
+				"time": "2026-07-05T11:00:00Z",
+				"endTime": "2026-07-27T17:00:00Z"
+			},
+			{
+				"id": "stage-today",
+				"sport": "cycling",
+				"title": "Etappe 9",
+				"tournament": "Tour de France",
+				"time": "2026-07-13T11:00:00Z",
+				"endTime": "2026-07-13T16:00:00Z"
+			},
+			{
+				"id": "stage-past",
+				"sport": "cycling",
+				"title": "Etappe 1",
+				"tournament": "Tour de France",
+				"time": "2026-07-05T11:00:00Z",
+				"endTime": "2026-07-05T16:00:00Z"
+			}
+		]
+	},
+	"expected": {
+		"inWindow": ["stage-today", "tdf"],
+		"relevant": ["stage-past", "stage-today", "tdf"]
+	}
+}
