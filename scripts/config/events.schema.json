@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"title": "SportSync – event",
+	"title": "Zenji – event",
 	"description": "Skjemaet for ETT event-objekt i docs/data/events.json (som selv er et flatt array av slike objekter — hvert element valideres mot dette skjemaet). Feltunionen er hentet fra pushEvent() (scripts/build-events.js) + de betingede AI-research-feltene i scripts/validate-events.js. Validert med den hjemmelagde scripts/lib/validate-schema.js, som kun støtter: type, required, properties, additionalProperties, items, enum, minimum, anyOf, lokal $ref — ingen maximum/minItems/format-nøkkelord, derfor brukes enum der en øvre grense trengs (f.eks. importance). norwegianPlayers er bevisst polymorf i dag (streng | {name} | {name, teeTime, teeTimeUTC, status} | null) — innstramming til én kanonisk form er WP-04, ikke dette skjemaet.",
 	"type": "object",
 	"required": ["time", "title", "sport"],

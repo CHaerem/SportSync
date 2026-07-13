@@ -1,25 +1,25 @@
-// SportSync v2 Service Worker — fresh data always, network-first shell
+// Zenji v2 Service Worker — fresh data always, network-first shell
 const CACHE_NAME = 'sportsync-v2-17';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
-    '/SportSync/',
-    '/SportSync/index.html',
-    '/SportSync/manifest.webmanifest',
-    '/SportSync/favicon.png',
-    '/SportSync/icons/icon-180x180.png',
-    '/SportSync/icons/icon-192x192.png',
-    '/SportSync/icons/icon-512x512.png',
-    '/SportSync/icons/icon.svg',
-    '/SportSync/css/base.css',
-    '/SportSync/css/layout.css',
-    '/SportSync/css/cards.css',
-    '/SportSync/js/shared-constants.js',
-    '/SportSync/js/sport-config.js',
-    '/SportSync/js/asset-maps.js',
-    '/SportSync/js/dashboard.js',
-    '/SportSync/rediger.html',
-    '/SportSync/js/edit.js'
+    '/zenji.app/',
+    '/zenji.app/index.html',
+    '/zenji.app/manifest.webmanifest',
+    '/zenji.app/favicon.png',
+    '/zenji.app/icons/icon-180x180.png',
+    '/zenji.app/icons/icon-192x192.png',
+    '/zenji.app/icons/icon-512x512.png',
+    '/zenji.app/icons/icon.svg',
+    '/zenji.app/css/base.css',
+    '/zenji.app/css/layout.css',
+    '/zenji.app/css/cards.css',
+    '/zenji.app/js/shared-constants.js',
+    '/zenji.app/js/sport-config.js',
+    '/zenji.app/js/asset-maps.js',
+    '/zenji.app/js/dashboard.js',
+    '/zenji.app/rediger.html',
+    '/zenji.app/js/edit.js'
 ];
 
 self.addEventListener('install', (event) => {

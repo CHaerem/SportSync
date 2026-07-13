@@ -1,12 +1,12 @@
-# SportSync
+# Zenji
 
 > A personal sports dashboard for a Norwegian sports fan — where **scheduled AI research
 > agents** find, verify, and editorialize the events that static APIs miss.
 
-[![Static pipeline](https://github.com/CHaerem/SportSync/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/SportSync/actions)
-[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/SportSync/)
+[![Static pipeline](https://github.com/CHaerem/zenji.app/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji.app/actions)
+[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/zenji.app/)
 
-**See it live**: [chaerem.github.io/SportSync](https://chaerem.github.io/SportSync/)
+**See it live**: [chaerem.github.io/Zenji](https://chaerem.github.io/zenji.app/)
 
 <!-- STATUS:START -->
 ## AI-budsjett

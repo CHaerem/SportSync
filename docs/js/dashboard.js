@@ -1,4 +1,4 @@
-// SportSync — a calm overview of the sport you follow.
+// Zenji — a calm overview of the sport you follow.
 // One question, answered quietly: what's on, when (Oslo), and where to watch.
 // One list, grouped by day. No dashboard, no noise.
 // Depends on: shared-constants.js, sport-config.js, asset-maps.js
@@ -696,7 +696,7 @@ class Dashboard {
 			`- Kanal: ${chan}`, `- Kilde: ${e.source || 'statisk'}${e.confidence ? ` (${e.confidence})` : ''}`,
 		].join('\n');
 		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${e.title}`, body });
-		window.open(`https://github.com/CHaerem/SportSync/issues/new?${p.toString()}`, '_blank', 'noopener');
+		window.open(`https://github.com/CHaerem/zenji.app/issues/new?${p.toString()}`, '_blank', 'noopener');
 	}
 
 	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —
@@ -710,7 +710,7 @@ class Dashboard {
 		let dismissed = false;
 		try { dismissed = localStorage.getItem('ss-install-hint') === 'off'; } catch { /* ignore */ }
 		if (!isIOS || installed || dismissed) return;
-		el.innerHTML = 'Legg SportSync på Hjem-skjermen for varsler + offline: trykk Del-knappen nederst i Safari → «Legg til på Hjem-skjerm». <button type="button" class="install-dismiss" aria-label="Skjul">Skjul</button>';
+		el.innerHTML = 'Legg Zenji på Hjem-skjermen for varsler + offline: trykk Del-knappen nederst i Safari → «Legg til på Hjem-skjerm». <button type="button" class="install-dismiss" aria-label="Skjul">Skjul</button>';
 		el.hidden = false;
 		el.querySelector('.install-dismiss')?.addEventListener('click', () => {
 			el.hidden = true;
