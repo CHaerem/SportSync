@@ -2,11 +2,15 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
+import { writeEntities } from "./build-entities.js";
 
 const dataDir = rootDataPath();
+const configDir =
+	process.env.SPORTSYNC_CONFIG_DIR ||
+	path.resolve(process.cwd(), "scripts", "config");
 
 // Stable event ID: first 12 hex chars of a sha256 hash of the same dedupe key
 // used throughout this file (`${sport}|${title}|${time}`, see the preservation
@@ -17,6 +21,58 @@ const dataDir = rootDataPath();
 // client-side `array-index` synthesis, which changed on every reorder.
 function computeEventId(sport, title, time) {
 	return crypto.createHash("sha256").update(`${sport}|${title}|${time}`).digest("hex").slice(0, 12);
+}
+
+// WP-05: entity index — built (and published to docs/data/entities.json)
+// before anything below needs it for entityId enrichment. Two lookup pools:
+// athletes (matched against norwegianPlayers) and teams+leagues (matched
+// against homeTeam/awayTeam — "league" is included because tracked.json files
+// a few clubs, e.g. FC Barcelona, under its "leagues" bucket; see
+// build-entities.js's NOTE ON TYPE ACCURACY).
+const entities = writeEntities(dataDir, configDir);
+const athleteEntities = entities.filter((e) => e.type === "athlete");
+const teamEntities = entities.filter((e) => e.type === "team" || e.type === "league");
+
+/**
+ * Word-boundary, sport-scoped entity lookup. Checks every (name+alias) term
+ * of each candidate entity against `name` in BOTH directions via containsName
+ * — never naive substring (the Brooklyn/Lyn trap: "Brooklyn FC" must not
+ * match the tracked club "Lyn"; see tests/fixtures/feed-vectors/DIVERGENCES.md
+ * and the negative test in tests/build-entities.test.js). Sport-scoped so a
+ * same-named entity in a different sport can't cross-match.
+ */
+function findEntityId(name, pool, sport) {
+	if (!name) return null;
+	for (const e of pool) {
+		if (sport && e.sport && normalizeText(e.sport) !== normalizeText(sport)) continue;
+		for (const term of entityTerms(e)) {
+			if (containsName(name, term) || containsName(term, name)) return e.id;
+		}
+	}
+	return null;
+}
+
+/**
+ * Stamp entityId (norwegianPlayers) / homeTeamEntityId / awayTeamEntityId
+ * onto an event, in place. Called from BOTH pushEvent() (fresh events) and
+ * the final normalization pass over `kept` (preserved ai-research /
+ * kept-on-board events, which bypass pushEvent — same dual-call pattern as
+ * computeEventId()/normalizeNorwegianPlayers() below). Idempotent: clears a
+ * stale id when the current text no longer matches any known entity.
+ */
+function enrichEntityIds(event) {
+	for (const p of event.norwegianPlayers || []) {
+		if (!p?.name) continue;
+		const id = findEntityId(p.name, athleteEntities, event.sport);
+		if (id) p.entityId = id;
+		else delete p.entityId;
+	}
+	const homeId = event.homeTeam ? findEntityId(event.homeTeam, teamEntities, event.sport) : null;
+	if (homeId) event.homeTeamEntityId = homeId;
+	else delete event.homeTeamEntityId;
+	const awayId = event.awayTeam ? findEntityId(event.awayTeam, teamEntities, event.sport) : null;
+	if (awayId) event.awayTeamEntityId = awayId;
+	else delete event.awayTeamEntityId;
 }
 
 // Auto-discover sport files by convention: any JSON with a { tournaments: [...] } structure
@@ -79,6 +135,10 @@ function pushEvent(ev, sport, tournament) {
 	if (ev.verifiedAt) event.verifiedAt = ev.verifiedAt;
 	if (ev.verificationStatus) event.verificationStatus = ev.verificationStatus;
 	if (ev.verificationSources) event.verificationSources = ev.verificationSources;
+	// WP-05: entityId enrichment — see enrichEntityIds() above for the
+	// dual-call-site rationale (this covers events built fresh in this pass;
+	// the final pass over `kept` covers preserved events too).
+	enrichEntityIds(event);
 	all.push(event);
 }
 
@@ -93,9 +153,6 @@ for (const sport of sports) {
 }
 
 // 2. Auto-discover curated event configs from scripts/config/*.json
-const configDir =
-	process.env.SPORTSYNC_CONFIG_DIR ||
-	path.resolve(process.cwd(), "scripts", "config");
 if (fs.existsSync(configDir)) {
 	const configFiles = fs.readdirSync(configDir).filter((f) => f.endsWith(".json"));
 	for (const file of configFiles) {
@@ -450,6 +507,13 @@ for (const e of kept) {
 	// the field missing. Idempotent for already-canonical events.
 	e.participants = normalizeParticipants(e.participants);
 	e.norwegianPlayers = normalizeNorwegianPlayers(e.norwegianPlayers);
+	// WP-05: re-derive entityId/homeTeamEntityId/awayTeamEntityId here too —
+	// same rationale as the participation/id recomputes above. Preserved
+	// ai-research / kept-on-board events bypass pushEvent()'s enrichment call
+	// entirely, and normalizeNorwegianPlayers() just rebuilt fresh player
+	// objects (dropping any entityId carried over from a previous run), so
+	// this is the pass that actually makes it stick for every output event.
+	enrichEntityIds(e);
 	e.mustWatch = mustWatchEntity(e, interests) != null;
 	if (e.mustWatch) mustWatchCount++;
 	// Recompute the stable id from the event's CURRENT sport|title|time so every

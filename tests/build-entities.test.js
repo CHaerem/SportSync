@@ -1,0 +1,274 @@
+// WP-05: docs/data/entities.json — a stable-id index of athletes/teams/
+// tournaments/leagues, built from tracked.json + norwegian-golfers.json +
+// sports-config.js, deduped across sources.
+import { describe, it, expect } from "vitest";
+import { execFileSync } from "child_process";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import { buildEntityIndex, writeEntities } from "../scripts/build-entities.js";
+
+function tmpDir(prefix) {
+	return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+}
+
+describe("buildEntityIndex", () => {
+	it("builds entries from all three sources: tracked.json, norwegian-golfers.json, sports-config.js", () => {
+		const configDir = tmpDir("ss-entities-sources-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({
+				leagues: [{ id: "premier-league-2026-27", name: "Premier League 2026/27", sport: "football" }],
+				athletes: [{ id: "viktor-hovland", name: "Viktor Hovland", sport: "golf" }],
+				tournaments: [{ id: "the-open-2026", name: "The Open 2026", sport: "golf" }],
+			})
+		);
+		fs.writeFileSync(
+			path.join(configDir, "norwegian-golfers.json"),
+			JSON.stringify([{ name: "Kris Ventura", tours: ["pga"], aliases: ["Ventura"] }])
+		);
+		const fakeSportsConfig = {
+			football: { sport: "football", norwegian: { teams: ["FK Lyn Oslo", "Lyn"] } },
+		};
+
+		const entities = buildEntityIndex(configDir, fakeSportsConfig);
+
+		expect(entities.find((e) => e.id === "premier-league-2026-27")).toMatchObject({ type: "league", sport: "football" });
+		expect(entities.find((e) => e.id === "viktor-hovland")).toMatchObject({ type: "athlete", sport: "golf" });
+		expect(entities.find((e) => e.id === "the-open-2026")).toMatchObject({ type: "tournament", sport: "golf" });
+		expect(entities.find((e) => e.name === "Kris Ventura")).toMatchObject({ type: "athlete", sport: "golf", aliases: ["Ventura"] });
+		// sports-config's free-text team list, deduped down to one entity (Lyn merges as an alias of FK Lyn Oslo).
+		const lynTeam = entities.find((e) => e.name === "FK Lyn Oslo");
+		expect(lynTeam).toMatchObject({ type: "team", sport: "football" });
+		expect(lynTeam.aliases).toContain("Lyn");
+		expect(entities.filter((e) => e.sport === "football" && e.type === "team")).toHaveLength(1);
+
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("every entry has the {id, name, aliases, sport, type} shape", () => {
+		const configDir = tmpDir("ss-entities-shape-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "magnus-carlsen", name: "Magnus Carlsen", sport: "chess" }] })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		expect(entities.length).toBeGreaterThan(0);
+		for (const e of entities) {
+			expect(typeof e.id).toBe("string");
+			expect(typeof e.name).toBe("string");
+			expect(Array.isArray(e.aliases)).toBe(true);
+			expect(["athlete", "team", "tournament", "league"]).toContain(e.type);
+		}
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("dedups a tracked.json athlete against the same name in sports-config.js — tracked's id wins", () => {
+		const configDir = tmpDir("ss-entities-dedup-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "casper-ruud", name: "Casper Ruud", sport: "tennis" }] })
+		);
+		const fakeSportsConfig = { tennis: { sport: "tennis", norwegian: { players: ["Casper Ruud"] } } };
+
+		const entities = buildEntityIndex(configDir, fakeSportsConfig);
+
+		const ruudEntities = entities.filter((e) => e.name === "Casper Ruud");
+		expect(ruudEntities).toHaveLength(1); // not two separate entities for the same person
+		expect(ruudEntities[0].id).toBe("casper-ruud"); // tracked.json's id wins
+	});
+
+	it("merges an alias-only match across sources (golfers.json alias vs. tracked.json full name)", () => {
+		// Realistic case: tracked.json tracks "Kristoffer Ventura" (full name);
+		// norwegian-golfers.json / sports-config use the short form "Kris Ventura"
+		// with alias "Ventura". The shared alias "Ventura" word-boundary-matches
+		// the tracked full name, so these fold into ONE entity under tracked's id.
+		const configDir = tmpDir("ss-entities-alias-dedup-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "kristoffer-ventura", name: "Kristoffer Ventura", sport: "golf" }] })
+		);
+		fs.writeFileSync(
+			path.join(configDir, "norwegian-golfers.json"),
+			JSON.stringify([{ name: "Kris Ventura", aliases: ["Ventura"] }])
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const venturaEntities = entities.filter((e) => e.sport === "golf" && e.type === "athlete");
+		expect(venturaEntities).toHaveLength(1);
+		expect(venturaEntities[0].id).toBe("kristoffer-ventura");
+		expect(venturaEntities[0].aliases).toEqual(expect.arrayContaining(["Kris Ventura", "Ventura"]));
+	});
+
+	it("does NOT fold a league's parenthetical annotation into a false team match (the Lyn/OBOS-ligaen trap)", () => {
+		// Regression found while implementing WP-05: tracked.json names a league
+		// "OBOS-ligaen 2026 (Lyn Oslo)" for human-readable context. Left in, that
+		// parenthetical would make the LEAGUE entity word-boundary-match the club
+		// name "Lyn" too — so a homeTeam "Lyn" would wrongly resolve to the league
+		// instead of the actual club entity. The league's match-name must have the
+		// annotation stripped.
+		const configDir = tmpDir("ss-entities-annotation-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "obos-ligaen-2026", name: "OBOS-ligaen 2026 (Lyn Oslo)", sport: "football" }] })
+		);
+		const fakeSportsConfig = { football: { sport: "football", norwegian: { teams: ["FK Lyn Oslo", "Lyn"] } } };
+		const entities = buildEntityIndex(configDir, fakeSportsConfig);
+
+		const league = entities.find((e) => e.id === "obos-ligaen-2026");
+		expect(league.name).toBe("OBOS-ligaen 2026"); // annotation stripped from the match/display name
+		expect(league.aliases).not.toContain("Lyn");
+
+		const team = entities.find((e) => e.name === "FK Lyn Oslo");
+		expect(team.type).toBe("team");
+		expect(team.aliases).toContain("Lyn"); // Lyn merged into the TEAM entity, not the league
+	});
+
+	it("generates a stable, readable kebab-case slug for a free-text name with no existing id", () => {
+		const fakeSportsConfig = { cycling: { sport: "cycling", norwegian: { players: ["Søren Wærenskjold"] } } };
+		const entities = buildEntityIndex(tmpDir("ss-entities-slug-"), fakeSportsConfig);
+		const entity = entities.find((e) => e.name === "Søren Wærenskjold");
+		expect(entity.id).toBe("soren-waerenskjold");
+	});
+
+	it("is deterministic across two runs on the same input", () => {
+		const configDir = tmpDir("ss-entities-determinism-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "viktor-hovland", name: "Viktor Hovland", sport: "golf" }] })
+		);
+		const first = buildEntityIndex(configDir, {});
+		const second = buildEntityIndex(configDir, {});
+		expect(second).toEqual(first);
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+});
+
+describe("writeEntities", () => {
+	it("writes entities.json to dataDir and returns the same array", () => {
+		const dataDir = tmpDir("ss-entities-write-");
+		const configDir = tmpDir("ss-entities-write-cfg-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "magnus-carlsen", name: "Magnus Carlsen", sport: "chess" }] })
+		);
+		const returned = writeEntities(dataDir, configDir);
+		const onDisk = JSON.parse(fs.readFileSync(path.join(dataDir, "entities.json"), "utf-8"));
+		expect(onDisk).toEqual(returned);
+		expect(onDisk.some((e) => e.id === "magnus-carlsen")).toBe(true);
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("CLI entrypoint writes entities.json when run directly with node", () => {
+		const dataDir = tmpDir("ss-entities-cli-");
+		const configDir = tmpDir("ss-entities-cli-cfg-");
+		execFileSync("node", ["scripts/build-entities.js"], {
+			env: { ...process.env, SPORTSYNC_DATA_DIR: dataDir, SPORTSYNC_CONFIG_DIR: configDir },
+		});
+		expect(fs.existsSync(path.join(dataDir, "entities.json"))).toBe(true);
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+});
+
+// WP-05 acceptance: build-events.js enrichment (entityId / homeTeamEntityId /
+// awayTeamEntityId), the Brooklyn/Lyn negative matching test, and manifest coverage.
+describe("build-events.js integration (WP-05 entity enrichment)", () => {
+	function freshDirs() {
+		return {
+			dataDir: fs.mkdtempSync(path.join(os.tmpdir(), "ss-enrich-")),
+			configDir: fs.mkdtempSync(path.join(os.tmpdir(), "ss-enrich-cfg-")),
+		};
+	}
+	function runBuild(dataDir, configDir) {
+		execFileSync("node", ["scripts/build-events.js"], {
+			env: { ...process.env, SPORTSYNC_DATA_DIR: dataDir, SPORTSYNC_CONFIG_DIR: configDir },
+		});
+		return JSON.parse(fs.readFileSync(path.join(dataDir, "events.json"), "utf-8"));
+	}
+	const future = (days) => new Date(Date.now() + days * 86400000).toISOString();
+
+	it("acceptance: a tracked athlete appearing in norwegianPlayers gets entityId", () => {
+		const { dataDir, configDir } = freshDirs();
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "viktor-hovland", name: "Viktor Hovland", sport: "golf" }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "golf.json"),
+			JSON.stringify({
+				tournaments: [{ name: "PGA Tour", events: [
+					{ title: "The Open", time: future(2), norwegian: true, norwegianPlayers: [{ name: "Viktor Hovland" }] },
+				] }],
+			})
+		);
+		const events = runBuild(dataDir, configDir);
+		const ev = events.find((e) => e.title === "The Open");
+		expect(ev.norwegianPlayers[0].entityId).toBe("viktor-hovland");
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("acceptance: enrichment also applies to a preserved ai-research event (bypasses pushEvent)", () => {
+		const { dataDir, configDir } = freshDirs();
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "magnus-carlsen", name: "Magnus Carlsen", sport: "chess" }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "chess", title: "EWC Chess Final", time: future(5), source: "ai-research", confidence: "high",
+				  evidence: ["a", "b"], norwegianPlayers: [{ name: "Magnus Carlsen" }] },
+			])
+		);
+		const events = runBuild(dataDir, configDir);
+		const ev = events.find((e) => e.title === "EWC Chess Final");
+		expect(ev.norwegianPlayers[0].entityId).toBe("magnus-carlsen");
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("negative test: 'Brooklyn FC' as homeTeam must NOT match the tracked club 'Lyn' (word-boundary, not substring)", () => {
+		const { dataDir, configDir } = freshDirs();
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "obos-ligaen-2026", name: "OBOS-ligaen 2026 (Lyn Oslo)", sport: "football" }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({
+				tournaments: [{ name: "Some Cup", events: [
+					// Trap: naive substring matching would find "lyn" inside "brooklyn".
+					{ title: "Brooklyn FC friendly", time: future(2), homeTeam: "Brooklyn FC", awayTeam: "Some Team" },
+					// Control: a real Lyn fixture must still match.
+					{ title: "Vålerenga vs Lyn", time: future(3), homeTeam: "Vålerenga", awayTeam: "Lyn" },
+				] }],
+			})
+		);
+		const events = runBuild(dataDir, configDir);
+		const brooklyn = events.find((e) => e.title === "Brooklyn FC friendly");
+		expect(brooklyn.homeTeamEntityId).toBeUndefined();
+
+		const derby = events.find((e) => e.title === "Vålerenga vs Lyn");
+		expect(derby.awayTeamEntityId).toBe("fk-lyn-oslo");
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("entities.json is published to dataDir and covered by manifest.json", () => {
+		const { dataDir, configDir } = freshDirs();
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "viktor-hovland", name: "Viktor Hovland", sport: "golf" }] })
+		);
+		runBuild(dataDir, configDir);
+		expect(fs.existsSync(path.join(dataDir, "entities.json"))).toBe(true);
+		const manifest = JSON.parse(fs.readFileSync(path.join(dataDir, "manifest.json"), "utf-8"));
+		expect(manifest.files).toHaveProperty("entities.json");
+		const entitiesBuf = fs.readFileSync(path.join(dataDir, "entities.json"));
+		expect(manifest.files["entities.json"].bytes).toBe(entitiesBuf.length);
+		fs.rmSync(dataDir, { recursive: true, force: true });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+});
