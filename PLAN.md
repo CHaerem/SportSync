@@ -196,12 +196,12 @@ mens alt er stabilt, og repostrukturen kan endres usynlig bak domenet etterpå.
   Tekst-TV-identiteten visuelt. Internasjonal ekspansjon er premiss.
 - **Prosess:** navneøkt → shortlist → domene-/varemerke-/App Store-sjekk per kandidat.
 - **Beslutning:** menneske. Agent kan generere/sjekke kandidater.
-- **Status:** flere genererings-/sjekkerunder gjennomført (~170 domener, RDAP).
-  Kandidater, domenestatus og drapsgrunner føres i en **privat navnejakt-logg**
-  (holdes utenfor det offentlige repoet — ledige kandidater her ville invitere
-  domene-sniping). Eier har loggen som privat artifact.
-  - **Neste:** smaks-seeds fra eier → målrettet runde → menneskelig valg →
-    formell varemerkesjekk (EUIPO + USPTO, klasse 9/41/42) → kjøp domener → WP-27.
+- **Status (13.07.2026):** ~340 domener sjekket over hele jakten; full logg i
+  privat artifact (holdes utenfor offentlig repo — sniping-risiko). **Beslutning:
+  primærkandidat valgt; eier sikrer domenesuiten** (betinget formell
+  varemerkesjekk i klasse 9/41/42 — én registrert US-søknad i naboklasse skal
+  vurderes eksplisitt). Parallelt prises 3–4 ettermarked-alternativer; endelig
+  navnelås før WP-27-cutover.
   - Biprodukt av jakten: to nære konkurrenter avdekket (Fixtured, Fixture
     Calendar) — ført inn i dossier P200.
 
