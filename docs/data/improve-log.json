@@ -1,7 +1,7 @@
 {
 	"runAt": "2026-07-13T10:40:00Z",
 	"action": "opened-pr",
-	"pr": null,
+	"pr": "https://github.com/CHaerem/SportSync/pull/233",
 	"proposal": "Kill the recurring World Cup knockout duplicates at the source in build-events.js. ESPN re-emits knockout slots as bracket placeholders ('Semifinal 2 Winner at Semifinal 1 Winner') whose title shares zero words with the channel-confirmed ai-research events ('VM-finalen 2026'), so the sport|title|time key AND the title-only fuzzy check both missed them and both copies survived every rebuild. Added a venue-based fuzzy match (same sport + same venue + overlapping date range — for point-in-time events this collapses to an exact-kickoff match, so it can't collide unrelated fixtures) as a second match kind, and when a static event matches an ai-research one ONLY by venue (titles disagree entirely) the AI event wins and the placeholder is dropped — while the existing title-match path (golf/stage tournaments) still lets the authoritative static fetcher win. Adds 2 build-events tests (WC dedup keeps the AI copy; two different-venue same-time matches are NOT merged).",
 	"evidence": [
 		"verify-log.json (2026-07-13): 'RECURRING build-events dedup gap: these tentative NRK/TV2 placeholders have now been removed 11, 12 and 13 Jul and keep returning because build-events dedupes on sport|title|time and the ESPN titles differ from the ai-research Norwegian titles. Permanent fix belongs in build-events ... verify can only whack-a-mole them daily.' — flagged three days running, explicitly handed to improve/self-repair.",
