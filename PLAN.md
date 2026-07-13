@@ -44,7 +44,7 @@ mennesket, aldri av en agent.
 | WP-12 | SyncClient | 0B | WP-03, WP-11 | ✅ merget (#242) — 37/37 tester |
 | WP-13 | FeedCompiler (Swift) | 0B | WP-06, WP-11 | ✅ merget (#243) — 13/13 vektorer bit-likt |
 | WP-14 | Agenda-UI + widget | 0B | WP-13 | todo |
-| WP-15 | NotificationPlanner | 0B | WP-13 | todo |
+| WP-15 | NotificationPlanner | 0B | WP-13 | PR åpnet — 69/69 iOS-tester grønt (49 baseline + 20 nye) |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | todo |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |

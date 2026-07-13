@@ -35,6 +35,15 @@ struct DataStore: Sendable {
         return try? ZenjiJSON.decoder.decode(TrackedConfig.self, from: data)
     }
 
+    /// WP-15: the user's `interests.json`, as synced by `SyncClient`. `nil`
+    /// when never synced or corrupt — callers (NotificationPlanner) treat
+    /// that the same way as an empty config (no mustWatch entities, so
+    /// nothing gets scheduled) rather than crashing.
+    func loadInterests() -> Interests? {
+        guard let data = cache.read("interests.json") else { return nil }
+        return try? ZenjiJSON.decoder.decode(Interests.self, from: data)
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {

@@ -4,14 +4,17 @@
 //
 //  WP-12: shared helpers for the sync tests. The guiding idea across all of
 //  them is to reuse the REAL, checked-in ZenjiTests/Fixtures/{events,
-//  entities,tracked,manifest}.json as the mock server's responses — the same
-//  fasit WP-11's decode tests already use — rather than inventing separate,
-//  parallel test data. Where a test needs a scenario the frozen fixture
-//  doesn't represent (a changed file, a corrupt download), it starts from
-//  the real manifest fixture and surgically mutates just the one entry that
-//  scenario needs, computing the replacement sha256 with the SAME
+//  entities,tracked,interests,manifest}.json as the mock server's responses —
+//  the same fasit WP-11's decode tests already use — rather than inventing
+//  separate, parallel test data. Where a test needs a scenario the frozen
+//  fixture doesn't represent (a changed file, a corrupt download), it starts
+//  from the real manifest fixture and surgically mutates just the one entry
+//  that scenario needs, computing the replacement sha256 with the SAME
 //  `Data.sha256Hex` SyncClient itself uses — so there is never a hand-typed
-//  hash to keep in sync by hand.
+//  hash to keep in sync by hand. (WP-15 added `interests.json` to
+//  `SyncClient.defaultFilesOfInterest` — NotificationPlanner needs the real
+//  notify-config synced — so the baseline sync now fetches four files, not
+//  three.)
 //
 
 import Foundation
@@ -64,6 +67,7 @@ enum SyncTestSupport {
                 "events.json": Fixture.data("events"),
                 "entities.json": Fixture.data("entities"),
                 "tracked.json": Fixture.data("tracked"),
+                "interests.json": Fixture.data("interests"),
             ]
         )
         let client = SyncClient(baseURL: baseURL, session: MockURLProtocol.mockedSession(), cache: cache)

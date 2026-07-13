@@ -44,27 +44,28 @@ final class SyncClientTests: XCTestCase {
 
     // MARK: - Baseline: first-ever sync against the real, full manifest fixture
 
-    /// The real manifest.json fixture lists ~28 published files; only three
-    /// (events/entities/tracked) are `SyncClient.defaultFilesOfInterest`.
-    /// This proves the diff-and-fetch loop is scoped to those three, not the
+    /// The real manifest.json fixture lists ~28 published files; only four
+    /// (events/entities/tracked/interests) are `SyncClient.defaultFilesOfInterest`.
+    /// This proves the diff-and-fetch loop is scoped to those four, not the
     /// whole manifest, on a completely realistic payload.
     func testInitialSync_fetchesOnlyFilesOfInterest_fromRealManifest() async throws {
         let result = await SyncTestSupport.performBaselineSync(cache: cache)
 
-        XCTAssertEqual(result, .changedFiles(["entities.json", "events.json", "tracked.json"]))
+        XCTAssertEqual(result, .changedFiles(["entities.json", "events.json", "interests.json", "tracked.json"]))
 
         let requestedFilenames = Set(MockURLProtocol.recordedRequests.compactMap { $0.url?.lastPathComponent })
-        XCTAssertEqual(requestedFilenames, ["manifest.json", "events.json", "entities.json", "tracked.json"])
-        XCTAssertEqual(MockURLProtocol.recordedRequests.count, 4, "no other manifest file should have been requested")
+        XCTAssertEqual(requestedFilenames, ["manifest.json", "events.json", "entities.json", "tracked.json", "interests.json"])
+        XCTAssertEqual(MockURLProtocol.recordedRequests.count, 5, "no other manifest file should have been requested")
 
         XCTAssertEqual(cache.read("events.json"), Fixture.data("events"))
         XCTAssertEqual(cache.read("entities.json"), Fixture.data("entities"))
         XCTAssertEqual(cache.read("tracked.json"), Fixture.data("tracked"))
+        XCTAssertEqual(cache.read("interests.json"), Fixture.data("interests"))
 
         let state = try XCTUnwrap(cache.readSyncState())
         XCTAssertEqual(state.etag, "W/\"v1\"")
         XCTAssertNotNil(state.lastSync)
-        XCTAssertEqual(state.appliedFiles.count, 3)
+        XCTAssertEqual(state.appliedFiles.count, 4)
     }
 
     // MARK: (a) 304 → no file requests at all beyond the manifest
@@ -94,9 +95,10 @@ final class SyncClientTests: XCTestCase {
 
         MockURLProtocol.reset()
         SyncTestSupport.stubSuccessfulSync(manifestBody: manifestV2, etag: "W/\"v2\"", fileBodies: ["events.json": newEvents])
-        // Deliberately no stub for entities.json/tracked.json — if SyncClient
-        // wrongly re-fetched either (their hashes are unchanged from the
-        // baseline), the request would still land in recordedRequests below.
+        // Deliberately no stub for entities.json/tracked.json/interests.json —
+        // if SyncClient wrongly re-fetched any (their hashes are unchanged
+        // from the baseline), the request would still land in
+        // recordedRequests below.
 
         let result = await makeClient().sync()
 
@@ -107,6 +109,7 @@ final class SyncClientTests: XCTestCase {
         XCTAssertEqual(cache.read("events.json"), newEvents)
         XCTAssertEqual(cache.read("entities.json"), Fixture.data("entities"), "unchanged file must be left alone")
         XCTAssertEqual(cache.read("tracked.json"), Fixture.data("tracked"), "unchanged file must be left alone")
+        XCTAssertEqual(cache.read("interests.json"), Fixture.data("interests"), "unchanged file must be left alone")
 
         let events = try ZenjiJSON.decoder.decode([Event].self, from: cache.read("events.json")!)
         XCTAssertTrue(events.isEmpty)

@@ -6,8 +6,10 @@
 //  with a single placeholder row. WP-12 wires in the sync status line below
 //  the date ("Sist synket: … · N events") and triggers a sync at app start;
 //  the agenda itself is still a placeholder — FeedCompiler (WP-13) and the
-//  real day-grouped rendering (WP-14) populate it later. NotificationPlanner
-//  (WP-15) follows. Norwegian UI per project convention.
+//  real day-grouped rendering (WP-14) populate it later. WP-15 adds the one
+//  NotificationPlanner hook in `refresh()` below (the "after a successful
+//  sync" reconcile point) — deliberately the ONLY WP-15 touch in this file;
+//  the real agenda rendering stays WP-14's. Norwegian UI per project convention.
 //
 
 import SwiftUI
@@ -15,13 +17,19 @@ import SwiftUI
 struct ContentView: View {
     let syncClient: SyncClient
     let dataStore: DataStore
+    let notificationPlanner: NotificationPlanner
 
     @State private var lastSync: Date?
     @State private var eventCount: Int = 0
 
-    init(syncClient: SyncClient = SyncClient(), dataStore: DataStore = DataStore()) {
+    init(
+        syncClient: SyncClient = SyncClient(),
+        dataStore: DataStore = DataStore(),
+        notificationPlanner: NotificationPlanner = NotificationPlanner()
+    ) {
         self.syncClient = syncClient
         self.dataStore = dataStore
+        self.notificationPlanner = notificationPlanner
     }
 
     private let today = Date()
@@ -60,10 +68,19 @@ struct ContentView: View {
     /// Loads whatever is already cached immediately (so the status line
     /// isn't blank while the network round-trip is in flight), then syncs
     /// and reloads — this is the "kall sync ved app-start" hook from WP-12.
+    /// WP-15: reconciles local notifications after the sync completes,
+    /// diffing whatever was cached before against whatever is cached now.
     private func refresh() async {
         reloadFromCache()
+        let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
         reloadFromCache()
+        await notificationPlanner.reconcile(
+            previousEvents: previousEvents,
+            newEvents: dataStore.loadEvents(),
+            interests: dataStore.loadInterests() ?? Interests(),
+            lastSync: dataStore.lastSync
+        )
     }
 
     private func reloadFromCache() {
