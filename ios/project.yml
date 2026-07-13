@@ -46,6 +46,13 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        # WP-12: BGAppRefreshTask (BackgroundRefreshScheduler.swift) — both
+        # keys are required by BGTaskScheduler regardless of how thin the
+        # wrapper around it is.
+        BGTaskSchedulerPermittedIdentifiers:
+          - app.zenji.refresh
+        UIBackgroundModes:
+          - fetch
     settings:
       base:
         PRODUCT_NAME: Zenji
@@ -81,7 +88,8 @@ targets:
   # tests with no dependency on the app's UI/runtime. Compiles the Models
   # sources directly into the test bundle (same pattern the widget extension
   # already uses for DesignTokens.swift above) rather than linking the app
-  # binary, so it needs no `@testable import`.
+  # binary, so it needs no `@testable import`. WP-12 adds Zenji/Sync the same
+  # way, for SyncClient/CacheStore/DataStore's own hostless tests.
   ZenjiTests:
     type: bundle.unit-test
     platform: iOS
@@ -89,6 +97,7 @@ targets:
     sources:
       - path: ZenjiTests
       - path: Zenji/Models
+      - path: Zenji/Sync
     resources:
       - path: ZenjiTests/Fixtures
     info:

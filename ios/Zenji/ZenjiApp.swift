@@ -2,17 +2,29 @@
 //  ZenjiApp.swift
 //  Zenji
 //
-//  App entry point. Pure scaffold (WP-10) — no networking, no feed logic.
-//  SyncClient (WP-12) and FeedCompiler (WP-13) plug in behind ContentView later.
+//  App entry point. WP-12 wires up SyncClient + the BGAppRefreshTask here —
+//  registration must happen before the app finishes launching, so it runs
+//  eagerly in init() rather than from a view (see BackgroundRefreshScheduler).
+//  FeedCompiler (WP-13) plugs in behind ContentView later.
 //
 
 import SwiftUI
 
 @main
 struct ZenjiApp: App {
+    private let syncClient = SyncClient()
+    private let dataStore = DataStore()
+
+    init() {
+        BackgroundRefreshScheduler.register(syncClient: syncClient, dataStore: dataStore)
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(syncClient: syncClient, dataStore: dataStore)
+                .onAppear {
+                    BackgroundRefreshScheduler.scheduleNextRefresh(dataStore: dataStore)
+                }
         }
     }
 }
