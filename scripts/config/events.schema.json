@@ -1,0 +1,194 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "SportSync – event",
+	"description": "Skjemaet for ETT event-objekt i docs/data/events.json (som selv er et flatt array av slike objekter — hvert element valideres mot dette skjemaet). Feltunionen er hentet fra pushEvent() (scripts/build-events.js) + de betingede AI-research-feltene i scripts/validate-events.js. Validert med den hjemmelagde scripts/lib/validate-schema.js, som kun støtter: type, required, properties, additionalProperties, items, enum, minimum, anyOf, lokal $ref — ingen maximum/minItems/format-nøkkelord, derfor brukes enum der en øvre grense trengs (f.eks. importance). norwegianPlayers er bevisst polymorf i dag (streng | {name} | {name, teeTime, teeTimeUTC, status} | null) — innstramming til én kanonisk form er WP-04, ikke dette skjemaet.",
+	"type": "object",
+	"required": ["time", "title", "sport"],
+	"additionalProperties": false,
+	"properties": {
+		"sport": {
+			"type": "string",
+			"description": "Sport-nøkkel, f.eks. \"football\", \"golf\", \"chess\"."
+		},
+		"tournament": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Turnering/serie eventet hører til."
+		},
+		"title": {
+			"type": "string",
+			"description": "Visningstittel."
+		},
+		"time": {
+			"type": "string",
+			"description": "ISO 8601 starttidspunkt (UTC)."
+		},
+		"endTime": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "ISO 8601 sluttidspunkt, eller null for punkt-i-tid-events."
+		},
+		"venue": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Sted/arena."
+		},
+		"meta": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Fri-tekst turnering/tour-kontekst brukt av streaming-oppslag og build-ics."
+		},
+		"norwegian": {
+			"type": "boolean",
+			"description": "Norsk relevans (utøver/lag/kringkasting)."
+		},
+		"streaming": {
+			"type": "array",
+			"description": "Norske visningsmuligheter, i prioritert rekkefølge.",
+			"items": { "$ref": "#/definitions/streamingChannel" }
+		},
+		"participants": {
+			"type": "array",
+			"description": "Deltakernavn (individuelle idretter/turneringer).",
+			"items": { "type": "string" }
+		},
+		"norwegianPlayers": {
+			"type": "array",
+			"description": "Norske utøvere involvert i eventet. Se definitions/norwegianPlayer for dagens polymorfi.",
+			"items": { "$ref": "#/definitions/norwegianPlayer" }
+		},
+		"totalPlayers": {
+			"anyOf": [{ "type": "number" }, { "enum": [null] }],
+			"description": "Antall deltakere i feltet (golf mv.)."
+		},
+		"link": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Ekstern lenke (kilde/resultatside)."
+		},
+		"status": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "F.eks. \"cancelled\"/\"postponed\", eller en live-status fra kilden."
+		},
+		"featuredGroups": {
+			"type": "array",
+			"description": "Golf: fremhevede spillegrupper rundt en norsk spiller.",
+			"items": { "$ref": "#/definitions/featuredGroup" }
+		},
+		"homeTeam": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Hjemmelag (kamp-sporter)."
+		},
+		"awayTeam": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Bortelag (kamp-sporter)."
+		},
+		"isFavorite": {
+			"type": "boolean",
+			"description": "Agent-/config-flagget favoritt."
+		},
+		"round": {
+			"anyOf": [{ "type": "string" }, { "enum": [null] }],
+			"description": "Runde-/fase-etikett (f.eks. \"Semifinale\")."
+		},
+		"mustWatch": {
+			"type": "boolean",
+			"description": "Beregnet av build-events.js — true når eventet treffer en tracked/must-watch-entitet."
+		},
+		"format": {
+			"type": "string",
+			"description": "F.eks. \"BO3\" (esports)."
+		},
+		"stage": {
+			"type": "string",
+			"description": "Delfase/stage-etikett satt av agent-enrichment."
+		},
+		"result": {
+			"type": "string",
+			"description": "Sluttresultat, satt av agent-enrichment."
+		},
+		"context": {
+			"type": "string",
+			"description": "Fri-tekst kontekst fra en kuratert config (scripts/config/*.json)."
+		},
+		"importance": {
+			"enum": [1, 2, 3, 4, 5],
+			"description": "1–5, agent-satt viktighet. enum brukt fremfor minimum/maximum siden validatoren ikke støtter maximum."
+		},
+		"summary": {
+			"type": "string",
+			"description": "Kort AI-generert oppsummering."
+		},
+		"source": {
+			"type": "string",
+			"description": "\"ai-research\" markerer et event research-agenten fant/skrev."
+		},
+		"confidence": {
+			"enum": ["high", "medium", "low"],
+			"description": "AI-research-kontrakt: \"high\" krever 2+ evidence-URLer (håndhevet separat i validate-events.js, ikke uttrykkelig i dette skjemaet siden validatoren mangler minItems)."
+		},
+		"evidence": {
+			"type": "array",
+			"description": "Kilde-URLer for et ai-research-event.",
+			"items": { "type": "string" }
+		},
+		"researchedAt": {
+			"type": "string",
+			"description": "ISO 8601 – når research-agenten fant eventet."
+		},
+		"verifiedAt": {
+			"type": "string",
+			"description": "ISO 8601 – når verify-agenten sist sjekket eventet."
+		},
+		"verificationStatus": {
+			"enum": ["confirmed", "amended", "removed"],
+			"description": "Se scripts/agents/verify.md."
+		},
+		"verificationSources": {
+			"type": "array",
+			"description": "Kildene verify-agenten brukte.",
+			"items": { "type": "string" }
+		},
+		"norwegianRelevance": {
+			"enum": [1, 2, 3, 4, 5],
+			"description": "Legacy enrichment-felt, håndhevet av validate-events.js."
+		},
+		"tags": {
+			"type": "array",
+			"description": "Legacy enrichment-felt, håndhevet av validate-events.js.",
+			"items": { "type": "string" }
+		}
+	},
+	"definitions": {
+		"streamingChannel": {
+			"description": "Én visningsmulighet. platform/url er kjernefeltene; tentative markerer et uverifisert kanalgjett (f.eks. det delte \"NRK / TV 2\"-gjettet før verify løser det).",
+			"type": "object",
+			"properties": {
+				"platform": { "type": "string" },
+				"url": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+				"tentative": { "type": "boolean" }
+			}
+		},
+		"norwegianPlayer": {
+			"description": "Bevisst polymorf (WP-04 er innstrammingen til én kanonisk form, ikke dette skjemaet): en ren streng, null, eller et objekt med minst \"name\" og valgfrie tee-time/status-felter (golf).",
+			"anyOf": [
+				{ "type": "string" },
+				{ "enum": [null] },
+				{
+					"type": "object",
+					"required": ["name"],
+					"properties": {
+						"name": { "type": "string" },
+						"teeTime": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+						"teeTimeUTC": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+						"status": { "anyOf": [{ "type": "string" }, { "enum": [null] }] }
+					}
+				}
+			]
+		},
+		"featuredGroup": {
+			"description": "Golf: en fremhevet gruppe rundt en norsk spiller.",
+			"type": "object",
+			"properties": {
+				"player": { "type": "string" },
+				"teeTime": { "anyOf": [{ "type": "string" }, { "enum": [null] }] },
+				"groupmates": { "type": "array" }
+			}
+		}
+	}
+}
