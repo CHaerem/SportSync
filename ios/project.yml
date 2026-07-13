@@ -1,0 +1,96 @@
+name: Zenji
+options:
+  bundleIdPrefix: app.zenji.ios
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: false
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    ENABLE_PREVIEWS: YES
+    # WP-10 scaffold must build+run on the Simulator with no Apple Developer
+    # account. App Group entitlements are wired per-target below so WP-17
+    # (real signing) only has to flip these back on — see ios/README.md.
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGN_IDENTITY: ""
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  Zenji:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Zenji
+    info:
+      path: Zenji/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: nb
+        CFBundleDisplayName: Zenji
+        CFBundlePackageType: APPL
+        LSRequiresIPhoneOS: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_NAME: Zenji
+        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios
+        CODE_SIGN_ENTITLEMENTS: Zenji/Zenji.entitlements
+    dependencies:
+      - target: ZenjiWidgetExtension
+        embed: true
+
+  ZenjiWidgetExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ZenjiWidget
+      - path: Zenji/DesignTokens.swift
+    info:
+      path: ZenjiWidget/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: nb
+        CFBundleDisplayName: Zenji
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_NAME: ZenjiWidget
+        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.widget
+        CODE_SIGN_ENTITLEMENTS: ZenjiWidget/ZenjiWidget.entitlements
+        SKIP_INSTALL: YES
+
+schemes:
+  Zenji:
+    build:
+      targets:
+        Zenji: all
+        ZenjiWidgetExtension: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  ZenjiWidgetExtension:
+    build:
+      targets:
+        ZenjiWidgetExtension: all
+    run:
+      config: Debug
+    archive:
+      config: Release
