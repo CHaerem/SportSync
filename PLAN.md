@@ -33,7 +33,7 @@ mennesket, aldri av en agent.
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
-| WP-01 | events.schema.json | 0A | – | todo |
+| WP-01 | events.schema.json | 0A | – | PR åpnet |
 | WP-02 | Stabil event-ID | 0A | – | todo |
 | WP-03 | manifest.json | 0A | – | todo |
 | WP-04 | Deltakelse-normalisering | 0A | WP-01 | todo |

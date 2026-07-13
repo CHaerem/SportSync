@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { rootDataPath } from "./lib/helpers.js";
+import { validateAgainstSchema } from "./lib/validate-schema.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const GRACE_WINDOW_MS = 14 * 24 * 60 * 60 * 1000; // 14 days — matches build-events.js day navigator history window
 const dataDir = rootDataPath();
+const schemaPath = path.join(__dirname, "config", "events.schema.json");
+const eventSchema = JSON.parse(fs.readFileSync(schemaPath, "utf-8"));
 const file = path.join(dataDir, "events.json");
 if (!fs.existsSync(file)) {
 	console.error("events.json not found. Run build-events.js first.");
@@ -92,6 +97,13 @@ for (const ev of events) {
 				streamingMissing++;
 			}
 		}
+	}
+	// Formal schema check (scripts/config/events.schema.json) — catches shape
+	// drift (wrong types, bad enums) that the ad-hoc checks above don't cover.
+	const schemaErrors = validateAgainstSchema(ev, eventSchema, eventSchema);
+	if (schemaErrors.length) {
+		for (const msg of schemaErrors) console.warn(`Schema violation for ${key}:${msg}`);
+		errors += schemaErrors.length;
 	}
 	// Timezone bleed check: endTime crossing midnight in CET but not UTC
 	if (ev.endTime) {
