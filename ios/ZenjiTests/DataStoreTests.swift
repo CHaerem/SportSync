@@ -38,6 +38,11 @@ final class DataStoreTests: XCTestCase {
         XCTAssertNil(dataStore.loadTracked())
     }
 
+    func testLoadInterests_emptyCache_returnsNilNotThrow() {
+        let dataStore = DataStore(cache: cache)
+        XCTAssertNil(dataStore.loadInterests())
+    }
+
     func testLastSync_noStateWritten_isNil() {
         let dataStore = DataStore(cache: cache)
         XCTAssertNil(dataStore.lastSync, "nil is the 'never synced' flag callers rely on")
@@ -65,6 +70,22 @@ final class DataStoreTests: XCTestCase {
         let dataStore = DataStore(cache: cache)
         let tracked = try XCTUnwrap(dataStore.loadTracked())
         XCTAssertTrue(tracked.athletes.contains { $0.id == "viktor-hovland" })
+    }
+
+    func testLoadInterests_decodesWhatSyncClientCached() throws {
+        try cache.write(Fixture.data("interests"), filename: "interests.json")
+
+        let dataStore = DataStore(cache: cache)
+        let interests = try XCTUnwrap(dataStore.loadInterests())
+        XCTAssertEqual(interests.notify?.leadMinutes, 30)
+        XCTAssertTrue(interests.alwaysTrack.teams.contains { $0.name == "Lyn" })
+    }
+
+    func testLoadInterests_corruptCacheFile_returnsNilNotThrow() throws {
+        try cache.write(Data("not valid json at all".utf8), filename: "interests.json")
+
+        let dataStore = DataStore(cache: cache)
+        XCTAssertNil(dataStore.loadInterests())
     }
 
     func testLoadEvents_corruptCacheFile_returnsEmptyArrayNotThrow() throws {
