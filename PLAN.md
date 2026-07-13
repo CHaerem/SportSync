@@ -199,6 +199,16 @@ Alt under denne linjen er skisse som re-planlegges ved gaten.
 - **WP-23 · Gap-voting v1** (P330): anonymt signal + server-kø under budsjett.
 - **WP-24 · Live Activities** via broadcast-kanaler (P340) — krever WP-17.
 - **WP-25 · Lansering ved vintersesongstart** — Gate G2: 5 000 brukere, D30 > 30 %.
+- **WP-26 · 💰 Rebranding + domene** («SportSync» kolliderer med eksisterende
+  produkter/varemerker): nytt navn + varemerkesjekk, kjøp domene (~150 kr/år),
+  custom domain på Pages (CNAME) — gjør URL-en flytte-sikker for PWA-installasjoner
+  og ICS-abonnenter. MÅ skje før lansering og før WP-27.
+- **WP-27 · 💰 Repo-splitt**: privat motor-repo (agenter, prompts, quirks/kalibrering,
+  fetchere, strategi) + offentlig site-repo (kun bygget docs/, Pages-hostet);
+  deploy key for cross-repo-push. NB: private repos har 2 000 gratis
+  Actions-min/mnd — dagens automasjon bruker est. 4–7 000 → overage (~15–45 USD/mnd),
+  slankere skjemaer eller self-hosted runner. Beslutning tas sammen med WP-21.
+  Utføres som ÉN samlet migrering med WP-26 («flyttedagen»).
 
 ## FASE 2 · Inntekt (vår 2027) — skisse
 Affiliate-avtaler (Viaplay/TV 2/Discovery+) → Pro-tier 59 kr/mnd (frontier-brief,
