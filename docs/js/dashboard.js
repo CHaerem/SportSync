@@ -696,7 +696,7 @@ class Dashboard {
 			`- Kanal: ${chan}`, `- Kilde: ${e.source || 'statisk'}${e.confidence ? ` (${e.confidence})` : ''}`,
 		].join('\n');
 		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${e.title}`, body });
-		window.open(`https://github.com/CHaerem/zenji.app/issues/new?${p.toString()}`, '_blank', 'noopener');
+		window.open(`https://github.com/CHaerem/zenji/issues/new?${p.toString()}`, '_blank', 'noopener');
 	}
 
 	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —

@@ -3,10 +3,10 @@
 > A personal sports dashboard for a Norwegian sports fan — where **scheduled AI research
 > agents** find, verify, and editorialize the events that static APIs miss.
 
-[![Static pipeline](https://github.com/CHaerem/zenji.app/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji.app/actions)
-[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/zenji.app/)
+[![Static pipeline](https://github.com/CHaerem/zenji/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji/actions)
+[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://chaerem.github.io/zenji/)
 
-**See it live**: [chaerem.github.io/Zenji](https://chaerem.github.io/zenji.app/)
+**See it live**: [chaerem.github.io/Zenji](https://chaerem.github.io/zenji/)
 
 <!-- STATUS:START -->
 ## AI-budsjett

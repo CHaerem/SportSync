@@ -3,7 +3,7 @@
 // Issue Form with fields PRE-FILLED via query params (GitHub renders the form,
 // the user just submits). The existing workflow turns it into a PR they merge.
 // Nothing is written directly — same review-gated flow, just zero manual input.
-const REPO = 'CHaerem/zenji.app';
+const REPO = 'CHaerem/zenji';
 const KINDS = [
 	['athletes', 'Utøver', 'Utøvere'],
 	['teams', 'Lag', 'Lag'],
