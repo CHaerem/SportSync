@@ -2,15 +2,28 @@
 //  ContentView.swift
 //  Zenji
 //
-//  WP-10 scaffold: a Tekst-TV header + an empty, day-grouped agenda shell with
-//  a single placeholder row. No data — SyncClient (WP-12) and FeedCompiler
-//  (WP-13) populate this later; NotificationPlanner (WP-15) and the real
-//  widget timeline (WP-14) follow. Norwegian UI per project convention.
+//  WP-10 scaffold: a Tekst-TV header + an empty, day-grouped agenda shell
+//  with a single placeholder row. WP-12 wires in the sync status line below
+//  the date ("Sist synket: … · N events") and triggers a sync at app start;
+//  the agenda itself is still a placeholder — FeedCompiler (WP-13) and the
+//  real day-grouped rendering (WP-14) populate it later. NotificationPlanner
+//  (WP-15) follows. Norwegian UI per project convention.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+    let syncClient: SyncClient
+    let dataStore: DataStore
+
+    @State private var lastSync: Date?
+    @State private var eventCount: Int = 0
+
+    init(syncClient: SyncClient = SyncClient(), dataStore: DataStore = DataStore()) {
+        self.syncClient = syncClient
+        self.dataStore = dataStore
+    }
+
     private let today = Date()
 
     private var dateLabel: String {
@@ -18,6 +31,15 @@ struct ContentView: View {
         formatter.locale = Locale(identifier: "nb_NO")
         formatter.dateFormat = "EEEE d. MMMM"
         return formatter.string(from: today).uppercased()
+    }
+
+    private var syncStatusLabel: String {
+        guard let lastSync else { return "Sist synket: aldri" }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "nb_NO")
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return "Sist synket: \(formatter.string(from: lastSync)) · \(eventCount) events"
     }
 
     var body: some View {
@@ -30,6 +52,23 @@ struct ContentView: View {
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
+        .task {
+            await refresh()
+        }
+    }
+
+    /// Loads whatever is already cached immediately (so the status line
+    /// isn't blank while the network round-trip is in flight), then syncs
+    /// and reloads — this is the "kall sync ved app-start" hook from WP-12.
+    private func refresh() async {
+        reloadFromCache()
+        _ = await syncClient.sync()
+        reloadFromCache()
+    }
+
+    private func reloadFromCache() {
+        lastSync = dataStore.lastSync
+        eventCount = dataStore.loadEvents().count
     }
 
     private var header: some View {
@@ -41,6 +80,9 @@ struct ContentView: View {
             Text(dateLabel)
                 .font(.zenjiMono(size: 13))
                 .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
+            Text(syncStatusLabel)
+                .font(.zenjiMono(size: 11))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
