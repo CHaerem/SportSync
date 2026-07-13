@@ -282,6 +282,65 @@ describe("build-events", () => {
 		expect(rebuilt[0].streaming).toEqual([{ platform: "TV 2 Play", url: "https://play.tv2.no/sport" }]);
 	});
 
+	it("dedupes a World Cup knockout placeholder against the ai-research event, keeping the AI copy", () => {
+		// Regression: ESPN re-emits knockout slots as bracket placeholders
+		// ("Semifinal 2 Winner at Semifinal 1 Winner") whose title shares NO words
+		// with the ai-research "VM-finalen 2026". The sport|title|time key misses
+		// them and, before this fix, the title-only fuzzy check missed them too — so
+		// both survived and verify had to remove the placeholder by hand every day.
+		// They match on venue + exact kickoff; keep the human-titled, channel-confirmed
+		// AI event and drop the placeholder.
+		const time = future(4);
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "FIFA World Cup", events: [
+				{ title: "Semifinal 2 Winner at Semifinal 1 Winner", time, round: "Finale",
+				  homeTeam: "Semifinal 1 Winner", awayTeam: "Semifinal 2 Winner", venue: "MetLife Stadium" },
+			] }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "FIFA World Cup", title: "VM-finalen 2026", time,
+				  round: "Finale", venue: "MetLife Stadium, East Rutherford, New Jersey",
+				  streaming: [{ platform: "NRK", url: "https://tv.nrk.no/direkte" }],
+				  source: "ai-research", confidence: "high", evidence: ["a", "b"],
+				  verificationStatus: "confirmed" },
+			])
+		);
+		const events = runBuild();
+		const wc = events.filter((e) => e.tournament === "FIFA World Cup");
+		expect(wc).toHaveLength(1);                                   // not two rows for the final
+		expect(wc[0].title).toBe("VM-finalen 2026");                 // the human title won
+		expect(wc[0].source).toBe("ai-research");                    // the placeholder was dropped
+		expect(wc[0].streaming).toEqual([{ platform: "NRK", url: "https://tv.nrk.no/direkte" }]);
+		// The placeholder team names must not leak onto the surviving event.
+		expect(wc[0].awayTeam).not.toBe("Semifinal 2 Winner");
+	});
+
+	it("does NOT merge two different same-time matches at different venues", () => {
+		// Safety: the venue path must not collapse unrelated fixtures. Two knockout
+		// slots kick off at the same instant but at different stadiums — both stay.
+		const time = future(4);
+		fs.writeFileSync(
+			path.join(dataDir, "football.json"),
+			JSON.stringify({ tournaments: [{ name: "FIFA World Cup", events: [
+				{ title: "Semifinal 2 Winner at Semifinal 1 Winner", time, homeTeam: "Semifinal 1 Winner", awayTeam: "Semifinal 2 Winner", venue: "MetLife Stadium" },
+			] }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{ sport: "football", tournament: "FIFA World Cup", title: "VM-bronsefinale", time,
+				  venue: "Hard Rock Stadium, Miami Gardens, Florida",
+				  source: "ai-research", confidence: "high", evidence: ["a", "b"] },
+			])
+		);
+		const events = runBuild();
+		const titles = events.filter((e) => e.tournament === "FIFA World Cup").map((e) => e.title).sort();
+		expect(titles).toEqual(["Semifinal 2 Winner at Semifinal 1 Winner", "VM-bronsefinale"]);
+	});
+
 	it("filters out events older than 14 days", () => {
 		fs.writeFileSync(
 			path.join(dataDir, "football.json"),

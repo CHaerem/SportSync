@@ -1,13 +1,12 @@
 {
-	"runAt": "2026-07-06T11:50:00Z",
+	"runAt": "2026-07-13T10:40:00Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/201",
-	"proposal": "Fix the recurring ESPN F1 mis-dating quirk at the source: f1.js now re-stamps each near-term Grand Prix with its actual RACE session date/time (from ESPN's core-API session list) instead of the Friday FP1 date ESPN puts on the scoreboard, and clears the premature FINAL status. Fail-open + bounded to the ~35-day window the pipeline keeps. Adds tests/f1-fetcher.test.js (5 cases).",
+	"pr": "https://github.com/CHaerem/SportSync/pull/233",
+	"proposal": "Kill the recurring World Cup knockout duplicates at the source in build-events.js. ESPN re-emits knockout slots as bracket placeholders ('Semifinal 2 Winner at Semifinal 1 Winner') whose title shares zero words with the channel-confirmed ai-research events ('VM-finalen 2026'), so the sport|title|time key AND the title-only fuzzy check both missed them and both copies survived every rebuild. Added a venue-based fuzzy match (same sport + same venue + overlapping date range — for point-in-time events this collapses to an exact-kickoff match, so it can't collide unrelated fixtures) as a second match kind, and when a static event matches an ai-research one ONLY by venue (titles disagree entirely) the AI event wins and the placeholder is dropped — while the existing title-match path (golf/stage tournaments) still lets the authoritative static fetcher win. Adds 2 build-events tests (WC dedup keeps the AI copy; two different-venue same-time matches are NOT merged).",
 	"evidence": [
-		"coverage-audit.json (2026-07-06): TWO high-severity F1 gaps — Belgian GP board-dated fre. 17. juli 11:30 and Hungarian GP fre. 24. juli 11:30 (FP1) instead of the Sunday races 19./26. juli. sourceIssues flags 'ESPN F1 scoreboard mis-daterer GP-helger til fredagens trening'.",
-		"events.json: British Grand Prix (race Sun 5 Jul) was absent from the static board and had to be back-filled by ai-research; Belgian/Hungarian carried the wrong Friday time+TBD venue.",
-		"source-quirks skill: ESPN F1 'race weekends (high)' entry — the Friday-dated weekend drops off the board by Saturday and Sunday's race silently disappears; observed 2026-07-05 (British GP).",
-		"Mechanism confirmed live: ESPN scoreboard event 600057439 dates to 2026-07-17T11:30Z (FP1, STATUS_FINAL) while the core-API competitions list has the Race session at 2026-07-19T13:00Z (type id 3 / abbreviation 'Race').",
-		"npm test: 207 passed incl. 5 new F1 cases (re-stamp, clear-status, two fail-open paths, out-of-window no-call, recent-past drop-off case)."
+		"verify-log.json (2026-07-13): 'RECURRING build-events dedup gap: these tentative NRK/TV2 placeholders have now been removed 11, 12 and 13 Jul and keep returning because build-events dedupes on sport|title|time and the ESPN titles differ from the ai-research Norwegian titles. Permanent fix belongs in build-events ... verify can only whack-a-mole them daily.' — flagged three days running, explicitly handed to improve/self-repair.",
+		"verify removed 3 ESPN placeholders again 2026-07-13: 'Spain at France' (dup of 'VM-semifinale 1'), 'Semifinal 2 Loser at Semifinal 1 Loser' (dup of 'VM-bronsefinale'), 'Semifinal 2 Winner at Semifinal 1 Winner' (dup of 'VM-finalen 2026'); the ai copies carry the NTB-confirmed NRK/TV 2 channel, the placeholders a tentative guess + an unreadable title.",
+		"Real-data rebuild (docs/data copy in a temp dir) with the fix: all three ESPN placeholders are deduped away, the channel-confirmed ai-research events survive, and 'Argentina at England' (resolved SF2 with no AI counterpart) correctly stays — no other football event affected.",
+		"npm test: 263 passed incl. 2 new build-events cases (WC knockout dedup keeps the AI copy; different-venue same-time matches stay separate)."
 	]
 }

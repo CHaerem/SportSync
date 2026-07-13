@@ -111,25 +111,46 @@ const CARRY_FORWARD_FIELDS = [
 	"summary",
 ];
 // Fuzzy "same event" check, to de-dupe an ai-research event against a static one
-// when their exact start times disagree — common for multi-day golf/stage events
-// (ESPN says 04:00, the research agent wrote 06:00, so a sport|title|time key
-// misses it and both survive). Same sport + ≥2 shared title words (or one title's
-// words ⊆ the other) + overlapping date range ⇒ the same event.
+// when a sport|title|time key misses them. Two ways two sources point at one event:
+//   • "title": same sport + ≥2 shared title words (or one title's words ⊆ the
+//     other) + overlapping date range — common for multi-day golf/stage events
+//     (ESPN says 04:00, the research agent wrote 06:00).
+//   • "venue": same sport + same venue + overlapping date range, when the two
+//     sources title the event COMPLETELY differently — the recurring World Cup
+//     knockout case, where ESPN emits a bracket placeholder ("Semifinal 2 Winner
+//     at Semifinal 1 Winner") and the research agent wrote a human title
+//     ("VM-finalen 2026"). Zero shared title words, but same stadium + kickoff.
+//     Safe because for point-in-time events the date-range overlap collapses to an
+//     EXACT start-time match — two events can't share a venue at the same instant.
 const TITLE_STOP = new Set(["the", "at", "in", "of", "and", "a", "vs", "v"]);
 function titleTokens(s) {
 	return String(s || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/)
 		.filter((w) => w.length > 1 && !TITLE_STOP.has(w) && !/^\d+(st|nd|rd|th)?$/.test(w));
 }
-function sameFuzzyEvent(a, b) {
-	if (!a || !b || a.sport !== b.sport) return false;
+const VENUE_GENERIC = new Set(["stadium", "stadion", "arena", "park", "field", "ground", "at"]);
+function venueMatch(a, b) {
+	const norm = (v) => String(v || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+	const va = norm(a.venue), vb = norm(b.venue);
+	if (!va || !vb) return false;
+	if (va.includes(vb) || vb.includes(va)) return true; // one venue string contains the other
+	const sig = (v) => new Set(v.split(" ").filter((w) => w.length > 2 && !VENUE_GENERIC.has(w)));
+	const tb = sig(vb);
+	for (const w of sig(va)) if (tb.has(w)) return true; // share a distinctive (non-generic) venue token
+	return false;
+}
+// Returns how a and b match ("title" | "venue"), or null. See the block comment above.
+function fuzzyMatchKind(a, b) {
+	if (!a || !b || a.sport !== b.sport) return null;
+	const s1 = Date.parse(a.time), e1 = a.endTime ? Date.parse(a.endTime) : s1;
+	const s2 = Date.parse(b.time), e2 = b.endTime ? Date.parse(b.endTime) : s2;
+	if (!Number.isFinite(s1) || !Number.isFinite(s2)) return null;
+	if (!(s1 <= e2 && s2 <= e1)) return null; // date ranges must overlap
 	const at = titleTokens(a.title), bset = new Set(titleTokens(b.title));
 	const shared = at.filter((w) => bset.has(w));
 	const subset = at.length > 0 && at.every((w) => bset.has(w));
-	if (shared.length < 2 && !subset) return false;
-	const s1 = Date.parse(a.time), e1 = a.endTime ? Date.parse(a.endTime) : s1;
-	const s2 = Date.parse(b.time), e2 = b.endTime ? Date.parse(b.endTime) : s2;
-	if (!Number.isFinite(s1) || !Number.isFinite(s2)) return false;
-	return s1 <= e2 && s2 <= e1; // date ranges overlap
+	if (shared.length >= 2 || subset) return "title";
+	if (venueMatch(a, b)) return "venue";
+	return null;
 }
 
 // When an ai-research event is dropped in favour of a fuzzy-matched static event,
@@ -204,8 +225,30 @@ if (Array.isArray(previousEvents)) {
 		//     player / norwegian flag that the relevance filter needs, so dropping
 		//     the AI copy outright made the whole event vanish (Gstaad / Ruud).
 		if (prev.source === "ai-research") {
-			const staticMatch = all.find((cur) => cur.source !== "ai-research" && sameFuzzyEvent(cur, prev));
+			let staticMatch = null, matchKind = null;
+			for (const cur of all) {
+				if (cur.source === "ai-research") continue;
+				const kind = fuzzyMatchKind(cur, prev);
+				if (kind) { staticMatch = cur; matchKind = kind; break; }
+			}
 			if (staticMatch) {
+				if (matchKind === "venue") {
+					// The two sources title this slot completely differently and match
+					// only on venue+time — the recurring World Cup knockout case, where
+					// the static fetcher emits a useless bracket placeholder ("Semifinal
+					// 2 Winner at Semifinal 1 Winner") and the ai-research event carries a
+					// human title + confirmed Norwegian channel. Keep the AI event, drop
+					// the static placeholder. Verify was removing these by hand daily —
+					// see the "recurring build-events dedup gap" note in verify-log.json.
+					const idx = all.indexOf(staticMatch);
+					if (idx >= 0) all.splice(idx, 1);
+					byKey.set(key, prev);
+					all.push(prev);
+					preserved++;
+					continue;
+				}
+				// Title match (same tournament, differing start time): the static
+				// fetcher is authoritative on dates/venue — graft AI enrichment onto it.
 				mergeEnrichment(staticMatch, prev);
 				continue;
 			}
