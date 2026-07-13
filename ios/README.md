@@ -1,4 +1,4 @@
-# Zenji — iOS app (WP-10 scaffold → WP-11 models → WP-12 sync → WP-13 feed → WP-14 agenda/widget → WP-15 notifications)
+# Zenji — iOS app (WP-10 scaffold → WP-11 models → WP-12 sync → WP-13 feed → WP-14 agenda/widget → WP-15 notifications → WP-16 assistant)
 
 SwiftUI app **Zenji** + WidgetKit extension **ZenjiWidget**, generated with
 [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`. WP-10
@@ -768,15 +768,122 @@ last real fetch was, which is precisely the "how stale is this" signal gate
 `.task`, not on `AgendaView`'s pull-to-refresh (WP-14) — a manual refresh
 re-syncs and recompiles the agenda but doesn't re-run the notification diff.
 
+## Assistent — FM-lekegrind (WP-16)
+
+`Zenji/Assistant/` is a conversational way to edit *what the app follows*:
+type a Norwegian utterance ("Følg Ruud bare i Grand Slams", "slutt med
+tennis", "mer sykkel i juli"), and the on-device model turns it into
+structured rule mutations you review as a DIFF and confirm or reject. Reached
+from a discreet speech-bubble glyph in the Tekst-TV header (`ContentView`).
+
+### The model is behind a protocol (vendor surface = one file)
+
+`InterestAssistant` (`Assistant/InterestAssistant.swift`) is the whole model
+API the UI and pipeline see — everything else is FoundationModels-free:
+
+- **`FoundationModelsInterestAssistant`** — the real one, Apple Intelligence
+  via **FoundationModels** (iOS 26+). The **only** file that
+  `import FoundationModels`. It defines the `@Generable` output schema
+  (`GeneratedMutation` — `action`/`entityId`/`entityQuery`/`scope`/`weight`/
+  `reason`) and a `searchEntities` **`Tool`** over the entity index, checks
+  `SystemLanguageModel.default.availability`, and runs one
+  `LanguageModelSession.respond(to:generating:)`. On the Simulator/CI the
+  model reports `.unavailable`, mapped to a calm Norwegian message — so it
+  compiles and links everywhere but only *runs* on the device.
+- **`MockInterestAssistant`** — a deterministic Norwegian keyword parser used
+  by every test (Apple Intelligence can't run in CI) and by SwiftUI previews.
+  It is **not** a silent fallback: when Apple Intelligence is off the shipping
+  app shows the honest "unavailable" banner rather than degrading to keywords.
+
+### Entity grounding is the hard rule
+
+A proposal is applied **only** if its `entityId` resolves in the WP-05 entity
+index (`docs/data/entities.json`, via `DataStore.loadEntities()`).
+`MutationGrounder.ground(_:index:profile:)` re-checks every id the model
+returns — a hallucinated or free-text entity ("cricket") is **rejected**, never
+applied, with a Norwegian explanation and up to three nearest-match suggestions
+("Fant ikke «X» i indeksen — mente du …?"). This holds identically whether the
+raw proposal came from FoundationModels or the mock.
+
+### Pieces (all pure + unit-tested except the two UI/FM shells)
+
+| File | What |
+|---|---|
+| `AssistantModels.swift` | `MutationKind`, `ProposedMutation` (raw), `GroundedMutation`/`RejectedMutation`, `AssistantAvailability`/`AssistantError` |
+| `InterestProfile.swift` | `InterestRule` + `InterestProfile.applying(_:)` — the pure add/update (upsert) / remove diff; every rule keeps a Norwegian `reason` |
+| `EntityIndex.swift` | exact lookup (grounding gate), tool search (Norwegian sport-word expansion), fuzzy nearest-match, the mock's utterance→entity detection |
+| `MutationGrounder.swift` | the hard grounding rule, as one pure function |
+| `ProfileStore.swift` | JSON persistence in Application Support (no App Group needed — works on the free-account device build); `load()` never throws |
+| `MockInterestAssistant.swift` | the deterministic parser (`MockInterestParser`) |
+| `FoundationModelsInterestAssistant.swift` | the real on-device model (only `import FoundationModels`) |
+| `AssistantViewModel.swift` | `@MainActor @Observable` coordinator: submit → ground → confirm/reject → persist |
+| `AssistantView.swift` | the one calm Tekst-TV screen (DIFF in green/amber/red tokens, "Hva jeg følger" list) |
+
+`ProfileStore` writes `interest-profile.json` to Application Support (a
+throwaway temp dir in tests). The profile is device-local — CloudKit sync is
+later work (PLAN.md WP-22).
+
+### Tests
+
+`ZenjiTests/{MockInterestAssistant,MutationGrounder,InterestProfile,ProfileStore,EntityIndex,AssistantViewModel}Tests.swift`
+(+ `AssistantTestSupport.swift`) drive the mock, never FoundationModels. They
+cover the ten canonical utterances → correct mutations, entity lookup +
+free-text rejection with nearest match, the diff application, persistence
+round-trip, and the end-to-end view-model flow. `xcodebuild test` on the
+Simulator passes **152 tests** (the 102 WP-10…15 baseline + 50 new).
+
+### Device build (free personal account)
+
+WP-16 needs a **physical device** with Apple Intelligence to exercise the real
+model. Two free-account limits are handled by a dedicated **`ZenjiDeviceDev`**
+target/scheme (added to `project.yml`) — the Simulator `Zenji` target, its
+schemes and all tests are unchanged:
+
+- **No App Groups** (unavailable on a free team): `ZenjiDeviceDev` uses an empty
+  entitlements file (`ZenjiDeviceDev/ZenjiDeviceDev.entitlements`); `CacheStore`
+  falls back to Application Support (its built-in fallback), `ProfileStore` uses
+  it unconditionally.
+- **No embedded widget** (a prior attempt failed with *"Embedded binary is not
+  signed with the same certificate as the parent app"*): `ZenjiDeviceDev` has
+  **no** `ZenjiWidgetExtension` dependency. The widget stays Simulator-only
+  until a paid account (WP-17).
+- It reuses bundle id `app.zenji.ios` (the free team already has a matching
+  provisioning profile covering the device) and a distinct `PRODUCT_NAME`
+  (`ZenjiDeviceDev.app`) so its product never collides with `Zenji.app`. The
+  home-screen name stays "Zenji" via `CFBundleDisplayName`.
+
+```sh
+cd ios && xcodegen generate
+
+# Build for the connected iPhone (free personal team, automatic signing):
+xcodebuild -project Zenji.xcodeproj -scheme ZenjiDeviceDev \
+  -destination 'platform=iOS,id=<device-id from `xcrun devicectl list devices`>' \
+  -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic \
+  DEVELOPMENT_TEAM=<team> build
+
+# Install + launch on the device (hardware UDID):
+APP=~/Library/Developer/Xcode/DerivedData/Zenji-*/Build/Products/Debug-iphoneos/ZenjiDeviceDev.app
+xcrun devicectl device install app --device <hardware-udid> "$APP"
+xcrun devicectl device process launch --device <hardware-udid> app.zenji.ios
+```
+
+**One-time on-device trust step:** the first launch of a free-team development
+build is blocked by iOS until the developer certificate is trusted manually —
+*Innstillinger → Generelt → VPN og enhetsadministrering → Utviklerapp → Stol
+på "Apple Development: …"*. This cannot be scripted (`devicectl launch` returns
+a `Security`/"profile has not been explicitly trusted" error until it's done).
+After trusting once, the app launches normally and the FM conversations can be
+verified by hand (see the WP-16 PR's manual checklist).
+
 ## Architecture (what plugs in next)
 
 WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache
 + background refresh, WP-13 added the FeedCompiler, WP-14 added the real
-agenda UI + widget, WP-15 added the NotificationPlanner. The pieces below are
-still separate work packages — **not implemented here**:
+agenda UI + widget, WP-15 added the NotificationPlanner, WP-16 added the FM
+assistant. Still separate, later work packages — **not implemented here**:
 
-- **FM playground (WP-16)** — conversational interest-rule editing via Apple
-  Intelligence `@Generable`, gated on a physical device.
+- **TestFlight (WP-17)** — a paid Apple Developer account, real signing, and
+  re-enabling the App Group + embedded widget on device.
 
 ## Data contract
 
