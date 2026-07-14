@@ -21,6 +21,9 @@ enum MemoryDemoSeed {
     /// om deg" page renders full and readable. Sport-scoped throughout so the
     /// labels resolve without a synced entity index.
     static func seedMemory(into store: MemoryStore, now: Date = Date()) {
+        // Idempotent: reset first so relaunching the demo (e.g. once per theme)
+        // never accumulates duplicate facts in the same Simulator container.
+        store.forgetAll(now: now)
         store.save(SaveMemoryCommand(sport: "f1", kind: .spoilerPolicy, value: "opptak",
                                      reason: "Ser F1 på opptak i helgene — vil ikke vite resultatet."), now: now)
         store.upsertFact(MemoryFact(sport: "chess", kind: .knowledgeLevel, value: "nybegynner",
