@@ -60,6 +60,11 @@ struct ContentView: View {
     }
     @State private var demoSheet: DemoSheet?
     #endif
+    /// WP-32 screenshot harness: force the "Nullstill" disclosure open (and
+    /// optionally jump to one level's confirmation ark) deterministically.
+    /// Always nil outside DEBUG (only ever assigned inside a `ZENJI_DEMO`
+    /// branch, same convention as `onboardingInitialStep` below).
+    @State private var resetDemoState: AssistantPanel.ResetDemoState?
 
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -169,7 +174,11 @@ struct ContentView: View {
             ZStack {
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) })
                 if panelShown {
-                    AssistantPanel(viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding)
+                    AssistantPanel(
+                        viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding,
+                        onReset: performReset, syncEnabled: profileSync.backend.isEnabled,
+                        initialResetState: resetDemoState
+                    )
                         .transition(.opacity)
                         .zIndex(1)
                 }
@@ -265,6 +274,31 @@ struct ContentView: View {
                     if mode != "onboarding-landed" { showOnboarding = true }
                     agenda.reloadFromCache(now: Date())
                 }
+                // WP-32 — reset-entry/-confirm show the "Nullstill" disclosure
+                // open (optionally mid-confirmation) over a seeded profile;
+                // reset-onboarding runs the REAL `performReset` path so the
+                // onboarding overlay that follows is the exact state a user
+                // sees, not a fabricated stand-in.
+                if mode.hasPrefix("reset") {
+                    try? profileStore.save(InterestProfile(rules: [
+                        InterestRule(entityId: "fk-lyn-oslo", entityName: "FK Lyn Oslo", sport: "football",
+                                     scope: nil, weight: 0.5, reason: "Du ba om å følge FK Lyn Oslo.", addedAt: Date()),
+                    ]))
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                    switch mode {
+                    case "reset-entry":
+                        resetDemoState = AssistantPanel.ResetDemoState(expanded: true, confirming: nil)
+                        panelShown = true
+                    case "reset-confirm":
+                        resetDemoState = AssistantPanel.ResetDemoState(expanded: true, confirming: .everything)
+                        panelShown = true
+                    case "reset-onboarding":
+                        performReset(.followedOnly)
+                    default:
+                        break
+                    }
+                }
                 assistant.demoSeed(mode)
                 if mode == "diff" || mode == "answer" { panelShown = true }
             }
@@ -337,6 +371,22 @@ struct ContentView: View {
     private func rerunOnboarding() {
         panelShown = false
         withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
+    }
+
+    /// WP-32 — the confirmed "Nullstill" action: reset the profile (and, at
+    /// the GDPR level, all personal memory + the misunderstood log) on THIS
+    /// device, then raise the onboarding overlay immediately — the owner's
+    /// ask, verbatim: never having to reinstall the app to re-onboard.
+    private func performReset(_ level: ResetLevel) {
+        assistant.resetProfile(level)
+        onboardingCompleted = false
+        agenda.reloadFromCache(now: Date())
+        panelShown = false
+        if reduceMotion {
+            showOnboarding = true
+        } else {
+            withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
+        }
     }
 
     /// The command line's `»_` — open the assistant in browse mode.
