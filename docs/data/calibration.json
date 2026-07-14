@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-14T07:09:30.474Z",
+  "generatedAt": "2026-07-14T09:55:29.056Z",
   "windowDays": 180,
   "records": {
-    "used": 47,
+    "used": 52,
     "skipped": 0
   },
   "sources": {
@@ -43,17 +43,17 @@
       "reliability": null
     },
     "cyclingstage.com": {
-      "checks": 7,
+      "checks": 8,
       "agreed": 3,
       "bySport": {
         "cycling": {
-          "checks": 7,
+          "checks": 8,
           "agreed": 3
         }
       },
       "byField": {
         "time": {
-          "checks": 6,
+          "checks": 7,
           "agreed": 2
         },
         "existence": {
@@ -61,8 +61,8 @@
           "agreed": 1
         }
       },
-      "lastChecked": "2026-07-10T09:30:00.000Z",
-      "reliability": 0.43
+      "lastChecked": "2026-07-14T05:30:00.000Z",
+      "reliability": 0.38
     },
     "tvkampen.com": {
       "checks": 2,
@@ -474,6 +474,78 @@
         }
       },
       "lastChecked": "2026-07-12T09:30:00.000Z",
+      "reliability": null
+    },
+    "fifa.com": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "football": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "existence": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-14T05:30:00.000Z",
+      "reliability": null
+    },
+    "hltv.org": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "esports": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "existence": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-14T05:30:00.000Z",
+      "reliability": null
+    },
+    "atptour.com": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "tennis": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "existence": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-14T05:30:00.000Z",
+      "reliability": null
+    },
+    "golferen.no": {
+      "checks": 1,
+      "agreed": 0,
+      "bySport": {
+        "golf": {
+          "checks": 1,
+          "agreed": 0
+        }
+      },
+      "byField": {
+        "streaming": {
+          "checks": 1,
+          "agreed": 0
+        }
+      },
+      "lastChecked": "2026-07-14T05:30:00.000Z",
       "reliability": null
     }
   }
