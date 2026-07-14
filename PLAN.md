@@ -52,7 +52,7 @@ mennesket, aldri av en agent.
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | ✅ merget (#246, +16.1 #247 linse/ærlighet, +16.2 #248 fuzzy-resolver) — 152/152 iOS-tester (mot mock; FM kjøres ikke i CI) + DeviceDev bygget/signert/installert på fysisk iPhone (launch krever engangs manuell utvikler-trust på enheten) |
 | WP-16.4 | Sømløs assistent | 0B | WP-16,WP-14 | ✅ merget (#257) |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
-| WP-18 | Linse-rendering (P320: event × deltakelse × linse) | 0B | WP-13,WP-16.1 | 🔬 PR åpnet — `LensRenderer` (Feed/, widget-trygg) + Agenda-integrasjon: golf rendres gjennom de norske du følger (tee time overstyrer tid/dag/sortering, status verbatim i meta, grasiøs degradering); de 5 predikatene urørt (13/13 gylne vektorer bit-like); 273/273 iOS-tester (+16), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev installert; skjermbilder `ios/docs/design-v2/lens-{dark,light}.png` |
+| WP-18 | Linse-rendering (P320: event × deltakelse × linse) | 0B | WP-13,WP-16.1 | ✅ merget (#259, 14.07) — `LensRenderer` (Feed/, widget-trygg) + Agenda-integrasjon: golf rendres gjennom de norske du følger (tee time overstyrer tid/dag/sortering, status verbatim i meta, grasiøs degradering); de 5 predikatene urørt (13/13 gylne vektorer bit-like); 273/273 iOS-tester (+16), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev installert; skjermbilder `ios/docs/design-v2/lens-{dark,light}.png` |
 | WP-19 | Profil-sync (P360: iCloud + QR-bro) | 0B | WP-16 | ✅ merget (#260) — 317/317 |
 | WP-30 | Personlig minne (P350) | 0B | WP-16.4,WP-19 | ✅ merget (#261) — 356/356 |
 | WP-31 | Naturlig onboarding (P310 «definere») | 0B | WP-16.4,WP-05 | ✅ merget (#262) — 368/368 |
@@ -61,6 +61,19 @@ mennesket, aldri av en agent.
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
+| WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
+| WP-41 | Web: død kode ut av shippet flate | 0D | – | ⬜ køet |
+| WP-42 | Pipeline: dødkode-sanering | 0D | – | ⬜ køet |
+| WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
+| WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
+| WP-45 | Golf: skraper-ekstraksjon | 0D | WP-43 | ⬜ køet |
+| WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | ⬜ køet |
+| WP-47 | Web: dashboard.js-splitt | 0D | WP-46 | ⬜ køet |
+| WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ⬜ køet |
+| WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ⬜ køet |
+| WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ⬜ køet |
+| WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ⬜ køet |
+| WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ⬜ køet |
 
 ---
 
@@ -295,6 +308,305 @@ bygget `docs/`. Site-repoet: INGEN workflows og ALDRI self-hosted runner
   innenfor 2 000 gratis-min; self-hosted for tunge agent-kjøringer.
 - **Aksept:** en full agent-syklus (research → verify → pipeline → publish) kjørt
   på runneren; overage-forbruk ~0; runner-nedetid gir køede (ikke tapte) runs.
+
+---
+
+## FASE 0D · Strukturhelse (kodegjennomgang 14.07.2026)
+
+Bakgrunn: fem parallelle strukturgjennomganger 14.07.2026 (pipeline, agent-økosystem,
+web, iOS, dokumentasjon). Hovedfunn: (1) dokumentasjonsdrift — CLAUDE.md beskriver
+pre-Tekst-TV-designet, 16 av 29 testfiler, og intet om `ios/`/follow-request/entities;
+(2) ett hull i autonomi-sikkerheten — ui-fix auto-merger uten protected-paths-sjekk;
+(3) død v1-kode som fortsatt shippes — 406 linjer klient-JS, sjakk-stier mot slettet
+config, ~75 % av `lib/filters.js`; (4) akkresjon — `dashboard.js` 1123 linjer,
+`Assistant/` er to domener, PNG-er er 80 % av sporede bytes.
+
+Alle pakkene er angrefrie og skal ikke endre atferd — med ett tilsiktet unntak
+(WP-43: `detect-coverage-gaps` skal slutte å generere falske gaps for pågående
+flerdagsevents). Delegeringsmalen øverst i dokumentet gjelder; regel 7 (ikke-mål er
+bindende) håndheves strengt — pakkene er skåret for å unngå filkollisjoner.
+
+**Bølge-plan (maks parallellitet uten merge-konflikter):**
+- **Bølge 1** (uavhengige, kan gå samtidig): WP-40, WP-41, WP-42, WP-48, WP-49, WP-51
+- **Bølge 2:** WP-43 (etter 42) · WP-46 (etter 41) · WP-50 (etter 48+49)
+- **Bølge 3:** WP-44 og WP-45 (begge etter 43, innbyrdes uavhengige) · WP-47 (etter 46)
+- **Sist:** WP-52 — dok-resynk dokumenterer sluttilstanden og kjøres når resten er merget
+
+**Beslutninger for mennesket (ikke agent):**
+1. WP-40 rører beskyttede stier (`.github/workflows/**`) — denne planoppføringen er den
+   eksplisitte ordren (regel 3), og PR-en merges av menneske.
+2. WP-49 sletter innsjekkede skjermbilder — git-historikken bevarer alt, men slettingen
+   godkjennes via PR-review.
+3. `scripts/lib/llm-client.js` har null produksjonskallere men er dokumentert
+   leverandørbytte-fallback — **behold (default)** eller slett; hvis slett, si det eksplisitt.
+4. `events.ics` PRODID/`@sportsync`-UID-er beholdes med vilje (bytte dupliserer events i
+   abonnenters kalendere) — ikke-mål i alle pakker.
+
+### WP-40 · Autonomi-herding: felles merge-gate
+- **Mål:** Invarianten «beskyttede stier auto-merges aldri» håndhevet i alle tre
+  selvfiks-løkker, fra ÉN kilde. I dag har self-repair og improve BLOCK-sjekken
+  (`self-repair-agent.yml:70-79`, `improve-agent.yml:65-74`) — **ui-fix mangler den**
+  (`ui-fix-agent.yml:58-77` merger enhver `ui-autofix/`-PR som passerer testene).
+- **Filer:** ny `scripts/merge-gate.js` (delt re-gate: test-kjøring + BLOCK-sjekk +
+  auto-merge/label); `.github/workflows/{ui-fix,self-repair,improve}-agent.yml` kaller
+  den; CLAUDE.md-listen over beskyttede stier (kun listelinjene — resten er WP-52).
+- **Innhold:** (1) trekk ut delt gate-script, wire inn i alle tre; (2) utvid BLOCK med
+  `.claude/settings.json` (filen som wirer hookene) og `.github/actions/**`; (3) rett
+  toppkommentarene i `improve-agent.yml:3-6` og `ui-fix-agent.yml:3-6` som sier
+  «never auto-merged»/«a human to merge» — motsatt av koden lenger ned; (4) legg til
+  commit-steg for `docs/data/{ui-fix,self-repair,improve}-log.json` — promptene krever
+  loggene, men på no-op-kjøringer skrives de og forkastes (improve miner dem som bevis).
+- **Ikke-mål:** reusable-workflow-refaktor av all boilerplate (over-engineering, jf.
+  anti-maskineri-linjen); endre hooks eller prompts.
+- **Aksept:** alle tre workflows kaller samme script; en test-PR som rører beskyttet
+  sti blir stående åpen med `needs-review`; en som ikke gjør det auto-merges; npm test
+  grønt (`tests/workflows.test.js`).
+
+### WP-41 · Web: død kode ut av shippet flate
+- **Mål:** Ingen JS shippes, precaches og testes som ikke har ett eneste kallsted.
+- **Innhold:** slett `docs/js/sport-config.js` (55 linjer) og `docs/js/asset-maps.js`
+  (351 linjer) — null kallsteder, header-kommentarene refererer slettede v1-filer, og
+  asset-maps kan ikke brukes uten å bryte DESIGN.md (logoer/emoji bevisst fjernet).
+  Fjern referansene: `docs/index.html:58-59`, `docs/sw.js:18-19`,
+  `tests/dashboard-cards.test.js:10-11`, `docs/js/dashboard.js:4`. Slett døde eksporter
+  i `docs/js/shared-constants.js`: `ssExtractAggregate` (:73-90) og
+  `isNoteworthyNorwegianResult` + `NORWEGIAN_CLUBS`/`UEFA_COMPETITION_CODES`-kopiene
+  (:12-40, ubrukt klientside). Synk sw-shell-listen: `activity.html` inn (lenket fra
+  footer, precaches ikke i dag), døde entries ut, bump `CACHE_NAME`.
+- **Merk:** WP-05s ikke-mål nevner asset-maps for fase 1 — beslutningen tas HER
+  (filen gjenskapes fra historikk om fase 1 trenger den); oppdater den linjen med
+  en parentes i samme PR.
+- **Ikke-mål:** designendringer; tema-arbeid (WP-46); dashboard-splitt (WP-47).
+- **Aksept:** `grep -rn "docs/js/sport-config\|asset-maps" docs/ tests/ scripts/ *.md`
+  tomt (NB: `scripts/config/sports-config.js` er en ANNEN, levende fil); npm test grønt;
+  `npm run screenshot` i begge temaer viser uendret side.
+
+### WP-42 · Pipeline: dødkode-sanering
+- **Mål:** v1-restene ut av `scripts/` — ren sletting, null atferdsendring.
+- **Innhold:**
+  - Sjakk: `fetch-standings.js:304-380` (`fetchChessStandings` leser
+    `scripts/config/chess-tournaments.json` som ble fjernet i v2 — returnerer alltid
+    `{}`); curated-grenen + `loadJsonFile` i `fetch/chess.js:22-55,177-185`
+    (chess-sources i `sports-config.js:135-142` er kun lichess).
+  - `lib/filters.js`: trim til de to brukte (`filterCurrentWeek`, `filterByTimeRange`
+    — kalt fra `fetch/chess.js:161-162`, `fetch/esports.js:165`); resten (~75 % av
+    API-flaten) har null kallere.
+  - `lib/adapters/espn-adapter.js`: ubrukt `EventFilters`-import (:3) + `_leagueMeta`
+    (:83-88, spreades bort i `base-fetcher.js:29` før noen kan lese det).
+  - `lib/api-client.js:131-158`: `buildURL`/`fetchWithDates`, null kallere.
+  - `lib/helpers.js:10-40`: død server-kopi av norsk-klubb-helperne (live-kopien er
+    klientens; klientens egen død-eksport tas i WP-41).
+  - `.github/actions/setup/` — dedup-mekanisme null workflows bruker, driftet
+    (checkout@v4/node 20 vs. inline @v5/node 22). NB: stien er IKKE beskyttet
+    (`.github/workflows/**` er), men nevn slettingen tydelig i PR-beskrivelsen.
+  - `apply-follow-request.js`: header (:4-6) beskriver det forlatte PR-baserte designet
+    og `pr-body.md`-outputen (:123-128) leses av ingen — workflowen committer til main.
+  - `fetch/cycling.js:29-35`: leser `scripts/config/cycling-*.json` som ikke finnes;
+    `build-events.js:156-172` sitt generiske config-pass eier det ansvaret alene.
+- **Ikke-mål:** konvensjonsendringer (WP-43); `llm-client.js` (menneskebeslutning,
+  se fase-intro); flytting av filer.
+- **Aksept:** npm test grønt; grep på hvert slettet symbol tomt;
+  `node scripts/build-events.js` + `node scripts/validate-events.js` kjører rent.
+
+### WP-43 · Pipeline: konvensjons-konvergens
+- **Mål:** Konvensjonene CLAUDE.md erklærer er sanne overalt — og den ene reelle
+  konsekvensen av bruddet fikses: falske coverage-gaps for flerdagsevents.
+- **Innhold:**
+  1. `detect-coverage-gaps.js:99-121` (`hasEventWithin`/`countSportEventsWithin`)
+     vinduer kun på `Date.parse(e.time)` og ignorerer `endTime` — en pågående
+     golf-turnering/etapperitt som startet for >1 døgn siden leses som «ikke på tavla»
+     og kan generere falske gaps. Rut gjennom `isEventInWindow` + regresjonstest
+     (flerdagsevent startet i går ⇒ ingen entity/sport-gap). **Fasens ene tilsiktede
+     atferdsendring.**
+  2. Samme mønsterbrudd (harmløst for enkeltkamper, men konvensjonen er absolutt):
+     `fetch/fotball-no.js:31-34` → `isEventInWindow`.
+  3. Én `yyyymmdd()`/`espnDateRange(days)` i `lib/helpers.js`; migrer
+     `fetch-results.js:22-24` og `espn-adapter.js:297-307` (golfs inline-variant tas
+     i WP-45).
+  4. Standardiser CLI-main-guard på `import.meta.url === pathToFileURL(...).href`-formen
+     (fire idiomer i dag; `process.argv[1]?.includes(...)`-varianten kan false-positive
+     på sti-substrenger).
+  5. `fetch/index.js:16-38`: fetcher-array og filnavn-array er koblet kun via posisjon
+     — én `{name, fn}`-array, avled `${name}.json`.
+- **Avhenger av:** WP-42 (samme filer — ta rebase-rekkefølgen alvorlig).
+- **Ikke-mål:** fetch-results-dedupe (WP-44); golf (WP-45); nye features i
+  coverage-gaps.
+- **Aksept:** regresjonstesten over grønn; npm test grønt; grep viser én
+  main-guard-form i `scripts/`.
+
+### WP-44 · fetch-results: intern dedupe
+- **Mål:** 823-linjersfilen krymper ~100 linjer ved å fjerne intern triplisering —
+  byte-likt output.
+- **Innhold:** én `mergeResults(existing, fresh, keyOf, retainDays)` (i dag tre
+  identiske modulo nøkkel: `:698-717`, `:436-453`, `:539-556`); én
+  favoritter-først/dato-desc-komparator (×4: `:249-253`, `:427-431`, `:745-749`,
+  `:778-782`); én dato-sanity-validator (×3: `:55-61`, `:345-351`, `:462-468`);
+  `termMatchesHeadline` (`:625-630`) erstattes av `containsName`
+  (`lib/helpers.js:81-87`); golf-leaderboard-mapperen deles med `fetch-standings.js`
+  (`mapCompetitor` `:87-97` vs. inline-kopiene `:294-300`/`:311-317`) via lib.
+- **Avhenger av:** WP-43.
+- **Ikke-mål:** splitte filen per sport (valgfritt senere — dedupen gjør det trivielt);
+  endre `recent-results.json`-formatet.
+- **Aksept:** npm test grønt; golden-test: kjøring mot fixture gir identisk JSON
+  før/etter.
+
+### WP-45 · Golf: skraper-ekstraksjon etter husmønsteret
+- **Mål:** Golf slutter å være arkitektur-avvikeren blant fetcherne; pgatour-skrapingen
+  får samme form som huset allerede har bevist:
+  `fetch-tvkampen.js` + `lib/tvkampen-scraper.js` + test.
+- **Innhold:** ny `scripts/lib/pgatour-scraper.js`; delt `fetchText()` i lib (golfs
+  hånd-rullede HTTPS-klient med redirect-håndtering `:98-154` duplicerer
+  `fetch-rss.js:55-72` og tvkampen-scraperens); dedupe tee-time-visningsblokken
+  (×3: `:202-216`, `:302-315`, `:316-335`) og turneringobjekt/endDate-konstruksjonen
+  (×3: `:616-640`, `:650-691`, `:699-719`); `tournamentNameMatches` (`:377-386`)
+  gjenbruker titleTokens-overlapp-logikken; tester for de 7 funksjonene `golf.js:736-737`
+  allerede eksporterer «for testing» (ingen test importerer dem i dag).
+- **Avhenger av:** WP-43 (delt fetchText/datohjelpere lander der/her koordinert).
+- **Ikke-mål:** full `BaseFetcher`-konvertering (valgfritt senere); endre
+  `golf.json`-formatet.
+- **Aksept:** golf-output byte-likt på fixture; nye scraper-tester grønne (network-fritt,
+  fixture-HTML); `fetch/golf.js` < 400 linjer.
+
+### WP-46 · Web: felles theme.js + side-småplukk
+- **Mål:** Én tema-implementasjon (i dag tre — to av dem subtilt feil) og undersidenes
+  småfeil ut.
+- **Innhold:** ny `docs/js/theme.js` med 3-stegs system/dark/light-syklusen fra
+  `dashboard.js:1092-1118` + pre-paint-snutt på ALLE tre sider (i dag kun
+  `rediger.html:12`; index.html har flash-of-wrong-theme-risiko). Erstatt de
+  uavhengige 2-stegs-variantene i `activity.html:96-109` og `edit.js:215-220` (kan
+  sette `data-theme="system"` som matcher ingen CSS-selektor og oppdaterer aldri
+  ◐-glyfen). Småplukk i samme PR: undersidenes `theme-color`-metaer
+  (`#0c0e11`/`#f6f3ec` → tokens `#0A0A0C`/`#F5F1E6`); manifest
+  `theme_color`/`background_color` `#000000` → token; fjern IBM Plex Mono-taggene
+  (`activity.html:11-13`, `rediger.html:13-15` — lastes fra Google Fonts, brukes aldri,
+  eneste tredjeparts-request på siten); repo-slug som én konstant (i dag tre steder,
+  to stavinger: `CHaerem/Zenji` vs `CHaerem/zenji`); flytt `shortReason` til
+  `shared-constants.js` og bruk fra både dashboard og edit (i dag divergerende kopier,
+  130 vs 95 tegn); `edit.js:13-15` bruker `escapeHtml` fra shared-constants (lastes
+  allerede); `CACHE_NAME` → `zenji-…` + bump.
+- **Avhenger av:** WP-41.
+- **Ikke-mål:** dashboard-splitt (WP-47); designendringer; ny funksjonalitet.
+- **Aksept:** tema-toggle oppfører seg identisk på alle tre sider (manuell sjekkliste
+  + screenshot begge temaer); null eksterne font-requests; npm test grønt.
+
+### WP-47 · Web: dashboard.js-splitt
+- **Mål:** 1123-linjersklassen deles langs de fire naturlige sømmene — fortsatt uten
+  byggesteg, null atferdsendring.
+- **Innhold:** window-global-mønsteret (som `shared-constants.js`;
+  `tests/helpers/load-client.js` laster allerede scripts enkeltvis): (a) live-polling +
+  live-rendering (`:257-325` + `:991-1090`, tre ESPN-pollere — renest ekstraksjon) →
+  `docs/js/live.js`; (b) agenda/detalj/serie-kollaps (`:327-799`) forblir kjernen i
+  `dashboard.js`; (c) «Dine neste»/«Hva vi følger»-indeksen (`:801-989`) → egen fil;
+  (d) shell-chrome (klokke/dato/footer/usage/install-hint; tema er alt flyttet i WP-46)
+  → egen fil. Oppdater script-tags i `index.html`, sw-shell-listen + cache-bump,
+  test-sandkassens innlasting. De to foreldreløse doc-kommentarene (`:563` hører til
+  `hasDetail`, `:894` beskriver slettet crest-funksjon) forsvinner naturlig i flyttingen.
+- **Avhenger av:** WP-46.
+- **Ikke-mål:** endre rendering/DOM-output; nye features; røre shared-constants-logikk.
+- **Aksept:** `tests/dashboard-cards.test.js` grønt uten assertion-endringer;
+  screenshot begge temaer visuelt likt; ingen fil i `docs/js/` > 500 linjer.
+
+### WP-48 · iOS: Profile/-modul + demo/mock-karantene
+- **Mål:** `Assistant/` slutter å være to domener i én mappe (12 av 24 filer er
+  profil-domenet — havnet der fordi mappen alt var wiret i test-targetet,
+  `project.yml:153`); demo/mock-kode karanteneres strukturelt, ikke via
+  plasserings-folklore.
+- **Innhold:** ny `ios/Zenji/Profile/` med de 12: `ProfileStore`, `InterestProfile`,
+  `ProfileMerge`, `ProfileSyncModel`, `ProfileSyncBackend`, `ProfileSyncCoordinator`,
+  `CloudKitProfileSync`, `ProfileShareCodec`, `ProfileSharePanel`, `ProfileQRCode`,
+  `ResetService`, `EffectiveInterests` (bro — vurder plassering). +1 kildelinje i
+  ZenjiTests-targetet i `project.yml` (app-target bruker `path: Zenji`, uberørt;
+  verifiser widget-eksklusjonene). `AssistantViewModel.swift:391-480`
+  (`MARK: WP-19 profil-sync`-blokken) → extension-fil i Profile/. Ny `Zenji/Demo/`
+  ekskludert fra widget/test-targets for `LensDemoSeed` + `MemoryDemoSeed`
+  (MemoryDemoSeeds header-påstand «test-target plukker den ikke opp» er FEIL i dag —
+  `project.yml:160` kompilerer `Zenji/Memory` inn i ZenjiTests). Pakk
+  `MockInterestAssistant` (285 linjer) + `MockAnswerer` (177) i `#if DEBUG` — de
+  kompileres i dag inn i Release; alle produksjonsreferanser er alt DEBUG-gatet, og
+  ZenjiTests bygger Debug så hostless-testene påvirkes ikke.
+- **Ikke-mål:** logikkendringer; navne-nits (plural/suffiks-inkonsistensene — valgfri
+  senere); splitte `AssistantPanel` (egen vurdering, sømmene er MARKet).
+- **Aksept:** alle iOS-tester grønne (samme antall som før flytting); begge schemes +
+  ZenjiDeviceDev bygger; Release-bygg inneholder ikke Mock*-symboler (verifiser i
+  build-logg/`nm`).
+
+### WP-49 · Repo-vekt: skjermbilde-sanering + bevis-policy
+- **Mål:** Ureferert bildeballast ut (PNG-er er 80 % av sporede bytes, 12,4 MB), og en
+  policy så per-WP-bevismønsteret ikke akkumulerer ~250 KB døde blobs per erstattet
+  skjermbilde.
+- **Innhold:** slett `docs/docs-design/` (2,2 MB før/etter-bilder i den PUBLISERTE
+  Pages-roten, referert av ingenting — PR #256 bevarer beviset); slett
+  `ios/docs/variants/` (60 PNG-er) + `enso-*varianter.png`-rutenettene (~10 MB
+  ikonutforskning — valget er tatt, ikonet ligger i Assets.xcassets); beslutt
+  `ios/tools/enso-icon.swift` (1050 linjer, header sier «DRAFT, not wired») — behold
+  kun med header som navngir valgt variant + regen-kommando, ellers slett;
+  `ios/docs/design-v2/` BEHOLDES (bevisførsel README refererer) — rekomprimer gjerne;
+  nytt policy-punkt under «Regler for alle agenter» (regel 8): per-WP-bevis = maks ~4
+  skjermbilder per flate, erstattede slettes i samme PR (historikken bevarer).
+- **Ikke-mål:** git-historie-omskriving (gamle blobs blir — akseptert); røre
+  app-ikoner/`Assets.xcassets`; røre design-v2-bevisene.
+- **Aksept:** `git ls-files '*.png' | xargs du -ch` ned fra ~12,4 MB til ≤ ~9 MB;
+  grep viser ingen brutte bildereferanser; Pages-deploy uendret.
+
+### WP-50 · iOS: README-restrukturering
+- **Mål:** `ios/README.md` går fra 1446-linjers kronologisk bygglogg (tittelen stopper
+  på WP-16, katalogoversikten `:139-230` mangler halve treet, `:504` påstår «102 tests»,
+  `:40` er en innbakt PR-tekst, WP-18/19/31/32 mangler helt) til et subsystem-dokument
+  som matcher treet.
+- **Innhold:** strukturer per delsystem — targets/signering, Sync, Feed, Agenda,
+  Assistant, Profile (ny fra WP-48), Memory, Onboarding, Widget, testing; regenerer
+  katalogoversikten; rett alle talldrifter; per-WP-narrativ overlates til git-/PR-
+  historikk; de urefererte design-v2-skjermbildene (reset/onboarding/profil-deling)
+  refereres fra riktig seksjon.
+- **Avhenger av:** WP-48 (ny struktur), WP-49 (endelig docs/-innhold).
+- **Ikke-mål:** røre PLAN.md-innhold; dokumentere nye features utover strukturen.
+- **Aksept:** hver katalog i `ios/Zenji/` har et avsnitt; stikkprøve: ingen tall-/sti-
+  påstand motsies av treet; < 500 linjer.
+
+### WP-51 · Testdekning: eksporterte pure-funksjoner
+- **Mål:** De siste utestede pure-flatene får tester i husstilen
+  (`tests/esports.test.js`-mønsteret: importer eksportene, fixture-data, network-fritt).
+- **Innhold:** `fetch-rss.js` (`parseRssItems`/`filterRecent`/`applyPerSportCap`/
+  `isNorwegianRelevant` — eksportert, testbart, utestet); `fetch-standings.js`
+  (`buildDriverTeamMap` `:186-234` — den genuint intrikate). Golf dekkes i WP-45.
+- **Ikke-mål:** nettverkstester; dekningsprosent-jag; røre produksjonskode.
+- **Aksept:** nye testfiler grønne; total kjøretid holder seg < 5 s-budsjettet.
+
+### WP-52 · Dok-resynk (kjøres SIST)
+- **Mål:** Dokumentasjonen agentene leser som fasit stemmer med repoet igjen — fasens
+  viktigste pakke, kjørt sist så den dokumenterer SLUTTtilstanden etter WP-40–51.
+- **Innhold (funnliste 14.07 — verifiser hver mot sluttilstanden):**
+  - **CLAUDE.md:** Frontend-seksjonen beskriver pre-Tekst-TV-designet («Schibsted
+    Grotesk» vs. mono-stacken `base.css:21`; «dashboard.js ~250 linjer»); pek på
+    DESIGN.md som normativ UI-kontrakt; Testing «16 filer» → reelt antall; datafil-
+    listen mangler `entities.json`/`manifest.json`/`interests.json`; nye avsnitt:
+    `ios/` (peker til ios/README), PLAN.md + DESIGN.md, follow-request-flyten
+    (menneske-initiert, OWNER-gated skrivesti til interests.json — nyansér «AI never
+    writes here»); gate-tier-listen (+ ui-fix/self-repair/improve som optional);
+    presiser at interests-hooken er CI-only (lokale menneske-økter er unntatt,
+    `protect-interests.js:10,15`).
+  - **README.md:** `:89` + `:122-123` påstår research kjører «Fable 5 → Opus 4.8» hver
+    4. time — det er den FORLATTE designen (standard-tier ER Opus 4.8; Fable kun
+    deep-tier); testtall «~20 filer (~160 tester)»; lenketekst
+    «chaerem.github.io/Zenji» vs. href `zenji.app`.
+  - **package.json:** description er v1-generisk — nevn agent-arkitekturen.
+  - **.github/copilot-instructions.md:** legg til DESIGN.md-peker (+ edit.js/rediger).
+  - **Prompter:** `research.md:179-184` begrunner logg-regelen med workflow-atferd som
+    ikke finnes lenger (fail-on-no-commit) — behold regelen, rett begrunnelsen;
+    `verify.md` mangler cs2-sources-referanse (skillen sier selv «verifying esports»);
+    `editorial.md` er eneste prompt uten interests-guardrail.
+  - **Koherens-tester:** `agent-prompts.test.js:80` skanner 3 av 9 prompter for
+    skill-stier — loop alle `scripts/agents/*.md`; `workflows.test.js:12` mangler
+    `follow-request.yml` i forventningslisten.
+  - **Småting:** `interests.schema.json:3` tittel «SportSync – …» (synlig i
+    github.dev-hover — eneste brukersynlige navnerest); `DIVERGENCES.md`-linjerefs
+    etter WP-47; `dashboard.js`-doc-kommentarene hvis WP-47 ikke tok dem.
+- **Avhenger av:** alle 0D-pakkene (spesielt WP-40/41/47/48).
+- **Ikke-mål:** beskyttede stier (workflow-kommentarene tas i WP-40); omskrive
+  DESIGN.md (den er verifisert presis, verdi-for-verdi mot CSS-en).
+- **Aksept:** utvidede koherens-tester grønne; stikkprøve: hver fil-/tall-påstand i
+  CLAUDE.md §Frontend/§Testing/§Data files verifiserbar mot treet; grep «Schibsted»
+  tomt.
 
 ---
 
