@@ -25,4 +25,11 @@ enum AssistantTestSupport {
         ProfileStore(directory: FileManager.default.temporaryDirectory
             .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true))
     }
+
+    /// A MisunderstoodLogStore in a fresh, unique temp directory (WP-16.3) —
+    /// same throwaway-temp-dir convention as `tempProfileStore()`.
+    static func tempMisunderstoodLog() -> MisunderstoodLogStore {
+        MisunderstoodLogStore(directory: FileManager.default.temporaryDirectory
+            .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true))
+    }
 }
