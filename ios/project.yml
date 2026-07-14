@@ -126,6 +126,10 @@ targets:
       # reference ZenjiTokens/.zenjiMono directly (same reason
       # ZenjiWidgetExtension already lists it explicitly, above).
       - path: Zenji/DesignTokens.swift
+      # WP-14.2: the manual theme override enum (pure cycling/mapping logic,
+      # unit-tested directly — no `@testable import`, same pattern as
+      # DesignTokens.swift above).
+      - path: Zenji/ThemeOverride.swift
       - path: Zenji/Agenda
       - path: Zenji/Widget
       # WP-16: the FM-lekegrind's sources — the pure pipeline (grounding, diff,
