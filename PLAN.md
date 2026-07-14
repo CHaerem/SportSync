@@ -56,7 +56,7 @@ mennesket, aldri av en agent.
 | WP-19 | Profil-sync (P360: iCloud + QR-bro) | 0B | WP-16 | ✅ merget (#260) — 317/317 |
 | WP-30 | Personlig minne (P350) | 0B | WP-16.4,WP-19 | ✅ merget (#261) — 356/356 |
 | WP-31 | Naturlig onboarding (P310 «definere») | 0B | WP-16.4,WP-05 | ✅ merget (#262) — 368/368 |
-| WP-32 | Nullstill profil + re-onboard | 0B | WP-30,WP-31 | 🔬 PR åpnet — `ResetService` (tombstone-basert, ikke bar wipe — sync-korrekt) + to nivåer («Nullstill det du følger» / «Slett alt om meg») i samme oppslag som «Hva jeg følger»/«Hva jeg vet om deg»; rolig bekreftelses-ark; tema bevares; onboarding trigger umiddelbart; 376/376 iOS-tester (+8), 373/373 JS urørt, begge schemes bygger; skjermbilder `ios/docs/design-v2/reset-*.png`; ZenjiDeviceDev bygget+signert (device `unavailable` under kjøring — noter, ikke feil, jf. WP-14.1/14.2-presedens) |
+| WP-32 | Nullstill profil + re-onboard | 0B | WP-30,WP-31 | ✅ merget (#263) — 376/376 |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
