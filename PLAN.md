@@ -36,7 +36,7 @@ mennesket, aldri av en agent.
 | WP-01 | events.schema.json | 0A | – | ✅ merget (#235) |
 | WP-02 | Stabil event-ID | 0A | – | ✅ merget (#234) |
 | WP-03 | manifest.json | 0A | – | ✅ merget (#236) |
-| WP-04 | Deltakelse-normalisering | 0A | WP-01 | PR åpnet |
+| WP-04 | Deltakelse-normalisering | 0A | WP-01 | ✅ merget (#239) |
 | WP-05 | Entitets-indeks | 0A | WP-01 | ✅ merget (#240) |
 | WP-06 | Gylne feed-vektorer | 0A | WP-02 | ✅ merget (#238) |
 | WP-10 | iOS-scaffold | 0B | – | ✅ merget (#237) + bygg bevist (Xcode 26.6, iOS 26.5-SDK) |
@@ -45,7 +45,7 @@ mennesket, aldri av en agent.
 | WP-13 | FeedCompiler (Swift) | 0B | WP-06, WP-11 | ✅ merget (#243) — 13/13 vektorer bit-likt |
 | WP-14 | Agenda-UI + widget | 0B | WP-13 | ✅ merget (#245) — 102/102 tester + screenshot-bevis |
 | WP-15 | NotificationPlanner | 0B | WP-13 | ✅ merget (#244) — 69/69 tester |
-| WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | ✅ merget (#246) — 152/152 iOS-tester (mot mock; FM kjøres ikke i CI) + DeviceDev bygget/signert/installert på fysisk iPhone (launch krever engangs manuell utvikler-trust på enheten) |
+| WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | ✅ merget (#246, +16.1 #247 linse/ærlighet, +16.2 #248 fuzzy-resolver) — 152/152 iOS-tester (mot mock; FM kjøres ikke i CI) + DeviceDev bygget/signert/installert på fysisk iPhone (launch krever engangs manuell utvikler-trust på enheten) |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
