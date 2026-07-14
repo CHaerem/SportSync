@@ -1,23 +1,24 @@
 {
-  "checkedAt": "2026-07-12T11:47:00Z",
+  "checkedAt": "2026-07-14T11:52:39Z",
   "widths": [375, 393, 900],
   "verdict": "pass",
   "findings": [
     {
       "width": 900,
-      "area": "agenda row — onsdag 15. juli, 21:00 England – Argentina",
-      "issue": "Fixture shows a flag emoji next to 'Argentina' but no flag next to 'England', so only one side of the matchup is badged. Same asymmetry visible at 375/393px. Names are still fully legible, but the flag treatment looks inconsistent compared to other fixtures.",
+      "area": "agenda row — i morgen, 21:00 England – Argentina",
+      "issue": "Fixture shows a flag emoji next to 'Argentina' but no flag next to 'England', so only one side of the matchup is badged. Same asymmetry visible at 375/393px. Names are still fully legible; this is a recurring cosmetic asymmetry (also flagged in the 2026-07-12 review) rather than a new regression — likely because no single Unicode flag emoji exists for England (only the UK flag, which would be misleading).",
       "severity": "low"
     }
   ],
   "notes": [
     "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths.",
-    "Fixture and event names read in full, nothing truncated: 'Genesis Scottish Open', 'ISCO Championship', 'Tour de France 2026', 'Wimbledon 2026: Herrefinale', 'VM-semifinale 1', 'England – Argentina', 'The 154th Open Championship', 'Corales Puntacana Championship', 'London Athletics Meet – Karsten Warholm (400m hekk)', 'Round 1 – XXVI Obert Internacional Sant Martí 2026', 'VM-bronsefinale'.",
-    "Norwegian-channel contract holds: only Viaplay, TV 2 Play, TV 2, NRK1/NRK TV, NRK 1, Max +1 appear as 'where to watch' — no ESPN/FOX/Sky at any width.",
-    "One row (Round 1 – XXVI Obert Internacional Sant Martí 2026) exercises the honest empty '–' channel placeholder — renders quietly, not alarming, and is easy to distinguish from a missing/broken value.",
-    "Round labels (Semifinale, Bronsefinale) show correctly next to knockout fixtures at all widths.",
-    "Must-see accent (left border + tinted wash) is selective, not universal: unaccented rows (Tour de France, Wimbledon Herrefinale, the chess row, VM-bronsefinale) sit alongside accented ones — consistent with the prior review's finding that this ties to tracked favorites/Norwegian interest rather than being blanket-applied, even though more than half of today's events happen to be accented (a heavy day for Norwegian golf/tennis/athletics, not a design regression).",
-    "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'Rediger' links, and footer (Oppdatert / Abonner i kalender / last ned / Aktivitet / AI-budsjett) intact and aligned at every width.",
-    "Could not assess clearly: the small icon/arrow next to the clock in the header (top right) — unclear what it represents, not clipped or broken."
+    "Event and fixture names read in full, nothing truncated: 'Tour de France 2026', 'Round 2 – XXVI Obert Internacional Sant Martí 2026', 'VM-semifinale 1', 'EFG Swiss Open Gstaad', 'England – Argentina', 'The Open', 'Corales Puntacana Championship', 'London Athletics Meet – Karsten Warholm (400m hekk)', 'VM-bronsefinale', 'Moët & Chandon Belgian Grand Prix', 'VM-finalen 2026', 'BLAST Bounty S2 – 100 Thieves (online-stadiet)'.",
+    "Norwegian-channel contract holds: only TV 2 Play, TV 2, Viaplay, HBO Max (Sport), NRK1/NRK TV, NRK 1, BLAST.tv (gratis offisiell strøm) appear as 'where to watch' — no ESPN/FOX/Sky at any width. 'HBO Max (Sport)' matches the known Max Sport channel bundle available in Norway (same family as the 'Max +1' channel accepted in the prior review), not a foreign broadcaster.",
+    "One row (Round 2 – XXVI Obert Internacional Sant Martí 2026, chess) exercises the honest empty '–' channel placeholder — renders quietly, easy to distinguish from a missing/broken value.",
+    "Round labels (Semifinale, Bronsefinale, Finale) show correctly next to knockout fixtures at all widths.",
+    "National flag emoji and sport icons render cleanly — no broken image icons or empty boxes.",
+    "Must-see accent (left border + tinted wash) appears on about 8 of 12 events today/this week (golf, athletics, cup finals) — a heavy density, but consistent with the prior review's conclusion that this tracks tracked favorites/Norwegian interest rather than being a blanket design regression (today has several followed golfers plus cup finals in play).",
+    "Header, 'Dine neste' tracked list, day-group headings, 'Hva vi følger'/'✎ Rediger' links, and footer (Oppdatert / Abonner i kalender / last ned / Aktivitet / AI-budsjett: uke 63% · økt 65%) intact and aligned at every width.",
+    "Could not assess clearly: the small chevron icon next to the clock in the header (top right) — unclear what it represents, not clipped or broken (same as prior review)."
   ]
 }
