@@ -176,6 +176,7 @@ diff-visning, bekreft/avvis. Krever fysisk enhet med Apple Intelligence (norsk: 
 **Aksept:** 10 norske testytringer («følg Ruud bare i Grand Slams», «slutt med tennis»)
 gir riktige strukturerte mutasjoner; ingen fritekst-entiteter (kun oppslag mot
 entities.json fra WP-05).
+**WP-16.1 (etter første brukertest):** la til LINSE i mutasjons-skjemaet («med fokus på norske utøvere» → `.throughNorwegians`, grounet som en entitet) + regelen om at assistenten ALLTID forklarer seg (aldri «fant ingen endringer») — 166/166 iOS-tester, DeviceDev re-installert på iPhone.
 
 ### WP-17 · 💰 TestFlight (BESLUTNING: 99 USD/år)
 Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.

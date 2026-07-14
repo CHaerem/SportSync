@@ -102,4 +102,66 @@ final class MutationGrounderTests: XCTestCase {
         XCTAssertEqual(result.grounded.map(\.entity.id), ["magnus-carlsen"])
         XCTAssertEqual(result.rejected.map(\.query), ["quidditch"])
     }
+
+    // MARK: - Lens grounding (WP-16.1)
+
+    func test_lens_throughNorwegians_survivesGroundingOnAdd() {
+        let proposal = ProposedMutation(
+            kind: .add, entityId: "tour-de-france-2026", entityQuery: "Tour de France",
+            reason: "følg", lens: .throughNorwegians
+        )
+        let result = MutationGrounder.ground([proposal], index: index, profile: InterestProfile())
+        XCTAssertEqual(result.grounded.count, 1)
+        XCTAssertEqual(result.grounded[0].lens, .throughNorwegians)
+    }
+
+    func test_lens_throughAthletes_isGroundedLikeAnEntityId() {
+        // Valid + hallucinated athlete ids mixed: the bogus one is dropped, the
+        // real one survives with the index's CANONICAL display name.
+        let proposal = ProposedMutation(
+            kind: .add, entityId: "tour-de-france-2026", entityQuery: "Tour de France", reason: "følg",
+            lens: .throughAthletes([
+                LensAthlete(entityId: "jonas-abrahamsen", name: "feil navn"),
+                LensAthlete(entityId: "does-not-exist", name: "spøkelse")
+            ])
+        )
+        let result = MutationGrounder.ground([proposal], index: index, profile: InterestProfile())
+        XCTAssertEqual(result.grounded.count, 1)
+        guard case let .throughAthletes(athletes) = result.grounded[0].lens else {
+            return XCTFail("expected a throughAthletes lens")
+        }
+        XCTAssertEqual(athletes.map(\.entityId), ["jonas-abrahamsen"], "hallucinated id dropped")
+        XCTAssertEqual(athletes.first?.name, "Jonas Abrahamsen", "display name normalised to the index")
+    }
+
+    func test_lens_throughAthletes_degradesToSportAsSuch_whenNoneResolve() {
+        let proposal = ProposedMutation(
+            kind: .add, entityId: "tour-de-france-2026", entityQuery: "Tour de France", reason: "følg",
+            lens: .throughAthletes([LensAthlete(entityId: "nobody", name: "Nobody")])
+        )
+        let result = MutationGrounder.ground([proposal], index: index, profile: InterestProfile())
+        XCTAssertEqual(result.grounded[0].lens, .sportAsSuch, "no surviving athlete → neutral default")
+    }
+
+    func test_lens_updateWithoutLens_inheritsPreviousLens() {
+        let tdf = index.entity(id: "tour-de-france-2026")!
+        let profile = InterestProfile().applying(GroundedMutation(
+            kind: .add, entity: tdf, scope: nil, weight: 0.5, reason: "seed",
+            previousRule: nil, lens: .throughNorwegians
+        ))
+        // An update that specifies no lens keeps the existing perspective, exactly
+        // like scope/weight carry over.
+        let proposal = ProposedMutation(kind: .update, entityId: "tour-de-france-2026", entityQuery: "TdF", reason: "endre")
+        let result = MutationGrounder.ground([proposal], index: index, profile: profile)
+        XCTAssertEqual(result.grounded[0].lens, .throughNorwegians)
+    }
+
+    func test_lens_removeNeverCarriesLens() {
+        let proposal = ProposedMutation(
+            kind: .remove, entityId: "tour-de-france-2026", entityQuery: "TdF",
+            reason: "slutt", lens: .throughNorwegians
+        )
+        let result = MutationGrounder.ground([proposal], index: index, profile: InterestProfile())
+        XCTAssertEqual(result.grounded[0].lens, .sportAsSuch)
+    }
 }

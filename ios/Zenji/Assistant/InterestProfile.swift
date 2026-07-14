@@ -35,14 +35,17 @@ struct InterestRule: Codable, Equatable, Identifiable, Sendable {
     /// Always-filled Norwegian rationale.
     var reason: String
     var addedAt: Date
+    /// The perspective this rule is followed through (WP-16.1). Defaults to
+    /// `.sportAsSuch`; persisted so "med fokus på norske" survives a round-trip.
+    var lens: Lens
 
     var id: String { entityId }
 
     private enum CodingKeys: String, CodingKey {
-        case entityId, entityName, sport, scope, weight, reason, addedAt
+        case entityId, entityName, sport, scope, weight, reason, addedAt, lens
     }
 
-    init(entityId: String, entityName: String, sport: String, scope: String? = nil, weight: Double, reason: String, addedAt: Date) {
+    init(entityId: String, entityName: String, sport: String, scope: String? = nil, weight: Double, reason: String, addedAt: Date, lens: Lens = .sportAsSuch) {
         self.entityId = entityId
         self.entityName = entityName
         self.sport = sport
@@ -50,6 +53,7 @@ struct InterestRule: Codable, Equatable, Identifiable, Sendable {
         self.weight = weight
         self.reason = reason
         self.addedAt = addedAt
+        self.lens = lens
     }
 
     /// Forward-compatible decode (same convention as the WP-11 models): unknown
@@ -64,6 +68,9 @@ struct InterestRule: Codable, Equatable, Identifiable, Sendable {
         weight = try c.decodeIfPresent(Double.self, forKey: .weight) ?? InterestProfile.defaultWeight
         reason = try c.decodeIfPresent(String.self, forKey: .reason) ?? ""
         addedAt = try c.decodeIfPresent(Date.self, forKey: .addedAt) ?? Date(timeIntervalSince1970: 0)
+        // Forward-compatible: a profile written by WP-16 (pre-lens) has no `lens`
+        // key — default it, exactly like the other optionals above.
+        lens = try c.decodeIfPresent(Lens.self, forKey: .lens) ?? .sportAsSuch
     }
 }
 
@@ -114,7 +121,8 @@ struct InterestProfile: Codable, Equatable, Sendable {
                 reason: mutation.reason,
                 // Preserve the original addedAt on an update; stamp now on a
                 // genuine first add.
-                addedAt: existing?.addedAt ?? now
+                addedAt: existing?.addedAt ?? now,
+                lens: mutation.lens
             )
             next.removeAll { $0.entityId == entityId }
             next.append(rule)

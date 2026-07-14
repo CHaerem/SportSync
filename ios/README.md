@@ -805,11 +805,45 @@ applied, with a Norwegian explanation and up to three nearest-match suggestions
 ("Fant ikke «X» i indeksen — mente du …?"). This holds identically whether the
 raw proposal came from FoundationModels or the mock.
 
+### Lens — the perspective a follow-rule is seen through (WP-16.1)
+
+The entity says *what* is followed; the **lens** says *how*. Without it, an
+utterance like *"Følg Tour de France med fokus på norske utøvere"* had nowhere
+to put "med fokus på norske" — the model produced no mutation and the UI
+collapsed that to a dead-end "fant ingen endringer". `Lens` gives that intent a
+home, on both `ProposedMutation`/`GroundedMutation` and the persisted
+`InterestRule`:
+
+- **`.sportAsSuch`** — the whole thing, every participant (the DEFAULT; existing
+  behaviour is unchanged).
+- **`.throughNorwegians`** — "med fokus på norske utøvere" / "bare de norske".
+- **`.throughAthletes([LensAthlete])`** — specific athletes, carrying their
+  entity ids. Those ids are **grounded exactly like the top-level `entityId`**:
+  `MutationGrounder` re-checks each against the index, drops any that don't
+  resolve (normalising the survivors' display names), and if none survive the
+  lens degrades back to `.sportAsSuch`. A `.remove` never carries a lens; an
+  `.update` with no explicit lens inherits the existing rule's, just as
+  scope/weight carry over. Shown in the DIFF and "Hva jeg følger" as a quiet
+  "gjennom norske utøvere" subtitle segment.
+
+### Always-explain — no dead-end "fant ingen endringer" (WP-16.1)
+
+The assistant **always** accounts for itself. Whenever a submitted utterance
+produces no confirmable change, `AssistantExplanation.make(…)` (pure, unit-
+tested) builds an honest, structured note the UI shows verbatim — `understood`
+(a paraphrase of what it took the utterance to mean) + `reason` (WHY nothing
+changed): the named things weren't in the index (with the "mente du …?"
+suggestions below), the entity data hasn't synced yet, or the intent couldn't
+be expressed as a rule change at all. The forbidden bare "fant ingen endringer"
+string is gone. `MockInterestAssistant.Behavior.producesNothing` simulates the
+usable-model-but-empty-output case so this path is testable without Apple
+Intelligence.
+
 ### Pieces (all pure + unit-tested except the two UI/FM shells)
 
 | File | What |
 |---|---|
-| `AssistantModels.swift` | `MutationKind`, `ProposedMutation` (raw), `GroundedMutation`/`RejectedMutation`, `AssistantAvailability`/`AssistantError` |
+| `AssistantModels.swift` | `MutationKind`, `Lens` (+ `LensAthlete`), `ProposedMutation` (raw), `GroundedMutation`/`RejectedMutation`, `AssistantExplanation`, `AssistantAvailability`/`AssistantError` |
 | `InterestProfile.swift` | `InterestRule` + `InterestProfile.applying(_:)` — the pure add/update (upsert) / remove diff; every rule keeps a Norwegian `reason` |
 | `EntityIndex.swift` | exact lookup (grounding gate), tool search (Norwegian sport-word expansion), fuzzy nearest-match, the mock's utterance→entity detection |
 | `MutationGrounder.swift` | the hard grounding rule, as one pure function |
@@ -830,7 +864,10 @@ later work (PLAN.md WP-22).
 cover the ten canonical utterances → correct mutations, entity lookup +
 free-text rejection with nearest match, the diff application, persistence
 round-trip, and the end-to-end view-model flow. `xcodebuild test` on the
-Simulator passes **152 tests** (the 102 WP-10…15 baseline + 50 new).
+Simulator passes **166 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
+WP-16.1: lens detection/grounding/persistence + the always-explain contract,
+incl. the exact first-user-test utterance *"Følg Tour de France med fokus på
+norske utøvere"* → `add(tour-de-france-2026, lens: .throughNorwegians)`).
 
 ### Device build (free personal account)
 
@@ -874,6 +911,15 @@ på "Apple Development: …"*. This cannot be scripted (`devicectl launch` retur
 a `Security`/"profile has not been explicitly trusted" error until it's done).
 After trusting once, the app launches normally and the FM conversations can be
 verified by hand (see the WP-16 PR's manual checklist).
+
+**Update (WP-16.1):** the `ZenjiDeviceDev` scheme was rebuilt for the connected
+iPhone 16 Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES
+CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**) and
+re-installed with `xcrun devicectl device install app` — the new lens +
+always-explain build now carries `app.zenji.ios` on the device. The on-device
+Apple Intelligence check of *"Følg Tour de France med fokus på norske utøvere"*
+(the utterance that first failed) is the manual step to confirm by hand after
+the one-time trust.
 
 ## Architecture (what plugs in next)
 
