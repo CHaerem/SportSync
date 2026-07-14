@@ -1,13 +1,13 @@
 {
-  "auditedAt": "2026-07-13T12:30:00Z",
+  "auditedAt": "2026-07-14T06:11:55Z",
   "horizonDays": 28,
   "gaps": [
     {
       "interest": "Tennis — Casper Ruud, National Bank Open (Montreal)",
       "whatsMissing": "Ruuds neste hardcourt-turnering etter Gstaad — National Bank Open Montreal (1.–13. aug, ATP Masters 1000) — ligger ikke på tavla",
-      "why": "Turneringen er bekreftet 1.–13. aug og Ruud står på påmeldingslista (71 av topp-72), men trekningen er først fredag 31. juli, så eksakt kampdag/motstander/norsk kanal er dato-gated. Kjent oppfølgingspunkt i tracked.json (casper-ruud), ikke en oversett hendelse — legges til når trekningen er ute.",
+      "why": "Web-bekreftet 14. juli: turneringen spilles 1.–13. aug og Ruud står i det offisielle feltet (71 av topp-72). Men trekningen er først fredag 31. juli, så eksakt kampdag/motstander/norsk kanal er dato-gated. Kjent oppfølgingspunkt i tracked.json (casper-ruud) og i gårsdagens audit, ikke en oversett hendelse — legges til når trekningen er ute.",
       "corroboration": [
-        "https://nationalbankopen.com/",
+        "https://nationalbankopen.com/matches-players/players/casper-ruud",
         "https://nationalbankopen.com/news/read/2026/top-atp-players-compete-obn-montreal-player-list"
       ],
       "suggestedSource": "https://nationalbankopen.com/matches-players/match-schedule",
@@ -16,23 +16,23 @@
   ],
   "sourceIssues": [],
   "coveredWell": [
-    "F1 — Belgia GP (Spa) søn. 19. juli 13:00 UTC (15:00 CEST): web-bekreftet mot formula1.com/skysports, standard-helg (INGEN sprint), korrekt søndags-datert på tavla — ESPN-fredags-mis-dateringen (source-quirks) er IKKE til stede denne runden",
-    "Fotball-VM — semifinale 1 (Frankrike–Spania) tir. 14. juli 19:00 UTC og semifinale 2 (England–Argentina) ons. 15. juli 19:00 UTC (begge 21:00 CEST), bronsefinale lør. 18. juli, finale søn. 19. juli 19:00 UTC — alle bekreftet mot olympics.com/NBC og korrekt på tavla",
-    "Golf — The Open (Royal Birkdale) 16.–19. juli på tavla (Viaplay), Hovland+Reitan i feltet; Corales Puntacana (Ventura) 16.–19. juli med rettet HBO Max (Sport)/Eurosport-streaming (gårsdagens medium-flagg om Viaplay-motsigelse er løst i events.json)",
-    "Sykkel — Tour de France alle 21 etapper til stede (etappe 10 tir. 14. juli), TV 2 Play",
-    "Tennis — Swiss Open Gstaad (Ruud, andreseedet) på tavla, TV 2 Play; order-of-play/eksakt R16-kampdag ikke ute = dato-gated oppfølging",
+    "F1 — Belgia GP (Spa) SØN. 19. juli 13:00 UTC (15:00 CET) og Ungarn GP (Hungaroring) SØN. 26. juli 13:00 UTC: begge web-bekreftet mot formula1.com/belgium.gp/skysports + racingnews365, begge STANDARD-helger (INGEN sprint), begge korrekt søndags-datert på tavla — ESPN-fredags-mis-dateringen (source-quirks) er eksplisitt sjekket og IKKE til stede denne runden for hverken Spa eller Hungaroring",
+    "Fotball-VM — semifinale 1 (Frankrike–Spania) tir. 14. juli 19:00 UTC, semifinale 2 (England–Argentina) ons. 15. juli 19:00 UTC, bronsefinale lør. 18. juli 21:00 UTC, finale søn. 19. juli 19:00 UTC — alle fire på tavla (TV 2/NRK), korrekt datert",
+    "Golf — The Open (Royal Birkdale) 16.–19. juli på tavla (Viaplay), Hovland tee-tid 08:36 UTC + Reitan 13:20 UTC i summary; Corales Puntacana (Ventura) 16.–19. juli med korrekt HBO Max (Sport)/Eurosport-streaming (Viaplay-motsigelsen fra tidligere kjøringer nå løst i events.json-arrayen)",
+    "Sykkel — Tour de France alle 21 etapper til stede (etappe 10 tir. 14. juli, Bastille-dagen), TV 2 Play",
+    "Tennis — Swiss Open Gstaad (Ruud, andreseedet) på tavla, TV 2 Play; web-bekreftet at Ruuds R16 tidligst ons. 15. juli ~08:30 UTC (motstander Faria/Wawrinka R32 spilles 14. juli) = dato-gated oppfølging, korrekt reflektert i summary",
     "Friidrett — Diamond League London (Warholm, 18. juli, NRK), NM Trondheim (23.–25. juli), EM Birmingham (10.–16. aug) alle på tavla",
     "Sjakk — Esports World Cup (Carlsen, 11.–15. aug) på tavla; ingen bekreftet Carlsen-turnering før EWC (verifisert korrekt fravær)",
     "Esports — BLAST Bounty S2 (100 Thieves/rain, online 21.–26. juli) på tavla; bracket/kamptider TBD (~18.–20. juli) = dato-gated",
-    "Fotball — Lyn OBOS (borte Strømsgodset 25. juli, hjemme Sogndal 2. aug), Barcelona oppkjøring Birmingham City 31. juli — alle på tavla"
+    "Fotball — Lyn OBOS: web-bekreftet (lynhistorie.no/fotball.no) at Lyns eneste kamper i horisonten er borte mot Strømsgodset 25. juli og hjemme mot Sogndal 2. aug — BEGGE på tavla, ingen tredje Lyn-kamp innen 28 dager (ingen skjult manglende runde); Barcelona oppkjøring Birmingham City 31. juli også på tavla"
   ],
   "escalated": false,
   "notes": [
-    "Kjøring 2026-07-13 (man., standard-tier). Mekanisk recall-watch ren: coverage-gaps.json 0 gaps / 0 anomalier (gårsdagens chess file-empty-anomali er borte). Fokus derfor på uavhengig web-bekreftelse av det imminente og viktige framfor å stole på tavla.",
-    "IMMINENT-PASS (neste ~4 dager): F1 Belgia GP web-bekreftet mot formula1.com + skysports (standard-helg, ingen sprint, race søn. 19. juli 15:00 CEST = 13:00 UTC) — tavla korrekt, ingen ESPN-fredags-mis-datering denne runden (source-quirks-blindsonen sjekket eksplisitt, ren). VM-semifinaler bekreftet mot olympics.com/NBC (Frankrike–Spania 14., England–Argentina 15., begge 21:00 CEST = 19:00 UTC) — tavla korrekt, samme for bronse (18.) og finale (19.). The Open bekreftet 16.–19. juli (tee-tider ~14.–15. juli, kjent dato-gate). Alt imminent på tavla.",
-    "HORIZON-PASS (~4 uker): per tracket utøver/lag/turnering har neste reelle hendelse en event på tavla. ENESTE hull: Ruud National Bank Open Montreal (1.–13. aug) — bekreftet turnering + Ruud påmeldt, men trekning 31. juli gjør kampdag/kanal dato-gated (low, kjent oppfølging). Hovlands FedExCup-åpning FedEx St. Jude (12.–16. aug) faller UTENFOR 28-dagershorisonten (dag 30+) — bekreftet mot fedexchampionship.com, korrekt utsatt til statiske fetchere/senere research, ikke et hull.",
-    "RSS-krysssjekk: dominert av VM-etterspill (Norge ute i kvartfinalen, dekket), Eliteserie-resultater (følges ikke — kun Lyn i OBOS), Wimbledon herrefinale (Sinner slo Zverev, ferdig/dekket), TdF etappe 9 (THJ nr. 2, dekket). Ingenting pressen behandler som «skjer nå» som mangler på tavla.",
-    "Korrekte fravær (ikke hull): ingen Carlsen-sjakkturnering før EWC (freestyle-touren har ingen etappe i vinduet, GCL i sept.); Tari IKKE på Andorra Open-startlista; vinteridretter av-sesong (juli); PL/La Liga sesongstart medio august utenfor horisont; Barcelona La Liga-åpning + Joan Gamper fortsatt ubekreftet/rapportert utsatt (korrekt ikke på tavla).",
-    "Ingen sourceIssues observert denne runden — F1-feeden var korrekt datert, ingen tom/stale fetcher-fil, ingen feil tid/kanal funnet på det som ble krysssjekket. calibration: kun cyclingstage.com (0.43) og nrk.no (0.60) har nok sjekker til reliability-tall; imminent-verifisering støttet seg på offisielle primærkilder framfor lav-tillits-aggregatorer."
+    "Kjøring 2026-07-14 (tir., standard-tier Opus). Mekanisk recall-watch nesten ren: coverage-gaps.json 1 gap (Premier League entity fra Man United-overgangsheadline — false positive, en overgang er ikke en event) / 0 anomalier. Fokus derfor på uavhengig web-bekreftelse av det imminente og viktige framfor å stole på tavla.",
+    "IMMINENT-PASS (neste ~4 dager): F1-blindsonen (source-quirks) sjekket eksplisitt for BEGGE kommende race — Belgia GP Spa (søn. 19. juli 13:00 UTC) OG Ungarn GP Hungaroring (søn. 26. juli 13:00 UTC) web-bekreftet mot formula1.com + belgium.gp + skysports + racingnews365: begge standard-helger (ingen sprint), begge korrekt søndags-datert på tavla, ingen ESPN-fredags-mis-datering denne runden. VM-sluttspillet (semifinaler 14./15., bronse 18., finale 19.) korrekt på tavla. The Open + Corales (16.–19.), DL London (18.), Gstaad (Ruud R16 ~15.) alle på tavla og web-bekreftet. Alt imminent dekket.",
+    "HORIZON-PASS (~4 uker, t.o.m. ~11. aug): per tracket utøver/lag/turnering har neste reelle hendelse en event på tavla. ENESTE hull: Ruud National Bank Open Montreal (1.–13. aug) — web-bekreftet turnering + Ruud i feltet, men trekning 31. juli gjør kampdag/kanal dato-gated (low, kjent oppfølging fra tracked.json + gårsdagens audit). Lyn-terminlista web-krysssjekket: kun Strømsgodset (25.) + Sogndal (2. aug) i vinduet, begge på tavla — ingen manglende runde. Hovlands FedExCup-åpning FedEx St. Jude (12.–16. aug) faller UTENFOR 28-dagershorisonten, korrekt utsatt.",
+    "RSS-krysssjekk: dominert av VM-etterspill (Norge ute i kvartfinalen mot England, folkefest på Slottsplassen, «vaier-gate»), overgangsrykter (Man United–Santos/Tielemans, Eliteserie-overganger — følges ikke) og TdF-varme (Pogačar-utspill). Ingenting pressen behandler som «skjer nå» som mangler på tavla.",
+    "Korrekte fravær (ikke hull): ingen Carlsen-sjakkturnering før EWC; Tari IKKE på Andorra Open-startlista; vinteridretter av-sesong (juli); PL/La Liga/UCL sesongstart medio august (La Liga R1 16. aug = dag 33, utenfor horisont); Barcelona Joan Gamper + La Liga-åpning fortsatt ubekreftet på offisiell terminliste (korrekt ikke på tavla).",
+    "Ingen sourceIssues observert denne runden — begge F1-race korrekt datert (blindsonen ren), ingen tom/stale fetcher-fil, ingen feil tid/kanal funnet på det som ble krysssjekket. Ingen high-severity gaps → ingen eskalering til research (per output-kontrakt)."
   ]
 }
