@@ -771,6 +771,105 @@ SUCCEEDED** (signed). The physical iPhone (`00008140-001939D02EBB001C`) was
 — noted rather than failed, per the WP-14.1 brief's own allowance; the signed
 build is ready to install once the device is awake.
 
+## Manuell tema-overstyring (WP-14.2)
+
+The owner asked for a manual theme override matching the web dashboard's
+theme toggle (`docs/js/dashboard.js` `initTheme`/`#theme-toggle`) — the tokens
+in `DesignTokens.swift` already followed the *device's* appearance
+(`UIColor { traits in traits.userInterfaceStyle == .dark ? … }`), but there
+was no way to force mørk/lys independent of the system setting.
+
+### `ThemeOverride.swift` — the pure half
+
+A small `String`-backed enum with three cases (`system`/`dark`/`light`),
+following the same split the codebase already uses for OS-facing state
+(`BackgroundRefreshScheduling` vs. `BackgroundRefreshScheduler`): all the
+actual logic is a plain, fully unit-tested value type —
+
+- `next` — the tap-cycle order: system → dark → light → system.
+- `colorScheme: ColorScheme?` — `nil`/`.dark`/`.light`, fed straight to
+  `.preferredColorScheme(_:)`.
+- `glyph` — the quantized header character: `◐` auto / `●` mørk / `○` lys.
+- `accessibilityLabel` — the Norwegian VoiceOver string ("Tema: automatisk"
+  / "Tema: mørk" / "Tema: lys").
+- `storageKey` — the `@AppStorage`/`UserDefaults` key (`"zenji.themeOverride"`).
+
+### `ContentView` — the thin SwiftUI shell
+
+One `@AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw`
+property (defaulting to `.system`'s rawValue) plus a computed `themeOverride`
+getter, a `.preferredColorScheme(themeOverride.colorScheme)` modifier on the
+view returned to `WindowGroup`, and a new header button next to the existing
+`»_` assistant glyph that writes `themeOverride.next.rawValue` back to
+storage. Applying the modifier at this one root — rather than per-screen —
+is what makes it cover every presented `.sheet` (`AssistantView`,
+`EventDetailSheet`, `SeriesDetailSheet`) automatically: `.preferredColorScheme`
+overrides the enclosing window's trait collection, which cascades to
+everything presented from it, so `DesignTokens.swift`'s `UIColor { traits in
+… }` lookups pick it up with zero changes there. No settings screen — one tap
+in the header, exactly like the web toggle.
+
+### Tests
+
+`ThemeOverrideTests.swift` (17 tests): the full 3-tap cycle for every
+starting state, each `colorScheme` mapping, every glyph (plus a "no two states
+share a glyph" check), every accessibility label, and the storage round-trip
+through an isolated `UserDefaults(suiteName:)` (never `.standard`, so the
+test can't pollute or be polluted by a real run) — including the corrupt/
+missing-key fallback to `.system` that `ContentView` relies on.
+
+`xcodebuild test … -scheme Zenji` passes **232 tests** (the 215 WP-10…14.1
+baseline + 17 new `ThemeOverrideTests`). Both schemes (`Zenji`,
+`ZenjiWidgetExtension`) build; `npm test` is untouched — this package touches
+only `ios/`.
+
+### Visual proof (WP-14.2)
+
+Four screenshots in `ios/docs/design-v2/`, `iPhone 17 Pro` Simulator (booted),
+installed + launched against **real, live** `zenji.app` data, device
+appearance flipped via `xcrun simctl ui <udid> appearance dark|light` and the
+override flipped via `xcrun simctl spawn <udid> defaults write app.zenji.ios
+zenji.themeOverride -string <value>` before each (re)launch — this exercises
+the exact same `UserDefaults`-backed persistence `@AppStorage` uses, and
+additionally proves the override **survives a fresh launch**, not just a live
+toggle:
+
+- `theme-toggle-dark.png` — device dark, override `system` (`◐`): the app
+  follows the device into dark, as before this package.
+- `theme-toggle-light.png` — device light, override `system` (`◐`): the app
+  follows the device into light.
+- `theme-toggle-override.png` — device **dark**, override forced to `light`
+  (`○`): the app renders the warm-paper light page anyway — the override wins.
+- `theme-toggle-override-reverse.png` — device **light**, override forced to
+  `dark` (`●`): the app renders the near-black dark page anyway — the override
+  wins the other direction too. (Not one of the three names the brief asked
+  for by name, but included because "prove the override wins both ways" needs
+  both directions shown, not just one.)
+
+All four show the new glyph correctly quantized next to `»_`, and the rest of
+the WP-14.1-realised agenda (I DAG-first, live line, series collapse, must-see
+dots, honest channels) unaffected.
+
+**Device build (WP-14.2):** same command as WP-14.1 → **BUILD SUCCEEDED**
+(signed). The physical iPhone (`00008140-001939D02EBB001C`) was still
+`unavailable` for this session (`devicectl device install` /
+`devicectl device list` both report `CoreDeviceError 1011` / no matching
+device) — noted rather than failed, per the brief's own allowance; the signed
+build is ready to install once the device is reachable.
+
+### Widget (unaffected — follows the system, by WidgetKit's nature)
+
+`ZenjiWidgetExtension`'s sources do **not** include `ThemeOverride.swift` (see
+`project.yml`), so the widget has no access to the in-app override at all —
+deliberately. A WidgetKit extension renders in a separate process hosted by
+the home screen / lock screen / StandBy, entirely outside the app's own
+`UIWindow`; there is no app-level `.preferredColorScheme` for it to inherit,
+and forcing an appearance from inside the widget would fight the OS's own
+per-surface appearance (a user can't have one widget "stuck" light while the
+rest of the home screen is dark). The widget's `DesignTokens.swift` colours
+therefore keep following the system appearance only, same as every other
+iOS widget — this is expected, not a gap to close.
+
 ## Notifications (WP-15)
 
 `Zenji/Notifications/` schedules local push reminders for must-watch events.

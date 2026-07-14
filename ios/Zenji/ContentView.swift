@@ -8,7 +8,10 @@
 //  AgendaView, which does the actual day-grouped rendering. WP-15 adds the
 //  one NotificationPlanner hook in `refresh()` below (the "after a
 //  successful sync" reconcile point) — deliberately the ONLY WP-15 touch in
-//  this file; the real agenda rendering is WP-14's.
+//  this file; the real agenda rendering is WP-14's. WP-14.2 adds the manual
+//  theme override glyph next to `»_` and applies `.preferredColorScheme` at
+//  this view's root — see `ThemeOverride.swift` for the pure cycling/mapping
+//  logic.
 //
 //  Deliberately keeps its public `init(syncClient:dataStore:)` call
 //  compatible with the WP-12 scaffold (the third parameter,
@@ -29,10 +32,18 @@ struct ContentView: View {
     @State private var now = Date()
     /// WP-16: the FM-lekegrind, reached from the header glyph below.
     @State private var showingAssistant = false
+    /// WP-14.2: persisted manual theme override, applied at this view's root
+    /// via `.preferredColorScheme` below — covers every screen and `.sheet`
+    /// (AssistantView included) with the one setting.
+    @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     /// DESIGN.md "Bevegelse & lyd": the ticking clock is the app's only
     /// continuous motion — under Reduce Motion it drops the seconds and reads
     /// static (HH:mm).
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var themeOverride: ThemeOverride {
+        ThemeOverride(rawValue: themeOverrideRaw) ?? .system
+    }
 
     /// Ticks once a second — the "tikkende klokke-følelse" in the header,
     /// same idea as the web masthead's clock (dashboard.js `startClock`), just
@@ -90,6 +101,10 @@ struct ContentView: View {
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
+        // WP-14.2: forces the whole window's appearance (this screen, every
+        // `.sheet` presented from it) when the owner has picked mørk/lys;
+        // `nil` for `.system` defers back to the device setting.
+        .preferredColorScheme(themeOverride.colorScheme)
         .task {
             await refresh()
         }
@@ -139,16 +154,29 @@ struct ContentView: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 5) {
-                // Assistant entry — a mono prompt glyph, dempet, NOT a speech
-                // bubble/emoji (DESIGN.md "Header").
-                Button {
-                    showingAssistant = true
-                } label: {
-                    Text("»_")
-                        .font(.zenjiMono(size: 15, weight: .semibold))
-                        .foregroundStyle(ZenjiTokens.muted)
+                HStack(spacing: 12) {
+                    // Theme override — cycles system → mørk → lys per tap
+                    // (DESIGN.md "Header"); state shown quantized (◐/●/○), no
+                    // settings screen. Mirrors the web dashboard's toggle.
+                    Button {
+                        themeOverrideRaw = themeOverride.next.rawValue
+                    } label: {
+                        Text(themeOverride.glyph)
+                            .font(.zenjiMono(size: 15, weight: .semibold))
+                            .foregroundStyle(ZenjiTokens.muted)
+                    }
+                    .accessibilityLabel(themeOverride.accessibilityLabel)
+                    // Assistant entry — a mono prompt glyph, dempet, NOT a speech
+                    // bubble/emoji (DESIGN.md "Header").
+                    Button {
+                        showingAssistant = true
+                    } label: {
+                        Text("»_")
+                            .font(.zenjiMono(size: 15, weight: .semibold))
+                            .foregroundStyle(ZenjiTokens.muted)
+                    }
+                    .accessibilityLabel("Assistent")
                 }
-                .accessibilityLabel("Assistent")
                 // The living clock — amber, tabular, the app's only motion.
                 Text(clockLabel)
                     .font(.zenjiMono(size: 13))

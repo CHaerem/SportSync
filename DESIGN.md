@@ -74,6 +74,13 @@ overskrift, 10pt etter. Én kolonnebredde (maks 640pt på store flater, sentrert
 `»_` eller `◆` (IKKE pratebobler/emoji), dempet, høyre. Valgfri side-semantikk:
 `P100` foran dato på brede flater (arven fra Tekst-TV-indeksen).
 
+**Tema-overstyring (BINDENDE, gjelder alle flater):** én mono-glyf i headeren,
+dempet, ved siden av assistent-glyfen, sykler system → mørk → lys → system ved
+tapp, kvantisert tilstand (`◐` auto / `●` mørk / `○` lys), persistert og
+appliseres på hele flaten (ingen egen innstillingsskjerm) — web har allerede
+sin theme-toggle (`docs/js/dashboard.js`); iOS speiler den (`ThemeOverride.swift`
++ `.preferredColorScheme` på appens rot i `ContentView`).
+
 ## Detaljark / assistent / widget
 
 - Detaljark: flate-token, samme radspråk: venue · sammendrag · alle
