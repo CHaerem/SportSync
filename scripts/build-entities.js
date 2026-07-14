@@ -46,7 +46,7 @@
  * build-events.js's homeTeam/awayTeam matching pool includes BOTH "team" and
  * "league" typed entities, so a literal `homeTeam: "FC Barcelona"` still
  * resolves correctly regardless of the label. Type-driven client behaviour is
- * out of scope for this WP (see CLAUDE.md's phase-1 note on asset-maps.js).
+ * out of scope for this WP.
  */
 
 import fs from "fs";

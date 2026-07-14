@@ -1,7 +1,7 @@
 // Zenji — a calm overview of the sport you follow.
 // One question, answered quietly: what's on, when (Oslo), and where to watch.
 // One list, grouped by day. No dashboard, no noise.
-// Depends on: shared-constants.js, sport-config.js, asset-maps.js
+// Depends on: shared-constants.js
 
 class Dashboard {
 	constructor() {

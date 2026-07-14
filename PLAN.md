@@ -62,7 +62,7 @@ mennesket, aldri av en agent.
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 | WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
-| WP-41 | Web: død kode ut av shippet flate | 0D | – | ⬜ køet |
+| WP-41 | Web: død kode ut av shippet flate | 0D | – | 🔬 PR åpnet — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
 | WP-42 | Pipeline: dødkode-sanering | 0D | – | ⬜ køet |
 | WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
 | WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
@@ -135,7 +135,9 @@ og polymorf utøverdata (`norwegianPlayers` er streng | `{name}` | `{name, teeTi
   `scripts/config/sports-config.js` (fritekst-lag) og `norwegian-golfers.json` (aliases).
   Events beriket med `entityId` på matchede `norwegianPlayers`/lag (bruk eksisterende
   navnematch i `scripts/lib/helpers.js`: `normalizeText`/`containsName`).
-- **Ikke-mål:** nøkle om `docs/js/asset-maps.js` til ID-er (fase 1); røre interests.json.
+- **Ikke-mål:** nøkle om `docs/js/asset-maps.js` til ID-er (fase 1) *(avgjort i WP-41:
+  filen slettes som død kode — gjenskapes fra git-historikk om fase 1 trenger den)*;
+  røre interests.json.
 - **Aksept:** hver tracked-utøver som opptrer i events bærer `entityId`; indeksen
   whitelistet + i manifest; schema-utvidelse; npm test grønt.
 

@@ -1,5 +1,5 @@
 // Zenji v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportsync-v2-17';
+const CACHE_NAME = 'sportsync-v2-18';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -15,11 +15,10 @@ const SHELL_FILES = [
     '/css/layout.css',
     '/css/cards.css',
     '/js/shared-constants.js',
-    '/js/sport-config.js',
-    '/js/asset-maps.js',
     '/js/dashboard.js',
     '/rediger.html',
-    '/js/edit.js'
+    '/js/edit.js',
+    '/activity.html'
 ];
 
 self.addEventListener('install', (event) => {
