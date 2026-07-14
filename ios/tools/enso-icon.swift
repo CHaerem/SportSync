@@ -688,6 +688,290 @@ func renderGridV2(_ vs: [EnsoV2Params], ref: EnsoParams) -> CGImage {
 	return g.makeImage()!
 }
 
+// MARK: - v3 · teletext mosaic (blokkgrafikk, ekte kvantisering)
+//
+//  v1 (smooth vector ribbon) and v2 (ink-physics bristles) were BOTH rejected as
+//  "still too robot-made" — faux analogue calligraphy is a DEAD direction. v3
+//  stops pretending to be a hand and lets the machine be a machine, with pride:
+//  the ensō is drawn the way a REAL 1985 teletext page would have drawn it —
+//  2×3-sixel block graphics, hard-quantised, no antialiasing, stair-stepped edges
+//  as the POINT (not the flaw). Amber #FFB000 flat on #0A0A0C. No glow, no
+//  gradient, no scanlines — just blocks that are ON or OFF.
+//
+//  Pipeline: an underlying ensō ring (v1/v2's variable-thickness arc, reused as
+//  the source field) is THRESHOLDED onto a real subpixel grid → a boolean mosaic.
+//  Ring thickness varies around the circle in WHOLE CELL STEPS (a heavier
+//  "nedslag" drag, thinner toward the opening) — the calligrapher's dynamics
+//  translated into block weight. The opening sits low/right; a hinted tail is
+//  left as one or two free-standing block fragments (the flick).
+//
+//  Grid resolution divides 180 EXACTLY (18|180, 30|180) so the blocks are
+//  knife-sharp at the 180px home-turf test. NB the four export sizes share no
+//  common divisor beyond 4 (180 = 2²·3²·5, but 512/1024 = 2⁹/2¹⁰), so ONE grid
+//  cannot land whole on all of them: 180 is honoured exactly, and 192/512/1024
+//  snap each block edge to the nearest integer pixel (≤1px variance, still zero
+//  antialiasing — crisp, just imperceptibly uneven at the big sizes).
+//
+//  Two teletext modes: contiguous (solid blocks that merge into shapes) and
+//  separated (each block shrunk inside its cell, leaving the page between them →
+//  the classic perforated dot texture).
+
+struct EnsoV3Params {
+	let key: String
+	let label: String
+	let grid: Int                  // N subpixels per axis — MUST divide 180
+	let separated: Bool            // separated-mode gaps around each block
+	let sepBlockFrac: Double        // block size as a fraction of the cell (separated)
+	// ensō geometry (canvas normalised to [-1,1]; half-canvas = 1.0)
+	let radiusFrac: Double         // centreline radius / half-canvas
+	let gapDegrees: Double
+	let gapBearingDegrees: Double   // math angle of the opening centre (-48 ≈ 4:30, low/right)
+	let rotationDegrees: Double
+	// thickness envelope, expressed in WHOLE CELLS (rounded → stepped weight)
+	let entryCells: Double         // thickness at brush-down (stroke start, by the gap)
+	let peakCells: Double          // heaviest drag
+	let tailCells: Double          // thickness at the lifted tail (other side of the gap)
+	let bodyPeakT: Double          // where along the stroke the drag is heaviest (0…1)
+	// quantisation
+	let coverThreshold: Double     // cell ON when supersampled coverage ≥ this
+	let wobbleAmp: Double          // gentle radius wobble (small — the grid does the work)
+	// tail: free-standing block fragments past the lift (the flick)
+	let tailFragments: Int
+	// joker: a partial second concentric band over the heavy arc
+	let doubleBand: Bool
+	let bandOffsetCells: Double     // radial offset of the 2nd band (in cells, outward)
+	let bandStartT: Double
+	let bandEndT: Double
+	let bandCells: Double
+	let seed: UInt64
+}
+
+let variantsV3: [EnsoV3Params] = [
+	// 1 — grov-contiguous: the coarsest grid, few big blocks, the stair-step huge
+	//     and unapologetic. 18|180 → 10px blocks at 180.
+	EnsoV3Params(key: "grov-contig", label: "grov-contiguous",
+		grid: 18, separated: false, sepBlockFrac: 0.70,
+		radiusFrac: 0.60, gapDegrees: 42, gapBearingDegrees: -48, rotationDegrees: 6,
+		entryCells: 1.6, peakCells: 3.0, tailCells: 1.0, bodyPeakT: 0.42,
+		coverThreshold: 0.42, wobbleAmp: 0.010,
+		tailFragments: 1,
+		doubleBand: false, bandOffsetCells: 0, bandStartT: 0, bandEndT: 0, bandCells: 0,
+		seed: 30140714),
+
+	// 2 — fin-contiguous: a denser grid, so the ring reads rounder and the whole-
+	//     cell thickness steps read as graded weight. 30|180 → 6px blocks at 180.
+	EnsoV3Params(key: "fin-contig", label: "fin-contiguous",
+		grid: 30, separated: false, sepBlockFrac: 0.70,
+		radiusFrac: 0.62, gapDegrees: 36, gapBearingDegrees: -50, rotationDegrees: 4,
+		entryCells: 2.2, peakCells: 4.2, tailCells: 1.2, bodyPeakT: 0.40,
+		coverThreshold: 0.42, wobbleAmp: 0.012,
+		tailFragments: 2,
+		doubleBand: false, bandOffsetCells: 0, bandStartT: 0, bandEndT: 0, bandCells: 0,
+		seed: 30240714),
+
+	// 3 — separated: a bolder mid grid (20|180 → 9px cells) with every block shrunk
+	//     inside its cell → the classic separated-graphics dot texture. Coarser than
+	//     fin on purpose: the perforated ring must still read as a clean circle with
+	//     a clear opening at icon size, not dissolve into a dot cloud.
+	EnsoV3Params(key: "separert", label: "separated",
+		grid: 20, separated: true, sepBlockFrac: 0.66,
+		radiusFrac: 0.62, gapDegrees: 42, gapBearingDegrees: -50, rotationDegrees: 4,
+		entryCells: 1.8, peakCells: 3.2, tailCells: 1.2, bodyPeakT: 0.40,
+		coverThreshold: 0.42, wobbleAmp: 0.012,
+		tailFragments: 2,
+		doubleBand: false, bandOffsetCells: 0, bandStartT: 0, bandEndT: 0, bandCells: 0,
+		seed: 30340714),
+
+	// 4 — dobbel-rad (joker): asymmetric weight — a heavy body plus a partial
+	//     SECOND concentric row over the "nedslag" arc that drops away toward the
+	//     opening, where the ring thins to a single broken row. The wildest one.
+	EnsoV3Params(key: "dobbel-rad", label: "dobbel-rad (joker)",
+		grid: 30, separated: false, sepBlockFrac: 0.70,
+		radiusFrac: 0.58, gapDegrees: 40, gapBearingDegrees: -46, rotationDegrees: 8,
+		entryCells: 1.2, peakCells: 3.2, tailCells: 1.0, bodyPeakT: 0.48,
+		coverThreshold: 0.42, wobbleAmp: 0.014,
+		tailFragments: 2,
+		doubleBand: true, bandOffsetCells: 3.0, bandStartT: 0.22, bandEndT: 0.66, bandCells: 1.4,
+		seed: 30440714),
+]
+
+/// Thickness envelope in WHOLE CELLS: a soft brush-down, a heavy drag at
+/// `bodyPeakT`, a thin lifted tail — then ROUNDED to an integer so the ring's
+/// weight changes in visible whole-cell steps (never a smooth analogue taper).
+func thickCellsV3(_ t: Double, _ p: EnsoV3Params) -> Double {
+	let base: Double
+	if t <= p.bodyPeakT {
+		base = p.entryCells + (p.peakCells - p.entryCells) * smoothstep(t / max(1e-4, p.bodyPeakT))
+	} else {
+		base = p.peakCells - (p.peakCells - p.tailCells) * smoothstep((t - p.bodyPeakT) / max(1e-4, 1.0 - p.bodyPeakT))
+	}
+	return max(1.0, base.rounded())
+}
+
+/// Quantise the underlying ensō field onto an N×N boolean mosaic. A cell is ON
+/// when its supersampled coverage of the ring ≥ threshold. Computed ONCE per
+/// variant and rendered identically at every export size, so the mosaic pattern
+/// is fixed — only the pixel scale changes.
+func buildGridV3(_ p: EnsoV3Params) -> [[Bool]] {
+	let N = p.grid
+	let cellNorm = 2.0 / Double(N)
+	var grid = Array(repeating: Array(repeating: false, count: N), count: N)
+	let gap = p.gapDegrees * .pi / 180.0
+	let sweep = TAU - gap
+	let start = (p.gapBearingDegrees + p.rotationDegrees) * .pi / 180.0 + gap / 2.0
+	let sRad = p.seed ^ 0xF00D
+
+	func rAt(_ t: Double) -> Double {
+		p.radiusFrac * (1.0 + p.wobbleAmp * sfbm(t * 2.3 + 1.5, sRad, octaves: 3))
+	}
+	// Membership of a normalised point in the (pre-quantisation) ensō field.
+	func inField(_ x: Double, _ y: Double) -> Bool {
+		let rho = sqrt(x * x + y * y)
+		let theta = atan2(y, x)
+		var d = (theta - start).truncatingRemainder(dividingBy: TAU)
+		if d < 0 { d += TAU }
+		if d > sweep { return false }              // inside the opening
+		let t = d / sweep
+		let R = rAt(t)
+		let halfW = thickCellsV3(t, p) / 2.0 * cellNorm
+		if abs(rho - R) <= halfW { return true }
+		if p.doubleBand && t >= p.bandStartT && t <= p.bandEndT {
+			let R2 = R + p.bandOffsetCells * cellNorm
+			let halfW2 = p.bandCells / 2.0 * cellNorm
+			if abs(rho - R2) <= halfW2 { return true }
+		}
+		return false
+	}
+
+	let ss = 3   // 3×3 supersampling per cell → a stable coverage threshold
+	for j in 0..<N {
+		for i in 0..<N {
+			let cx0 = -1.0 + Double(i) * cellNorm
+			let cy1 = 1.0 - Double(j) * cellNorm     // top edge of the cell (y up)
+			var hits = 0
+			for sj in 0..<ss {
+				for si in 0..<ss {
+					let x = cx0 + (Double(si) + 0.5) / Double(ss) * cellNorm
+					let y = cy1 - (Double(sj) + 0.5) / Double(ss) * cellNorm
+					if inField(x, y) { hits += 1 }
+				}
+			}
+			if Double(hits) / Double(ss * ss) >= p.coverThreshold { grid[j][i] = true }
+		}
+	}
+
+	// Tail fragments: 1–2 free-standing blocks just past the lift, stepping into
+	// the opening and slightly outward — separated from the ring by empty cells.
+	for k in 0..<p.tailFragments {
+		let ang = start + sweep + Double(k + 1) * (gap * 0.20)
+		let R = rAt(1.0) + (0.7 + Double(k) * 1.3) * cellNorm
+		let x = R * cos(ang), y = R * sin(ang)
+		let i = Int((x + 1.0) / cellNorm)
+		let j = Int((1.0 - y) / cellNorm)
+		if i >= 0 && i < N && j >= 0 && j < N { grid[j][i] = true }
+	}
+	return grid
+}
+
+/// A context with antialiasing OFF — block edges land hard on integer pixels.
+func makeContextSharp(_ px: Int) -> CGContext {
+	let cs = CGColorSpaceCreateDeviceRGB()
+	let ctx = CGContext(data: nil, width: px, height: px, bitsPerComponent: 8,
+	                    bytesPerRow: 0, space: cs,
+	                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+	ctx.setAllowsAntialiasing(false)
+	ctx.setShouldAntialias(false)
+	ctx.interpolationQuality = .none
+	return ctx
+}
+
+/// Paint the mosaic at a given size. Each ON cell is one flat-amber rectangle
+/// with edges snapped to integer pixels (exact at 180, ≤1px snap elsewhere).
+func renderIconV3(px: Int, grid: [[Bool]], p: EnsoV3Params) -> CGImage {
+	let ctx = makeContextSharp(px)
+	let f = CGFloat(px)
+	ctx.setFillColor(pageCG)
+	ctx.fill(CGRect(x: 0, y: 0, width: f, height: f))
+	let N = grid.count
+	ctx.setFillColor(amberCG)
+	for j in 0..<N {
+		for i in 0..<N where grid[j][i] {
+			let x0 = (CGFloat(i) * f / CGFloat(N)).rounded()
+			let x1 = (CGFloat(i + 1) * f / CGFloat(N)).rounded()
+			let yTopPx = (CGFloat(j) * f / CGFloat(N)).rounded()       // measured from the top
+			let yBotPx = (CGFloat(j + 1) * f / CGFloat(N)).rounded()
+			var rx = x0, ry = f - yBotPx, rw = x1 - x0, rh = yBotPx - yTopPx
+			if p.separated {
+				let gx = max(CGFloat(1), ((rw * (1 - CGFloat(p.sepBlockFrac))) / 2).rounded())
+				let gy = max(CGFloat(1), ((rh * (1 - CGFloat(p.sepBlockFrac))) / 2).rounded())
+				rx += gx; ry += gy; rw -= 2 * gx; rh -= 2 * gy
+			}
+			if rw > 0 && rh > 0 { ctx.fill(CGRect(x: rx, y: ry, width: rw, height: rh)) }
+		}
+	}
+	return ctx.makeImage()!
+}
+
+/// The v3 comparison grid: a banner, then each variant as a row of
+/// [full 1024, nearest-neighbour] · [true 180px, 1:1]. Nearest-neighbour scaling
+/// keeps the preview blocky; the 180 cell is the honest hard test.
+func renderGridV3(_ vs: [EnsoV3Params]) -> CGImage {
+	let cell: CGFloat = 500
+	let colGap: CGFloat = 44
+	let pad: CGFloat = 52
+	let labelH: CGFloat = 58
+	let rowGap: CGFloat = 30
+	let banner: CGFloat = 130
+	let colHead: CGFloat = 42
+
+	let rows = vs.count
+	let W = Int(pad + cell + colGap + cell + pad)
+	let H = Int(pad + banner + colHead + CGFloat(rows) * (cell + labelH + rowGap) + pad)
+	let Hf = CGFloat(H)
+
+	let cs = CGColorSpaceCreateDeviceRGB()
+	let g = CGContext(data: nil, width: W, height: H, bitsPerComponent: 8,
+	                  bytesPerRow: 0, space: cs,
+	                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+	g.interpolationQuality = .none
+	g.setShouldAntialias(true)
+	g.setFillColor(pageCG); g.fill(CGRect(x: 0, y: 0, width: CGFloat(W), height: Hf))
+
+	drawLabel(g, "ENSŌ v3 · teletext-mosaikk · #FFB000 på #0A0A0C", centerX: CGFloat(W) / 2,
+	          baselineY: Hf - (pad + banner * 0.38), size: 30, color: pageFG)
+	drawLabel(g, "ekte 2×3-sixel kvantisering · blokk PÅ/AV · hele-celle tykkelsessteg · knivskarp på 180",
+	          centerX: CGFloat(W) / 2, baselineY: Hf - (pad + banner * 0.72), size: 17, color: amberCG)
+
+	let colAx = pad + cell / 2
+	let colBx = pad + cell + colGap + cell / 2
+	let rowMidX = pad + cell + colGap / 2
+	let headTop = pad + banner
+	drawLabel(g, "1024px", centerX: colAx, baselineY: Hf - (headTop + colHead * 0.5), size: 20, color: pageFG)
+	drawLabel(g, "180px (1:1)", centerX: colBx, baselineY: Hf - (headTop + colHead * 0.5), size: 20, color: pageFG)
+
+	for (index, p) in vs.enumerated() {
+		let grid = buildGridV3(p)
+		let big = renderIconV3(px: 1024, grid: grid, p: p)
+		let small = renderIconV3(px: 180, grid: grid, p: p)
+		let top = pad + banner + colHead + CGFloat(index) * (cell + labelH + rowGap)
+		g.setShouldAntialias(false)
+		let aRect = CGRect(x: pad, y: Hf - (top + cell), width: cell, height: cell)
+		g.draw(big, in: aRect)
+		let bLeft = pad + cell + colGap
+		let sSize: CGFloat = 180
+		let bx = bLeft + (cell - sSize) / 2
+		let byTop = top + (cell - sSize) / 2
+		let bRect = CGRect(x: bx, y: Hf - (byTop + sSize), width: sSize, height: sSize)
+		g.draw(small, in: bRect)
+		g.setShouldAntialias(true)
+		g.setStrokeColor(CGColor(srgbRed: 1, green: 0xB0 / 255.0, blue: 0, alpha: 0.30))
+		g.setLineWidth(1); g.stroke(bRect)
+		drawLabel(g, p.label, centerX: rowMidX, baselineY: Hf - (top + cell + labelH * 0.62),
+		          size: 26, color: amberCG)
+	}
+	return g.makeImage()!
+}
+
 // MARK: - Main
 
 let fm = FileManager.default
@@ -740,6 +1024,27 @@ let gridV2URL = outBase.appendingPathComponent("enso-v2-varianter.png")
 writePNG(renderGridV2(variantsV2, ref: tungRef), to: gridV2URL)
 written += 1
 
+// --- v3 (teletext mosaic) ---------------------------------------------------
+// The chosen direction. Full size set per variant under variants/v3-<key>/,
+// plus the v3 review grid. Nothing live is touched — wiring waits for the
+// owner's choice among these four.
+for p in variantsV3 {
+	let grid = buildGridV3(p)
+	let dir = outBase.appendingPathComponent("variants").appendingPathComponent("v3-\(p.key)")
+	try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+	for size in iconSizes {
+		let url = dir.appendingPathComponent("enso-\(size).png")
+		writePNG(renderIconV3(px: size, grid: grid, p: p), to: url)
+		written += 1
+	}
+	print("  v3-\(p.key): \(iconSizes.map { "\($0)" }.joined(separator: "/")) px")
+}
+
+let gridV3URL = outBase.appendingPathComponent("enso-v3-varianter.png")
+writePNG(renderGridV3(variantsV3), to: gridV3URL)
+written += 1
+
 print("\nWrote \(written) PNG(s) under \(outBase.path)")
 print("Review grid (v1): \(gridURL.path)")
 print("Review grid (v2): \(gridV2URL.path)")
+print("Review grid (v3): \(gridV3URL.path)")
