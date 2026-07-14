@@ -61,4 +61,21 @@ describe("v2 workflows", () => {
 			expect(wf(f), f).toContain("concurrency:");
 		}
 	});
+
+	it("all three self-fixing loops use the ONE shared merge gate and commit their run log", () => {
+		expect(fs.existsSync(path.resolve("scripts", "merge-gate.js")), "scripts/merge-gate.js").toBe(true);
+		for (const [file, prefix, log] of [
+			["ui-fix-agent.yml", "ui-autofix/", "docs/data/ui-fix-log.json"],
+			["self-repair-agent.yml", "self-repair/", "docs/data/self-repair-log.json"],
+			["improve-agent.yml", "improve/", "docs/data/improve-log.json"],
+		]) {
+			const content = wf(file);
+			expect(content, `${file} must call the shared gate`).toContain(`node scripts/merge-gate.js ${prefix}`);
+			expect(content, `${file} must not keep an inline protected-path check`).not.toMatch(/BLOCK=/);
+			expect(content, `${file} must not merge inline`).not.toContain("gh pr merge");
+			expect(content, `${file} must persist its run log to main`).toContain(log);
+		}
+		// self-repair additionally gates on the events contract, as before the extraction
+		expect(wf("self-repair-agent.yml")).toContain("--validate-events");
+	});
 });

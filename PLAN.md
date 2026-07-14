@@ -65,7 +65,7 @@ mennesket, aldri av en agent.
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
-| WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
+| WP-40 | Autonomi-herding: felles merge-gate | 0D | – | 🔬 PR åpnet — `scripts/merge-gate.js` delt av alle tre løkker (ui-fix-hullet tettet), BLOCK utvidet med `.claude/settings.json` + `.github/actions/**`, run-logger committes også på no-op, toppkommentarer rettet; 382/382 tester. Beskyttet sti → menneskelig merge |
 | WP-41 | Web: død kode ut av shippet flate | 0D | – | ✅ merget (#265) — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
 | WP-42 | Pipeline: dødkode-sanering | 0D | – | ✅ merget (#268) — sjakk-stier (fetchChessStandings + curated-gren), filters trimmet til de 2 brukte, buildURL/fetchWithDates, `_leagueMeta`, døde norsk-klubb-helpere, cycling-configlesing, pr-body.md, `.github/actions/setup/` slettet; 373/373 grønt, build+validate rent |
 | WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ✅ merget (#270) — coverage-gaps/fotball-no rutet gjennom `isEventInWindow` (endTime-blindheten fikset + regresjonstester: pågående flerdagsevent ⇒ ingen entity/sport-gap), delt `yyyymmdd`/`espnDateRange` i lib/helpers, én main-guard-form (`pathToFileURL`) i alle scripts, fetch/index `{name, fn}`-array; 411/411 grønt |

@@ -1,9 +1,11 @@
 name: Improve agent
 
-# Evolution, proposal-only. Weekly, the system reviews its own logs and proposes
-# ONE evidenced improvement as a PR for a human to review — never auto-merged,
-# because "what should we do better" is a judgment call. Biased toward sharpening
-# what exists over adding machinery (the v1 complexity lesson).
+# Evolution. Weekly, the system reviews its own logs and proposes ONE evidenced
+# improvement as a PR. The workflow then re-runs the tests AND checks the PR
+# stays out of protected paths before auto-merging (scripts/merge-gate.js —
+# shared with ui-fix and self-repair); a protected-path change is left open for
+# a human. Biased toward sharpening what exists over adding machinery (the v1
+# complexity lesson).
 
 on:
   schedule:
@@ -49,35 +51,35 @@ jobs:
             evidenced improvement, make it on a branch, open a PR. Do not merge
             (the workflow re-gates tests and auto-merges it).
 
-      # Re-gate tests + auto-merge, except protected paths (workflows/hooks/
-      # interests) which are left open for review.
-      - name: Re-gate + auto-merge
+      # Persist the run log to main — the prompt writes docs/data/improve-log.json
+      # on EVERY run (including action:"none" weeks), but the agent never pushes
+      # to main itself, so on no-op runs the log used to be discarded with the
+      # workspace. Runs before the merge gate so the log survives a failed gate.
+      - name: Commit run log
+        if: steps.usage.outputs.run == 'true'
+        run: |
+          LOG=docs/data/improve-log.json
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log unchanged — nothing to commit."; exit 0; }
+          cp "$LOG" "$RUNNER_TEMP/run-log.json"
+          git checkout -f main # the agent may have left the workspace on its fix branch
+          cp "$RUNNER_TEMP/run-log.json" "$LOG"
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log matches main — nothing to commit."; exit 0; }
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add "$LOG"
+          git commit -m "improve: run log"
+          git push || (git pull --rebase -X theirs origin main && git push)
+
+      # Re-gate tests + auto-merge via the shared merge gate (scripts/merge-gate.js,
+      # same invariant for ui-fix/self-repair/improve): protected paths (workflows,
+      # actions, hooks, interests.json, .claude/settings.json) are never auto-merged
+      # — the PR is left open + labelled needs-review.
+      - name: Merge gate (re-test + protected paths + auto-merge)
         id: automerge
         if: steps.usage.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          PR=$(gh pr list --state open --json number,headRefName \
-                --jq '[.[] | select(.headRefName | startswith("improve/"))] | sort_by(.number) | last | .number // empty')
-          if [ -z "$PR" ]; then
-            echo "No improve PR this run."; echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          BLOCK='^(\.github/workflows/|scripts/hooks/|scripts/config/interests\.json$)'
-          BLOCKED=0
-          for f in $(gh pr view "$PR" --json files --jq '.files[].path'); do
-            echo "$f" | grep -qE "$BLOCK" && { echo "protected path: $f"; BLOCKED=1; }
-          done
-          if [ "$BLOCKED" = "1" ]; then
-            echo "PR #$PR touches a protected path — leaving OPEN for review."
-            gh pr edit "$PR" --add-label needs-review 2>/dev/null || true
-            echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          echo "Re-gating PR #$PR with fresh tests…"
-          gh pr checkout "$PR"
-          npm ci
-          npm test
-          gh pr merge "$PR" --merge --delete-branch
-          echo "Auto-merged PR #$PR."; echo "merged=true" >> "$GITHUB_OUTPUT"
+        run: node scripts/merge-gate.js improve/
 
   deploy:
     needs: improve
