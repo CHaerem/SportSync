@@ -36,7 +36,20 @@ protocol InterestAssistant: Sendable {
     /// local `feed` (the agenda the answer arm queries via `searchEvents`; the
     /// mutation arm ignores it).
     ///
+    /// WP-30 adds `memory`: the personal-memory context, injected as a retrieval
+    /// digest into the session instructions (so answers REFLECT what we know
+    /// about you) and wired to the `saveMemory` tool (so the model can persist
+    /// something it learns).
+    ///
     /// Throws `AssistantError.unavailable` if the model isn't usable, or
     /// `.generationFailed` if a usable model still couldn't produce output.
-    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery) async throws -> AssistantTurn
+    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery, memory: MemoryContext) async throws -> AssistantTurn
+}
+
+extension InterestAssistant {
+    /// Memory-free convenience — the WP-16.4 signature. Keeps every existing
+    /// caller / test compiling unchanged; forwards an empty `MemoryContext`.
+    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery) async throws -> AssistantTurn {
+        try await interpret(utterance: utterance, profile: profile, index: index, feed: feed, memory: MemoryContext())
+    }
 }

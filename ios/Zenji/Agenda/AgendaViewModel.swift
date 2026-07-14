@@ -76,12 +76,16 @@ final class AgendaViewModel {
         // agendaen re-kompileres synlig med det samme".
         let interests = EffectiveInterests.merge(profile: profile, into: baseInterests, index: index)
         let followedIds = Set(profile.rules.map(\.entityId))
+        // WP-30: the spoiler shield from personal memory (same shared profile
+        // file). A pure PRESENTATION layer — it masks result/score at display
+        // time and never touches the five predicates / golden vectors.
+        let shield = SpoilerShield(memory: MemoryStore(profileStore: profileStore).load())
         // WP-18: the raw profile is passed ALONGSIDE the merged interests because
         // EffectiveInterests.merge folds a rule's entity into the tracked buckets
         // but drops its `lens` — and the lens is exactly what the lens-rendering
         // layer needs. So the merged `interests` drive the five predicates
         // (unchanged), and `profile` carries the per-rule lens on top.
-        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile)
+        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
         liveNow = Self.liveRows(events: events, interests: interests, now: now)
         lastSync = dataStore.lastSync
     }
@@ -106,7 +110,7 @@ final class AgendaViewModel {
     /// can re-home a row to the athlete's own effective (tee) time. An empty
     /// profile, or a profile with only default (`.sportAsSuch`) lenses, leaves
     /// the output byte-for-byte identical to WP-16.4 — graceful degradation.
-    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile()) -> [AgendaSection] {
+    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile(), shield: SpoilerShield = SpoilerShield()) -> [AgendaSection] {
         let (feedEvents, lookup) = EventBridge.bridge(events)
         let feed = FeedCompiler.compile(events: feedEvents, interests: interests, now: now)
         let todayKey = FeedCompiler.osloDayKey(now)
@@ -125,7 +129,7 @@ final class AgendaViewModel {
                 guard case .event(let feedEvent, let mustWatch, let mustSee) = compiled else {
                     // Series rows never lens (they are already the collapsed,
                     // athlete-agnostic view) — pass through on their own day.
-                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) {
+                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield) {
                         placed.append(Placed(dayKey: day.key, sortTime: compiled.time, item: item))
                     }
                     continue
@@ -137,10 +141,10 @@ final class AgendaViewModel {
                     // brief) and re-home to the athlete's effective day/time.
                     for lensRow in lensRows {
                         let (dayKey, sortTime) = place(lensRow, event: feedEvent, compiledDay: day.key, todayKey: todayKey)
-                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds)
+                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield)
                         placed.append(Placed(dayKey: dayKey, sortTime: sortTime, item: .event(row)))
                     }
-                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) {
+                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield) {
                     // No lens applies → the ordinary WP-16.4 row, untouched.
                     placed.append(Placed(dayKey: day.key, sortTime: feedEvent.time, item: item))
                 }
@@ -240,11 +244,18 @@ final class AgendaViewModel {
         interests: Interests,
         now: Date,
         index: EntityIndex,
-        followedIds: Set<String>
+        followedIds: Set<String>,
+        shield: SpoilerShield
     ) -> AgendaEventRow {
         let timeLabel = lensRow.effectiveTime.map { AgendaFormat.timeLabel(time: $0, endTime: nil) }
             ?? AgendaFormat.timeLabel(time: feedEvent.time, endTime: feedEvent.endTime)
-        let meta = lensRow.metaDetail ?? AgendaFormat.metaLabel(tournament: event.tournament, title: lensRow.title)
+        let spoilerSafe = shield.spoilerSafe(event: event)
+        // WP-30: the lens meta detail is the athlete's status VERBATIM (score /
+        // placement) — a spoiler for someone avoiding results. When not safe,
+        // fall back to the neutral tournament meta so no outcome leaks into the
+        // agenda row (the detail sheet handles the fuller masking + reveal).
+        let neutralMeta = AgendaFormat.metaLabel(tournament: event.tournament, title: lensRow.title)
+        let meta = spoilerSafe ? (lensRow.metaDetail ?? neutralMeta) : neutralMeta
         return AgendaEventRow(
             id: EventBridge.stableId(for: event) + "|" + lensRow.idSuffix,
             timeLabel: timeLabel,
@@ -256,7 +267,8 @@ final class AgendaViewModel {
             isAIResearch: event.source == "ai-research",
             event: event,
             whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
-            followable: followableEntities(for: event, index: index, followedIds: followedIds)
+            followable: followableEntities(for: event, index: index, followedIds: followedIds),
+            spoilerSafe: spoilerSafe
         )
     }
 
@@ -341,7 +353,8 @@ final class AgendaViewModel {
         interests: Interests,
         now: Date,
         index: EntityIndex,
-        followedIds: Set<String>
+        followedIds: Set<String>,
+        shield: SpoilerShield
     ) -> AgendaItem? {
         switch item {
         case .event(let feedEvent, let mustWatch, let mustSee):
@@ -362,7 +375,8 @@ final class AgendaViewModel {
                 isAIResearch: event.source == "ai-research",
                 event: event,
                 whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
-                followable: followableEntities(for: event, index: index, followedIds: followedIds)
+                followable: followableEntities(for: event, index: index, followedIds: followedIds),
+                spoilerSafe: shield.spoilerSafe(event: event)
             ))
 
         case .series(let series):

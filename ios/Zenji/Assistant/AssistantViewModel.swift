@@ -65,6 +65,12 @@ final class AssistantViewModel {
     /// Entries still needing attention — a `resolved` one no longer counts.
     var misunderstoodCount: Int { misunderstoodEntries.filter { !$0.isResolved }.count }
 
+    /// WP-30 — the live personal-memory projection ("Hva jeg vet om deg"):
+    /// structured facts + episodic notes + behaviour stats, tombstones dropped.
+    private(set) var memory: MemoryState = MemoryState()
+    /// The count shown next to "HVA JEG VET OM DEG".
+    var memoryItemCount: Int { memory.itemCount }
+
     /// Anything worth raising the panel for.
     var hasPresentableResult: Bool {
         !pending.isEmpty || !rejected.isEmpty || explanation != nil || answer != nil || errorMessage != nil
@@ -75,6 +81,11 @@ final class AssistantViewModel {
     private let profileStore: ProfileStore
     private let index: EntityIndex
     private let misunderstoodLog: MisunderstoodLogStore
+    /// WP-30 — personal memory (facts/episodic/behaviour) over the SAME profile
+    /// file (`ProfileSyncState`), and the episodic distiller that turns a
+    /// conversation into a compact note.
+    private let memoryStore: MemoryStore
+    private let distiller: any MemoryDistiller
     /// WP-16.4 — builds the local agenda the answer arm queries, fresh per
     /// submit (so a just-confirmed follow is reflected). Defaults to an empty
     /// feed for the mutation-only unit tests that don't inject one.
@@ -95,16 +106,23 @@ final class AssistantViewModel {
         profileStore: ProfileStore,
         index: EntityIndex,
         misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore(),
+        memoryStore: MemoryStore? = nil,
+        distiller: any MemoryDistiller = FoundationModelsMemoryDistiller(),
         feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) }
     ) {
         self.assistant = assistant
         self.profileStore = profileStore
         self.index = index
         self.misunderstoodLog = misunderstoodLog
+        // Default the memory store over the SAME profile file, so memory and the
+        // profile share one on-disk `ProfileSyncState`.
+        self.memoryStore = memoryStore ?? MemoryStore(profileStore: profileStore)
+        self.distiller = distiller
         self.feedProvider = feedProvider
         self.profile = profileStore.load()
         self.availability = assistant.availability()
         self.misunderstoodEntries = misunderstoodLog.load()
+        self.memory = (memoryStore ?? MemoryStore(profileStore: profileStore)).load()
     }
 
     /// App wiring: the real FM assistant + the on-disk profile + the synced
@@ -168,8 +186,11 @@ final class AssistantViewModel {
         resetBatch()
 
         let feed = feedProvider()
+        // WP-30 — hand the assistant the personal-memory context: the live state
+        // (injected as a retrieval digest) + the write sink (the saveMemory tool).
+        let memoryContext = MemoryContext(state: memory, sink: memoryStore)
         do {
-            let turn = try await assistant.interpret(utterance: text, profile: profile, index: index, feed: feed)
+            let turn = try await assistant.interpret(utterance: text, profile: profile, index: index, feed: feed, memory: memoryContext)
             guard !Task.isCancelled else { return }
             switch turn {
             case .mutations(let proposals):
@@ -177,6 +198,12 @@ final class AssistantViewModel {
             case .answer(let ans):
                 applyAnswer(text: text, answer: ans, feed: feed)
             }
+            // WP-30 — the model may have written a fact via saveMemory; reflect it.
+            refreshMemory()
+            // WP-30 — episodic: distil this exchange into a compact note (never a
+            // transcript). Fire-and-forget so it never delays the shown result.
+            let assistantText = distillableAssistantText(from: turn)
+            distill(userText: text, assistantText: assistantText)
         } catch let error as AssistantError {
             guard !Task.isCancelled else { return }
             errorMessage = error.errorDescription
@@ -284,6 +311,9 @@ final class AssistantViewModel {
     }
 
     func reject(_ mutation: GroundedMutation) {
+        // WP-30 behaviour stat: a rejection is a "dismiss" signal for the entity.
+        memoryStore.record(.dismiss, entityId: mutation.entity.id)
+        refreshMemory()
         let hadItem = pending.contains { $0.id == mutation.id }
         pending.removeAll { $0.id == mutation.id }
         mentedFromLogId.removeValue(forKey: mutation.id)
@@ -418,6 +448,90 @@ final class AssistantViewModel {
         if updated != profile {
             profile = updated
             onProfileChanged?()
+        }
+    }
+
+    // MARK: - WP-30 — personal memory ("Hva jeg vet om deg")
+
+    /// Re-read the live memory projection from disk.
+    func refreshMemory() { memory = memoryStore.load() }
+
+    /// A human display name for an entity id (falls back to the id itself when
+    /// the index hasn't synced or the entity is gone) — for the memory page.
+    func entityName(_ id: String) -> String { index.entity(id: id)?.name ?? id }
+
+    /// Behaviour: record that the user OPENED an event's detail — one "open" per
+    /// entity the event is about, plus its sport. Pure, no AI (WP-30 layer 3).
+    func recordOpened(_ event: Event) {
+        for id in SpoilerShield.entityIds(of: event) { memoryStore.record(.open, entityId: id) }
+        if !event.sport.isEmpty { memoryStore.record(.open, sport: event.sport) }
+        refreshMemory()
+    }
+
+    /// Behaviour: record that the user EXPANDED something (a collapsed series, or
+    /// "hvorfor vises denne") — an "expand" signal on the sport/entities.
+    func recordExpanded(_ event: Event) {
+        for id in SpoilerShield.entityIds(of: event) { memoryStore.record(.expand, entityId: id) }
+        if !event.sport.isEmpty { memoryStore.record(.expand, sport: event.sport) }
+        refreshMemory()
+    }
+
+    /// Edit (or add) a structured fact from the "Hva jeg vet om deg" page.
+    func updateFact(_ fact: MemoryFact) {
+        memoryStore.upsertFact(fact)
+        refreshMemory()
+    }
+
+    /// Forget one structured fact (a replicating tombstone).
+    func deleteFact(_ fact: MemoryFact) {
+        memoryStore.deleteFact(id: fact.id)
+        refreshMemory()
+    }
+
+    /// Forget one episodic memory note.
+    func deleteEpisodic(_ note: EpisodicNote) {
+        memoryStore.deleteEpisodic(id: note.id)
+        refreshMemory()
+    }
+
+    /// Forget one behaviour stat.
+    func deleteBehavior(_ stat: BehaviorStat) {
+        memoryStore.deleteBehavior(key: stat.key)
+        refreshMemory()
+    }
+
+    /// The GDPR "Glem alt" — forget ALL personal memory (facts + episodic +
+    /// behaviour). The follow-profile is deliberately kept (see MemoryStore).
+    func forgetAllMemory() {
+        memoryStore.forgetAll()
+        refreshMemory()
+    }
+
+    /// The spoiler shield derived from the current memory — the flag the agenda
+    /// and detail sheet respect (masking result/score for spoiler-policy
+    /// entities/sports). Recomputed from `memory` so it tracks edits live.
+    var spoilerShield: SpoilerShield { SpoilerShield(memory: memory) }
+
+    /// Fire-and-forget episodic distillation of one exchange. Never blocks the
+    /// shown result; records a compact note only when the distiller finds
+    /// something durable (nil otherwise).
+    private func distill(userText: String, assistantText: String) {
+        Task { @MainActor in
+            guard let note = await self.distiller.distill(
+                MemoryConversation(userText: userText, assistantText: assistantText), index: self.index, now: Date()
+            ) else { return }
+            self.memoryStore.appendEpisodic(note)
+            self.refreshMemory()
+        }
+    }
+
+    /// The assistant's side of the exchange, for distillation: the answer prose,
+    /// or a short account of the mutations proposed.
+    private func distillableAssistantText(from turn: AssistantTurn) -> String {
+        switch turn {
+        case let .answer(answer): return answer.text
+        case let .mutations(proposals):
+            return proposals.map { "\($0.kind.rawValue) \($0.entityQuery)" }.joined(separator: "; ")
         }
     }
 

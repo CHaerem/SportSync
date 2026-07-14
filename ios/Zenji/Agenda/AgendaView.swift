@@ -28,6 +28,10 @@ struct AgendaView: View {
     /// ContentView routes it into the assistant's diff/confirm flow. Defaults to
     /// a no-op so the WP-14 `#Preview` and any standalone use still compile.
     var onFollow: (Entity) -> Void = { _ in }
+    /// WP-30 — an event's detail was opened; the host records a behaviour "open"
+    /// stat for it (personal memory, layer 3). No-op default keeps previews/
+    /// standalone use compiling.
+    var onOpen: (Event) -> Void = { _ in }
 
     /// A single optional target drives both sheets. The event case carries the
     /// whole `AgendaEventRow` (not just the `Event`) so the detail sheet has the
@@ -112,8 +116,8 @@ struct AgendaView: View {
 
     private func open(_ item: AgendaItem) {
         switch item {
-        case .event(let row): detailTarget = .event(row)
-        case .series(let row): detailTarget = .series(row)
+        case .event(let row): detailTarget = .event(row); onOpen(row.event)
+        case .series(let row): detailTarget = .series(row); onOpen(row.nextStage)
         }
     }
 

@@ -23,6 +23,9 @@ struct EventDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     /// WP-16.4 — the "Hvorfor vises denne?" context action, collapsed by default.
     @State private var whyExpanded = false
+    /// WP-30 — spoiler protection: a masked result stays hidden until the user
+    /// taps to reveal it ("til brukeren har «sett» det").
+    @State private var resultRevealed = false
 
     private var event: Event { row.event }
 
@@ -41,6 +44,8 @@ struct EventDetailSheet: View {
                 }
 
                 contextActionsSection
+
+                resultSection
 
                 Section {
                     if event.streaming.isEmpty {
@@ -154,6 +159,45 @@ struct EventDetailSheet: View {
                 }
             } header: {
                 header("HANDLINGER")
+            }
+        }
+    }
+
+    // MARK: - Result (WP-30 — spoiler protection)
+
+    /// The event's result/score. When the user has a spoiler policy on this
+    /// event's sport/entity (`row.spoilerSafe == false`), the outcome is MASKED
+    /// behind a calm tap-to-reveal, so a glance at the sheet never spoils a game
+    /// they're watching on delay. When safe, it shows plainly. Absent otherwise.
+    @ViewBuilder
+    private var resultSection: some View {
+        if let result = event.result, !result.isEmpty {
+            Section {
+                if row.spoilerSafe || resultRevealed {
+                    Text(result)
+                        .font(.zenjiMono(size: 14))
+                        .foregroundStyle(ZenjiTokens.foreground)
+                        .listRowBackground(ZenjiTokens.surface)
+                } else {
+                    Button {
+                        resultRevealed = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Skjult — spoilervern på")
+                                .font(.zenjiMono(size: 14, weight: .semibold))
+                                .foregroundStyle(ZenjiTokens.accent)
+                            Text("Trykk for å vise resultatet")
+                                .font(.zenjiMono(size: 12))
+                                .foregroundStyle(ZenjiTokens.muted)
+                        }
+                        // WP-14.3: a real, comfortable tap target.
+                        .frame(minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .listRowBackground(ZenjiTokens.surface)
+                }
+            } header: {
+                header("RESULTAT")
             }
         }
     }

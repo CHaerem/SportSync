@@ -151,6 +151,13 @@ targets:
       # only (Apple Intelligence can't run in CI/Simulator — see AssistantView's
       # header and ios/README.md).
       - path: Zenji/Assistant
+      # WP-30: personal-memory sources (facts/episodic/behaviour store over the
+      # same ProfileSyncState, retrieval digest, distiller, spoiler shield, the
+      # "Hva jeg vet om deg" page) — compiled directly into the hostless bundle,
+      # same "no @testable import" pattern. The app + ZenjiDeviceDev targets pick
+      # these up via `path: Zenji`; the widget deliberately does NOT (memory is
+      # app-only — the widget has no network/personal-context code).
+      - path: Zenji/Memory
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen

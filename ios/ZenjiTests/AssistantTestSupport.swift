@@ -33,6 +33,14 @@ enum AssistantTestSupport {
             .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true))
     }
 
+    /// A MemoryStore (WP-30) over a fresh throwaway ProfileStore — memory shares
+    /// the profile file, so this also gives an isolated ProfileSyncState.
+    static func tempMemoryStore(deviceID: String = "TEST-DEVICE") -> MemoryStore {
+        let store = ProfileStore(directory: FileManager.default.temporaryDirectory
+            .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true), deviceID: deviceID)
+        return MemoryStore(profileStore: store)
+    }
+
     // MARK: - WP-16.4 — the local agenda the answer arm queries
 
     /// The real, checked-in events fixture as `[Event]`.

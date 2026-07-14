@@ -19,6 +19,12 @@
 //                 so the union is order-independent.
 //    • counters   behaviour statistics → a grow-only G-Counter: per-device
 //                 sub-counts merge by MAX, the value is the SUM across devices.
+//    • facts      WP-30 structured personal-memory facts → per-fact
+//                 LAST-WRITER-WINS on `updatedAt`, plus TOMBSTONES for
+//                 forgotten facts (same strategy as rules). This is the
+//                 EXTENSION WP-30 adds — memory rides the SAME sync model
+//                 rather than a competing store, so it syncs via iCloud / QR
+//                 for free (P350/P360).
 //
 //  `ProfileStore` persists this shape (a backward-compatible SUPERSET of the
 //  WP-16…WP-18 flat `{ rules: [InterestRule] }` file — old profiles migrate on
@@ -194,23 +200,30 @@ struct ProfileSyncState: Codable, Equatable, Sendable {
     var rules: [SyncedRule]
     var episodic: [EpisodicNote]
     var counters: [Counter]
+    /// WP-30 — structured personal-memory facts (LWW + tombstone). Backward-
+    /// compatible: an older state (or QR payload) with no `facts` key decodes to
+    /// an empty array, so every existing merge/round-trip is byte-for-byte
+    /// unchanged when no memory is present.
+    var facts: [MemoryFact]
 
-    init(rules: [SyncedRule] = [], episodic: [EpisodicNote] = [], counters: [Counter] = []) {
+    init(rules: [SyncedRule] = [], episodic: [EpisodicNote] = [], counters: [Counter] = [], facts: [MemoryFact] = []) {
         self.rules = rules
         self.episodic = episodic
         self.counters = counters
+        self.facts = facts
     }
 
-    private enum CodingKeys: String, CodingKey { case rules, episodic, counters }
+    private enum CodingKeys: String, CodingKey { case rules, episodic, counters, facts }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         rules = try c.decodeIfPresent([SyncedRule].self, forKey: .rules) ?? []
         episodic = try c.decodeIfPresent([EpisodicNote].self, forKey: .episodic) ?? []
         counters = try c.decodeIfPresent([Counter].self, forKey: .counters) ?? []
+        facts = try c.decodeIfPresent([MemoryFact].self, forKey: .facts) ?? []
     }
 
-    var isEmpty: Bool { rules.isEmpty && episodic.isEmpty && counters.isEmpty }
+    var isEmpty: Bool { rules.isEmpty && episodic.isEmpty && counters.isEmpty && facts.isEmpty }
 
     /// The live "Hva jeg følger" projection the rest of the app reads: tombstones
     /// dropped, rules sorted EXACTLY the way `InterestProfile.applying` sorts
@@ -230,7 +243,8 @@ struct ProfileSyncState: Codable, Equatable, Sendable {
         ProfileSyncState(
             rules: rules.sorted { $0.entityId < $1.entityId },
             episodic: episodic.sorted { $0.id < $1.id },
-            counters: counters.sorted { $0.key < $1.key }
+            counters: counters.sorted { $0.key < $1.key },
+            facts: facts.sorted { $0.id < $1.id }
         )
     }
 
@@ -244,10 +258,13 @@ struct ProfileSyncState: Codable, Equatable, Sendable {
         for n in episodic { noteByID[n.id] = noteByID[n.id].map { EpisodicNote.reconcile($0, n) } ?? n }
         var counterByKey: [String: Counter] = [:]
         for c in counters { counterByKey[c.key] = counterByKey[c.key].map { Counter.merge($0, c) } ?? c }
+        var factByID: [String: MemoryFact] = [:]
+        for f in facts { factByID[f.id] = factByID[f.id].map { ProfileMerge.pickNewerFact($0, f) } ?? f }
         return ProfileSyncState(
             rules: Array(ruleByID.values),
             episodic: Array(noteByID.values),
-            counters: Array(counterByKey.values)
+            counters: Array(counterByKey.values),
+            facts: Array(factByID.values)
         ).normalized()
     }
 
@@ -284,7 +301,49 @@ struct ProfileSyncState: Codable, Equatable, Sendable {
             }
         }
 
-        return ProfileSyncState(rules: next, episodic: episodic, counters: counters).normalized()
+        return ProfileSyncState(rules: next, episodic: episodic, counters: counters, facts: facts).normalized()
+    }
+
+    // MARK: - Facts (the WP-30 write-time half — LWW + tombstone, like rules)
+
+    /// Produce a new state whose LIVE facts equal `facts`, stamping ONLY what
+    /// changed against `self` with `(now, deviceID)` and TOMBSTONING facts that
+    /// were removed. Unchanged facts keep their existing stamp verbatim (a no-op
+    /// save causes no merge churn). Rules/episodic/counters pass through untouched.
+    func updatingFacts(to liveFacts: [MemoryFact], now: Date, deviceID: String) -> ProfileSyncState {
+        var existing: [String: MemoryFact] = [:]
+        for f in facts { existing[f.id] = f }
+
+        var next: [MemoryFact] = []
+        var desiredIDs = Set<String>()
+
+        for var fact in liveFacts {
+            desiredIDs.insert(fact.id)
+            let prior = existing[fact.id]
+            // Compare on payload only (ignore the sync metadata) to decide if it changed.
+            if let prior, !prior.deleted, prior.payloadKey == fact.payloadKey {
+                next.append(prior)                                  // unchanged → keep stamp
+            } else {
+                fact.updatedAt = now
+                fact.deviceID = deviceID
+                fact.deleted = false
+                next.append(fact)
+            }
+        }
+
+        for (id, prior) in existing where !desiredIDs.contains(id) {
+            if prior.deleted {
+                next.append(prior)
+            } else {
+                var tomb = prior
+                tomb.deleted = true
+                tomb.updatedAt = now
+                tomb.deviceID = deviceID
+                next.append(tomb)
+            }
+        }
+
+        return ProfileSyncState(rules: rules, episodic: episodic, counters: counters, facts: next).normalized()
     }
 }
 
@@ -296,14 +355,16 @@ struct PushSet: Equatable, Sendable {
     var rules: [SyncedRule]
     var episodic: [EpisodicNote]
     var counters: [Counter]
+    var facts: [MemoryFact]
 
-    init(rules: [SyncedRule] = [], episodic: [EpisodicNote] = [], counters: [Counter] = []) {
+    init(rules: [SyncedRule] = [], episodic: [EpisodicNote] = [], counters: [Counter] = [], facts: [MemoryFact] = []) {
         self.rules = rules
         self.episodic = episodic
         self.counters = counters
+        self.facts = facts
     }
 
-    var isEmpty: Bool { rules.isEmpty && episodic.isEmpty && counters.isEmpty }
+    var isEmpty: Bool { rules.isEmpty && episodic.isEmpty && counters.isEmpty && facts.isEmpty }
 }
 
 /// The result of merging a local state with a remote one: the converged state

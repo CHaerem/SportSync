@@ -102,13 +102,54 @@ enum ProfileMerge {
             if r != winner { pushCounters.append(winner) }
         }
 
-        let merged = ProfileSyncState(rules: mergedRules, episodic: mergedNotes, counters: mergedCounters).normalized()
+        // --- facts: LWW + tombstone (WP-30, same strategy as rules) ---------
+        var localFact: [String: MemoryFact] = [:]
+        for f in local.facts { localFact[f.id] = f }
+        var remoteFact: [String: MemoryFact] = [:]
+        for f in remote.facts { remoteFact[f.id] = f }
+
+        var mergedFacts: [MemoryFact] = []
+        var pushFacts: [MemoryFact] = []
+        for id in Set(localFact.keys).union(remoteFact.keys) {
+            let l = localFact[id]
+            let r = remoteFact[id]
+            let winner = pickFact(l, r)!        // union guarantees at least one side
+            mergedFacts.append(winner)
+            if r != winner { pushFacts.append(winner) }
+        }
+
+        let merged = ProfileSyncState(rules: mergedRules, episodic: mergedNotes, counters: mergedCounters, facts: mergedFacts).normalized()
         let push = PushSet(
             rules: pushRules.sorted { $0.entityId < $1.entityId },
             episodic: pushNotes.sorted { $0.id < $1.id },
-            counters: pushCounters.sorted { $0.key < $1.key }
+            counters: pushCounters.sorted { $0.key < $1.key },
+            facts: pushFacts.sorted { $0.id < $1.id }
         )
         return MergeOutcome(merged: merged, toPush: push)
+    }
+
+    // MARK: - Facts (WP-30)
+
+    /// The per-fact winner given (at most) one record from each side. `nil` only
+    /// when BOTH are nil.
+    static func pickFact(_ a: MemoryFact?, _ b: MemoryFact?) -> MemoryFact? {
+        switch (a, b) {
+        case let (x?, y?): return pickNewerFact(x, y)
+        case let (x?, nil): return x
+        case let (nil, y?): return y
+        case (nil, nil): return nil
+        }
+    }
+
+    /// Resolve two records for the SAME fact id. Symmetric + deterministic,
+    /// mirroring `pickNewer` for rules: newer `updatedAt` wins; on a clock-skew
+    /// tie a tombstone wins (don't revive on a coin-flip); then higher
+    /// `deviceID`; then the greater payload key.
+    static func pickNewerFact(_ a: MemoryFact, _ b: MemoryFact) -> MemoryFact {
+        if a.updatedAt != b.updatedAt { return a.updatedAt > b.updatedAt ? a : b }
+        if a.deleted != b.deleted { return a.deleted ? a : b }
+        if a.deviceID != b.deviceID { return a.deviceID > b.deviceID ? a : b }
+        return a.payloadKey >= b.payloadKey ? a : b
     }
 
     /// The per-rule winner given (at most) one record from each side. `nil` only
