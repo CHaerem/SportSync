@@ -26,6 +26,15 @@
 	align-items: baseline;
 	gap: 14px;
 }
+.wordmark-enso {
+	width: 20px;
+	height: 20px;
+	align-self: center;
+	flex: none;
+	background-color: var(--accent);
+	-webkit-mask: url(../icons/enso-mark.svg) center / contain no-repeat;
+	mask: url(../icons/enso-mark.svg) center / contain no-repeat;
+}
 .wordmark {
 	font-weight: 700;
 	font-size: 18px;
