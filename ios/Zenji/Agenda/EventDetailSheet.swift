@@ -87,6 +87,7 @@ struct EventDetailSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Lukk") { dismiss() }
                         .foregroundStyle(ZenjiTokens.accent)
+                        .zenjiTapTarget()
                 }
             }
         }
@@ -122,6 +123,11 @@ struct EventDetailSheet: View {
                         Text("Hvorfor vises denne?")
                             .font(.zenjiMono(size: 13))
                             .foregroundStyle(ZenjiTokens.foreground)
+                            // WP-14.3: the disclosure header is the tap
+                            // target for the whole row — guarantee ≥44pt
+                            // even though the label text itself is small.
+                            .frame(minHeight: 44, alignment: .leading)
+                            .contentShape(Rectangle())
                     }
                     .tint(ZenjiTokens.muted)
                     .listRowBackground(ZenjiTokens.surface)
@@ -139,6 +145,10 @@ struct EventDetailSheet: View {
                                 .foregroundStyle(ZenjiTokens.accent)
                             Spacer()
                         }
+                        // WP-14.3: this IS an action (Følg …) — a comfortable
+                        // real row height, not a glyph-small tap.
+                        .frame(minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
                     .listRowBackground(ZenjiTokens.surface)
                 }

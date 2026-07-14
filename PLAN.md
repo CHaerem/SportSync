@@ -47,6 +47,7 @@ mennesket, aldri av en agent.
 | WP-15 | NotificationPlanner | 0B | WP-13 | ✅ merget (#244) — 69/69 tester |
 | WP-14.1 | Designspråk-realisering iOS (DESIGN.md) | 0B | WP-14 | 🔜 PR åpnet (#254) |
 | WP-14.2 | Manuell tema-overstyring + finpuss (DESIGN.md) | 0B | WP-14.1 | 🔜 PR åpnet (#255) |
+| WP-14.3 | Tapp-mål ≥44×44 pt + ensō-merke i app-headeren (DESIGN.md) | 0B | WP-14.2 | 🔜 PR åpnet |
 | WEB-1 | Web etter DESIGN.md (flatt radspråk) | 0B | WP-14.1 | 🔜 PR åpnet |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | ✅ merget (#246, +16.1 #247 linse/ærlighet, +16.2 #248 fuzzy-resolver) — 152/152 iOS-tester (mot mock; FM kjøres ikke i CI) + DeviceDev bygget/signert/installert på fysisk iPhone (launch krever engangs manuell utvikler-trust på enheten) |
 | WP-16.4 | Sømløs assistent (kommandolinje + Q&A over feeden) | 0B | WP-16, WP-14 | ✅ merget (#257) — 257/257 |

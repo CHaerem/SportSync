@@ -40,6 +40,8 @@ struct CommandLineView: View {
                     .foregroundStyle(ZenjiTokens.muted)
             }
             .accessibilityLabel("Åpne assistenten")
+            // WP-14.3: same glyph, ≥44×44pt hit area.
+            .zenjiTapTarget()
 
             TextField("Skriv eller spør …", text: $viewModel.utterance, axis: .vertical)
                 .font(.zenjiMono(size: 15))
@@ -74,6 +76,7 @@ struct CommandLineView: View {
                 Button("Avbryt") { viewModel.cancel() }
                     .font(.zenjiMono(size: 12))
                     .foregroundStyle(ZenjiTokens.muted)
+                    .zenjiTapTarget()
             }
         } else if !trimmed.isEmpty {
             Button(action: submit) {
@@ -82,6 +85,7 @@ struct CommandLineView: View {
                     .foregroundStyle(ZenjiTokens.accent)
             }
             .accessibilityLabel("Send")
+            .zenjiTapTarget()
         } else {
             // Idle: the blinking prompt cursor IS the whole affordance.
             BlinkingCursor()

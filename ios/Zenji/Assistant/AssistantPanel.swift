@@ -65,6 +65,7 @@ struct AssistantPanel: View {
             Button("Lukk") { dismiss() }
                 .font(.zenjiMono(size: 14))
                 .foregroundStyle(ZenjiTokens.muted)
+                .zenjiTapTarget()
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
@@ -150,9 +151,11 @@ struct AssistantPanel: View {
                 sectionTitle("FORESLÅTTE ENDRINGER")
                 Spacer()
                 if viewModel.pending.count > 1 {
+                    // WP-14.3: an action, not chrome — real button comfort.
                     Button("Bekreft alle") { viewModel.confirmAll(); dismissIfDone() }
                         .font(.zenjiMono(size: 12, weight: .bold))
                         .foregroundStyle(ZenjiTokens.diffAdd)
+                        .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
                 }
             }
             ForEach(viewModel.pending) { mutation in proposalRow(mutation) }
@@ -176,13 +179,18 @@ struct AssistantPanel: View {
             Text(mutation.reason)
                 .font(.zenjiMono(size: 12))
                 .foregroundStyle(ZenjiTokens.foreground.opacity(0.75))
+            // WP-14.3: Bekreft/Avvis ARE the action, never glyph-small — a
+            // real, comfortable button (min 44pt tall, roomy padding, a
+            // hairline box in the action's own colour, never a filled pill).
             HStack(spacing: 10) {
                 Button("Bekreft") { viewModel.confirm(mutation); dismissIfDone() }
                     .font(.zenjiMono(size: 13, weight: .bold))
                     .foregroundStyle(ZenjiTokens.diffAdd)
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
                 Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
                     .font(.zenjiMono(size: 13))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
             }
         }
         .padding(12)
@@ -215,20 +223,25 @@ struct AssistantPanel: View {
                             .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(rejection.suggestions, id: \.id) { suggestion in
+                                // WP-14.3: a «mente du»-forslag IS the action
+                                // (it re-grounds the whole utterance and re-
+                                // proposes a diff) — comfortable button, not
+                                // a glyph-small link.
                                 Button {
                                     viewModel.choose(suggestion, for: rejection)
                                 } label: {
                                     Text("› \(suggestion.name)")
                                         .font(.zenjiMono(size: 13, weight: .bold))
                                         .foregroundStyle(ZenjiTokens.accent)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
+                                .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
                             }
                         }
                     }
                     Button("OK") { viewModel.dismissRejection(rejection); dismissIfDone() }
                         .font(.zenjiMono(size: 12))
                         .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .zenjiTapTarget()
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -289,6 +302,7 @@ struct AssistantPanel: View {
                 Button("Fjern") { viewModel.removeRule(rule) }
                     .font(.zenjiMono(size: 12))
                     .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.8))
+                    .zenjiTapTarget()
             }
             Text(ruleSubtitle(rule))
                 .font(.zenjiMono(size: 12))
@@ -323,11 +337,13 @@ struct AssistantPanel: View {
                             .foregroundStyle(ZenjiTokens.accent)
                     }
                     .disabled(viewModel.misunderstoodEntries.isEmpty)
+                    .zenjiTapTarget()
                     Spacer()
                     if !viewModel.misunderstoodEntries.isEmpty {
                         Button("Slett alt") { viewModel.deleteAllMisunderstood() }
                             .font(.zenjiMono(size: 11))
                             .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.75))
+                            .zenjiTapTarget()
                     }
                 }
                 if viewModel.misunderstoodEntries.isEmpty {
@@ -446,12 +462,14 @@ struct MisunderstoodEntryRow: View {
                     }
                     .font(.zenjiMono(size: 11, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
+                    .zenjiTapTarget()
                     Button("Avbryt") {
                         noteDraft = entry.note ?? ""
                         isEditingNote = false
                     }
                     .font(.zenjiMono(size: 11))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .zenjiTapTarget()
                 }
             } else if let note = entry.note, !note.isEmpty {
                 Text("Notat: \(note)")
@@ -466,10 +484,12 @@ struct MisunderstoodEntryRow: View {
                     }
                     .font(.zenjiMono(size: 11))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                    .zenjiTapTarget()
                 }
                 Button("Slett") { onDelete() }
                     .font(.zenjiMono(size: 11))
                     .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.7))
+                    .zenjiTapTarget()
             }
         }
         .padding(10)
