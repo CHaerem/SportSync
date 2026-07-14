@@ -30,38 +30,56 @@ enum MutationGrounder {
 
         for proposal in proposals {
             // THE gate: the claimed entityId must exist in the index, verbatim.
-            guard let entity = index.entity(id: proposal.entityId) else {
-                rejected.append(reject(proposal, index: index))
+            if let entity = index.entity(id: proposal.entityId) {
+                grounded.append(build(proposal, on: entity, index: index, profile: profile))
                 continue
             }
-
-            let previous = profile.rule(for: entity.id)
-            let weight = proposal.weight
-                ?? previous?.weight
-                ?? InterestProfile.defaultWeight
-            // An update with no new scope keeps the existing one; an add uses
-            // whatever it was given (possibly nil = no scope).
-            let scope: String?
-            switch proposal.kind {
-            case .update:
-                scope = proposal.scope ?? previous?.scope
-            case .add, .remove:
-                scope = proposal.scope
+            // WP-16.2: the id didn't resolve exactly — hand the query to the
+            // fuzzy resolver. An UNAMBIGUOUS, confident top hit ("tour de
+            // france", "tdf", the typo "Tour de Farnce") is SERVED directly:
+            // the correction happens deterministically in the lookup, never by
+            // turning the model's free text loose. Anything ambiguous or
+            // genuinely absent is rejected — now with the resolver's ranked
+            // candidates as the (tappable) "mente du …?" suggestions.
+            let resolution = index.resolve(resolutionQuery(for: proposal))
+            if let served = resolution.served {
+                grounded.append(build(proposal, on: served, index: index, profile: profile))
+            } else {
+                rejected.append(reject(proposal, resolution: resolution))
             }
-            let lens = groundedLens(for: proposal, previous: previous, index: index)
-
-            grounded.append(GroundedMutation(
-                kind: proposal.kind,
-                entity: entity,
-                scope: scope,
-                weight: weight,
-                reason: proposal.reason,
-                previousRule: previous,
-                lens: lens
-            ))
         }
 
         return GroundingResult(grounded: grounded, rejected: rejected)
+    }
+
+    /// Assemble a grounded mutation from a proposal + the entity it resolved to
+    /// (exactly or via the fuzzy resolver). Scope/weight/lens carry over from
+    /// the existing rule for an unspecified `.update`, exactly as before.
+    private static func build(_ proposal: ProposedMutation, on entity: Entity, index: EntityIndex, profile: InterestProfile) -> GroundedMutation {
+        let previous = profile.rule(for: entity.id)
+        let weight = proposal.weight
+            ?? previous?.weight
+            ?? InterestProfile.defaultWeight
+        // An update with no new scope keeps the existing one; an add uses
+        // whatever it was given (possibly nil = no scope).
+        let scope: String?
+        switch proposal.kind {
+        case .update:
+            scope = proposal.scope ?? previous?.scope
+        case .add, .remove:
+            scope = proposal.scope
+        }
+        let lens = groundedLens(for: proposal, previous: previous, index: index)
+
+        return GroundedMutation(
+            kind: proposal.kind,
+            entity: entity,
+            scope: scope,
+            weight: weight,
+            reason: proposal.reason,
+            previousRule: previous,
+            lens: lens
+        )
     }
 
     // MARK: - Lens grounding
@@ -99,15 +117,21 @@ enum MutationGrounder {
 
     // MARK: - Rejection
 
-    private static func reject(_ proposal: ProposedMutation, index: EntityIndex) -> RejectedMutation {
-        let query = proposal.entityQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ? proposal.entityId
-            : proposal.entityQuery
-        let suggestions = index.nearestMatches(to: query)
+    /// The phrase a failed proposal is resolved/explained against: the user's
+    /// verbatim words when present, else the (bogus) id it carried.
+    private static func resolutionQuery(for proposal: ProposedMutation) -> String {
+        let phrase = proposal.entityQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        return phrase.isEmpty ? proposal.entityId : phrase
+    }
+
+    private static func reject(_ proposal: ProposedMutation, resolution: EntityIndex.Resolution) -> RejectedMutation {
+        let query = resolutionQuery(for: proposal)
+        let suggestions = resolution.candidates.map(\.entity)
         return RejectedMutation(
             query: query,
             explanation: rejectionText(query: query, suggestions: suggestions),
-            suggestions: suggestions
+            suggestions: suggestions,
+            proposal: proposal
         )
     }
 

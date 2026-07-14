@@ -246,7 +246,21 @@ struct AssistantView: View {
                         .font(.zenjiMono(size: 13))
                         .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
                     if !rejection.suggestions.isEmpty {
-                        FlowRow(rejection.suggestions.map(\.name))
+                        Text("Trykk for å foreslå endringen:")
+                            .font(.zenjiMono(size: 11))
+                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(rejection.suggestions, id: \.id) { suggestion in
+                                Button {
+                                    viewModel.choose(suggestion, for: rejection)
+                                } label: {
+                                    Text("› \(suggestion.name)")
+                                        .font(.zenjiMono(size: 13, weight: .bold))
+                                        .foregroundStyle(ZenjiTokens.accent)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
                     }
                     Button("OK") { viewModel.dismissRejection(rejection) }
                         .font(.zenjiMono(size: 12))
@@ -354,22 +368,6 @@ struct AssistantView: View {
 
     private func weightLabel(_ weight: Double) -> String {
         String(format: "%.1f", weight)
-    }
-}
-
-/// A tiny wrapping row of quiet suggestion chips (the "mente du …?" names).
-private struct FlowRow: View {
-    let items: [String]
-    init(_ items: [String]) { self.items = items }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            ForEach(items, id: \.self) { item in
-                Text("· \(item)")
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.accent.opacity(0.85))
-            }
-        }
     }
 }
 

@@ -177,6 +177,7 @@ diff-visning, bekreft/avvis. Krever fysisk enhet med Apple Intelligence (norsk: 
 gir riktige strukturerte mutasjoner; ingen fritekst-entiteter (kun oppslag mot
 entities.json fra WP-05).
 **WP-16.1 (etter første brukertest):** la til LINSE i mutasjons-skjemaet («med fokus på norske utøvere» → `.throughNorwegians`, grounet som en entitet) + regelen om at assistenten ALLTID forklarer seg (aldri «fant ingen endringer») — 166/166 iOS-tester, DeviceDev re-installert på iPhone.
+**WP-16.2 (etter andre brukertest):** fuzzy entitets-oppslag i den DETERMINISTISKE resolveren (års-strippet + initial-alias i `entities.json`; case/diakritika/prefiks/innehold/initialer/skrivefeil ≤2) — «tour de france», «tdf» og «Tour de Farnce» serveres nå rett til `tour-de-france-2026` uten avvisning, og «mente du»-forslag er blitt trykkbare (re-grounder opprinnelig intensjon → diff → Bekreft; aldri en død knapp). Initial-aliaser holdes utenfor server-matching. 179/179 iOS-tester (+13), 373/373 JS-tester (+4), DeviceDev re-installert på iPhone.
 
 ### WP-17 · 💰 TestFlight (BESLUTNING: 99 USD/år)
 Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.

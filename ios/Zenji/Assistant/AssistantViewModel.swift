@@ -130,6 +130,23 @@ final class AssistantViewModel {
         rejected.removeAll { $0.id == rejection.id }
     }
 
+    /// WP-16.2: the user tapped a "mente du …?" suggestion. Re-ground the
+    /// ORIGINAL proposal with the chosen entity id substituted in — so the
+    /// intent (add/remove, scope, weight, the «med fokus på norske» lens)
+    /// survives — and move the resolved mutation into the reviewable DIFF
+    /// (`pending`), exactly like any other proposal. The user still confirms it
+    /// with Bekreft; nothing is applied by the tap alone. Never a dead button.
+    func choose(_ suggestion: Entity, for rejection: RejectedMutation) {
+        var proposal = rejection.proposal
+        proposal.entityId = suggestion.id
+        let result = MutationGrounder.ground([proposal], index: index, profile: profile)
+        pending.append(contentsOf: result.grounded)
+        rejected.removeAll { $0.id == rejection.id }
+        // The explanation ("INGEN ENDRING") no longer applies once there's a
+        // confirmable change on screen.
+        if !pending.isEmpty { explanation = nil }
+    }
+
     /// Directly unfollow an existing rule from the "Hva jeg følger" list.
     func removeRule(_ rule: InterestRule) {
         if let entity = index.entity(id: rule.entityId) {

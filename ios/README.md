@@ -839,6 +839,46 @@ string is gone. `MockInterestAssistant.Behavior.producesNothing` simulates the
 usable-model-but-empty-output case so this path is testable without Apple
 Intelligence.
 
+### Fuzzy entity resolver + working «mente du» (WP-16.2)
+
+The second on-device user test typed *"Følg Tour de France med fokus på norske
+utøvere"* and got «Fant ikke 'tour de france' i indeksen — mente du: Tour de
+France 2026?» — and tapping the suggestion did **nothing**. Two fixes, both true
+to P310's design rule (*the model interprets intent; a DETERMINISTIC lookup
+decides identity* — so the fuzzy intelligence goes into the lookup + index, never
+into turning the model's free text loose):
+
+- **A ranked fuzzy resolver** (`EntityIndex.resolve`) now backs BOTH the model's
+  `searchEntities` tool and `MutationGrounder`'s failed-grounding path. It is
+  diacritic/case-folded (reusing `TextMatch`), **year-suffix-agnostic** ("tour de
+  france" ≡ "Tour de France 2026"), alias- and **initials-aware** ("tdf" →
+  TdF), prefix/substring, and **typo-tolerant** (edit-distance ≤ 2 across a
+  same-shape multi-word phrase, so "Tour de Farnce" still resolves). It returns
+  ranked candidates with a score; a single, confident, UNAMBIGUOUS top hit is
+  **served straight to the grounder** — so "tour de france", "tdf" and the typo
+  never reach the rejection path again. A merely partial match (a bare
+  single-word truncation like "Hovlan") stays a *suggestion*, never auto-served,
+  which keeps the hard grounding rule honest. Anything genuinely absent
+  ("cricket") or ambiguous is still rejected — now with the resolver's ranked
+  candidates as the "mente du …?" list.
+- **The «mente du» suggestions are now tappable.** Tapping one re-grounds the
+  ORIGINAL proposal with the chosen entity id substituted in — so the intent
+  (add/remove, scope, weight, the «med fokus på norske» lens) survives — and the
+  resolved mutation lands in the reviewable DIFF for a normal Bekreft. Never a
+  dead button.
+
+The fuzzy data lives in `docs/data/entities.json` (built by
+`scripts/build-entities.js`): a **year-strip alias** ("Tour de France 2026" →
+alias "Tour de France", written to `aliases`, skipped for backdrop `league`
+entities whose year-stripped form doubles as a scope phrase) and a
+collision-checked **initial-alias** ("Tour de France" → `initials: ["TdF"]`).
+The initials live in their OWN `initials` field, deliberately **out of**
+`aliases`, so a 3-letter acronym can never leak into server-side / feed
+`containsName` word-boundary matching (`helpers.entityTerms` reads only
+name+aliases) — the acronym is purely resolver data. Two entities that would
+share an acronym (FIFA World Cup vs Formula 1 World Championship → both "FWC")
+have it dropped from both, so the resolver never mis-serves an ambiguous one.
+
 ### Pieces (all pure + unit-tested except the two UI/FM shells)
 
 | File | What |
@@ -864,10 +904,14 @@ later work (PLAN.md WP-22).
 cover the ten canonical utterances → correct mutations, entity lookup +
 free-text rejection with nearest match, the diff application, persistence
 round-trip, and the end-to-end view-model flow. `xcodebuild test` on the
-Simulator passes **166 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
+Simulator passes **179 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
 WP-16.1: lens detection/grounding/persistence + the always-explain contract,
 incl. the exact first-user-test utterance *"Følg Tour de France med fokus på
-norske utøvere"* → `add(tour-de-france-2026, lens: .throughNorwegians)`).
+norske utøvere"* → `add(tour-de-france-2026, lens: .throughNorwegians)` + 13
+WP-16.2 `FuzzyResolverTests`: "tour de france" / "tdf" / the typo "Tour de
+Farnce" all served to `tour-de-france-2026` without rejection, ambiguity →
+tappable candidates, and the now-working «mente du» tap → a confirmable
+mutation).
 
 ### Device build (free personal account)
 
@@ -920,6 +964,19 @@ always-explain build now carries `app.zenji.ios` on the device. The on-device
 Apple Intelligence check of *"Følg Tour de France med fokus på norske utøvere"*
 (the utterance that first failed) is the manual step to confirm by hand after
 the one-time trust.
+
+**Update (WP-16.2):** the `ZenjiDeviceDev` scheme was rebuilt for the iPhone 16
+Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
+DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
+chris.haerem@gmail.com*) and re-installed with `xcrun devicectl device install
+app --device 00008140-001939D02EBB001C` (**exit 0**) — the new fuzzy-resolver +
+working-«mente du» build (fresh binary, timestamp confirmed) now carries
+`app.zenji.ios` on the device. The on-device Apple Intelligence check — that
+"tour de france", "tdf" and a typo now resolve straight to Tour de France, and
+that tapping a "mente du" suggestion applies the change — is the manual step to
+confirm by hand once the device is unlocked (a locked device rejects
+`devicectl … process launch` with `FBSOpenApplicationErrorDomain error 7`, as
+expected; nothing to fix).
 
 ## Architecture (what plugs in next)
 

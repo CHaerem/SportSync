@@ -7,6 +7,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { buildEntityIndex, writeEntities } from "../scripts/build-entities.js";
+import { entityTerms } from "../scripts/lib/helpers.js";
 
 function tmpDir(prefix) {
 	return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -128,6 +129,82 @@ describe("buildEntityIndex", () => {
 		const entities = buildEntityIndex(tmpDir("ss-entities-slug-"), fakeSportsConfig);
 		const entity = entities.find((e) => e.name === "Søren Wærenskjold");
 		expect(entity.id).toBe("soren-waerenskjold");
+	});
+
+	// WP-16.2: app-resolver aliases (year-strip + initial acronym).
+	it("generates a year-strip alias for a year-suffixed name (\"Tour de France 2026\" → \"Tour de France\")", () => {
+		const configDir = tmpDir("ss-entities-yearstrip-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({
+				tournaments: [
+					{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" },
+					{ id: "the-open-2026", name: "The Open Championship 2026 (Royal Birkdale)", sport: "golf" },
+					{ id: "la-liga-2026-27", name: "La Liga 2026/27", sport: "football" },
+				],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		expect(entities.find((e) => e.id === "tour-de-france-2026").aliases).toContain("Tour de France");
+		// Trailing parenthetical + year both stripped.
+		expect(entities.find((e) => e.id === "the-open-2026").aliases).toContain("The Open Championship");
+		// Season token "2026/27" stripped too.
+		expect(entities.find((e) => e.id === "la-liga-2026-27").aliases).toContain("La Liga");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("generates an initial-alias for a 3+-word name (\"Tour de France\" → \"TdF\"), in a separate `initials` field", () => {
+		const configDir = tmpDir("ss-entities-initials-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({
+				tournaments: [
+					{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" },
+					{ id: "the-open-2026", name: "The Open 2026", sport: "golf" }, // 2 words after strip → none
+				],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const tdf = entities.find((e) => e.id === "tour-de-france-2026");
+		expect(tdf.initials).toEqual(["TdF"]);
+		// A 2-word name gets no acronym (would be too collision-prone).
+		expect(entities.find((e) => e.id === "the-open-2026").initials).toBeUndefined();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("drops the initial-alias from BOTH entities when two share the same acronym (collision)", () => {
+		const configDir = tmpDir("ss-entities-collision-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({
+				tournaments: [
+					{ id: "alpha-beta-gamma", name: "Alpha Beta Gamma", sport: "golf" },
+					{ id: "apple-banana-grape", name: "Apple Banana Grape", sport: "tennis" },
+				],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		// Both would be "ABG" → ambiguous → neither carries a stored acronym.
+		expect(entities.find((e) => e.id === "alpha-beta-gamma").initials).toBeUndefined();
+		expect(entities.find((e) => e.id === "apple-banana-grape").initials).toBeUndefined();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("keeps the initial-alias OUT of server-side matching terms (initials never reach containsName/entityTerms)", () => {
+		const configDir = tmpDir("ss-entities-server-safe-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ tournaments: [{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" }] })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const tdf = entities.find((e) => e.id === "tour-de-france-2026");
+		// The acronym exists as resolver data …
+		expect(tdf.initials).toEqual(["TdF"]);
+		// … but is NOT in `aliases`, and NOT in the terms server matching reads.
+		expect(tdf.aliases).not.toContain("TdF");
+		expect(entityTerms(tdf)).not.toContain("TdF");
+		expect(entityTerms(tdf)).toEqual([tdf.name, ...tdf.aliases]);
+		fs.rmSync(configDir, { recursive: true, force: true });
 	});
 
 	it("is deterministic across two runs on the same input", () => {
