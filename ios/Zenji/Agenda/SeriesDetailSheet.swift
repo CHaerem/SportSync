@@ -58,6 +58,7 @@ struct SeriesDetailSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Lukk") { dismiss() }
                         .foregroundStyle(ZenjiTokens.accent)
+                        .zenjiTapTarget()
                 }
             }
         }

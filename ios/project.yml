@@ -130,6 +130,10 @@ targets:
       # unit-tested directly — no `@testable import`, same pattern as
       # DesignTokens.swift above).
       - path: Zenji/ThemeOverride.swift
+      # WP-14.3: `.zenjiTapTarget()` / `ZenjiActionButtonStyle` — the shared
+      # tap-target helpers Agenda/Assistant's views call; same "no @testable
+      # import" pattern as DesignTokens.swift/ThemeOverride.swift above.
+      - path: Zenji/Interaction.swift
       - path: Zenji/Agenda
       - path: Zenji/Widget
       # WP-16: the FM-lekegrind's sources — the pure pipeline (grounding, diff,

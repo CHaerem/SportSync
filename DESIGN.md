@@ -71,6 +71,10 @@ aldri tittelen.)
 
 ## Header
 
+Mosaikk-ensō som stille merke foran `ZENJI`-wordmarken, på alle flater (web:
+`.wordmark-enso` i mastheaden; iOS: `EnsoMark` i Assets.xcassets, template-
+rendret mot amber-token) — dekorativt, ikke interaktivt.
+
 `ZENJI` (amber, tung mono) · dato («TIRSDAG 14. JULI», dempet) · levende klokke
 `HH:MM:SS` (amber, tikker). Assistent-glyf: mono `»_` (IKKE pratebobler/emoji),
 dempet, høyre — en FOKUS-SNARVEI til kommandolinjen nederst (ikke en egen skjerm;
@@ -83,6 +87,19 @@ tapp, kvantisert tilstand (`◐` auto / `●` mørk / `○` lys), persistert og
 appliseres på hele flaten (ingen egen innstillingsskjerm) — web har allerede
 sin theme-toggle (`docs/js/dashboard.js`); iOS speiler den (`ThemeOverride.swift`
 + `.preferredColorScheme` på appens rot i `ContentView`).
+
+## Interaksjon (BINDENDE — WP-14.3, Apple HIG)
+
+Tapp-mål ≥44×44 pt for ETHVERT interaktivt element, uansett hvor liten glyfen
+SER ut. Den lille, stille mono-glyfen er det VISUELLE språket og beholdes
+uendret — treffflaten utvides usynlig rundt den (padding/`contentShape`,
+aldri en større glyf/font). Gjelder header-glyfene, ⓘ og alle sigiler,
+verktøylinje-knapper, og enhver liten tekst-«lenke» (Fjern/Slett/OK/Avbryt).
+
+Handlingsknapper er ALDRI glyf-små: en handling som Bekreft/Avvis eller et
+«mente du»-forslag er komfortabel — min. 44 pt høy, romslig horisontal
+padding, en flat hårlinje-ramme i handlingens egen farge (diffAdd/diffRemove/
+amber/dempet). Aldri en fylt «pill button» (forbudslisten gjelder også her).
 
 ## Detaljark / assistent / widget
 

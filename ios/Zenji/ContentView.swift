@@ -183,17 +183,31 @@ struct ContentView: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 5) {
-                Text("ZENJI")
-                    .font(.zenjiMono(size: 28, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.accent)
-                    .tracking(2)
-                HStack(spacing: 8) {
-                    Text("P100")
-                        .foregroundStyle(ZenjiTokens.muted)
-                    Text(dateLabel)
-                        .foregroundStyle(ZenjiTokens.muted)
+                HStack(alignment: .center, spacing: 6) {
+                    // The mosaic ensō — a stille brand mark, mirrors the web
+                    // masthead's `.wordmark-enso` (docs/index.html): the SAME
+                    // template-rendered SVG, coloured via the accent token so
+                    // it follows dark/light automatically. Decorative only —
+                    // no tap target (DESIGN.md "Header").
+                    Image("EnsoMark")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(ZenjiTokens.accent)
+                        .accessibilityHidden(true)
+                    Text("ZENJI")
+                        .font(.zenjiMono(size: 28, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.accent)
+                        .tracking(2)
                 }
-                .font(.zenjiMono(size: 13))
+                // WP-14.3 (owner feedback): the "P100" Tekst-TV page-index
+                // glyph read as unexplained noise — dropped, no replacement.
+                // The DESIGN.md line update for this lives in a separate
+                // session's commit, not this package.
+                Text(dateLabel)
+                    .font(.zenjiMono(size: 13))
+                    .foregroundStyle(ZenjiTokens.muted)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 5) {
@@ -206,6 +220,9 @@ struct ContentView: View {
                             .foregroundStyle(ZenjiTokens.muted)
                     }
                     .accessibilityLabel(themeOverride.accessibilityLabel)
+                    // WP-14.3: the glyph itself stays DESIGN.md-small — only
+                    // the invisible hit area grows to the HIG's ≥44×44pt.
+                    .zenjiTapTarget()
                     // WP-16.4: the assistant glyph is now a FOCUS SHORTCUT to
                     // the command line (the primary entry), not a button that
                     // opens a separate screen.
@@ -217,6 +234,7 @@ struct ContentView: View {
                             .foregroundStyle(ZenjiTokens.muted)
                     }
                     .accessibilityLabel("Skriv til assistenten")
+                    .zenjiTapTarget()
                 }
                 Text(clockLabel)
                     .font(.zenjiMono(size: 13))
