@@ -261,6 +261,20 @@ delt, server-produsert). **Serveren samler ALDRI personlig kontekst.** Bindende:
   følger»). Mono, ingen emoji, tapp-mål ≥44 pt. Sier rett ut at minnet bor kun på
   enheten (og din egen iCloud), aldri på en server.
 
+### Nullstill uten å reinstallere (WP-32)
+
+En «NULLSTILL»-disclosure i samme stille oppslag som «Hva jeg følger»/«Hva jeg
+vet om deg» — ikke en ny fane — gir to rolige nivåer: **«Nullstill det du
+følger»** (profilen + onboarding-flagget, så onboarding starter på nytt) og
+**«Slett alt om meg»** (det over PLUSS alt personlig minne og «det jeg ikke
+forsto»-loggen — GDPR-knappen). Destruktiv handling → ett rolig
+bekreftelses-ark (DESIGN.md-tro, aldri en system-alert): eksakt setning om
+konsekvensen + Nullstill/Avbryt i `ZenjiActionButtonStyle`. Ærlig om omfang:
+gjelder KUN denne enheten (en synket enhet beholder sitt til neste sync, som
+da også ser slettingen — tombstones, ikke en taus forsvinning). Tema-
+overstyringen er en enhets-preferanse, ikke en del av profilen, og overlever
+enhver nullstilling uendret.
+
 ## Bevegelse & lyd
 
 Klokkens sekundtikk og kommandolinjens blinkende `▌`-markør er appens eneste

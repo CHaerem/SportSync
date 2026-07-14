@@ -26,12 +26,37 @@ struct AssistantPanel: View {
     /// WP-31 — re-run the first-run onboarding from "Hva jeg følger". Default
     /// no-op so previews / standalone use still compile.
     var onRerunOnboarding: () -> Void = {}
+    /// WP-32 — perform a confirmed reset (ContentView both calls
+    /// `AssistantViewModel.resetProfile(_:)` AND raises the onboarding overlay
+    /// afterwards, so it owns this closure). Default no-op so previews /
+    /// standalone use still compile.
+    var onReset: (ResetLevel) -> Void = { _ in }
+    /// WP-32 — whether cross-device sync is actually on (CloudKit, WP-17),
+    /// so the reset confirmation can honestly mention other devices only
+    /// when there ARE other devices to mention. Defaults to off (the free-
+    /// account build's `LocalOnlyProfileSync`).
+    var syncEnabled: Bool = false
 
     @State private var misunderstoodExpanded = false
     @State private var profileExpanded = false
     /// WP-30 — the "Hva jeg vet om deg" page (presented from the same foot as
     /// "Hva jeg følger").
     @State private var memoryPageShown = false
+    /// WP-32 — the "Nullstill" disclosure + which level (if any) is mid-
+    /// confirmation (nil = the two calm entry rows, non-nil = the confirm ark).
+    @State private var resetExpanded = false
+    @State private var confirmingReset: ResetLevel?
+
+    /// DEBUG screenshot harness only: force the "Nullstill" disclosure open
+    /// (and optionally jump straight to one level's confirmation ark) so each
+    /// state can be captured deterministically. Nil in the shipping flow —
+    /// same convention as `OnboardingView.initialStep`.
+    var initialResetState: ResetDemoState? = nil
+
+    struct ResetDemoState {
+        var expanded: Bool
+        var confirming: ResetLevel?
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +74,7 @@ struct AssistantPanel: View {
                     profileSection
                     rerunOnboardingRow
                     memoryEntry
+                    resetSection
                     misunderstoodSection
                     ProfileSharePanel(viewModel: viewModel)
                 }
@@ -60,6 +86,12 @@ struct AssistantPanel: View {
         .background(ZenjiTokens.surface)
         .foregroundStyle(ZenjiTokens.foreground)
         .task { viewModel.refreshAvailability() }
+        .onAppear {
+            if let initialResetState {
+                resetExpanded = initialResetState.expanded
+                confirmingReset = initialResetState.confirming
+            }
+        }
     }
 
     // MARK: - Header
@@ -373,6 +405,101 @@ struct AssistantPanel: View {
         }
         .sheet(isPresented: $memoryPageShown) {
             WhatIKnowView(viewModel: viewModel)
+        }
+    }
+
+    // MARK: - "Nullstill" (WP-32) — reset the profile, re-onboard, no reinstall
+
+    /// A quiet disclosure at the same foot as "Hva jeg følger"/"Hva jeg vet om
+    /// deg": two calm entry rows (never a "button jungle" — each opens the
+    /// SAME inline confirm-ark, one at a time) collapse to a single confirm
+    /// step per tap, exactly the "Glem alt" idiom `WhatIKnowView` already uses.
+    private var resetSection: some View {
+        DisclosureGroup(isExpanded: $resetExpanded) {
+            VStack(alignment: .leading, spacing: 14) {
+                if let level = confirmingReset {
+                    resetConfirmation(level)
+                } else {
+                    Text("Dette gjelder DENNE enheten — du trenger aldri installere Zenji på nytt for å nullstille.")
+                        .font(.zenjiMono(size: 12))
+                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .fixedSize(horizontal: false, vertical: true)
+                    resetRow(
+                        title: "Nullstill det du følger",
+                        detail: "Fjerner alt du følger og viser onboarding på nytt. Det jeg vet om deg beholdes.",
+                        action: { confirmingReset = .followedOnly }
+                    )
+                    resetRow(
+                        title: "Slett alt om meg",
+                        detail: "Det du følger OG alt jeg vet om deg, pluss loggen over det jeg ikke forsto.",
+                        action: { confirmingReset = .everything }
+                    )
+                }
+            }
+            .padding(.top, 10)
+        } label: {
+            Text("NULLSTILL")
+                .font(.zenjiMono(size: 12, weight: .bold))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .tracking(1.5)
+        }
+        .tint(ZenjiTokens.muted)
+    }
+
+    private func resetRow(title: String, detail: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.zenjiMono(size: 13, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.85))
+                Text(detail)
+                    .font(.zenjiMono(size: 11))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// The rolig confirm ark (DESIGN.md — never a system alert): the exact,
+    /// honest consequence in one sentence, then Nullstill/Avbryt at full
+    /// comfortable size (never glyph-small). Mentions other devices ONLY when
+    /// sync is actually on — an honest, not hypothetical, disclosure.
+    private func resetConfirmation(_ level: ResetLevel) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(resetConfirmationText(level))
+                .font(.zenjiMono(size: 12))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                Button("Nullstill") {
+                    onReset(level)
+                    confirmingReset = nil
+                }
+                .font(.zenjiMono(size: 13, weight: .bold))
+                .foregroundStyle(ZenjiTokens.diffRemove)
+                .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffRemove))
+                Button("Avbryt") { confirmingReset = nil }
+                    .font(.zenjiMono(size: 13))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.diffRemove.opacity(0.06))
+        .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+    }
+
+    private func resetConfirmationText(_ level: ResetLevel) -> String {
+        let otherDevicesNote = syncEnabled ? " Andre enheter beholder sitt til neste sync." : ""
+        switch level {
+        case .followedOnly:
+            return "Dette sletter det du følger på denne enheten og starter onboarding på nytt. Det jeg vet om deg beholdes. Kan ikke angres.\(otherDevicesNote)"
+        case .everything:
+            return "Dette sletter det du følger og alt Zenji vet om deg, fra denne enheten. Kan ikke angres.\(otherDevicesNote)"
         }
     }
 

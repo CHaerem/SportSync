@@ -166,4 +166,60 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertTrue(vm.profile.isEmpty)
         XCTAssertTrue(makeVM(store: store).profile.isEmpty, "removal persisted")
     }
+
+    // MARK: - WP-32 — resetProfile(_:)
+
+    func test_resetProfile_followedOnly_clearsProfile_keepsMemoryAndLog_firesOnProfileChanged() async {
+        let store = AssistantTestSupport.tempProfileStore()
+        let vm = makeVM(store: store)
+        vm.utterance = "Følg Magnus Carlsen"
+        await vm.submit()
+        vm.confirmAll()
+        XCTAssertEqual(vm.profile.rules.count, 1)
+        vm.refreshMemory()
+        // Seed a memory fact + a misunderstood entry directly through the same
+        // stores the view model was built with isn't exposed, so drive it via
+        // a real user turn that both saves memory-worthy behaviour (a reject)
+        // and logs a miss.
+        vm.utterance = "Følg quidditch"
+        await vm.submit()
+        XCTAssertFalse(vm.misunderstoodEntries.isEmpty, "a rejected free-text entity logged a misunderstood entry")
+
+        var recompiles = 0
+        vm.onProfileChanged = { recompiles += 1 }
+        vm.resetProfile(.followedOnly)
+
+        XCTAssertTrue(vm.profile.isEmpty, "the profile is cleared")
+        XCTAssertTrue(makeVM(store: store).profile.isEmpty, "…and persisted")
+        XCTAssertFalse(vm.misunderstoodEntries.isEmpty, "the misunderstood log is untouched at this level")
+        XCTAssertEqual(recompiles, 1, "onProfileChanged fires so the agenda recompiles on the spot")
+    }
+
+    func test_resetProfile_everything_clearsProfileMemoryAndLog() async {
+        let store = AssistantTestSupport.tempProfileStore()
+        let vm = makeVM(store: store)
+        vm.utterance = "Følg Magnus Carlsen"
+        await vm.submit()
+        vm.confirmAll()
+        vm.utterance = "Følg quidditch"
+        await vm.submit()
+        XCTAssertFalse(vm.misunderstoodEntries.isEmpty)
+
+        vm.resetProfile(.everything)
+
+        XCTAssertTrue(vm.profile.isEmpty)
+        XCTAssertTrue(vm.memory.isEmpty, "all personal memory is forgotten at the GDPR level")
+        XCTAssertTrue(vm.misunderstoodEntries.isEmpty, "the misunderstood log is emptied at the GDPR level")
+    }
+
+    func test_resetProfile_clearsPresentableResults() async {
+        let vm = makeVM()
+        vm.utterance = "Følg Casper Ruud bare i Grand Slams"
+        await vm.submit()
+        XCTAssertFalse(vm.pending.isEmpty)
+
+        vm.resetProfile(.followedOnly)
+        XCTAssertTrue(vm.pending.isEmpty, "a reset clears any in-flight proposal — nothing left to confirm against a wiped profile")
+        XCTAssertFalse(vm.hasPresentableResult)
+    }
 }

@@ -583,6 +583,25 @@ final class AssistantViewModel {
         misunderstoodLog.exportPayload()
     }
 
+    // MARK: - WP-32 — nullstill / re-onboard
+
+    /// Reset the local profile on THIS device (see `ResetService`):
+    /// `.followedOnly` clears the follow-profile + the onboarding-completed
+    /// flag; `.everything` (the GDPR level) ALSO forgets all personal memory
+    /// and the misunderstood-log. Re-reads every affected store into this
+    /// view model's published state and fires `onProfileChanged` so the
+    /// agenda recompiles on the spot — `ContentView` is what actually raises
+    /// the onboarding overlay afterwards (it owns that piece of state).
+    func resetProfile(_ level: ResetLevel) {
+        ResetService.reset(level: level, profileStore: profileStore, memoryStore: memoryStore, misunderstoodLogStore: misunderstoodLog)
+        resetResults()
+        resetBatch()
+        reloadProfile()
+        refreshMemory()
+        refreshMisunderstoodLog()
+        onProfileChanged?()
+    }
+
     @discardableResult
     private func logMisunderstood(utterance: String, outcome: MisunderstoodOutcome, explanation: AssistantExplanation) -> UUID {
         let id = misunderstoodLog.record(utterance: utterance, outcome: outcome, explanation: explanation)
