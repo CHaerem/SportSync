@@ -1,15 +1,16 @@
 {
-  "runAt": "2026-07-13T05:30:00.000Z",
-  "checked": 4,
-  "confirmed": 1,
-  "amended": 0,
-  "removed": 3,
+  "runAt": "2026-07-14T05:30:00.000Z",
+  "checked": 5,
+  "confirmed": 3,
+  "amended": 2,
+  "removed": 0,
   "notes": [
-    "Window: 13-20 Jul 2026. Most in-window ai-research/near-term events were freshly verified 11-12 Jul (WC semis/bronze/final channels, Gstaad draw, The Open, Corales Puntacana, London Athletics/Warholm, TdF stages 8-14) and were not re-fetched today.",
-    "CONFIRMED TdF Etappe 15 (19 Jul, Champagnole -> Plateau de Solaison, mountain, 183.9 km) — was still unverified. Route+date confirmed vs en.wikipedia.org/wiki/2026_Tour_de_France; GC unchanged (Pogacar yellow +2:42 Vingegaard, +3:27 del Toro). Start time still estimated (ASO has not published exact stage times), confidence kept medium.",
-    "REMOVED 3 ESPN-placeholder World Cup duplicates re-added by the static pipeline: 'Spain at France' (14 Jul) dup of ai-research 'VM-semifinale 1' (TV 2); 'Semifinal 2 Loser at Semifinal 1 Loser' (18 Jul) dup of 'VM-bronsefinale' (NRK 1); 'Semifinal 2 Winner at Semifinal 1 Winner' (19 Jul) dup of 'VM-finalen 2026' (NRK 1). All three carried a tentative NRK/TV2 chip; the ai-research counterparts already carry the correct confirmed channel (NTB press release, verified 12 Jul).",
-    "RECURRING build-events dedup gap: these tentative NRK/TV2 placeholders have now been removed 11, 12 and 13 Jul and keep returning because build-events dedupes on sport|title|time and the ESPN titles differ from the ai-research Norwegian titles. Permanent fix belongs in build-events (dedup WC knockouts by sport+time+round/venue or by teams) — flagged for improve/self-repair; verify can only whack-a-mole them daily.",
-    "Gstaad (Ruud): order of play for his R2 match not yet published; event already confirmed 12 Jul, no change. Kept TV 2 Play (ATP rights Norway through 2026).",
-    "No amendments and no rights-map/source-quirks changes needed this run."
+    "Window: 14-21 Jul 2026. Focused on the two unverified in-window ai-research events (BLAST Bounty, TdF stage 16) plus time-sensitive near-term events; TdF stages 11-15, London Athletics/Warholm (18 Jul), WC bronze (18 Jul) + final (19 Jul) and The Open (16 Jul) were freshly verified 8-13 Jul and remain consistent, so not re-fetched to stay within budget.",
+    "CONFIRMED WC semifinal 1 (14 Jul, today): France vs Spain at Dallas/AT&T Stadium via fifa.com; TV 2 broadcast holds (prior NTB/NRK checks).",
+    "CONFIRMED BLAST Bounty S2 (100 Thieves, from 21 Jul) via HLTV/BLAST.tv — online stage 21-26 Jul, LAN in Malta 30 Jul-2 Aug for top 8; 100T is a wildcard invite. Individual match times still unpublished (kept medium); streaming BLAST.tv/Twitch (free).",
+    "CONFIRMED Gstaad ATP (Casper Ruud, 15 Jul): re-checked he is still in the draw as No. 2 seed with R1 bye; R16 opponent = winner of today's Faria vs Wawrinka R32. Exact court time not yet in the published order of play — event keeps provisional 08:30 UTC. (A stale tennis.com 'Ruud bows out of Gstaad' headline surfaced in search; it is from a prior year, not 2026 — he has not withdrawn.)",
+    "AMENDED TdF stage 16 ITT (21 Jul): cyclingstage lists first rider off 13:00 CEST = 11:00 UTC (GC leader ~17:50 CEST). events.json had 10:00 UTC — corrected time to 11:00 UTC and endTime to 15:50 UTC.",
+    "AMENDED Corales Puntacana Championship (16-19 Jul): streaming Viaplay -> HBO Max (Sport). Regular PGA Tour events stream on HBO Max/Eurosport Norge (WBD) in Norway from 2026, not Viaplay (golferen.no/tvkampen + HBO Max page). The research agent had re-added this event today with the Viaplay golf default, silently reverting the 11 Jul HBO Max fix — a recurring pattern worth a research-prompt/skill nudge.",
+    "PENDING: norwegian-rights skill golf line still says all PGA Tour -> Viaplay; it needs the 2026 WBD/HBO Max split (regular PGA Tour + Masters/PGA Championship on WBD; The Open + US Open + DP World Tour on Viaplay). The skill-file write was blocked this run — flagged for a follow-up with write access."
   ]
 }
