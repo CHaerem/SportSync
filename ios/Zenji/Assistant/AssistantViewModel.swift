@@ -2,18 +2,25 @@
 //  AssistantViewModel.swift
 //  Zenji
 //
-//  WP-16 — the FM-lekegrind's view model. Orchestrates the one flow the screen
-//  needs: utterance → model proposal → HARD grounding → a reviewable DIFF the
-//  user confirms/rejects per mutation → persisted profile. Follows the app's
-//  usual @MainActor @Observable pattern (AgendaViewModel); the genuinely
-//  logic-bearing steps it calls are all pure and separately tested
-//  (`MockInterestParser`, `MutationGrounder`, `InterestProfile.applying`,
-//  `ProfileStore`), so this type is a thin, testable coordinator rather than a
-//  place logic hides.
+//  WP-16 → WP-16.4 — the assistant's view model. WP-16 orchestrated one flow:
+//  utterance → model proposal → HARD grounding → a reviewable DIFF the user
+//  confirms/rejects per mutation → persisted profile. WP-16.4 makes it the
+//  brain behind the always-present command line and adds three things without
+//  disturbing that flow:
 //
-//  It depends only on the `InterestAssistant` PROTOCOL, so AssistantViewModel
-//  Tests inject `MockInterestAssistant` (FM can't run in CI) and the shipping
-//  app injects `FoundationModelsInterestAssistant` — the code path is identical.
+//    • INTENT ROUTING — `submit()` now interprets the utterance as EITHER
+//      mutations (the WP-16 diff flow, unchanged) OR an `answer` to a question
+//      about the agenda, answered from the local `FeedQuery`.
+//    • CONTEXT FOLLOW — `proposeFollow(_:)` pre-fills an add-mutation from the
+//      event detail sheet straight into the SAME grounded diff/confirm flow.
+//    • IMMEDIATE CONSEQUENCE — every applied mutation calls `onProfileChanged`,
+//      which ContentView wires to recompile the agenda on the spot.
+//
+//  Still a thin coordinator over pure, separately-tested pieces
+//  (MockInterestParser/MockAnswerer, MutationGrounder, FeedQuery,
+//  InterestProfile.applying, ProfileStore, MisunderstoodLogStore); it depends
+//  only on the `InterestAssistant` PROTOCOL, so tests inject the deterministic
+//  mock and the shipping app injects the FoundationModels one — same path.
 //
 
 import Foundation
@@ -30,132 +37,150 @@ final class AssistantViewModel {
     private(set) var pending: [GroundedMutation] = []
     /// Proposals rejected by grounding — shown as honest "fant ikke …" notes.
     private(set) var rejected: [RejectedMutation] = []
+    /// WP-16.4 — the answer to a question, resolved to displayable rows. Nil
+    /// unless the last submit routed to the answer arm.
+    private(set) var answer: AssistantAnswerResult?
 
-    /// Bound to the text field.
+    /// Bound to the command-line text field.
     var utterance: String = ""
     private(set) var isThinking = false
     /// A blocking error (model unavailable / generation failed) shown verbatim.
     private(set) var errorMessage: String?
     /// The always-explain account (WP-16.1): set WHENEVER a submitted utterance
-    /// produced no confirmable change, instead of the old dead-end "fant ingen
-    /// endringer" note. Nil when there are pending mutations to review.
+    /// produced no confirmable change (or an empty answer), instead of a
+    /// dead-end. Nil when there are pending mutations or an answer to show.
     private(set) var explanation: AssistantExplanation?
 
+    /// WP-16.4 — bumped whenever there's a fresh presentable result (a diff, an
+    /// answer, an explanation, an error, or a pre-filled follow). ContentView
+    /// observes it to raise the assistant panel over the agenda.
+    private(set) var presentToken = 0
+    /// WP-16.4 — called after any mutation is APPLIED, so the host can recompile
+    /// the agenda immediately ("umiddelbar konsekvens"). Set by ContentView.
+    var onProfileChanged: (() -> Void)?
+
     /// The local "forsto ikke"-log (WP-16.3): every submit that ended without
-    /// an applied mutation, most-recent first. Reloaded after every write so
-    /// the UI list stays in sync with no manual pull-to-refresh.
+    /// an applied mutation, most-recent first.
     private(set) var misunderstoodEntries: [MisunderstoodEntry] = []
-    /// Entries still needing attention — a `resolved` one (WP-16.3 §3, a later
-    /// "mente du" pick that got confirmed) no longer counts toward the badge.
+    /// Entries still needing attention — a `resolved` one no longer counts.
     var misunderstoodCount: Int { misunderstoodEntries.filter { !$0.isResolved }.count }
+
+    /// Anything worth raising the panel for.
+    var hasPresentableResult: Bool {
+        !pending.isEmpty || !rejected.isEmpty || explanation != nil || answer != nil || errorMessage != nil
+    }
 
     private let assistant: any InterestAssistant
     private let profileStore: ProfileStore
     private let index: EntityIndex
     private let misunderstoodLog: MisunderstoodLogStore
+    /// WP-16.4 — builds the local agenda the answer arm queries, fresh per
+    /// submit (so a just-confirmed follow is reflected). Defaults to an empty
+    /// feed for the mutation-only unit tests that don't inject one.
+    private let feedProvider: () -> FeedQuery
+    /// WP-16.4 — the in-flight interpret task, so the command line can cancel it.
+    private var currentTask: Task<Void, Never>?
 
-    // MARK: - WP-16.3 in-memory batch bookkeeping — never persisted itself;
-    // just enough state about the CURRENT `pending` batch to (a) log
-    // `.allRejectedByUser` with the right utterance if the user rejects every
-    // mutation in it without confirming any, and (b) resolve a prior
-    // rejected-entity log entry if a "mente du" pick it produced gets confirmed.
+    // MARK: - WP-16.3 in-memory batch bookkeeping (unchanged from WP-16.3)
     private var pendingBatchUtterance = ""
     private var pendingBatchEntityNames: [String] = []
     private var pendingBatchConfirmedAny = false
-    /// Maps a "mente du"-derived `GroundedMutation.id` (from `choose(_:for:)`)
-    /// back to the misunderstood-log entry it should resolve if confirmed.
     private var mentedFromLogId: [String: UUID] = [:]
-    /// The log entry id (if any) created by the MOST RECENT submit() — the
-    /// window during which `choose(_:for:)` can still tie a "mente du" rescue
-    /// back to it. Reset every submit().
     private var activeMisunderstoodLogId: UUID?
 
     /// Designated initializer — everything injected, for tests + previews.
-    init(assistant: any InterestAssistant, profileStore: ProfileStore, index: EntityIndex, misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore()) {
+    init(
+        assistant: any InterestAssistant,
+        profileStore: ProfileStore,
+        index: EntityIndex,
+        misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore(),
+        feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) }
+    ) {
         self.assistant = assistant
         self.profileStore = profileStore
         self.index = index
         self.misunderstoodLog = misunderstoodLog
+        self.feedProvider = feedProvider
         self.profile = profileStore.load()
         self.availability = assistant.availability()
         self.misunderstoodEntries = misunderstoodLog.load()
     }
 
     /// App wiring: the real FM assistant + the on-disk profile + the synced
-    /// entity index from the WP-12 cache.
+    /// entity index and agenda from the WP-12 cache. The feed provider re-reads
+    /// events every submit and folds the local profile into the effective
+    /// interests, so the answer arm sees exactly the agenda on screen.
     convenience init(
         dataStore: DataStore = DataStore(),
         assistant: any InterestAssistant = FoundationModelsInterestAssistant(),
         profileStore: ProfileStore = ProfileStore(),
         misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore()
     ) {
-        self.init(assistant: assistant, profileStore: profileStore, index: EntityIndex(dataStore.loadEntities()), misunderstoodLog: misunderstoodLog)
+        self.init(
+            assistant: assistant,
+            profileStore: profileStore,
+            index: EntityIndex(dataStore.loadEntities()),
+            misunderstoodLog: misunderstoodLog,
+            feedProvider: {
+                let events = dataStore.loadEvents()
+                let base = dataStore.loadInterests() ?? Interests()
+                let idx = EntityIndex(dataStore.loadEntities())
+                let profile = profileStore.load()
+                let effective = EffectiveInterests.merge(profile: profile, into: base, index: idx)
+                return FeedQuery.build(events: events, interests: effective, now: Date())
+            }
+        )
     }
 
     /// The entity index arrived (has been synced)? Used to warn honestly when
     /// nothing can be grounded because the index hasn't downloaded yet.
     var hasEntities: Bool { !index.isEmpty }
 
-    /// Re-reads availability (the model can become ready after app start, or the
-    /// user can toggle Apple Intelligence in Settings while the sheet is open).
-    func refreshAvailability() {
-        availability = assistant.availability()
+    func refreshAvailability() { availability = assistant.availability() }
+
+    // MARK: - Submit (intent routing)
+
+    /// Fire-and-forget, cancellable entry the command line uses.
+    func run() {
+        currentTask?.cancel()
+        currentTask = Task { await submit() }
     }
 
-    /// Runs one utterance through the model + grounding. Never throws — a
-    /// failure lands in `errorMessage`, an empty result in `notice`.
+    /// WP-16.4 — cancel the in-flight interpretation (the command line's
+    /// "Avbryt" while the cursor is blinking "tenker …"). The blinking marker,
+    /// never a spinner, is the whole thinking language.
+    func cancel() {
+        currentTask?.cancel()
+        currentTask = nil
+        isThinking = false
+    }
+
+    /// Runs one utterance through the model + routing. Never throws — a failure
+    /// lands in `errorMessage`, an empty mutation result in `explanation`.
     func submit() async {
         let text = utterance.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
 
-        errorMessage = nil
-        explanation = nil
-        pending = []
-        rejected = []
+        resetResults()
         isThinking = true
         defer { isThinking = false }
-        // A fresh batch starts here (WP-16.3) — reset before either outcome.
-        pendingBatchUtterance = ""
-        pendingBatchEntityNames = []
-        pendingBatchConfirmedAny = false
-        activeMisunderstoodLogId = nil
+        resetBatch()
 
+        let feed = feedProvider()
         do {
-            let proposals = try await assistant.propose(utterance: text, profile: profile, index: index)
-            let result = MutationGrounder.ground(proposals, index: index, profile: profile)
-            pending = result.grounded
-            rejected = result.rejected
-            // The always-explain rule: no confirmable change is NEVER a bare
-            // "fant ingen endringer" — build an honest, structured account.
-            if pending.isEmpty {
-                let exp = AssistantExplanation.make(
-                    utterance: text, proposals: proposals, result: result, hasEntities: hasEntities
-                )
-                explanation = exp
-                // WP-16.3: log it, unless the sole reason is the entity index
-                // not having synced yet — that's a transient environment state,
-                // not a misunderstood utterance, and isn't useful raw material
-                // for the next iteration.
-                if hasEntities {
-                    if !result.rejected.isEmpty {
-                        activeMisunderstoodLogId = logMisunderstood(utterance: text, outcome: .rejectedEntity, explanation: exp)
-                    } else if proposals.isEmpty {
-                        logMisunderstood(utterance: text, outcome: .emptyModelResponse, explanation: exp)
-                    }
-                }
-            } else {
-                // A confirmable batch — remember it so a later "reject everything"
-                // can be logged as `.allRejectedByUser` (WP-16.3).
-                pendingBatchUtterance = text
-                pendingBatchEntityNames = pending.map(\.entity.name)
+            let turn = try await assistant.interpret(utterance: text, profile: profile, index: index, feed: feed)
+            guard !Task.isCancelled else { return }
+            switch turn {
+            case .mutations(let proposals):
+                applyMutations(text: text, proposals: proposals)
+            case .answer(let ans):
+                applyAnswer(text: text, answer: ans, feed: feed)
             }
         } catch let error as AssistantError {
+            guard !Task.isCancelled else { return }
             errorMessage = error.errorDescription
-            // WP-16.3: `.generationFailed` means the model had an utterance but
-            // could not turn it into a valid structured mutation — the
-            // "inexpressible" outcome. `.unavailable` is a device-state gate
-            // (Apple Intelligence off), not a misunderstood utterance, so it is
-            // deliberately NOT logged here.
+            // WP-16.3: `.generationFailed` is the "inexpressible" outcome;
+            // `.unavailable` is a device-state gate, deliberately NOT logged.
             if case let .generationFailed(message) = error {
                 logMisunderstood(
                     utterance: text,
@@ -167,20 +192,85 @@ final class AssistantViewModel {
                 )
             }
         } catch {
+            guard !Task.isCancelled else { return }
             errorMessage = "Noe gikk galt: \(error.localizedDescription)"
+        }
+
+        if hasPresentableResult { presentToken &+= 1 }
+    }
+
+    /// The WP-16 mutation flow (grounding + always-explain + WP-16.3 logging),
+    /// unchanged apart from being one arm of the router now.
+    private func applyMutations(text: String, proposals: [ProposedMutation]) {
+        let result = MutationGrounder.ground(proposals, index: index, profile: profile)
+        pending = result.grounded
+        rejected = result.rejected
+        if pending.isEmpty {
+            let exp = AssistantExplanation.make(
+                utterance: text, proposals: proposals, result: result, hasEntities: hasEntities
+            )
+            explanation = exp
+            if hasEntities {
+                if !result.rejected.isEmpty {
+                    activeMisunderstoodLogId = logMisunderstood(utterance: text, outcome: .rejectedEntity, explanation: exp)
+                } else if proposals.isEmpty {
+                    logMisunderstood(utterance: text, outcome: .emptyModelResponse, explanation: exp)
+                }
+            }
+        } else {
+            pendingBatchUtterance = text
+            pendingBatchEntityNames = pending.map(\.entity.name)
         }
     }
 
-    /// Confirms a single mutation — applies it to the profile and persists.
+    /// WP-16.4 — the answer arm. An empty answer isn't a phantom row: it becomes
+    /// an honest always-explain account (never logged as a mutation miss).
+    private func applyAnswer(text: String, answer: AssistantAnswer, feed: FeedQuery) {
+        let trimmed = answer.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            explanation = AssistantExplanation(
+                understood: "Jeg forsto «\(text)» som et spørsmål.",
+                reason: "Jeg fant ingenting i agendaen din å svare med akkurat nå."
+            )
+            return
+        }
+        self.answer = AssistantAnswerResult(text: trimmed, rows: feed.rows(forIds: answer.referencedEventIds))
+    }
+
+    // MARK: - Context follow (WP-16.4 — the detail sheet's «Følg X»)
+
+    /// Pre-fill an add-mutation for `entity` and drop it straight into the SAME
+    /// grounded diff/confirm flow a typed "Følg X" produces — the user still
+    /// confirms it with Bekreft; nothing is applied by the tap. Raises the panel.
+    func proposeFollow(_ entity: Entity) {
+        resetResults()
+        resetBatch()
+        let proposal = ProposedMutation(
+            kind: .add, entityId: entity.id, entityQuery: entity.name,
+            reason: "Du valgte å følge \(entity.name) fra hendelsen."
+        )
+        let result = MutationGrounder.ground([proposal], index: index, profile: profile)
+        pending = result.grounded
+        rejected = result.rejected
+        if !pending.isEmpty {
+            pendingBatchUtterance = "Følg \(entity.name)"
+            pendingBatchEntityNames = pending.map(\.entity.name)
+        }
+        presentToken &+= 1
+    }
+
+    // MARK: - Confirm / reject (unchanged semantics + WP-16.4 recompile hook)
+
     func confirm(_ mutation: GroundedMutation) {
         profile = profile.applying(mutation)
         persist()
         pending.removeAll { $0.id == mutation.id }
         pendingBatchConfirmedAny = true
         resolveIfMentedFrom(mutation)
+        onProfileChanged?()
+        if pending.isEmpty { utterance = "" }
     }
 
-    /// Confirms every pending mutation at once.
     func confirmAll() {
         guard !pending.isEmpty else { return }
         for mutation in pending { resolveIfMentedFrom(mutation) }
@@ -188,12 +278,10 @@ final class AssistantViewModel {
         persist()
         pendingBatchConfirmedAny = true
         pending = []
+        onProfileChanged?()
+        utterance = ""
     }
 
-    /// Discards a proposed mutation without touching the profile. If this was
-    /// the LAST pending mutation in the batch and NONE of them were ever
-    /// confirmed, the whole utterance is logged as `.allRejectedByUser`
-    /// (WP-16.3) — the model understood it fine, the user just disagreed.
     func reject(_ mutation: GroundedMutation) {
         let hadItem = pending.contains { $0.id == mutation.id }
         pending.removeAll { $0.id == mutation.id }
@@ -204,7 +292,7 @@ final class AssistantViewModel {
                 reason: "Du avviste alle de foreslåtte endringene uten å bekrefte noen av dem."
             )
             logMisunderstood(utterance: pendingBatchUtterance, outcome: .allRejectedByUser, explanation: exp)
-            pendingBatchUtterance = "" // guard against a stray repeat reject() re-logging
+            pendingBatchUtterance = ""
         }
     }
 
@@ -212,21 +300,14 @@ final class AssistantViewModel {
         rejected.removeAll { $0.id == rejection.id }
     }
 
-    /// WP-16.2: the user tapped a "mente du …?" suggestion. Re-ground the
-    /// ORIGINAL proposal with the chosen entity id substituted in — so the
-    /// intent (add/remove, scope, weight, the «med fokus på norske» lens)
-    /// survives — and move the resolved mutation into the reviewable DIFF
-    /// (`pending`), exactly like any other proposal. The user still confirms it
-    /// with Bekreft; nothing is applied by the tap alone. Never a dead button.
+    /// WP-16.2: the user tapped a "mente du …?" suggestion — re-ground the
+    /// ORIGINAL proposal with the chosen entity id, moving it into the diff.
     func choose(_ suggestion: Entity, for rejection: RejectedMutation) {
         var proposal = rejection.proposal
         proposal.entityId = suggestion.id
         let result = MutationGrounder.ground([proposal], index: index, profile: profile)
         pending.append(contentsOf: result.grounded)
         rejected.removeAll { $0.id == rejection.id }
-        // WP-16.3 §3: this rescue traces back to the utterance that got logged
-        // as `.rejectedEntity` at submit() time — if the rescued mutation is
-        // later confirmed, that log entry should flip to resolved.
         if let logId = activeMisunderstoodLogId {
             for m in result.grounded { mentedFromLogId[m.id] = logId }
         }
@@ -243,35 +324,29 @@ final class AssistantViewModel {
                 reason: "Fjernet manuelt.", previousRule: rule
             ))
         } else {
-            // Entity dropped out of the index — remove the rule directly.
             profile = InterestProfile(rules: profile.rules.filter { $0.entityId != rule.entityId })
         }
         persist()
+        onProfileChanged?()
     }
 
     // MARK: - WP-16.3 — "Det jeg ikke forsto"
 
-    /// The user's own note on what an utterance actually meant.
     func setMisunderstoodNote(_ note: String?, for entry: MisunderstoodEntry) {
         misunderstoodLog.setNote(note, for: entry.id)
         refreshMisunderstoodLog()
     }
 
-    /// Deletes one entry.
     func deleteMisunderstood(_ entry: MisunderstoodEntry) {
         misunderstoodLog.delete(entry.id)
         refreshMisunderstoodLog()
     }
 
-    /// Deletes the whole log ("Slett alt").
     func deleteAllMisunderstood() {
         misunderstoodLog.deleteAll()
         refreshMisunderstoodLog()
     }
 
-    /// The anonymised JSON payload for "Del rapport" (utterance/outcome/
-    /// explanation/note/timestamp/resolved only — never anything about the
-    /// device or the person) — the UI hands this straight to a `ShareLink`.
     func misunderstoodExportPayload() -> Data {
         misunderstoodLog.exportPayload()
     }
@@ -283,9 +358,6 @@ final class AssistantViewModel {
         return id
     }
 
-    /// If `mutation` was rescued via a "mente du" tap (`choose(_:for:)`) that
-    /// traced back to a logged utterance, mark that log entry resolved — a
-    /// success case, kept (and exported) but no longer counted as unresolved.
     private func resolveIfMentedFrom(_ mutation: GroundedMutation) {
         guard let logId = mentedFromLogId.removeValue(forKey: mutation.id) else { return }
         misunderstoodLog.markResolved(logId)
@@ -296,6 +368,23 @@ final class AssistantViewModel {
         misunderstoodEntries = misunderstoodLog.load()
     }
 
+    // MARK: - Helpers
+
+    private func resetResults() {
+        errorMessage = nil
+        explanation = nil
+        pending = []
+        rejected = []
+        answer = nil
+    }
+
+    private func resetBatch() {
+        pendingBatchUtterance = ""
+        pendingBatchEntityNames = []
+        pendingBatchConfirmedAny = false
+        activeMisunderstoodLogId = nil
+    }
+
     private func persist() {
         do {
             try profileStore.save(profile)
@@ -303,4 +392,32 @@ final class AssistantViewModel {
             errorMessage = "Klarte ikke å lagre profilen din."
         }
     }
+
+    #if DEBUG
+    /// DEBUG-only: seed a representative state so each assistant surface can be
+    /// screenshotted deterministically in the Simulator, where Apple
+    /// Intelligence is unavailable (see ios/README.md). Drives the REAL views +
+    /// real value types — it only pre-fills what a live model would have
+    /// produced. Never compiled into a release build.
+    func demoSeed(_ mode: String) {
+        switch mode {
+        case "thinking":
+            isThinking = true
+        case "diff":
+            let ruud = Entity(id: "casper-ruud", name: "Casper Ruud", aliases: [], sport: "tennis", type: "athlete")
+            pending = [GroundedMutation(
+                kind: .add, entity: ruud, scope: "bare i Grand Slams", weight: 0.8,
+                reason: "Du ba om å følge Casper Ruud (bare i Grand Slams). Fokus: gjennom norske utøvere.",
+                previousRule: nil, lens: .throughNorwegians
+            )]
+        case "answer":
+            answer = AssistantAnswerResult(
+                text: "I kveld kan du se VM-semifinale 1 kl. 21:00 på TV 2.",
+                rows: [AnswerRow(id: "demo", dayLabel: "I DAG", timeLabel: "21:00", title: "VM-semifinale 1", channelLabel: "TV 2")]
+            )
+        default:
+            break
+        }
+    }
+    #endif
 }

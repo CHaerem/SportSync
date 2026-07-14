@@ -13,10 +13,13 @@
 //    • MockInterestAssistant — a deterministic Norwegian keyword parser used by
 //      the tests (FM can't run in CI) and by SwiftUI previews.
 //
-//  `propose` returns RAW `ProposedMutation`s — deliberately BEFORE grounding.
-//  Grounding (the hard rule) is the caller's job (AssistantViewModel →
-//  MutationGrounder), so it is applied uniformly to real-model and mock output
-//  alike and can be unit-tested in isolation.
+//  `interpret` returns an `AssistantTurn` — either RAW `ProposedMutation`s
+//  (deliberately BEFORE grounding; the hard grounding rule is the caller's job,
+//  AssistantViewModel → MutationGrounder, applied uniformly to real-model and
+//  mock output alike) OR an `AssistantAnswer` to a question about the agenda.
+//  WP-16.4 added the answer arm alongside the WP-16 mutation arm; the model (or
+//  the mock) decides which in a single call, so the command line is one entry
+//  for both "change what I follow" and "what's on tonight".
 //
 
 import Foundation
@@ -26,12 +29,14 @@ protocol InterestAssistant: Sendable {
     /// the UI can render an honest "unavailable" state before any request.
     func availability() -> AssistantAvailability
 
-    /// Turns one Norwegian utterance into raw, ungrounded mutation proposals,
-    /// given the current profile (for context — e.g. which rules a "slutt med
-    /// tennis" would target) and the entity index (the model's searchEntities
-    /// tool reads it; the mock matches against it directly).
+    /// Interpret one Norwegian utterance as either profile mutations OR an
+    /// answer to a question, given the current profile (context — e.g. which
+    /// rules a "slutt med tennis" targets), the entity index (the model's
+    /// `searchEntities` tool reads it; the mock matches directly), and the
+    /// local `feed` (the agenda the answer arm queries via `searchEvents`; the
+    /// mutation arm ignores it).
     ///
     /// Throws `AssistantError.unavailable` if the model isn't usable, or
     /// `.generationFailed` if a usable model still couldn't produce output.
-    func propose(utterance: String, profile: InterestProfile, index: EntityIndex) async throws -> [ProposedMutation]
+    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery) async throws -> AssistantTurn
 }

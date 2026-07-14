@@ -36,10 +36,16 @@ final class AgendaViewModel {
 
     private let dataStore: DataStore
     private let syncClient: SyncClient
+    /// WP-16.4 — the SAME local profile the assistant edits. Folded into the
+    /// synced interests on every recompile, so a just-confirmed "Følg X" shows
+    /// up on the board immediately ("umiddelbar konsekvens"). Shared instance
+    /// with AssistantViewModel via ContentView.
+    private let profileStore: ProfileStore
 
-    init(dataStore: DataStore = DataStore(), syncClient: SyncClient = SyncClient()) {
+    init(dataStore: DataStore = DataStore(), syncClient: SyncClient = SyncClient(), profileStore: ProfileStore = ProfileStore()) {
         self.dataStore = dataStore
         self.syncClient = syncClient
+        self.profileStore = profileStore
     }
 
     /// Shows whatever is already cached immediately, then syncs and
@@ -62,8 +68,15 @@ final class AgendaViewModel {
     /// because interests.json hasn't synced yet.
     func reloadFromCache(now: Date = Date()) {
         let events = dataStore.loadEvents()
-        let interests = dataStore.loadInterests() ?? Interests()
-        sections = Self.buildSections(events: events, interests: interests, now: now)
+        let baseInterests = dataStore.loadInterests() ?? Interests()
+        let profile = profileStore.load()
+        let index = EntityIndex(dataStore.loadEntities())
+        // WP-16.4: fold the local profile in, so the board reflects what the
+        // assistant just changed — this is the visible half of "Bekreft →
+        // agendaen re-kompileres synlig med det samme".
+        let interests = EffectiveInterests.merge(profile: profile, into: baseInterests, index: index)
+        let followedIds = Set(profile.rules.map(\.entityId))
+        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds)
         liveNow = Self.liveRows(events: events, interests: interests, now: now)
         lastSync = dataStore.lastSync
     }
@@ -76,7 +89,12 @@ final class AgendaViewModel {
     /// below) OUT of the class's `@MainActor` isolation — it touches no
     /// instance/main-actor state at all, and AgendaViewModelTests calls it
     /// directly, synchronously, with no actor hop.
-    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date) -> [AgendaSection] {
+    /// WP-16.4: `index` + `followedIds` are optional (default empty) so the
+    /// WP-14 unit tests that call this with just events/interests/now still
+    /// compile — they simply produce empty `whyShown`/`followable`, which the
+    /// agenda row itself doesn't display (those feed the detail sheet's context
+    /// actions). The real app always passes them (see `reloadFromCache`).
+    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = []) -> [AgendaSection] {
         let (feedEvents, lookup) = EventBridge.bridge(events)
         let feed = FeedCompiler.compile(events: feedEvents, interests: interests, now: now)
         let todayKey = FeedCompiler.osloDayKey(now)
@@ -97,9 +115,37 @@ final class AgendaViewModel {
                 AgendaSection(
                     id: day.key,
                     label: AgendaFormat.dayLabel(key: day.key, todayKey: todayKey, tomorrowKey: tomorrowKey),
-                    items: day.items.compactMap { makeItem($0, lookup: lookup, interests: interests, now: now) }
+                    items: day.items.compactMap { makeItem($0, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) }
                 )
             }
+    }
+
+    // MARK: - Followable entities (WP-16.4 — the detail sheet's «Følg X»)
+
+    /// The entities this event is ABOUT that the user doesn't already follow —
+    /// what a "Følg X" context action can offer. Sources, in order: the event's
+    /// own stable entity ids (home/away team, Norwegian players — authoritative
+    /// when present), then the home/away team & tournament NAMES resolved
+    /// confidently through the index (so "Lyn" offers FK Lyn Oslo even without
+    /// an id). De-duplicated, already-followed dropped, capped at three so the
+    /// sheet stays calm. Empty when the index hasn't synced. Pure — testable
+    /// with a hand-built index.
+    nonisolated static func followableEntities(for event: Event, index: EntityIndex, followedIds: Set<String>) -> [Entity] {
+        guard !index.isEmpty else { return [] }
+        var ids: [String] = []
+        func add(_ id: String?) { if let id, !id.isEmpty { ids.append(id) } }
+        add(event.homeTeamEntityId)
+        add(event.awayTeamEntityId)
+        for player in event.norwegianPlayers { add(player.entityId) }
+        for name in [event.homeTeam, event.awayTeam, event.tournament].compactMap({ $0 }) {
+            if let served = index.resolve(name).served { ids.append(served.id) }
+        }
+        var seen = Set<String>()
+        var out: [Entity] = []
+        for id in ids where !followedIds.contains(id) && seen.insert(id).inserted {
+            if let entity = index.entity(id: id) { out.append(entity) }
+        }
+        return Array(out.prefix(3))
     }
 
     // MARK: - Live now (DESIGN.md §4)
@@ -153,7 +199,9 @@ final class AgendaViewModel {
         _ item: FeedCompiler.CompiledFeed.Item,
         lookup: [String: Event],
         interests: Interests,
-        now: Date
+        now: Date,
+        index: EntityIndex,
+        followedIds: Set<String>
     ) -> AgendaItem? {
         switch item {
         case .event(let feedEvent, let mustWatch, let mustSee):
@@ -172,7 +220,9 @@ final class AgendaViewModel {
                 isMustSee: mustSee,
                 mustWatch: mustWatch,
                 isAIResearch: event.source == "ai-research",
-                event: event
+                event: event,
+                whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
+                followable: followableEntities(for: event, index: index, followedIds: followedIds)
             ))
 
         case .series(let series):

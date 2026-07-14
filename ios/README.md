@@ -1235,6 +1235,86 @@ assistant can't ground, confirm it appears under "Det jeg ikke forsto", add a
 note, and use "Del rapport") is the manual step to confirm by hand once the
 device is unlocked.
 
+## Sømløs assistent (WP-16.4)
+
+The owner's brief: *"AI-assistent-opplevelsen skal være mer sømløs"* — the
+principle is **"assistenten ER grensesnittet"**, not a room behind a button.
+WP-16.4 dissolves the WP-16 `AssistantView` screen into the agenda flow, keeps
+**all** WP-16.x behaviour (grounding, lens, always-explain, «mente du», the
+misunderstood-log), and adds a question-answering arm.
+
+### The five moves
+
+1. **Kommandolinjen** (`Assistant/CommandLineView.swift`) — a fixed, quiet
+   prompt line pinned to the bottom of the agenda (`»_` sigil · text field ·
+   blinking amber `▌` `BlinkingCursor`, static under Reduce Motion). It's the
+   primary entry; the header `»_` glyph is now just a `@FocusState` shortcut to
+   it. The old screen split into this line + a flat result **ark**
+   (`Assistant/AssistantPanel.swift`) that fades in (≤150 ms) over the agenda,
+   with «Hva jeg følger» + «Det jeg ikke forsto» as quiet disclosures at its
+   foot (`MisunderstoodEntryRow` migrated here).
+2. **Intent-ruting** — `InterestAssistant.interpret(...)` now returns an
+   `AssistantTurn` = `.mutations([ProposedMutation])` (the WP-16 diff flow,
+   untouched) OR `.answer(AssistantAnswer)`. Questions are answered over LOCAL
+   data only (no PCC/cloud): `FeedQuery` (`Assistant/FeedQuery.swift`) reduces
+   the same relevance-filtered agenda to a queryable value (today/tonight/
+   next-matching/search); the FM assistant gains `searchEvents` + `getProfile`
+   tools over it (`GeneratedTurn` carries `intent`/`answer`/`referencedEventIds`).
+   `MockAnswerer` is the deterministic counterpart (`isQuestion` router +
+   answer generator) so CI drives both arms without Apple Intelligence.
+3. **Kontekst-handlinger** (`Agenda/EventDetailSheet.swift`) — «Følg <entitet>»
+   (a pre-filled add routed through the SAME grounded diff/confirm flow via
+   `AssistantViewModel.proposeFollow`) and «Hvorfor vises denne?»
+   (`FeedCompiler.whyShown`, a deterministic port of dashboard.js's `whyShown`,
+   self-contained so the widget target still builds). `AgendaEventRow` carries
+   precomputed `whyShown` + `followable`.
+4. **Umiddelbar konsekvens** — the assistant's local `InterestProfile` is folded
+   into the agenda's interests by `EffectiveInterests.merge`, and
+   `AssistantViewModel.onProfileChanged` (wired in `ContentView`) recompiles the
+   agenda the instant a mutation is confirmed. `AgendaViewModel` + the assistant
+   share ONE `ProfileStore`.
+5. **Tenke-tilstand** — while interpreting, the command line blinks the cursor
+   and shows a dimmed "tenker …" + "Avbryt" (`AssistantViewModel.run()`/
+   `cancel()`), never a spinner.
+
+### Tests + build
+
+`xcodebuild test … -scheme Zenji` passes **257 tests** (the 232 WP-10…16.3
+baseline + 25 new: intent routing, `FeedQuery`, the Q&A view-model path against
+the real fixtures, `EffectiveInterests` + immediate re-compilation, and the
+context actions incl. `whyShown`). Both schemes (`Zenji`,
+`ZenjiWidgetExtension`) build; `npm test` is untouched — this package touches
+only `ios/` + the DESIGN.md Assistant section + the PLAN.md WP-16.4 row.
+
+### Visual proof (WP-16.4)
+
+Eight screenshots in `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`
+— `iPhone 17` Simulator, installed + launched against **real, live** `zenji.app`
+data, each state driven by a **DEBUG-only** launch-env harness
+(`ZENJI_DEMO=idle|thinking|diff|answer`, read in `ContentView`/
+`AssistantViewModel.demoSeed`, never compiled into release) that backs the
+assistant with the deterministic mock so the diff/answer arks render without
+Apple Intelligence (unavailable in the Simulator). Both themes show: the command
+line with its blinking cursor (idle), the "tenker … Avbryt" thinking line, the
+green `+ Casper Ruud` diff ark, and the "SVAR" answer ark referencing
+`VM-semifinale 1 · 21:00 · TV 2` — all Tekst-TV, no chrome breaches.
+
+### Device build (WP-16.4)
+
+The `ZenjiDeviceDev` scheme was rebuilt for the physical iPhone
+(`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
+DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
+chris.haerem@gmail.com*) and — unlike WP-16.1–16.3, when the device was
+`unavailable` — **installed successfully** this time:
+`xcrun devicectl device install app --device 00008140-001939D02EBB001C …` →
+*App installed: bundleID app.zenji.ios*. `devicectl device process launch` then
+hit the same documented, expected `FBSOpenApplicationErrorDomain error 7`
+("Locked") the earlier WPs recorded — the device was locked, nothing to fix. The
+on-device Apple Intelligence checks (type in the command line: a follow, a
+"Følg X" from an event's detail sheet, and a question like *"hva bør jeg se i
+kveld?"*/*"når går neste TdF-etappe?"*; confirm the answer references real rows)
+are the manual steps to run by hand once the device is unlocked.
+
 ## Architecture (what plugs in next)
 
 WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache

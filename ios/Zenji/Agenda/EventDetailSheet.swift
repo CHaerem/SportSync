@@ -14,8 +14,17 @@
 import SwiftUI
 
 struct EventDetailSheet: View {
-    let event: Event
+    /// WP-16.4 — the full agenda row, so the sheet has the precomputed context
+    /// data (whyShown + followable) alongside the event.
+    let row: AgendaEventRow
+    /// WP-16.4 — a "Følg <entitet>" tap; the host routes it into the assistant's
+    /// diff/confirm flow. No-op default keeps standalone/preview use compiling.
+    var onFollow: (Entity) -> Void = { _ in }
     @Environment(\.dismiss) private var dismiss
+    /// WP-16.4 — the "Hvorfor vises denne?" context action, collapsed by default.
+    @State private var whyExpanded = false
+
+    private var event: Event { row.event }
 
     private var titleText: String {
         AgendaFormat.title(homeTeam: event.homeTeam, awayTeam: event.awayTeam, fallback: event.title)
@@ -30,6 +39,8 @@ struct EventDetailSheet: View {
                 if let summary = event.summary, !summary.isEmpty {
                     DetailRow(label: "Om", value: summary)
                 }
+
+                contextActionsSection
 
                 Section {
                     if event.streaming.isEmpty {
@@ -87,6 +98,54 @@ struct EventDetailSheet: View {
             .font(.zenjiMono(size: 11, weight: .semibold))
             .foregroundStyle(ZenjiTokens.accent)
             .tracking(0.5)
+    }
+
+    // MARK: - Context actions (WP-16.4)
+
+    /// The two in-context actions the "sømløs assistent" brief asks for, both
+    /// woven into the same flow as everything else: a quiet, deterministic
+    /// "Hvorfor vises denne?" (FeedCompiler.whyShown, no model needed) and a
+    /// "Følg <entitet>" per followable subject that routes through the
+    /// assistant's normal diff/confirm flow (nothing is applied by the tap
+    /// alone — the user still confirms the diff).
+    @ViewBuilder
+    private var contextActionsSection: some View {
+        if !row.whyShown.isEmpty || !row.followable.isEmpty {
+            Section {
+                if !row.whyShown.isEmpty {
+                    DisclosureGroup(isExpanded: $whyExpanded) {
+                        Text(row.whyShown)
+                            .font(.zenjiMono(size: 13))
+                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                            .padding(.vertical, 4)
+                    } label: {
+                        Text("Hvorfor vises denne?")
+                            .font(.zenjiMono(size: 13))
+                            .foregroundStyle(ZenjiTokens.foreground)
+                    }
+                    .tint(ZenjiTokens.muted)
+                    .listRowBackground(ZenjiTokens.surface)
+                }
+                ForEach(row.followable, id: \.id) { entity in
+                    Button {
+                        // Hand off to the command-line assistant's diff flow,
+                        // then close the sheet so the diff ark is unobscured.
+                        onFollow(entity)
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text("» Følg \(entity.name)")
+                                .font(.zenjiMono(size: 14, weight: .semibold))
+                                .foregroundStyle(ZenjiTokens.accent)
+                            Spacer()
+                        }
+                    }
+                    .listRowBackground(ZenjiTokens.surface)
+                }
+            } header: {
+                header("HANDLINGER")
+            }
+        }
     }
 }
 
@@ -207,9 +266,14 @@ private struct ProvenanceRows: View {
 }
 
 #Preview {
-    EventDetailSheet(event: try! ZenjiJSON.decoder.decode(Event.self, from: Data("""
+    let event = try! ZenjiJSON.decoder.decode(Event.self, from: Data("""
     {"sport":"chess","title":"Sjakk-NM 2026","time":"2026-07-03T16:00:00Z","venue":"Normoria, Kristiansund",
      "summary":"Landsturneringen 2026.","streaming":[{"platform":"Lichess","url":"https://lichess.org"}],
      "source":"ai-research","confidence":"high","evidence":["https://sjakknm2026.no/"]}
-    """.utf8)))
+    """.utf8))
+    return EventDetailSheet(row: AgendaEventRow(
+        id: "preview", timeLabel: "18:00", title: "Sjakk-NM 2026", metaLabel: nil,
+        channelLabel: "Lichess", isMustSee: false, mustWatch: false, isAIResearch: true,
+        event: event, whyShown: "AI-research fant dette for deg", followable: []
+    ))
 }

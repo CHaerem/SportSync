@@ -2,23 +2,23 @@
 //  ContentView.swift
 //  Zenji
 //
-//  WP-10 scaffold → WP-12 wired in sync → WP-14 replaces the placeholder
-//  agenda with the real one: a Tekst-TV header (ZENJI · dato · a quietly
-//  ticking clock, no other chrome — CLAUDE.md "Calm dashboard") above
-//  AgendaView, which does the actual day-grouped rendering. WP-15 adds the
-//  one NotificationPlanner hook in `refresh()` below (the "after a
-//  successful sync" reconcile point) — deliberately the ONLY WP-15 touch in
-//  this file; the real agenda rendering is WP-14's. WP-14.2 adds the manual
-//  theme override glyph next to `»_` and applies `.preferredColorScheme` at
-//  this view's root — see `ThemeOverride.swift` for the pure cycling/mapping
-//  logic.
+//  WP-10 scaffold → WP-12 sync → WP-14 agenda → WP-14.2 theme override →
+//  WP-16.4 the seamless assistant. The screen is now: a Tekst-TV header
+//  (ZENJI · dato · ticking clock, plus the theme + assistant glyphs), the
+//  quiet live-now line, the day-grouped agenda, and — pinned to the bottom
+//  above the safe-area — the always-present KOMMANDOLINJE. The assistant's
+//  results (a proposal DIFF, an answer, an explanation) fade in as a flat
+//  "ark" (AssistantPanel) over the agenda; the command line stays put beneath
+//  it, so the line is unmistakably the primary way in. The header `»_` glyph
+//  is now a focus shortcut to that line rather than a button that opens a room.
 //
-//  Deliberately keeps its public `init(syncClient:dataStore:)` call
-//  compatible with the WP-12 scaffold (the third parameter,
-//  `notificationPlanner`, defaults): WP-15 (NotificationPlanner) landed in
-//  parallel and the brief asked to keep `ZenjiApp.swift` changes to an
-//  absolute minimum to avoid a merge conflict — `ZenjiApp.swift` constructs
-//  this view with just `syncClient`/`dataStore` and needs zero edits.
+//  ContentView owns BOTH view models and hands them ONE shared ProfileStore, so
+//  a follow the assistant applies is the same profile the agenda recompiles
+//  against — that shared store, plus `assistant.onProfileChanged` wired to
+//  `agenda.reloadFromCache`, is the "umiddelbar konsekvens" (move 4).
+//
+//  Deliberately keeps `init(syncClient:dataStore:)` compatible with
+//  ZenjiApp.swift (which needs zero edits — the WP-14/15 rationale still holds).
 //
 
 import SwiftUI
@@ -27,38 +27,50 @@ struct ContentView: View {
     let syncClient: SyncClient
     let dataStore: DataStore
     let notificationPlanner: NotificationPlanner
+    /// WP-16.4 — the one profile store the agenda AND the assistant share.
+    let profileStore: ProfileStore
 
-    @State private var viewModel: AgendaViewModel
+    @State private var agenda: AgendaViewModel
+    @State private var assistant: AssistantViewModel
     @State private var now = Date()
-    /// WP-16: the FM-lekegrind, reached from the header glyph below.
-    @State private var showingAssistant = false
-    /// WP-14.2: persisted manual theme override, applied at this view's root
-    /// via `.preferredColorScheme` below — covers every screen and `.sheet`
-    /// (AssistantView included) with the one setting.
+    /// WP-16.4 — the assistant "ark" is up (a result or a browse).
+    @State private var panelShown = false
+    @FocusState private var commandFocused: Bool
+
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
-    /// DESIGN.md "Bevegelse & lyd": the ticking clock is the app's only
-    /// continuous motion — under Reduce Motion it drops the seconds and reads
-    /// static (HH:mm).
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var themeOverride: ThemeOverride {
         ThemeOverride(rawValue: themeOverrideRaw) ?? .system
     }
 
-    /// Ticks once a second — the "tikkende klokke-følelse" in the header,
-    /// same idea as the web masthead's clock (dashboard.js `startClock`), just
-    /// quieter (no seconds ticking sound, obviously — just the digits).
     private let clock = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(
         syncClient: SyncClient = SyncClient(),
         dataStore: DataStore = DataStore(),
-        notificationPlanner: NotificationPlanner = NotificationPlanner()
+        notificationPlanner: NotificationPlanner = NotificationPlanner(),
+        profileStore: ProfileStore = ProfileStore()
     ) {
         self.syncClient = syncClient
         self.dataStore = dataStore
         self.notificationPlanner = notificationPlanner
-        self._viewModel = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient))
+        self.profileStore = profileStore
+        self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore))
+        #if DEBUG
+        // Screenshot harness: back the assistant with the deterministic mock
+        // (so no "Apple Intelligence off" banner) when a demo mode is requested.
+        if ProcessInfo.processInfo.environment["ZENJI_DEMO"] != nil {
+            self._assistant = State(initialValue: AssistantViewModel(
+                assistant: MockInterestAssistant(), profileStore: profileStore,
+                index: EntityIndex(dataStore.loadEntities())
+            ))
+        } else {
+            self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
+        }
+        #else
+        self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
+        #endif
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -97,36 +109,67 @@ struct ContentView: View {
                 .fill(ZenjiTokens.hairline)
                 .frame(height: 1)
             liveNowLine
-            AgendaView(viewModel: viewModel)
+            ZStack {
+                AgendaView(viewModel: agenda, onFollow: follow)
+                if panelShown {
+                    AssistantPanel(viewModel: assistant, dismiss: closePanel)
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
-        // WP-14.2: forces the whole window's appearance (this screen, every
-        // `.sheet` presented from it) when the owner has picked mørk/lys;
-        // `nil` for `.system` defers back to the device setting.
         .preferredColorScheme(themeOverride.colorScheme)
         .task {
+            // Recompile the agenda the instant the assistant applies a change
+            // (move 4). Set here (not in init) so it can capture `agenda`.
+            assistant.onProfileChanged = { agenda.reloadFromCache(now: Date()) }
+            #if DEBUG
+            if let mode = ProcessInfo.processInfo.environment["ZENJI_DEMO"] {
+                assistant.demoSeed(mode)
+                if mode == "diff" || mode == "answer" { panelShown = true }
+            }
+            #endif
             await refresh()
         }
         .onReceive(clock) { now = $0 }
-        .sheet(isPresented: $showingAssistant) {
-            AssistantView()
+        // A fresh assistant result raises the ark (≤150 ms fade, move 5's calm).
+        .onChange(of: assistant.presentToken) { _, _ in
+            commandFocused = false
+            withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
         }
     }
 
-    /// Loads whatever is already cached immediately (so the agenda isn't
-    /// blank while the network round-trip is in flight — WP-12's "kall sync
-    /// ved app-start" hook), then syncs and reloads. WP-15: reconciles local
-    /// notifications after the sync completes, diffing whatever was cached
-    /// before against whatever is cached now — this orchestration (rather
-    /// than delegating straight to `viewModel.refresh(now:)`) is what lets
-    /// the "previous events" snapshot land exactly between the two cache
-    /// reloads, same shape as the WP-15 original.
+    // MARK: - Actions
+
+    /// A "Følg <entitet>" tapped in the event detail sheet — hand it to the
+    /// assistant's diff/confirm flow (the panel rises via presentToken).
+    private func follow(_ entity: Entity) {
+        assistant.proposeFollow(entity)
+    }
+
+    /// The command line's `»_` — open the assistant in browse mode.
+    private func openBrowse() {
+        commandFocused = false
+        withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+    }
+
+    private func closePanel() {
+        withAnimation(.easeOut(duration: 0.15)) { panelShown = false }
+    }
+
     private func refresh() async {
-        viewModel.reloadFromCache(now: now)
+        agenda.reloadFromCache(now: now)
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
-        viewModel.reloadFromCache(now: now)
+        agenda.reloadFromCache(now: now)
+        #if DEBUG
+        // The screenshot harness must not trip the first-launch notification
+        // permission alert over the design it's capturing.
+        if ProcessInfo.processInfo.environment["ZENJI_DEMO"] != nil { return }
+        #endif
         await notificationPlanner.reconcile(
             previousEvents: previousEvents,
             newEvents: dataStore.loadEvents(),
@@ -135,15 +178,15 @@ struct ContentView: View {
         )
     }
 
+    // MARK: - Header
+
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 5) {
-                // Wordmark — amber, heavy mono (DESIGN.md "Header").
                 Text("ZENJI")
                     .font(.zenjiMono(size: 28, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
                     .tracking(2)
-                // Tekst-TV page index + date, both dempet.
                 HStack(spacing: 8) {
                     Text("P100")
                         .foregroundStyle(ZenjiTokens.muted)
@@ -155,9 +198,6 @@ struct ContentView: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 5) {
                 HStack(spacing: 12) {
-                    // Theme override — cycles system → mørk → lys per tap
-                    // (DESIGN.md "Header"); state shown quantized (◐/●/○), no
-                    // settings screen. Mirrors the web dashboard's toggle.
                     Button {
                         themeOverrideRaw = themeOverride.next.rawValue
                     } label: {
@@ -166,18 +206,18 @@ struct ContentView: View {
                             .foregroundStyle(ZenjiTokens.muted)
                     }
                     .accessibilityLabel(themeOverride.accessibilityLabel)
-                    // Assistant entry — a mono prompt glyph, dempet, NOT a speech
-                    // bubble/emoji (DESIGN.md "Header").
+                    // WP-16.4: the assistant glyph is now a FOCUS SHORTCUT to
+                    // the command line (the primary entry), not a button that
+                    // opens a separate screen.
                     Button {
-                        showingAssistant = true
+                        commandFocused = true
                     } label: {
                         Text("»_")
                             .font(.zenjiMono(size: 15, weight: .semibold))
                             .foregroundStyle(ZenjiTokens.muted)
                     }
-                    .accessibilityLabel("Assistent")
+                    .accessibilityLabel("Skriv til assistenten")
                 }
-                // The living clock — amber, tabular, the app's only motion.
                 Text(clockLabel)
                     .font(.zenjiMono(size: 13))
                     .monospacedDigit()
@@ -188,14 +228,11 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// DESIGN.md "Agendaens semantikk" §4: a quiet line under the header when
-    /// something is on right now — a `▌ LIVE` marker in the live colour, then
-    /// title · channel, at most two. Invisible (and takes no space) otherwise.
     @ViewBuilder
     private var liveNowLine: some View {
-        if !viewModel.liveNow.isEmpty {
+        if !agenda.liveNow.isEmpty {
             VStack(alignment: .leading, spacing: 5) {
-                ForEach(viewModel.liveNow) { row in
+                ForEach(agenda.liveNow) { row in
                     HStack(spacing: 8) {
                         Text("▌ LIVE")
                             .font(.zenjiMono(size: 12, weight: .semibold))
