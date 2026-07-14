@@ -1,4 +1,4 @@
-# Verify Agent — SportSync
+# Verify Agent — Zenji
 
 Read `docs/data/events.json`. For events in the next 7 days where
 `source: "ai-research"` OR `confidence` is set OR `streaming` carries a

@@ -49,7 +49,7 @@ jobs:
           PR_TITLE: ${{ steps.apply.outputs.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          git config user.name "SportSync bot"
+          git config user.name "Zenji bot"
           git config user.email "action@github.com"
           git add scripts/config/interests.json
           git commit -m "${PR_TITLE} (from #${ISSUE_NUMBER})"

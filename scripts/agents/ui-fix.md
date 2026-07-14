@@ -1,4 +1,4 @@
-# UI Fix Agent — SportSync (self-healing loop)
+# UI Fix Agent — Zenji (self-healing loop)
 
 You close the loop the **visual-qa** agent opens. Visual-qa *reports* rendering
 problems; you *fix* them — on a branch, re-verified with screenshots, opened as a
