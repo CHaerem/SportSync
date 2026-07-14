@@ -16,7 +16,7 @@ beforeAll(() => {
 const soon = () => new Date(Date.now() + 3600000).toISOString();
 
 describe("agenda event row", () => {
-	it("renders a match with both teams, a sport badge, time and channel", () => {
+	it("renders a match with both teams, time and channel in a flat row (no sport badge)", () => {
 		const html = dash.eventRow({
 			id: "x", sport: "football", tournament: "Premier League",
 			homeTeam: "Liverpool FC", awayTeam: "Arsenal FC", title: "Liverpool vs Arsenal",
@@ -25,8 +25,10 @@ describe("agenda event row", () => {
 		expect(html).toContain("Liverpool");
 		expect(html).toContain("Arsenal");
 		expect(html).toContain("TV 2 Play");
-		expect(html).toContain("ev-badge"); // sport visual anchor
 		expect(html).toContain("ev-time");
+		// Pinned v1 look → now DESIGN.md: sport is signalled by the content, not an
+		// emoji sticker in a rounded box. The per-row sport badge is gone.
+		expect(html).not.toContain("ev-badge");
 	});
 
 	it("renders a non-match event by its title", () => {
@@ -52,10 +54,15 @@ describe("agenda event row", () => {
 		expect(detail).toContain("kilde 1");
 	});
 
-	it("shows a national flag for country teams that have no club crest", () => {
+	it("shows both country teams by name, with no flag emoji in the chrome", () => {
 		const html = dash.eventTitle({ homeTeam: "Norway", awayTeam: "Brazil" });
-		expect(html).toContain("🇳🇴");
-		expect(html).toContain("🇧🇷");
+		expect(html).toContain("Norway");
+		expect(html).toContain("Brazil");
+		expect(html).toContain("–"); // the two teams, joined
+		// Pinned v1 look → now DESIGN.md: emoji is forbidden in the chrome (only
+		// the amber must-see dot + the plain team names carry the row).
+		expect(html).not.toContain("🇳🇴");
+		expect(html).not.toContain("🇧🇷");
 	});
 
 	it("shows round context when present (e.g. WC knockout round)", () => {

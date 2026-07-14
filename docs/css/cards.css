@@ -1,32 +1,23 @@
-/* SportSync — the agenda. One quiet list, grouped by day. Each row answers
-   only: when · what · where to watch. Nothing competes for attention. */
+/* Zenji — the agenda. One quiet list, grouped by day. The flat row language of
+   DESIGN.md: hairlines, one amber dot for must-see, a ticking clock the only
+   motion. No cards, no washes, no left-stripes, no chips, no chevrons, no emoji
+   in the chrome. Each row answers only: when · what · where to watch. */
 
-/* Optional single quiet headline under the date (editorial, one line, no more) */
-.today-line {
-	font-size: 16px;
-	color: var(--fg-2);
-	margin: 18px 0 4px;
-	max-width: 52ch;
-	line-height: 1.45;
-}
-
-/* Live: a quiet line at the very top, only when something is on now */
-.live-now {
-	margin: 22px 0 6px;
-}
+/* ── Live now: a quiet line at the very top, only when something is on ─────── */
+.live-now { margin: 18px 0 4px; }
 .live-now .live-label {
-	display: inline-flex; align-items: center; gap: 7px;
-	font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
-	color: var(--live); font-weight: 600;
-	margin-bottom: 8px;
+	display: inline-flex; align-items: center; gap: 8px;
+	font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+	color: var(--live); font-weight: 700;
+	margin-bottom: 6px;
 }
 .live-item {
 	display: flex; align-items: baseline; gap: 12px;
 	padding: 6px 0;
-	font-size: 16px;
+	font-size: 15px;
 }
 .live-item .live-score { font-weight: 600; font-variant-numeric: tabular-nums; }
-.live-item .live-meta { color: var(--fg-2); font-size: 14px; margin-left: auto; white-space: nowrap; }
+.live-item .live-meta { color: var(--fg-2); font-size: 13px; margin-left: auto; white-space: nowrap; }
 
 /* Live golf/F1: a quiet line — leader on the right, your athletes' live position
    under the name — that expands to the top of the leaderboard on tap. */
@@ -34,8 +25,6 @@
 .live-you { font-size: 12.5px; color: var(--fg-2); margin-top: 2px; overflow-wrap: anywhere; }
 .live-you .live-pos { color: var(--fg-3); }
 .live-item.live-expand { cursor: pointer; }
-.live-caret { color: var(--fg-3); font-size: 13px; opacity: 0.55; margin-left: 6px; display: inline-block; transition: transform 0.15s; }
-.live-item.live-expand[aria-expanded="true"] .live-caret { transform: rotate(90deg); }
 .live-detail { padding: 6px 0 8px 15px; display: grid; gap: 3px; }
 .lb-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: baseline; font-size: 13.5px; }
 .lb-pos { color: var(--fg-3); font-variant-numeric: tabular-nums; text-align: right; }
@@ -43,82 +32,118 @@
 .lb-x { color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .lb-row.mine .lb-name, .lb-row.mine .lb-x { color: var(--accent); font-weight: 600; }
 .live-out { color: var(--live); font-style: italic; font-size: 11.5px; }
-.lb-cut { margin-top: 5px; padding-top: 5px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--fg-3); font-style: italic; }
+.lb-cut { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); font-size: 12px; color: var(--fg-3); font-style: italic; }
 
+/* The live marker — a small static block in the live colour (no pulsing: the
+   clock's tick is the app's only continuous motion). */
 .live-dot {
-	width: 7px; height: 7px; border-radius: 50%;
+	width: 5px; height: 13px;
 	background: var(--live); display: inline-block; flex-shrink: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-	.live-dot { animation: breathe 2s ease-in-out infinite; }
-	@keyframes breathe { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+	align-self: center;
 }
 
-/* Day groups — a teletext section header (amber block + label) over a boxed table */
-.day {
-	margin-top: 22px;
-}
-.day:first-of-type { margin-top: 10px; }
+/* ── Day groups — an amber uppercase label over flat, hairline-separated rows ─
+   28pt of air before the header, 10pt after (the DESIGN.md rhythm). */
+.day { margin-top: 28px; }
+.day:first-of-type { margin-top: 14px; }
 .day-name {
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--accent);
-	letter-spacing: 0.10em;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--accent);          /* day headers are one of the five amber uses */
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	margin: 0 0 7px 0;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-/* A teletext block glyph leading the section label */
-.day-name::before {
-	content: "";
-	width: 9px;
-	height: 13px;
-	background: var(--accent);
-}
-.day.is-today .day-name { color: var(--accent); }
-
-/* The boxed "table" holding a day's rows — flat, bordered, teletext */
-.day-card {
-	border: 1px solid var(--line);
-	border-radius: 8px;
-	background: var(--surface);
-	padding: 2px 13px;
-	overflow: hidden;
+	margin: 0 0 10px 0;
 }
 
+/* Row wrapper — the hairline lives here, below every row (incl. the day's last). */
 .ev-wrap { border-bottom: 1px solid var(--line); }
-.ev-wrap:last-child { border-bottom: none; }
 
-/* Event row — icon · time · what · where. Scan by the visual anchor, not by reading. */
+/* Event row — [dot] [time] [what + meta] [ⓘ]. Flat. Scanned by rhythm, not boxes.
+   The whole row is tappable; that's signalled by rhythm + hover, never a chevron. */
 .ev {
 	display: grid;
-	grid-template-columns: 30px 46px 1fr auto 12px;
-	gap: 10px;
-	align-items: center;
-	padding: 11px 5px;
-	margin: 0 -5px;
-	border-radius: 6px;
-	transition: background 0.12s;
+	grid-template-columns: 14px var(--time-col) 1fr auto;
+	column-gap: 12px;
+	align-items: start;
+	padding: 12px 0;
 }
 .ev.expandable { cursor: pointer; }
-.ev.expandable:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.ev.expandable:hover { background: color-mix(in srgb, var(--fg) 5%, transparent); }
 .ev.expandable:hover .ev-title { color: var(--accent); }
 
-.ev-flag { font-size: 15px; margin-right: 6px; vertical-align: -1px; }
-.ev-caret { color: var(--fg-3); font-size: 15px; opacity: 0.5; transition: transform 0.15s; justify-self: end; }
-/* Quiet marker: this event is in the must-watch reminder feed. */
-.ev-bell { font-size: 11px; opacity: 0.75; margin-left: 6px; vertical-align: 1px; cursor: default; }
-/* "Del" (native share) button inside an expanded event's detail. */
-.d-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-.ev-act { font-size: 12.5px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg-2); cursor: pointer; }
-.ev-act:hover { border-color: var(--accent); color: var(--accent); }
-.ev.expandable[aria-expanded="true"] .ev-caret { transform: rotate(90deg); }
+/* Must-see: the amber dot, left of the time — the whole language. No wash, no
+   stripe, no amber text (never two amber elements in one row). */
+.ev-dot {
+	width: 7px; height: 7px; border-radius: 50%;
+	background: var(--accent);
+	margin: 8px auto 0;
+}
 
-/* Expanded detail — the "nice extra", quiet, only on demand */
+.ev-time {
+	font-variant-numeric: tabular-nums;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--fg);
+	line-height: 1.35;
+	overflow-wrap: break-word;   /* a multi-day window may wrap; a HH:MM never does */
+}
+
+.ev-main { min-width: 0; }
+/* Titles are never truncated — they wrap to as many lines as they need. */
+.ev-title {
+	display: block;
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--fg);
+	line-height: 1.3;
+	overflow-wrap: break-word;
+}
+/* One muted meta line: tournament · round · where-to-watch (or status/result). */
+.ev-meta {
+	display: block;
+	margin-top: 3px;
+	font-size: 14px;
+	color: var(--fg-2);
+	line-height: 1.4;
+	overflow-wrap: break-word;
+}
+.ev-sep { color: var(--fg-3); }
+.ev-round { color: var(--fg-2); }
+
+/* ⓘ — mono, dempet, ONLY on AI-research rows; opens provenance in the detail. */
+.ev-info {
+	color: var(--fg-3);
+	font-size: 15px;
+	line-height: 1.35;
+	margin-top: 1px;
+	justify-self: end;
+}
+.ev.expandable:hover .ev-info { color: var(--accent); }
+
+/* Where to watch — quiet, inline in the meta line. Faint dash when unknown. */
+.ev-where { color: var(--fg-2); }
+.ev-where a { border-bottom: 1px dotted var(--fg-3); }
+.ev-where a:hover { border-bottom: 1px solid var(--accent); color: var(--accent); }
+.ev-where.unknown { color: var(--fg-3); }
+.ev-where.tentative { color: var(--fg-3); font-style: italic; }
+.ev-where-more { color: var(--fg-3); font-size: 12px; margin-left: 3px; }
+
+/* Cancelled/postponed: stays on the board, clearly faded (never the live colour). */
+.ev.cancelled { opacity: 0.55; }
+.ev.cancelled .ev-title { text-decoration: line-through; text-decoration-color: var(--fg-3); }
+.ev-status { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-2); white-space: nowrap; }
+/* Finished: stays briefly with its result, gently dimmed (it happened). */
+.ev.done { opacity: 0.7; }
+.ev-done { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-3); white-space: nowrap; }
+.ev-done-score { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; margin-left: 5px; }
+/* Live in-progress: the score in the live colour. */
+.ev-live { color: var(--live); font-variant-numeric: tabular-nums; font-weight: 600; }
+.d-v .tbd { color: var(--fg-3); font-style: italic; }
+
+/* Expanded detail — the "nice extra", quiet, only on demand. Indented under the
+   title column; same flat row language, no card-in-a-card. */
 .ev-detail {
-	padding: 2px 0 14px 40px;
+	padding: 4px 0 16px calc(14px + 12px + var(--time-col) + 12px);
 	display: grid;
 	gap: 6px;
 	font-size: 13.5px;
@@ -128,138 +153,61 @@
 .ev-detail .d-v { color: var(--fg-2); }
 .ev-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
 .ev-detail a:hover { border-bottom-color: var(--accent); }
-
-/* Sport badge — a small teletext cell; the emoji carries the sport */
-.ev-badge {
-	width: 30px; height: 30px;
-	border-radius: 5px;
-	display: grid; place-items: center;
-	font-size: 15px;
-	line-height: 1;
-	background: color-mix(in srgb, var(--fg) 6%, transparent);
-	border: 1px solid var(--line);
-}
-
-.ev-time {
-	font-variant-numeric: tabular-nums;
-	font-size: 14px;
-	color: var(--fg-2);
-	white-space: nowrap;
-}
-.ev-main { min-width: 0; }
-/* Let a long title (e.g. an unresolved bracket "Round of 16 5 Winner – …")
-   wrap onto a second line rather than clip mid-word with an ellipsis. Phones
-   already wrapped; this makes wide screens behave the same, so the full name
-   always reads. Short, everyday fixtures still sit on one line. */
-.ev-title {
-	display: block;
-	font-size: 15.5px;
-	color: var(--fg);
-	overflow-wrap: break-word;
-	line-height: 1.3;
-}
-.ev-round {
-	display: block;
-	font-size: 12px;
-	color: var(--fg-3);
-	margin-top: 1px;
-}
-.ev-logo {
-	width: 18px; height: 18px;
-	object-fit: contain;
-	vertical-align: -4px;
-	margin-right: 5px;
-}
-
-/* Must-see: an amber teletext highlight — amber block, wash + amber time/title */
-.ev.must {
-	background: var(--accent-wash);
-	box-shadow: inset 3px 0 0 0 var(--accent);
-}
-.ev.must.expandable:hover { background: var(--accent-wash); }
-.ev.must .ev-title { font-weight: 600; color: var(--accent); }
-.ev.must .ev-badge { border-color: var(--accent); }
-.ev.must .ev-time { color: var(--accent); font-weight: 600; }
-
-/* Gentle staggered reveal on load — a little life, respectful of reduced-motion */
-@media (prefers-reduced-motion: no-preference) {
-	.hero { animation: ss-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 0.02s; }
-	/* Only on the first render (#agenda.reveal), never on live-poll re-renders */
-	#agenda.reveal .day { animation: ss-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-	#agenda.reveal .day:nth-of-type(1) { animation-delay: 0.09s; }
-	#agenda.reveal .day:nth-of-type(2) { animation-delay: 0.15s; }
-	#agenda.reveal .day:nth-of-type(3) { animation-delay: 0.21s; }
-	#agenda.reveal .day:nth-of-type(4) { animation-delay: 0.27s; }
-	#agenda.reveal .day:nth-of-type(5) { animation-delay: 0.33s; }
-	#agenda.reveal .day:nth-of-type(n+6) { animation-delay: 0.39s; }
-	@keyframes ss-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
-}
-
 /* Collapsed stage race (e.g. Tour de France): past stages dimmed when expanded */
 .ev-detail .d-row.stage.past { opacity: 0.45; }
 
-/* Quiet "show the rest of the fortnight" control */
+/* Detail actions — quiet flat text buttons, no pills. */
+.d-actions { margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
+.ev-act { font-size: 12.5px; color: var(--fg-2); background: none; border: none; padding: 0; cursor: pointer; border-bottom: 1px solid transparent; }
+.ev-act:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Quiet "show the rest of the fortnight" control — flat text, no pill, no arrow. */
 .agenda-more {
 	display: block;
-	margin: 22px auto 0;
-	padding: 10px 20px;
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--fg-2);
-	background: var(--surface);
-	border: 1px solid var(--line);
-	border-radius: 6px;
-}
-.agenda-more:hover { color: var(--accent); border-color: var(--accent); }
-
-.ai-badge { font-size: 11px; color: var(--fg-3); margin-left: 4px; vertical-align: 1px; }
-.ai-badge:hover { color: var(--accent); }
-
-/* Where to watch — present but quiet, right-aligned, one primary channel.
-   Wrap the qualifier ("(gratis)", "(finale gratis)") to a quiet second line
-   instead of ellipsis-clipping it — a hidden "gratis" note is worse than a
-   two-line channel. Break long single words only as a last resort so a lone
-   channel name ("Direktesport") never clips on a narrow phone. */
-.ev-where {
+	margin: 26px auto 0;
+	padding: 8px;
 	font-size: 13px;
 	color: var(--fg-2);
-	text-align: right;
-	max-width: 128px;
-	overflow-wrap: break-word;
-	line-height: 1.3;
+	background: none;
+	border: none;
 }
-/* Faint dotted underline signals the channel is tappable (opens where to watch). */
-.ev-where a { border-bottom: 1px dotted var(--fg-3); }
-.ev-where a:hover { border-bottom: 1px solid var(--accent); color: var(--accent); }
-.ev-where.unknown { color: var(--fg-3); }
-/* Cancelled/postponed: stays on the board but clearly faded — "not happening",
-   so it recedes rather than shouts (never the live red). */
-.ev.cancelled { opacity: 0.6; }
-.ev.cancelled .ev-title { text-decoration: line-through; text-decoration-color: var(--fg-3); }
-.ev-status { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-2); text-align: right; white-space: nowrap; justify-self: end; }
-/* Finished: stays briefly with its result, gently dimmed (it happened — not
-   cancelled, so no strikethrough). */
-.ev.done { opacity: 0.72; }
-.ev-done { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-3); text-align: right; white-space: nowrap; justify-self: end; }
-.ev-done-score { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; margin-left: 5px; }
-.ev-where.tentative { color: var(--fg-3); font-style: italic; }
-.ev-where-more { color: var(--fg-3); font-size: 11px; margin-left: 4px; }
-.d-v .tbd { color: var(--fg-3); font-style: italic; }
+.agenda-more:hover { color: var(--accent); }
 
-.ev-live {
-	color: var(--live);
-	font-variant-numeric: tabular-nums;
-	font-weight: 600;
+.empty { color: var(--fg-2); font-size: 15px; padding: 40px 0; text-align: center; }
+
+/* ── "Dine neste": the compact top glance ─────────────────────────────────
+   A quiet borderless list under a muted label — flat rows, one hairline + air
+   below to set it apart from the schedule. Upcoming-only. */
+.next-up { margin: 20px 0; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.nu-label {
+	font-size: 12px; font-weight: 600; color: var(--fg-2);
+	letter-spacing: 0.08em; text-transform: uppercase;
+	margin: 0 0 6px 0;
 }
+.next-up .fn-row { padding: 7px 0; }
+.nu-more { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--fg-2); background: none; border: none; padding: 2px 0; cursor: pointer; }
+.nu-more:hover { color: var(--accent); }
 
-.empty {
-	color: var(--fg-2);
-	font-size: 15px;
-	padding: 40px 0;
-	text-align: center;
-}
+/* ── "Neste" index rows — one quiet row per followed athlete/team ──────────
+   name · relative day; tap to expand when·what·where; honest gap when empty. */
+.follow-next { list-style: none; margin: 0; padding: 0; }
+.fn-item { border-top: 1px solid var(--line); }
+.fn-item:first-child { border-top: none; }
+.fn-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline; padding: 9px 0; }
+.fn-item.has-event .fn-row { cursor: pointer; }
+.fn-item.has-event .fn-row:hover .fn-name { color: var(--accent); }
+.fn-name { font-size: 15px; color: var(--fg); min-width: 0; overflow-wrap: break-word; }
+.fn-sub { display: block; font-size: 12px; color: var(--fg-3); font-style: italic; margin-top: 1px; }
+.fn-when { font-size: 13px; color: var(--fg-2); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fn-detail { padding: 2px 0 12px 0; display: grid; gap: 6px; font-size: 13px; }
+.fn-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
+.fn-detail .d-k { color: var(--fg-3); min-width: 52px; flex-shrink: 0; }
+.fn-detail .d-v { color: var(--fg-2); }
+.fn-detail .tbd { color: var(--fg-3); font-style: italic; }
+.fn-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
+.fn-detail a:hover { border-bottom-color: var(--accent); }
 
-/* "Hva vi følger" — a single quiet disclosure at the very bottom, closed by default */
+/* ── "Hva vi følger" — one quiet disclosure at the very bottom ─────────────── */
 .followed {
 	margin-top: 40px;
 	border-top: 1px solid var(--line);
@@ -271,118 +219,27 @@
 	cursor: pointer;
 	list-style: none;
 }
-.followed-edit-top { margin-left: 14px; font-size: 12.5px; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.followed-edit-top { margin-left: 14px; font-size: 12.5px; color: var(--accent); white-space: nowrap; }
 .followed-edit-top:hover { text-decoration: underline; }
 .followed summary::-webkit-details-marker { display: none; }
-.followed summary::before { content: "› "; color: var(--fg-3); }
-.followed[open] summary::before { content: "⌄ "; }
+.followed summary::before { content: "▸ "; color: var(--fg-3); }
+.followed[open] summary::before { content: "▾ "; }
 .followed-body { margin-top: 14px; }
 .followed-layer { margin-bottom: 22px; }
-.followed-head { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 10px; }
-.chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.chip-follow { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); }
-/* Labelled chip groups so athletes/teams/tournaments read apart at a glance. */
-.chip-group { margin-bottom: 12px; }
-.chip-group .chips-row { margin-bottom: 0; }
-.chip-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin-bottom: 5px; }
-.followed-notify { font-size: 12px; color: var(--fg-3); margin: 2px 0 16px; }
-.followed-broad-label { margin-top: 2px; }
-.followed-sub-hint { text-transform: none; letter-spacing: 0; font-style: italic; }
-.followed-broad { margin: 5px 0 0; padding-left: 18px; }
-.followed-broad li { font-size: 12.5px; color: var(--fg-2); line-height: 1.65; }
-.followed-item-name { font-weight: 500; }
-.followed-item .until { margin-left: 8px; }
-.followed-item .why { display: block; margin-top: 2px; line-height: 1.45; }
-.chip-bell { font-size: 9px; margin-left: 4px; opacity: 0.8; vertical-align: 1px; }
-
-/* ── "Neste" index: one quiet row per followed athlete/team ────────────────
-   Answers "when's X next?" at a glance. A muted right-aligned relative day,
-   tap to expand when·what·where; an honest "ikke satt opp ennå" when empty. */
-.follow-next { list-style: none; margin: 0; padding: 0; }
-.fn-item { border-top: 1px solid var(--line); }
-.fn-item:first-child { border-top: none; }
-.fn-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center; padding: 8px 4px; margin: 0 -4px; border-radius: 6px; }
-.fn-item.has-event .fn-row { cursor: pointer; transition: background 0.12s; }
-.fn-item.has-event .fn-row:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); }
-.fn-item.has-event .fn-row:hover .fn-name { color: var(--accent); }
-.fn-row .ev-badge { width: 24px; height: 24px; font-size: 12px; }
-.fn-logo { width: 22px; height: 22px; object-fit: contain; }
-.fn-name { font-size: 14px; color: var(--fg); min-width: 0; overflow-wrap: break-word; }
-/* Honest gap, calm: sits under the name so it never crowds or clips the row. */
-.fn-sub { display: block; font-size: 11.5px; color: var(--fg-3); font-style: italic; margin-top: 1px; }
-.fn-when { font-size: 12.5px; color: var(--fg-2); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: 4px; }
-.fn-caret { color: var(--fg-3); font-size: 14px; opacity: 0.5; transition: transform 0.15s; }
-.fn-item.has-event .fn-row[aria-expanded="true"] .fn-caret { transform: rotate(90deg); }
-.fn-detail { padding: 2px 4px 12px 34px; display: grid; gap: 6px; font-size: 13px; }
-.fn-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
-.fn-detail .d-k { color: var(--fg-3); min-width: 44px; flex-shrink: 0; }
-.fn-detail .d-v { color: var(--fg-2); }
-.fn-detail .tbd { color: var(--fg-3); font-style: italic; }
-.fn-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
-.fn-detail a:hover { border-bottom-color: var(--accent); }
-
-/* ── "Dine neste": the compact top glance ─────────────────────────────────
-   Deliberately calm — a quiet borderless list under a muted label, so amber
-   and boxes stay the agenda's own language. A single hairline + air below
-   sets it apart from the schedule without adding another framed card.
-   Upcoming-only, tight rows, bells omitted. */
-.next-up {
-	margin: 22px 0 22px;
-	padding-bottom: 20px;
-	border-bottom: 1px solid var(--line);
-}
-.nu-label {
-	font-size: 11px; font-weight: 600; color: var(--fg-3);
-	letter-spacing: 0.08em; text-transform: uppercase;
-	margin: 0 0 4px 0;
-}
-.next-up .fn-row { padding: 7px 4px; grid-template-columns: 22px 1fr auto; gap: 9px; }
-.next-up .fn-row .ev-badge { width: 22px; height: 22px; font-size: 11px; }
-.next-up .fn-logo { width: 20px; height: 20px; }
-.next-up .fn-when { font-size: 12.5px; }
-.next-up .chip-bell { display: none; } /* declutter — bells live in the full list below */
-.nu-more { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--fg-2); background: none; border: none; padding: 2px; cursor: pointer; }
-.nu-more:hover { color: var(--accent); }
-.followed-note { font-size: 12.5px; color: var(--fg-3); line-height: 1.5; margin-top: 4px; }
+.chip-group { margin-bottom: 14px; }
+.chip-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin-bottom: 6px; }
+/* Tournaments read as a quiet dot-separated line, not pills. */
+.chips-row { margin-bottom: 0; line-height: 1.9; }
+.chip-follow { font-size: 13px; color: var(--fg); }
+.chip-follow:not(:last-child)::after { content: " · "; color: var(--fg-3); }
 .followed-hint { font-size: 12.5px; color: var(--fg-3); font-style: italic; margin-top: 10px; }
-.followed-group { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-3); margin: 12px 0 5px; }
-.followed-item { font-size: 14px; padding: 4px 0; color: var(--fg); }
-.followed-item .why { color: var(--fg-3); font-size: 12.5px; }
-.followed-item .until { color: var(--fg-3); font-size: 11.5px; }
+.followed-hint .followed-edit { color: var(--accent); font-style: normal; }
 
-/* ── Phones: give match names room ────────────────────────────────────────
-   The desktop row reserves up to 116px for the channel, which starves the
-   title on a ~375px screen (e.g. "Brazil – Nor…" hid that Norway plays).
-   Tighten the grid, columns and gaps so the title (what's on) wins the space;
-   the channel stays readable at its real width ("NRK / TV 2", "TV 2 Play"). */
+/* ── Phones: keep the title (what's on) winning the width ─────────────────── */
 @media (max-width: 460px) {
-	.ev {
-		grid-template-columns: 28px 42px 1fr auto 8px;
-		gap: 8px;
-	}
-	.ev-badge { width: 28px; height: 28px; font-size: 14px; }
-	/* Keep the channel footprint tight so the title (what's on) still wins the
-	   phone's width; a slightly smaller channel type fits the longest single
-	   word ("Direktesport") on one line, and any qualifier wraps quietly below. */
-	.ev-where { max-width: 84px; font-size: 11.5px; }
-	.ev-detail { padding-left: 30px; }
-	/* Let the title wrap instead of clipping the away team to a lone flag
-	   ("United States – 🇧🇪…"). Two lines beats an unreadable name; the row
-	   grows a little, the column stays quiet. */
-	.ev-title {
-		white-space: normal;
-		overflow: visible;
-		text-overflow: clip;
-		overflow-wrap: break-word;
-		line-height: 1.3;
-	}
-	.ev { align-items: start; }
-	.ev-badge, .ev-time, .ev-where, .ev-caret { margin-top: 1px; }
+	:root { --time-col: 112px; }
+	.ev { column-gap: 10px; }
+	.ev-time { font-size: 15px; }
+	.ev-title { font-size: 15.5px; }
+	.ev-meta { font-size: 13px; }
 }
-
-/* AI provenance modal (kept, but invisible until asked for) */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(3px); z-index: 50; display: grid; place-items: center; padding: 24px; }
-.modal { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; max-width: 440px; width: 100%; max-height: 80vh; overflow-y: auto; }
-.modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-.modal .evidence-link { display: block; font-size: 13px; color: var(--accent); word-break: break-all; margin: 6px 0; }
-.modal .modal-close { float: right; color: var(--fg-2); font-size: 18px; }

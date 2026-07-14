@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 	<meta name="description" content="En rolig oversikt over sporten du følger — når det skjer og hvor du ser det.">
-	<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
-	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#0A0A0C" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#F5F1E6" media="(prefers-color-scheme: light)">
 	<link rel="manifest" href="manifest.webmanifest">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,9 +13,6 @@
 	<link rel="apple-touch-icon" href="icons/icon-180x180.png">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<title>Zenji</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<link rel="stylesheet" href="css/cards.css">
@@ -23,15 +20,19 @@
 <body>
 	<header class="masthead">
 		<div class="wrap masthead-inner">
-			<span class="wordmark-enso" aria-hidden="true"></span><span class="wordmark">Zenji</span>
-			<span class="masthead-clock" id="masthead-clock" aria-hidden="true"></span>
-			<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
+			<div class="mast-row mast-row-top">
+				<span class="wordmark-enso" aria-hidden="true"></span><span class="wordmark">Zenji</span>
+				<button class="theme-toggle" id="theme-toggle" title="Bytt tema (system / mørk / lys)" aria-label="Bytt tema">◐</button>
+			</div>
+			<div class="mast-row mast-row-sub">
+				<p class="mast-date"><span class="mast-index" aria-hidden="true">P100</span> <span id="hero-date"></span></p>
+				<span class="masthead-clock" id="masthead-clock" aria-hidden="true"></span>
+			</div>
 		</div>
 	</header>
 
 	<main class="wrap">
 		<section class="hero" id="hero">
-			<p class="hero-eyebrow" id="hero-date"></p>
 			<h1 class="hero-headline" id="hero-headline"></h1>
 		</section>
 		<p class="install-hint" id="install-hint" hidden></p>
@@ -39,14 +40,14 @@
 		<section class="next-up" id="next-up" hidden></section>
 		<div id="agenda"></div>
 		<details class="followed" id="followed" hidden>
-			<summary id="followed-summary"><span>Hva vi følger</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">✎ Rediger</a></summary>
+			<summary id="followed-summary"><span>Hva vi følger</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">Rediger</a></summary>
 			<div class="followed-body" id="followed-body"></div>
 		</details>
 	</main>
 
 	<footer class="site-footer wrap">
 		<span id="footer-updated"></span>
-		<a href="webcal://zenji.app/data/events.ics" title="Abonner — native påminnelser på mobil før 🔔-eventene (ett trykk på iOS/Android)">Abonner i kalender</a>
+		<a href="webcal://zenji.app/data/events.ics" title="Abonner — native påminnelser på mobil før varsel-eventene (ett trykk på iOS/Android)">Abonner i kalender</a>
 		<a href="data/events.ics" download class="footer-alt" title="Last ned .ics (engangsimport, f.eks. på desktop)">last ned</a>
 		<a href="activity.html" class="footer-alt" title="Hva automatikken har gjort — forbedringer og endringer">Aktivitet</a>
 		<span id="footer-stale" class="footer-stale" hidden></span>
