@@ -33,10 +33,10 @@ struct EventDetailSheet: View {
 
                 Section {
                     if event.streaming.isEmpty {
-                        Text("–")
+                        Text("Kanal ukjent")
                             .font(.zenjiMono(size: 14))
-                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.4))
-                            .listRowBackground(ZenjiTokens.background)
+                            .foregroundStyle(ZenjiTokens.muted)
+                            .listRowBackground(ZenjiTokens.surface)
                     } else {
                         ForEach(Array(event.streaming.enumerated()), id: \.offset) { _, channel in
                             StreamingLinkRow(channel: channel)
@@ -53,10 +53,23 @@ struct EventDetailSheet: View {
                         header("ⓘ FUNNET AV AI")
                     }
                 }
+
+                // The reminder ("varsel") state lives HERE, quietly, not in
+                // the agenda row (DESIGN.md "Radens anatomi": "Varslings-
+                // tilstand vises IKKE i raden … bor i detaljarket"). It is an
+                // honest read-out of whether this event arms a reminder (the
+                // must-watch rule, keyed off interests.json), not a fake
+                // control — a user-set per-event override would be a new
+                // feature, out of WP-14.1 scope.
+                Section {
+                    NotifyStatusRow(on: event.mustWatch)
+                } header: {
+                    header("VARSEL")
+                }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .background(ZenjiTokens.background)
+            .background(ZenjiTokens.surface)
             .navigationTitle(titleText)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -86,13 +99,33 @@ struct DetailRow: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label.uppercased())
                 .font(.zenjiMono(size: 10, weight: .semibold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.45))
+                .foregroundStyle(ZenjiTokens.muted)
             Text(value)
                 .font(.zenjiMono(size: 14))
                 .foregroundStyle(ZenjiTokens.foreground)
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.background)
+        .listRowBackground(ZenjiTokens.surface)
+    }
+}
+
+/// The quiet reminder read-out (DESIGN.md "Detaljark"): amber "På" when the
+/// event arms a reminder, dempet "Av" otherwise — a matter-of-fact status, no
+/// exclamation, no fake control.
+private struct NotifyStatusRow: View {
+    let on: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(on ? "På" : "Av")
+                .font(.zenjiMono(size: 14, weight: .semibold))
+                .foregroundStyle(on ? ZenjiTokens.accent : ZenjiTokens.muted)
+            Text(on ? "minner deg før start" : "ingen påminnelse")
+                .font(.zenjiMono(size: 12))
+                .foregroundStyle(ZenjiTokens.muted)
+        }
+        .padding(.vertical, 2)
+        .listRowBackground(ZenjiTokens.surface)
     }
 }
 
@@ -112,7 +145,7 @@ private struct StreamingLinkRow: View {
                 row(linked: false)
             }
         }
-        .listRowBackground(ZenjiTokens.background)
+        .listRowBackground(ZenjiTokens.surface)
     }
 
     private func row(linked: Bool) -> some View {
@@ -123,13 +156,13 @@ private struct StreamingLinkRow: View {
             if channel.tentative == true {
                 Text("(bekreftes)")
                     .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .foregroundStyle(ZenjiTokens.muted)
             }
             Spacer()
             if linked {
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 10))
-                    .foregroundStyle(ZenjiTokens.accent.opacity(0.7))
+                Text("↗")
+                    .font(.zenjiMono(size: 12))
+                    .foregroundStyle(ZenjiTokens.accent)
             }
         }
     }
@@ -144,11 +177,11 @@ private struct ProvenanceRows: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Sikkerhet: \(confidenceLabel)")
                 .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .foregroundStyle(ZenjiTokens.foreground)
             if event.evidence.isEmpty {
                 Text("Ingen kildelenker oppgitt.")
                     .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .foregroundStyle(ZenjiTokens.muted)
             } else {
                 ForEach(Array(event.evidence.enumerated()), id: \.offset) { index, urlString in
                     if let url = URL(string: urlString) {
@@ -160,7 +193,7 @@ private struct ProvenanceRows: View {
             }
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.background)
+        .listRowBackground(ZenjiTokens.surface)
     }
 
     private var confidenceLabel: String {

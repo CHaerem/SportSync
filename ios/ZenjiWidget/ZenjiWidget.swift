@@ -99,7 +99,7 @@ struct ZenjiWidgetEntryView: View {
                     Text(entry.content.channelLabel)
                 }
                 .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                .foregroundStyle(ZenjiTokens.muted)
                 .lineLimit(1)
             }
         }

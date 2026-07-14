@@ -76,6 +76,21 @@ enum AgendaFormat {
         return "\(home) – \(away)"
     }
 
+    /// The quiet meta line under the title (DESIGN.md "Radens anatomi":
+    /// "meta: turnering — én dempet linje ved behov"). Returns the tournament
+    /// ONLY when it adds context the title doesn't already carry — i.e. it is
+    /// non-empty, not equal to the title, and not already contained in it
+    /// (case-insensitive). Otherwise nil, so no empty second line is drawn.
+    /// This is what keeps "Sjakk-NM 2026 – eliteklassen" (whose title already
+    /// names the tournament) to one line while a bare "Lyn – Sogndal" gains a
+    /// dempet "Eliteserien".
+    static func metaLabel(tournament: String?, title: String) -> String? {
+        guard let tournament, !tournament.isEmpty else { return nil }
+        if tournament == title { return nil }
+        if title.range(of: tournament, options: .caseInsensitive) != nil { return nil }
+        return tournament
+    }
+
     // MARK: - "Hvor" — the channel column
 
     /// First Norwegian streaming option, or an honest faint "–" when none is
