@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Turn a "follow-request" Issue Form submission into an edit of interests.json.
-// Runs in the follow-request workflow: parse the issue body → apply the change →
-// validate against interests.schema.json → write the file. The workflow then opens
-// a PR the user reviews and merges (nothing lands until they do). Deterministic
-// transcription of the user's own form — not AI — and it only ever reaches a PR.
+// Runs in the follow-request workflow (OWNER-gated): parse the issue body →
+// apply the change → validate against interests.schema.json → write the file.
+// The workflow then commits the change straight to main and triggers a rebuild.
+// Deterministic transcription of the user's own form — not AI.
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
@@ -120,12 +120,6 @@ function main() {
 
 	fs.writeFileSync(interestsPath, JSON.stringify(updated, null, 2) + "\n");
 	if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `title=${summary}\n`);
-	fs.writeFileSync(
-		"pr-body.md",
-		`Automatisk fra #${process.env.ISSUE_NUMBER || "?"}: **${summary}**\n\n` +
-			"Se over diffen i `scripts/config/interests.json` og merge når du er fornøyd. " +
-			"Ingenting endres før du merger.\n"
-	);
 	console.log(summary);
 }
 

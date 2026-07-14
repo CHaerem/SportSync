@@ -163,7 +163,7 @@ export const sportsConfig = {
 				api: "curated-configs",
 				type: "local",
 				enabled: true,
-				note: "Reads race schedules from scripts/config/cycling-*.json"
+				note: "No live API — build-events.js's generic config pass reads curated configs; events come from the research agent"
 			}
 		],
 		filters: {

@@ -2,8 +2,6 @@ import { BaseFetcher } from "../lib/base-fetcher.js";
 import { sportsConfig } from "../config/sports-config.js";
 import { EventNormalizer } from "../lib/event-normalizer.js";
 import { EventFilters } from "../lib/filters.js";
-import fs from "fs";
-import path from "path";
 
 export class ChessFetcher extends BaseFetcher {
 	constructor() {
@@ -11,47 +9,10 @@ export class ChessFetcher extends BaseFetcher {
 	}
 
 	async fetchFromSource(source) {
-		if (source.api === "curated") {
-			return await this.fetchCuratedTournaments(source);
-		} else if (source.api === "lichess") {
+		if (source.api === "lichess") {
 			return await this.fetchLichessBroadcasts(source);
 		}
 		return [];
-	}
-
-	async fetchCuratedTournaments(source) {
-		const events = [];
-		
-		try {
-			const tournamentsPath = path.resolve(process.cwd(), source.configFiles.tournaments);
-			const playersPath = path.resolve(process.cwd(), source.configFiles.players);
-			
-			const tournaments = this.loadJsonFile(tournamentsPath, []);
-			const players = this.loadJsonFile(playersPath, []);
-			
-			for (const tournament of tournaments) {
-				const participants = players
-					.filter(p => tournament.participantsHint?.includes(p.name))
-					.map(p => p.name);
-				
-				for (const round of tournament.rounds || []) {
-					const roundLabel = round.round ? `Round ${round.round}` : "Round";
-					events.push({
-						title: `${roundLabel} – ${tournament.name}`,
-						time: round.date,
-						venue: tournament.venue || "Chess Arena",
-						tournament: tournament.name,
-						participants: participants,
-						norwegian: participants.length > 0,
-						meta: tournament.name
-					});
-				}
-			}
-		} catch (error) {
-			console.error("Error loading curated chess data:", error.message);
-		}
-		
-		return events;
 	}
 
 	async fetchLichessBroadcasts(source) {
@@ -172,16 +133,6 @@ export class ChessFetcher extends BaseFetcher {
 		// not a fetch failure — don't retain stale data
 		if (events.length === 0) response._noRetain = true;
 		return response;
-	}
-
-	loadJsonFile(filepath, fallback = null) {
-		try {
-			const content = fs.readFileSync(filepath, 'utf-8');
-			return JSON.parse(content);
-		} catch (error) {
-			console.warn(`Failed to load ${filepath}:`, error.message);
-			return fallback;
-		}
 	}
 }
 

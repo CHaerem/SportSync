@@ -127,33 +127,4 @@ export class APIClient {
 	clearCache() {
 		this.cache.clear();
 	}
-
-	buildURL(template, params) {
-		let url = template;
-		for (const [key, value] of Object.entries(params)) {
-			url = url.replace(`{${key}}`, encodeURIComponent(value));
-		}
-		return url;
-	}
-
-	async fetchWithDates(urlTemplate, dateRange = 7) {
-		const results = [];
-		const now = new Date();
-		
-		for (let i = 0; i < dateRange; i++) {
-			const date = new Date(now.getTime() + i * 86400000);
-			const dateStr = date.toISOString().split("T")[0].replace(/-/g, "");
-			const url = urlTemplate.replace("{date}", dateStr);
-			
-			try {
-				const data = await this.fetchJSON(url);
-				if (data) results.push(data);
-				await this.delay(150);
-			} catch (error) {
-				console.warn(`Failed to fetch data for date ${dateStr}:`, error.message);
-			}
-		}
-		
-		return results;
-	}
 }
