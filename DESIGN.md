@@ -69,6 +69,34 @@ aldri tittelen.)
 - **Ingen chevroner.** Hele raden er tappbar; det signaliseres av rytme, ikke pil.
   ⓘ-glyf (mono, dempet) KUN på AI-research-events — åpner proveniens.
 
+## Linse-rendering (P320 — rad = event × deltakelse × linse)
+
+En sport når deg GJENNOM dem du følger. Følger du en golfturnering «med fokus på
+norske utøvere» (linse `throughNorwegians`/`throughAthletes`), slutter «The Open»
+å være én rad — den blir utøver-sentrerte rader, sett fra den fulgtes plass.
+Bindende (WP-18):
+
+- **Utøver-tid overstyrer eventtid.** Har en fulgt utøver en starttid (golf:
+  tee time), er DEN radens tid — den overstyrer eventtiden for sortering,
+  dag-gruppering OG visning i tidskolonnen (ikke flerdagsvinduet). Tittelen
+  omformuleres til utøver-perspektiv («Reitan teer av — The Open»); status
+  (runde/score/plassering) legges dempet i meta-linjen.
+- **Én rad per utøver-tid.** Flere fulgte i samme event med ULIKE tider → én rad
+  hver (hver tee time beholder sin egen tidskolonne — tidskolonnen er hellig).
+  Deler de nøyaktig samme tid, kollapser de til én rolig rad med etternavnene
+  listet. Roligst, og ærligst mot «når».
+- **Grasiøs degradering.** Ingen linse (default `sportAsSuch`), eller ingen
+  per-utøver-deltakelsesdata å rendre gjennom, ⇒ NÅVÆRENDE rad urørt. En sport
+  uten per-utøver-tid (sjakk, fotball) rammes aldri.
+- **Ærlighet over fylde.** Mangler tid, DIKT den ALDRI: behold eventtiden (eller
+  flerdagsvinduet) og løft utøvernavnet inn i meta-linjen. Status vises verbatim,
+  aldri tolket/oppdiktet.
+- Linse-rader arver must-see-prikk og bjelle fra sitt event. Detaljarket viser
+  fortsatt HELE eventet (linse-tittelen lekker aldri dit). Ingen nye farger/emoji.
+- Rendering-lag, ikke seleksjon: linsen kjører ETTER relevans/must-see/kollaps
+  og rører aldri de fem predikatene (de gylne vektorene forblir bit-like). I dag
+  iOS-only (profil/linse bor lokalt per P310/P350); web venter på profil-sync.
+
 ## Header
 
 Mosaikk-ensō som stille merke foran `ZENJI`-wordmarken, på alle flater (web:
