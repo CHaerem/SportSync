@@ -8,8 +8,10 @@
 //  an ordinary football row for contrast) into the SAME cache DataStore reads
 //  from, plus a `.throughNorwegians` golf rule into the SAME profile the agenda
 //  merges — so `ZENJI_DEMO=lens` captures athlete-centred golf rows without any
-//  network. Never compiled into a release build (`#if DEBUG`), and lives at the
-//  app-target root so neither the widget nor the test bundle pick it up.
+//  network. Never compiled into a release build (`#if DEBUG`), and lives in
+//  Zenji/Demo/ (WP-48) — only the app targets' `path: Zenji` picks that folder
+//  up; the widget and test targets list their sources explicitly and exclude
+//  it, so the demo quarantine is structural, not placement-folklore.
 //
 //  All timestamps are anchored to `now` so the tee times land under I DAG with
 //  clean Europe/Oslo clock labels whenever the screenshot is taken.

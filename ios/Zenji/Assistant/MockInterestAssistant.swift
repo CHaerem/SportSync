@@ -18,7 +18,13 @@
 //  index (so the mock can only "find" real entities, exactly like the tool-
 //  using model), and grounding re-checks everything downstream regardless.
 //
+//  WP-48: the whole file is `#if DEBUG` — a Release build must contain no
+//  Mock* symbols. Every app reference is itself DEBUG-gated (ContentView's
+//  ZENJI_DEMO harness), and ZenjiTests builds the Debug configuration, so the
+//  hostless tests still compile it.
+//
 
+#if DEBUG
 import Foundation
 
 struct MockInterestAssistant: InterestAssistant {
@@ -283,3 +289,4 @@ enum MockInterestParser {
         return lens.isDefault ? base : "\(base) Fokus: \(lens.label)."
     }
 }
+#endif

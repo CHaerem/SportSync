@@ -445,7 +445,9 @@ struct FoundationModelsMemoryDistiller: MemoryDistiller {
             summary: summary,
             entityRefs: refs,
             kind: SaveMemoryTool.memoryKind(from: note.kind),
-            expiresAt: note.ephemeral ? MockMemoryDistiller.endOfOsloDay(now) : nil
+            // WP-48: the shared expiry rule moved out of the (now DEBUG-only)
+            // MockMemoryDistiller into MemoryFreshness — same behaviour.
+            expiresAt: note.ephemeral ? MemoryFreshness.endOfOsloDay(now) : nil
         )
     }
 
