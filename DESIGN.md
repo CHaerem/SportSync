@@ -53,9 +53,11 @@ overskrift, 10pt etter. Én kolonnebredde (maks 640pt på store flater, sentrert
 ## Radens anatomi
 
 ```
-[tid HH:MM]  [tittel — inntil TO linjer, ALDRI trunkert]      [kanal]
- [• amber]   [meta: turnering — én dempet linje ved behov]
+[tid HH:MM]  [tittel — inntil TO linjer, ALDRI trunkert]
+ [• amber]   [meta: turnering · runde · kanal — én dempet linje]
 ```
+(Kanalen bor i meta-linjen — realisert slik i både iOS og web; den krymper
+aldri tittelen.)
 
 - Tid: fast venstre kolonne, semibold, tabular. Flerdagsvindu i samme kolonne.
 - **Titler trunkeres aldri** — to linjer, deretter omformuler datakilden (aldri «…»).
