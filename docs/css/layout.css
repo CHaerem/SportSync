@@ -1,5 +1,5 @@
-/* SportSync — calm single-column frame. Same narrow reading column everywhere;
-   no dashboard grid, no competing panels. Generous, quiet, mobile-first. */
+/* Zenji — calm single-column frame. One narrow reading column everywhere (max
+   640, centered); no dashboard grid, no competing panels. Mobile-first. */
 
 .wrap {
 	max-width: var(--max-w);
@@ -11,25 +11,23 @@
 	.wrap { padding: 0 16px; }
 }
 
-/* Masthead — a teletext header row: page name + number, a ticking clock */
+/* Masthead — the teletext index page header: ZENJI + P100·date, a ticking amber
+   clock. Two quiet rows, one hairline under. */
 .masthead {
 	position: sticky;
 	top: 0;
 	z-index: 30;
-	padding-top: calc(env(safe-area-inset-top) + 12px);
-	padding-bottom: 10px;
+	padding-top: calc(env(safe-area-inset-top) + 14px);
+	padding-bottom: 12px;
 	background: var(--bg);
 	border-bottom: 1px solid var(--line);
 }
-.masthead-inner {
-	display: flex;
-	align-items: baseline;
-	gap: 14px;
-}
+.masthead-inner { display: flex; flex-direction: column; gap: 5px; }
+.mast-row { display: flex; align-items: center; gap: 10px; }
+.mast-row-sub { justify-content: space-between; }
 .wordmark-enso {
-	width: 20px;
-	height: 20px;
-	align-self: center;
+	width: 24px;
+	height: 24px;
 	flex: none;
 	background-color: var(--accent);
 	-webkit-mask: url(../icons/enso-mark.svg) center / contain no-repeat;
@@ -37,52 +35,49 @@
 }
 .wordmark {
 	font-weight: 700;
-	font-size: 18px;
-	letter-spacing: -0.01em;
-	color: var(--fg);
-	text-transform: uppercase;
-}
-.masthead-clock {
-	margin-left: auto;
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--fg-2);
-	font-variant-numeric: tabular-nums;
+	font-size: 26px;
 	letter-spacing: 0.02em;
+	color: var(--accent);          /* amber — the wordmark is one of the five amber uses */
+	text-transform: uppercase;
+	line-height: 1;
 }
-.theme-toggle {
-	font-size: 16px;
+.mast-date {
+	font-size: 13px;
 	color: var(--fg-2);
-	padding: 2px 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+.mast-index { color: var(--fg-3); }
+.masthead-clock {
+	font-size: 13px;
+	color: var(--accent);          /* the ticking clock — the only continuous motion */
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.04em;
+}
+/* Theme toggle — the quantized override glyph (◐ system / ● dark / ○ light). */
+.theme-toggle {
+	margin-left: auto;
+	font-size: 17px;
+	color: var(--fg-2);
+	padding: 0 2px;
 	line-height: 1;
 	transition: color 0.15s;
 }
 .theme-toggle:hover { color: var(--accent); }
 
-main { padding: 14px 0 72px; }
+main { padding: 6px 0 72px; }
 
-/* Hero — the brief, set like a teletext deck: monospace, tight, one amber word. */
-.hero {
-	padding: 20px 0 24px;
-}
-.hero-eyebrow {
-	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	color: var(--accent);
-	margin-bottom: 12px;
-}
+/* Hero — one quiet editorial line under the header (a "nice extra", never loud).
+   No amber here: amber is reserved for the five chrome uses in DESIGN.md. */
+.hero { padding: 16px 0 6px; }
 .hero-headline {
-	font-weight: 600;
-	font-size: clamp(21px, 4.6vw, 29px);
-	line-height: 1.25;
-	letter-spacing: -0.01em;
-	color: var(--fg);
-	text-wrap: balance;
-	max-width: 30ch;
+	font-weight: 400;
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--fg-2);
+	max-width: 58ch;
 }
-.hero-headline .em { color: var(--accent); }
+.hero-headline .em { color: var(--fg); font-weight: 600; }
 .hero:empty, .hero-headline:empty { display: none; }
 
 .site-footer {
@@ -98,13 +93,15 @@ main { padding: 14px 0 72px; }
 .site-footer a { color: var(--fg-2); }
 .site-footer a:hover { color: var(--accent); }
 .site-footer a.footer-alt { color: var(--fg-3); font-size: 0.85em; }
-/* Quiet, dismissible iOS "add to Home Screen" hint (shown only when relevant). */
-.install-hint { margin: 0 0 18px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg-2); font-size: 12.5px; line-height: 1.55; }
+/* Quiet, dismissible iOS "add to Home Screen" hint (shown only when relevant).
+   Flat — a hairline top/bottom, never a card. */
+.install-hint { margin: 4px 0 14px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--fg-2); font-size: 12.5px; line-height: 1.55; }
 .install-dismiss { margin-left: 6px; border: none; background: none; color: var(--fg-3); font-size: 12px; cursor: pointer; text-decoration: underline; padding: 0; }
 .install-dismiss:hover { color: var(--accent); }
-/* Quiet staleness warning — only shown when data is unexpectedly old */
-.footer-stale { flex-basis: 100%; color: var(--live); font-size: 12.5px; }
-/* AI quota fuel gauge — calm by default; warns as the budget runs low */
+/* Quiet staleness note — shown only when data is unexpectedly old. Calm and
+   honest (not the live green, and no alarm colour): it explains, it doesn't shout. */
+.footer-stale { flex-basis: 100%; color: var(--fg-2); font-size: 12.5px; }
+/* AI quota fuel gauge — calm by default; a touch more present as it runs low. */
 .footer-usage { flex-basis: 100%; color: var(--fg-3); font-size: 12.5px; }
-.footer-usage.amber { color: var(--accent); }
-.footer-usage.red { color: var(--live); }
+.footer-usage.amber { color: var(--fg-2); }
+.footer-usage.red { color: var(--fg); }

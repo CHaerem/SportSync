@@ -1,57 +1,53 @@
-/* SportSync — calm design tokens, reset, typography.
-   One purpose: a quiet, scannable overview of the events you follow.
-   One typeface (Schibsted Grotesk, tabular numerals), muted palette, one
-   restrained accent used only where it earns attention (live, must-see). */
+/* Zenji — design tokens, reset, typography. The normative contract is DESIGN.md.
+   One purpose: a quiet, scannable overview of the events you follow — when · what ·
+   where. One mono typeface (tabular numerals), one accent (amber, used sparingly),
+   flat rows on hairlines. No cards, no washes, no second colour. */
 
+/* Token values are the DESIGN.md table verbatim. Amber is the ONLY accent and is
+   used only for: wordmark, day headers, the must-see dot, the clock, selected
+   state. Live is a sparse semantic green. Hairlines are solid, not translucent. */
 :root {
-	/* Tekst-TV, reborn — a premium modern take on NRK teletext sport pages:
-	   near-black "page", monospace, the teletext colour language led by amber. */
-	/* Dark (default) — the page */
-	--bg: #08090c;
-	--surface: #111318;
-	--fg: #e9ecef;
-	--fg-2: #949aa3;
-	--fg-3: #5b616b;
-	--line: rgba(255, 255, 255, 0.09);
-	--accent: #ffb454;        /* teletext amber — leads the palette */
-	--accent-ink: #08090c;    /* dark text on an amber block */
-	--accent-wash: rgba(255, 180, 84, 0.13);
-	--cyan: #66d0ff;          /* teletext cyan — secondary / links */
-	--live: #ff5b54;          /* teletext red — live */
+	/* Dark — the merkevare default (near-black "page") */
+	--bg: #0A0A0C;
+	--surface: #131316;        /* ark / detalj surface — used only in detail sheets */
+	--fg: #E8E6E0;
+	--fg-2: #8A877E;           /* dempet */
+	--fg-3: #5C5A52;           /* fainter — derived, one step below dempet */
+	--line: #26251F;           /* hårlinje */
+	--accent: #FFB000;         /* amber — the ONLY accent */
+	--accent-ink: #0A0A0C;     /* ink on an amber block */
+	--live: #5BD990;           /* live — semantic, sparse */
 
-	--font: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, "Cascadia Mono", monospace;
+	--font: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", monospace;
 	--display: var(--font);
-	--max-w: 680px;
+	--max-w: 640px;            /* one column, max 640 on large surfaces, centered */
+	--time-col: 120px;         /* fixed time column so titles align + a date window fits one line */
 }
 
 :root[data-theme="light"] {
-	/* A clean "paper" sibling — same mono + structure carries the identity */
-	--bg: #f4f4f1;
-	--surface: #ffffff;
-	--fg: #14161a;
-	--fg-2: #5a616b;
-	--fg-3: #9aa0a8;
-	--line: rgba(20, 24, 34, 0.12);
-	--accent: #b26a12;
-	--accent-ink: #ffffff;
-	--accent-wash: rgba(178, 106, 18, 0.12);
-	--cyan: #0e7fb8;
-	--live: #d33a30;
+	/* Light — the warm-paper sibling (equally polished; never a plain inversion) */
+	--bg: #F5F1E6;
+	--surface: #EDE8D9;
+	--fg: #1D1B15;
+	--fg-2: #6E6A5C;
+	--fg-3: #9A9484;
+	--line: #D9D3C0;
+	--accent: #8F6400;
+	--accent-ink: #F5F1E6;
+	--live: #2E7D4F;
 }
 
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme="dark"]) {
-		--bg: #f4f4f1;
-		--surface: #ffffff;
-		--fg: #14161a;
-		--fg-2: #5a616b;
-		--fg-3: #9aa0a8;
-		--line: rgba(20, 24, 34, 0.12);
-		--accent: #b26a12;
-		--accent-ink: #ffffff;
-		--accent-wash: rgba(178, 106, 18, 0.12);
-		--cyan: #0e7fb8;
-		--live: #d33a30;
+		--bg: #F5F1E6;
+		--surface: #EDE8D9;
+		--fg: #1D1B15;
+		--fg-2: #6E6A5C;
+		--fg-3: #9A9484;
+		--line: #D9D3C0;
+		--accent: #8F6400;
+		--accent-ink: #F5F1E6;
+		--live: #2E7D4F;
 	}
 }
 
@@ -75,5 +71,5 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 [hidden] { display: none !important; }
 
-::selection { background: var(--accent); color: #fff; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

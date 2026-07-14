@@ -92,7 +92,7 @@ class Dashboard {
 		const wk = u.week?.percentUsed, se = u.session?.percentUsed;
 		if (u.skipAll) {
 			const until = u.session?.resetsAt ? new Date(u.session.resetsAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }) : '';
-			el.textContent = `⏸ AI-oppdatering pauset — kvote brukt opp${until ? `, nullstiller ${until}` : ''}`;
+			el.textContent = `AI-oppdatering pauset — kvote brukt opp${until ? `, nullstiller ${until}` : ''}`;
 		} else {
 			const conserving = u.status !== 'green' ? ' · sparer kvote' : '';
 			el.textContent = `AI-budsjett: uke ${wk ?? '?'}% · økt ${se ?? '?'}%${conserving}`;
@@ -163,7 +163,7 @@ class Dashboard {
 		const utcHour = new Date().getUTCHours();
 		const activeHours = utcHour >= 6 && utcHour <= 22;
 		if (activeHours && mins > 180) {
-			stale.textContent = `⚠ Dataene er ~${Math.round(mins / 60)} t gamle — oppdatering kan ha stoppet`;
+			stale.textContent = `Dataene er ~${Math.round(mins / 60)} t gamle — oppdatering kan ha stoppet`;
 			stale.hidden = false;
 		} else {
 			stale.hidden = true;
@@ -173,10 +173,6 @@ class Dashboard {
 	// ── Helpers ─────────────────────────────────────────────────────────────
 	osloTime(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }); }
 	osloDayKey(d) { return d.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' }); }
-	sportCfg(e) {
-		const id = normalizeClientSportId(e.sport);
-		return SPORT_CONFIG.find((s) => s.id === id) || { emoji: '🏆', name: e.sport, color: 'var(--accent)' };
-	}
 	isMustSee(e) {
 		if (e.isSeries) return false;
 		if (e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)) return true;
@@ -197,33 +193,44 @@ class Dashboard {
 		return m > 0 ? Math.round(m) : 30;
 	}
 
-	/** A quiet bell on events that are in the must-watch reminder feed. */
-	notifyMark(on) {
-		return on
-			? `<span class="ev-bell" title="Kalendervarsel ${this.notifyLead()} min før" aria-label="Du får kalendervarsel">🔔</span>`
-			: '';
-	}
-
-	/** Leading visual anchor: sport icon in a faint sport-coloured circle. */
-	sportBadge(e) {
-		const cfg = this.sportCfg(e);
-		return `<span class="ev-badge" style="--sport-color:${cfg.color}" title="${escapeHtml(cfg.name)}">${cfg.emoji}</span>`;
-	}
-
-	/** Visual mark for a team: club crest if we have one, else a national flag, else nothing. */
-	teamMark(name) {
-		const url = typeof getTeamLogo === 'function' ? getTeamLogo(name) : null;
-		if (url) return `<img class="ev-logo" src="${url}" alt="" loading="lazy" onerror="this.remove()">`;
-		const flag = typeof getNationFlag === 'function' ? getNationFlag(name) : null;
-		if (flag) return `<span class="ev-flag" aria-hidden="true">${flag}</span>`;
-		return '';
+	/** The time cell: a HH:MM for a single-day event, or a date window
+	 *  ("13.–20. juli") that REPLACES the clock for a multi-day event — never
+	 *  both, and never duplicated in the title. */
+	timeLabel(e) {
+		const start = new Date(e.time);
+		if (e.endTime) {
+			const end = new Date(e.endTime);
+			if (this.osloDayKey(end) > this.osloDayKey(start)) {
+				// nb-NO already renders the day with a trailing period ("15."), so
+				// strip it and add exactly one — never "15.." (works either way).
+				const day = (d) => d.toLocaleDateString('nb-NO', { day: 'numeric', timeZone: 'Europe/Oslo' }).replace(/\.$/, '');
+				const mon = (d) => d.toLocaleDateString('nb-NO', { month: 'long', timeZone: 'Europe/Oslo' });
+				return mon(start) === mon(end)
+					? `${day(start)}.–${day(end)}. ${mon(end)}`
+					: `${day(start)}. ${mon(start)}–${day(end)}. ${mon(end)}`;
+			}
+		}
+		return this.osloTime(start);
 	}
 
 	eventTitle(e) {
 		if (e.homeTeam && e.awayTeam) {
-			return `${this.teamMark(e.homeTeam)}${escapeHtml(ssShortName(e.homeTeam))} – ${this.teamMark(e.awayTeam)}${escapeHtml(ssShortName(e.awayTeam))}`;
+			return `${escapeHtml(ssShortName(e.homeTeam))} – ${escapeHtml(ssShortName(e.awayTeam))}`;
 		}
 		return escapeHtml(e.title);
+	}
+
+	/** The one muted meta line under a title: tournament · round · where-to-watch
+	 *  (or, when the game is off/over/live, the status/result/score instead of a
+	 *  channel). Parts are joined by a quiet middot. */
+	eventMeta(e, trailing) {
+		const parts = [];
+		const title = (e.homeTeam && e.awayTeam) ? '' : (e.title || '');
+		if (e.tournament && e.tournament !== title) parts.push(escapeHtml(e.tournament));
+		if (e.round) parts.push(`<span class="ev-round">${escapeHtml(e.round)}</span>`);
+		if (trailing) parts.push(trailing);
+		if (!parts.length) return '';
+		return `<span class="ev-meta">${parts.join('<span class="ev-sep"> · </span>')}</span>`;
 	}
 
 	/** A channel is tappable when it has a URL — but a TENTATIVE (shared-rights)
@@ -263,9 +270,10 @@ class Dashboard {
 		box.hidden = false;
 	}
 
-	/** One leaderboard row (position · name · trailing value), your player highlighted. */
+	/** One leaderboard row (position · name · trailing value); your player is
+	 *  highlighted in amber (the .mine class) — no flag emoji in the chrome. */
 	lbRow(pos, name, trail, mine) {
-		return `<div class="lb-row${mine ? ' mine' : ''}"><span class="lb-pos">${escapeHtml(String(pos ?? ''))}</span><span class="lb-name">${mine ? '🇳🇴 ' : ''}${escapeHtml(ssShortName(name || ''))}</span><span class="lb-x">${escapeHtml(String(trail ?? ''))}</span></div>`;
+		return `<div class="lb-row${mine ? ' mine' : ''}"><span class="lb-pos">${escapeHtml(String(pos ?? ''))}</span><span class="lb-name">${escapeHtml(ssShortName(name || ''))}</span><span class="lb-x">${escapeHtml(String(trail ?? ''))}</span></div>`;
 	}
 
 	/** Golf live: quiet line (tournament + leader + your Norwegians' live position),
@@ -273,7 +281,7 @@ class Dashboard {
 	liveGolfItem(g) {
 		const open = !!(this._liveOpen && this._liveOpen.golf);
 		const leader = g.top[0];
-		const you = (g.tracked || []).map((t) => `🇳🇴 ${escapeHtml(ssShortName(t.player))} ${escapeHtml(t.score)} <span class="live-pos">${escapeHtml(String(t.pos))}.</span>${t.out ? ' <span class="live-out">utenfor</span>' : ''}`).join(' · ');
+		const you = (g.tracked || []).map((t) => `${escapeHtml(ssShortName(t.player))} ${escapeHtml(t.score)} <span class="live-pos">${escapeHtml(String(t.pos))}.</span>${t.out ? ' <span class="live-out">utenfor</span>' : ''}`).join(' · ');
 		const board = g.top.map((r) => this.lbRow(r.pos, r.player, r.score, false))
 			.concat((g.tracked || []).filter((t) => !g.top.some((r) => r.player === t.player)).map((t) => this.lbRow(t.pos, t.player, t.score, true)))
 			.join('');
@@ -281,7 +289,7 @@ class Dashboard {
 		return `<div class="live-wrap"><div class="live-item live-expand" role="button" tabindex="0" aria-expanded="${open}" data-live="golf">
 			<span class="live-dot"></span>
 			<span class="live-body"><span class="live-name">${escapeHtml(g.name)}</span>${you ? `<span class="live-you">${you}</span>` : ''}</span>
-			<span class="live-meta">${escapeHtml(leader.player)} ${escapeHtml(leader.score)}<span class="live-caret">›</span></span>
+			<span class="live-meta">${escapeHtml(leader.player)} ${escapeHtml(leader.score)}</span>
 		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}${cutRow}</div></div>`;
 	}
 
@@ -293,7 +301,7 @@ class Dashboard {
 		return `<div class="live-wrap"><div class="live-item live-expand" role="button" tabindex="0" aria-expanded="${open}" data-live="f1">
 			<span class="live-dot"></span>
 			<span class="live-body"><span class="live-name">${escapeHtml(f.name)}</span>${f.session ? `<span class="live-you">${escapeHtml(f.session)}</span>` : ''}</span>
-			<span class="live-meta">${escapeHtml(leader.player)}<span class="live-caret">›</span></span>
+			<span class="live-meta">${escapeHtml(leader.player)}</span>
 		</div><div class="live-detail"${open ? '' : ' hidden'}>${board}</div></div>`;
 	}
 
@@ -361,9 +369,9 @@ class Dashboard {
 			if (key === todayKey) name = 'I dag';
 			else if (key === tomorrowKey) name = 'I morgen';
 			else name = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
-			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div><div class="day-card">${evs.map((e) => this.eventRow(e)).join('')}</div></section>`;
+			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div>${evs.map((e) => this.eventRow(e)).join('')}</section>`;
 		}
-		if (hasMore) html += `<button type="button" class="agenda-more">Vis resten av de neste to ukene ›</button>`;
+		if (hasMore) html += `<button type="button" class="agenda-more">Vis resten av de neste to ukene</button>`;
 		el.innerHTML = html;
 		// Play the entrance reveal ONCE on first load — not on every live-poll
 		// re-render (which would re-flash the whole agenda each minute).
@@ -446,45 +454,51 @@ class Dashboard {
 		return m ? `${m.homeScore}–${m.awayScore}` : null;
 	}
 
+	/** The amber must-see dot, left of the time — or an empty cell that holds the
+	 *  column so titles stay aligned. The dot is the whole must-see language. */
+	dotCell(on) { return on ? '<span class="ev-dot" aria-hidden="true"></span>' : '<span></span>'; }
+
+	/** The ⓘ provenance glyph — mono, dempet, ONLY on AI-research rows. Every
+	 *  other row keeps an empty cell (tappability is signalled by rhythm). */
+	infoCell(e) {
+		return e.source === 'ai-research'
+			? '<span class="ev-info" aria-label="Funnet av AI — trykk for kilder">ⓘ</span>'
+			: '<span></span>';
+	}
+
 	eventRow(e) {
 		if (e.isSeries) return this.seriesRow(e);
-		const date = new Date(e.time);
 		const live = this.liveScores[e.id];
 		const status = this.statusLabel(e);
 		const done = (!status && !(live && live.state === 'in')) ? this.finishedInfo(e) : null;
-		let where;
-		if (status) where = `<span class="ev-status">${escapeHtml(status)}</span>`;
-		else if (live && live.state === 'in') where = `<span class="ev-where ev-live">${live.home}–${live.away}</span>`;
-		else if (done) where = `<span class="ev-done">Ferdig${done.score ? `<span class="ev-done-score">${escapeHtml(done.score)}</span>` : ''}</span>`;
-		else where = this.whereToWatch(e);
+		let trailing;
+		if (status) trailing = `<span class="ev-status">${escapeHtml(status)}</span>`;
+		else if (live && live.state === 'in') trailing = `<span class="ev-where ev-live">${live.home}–${live.away}</span>`;
+		else if (done) trailing = `<span class="ev-done">Ferdig${done.score ? `<span class="ev-done-score">${escapeHtml(done.score)}</span>` : ''}</span>`;
+		else trailing = this.whereToWatch(e);
 		const expandable = this.hasDetail(e);
-		const caret = expandable ? `<span class="ev-caret" aria-hidden="true">›</span>` : `<span class="ev-caret"></span>`;
 		const attrs = expandable
 			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
 			: '';
-		const round = e.round ? `<span class="ev-round">${escapeHtml(e.round)}</span>` : '';
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${done ? ' done' : ''}${expandable ? ' expandable' : ''}"${attrs}>
-			${this.sportBadge(e)}
-			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${round}${(status || done) ? '' : this.notifyMark(e.mustWatch)}</span>
-			${where}
-			${caret}
+			${this.dotCell(this.isMustSee(e))}
+			<span class="ev-time">${escapeHtml(this.timeLabel(e))}</span>
+			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${this.eventMeta(e, trailing)}</span>
+			${this.infoCell(e)}
 		</div><div class="ev-detail" hidden></div></div>`;
 	}
 
-	/** A stage race collapsed to one line: next stage + count + end date, tap to expand. */
+	/** A stage race collapsed to one line: next stage + count, tap to expand. */
 	seriesRow(s) {
 		const date = new Date(s.nextStage.time);
-		const until = new Date(s.endTime).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
 		const m = String(s.nextStage.title || '').match(/(etappe|stage)\s*\d+/i);
 		const nextLabel = m ? m[0] : ssShortName(s.nextStage.title || '');
-		const sub = `neste: ${escapeHtml(nextLabel)} · ${s.stages.length} etapper · t.o.m. ${escapeHtml(until)}`;
+		const meta = `neste: ${escapeHtml(nextLabel)}<span class="ev-sep"> · </span>${s.stages.length} etapper<span class="ev-sep"> · </span>${this.whereToWatch(s.nextStage)}`;
 		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(s.id)}">
-			${this.sportBadge(s)}
+			${this.dotCell(false)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-round">${sub}</span>${this.notifyMark(s.stages && s.stages.some((st) => st.mustWatch))}</span>
-			${this.whereToWatch(s.nextStage)}
-			<span class="ev-caret" aria-hidden="true">›</span>
+			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-meta">${meta}</span></span>
+			<span></span>
 		</div><div class="ev-detail" hidden></div></div>`;
 	}
 
@@ -648,7 +662,7 @@ class Dashboard {
 		else if (e.norwegian) why = 'Norsk deltakelse';
 		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
 		else why = 'Passer interessene dine';
-		if (e.mustWatch) why += ' · 🔔 gir deg varsel';
+		if (e.mustWatch) why += ` · varsel ${this.notifyLead()} min før`;
 		return why;
 	}
 
@@ -826,12 +840,9 @@ class Dashboard {
 		const at = this.interests && this.interests.alwaysTrack;
 		if (!at) { wrap.hidden = true; return; }
 
-		const chip = (x, notifyDefault) => {
-			const notify = (x && typeof x === 'object' && x.notify != null) ? x.notify : notifyDefault;
-			return `<span class="chip-follow">${escapeHtml(ssEntityName(x))}${notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : ''}</span>`;
-		};
-		const chipGroup = (label, items, notifyDefault) => (items || []).length
-			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x, notifyDefault)).join('')}</div></div>`
+		const chip = (x) => `<span class="chip-follow">${escapeHtml(ssEntityName(x))}</span>`;
+		const chipGroup = (label, items) => (items || []).length
+			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x)).join('')}</div></div>`
 			: '';
 		const nextGroup = (label, items, notifyDefault) => (items || []).length
 			? `<div class="chip-group"><div class="chip-group-label">${label}</div><ul class="follow-next">${items.map((x) => this.followRow(x, notifyDefault)).join('')}</ul></div>`
@@ -840,7 +851,7 @@ class Dashboard {
 			+ nextGroup('Utøvere', at.athletes, true)
 			+ nextGroup('Lag', at.teams, true)
 			+ chipGroup('Turneringer', at.tournaments, false)
-			+ `<div class="followed-hint">🔔 = kalendervarsel ${this.notifyLead()} min før start · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
+			+ `<div class="followed-hint">Varsel = kalendervarsel ${this.notifyLead()} min før start · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
 			+ '</div>';
 		wrap.hidden = false;
 	}
@@ -881,13 +892,6 @@ class Dashboard {
 	}
 
 	/** Leading mark for an entity: club crest if we have one, else the sport badge. */
-	entityMark(entry) {
-		const name = ssEntityName(entry);
-		const url = typeof getTeamLogo === 'function' ? getTeamLogo(name) : null;
-		if (url) return `<img class="fn-logo" src="${url}" alt="" loading="lazy" onerror="this.remove()">`;
-		return this.sportBadge({ sport: (entry && typeof entry === 'object') ? entry.sport : '' });
-	}
-
 	/** For a golf event + a followed golfer entity, that player's own tee time
 	 *  (already Oslo-formatted for display) and marquee groupmates. Golf's real
 	 *  "when" is the individual tee time, not the tournament's Thursday start —
@@ -904,21 +908,20 @@ class Dashboard {
 		return { tee, groupmates: ((g && g.groupmates) || []).map((m) => m.name || m).filter(Boolean) };
 	}
 
-	/** One row in the "neste" index: name + next event (or an honest gap). */
+	/** One row in the "neste" index: name + next event (or an honest gap). Flat —
+	 *  no logo/badge, no bell, no chevron; the row's rhythm signals tappability. */
 	followRow(entry, notifyDefault) {
 		const name = escapeHtml(ssEntityName(entry));
-		const notify = (entry && typeof entry === 'object' && entry.notify != null) ? entry.notify : notifyDefault;
-		const bell = notify ? '<span class="chip-bell" title="Gir deg påminnelse">🔔</span>' : '';
-		const mark = this.entityMark(entry);
+		void notifyDefault; // notify state lives in the detail, not the row chrome
 		const next = this.nextEventForEntity(entry);
 		if (!next) {
-			return `<li class="fn-item no-event"><div class="fn-row">${mark}<span class="fn-name">${name}${bell}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
+			return `<li class="fn-item no-event"><div class="fn-row"><span class="fn-name">${name}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
 		}
 		const tee = this.golfTeeForEntity(next, entry);
 		const when = tee ? `${this.relDay(next)} · ${tee.tee}` : this.relDay(next);
 		return `<li class="fn-item has-event"><div class="fn-row" role="button" tabindex="0" aria-expanded="false">
-			${mark}<span class="fn-name">${name}${bell}</span>
-			<span class="fn-when">${escapeHtml(when)}<span class="fn-caret" aria-hidden="true">›</span></span>
+			<span class="fn-name">${name}</span>
+			<span class="fn-when">${escapeHtml(when)}</span>
 		</div><div class="fn-detail" hidden>${this.followDetail(next, entry)}</div></li>`;
 	}
 
@@ -1086,15 +1089,31 @@ class Dashboard {
 		} catch { /* ignore */ }
 	}
 
-	// ── Theme ────────────────────────────────────────────────────────────────
+	// ── Theme override (BINDING, DESIGN.md) ───────────────────────────────────
+	// A single quantized glyph cycles system → dark → light → system. 'system'
+	// clears data-theme so prefers-color-scheme decides; the glyph shows the
+	// current quantized state: ◐ system · ● dark · ○ light.
+	THEME_GLYPH = { system: '◐', dark: '●', light: '○' };
+	applyTheme(mode) {
+		const root = document.documentElement;
+		if (mode === 'system') delete root.dataset.theme;
+		else root.dataset.theme = mode;
+		const btn = document.getElementById('theme-toggle');
+		if (btn) {
+			btn.textContent = this.THEME_GLYPH[mode] || '◐';
+			btn.setAttribute('aria-label', `Tema: ${mode === 'dark' ? 'mørk' : mode === 'light' ? 'lys' : 'system'} (trykk for å bytte)`);
+		}
+	}
 	initTheme() {
-		const stored = localStorage.getItem('ss-theme');
-		if (stored) document.documentElement.dataset.theme = stored;
+		// Migrate: an earlier 2-state toggle stored only 'dark' | 'light'.
+		let mode = localStorage.getItem('ss-theme') || 'system';
+		if (!['system', 'dark', 'light'].includes(mode)) mode = 'system';
+		this.applyTheme(mode);
 		document.getElementById('theme-toggle')?.addEventListener('click', () => {
-			const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-			const next = cur === 'dark' ? 'light' : 'dark';
-			document.documentElement.dataset.theme = next;
+			const cur = localStorage.getItem('ss-theme') || 'system';
+			const next = cur === 'system' ? 'dark' : cur === 'dark' ? 'light' : 'system';
 			localStorage.setItem('ss-theme', next);
+			this.applyTheme(next);
 		});
 	}
 }
