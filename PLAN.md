@@ -62,7 +62,7 @@ mennesket, aldri av en agent.
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 | WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
-| WP-41 | Web: død kode ut av shippet flate | 0D | – | 🔬 PR åpnet — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
+| WP-41 | Web: død kode ut av shippet flate | 0D | – | 🔬 PR åpnet (#265) — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
 | WP-42 | Pipeline: dødkode-sanering | 0D | – | ⬜ køet |
 | WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
 | WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
