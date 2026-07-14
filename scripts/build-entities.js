@@ -97,6 +97,46 @@ function uniqueSlug(base, used) {
 	return slug;
 }
 
+/**
+ * WP-16.2: a display name with its edition noise removed — the trailing
+ * parenthetical annotation (already stripped from league names, but kept on
+ * tournaments) AND any 4-digit year / "2026/27" season token — collapsed and
+ * trimmed. "Tour de France 2026" → "Tour de France"; "The Open Championship
+ * 2026 (Royal Birkdale)" → "The Open Championship"; "La Liga 2026/27" → "La
+ * Liga". Returns "" when nothing meaningful remains. Used to derive the
+ * year-strip alias and the initial-alias below (so a fan typing the bare,
+ * yearless name — or its initials — still resolves in the app).
+ */
+function editionStrippedName(name) {
+	return String(name || "")
+		.replace(/\s*\([^)]*\)\s*$/g, " ")            // trailing "(…)" annotation
+		.replace(/\b(?:19|20)\d{2}(?:\s*\/\s*\d{2})?\b/g, " ") // 2026 · 2026/27
+		.replace(/\s{2,}/g, " ")
+		.replace(/^[\s\p{Pd}–—-]+|[\s\p{Pd}–—-]+$/gu, "") // stray leading/trailing dashes
+		.trim();
+}
+
+/**
+ * WP-16.2: the initial-alias for a multi-word name ("Tour de France" → "TdF").
+ * Only generated for names with 3+ letter-initial words (so it is a real,
+ * memorable acronym, not a two-letter near-collision like "PL"). First letter
+ * of each letter-initial word, ORIGINAL case preserved for a readable alias.
+ * Returns null when there are fewer than three such words.
+ *
+ * IMPORTANT: this is written to entities.json's own `initials` field, NEVER to
+ * `aliases` — server-side matching (build-events entityId enrichment, the
+ * relevance/bell paths) reads only name+aliases via helpers.entityTerms, so a
+ * 3-letter acronym can never leak into word-boundary haystack matching there.
+ * The initials exist purely for the app-side fuzzy resolver (EntityIndex.swift).
+ */
+function initialAlias(name) {
+	const words = editionStrippedName(name)
+		.split(/\s+/)
+		.filter((w) => /^\p{L}/u.test(w));
+	if (words.length < 3) return null;
+	return words.map((w) => Array.from(w)[0]).join("");
+}
+
 /** Every string an entity/candidate can be recognised by: name + aliases. */
 function terms(e) {
 	return [e?.name, ...(e?.aliases || [])].filter(Boolean);
@@ -194,7 +234,58 @@ export function buildEntityIndex(configDir = configDirDefault(), sportsConfigDat
 		}
 	}
 
-	return builder.entities.map((e) => ({ id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type }));
+	return decorateAliases(builder.entities).map((e) => {
+		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };
+		if (e.initials && e.initials.length) out.initials = e.initials;
+		return out;
+	});
+}
+
+/**
+ * WP-16.2: derive the app-resolver aliases from each entity's display name.
+ *   (a) year-strip alias → appended to `aliases` (safe for server matching: a
+ *       full, yearless name like "Tour de France" is a legitimate word-boundary
+ *       term, so it improves recall without the acronym-collision risk).
+ *   (b) initial-alias → a NEW `initials` field, kept OUT of `aliases` so
+ *       short acronyms never reach containsName-based server matching. If two
+ *       entities would share the same (case-insensitive) initials the acronym
+ *       is ambiguous — dropped from BOTH, so the resolver never auto-picks one
+ *       (it can still surface them as "mente du …?" candidates on the fly).
+ * Mutates + returns the same entity objects (they are freshly built here).
+ */
+function decorateAliases(entities) {
+	// (a) year-strip alias. SKIP leagues: a league's year-stripped form
+	// ("Premier League", "OBOS-ligaen") is a backdrop/scope phrase ("… i
+	// OBOS-ligaen"), not a follow-target, and as a first-class match alias it
+	// would make an utterance's scope compete with its real target (the
+	// Lyn/OBOS-ligaen case). Leagues stay fully resolvable regardless — the
+	// app resolver strips the year on the fly (editionStripped), so no stored
+	// alias is needed for "premier league" → "Premier League 2026/27".
+	for (const e of entities) {
+		if (e.type === "league") continue;
+		const stripped = editionStrippedName(e.name);
+		if (!stripped) continue;
+		const norm = normalizeText(stripped).trim();
+		if (!norm || norm === normalizeText(e.name).trim()) continue;
+		if (e.aliases.some((a) => normalizeText(a).trim() === norm)) continue;
+		e.aliases.push(stripped);
+	}
+
+	// (b) initial-alias, with cross-index collision drop
+	const byInitials = new Map(); // normalized acronym → [entity, …]
+	for (const e of entities) {
+		const ini = initialAlias(e.name);
+		if (!ini) continue;
+		e.initials = [ini];
+		const key = normalizeText(ini).trim();
+		if (!byInitials.has(key)) byInitials.set(key, []);
+		byInitials.get(key).push(e);
+	}
+	for (const group of byInitials.values()) {
+		if (group.length > 1) for (const e of group) delete e.initials; // ambiguous → drop
+	}
+
+	return entities;
 }
 
 /** Build + write docs/data/entities.json. Returns the entity array. */

@@ -150,7 +150,9 @@ struct GroundedMutation: Equatable, Identifiable, Sendable {
 }
 
 /// A proposal that failed the hard grounding rule: it referred to something not
-/// in the index. Never applied — shown to the user as an honest explanation.
+/// in the index (and could not be UNAMBIGUOUSLY resolved by the fuzzy resolver).
+/// Never applied — shown to the user as an honest explanation with tappable
+/// "mente du …?" suggestions.
 struct RejectedMutation: Equatable, Identifiable, Sendable {
     /// The phrase the user used that couldn't be grounded.
     var query: String
@@ -158,6 +160,12 @@ struct RejectedMutation: Equatable, Identifiable, Sendable {
     var explanation: String
     /// Nearest real entities (may be empty) — offered as tappable alternatives.
     var suggestions: [Entity]
+    /// The original raw proposal (its bogus/empty entityId and all). WP-16.2:
+    /// tapping a suggestion re-grounds THIS proposal with the picked entity id
+    /// substituted in — so the user's intent (add/remove, scope, weight, the
+    /// «med fokus på norske» lens) survives the correction instead of being a
+    /// dead button.
+    var proposal: ProposedMutation
 
     var id: String { query }
 }

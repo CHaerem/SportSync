@@ -43,63 +43,187 @@ struct EntityIndex: Sendable {
 
     var isEmpty: Bool { entities.isEmpty }
 
+    // MARK: - Ranked fuzzy resolver (WP-16.2 — the shared identity lookup)
+
+    /// The outcome of resolving a free-text phrase to real entities. `candidates`
+    /// is the ranked, score-descending shortlist (each ≥ `candidateFloor`);
+    /// `served` is the single, confident, UNAMBIGUOUS winner (nil when nothing
+    /// clears the bar or when two candidates are too close to separate).
+    struct Resolution: Equatable, Sendable {
+        var candidates: [ScoredEntity]
+        var served: Entity?
+        var isEmpty: Bool { candidates.isEmpty }
+    }
+
+    struct ScoredEntity: Equatable, Sendable {
+        var entity: Entity
+        var score: Int
+    }
+
+    // Thresholds. `candidateFloor`: minimum score to be offered as a "mente du"
+    // suggestion. `autoUseFloor` + `leadMargin`: an AUTO-eligible top hit (exact
+    // name/alias, exact initials, or a same-shape typo) at/above this score that
+    // clearly leads the runner-up is SERVED directly — so "tour de france",
+    // "tdf" and "Tour de Farnce" never reach the rejection path again. A merely
+    // strong-but-partial match (a prefix like "Hovlan", a substring) is
+    // suggestion-only, never auto-served.
+    static let candidateFloor = 55
+    static let autoUseFloor = 66
+    static let leadMargin = 12
+
+    /// Resolve a phrase to a ranked candidate list + (maybe) one served winner.
+    /// Diacritic/case-folded (TextMatch), year-suffix-agnostic, alias-aware,
+    /// prefix/contains, initials-aware, and edit-distance≤2 typo-tolerant. No
+    /// Norwegian sport-word expansion — resolving an IDENTITY from "tennis" must
+    /// not silently pick one tennis entity (that stays ambiguous / unresolved).
+    func resolve(_ query: String, limit: Int = 5) -> Resolution {
+        let q = TextMatch.normalize(query)
+        guard !q.isEmpty else { return Resolution(candidates: [], served: nil) }
+        let qTokens = q.split(separator: " ").map(String.init)
+
+        var scored: [(entity: Entity, score: Int, auto: Bool)] = []
+        for e in entities {
+            if let m = Self.matchScore(for: e, queryNorm: q, queryTokens: qTokens), m.score >= Self.candidateFloor {
+                scored.append((e, m.score, m.auto))
+            }
+        }
+        let ranked = scored.sorted { lhs, rhs in
+            if lhs.score != rhs.score { return lhs.score > rhs.score }
+            return lhs.entity.name < rhs.entity.name
+        }
+        let candidates = ranked.prefix(limit).map { ScoredEntity(entity: $0.entity, score: $0.score) }
+
+        var served: Entity?
+        if let top = ranked.first, top.auto, top.score >= Self.autoUseFloor {
+            let clearLead = ranked.count < 2 || (top.score - ranked[1].score) >= Self.leadMargin
+            if clearLead { served = top.entity }
+        }
+        return Resolution(candidates: Array(candidates), served: served)
+    }
+
     // MARK: - Tool-facing search
 
-    /// Free-text search for the `searchEntities` tool. Ranks by name/alias/id
-    /// containment, with Norwegian sport-keyword expansion (a bare "tennis" or
-    /// "sykkel" returns that sport's entities). Deterministic order so the tool
-    /// output — and therefore the model's grounding — is reproducible.
+    /// Free-text search for the `searchEntities` tool — the resolver's ranked
+    /// hits PLUS Norwegian sport-keyword expansion (a bare "tennis"/"sykkel"
+    /// returns that sport's entities), so the model gets the same fuzzy quality
+    /// (year/alias/initials/typo) the grounder does. Deterministic order so the
+    /// tool output — and therefore the model's grounding — is reproducible.
     func search(_ query: String, limit: Int = 8) -> [Entity] {
         let q = TextMatch.normalize(query)
         guard !q.isEmpty else { return [] }
-        let sportFromQuery = Self.sportKeyword(in: query)
 
-        var scored: [(Entity, Int)] = []
-        for e in entities {
-            var score = 0
-            if e.id == q { score = 100 }
-            for term in [e.name] + e.aliases {
-                if TextMatch.containsName(query, term) { score = max(score, 75) }
-                if TextMatch.containsName(term, query) { score = max(score, 70) }
-                if TextMatch.normalize(term).contains(q) { score = max(score, 45) }
-            }
-            if let sport = sportFromQuery, e.sport == sport { score = max(score, 50) }
-            if score > 0 { scored.append((e, score)) }
+        var scoreById: [String: Int] = [:]
+        for c in resolve(query, limit: entities.count).candidates {
+            scoreById[c.entity.id] = c.score
         }
-        return scored
+        if let sport = Self.sportKeyword(in: query) {
+            for e in entities where e.sport == sport {
+                scoreById[e.id] = max(scoreById[e.id] ?? 0, 50)
+            }
+        }
+        return entities
+            .filter { scoreById[$0.id] != nil }
             .sorted { lhs, rhs in
-                if lhs.1 != rhs.1 { return lhs.1 > rhs.1 }
-                return lhs.0.name < rhs.0.name
+                let a = scoreById[lhs.id] ?? 0, b = scoreById[rhs.id] ?? 0
+                if a != b { return a > b }
+                return lhs.name < rhs.name
             }
             .prefix(limit)
-            .map { $0.0 }
+            .map { $0 }
     }
 
     // MARK: - Fuzzy nearest (failed-grounding suggestions)
 
-    /// Nearest real entities for a phrase that did NOT ground — string
-    /// similarity only, so it never fabricates a sport-level suggestion. Empty
-    /// when nothing is genuinely close (the correct answer for "cricket").
+    /// Nearest real entities for a phrase that did NOT ground — the resolver's
+    /// candidate list (identity-only, no sport expansion), so it never
+    /// fabricates a sport-level suggestion. Empty when nothing is genuinely
+    /// close (the correct answer for "cricket").
     func nearestMatches(to query: String, limit: Int = 3) -> [Entity] {
-        let q = TextMatch.normalize(query)
-        guard !q.isEmpty else { return [] }
+        resolve(query, limit: limit).candidates.map(\.entity)
+    }
 
-        var scored: [(Entity, Int)] = []
-        for e in entities {
-            var best = 0
-            let terms = [e.name] + e.aliases + [e.id.replacingOccurrences(of: "-", with: " ")]
-            for term in terms {
-                best = max(best, Self.similarity(q, TextMatch.normalize(term)))
-            }
-            if best >= 55 { scored.append((e, best)) }
+    // MARK: - Scoring one entity against a query
+
+    /// Best (score, auto-eligible) for one entity, or nil if nothing matches.
+    /// `auto` marks a HIGH-confidence identity match (exact name/alias/initials
+    /// or a same-shape typo) that may be served without the user tapping; a
+    /// partial match (prefix/substring/single-word fuzz) scores well but stays
+    /// suggestion-only.
+    static func matchScore(for e: Entity, queryNorm q: String, queryTokens qTokens: [String]) -> (score: Int, auto: Bool)? {
+        var best = 0
+        var bestAuto = false
+        func consider(_ score: Int, _ auto: Bool) {
+            if score > best { best = score; bestAuto = auto }
+            else if score == best, auto, !bestAuto { bestAuto = true }
         }
-        return scored
-            .sorted { lhs, rhs in
-                if lhs.1 != rhs.1 { return lhs.1 > rhs.1 }
-                return lhs.0.name < rhs.0.name
+
+        var terms = [e.name] + e.aliases
+        terms.append(e.id.replacingOccurrences(of: "-", with: " "))
+        for raw in terms {
+            let tn = TextMatch.normalize(raw)
+            let stripped = editionStripped(tn)
+            for termNorm in Set([tn, stripped]) where !termNorm.isEmpty {
+                if termNorm == q { consider(100, true); continue }
+                if q.count >= 3, termNorm.count >= 3, (termNorm.hasPrefix(q) || q.hasPrefix(termNorm)) {
+                    consider(88, false)
+                }
+                if TextMatch.containsName(raw, q) { consider(82, false) }
+                if TextMatch.containsName(q, raw) { consider(78, false) }
+                let tTokens = termNorm.split(separator: " ").map(String.init)
+                if tTokens.count >= 2, qTokens.count == tTokens.count,
+                   let d = tokenwiseDistance(qTokens, tTokens), d >= 1, d <= 2 {
+                    consider(d == 1 ? 84 : 80, true)   // same-shape typo — auto
+                }
+                if q.count >= 3, (termNorm.contains(q) || q.contains(termNorm)) { consider(58, false) }
+                let sim = similarity(q, termNorm)
+                if sim >= 60 { consider(min(sim, 79), false) }
             }
-            .prefix(limit)
-            .map { $0.0 }
+        }
+        for ini in e.initials where TextMatch.normalize(ini) == q { consider(96, true) }
+        if let onFly = onTheFlyInitials(e), onFly == q { consider(72, false) }
+
+        return best > 0 ? (best, bestAuto) : nil
+    }
+
+    /// Sum of per-token Levenshtein distances when the two token lists align
+    /// 1:1; nil when they cannot be trusted as the same phrase (a differing
+    /// pair too short to be a mere typo, or any single pair already > 2 apart).
+    static func tokenwiseDistance(_ a: [String], _ b: [String]) -> Int? {
+        guard a.count == b.count, !a.isEmpty else { return nil }
+        var total = 0
+        for (x, y) in zip(a, b) where x != y {
+            if max(x.count, y.count) < 4 { return nil }   // too short to fuzz safely
+            let d = levenshtein(Array(x), Array(y))
+            if d > 2 { return nil }
+            total += d
+            if total > 2 { return nil }
+        }
+        return total
+    }
+
+    /// A normalized string with edition noise stripped: a trailing "(…)"
+    /// annotation and any 4-digit year / "2026/27" season token, collapsed —
+    /// so "tour de france 2026" ≡ "tour de france". Mirrors build-entities.js's
+    /// `editionStrippedName` on the resolver side.
+    static func editionStripped(_ norm: String) -> String {
+        var s = norm.replacingOccurrences(of: "\\s*\\([^)]*\\)\\s*$", with: " ", options: .regularExpression)
+        s = s.replacingOccurrences(of: "\\b(?:19|20)\\d{2}(?:\\s*/\\s*\\d{2})?\\b", with: " ", options: .regularExpression)
+        s = s.replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
+        return s.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+    }
+
+    /// The acronym a 3+-letter-word name would fold to ("tour de france" →
+    /// "tdf"), computed on the fly (normalized). A softer, suggestion-tier
+    /// signal than the STORED, collision-checked `initials` field: two entities
+    /// sharing an acronym have it dropped from their stored data, but both still
+    /// surface here as "mente du" candidates rather than one being mis-served.
+    static func onTheFlyInitials(_ e: Entity) -> String? {
+        let words = editionStripped(TextMatch.normalize(e.name))
+            .split(separator: " ")
+            .map(String.init)
+            .filter { $0.first?.isLetter == true }
+        guard words.count >= 3 else { return nil }
+        return words.compactMap(\.first).map(String.init).joined()
     }
 
     // MARK: - Mock utterance detection (NOT grounding)
@@ -215,12 +339,13 @@ extension Entity {
     /// which suppresses Swift's synthesised memberwise init — this restores a
     /// direct constructor so tests and previews can build entities without
     /// round-tripping through JSON.
-    init(id: String, name: String, aliases: [String] = [], sport: String, type: String) {
+    init(id: String, name: String, aliases: [String] = [], sport: String, type: String, initials: [String] = []) {
         self.id = id
         self.name = name
         self.aliases = aliases
         self.sport = sport
         self.type = type
+        self.initials = initials
     }
 }
 
