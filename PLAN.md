@@ -69,7 +69,7 @@ mennesket, aldri av en agent.
 | WP-45 | Golf: skraper-ekstraksjon | 0D | WP-43 | ⬜ køet |
 | WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | ⬜ køet |
 | WP-47 | Web: dashboard.js-splitt | 0D | WP-46 | ⬜ køet |
-| WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ⬜ køet |
+| WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | 🔬 PR åpnet (#269) — 12 filer `git mv` → `Zenji/Profile/` + profil-sync-extension ut av AssistantViewModel; `Zenji/Demo/` (LensDemoSeed/MemoryDemoSeed) strukturelt utenfor widget/test-targets; Mock* i `#if DEBUG` (også MockMemoryDistiller — `endOfOsloDay` → ny `MemoryFreshness`, siden FM-distillasjonen bruker den); `nm`: 0 Mock*-symboler i Release (193 i Debug-kontroll); 376/376 iOS-tester (uendret antall), 373/373 JS, begge schemes + ZenjiDeviceDev bygger |
 | WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ⬜ køet |
 | WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ⬜ køet |
 | WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ⬜ køet |
