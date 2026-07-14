@@ -128,6 +128,13 @@ struct ContentView: View {
             assistant.onProfileChanged = { agenda.reloadFromCache(now: Date()) }
             #if DEBUG
             if let mode = ProcessInfo.processInfo.environment["ZENJI_DEMO"] {
+                // WP-18: seed a deterministic lensed golf agenda + the profile
+                // rule BEFORE the first reload, so the screenshot shows the lens
+                // with no network round-trip.
+                if mode == "lens" {
+                    LensDemoSeed.seed(profileStore: profileStore)
+                    agenda.reloadFromCache(now: Date())
+                }
                 assistant.demoSeed(mode)
                 if mode == "diff" || mode == "answer" { panelShown = true }
             }
@@ -162,6 +169,12 @@ struct ContentView: View {
 
     private func refresh() async {
         agenda.reloadFromCache(now: now)
+        #if DEBUG
+        // WP-18: the lens screenshot demo runs entirely off its seeded cache —
+        // a live sync would clobber it, so don't fetch (and don't schedule
+        // notifications) in that mode.
+        if ProcessInfo.processInfo.environment["ZENJI_DEMO"] == "lens" { return }
+        #endif
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
         agenda.reloadFromCache(now: now)

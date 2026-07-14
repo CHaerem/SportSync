@@ -76,7 +76,12 @@ final class AgendaViewModel {
         // agendaen re-kompileres synlig med det samme".
         let interests = EffectiveInterests.merge(profile: profile, into: baseInterests, index: index)
         let followedIds = Set(profile.rules.map(\.entityId))
-        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds)
+        // WP-18: the raw profile is passed ALONGSIDE the merged interests because
+        // EffectiveInterests.merge folds a rule's entity into the tracked buckets
+        // but drops its `lens` — and the lens is exactly what the lens-rendering
+        // layer needs. So the merged `interests` drive the five predicates
+        // (unchanged), and `profile` carries the per-rule lens on top.
+        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile)
         liveNow = Self.liveRows(events: events, interests: interests, now: now)
         lastSync = dataStore.lastSync
     }
@@ -94,30 +99,165 @@ final class AgendaViewModel {
     /// compile — they simply produce empty `whyShown`/`followable`, which the
     /// agenda row itself doesn't display (those feed the detail sheet's context
     /// actions). The real app always passes them (see `reloadFromCache`).
-    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = []) -> [AgendaSection] {
+    /// WP-18: `profile` (default empty) carries the per-rule LENS. Lens
+    /// rendering is a pure post-processing layer over FeedCompiler's output —
+    /// it runs AFTER relevance/must-see/must-watch/collapse (those five
+    /// predicates are never touched; the golden vectors stay bit-identical) and
+    /// can re-home a row to the athlete's own effective (tee) time. An empty
+    /// profile, or a profile with only default (`.sportAsSuch`) lenses, leaves
+    /// the output byte-for-byte identical to WP-16.4 — graceful degradation.
+    nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile()) -> [AgendaSection] {
         let (feedEvents, lookup) = EventBridge.bridge(events)
         let feed = FeedCompiler.compile(events: feedEvents, interests: interests, now: now)
         let todayKey = FeedCompiler.osloDayKey(now)
         let tomorrowKey = FeedCompiler.osloDayKey(now.addingTimeInterval(24 * 60 * 60))
 
-        // DESIGN.md "Agendaens semantikk" §1: I DAG first, then forward — and
-        // NEVER a passed day. FeedCompiler already re-homes a still-running
-        // multi-day event onto `todayKey` (its line "belongs under today, not
-        // its past start day"), so anything still keyed to a day BEFORE today
-        // is genuinely over and must not appear. `feed.days` is already sorted
-        // ascending, so dropping the past days leaves I DAG (today) first.
-        // (This is the agenda-specific rule; FeedCompiler stays the faithful
-        // WP-13 port with its own 14-day retention window that the web's
-        // results view still needs.)
-        return feed.days
-            .filter { $0.key >= todayKey }
-            .map { day in
-                AgendaSection(
-                    id: day.key,
-                    label: AgendaFormat.dayLabel(key: day.key, todayKey: todayKey, tomorrowKey: tomorrowKey),
-                    items: day.items.compactMap { makeItem($0, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) }
-                )
+        // A placed row: one agenda item pinned to a day key + a sort time. The
+        // lens layer can emit MULTIPLE rows for one event, each re-homed to the
+        // athlete's OWN effective day/time (P320: the tee time overrides sort,
+        // day-grouping AND display) — hence a flat placed-list plus a re-group,
+        // rather than mapping FeedCompiler's day buckets in place.
+        struct Placed { let dayKey: String; let sortTime: Date?; let item: AgendaItem }
+        var placed: [Placed] = []
+
+        for day in feed.days {
+            for compiled in day.items {
+                guard case .event(let feedEvent, let mustWatch, let mustSee) = compiled else {
+                    // Series rows never lens (they are already the collapsed,
+                    // athlete-agnostic view) — pass through on their own day.
+                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) {
+                        placed.append(Placed(dayKey: day.key, sortTime: compiled.time, item: item))
+                    }
+                    continue
+                }
+                guard let id = feedEvent.id, let event = lookup[id] else { continue }
+                let mode = applicableLensMode(for: feedEvent, event: event, profile: profile, index: index)
+                if let lensRows = LensRenderer.render(event: event, mode: mode, followedIds: followedIds) {
+                    // Lens rows inherit the event's bell/accent (item 2 of the
+                    // brief) and re-home to the athlete's effective day/time.
+                    for lensRow in lensRows {
+                        let (dayKey, sortTime) = place(lensRow, event: feedEvent, compiledDay: day.key, todayKey: todayKey)
+                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds)
+                        placed.append(Placed(dayKey: dayKey, sortTime: sortTime, item: .event(row)))
+                    }
+                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds) {
+                    // No lens applies → the ordinary WP-16.4 row, untouched.
+                    placed.append(Placed(dayKey: day.key, sortTime: feedEvent.time, item: item))
+                }
             }
+        }
+
+        // Re-group by day, drop passed days (DESIGN.md "Agendaens semantikk" §1:
+        // I DAG first, never a passed day — FeedCompiler already re-homed a
+        // still-running multi-day event onto today), order days ascending, and
+        // sort within a day by the (effective) time. With an empty/default-lens
+        // profile every placed row keeps its FeedCompiler day + event time, so
+        // this reproduces the old per-day map exactly.
+        var order: [String] = []
+        var byDay: [String: [Placed]] = [:]
+        for p in placed where p.dayKey >= todayKey {
+            if byDay[p.dayKey] == nil { order.append(p.dayKey) }
+            byDay[p.dayKey, default: []].append(p)
+        }
+        return order.sorted().map { key in
+            AgendaSection(
+                id: key,
+                label: AgendaFormat.dayLabel(key: key, todayKey: todayKey, tomorrowKey: tomorrowKey),
+                items: (byDay[key] ?? [])
+                    .sorted { ($0.sortTime ?? .distantPast) < ($1.sortTime ?? .distantPast) }
+                    .map(\.item)
+            )
+        }
+    }
+
+    // MARK: - Lens rendering (WP-18 — P320: event × deltakelse × linse)
+
+    /// The day + sort time a lens row lands on. The athlete's effective (tee)
+    /// time OVERRIDES the event's — but a STALE, past tee time must never
+    /// silently drop the whole event, so it only re-homes when the tee day is
+    /// today-or-later; otherwise the row keeps the event's own (already
+    /// multi-day-re-homed) day and sorts on the event start. An untimed lens row
+    /// (no tee time — the honest degradation) always keeps the event's day/time.
+    nonisolated private static func place(_ lensRow: LensRenderer.LensRow, event feedEvent: FeedEvent, compiledDay: String, todayKey: String) -> (dayKey: String, sortTime: Date?) {
+        if let eff = lensRow.effectiveTime {
+            let effDay = FeedCompiler.osloDayKey(eff)
+            if effDay >= todayKey { return (effDay, eff) }
+        }
+        return (compiledDay, feedEvent.time)
+    }
+
+    /// The LENS to render an event through: the first followed rule carrying a
+    /// non-default lens whose entity actually participates in the event
+    /// (`.sportAsSuch` — no lens — when there is none, the common case). Maps
+    /// the Assistant `Lens` → the Feed-local `LensMode` the renderer consumes,
+    /// so the renderer stays free of the Assistant module (widget-buildable).
+    nonisolated static func applicableLensMode(for feedEvent: FeedEvent, event: Event, profile: InterestProfile, index: EntityIndex) -> LensMode {
+        let lensed = profile.rules.filter { !$0.lens.isDefault }
+        guard !lensed.isEmpty else { return .sportAsSuch }
+        let hay = FeedCompiler.serverHaystack(feedEvent)
+        for rule in lensed where ruleMatches(rule, event: event, hay: hay, index: index) {
+            switch rule.lens {
+            case .sportAsSuch:
+                continue
+            case .throughNorwegians:
+                return .throughNorwegians
+            case let .throughAthletes(athletes):
+                return .throughAthletes(ids: Set(athletes.map(\.entityId)), names: athletes.map(\.name))
+            }
+        }
+        return .sportAsSuch
+    }
+
+    /// Whether `rule`'s followed entity participates in `event`: an authoritative
+    /// entity-id match on the event's players/teams, else the SAME sport-scoped
+    /// name/alias word-boundary test `whyShown`/`mustWatch` use (so a golf
+    /// tournament rule matches that tournament's events, a football club rule
+    /// its club's matches). Falls back to the rule's cached name/sport when the
+    /// entity isn't in the (maybe unsynced) index.
+    nonisolated private static func ruleMatches(_ rule: InterestRule, event: Event, hay: String, index: EntityIndex) -> Bool {
+        if event.norwegianPlayers.contains(where: { $0.entityId == rule.entityId }) { return true }
+        if event.homeTeamEntityId == rule.entityId || event.awayTeamEntityId == rule.entityId { return true }
+        let entity = index.entity(id: rule.entityId)
+        let sport = entity?.sport ?? rule.sport
+        if !sport.isEmpty, TextMatch.normalize(sport) != TextMatch.normalize(event.sport) { return false }
+        let terms = entity.map { [$0.name] + $0.aliases } ?? [rule.entityName]
+        return terms.contains { !$0.isEmpty && TextMatch.containsName(hay, $0) }
+    }
+
+    /// Build the view-ready `AgendaEventRow` for one lens row. The time column
+    /// shows the athlete's effective time when present (else the event's own
+    /// label — a window for a multi-day tournament); the meta line is the lens's
+    /// (status verbatim / names), falling back to the event's tournament only
+    /// when the lens carries none. Everything else — channel, bell, accent, AI
+    /// provenance, the FULL event for the detail sheet — comes straight from the
+    /// event, so the detail sheet still shows the whole event unchanged.
+    nonisolated private static func makeLensRow(
+        _ lensRow: LensRenderer.LensRow,
+        event: Event,
+        feedEvent: FeedEvent,
+        mustWatch: Bool,
+        mustSee: Bool,
+        interests: Interests,
+        now: Date,
+        index: EntityIndex,
+        followedIds: Set<String>
+    ) -> AgendaEventRow {
+        let timeLabel = lensRow.effectiveTime.map { AgendaFormat.timeLabel(time: $0, endTime: nil) }
+            ?? AgendaFormat.timeLabel(time: feedEvent.time, endTime: feedEvent.endTime)
+        let meta = lensRow.metaDetail ?? AgendaFormat.metaLabel(tournament: event.tournament, title: lensRow.title)
+        return AgendaEventRow(
+            id: EventBridge.stableId(for: event) + "|" + lensRow.idSuffix,
+            timeLabel: timeLabel,
+            title: lensRow.title,
+            metaLabel: meta,
+            channelLabel: AgendaFormat.channelLabel(event.streaming),
+            isMustSee: mustSee,
+            mustWatch: mustWatch,
+            isAIResearch: event.source == "ai-research",
+            event: event,
+            whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
+            followable: followableEntities(for: event, index: index, followedIds: followedIds)
+        )
     }
 
     // MARK: - Followable entities (WP-16.4 — the detail sheet's «Følg X»)
