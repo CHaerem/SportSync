@@ -124,8 +124,33 @@ struct AgendaView: View {
     /// "Henter data …" before the very first sync ever completes, else the
     /// honest "nothing right now" — `lastSync == nil` is DataStore's own
     /// "never synced" flag (see DataStore.swift), not just "zero events".
+    /// WP-31: when the board is empty AND the follow-profile is empty (onboarding
+    /// skipped), point back at the command line instead of reading as "nothing on".
+    @ViewBuilder
     private var emptyRow: some View {
-        Text(viewModel.lastSync == nil ? "Henter data …" : "Ingen kommende arrangementer akkurat nå.")
+        if viewModel.lastSync == nil {
+            emptyText("Henter data …")
+        } else if viewModel.profileIsEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                emptyText("Fortell Zenji hva du følger.")
+                HStack(spacing: 8) {
+                    Text("»_")
+                        .font(.zenjiMono(size: 15, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.muted)
+                    Text("Skriv i linjen nederst.")
+                        .font(.zenjiMono(size: 13))
+                        .foregroundStyle(ZenjiTokens.muted.opacity(0.8))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 24)
+        } else {
+            emptyText("Ingen kommende arrangementer akkurat nå.")
+        }
+    }
+
+    private func emptyText(_ text: String) -> some View {
+        Text(text)
             .font(.zenjiMono(size: 15))
             .foregroundStyle(ZenjiTokens.muted)
             .frame(maxWidth: .infinity, alignment: .leading)

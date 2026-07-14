@@ -23,6 +23,9 @@ struct AssistantPanel: View {
     var viewModel: AssistantViewModel
     /// Fades the ark away (ContentView owns the ≤150 ms transition).
     var dismiss: () -> Void
+    /// WP-31 — re-run the first-run onboarding from "Hva jeg følger". Default
+    /// no-op so previews / standalone use still compile.
+    var onRerunOnboarding: () -> Void = {}
 
     @State private var misunderstoodExpanded = false
     @State private var profileExpanded = false
@@ -44,6 +47,7 @@ struct AssistantPanel: View {
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
                     Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.vertical, 2)
                     profileSection
+                    rerunOnboardingRow
                     memoryEntry
                     misunderstoodSection
                     ProfileSharePanel(viewModel: viewModel)
@@ -320,6 +324,26 @@ struct AssistantPanel: View {
         .overlay(alignment: .bottom) {
             Rectangle().fill(ZenjiTokens.foreground.opacity(0.1)).frame(height: 1)
         }
+    }
+
+    /// WP-31 — a quiet way back into the first-run flow ("say what you follow"),
+    /// for someone who skipped it or wants to add more from a guided step.
+    private var rerunOnboardingRow: some View {
+        Button { onRerunOnboarding() } label: {
+            HStack {
+                Text("SETT OPP DET DU FØLGER")
+                    .font(.zenjiMono(size: 12, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .tracking(1.5)
+                Spacer()
+                Text("»_")
+                    .font(.zenjiMono(size: 13, weight: .semibold))
+                    .foregroundStyle(ZenjiTokens.muted)
+            }
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .accessibilityLabel("Sett opp det du følger på nytt")
     }
 
     private func ruleSubtitle(_ rule: InterestRule) -> String {

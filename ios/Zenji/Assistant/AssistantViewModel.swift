@@ -361,6 +361,33 @@ final class AssistantViewModel {
         onProfileChanged?()
     }
 
+    // MARK: - WP-31 — onboarding starter packs
+
+    /// Whether every rule in `pack` is already followed — drives the quiet
+    /// "valgt" state and lets a second tap toggle the pack back off.
+    func isApplied(_ pack: StarterPack) -> Bool {
+        guard !pack.rules.isEmpty else { return false }
+        let ids = Set(profile.rules.map(\.entityId))
+        return pack.entityIds.allSatisfy(ids.contains)
+    }
+
+    /// Apply (or, if already applied, remove) a curated onboarding starter pack.
+    /// A tap IS the confirmation — no diff round-trip — but it runs through the
+    /// SAME `InterestProfile.applying` core, persists, and fires
+    /// `onProfileChanged`, so the agenda recompiles on the spot exactly like a
+    /// confirmed conversation mutation ("umiddelbar konsekvens"). Grounds against
+    /// the live index when present, else the pack's own curated entity data, so
+    /// it gives full value at cold start before entities.json has synced.
+    func toggleStarterPack(_ pack: StarterPack) {
+        let mutations = isApplied(pack)
+            ? pack.removeMutations(index: index, profile: profile)
+            : pack.addMutations(index: index, profile: profile)
+        guard !mutations.isEmpty else { return }
+        profile = profile.applying(mutations)
+        persist()
+        onProfileChanged?()
+    }
+
     // MARK: - WP-19 — profil-sync (QR-bro + bakgrunns-sync)
 
     /// A calm summary of what a QR/link import changed — shown after a merge.
