@@ -72,7 +72,7 @@ mennesket, aldri av en agent.
 | WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ⬜ køet |
 | WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ⬜ køet |
 | WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ⬜ køet |
-| WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | 🔬 PR åpnet — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
+| WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | 🔬 PR åpnet (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
 | WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ⬜ køet |
 
 ---
