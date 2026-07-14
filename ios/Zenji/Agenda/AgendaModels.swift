@@ -32,6 +32,16 @@ struct AgendaEventRow: Identifiable, Equatable {
     /// the quiet mono ⓘ glyph (DESIGN.md: "ⓘ-glyf … KUN på AI-research-events").
     var isAIResearch: Bool
     var event: Event
+    /// WP-16.4 — the deterministic "hvorfor vises denne?" reason
+    /// (FeedCompiler.whyShown against the EFFECTIVE interests), precomputed so
+    /// the detail sheet's context action shows it with no model and no work per
+    /// render. Empty only when the index/interests weren't available.
+    var whyShown: String = ""
+    /// WP-16.4 — the followable entities this event is ABOUT that aren't already
+    /// followed (home/away team, tournament, Norwegian players, resolved
+    /// through the index). The detail sheet offers a "Følg X" context action
+    /// per entry, routed through the assistant's normal diff/confirm flow.
+    var followable: [Entity] = []
 }
 
 /// A folded stage race — dashboard.js `collapseSeries`'s Swift-side output,

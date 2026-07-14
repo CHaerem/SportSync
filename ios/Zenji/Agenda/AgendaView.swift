@@ -24,17 +24,21 @@ import SwiftUI
 
 struct AgendaView: View {
     var viewModel: AgendaViewModel
+    /// WP-16.4 — a "Følg <entitet>" context action tapped in the detail sheet;
+    /// ContentView routes it into the assistant's diff/confirm flow. Defaults to
+    /// a no-op so the WP-14 `#Preview` and any standalone use still compile.
+    var onFollow: (Entity) -> Void = { _ in }
 
-    /// A single optional target drives both sheets — Event isn't Identifiable
-    /// (its `id` is optional on the model, per WP-11's forward-compat story),
-    /// so this local wrapper is what `.sheet(item:)` needs.
+    /// A single optional target drives both sheets. The event case carries the
+    /// whole `AgendaEventRow` (not just the `Event`) so the detail sheet has the
+    /// precomputed WP-16.4 context data (whyShown + followable) too.
     private enum DetailTarget: Identifiable {
-        case event(Event)
+        case event(AgendaEventRow)
         case series(AgendaSeriesRow)
 
         var id: String {
             switch self {
-            case .event(let e): return EventBridge.stableId(for: e)
+            case .event(let row): return row.id
             case .series(let s): return s.id
             }
         }
@@ -70,8 +74,8 @@ struct AgendaView: View {
         }
         .sheet(item: $detailTarget) { target in
             switch target {
-            case .event(let event):
-                EventDetailSheet(event: event)
+            case .event(let row):
+                EventDetailSheet(row: row, onFollow: onFollow)
             case .series(let series):
                 SeriesDetailSheet(series: series)
             }
@@ -108,7 +112,7 @@ struct AgendaView: View {
 
     private func open(_ item: AgendaItem) {
         switch item {
-        case .event(let row): detailTarget = .event(row.event)
+        case .event(let row): detailTarget = .event(row)
         case .series(let row): detailTarget = .series(row)
         }
     }

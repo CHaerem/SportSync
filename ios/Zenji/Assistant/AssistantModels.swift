@@ -266,6 +266,54 @@ struct AssistantExplanation: Codable, Equatable, Sendable {
     }
 }
 
+/// WP-16.4 — the top-level INTENT the command line routes on. One utterance is
+/// either a request to CHANGE what's followed (mutations, exactly as WP-16) OR
+/// a QUESTION about the agenda ("hva bør jeg se i kveld?", "når går neste
+/// TdF-etappe?") the assistant answers from LOCAL data. The model decides which
+/// in a single generation (`GeneratedTurn.intent`); the mock decides
+/// deterministically (`MockAnswerer.isQuestion`). The grounding/diff pipeline is
+/// unchanged for the mutation arm — this only adds the answer arm alongside it.
+enum AssistantTurn: Equatable, Sendable {
+    case mutations([ProposedMutation])
+    case answer(AssistantAnswer)
+}
+
+/// A calm, Norwegian answer to a question about the agenda, plus the stable ids
+/// of the rows it refers to. `referencedEventIds` are UNTRUSTED handles (the FM
+/// is told to cite only ids the `searchEvents` tool returned; the mock fills
+/// them from the same query layer) — the view model re-resolves them against
+/// the feed it built, so a hallucinated id simply drops out rather than
+/// rendering a phantom row. `text` already reads as prose ("I kveld kan du se
+/// …"); the resolved rows are shown quietly beneath it as when · what · where.
+struct AssistantAnswer: Codable, Equatable, Sendable {
+    var text: String
+    var referencedEventIds: [String]
+
+    init(text: String, referencedEventIds: [String] = []) {
+        self.text = text
+        self.referencedEventIds = referencedEventIds
+    }
+}
+
+/// The view-facing result of an answered question: the prose plus the agenda
+/// rows it referenced, already resolved to displayable when · what · where by
+/// the view model (via `FeedQuery`). Kept separate from `AssistantAnswer` (the
+/// raw model output) so the UI never has to touch a bare, unresolved id.
+struct AssistantAnswerResult: Equatable, Sendable {
+    var text: String
+    var rows: [AnswerRow]
+}
+
+/// One referenced agenda row in an answer — the same when · what · where an
+/// agenda row answers, already formatted. `Identifiable` for SwiftUI lists.
+struct AnswerRow: Identifiable, Equatable, Sendable {
+    var id: String
+    var dayLabel: String
+    var timeLabel: String
+    var title: String
+    var channelLabel: String
+}
+
 /// Whether the on-device model can actually be used right now. Mirrors
 /// `SystemLanguageModel.Availability` but is FM-free so the UI/tests can reason
 /// about it without importing FoundationModels.

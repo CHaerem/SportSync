@@ -175,16 +175,17 @@ final class MockInterestAssistantTests: XCTestCase {
         )
     }
 
-    func test_asyncPropose_matchesParser() async throws {
+    func test_asyncInterpret_matchesParser() async throws {
         let assistant = MockInterestAssistant()
-        let out = try await assistant.propose(utterance: "Følg Magnus Carlsen", profile: InterestProfile(), index: index)
+        let turn = try await assistant.interpret(utterance: "Følg Magnus Carlsen", profile: InterestProfile(), index: index, feed: FeedQuery(now: Date()))
+        guard case let .mutations(out) = turn else { return XCTFail("a command must route to mutations") }
         XCTAssertEqual(out.map(\.entityId), ["magnus-carlsen"])
     }
 
-    func test_asyncPropose_throwsWhenUnavailable() async {
+    func test_asyncInterpret_throwsWhenUnavailable() async {
         let assistant = MockInterestAssistant(behavior: .unavailable("Apple Intelligence er av."))
         do {
-            _ = try await assistant.propose(utterance: "Følg Lyn", profile: InterestProfile(), index: index)
+            _ = try await assistant.interpret(utterance: "Følg Lyn", profile: InterestProfile(), index: index, feed: FeedQuery(now: Date()))
             XCTFail("expected throw")
         } catch let error as AssistantError {
             XCTAssertEqual(error, .unavailable(message: "Apple Intelligence er av."))

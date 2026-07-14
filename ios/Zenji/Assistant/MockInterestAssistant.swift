@@ -55,16 +55,26 @@ struct MockInterestAssistant: InterestAssistant {
         }
     }
 
-    func propose(utterance: String, profile: InterestProfile, index: EntityIndex) async throws -> [ProposedMutation] {
+    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery) async throws -> AssistantTurn {
         switch behavior {
         case let .unavailable(message):
             throw AssistantError.unavailable(message: message)
         case let .throwsGenerationFailure(message):
             throw AssistantError.generationFailed(message: message)
         case .producesNothing:
-            return []
+            // A usable model that produced nothing. For a QUESTION that still
+            // means an empty answer (no phantom rows); for a command it means
+            // the empty mutation list the WP-16.1/16.3 paths already handle.
+            return MockAnswerer.isQuestion(utterance)
+                ? .answer(AssistantAnswer(text: ""))
+                : .mutations([])
         case .available:
-            return MockInterestParser.parse(utterance: utterance, profile: profile, index: index)
+            // WP-16.4 intent routing: a question is answered from the local
+            // feed; everything else parses to mutations exactly as WP-16.
+            if MockAnswerer.isQuestion(utterance) {
+                return .answer(MockAnswerer.answer(utterance: utterance, feed: feed, index: index))
+            }
+            return .mutations(MockInterestParser.parse(utterance: utterance, profile: profile, index: index))
         }
     }
 }

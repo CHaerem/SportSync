@@ -32,4 +32,32 @@ enum AssistantTestSupport {
         MisunderstoodLogStore(directory: FileManager.default.temporaryDirectory
             .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true))
     }
+
+    // MARK: - WP-16.4 — the local agenda the answer arm queries
+
+    /// The real, checked-in events fixture as `[Event]`.
+    static func fixtureEvents() -> [Event] {
+        // swiftlint:disable:next force_try
+        try! ZenjiJSON.decoder.decode([Event].self, from: Fixture.data("events"))
+    }
+
+    /// The real, checked-in interests fixture.
+    static func fixtureInterests() -> Interests {
+        // swiftlint:disable:next force_try
+        try! ZenjiJSON.decoder.decode(Interests.self, from: Fixture.data("interests"))
+    }
+
+    /// A FeedQuery over the real fixtures, compiled against `now` — the same
+    /// agenda the app would show, for driving the Q&A tests deterministically.
+    static func liveFeed(now: Date) -> FeedQuery {
+        FeedQuery.build(events: fixtureEvents(), interests: fixtureInterests(), now: now)
+    }
+
+    /// Parse an ISO 8601 instant (internet date-time) for fixed test clocks.
+    static func iso(_ s: String) -> Date {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        // swiftlint:disable:next force_unwrapping
+        return f.date(from: s)!
+    }
 }

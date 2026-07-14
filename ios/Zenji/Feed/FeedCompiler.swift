@@ -180,6 +180,60 @@ enum FeedCompiler {
         return norwayNationalRegex.firstMatch(in: lowercasedTeam, options: [], range: range) != nil
     }
 
+    // MARK: - §whyShown — "hvorfor vises denne?" (CLIENT, dashboard.js:621)
+
+    /// Norwegian sport display words for the "you follow <sport>" reason. Kept
+    /// local (not `SportVocabulary`, which lives in the Assistant module the
+    /// widget target does NOT compile) so FeedCompiler stays buildable in every
+    /// target that includes Feed/.
+    private static let sportNb: [String: String] = [
+        "football": "fotball", "golf": "golf", "f1": "Formel 1", "cycling": "sykkel",
+        "tennis": "tennis", "chess": "sjakk", "esports": "esport", "athletics": "friidrett",
+        "biathlon": "skiskyting", "cross-country": "langrenn", "alpine": "alpint",
+    ]
+
+    private static let enduranceSports: Set<String> = [
+        "cycling", "athletics", "biathlon", "cross-country", "alpine", "nordic", "ski jumping",
+    ]
+
+    /// The deterministic "why is this on my board" reason (WP-16.4 context
+    /// action «Hvorfor vises denne?»). A faithful port of dashboard.js
+    /// `whyShown` — sport-scoped tracked-entity match (athlete → team →
+    /// tournament), then ai-research / norwegian / followed-sport / generic,
+    /// in that priority order. The reminder tail is worded WITHOUT the 🔔 emoji
+    /// (DESIGN.md forbids emoji in chrome; the detail sheet is chrome).
+    static func whyShown(_ e: FeedEvent, interests: Interests) -> String {
+        let hay = serverHaystack(e)
+        func firstHit(_ entries: [Interests.Entity]) -> String? {
+            for x in entries {
+                if let sport = x.sport, TextMatch.normalize(sport) != TextMatch.normalize(e.sport) { continue }
+                if x.terms.contains(where: { TextMatch.containsName(hay, $0) }) { return x.name }
+            }
+            return nil
+        }
+        let at = interests.alwaysTrack
+        let verb = enduranceSports.contains(e.sport) ? "er med" : "spiller"
+
+        var why: String
+        if let athlete = firstHit(at.athletes) {
+            why = "Fordi \(athlete) \(verb)"
+        } else if let team = firstHit(at.teams) {
+            why = "Fordi \(team) \(verb)"
+        } else if let tourn = firstHit(at.tournaments) {
+            why = "Del av \(tourn), som du følger"
+        } else if e.source == "ai-research" {
+            why = "AI-research fant dette for deg"
+        } else if e.norwegian {
+            why = "Norsk deltakelse"
+        } else if (interests.followBroadly ?? defaultFollowBroadly).map({ $0.lowercased() }).contains(e.sport.lowercased()) {
+            why = "Du følger \(sportNb[e.sport] ?? e.sport)"
+        } else {
+            why = "Passer interessene dine"
+        }
+        if mustWatch(e, interests: interests) { why += " · varsler deg før start" }
+        return why
+    }
+
     // MARK: - §inWindow — agenda time window (SERVER & CLIENT, identical)
 
     /// Port of `isEventInWindow` (helpers.js:52 ≡ shared-constants.js:23). With

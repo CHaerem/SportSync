@@ -72,9 +72,10 @@ aldri tittelen.)
 ## Header
 
 `ZENJI` (amber, tung mono) · dato («TIRSDAG 14. JULI», dempet) · levende klokke
-`HH:MM:SS` (amber, tikker — eneste bevegelse i appen). Assistent-inngang: mono-glyf
-`»_` eller `◆` (IKKE pratebobler/emoji), dempet, høyre. Valgfri side-semantikk:
-`P100` foran dato på brede flater (arven fra Tekst-TV-indeksen).
+`HH:MM:SS` (amber, tikker). Assistent-glyf: mono `»_` (IKKE pratebobler/emoji),
+dempet, høyre — en FOKUS-SNARVEI til kommandolinjen nederst (ikke en egen skjerm;
+se «Assistent»). Valgfri side-semantikk: `P100` foran dato på brede flater
+(arven fra Tekst-TV-indeksen).
 
 **Tema-overstyring (BINDENDE, gjelder alle flater):** én mono-glyf i headeren,
 dempet, ved siden av assistent-glyfen, sykler system → mørk → lys → system ved
@@ -87,17 +88,48 @@ sin theme-toggle (`docs/js/dashboard.js`); iOS speiler den (`ThemeOverride.swift
 
 - Detaljark: flate-token, samme radspråk: venue · sammendrag · alle
   se-muligheter som lenkeliste · ⓘ-proveniens (confidence + kilder) for AI-events ·
-  stille varsel-toggle. Ingen kort-i-kortet.
-- Assistent: samme skjermspråk; diff i amber (ny) / dempet gjennomstreket (fjernet);
-  forklaringer som rolig tekst, aldri alerts. «Hva jeg følger» = agendarader.
+  stille varsel-toggle · KONTEKST-HANDLINGER (se Assistent). Ingen kort-i-kortet.
 - Widget: mosaikk-ensō + neste must-see (tid · tittel · kanal) i tokens — en
   miniatyr-teletekstside, ikke en iOS-plakat.
 
+## Assistent (kommandolinjen ER grensesnittet)
+
+Assistenten er ikke et rom bak en knapp — den er inngangen. «Assistenten ER
+grensesnittet.» Normativt (BINDENDE):
+
+- **Kommandolinjen**: en fast, stille prompt-linje NEDERST i agendaen, over
+  safe-area, på hver skjerm — den PRIMÆRE inngangen. Anatomi: mono `»_`-sigill
+  (venstre, dempet, trykkbart = åpner assistent-oppslaget) · tekstfelt
+  («Skriv eller spør …») · blinkende `▌`-blokkmarkør i amber (høyre). Markøren er
+  appens eneste bevegelse utenom klokka; Reduce Motion ⇒ statisk. Header-glyfen
+  er kun en fokus-snarvei hit.
+- **Intent-dualitet**: linjen forstår BÅDE profil-endringer OG spørsmål. Ett svar
+  er enten mutasjoner (diff) ELLER et svar over LOKAL agenda-data (aldri sky).
+  Spørsmål besvares rolig på norsk med referanse til radene (tid · tittel · kanal).
+- **Forslag/diff som ark**: resultater vises som et flatt ark (flate-token) som
+  toner inn (≤150 ms fade) OVER agendaen, med kommandolinjen synlig under (aldri
+  en egen skjerm). Diff-tegn: `+` grønn (ny) · `±` amber (endret) · `−` rød
+  (fjernet) — grønn/rød er SEMANTISKE signalfarger (som live-fargen), sparsomt
+  brukt, aldri en andre aksent. Forklaringer som rolig tekst, aldri alerts.
+  «Hva jeg følger» + «Det jeg ikke forsto» nås fra stille oppslag NEDERST i
+  samme ark.
+- **Tenke-tilstand**: mens modellen jobber blinker markøren i linjen og viser en
+  dempet «tenker …» + «Avbryt». ALDRI en spinner. Alltid avbrytbar.
+- **Umiddelbar konsekvens**: Bekreft ⇒ arket toner bort (≤150 ms) ⇒ profilen
+  appliseres ⇒ agendaen re-kompileres synlig med det samme.
+- **Kontekst-handlinger** (i detaljarket): «Følg <entitet>» (forhåndsutfylt
+  mutasjon gjennom den vanlige diff/bekreft-flyten) og «Hvorfor vises denne?»
+  (den deterministiske relevans-grunnen). Samme rolige radspråk.
+- Ærlighet: er Apple Intelligence av, sier arket det rett ut — aldri falsk
+  degradering til nøkkelord.
+
 ## Bevegelse & lyd
 
-Klokkens sekundtikk er appens eneste kontinuerlige bevegelse. Overganger:
-umiddelbare eller ≤150 ms fade. Ingen spretne kurver, parallakse, konfetti,
-haptikk-fest. `prefers-reduced-motion`/Reduce Motion: klokka viser HH:MM statisk.
+Klokkens sekundtikk og kommandolinjens blinkende `▌`-markør er appens eneste
+kontinuerlige bevegelser. Overganger: umiddelbare eller ≤150 ms fade (assistent-
+arket toner inn/ut). Ingen spretne kurver, parallakse, konfetti, haptikk-fest,
+spinnere. `prefers-reduced-motion`/Reduce Motion: klokka viser HH:MM statisk og
+markøren står stille.
 
 ## Stemme
 
