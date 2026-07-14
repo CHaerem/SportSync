@@ -29,6 +29,9 @@ struct ContentView: View {
     let notificationPlanner: NotificationPlanner
     /// WP-16.4 — the one profile store the agenda AND the assistant share.
     let profileStore: ProfileStore
+    /// WP-19 — offline-first profile sync. LocalOnly by default (a no-op on the
+    /// free-account/Simulator build); a paid-account build injects CloudKit.
+    let profileSync: ProfileSyncCoordinator
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
@@ -39,6 +42,7 @@ struct ContentView: View {
 
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     private var themeOverride: ThemeOverride {
         ThemeOverride(rawValue: themeOverrideRaw) ?? .system
@@ -50,12 +54,14 @@ struct ContentView: View {
         syncClient: SyncClient = SyncClient(),
         dataStore: DataStore = DataStore(),
         notificationPlanner: NotificationPlanner = NotificationPlanner(),
-        profileStore: ProfileStore = ProfileStore()
+        profileStore: ProfileStore = ProfileStore(),
+        profileSync: ProfileSyncCoordinator = ProfileSyncCoordinator(backend: ProfileSyncBackendFactory.make())
     ) {
         self.syncClient = syncClient
         self.dataStore = dataStore
         self.notificationPlanner = notificationPlanner
         self.profileStore = profileStore
+        self.profileSync = profileSync
         self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore))
         #if DEBUG
         // Screenshot harness: back the assistant with the deterministic mock
@@ -135,17 +141,46 @@ struct ContentView: View {
                     LensDemoSeed.seed(profileStore: profileStore)
                     agenda.reloadFromCache(now: Date())
                 }
+                // WP-19: seed a small profile so the share panel shows a real QR +
+                // link (the export needs a non-empty profile) and raise the ark.
+                if mode == "share" {
+                    let now = Date()
+                    try? profileStore.save(InterestProfile(rules: [
+                        InterestRule(entityId: "casper-ruud", entityName: "Casper Ruud", sport: "tennis",
+                                     scope: "bare i Grand Slams", weight: 0.8, reason: "Norsk tennisstjerne.",
+                                     addedAt: now, lens: .throughNorwegians),
+                        InterestRule(entityId: "viktor-hovland", entityName: "Viktor Hovland", sport: "golf",
+                                     scope: nil, weight: 0.6, reason: "Følger norsk golf.", addedAt: now),
+                    ]), now: now)
+                    assistant.reloadProfile()
+                    panelShown = true
+                }
                 assistant.demoSeed(mode)
                 if mode == "diff" || mode == "answer" { panelShown = true }
             }
             #endif
             await refresh()
+            // WP-19 — one profile sync round at launch (no-op on LocalOnly).
+            await assistant.runBackgroundSync(using: profileSync)
         }
         .onReceive(clock) { now = $0 }
         // A fresh assistant result raises the ark (≤150 ms fade, move 5's calm).
         .onChange(of: assistant.presentToken) { _, _ in
             commandFocused = false
             withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+        }
+        // WP-19 — a scanned QR / opened share link imports on the spot, MERGING
+        // into this device's profile (never overwriting); the agenda recompiles
+        // via `onProfileChanged`, and the confirmation shows in the assistant ark.
+        .onOpenURL { url in
+            assistant.importSharedProfile(from: url)
+            withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+        }
+        // WP-19 — offline-first pull → merge → push on foreground (a no-op on the
+        // LocalOnly backend; the real round-trip only happens on a CloudKit build).
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await assistant.runBackgroundSync(using: profileSync) }
         }
     }
 

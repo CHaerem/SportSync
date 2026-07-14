@@ -42,6 +42,7 @@ struct AssistantPanel: View {
                     Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.vertical, 2)
                     profileSection
                     misunderstoodSection
+                    ProfileSharePanel(viewModel: viewModel)
                 }
                 .padding(20)
                 .frame(maxWidth: 640, alignment: .leading)

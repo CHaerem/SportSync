@@ -53,6 +53,13 @@ targets:
           - app.zenji.refresh
         UIBackgroundModes:
           - fetch
+        # WP-19: the `zenji://` deep-link scheme the profile-share QR / link
+        # opens (ProfileShareCodec). Custom scheme → no Associated-Domains
+        # entitlement needed (free-account friendly).
+        CFBundleURLTypes:
+          - CFBundleURLName: app.zenji.ios.profile
+            CFBundleURLSchemes:
+              - zenji
     settings:
       base:
         PRODUCT_NAME: Zenji
@@ -212,6 +219,12 @@ targets:
           - app.zenji.refresh
         UIBackgroundModes:
           - fetch
+        # WP-19: same `zenji://` deep-link scheme on the device build so a
+        # scanned QR / share link imports (LocalOnly merge — no CloudKit needed).
+        CFBundleURLTypes:
+          - CFBundleURLName: app.zenji.ios.profile
+            CFBundleURLSchemes:
+              - zenji
     settings:
       base:
         # Distinct PRODUCT_NAME → distinct `ZenjiDeviceDev.app` output, so it
