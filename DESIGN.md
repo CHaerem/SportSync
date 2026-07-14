@@ -74,8 +74,8 @@ aldri tittelen.)
 `ZENJI` (amber, tung mono) · dato («TIRSDAG 14. JULI», dempet) · levende klokke
 `HH:MM:SS` (amber, tikker). Assistent-glyf: mono `»_` (IKKE pratebobler/emoji),
 dempet, høyre — en FOKUS-SNARVEI til kommandolinjen nederst (ikke en egen skjerm;
-se «Assistent»). Valgfri side-semantikk: `P100` foran dato på brede flater
-(arven fra Tekst-TV-indeksen).
+se «Assistent»). Ingen sidetall/P-nummer i produktflatene — interne
+tekst-TV-referanser som må forklares er dekorasjon, ikke kommunikasjon.
 
 **Tema-overstyring (BINDENDE, gjelder alle flater):** én mono-glyf i headeren,
 dempet, ved siden av assistent-glyfen, sykler system → mørk → lys → system ved
