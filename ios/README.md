@@ -1315,6 +1315,93 @@ on-device Apple Intelligence checks (type in the command line: a follow, a
 kveld?"*/*"når går neste TdF-etappe?"*; confirm the answer references real rows)
 are the manual steps to run by hand once the device is unlocked.
 
+## Personlig minne (WP-30 — P350)
+
+The assistant should feel like an editor who **remembers you** between sessions.
+Foundation Models is stateless, so "memory" = persisted data + smart insertion
+into the session. The dossier's P350 split is the whole point: **personal
+context** (how you relate to what you follow — knowledge level, spoiler
+preference, notify tolerance; small, private, on-device) is kept apart from
+**world context** (form/storylines — large, shared, server-produced). **Our
+server never gathers personal context.**
+
+### Three memory layers, all local — riding WP-19's `ProfileSyncState`
+
+WP-19 already carried `episodic` + `counters` on the mergeable `ProfileSyncState`;
+WP-30 **extends** it with `facts` rather than standing up a competing store — so
+all of memory syncs through the user's own iCloud / a QR bridge for free (P360),
+never our server. `Zenji/Memory/`:
+
+- **Structured** (`MemoryFact`, `MemoryStore`) — relationship metadata per
+  entity/sport beyond the follow-rules: `knowledgeLevel` ("nybegynner i sjakk"),
+  `spoilerPolicy` ("ser F1 på opptak"), `notifyWindow` ("ikke før 08:00"),
+  `preference`, `note`. Editable + deletable ⇒ **LWW + tombstone**, exactly like
+  rules (`ProfileMerge.pickNewerFact`).
+- **Episodic** (`MemoryDistiller`, `DistilledNote` → `EpisodicNote`) — after a
+  conversation an FM distils ONE compact `@Generable` note (`{summary,
+  entityRefs, kind, expiresAt?}`) — **never a raw transcript**. Append-only union.
+  `MockMemoryDistiller` is the deterministic CI stand-in.
+- **Behaviour** (`Counter`) — opens / expansions / dismissals per entity/sport,
+  rolling. **Pure code, no AI**, grow-only.
+
+`MemoryState(from:)` is the live projection (tombstones dropped) the UI + digest
+read — the memory analogue of `ProfileSyncState.profile`.
+
+### Retrieval is pure Swift, injected into the session
+
+`MemoryDigest.build(...)` is deterministic (entity-match + freshness, **no AI in
+retrieval**): it selects the facts/notes relevant to what's in front of the user,
+ages out expired episodic notes, floats spoiler policies to the front, and caps
+at ~500 tokens. The digest is injected into the `LanguageModelSession`
+instructions in BOTH the answer/mutation call and a new local **`saveMemory`**
+tool the model calls to persist something it learns. So a Q&A answer now
+**reflects** the memory — e.g. a `knowledgeLevel` fact makes it offer to explain
+fagtermer (`MockAnswerer.reflectMemory`, unit-tested end-to-end).
+
+### Spoiler protection — a presentation layer (impossible server-side)
+
+`SpoilerShield(memory:)` derives the spoiler-scoped sports/entities from
+`spoilerPolicy` facts. It (a) tells the model — via the digest — to phrase answers
+without revealing outcomes, and (b) exposes a per-row **`spoilerSafe`** flag the
+agenda + detail sheet respect: the detail sheet's `RESULTAT` is **masked** behind
+a calm "Skjult — spoilervern på · Trykk for å vise", and the lens meta drops its
+verbatim status. Like the WP-18 lens, this is a pure rendering layer on top of the
+feed — `FeedCompiler`'s five predicates and the golden vectors are untouched.
+
+### "Hva jeg vet om deg" (`WhatIKnowView`)
+
+The P350 trust surface + the plain-language GDPR answer: a calm, DESIGN.md-true
+page listing everything remembered (structured / episodic / behaviour), each entry
+readable, the facts editable, everything deletable, plus **"Glem alt"** (which
+wipes memory but keeps the follow-profile). Reached from the assistant flow, the
+same foot as "Hva jeg følger" (`AssistantPanel.memoryEntry`). Mono, no emoji, tap
+targets ≥44pt; the intro states outright that memory lives only on the device.
+
+### Tests + build
+
+`xcodebuild test … -scheme Zenji` passes **356 tests** (the 317 WP-…19 baseline +
+39 new: `MemoryStoreTests`, `MemoryDigestTests`, `MemoryDistillerTests`,
+`SpoilerShieldTests`, `ProfileMergeFactsTests`, `MemoryAssistantTests`). Both
+schemes (`Zenji`, `ZenjiWidgetExtension`) build — the widget deliberately does not
+compile `Zenji/Memory` (no network/personal-context code in the widget). `npm
+test` is untouched (373/373).
+
+### Visual proof + device build (WP-30)
+
+Four screenshots in `docs/design-v2/memory-{page,spoiler}-{dark,light}.png` —
+`iPhone 17 Pro` Simulator, both appearances, each state driven by the DEBUG-only
+`ZENJI_DEMO=memory|spoiler` launch harness (`MemoryDemoSeed` + a full-screen demo
+overlay, since a `.sheet` raised during the launch `.task` is a SwiftUI no-op):
+the "Hva jeg vet om deg" page (structured facts + episodic + behaviour) and a
+spoiler-masked `Britisk Grand Prix` detail sheet (`RESULTAT · Skjult —
+spoilervern på`). The `ZenjiDeviceDev` scheme was rebuilt (**BUILD SUCCEEDED**,
+signed *Apple Development*) and **installed** on the connected iPhone 16 Pro
+(`xcrun devicectl device install` → *App installed: app.zenji.ios*); the
+on-device Apple Intelligence checks (say something durable → it saves via
+`saveMemory`; ask a chess question with a beginner fact set → it explains
+fagtermer; a spoiler-policy result stays masked in the detail sheet) are the
+manual steps once the device is unlocked.
+
 ## Architecture (what plugs in next)
 
 WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache

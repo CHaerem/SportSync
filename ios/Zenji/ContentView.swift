@@ -39,6 +39,22 @@ struct ContentView: View {
     /// WP-16.4 — the assistant "ark" is up (a result or a browse).
     @State private var panelShown = false
     @FocusState private var commandFocused: Bool
+    #if DEBUG
+    /// WP-30 screenshot harness: the "Hva jeg vet om deg" page / a spoiler-masked
+    /// detail sheet, presented deterministically under `ZENJI_DEMO` (one sheet
+    /// binding — SwiftUI honours only one `.sheet` per view).
+    enum DemoSheet: Identifiable {
+        case memory
+        case spoiler(AgendaEventRow)
+        var id: String {
+            switch self {
+            case .memory: return "memory"
+            case .spoiler(let row): return "spoiler-\(row.id)"
+            }
+        }
+    }
+    @State private var demoSheet: DemoSheet?
+    #endif
 
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -109,6 +125,7 @@ struct ContentView: View {
     }
 
     var body: some View {
+        ZStack {
         VStack(alignment: .leading, spacing: 0) {
             header
             Rectangle()
@@ -116,7 +133,7 @@ struct ContentView: View {
                 .frame(height: 1)
             liveNowLine
             ZStack {
-                AgendaView(viewModel: agenda, onFollow: follow)
+                AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) })
                 if panelShown {
                     AssistantPanel(viewModel: assistant, dismiss: closePanel)
                         .transition(.opacity)
@@ -124,6 +141,10 @@ struct ContentView: View {
                 }
             }
             CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
+        }
+        #if DEBUG
+        demoOverlay
+        #endif
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
@@ -155,6 +176,18 @@ struct ContentView: View {
                     assistant.reloadProfile()
                     panelShown = true
                 }
+                // WP-30: memory page + spoiler-masked detail sheet, shown as a
+                // full-screen demo overlay (a sheet raised during the launch
+                // `.task` is a SwiftUI no-op; the overlay renders the SAME real
+                // WhatIKnowView / EventDetailSheet content).
+                if mode == "memory" {
+                    MemoryDemoSeed.seedMemory(into: MemoryStore(profileStore: profileStore))
+                    assistant.refreshMemory()
+                    demoSheet = .memory
+                }
+                if mode == "spoiler" {
+                    demoSheet = .spoiler(MemoryDemoSeed.spoilerRow())
+                }
                 assistant.demoSeed(mode)
                 if mode == "diff" || mode == "answer" { panelShown = true }
             }
@@ -183,6 +216,22 @@ struct ContentView: View {
             Task { await assistant.runBackgroundSync(using: profileSync) }
         }
     }
+
+    #if DEBUG
+    /// Full-screen demo overlay for the WP-30 screenshots — renders the real
+    /// memory page / spoiler-masked detail sheet content over an opaque backdrop
+    /// (a `.sheet` won't present when raised during the launch `.task`).
+    @ViewBuilder
+    private var demoOverlay: some View {
+        if let demoSheet {
+            ZenjiTokens.background.ignoresSafeArea()
+            switch demoSheet {
+            case .memory: WhatIKnowView(viewModel: assistant)
+            case .spoiler(let row): EventDetailSheet(row: row)
+            }
+        }
+    }
+    #endif
 
     // MARK: - Actions
 

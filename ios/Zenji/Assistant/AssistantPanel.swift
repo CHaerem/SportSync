@@ -26,6 +26,9 @@ struct AssistantPanel: View {
 
     @State private var misunderstoodExpanded = false
     @State private var profileExpanded = false
+    /// WP-30 — the "Hva jeg vet om deg" page (presented from the same foot as
+    /// "Hva jeg følger").
+    @State private var memoryPageShown = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,6 +44,7 @@ struct AssistantPanel: View {
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
                     Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.vertical, 2)
                     profileSection
+                    memoryEntry
                     misunderstoodSection
                     ProfileSharePanel(viewModel: viewModel)
                 }
@@ -324,6 +328,28 @@ struct AssistantPanel: View {
         if !rule.lens.isDefault { parts.append(rule.lens.label) }
         parts.append("vekt \(weightLabel(rule.weight))")
         return parts.joined(separator: " · ")
+    }
+
+    // MARK: - "Hva jeg vet om deg" (WP-30) — a quiet entry to the memory page
+
+    /// A calm, chevron-free row (rhythm signals tappability, per DESIGN.md) that
+    /// opens the "Hva jeg vet om deg" trust/GDPR page — sits right under "Hva
+    /// jeg følger", the same foot of the ark.
+    private var memoryEntry: some View {
+        Button { memoryPageShown = true } label: {
+            HStack {
+                Text("HVA JEG VET OM DEG (\(viewModel.memoryItemCount))")
+                    .font(.zenjiMono(size: 12, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .tracking(1.5)
+                Spacer()
+            }
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .sheet(isPresented: $memoryPageShown) {
+            WhatIKnowView(viewModel: viewModel)
+        }
     }
 
     // MARK: - "Det jeg ikke forsto" (WP-16.3)

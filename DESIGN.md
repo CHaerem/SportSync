@@ -190,6 +190,40 @@ iCloud** — aldri via vår server. Bindende:
 - **Aldri vår server.** All sync er brukerens iCloud eller QR/lenke mellom deres
   egne enheter. Personvern-løftet holder bokstavelig.
 
+## Personlig minne (P350 — WP-30)
+
+Assistenten skal føles som en redaktør som HUSKER DEG mellom øktene. Foundation
+Models er statsløs — «minne» = persistert data + smart innsetting i sesjonen.
+Kjernen er skillet mellom **personlig kontekst** (hvordan DU forholder deg til
+det du følger — smak, kunnskapsnivå, spoiler-preferanse, varslingstoleranse;
+liten, privat, KUN på enheten) og **verdens-kontekst** (form, storylines — stor,
+delt, server-produsert). **Serveren samler ALDRI personlig kontekst.** Bindende:
+
+- **Tre minnelag, alle lokalt** (utvider P360-synkmodellen `ProfileSyncState`, en
+  egen konkurrent lages aldri): **strukturert** (relasjonsmetadata per
+  entitet/sport — «nybegynner i sjakk», «ser F1 på opptak», «ikke varsle før
+  08:00» — LWW + tombstone, redigerbart), **episodisk** (etter en samtale
+  destillerer FM ett KOMPAKT notat, aldri råtranskript — append-only), og
+  **atferd** (åpninger/utvidelser/avvisninger per entitet — ren kode, ingen AI,
+  grow-only). Alt synkes gjennom brukerens egen iCloud/QR (P360), aldri serveren.
+- **Retrieval er ren Swift** (deterministisk entitet-match + ferskhet, ingen AI):
+  et `memoryDigest` (~500-token-tak) bygges for det som er relevant NÅ og
+  **injiseres i `LanguageModelSession`-instruksjonene** i både svar og en lokal
+  `saveMemory`-verktøy modellen kaller for å lagre noe den lærer. Svar REFLEKTERER
+  minnet (bruker kunnskapsnivå til å forklare/ikke forklare fagtermer) — det leses
+  aldri opp ordrett.
+- **Spoilervern er et presentasjonslag** (signaturtrekket, umulig server-side): en
+  `spoilerPolicy`-minnepost gir (a) svar formulert uten å avsløre utfall, og (b)
+  et `spoilerSafe`-flagg agendaen/detaljarket respekterer ved å **maskere
+  resultat/score** for den entiteten/sporten til brukeren har «sett» det (tapp for
+  å vise). Ligger OPPÅ feeden som linsen (WP-18) — rører aldri de fem predikatene
+  eller de gylne vektorene.
+- **«Hva jeg vet om deg»** er tillits- og GDPR-flaten: en rolig liste over ALT
+  lagret minne (strukturert + episodisk + atferd), hver post lesbar, redigerbar,
+  slettbar, med «Glem alt». Nås fra assistent-flyten (samme sted som «Hva jeg
+  følger»). Mono, ingen emoji, tapp-mål ≥44 pt. Sier rett ut at minnet bor kun på
+  enheten (og din egen iCloud), aldri på en server.
+
 ## Bevegelse & lyd
 
 Klokkens sekundtikk og kommandolinjens blinkende `▌`-markør er appens eneste

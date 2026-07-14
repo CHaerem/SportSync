@@ -42,6 +42,11 @@ struct AgendaEventRow: Identifiable, Equatable {
     /// through the index). The detail sheet offers a "Følg X" context action
     /// per entry, routed through the assistant's normal diff/confirm flow.
     var followable: [Entity] = []
+    /// WP-30 — the spoiler flag derived from personal memory (`SpoilerShield`):
+    /// `false` when the user has a spoiler policy on this event's sport/entity,
+    /// so the agenda + detail sheet MASK result/score for it. Defaults to `true`
+    /// (safe to show) so every existing caller/test is unchanged.
+    var spoilerSafe: Bool = true
 }
 
 /// A folded stage race — dashboard.js `collapseSeries`'s Swift-side output,

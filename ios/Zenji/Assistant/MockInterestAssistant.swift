@@ -55,7 +55,7 @@ struct MockInterestAssistant: InterestAssistant {
         }
     }
 
-    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery) async throws -> AssistantTurn {
+    func interpret(utterance: String, profile: InterestProfile, index: EntityIndex, feed: FeedQuery, memory: MemoryContext) async throws -> AssistantTurn {
         switch behavior {
         case let .unavailable(message):
             throw AssistantError.unavailable(message: message)
@@ -71,8 +71,10 @@ struct MockInterestAssistant: InterestAssistant {
         case .available:
             // WP-16.4 intent routing: a question is answered from the local
             // feed; everything else parses to mutations exactly as WP-16.
+            // WP-30: the answer arm reflects the personal-memory state (e.g. a
+            // knowledge-level fact makes it explain fagtermer).
             if MockAnswerer.isQuestion(utterance) {
-                return .answer(MockAnswerer.answer(utterance: utterance, feed: feed, index: index))
+                return .answer(MockAnswerer.answer(utterance: utterance, feed: feed, index: index, memory: memory.state))
             }
             return .mutations(MockInterestParser.parse(utterance: utterance, profile: profile, index: index))
         }

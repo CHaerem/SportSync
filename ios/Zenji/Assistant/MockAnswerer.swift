@@ -49,7 +49,14 @@ enum MockAnswerer {
     /// Turn a question into a calm answer over the local agenda. Never throws
     /// and never blank: an empty agenda yields an honest "jeg ser ingenting …"
     /// (which the view model shows as an answer, not a misunderstanding).
-    static func answer(utterance: String, feed: FeedQuery, index: EntityIndex) -> AssistantAnswer {
+    /// WP-30: the answer then REFLECTS the personal memory (`reflectMemory`) — a
+    /// knowledge-level fact makes it offer to explain fagtermer.
+    static func answer(utterance: String, feed: FeedQuery, index: EntityIndex, memory: MemoryState = MemoryState()) -> AssistantAnswer {
+        let base = baseAnswer(utterance: utterance, feed: feed, index: index)
+        return reflectMemory(base, utterance: utterance, feed: feed, index: index, memory: memory)
+    }
+
+    private static func baseAnswer(utterance: String, feed: FeedQuery, index: EntityIndex) -> AssistantAnswer {
         let n = " " + TextMatch.normalize(utterance) + " "
 
         // 1) "i kveld" / "i dag" — the calendar questions.
@@ -92,6 +99,42 @@ enum MockAnswerer {
         let upcoming = Array(feed.upcoming().prefix(3))
         return list(lead: "Det neste på agendaen din:", hits: upcoming,
                     empty: "Jeg ser ingenting kommende i agendaen din akkurat nå.")
+    }
+
+    // MARK: - Memory reflection (WP-30)
+
+    /// Fold the personal memory into an answer. Deterministic and pure (the
+    /// mock's counterpart to the FM model reading the injected digest): if the
+    /// user is a beginner in the sport the answer is ABOUT, append an offer to
+    /// explain fagtermer, so the reply visibly changes with what we know.
+    static func reflectMemory(_ base: AssistantAnswer, utterance: String, feed: FeedQuery, index: EntityIndex, memory: MemoryState) -> AssistantAnswer {
+        guard !base.text.isEmpty, !memory.facts.isEmpty else { return base }
+        let (sports, entityIds) = topics(utterance: utterance, referencedIds: base.referencedEventIds, feed: feed, index: index)
+
+        let beginner = memory.facts.first { fact in
+            fact.kind == .knowledgeLevel &&
+            ((fact.sport.map(sports.contains) ?? false) || (fact.entityId.map(entityIds.contains) ?? false))
+        }
+        guard let beginner else { return base }
+        let where_ = beginner.sport.map(SportVocabulary.display(for:)) ?? "dette"
+        return AssistantAnswer(
+            text: base.text + " Jeg forklarer fagtermer underveis siden du er fersk i \(where_).",
+            referencedEventIds: base.referencedEventIds
+        )
+    }
+
+    /// The sports + entity ids an answer is ABOUT: from the referenced agenda
+    /// rows (authoritative) plus anything named in the utterance.
+    private static func topics(utterance: String, referencedIds: [String], feed: FeedQuery, index: EntityIndex) -> (sports: Set<String>, entityIds: Set<String>) {
+        var sports = Set<String>()
+        var entityIds = Set<String>()
+        let byId = Dictionary(feed.events.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        for id in referencedIds {
+            if let e = byId[id] { sports.insert(e.sport); entityIds.formUnion(e.entityIds) }
+        }
+        for e in index.detectEntities(in: utterance) { sports.insert(e.sport); entityIds.insert(e.id) }
+        if let sport = EntityIndex.sportKeyword(in: utterance) { sports.insert(sport) }
+        return (sports, entityIds)
     }
 
     // MARK: - Composition

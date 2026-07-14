@@ -33,7 +33,10 @@ enum EventBuilder {
         evidence: [String] = [],
         venue: String? = nil,
         summary: String? = nil,
-        id: String? = nil
+        id: String? = nil,
+        result: String? = nil,
+        homeTeamEntityId: String? = nil,
+        awayTeamEntityId: String? = nil
     ) -> Event {
         var dict: [String: Any] = ["sport": sport, "title": title, "time": time, "norwegian": norwegian, "isFavorite": isFavorite]
         if let endTime { dict["endTime"] = endTime }
@@ -49,6 +52,9 @@ enum EventBuilder {
         if let venue { dict["venue"] = venue }
         if let summary { dict["summary"] = summary }
         if let id { dict["id"] = id }
+        if let result { dict["result"] = result }
+        if let homeTeamEntityId { dict["homeTeamEntityId"] = homeTeamEntityId }
+        if let awayTeamEntityId { dict["awayTeamEntityId"] = awayTeamEntityId }
         // swiftlint:disable:next force_try
         let data = try! JSONSerialization.data(withJSONObject: dict)
         // swiftlint:disable:next force_try
