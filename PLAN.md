@@ -55,6 +55,7 @@ mennesket, aldri av en agent.
 | WP-18 | Linse-rendering (P320: event × deltakelse × linse) | 0B | WP-13,WP-16.1 | 🔬 PR åpnet — `LensRenderer` (Feed/, widget-trygg) + Agenda-integrasjon: golf rendres gjennom de norske du følger (tee time overstyrer tid/dag/sortering, status verbatim i meta, grasiøs degradering); de 5 predikatene urørt (13/13 gylne vektorer bit-like); 273/273 iOS-tester (+16), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev installert; skjermbilder `ios/docs/design-v2/lens-{dark,light}.png` |
 | WP-19 | Profil-sync (P360: iCloud + QR-bro) | 0B | WP-16 | ✅ merget (#260) — 317/317 |
 | WP-30 | Personlig minne (P350) | 0B | WP-16.4,WP-19 | ✅ merget (#261) — 356/356 |
+| WP-31 | Naturlig onboarding (P310 «definere») | 0B | WP-16.4,WP-05 | 🔨 agent i arbeid |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
