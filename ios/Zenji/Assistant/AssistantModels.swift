@@ -40,6 +40,58 @@ enum MutationKind: String, Codable, Equatable, Sendable {
     case remove
 }
 
+/// The PERSPECTIVE a follow-rule is seen through (WP-16.1). The entity says
+/// *what* is followed (a tournament, a team, a sport's headline event); the lens
+/// says *how*. Without it, an utterance like "Følg Tour de France med fokus på
+/// norske utøvere" simply could not be represented — the model had nowhere to
+/// put "med fokus på norske", produced no mutation, and the UI collapsed that to
+/// a bare "fant ingen endringer". The lens gives that intent a home.
+///
+///   • `.sportAsSuch`       the whole thing — every participant (the DEFAULT).
+///   • `.throughNorwegians` focus on the Norwegian athletes/teams in the
+///                          entity's events ("med fokus på norske utøvere").
+///   • `.throughAthletes`   focus on specific athletes; carries their entity ids
+///                          — GROUNDED against the index exactly like every other
+///                          id (an athlete not in the index is dropped, and an
+///                          empty result degrades back to `.sportAsSuch`).
+enum Lens: Codable, Equatable, Sendable {
+    case sportAsSuch
+    case throughNorwegians
+    case throughAthletes([LensAthlete])
+
+    /// The neutral default — a rule with no explicit perspective.
+    var isDefault: Bool { self == .sportAsSuch }
+
+    /// Human-readable Norwegian label for the DIFF / "Hva jeg følger" list, e.g.
+    /// "gjennom norske utøvere" or "gjennom Casper Ruud, Viktor Hovland".
+    var label: String {
+        switch self {
+        case .sportAsSuch:
+            return "hele sporten"
+        case .throughNorwegians:
+            return "gjennom norske utøvere"
+        case let .throughAthletes(athletes):
+            let names = athletes.map(\.name).joined(separator: ", ")
+            return names.isEmpty ? "gjennom utvalgte utøvere" : "gjennom \(names)"
+        }
+    }
+}
+
+/// One athlete a `.throughAthletes` lens focuses on. `entityId` is the WP-05
+/// stable id; `name` is cached for display (mirroring `InterestRule.entityName`)
+/// so the DIFF/profile render without a second index lookup. In a RAW proposal
+/// these ids are UNTRUSTED (the grounder re-checks them); in a grounded mutation
+/// or a persisted rule every one has been verified to exist.
+struct LensAthlete: Codable, Equatable, Sendable {
+    var entityId: String
+    var name: String
+
+    init(entityId: String, name: String) {
+        self.entityId = entityId
+        self.name = name
+    }
+}
+
 /// The model's RAW proposal, BEFORE entity-grounding.
 ///
 /// `entityId` is deliberately treated as untrusted: the model is instructed to
@@ -59,14 +111,20 @@ struct ProposedMutation: Equatable, Sendable {
     var weight: Double?
     /// Always-filled Norwegian rationale (the transparency contract).
     var reason: String
+    /// The perspective the user wants this followed through. For a `.throughAthletes`
+    /// lens the athlete ids here are UNTRUSTED (grounding re-checks them, exactly
+    /// like `entityId`). Defaults to `.sportAsSuch` so existing callers and any
+    /// utterance without a focus phrase are unaffected.
+    var lens: Lens
 
-    init(kind: MutationKind, entityId: String, entityQuery: String, scope: String? = nil, weight: Double? = nil, reason: String) {
+    init(kind: MutationKind, entityId: String, entityQuery: String, scope: String? = nil, weight: Double? = nil, reason: String, lens: Lens = .sportAsSuch) {
         self.kind = kind
         self.entityId = entityId
         self.entityQuery = entityQuery
         self.scope = scope
         self.weight = weight
         self.reason = reason
+        self.lens = lens
     }
 }
 
@@ -80,6 +138,11 @@ struct GroundedMutation: Equatable, Identifiable, Sendable {
     /// The rule this would replace/remove, if one already exists — lets the
     /// DIFF view show a real before/after instead of guessing.
     var previousRule: InterestRule?
+    /// The perspective this rule is followed through — GROUNDED (any
+    /// `.throughAthletes` ids have been verified to exist). Defaults to
+    /// `.sportAsSuch`, declared last so the synthesised memberwise initialiser
+    /// stays backward-compatible with callers that omit it.
+    var lens: Lens = .sportAsSuch
 
     /// Stable, deterministic id (entity + kind) — no random UUID, so the type
     /// stays value-equal for tests and SwiftUI diffing.
@@ -110,6 +173,89 @@ struct GroundingResult: Equatable, Sendable {
     }
 
     var isEmpty: Bool { grounded.isEmpty && rejected.isEmpty }
+}
+
+/// The HARD UX RULE, made a value (WP-16.1): the assistant ALWAYS explains
+/// itself. Whenever a submitted utterance produces no confirmable change, this
+/// replaces the old dead-end "fant ingen endringer" note with an honest,
+/// structured account the UI shows verbatim:
+///
+///   • `understood` — a short paraphrase of what the assistant took the
+///     utterance to mean.
+///   • `reason` — WHY nothing changed: the named things weren't in the index
+///     (see the "mente du …?" suggestions), the entity data hasn't synced yet,
+///     or the intent couldn't be expressed as a rule change at all ("jeg kan
+///     ikke uttrykke X ennå" — the case that produced the original bug).
+///
+/// Both fields are always non-empty Norwegian text — the UI must never show a
+/// blank or a bare "no changes".
+struct AssistantExplanation: Equatable, Sendable {
+    var understood: String
+    var reason: String
+
+    init(understood: String, reason: String) {
+        self.understood = understood
+        self.reason = reason
+    }
+
+    /// Builds the honest account shown WHENEVER a submitted utterance produced no
+    /// confirmable change (no grounded mutation). Pure — no clock, no I/O — so
+    /// the always-explain contract is unit-tested directly. The four honest
+    /// endings, in priority order:
+    ///
+    ///   1. the entity index hasn't synced yet → nothing could be looked up;
+    ///   2. the model produced no proposal at all → the intent couldn't be
+    ///      expressed as a rule change (the case that produced the original
+    ///      "fant ingen endringer" bug);
+    ///   3. every proposal named something not in the index → rejected, with the
+    ///      "mente du …?" suggestions shown separately;
+    ///   4. (defensive) proposals resolved but changed nothing net.
+    ///
+    /// `understood` always paraphrases the utterance so the UI never shows a bare
+    /// blank; `reason` always says WHY, in Norwegian.
+    static func make(
+        utterance: String,
+        proposals: [ProposedMutation],
+        result: GroundingResult,
+        hasEntities: Bool
+    ) -> AssistantExplanation {
+        let understood = understoodText(utterance: utterance, proposals: proposals)
+        let reason: String
+        if !hasEntities {
+            reason = "Jeg har ikke lastet ned hva du kan følge ennå, så jeg fikk ikke slått opp noe. Prøv igjen om litt."
+        } else if !result.rejected.isEmpty {
+            let names = result.rejected.map { "«\($0.query)»" }.joined(separator: ", ")
+            reason = "Jeg fant ikke \(names) i indeksen over det du kan følge, så jeg endret ingenting. Se forslagene under."
+        } else if proposals.isEmpty {
+            reason = "Jeg klarte ikke å uttrykke dette som en endring i en følge-regel ennå, så jeg lot profilen stå urørt. Prøv å skrive hvem eller hva du vil følge, f.eks. «Følg Tour de France med fokus på norske utøvere»."
+        } else {
+            reason = "Det du beskrev endrer ikke det du allerede følger, så jeg gjorde ingenting."
+        }
+        return AssistantExplanation(understood: understood, reason: reason)
+    }
+
+    /// A short Norwegian paraphrase of what the assistant took the utterance to
+    /// mean — from the proposals when there are any, else an honest echo of the
+    /// raw text so the field is never empty.
+    private static func understoodText(utterance: String, proposals: [ProposedMutation]) -> String {
+        guard !proposals.isEmpty else {
+            let text = utterance.trimmingCharacters(in: .whitespacesAndNewlines)
+            return "Jeg leste ytringen din som «\(text)», men fant ingen konkret utøver, lag eller turnering å endre."
+        }
+        var seen = Set<String>()
+        let phrases = proposals.map(phrase(for:)).filter { seen.insert($0).inserted }
+        return phrases.joined(separator: " ")
+    }
+
+    private static func phrase(for proposal: ProposedMutation) -> String {
+        let q = proposal.entityQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let subject = q.isEmpty ? "det du skrev" : "«\(q)»"
+        switch proposal.kind {
+        case .add: return "Du vil følge \(subject)."
+        case .update: return "Du vil justere hvordan du følger \(subject)."
+        case .remove: return "Du vil slutte å følge \(subject)."
+        }
+    }
 }
 
 /// Whether the on-device model can actually be used right now. Mirrors

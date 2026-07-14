@@ -130,6 +130,41 @@ final class MockInterestAssistantTests: XCTestCase {
         XCTAssertEqual(p[0].entityQuery, "cricket")  // carried for the "mente du …?" suggestion
     }
 
+    // MARK: - 11. Lens — the original bug ("med fokus på norske utøvere")
+
+    func test11_følgTourDeFranceMedFokusPåNorske() {
+        // The exact first-user-test utterance that WP-16 produced no mutation for.
+        let p = parse("Følg Tour de France med fokus på norske utøvere")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].kind, .add)
+        XCTAssertEqual(p[0].entityId, "tour-de-france-2026")
+        XCTAssertEqual(p[0].lens, .throughNorwegians, "«med fokus på norske» must become the Norwegian lens")
+        XCTAssertNil(p[0].scope)
+        XCTAssertTrue(p[0].reason.contains("norske"), "the reason names the perspective")
+    }
+
+    func test11b_plainAdd_hasDefaultLens() {
+        // No focus phrase → the neutral default, so existing behaviour is unchanged.
+        let p = parse("Følg Magnus Carlsen")
+        XCTAssertEqual(p[0].lens, .sportAsSuch)
+        XCTAssertTrue(p[0].lens.isDefault)
+    }
+
+    func test11c_wholeSportWithNorwegianFocus_carriesLens() {
+        // "Mer sykkel" is a whole-sport command; "de norske" is its lens.
+        let p = parse("Mer sykkel, bare de norske")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].kind, .update)
+        XCTAssertEqual(p[0].lens, .throughNorwegians)
+    }
+
+    func test11d_removeNeverCarriesLens() {
+        // A lens makes no sense on a remove, even if the phrase is present.
+        let p = parse("Slutt med tennis, de norske", profile: profileFollowingRuud())
+        XCTAssertEqual(p.map(\.kind), [.remove])
+        XCTAssertEqual(p[0].lens, .sportAsSuch)
+    }
+
     // MARK: - Availability + async surface
 
     func test_availability_reflectsBehavior() {

@@ -48,6 +48,7 @@ enum MutationGrounder {
             case .add, .remove:
                 scope = proposal.scope
             }
+            let lens = groundedLens(for: proposal, previous: previous, index: index)
 
             grounded.append(GroundedMutation(
                 kind: proposal.kind,
@@ -55,11 +56,45 @@ enum MutationGrounder {
                 scope: scope,
                 weight: weight,
                 reason: proposal.reason,
-                previousRule: previous
+                previousRule: previous,
+                lens: lens
             ))
         }
 
         return GroundingResult(grounded: grounded, rejected: rejected)
+    }
+
+    // MARK: - Lens grounding
+
+    /// Grounds a proposal's lens the same way the entity id is grounded (WP-16.1):
+    ///   • `.remove` never carries a lens — you don't stop-following "through" a
+    ///     perspective.
+    ///   • `.throughAthletes` ids are re-checked against the index, exactly like
+    ///     the top-level entity id. Ids that don't resolve are dropped (and their
+    ///     display name is normalised to the index's canonical name); if none
+    ///     survive, the lens degrades to `.sportAsSuch`.
+    ///   • An `.update` that specifies no lens (`.sportAsSuch`, the default)
+    ///     inherits the existing rule's lens, mirroring how scope/weight carry
+    ///     over.
+    private static func groundedLens(for proposal: ProposedMutation, previous: InterestRule?, index: EntityIndex) -> Lens {
+        switch proposal.kind {
+        case .remove:
+            return .sportAsSuch
+        case .add:
+            return resolve(proposal.lens, index: index)
+        case .update:
+            return proposal.lens.isDefault ? (previous?.lens ?? .sportAsSuch) : resolve(proposal.lens, index: index)
+        }
+    }
+
+    private static func resolve(_ lens: Lens, index: EntityIndex) -> Lens {
+        guard case let .throughAthletes(athletes) = lens else { return lens }
+        var seen = Set<String>()
+        let grounded = athletes.compactMap { athlete -> LensAthlete? in
+            guard let entity = index.entity(id: athlete.entityId), seen.insert(entity.id).inserted else { return nil }
+            return LensAthlete(entityId: entity.id, name: entity.name)
+        }
+        return grounded.isEmpty ? .sportAsSuch : .throughAthletes(grounded)
     }
 
     // MARK: - Rejection

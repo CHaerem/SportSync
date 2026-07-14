@@ -52,6 +52,12 @@ struct GeneratedMutation {
 
     @Guide(description: "Kort begrunnelse på norsk for hvorfor denne endringen foreslås. Skal alltid fylles ut.")
     var reason: String
+
+    @Guide(description: "Linse — hvilket perspektiv brukeren vil følge dette gjennom. Gjelder kun 'add' og 'update'. Bruk 'sport' for hele sporten/turneringen (standard), 'norwegians' når brukeren sier «med fokus på norske», «bare de norske» e.l., eller 'athletes' når brukeren vil følge bestemte utøvere (f.eks. «bare når Ruud spiller») — da MÅ du fylle lensAthleteIds.")
+    var lens: String
+
+    @Guide(description: "Kun når lens = 'athletes': entityId-ene (fra searchEntities) til utøverne brukeren vil følge dette gjennom. Ellers tom liste. Bruk kun ekte id-er fra verktøyet — aldri oppdiktede.")
+    var lensAthleteIds: [String]
 }
 
 /// The top-level structure the session generates for a single utterance.
@@ -162,8 +168,28 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
             entityQuery: g.entityQuery.trimmingCharacters(in: .whitespacesAndNewlines),
             scope: scope.isEmpty ? nil : scope,
             weight: g.weight > 0 ? min(g.weight, 1.0) : nil,
-            reason: reason.isEmpty ? "Foreslått fra ytringen din." : reason
+            reason: reason.isEmpty ? "Foreslått fra ytringen din." : reason,
+            lens: lens(from: g)
         )
+    }
+
+    /// GeneratedMutation → Lens. The raw athlete ids are left UNTRUSTED here —
+    /// `MutationGrounder` re-checks them (and fills the canonical display name),
+    /// exactly like the top-level entityId. An unrecognised lens string, or a
+    /// `.remove`, falls back to `.sportAsSuch`.
+    static func lens(from g: GeneratedMutation) -> Lens {
+        switch g.lens.lowercased().trimmingCharacters(in: .whitespaces) {
+        case "norwegians", "norske", "norsk", "norway", "norge":
+            return .throughNorwegians
+        case "athletes", "athlete", "utovere", "utøvere", "utover", "utøver":
+            let athletes = g.lensAthleteIds
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+                .map { LensAthlete(entityId: $0, name: $0) }
+            return athletes.isEmpty ? .sportAsSuch : .throughAthletes(athletes)
+        default:
+            return .sportAsSuch
+        }
     }
 
     static func instructions(profile: InterestProfile) -> String {
@@ -187,6 +213,13 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         - «slutt med <idrett>» betyr å fjerne det brukeren allerede følger i den idretten.
         - Sett en kort, ærlig begrunnelse på norsk i reason på hver mutasjon.
         - Vær konservativ: foreslå bare det ytringen faktisk ber om.
+
+        LINSE (perspektivet brukeren vil følge noe gjennom — felt: lens):
+        - «Følg Tour de France med fokus på norske utøvere» → add på Tour de France med lens = 'norwegians'.
+        - «Følg VM i friidrett, bare de norske» → add på turneringen med lens = 'norwegians'.
+        - «Følg Tour de France bare når Kristoff er med» → add på Tour de France med lens = 'athletes' og lensAthleteIds = [Kristoffs entityId fra searchEntities].
+        - «Følg hele Premier League» / uten noe fokus-uttrykk → lens = 'sport' (standard).
+        - Linse endrer ALDRI hvilken entitet du følger — den sier bare hvordan. Entiteten (turneringen/laget) må fortsatt være en ekte id fra verktøyet, og utøverne i 'athletes' likeså.
 
         \(following)
         """

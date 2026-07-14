@@ -60,4 +60,37 @@ final class ProfileStoreTests: XCTestCase {
         XCTAssertEqual(loaded.rule(for: "casper-ruud")?.reason, "fordi Ruud")
         XCTAssertFalse(loaded.rules.contains { $0.reason.isEmpty }, "every rule keeps its Norwegian reason")
     }
+
+    // MARK: - Lens persistence (WP-16.1)
+
+    func test_lensSurvivesRoundTrip() throws {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let profile = InterestProfile()
+            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "tour-de-france-2026")!,
+                                       scope: nil, weight: 0.5, reason: "norsk fokus",
+                                       previousRule: nil, lens: .throughNorwegians), now: now)
+            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "esports-world-cup-2026-chess")!,
+                                       scope: nil, weight: 0.5, reason: "utvalgte",
+                                       previousRule: nil,
+                                       lens: .throughAthletes([LensAthlete(entityId: "magnus-carlsen", name: "Magnus Carlsen")])),
+                      now: now)
+        let store = AssistantTestSupport.tempProfileStore()
+        try store.save(profile)
+        let loaded = store.load()
+        XCTAssertEqual(loaded, profile, "the lens (both cases) round-trips through JSON unchanged")
+        XCTAssertEqual(loaded.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+    }
+
+    func test_papersOverPreLensProfile_defaultsToSportAsSuch() throws {
+        // A profile written by WP-16 (before the lens existed) has no `lens` key.
+        let store = AssistantTestSupport.tempProfileStore()
+        let json = """
+        { "rules": [ { "entityId": "magnus-carlsen", "entityName": "Magnus Carlsen",
+          "sport": "chess", "weight": 0.5, "reason": "sjakk",
+          "addedAt": "2026-01-01T00:00:00Z" } ] }
+        """
+        try Data(json.utf8).write(to: store.directoryURL.appendingPathComponent(ProfileStore.filename))
+        XCTAssertEqual(store.load().rule(for: "magnus-carlsen")?.lens, .sportAsSuch,
+                       "forward-compatible: a pre-lens rule defaults to the neutral lens")
+    }
 }

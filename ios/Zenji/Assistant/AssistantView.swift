@@ -46,6 +46,7 @@ struct AssistantView: View {
                 }
                 inputSection
                 statusSection
+                if let explanation = viewModel.explanation { explanationSection(explanation) }
                 if !viewModel.pending.isEmpty { proposalsSection }
                 if !viewModel.rejected.isEmpty { rejectionsSection }
                 profileSection
@@ -150,11 +151,27 @@ struct AssistantView: View {
                 .font(.zenjiMono(size: 13))
                 .foregroundStyle(ZenjiTokens.diffRemove)
         }
-        if let notice = viewModel.notice {
-            Text(notice)
+    }
+
+    // MARK: - Always-explain (no confirmable change → an honest account)
+
+    /// The WP-16.1 contract, on screen: never a bare "fant ingen endringer".
+    /// Shows what the assistant understood and WHY nothing changed; any
+    /// "mente du …?" suggestions render just below in the rejections section.
+    private func explanationSection(_ explanation: AssistantExplanation) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            sectionTitle("INGEN ENDRING")
+            Text(explanation.understood)
                 .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+            Text(explanation.reason)
+                .font(.zenjiMono(size: 12))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.65))
         }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.foreground.opacity(0.05))
+        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
     }
 
     // MARK: - Proposed mutations (the DIFF)
@@ -211,6 +228,9 @@ struct AssistantView: View {
     private func subtitle(for mutation: GroundedMutation) -> String {
         var parts = [SportVocabulary.display(for: mutation.entity.sport)]
         if let scope = mutation.scope, !scope.isEmpty { parts.append(scope) }
+        // The lens — "gjennom norske utøvere" — shown only when it isn't the
+        // neutral default, and never on a remove (WP-16.1).
+        if mutation.kind != .remove, !mutation.lens.isDefault { parts.append(mutation.lens.label) }
         if mutation.kind != .remove { parts.append("vekt \(weightLabel(mutation.weight))") }
         return parts.joined(separator: " · ")
     }
@@ -283,6 +303,7 @@ struct AssistantView: View {
     private func ruleSubtitle(_ rule: InterestRule) -> String {
         var parts = [SportVocabulary.display(for: rule.sport)]
         if let scope = rule.scope, !scope.isEmpty { parts.append(scope) }
+        if !rule.lens.isDefault { parts.append(rule.lens.label) }
         parts.append("vekt \(weightLabel(rule.weight))")
         return parts.joined(separator: " · ")
     }

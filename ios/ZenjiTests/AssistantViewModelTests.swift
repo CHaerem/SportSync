@@ -91,6 +91,58 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertTrue(vm.rejected[0].explanation.contains("cricket"))
     }
 
+    // MARK: - Lens end-to-end (WP-16.1) — the original bug utterance
+
+    func test_submit_lensThroughNorwegians_appliesAndPersists() async {
+        let store = AssistantTestSupport.tempProfileStore()
+        let vm = makeVM(store: store)
+        vm.utterance = "Følg Tour de France med fokus på norske utøvere"
+        await vm.submit()
+
+        // A confirmable change — NOT the old dead-end "fant ingen endringer".
+        XCTAssertNil(vm.explanation)
+        XCTAssertEqual(vm.pending.map(\.entity.id), ["tour-de-france-2026"])
+        XCTAssertEqual(vm.pending.first?.lens, .throughNorwegians)
+
+        vm.confirm(vm.pending[0])
+        XCTAssertEqual(vm.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+
+        // The perspective survives a persistence round-trip.
+        let reloaded = makeVM(store: store)
+        XCTAssertEqual(reloaded.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+    }
+
+    // MARK: - Always-explain (WP-16.1) — no bare "fant ingen endringer"
+
+    func test_submit_producesNothing_explainsHonestly() async {
+        // A usable model that returned no structured output — the exact device
+        // bug. The UI must get a structured explanation, never a dead end.
+        let vm = makeVM(behavior: .producesNothing)
+        vm.utterance = "gjør noe fint med sporten min"
+        await vm.submit()
+
+        XCTAssertTrue(vm.pending.isEmpty)
+        XCTAssertNil(vm.errorMessage)
+        let explanation = try? XCTUnwrap(vm.explanation)
+        XCTAssertNotNil(explanation)
+        XCTAssertFalse(explanation?.understood.isEmpty ?? true)
+        XCTAssertFalse(explanation?.reason.isEmpty ?? true)
+        XCTAssertNotEqual(explanation?.reason, "Fant ingen endringer i det du skrev.",
+                          "the forbidden dead-end message must never appear")
+    }
+
+    func test_submit_unknownEntity_explainsAndSuggests() async {
+        let vm = makeVM()
+        vm.utterance = "Følg quidditch"
+        await vm.submit()
+
+        XCTAssertTrue(vm.pending.isEmpty)
+        XCTAssertEqual(vm.rejected.count, 1, "the unknown thing is shown as a rejection")
+        XCTAssertNotNil(vm.explanation, "and it is explained, not collapsed to silence")
+        XCTAssertTrue(vm.explanation?.reason.contains("quidditch") ?? false,
+                      "the explanation names what couldn't be found")
+    }
+
     func test_submit_whenUnavailable_setsErrorMessage() async {
         let vm = makeVM(behavior: .unavailable("Apple Intelligence er av."))
         vm.utterance = "Følg Lyn"

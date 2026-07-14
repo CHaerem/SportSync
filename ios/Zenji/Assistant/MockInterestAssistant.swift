@@ -28,6 +28,12 @@ struct MockInterestAssistant: InterestAssistant {
         /// Simulates Apple Intelligence being off / the model not loaded, so
         /// the UI's honest "unavailable" path can be tested without a device.
         case unavailable(String)
+        /// Simulates a USABLE model that still produced no usable structured
+        /// output for the utterance — an empty mutation list (or output that all
+        /// failed validation/grounding). This is the device bug that made the UI
+        /// collapse to a bare "fant ingen endringer"; the behaviour exists so the
+        /// WP-16.1 honest-explanation path is testable without Apple Intelligence.
+        case producesNothing
     }
 
     let behavior: Behavior
@@ -38,16 +44,20 @@ struct MockInterestAssistant: InterestAssistant {
 
     func availability() -> AssistantAvailability {
         switch behavior {
-        case .available: return .available
+        case .available, .producesNothing: return .available
         case let .unavailable(message): return .unavailable(message: message)
         }
     }
 
     func propose(utterance: String, profile: InterestProfile, index: EntityIndex) async throws -> [ProposedMutation] {
-        if case let .unavailable(message) = behavior {
+        switch behavior {
+        case let .unavailable(message):
             throw AssistantError.unavailable(message: message)
+        case .producesNothing:
+            return []
+        case .available:
+            return MockInterestParser.parse(utterance: utterance, profile: profile, index: index)
         }
-        return MockInterestParser.parse(utterance: utterance, profile: profile, index: index)
     }
 }
 
@@ -73,6 +83,8 @@ enum MockInterestParser {
         // 1) An explicit entity mention always wins.
         let matched = index.detectEntities(in: trimmed)
         if !matched.isEmpty {
+            // A lens only makes sense on add/increase/decrease — never on remove.
+            let lens: Lens = intent == .remove ? .sportAsSuch : detectLens(in: trimmed)
             return matched.map { entity in
                 let effectiveScope = intent == .remove ? nil : scope
                 return ProposedMutation(
@@ -81,14 +93,16 @@ enum MockInterestParser {
                     entityQuery: entity.name,
                     scope: effectiveScope,
                     weight: weight,
-                    reason: entityReason(intent: intent, name: entity.name, scope: effectiveScope)
+                    reason: entityReason(intent: intent, name: entity.name, scope: effectiveScope, lens: lens),
+                    lens: lens
                 )
             }
         }
 
         // 2) A whole-sport command ("mer sykkel", "slutt med tennis").
         if let sport = EntityIndex.sportKeyword(in: trimmed) {
-            return sportProposals(intent: intent, sport: sport, scope: scope, weight: weight, profile: profile, index: index)
+            let lens: Lens = intent == .remove ? .sportAsSuch : detectLens(in: trimmed)
+            return sportProposals(intent: intent, sport: sport, scope: scope, weight: weight, lens: lens, profile: profile, index: index)
         }
 
         // 3) Nothing recognised → one unresolved proposal; grounding rejects it
@@ -108,7 +122,7 @@ enum MockInterestParser {
 
     // MARK: - Sport-level commands
 
-    private static func sportProposals(intent: Intent, sport: String, scope: String?, weight: Double?, profile: InterestProfile, index: EntityIndex) -> [ProposedMutation] {
+    private static func sportProposals(intent: Intent, sport: String, scope: String?, weight: Double?, lens: Lens, profile: InterestProfile, index: EntityIndex) -> [ProposedMutation] {
         let display = SportVocabulary.display(for: sport)
 
         switch intent {
@@ -134,7 +148,8 @@ enum MockInterestParser {
                 entityQuery: display,
                 scope: scope,
                 weight: weight,
-                reason: sportReason(intent: intent, display: display, entityName: entity.name, scope: scope)
+                reason: sportReason(intent: intent, display: display, entityName: entity.name, scope: scope, lens: lens),
+                lens: lens
             )]
         }
     }
@@ -158,6 +173,21 @@ enum MockInterestParser {
         case .increase, .decrease: return .update
         case .remove: return .remove
         }
+    }
+
+    // MARK: - Lens detection (WP-16.1)
+
+    /// Detects the PERSPECTIVE phrase in an utterance — the Norwegian-focus case
+    /// that produced the original bug ("med fokus på norske utøvere", "bare de
+    /// norske"). Everything else is `.sportAsSuch` (the default). The mock only
+    /// needs this one lens to exercise the pipeline; the real FM model also
+    /// emits the richer `.throughAthletes` lens, and `MutationGrounder`
+    /// re-checks every lens regardless of where it came from.
+    static func detectLens(in utterance: String) -> Lens {
+        let n = " " + TextMatch.normalize(utterance) + " "
+        let norwegianFocus = [" norske ", " norsk ", " nordmenn ", " nordmennene "]
+        if norwegianFocus.contains(where: n.contains) { return .throughNorwegians }
+        return .sportAsSuch
     }
 
     static func weight(for intent: Intent) -> Double? {
@@ -210,22 +240,26 @@ enum MockInterestParser {
 
     // MARK: - Norwegian reason text (always filled)
 
-    static func entityReason(intent: Intent, name: String, scope: String?) -> String {
+    static func entityReason(intent: Intent, name: String, scope: String?, lens: Lens) -> String {
         let s = scope.map { " (\($0))" } ?? ""
+        let base: String
         switch intent {
-        case .add: return "Du ba om å følge \(name)\(s)."
-        case .increase: return "Du ba om å prioritere \(name) høyere\(s)."
-        case .decrease: return "Du ba om å nedprioritere \(name)\(s)."
-        case .remove: return "Du ba om å slutte å følge \(name)."
+        case .add: base = "Du ba om å følge \(name)\(s)."
+        case .increase: base = "Du ba om å prioritere \(name) høyere\(s)."
+        case .decrease: base = "Du ba om å nedprioritere \(name)\(s)."
+        case .remove: base = "Du ba om å slutte å følge \(name)."
         }
+        return lens.isDefault ? base : "\(base) Fokus: \(lens.label)."
     }
 
-    static func sportReason(intent: Intent, display: String, entityName: String, scope: String?) -> String {
+    static func sportReason(intent: Intent, display: String, entityName: String, scope: String?, lens: Lens) -> String {
         let s = scope.map { " \($0)" } ?? ""
+        let base: String
         switch intent {
-        case .add, .increase: return "Du vil se mer \(display)\(s). Legger til \(entityName)."
-        case .decrease: return "Du vil se mindre \(display). Nedprioriterer \(entityName)."
-        case .remove: return "Du ba om å slutte med \(display)."
+        case .add, .increase: base = "Du vil se mer \(display)\(s). Legger til \(entityName)."
+        case .decrease: base = "Du vil se mindre \(display). Nedprioriterer \(entityName)."
+        case .remove: base = "Du ba om å slutte med \(display)."
         }
+        return lens.isDefault ? base : "\(base) Fokus: \(lens.label)."
     }
 }

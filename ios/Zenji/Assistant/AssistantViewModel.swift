@@ -36,8 +36,10 @@ final class AssistantViewModel {
     private(set) var isThinking = false
     /// A blocking error (model unavailable / generation failed) shown verbatim.
     private(set) var errorMessage: String?
-    /// A calm, non-error note, e.g. "Fant ingen endringer i det du skrev."
-    private(set) var notice: String?
+    /// The always-explain account (WP-16.1): set WHENEVER a submitted utterance
+    /// produced no confirmable change, instead of the old dead-end "fant ingen
+    /// endringer" note. Nil when there are pending mutations to review.
+    private(set) var explanation: AssistantExplanation?
 
     private let assistant: any InterestAssistant
     private let profileStore: ProfileStore
@@ -79,7 +81,7 @@ final class AssistantViewModel {
         guard !text.isEmpty else { return }
 
         errorMessage = nil
-        notice = nil
+        explanation = nil
         pending = []
         rejected = []
         isThinking = true
@@ -90,10 +92,12 @@ final class AssistantViewModel {
             let result = MutationGrounder.ground(proposals, index: index, profile: profile)
             pending = result.grounded
             rejected = result.rejected
-            if result.isEmpty {
-                notice = hasEntities
-                    ? "Fant ingen endringer i det du skrev."
-                    : "Har ikke lastet ned hva du kan følge ennå — prøv igjen om litt."
+            // The always-explain rule: no confirmable change is NEVER a bare
+            // "fant ingen endringer" — build an honest, structured account.
+            if pending.isEmpty {
+                explanation = AssistantExplanation.make(
+                    utterance: text, proposals: proposals, result: result, hasEntities: hasEntities
+                )
             }
         } catch let error as AssistantError {
             errorMessage = error.errorDescription
