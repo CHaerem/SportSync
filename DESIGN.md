@@ -168,6 +168,43 @@ grensesnittet.» Normativt (BINDENDE):
 - Ærlighet: er Apple Intelligence av, sier arket det rett ut — aldri falsk
   degradering til nøkkelord.
 
+## Onboarding (P310 — «definere»)
+
+Førstegangsopplevelsen er en **samtale, ikke et skjema** — ingen konkurrent lar
+deg SI hva du bryr deg om; alle tvinger deg gjennom liga-lister. Zenji gjør det
+motsatte, og lander deg i en agenda som ALLEREDE reflekterer valgene (umiddelbar
+konsekvens, samme mønster som assistenten). Bindende:
+
+- **Vises kun ved førstegang.** Ett persistent flagg (`@AppStorage`); onboarding
+  dukker opp bare når profilen er tom OG flagget ikke er satt. Re-kjørbar på
+  forespørsel fra «Hva jeg følger» (samme stille flyt) — aldri automatisk igjen.
+- **Rolige steg, ingen «AI-slop».** Ingen hero-illustrasjoner, karuseller, emoji
+  eller utropstegn. Mono, amber, nesten-svart, ensō-merket i toppen; DESIGN.md-
+  tokens og ≥44 pt tapp-mål gjennomgående. Fire steg:
+  1. **Velkommen** — én ærlig setning om hva Zenji er (når · hva · hvor) +
+     personvern-øyeblikket, on-brand og sant: «Det du følger bor på telefonen din
+     — aldri på en server.» (P350/P360-løftet).
+  2. **Samtale** (primærvei når Apple Intelligence er tilgjengelig) — samme `»_`-
+     kommandolinje-idiom. Fri norsk tekst → den EKSISTERENDE assistenten
+     (`InterestAssistant.interpret`) → en rolig diff brukeren bekrefter, flere ting
+     etter hverandre, mens «Følger nå»-lista vokser. Gjenbruk av assistenten, ikke
+     en parallell inntasting. Grasiøs: forstår den ikke → alltid-forklar (WP-16.1)
+     + tilbud om hurtigvalg.
+  3. **Hurtigvalg** (fallback + for alle) — kuraterte norske startpakker som
+     tappbare valg (≥44 pt), bygget fra entitets-indeksen + en liten kuratert
+     startliste. Fornuftige linser der det gir mening (golf/sykkel gjennom de
+     norske → `throughNorwegians`, WP-18). Dette steget ALENE gir full verdi ved
+     cold-start uten Apple Intelligence (pakkene bærer egne entitetsdata).
+  4. **Landet** — peker på den alltid-tilstedeværende kommandolinjen («du kan
+     alltid si mer til Zenji») og slipper deg inn i en fylt agenda.
+- **Hopp over er alltid lov.** Tom profil ⇒ agendaen viser en rolig «Fortell Zenji
+  hva du følger»-tomtilstand med peker til `»_` — aldri et falskt «ingenting på».
+- **Ærlighet over fylde.** Hurtigvalg-pakkene er grunnet i ekte, i-sesong
+  entiteter (så en tapp har konsekvens umiddelbart). Vintersport (langrenn/
+  skiskyting/hopp) er bevisst utelatt utenom sesong — det finnes ingen entiteter
+  ennå, og en pakke som matchet ingenting ville brutt ærlighets-løftet;
+  research-agenten legger dem til ved sesongstart.
+
 ## Profil-sync (P360 — WP-19)
 
 Profilen (det du følger) og minnet er DITT, og synkes gjennom **din egen

@@ -33,6 +33,11 @@ final class AgendaViewModel {
     /// (DESIGN.md §4). Empty when nothing is live — the view hides the line.
     private(set) var liveNow: [AgendaLiveRow] = []
     private(set) var lastSync: Date?
+    /// WP-31 — whether the local follow-profile is empty (e.g. onboarding was
+    /// skipped). Drives the agenda's empty state: an empty board with an empty
+    /// profile points back at the command line ("fortell Zenji hva du følger")
+    /// rather than reading as "nothing on".
+    private(set) var profileIsEmpty: Bool = true
 
     private let dataStore: DataStore
     private let syncClient: SyncClient
@@ -88,6 +93,7 @@ final class AgendaViewModel {
         sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
         liveNow = Self.liveRows(events: events, interests: interests, now: now)
         lastSync = dataStore.lastSync
+        profileIsEmpty = profile.isEmpty
     }
 
     // MARK: - Pure core

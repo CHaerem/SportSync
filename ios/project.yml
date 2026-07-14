@@ -158,6 +158,11 @@ targets:
       # these up via `path: Zenji`; the widget deliberately does NOT (memory is
       # app-only — the widget has no network/personal-context code).
       - path: Zenji/Memory
+      # WP-31: the first-run onboarding — pure gate/starter-pack logic + the
+      # SwiftUI flow — compiled directly into the hostless bundle (same "no
+      # @testable import" pattern). App + ZenjiDeviceDev pick these up via
+      # `path: Zenji`; the widget deliberately does NOT (onboarding is app-only).
+      - path: Zenji/Onboarding
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen

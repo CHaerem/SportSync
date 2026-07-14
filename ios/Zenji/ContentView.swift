@@ -39,6 +39,11 @@ struct ContentView: View {
     /// WP-16.4 — the assistant "ark" is up (a result or a browse).
     @State private var panelShown = false
     @FocusState private var commandFocused: Bool
+    /// WP-31 — the first-run onboarding overlay. Decided once in init (profile
+    /// empty AND not yet completed); also re-raised on demand from "Hva jeg
+    /// følger" (see `rerunOnboarding`).
+    @State private var showOnboarding: Bool
+    @AppStorage(OnboardingGate.storageKey) private var onboardingCompleted = false
     #if DEBUG
     /// WP-30 screenshot harness: the "Hva jeg vet om deg" page / a spoiler-masked
     /// detail sheet, presented deterministically under `ZENJI_DEMO` (one sheet
@@ -93,6 +98,35 @@ struct ContentView: View {
         #else
         self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
         #endif
+
+        // WP-31 — first-run decision, made before the first frame so there's no
+        // flash of the agenda before the overlay. A ZENJI_DEMO launch never auto-
+        // shows onboarding (the `.task` harness raises the requested state instead,
+        // so the other demo modes aren't covered by the overlay).
+        #if DEBUG
+        let isDemo = ProcessInfo.processInfo.environment["ZENJI_DEMO"] != nil
+        #else
+        let isDemo = false
+        #endif
+        let completed = UserDefaults.standard.bool(forKey: OnboardingGate.storageKey)
+        self._showOnboarding = State(initialValue: !isDemo && OnboardingGate.shouldShow(
+            completed: completed, profileIsEmpty: profileStore.load().isEmpty))
+    }
+
+    /// DEBUG screenshot harness: which onboarding step a `ZENJI_DEMO=onboarding-*`
+    /// launch jumps to. Always defined (nil in the shipping flow).
+    private var onboardingInitialStep: OnboardingStep? {
+        #if DEBUG
+        switch ProcessInfo.processInfo.environment["ZENJI_DEMO"] {
+        case "onboarding-welcome": return .welcome
+        case "onboarding-converse": return .converse
+        case "onboarding-quickpicks": return .quickPicks
+        case "onboarding-landing": return .landing
+        default: return nil
+        }
+        #else
+        return nil
+        #endif
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -135,7 +169,7 @@ struct ContentView: View {
             ZStack {
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) })
                 if panelShown {
-                    AssistantPanel(viewModel: assistant, dismiss: closePanel)
+                    AssistantPanel(viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding)
                         .transition(.opacity)
                         .zIndex(1)
                 }
@@ -145,6 +179,19 @@ struct ContentView: View {
         #if DEBUG
         demoOverlay
         #endif
+        // WP-31 — the first-run onboarding, above everything (its own command-line
+        // idiom + diff), fading away into an agenda that already reflects the
+        // choices (every confirm/tap recompiled it behind the overlay).
+        if showOnboarding {
+            OnboardingView(
+                assistant: assistant,
+                onFinish: finishOnboarding,
+                onSkip: finishOnboarding,
+                initialStep: onboardingInitialStep
+            )
+            .transition(.opacity)
+            .zIndex(10)
+        }
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
         .foregroundStyle(ZenjiTokens.foreground)
@@ -188,6 +235,36 @@ struct ContentView: View {
                 if mode == "spoiler" {
                     demoSheet = .spoiler(MemoryDemoSeed.spoilerRow())
                 }
+                // WP-31 onboarding screenshots — the mock-backed assistant reads
+                // "available", so the conversation step renders. Seed per sub-mode
+                // and raise the overlay (initialStep jumps to the right step).
+                if mode.hasPrefix("onboarding") {
+                    switch mode {
+                    case "onboarding-converse":
+                        // One already-followed rule (so "Følger nå" shows) + a
+                        // pending diff (the FORSLAG block).
+                        try? profileStore.save(InterestProfile(rules: [
+                            InterestRule(entityId: "fk-lyn-oslo", entityName: "FK Lyn Oslo", sport: "football",
+                                         scope: nil, weight: 0.5, reason: "Du ba om å følge FK Lyn Oslo.", addedAt: Date()),
+                        ]))
+                        assistant.reloadProfile()
+                        assistant.demoSeed("diff")
+                    case "onboarding-quickpicks":
+                        if let golf = StarterPacks.all.first(where: { $0.id == "norske-golfere" }) {
+                            assistant.toggleStarterPack(golf)
+                        }
+                    case "onboarding-landing", "onboarding-landed":
+                        if let golf = StarterPacks.all.first(where: { $0.id == "norske-golfere" }) {
+                            assistant.toggleStarterPack(golf)
+                        }
+                    default:
+                        break
+                    }
+                    // "onboarding-landed" shows the FILLED agenda (overlay off);
+                    // every other onboarding-* mode raises the overlay.
+                    if mode != "onboarding-landed" { showOnboarding = true }
+                    agenda.reloadFromCache(now: Date())
+                }
                 assistant.demoSeed(mode)
                 if mode == "diff" || mode == "answer" { panelShown = true }
             }
@@ -198,7 +275,10 @@ struct ContentView: View {
         }
         .onReceive(clock) { now = $0 }
         // A fresh assistant result raises the ark (≤150 ms fade, move 5's calm).
+        // WP-31: while onboarding is up it renders its OWN diff/answer inline, so
+        // don't also raise the ark behind the overlay.
         .onChange(of: assistant.presentToken) { _, _ in
+            guard !showOnboarding else { return }
             commandFocused = false
             withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
         }
@@ -239,6 +319,24 @@ struct ContentView: View {
     /// assistant's diff/confirm flow (the panel rises via presentToken).
     private func follow(_ entity: Entity) {
         assistant.proposeFollow(entity)
+    }
+
+    // MARK: - WP-31 — onboarding
+
+    /// Finish or skip onboarding: mark it done (persistent flag) and fade the
+    /// overlay away. The agenda underneath already reflects every confirm/tap
+    /// (onProfileChanged recompiled it live), so there's nothing more to do.
+    private func finishOnboarding() {
+        onboardingCompleted = true
+        withAnimation(.easeOut(duration: 0.15)) { showOnboarding = false }
+        agenda.reloadFromCache(now: Date())
+    }
+
+    /// Re-run onboarding on demand from "Hva jeg følger" — closes the assistant
+    /// ark and raises the overlay fresh (it re-enters at `.welcome`).
+    private func rerunOnboarding() {
+        panelShown = false
+        withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
     }
 
     /// The command line's `»_` — open the assistant in browse mode.
