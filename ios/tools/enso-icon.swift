@@ -1,7 +1,25 @@
 #!/usr/bin/env swift
 //
 //  enso-icon.swift
-//  Zenji — ensō app/PWA icon generator (DRAFT, not wired anywhere)
+//  Zenji — ensō app/PWA icon generator
+//
+//  CHOSEN VARIANT: v3-grov-contig (teletext mosaic, coarse contiguous 18×18
+//  grid). Verified byte-identical (WP-49) to every shipped icon:
+//    variants/v3-grov-contig/enso-1024.png = ios/Zenji/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
+//    variants/v3-grov-contig/enso-512.png  = docs/icons/icon-512x512.png
+//    variants/v3-grov-contig/enso-192.png  = docs/icons/icon-192x192.png (= docs/favicon.png)
+//    variants/v3-grov-contig/enso-180.png  = docs/icons/icon-180x180.png
+//
+//  REGENERATE the shipped icons (deterministic — seeded RNG, fixed grid):
+//    swift ios/tools/enso-icon.swift /tmp/enso-out
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-1024.png ios/Zenji/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-512.png  docs/icons/icon-512x512.png
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-192.png  docs/icons/icon-192x192.png
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-192.png  docs/favicon.png
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-180.png  docs/icons/icon-180x180.png
+//  ALWAYS pass an output dir outside the repo: the exploration outputs
+//  (variants/ + review grids) were removed from git in WP-49 and must not
+//  be re-committed — only the shipped icon files above belong in the repo.
 //
 //  Draws the Zenji mark: an ensō (円相) — the zen circle painted in one
 //  brushstroke — in flat teletext amber (#FFB000) on the near-black page
@@ -20,11 +38,14 @@
 //      is the only texture, and only where a variant asks for it.
 //
 //  Usage:
-//    swift ios/tools/enso-icon.swift            # all variants + grid → ios/docs
-//    swift ios/tools/enso-icon.swift <outDir>   # override output base dir
+//    swift ios/tools/enso-icon.swift <outDir>   # all variants + grids → <outDir>
+//    swift ios/tools/enso-icon.swift            # default outDir = ios/docs —
+//                                               # AVOID: writes exploration
+//                                               # ballast into the repo tree
 //
-//  Outputs (nothing live is touched — wiring happens after human choice):
-//    <outDir>/enso-varianter.png                # 2x2 review grid
+//  Outputs (review material — never commit; see WP-49 policy):
+//    <outDir>/enso-varianter.png                # 2x2 review grid (v1)
+//    <outDir>/enso-v2-varianter.png / enso-v3-varianter.png
 //    <outDir>/variants/<key>/enso-{1024,512,192,180}.png
 //        1024 = iOS AppIcon · 512/192 = PWA · 180 = apple-touch
 //
@@ -1025,9 +1046,9 @@ writePNG(renderGridV2(variantsV2, ref: tungRef), to: gridV2URL)
 written += 1
 
 // --- v3 (teletext mosaic) ---------------------------------------------------
-// The chosen direction. Full size set per variant under variants/v3-<key>/,
-// plus the v3 review grid. Nothing live is touched — wiring waits for the
-// owner's choice among these four.
+// The chosen direction — the owner picked v3-grov-contig (shipped as the app/PWA
+// icon, see header). Full size set per variant under variants/v3-<key>/, plus
+// the v3 review grid. Nothing live is touched by running this script.
 for p in variantsV3 {
 	let grid = buildGridV3(p)
 	let dir = outBase.appendingPathComponent("variants").appendingPathComponent("v3-\(p.key)")
