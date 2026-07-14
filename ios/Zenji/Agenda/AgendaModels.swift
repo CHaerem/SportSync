@@ -20,9 +20,17 @@ struct AgendaEventRow: Identifiable, Equatable {
     var id: String
     var timeLabel: String
     var title: String
+    /// A quiet second line — the tournament/context — shown "ved behov"
+    /// (DESIGN.md "Radens anatomi"): only when it adds something the title
+    /// doesn't already carry, else nil (no empty line). See
+    /// `AgendaFormat.metaLabel`.
+    var metaLabel: String?
     var channelLabel: String
     var isMustSee: Bool
     var mustWatch: Bool
+    /// True for `source == "ai-research"` events — the ONLY rows that carry
+    /// the quiet mono ⓘ glyph (DESIGN.md: "ⓘ-glyf … KUN på AI-research-events").
+    var isAIResearch: Bool
     var event: Event
 }
 
@@ -45,11 +53,24 @@ struct AgendaSeriesRow: Identifiable, Equatable {
     /// applies to a collapsed row (FeedCompiler.isMustSee always returns
     /// false for a series — see FeedCompiler.swift's header).
     var mustWatch: Bool
+    /// True when the collapsed race's next stage is an AI-research event — the
+    /// same quiet mono ⓘ glyph an ordinary AI-research row carries.
+    var isAIResearch: Bool
     var tournament: String
     /// Chronological, full `Event`s (so the expanded detail can show each
     /// stage's own channel/venue).
     var stages: [Event]
     var nextStage: Event
+}
+
+/// One quiet "live now" line under the header (DESIGN.md "Agendaens
+/// semantikk" §4): rendered in the live colour with a `▌ LIVE` marker, at
+/// most two at once, invisible when nothing is ongoing. Just enough to say
+/// what · where — the agenda row itself carries the rest.
+struct AgendaLiveRow: Identifiable, Equatable {
+    var id: String
+    var title: String
+    var channelLabel: String
 }
 
 /// One row in a day section — either an ordinary event or a collapsed series.

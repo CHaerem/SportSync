@@ -103,14 +103,15 @@ final class AgendaViewModelTests: XCTestCase {
     // MARK: - Hand-built: collapsed series summary text
 
     func testBuildSections_fourOrMoreStages_collapseIntoOneSeriesRow() {
-        // Stages run 1–4 July (ISO week 27); "now" is 10 July (week 28) — a
-        // different ISO week, so the summary carries no "denne uka"
-        // qualifier (AgendaFormatTests covers that qualifier directly) while
-        // still comfortably inside the 14-day relevance retention window.
-        let now = iso("2026-07-10T08:00:00Z")
+        // WP-14.1: pinned v1 behaviour used past stages (1–4 July with "now"
+        // = 10 July) — but DESIGN.md forbids passed days in the agenda, so
+        // past stages now drop out entirely. Re-anchored to UPCOMING stages
+        // (6–9 July, "now" = 3 July): still tests the ≥4 collapse, still a
+        // different ISO week from the last stage so no "denne uka" qualifier.
+        let now = iso("2026-07-03T06:00:00Z")
         let stages = (1...4).map { n in
             EventBuilder.make(
-                sport: "cycling", title: "Etappe \(n)", time: "2026-07-0\(n)T11:00:00Z",
+                sport: "cycling", title: "Etappe \(n)", time: "2026-07-0\(5 + n)T11:00:00Z",
                 tournament: "Tour de Test", streaming: [["platform": "TV 2 Play"]]
             )
         }
@@ -126,7 +127,9 @@ final class AgendaViewModelTests: XCTestCase {
     }
 
     func testBuildSections_fewerThanFourStages_doNotCollapse() {
-        let now = iso("2026-07-10T08:00:00Z")
+        // WP-14.1: re-anchored to UPCOMING stages (same reason as above —
+        // past days no longer appear); "now" precedes the three stages.
+        let now = iso("2026-07-01T06:00:00Z")
         let stages = (1...3).map { n in
             EventBuilder.make(sport: "cycling", title: "Etappe \(n)", time: "2026-07-0\(n)T11:00:00Z", tournament: "Tour de Test")
         }
@@ -134,6 +137,110 @@ final class AgendaViewModelTests: XCTestCase {
 
         let sections = AgendaViewModel.buildSections(events: stages, interests: interests, now: now)
         XCTAssertEqual(allItems(sections).count, 3, "fewer than 4 stages must stay as individual rows")
+    }
+
+    // MARK: - WP-14.1: DESIGN.md "Agendaens semantikk" — today first, never past
+
+    func testBuildSections_todayFirst_neverShowsPastDays() {
+        // A finished-yesterday event, a today event, and a future one. DESIGN.md
+        // §1: the first section is I DAG, no passed day ever appears, and the
+        // past event is gone (even though it is still inside FeedCompiler's
+        // 14-day relevance retention window that the web results view needs).
+        let now = iso("2026-07-14T10:00:00Z") // Tuesday, Oslo noon
+        let events = [
+            EventBuilder.make(sport: "football", title: "Ferdig i går", time: "2026-07-13T18:00:00Z"),
+            EventBuilder.make(sport: "football", title: "I dag-kamp", time: "2026-07-14T18:00:00Z"),
+            EventBuilder.make(sport: "football", title: "Om tre dager", time: "2026-07-17T18:00:00Z"),
+        ]
+        let interests = Interests(followBroadly: ["football"])
+
+        let sections = AgendaViewModel.buildSections(events: events, interests: interests, now: now)
+
+        XCTAssertEqual(sections.first?.label, "I DAG", "I DAG must be the first section, never a past day")
+        XCTAssertFalse(sections.contains { $0.id < "2026-07-14" }, "no section may key to a passed day")
+        let titles = allItems(sections).compactMap { item -> String? in
+            if case .event(let row) = item { return row.title }
+            return nil
+        }
+        XCTAssertFalse(titles.contains("Ferdig i går"), "a finished (past-day) event must not appear")
+        XCTAssertTrue(titles.contains("I dag-kamp"))
+        XCTAssertTrue(titles.contains("Om tre dager"))
+    }
+
+    func testBuildSections_ongoingMultiDayEvent_livesUnderTodayWithWindow() {
+        // DESIGN.md §2: a multi-day event that STARTED before today but is
+        // still running belongs under I DAG (not its past start day), with a
+        // date WINDOW in the time column — not a misleading bare start time.
+        let now = iso("2026-07-14T10:00:00Z")
+        let event = EventBuilder.make(
+            sport: "golf", title: "EFG Swiss Open Gstaad",
+            time: "2026-07-13T08:30:00Z", endTime: "2026-07-20T03:59:00Z",
+            streaming: [["platform": "TV 2 Play"]]
+        )
+        let interests = Interests(followBroadly: ["golf"])
+
+        let sections = AgendaViewModel.buildSections(events: [event], interests: interests, now: now)
+
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections[0].label, "I DAG", "an ongoing multi-day event bor under I DAG")
+        guard case .event(let row) = sections[0].items.first else { return XCTFail("expected one event row") }
+        XCTAssertEqual(row.timeLabel, "13.–20. juli", "the window replaces the clock in the time column")
+    }
+
+    func testBuildSections_multiDayWindow_livesOnlyInTimeColumn_notMergedIntoTitle() {
+        // The "13.–20. juliEFG" no-space breach: the window belongs ONLY to
+        // the time column; the title stays the clean event name. These are
+        // distinct fields — never concatenated (the view lays them out in
+        // separate columns, so there is no missing space to lose).
+        let now = iso("2026-07-14T10:00:00Z")
+        let event = EventBuilder.make(
+            sport: "golf", title: "EFG Swiss Open Gstaad",
+            time: "2026-07-13T08:30:00Z", endTime: "2026-07-20T03:59:00Z"
+        )
+        let interests = Interests(followBroadly: ["golf"])
+
+        let sections = AgendaViewModel.buildSections(events: [event], interests: interests, now: now)
+        guard case .event(let row) = allItems(sections).first else { return XCTFail("expected one event row") }
+        XCTAssertEqual(row.timeLabel, "13.–20. juli")
+        XCTAssertEqual(row.title, "EFG Swiss Open Gstaad", "the title must not carry the date window")
+        XCTAssertFalse(row.title.contains("juli"), "no date text may leak into the title")
+    }
+
+    // MARK: - WP-14.1: the "live now" line (DESIGN.md §4)
+
+    func testLiveRows_ongoingEvent_isLiveWithChannel() {
+        let now = iso("2026-07-14T12:00:00Z")
+        let events = [EventBuilder.make(
+            sport: "cycling", title: "Etappe 10", time: "2026-07-14T10:30:00Z",
+            endTime: "2026-07-14T15:00:00Z", tournament: "Tour", streaming: [["platform": "TV 2 Play"]]
+        )]
+        let interests = Interests(followBroadly: ["cycling"])
+
+        let live = AgendaViewModel.liveRows(events: events, interests: interests, now: now)
+        XCTAssertEqual(live.count, 1)
+        XCTAssertEqual(live[0].title, "Etappe 10")
+        XCTAssertEqual(live[0].channelLabel, "TV 2 Play")
+    }
+
+    func testLiveRows_futureAndFinishedEvents_excluded() {
+        let now = iso("2026-07-14T12:00:00Z")
+        let events = [
+            EventBuilder.make(sport: "cycling", title: "Ferdig", time: "2026-07-14T08:00:00Z", endTime: "2026-07-14T10:00:00Z"),
+            EventBuilder.make(sport: "cycling", title: "Senere i dag", time: "2026-07-14T18:00:00Z"),
+        ]
+        let interests = Interests(followBroadly: ["cycling"])
+
+        XCTAssertTrue(AgendaViewModel.liveRows(events: events, interests: interests, now: now).isEmpty)
+    }
+
+    func testLiveRows_cappedAtTwo() {
+        let now = iso("2026-07-14T12:00:00Z")
+        let events = (1...3).map { n in
+            EventBuilder.make(sport: "cycling", title: "Live \(n)", time: "2026-07-14T11:00:00Z", endTime: "2026-07-14T15:00:00Z", tournament: "T\(n)")
+        }
+        let interests = Interests(followBroadly: ["cycling"])
+
+        XCTAssertEqual(AgendaViewModel.liveRows(events: events, interests: interests, now: now).count, 2, "the live line shows at most two")
     }
 
     // MARK: - End-to-end against the real, checked-in fixtures

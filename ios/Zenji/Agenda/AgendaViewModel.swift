@@ -29,6 +29,9 @@ import Observation
 @Observable
 final class AgendaViewModel {
     private(set) var sections: [AgendaSection] = []
+    /// Ongoing events, for the quiet "live now" line under the header
+    /// (DESIGN.md §4). Empty when nothing is live — the view hides the line.
+    private(set) var liveNow: [AgendaLiveRow] = []
     private(set) var lastSync: Date?
 
     private let dataStore: DataStore
@@ -58,11 +61,10 @@ final class AgendaViewModel {
     /// than tracking nothing at all, so the agenda is never blank just
     /// because interests.json hasn't synced yet.
     func reloadFromCache(now: Date = Date()) {
-        sections = Self.buildSections(
-            events: dataStore.loadEvents(),
-            interests: dataStore.loadInterests() ?? Interests(),
-            now: now
-        )
+        let events = dataStore.loadEvents()
+        let interests = dataStore.loadInterests() ?? Interests()
+        sections = Self.buildSections(events: events, interests: interests, now: now)
+        liveNow = Self.liveRows(events: events, interests: interests, now: now)
         lastSync = dataStore.lastSync
     }
 
@@ -80,13 +82,71 @@ final class AgendaViewModel {
         let todayKey = FeedCompiler.osloDayKey(now)
         let tomorrowKey = FeedCompiler.osloDayKey(now.addingTimeInterval(24 * 60 * 60))
 
-        return feed.days.map { day in
-            AgendaSection(
-                id: day.key,
-                label: AgendaFormat.dayLabel(key: day.key, todayKey: todayKey, tomorrowKey: tomorrowKey),
-                items: day.items.compactMap { makeItem($0, lookup: lookup, interests: interests, now: now) }
+        // DESIGN.md "Agendaens semantikk" §1: I DAG first, then forward — and
+        // NEVER a passed day. FeedCompiler already re-homes a still-running
+        // multi-day event onto `todayKey` (its line "belongs under today, not
+        // its past start day"), so anything still keyed to a day BEFORE today
+        // is genuinely over and must not appear. `feed.days` is already sorted
+        // ascending, so dropping the past days leaves I DAG (today) first.
+        // (This is the agenda-specific rule; FeedCompiler stays the faithful
+        // WP-13 port with its own 14-day retention window that the web's
+        // results view still needs.)
+        return feed.days
+            .filter { $0.key >= todayKey }
+            .map { day in
+                AgendaSection(
+                    id: day.key,
+                    label: AgendaFormat.dayLabel(key: day.key, todayKey: todayKey, tomorrowKey: tomorrowKey),
+                    items: day.items.compactMap { makeItem($0, lookup: lookup, interests: interests, now: now) }
+                )
+            }
+    }
+
+    // MARK: - Live now (DESIGN.md §4)
+
+    /// The events ongoing at `now`, for the quiet "live now" line under the
+    /// header — capped at two, must-see first (the amber-dot events lead, same
+    /// spirit as the widget's highlight), then earliest-started. An event is
+    /// "live" when its own source status says so, or — the honest fallback for
+    /// the cache, which carries no live ESPN poll — when `now` sits inside its
+    /// `[time, endTime]` window (so an in-progress golf major or stage still
+    /// reads as live, while a single kickoff with no end time doesn't
+    /// masquerade as live for hours). Only followed (relevant) events qualify.
+    nonisolated static func liveRows(events: [Event], interests: Interests, now: Date) -> [AgendaLiveRow] {
+        let (feedEvents, lookup) = EventBridge.bridge(events)
+        let live = feedEvents.filter { fe in
+            guard FeedCompiler.isRelevant(fe, interests: interests, now: now) else { return false }
+            return isLiveNow(fe, event: fe.id.flatMap { lookup[$0] }, now: now)
+        }
+        .sorted { lhs, rhs in
+            let lSee = FeedCompiler.isMustSee(lhs, interests: interests)
+            let rSee = FeedCompiler.isMustSee(rhs, interests: interests)
+            if lSee != rSee { return lSee }               // must-see first
+            return (lhs.time ?? .distantFuture) < (rhs.time ?? .distantFuture)
+        }
+        return live.prefix(2).compactMap { fe -> AgendaLiveRow? in
+            guard let id = fe.id, let event = lookup[id] else { return nil }
+            return AgendaLiveRow(
+                id: id,
+                title: AgendaFormat.title(homeTeam: fe.homeTeam, awayTeam: fe.awayTeam, fallback: fe.title),
+                channelLabel: AgendaFormat.channelLabel(event.streaming)
             )
         }
+    }
+
+    /// True when the event is in progress at `now` (see `liveRows`). A source
+    /// `status` that names an in-progress state wins outright; otherwise the
+    /// `[time, endTime]` window decides.
+    nonisolated static func isLiveNow(_ fe: FeedEvent, event: Event?, now: Date) -> Bool {
+        if let status = event?.status?.lowercased() {
+            if status.contains("in_progress") || status.contains("in-progress")
+                || status == "in" || status.contains("live") || status.contains("halftime") {
+                return true
+            }
+        }
+        guard let time = fe.time else { return false }
+        let end = fe.endTime ?? time
+        return time <= now && end >= now
     }
 
     nonisolated private static func makeItem(
@@ -102,13 +162,16 @@ final class AgendaViewModel {
             // happen if a caller hand-built a FeedEvent bypassing
             // EventBridge) safely drops the row rather than crashing.
             guard let id = feedEvent.id, let event = lookup[id] else { return nil }
+            let title = AgendaFormat.title(homeTeam: feedEvent.homeTeam, awayTeam: feedEvent.awayTeam, fallback: feedEvent.title)
             return .event(AgendaEventRow(
                 id: id,
                 timeLabel: AgendaFormat.timeLabel(time: feedEvent.time, endTime: feedEvent.endTime),
-                title: AgendaFormat.title(homeTeam: feedEvent.homeTeam, awayTeam: feedEvent.awayTeam, fallback: feedEvent.title),
+                title: title,
+                metaLabel: AgendaFormat.metaLabel(tournament: event.tournament, title: title),
                 channelLabel: AgendaFormat.channelLabel(event.streaming),
                 isMustSee: mustSee,
                 mustWatch: mustWatch,
+                isAIResearch: event.source == "ai-research",
                 event: event
             ))
 
@@ -131,6 +194,7 @@ final class AgendaViewModel {
                 ),
                 channelLabel: AgendaFormat.channelLabel(nextStage.streaming),
                 mustWatch: series.stages.contains { FeedCompiler.mustWatch($0, interests: interests) },
+                isAIResearch: nextStage.source == "ai-research",
                 tournament: tournamentName,
                 stages: stages,
                 nextStage: nextStage

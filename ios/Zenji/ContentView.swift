@@ -29,6 +29,10 @@ struct ContentView: View {
     @State private var now = Date()
     /// WP-16: the FM-lekegrind, reached from the header glyph below.
     @State private var showingAssistant = false
+    /// DESIGN.md "Bevegelse & lyd": the ticking clock is the app's only
+    /// continuous motion — under Reduce Motion it drops the seconds and reads
+    /// static (HH:mm).
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Ticks once a second — the "tikkende klokke-følelse" in the header,
     /// same idea as the web masthead's clock (dashboard.js `startClock`), just
@@ -62,15 +66,26 @@ struct ContentView: View {
         return f
     }()
 
+    private static let clockFormatterNoSeconds: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "nb_NO")
+        f.timeZone = FeedCompiler.osloTimeZone
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+
     private var dateLabel: String { Self.dateFormatter.string(from: now).uppercased() }
-    private var clockLabel: String { Self.clockFormatter.string(from: now) }
+    private var clockLabel: String {
+        (reduceMotion ? Self.clockFormatterNoSeconds : Self.clockFormatter).string(from: now)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
             Rectangle()
-                .fill(ZenjiTokens.accent.opacity(0.35))
+                .fill(ZenjiTokens.hairline)
                 .frame(height: 1)
+            liveNowLine
             AgendaView(viewModel: viewModel)
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
@@ -107,32 +122,78 @@ struct ContentView: View {
 
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 5) {
+                // Wordmark — amber, heavy mono (DESIGN.md "Header").
                 Text("ZENJI")
-                    .font(.zenjiMono(size: 26, weight: .bold))
+                    .font(.zenjiMono(size: 28, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
                     .tracking(2)
-                Text(dateLabel)
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
+                // Tekst-TV page index + date, both dempet.
+                HStack(spacing: 8) {
+                    Text("P100")
+                        .foregroundStyle(ZenjiTokens.muted)
+                    Text(dateLabel)
+                        .foregroundStyle(ZenjiTokens.muted)
+                }
+                .font(.zenjiMono(size: 13))
             }
             Spacer()
-            Button {
-                showingAssistant = true
-            } label: {
-                Image(systemName: "text.bubble")
-                    .font(.system(size: 15, design: .monospaced))
-                    .foregroundStyle(ZenjiTokens.accent.opacity(0.8))
+            VStack(alignment: .trailing, spacing: 5) {
+                // Assistant entry — a mono prompt glyph, dempet, NOT a speech
+                // bubble/emoji (DESIGN.md "Header").
+                Button {
+                    showingAssistant = true
+                } label: {
+                    Text("»_")
+                        .font(.zenjiMono(size: 15, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.muted)
+                }
+                .accessibilityLabel("Assistent")
+                // The living clock — amber, tabular, the app's only motion.
+                Text(clockLabel)
+                    .font(.zenjiMono(size: 13))
+                    .monospacedDigit()
+                    .foregroundStyle(ZenjiTokens.accent)
             }
-            .accessibilityLabel("Assistent")
-            .padding(.trailing, 12)
-            Text(clockLabel)
-                .font(.zenjiMono(size: 13))
-                .monospacedDigit()
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// DESIGN.md "Agendaens semantikk" §4: a quiet line under the header when
+    /// something is on right now — a `▌ LIVE` marker in the live colour, then
+    /// title · channel, at most two. Invisible (and takes no space) otherwise.
+    @ViewBuilder
+    private var liveNowLine: some View {
+        if !viewModel.liveNow.isEmpty {
+            VStack(alignment: .leading, spacing: 5) {
+                ForEach(viewModel.liveNow) { row in
+                    HStack(spacing: 8) {
+                        Text("▌ LIVE")
+                            .font(.zenjiMono(size: 12, weight: .semibold))
+                            .foregroundStyle(ZenjiTokens.live)
+                        Text(row.title)
+                            .font(.zenjiMono(size: 13))
+                            .foregroundStyle(ZenjiTokens.foreground)
+                            .lineLimit(1)
+                        Text("·")
+                            .font(.zenjiMono(size: 13))
+                            .foregroundStyle(ZenjiTokens.muted.opacity(0.6))
+                        Text(row.channelLabel)
+                            .font(.zenjiMono(size: 13))
+                            .foregroundStyle(ZenjiTokens.muted)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .frame(maxWidth: 640, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
+            Rectangle()
+                .fill(ZenjiTokens.hairline)
+                .frame(height: 1)
+        }
     }
 }
 

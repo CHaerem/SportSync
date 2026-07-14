@@ -686,6 +686,91 @@ headless environment (no scriptable `simctl` path to add a widget to a
 Simulator home screen — see "Build verification performed for this PR" above)
 — noted rather than faked, per the WP-14 brief's own allowance.
 
+## Designspråk-realisering (WP-14.1)
+
+The first WP-14 agenda shipped before `DESIGN.md` (the repo-root normative
+design contract) existed, and a two-screenshot audit against it found **eight
+breaches**. WP-14.1 realises the agenda against `DESIGN.md` — logic first, then
+typography/layout — with no new product features and no changes outside `ios/`.
+
+The eight breaches and their fixes:
+
+1. **Passed days shown first, "I DAG" at the bottom.** `AgendaViewModel
+   .buildSections` now drops every day section keyed before today
+   (`day.key >= todayKey`), so I DAG is first and no passed day ever appears.
+   `FeedCompiler.compile` already re-homes a still-running multi-day event onto
+   today, so an ongoing golf major / stage race stays under I DAG (with a
+   window in the time column) while a genuinely-finished event simply
+   disappears — even though it is still inside FeedCompiler's 14-day retention
+   window that the web results view needs. New/updated tests pin *I-DAG-first*,
+   *never-past*, and *ongoing-multi-day-under-I DAG*.
+2. **Truncated titles ("Sjakk-NM 20…").** Titles now wrap to up to two lines,
+   never an "…" (`.lineLimit(2)` + `fixedSize(vertical:)`). On a compact screen
+   the channel drops to its own dempet line so the title keeps the full column.
+3. **The date window duplicated / no-space bug ("13.–20. juliEFG").** The
+   window lives ONLY in the time column (`AgendaFormat.timeLabel`) and the title
+   stays the clean event name — separate columns, so there is no space to lose.
+   A multi-day window renders a notch quieter (13pt) so a week-long span stays
+   compact. Test pins that `timeLabel` == the window and `title` carries no date
+   text.
+4. **🔔 emoji in rows.** Gone. The amber must-see dot is the whole must-see
+   language; the reminder ("varsel") state moved to `EventDetailSheet` as a
+   quiet, honest read-out ("På / Av") — not a fake control (a user-set per-event
+   override would be a new feature, out of scope).
+5. **iOS chevrons on rows.** Gone. A quiet mono ⓘ now trails ONLY on
+   `source == "ai-research"` rows (it opens the same provenance the detail sheet
+   already showed).
+6. **Channel stealing title space.** The title has priority and the channel is
+   `fixedSize` (never truncated); a long "meta · kanal" that won't fit drops the
+   meta WHOLE (via `ViewThatFits`) rather than clipping the channel.
+7. **No live-now line.** `AgendaViewModel.liveRows` computes the events ongoing
+   at `now` (source status, else the `[time, endTime]` window), must-see first,
+   capped at two; `ContentView` renders a quiet `▌ LIVE title · kanal` line in
+   the live colour under the header, invisible when nothing is on.
+8. **Header speech-bubble glyph.** Replaced with a mono prompt glyph `»_`
+   (dempet); the clock is now amber and tabular (and drops its seconds under
+   Reduce Motion), with a `P100` Tekst-TV page index before the date.
+
+`DesignTokens.swift` was brought into 1:1 lock-step with the `DESIGN.md` token
+table (added `surface`/`muted`/`hairline`/`live`, fixed the light foreground to
+`#1D1B15`); the agenda uses the DESIGN.md type scale (title 17 · time 17
+semibold · meta/kanal 15 dempet · day header 13 uppercase +8 % tracking ·
+wordmark 28) and rhythm (12pt row + hairline; 28pt before / 10pt after a day
+header; one 640pt-max centred column). Detail sheets moved to the `surface`
+token. The widget's opacity-based muted text was swapped for the `muted` token.
+
+`xcodebuild test … -scheme Zenji` passes **215 tests** (the 206 WP-10…16.3
+baseline + 9 new: 3 `AgendaFormatTests` metaLabel cases + 6 `AgendaViewModelTests`
+— I-DAG-first/never-past, ongoing-multi-day-window, window-not-in-title, and
+three `liveRows` cases; two pre-existing series-collapse tests were re-anchored
+from *past* to *upcoming* stages — "pinned a v1 breach → now DESIGN.md-correct").
+Both schemes (`Zenji`, `ZenjiWidgetExtension`) build; `npm test` (373 tests) is
+untouched — this package touches only `ios/`.
+
+### Visual proof (WP-14.1)
+
+`docs/design-v2/after-dark.png` + `docs/design-v2/after-light.png` — `iPhone 17
+Pro` Simulator (booted, `xcrun simctl ui booted appearance dark|light`),
+installed + launched, screenshotted against **real, live** `zenji.app` data.
+Both themes show: I DAG first (no passed day), the green `▌ LIVE EFG Swiss Open
+Gstaad` line, the multi-day window ("13.–20. juli") clean in the time column
+with a two-line title beside it, the collapsed "Tour de France 2026 — 21
+etapper" series row, must-see dots, the mono ⓘ on AI-research rows only, honest
+channels, the `»_` header glyph, `P100` page index and amber clock — and no
+truncation, no 🔔, no chevrons. The detail sheet (venue/streaming/provenance +
+the quiet VARSEL read-out) has no scriptable `simctl` tap path to screenshot
+headlessly (same limitation the WP-14 widget note records) — covered by code +
+unit tests instead.
+
+**Device build (WP-14.1):** `xcodebuild -scheme ZenjiDeviceDev -destination
+'generic/platform=iOS' -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES
+CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=9LVCB72DT8 build` → **BUILD
+SUCCEEDED** (signed). The physical iPhone (`00008140-001939D02EBB001C`) was
+`unavailable` (asleep / not reachable wirelessly) for the whole session, so
+`devicectl device install` returned `CoreDeviceError 1011` (device not located)
+— noted rather than failed, per the WP-14.1 brief's own allowance; the signed
+build is ready to install once the device is awake.
+
 ## Notifications (WP-15)
 
 `Zenji/Notifications/` schedules local push reminders for must-watch events.

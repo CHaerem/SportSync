@@ -60,6 +60,24 @@ final class AgendaFormatTests: XCTestCase {
         XCTAssertEqual(AgendaFormat.title(homeTeam: "Lyn", awayTeam: nil, fallback: "Lyn – Sogndal"), "Lyn – Sogndal")
     }
 
+    // MARK: - metaLabel (the quiet second line, "ved behov")
+
+    func testMetaLabel_tournamentDistinctFromTitle_isShown() {
+        XCTAssertEqual(AgendaFormat.metaLabel(tournament: "Eliteserien", title: "Lyn – Sogndal"), "Eliteserien")
+    }
+
+    func testMetaLabel_tournamentAlreadyInTitle_isNil() {
+        // "Sjakk-NM 2026 – eliteklassen" already names its tournament, so no
+        // redundant second line.
+        XCTAssertNil(AgendaFormat.metaLabel(tournament: "Sjakk-NM 2026", title: "Sjakk-NM 2026 – eliteklassen"))
+    }
+
+    func testMetaLabel_equalOrEmpty_isNil() {
+        XCTAssertNil(AgendaFormat.metaLabel(tournament: "The Open", title: "The Open"))
+        XCTAssertNil(AgendaFormat.metaLabel(tournament: "", title: "Noe"))
+        XCTAssertNil(AgendaFormat.metaLabel(tournament: nil, title: "Noe"))
+    }
+
     // MARK: - channelLabel ("hvor")
 
     func testChannelLabel_firstPlatform() {

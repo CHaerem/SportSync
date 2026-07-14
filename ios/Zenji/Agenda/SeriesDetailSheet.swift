@@ -51,7 +51,7 @@ struct SeriesDetailSheet: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .background(ZenjiTokens.background)
+            .background(ZenjiTokens.surface)
             .navigationTitle(series.tournament)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -89,7 +89,7 @@ private struct StageRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(Self.dateFormatter.string(from: stage.time))
                     .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                    .foregroundStyle(ZenjiTokens.muted)
                 Text(stage.title)
                     .font(.zenjiMono(size: 13))
                     .foregroundStyle(ZenjiTokens.foreground)
@@ -97,9 +97,9 @@ private struct StageRow: View {
             Spacer()
             Text(AgendaFormat.channelLabel(stage.streaming))
                 .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                .foregroundStyle(ZenjiTokens.muted)
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.background)
+        .listRowBackground(ZenjiTokens.surface)
     }
 }
