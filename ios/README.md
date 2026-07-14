@@ -879,6 +879,59 @@ name+aliases) — the acronym is purely resolver data. Two entities that would
 share an acronym (FIFA World Cup vs Formula 1 World Championship → both "FWC")
 have it dropped from both, so the resolver never mis-serves an ambiguous one.
 
+### "Det jeg ikke forsto" — the misunderstood-log (WP-16.3)
+
+P310's dossier on the assistant's own proposal loop put it plainly: every
+utterance the assistant does NOT manage to turn into an applied mutation is
+raw material for the next iteration — a prompt tweak, a missing entity, a
+scope the schema can't express yet. Before WP-16.3 that signal was thrown
+away the moment the next `submit()` reset `explanation`/`rejected`. Now it's
+durable, local, and private:
+
+- **`MisunderstoodLog.swift`** — `MisunderstoodOutcome` (four distinct,
+  machine-observable triggers), `MisunderstoodEntry` (utterance + outcome +
+  the `AssistantExplanation` shown at the time + timestamp + an optional
+  user note + `resolvedAt`), and `MisunderstoodLogStore` — ONE JSON file in
+  Application Support (same directory as `ProfileStore`, no App Group
+  dependency), capped to **200 entries** (oldest dropped first). **No
+  network code anywhere in this file** — the log never leaves the device
+  except via an explicit "Del rapport" tap.
+- **The four outcomes**, logged automatically by `AssistantViewModel`:
+  - `.rejectedEntity` — every proposal's entity was rejected by
+    `MutationGrounder` (nothing in the index matched).
+  - `.emptyModelResponse` — the model returned zero proposals for the
+    utterance.
+  - `.inexpressible` — `AssistantError.generationFailed`: the model had an
+    utterance but could not turn it into a valid structured mutation at all.
+    Deliberately distinct from `.unavailable` (Apple Intelligence off) — a
+    device-state gate is not a misunderstood utterance, so it is NOT logged.
+  - `.allRejectedByUser` — grounding DID produce a confirmable diff, but the
+    user rejected every mutation in it without confirming any (tracked via a
+    small in-memory "current batch" bookkeeping in `AssistantViewModel` —
+    the utterance/entity names of the live `pending` batch, cleared the
+    moment even one mutation is confirmed).
+  - The entity-index-not-synced case (`AssistantExplanation`'s own case 1)
+    is deliberately **not** logged — a transient environment state, not a
+    misunderstood utterance, and not useful raw material.
+- **Resolved, not deleted (§3).** If a later "mente du" pick
+  (`choose(_:for:)`, WP-16.2) that traces back to a logged `.rejectedEntity`
+  utterance gets **confirmed**, that log entry flips to `resolvedAt` —
+  kept in the log AND the export (a valuable success case), just excluded
+  from the "N unresolved" badge (`AssistantViewModel.misunderstoodCount`).
+  Tracked via a small `[GroundedMutation.id: logEntryId]` map populated in
+  `choose(_:for:)` and consumed in `confirm(_:)`/`confirmAll()`.
+- **UI**: a discreet, collapsed-by-default `DisclosureGroup` at the very
+  bottom of `AssistantView` — "DET JEG IKKE FORSTO (N)" — never a competing
+  panel. Each row shows the utterance, the outcome, the reason, an optional
+  "legg til notat" (what the user actually meant), and Slett; a resolved
+  entry shows a quiet "LØST" tag instead of disappearing. "Del rapport" is a
+  native `ShareLink` over the anonymised export text — the iOS share sheet,
+  no custom networking.
+- **The export** (`MisunderstoodLogStore.exportPayload()` /
+  `ExportEntry`) carries **only** utterance / outcome / understood / reason /
+  note / timestamp / resolved — never the entry's device-generated `UUID`,
+  never anything about the device or the person.
+
 ### Pieces (all pure + unit-tested except the two UI/FM shells)
 
 | File | What |
@@ -888,10 +941,11 @@ have it dropped from both, so the resolver never mis-serves an ambiguous one.
 | `EntityIndex.swift` | exact lookup (grounding gate), tool search (Norwegian sport-word expansion), fuzzy nearest-match, the mock's utterance→entity detection |
 | `MutationGrounder.swift` | the hard grounding rule, as one pure function |
 | `ProfileStore.swift` | JSON persistence in Application Support (no App Group needed — works on the free-account device build); `load()` never throws |
+| `MisunderstoodLog.swift` | WP-16.3 — `MisunderstoodOutcome`/`MisunderstoodEntry` + `MisunderstoodLogStore` (local, capped, private; anonymised export) |
 | `MockInterestAssistant.swift` | the deterministic parser (`MockInterestParser`) |
 | `FoundationModelsInterestAssistant.swift` | the real on-device model (only `import FoundationModels`) |
-| `AssistantViewModel.swift` | `@MainActor @Observable` coordinator: submit → ground → confirm/reject → persist |
-| `AssistantView.swift` | the one calm Tekst-TV screen (DIFF in green/amber/red tokens, "Hva jeg følger" list) |
+| `AssistantViewModel.swift` | `@MainActor @Observable` coordinator: submit → ground → confirm/reject → persist; also logs/resolves the misunderstood-log (WP-16.3) |
+| `AssistantView.swift` | the one calm Tekst-TV screen (DIFF in green/amber/red tokens, "Hva jeg følger" list, the discreet "Det jeg ikke forsto" section) |
 
 `ProfileStore` writes `interest-profile.json` to Application Support (a
 throwaway temp dir in tests). The profile is device-local — CloudKit sync is
@@ -899,19 +953,22 @@ later work (PLAN.md WP-22).
 
 ### Tests
 
-`ZenjiTests/{MockInterestAssistant,MutationGrounder,InterestProfile,ProfileStore,EntityIndex,AssistantViewModel}Tests.swift`
+`ZenjiTests/{MockInterestAssistant,MutationGrounder,InterestProfile,ProfileStore,EntityIndex,AssistantViewModel,MisunderstoodLogStore,MisunderstoodLogViewModel}Tests.swift`
 (+ `AssistantTestSupport.swift`) drive the mock, never FoundationModels. They
 cover the ten canonical utterances → correct mutations, entity lookup +
 free-text rejection with nearest match, the diff application, persistence
 round-trip, and the end-to-end view-model flow. `xcodebuild test` on the
-Simulator passes **179 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
+Simulator passes **206 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
 WP-16.1: lens detection/grounding/persistence + the always-explain contract,
 incl. the exact first-user-test utterance *"Følg Tour de France med fokus på
 norske utøvere"* → `add(tour-de-france-2026, lens: .throughNorwegians)` + 13
 WP-16.2 `FuzzyResolverTests`: "tour de france" / "tdf" / the typo "Tour de
 Farnce" all served to `tour-de-france-2026` without rejection, ambiguity →
 tappable candidates, and the now-working «mente du» tap → a confirmable
-mutation).
+mutation + 27 WP-16.3: the four outcomes logged automatically (incl.
+`.unavailable` deliberately NOT logged), the cap-at-200/oldest-dropped-first
+behaviour, resolved-marking via a real "mente du" confirm, and the exported
+payload's exact field set — no id, no device/person metadata).
 
 ### Device build (free personal account)
 
@@ -977,6 +1034,22 @@ that tapping a "mente du" suggestion applies the change — is the manual step t
 confirm by hand once the device is unlocked (a locked device rejects
 `devicectl … process launch` with `FBSOpenApplicationErrorDomain error 7`, as
 expected; nothing to fix).
+
+**Update (WP-16.3):** the `ZenjiDeviceDev` scheme was rebuilt for the iPhone 16
+Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
+DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
+chris.haerem@gmail.com*) and re-installed with `xcrun devicectl device install
+app --device 00008140-001939D02EBB001C` (**exit 0** — the wireless connection
+dropped once mid-attempt with `CoreDeviceError 4000`, resolved by retrying once
+the device showed `available (paired)` again). Binary timestamp confirmed
+fresh (`ZenjiDeviceDev` mtime immediately after the build, ahead of every
+older DerivedData copy) — the misunderstood-log build now carries
+`app.zenji.ios` on the device. `devicectl device process launch` then hit the
+same documented, expected `FBSOpenApplicationErrorDomain error 7` ("Locked") as
+WP-16.2 — nothing to fix; the on-device check (submit an utterance the
+assistant can't ground, confirm it appears under "Det jeg ikke forsto", add a
+note, and use "Del rapport") is the manual step to confirm by hand once the
+device is unlocked.
 
 ## Architecture (what plugs in next)
 

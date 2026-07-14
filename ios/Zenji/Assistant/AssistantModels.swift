@@ -197,7 +197,7 @@ struct GroundingResult: Equatable, Sendable {
 ///
 /// Both fields are always non-empty Norwegian text — the UI must never show a
 /// blank or a bare "no changes".
-struct AssistantExplanation: Equatable, Sendable {
+struct AssistantExplanation: Codable, Equatable, Sendable {
     var understood: String
     var reason: String
 

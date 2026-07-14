@@ -22,6 +22,8 @@ struct AssistantView: View {
     @State private var viewModel: AssistantViewModel
     @Environment(\.dismiss) private var dismiss
     @FocusState private var inputFocused: Bool
+    /// WP-16.3 — collapsed by default; a discreet section, not a competing panel.
+    @State private var misunderstoodExpanded = false
 
     /// Canonical example utterances (the WP-16 spirit) — tappable to fill the
     /// field, so the playground is discoverable without a keyboard tour.
@@ -51,6 +53,7 @@ struct AssistantView: View {
                 if !viewModel.rejected.isEmpty { rejectionsSection }
                 profileSection
                 examplesSection
+                misunderstoodSection
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -341,6 +344,57 @@ struct AssistantView: View {
         }
     }
 
+    // MARK: - "Det jeg ikke forsto" (WP-16.3)
+
+    /// A discreet, collapsed-by-default section at the very bottom — the
+    /// local "forsto ikke"-log. Never a competing panel: closed until the
+    /// user chooses to look, exactly like "Hva vi følger" on the web
+    /// dashboard. The count in the label excludes resolved entries.
+    private var misunderstoodSection: some View {
+        DisclosureGroup(isExpanded: $misunderstoodExpanded) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 16) {
+                    ShareLink(item: misunderstoodExportText, preview: SharePreview("forsto-ikke-rapport.json")) {
+                        Text("DEL RAPPORT")
+                            .font(.zenjiMono(size: 11, weight: .bold))
+                            .foregroundStyle(ZenjiTokens.accent)
+                    }
+                    .disabled(viewModel.misunderstoodEntries.isEmpty)
+                    Spacer()
+                    if !viewModel.misunderstoodEntries.isEmpty {
+                        Button("Slett alt") { viewModel.deleteAllMisunderstood() }
+                            .font(.zenjiMono(size: 11))
+                            .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.75))
+                    }
+                }
+                if viewModel.misunderstoodEntries.isEmpty {
+                    Text("Ingenting her ennå — det dukker opp når jeg ikke klarer å gjøre en ytring om til en endring.")
+                        .font(.zenjiMono(size: 12))
+                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                } else {
+                    ForEach(viewModel.misunderstoodEntries) { entry in
+                        MisunderstoodEntryRow(
+                            entry: entry,
+                            onSaveNote: { note in viewModel.setMisunderstoodNote(note, for: entry) },
+                            onDelete: { viewModel.deleteMisunderstood(entry) }
+                        )
+                    }
+                }
+            }
+            .padding(.top, 12)
+        } label: {
+            Text("DET JEG IKKE FORSTO (\(viewModel.misunderstoodCount))")
+                .font(.zenjiMono(size: 12, weight: .bold))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .tracking(1.5)
+        }
+        .tint(ZenjiTokens.foreground.opacity(0.5))
+    }
+
+    private var misunderstoodExportText: String {
+        String(data: viewModel.misunderstoodExportPayload(), encoding: .utf8) ?? "[]"
+    }
+
     // MARK: - Small helpers
 
     private func sectionTitle(_ text: String) -> some View {
@@ -371,6 +425,92 @@ struct AssistantView: View {
     }
 }
 
+/// One row in "Det jeg ikke forsto" (WP-16.3): the utterance, what went wrong,
+/// an optional note the user can add ("hva jeg egentlig mente"), and a delete
+/// button. A resolved entry (a later "mente du" pick got confirmed) shows a
+/// quiet "LØST" tag instead of being hidden — it's kept as a success case.
+private struct MisunderstoodEntryRow: View {
+    let entry: MisunderstoodEntry
+    let onSaveNote: (String?) -> Void
+    let onDelete: () -> Void
+
+    @State private var isEditingNote = false
+    @State private var noteDraft: String
+
+    init(entry: MisunderstoodEntry, onSaveNote: @escaping (String?) -> Void, onDelete: @escaping () -> Void) {
+        self.entry = entry
+        self.onSaveNote = onSaveNote
+        self.onDelete = onDelete
+        _noteDraft = State(initialValue: entry.note ?? "")
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("«\(entry.utterance)»")
+                    .font(.zenjiMono(size: 13, weight: .bold))
+                Spacer()
+                if entry.isResolved {
+                    Text("LØST")
+                        .font(.zenjiMono(size: 10, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.diffAdd)
+                }
+            }
+            Text(entry.outcome.label)
+                .font(.zenjiMono(size: 11))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+            Text(entry.explanation.reason)
+                .font(.zenjiMono(size: 12))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.75))
+
+            if isEditingNote {
+                TextField("Hva mente du egentlig?", text: $noteDraft, axis: .vertical)
+                    .font(.zenjiMono(size: 12))
+                    .textFieldStyle(.plain)
+                    .lineLimit(1...3)
+                    .padding(8)
+                    .background(ZenjiTokens.foreground.opacity(0.06))
+                    .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
+                HStack(spacing: 14) {
+                    Button("Lagre notat") {
+                        onSaveNote(noteDraft)
+                        isEditingNote = false
+                    }
+                    .font(.zenjiMono(size: 11, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.accent)
+                    Button("Avbryt") {
+                        noteDraft = entry.note ?? ""
+                        isEditingNote = false
+                    }
+                    .font(.zenjiMono(size: 11))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                }
+            } else if let note = entry.note, !note.isEmpty {
+                Text("Notat: \(note)")
+                    .font(.zenjiMono(size: 12))
+                    .foregroundStyle(ZenjiTokens.accent.opacity(0.85))
+            }
+
+            HStack(spacing: 16) {
+                if !isEditingNote {
+                    Button(entry.note?.isEmpty == false ? "Endre notat" : "Legg til notat") {
+                        isEditingNote = true
+                    }
+                    .font(.zenjiMono(size: 11))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                }
+                Button("Slett") { onDelete() }
+                    .font(.zenjiMono(size: 11))
+                    .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.7))
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.foreground.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+    }
+}
+
 #Preview {
     // Preview uses the deterministic mock so it renders without Apple Intelligence.
     let index = EntityIndex([
@@ -380,6 +520,7 @@ struct AssistantView: View {
     return AssistantView(viewModel: AssistantViewModel(
         assistant: MockInterestAssistant(),
         profileStore: ProfileStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent("zenji-preview")),
-        index: index
+        index: index,
+        misunderstoodLog: MisunderstoodLogStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent("zenji-preview-misunderstood"))
     ))
 }

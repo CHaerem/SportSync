@@ -127,7 +127,8 @@ final class FuzzyResolverTests: XCTestCase {
         let vm = AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: ambiguous
+            index: ambiguous,
+            misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
         vm.utterance = "Følg Jonas"
         await vm.submit()

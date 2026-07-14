@@ -34,6 +34,12 @@ struct MockInterestAssistant: InterestAssistant {
         /// collapse to a bare "fant ingen endringer"; the behaviour exists so the
         /// WP-16.1 honest-explanation path is testable without Apple Intelligence.
         case producesNothing
+        /// Simulates the model attempting generation and failing to produce a
+        /// valid `@Generable` output (a malformed/incomplete structured response)
+        /// — `AssistantError.generationFailed`, as opposed to `.unavailable`
+        /// (the device-state gate). Exists so the WP-16.3 "inexpressible"
+        /// misunderstood-log outcome is testable without Apple Intelligence.
+        case throwsGenerationFailure(String)
     }
 
     let behavior: Behavior
@@ -44,7 +50,7 @@ struct MockInterestAssistant: InterestAssistant {
 
     func availability() -> AssistantAvailability {
         switch behavior {
-        case .available, .producesNothing: return .available
+        case .available, .producesNothing, .throwsGenerationFailure: return .available
         case let .unavailable(message): return .unavailable(message: message)
         }
     }
@@ -53,6 +59,8 @@ struct MockInterestAssistant: InterestAssistant {
         switch behavior {
         case let .unavailable(message):
             throw AssistantError.unavailable(message: message)
+        case let .throwsGenerationFailure(message):
+            throw AssistantError.generationFailed(message: message)
         case .producesNothing:
             return []
         case .available:

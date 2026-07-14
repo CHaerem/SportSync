@@ -23,7 +23,10 @@ final class AssistantViewModelTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(behavior: behavior),
             profileStore: store ?? AssistantTestSupport.tempProfileStore(),
-            index: index
+            index: index,
+            // WP-16.3: a throwaway temp directory, never this process's real
+            // Application Support — same guarantee as `tempProfileStore()`.
+            misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
     }
 
