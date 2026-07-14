@@ -6,5 +6,23 @@
 	<array>
 		<string>group.app.zenji</string>
 	</array>
+	<!--
+	  WP-19 — CloudKit for the USER'S OWN private profile sync (P360). Like the
+	  App Group above, this is a PAID-account capability: it is declared here on
+	  the signed/full-account target so CloudKitProfileSync can be switched on
+	  (compile with -D ZENJI_CLOUDKIT — see ProfileSyncBackendFactory) with no
+	  further wiring. The free personal team cannot provision it, so the device
+	  build (ZenjiDeviceDev.entitlements) stays EMPTY and uses LocalOnlyProfileSync.
+	  Unsigned Simulator builds (CODE_SIGNING_ALLOWED=NO) ignore these keys, so
+	  the app + test builds are unaffected.
+	-->
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.app.zenji.ios</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
 </dict>
 </plist>

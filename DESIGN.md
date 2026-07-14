@@ -168,6 +168,28 @@ grensesnittet.» Normativt (BINDENDE):
 - Ærlighet: er Apple Intelligence av, sier arket det rett ut — aldri falsk
   degradering til nøkkelord.
 
+## Profil-sync (P360 — WP-19)
+
+Profilen (det du følger) og minnet er DITT, og synkes gjennom **din egen
+iCloud** — aldri via vår server. Bindende:
+
+- **iClouds egen kanal.** Ekte cross-device-sync går til brukerens PRIVATE
+  CloudKit-database (i deres iCloud-kvote), record-per-regel, med `encryptedValues`
+  på fritekst (regelens `reason`, notater) — E2E der CloudKit støtter det.
+  Krever betalt Apple-konto (WP-17); til da er backenden `LocalOnly` (no-op) og
+  telefon-installasjonen (gratis-konto) virker som før.
+- **Merge-strategiene** (deterministiske, CRDT-aktige): regler = siste-skriver-vinner
+  på `modifiedAt` + **tombstones** for slettinger (en sletting replikeres — en
+  gammel enhet gjenoppliver den aldri); episodiske minnenotater = append-only
+  union; atferdstellere = grow-only (max per enhet, sum totalt). Merge er
+  kommutativ, idempotent og rekkefølge-uavhengig.
+- **QR-broen** (verdifull NÅ, uten betalt konto): profilen eksporteres som en
+  komprimert payload i en QR-kode + `zenji://`-delelenke; import på en annen
+  enhet kjører SAMME merge — den **slår sammen, overskriver aldri**. Rolig UI:
+  mono, én amber-aksent, QR tonet til blekk-token, ingen emoji.
+- **Aldri vår server.** All sync er brukerens iCloud eller QR/lenke mellom deres
+  egne enheter. Personvern-løftet holder bokstavelig.
+
 ## Bevegelse & lyd
 
 Klokkens sekundtikk og kommandolinjens blinkende `▌`-markør er appens eneste

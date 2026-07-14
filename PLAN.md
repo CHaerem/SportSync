@@ -53,6 +53,7 @@ mennesket, aldri av en agent.
 | WP-16.4 | Sømløs assistent | 0B | WP-16,WP-14 | ✅ merget (#257) |
 | WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | venter på beslutning |
 | WP-18 | Linse-rendering (P320: event × deltakelse × linse) | 0B | WP-13,WP-16.1 | 🔬 PR åpnet — `LensRenderer` (Feed/, widget-trygg) + Agenda-integrasjon: golf rendres gjennom de norske du følger (tee time overstyrer tid/dag/sortering, status verbatim i meta, grasiøs degradering); de 5 predikatene urørt (13/13 gylne vektorer bit-like); 273/273 iOS-tester (+16), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev installert; skjermbilder `ios/docs/design-v2/lens-{dark,light}.png` |
+| WP-19 | Profil-sync (P360: iCloud-kanal + QR-bro) | 0B | WP-16 | 🔬 PR åpnet — ren `ProfileMerge` (LWW+tombstones / append-union / grow-only teller; kommutativ+idempotent+konvergent), `ProfileSyncBackend` (CloudKit privat DB + `encryptedValues` / LocalOnly no-op) bak leverandør-agnostisk seam, ProfileStore-stempling (`modifiedAt`+`deviceID`+tombstones, API uendret), offline-først koordinator, QR/`zenji://`-bro (import = merge, aldri overskriv); 317/317 iOS-tester (+44), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev bygd/signert/installert (LocalOnly), skjermbilder `ios/docs/design-v2/profile-share-{dark,light}.png` |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
 | WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
@@ -186,6 +187,36 @@ entities.json fra WP-05).
 **WP-16.2 (etter andre brukertest):** fuzzy entitets-oppslag i den DETERMINISTISKE resolveren (års-strippet + initial-alias i `entities.json`; case/diakritika/prefiks/innehold/initialer/skrivefeil ≤2) — «tour de france», «tdf» og «Tour de Farnce» serveres nå rett til `tour-de-france-2026` uten avvisning, og «mente du»-forslag er blitt trykkbare (re-grounder opprinnelig intensjon → diff → Bekreft; aldri en død knapp). Initial-aliaser holdes utenfor server-matching. 179/179 iOS-tester (+13), 373/373 JS-tester (+4), DeviceDev re-installert på iPhone.
 **WP-16.3 (P310s forslagsløkke — «forsto ikke»-loggen):** hver submit som ender uten applisert mutasjon (avvist entitet / uuttrykkbar / alt avvist av bruker / tomt modellsvar) logges lokalt og privat i Application Support (ingen nettverkskode, cap 200, eldste ryker) med ytring + AssistantExplanation + tidsstempel; diskret seksjon nederst i AssistantView («Det jeg ikke forsto (N)») med valgfritt notat, slett (enkelt/alt) og «Del rapport» (anonymisert JSON-eksport via iOS-delesheet — kun ytring/utfall/forklaring/notat/tidsstempel/løst); en senere «mente du»-bekreftelse markerer entryen løst (beholdes i loggen/eksporten, telles ikke i N). 206/206 iOS-tester (+27), 373/373 JS-tester (uendret), DeviceDev re-installert på iPhone.
 **WP-16.4 (sømløs assistent — «assistenten ER grensesnittet»):** flyttet assistenten ut av skjermen-bak-en-knapp og inn i flyten. (1) KOMMANDOLINJEN: en fast, stille prompt-linje nederst i agendaen (mono `»_` + tekstfelt + blinkende amber `▌`-markør, statisk under Reduce Motion), nå primær inngang; header-glyfen ble en fokus-snarvei. AssistantView splittet i `CommandLineView` + et flatt resultat-ark (`AssistantPanel`) som toner inn (≤150 ms) over agendaen; «Hva jeg følger» + forsto-ikke-loggen nås fra stille oppslag i samme ark (all 16.x-funksjonalitet beholdt). (2) INTENT-RUTING: `InterestAssistant.interpret` returnerer `AssistantTurn` = mutasjoner ELLER `answer`; spørsmål besvares over LOKAL data (`FeedQuery` + nye FM-verktøy `searchEvents`/`getProfile`), rolig norsk med referanse til rader (tid · tittel · kanal). MockInterestAssistant utvidet deterministisk for begge intents (`MockAnswerer`). (3) KONTEKST-HANDLINGER i detaljarket: «Følg <entitet>» (forhåndsutfylt gjennom vanlig diff/bekreft-flyt) + «Hvorfor vises denne?» (`FeedCompiler.whyShown`). (4) UMIDDELBAR KONSEKVENS: profil foldes inn i effektive interesser (`EffectiveInterests`), Bekreft re-kompilerer agendaen synlig med det samme. (5) TENKE-TILSTAND: blinkende markør + dempet «tenker …» + «Avbryt», aldri spinner. DESIGN.md Assistent-seksjon utvidet normativt. 257/257 iOS-tester (+25), JS-tester urørt, skjermbilder i begge temaer i `ios/docs/design-v2/assistant-*.png`.
+
+### WP-19 · Profil-sync (P360: iCloud-kanal + QR-bro)
+Forbereder ekte cross-device profil/minne-sync OG leverer en gratis-konto-bro nå.
+Leverandør-agnostisk bak en `ProfileSyncBackend`-protokoll (portabilitetsprinsippet:
+lock-in isolert til ett lag).
+- **Sync-modellen (hjertet, testbar UTEN iCloud):** en ren
+  `ProfileMerge(local, remote) → (merged, push-set)`. Regler (stabil `entityId`):
+  siste-skriver-vinner på `modifiedAt` + **tombstones** for slettinger (respektert
+  — en gammel peer gjenoppliver aldri; en genuint nyere re-følg vinner). Episodiske
+  notater: append-only union. Tellere: grow-only G-counter (max per enhet, sum
+  totalt). Kommutativ, idempotent, rekkefølge-uavhengig konvergens.
+- **Backend-seam:** `CloudKitProfileSync` (brukerens PRIVATE CloudKit-DB,
+  record-per-regel, `encryptedValues` på `reason`/notat — kompilerer på
+  simulator/CI, kjører kun med betalt konto + entitlement) + `LocalOnlyProfileSync`
+  (no-op). `ZenjiDeviceDev` bruker LocalOnly (gratis personal team støtter ikke
+  CloudKit-entitlement på enhets-bygg) → telefon-installasjon virker fortsatt.
+- **ProfileStore + koordinator:** superset-schema (bakoverkompatibelt med det flate
+  WP-16-formatet), stempler kun endringer, tombstoner fjernede regler; `load()/save()`
+  uendret for eksisterende kallere. Offline-først: pull → merge → push på
+  app-start/foreground; feil bevarer lokal state og blokkerer aldri UI.
+- **QR-bro (uten betalt konto):** eksporter profilen som komprimert payload i en
+  QR-kode + `zenji://`-delelenke; import (skann/lim inn/dyplenke) kjører SAMME merge
+  — slår sammen, overskriver aldri. Rolig DESIGN.md-tro UI.
+- **Ikke-mål:** server-endringer (all sync er brukerens iCloud/QR); web-CloudKit-JS
+  (payload enkel å porte, framtid); minne-innhold utover det som synkes.
+- **Aksept:** merge uttømmende testet; backend mot mock; ProfileStore round-trip;
+  QR-eksport/-import round-trip. 317/317 iOS-tester (+44), 373/373 JS urørt, begge
+  schemes bygger, ZenjiDeviceDev installert (LocalOnly), skjermbilder i begge temaer.
+- **Konsekvens for WP-22:** merge + backend + entitlement + `ProfileSyncBackendFactory`
+  er nå på plass — WP-22 reduseres til å skru på CloudKit-backenden på betalt konto.
 
 ### WP-17 · 💰 TestFlight (BESLUTNING: 99 USD/år)
 Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.

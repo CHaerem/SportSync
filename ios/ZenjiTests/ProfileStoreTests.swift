@@ -93,4 +93,70 @@ final class ProfileStoreTests: XCTestCase {
         XCTAssertEqual(store.load().rule(for: "magnus-carlsen")?.lens, .sportAsSuch,
                        "forward-compatible: a pre-lens rule defaults to the neutral lens")
     }
+
+    // MARK: - WP-19 — sync stamping (modifiedAt + deviceID + tombstones)
+
+    /// A ProfileStore in a throwaway temp dir with a FIXED device stamp, for
+    /// deterministic sync assertions.
+    private func stampedStore(_ deviceID: String) -> ProfileStore {
+        ProfileStore(directory: FileManager.default.temporaryDirectory
+            .appendingPathComponent("zenji-tests-\(UUID().uuidString)", isDirectory: true), deviceID: deviceID)
+    }
+
+    private func addRuud(_ profile: InterestProfile, now: Date) -> InterestProfile {
+        profile.applying(GroundedMutation(kind: .add, entity: index.entity(id: "casper-ruud")!,
+                                          scope: nil, weight: 0.5, reason: "tennis", previousRule: nil), now: now)
+    }
+
+    func test_save_stampsModifiedAtAndDeviceID() throws {
+        let store = stampedStore("DEVICE-1")
+        let now = Date(timeIntervalSince1970: 1_700_000_500)
+        try store.save(addRuud(InterestProfile(), now: now), now: now)
+
+        let synced = store.loadSyncState().rules.first { $0.entityId == "casper-ruud" }
+        XCTAssertEqual(synced?.modifiedAt, now)
+        XCTAssertEqual(synced?.deviceID, "DEVICE-1")
+        XCTAssertEqual(synced?.deleted, false)
+    }
+
+    func test_removingRule_leavesADurableTombstone() throws {
+        let store = stampedStore("DEVICE-1")
+        let now = Date(timeIntervalSince1970: 1_700_000_500)
+        try store.save(addRuud(InterestProfile(), now: now), now: now)
+
+        // Save an empty profile — the removed rule must persist as a tombstone,
+        // so a peer's stale copy can't revive it on the next sync.
+        let later = Date(timeIntervalSince1970: 1_700_000_900)
+        try store.save(InterestProfile(), now: later)
+
+        XCTAssertTrue(store.load().isEmpty, "the live view no longer shows it")
+        let tombstone = store.loadSyncState().rules.first { $0.entityId == "casper-ruud" }
+        XCTAssertEqual(tombstone?.deleted, true, "the deletion survives on disk as a tombstone")
+        XCTAssertEqual(tombstone?.modifiedAt, later)
+    }
+
+    func test_resavingUnchangedProfile_doesNotBumpTheStamp() throws {
+        let store = stampedStore("DEVICE-1")
+        let first = Date(timeIntervalSince1970: 1_700_000_500)
+        try store.save(addRuud(InterestProfile(), now: first), now: first)
+
+        // Re-save the identical profile at a later clock — no real change, so no
+        // new stamp (otherwise every launch would churn the merge for peers).
+        try store.save(store.load(), now: Date(timeIntervalSince1970: 1_700_009_000))
+        XCTAssertEqual(store.loadSyncState().rules.first { $0.entityId == "casper-ruud" }?.modifiedAt, first)
+    }
+
+    func test_syncState_roundTripsThroughDisk() throws {
+        let store = stampedStore("DEVICE-1")
+        let state = ProfileSyncState(
+            rules: [SyncedRule(rule: index.entity(id: "casper-ruud").map {
+                InterestRule(entityId: $0.id, entityName: $0.name, sport: $0.sport, scope: nil,
+                             weight: 0.5, reason: "x", addedAt: Date(timeIntervalSince1970: 1_700_000_000))
+            }!, modifiedAt: Date(timeIntervalSince1970: 1_700_000_100), deviceID: "DEVICE-1")],
+            episodic: [EpisodicNote(id: "n1", kind: "misunderstood", createdAt: Date(timeIntervalSince1970: 1_700_000_050))],
+            counters: [Counter(key: "opens", perDevice: ["DEVICE-1": 3])]
+        )
+        try store.saveSyncState(state)
+        XCTAssertEqual(store.loadSyncState(), state.normalized(), "the full mergeable state round-trips")
+    }
 }
