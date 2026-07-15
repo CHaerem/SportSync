@@ -1,0 +1,327 @@
+{
+  "mergeFootball": [
+    {
+      "homeTeam": "Liverpool",
+      "awayTeam": "Arsenal",
+      "homeScore": 3,
+      "awayScore": 1,
+      "date": "2026-07-14T19:00:00.000Z",
+      "league": "Premier League",
+      "isFavorite": true,
+      "recapHeadline": "Liverpool 3-1 Arsenal"
+    },
+    {
+      "homeTeam": "Chelsea",
+      "awayTeam": "Everton",
+      "homeScore": 0,
+      "awayScore": 0,
+      "date": "2026-07-10T15:00:00.000Z",
+      "league": "Premier League",
+      "isFavorite": false,
+      "recapHeadline": null
+    },
+    {
+      "homeTeam": "Manchester City",
+      "awayTeam": "Brighton",
+      "homeScore": 4,
+      "awayScore": 0,
+      "date": "2026-07-13T19:00:00.000Z",
+      "league": "Premier League",
+      "isFavorite": false,
+      "recapHeadline": null
+    }
+  ],
+  "mergeTennis": [
+    {
+      "winner": "Casper Ruud",
+      "loser": "Novak Djokovic",
+      "score": "6-4, 7-6",
+      "date": "2026-07-14T12:00:00.000Z",
+      "tour": "ATP",
+      "isFavorite": true
+    },
+    {
+      "winner": "Iga Swiatek",
+      "loser": "Aryna Sabalenka",
+      "score": "7-5, 6-4",
+      "date": "2026-07-10T12:00:00.000Z",
+      "tour": "WTA",
+      "isFavorite": false
+    },
+    {
+      "winner": "Carlos Alcaraz",
+      "loser": "Jannik Sinner",
+      "score": "6-3, 6-4",
+      "date": "2026-07-13T12:00:00.000Z",
+      "tour": "ATP",
+      "isFavorite": false
+    }
+  ],
+  "mergeF1": [
+    {
+      "raceName": "British Grand Prix",
+      "type": "Race",
+      "date": "2026-07-06T14:00:00.000Z",
+      "circuit": "Silverstone",
+      "topDrivers": [
+        {
+          "position": 1,
+          "driver": "Verstappen",
+          "team": "Red Bull Racing",
+          "status": null
+        }
+      ],
+      "totalDrivers": 20
+    },
+    {
+      "raceName": "British Grand Prix",
+      "type": "Sprint",
+      "date": "2026-07-05T14:00:00.000Z",
+      "circuit": "Silverstone",
+      "topDrivers": [
+        {
+          "position": 1,
+          "driver": "Norris",
+          "team": "McLaren",
+          "status": null
+        }
+      ],
+      "totalDrivers": 20
+    },
+    {
+      "raceName": "Austrian Grand Prix",
+      "type": "Race",
+      "date": "2026-06-29T14:00:00.000Z",
+      "circuit": "Red Bull Ring",
+      "topDrivers": [
+        {
+          "position": 1,
+          "driver": "Leclerc",
+          "team": "Ferrari",
+          "status": null
+        }
+      ],
+      "totalDrivers": 20
+    }
+  ],
+  "comparatorSorted": [
+    "d",
+    "b",
+    "c",
+    "a"
+  ],
+  "footballValidator": [
+    {
+      "valid": true,
+      "issues": []
+    },
+    {
+      "valid": false,
+      "issues": [
+        "homeScore out of range: undefined",
+        "awayScore out of range: undefined"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Date is in the future"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Invalid date"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "date missing"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "homeTeam equals awayTeam"
+      ]
+    }
+  ],
+  "tennisValidator": [
+    {
+      "valid": true,
+      "issues": []
+    },
+    {
+      "valid": false,
+      "issues": [
+        "score missing or not a string"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Date is in the future"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Invalid date"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "date missing"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "winner equals loser"
+      ]
+    }
+  ],
+  "f1Validator": [
+    {
+      "valid": true,
+      "issues": []
+    },
+    {
+      "valid": false,
+      "issues": [
+        "topDrivers missing or empty"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Date is in the future"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Invalid date"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "date missing"
+      ]
+    }
+  ],
+  "golfValidator": [
+    {
+      "valid": true,
+      "issues": []
+    },
+    {
+      "valid": true,
+      "issues": []
+    },
+    {
+      "valid": false,
+      "issues": [
+        "Final tournament has no topPlayers",
+        "Final tournament has only 2 completed rounds"
+      ]
+    },
+    {
+      "valid": false,
+      "issues": [
+        "tournamentName present but empty",
+        "topPlayers positions not ascending"
+      ]
+    },
+    {
+      "valid": true,
+      "issues": []
+    }
+  ],
+  "validateResults": {
+    "totalResults": 19,
+    "validResults": 4,
+    "issues": [
+      "Football [A v B]: homeScore out of range: undefined",
+      "Football [A v B]: awayScore out of range: undefined",
+      "Football [A v B]: Date is in the future",
+      "Football [A v B]: Invalid date",
+      "Football [A v B]: date missing",
+      "Football [A v A]: homeTeam equals awayTeam",
+      "Golf [dpWorld]: Final tournament has no topPlayers",
+      "Golf [dpWorld]: Final tournament has only 2 completed rounds",
+      "Tennis [Ruud v Sinner]: score missing or not a string",
+      "Tennis [Ruud v Sinner]: Date is in the future",
+      "Tennis [Ruud v Sinner]: Invalid date",
+      "Tennis [Ruud v Sinner]: date missing",
+      "Tennis [Ruud v Ruud]: winner equals loser",
+      "F1 [British GP]: topDrivers missing or empty",
+      "F1 [British GP]: Date is in the future",
+      "F1 [British GP]: Invalid date",
+      "F1 [British GP]: date missing"
+    ]
+  },
+  "rssMatch": [
+    "Liverpool beat Arsenal 2-1 in thriller",
+    "Barcelona edge Sevilla in Copa clash",
+    "City dominate United in Manchester derby",
+    "Newcastle secure late winner",
+    null,
+    null
+  ],
+  "golfStandingsMapped": [
+    {
+      "position": 1,
+      "positionDisplay": "1",
+      "player": "Viktor Hovland",
+      "score": "-12",
+      "today": "66",
+      "thru": "18",
+      "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/1234.png"
+    },
+    {
+      "position": 2,
+      "positionDisplay": "T2",
+      "player": "Rory McIlroy",
+      "score": "-8",
+      "today": "70",
+      "thru": "12",
+      "headshot": "https://a.espncdn.com/i/headshots/golf/players/full/5678.png"
+    },
+    {
+      "position": 3,
+      "positionDisplay": null,
+      "player": "Unknown",
+      "score": "E",
+      "today": "-",
+      "thru": "-",
+      "headshot": null
+    }
+  ],
+  "golfResultsMapped": [
+    {
+      "position": 1,
+      "player": "Viktor Hovland",
+      "score": "-12",
+      "roundScore": "66",
+      "thru": "18"
+    },
+    {
+      "position": 2,
+      "player": "Rory McIlroy",
+      "score": "-8",
+      "roundScore": "70",
+      "thru": "12"
+    },
+    {
+      "position": 3,
+      "player": "Unknown",
+      "score": "E",
+      "roundScore": "-",
+      "thru": "-"
+    }
+  ]
+}

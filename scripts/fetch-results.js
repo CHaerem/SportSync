@@ -14,8 +14,57 @@
 
 import path from "path";
 import { pathToFileURL } from "url";
-import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest, yyyymmdd } from "./lib/helpers.js";
+import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest, yyyymmdd, containsName } from "./lib/helpers.js";
 import { validateESPNScoreboard } from "./lib/response-validator.js";
+import { golfCompetitorFields } from "./lib/golf.js";
+
+/**
+ * Shared date-sanity check for result validators. Returns the list of issue
+ * strings for a result's `date` field: missing, unparseable, or in the future
+ * (>24h ahead). The three sport validators all applied this identical check.
+ */
+function dateSanityIssues(date) {
+	if (!date) return ["date missing"];
+	const d = new Date(date);
+	if (isNaN(d.getTime())) return ["Invalid date"];
+	if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) return ["Date is in the future"];
+	return [];
+}
+
+/**
+ * Sort comparator: favourites first, then most recent date first. Used for the
+ * football and tennis result lists (both at fetch time and after the history merge).
+ */
+function byFavoriteThenDateDesc(a, b) {
+	if (a.isFavorite && !b.isFavorite) return -1;
+	if (!a.isFavorite && b.isFavorite) return 1;
+	return new Date(b.date) - new Date(a.date);
+}
+
+/** Sort comparator: most recent date first (F1, which has no favourite flag). */
+function byDateDesc(a, b) {
+	return new Date(b.date) - new Date(a.date);
+}
+
+/**
+ * Merge fresh results into retained history: drop entries older than `retainDays`,
+ * dedupe by `keyOf(result)` (fresh overrides existing — newer data may carry more
+ * detail), preserving first-seen insertion order. The per-sport merge functions are
+ * thin wrappers that supply their own key + retention window.
+ */
+export function mergeResults(existing, fresh, keyOf, retainDays) {
+	const cutoff = Date.now() - retainDays * MS_PER_DAY;
+	const map = new Map();
+	for (const r of (existing || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		map.set(keyOf(r), r);
+	}
+	for (const r of (fresh || [])) {
+		if (new Date(r.date).getTime() < cutoff) continue;
+		map.set(keyOf(r), r);
+	}
+	return Array.from(map.values());
+}
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
 const INTERESTS_PATH = path.resolve(process.cwd(), "scripts", "config", "interests.json");
@@ -49,13 +98,7 @@ export function validateFootballResult(result) {
 	if (typeof result.homeScore !== "number" || result.homeScore < 0 || result.homeScore > 20) issues.push(`homeScore out of range: ${result.homeScore}`);
 	if (typeof result.awayScore !== "number" || result.awayScore < 0 || result.awayScore > 20) issues.push(`awayScore out of range: ${result.awayScore}`);
 
-	if (result.date) {
-		const d = new Date(result.date);
-		if (isNaN(d.getTime())) issues.push("Invalid date");
-		else if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) issues.push("Date is in the future");
-	} else {
-		issues.push("date missing");
-	}
+	issues.push(...dateSanityIssues(result.date));
 
 	// Goal scorer count should not wildly exceed total goals
 	if (Array.isArray(result.goalScorers)) {
@@ -243,11 +286,7 @@ export async function fetchFootballResults(options = {}) {
 	}
 
 	// Sort by date descending, favorites first
-	results.sort((a, b) => {
-		if (a.isFavorite && !b.isFavorite) return -1;
-		if (!a.isFavorite && b.isFavorite) return 1;
-		return new Date(b.date) - new Date(a.date);
-	});
+	results.sort(byFavoriteThenDateDesc);
 
 	return results;
 }
@@ -288,13 +327,10 @@ export async function fetchGolfResults(options = {}) {
 			const samplePlayer = competitors[0];
 			const completedRound = samplePlayer?.linescores?.length || 0;
 
-			const topPlayers = competitors.slice(0, 5).map((c, idx) => ({
-				position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
-				player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
-				score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
-				roundScore: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
-				thru: c.status?.thru?.toString() || "-",
-			}));
+			const topPlayers = competitors.slice(0, 5).map((c, idx) => {
+				const f = golfCompetitorFields(c, idx);
+				return { position: f.position, player: f.player, score: f.score, roundScore: f.round, thru: f.thru };
+			});
 
 			// Find Norwegian players (or any favorite players). Surname-only hits
 			// (e.g. "Hovland") come from the entity's aliases, matched at word
@@ -305,13 +341,10 @@ export async function fetchGolfResults(options = {}) {
 					const name = c.athlete?.displayName || c.athlete?.fullName || "";
 					return matchInterest(name, favoritePlayers) != null;
 				})
-				.map((c, idx) => ({
-					position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
-					player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
-					score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
-					roundScore: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
-					thru: c.status?.thru?.toString() || "-",
-				}));
+				.map((c, idx) => {
+					const f = golfCompetitorFields(c, idx);
+					return { position: f.position, player: f.player, score: f.score, roundScore: f.round, thru: f.thru };
+				});
 
 			result[tour.key] = {
 				tournamentName: event.name || null,
@@ -339,13 +372,7 @@ export function validateTennisResult(result) {
 
 	if (!result.score || typeof result.score !== "string") issues.push("score missing or not a string");
 
-	if (result.date) {
-		const d = new Date(result.date);
-		if (isNaN(d.getTime())) issues.push("Invalid date");
-		else if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) issues.push("Date is in the future");
-	} else {
-		issues.push("date missing");
-	}
+	issues.push(...dateSanityIssues(result.date));
 
 	return { valid: issues.length === 0, issues };
 }
@@ -421,32 +448,13 @@ export async function fetchTennisResults(options = {}) {
 	}
 
 	// Sort: favorites first, then by date descending
-	results.sort((a, b) => {
-		if (a.isFavorite && !b.isFavorite) return -1;
-		if (!a.isFavorite && b.isFavorite) return 1;
-		return new Date(b.date) - new Date(a.date);
-	});
+	results.sort(byFavoriteThenDateDesc);
 
 	return results;
 }
 
 export function mergeTennisResults(existing, fresh, retainDays = 7) {
-	const cutoff = Date.now() - retainDays * MS_PER_DAY;
-	const map = new Map();
-
-	for (const r of (existing || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.winner}-${r.loser}-${r.date}-${r.tour}`;
-		map.set(key, r);
-	}
-
-	for (const r of (fresh || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.winner}-${r.loser}-${r.date}-${r.tour}`;
-		map.set(key, r);
-	}
-
-	return Array.from(map.values());
+	return mergeResults(existing, fresh, (r) => `${r.winner}-${r.loser}-${r.date}-${r.tour}`, retainDays);
 }
 
 export function validateF1Result(result) {
@@ -456,13 +464,7 @@ export function validateF1Result(result) {
 	if (typeof result.raceName !== "string" || !result.raceName.trim()) issues.push("raceName missing or empty");
 	if (!Array.isArray(result.topDrivers) || result.topDrivers.length === 0) issues.push("topDrivers missing or empty");
 
-	if (result.date) {
-		const d = new Date(result.date);
-		if (isNaN(d.getTime())) issues.push("Invalid date");
-		else if (d.getTime() > Date.now() + 24 * 60 * 60 * 1000) issues.push("Date is in the future");
-	} else {
-		issues.push("date missing");
-	}
+	issues.push(...dateSanityIssues(result.date));
 
 	return { valid: issues.length === 0, issues };
 }
@@ -528,28 +530,13 @@ export async function fetchF1Results(options = {}) {
 	}
 
 	// Sort by date descending
-	results.sort((a, b) => new Date(b.date) - new Date(a.date));
+	results.sort(byDateDesc);
 
 	return results;
 }
 
 export function mergeF1Results(existing, fresh, retainDays = 30) {
-	const cutoff = Date.now() - retainDays * MS_PER_DAY;
-	const map = new Map();
-
-	for (const r of (existing || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.raceName}-${r.date}-${r.type}`;
-		map.set(key, r);
-	}
-
-	for (const r of (fresh || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.raceName}-${r.date}-${r.type}`;
-		map.set(key, r);
-	}
-
-	return Array.from(map.values());
+	return mergeResults(existing, fresh, (r) => `${r.raceName}-${r.date}-${r.type}`, retainDays);
 }
 
 /**
@@ -614,18 +601,6 @@ function teamShortForms(teamName) {
 	return candidates;
 }
 
-/**
- * Test whether a candidate term appears in a headline at a word boundary.
- * Uses \b-style matching: term must not be immediately preceded or followed
- * by a letter, to avoid "City" matching "Electricity" or "Unity".
- */
-function termMatchesHeadline(term, headline) {
-	// Escape regex metacharacters in the term
-	const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	const re = new RegExp(`(?<![a-zA-ZÀ-ÖØ-öø-ÿ])${escaped}(?![a-zA-ZÀ-ÖØ-öø-ÿ])`, "i");
-	return re.test(headline);
-}
-
 export function matchRssHeadline(homeTeam, awayTeam, rssItems, options = {}) {
 	if (!homeTeam || !awayTeam || !Array.isArray(rssItems)) return null;
 
@@ -656,8 +631,8 @@ export function matchRssHeadline(homeTeam, awayTeam, rssItems, options = {}) {
 		const homeForms = teamShortForms(homeTeam);
 		const awayForms = teamShortForms(awayTeam);
 
-		const homeHit = [...homeForms].some(f => termMatchesHeadline(f, item.title));
-		const awayHit = [...awayForms].some(f => termMatchesHeadline(f, item.title));
+		const homeHit = [...homeForms].some(f => containsName(item.title, f));
+		const awayHit = [...awayForms].some(f => containsName(item.title, f));
 		if (homeHit && awayHit) {
 			return item.title;
 		}
@@ -693,24 +668,7 @@ export function matchRssHeadline(homeTeam, awayTeam, rssItems, options = {}) {
  * can reference the complete round for narrative context.
  */
 export function mergeFootballResults(existing, fresh, retainDays = 7) {
-	const cutoff = Date.now() - retainDays * MS_PER_DAY;
-	const map = new Map();
-
-	// Add existing results first (retained history)
-	for (const r of (existing || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.homeTeam}-${r.awayTeam}-${r.date}`;
-		map.set(key, r);
-	}
-
-	// Fresh results override existing (newer data may have more details)
-	for (const r of (fresh || [])) {
-		if (new Date(r.date).getTime() < cutoff) continue;
-		const key = `${r.homeTeam}-${r.awayTeam}-${r.date}`;
-		map.set(key, r);
-	}
-
-	return Array.from(map.values());
+	return mergeResults(existing, fresh, (r) => `${r.homeTeam}-${r.awayTeam}-${r.date}`, retainDays);
 }
 
 async function main() {
@@ -739,11 +697,7 @@ async function main() {
 			}
 		}
 		// Sort: favorites first, then by date descending
-		merged.sort((a, b) => {
-			if (a.isFavorite && !b.isFavorite) return -1;
-			if (!a.isFavorite && b.isFavorite) return 1;
-			return new Date(b.date) - new Date(a.date);
-		});
+		merged.sort(byFavoriteThenDateDesc);
 		output.football = merged;
 		console.log(`Football: ${merged.length} results (${merged.filter(r => r.isFavorite).length} favorites, ${fresh.length} fresh)`);
 	} catch (err) {
@@ -772,11 +726,7 @@ async function main() {
 	try {
 		const fresh = await fetchTennisResults({ userContext });
 		const merged = mergeTennisResults(existing?.tennis, fresh);
-		merged.sort((a, b) => {
-			if (a.isFavorite && !b.isFavorite) return -1;
-			if (!a.isFavorite && b.isFavorite) return 1;
-			return new Date(b.date) - new Date(a.date);
-		});
+		merged.sort(byFavoriteThenDateDesc);
 		output.tennis = merged;
 		console.log(`Tennis: ${merged.length} results (${merged.filter(r => r.isFavorite).length} favorites, ${fresh.length} fresh)`);
 	} catch (err) {
@@ -788,7 +738,7 @@ async function main() {
 	try {
 		const fresh = await fetchF1Results();
 		const merged = mergeF1Results(existing?.f1, fresh);
-		merged.sort((a, b) => new Date(b.date) - new Date(a.date));
+		merged.sort(byDateDesc);
 		output.f1 = merged;
 		console.log(`F1: ${merged.length} results (${fresh.length} fresh)`);
 	} catch (err) {
