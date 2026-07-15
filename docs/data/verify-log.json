@@ -1,16 +1,14 @@
 {
-  "runAt": "2026-07-14T05:30:00.000Z",
-  "checked": 5,
-  "confirmed": 3,
+  "runAt": "2026-07-15T05:30:00.000Z",
+  "checked": 3,
+  "confirmed": 1,
   "amended": 2,
   "removed": 0,
   "notes": [
-    "Window: 14-21 Jul 2026. Focused on the two unverified in-window ai-research events (BLAST Bounty, TdF stage 16) plus time-sensitive near-term events; TdF stages 11-15, London Athletics/Warholm (18 Jul), WC bronze (18 Jul) + final (19 Jul) and The Open (16 Jul) were freshly verified 8-13 Jul and remain consistent, so not re-fetched to stay within budget.",
-    "CONFIRMED WC semifinal 1 (14 Jul, today): France vs Spain at Dallas/AT&T Stadium via fifa.com; TV 2 broadcast holds (prior NTB/NRK checks).",
-    "CONFIRMED BLAST Bounty S2 (100 Thieves, from 21 Jul) via HLTV/BLAST.tv — online stage 21-26 Jul, LAN in Malta 30 Jul-2 Aug for top 8; 100T is a wildcard invite. Individual match times still unpublished (kept medium); streaming BLAST.tv/Twitch (free).",
-    "CONFIRMED Gstaad ATP (Casper Ruud, 15 Jul): re-checked he is still in the draw as No. 2 seed with R1 bye; R16 opponent = winner of today's Faria vs Wawrinka R32. Exact court time not yet in the published order of play — event keeps provisional 08:30 UTC. (A stale tennis.com 'Ruud bows out of Gstaad' headline surfaced in search; it is from a prior year, not 2026 — he has not withdrawn.)",
-    "AMENDED TdF stage 16 ITT (21 Jul): cyclingstage lists first rider off 13:00 CEST = 11:00 UTC (GC leader ~17:50 CEST). events.json had 10:00 UTC — corrected time to 11:00 UTC and endTime to 15:50 UTC.",
-    "AMENDED Corales Puntacana Championship (16-19 Jul): streaming Viaplay -> HBO Max (Sport). Regular PGA Tour events stream on HBO Max/Eurosport Norge (WBD) in Norway from 2026, not Viaplay (golferen.no/tvkampen + HBO Max page). The research agent had re-added this event today with the Viaplay golf default, silently reverting the 11 Jul HBO Max fix — a recurring pattern worth a research-prompt/skill nudge.",
-    "PENDING: norwegian-rights skill golf line still says all PGA Tour -> Viaplay; it needs the 2026 WBD/HBO Max split (regular PGA Tour + Masters/PGA Championship on WBD; The Open + US Open + DP World Tour on Viaplay). The skill-file write was blocked this run — flagged for a follow-up with write access."
+    "Window: 15-22 Jul 2026. Prioritised the most time-sensitive in-window items; TdF stages 12-16, London/Warholm (18 Jul), WC bronze (18 Jul) + final (19 Jul), BLAST Bounty (from 21 Jul) and The Open (16 Jul) were freshly verified 8-14 Jul and remain consistent, so not re-fetched to stay within budget.",
+    "CONFIRMED Gstaad ATP R16 (Casper Ruud, Thu 16 Jul): Jaime Faria beat Wawrinka 6-7,6-4,6-4 in R32 (Tue 14 Jul), so Ruud (No.2 seed, R1 bye) meets Faria in R16 as listed. Exact court time still not in the published Thursday order of play (ATP daily-schedule + swissopengstaad draws pages don't yet show the slot) — kept provisional 08:00 UTC (~10:00 CEST). Matchup re-confirmed via ATP + Tennis Majors.",
+    "AMENDED Corales Puntacana Championship (16-19 Jul): streaming Viaplay -> HBO Max (Sport)/Eurosport. WBD holds the regular PGA Tour rights in Norway from 2026 (dedicated hbomax.com/no PGA Tour page + golferen.no); majors The Open/US Open + DP World Tour stay Viaplay. This is the SAME silent revert flagged 11 + 14 Jul: research re-adds the event each rebuild with the sport-config Viaplay golf default, clobbering the fix. Durable fix needs the golf streaming default and/or research prompt corrected — verify can only re-patch events.json.",
+    "AMENDED TdF stage 17 (22 Jul, Chambery-Voiron): estimated start 11:00 UTC -> confirmed reel start 13:20 CEST = 11:20 UTC (cyclingstage), finish ~17:30 CEST; 174.7 km, ASO-flat but ~2400m climbing. Added verifiedAt (was previously unverified).",
+    "PENDING (skill write blocked again): the norwegian-rights golf line still reads 'all PGA Tour -> Viaplay'. It needs the 2026 WBD split (regular PGA Tour + Masters/PGA Championship -> HBO Max/Eurosport; The Open/US Open + DP World Tour -> Viaplay). Edit to .claude/skills/norwegian-rights/SKILL.md was blocked by the permission gate this run, as on 14 Jul — needs a run with write access to that path."
   ]
 }
