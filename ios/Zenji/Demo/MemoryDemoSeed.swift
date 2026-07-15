@@ -8,8 +8,11 @@
 //  the app reads, plus a small agenda cache with a spoiler-sensitive result — so
 //  `ZENJI_DEMO=memory` captures the "Hva jeg vet om deg" page and
 //  `ZENJI_DEMO=spoiler` captures a spoiler-masked detail sheet, both with no
-//  network. Never compiled into a release build (`#if DEBUG`); lives at the app
-//  target so neither the widget nor the test bundle pick it up.
+//  network. Never compiled into a release build (`#if DEBUG`); lives in
+//  Zenji/Demo/ (WP-48) — only the app targets' `path: Zenji` picks that folder
+//  up, so neither the widget nor the test bundle compiles it. (Its old home,
+//  Zenji/Memory/, WAS compiled into ZenjiTests — the previous "the test target
+//  doesn't pick this up" claim here only became true with this move.)
 //
 
 #if DEBUG

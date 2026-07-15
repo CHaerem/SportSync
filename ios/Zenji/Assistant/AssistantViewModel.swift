@@ -31,8 +31,12 @@ import Observation
 final class AssistantViewModel {
     /// Whether the on-device model can be used — drives the honest "off" banner.
     private(set) var availability: AssistantAvailability
-    /// The current, persisted profile ("Hva jeg følger").
-    private(set) var profile: InterestProfile
+    /// The current, persisted profile ("Hva jeg følger"). Setter is internal
+    /// (not `private(set)`) only because the WP-19 profil-sync arm now lives in
+    /// Profile/AssistantViewModel+ProfileSync.swift (WP-48) — an extension in
+    /// another file can't reach a private setter. Only that extension and this
+    /// class assign it.
+    var profile: InterestProfile
     /// Grounded mutations awaiting the user's Bekreft/Avvis.
     private(set) var pending: [GroundedMutation] = []
     /// Proposals rejected by grounding — shown as honest "fant ikke …" notes.
@@ -53,8 +57,10 @@ final class AssistantViewModel {
 
     /// WP-16.4 — bumped whenever there's a fresh presentable result (a diff, an
     /// answer, an explanation, an error, or a pre-filled follow). ContentView
-    /// observes it to raise the assistant panel over the agenda.
-    private(set) var presentToken = 0
+    /// observes it to raise the assistant panel over the agenda. Setter is
+    /// internal (not `private(set)`) only so the profil-sync extension in
+    /// Profile/AssistantViewModel+ProfileSync.swift (WP-48) can bump it too.
+    var presentToken = 0
     /// WP-16.4 — called after any mutation is APPLIED, so the host can recompile
     /// the agenda immediately ("umiddelbar konsekvens"). Set by ContentView.
     var onProfileChanged: (() -> Void)?
@@ -78,7 +84,10 @@ final class AssistantViewModel {
     }
 
     private let assistant: any InterestAssistant
-    private let profileStore: ProfileStore
+    /// Internal (not private) only because the WP-19 profil-sync arm in
+    /// Profile/AssistantViewModel+ProfileSync.swift (WP-48) reads it — share
+    /// link/QR export, import-merge, reload, background sync all go through it.
+    let profileStore: ProfileStore
     private let index: EntityIndex
     private let misunderstoodLog: MisunderstoodLogStore
     /// WP-30 — personal memory (facts/episodic/behaviour) over the SAME profile
@@ -389,94 +398,17 @@ final class AssistantViewModel {
     }
 
     // MARK: - WP-19 — profil-sync (QR-bro + bakgrunns-sync)
-
-    /// A calm summary of what a QR/link import changed — shown after a merge.
-    struct ProfileImportSummary: Equatable, Sendable {
-        var added: Int
-        var updated: Int
-        var removed: Int
-        var isNoop: Bool { added == 0 && updated == 0 && removed == 0 }
-    }
-
-    /// The deep link that SHARES this device's profile (QR + share sheet). Nil
-    /// only if encoding somehow fails (never expected for a well-formed profile).
-    var profileShareURL: URL? {
-        try? ProfileShareCodec.link(for: profileStore.loadSyncState())
-    }
+    //
+    // The whole arm lives in Profile/AssistantViewModel+ProfileSync.swift
+    // (WP-48 — the profile domain moved out of Assistant/). Only its two
+    // STORED properties stay behind here: a Swift extension can't hold stored
+    // state. Their setters are internal (not `private(set)`) so that extension
+    // — another file — can assign them; `resetResults()` below clears them.
 
     /// The last import's calm outcome, for the share panel's confirmation line.
-    private(set) var lastImportSummary: ProfileImportSummary?
+    var lastImportSummary: ProfileImportSummary?
     /// An honest error if an import couldn't be read ("ikke en gyldig kode").
-    private(set) var shareImportMessage: String?
-
-    /// Import a shared profile from a deep link — MERGES into the local profile
-    /// (never overwrites), persists, and recompiles the agenda. Pure + offline.
-    func importSharedProfile(from url: URL) {
-        importMerging { try ProfileShareCodec.merge(url: url, into: $0) }
-    }
-
-    /// Import from a pasted string — the whole `zenji://…` link or just its
-    /// payload (both accepted), for the manual import field.
-    func importSharedProfile(fromPayload raw: String) {
-        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        if let url = URL(string: trimmed), url.scheme == ProfileShareCodec.scheme {
-            importSharedProfile(from: url)
-        } else {
-            importMerging { try ProfileShareCodec.merge(payload: trimmed, into: $0) }
-        }
-    }
-
-    private func importMerging(_ merge: (ProfileSyncState) throws -> MergeOutcome) {
-        shareImportMessage = nil
-        lastImportSummary = nil
-        let before = profileStore.loadSyncState()
-        do {
-            let outcome = try merge(before)
-            try? profileStore.saveSyncState(outcome.merged)
-            lastImportSummary = Self.summary(before: before.profile, after: outcome.merged.profile)
-            reloadProfile()
-            onProfileChanged?()
-        } catch ProfileShareError.empty {
-            shareImportMessage = "Koden inneholdt ingen profil å slå sammen."
-        } catch ProfileShareError.unsupportedVersion {
-            shareImportMessage = "Koden er laget av en nyere versjon av Zenji enn denne."
-        } catch {
-            shareImportMessage = "Dette var ikke en gyldig Zenji-profilkode."
-        }
-        presentToken &+= 1
-    }
-
-    private static func summary(before: InterestProfile, after: InterestProfile) -> ProfileImportSummary {
-        let beforeByID = Dictionary(before.rules.map { ($0.entityId, $0) }, uniquingKeysWith: { a, _ in a })
-        let afterByID = Dictionary(after.rules.map { ($0.entityId, $0) }, uniquingKeysWith: { a, _ in a })
-        var added = 0, updated = 0, removed = 0
-        for (id, rule) in afterByID {
-            if let prior = beforeByID[id] { if prior != rule { updated += 1 } } else { added += 1 }
-        }
-        for id in beforeByID.keys where afterByID[id] == nil { removed += 1 }
-        return ProfileImportSummary(added: added, updated: updated, removed: removed)
-    }
-
-    /// Re-read the persisted profile into memory (after an external merge — a QR
-    /// import or a background CloudKit sync).
-    func reloadProfile() {
-        profile = profileStore.load()
-    }
-
-    /// One offline-first background sync round through `coordinator` (LocalOnly by
-    /// default → a no-op). Persists the merged state and recompiles if it changed.
-    func runBackgroundSync(using coordinator: ProfileSyncCoordinator) async {
-        guard coordinator.backend.isEnabled else { return }
-        let result = await coordinator.sync(local: profileStore.loadSyncState())
-        guard result.didSync else { return }
-        try? profileStore.saveSyncState(result.merged)
-        let updated = result.merged.profile
-        if updated != profile {
-            profile = updated
-            onProfileChanged?()
-        }
-    }
+    var shareImportMessage: String?
 
     // MARK: - WP-30 — personal memory ("Hva jeg vet om deg")
 

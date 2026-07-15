@@ -151,6 +151,18 @@ targets:
       # only (Apple Intelligence can't run in CI/Simulator — see AssistantView's
       # header and ios/README.md).
       - path: Zenji/Assistant
+      # WP-48: the profile domain (ProfileStore/InterestProfile/merge/sync-model/
+      # backend/coordinator/CloudKit, the share codec + QR + panel, ResetService,
+      # the EffectiveInterests bridge, and the view model's profil-sync extension)
+      # moved out of Assistant/ into its own Zenji/Profile — it had only landed in
+      # Assistant/ because that folder was already wired in here. Same hostless
+      # "no @testable import" pattern; app + ZenjiDeviceDev pick it up via
+      # `path: Zenji`, the widget deliberately does NOT (no profile/personal-
+      # context code in the widget). Zenji/Demo (LensDemoSeed/MemoryDemoSeed) is
+      # just as deliberately NOT listed here nor in the widget target: the demo
+      # seeds are app-only screenshot harnesses, and keeping them out of the
+      # explicit source lists is what makes that quarantine structural.
+      - path: Zenji/Profile
       # WP-30: personal-memory sources (facts/episodic/behaviour store over the
       # same ProfileSyncState, retrieval digest, distiller, spoiler shield, the
       # "Hva jeg vet om deg" page) — compiled directly into the hostless bundle,

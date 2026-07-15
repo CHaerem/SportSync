@@ -22,7 +22,12 @@
 //  TdF-etappe?") deterministically, exactly as MockInterestParser is for
 //  mutations.
 //
+//  WP-48: the whole file is `#if DEBUG` — a Release build must contain no
+//  Mock* symbols. Only MockInterestAssistant (itself DEBUG-only) and the
+//  hostless tests (which build Debug) call this.
+//
 
+#if DEBUG
 import Foundation
 
 enum MockAnswerer {
@@ -175,3 +180,4 @@ enum MockAnswerer {
             .joined(separator: " ")
     }
 }
+#endif

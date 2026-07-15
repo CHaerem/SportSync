@@ -36,6 +36,24 @@ protocol MemoryDistiller: Sendable {
     func distill(_ conversation: MemoryConversation, index: EntityIndex, now: Date) async -> DistilledNote?
 }
 
+/// The freshness/expiry rule both distillers share. Lives OUTSIDE the
+/// DEBUG-only mock below because the REAL path needs it too — the
+/// FoundationModels assistant gives an `ephemeral` note the same end-of-day
+/// expiry (see FoundationModelsInterestAssistant) — and a Release build must
+/// contain no Mock* symbols (WP-48).
+enum MemoryFreshness {
+
+    /// End of the current Europe/Oslo calendar day — when an "i kveld" note stops
+    /// being relevant.
+    static func endOfOsloDay(_ now: Date) -> Date {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = FeedCompiler.osloTimeZone
+        let start = cal.startOfDay(for: now)
+        return cal.date(byAdding: .day, value: 1, to: start) ?? now.addingTimeInterval(86_400)
+    }
+}
+
+#if DEBUG
 /// The deterministic stand-in used by CI + previews (Apple Intelligence can't run
 /// there). Small and rule-based — enough to prove the conversation→note path and
 /// the freshness/expiry handling, not a general summariser:
@@ -110,12 +128,9 @@ struct MockMemoryDistiller: MemoryDistiller {
         contains(n, [" i kveld ", " kveld ", " i dag ", " idag ", " i natt "])
     }
 
-    /// End of the current Europe/Oslo calendar day — when an "i kveld" note stops
-    /// being relevant.
-    static func endOfOsloDay(_ now: Date) -> Date {
-        var cal = Calendar(identifier: .gregorian)
-        cal.timeZone = FeedCompiler.osloTimeZone
-        let start = cal.startOfDay(for: now)
-        return cal.date(byAdding: .day, value: 1, to: start) ?? now.addingTimeInterval(86_400)
-    }
+    /// Forwarder to the shared rule above (WP-48 moved the implementation to
+    /// `MemoryFreshness`), kept so the existing test/demo call sites read the
+    /// same — the mock and the real distiller expire notes identically.
+    static func endOfOsloDay(_ now: Date) -> Date { MemoryFreshness.endOfOsloDay(now) }
 }
+#endif
