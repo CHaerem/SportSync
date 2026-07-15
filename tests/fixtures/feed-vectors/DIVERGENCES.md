@@ -40,9 +40,9 @@ divergence found**, and the assertion now guards against a future one-sided edit
 ## 1. Relevance is NOT sport-scoped; the bell IS
 
 - Server `isRelevant` calls `matchInterest(hay, trackedEntities)` **without** a
-  `sport` option (`build-events.js:420`).
+  `sport` option (`build-events.js:483`).
 - Server `mustWatchEntity` calls `matchInterest(hay, notifyEntities, { sport: event.sport })`
-  (`helpers.js:171`).
+  (`helpers.js:141`).
 
 **Consequence.** A tracked entity from one sport can pull an unrelated sport's
 event onto the board, while the (scoped) bell correctly ignores it.
@@ -65,11 +65,11 @@ Net effect: the event appears on the board with **neither** a bell nor an accent
 
 - Client `isMustSee` matches tracked teams with
   `homeTeam.toLowerCase().includes(term.toLowerCase())` and tracked athletes with
-  `haystack.toLowerCase().includes(term.toLowerCase())` (`dashboard.js:188,191`).
+  `haystack.toLowerCase().includes(term.toLowerCase())` (`dashboard.js:134,137`).
   Plain substring, plain lowercase — **no** word boundaries, **no** diacritic
   folding.
 - Server matching (`containsName`, used by both relevance and the bell) is
-  **word-boundary** and **diacritic-insensitive** (`helpers.js:81`).
+  **word-boundary** and **diacritic-insensitive** (`helpers.js:61`).
 
 **Consequence.** The accent fires on substrings the server rejects.
 
@@ -111,7 +111,7 @@ meant to be equal. The Swift port must keep them as two functions.
 ## 4. `confidence` does not gate feed inclusion
 
 `source == "ai-research"` makes an event `relevant` regardless of `confidence`
-(`build-events.js:416`) — a `confidence: "low"` research event in an
+(`build-events.js:479`) — a `confidence: "low"` research event in an
 otherwise-unfollowed sport still reaches the board.
 
 **Pinned by** `12-edge-airesearch-lowconf-empty-streaming.json` (`ai-low-tennis`:

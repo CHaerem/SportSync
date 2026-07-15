@@ -9,7 +9,7 @@ Mode from `SPORTSYNC_EDITORIAL_MODE` (`morning` | `evening`).
 - `evening` (~17:00 Oslo): tonight's highlight + a nod to tomorrow
 
 ## Inputs
-- `scripts/config/interests.json` — what the user cares about
+- `scripts/config/interests.json` — what the user cares about (read-only)
 - `docs/data/events.json` — upcoming events (prioritise favorites, Norwegian
   athletes, and importance ≥4 when choosing what the line is about)
 - `docs/data/recent-results.json` — for an evening nod to what just happened
@@ -34,3 +34,5 @@ Rules:
 - Lead with the single most relevant thing for this user today. Never invent
   results or times — only reference what's in the input files.
 - Calm and plain — no hype, no emoji, no clickbait.
+- Your only output is `docs/data/featured.json`. Never modify
+  `scripts/config/interests.json` — it is user-owned; you read it, nothing more.

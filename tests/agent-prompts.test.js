@@ -76,8 +76,11 @@ describe("agent prompts", () => {
 		}
 	});
 
-	it("every skill referenced in a prompt exists, and x-sources is wired in", () => {
-		for (const f of ["research.md", "verify.md", "editorial.md"]) {
+	it("every skill referenced in any prompt exists, and x-sources is wired in", () => {
+		const agentsDir = path.resolve("scripts", "agents");
+		const prompts = fs.readdirSync(agentsDir).filter((f) => f.endsWith(".md"));
+		expect(prompts.length).toBeGreaterThan(3);
+		for (const f of prompts) {
 			const refs = [...read(f).matchAll(/\.claude\/skills\/[\w-]+\/SKILL\.md/g)].map((m) => m[0]);
 			for (const ref of refs) {
 				expect(fs.existsSync(path.resolve(ref)), `${f} references missing ${ref}`).toBe(true);

@@ -9,7 +9,7 @@ const wf = (f) => fs.readFileSync(path.resolve(process.cwd(), ".github", "workfl
 describe("v2 workflows", () => {
 	it("exactly the expected agent workflows exist (old autopilot removed)", () => {
 		const dir = fs.readdirSync(path.resolve(".github", "workflows"));
-		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml", "usage-monitor.yml", "ui-fix-agent.yml", "self-repair-agent.yml", "improve-agent.yml"]) {
+		for (const f of ["static-pipeline.yml", "research-agent.yml", "verify-agent.yml", "editorial-agent.yml", "scout-agent.yml", "coverage-critic-agent.yml", "visual-qa-agent.yml", "usage-monitor.yml", "ui-fix-agent.yml", "self-repair-agent.yml", "improve-agent.yml", "follow-request.yml"]) {
 			expect(dir, f).toContain(f);
 		}
 		for (const f of ["claude-autopilot.yml", "update-sports-data.yml", "claude-maintenance.yml"]) {
