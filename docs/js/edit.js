@@ -3,16 +3,13 @@
 // Issue Form with fields PRE-FILLED via query params (GitHub renders the form,
 // the user just submits). The existing workflow turns it into a PR they merge.
 // Nothing is written directly — same review-gated flow, just zero manual input.
-const REPO = 'CHaerem/zenji';
+// Repo slug (SS_REPO), escapeHtml and ssShortReason come from shared-constants.js
+// (loaded before this script); theme lives in js/theme.js.
 const KINDS = [
 	['athletes', 'Utøver', 'Utøvere'],
 	['teams', 'Lag', 'Lag'],
 	['tournaments', 'Turnering', 'Turneringer'],
 ];
-
-function escapeHtml(s) {
-	return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 // GitHub Issue Forms DON'T prefill dropdowns from the URL — only text fields — so
 // prefilling the template left Handling/Type unset. Instead compose the whole
@@ -33,7 +30,7 @@ function issueUrl(f) {
 		title: `[følg] ${f.action}: ${f.name}`,
 		body: lines.join('\n\n'),
 	});
-	return `https://github.com/${REPO}/issues/new?${p.toString()}`;
+	return `https://github.com/${SS_REPO}/issues/new?${p.toString()}`;
 }
 
 /** Does this entry notify? Teams/athletes default on; tournaments default off. */
@@ -68,13 +65,6 @@ function briefRow(s) {
 	return `<div class="edit-row"><div class="edit-name"><span class="edit-brief">${escapeHtml(s)}</span></div><div class="edit-actions"><a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a></div></div>`;
 }
 
-/** Trim an agent reason to a one-line gist (drops the provenance prefix). */
-function shortReason(r) {
-	if (!r) return '';
-	let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').replace(/^[,.\s]+/, '').trim();
-	if (s.length > 130) s = s.slice(0, 128).replace(/\s+\S*$/, '') + '…';
-	return s;
-}
 /** Strip trailing year / parenthetical from a tracked name for a clean follow. */
 function coreName(name) {
 	return String(name).replace(/\s*\d{4}(?:\/\d{2})?/g, '').replace(/\s*\(.*?\)/g, '').trim();
@@ -83,7 +73,7 @@ function coreName(name) {
 /** "AI har funnet" row: a discovery, name + why + expiry, with a "Følg 🔔" action. */
 function aiRow(x, kind) {
 	const until = x.expires ? `<span class="tag">ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : '';
-	const why = x.reason ? `<div class="edit-alias" title="${escapeHtml(x.reason)}">${escapeHtml(shortReason(x.reason))}</div>` : '';
+	const why = x.reason ? `<div class="edit-alias" title="${escapeHtml(x.reason)}">${escapeHtml(ssShortReason(x.reason))}</div>` : '';
 	const followUrl = issueUrl({ action: 'Legg til', kind, name: coreName(x.name), sport: x.sport || '', notify: 'Ja' });
 	return `<div class="edit-row"><div class="edit-name"><span class="edit-title">${escapeHtml(x.name)}</span>${until}${why}</div><div class="edit-actions"><a class="btn" href="${followUrl}" target="_blank" rel="noopener">Følg 🔔</a></div></div>`;
 }
@@ -175,7 +165,7 @@ function suggestionEl(c) {
 function renderSuggestions(list, q) {
 	const box = document.getElementById('add-suggestions');
 	if (!box) return;
-	const manualUrl = `https://github.com/${REPO}/issues/new?${new URLSearchParams({ template: 'follow.yml', name: q }).toString()}`;
+	const manualUrl = `https://github.com/${SS_REPO}/issues/new?${new URLSearchParams({ template: 'follow.yml', name: q }).toString()}`;
 	const manual = `<a class="suggestion manual" href="${manualUrl}" target="_blank" rel="noopener">Legg til «${escapeHtml(q)}» manuelt — velg type + sport</a>`;
 	box.innerHTML = list.slice(0, 8).map(suggestionEl).join('') + manual;
 }
@@ -209,12 +199,4 @@ Promise.all([
 	document.getElementById('add-search')?.addEventListener('input', (e) => onSearch(e.target.value));
 }).catch(() => {
 	document.getElementById('edit-root').innerHTML = '<p class="muted">Kunne ikke laste lista. Prøv å laste siden på nytt.</p>';
-});
-
-// Theme toggle — parity with the dashboard (same localStorage key).
-document.getElementById('theme-toggle')?.addEventListener('click', () => {
-	const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-	const next = cur === 'dark' ? 'light' : 'dark';
-	document.documentElement.dataset.theme = next;
-	try { localStorage.setItem('ss-theme', next); } catch (e) { /* ignore */ }
 });

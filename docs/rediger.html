@@ -4,15 +4,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 	<meta name="description" content="Rediger det du følger i Zenji.">
-	<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
-	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#0A0A0C" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#F5F1E6" media="(prefers-color-scheme: light)">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<title>Rediger · Zenji</title>
-	<!-- Apply the chosen theme before paint so it matches the dashboard (no flash). -->
-	<script>try { var t = localStorage.getItem('ss-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<!-- Apply the chosen theme before paint (no flash of wrong theme); js/theme.js owns the toggle. -->
+	<script>try { var t = localStorage.getItem('ss-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}</script>
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<style>
@@ -76,6 +73,7 @@
 	</main>
 
 	<script src="js/shared-constants.js"></script>
+	<script src="js/theme.js"></script>
 	<script src="js/edit.js"></script>
 </body>
 </html>

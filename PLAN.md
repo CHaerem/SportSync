@@ -71,7 +71,7 @@ mennesket, aldri av en agent.
 | WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
 | WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
 | WP-45 | Golf: skraper-ekstraksjon | 0D | WP-43 | ⬜ køet |
-| WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | ⬜ køet |
+| WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | 🔬 PR åpnet — ny `docs/js/theme.js` (3-stegs system→mørk→lys, ◐/●/○) på alle tre sider + pre-paint-snutt overalt; 2-stegs-variantene i activity/edit fjernet; theme-color/manifest → tokens (#0A0A0C/#F5F1E6); IBM Plex Mono-taggene ut (null eksterne requests); `SS_REPO` + `ssShortReason` i shared-constants; sw-cache `zenji-v2-19`; syklus verifisert identisk på alle sider, begge temaer screenshottet |
 | WP-47 | Web: dashboard.js-splitt | 0D | WP-46 | ⬜ køet |
 | WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ✅ merget (#269) — 12 filer `git mv` → `Zenji/Profile/` + profil-sync-extension ut av AssistantViewModel; `Zenji/Demo/` (LensDemoSeed/MemoryDemoSeed) strukturelt utenfor widget/test-targets; Mock* i `#if DEBUG` (også MockMemoryDistiller — `endOfOsloDay` → ny `MemoryFreshness`, siden FM-distillasjonen bruker den); `nm`: 0 Mock*-symboler i Release (193 i Debug-kontroll); 376/376 iOS-tester (uendret antall), 373/373 JS, begge schemes + ZenjiDeviceDev bygger |
 | WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ✅ merget (#264) — 57 PNG-er slettet (docs-design/, ios/docs/variants/, enso-grids; alle ureferert), enso-icon.swift beholdt med header for valgt variant v3-grov-contig (hash-bevist = shippet ikon), regel 8 (bevis-policy) lagt til; sporede PNG-er 12 MB → 8,3 MB |

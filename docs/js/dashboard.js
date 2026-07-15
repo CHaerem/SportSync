@@ -17,7 +17,7 @@ class Dashboard {
 	}
 
 	async init() {
-		this.initTheme();
+		// Theme is owned by js/theme.js (shared across pages).
 		this.renderDate();
 		this.startClock();
 		await this.loadData();
@@ -657,21 +657,13 @@ class Dashboard {
 		else if (tourn) why = `Del av <strong>${escapeHtml(tourn)}</strong>, som du følger`;
 		else if (e.source === 'ai-research') {
 			const r = this.trackedReasonFor(e);
-			why = r ? `AI valgte dette: ${escapeHtml(this.shortReason(r))}` : 'AI-research fant dette for deg';
+			why = r ? `AI valgte dette: ${escapeHtml(ssShortReason(r, 95))}` : 'AI-research fant dette for deg';
 		}
 		else if (e.norwegian) why = 'Norsk deltakelse';
 		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
 		else why = 'Passer interessene dine';
 		if (e.mustWatch) why += ` · varsel ${this.notifyLead()} min før`;
 		return why;
-	}
-
-	/** Trim an agent reason to a one-line gist (drops the provenance prefix). */
-	shortReason(r) {
-		if (!r) return '';
-		let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').replace(/^[,.\s]+/, '').trim();
-		if (s.length > 95) s = s.slice(0, 93).replace(/\s+\S*$/, '') + '…';
-		return s;
 	}
 
 	/** The research agent's reason for tracking the thing this ai-research event belongs to. */
@@ -710,7 +702,7 @@ class Dashboard {
 			`- Kanal: ${chan}`, `- Kilde: ${e.source || 'statisk'}${e.confidence ? ` (${e.confidence})` : ''}`,
 		].join('\n');
 		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${e.title}`, body });
-		window.open(`https://github.com/CHaerem/zenji/issues/new?${p.toString()}`, '_blank', 'noopener');
+		window.open(`https://github.com/${SS_REPO}/issues/new?${p.toString()}`, '_blank', 'noopener');
 	}
 
 	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —
@@ -1089,33 +1081,6 @@ class Dashboard {
 		} catch { /* ignore */ }
 	}
 
-	// ── Theme override (BINDING, DESIGN.md) ───────────────────────────────────
-	// A single quantized glyph cycles system → dark → light → system. 'system'
-	// clears data-theme so prefers-color-scheme decides; the glyph shows the
-	// current quantized state: ◐ system · ● dark · ○ light.
-	THEME_GLYPH = { system: '◐', dark: '●', light: '○' };
-	applyTheme(mode) {
-		const root = document.documentElement;
-		if (mode === 'system') delete root.dataset.theme;
-		else root.dataset.theme = mode;
-		const btn = document.getElementById('theme-toggle');
-		if (btn) {
-			btn.textContent = this.THEME_GLYPH[mode] || '◐';
-			btn.setAttribute('aria-label', `Tema: ${mode === 'dark' ? 'mørk' : mode === 'light' ? 'lys' : 'system'} (trykk for å bytte)`);
-		}
-	}
-	initTheme() {
-		// Migrate: an earlier 2-state toggle stored only 'dark' | 'light'.
-		let mode = localStorage.getItem('ss-theme') || 'system';
-		if (!['system', 'dark', 'light'].includes(mode)) mode = 'system';
-		this.applyTheme(mode);
-		document.getElementById('theme-toggle')?.addEventListener('click', () => {
-			const cur = localStorage.getItem('ss-theme') || 'system';
-			const next = cur === 'system' ? 'dark' : cur === 'dark' ? 'light' : 'system';
-			localStorage.setItem('ss-theme', next);
-			this.applyTheme(next);
-		});
-	}
 }
 
 const dashboard = new Dashboard();
