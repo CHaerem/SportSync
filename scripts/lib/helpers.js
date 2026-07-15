@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import http from "http";
 import https from "https";
 import zlib from "zlib";
 
@@ -300,6 +301,40 @@ export async function fetchJson(
 				settle(reject, new Error(`Request timed out after ${timeout}ms: ${url}`));
 			}, timeout);
 		}
+	});
+}
+
+/**
+ * Fetch a URL and resolve its response body as text.
+ *
+ * The shared HTTP-GET-text client for the scrapers: picks http/https by the
+ * URL protocol, sends a User-Agent (overridable), follows redirects (resolving a
+ * relative Location against the request URL), and rejects on HTTP >= 400 or
+ * timeout. Callers that need a different UA or timeout pass them in `opts`
+ * (e.g. pgatour.com wants a browser-like UA and a 10s budget).
+ *
+ * @param {string} url
+ * @param {{ headers?: Record<string,string>, timeout?: number }} [opts]
+ * @returns {Promise<string>}
+ */
+export function fetchText(url, { headers = {}, timeout = 8000 } = {}) {
+	const reqHeaders = { "User-Agent": "SportSync/1.0", ...headers };
+	return new Promise((resolve, reject) => {
+		const client = url.startsWith("https") ? https : http;
+		const req = client.get(url, { headers: reqHeaders, timeout }, (res) => {
+			if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+				const next = new URL(res.headers.location, url).toString();
+				return fetchText(next, { headers, timeout }).then(resolve, reject);
+			}
+			if (res.statusCode >= 400) {
+				return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+			}
+			let body = "";
+			res.on("data", (c) => (body += c));
+			res.on("end", () => resolve(body));
+		});
+		req.on("error", reject);
+		req.on("timeout", () => { req.destroy(); reject(new Error(`Timeout for ${url}`)); });
 	});
 }
 
