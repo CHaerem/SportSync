@@ -66,17 +66,17 @@ mennesket, aldri av en agent.
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 | WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
-| WP-41 | Web: død kode ut av shippet flate | 0D | – | 🔬 PR åpnet (#265) — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
-| WP-42 | Pipeline: dødkode-sanering | 0D | – | 🔬 PR åpnet (#268) — sjakk-stier (fetchChessStandings + curated-gren), filters trimmet til de 2 brukte, buildURL/fetchWithDates, `_leagueMeta`, døde norsk-klubb-helpere, cycling-configlesing, pr-body.md, `.github/actions/setup/` slettet; 373/373 grønt, build+validate rent |
+| WP-41 | Web: død kode ut av shippet flate | 0D | – | ✅ merget (#265) — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
+| WP-42 | Pipeline: dødkode-sanering | 0D | – | ✅ merget (#268) — sjakk-stier (fetchChessStandings + curated-gren), filters trimmet til de 2 brukte, buildURL/fetchWithDates, `_leagueMeta`, døde norsk-klubb-helpere, cycling-configlesing, pr-body.md, `.github/actions/setup/` slettet; 373/373 grønt, build+validate rent |
 | WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
 | WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
 | WP-45 | Golf: skraper-ekstraksjon | 0D | WP-43 | ⬜ køet |
 | WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | ⬜ køet |
 | WP-47 | Web: dashboard.js-splitt | 0D | WP-46 | ⬜ køet |
-| WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | 🔬 PR åpnet (#269) — 12 filer `git mv` → `Zenji/Profile/` + profil-sync-extension ut av AssistantViewModel; `Zenji/Demo/` (LensDemoSeed/MemoryDemoSeed) strukturelt utenfor widget/test-targets; Mock* i `#if DEBUG` (også MockMemoryDistiller — `endOfOsloDay` → ny `MemoryFreshness`, siden FM-distillasjonen bruker den); `nm`: 0 Mock*-symboler i Release (193 i Debug-kontroll); 376/376 iOS-tester (uendret antall), 373/373 JS, begge schemes + ZenjiDeviceDev bygger |
-| WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | 🔬 PR åpnet (#264) — 57 PNG-er slettet (docs-design/, ios/docs/variants/, enso-grids; alle ureferert), enso-icon.swift beholdt med header for valgt variant v3-grov-contig (hash-bevist = shippet ikon), regel 8 (bevis-policy) lagt til; sporede PNG-er 12 MB → 8,3 MB |
+| WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ✅ merget (#269) — 12 filer `git mv` → `Zenji/Profile/` + profil-sync-extension ut av AssistantViewModel; `Zenji/Demo/` (LensDemoSeed/MemoryDemoSeed) strukturelt utenfor widget/test-targets; Mock* i `#if DEBUG` (også MockMemoryDistiller — `endOfOsloDay` → ny `MemoryFreshness`, siden FM-distillasjonen bruker den); `nm`: 0 Mock*-symboler i Release (193 i Debug-kontroll); 376/376 iOS-tester (uendret antall), 373/373 JS, begge schemes + ZenjiDeviceDev bygger |
+| WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ✅ merget (#264) — 57 PNG-er slettet (docs-design/, ios/docs/variants/, enso-grids; alle ureferert), enso-icon.swift beholdt med header for valgt variant v3-grov-contig (hash-bevist = shippet ikon), regel 8 (bevis-policy) lagt til; sporede PNG-er 12 MB → 8,3 MB |
 | WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ⬜ køet |
-| WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | 🔬 PR åpnet (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
+| WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ✅ merget (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
 | WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ⬜ køet |
 
 ---
