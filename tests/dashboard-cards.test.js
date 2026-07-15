@@ -7,8 +7,6 @@ let dash;
 beforeAll(() => {
 	const sandbox = createClientSandbox();
 	loadClientScript(sandbox, "shared-constants.js");
-	loadClientScript(sandbox, "sport-config.js");
-	loadClientScript(sandbox, "asset-maps.js");
 	loadClientScript(sandbox, "dashboard.js");
 	dash = sandbox.window.dashboard;
 });
@@ -361,8 +359,6 @@ describe("loadData: stable id from the server, index fallback for old payloads",
 	function sandboxWithEvents(events) {
 		const sandbox = createClientSandbox();
 		loadClientScript(sandbox, "shared-constants.js");
-		loadClientScript(sandbox, "sport-config.js");
-		loadClientScript(sandbox, "asset-maps.js");
 		loadClientScript(sandbox, "dashboard.js");
 		sandbox.fetch = (url) => {
 			const name = String(url).split("data/")[1]?.split("?")[0];

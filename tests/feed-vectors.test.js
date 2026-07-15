@@ -90,8 +90,6 @@ let clientInWindow; // docs/js/shared-constants.js isEventInWindow
 beforeAll(() => {
 	const sandbox = createClientSandbox();
 	loadClientScript(sandbox, "shared-constants.js");
-	loadClientScript(sandbox, "sport-config.js");
-	loadClientScript(sandbox, "asset-maps.js");
 	loadClientScript(sandbox, "dashboard.js");
 	dash = sandbox.window.dashboard;
 	clientInWindow = sandbox.window.isEventInWindow;

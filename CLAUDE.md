@@ -144,7 +144,7 @@ no dashboard grid, no competing panels.
 - `docs/css/` — `base.css` (calm tokens: near-black dark default, warm-paper light via prefers-color-scheme; one restrained accent; single typeface Schibsted Grotesk with tabular numerals; max-width 640px), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
 - `docs/js/dashboard.js` (~250 lines) — data load, one day-grouped agenda (`renderAgenda`/`eventRow`), `whereToWatch` channel helper, quiet live-now line, ESPN live polling (60s), theme toggle, AI-provenance modal (hidden until tapped)
 - Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
-- `docs/js/shared-constants.js`, `sport-config.js`, `asset-maps.js` — utilities, sport metadata, logo/headshot maps
+- `docs/js/shared-constants.js` — shared utilities (time windows, escaping, name matching), mirrors of the server helpers
 - The editorial agent produces a single `headline` block shown as one quiet line under the date (a "nice extra"), nothing more. AI-research events carry a small ⓘ that opens a source modal on tap.
 
 ### Data files (docs/data/, gitignore-whitelisted)
@@ -199,8 +199,8 @@ or schema drifts from the code, CI fails.
 ## Extending
 
 **New sport**: write a fetcher in `scripts/fetch/` that outputs `{ tournaments: [...] }`
-to `docs/data/{sport}.json`, register in `scripts/fetch/index.js`, add sport metadata to
-`docs/js/sport-config.js`. `build-events.js` auto-discovers the file by convention.
+to `docs/data/{sport}.json` and register it in `scripts/fetch/index.js`.
+`build-events.js` auto-discovers the file by convention.
 
 **New tracked interest**: edit `scripts/config/interests.json` — the research agent
 reconciles `tracked.json` against it on the next run.
