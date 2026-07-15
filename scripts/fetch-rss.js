@@ -6,11 +6,9 @@
  * No external dependencies — uses built-in https + lightweight XML regex parsing.
  */
 
-import https from "https";
-import http from "http";
 import path from "path";
 import { pathToFileURL } from "url";
-import { iso, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
+import { iso, rootDataPath, writeJsonPretty, fetchText } from "./lib/helpers.js";
 
 const FEEDS = [
 	{ id: "nrk-sport", sport: "general", url: "https://www.nrk.no/sport/toppsaker.rss", lang: "no" },
@@ -48,29 +46,6 @@ const NORWEGIAN_KEYWORDS = [
 	// General
 	"olympic", "olympi", "ol 2026", "cortina", "milano",
 ];
-
-/**
- * Fetch a URL and return the response body as a string.
- * Follows one redirect. Timeout after 8 seconds.
- */
-export function fetchText(url) {
-	return new Promise((resolve, reject) => {
-		const client = url.startsWith("https") ? https : http;
-		const req = client.get(url, { headers: { "User-Agent": "SportSync/1.0" }, timeout: 8000 }, (res) => {
-			if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-				return fetchText(res.headers.location).then(resolve, reject);
-			}
-			if (res.statusCode >= 400) {
-				return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
-			}
-			let body = "";
-			res.on("data", (c) => (body += c));
-			res.on("end", () => resolve(body));
-		});
-		req.on("error", reject);
-		req.on("timeout", () => { req.destroy(); reject(new Error(`Timeout for ${url}`)); });
-	});
-}
 
 /**
  * Parse RSS XML into an array of items using regex.
