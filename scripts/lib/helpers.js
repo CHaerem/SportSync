@@ -11,6 +11,17 @@ export function iso(d = Date.now()) {
 	return new Date(d).toISOString();
 }
 
+/** UTC calendar date as "YYYYMMDD" — the format ESPN's ?dates= parameter takes. */
+export function yyyymmdd(d = Date.now()) {
+	return new Date(d).toISOString().slice(0, 10).replace(/-/g, "");
+}
+
+/** The next `days` UTC dates (starting today) as yyyymmdd strings for ESPN ?dates=. */
+export function espnDateRange(days) {
+	const now = Date.now();
+	return Array.from({ length: days }, (_, i) => yyyymmdd(now + i * MS_PER_DAY));
+}
+
 /**
  * Check if an event overlaps with a time window.
  * Handles multi-day events (endTime) and single-point events uniformly.

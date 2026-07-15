@@ -22,7 +22,8 @@
 
 import fs from "fs";
 import path from "path";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeEntity, entityTerms } from "./lib/helpers.js";
+import { pathToFileURL } from "url";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeEntity, entityTerms, isEventInWindow } from "./lib/helpers.js";
 
 // Re-export so existing importers (tests) keep resolving containsName from here.
 export { containsName };
@@ -95,14 +96,16 @@ function eventMentionsName(event, name) {
 	return containsName(haystack, name);
 }
 
-/** Does any event within `days` (and not already past) mention this name? */
+/**
+ * Does any event within `days` (and not already over) mention this name?
+ * Uses isEventInWindow so an ongoing multi-day event (golf, stage race) that
+ * STARTED days ago still counts as coverage — windowing on start time alone
+ * generated false gaps for exactly those events.
+ */
 export function hasEventWithin(name, events, now, days) {
-	const horizon = now + days * MS_PER_DAY;
-	return events.some((e) => {
-		const t = Date.parse(e.time);
-		if (Number.isNaN(t) || t < now - MS_PER_DAY || t > horizon) return false;
-		return eventMentionsName(e, name);
-	});
+	const windowStart = now - MS_PER_DAY;
+	const windowEnd = now + days * MS_PER_DAY;
+	return events.some((e) => isEventInWindow(e, windowStart, windowEnd) && eventMentionsName(e, name));
 }
 
 /** Back-compat: is there an upcoming (≤14d) event for this name? */
@@ -110,14 +113,11 @@ export function hasUpcomingEvent(name, events, now = Date.now()) {
 	return hasEventWithin(name, events, now, UPCOMING_DAYS);
 }
 
-/** Count events of a given sport within `days` (and not already past). */
+/** Count events of a given sport within `days` (ongoing multi-day events included). */
 export function countSportEventsWithin(events, sport, now, days) {
-	const horizon = now + days * MS_PER_DAY;
-	return events.filter((e) => {
-		if (e.sport !== sport) return false;
-		const t = Date.parse(e.time);
-		return !Number.isNaN(t) && t >= now - MS_PER_DAY && t <= horizon;
-	}).length;
+	const windowStart = now - MS_PER_DAY;
+	const windowEnd = now + days * MS_PER_DAY;
+	return events.filter((e) => e.sport === sport && isEventInWindow(e, windowStart, windowEnd)).length;
 }
 
 export function detectGaps({ rss, events, interests, tracked, now = Date.now() }) {
@@ -199,10 +199,9 @@ export function detectSourceAnomalies({ sources, events, now = Date.now() }) {
 			continue;
 		}
 		const fileEvents = (data.tournaments || []).flatMap((t) => t.events || []);
-		const upcomingInFile = fileEvents.filter((e) => {
-			const t = Date.parse(e.time);
-			return !Number.isNaN(t) && t >= now - MS_PER_DAY && t <= now + UPCOMING_DAYS * MS_PER_DAY;
-		}).length;
+		const upcomingInFile = fileEvents.filter((e) =>
+			isEventInWindow(e, now - MS_PER_DAY, now + UPCOMING_DAYS * MS_PER_DAY)
+		).length;
 		if (upcomingInFile > 0) {
 			anomalies.push({ sport, issue: "dropped-in-build", detail: `${upcomingInFile} upcoming ${sport} event(s) in the source file but 0 on the board — build/normalisation may be dropping them`, severity: "high", detectedAt: iso(now) });
 		} else if (fileEvents.length === 0) {
@@ -245,6 +244,6 @@ function main() {
 	);
 }
 
-if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main();
 }

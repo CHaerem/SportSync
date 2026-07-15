@@ -51,6 +51,7 @@
 
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 import { readJsonIfExists, rootDataPath, normalizeText, containsName } from "./lib/helpers.js";
 import { sportsConfig as defaultSportsConfig } from "./config/sports-config.js";
 
@@ -300,6 +301,6 @@ function main() {
 	console.log(`entities.json: ${entities.length} entit${entities.length === 1 ? "y" : "ies"}.`);
 }
 
-if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main();
 }

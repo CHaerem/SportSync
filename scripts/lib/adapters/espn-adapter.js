@@ -1,5 +1,6 @@
 import { BaseFetcher } from "../base-fetcher.js";
 import { EventNormalizer } from "../event-normalizer.js";
+import { espnDateRange } from "../helpers.js";
 
 export class ESPNAdapter extends BaseFetcher {
 	async fetchFromSource(source) {
@@ -27,7 +28,7 @@ export class ESPNAdapter extends BaseFetcher {
 	async fetchScoreboardWithLeagues(source) {
 		const allEvents = [];
 		const now = new Date();
-		const days = this.generateDateRange(7);
+		const days = espnDateRange(7);
 		const leagueResults = new Map(); // track per-league success/failure
 
 		for (const league of source.leagues) {
@@ -284,18 +285,6 @@ export class ESPNAdapter extends BaseFetcher {
 		}
 		
 		return streaming;
-	}
-
-	generateDateRange(days) {
-		const dates = [];
-		const now = new Date();
-		
-		for (let i = 0; i < days; i++) {
-			const date = new Date(now.getTime() + i * 86400000);
-			dates.push(date.toISOString().split("T")[0].replace(/-/g, ""));
-		}
-		
-		return dates;
 	}
 
 	applyCustomFilters(events) {

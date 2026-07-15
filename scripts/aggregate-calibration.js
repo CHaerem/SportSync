@@ -15,6 +15,7 @@
 
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 import { rootDataPath, writeJsonPretty, iso, MS_PER_DAY } from "./lib/helpers.js";
 
 const WINDOW_DAYS = 180; // old lessons decay out of the stats
@@ -106,6 +107,6 @@ function main() {
 	);
 }
 
-if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main();
 }

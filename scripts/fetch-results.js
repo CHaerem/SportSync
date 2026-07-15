@@ -13,15 +13,12 @@
  */
 
 import path from "path";
-import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest } from "./lib/helpers.js";
+import { pathToFileURL } from "url";
+import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest, yyyymmdd } from "./lib/helpers.js";
 import { validateESPNScoreboard } from "./lib/response-validator.js";
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
 const INTERESTS_PATH = path.resolve(process.cwd(), "scripts", "config", "interests.json");
-
-export function formatDate(d) {
-	return d.toISOString().slice(0, 10).replace(/-/g, "");
-}
 
 function loadUserContext() {
 	const interests = readJsonIfExists(INTERESTS_PATH) || {};
@@ -180,7 +177,7 @@ export async function fetchFootballResults(options = {}) {
 	for (const [leagueCode, leagueName] of Object.entries(LEAGUE_MAP)) {
 		for (let d = 0; d < daysBack; d++) {
 			const date = new Date(now.getTime() - d * MS_PER_DAY);
-			const dateStr = formatDate(date);
+			const dateStr = yyyymmdd(date);
 			const url = `${ESPN_SITE}/soccer/${leagueCode}/scoreboard?dates=${dateStr}`;
 
 			try {
@@ -368,7 +365,7 @@ export async function fetchTennisResults(options = {}) {
 	for (const tour of TENNIS_TOURS) {
 		for (let d = 0; d < daysBack; d++) {
 			const date = new Date(now.getTime() - d * MS_PER_DAY);
-			const dateStr = formatDate(date);
+			const dateStr = yyyymmdd(date);
 			const url = `${tour.url}?dates=${dateStr}`;
 
 			try {
@@ -480,7 +477,7 @@ export async function fetchF1Results(options = {}) {
 
 	for (let d = 0; d < daysBack; d++) {
 		const date = new Date(now.getTime() - d * MS_PER_DAY);
-		const dateStr = formatDate(date);
+		const dateStr = yyyymmdd(date);
 		const url = `${F1_URL}?dates=${dateStr}`;
 
 		try {
@@ -815,7 +812,7 @@ async function main() {
 	console.log(`Results written to ${outPath} (${validation.validResults}/${validation.totalResults} valid)`);
 }
 
-if (process.argv[1]?.includes("fetch-results")) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main().catch((err) => {
 		console.error("Fatal error:", err);
 		process.exit(1);

@@ -16,6 +16,7 @@
  */
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 import { rootDataPath, iso, MS_PER_DAY } from "./lib/helpers.js";
 
 // Utilization thresholds (0..1):
@@ -159,7 +160,7 @@ async function fetchUsageHeaders(token) {
 }
 
 // CLI: make the call, write usage-state.json (fail-soft — never overwrite with junk).
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	const token = process.env.CLAUDE_CODE_OAUTH_TOKEN;
 	const out = path.join(rootDataPath(), "usage-state.json");
 	(async () => {

@@ -68,7 +68,7 @@ mennesket, aldri av en agent.
 | WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ⬜ køet — beskyttet sti, menneskelig merge |
 | WP-41 | Web: død kode ut av shippet flate | 0D | – | ✅ merget (#265) — sport-config.js + asset-maps.js slettet (406 linjer, null kallsteder) + døde shared-constants-eksporter; sw-shell synket (+activity.html, cache v2-18); 373/373, begge temaer verifisert |
 | WP-42 | Pipeline: dødkode-sanering | 0D | – | ✅ merget (#268) — sjakk-stier (fetchChessStandings + curated-gren), filters trimmet til de 2 brukte, buildURL/fetchWithDates, `_leagueMeta`, døde norsk-klubb-helpere, cycling-configlesing, pr-body.md, `.github/actions/setup/` slettet; 373/373 grønt, build+validate rent |
-| WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | ⬜ køet |
+| WP-43 | Pipeline: konvensjons-konvergens | 0D | WP-42 | 🔬 PR åpnet — coverage-gaps/fotball-no rutet gjennom `isEventInWindow` (endTime-blindheten fikset + regresjonstester: pågående flerdagsevent ⇒ ingen entity/sport-gap), delt `yyyymmdd`/`espnDateRange` i lib/helpers, én main-guard-form (`pathToFileURL`) i alle scripts, fetch/index `{name, fn}`-array; 411/411 grønt |
 | WP-44 | fetch-results: intern dedupe | 0D | WP-43 | ⬜ køet |
 | WP-45 | Golf: skraper-ekstraksjon | 0D | WP-43 | ⬜ køet |
 | WP-46 | Web: felles theme.js + side-småplukk | 0D | WP-41 | ⬜ køet |

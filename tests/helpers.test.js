@@ -5,7 +5,22 @@ import os from "os";
 import path from "path";
 import { isEventInWindow, retainLastGood, hasEvents, normalizeToUTC, MS_PER_DAY,
 	normalizeText, containsName, normalizeEntity, matchInterest, mustWatchEntity,
-	normalizeParticipants, normalizeNorwegianPlayers } from "../scripts/lib/helpers.js";
+	normalizeParticipants, normalizeNorwegianPlayers, yyyymmdd, espnDateRange } from "../scripts/lib/helpers.js";
+
+describe("yyyymmdd / espnDateRange (shared ESPN date helpers)", () => {
+	it("formats a date as YYYYMMDD in UTC", () => {
+		expect(yyyymmdd(new Date("2026-07-03T12:00:00Z"))).toBe("20260703");
+		expect(yyyymmdd(Date.parse("2026-01-09T23:59:59Z"))).toBe("20260109");
+	});
+
+	it("espnDateRange returns `days` consecutive yyyymmdd strings starting today", () => {
+		const range = espnDateRange(3);
+		expect(range).toHaveLength(3);
+		expect(range[0]).toBe(yyyymmdd());
+		expect(range.every((d) => /^\d{8}$/.test(d))).toBe(true);
+		expect(range[1]).toBe(yyyymmdd(Date.now() + MS_PER_DAY));
+	});
+});
 
 describe("isEventInWindow", () => {
 	const day = (n) => new Date(Date.parse("2026-07-02T00:00:00Z") + n * MS_PER_DAY);

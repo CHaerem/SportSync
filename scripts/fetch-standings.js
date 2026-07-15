@@ -9,6 +9,7 @@
  */
 
 import path from "path";
+import { pathToFileURL } from "url";
 import { fetchJson, iso, rootDataPath, readJsonIfExists, writeJsonPretty } from "./lib/helpers.js";
 import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-validator.js";
 
@@ -359,7 +360,7 @@ async function main() {
 }
 
 // Run if executed directly
-if (process.argv[1]?.includes("fetch-standings")) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main().catch((err) => {
 		console.error("Fatal error:", err);
 		process.exit(1);

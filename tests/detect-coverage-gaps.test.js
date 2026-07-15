@@ -109,6 +109,38 @@ describe("detectGaps — imminence (entity has a later event but nothing soon)",
 	});
 });
 
+describe("detectGaps — ongoing multi-day events (WP-43 regression)", () => {
+	// A golf tournament that STARTED three days before NOW and is still running.
+	// Windowing on e.time alone read this as "not on the board" and produced
+	// false entity/sport gaps; isEventInWindow must count it as coverage.
+	const ongoingGolf = {
+		sport: "golf",
+		title: "The Open Championship",
+		norwegianPlayers: [{ name: "Viktor Hovland" }],
+		time: "2026-06-30T06:00:00Z", // > 1 day before NOW (2026-07-03)
+		endTime: "2026-07-06T18:00:00Z", // still in progress
+	};
+
+	it("does NOT flag an entity playing an ongoing multi-day event", () => {
+		const rss = { items: [{ title: "Viktor Hovland spiller i dag", link: "https://nrk.no/h" }] };
+		const gaps = detectGaps({ rss, events: [ongoingGolf], interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.entity === "Viktor Hovland")).toBeUndefined();
+	});
+
+	it("does NOT flag a sport gap when the sport has an ongoing multi-day event", () => {
+		const rss = { items: [{ title: "PGA Tour: avgjørelsen faller i dag" }] };
+		const gaps = detectGaps({ rss, events: [ongoingGolf], interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.kind === "sport" && x.sport === "golf")).toBeUndefined();
+	});
+
+	it("still flags when the multi-day event is already over", () => {
+		const finished = { ...ongoingGolf, time: "2026-06-25T06:00:00Z", endTime: "2026-06-28T18:00:00Z" };
+		const rss = { items: [{ title: "Viktor Hovland spiller i dag", link: "https://nrk.no/h" }] };
+		const gaps = detectGaps({ rss, events: [finished], interests, tracked, now: NOW });
+		expect(gaps.find((x) => x.entity === "Viktor Hovland")).toBeTruthy();
+	});
+});
+
 describe("detectGaps — sport-level blind spot (the F1 case)", () => {
 	it("flags a followed sport that is imminent in the news but absent from the board soon", () => {
 		// F1 in the news happening today; board only has a race 14 days out (the real bug).
@@ -175,6 +207,15 @@ describe("detectSourceAnomalies", () => {
 		const board = boardWithAll().filter((e) => e.sport !== "chess");
 		const a = detectSourceAnomalies({ sources: s, events: board, now: NOW });
 		expect(a.find((x) => x.sport === "chess")?.issue).toBe("file-empty");
+	});
+
+	it("counts an ongoing multi-day event in the source file as upcoming (WP-43 regression)", () => {
+		const s = healthy();
+		// Started 3 days before NOW, still running — must register as dropped-in-build, not file-empty.
+		s.golf = { tournaments: [{ events: [{ time: "2026-06-30T06:00:00Z", endTime: "2026-07-06T18:00:00Z" }] }] };
+		const board = boardWithAll().filter((e) => e.sport !== "golf");
+		const a = detectSourceAnomalies({ sources: s, events: board, now: NOW });
+		expect(a.find((x) => x.sport === "golf")?.issue).toBe("dropped-in-build");
 	});
 
 	it("flags (high) events present in the source but dropped from the board", () => {

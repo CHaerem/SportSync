@@ -1,4 +1,4 @@
-import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
+import { fetchJson, iso, normalizeToUTC, isEventInWindow } from "../lib/helpers.js";
 import https from "https";
 
 // Fetch OBOS-ligaen calendar from fotball.no
@@ -28,10 +28,9 @@ export async function fetchOBOSLigaenFromFotballNo() {
 		const endOfWeek = new Date(startOfWeek);
 		endOfWeek.setDate(startOfWeek.getDate() + 7);
 		
-		const currentWeekMatches = lynMatches.filter(match => {
-			const matchDate = new Date(match.time);
-			return matchDate >= startOfWeek && matchDate < endOfWeek;
-		});
+		const currentWeekMatches = lynMatches.filter(match =>
+			isEventInWindow(match, startOfWeek, endOfWeek)
+		);
 		
 		return {
 			lastUpdated: iso(),
