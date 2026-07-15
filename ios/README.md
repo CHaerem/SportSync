@@ -1,140 +1,94 @@
-# Zenji — iOS app (WP-10 scaffold → WP-11 models → WP-12 sync → WP-13 feed → WP-14 agenda/widget → WP-15 notifications → WP-16 assistant)
+# Zenji — iOS app
 
 SwiftUI app **Zenji** + WidgetKit extension **ZenjiWidget**, generated with
-[XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`. WP-10
-was the scaffold only (a Tekst-TV shell with no data, no networking, no feed
-logic). WP-11 (see PLAN.md) added the Codable models that mirror the data
-contract. WP-12 added the sync layer — the app fetches and caches real data.
-WP-13 added `FeedCompiler`, the Swift port of the personalisation semantics.
-WP-14 is the payoff: a real, day-grouped Tekst-TV agenda + a home screen
-widget, both reading the same synced cache — no more placeholder row. WP-15
-(below) adds local push reminders on top of it all.
+[XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`. The app is a
+pure consumer of the same static JSON the web dashboard reads (published to GitHub
+Pages) — no separate backend, per the zero-infrastructure constraint in `CLAUDE.md`.
+It syncs that data into an on-disk cache, compiles a personalised, day-grouped
+Tekst-TV agenda + home-screen widget, sends calm local reminders, and hosts an
+on-device (Foundation Models) assistant that edits *what you follow* and answers
+questions over your own local data.
+
+This README is a **subsystem map** — one section per directory in `Zenji/`, plus
+targets/signing and testing. The per-work-package build narrative lives in git/PR
+history, not here.
 
 ## Generate, open, build
 
 ```sh
-brew install xcodegen   # once, if not already installed
+brew install xcodegen        # once, if not already installed
 cd ios
-xcodegen generate       # writes Zenji.xcodeproj (gitignored — never check it in)
-open Zenji.xcodeproj    # or build from the CLI:
+xcodegen generate            # writes Zenji.xcodeproj (gitignored — never check it in)
+open Zenji.xcodeproj         # or build/test from the CLI:
+
 xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator' build
 xcodebuild -scheme ZenjiWidgetExtension -destination 'generic/platform=iOS Simulator' build
-
-# WP-11: run the model decoding tests (pick any available simulator —
-# `xcrun simctl list devices available`)
 xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+  -destination 'platform=iOS Simulator,name=<a device from `xcrun simctl list devices available`>'
 ```
 
-`Zenji.xcodeproj` (and `xcuserdata/`, `DerivedData/`) are gitignored via
-`ios/.gitignore` — regenerate from `project.yml` after every pull. This
-`ios/.gitignore` is scoped to this directory; it does not touch the repo-root
-`.gitignore`, which is owned by the `docs/data/` whitelist (see `CLAUDE.md`).
+`Zenji.xcodeproj` (and `xcuserdata/`, `DerivedData/`) are gitignored via a
+directory-scoped `ios/.gitignore` — **regenerate from `project.yml` after every
+pull**. `xcodegen generate` also rewrites the three `Info.plist` files from the
+`info.properties` blocks in `project.yml` (XcodeGen owns them — edit the
+properties, never the generated plists).
 
-Re-run `xcodegen generate` whenever `project.yml` changes — it also rewrites
-`Zenji/Info.plist` and `ZenjiWidget/Info.plist` from the `info.properties`
-blocks in `project.yml` (XcodeGen owns those two files; edit the properties in
-`project.yml`, not the plists directly, or your edits will be overwritten on
-the next generate).
+## Targets, schemes & signing
 
-### Build verification performed for this PR
+`project.yml` (checked-in source of truth) declares four targets + three schemes:
 
-This worktree has Xcode **Command Line Tools** but not the full **Xcode.app**
-(no iOS SDK, no Simulator runtime — `xcodebuild` refuses to run at all:
-`"tool 'xcodebuild' requires Xcode, but active developer directory ... is a
-command line tools instance"`). The required
-`xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator' build`
-could therefore not be executed in this environment. What was verified
-instead, as the closest available substitute:
+| Target | Type | Scheme | Notes |
+|---|---|---|---|
+| `Zenji` | application | `Zenji` | The Simulator app; embeds `ZenjiWidgetExtension`. Sources: the whole `Zenji/` tree. |
+| `ZenjiWidgetExtension` | app-extension | `ZenjiWidgetExtension` | The widget. Compiles a deliberate subset of `Zenji/` (see [Widget](#widget)). |
+| `ZenjiTests` | unit-test bundle | (runs under `Zenji`) | Hostless logic bundle — see [Testing](#testing). |
+| `ZenjiDeviceDev` | application | `ZenjiDeviceDev` | Device build under a **free** Apple team — see below. |
 
-- `xcodegen generate` succeeds and produces `Zenji.xcodeproj` with no errors.
-- `plutil -lint Zenji.xcodeproj/project.pbxproj` → **OK** (well-formed project file).
-- Both schemes exist as expected: `Zenji` (app, embeds the widget extension
-  via an "Embed Foundation Extensions" build phase) and `ZenjiWidgetExtension`.
-- Generated build settings inspected directly in the `.pbxproj`: correct
-  bundle IDs (`app.zenji.ios` / `app.zenji.ios.widget`), `IPHONEOS_DEPLOYMENT_TARGET
-  = 26.0` on every target, and `CODE_SIGNING_ALLOWED = NO` /
-  `CODE_SIGNING_REQUIRED = NO` so a Simulator build needs no developer account.
-- Every Swift file parses cleanly under `swiftc -parse` (syntax-only; this
-  machine has no iOS SDK to type-check SwiftUI/WidgetKit APIs against, so this
-  only rules out gross syntax errors, not full compilation).
-
-**Action required on a machine with full Xcode installed:** run the two
-`xcodebuild` commands above and confirm they exit 0. Nothing here should stop
-that from working, but it has not been proven end-to-end.
-
-**Update (WP-12):** this later PR's worktree *did* have full Xcode 26.6 + the
-iOS 26.5 Simulator runtime installed, so the above was finally proven
-end-to-end rather than by substitute: `xcodebuild -scheme Zenji -destination
-'generic/platform=iOS Simulator' build` and `xcodebuild -scheme
-ZenjiWidgetExtension -destination 'generic/platform=iOS Simulator' build`
-both exit 0, and `xcodebuild test -project Zenji.xcodeproj -scheme Zenji
--destination 'platform=iOS Simulator,name=iPhone 17 Pro' clean test`
-**passes all 37 tests** (the 11 from WP-11 + 26 new WP-12 sync tests — see
-"Sync layer (WP-12)" below).
-
-**Update (WP-15):** same Xcode 26.6 / iOS 26.5 Simulator worktree. Both
-`xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator' build`
-and `xcodebuild -scheme ZenjiWidgetExtension -destination 'generic/platform=iOS
-Simulator' build` exit 0, and `xcodebuild test -project Zenji.xcodeproj
--scheme Zenji -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
-**passes all 69 tests** (the 49 WP-10/11/12/13 baseline + 20 new: 17
-`NotificationPlannerTests` + 3 `DataStoreTests` covering `loadInterests()` —
-see "Notifications (WP-15)" below). `npm test` (369 tests, 29 files) is
-unaffected — this package touches only `ios/`.
-
-**Update (WP-14):** this worktree (rebased onto WP-15, which landed in
-parallel) also had full Xcode 26.6 + the iOS 26.5 Simulator runtime, so this
-PR's own additions were proven fully end-to-end, never by substitute:
-
-- `xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator'
-  build` and `xcodebuild -scheme ZenjiWidgetExtension -destination
-  'generic/platform=iOS Simulator' build` both exit 0.
-- `xcodebuild test -project Zenji.xcodeproj -scheme Zenji -destination
-  'platform=iOS Simulator,name=iPhone 17 Pro'` **passes all 102 tests** — the
-  49 WP-10/11/12/13 baseline, 20 from WP-15 (`NotificationPlannerTests` + 3
-  `DataStoreTests`), plus 33 new from this package (`AgendaFormatTests`,
-  `AgendaViewModelTests`, `WidgetTimelineBuilderTests`).
-- Booted `iPhone 17 Pro` (`xcrun simctl boot`), installed and launched the
-  real app (`xcrun simctl install` / `launch`), and screenshotted it
-  (`xcrun simctl io … screenshot`) against the **real, live** `zenji.app`
-  data — see `docs/agenda-screenshot.png` and "Visual proof (WP-14)" below.
-- The widget target builds and its `WidgetTimelineBuilder` is unit-tested,
-  but actually adding the widget to a Simulator home screen has no scriptable
-  `simctl` path (it needs interactive long-press-to-add UI, or a dedicated
-  XCUITest target this project doesn't have) — **not captured as a
-  screenshot**; noted rather than faked, per the WP-14 brief's own
-  "ellers noter" ("otherwise, note it") allowance.
-
-### Deployment target: iOS 26.0
-
-Chosen as "iOS 26 if the SDK on this machine supports it, else newest
-available" (per the WP-10 brief). This machine has no Xcode.app installed, so
-no iOS SDK version could be read directly with `xcodebuild -showsdks`.
-`softwareupdate --list` does show **"Command Line Tools for Xcode 26.6"**
-as the counterpart package for this OS (macOS SDKs present locally go up to
-`MacOSX26.5.sdk`), and the task's current date (July 2026) places the iOS 26
-generation as current — so iOS 26.0 was used as the deployment target. Revisit
-this if/when full Xcode is installed and `xcodebuild -showsdks` can confirm
-the actual bundled iOS SDK version.
+- **Bundle ids:** `app.zenji.ios` (app + `ZenjiDeviceDev`), `.widget`, `.tests`.
+  **Deployment target:** iOS 26.0 everywhere; Swift 6.0.
+- **Deep-link scheme:** `zenji://` (`CFBundleURLTypes`) — the custom scheme the
+  profile-share QR / link opens, so no Associated-Domains entitlement (and no paid
+  account) is needed.
 
 ### Signing
 
-`CODE_SIGN_STYLE: Automatic` with `CODE_SIGNING_ALLOWED/REQUIRED: NO` and no
-`DEVELOPMENT_TEAM` — the project builds and runs on the Simulator with no
-Apple Developer account. Each target still carries a `CODE_SIGN_ENTITLEMENTS`
-pointing at its App Group entitlements file (see below), so switching on real
-signing for WP-17 is a matter of flipping those two build settings back on
-and filling in a team ID — the entitlements are already wired.
+The base config uses `CODE_SIGN_STYLE: Automatic` with
+`CODE_SIGNING_ALLOWED/REQUIRED: NO` and no `DEVELOPMENT_TEAM` — the app builds and
+runs on the **Simulator with no Apple Developer account**. Each target still points
+`CODE_SIGN_ENTITLEMENTS` at its App Group entitlements file (`group.app.zenji`, in
+`Zenji.entitlements` + `ZenjiWidget.entitlements` — the shared cache container the
+app writes and the widget reads, fallback under [Sync](#sync)), so enabling real
+signing for TestFlight (WP-17) is just flipping those two settings back on and
+filling in a team ID.
 
-### App Group
+### `ZenjiDeviceDev` — running on a physical iPhone with a free account
 
-`group.app.zenji`, declared in both `Zenji/Zenji.entitlements` and
-`ZenjiWidget/ZenjiWidget.entitlements`. WP-12's `CacheStore` uses this as its
-preferred cache location (falling back to Application Support when the
-container isn't available — see "Sync layer (WP-12)" below); WP-14's widget
-extension reads the same synced cache through it, no further
-project-structure change needed.
+A device-flavoured build of the same app sources (so it includes the on-device
+Foundation Models code, which only *runs* on real hardware), handling two
+free-team constraints without touching the Simulator setup: **no App Groups**
+(empty entitlements file → `CacheStore`/`ProfileStore` use Application Support) and
+**no embedded widget** (a prior attempt failed *"Embedded binary is not signed with
+the same certificate as the parent app"* — so no `ZenjiWidgetExtension` dependency;
+the widget stays Simulator-only until WP-17). It reuses bundle id `app.zenji.ios`
+(the free team's existing provisioning profile) with a distinct `PRODUCT_NAME` so
+its product never collides with `Zenji.app` (home-screen name stays "Zenji").
+
+```sh
+cd ios && xcodegen generate
+xcodebuild -project Zenji.xcodeproj -scheme ZenjiDeviceDev \
+  -destination 'platform=iOS,id=<device-id from `xcrun devicectl list devices`>' \
+  -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic \
+  DEVELOPMENT_TEAM=<team> build
+APP=~/Library/Developer/Xcode/DerivedData/Zenji-*/Build/Products/Debug-iphoneos/ZenjiDeviceDev.app
+xcrun devicectl device install app --device <hardware-udid> "$APP"
+xcrun devicectl device process launch --device <hardware-udid> app.zenji.ios
+```
+
+**One-time on-device trust step:** iOS blocks the first launch of a free-team build
+until the developer certificate is trusted manually (*Innstillinger → Generelt →
+VPN og enhetsadministrering → Utviklerapp → Stol på …* — can't be scripted). After
+that the app launches normally and the Foundation Models flows can be verified by
+hand.
 
 ## Directory layout
 
@@ -143,1304 +97,399 @@ ios/
 ├── project.yml                    XcodeGen spec — source of truth, checked in
 ├── .gitignore                     scoped to ios/: *.xcodeproj, xcuserdata, DerivedData
 ├── Zenji/                         app target
-│   ├── ZenjiApp.swift             @main entry point (untouched since WP-12 — see WP-14/15 notes)
-│   ├── ContentView.swift          Tekst-TV header (WP-14: ZENJI · dato · ticking clock) + AgendaView
-│   ├── DesignTokens.swift         shared design tokens (also used by ZenjiWidget/ZenjiTests)
-│   ├── Models/                    WP-11: Codable models mirroring the data contract
-│   │   ├── ZenjiJSON.swift        shared JSONDecoder factory (dual ISO 8601 dates)
-│   │   ├── Event.swift            events.schema.json, field-for-field
-│   │   ├── StreamingChannel.swift
-│   │   ├── Participant.swift
-│   │   ├── NorwegianPlayer.swift
-│   │   ├── FeaturedGroup.swift
-│   │   ├── Entity.swift           docs/data/entities.json (WP-05)
-│   │   ├── Manifest.swift         docs/data/manifest.json (WP-03)
-│   │   └── TrackedConfig.swift    scripts/config/tracked.json
-│   ├── Sync/                      WP-12: manifest-diff sync + cache + BGAppRefreshTask
-│   │   ├── SyncClient.swift       polls manifest.json, fetches only changed files
-│   │   ├── SyncResult.swift       SyncResult / SyncError — the sync() outcome
-│   │   ├── CacheStore.swift       App Group cache, auto-fallback to Application Support
-│   │   ├── SyncState.swift        persisted etag + reconciled per-file manifest snapshot
-│   │   ├── Checksum.swift         Data.sha256Hex (CryptoKit) — verifies downloads
-│   │   ├── DataStore.swift        read-only facade: loadEvents()/…/loadInterests() (WP-15)
-│   │   ├── BackgroundRefreshScheduling.swift   pure "when's the next refresh" function
-│   │   └── BackgroundRefreshScheduler.swift    thin BGTaskScheduler wrapper (untested)
-│   ├── Feed/                      WP-13: FeedCompiler + WP-14's shared formatting helpers
-│   │   ├── FeedEvent.swift        the small input the five predicates read
-│   │   ├── Interests.swift        Swift mirror of scripts/config/interests.json
-│   │   ├── TextMatch.swift        server normalize/containsName port
-│   │   ├── FeedCompiler.swift     the five predicates + compile() facade
-│   │   ├── AgendaFormat.swift     WP-14: när/hva/hvor + day-label + series-summary formatting
-│   │   └── EventBridge.swift      WP-14: [Event] → [FeedEvent] bridge + id lookup
-│   ├── Agenda/                    WP-14: the real agenda (app-only, not in the widget target)
-│   │   ├── AgendaModels.swift     AgendaSection/AgendaItem/AgendaEventRow/AgendaSeriesRow
-│   │   ├── AgendaViewModel.swift  @MainActor view model; buildSections() is the pure core
-│   │   ├── AgendaView.swift       day-sectioned List + EventRowView/SeriesRowView
-│   │   ├── EventDetailSheet.swift venue/summary/streaming links/AI provenance
-│   │   └── SeriesDetailSheet.swift expanded stage-race detail
-│   ├── Widget/                    WP-14: the widget's own pure timeline logic
-│   │   └── WidgetTimelineBuilder.swift   no `import WidgetKit` — see its own header
-│   ├── Notifications/             WP-15: local push reminders for must-watch events
-│   │   ├── NotificationOperation.swift   NotificationRequest + the scheduleNew/reschedule/cancel plan
-│   │   ├── NotificationScheduling.swift  thin UNUserNotificationCenter wrapper behind a protocol
-│   │   └── NotificationPlanner.swift     the pure plan(...) diff + the impure reconcile(...)
-│   ├── Info.plist                 generated by xcodegen from project.yml properties
-│   ├── Zenji.entitlements         App Group (group.app.zenji — in active use since WP-12)
+│   ├── ZenjiApp.swift             @main entry point
+│   ├── ContentView.swift          Tekst-TV header + live line + AgendaView host + sync/notify hook
+│   ├── DesignTokens.swift         shared Tekst-TV tokens (also used by widget + tests)
+│   ├── ThemeOverride.swift        manual system/dark/light override enum (pure)
+│   ├── Interaction.swift          shared ≥44pt tap-target helpers
+│   ├── Models/                    Codable models mirroring the data contract
+│   ├── Sync/                      manifest-diff sync + cache + background refresh
+│   ├── Feed/                      FeedCompiler + agenda formatting + lens renderer
+│   ├── Agenda/                    the day-grouped agenda UI + detail sheets
+│   ├── Widget/                    the widget's pure timeline logic
+│   ├── Notifications/             local push reminders for must-watch events
+│   ├── Assistant/                 on-device (Foundation Models) assistant
+│   ├── Profile/                   local interest profile: sync, share, reset, effective-merge
+│   ├── Memory/                    personal memory (facts/episodic/behaviour) + spoiler shield
+│   ├── Onboarding/                first-run gate + starter packs + flow
+│   ├── Demo/                      DEBUG-only screenshot-harness seeds (app-only)
+│   ├── Info.plist                 generated by xcodegen
+│   ├── Zenji.entitlements         App Group (group.app.zenji)
 │   └── Assets.xcassets/
-├── ZenjiWidget/                   WidgetKit extension target
-│   ├── ZenjiWidgetBundle.swift    @main WidgetBundle entry point
-│   ├── ZenjiWidget.swift          WP-14: real TimelineProvider (WidgetTimelineBuilder + DataStore)
-│   ├── Info.plist                 generated (NSExtension → com.apple.widgetkit-extension)
-│   ├── ZenjiWidget.entitlements   App Group (shares the app's synced cache)
-│   └── Assets.xcassets/
-└── ZenjiTests/                    hostless logic-test bundle (Zenji/Models + Zenji/Sync +
-    │                              Zenji/Feed + Zenji/Agenda + Zenji/Widget + Zenji/Notifications
-    │                              sources compiled directly in — no @testable import, no TEST_HOST)
-    ├── Fixture.swift              loads the JSON fixtures below (WP-11)
-    ├── EventBuilder.swift         WP-14: builds `Event` values (via JSON) for focused agenda/widget tests
-    ├── EventFixtureBuilder.swift  WP-15: builds `Event` values (via JSON) for NotificationPlanner tests
-    ├── EventDecodingTests.swift                     (WP-11)
-    ├── SupportingModelDecodingTests.swift            (WP-11)
-    ├── ForwardCompatibilityTests.swift               (WP-11)
-    ├── MockURLProtocol.swift      URLProtocol stub injected via URLSessionConfiguration (WP-12)
-    ├── SyncTestSupport.swift      shared sync-test helpers, reuses Fixtures/* (WP-12)
-    ├── SyncClientTests.swift      304 / changed-manifest / offline / etag / corrupt-download (WP-12)
-    ├── CacheStoreTests.swift      atomic read/write, sync-state, App Group fallback (WP-12)
-    ├── DataStoreTests.swift       never-throws facade behaviour, incl. loadInterests() (WP-12/15)
-    ├── BackgroundRefreshSchedulingTests.swift        pure scheduling function (WP-12)
-    ├── FeedCompilerUnitTests.swift + FeedVectorTests.swift    predicates + golden vectors (WP-13)
-    ├── AgendaFormatTests.swift     när/hva/hvor + day-label + series-summary rules (WP-14)
-    ├── AgendaViewModelTests.swift  buildSections(): hand-built + real-fixture cases (WP-14)
-    ├── WidgetTimelineBuilderTests.swift   ticks/nextHighlight/buildEntries (WP-14)
-    ├── RecordingNotificationScheduler.swift   recording NotificationScheduling double (WP-15)
-    ├── NotificationPlannerTests.swift          plan()/reconcile() acceptance tests (WP-15)
-    ├── Info.plist                 generated by xcodegen
-    └── Fixtures/                  FRESH snapshots, see "Model fixtures" below
-        ├── events.json
-        ├── entities.json
-        ├── interests.json         WP-14/15
-        ├── manifest.json
-        └── tracked.json
+├── ZenjiWidget/                   WidgetKit extension: ZenjiWidgetBundle + ZenjiWidget
+│   │                              (TimelineProvider), Info.plist, entitlements (App Group)
+├── ZenjiDeviceDev/                free-account device build: Info.plist + empty entitlements
+└── ZenjiTests/                    hostless logic-test bundle (*Tests.swift + doubles +
+                                   Fixtures/ frozen snapshots) — see Testing
 ```
 
 ## Design tokens
 
-`Zenji/DesignTokens.swift` — Tekst-TV (teletext) identity, mood carried over
-from `docs/css/base.css` (mono, amber-led, near-black dark page with a
-warm-paper light sibling):
+`Zenji/DesignTokens.swift` — the Tekst-TV (teletext) identity carried over from
+`docs/css/base.css` (mono, amber-led, near-black dark with a warm-paper light
+sibling), kept 1:1 with the `DESIGN.md` token table.
 
 | Token | Dark (default) | Light ("warm paper") |
 |---|---|---|
 | Background | `#0A0A0C` | `#F5F1E6` |
-| Foreground | `#E8E6E0` | `#1A1804` |
+| Foreground | `#E8E6E0` | `#1D1B15` |
 | Accent (amber) | `#FFB000` | `#8F6400` |
-| Type | SF Mono / system monospaced, throughout | same |
 
-`ZenjiTokens.background` / `.foreground` / `.accent` are dynamic `Color`
-values that follow the system colour scheme (the SwiftUI analogue of
-`prefers-color-scheme` in the web CSS). `Font.zenjiMono(size:weight:)` gives
-the one monospaced typeface used everywhere.
+Plus `surface` / `muted` / `hairline` / `live`. `ZenjiTokens.background` /
+`.foreground` / `.accent` are dynamic `Color`s following the system colour scheme;
+`Font.zenjiMono(size:weight:)` is the one monospaced typeface used everywhere.
 
-These are the literal WP-10 spec values, not a byte-for-byte copy of the web
-tokens (which use `#ffb454` for amber) — cross-platform token unification is
-future work, out of scope for this package.
+**`ThemeOverride.swift`** — a `String`-backed enum (`system`/`dark`/`light`) with a
+tap-cycle, a `colorScheme: ColorScheme?` fed to `.preferredColorScheme`, a
+quantized header glyph (`◐`/`●`/`○`) and an `@AppStorage` key. Applied once at the
+`ContentView` window root, so it cascades to every `.sheet` and survives a fresh
+launch. The widget does **not** compile it (a WidgetKit extension follows the OS's
+own per-surface appearance). **`Interaction.swift`** gives every interactive glyph
+a HIG ≥44×44pt hit area (`.zenjiTapTarget()` / `ZenjiActionButtonStyle`; owner
+finding: "veldig små knapper").
+Screenshots: `docs/design-v2/theme-toggle-*.png`, `docs/design-v2/tap-targets-*.png`.
 
-## Models (WP-11)
+## Models
 
-`Zenji/Models/` is the Swift mirror of the data contract described in
-`scripts/config/events.schema.json` (events), `docs/data/entities.json`
-(WP-05), `docs/data/manifest.json` (WP-03), and `scripts/config/tracked.json`.
-No networking or feed logic lives here — this package only turns the raw
-JSON bytes into typed Swift values; `Zenji/Sync/` (WP-12, below) is what
-actually fetches them, `Zenji/Feed/` (WP-13) is what turns them into a feed.
+`Zenji/Models/` is the Swift mirror of the data contract — it turns raw JSON into
+typed values, nothing more (no networking, no feed logic).
 
-- **`ZenjiJSON.decoder`** — the one shared `JSONDecoder` every model decodes
-  through. Its only job beyond the default is dates: the pipeline emits ISO
-  8601 timestamps both with fractional seconds
-  (`"2026-07-16T04:00:00.000Z"`, from JS `Date#toISOString()`) and without
-  (`"2026-08-02T15:00:00Z"`, hand-written in agent output) — both appear
-  side-by-side in real `events.json`, so the decoder tries the fractional
-  formatter first and falls back to the whole-second one.
-- **Forward compatibility** — unknown/new JSON keys are ignored automatically
-  by Swift's Codable synthesis (a decoder only looks up the keys its
-  `CodingKeys` enum lists); no extra code needed. What Swift does NOT do for
-  free is apply a *default* when a key the pipeline always writes (but the
-  schema doesn't strictly require) is missing — `Event`, `Entity` and
-  `TrackedConfig.Entry` each have a hand-written `init(from:)` using
-  `decodeIfPresent(...) ?? default` for those fields (arrays default to
-  `[]`, booleans to `false`); `encode(to:)` is left to the compiler in all
-  three cases.
-- **Enum-like string fields** (`confidence`, `status`, `verificationStatus`,
-  `source`, entity `type`, tracked-entry `priority`) are kept as plain
-  `String`, not closed Swift enums, even though the JSON Schema declares some
-  of them as enums — a new value from the server should decode gracefully on
-  an older client, not crash the whole event.
-- **`teeTime` vs. `teeTimeUTC`** (on `NorwegianPlayer` and
-  `FeaturedGroup.Groupmate`) look similar but aren't: `teeTime` is a locale-
-  formatted *display* string (`"14:30"`, built with
-  `Date#toLocaleTimeString("no-NO", …)` in `scripts/fetch/golf.js`), so it
-  stays `String`; `teeTimeUTC` is always a real ISO 8601 string, so it
-  decodes as `Date` through the same shared strategy as every other date.
+- `ZenjiJSON.swift` — the one shared `JSONDecoder`; its only job beyond the
+  default is dates: real `events.json` carries ISO 8601 both with fractional
+  seconds (JS `toISOString()`) and without (hand-written agent output), so the
+  decoder tries the fractional formatter first and falls back to whole-second.
+- `Event.swift` — mirrors `events.schema.json` field-for-field (with
+  `StreamingChannel`/`Participant`/`NorwegianPlayer`/`FeaturedGroup`);
+  `Entity.swift` (`entities.json`), `Manifest.swift` (`manifest.json`),
+  `TrackedConfig.swift` (`tracked.json`).
+
+**Forward compatibility:** unknown JSON keys are ignored automatically. Where the
+pipeline always writes a field the schema doesn't strictly require,
+`Event`/`Entity`/`TrackedConfig.Entry` use hand-written `init(from:)` with
+`decodeIfPresent(...) ?? default`. Enum-like string fields (`confidence`, `status`,
+`source`, entity `type`, …) stay plain `String`, not closed Swift enums, so a new
+server value decodes gracefully on an older client rather than crashing the event.
 
 ### Model fixtures
 
-`ZenjiTests/Fixtures/` holds **checked-in, deliberately-frozen snapshots** of
-the real `docs/data/events.json`, `docs/data/entities.json`,
-`docs/data/manifest.json`, `scripts/config/tracked.json`, and
-`docs/data/interests.json` (the last verified byte-identical to the live
-site's copy via sha256 at the time it was added), taken fresh when this
-package was written. They are the Swift side's fasit for the contract —
-update them by deliberately re-copying the live files and committing the
-diff (e.g. when the schema changes in a later WP), never by an automated
-job. `ZenjiTests/` itself is a hostless unit-test bundle (no `TEST_HOST`,
-no `@testable import` — it compiles `Zenji/Models` directly, the same trick
-`ZenjiWidgetExtension` already uses for `DesignTokens.swift`), so it runs
-with:
+`ZenjiTests/Fixtures/` holds **checked-in, deliberately-frozen snapshots** of the
+real `events` / `entities` / `manifest` / `tracked` / `interests` JSON (each
+verified byte-identical to the live site via sha256 when added). They are the
+Swift side's fasit for the contract — update them by deliberately re-copying the
+live files and committing the diff, **never** by an automated job.
+
+## Sync
+
+`Zenji/Sync/` is the app's **only** networking code — everything else reads from the
+on-disk cache it maintains. **The manifest-diff flow** (`SyncClient.sync() async ->
+SyncResult`):
+
+1. **GET `manifest.json`** from `baseURL` (default `https://zenji.app/data/`,
+   injectable) with `If-None-Match` set to the persisted ETag.
+2. **304 → `.upToDate`**, no further requests — the common case after the first sync.
+3. **200 → decode** with `Manifest`, diff its per-file `sha256` against
+   `SyncState.appliedFiles` (a **reconciled** snapshot of what the cache has actually
+   applied, *not* a copy of the last server manifest), and fetch only files that
+   changed **and** are in `filesOfInterest` (`events`/`entities`/`tracked`/
+   `interests`.json — the ~24 other manifest entries are irrelevant here).
+4. Each fetched file is **verified against the manifest's declared sha256**
+   (`Checksum.swift`, CryptoKit) before it is trusted, then written **atomically**.
+   A mismatch or network hiccup silently discards that one file, leaves the old copy
+   alone, and carries its **old** manifest entry forward — so a flaky file is retried
+   next sync, never wrongly "already applied" nor failing the whole sync.
+5. Persists the new ETag + reconciled snapshot + `lastSync`, and returns
+   `.upToDate`, `.changedFiles([String])` (exactly the files written this run), or
+   `.failure(SyncError)` (the manifest fetch failed — cache + state untouched).
+
+**`CacheStore`** prefers the `group.app.zenji` App Group container, falling back to
+Application Support when it's unavailable (a free-account device build). Since the
+Simulator resolves the container even for an unsigned build, `CacheStoreTests`
+proves the fallback via a `FileManager` subclass returning `nil`. **`DataStore`** is
+the read-only facade: `loadEvents()`/`loadEntities()`/`loadTracked()`/
+`loadInterests()` decode from the cache and **never throw** (a missing/corrupt file
+is an empty list or `nil`); `DataStore.lastSync` is the "have we ever synced" flag
+(`nil` = never) the UI and `NotificationPlanner` read for staleness.
+
+**Background refresh** is split pure/impure:
+`BackgroundRefreshScheduling.earliestBeginDate(...)` is a *pure*, unit-tested
+function ("when should the next refresh run" — never sooner than the research
+agent's 4-hourly cadence); `BackgroundRefreshScheduler` is the thin
+`BGTaskScheduler` wrapper (`register(...)` from `ZenjiApp.init()`,
+`scheduleNextRefresh(...)`). Requires `app.zenji.refresh` in
+`BGTaskSchedulerPermittedIdentifiers` and `UIBackgroundModes: [fetch]`
+(`project.yml`).
+
+## Feed
+
+`Zenji/Feed/` is the Swift port of the personalisation semantics — which events
+reach the feed, which get the bell/accent, how the window behaves, how stage races
+collapse. Its one hard acceptance criterion: it reproduces **every** golden
+feed-vector (`tests/fixtures/feed-vectors/`, referenced directly from `project.yml`,
+never copied) **bit-for-bit**, including the four pinned server/client divergences
+(`DIVERGENCES.md`) — reproduced, never "fixed".
+
+**There is no single "special?" predicate — there are five,** each ported faithful
+to the side that owns it (server and client intentionally differ):
+
+| Predicate | Question | Ported from |
+|---|---|---|
+| `isRelevant` | In the feed at all? | server `build-events.js` (+ 14-day cutoff on `endTime ?? time`; entity match is **not** sport-scoped) |
+| `mustWatch` | Reminder bell 🔔? | server `helpers.js` `mustWatchEntity` (**sport-scoped**, keyed only off `interests.json` notify-entities, word-boundary + diacritic-folded) |
+| `isMustSee` | Quiet visual accent? | client `dashboard.js` `isMustSee` (naive lowercase-substring match — the pinned `"Brooklyn".contains("lyn")` behaviour is kept) |
+| `isEventInWindow` | Overlaps the agenda window? | server & client, byte-identical (`s < end && e >= start`) |
+| `collapseSeries` | How do stage races fold? | client `dashboard.js` (titles matching `/\betappe\b|\bstage\s*\d/i`; **4+** fold into one row) |
+
+- `TextMatch.swift` — the server matchers as pure functions: `normalize` (NFD →
+  strip `\p{M}` → lowercase, so "Barça" ≡ "Barca") and `containsName` (word-boundary,
+  accent-insensitive). The accent's *naive* substring match deliberately does **not**
+  route through it (its lack of folding is pinned).
+- `FeedEvent.swift` / `Interests.swift` — the small pure input the predicates read
+  (`time` is `Date?` so the vectors' pinned `"time": null` decodes; `init(from:)`
+  bridges the real cached `[Event]`) + the mirror of the `interests.json` fields.
+- `FeedCompiler.swift` — the five predicates + `compile(events:interests:now:)`
+  (relevance filter → bell/accent → series collapse → Europe/Oslo day grouping) +
+  `whyShown`. `AgendaFormat.swift` / `EventBridge.swift` (formatting + the
+  `[Event] → [FeedEvent]` bridge) live in `Feed/` too, so the widget picks them up.
+- `LensRenderer.swift` — "rad = event × deltakelse × linse": with a
+  `.throughNorwegians` / `.throughAthletes` lens active a golf tournament renders
+  as "Reitan teer av 14:32" rather than "The Open" — a pure rendering layer, the
+  predicates and golden vectors untouched.
+  Screenshots: `docs/design-v2/lens-*.png`.
+
+## Agenda
+
+`Zenji/Agenda/` is the real, day-grouped Tekst-TV agenda — a pure consumer of Sync's
+cache and Feed's `FeedCompiler`. **`AgendaViewModel`** is `@MainActor @Observable`,
+but its logic is a `nonisolated static` pure function
+`buildSections(events:interests:now:) -> [AgendaSection]` (the codebase's usual
+pure-core/thin-wrapper split). The chain is `DataStore → EventBridge →
+FeedCompiler.compile() → AgendaFormat → day sections`. `AgendaFormat` produces the
+row text — `timeLabel` ("HH:mm", or a compact "16.–19. juli" WINDOW for a multi-day
+event, never a misleading bare start time), `title`, `channelLabel` (first platform
+or an honest "–"), `dayLabel` ("I DAG"/"I MORGEN"/"TIRSDAG 14. JULI") and
+`seriesSummary`. `buildSections` drops every day before today (I DAG always first,
+no passed day; `FeedCompiler` re-homes a still-running multi-day event onto today);
+`liveRows` computes the events ongoing at `now` for the live line.
+
+**`AgendaView`** is a `List` of day `Section`s. Must-see gets the gentlest
+emphasis — a 6pt amber dot, never a card; must-watch shows no inline glyph (the
+varsel state is in the detail sheet); a quiet mono `ⓘ` trails only on
+`ai-research` rows. Pull-to-refresh re-syncs + recompiles but does **not** run the
+notification reconcile (see [Notifications](#notifications)). Tapping a row opens
+`EventDetailSheet` (venue, summary, streaming as real `Link`s, the AI-provenance
+block only on `ai-research` rows, a quiet varsel read-out, the spoiler-masked
+`RESULTAT`, and the assistant [context actions](#assistant)) or `SeriesDetailSheet`
+(the expanded stage race: every Norwegian rider de-duplicated, the next stage's
+summary, every stage as its own line).
+
+`ContentView` hosts `AgendaView` under a header ("ZENJI · dato · en stille tikkende
+klokke": a `P100` page index, the amber tabular clock, the `»_` assistant glyph, the
+theme glyph) + a quiet `▌ LIVE …` line (invisible when nothing is on).
+Screenshots: `docs/design-v2/after-{dark,light}.png`.
+
+## Widget
+
+`Zenji/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
+`import WidgetKit` — deliberate): given `[Event]` + `Interests` + "now" it returns
+one `Entry` per full remaining Europe/Oslo hour, each "the next must-see event as of
+that moment, else the nearest relevant upcoming one, else an honest
+'Ingenting i dag'". `ZenjiWidget.swift` (the `TimelineProvider`) is the thin wrapper
+reading `DataStore` (`systemSmall` + `systemMedium`, same tokens as the app). By
+construction there is **no network code in the widget target**: `project.yml` gives
+it `Models`/`Feed`/`DesignTokens`/`WidgetTimelineBuilder` and only the **read** half
+of `Sync` — never `SyncClient`/`Checksum` nor the app-only subsystems.
+
+## Notifications
+
+`Zenji/Notifications/` schedules local push reminders for must-watch events —
+**a wrong time in a push is the most expensive trust violation the app can commit**,
+so reminders are few, correct, and calm. **`NotificationPlanner.plan(...)`** is the
+pure core: two event snapshots in, a diff of `[NotificationOperation]` out (no
+`UNUserNotificationCenter`, no async, no I/O). Keyed **exclusively** on the WP-02
+stable event id: same id + a different
+computed reminder = `.reschedule`; an id that no longer resolves to a plannable
+reminder = `.cancel`; a never-seen plannable id = `.scheduleNew`; **unchanged**
+content = **no operation** (reconciling never re-touches a correct reminder).
+
+- **Who:** only events `FeedCompiler.mustWatch` rings the bell for. Fire date =
+  `event.time` minus `interests.notify.leadMinutes` (default 30 — the **same** lead
+  `scripts/build-ics.js`'s VALARM uses, so calendar + push never disagree), clamped
+  to "now" if already passed.
+- **Quality gates** (each a hard `nil`): (a) `confidence == "low"` **and**
+  `verificationStatus != "confirmed"` is never planned; (b) if `lastSync` is >6h old
+  (or `nil`), the body hedges ("Etter planen: …") instead of stating the time as
+  settled fact; (c) `event.time <= now` is never planned.
+- **Text** (Norwegian, calm): body `"Kl. HH:mm · kanal"` (Europe/Oslo), honest
+  `"Kanal ukjent"` when streaming is empty — never invented, no emoji.
+
+**`NotificationScheduling`** wraps `UNUserNotificationCenter` behind a protocol
+(tests substitute `RecordingNotificationScheduler`); permission is requested
+**lazily** in `reconcile(...)`, only when the plan wants to schedule — never at app
+start. The sync hook `ContentView.refresh()` snapshots `loadEvents()` *before*
+`sync()`, then calls `reconcile(...)` with the before/after snapshots — **only** on
+the app-start `.task`, not on pull-to-refresh.
+
+## Assistant
+
+`Zenji/Assistant/` is a conversational way to edit *what the app follows* and ask
+questions over your own local data. The principle is **"assistenten ER
+grensesnittet"** — a fixed, quiet command line pinned to the bottom of the agenda
+(`CommandLineView`: `»_` sigil · text field · blinking cursor), not a room behind a
+button; results fade in as a flat **ark** (`AssistantPanel`).
+
+**The model is behind the `InterestAssistant` protocol** — the vendor surface is one file:
+
+- **`FoundationModelsInterestAssistant`** — the real one (Apple Intelligence via
+  **FoundationModels**, iOS 26+), the **only** file that `import FoundationModels`:
+  it defines the `@Generable` schema + tools (`searchEntities`/`searchEvents`/
+  `getProfile`/`saveMemory`) and runs one `LanguageModelSession` (`.unavailable` on
+  Simulator/CI).
+- **`MockInterestAssistant`** / **`MockAnswerer`** — deterministic Norwegian keyword
+  parsers used by every test + previews. **Not** a silent fallback: with Apple
+  Intelligence off the app shows an honest "unavailable" banner, never degrading to
+  keywords.
+
+**Intent routing:** `interpret(...)` returns an `AssistantTurn` =
+`.mutations([ProposedMutation])` (the edit-what-you-follow diff flow) OR
+`.answer(AssistantAnswer)`. Questions are answered over **LOCAL data only** — no
+cloud: `FeedQuery` reduces the relevance-filtered agenda to a queryable value.
+
+**Entity grounding is the hard rule.** A proposal is applied **only** if its
+`entityId` resolves in the WP-05 entity index; `MutationGrounder.ground(...)`
+re-checks every id and **rejects** a hallucinated / free-text entity with up to
+three "mente du …?" suggestions. `EntityIndex.resolve` (a ranked fuzzy resolver —
+diacritic/case-folded, year-suffix-agnostic, alias/initials-aware, edit-distance ≤ 2)
+backs it: a confident hit is served straight through, a partial match stays a
+**tappable** suggestion that re-grounds the original proposal (intent survives —
+never a dead button).
+
+`Lens` (on the mutations + persisted `InterestRule`) gives *how* a follow is seen
+a home — `.sportAsSuch` / `.throughNorwegians` / `.throughAthletes([LensAthlete])`.
+**Always-explain:** when an utterance produces no confirmable change,
+`AssistantExplanation.make(…)` builds an honest `understood` + `reason` note (no
+bare "fant ingen endringer"). Every utterance not turned into a mutation becomes
+durable, local, private raw material in **`MisunderstoodLog`** — ONE capped JSON
+file in Application Support, **no network code**, surfaced as a discreet "DET JEG
+IKKE FORSTO (N)" disclosure with a "Del rapport" `ShareLink` over an **anonymised**
+export. **Context actions** (`EventDetailSheet`): "Følg <entitet>" (a pre-filled
+add through the same grounded flow) and "Hvorfor vises denne?"
+(`FeedCompiler.whyShown`).
+
+Screenshots: `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`,
+driven by a DEBUG-only `ZENJI_DEMO=…` launch harness (never compiled into release).
+
+## Profile
+
+`Zenji/Profile/` is the on-device, human-owned interest profile the assistant edits,
+plus its sync/share/reset/effective-merge machinery. **Our server never sees this**
+— it is device-local, syncing only through the user's own iCloud or a QR bridge (P360).
+
+- **`InterestProfile.swift` / `ProfileStore.swift`** — a flat list of
+  `InterestRule`s (each with an always-filled Norwegian `reason`, the transparency
+  contract `tracked.json` uses server-side; `applying(_:)` is the pure
+  upsert/remove diff), persisted as JSON in Application Support (**no** App Group →
+  works on the free-account device build). Assistant + `AgendaViewModel` share ONE.
+- **`ProfileSyncModel.swift` / `ProfileMerge.swift`** — the mergeable transport
+  shape + **the heart of sync**: a pure, deterministic, order-independent CRDT-like
+  `merge(local, remote) → (state, push set)`, testable with **no iCloud account**
+  (rules/facts/notes/counters merge LWW + tombstone).
+- **`CloudKitProfileSync.swift` / `ProfileSyncCoordinator.swift`** — the real
+  backend syncs to the **user's own private CloudKit database**, never our server;
+  the coordinator does one offline-first round (pull → merge → push only what the
+  remote is behind on). `ProfileSyncBackend.swift` is the protocol tests substitute.
+- **`ProfileShareCodec.swift` / `ProfileQRCode.swift` / `ProfileSharePanel.swift`**
+  — the valuable-NOW half needing **nothing but two phones**: a profile is a
+  compressed base64url payload in a QR code + a `zenji://` link, imported via the
+  same merge. Screenshots: `docs/design-v2/profile-share-{dark,light}.png`.
+- **`EffectiveInterests.swift`** — makes "Bekreft → agendaen re-kompileres med det
+  samme" real: `merge` folds the local `InterestProfile` into the SYNCED,
+  server-owned `Interests` the agenda compiles from, so a confirmed mutation is live
+  at once. **`ResetService.swift`** — "nullstill profil + re-onboard" (reset without
+  reinstalling): one pure function clears local state through the same stores.
+  Screenshots: `docs/design-v2/reset-{entry,confirm,onboarding}-{dark,light}.png`.
+
+## Memory
+
+`Zenji/Memory/` makes the assistant an editor who **remembers you** between
+sessions (Foundation Models is stateless, so "memory" = persisted data + smart
+insertion into the session). **Personal context** (how you relate to what you
+follow) is kept device-local, apart from server-produced world context — the server
+never gathers it. All three layers ride WP-19's `ProfileSyncState`, so memory syncs
+through the user's own iCloud / QR bridge for free:
+
+- **Structured** (`MemoryFact`, `MemoryStore`) — per entity/sport `knowledgeLevel`,
+  `spoilerPolicy`, `notifyWindow`, `preference`, `note`; editable/deletable ⇒ LWW +
+  tombstone.
+- **Episodic** (`MemoryDistiller`) — after a conversation an FM distils ONE compact
+  `@Generable` note (never a raw transcript), append-only; `MockMemoryDistiller` is
+  the CI stand-in. **Behaviour** (`Counter`) — opens/expansions/dismissals per
+  entity/sport; pure, no AI, grow-only.
+
+**Retrieval is pure Swift** (no AI): `MemoryDigest.build(...)` selects the
+facts/notes relevant to what's in front of the user, ages out expired notes, floats
+spoiler policies to the front, caps at ~500 tokens, and is injected into the
+`LanguageModelSession` instructions + the `saveMemory` tool. **Spoiler protection**
+(`SpoilerShield`, a presentation layer impossible server-side) derives
+spoiler-scoped sports/entities from `spoilerPolicy` facts and exposes a per-row
+`spoilerSafe` flag — the detail sheet's `RESULTAT` is masked behind a calm "Skjult —
+spoilervern på". **"Hva jeg vet om deg"** (`WhatIKnowView`) is the trust surface +
+plain-language GDPR answer: everything remembered listed, facts editable, all
+deletable, plus **"Glem alt"** (wipes memory, keeps the follow-profile).
+Screenshots: `docs/design-v2/memory-{page,spoiler}-{dark,light}.png`.
+
+## Onboarding
+
+`Zenji/Onboarding/` is the calm first-run experience (dossier P310: "onboarding er
+en samtale, ikke et skjema") — four quiet steps in the Tekst-TV language, no hero
+art, no carousel, no emoji. `OnboardingGate.swift` is the pure, FM-free, I/O-free
+decision layer ("should we show it / where does it start"); `StarterPacks.swift` is
+the quick-picks fallback — Norwegian "startpakker" a first-timer taps to build a
+profile **without** Apple Intelligence (each carrying its own entity data, the path
+that must give full value on a cold start); `OnboardingView.swift` is the flow.
+Screenshots:
+`docs/design-v2/onboarding-{welcome,converse,quickpicks,landed}-{dark,light}.png`.
+
+## Testing
+
+`ZenjiTests/` is a **hostless** unit-test bundle — no `TEST_HOST`, no
+`@testable import`; it compiles the real sources it exercises directly into the
+bundle (every `Zenji/` subsystem, plus `DesignTokens`/`ThemeOverride`/`Interaction`),
+the same trick `ZenjiWidgetExtension` uses. All tests are **network-free**:
+`MockURLProtocol` (via `URLSessionConfiguration.protocolClasses`) intercepts every
+request, the Foundation Models tests drive `MockInterestAssistant`/`MockAnswerer`
+only, and they reuse the frozen `ZenjiTests/Fixtures/*` snapshots as decode input
+and mock-server responses.
+
+There are **42 `*Tests.swift` files (376 tests)**, at least one per subsystem —
+e.g. `SyncClientTests` (304 / changed-manifest / offline / corrupt-download),
+`CacheStoreTests` (App Group fallback), the `FeedCompilerUnit`/`FeedVector` pair,
+`AgendaViewModelTests`, `NotificationPlannerTests`, and the Assistant / Profile /
+Memory / Onboarding suites (see the `ZenjiTests/` listing for all). Run them with:
 
 ```sh
+cd ios && xcodegen generate
 xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
   -destination 'platform=iOS Simulator,name=<a device from `xcrun simctl list devices available`>'
 ```
 
-## Sync layer (WP-12)
-
-`Zenji/Sync/` is the app's only networking code — everything else in the app
-reads exclusively from the on-disk cache this layer maintains. No feed logic
-lives here (that's WP-13); this package only gets the right bytes onto disk
-and lets the rest of the app read them back out as typed models.
-
-### The manifest-diff flow
-
-`SyncClient.sync() async -> SyncResult` does, in order:
-
-1. **GET `manifest.json`** from `baseURL` (default `https://zenji.app/data/`,
-   injectable via the initializer) with `If-None-Match` set to whatever ETag
-   `CacheStore` has persisted from the previous run.
-2. **304 → `.upToDate`.** No further requests are made at all — this is the
-   common case on every sync after the first, since the pipeline runs hourly
-   but this client doesn't need to be that eager.
-3. **200 → decode** the body with WP-11's `Manifest` model, then diff its
-   per-file `sha256` against `SyncState.appliedFiles` — **not** a straight
-   copy of the last server manifest, but a *reconciled* snapshot of what
-   this cache has actually applied (see below for why that distinction
-   matters). Only files that (a) actually changed and (b) are in
-   `filesOfInterest` (default `events.json` / `entities.json` /
-   `tracked.json` / `interests.json` — the last added by WP-15 so
-   `NotificationPlanner` has the real notify-config to plan against, and
-   equally needed by WP-14's `FeedCompiler.compile()`; the ~24 other
-   manifest entries are agent logs, calibration data, per-sport source
-   files, … irrelevant to this client) are fetched.
-4. Each fetched file's bytes are **verified against the manifest's declared
-   sha256** (via `Data.sha256Hex`, `Checksum.swift`, CryptoKit) before being
-   trusted. A mismatch (truncated/corrupt download) or a network hiccup
-   discards that one file silently — the old cached copy (if any) is left
-   completely alone, and because its **old** manifest entry is carried
-   forward into the new `SyncState` rather than the server's new one, it's
-   picked up again on the next sync instead of being wrongly considered
-   "already applied". A single flaky file therefore never fails the whole
-   sync, and never gets silently skipped forever either.
-5. Files that pass verification are written to the cache **atomically**
-   (`Data.write(options: .atomic)` — a crash mid-write can never hand
-   `DataStore` a half-written file), and the new ETag + reconciled manifest
-   snapshot + `lastSync` timestamp are persisted to `sync-state.json`.
-6. Returns `SyncResult`: `.upToDate`, `.changedFiles([String])` (exactly the
-   filenames actually written this run — may be fewer than the manifest
-   reported changed, per point 4), or `.failure(SyncError)` (the manifest
-   fetch itself failed — network error, bad status, undecodable body — and
-   the existing cache/state are left completely untouched).
-
-### Cache location
-
-`CacheStore` prefers the `group.app.zenji` App Group container so the widget
-extension (WP-14) can read the same synced cache, falling back automatically
-to this process's own Application Support directory when the App Group
-container genuinely isn't available (e.g. a real device build before WP-17
-wires up a real provisioning profile). Data files are stored as-is,
-byte-for-byte what the server sent, alongside one small `sync-state.json`
-(`etag`, the reconciled `appliedFiles` manifest snapshot, `lastSync`).
-
-One environment note from writing this: the iOS **Simulator** resolves the
-`group.app.zenji` container readily even for a completely unsigned,
-entitlement-less build (its sandboxd is lenient about app-group containers
-for unsigned Debug builds) — so "runs in the Simulator" does *not* reliably
-exercise the fallback branch. `CacheStoreTests` proves the fallback
-deterministically instead, via a `FileManager` subclass that always returns
-`nil` from `containerURL(forSecurityApplicationGroupIdentifier:)`.
-
-### DataStore — the read-only facade
-
-`DataStore.loadEvents() -> [Event]` / `.loadEntities() -> [Entity]` /
-`.loadTracked() -> TrackedConfig?` / `.loadInterests() -> Interests?` (WP-15)
-decode straight from the cache through `ZenjiJSON.decoder` (WP-11) and
-**never throw** — a missing or corrupt cache file is not a crash, it's an
-empty list (or `nil`). `DataStore.lastSync` (from `sync-state.json`) is the
-"have we ever synced" flag: `nil` means never, which the UI needs to tell
-apart from "synced fine, zero events right now" (a legitimate state, e.g. an
-off-season day) — WP-15's `NotificationPlanner` also reads it directly, as
-the "how stale is what I'm about to plan from" signal (see "Notifications"
-below). Every `loadInterests()` call site (WP-14's `AgendaViewModel`, the
-widget, WP-15's `ContentView` hook) falls back to an empty `Interests()`
-when it's `nil` — `FeedCompiler.compile` already has its own default
-`followBroadly` list for exactly that case, so nothing goes blank just
-because `interests.json` hasn't synced yet.
-
-### BGAppRefreshTask
-
-A deliberately thin, separate layer, split in two:
-
-- **`BackgroundRefreshScheduling.swift`** — a *pure* function,
-  `earliestBeginDate(lastSync:now:minimumInterval:) -> Date`, answering "when
-  should the next refresh run" (never sooner than the research agent's own
-  4-hourly cadence, never in the past). This is the one part of the BGTask
-  layer with real logic, so it's the one part with unit tests
-  (`BackgroundRefreshSchedulingTests`).
-- **`BackgroundRefreshScheduler.swift`** — the actual `BGTaskScheduler`
-  wrapper: `register(syncClient:dataStore:)` (called from `ZenjiApp.init()`,
-  before the app finishes launching — Apple's own requirement, and why it
-  can't live behind a view's `.task`) and `scheduleNextRefresh(dataStore:)`
-  (submits/resubmits a `BGAppRefreshTaskRequest`, called on every app
-  foreground and at the end of every background run). **Not unit-tested** —
-  `BGTaskScheduler` needs a running app + the real OS scheduler, which a test
-  target can't provide; per the WP-12 brief, only the pure scheduling
-  decision above is meant to be tested. Needs `app.zenji.refresh` in
-  `BGTaskSchedulerPermittedIdentifiers` and `UIBackgroundModes: [fetch]` —
-  both set in `project.yml`'s `Zenji` target `info.properties` (regenerate
-  with `xcodegen generate` after any change there; editing the generated
-  `Info.plist` directly gets overwritten).
-
-### Tests
-
-All 26 new WP-12 tests are network-free (no `.shared` session is ever used in
-tests — `MockURLProtocol`, injected via `URLSessionConfiguration
-.protocolClasses`, intercepts every request) and reuse the **real, checked-in
-WP-11 fixtures** (`ZenjiTests/Fixtures/{events,entities,tracked,manifest}
-.json`) as the mock server's responses, exactly as the WP-11 decode tests do
-— rather than inventing separate test data. Where a scenario needs a variant
-the frozen fixture doesn't represent (a changed file, a corrupt download),
-`SyncTestSupport.manifestFixture(replacing:with:)` starts from the real
-manifest and mutates exactly one entry, computing its sha256 with the same
-`Data.sha256Hex` `SyncClient` itself uses.
-
-## Feed compiler (WP-13)
-
-`Zenji/Feed/` is the Swift port of the personalisation semantics — **which**
-events reach the feed, which get the reminder bell, which get the visual
-accent, how the agenda time window behaves, and how stage races collapse. Its
-one hard acceptance criterion: it reproduces **every** golden feed-vector
-(`tests/fixtures/feed-vectors/`, WP-06) **bit-for-bit**, including the four
-pinned server/client divergences (`DIVERGENCES.md`) — those are *reproduced*,
-never "fixed".
-
-### There is no single "special?" predicate — there are five
-
-Each answers a different product question and is ported faithful to the side
-that owns it (the web duplicates this logic across server and client, and the
-two are *intended* to differ):
-
-| Predicate | Question | Ported from | Semantics the port preserves |
-|---|---|---|---|
-| `isRelevant` | In the feed at all? | **server** `build-events.js` `isRelevant` + 14-day cutoff | `sport ∈ followBroadly` OR norwegian/isFavorite/importance≥4/ai-research OR a tracked entity matches — the entity match is **NOT sport-scoped**. Cutoff keys off `endTime ?? time` (multi-day events survive on their end); boundary inclusive. |
-| `mustWatch` | Reminder bell 🔔? | **server** `helpers.js` `mustWatchEntity` | Keyed **only** off `interests.json` notify-entities (teams+athletes by default, tournaments only when `notify:true`); **sport-scoped**; word-boundary + diacritic-folding matching. |
-| `isMustSee` | Quiet visual accent? | **client** `dashboard.js` `isMustSee` | isFavorite/importance≥4/(norwegian+players), national-team regex, then **naive lowercase-substring** team/athlete matching — the pinned substring behaviour (`"Brooklyn".contains("lyn")` fires) is kept deliberately. Reads title + player names, **not** participants/tournament. |
-| `isEventInWindow` | Overlaps the agenda window? | **server & client, byte-identical** | `s = time`, `e = endTime ?? time`; overlaps `[start,end)` iff `s < end && e >= start`; no time → false. |
-| `collapseSeries` | How do stage races fold? | **client** `dashboard.js` `collapseSeries` | Groups titles matching `/\betappe\b|\bstage\s*\d/i` by `sport||tournament`; **4 or more** fold into one synthetic row; next stage = first with `endTime ?? time >= now`, else the last. |
-
-The four pinned divergences the port reproduces: relevance is unscoped while the
-bell is sport-scoped (a football "Barcelona" pulls a tennis "Barcelona Open"
-onto the board but rings no bell); the accent's naive substring vs the bell's
-word boundary (`"Brooklyn FC"` gets the accent, not the bell); bell ≠ accent in
-general (favorite/national-team/golf-lens accent without a bell; F1/TdF bell
-without an accent); and `confidence` does **not** gate feed inclusion.
-
-### The dangerous part: text matching
-
-`TextMatch.swift` ports the server matchers as pure functions:
-`normalize` (NFD-decompose → strip Unicode Marks `\p{M}` → lowercase, so
-"Barça" ≡ "Barca", "Vålerenga" → "valerenga") and `containsName`
-(word-boundary, accent-insensitive containment via
-`(?:^|[^\p{L}\p{N}])name(?:[^\p{L}\p{N}]|$)`). These are the exact JS
-semantics from `scripts/lib/helpers.js`; `FeedCompilerUnitTests` guards them
-with named minimal cases. The client accent's **naive** `lowercased()` +
-substring `contains` deliberately does **not** route through this file — it
-lives inline in `FeedCompiler.isMustSee` because its lack of folding/boundaries
-is pinned behaviour.
-
-### Types
-
-- `FeedEvent.swift` — the small pure-data input the predicates read (only the
-  fields they use). Separate from WP-11's `Event` for one concrete reason:
-  `Event.time` is a **non-optional** `Date`, but the vectors include a pinned
-  `"time": null` case; `FeedEvent.time` is `Date?` so that decodes and the
-  predicates return the same `false` the JS does. `init(from event: Event)`
-  bridges the real cached `[Event]` (from `DataStore`) into the compiler for
-  WP-14 (see `EventBridge` below).
-- `Interests.swift` — the personalisation config the vectors embed (a Swift
-  mirror of the fields of `scripts/config/interests.json` the predicates read).
-- `FeedCompiler.swift` — the five predicates + the `compile(events:interests:
-  now:)` facade (relevance filter → bell/accent annotation → series collapse →
-  Europe/Oslo day grouping). The day grouping is **not** vector-covered (kept
-  simple, unit-tested separately in `FeedCompilerUnitTests`).
-- `AgendaFormat.swift` / `EventBridge.swift` (WP-14) — see "Agenda UI +
-  widget (WP-14)" below for why these two live in `Feed/` rather than
-  `Agenda/`.
-
-### Running the vectors
-
-`FeedVectorTests` decodes the **same** files the JS reference
-(`tests/feed-vectors.test.js`) replays — the repo-root
-`tests/fixtures/feed-vectors` folder is referenced directly from
-`project.yml` as a bundled folder reference (`buildPhase: resources`,
-`type: folder`, an out-of-`ios/` path XcodeGen resolves relative to
-`project.yml`), never copied, so the two runners can never drift. At runtime
-the tests enumerate the bundled `feed-vectors/*.json`, decode each into the
-`FeedEvent`/`Interests` models, and assert each declared expectation as an
-unordered id set. **The fixtures are frozen** — a failing vector is left red
-and escalated, never "fixed" by editing the fixture.
-
-```
-cd ios && xcodegen generate
-xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
-# 102 tests: 49 WP-10/11/12/13 baseline + 20 WP-15 + 33 WP-14
-```
-
-## Agenda UI + widget (WP-14)
-
-The payoff package: a real, day-grouped Tekst-TV agenda (`ContentView` now
-hosts `AgendaView` instead of a placeholder row) and a home screen widget
-showing "neste must-see" — both pure consumers of WP-12's synced cache and
-WP-13's `FeedCompiler`, with no feed logic of their own.
-
-### The interests source (`interests.json` decoding)
-
-`SyncClient.defaultFilesOfInterest` (`Sync/SyncClient.swift`) includes
-`"interests.json"` alongside events/entities/tracked (added independently by
-both this package and WP-15 — `NotificationPlanner` needs the exact same
-file), and `DataStore.loadInterests() -> Interests?` (`Sync/DataStore.swift`,
-WP-15) is the "little decoder" for it: the published `docs/data/interests
-.json` (checked in at `ZenjiTests/Fixtures/interests.json`, byte-identical to
-the live site at the time of writing — verified by sha256) already carries
-`followBroadly` / `alwaysTrack` / `notify` field-for-field matching WP-13's
-`Interests` `CodingKeys`, so ordinary Codable name-based decoding **is** the
-mapping — no translation layer needed. The extra human-facing fields the
-real file also carries (`$schema`, `language`, `timezone`, the free-text
-`interests`/`neverTrack` lists, `notes`) are ignored automatically, the same
-forward-compatibility story `Event.swift` already relies on. Every call site
-in this package (`AgendaViewModel`, the widget) falls back to an empty
-`Interests()` when the result is `nil` — `FeedCompiler.compile` already has
-its own default `followBroadly` list for exactly this case, so the agenda
-never goes blank just because `interests.json` hasn't synced yet.
-
-### AgendaViewModel — the pure pipeline
-
-`Zenji/Agenda/AgendaViewModel.swift` is `@MainActor @Observable` (it drives
-SwiftUI state directly), but its actual logic is a `nonisolated static`
-function, per this codebase's usual pure-core/thin-wrapper split
-(`FeedCompiler`'s predicates, `BackgroundRefreshScheduling`):
-
-```
-AgendaViewModel.buildSections(events: [Event], interests: Interests, now: Date) -> [AgendaSection]
-```
-
-The chain is exactly DataStore → FeedEvent-bridge → `FeedCompiler.compile()`
-→ day sections, per the WP-14 brief:
-
-1. **`EventBridge.bridge(_:)`** (`Zenji/Feed/EventBridge.swift` — lives in
-   `Feed/`, not `Agenda/`, so the widget target picks it up for free
-   alongside `FeedCompiler`) turns `[Event]` into WP-13's `[FeedEvent]` AND
-   returns a `[String: Event]` lookup back to the source `Event` — needed
-   because `FeedCompiler.compile()`'s output no longer has positional
-   correspondence to the input, but the row/detail sheet still need fields
-   `FeedEvent` deliberately omits (`streaming`, `venue`, `summary`,
-   `evidence`, …). The lookup key is `Event.id` (WP-02) when present, else a
-   deterministic `sport|title|time` fallback — the same idea as
-   dashboard.js's own client-side id fallback.
-2. **`FeedCompiler.compile(events:interests:now:)`** (WP-13, untouched)
-   does the actual relevance filter → bell/accent annotation → series
-   collapse → Europe/Oslo day grouping.
-3. **`AgendaFormat`** (`Zenji/Feed/AgendaFormat.swift` — same "lives in
-   Feed/ so the widget gets it for free" reasoning as `EventBridge`) turns
-   the compiled, annotated data into the actual row text: `timeLabel`
-   ("HH:mm", or a compact "16.–19. juli" WINDOW for a multi-day event —
-   never a misleading bare start time), `title` ("Home – Away" for a team
-   match, else the event's own title), `channelLabel` (first streaming
-   platform, or an honest "–"), `dayLabel` ("I DAG" / "I MORGEN" / else
-   "TIRSDAG 14. JULI" — the same `"EEEE d. MMMM".uppercased()` convention
-   `ContentView`'s header already used, just Europe/Oslo-scoped), and
-   `seriesSummary` ("Tour de France — 21 etapper", plus a quiet "denne uka"
-   qualifier when the last stage falls in the current Oslo ISO week).
-4. `AgendaViewModel.buildSections` assembles `AgendaSection`/`AgendaItem`/
-   `AgendaEventRow`/`AgendaSeriesRow` (`Zenji/Agenda/AgendaModels.swift`) —
-   plain, `Equatable` view-ready data, computed once, not per render.
-
-`AgendaViewModelTests` drives `buildSections` directly (no DataStore, no
-disk) with both hand-built `EventBuilder`-constructed fixtures (one rule per
-test: day grouping, channel selection + "–" fallback, must-see/must-watch
-passthrough, series collapse + summary text) AND the real, checked-in
-`events.json`/`interests.json` fixtures end-to-end (proves the real Tour de
-France fixture — 21 stages — collapses into exactly one series row, and that
-"Lyn – Sogndal" comes out must-watch with channel "TV 2 Play").
-
-### AgendaView — the SwiftUI layer
-
-`Zenji/Agenda/AgendaView.swift` is a `List` of day `Section`s (label = the
-Norwegian day header), each row either an `EventRowView` or a
-`SeriesRowView` — must-see gets the gentlest possible emphasis (a 6pt amber
-dot, CLAUDE.md's own phrase), must-watch gets a small 🔔, the channel column
-is quiet, an honest "–" when unknown. Pull-to-refresh (`.refreshable`) calls
-`AgendaViewModel.refresh()`, which re-syncs then recompiles (this path does
-NOT run WP-15's notification reconcile — see "ContentView" below). Tapping a
-row opens a `.sheet`:
-
-- **`EventDetailSheet`** — venue, summary, every streaming option as a real
-  `Link` (never a fake link when there's no URL), and — only when
-  `event.source == "ai-research"` — the provenance block: confidence
-  (høy/middels/lav/ukjent) + every evidence URL as its own link. "Åpenhet er
-  en funksjon" (CLAUDE.md): this ⓘ is how the app earns trust for events a
-  human didn't curate.
-- **`SeriesDetailSheet`** — the "kan ekspanderes" half of a collapsed stage
-  race: every Norwegian rider across all stages (de-duplicated), the next
-  stage's own summary, and every stage as its own date/title/channel line
-  (mirrors dashboard.js `seriesDetail`).
-
-### ContentView — the header + the one shared sync hook
-
-`ContentView.swift` keeps its exact pre-WP-14 public signature
-(`init(syncClient:dataStore:notificationPlanner:)`, the third parameter added
-by WP-15 with a default so `ZenjiApp.swift` needs zero edits) — it now just
-constructs an `AgendaViewModel` and hosts `AgendaView` below a header that's
-genuinely "ZENJI · dato · en stille tikkende klokke" (a
-`Timer.publish(every: 1, …)` ticks a `HH:mm:ss` clock, Europe/Oslo, no other
-chrome) instead of the WP-12 scaffold's "Sist synket: …" debug line.
-`ContentView.refresh()` (called once from `.task` at app start) orchestrates
-BOTH packages' hooks in the one place they need to interleave: it reloads
-`AgendaViewModel` from cache, snapshots `dataStore.loadEvents()`, syncs,
-reloads `AgendaViewModel` from cache again, then calls WP-15's
-`notificationPlanner.reconcile(previousEvents:newEvents:interests:lastSync:)`
-with the before/after snapshots — see "Notifications (WP-15)" below for what
-that call does. **Deliberately zero changes to `ZenjiApp.swift`** — both
-WP-14 and WP-15 landed in parallel and the brief for each asked to keep that
-file untouched to avoid a merge conflict; `ZenjiApp.swift` still constructs
-`ContentView(syncClient:dataStore:)` with two arguments.
-
-### The widget — pre-computed timeline, no network
-
-`Zenji/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
-`import WidgetKit` at all — that's deliberate, see the file's own header):
-given `[Event]` + `Interests` + "now", it returns one `Entry` per "clock
-strike" (every full hour remaining in the Europe/Oslo day, plus "now"
-itself) — each entry is "the next must-see event as of that moment, else
-the nearest merely-relevant upcoming one, else an honest 'Ingenting i dag'".
-`ZenjiWidget.swift` (the actual `TimelineProvider`) is the thin WidgetKit
-wrapper around it: reads `DataStore` (cache only — **no network call
-anywhere in the widget target**, by construction: its project.yml sources
-include `Sync/CacheStore.swift`/`SyncState.swift`/`DataStore.swift` but
-deliberately NOT `SyncClient.swift`/`Checksum.swift`, so there is no
-network-capable code to accidentally call), builds the day's entries once,
-and hands WidgetKit a `Timeline` that reloads itself shortly after the last
-pre-computed entry — the OS swaps entries on its own schedule with zero
-further app/widget activity. `systemSmall` + `systemMedium`, same Tekst-TV
-tokens (`DesignTokens.swift`) as the app.
-
-`WidgetTimelineBuilderTests` covers `ticks(from:)` (always starts at `now`,
-strictly increasing, correctly empty-but-`now` in the last minutes of the
-day) and `nextHighlight`/`buildEntries` (prefers a must-see match over an
-earlier plain event, falls back to nearest-upcoming, excludes finished
-events, reflects the paired `Event`'s own `streaming` for the channel).
-
-### project.yml — what each target actually compiles
-
-- **`Zenji`** (app): unchanged — it already lists the whole `Zenji/` tree, so
-  the new `Agenda/` and `Widget/` folders are picked up automatically.
-- **`ZenjiWidgetExtension`**: gained `Zenji/Models`, `Zenji/Feed` (which is
-  where `AgendaFormat`/`EventBridge` live — see above), and just the
-  **read** half of `Sync` (`CacheStore.swift`/`SyncState.swift`/
-  `DataStore.swift`, NOT `SyncClient.swift`/`Checksum.swift`) plus
-  `Zenji/Widget/WidgetTimelineBuilder.swift` — the exact "Models/Sync-read/
-  Feed" set the WP-14 brief asked for, same pattern as the pre-existing
-  `DesignTokens.swift` entry.
-- **`ZenjiTests`**: gained `Zenji/DesignTokens.swift` (Agenda's SwiftUI views
-  reference `ZenjiTokens`/`.zenjiMono` directly), `Zenji/Agenda`, and
-  `Zenji/Widget` — same "no `@testable import`, compile the real sources
-  directly into the hostless bundle" pattern as Models/Sync/Feed already use.
-
-### Visual proof (WP-14)
-
-`docs/agenda-screenshot.png` — `iPhone 17 Pro` Simulator (iOS 26.5),
-installed and launched via `xcrun simctl install`/`launch`, screenshotted via
-`xcrun simctl io … screenshot`, running against **real, live** `zenji.app`
-data (the Simulator's cache was seeded with the checked-in
-`ZenjiTests/Fixtures/{events,entities,tracked,interests}.json` — verified
-byte-identical to what `zenji.app` currently serves via `sha256`, sidestepping
-an unrelated, pre-existing production issue where the live site's
-`manifest.json` and its actually-served `events.json` are momentarily out of
-sync/stale relative to each other — a CDN/deploy-cache-coherency issue on the
-live site, NOT a bug in this PR's `SyncClient`, which correctly detected the
-sha256 mismatch and safely discarded the corrupt download per its own
-WP-12 contract). Shows: the header (wordmark · Oslo date · ticking clock),
-several real day sections ("FREDAG 3. JULI" … "I DAG" … "I MORGEN"),
-must-see dots, 🔔 must-watch marks, real channels, an honest "–" where a
-channel isn't known, and a multi-day window ("13.–20. juli") rendering on one
-line. The widget gallery screenshot was **not practically possible** in this
-headless environment (no scriptable `simctl` path to add a widget to a
-Simulator home screen — see "Build verification performed for this PR" above)
-— noted rather than faked, per the WP-14 brief's own allowance.
-
-## Designspråk-realisering (WP-14.1)
-
-The first WP-14 agenda shipped before `DESIGN.md` (the repo-root normative
-design contract) existed, and a two-screenshot audit against it found **eight
-breaches**. WP-14.1 realises the agenda against `DESIGN.md` — logic first, then
-typography/layout — with no new product features and no changes outside `ios/`.
-
-The eight breaches and their fixes:
-
-1. **Passed days shown first, "I DAG" at the bottom.** `AgendaViewModel
-   .buildSections` now drops every day section keyed before today
-   (`day.key >= todayKey`), so I DAG is first and no passed day ever appears.
-   `FeedCompiler.compile` already re-homes a still-running multi-day event onto
-   today, so an ongoing golf major / stage race stays under I DAG (with a
-   window in the time column) while a genuinely-finished event simply
-   disappears — even though it is still inside FeedCompiler's 14-day retention
-   window that the web results view needs. New/updated tests pin *I-DAG-first*,
-   *never-past*, and *ongoing-multi-day-under-I DAG*.
-2. **Truncated titles ("Sjakk-NM 20…").** Titles now wrap to up to two lines,
-   never an "…" (`.lineLimit(2)` + `fixedSize(vertical:)`). On a compact screen
-   the channel drops to its own dempet line so the title keeps the full column.
-3. **The date window duplicated / no-space bug ("13.–20. juliEFG").** The
-   window lives ONLY in the time column (`AgendaFormat.timeLabel`) and the title
-   stays the clean event name — separate columns, so there is no space to lose.
-   A multi-day window renders a notch quieter (13pt) so a week-long span stays
-   compact. Test pins that `timeLabel` == the window and `title` carries no date
-   text.
-4. **🔔 emoji in rows.** Gone. The amber must-see dot is the whole must-see
-   language; the reminder ("varsel") state moved to `EventDetailSheet` as a
-   quiet, honest read-out ("På / Av") — not a fake control (a user-set per-event
-   override would be a new feature, out of scope).
-5. **iOS chevrons on rows.** Gone. A quiet mono ⓘ now trails ONLY on
-   `source == "ai-research"` rows (it opens the same provenance the detail sheet
-   already showed).
-6. **Channel stealing title space.** The title has priority and the channel is
-   `fixedSize` (never truncated); a long "meta · kanal" that won't fit drops the
-   meta WHOLE (via `ViewThatFits`) rather than clipping the channel.
-7. **No live-now line.** `AgendaViewModel.liveRows` computes the events ongoing
-   at `now` (source status, else the `[time, endTime]` window), must-see first,
-   capped at two; `ContentView` renders a quiet `▌ LIVE title · kanal` line in
-   the live colour under the header, invisible when nothing is on.
-8. **Header speech-bubble glyph.** Replaced with a mono prompt glyph `»_`
-   (dempet); the clock is now amber and tabular (and drops its seconds under
-   Reduce Motion), with a `P100` Tekst-TV page index before the date.
-
-`DesignTokens.swift` was brought into 1:1 lock-step with the `DESIGN.md` token
-table (added `surface`/`muted`/`hairline`/`live`, fixed the light foreground to
-`#1D1B15`); the agenda uses the DESIGN.md type scale (title 17 · time 17
-semibold · meta/kanal 15 dempet · day header 13 uppercase +8 % tracking ·
-wordmark 28) and rhythm (12pt row + hairline; 28pt before / 10pt after a day
-header; one 640pt-max centred column). Detail sheets moved to the `surface`
-token. The widget's opacity-based muted text was swapped for the `muted` token.
-
-`xcodebuild test … -scheme Zenji` passes **215 tests** (the 206 WP-10…16.3
-baseline + 9 new: 3 `AgendaFormatTests` metaLabel cases + 6 `AgendaViewModelTests`
-— I-DAG-first/never-past, ongoing-multi-day-window, window-not-in-title, and
-three `liveRows` cases; two pre-existing series-collapse tests were re-anchored
-from *past* to *upcoming* stages — "pinned a v1 breach → now DESIGN.md-correct").
-Both schemes (`Zenji`, `ZenjiWidgetExtension`) build; `npm test` (373 tests) is
-untouched — this package touches only `ios/`.
-
-### Visual proof (WP-14.1)
-
-`docs/design-v2/after-dark.png` + `docs/design-v2/after-light.png` — `iPhone 17
-Pro` Simulator (booted, `xcrun simctl ui booted appearance dark|light`),
-installed + launched, screenshotted against **real, live** `zenji.app` data.
-Both themes show: I DAG first (no passed day), the green `▌ LIVE EFG Swiss Open
-Gstaad` line, the multi-day window ("13.–20. juli") clean in the time column
-with a two-line title beside it, the collapsed "Tour de France 2026 — 21
-etapper" series row, must-see dots, the mono ⓘ on AI-research rows only, honest
-channels, the `»_` header glyph, `P100` page index and amber clock — and no
-truncation, no 🔔, no chevrons. The detail sheet (venue/streaming/provenance +
-the quiet VARSEL read-out) has no scriptable `simctl` tap path to screenshot
-headlessly (same limitation the WP-14 widget note records) — covered by code +
-unit tests instead.
-
-**Device build (WP-14.1):** `xcodebuild -scheme ZenjiDeviceDev -destination
-'generic/platform=iOS' -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES
-CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=9LVCB72DT8 build` → **BUILD
-SUCCEEDED** (signed). The physical iPhone (`00008140-001939D02EBB001C`) was
-`unavailable` (asleep / not reachable wirelessly) for the whole session, so
-`devicectl device install` returned `CoreDeviceError 1011` (device not located)
-— noted rather than failed, per the WP-14.1 brief's own allowance; the signed
-build is ready to install once the device is awake.
-
-## Manuell tema-overstyring (WP-14.2)
-
-The owner asked for a manual theme override matching the web dashboard's
-theme toggle (`docs/js/dashboard.js` `initTheme`/`#theme-toggle`) — the tokens
-in `DesignTokens.swift` already followed the *device's* appearance
-(`UIColor { traits in traits.userInterfaceStyle == .dark ? … }`), but there
-was no way to force mørk/lys independent of the system setting.
-
-### `ThemeOverride.swift` — the pure half
-
-A small `String`-backed enum with three cases (`system`/`dark`/`light`),
-following the same split the codebase already uses for OS-facing state
-(`BackgroundRefreshScheduling` vs. `BackgroundRefreshScheduler`): all the
-actual logic is a plain, fully unit-tested value type —
-
-- `next` — the tap-cycle order: system → dark → light → system.
-- `colorScheme: ColorScheme?` — `nil`/`.dark`/`.light`, fed straight to
-  `.preferredColorScheme(_:)`.
-- `glyph` — the quantized header character: `◐` auto / `●` mørk / `○` lys.
-- `accessibilityLabel` — the Norwegian VoiceOver string ("Tema: automatisk"
-  / "Tema: mørk" / "Tema: lys").
-- `storageKey` — the `@AppStorage`/`UserDefaults` key (`"zenji.themeOverride"`).
-
-### `ContentView` — the thin SwiftUI shell
-
-One `@AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw`
-property (defaulting to `.system`'s rawValue) plus a computed `themeOverride`
-getter, a `.preferredColorScheme(themeOverride.colorScheme)` modifier on the
-view returned to `WindowGroup`, and a new header button next to the existing
-`»_` assistant glyph that writes `themeOverride.next.rawValue` back to
-storage. Applying the modifier at this one root — rather than per-screen —
-is what makes it cover every presented `.sheet` (`AssistantView`,
-`EventDetailSheet`, `SeriesDetailSheet`) automatically: `.preferredColorScheme`
-overrides the enclosing window's trait collection, which cascades to
-everything presented from it, so `DesignTokens.swift`'s `UIColor { traits in
-… }` lookups pick it up with zero changes there. No settings screen — one tap
-in the header, exactly like the web toggle.
-
-### Tests
-
-`ThemeOverrideTests.swift` (17 tests): the full 3-tap cycle for every
-starting state, each `colorScheme` mapping, every glyph (plus a "no two states
-share a glyph" check), every accessibility label, and the storage round-trip
-through an isolated `UserDefaults(suiteName:)` (never `.standard`, so the
-test can't pollute or be polluted by a real run) — including the corrupt/
-missing-key fallback to `.system` that `ContentView` relies on.
-
-`xcodebuild test … -scheme Zenji` passes **232 tests** (the 215 WP-10…14.1
-baseline + 17 new `ThemeOverrideTests`). Both schemes (`Zenji`,
-`ZenjiWidgetExtension`) build; `npm test` is untouched — this package touches
-only `ios/`.
-
-### Visual proof (WP-14.2)
-
-Four screenshots in `ios/docs/design-v2/`, `iPhone 17 Pro` Simulator (booted),
-installed + launched against **real, live** `zenji.app` data, device
-appearance flipped via `xcrun simctl ui <udid> appearance dark|light` and the
-override flipped via `xcrun simctl spawn <udid> defaults write app.zenji.ios
-zenji.themeOverride -string <value>` before each (re)launch — this exercises
-the exact same `UserDefaults`-backed persistence `@AppStorage` uses, and
-additionally proves the override **survives a fresh launch**, not just a live
-toggle:
-
-- `theme-toggle-dark.png` — device dark, override `system` (`◐`): the app
-  follows the device into dark, as before this package.
-- `theme-toggle-light.png` — device light, override `system` (`◐`): the app
-  follows the device into light.
-- `theme-toggle-override.png` — device **dark**, override forced to `light`
-  (`○`): the app renders the warm-paper light page anyway — the override wins.
-- `theme-toggle-override-reverse.png` — device **light**, override forced to
-  `dark` (`●`): the app renders the near-black dark page anyway — the override
-  wins the other direction too. (Not one of the three names the brief asked
-  for by name, but included because "prove the override wins both ways" needs
-  both directions shown, not just one.)
-
-All four show the new glyph correctly quantized next to `»_`, and the rest of
-the WP-14.1-realised agenda (I DAG-first, live line, series collapse, must-see
-dots, honest channels) unaffected.
-
-**Device build (WP-14.2):** same command as WP-14.1 → **BUILD SUCCEEDED**
-(signed). The physical iPhone (`00008140-001939D02EBB001C`) was still
-`unavailable` for this session (`devicectl device install` /
-`devicectl device list` both report `CoreDeviceError 1011` / no matching
-device) — noted rather than failed, per the brief's own allowance; the signed
-build is ready to install once the device is reachable.
-
-### Widget (unaffected — follows the system, by WidgetKit's nature)
-
-`ZenjiWidgetExtension`'s sources do **not** include `ThemeOverride.swift` (see
-`project.yml`), so the widget has no access to the in-app override at all —
-deliberately. A WidgetKit extension renders in a separate process hosted by
-the home screen / lock screen / StandBy, entirely outside the app's own
-`UIWindow`; there is no app-level `.preferredColorScheme` for it to inherit,
-and forcing an appearance from inside the widget would fight the OS's own
-per-surface appearance (a user can't have one widget "stuck" light while the
-rest of the home screen is dark). The widget's `DesignTokens.swift` colours
-therefore keep following the system appearance only, same as every other
-iOS widget — this is expected, not a gap to close.
-
-## Notifications (WP-15)
-
-`Zenji/Notifications/` schedules local push reminders for must-watch events.
-The product rule this package exists to serve: **a wrong time in a push
-notification is the most expensive trust violation the app can commit** — so
-reminders must be few, correct, and calm.
-
-### `NotificationPlanner.plan(...)` — the pure core
-
-```swift
-static func plan(
-    previousEvents: [Event], newEvents: [Event], interests: Interests,
-    now: Date, lastSync: Date?
-) -> [NotificationOperation]
-```
-
-Two event snapshots in, a diff of operations out — no `UNUserNotificationCenter`,
-no async, no I/O, fully unit-testable. It is keyed **exclusively** on the WP-02
-stable event id (the diff contract from the WP-15 brief): the same id
-reappearing with a different computed reminder is a `.reschedule`, an id that
-no longer resolves to a plannable reminder (removed from the feed, or
-disqualified by a gate) is a `.cancel`, and a never-before-seen plannable id is
-a `.scheduleNew`. An event whose plannable content (fire date, title, body) is
-**unchanged** between the two snapshots produces **no operation at all** —
-reconciling never re-touches a correctly scheduled reminder on every sync.
-
-**Who gets notified:** only events `FeedCompiler.mustWatch` rings the bell for
-(WP-13) — sport-scoped, keyed off `interests.json`'s notify-entities, never an
-event's own `isFavorite`/`importance`. The fire date is `event.time` minus the
-lead time from `interests.notify.leadMinutes` (default 30 — the **same** lead
-`scripts/build-ics.js`'s VALARM uses, so the calendar and push channels never
-disagree), clamped to "now" if that instant has already passed (a normal case:
-the event is close but hasn't started) rather than silently dropped.
-
-**Quality gates**, each a hard `nil` in `plannedRequest(for:)`:
-
-- **(a) Confidence** — `confidence == "low"` **and** `verificationStatus !=
-  "confirmed"` is never planned. Any other confidence (medium/high/absent —
-  non-ai-research events carry none) passes untouched.
-- **(b) Verification window** — if `lastSync` is more than 6 hours old at
-  planning time (or `nil` — never synced is the least verified state of all),
-  the body text hedges ("Etter planen: kl. HH:mm · kanal") instead of stating
-  the time as settled fact ("Kl. HH:mm · kanal").
-- **(c) Already underway/passed** — `event.time <= now` is never planned; if a
-  previously-plannable event's corrected time moves into the past, any
-  existing plan is cancelled, not left dangling.
-
-**Notification text** (Norwegian, calm): title = the event title; body = `"Kl.
-HH:mm · kanal"` in Europe/Oslo time, with an honest `"Kanal ukjent"` when
-`streaming` is empty — never invented. No emoji (the web's 🔔 marks the bell
-*inline*, not inside a push body).
-
-### `NotificationScheduling` — the thin OS shell
-
-A protocol wrapping `UNUserNotificationCenter`
-(`requestAuthorizationIfNeeded()` / `schedule(_:)` / `cancel(id:)`), so tests
-substitute `RecordingNotificationScheduler` (`ZenjiTests/`, logs every call)
-instead of touching the real, global center — `ZenjiTests` is a hostless logic
-bundle; a real center call would need a running app and prompt the actual OS
-permission dialog. `UNUserNotificationScheduler` is the production
-implementation. Permission is requested **lazily**, inside
-`NotificationPlanner.reconcile(...)`, and only when the computed plan actually
-wants to schedule or reschedule something — never at app start, and never for
-a sync that only cancels or changes nothing.
-
-### The sync hook
-
-`ContentView.refresh()` (the same function WP-12 wired to call
-`syncClient.sync()` at app start, and WP-14 rebuilt to also drive
-`AgendaViewModel` — see "Agenda UI + widget (WP-14)" above) is where WP-15
-plugs in: it snapshots `dataStore.loadEvents()` *before* calling `sync()`,
-then — after the sync completes and the cache reflects the new data — calls
-`notificationPlanner.reconcile(previousEvents:newEvents:interests:lastSync:)`
-with the before/after snapshots, `dataStore.loadInterests() ?? Interests()`
-(WP-15 added `interests.json` to `SyncClient.defaultFilesOfInterest` for
-exactly this), and `dataStore.lastSync` (which `SyncClient` only refreshes to
-"now" on an actual data change — a `.upToDate` 304 leaves it at whatever the
-last real fetch was, which is precisely the "how stale is this" signal gate
-(b) above needs). Note this reconcile call happens only on the app-start
-`.task`, not on `AgendaView`'s pull-to-refresh (WP-14) — a manual refresh
-re-syncs and recompiles the agenda but doesn't re-run the notification diff.
-
-## Assistent — FM-lekegrind (WP-16)
-
-`Zenji/Assistant/` is a conversational way to edit *what the app follows*:
-type a Norwegian utterance ("Følg Ruud bare i Grand Slams", "slutt med
-tennis", "mer sykkel i juli"), and the on-device model turns it into
-structured rule mutations you review as a DIFF and confirm or reject. Reached
-from a discreet speech-bubble glyph in the Tekst-TV header (`ContentView`).
-
-### The model is behind a protocol (vendor surface = one file)
-
-`InterestAssistant` (`Assistant/InterestAssistant.swift`) is the whole model
-API the UI and pipeline see — everything else is FoundationModels-free:
-
-- **`FoundationModelsInterestAssistant`** — the real one, Apple Intelligence
-  via **FoundationModels** (iOS 26+). The **only** file that
-  `import FoundationModels`. It defines the `@Generable` output schema
-  (`GeneratedMutation` — `action`/`entityId`/`entityQuery`/`scope`/`weight`/
-  `reason`) and a `searchEntities` **`Tool`** over the entity index, checks
-  `SystemLanguageModel.default.availability`, and runs one
-  `LanguageModelSession.respond(to:generating:)`. On the Simulator/CI the
-  model reports `.unavailable`, mapped to a calm Norwegian message — so it
-  compiles and links everywhere but only *runs* on the device.
-- **`MockInterestAssistant`** — a deterministic Norwegian keyword parser used
-  by every test (Apple Intelligence can't run in CI) and by SwiftUI previews.
-  It is **not** a silent fallback: when Apple Intelligence is off the shipping
-  app shows the honest "unavailable" banner rather than degrading to keywords.
-
-### Entity grounding is the hard rule
-
-A proposal is applied **only** if its `entityId` resolves in the WP-05 entity
-index (`docs/data/entities.json`, via `DataStore.loadEntities()`).
-`MutationGrounder.ground(_:index:profile:)` re-checks every id the model
-returns — a hallucinated or free-text entity ("cricket") is **rejected**, never
-applied, with a Norwegian explanation and up to three nearest-match suggestions
-("Fant ikke «X» i indeksen — mente du …?"). This holds identically whether the
-raw proposal came from FoundationModels or the mock.
-
-### Lens — the perspective a follow-rule is seen through (WP-16.1)
-
-The entity says *what* is followed; the **lens** says *how*. Without it, an
-utterance like *"Følg Tour de France med fokus på norske utøvere"* had nowhere
-to put "med fokus på norske" — the model produced no mutation and the UI
-collapsed that to a dead-end "fant ingen endringer". `Lens` gives that intent a
-home, on both `ProposedMutation`/`GroundedMutation` and the persisted
-`InterestRule`:
-
-- **`.sportAsSuch`** — the whole thing, every participant (the DEFAULT; existing
-  behaviour is unchanged).
-- **`.throughNorwegians`** — "med fokus på norske utøvere" / "bare de norske".
-- **`.throughAthletes([LensAthlete])`** — specific athletes, carrying their
-  entity ids. Those ids are **grounded exactly like the top-level `entityId`**:
-  `MutationGrounder` re-checks each against the index, drops any that don't
-  resolve (normalising the survivors' display names), and if none survive the
-  lens degrades back to `.sportAsSuch`. A `.remove` never carries a lens; an
-  `.update` with no explicit lens inherits the existing rule's, just as
-  scope/weight carry over. Shown in the DIFF and "Hva jeg følger" as a quiet
-  "gjennom norske utøvere" subtitle segment.
-
-### Always-explain — no dead-end "fant ingen endringer" (WP-16.1)
-
-The assistant **always** accounts for itself. Whenever a submitted utterance
-produces no confirmable change, `AssistantExplanation.make(…)` (pure, unit-
-tested) builds an honest, structured note the UI shows verbatim — `understood`
-(a paraphrase of what it took the utterance to mean) + `reason` (WHY nothing
-changed): the named things weren't in the index (with the "mente du …?"
-suggestions below), the entity data hasn't synced yet, or the intent couldn't
-be expressed as a rule change at all. The forbidden bare "fant ingen endringer"
-string is gone. `MockInterestAssistant.Behavior.producesNothing` simulates the
-usable-model-but-empty-output case so this path is testable without Apple
-Intelligence.
-
-### Fuzzy entity resolver + working «mente du» (WP-16.2)
-
-The second on-device user test typed *"Følg Tour de France med fokus på norske
-utøvere"* and got «Fant ikke 'tour de france' i indeksen — mente du: Tour de
-France 2026?» — and tapping the suggestion did **nothing**. Two fixes, both true
-to P310's design rule (*the model interprets intent; a DETERMINISTIC lookup
-decides identity* — so the fuzzy intelligence goes into the lookup + index, never
-into turning the model's free text loose):
-
-- **A ranked fuzzy resolver** (`EntityIndex.resolve`) now backs BOTH the model's
-  `searchEntities` tool and `MutationGrounder`'s failed-grounding path. It is
-  diacritic/case-folded (reusing `TextMatch`), **year-suffix-agnostic** ("tour de
-  france" ≡ "Tour de France 2026"), alias- and **initials-aware** ("tdf" →
-  TdF), prefix/substring, and **typo-tolerant** (edit-distance ≤ 2 across a
-  same-shape multi-word phrase, so "Tour de Farnce" still resolves). It returns
-  ranked candidates with a score; a single, confident, UNAMBIGUOUS top hit is
-  **served straight to the grounder** — so "tour de france", "tdf" and the typo
-  never reach the rejection path again. A merely partial match (a bare
-  single-word truncation like "Hovlan") stays a *suggestion*, never auto-served,
-  which keeps the hard grounding rule honest. Anything genuinely absent
-  ("cricket") or ambiguous is still rejected — now with the resolver's ranked
-  candidates as the "mente du …?" list.
-- **The «mente du» suggestions are now tappable.** Tapping one re-grounds the
-  ORIGINAL proposal with the chosen entity id substituted in — so the intent
-  (add/remove, scope, weight, the «med fokus på norske» lens) survives — and the
-  resolved mutation lands in the reviewable DIFF for a normal Bekreft. Never a
-  dead button.
-
-The fuzzy data lives in `docs/data/entities.json` (built by
-`scripts/build-entities.js`): a **year-strip alias** ("Tour de France 2026" →
-alias "Tour de France", written to `aliases`, skipped for backdrop `league`
-entities whose year-stripped form doubles as a scope phrase) and a
-collision-checked **initial-alias** ("Tour de France" → `initials: ["TdF"]`).
-The initials live in their OWN `initials` field, deliberately **out of**
-`aliases`, so a 3-letter acronym can never leak into server-side / feed
-`containsName` word-boundary matching (`helpers.entityTerms` reads only
-name+aliases) — the acronym is purely resolver data. Two entities that would
-share an acronym (FIFA World Cup vs Formula 1 World Championship → both "FWC")
-have it dropped from both, so the resolver never mis-serves an ambiguous one.
-
-### "Det jeg ikke forsto" — the misunderstood-log (WP-16.3)
-
-P310's dossier on the assistant's own proposal loop put it plainly: every
-utterance the assistant does NOT manage to turn into an applied mutation is
-raw material for the next iteration — a prompt tweak, a missing entity, a
-scope the schema can't express yet. Before WP-16.3 that signal was thrown
-away the moment the next `submit()` reset `explanation`/`rejected`. Now it's
-durable, local, and private:
-
-- **`MisunderstoodLog.swift`** — `MisunderstoodOutcome` (four distinct,
-  machine-observable triggers), `MisunderstoodEntry` (utterance + outcome +
-  the `AssistantExplanation` shown at the time + timestamp + an optional
-  user note + `resolvedAt`), and `MisunderstoodLogStore` — ONE JSON file in
-  Application Support (same directory as `ProfileStore`, no App Group
-  dependency), capped to **200 entries** (oldest dropped first). **No
-  network code anywhere in this file** — the log never leaves the device
-  except via an explicit "Del rapport" tap.
-- **The four outcomes**, logged automatically by `AssistantViewModel`:
-  - `.rejectedEntity` — every proposal's entity was rejected by
-    `MutationGrounder` (nothing in the index matched).
-  - `.emptyModelResponse` — the model returned zero proposals for the
-    utterance.
-  - `.inexpressible` — `AssistantError.generationFailed`: the model had an
-    utterance but could not turn it into a valid structured mutation at all.
-    Deliberately distinct from `.unavailable` (Apple Intelligence off) — a
-    device-state gate is not a misunderstood utterance, so it is NOT logged.
-  - `.allRejectedByUser` — grounding DID produce a confirmable diff, but the
-    user rejected every mutation in it without confirming any (tracked via a
-    small in-memory "current batch" bookkeeping in `AssistantViewModel` —
-    the utterance/entity names of the live `pending` batch, cleared the
-    moment even one mutation is confirmed).
-  - The entity-index-not-synced case (`AssistantExplanation`'s own case 1)
-    is deliberately **not** logged — a transient environment state, not a
-    misunderstood utterance, and not useful raw material.
-- **Resolved, not deleted (§3).** If a later "mente du" pick
-  (`choose(_:for:)`, WP-16.2) that traces back to a logged `.rejectedEntity`
-  utterance gets **confirmed**, that log entry flips to `resolvedAt` —
-  kept in the log AND the export (a valuable success case), just excluded
-  from the "N unresolved" badge (`AssistantViewModel.misunderstoodCount`).
-  Tracked via a small `[GroundedMutation.id: logEntryId]` map populated in
-  `choose(_:for:)` and consumed in `confirm(_:)`/`confirmAll()`.
-- **UI**: a discreet, collapsed-by-default `DisclosureGroup` at the very
-  bottom of `AssistantView` — "DET JEG IKKE FORSTO (N)" — never a competing
-  panel. Each row shows the utterance, the outcome, the reason, an optional
-  "legg til notat" (what the user actually meant), and Slett; a resolved
-  entry shows a quiet "LØST" tag instead of disappearing. "Del rapport" is a
-  native `ShareLink` over the anonymised export text — the iOS share sheet,
-  no custom networking.
-- **The export** (`MisunderstoodLogStore.exportPayload()` /
-  `ExportEntry`) carries **only** utterance / outcome / understood / reason /
-  note / timestamp / resolved — never the entry's device-generated `UUID`,
-  never anything about the device or the person.
-
-### Pieces (all pure + unit-tested except the two UI/FM shells)
-
-| File | What |
-|---|---|
-| `AssistantModels.swift` | `MutationKind`, `Lens` (+ `LensAthlete`), `ProposedMutation` (raw), `GroundedMutation`/`RejectedMutation`, `AssistantExplanation`, `AssistantAvailability`/`AssistantError` |
-| `InterestProfile.swift` | `InterestRule` + `InterestProfile.applying(_:)` — the pure add/update (upsert) / remove diff; every rule keeps a Norwegian `reason` |
-| `EntityIndex.swift` | exact lookup (grounding gate), tool search (Norwegian sport-word expansion), fuzzy nearest-match, the mock's utterance→entity detection |
-| `MutationGrounder.swift` | the hard grounding rule, as one pure function |
-| `ProfileStore.swift` | JSON persistence in Application Support (no App Group needed — works on the free-account device build); `load()` never throws |
-| `MisunderstoodLog.swift` | WP-16.3 — `MisunderstoodOutcome`/`MisunderstoodEntry` + `MisunderstoodLogStore` (local, capped, private; anonymised export) |
-| `MockInterestAssistant.swift` | the deterministic parser (`MockInterestParser`) |
-| `FoundationModelsInterestAssistant.swift` | the real on-device model (only `import FoundationModels`) |
-| `AssistantViewModel.swift` | `@MainActor @Observable` coordinator: submit → ground → confirm/reject → persist; also logs/resolves the misunderstood-log (WP-16.3) |
-| `AssistantView.swift` | the one calm Tekst-TV screen (DIFF in green/amber/red tokens, "Hva jeg følger" list, the discreet "Det jeg ikke forsto" section) |
-
-`ProfileStore` writes `interest-profile.json` to Application Support (a
-throwaway temp dir in tests). The profile is device-local — CloudKit sync is
-later work (PLAN.md WP-22).
-
-### Tests
-
-`ZenjiTests/{MockInterestAssistant,MutationGrounder,InterestProfile,ProfileStore,EntityIndex,AssistantViewModel,MisunderstoodLogStore,MisunderstoodLogViewModel}Tests.swift`
-(+ `AssistantTestSupport.swift`) drive the mock, never FoundationModels. They
-cover the ten canonical utterances → correct mutations, entity lookup +
-free-text rejection with nearest match, the diff application, persistence
-round-trip, and the end-to-end view-model flow. `xcodebuild test` on the
-Simulator passes **206 tests** (the 102 WP-10…15 baseline + 50 WP-16 + 14
-WP-16.1: lens detection/grounding/persistence + the always-explain contract,
-incl. the exact first-user-test utterance *"Følg Tour de France med fokus på
-norske utøvere"* → `add(tour-de-france-2026, lens: .throughNorwegians)` + 13
-WP-16.2 `FuzzyResolverTests`: "tour de france" / "tdf" / the typo "Tour de
-Farnce" all served to `tour-de-france-2026` without rejection, ambiguity →
-tappable candidates, and the now-working «mente du» tap → a confirmable
-mutation + 27 WP-16.3: the four outcomes logged automatically (incl.
-`.unavailable` deliberately NOT logged), the cap-at-200/oldest-dropped-first
-behaviour, resolved-marking via a real "mente du" confirm, and the exported
-payload's exact field set — no id, no device/person metadata).
-
-### Device build (free personal account)
-
-WP-16 needs a **physical device** with Apple Intelligence to exercise the real
-model. Two free-account limits are handled by a dedicated **`ZenjiDeviceDev`**
-target/scheme (added to `project.yml`) — the Simulator `Zenji` target, its
-schemes and all tests are unchanged:
-
-- **No App Groups** (unavailable on a free team): `ZenjiDeviceDev` uses an empty
-  entitlements file (`ZenjiDeviceDev/ZenjiDeviceDev.entitlements`); `CacheStore`
-  falls back to Application Support (its built-in fallback), `ProfileStore` uses
-  it unconditionally.
-- **No embedded widget** (a prior attempt failed with *"Embedded binary is not
-  signed with the same certificate as the parent app"*): `ZenjiDeviceDev` has
-  **no** `ZenjiWidgetExtension` dependency. The widget stays Simulator-only
-  until a paid account (WP-17).
-- It reuses bundle id `app.zenji.ios` (the free team already has a matching
-  provisioning profile covering the device) and a distinct `PRODUCT_NAME`
-  (`ZenjiDeviceDev.app`) so its product never collides with `Zenji.app`. The
-  home-screen name stays "Zenji" via `CFBundleDisplayName`.
-
-```sh
-cd ios && xcodegen generate
-
-# Build for the connected iPhone (free personal team, automatic signing):
-xcodebuild -project Zenji.xcodeproj -scheme ZenjiDeviceDev \
-  -destination 'platform=iOS,id=<device-id from `xcrun devicectl list devices`>' \
-  -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic \
-  DEVELOPMENT_TEAM=<team> build
-
-# Install + launch on the device (hardware UDID):
-APP=~/Library/Developer/Xcode/DerivedData/Zenji-*/Build/Products/Debug-iphoneos/ZenjiDeviceDev.app
-xcrun devicectl device install app --device <hardware-udid> "$APP"
-xcrun devicectl device process launch --device <hardware-udid> app.zenji.ios
-```
-
-**One-time on-device trust step:** the first launch of a free-team development
-build is blocked by iOS until the developer certificate is trusted manually —
-*Innstillinger → Generelt → VPN og enhetsadministrering → Utviklerapp → Stol
-på "Apple Development: …"*. This cannot be scripted (`devicectl launch` returns
-a `Security`/"profile has not been explicitly trusted" error until it's done).
-After trusting once, the app launches normally and the FM conversations can be
-verified by hand (see the WP-16 PR's manual checklist).
-
-**Update (WP-16.1):** the `ZenjiDeviceDev` scheme was rebuilt for the connected
-iPhone 16 Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES
-CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**) and
-re-installed with `xcrun devicectl device install app` — the new lens +
-always-explain build now carries `app.zenji.ios` on the device. The on-device
-Apple Intelligence check of *"Følg Tour de France med fokus på norske utøvere"*
-(the utterance that first failed) is the manual step to confirm by hand after
-the one-time trust.
-
-**Update (WP-16.2):** the `ZenjiDeviceDev` scheme was rebuilt for the iPhone 16
-Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
-DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
-chris.haerem@gmail.com*) and re-installed with `xcrun devicectl device install
-app --device 00008140-001939D02EBB001C` (**exit 0**) — the new fuzzy-resolver +
-working-«mente du» build (fresh binary, timestamp confirmed) now carries
-`app.zenji.ios` on the device. The on-device Apple Intelligence check — that
-"tour de france", "tdf" and a typo now resolve straight to Tour de France, and
-that tapping a "mente du" suggestion applies the change — is the manual step to
-confirm by hand once the device is unlocked (a locked device rejects
-`devicectl … process launch` with `FBSOpenApplicationErrorDomain error 7`, as
-expected; nothing to fix).
-
-**Update (WP-16.3):** the `ZenjiDeviceDev` scheme was rebuilt for the iPhone 16
-Pro (`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
-DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
-chris.haerem@gmail.com*) and re-installed with `xcrun devicectl device install
-app --device 00008140-001939D02EBB001C` (**exit 0** — the wireless connection
-dropped once mid-attempt with `CoreDeviceError 4000`, resolved by retrying once
-the device showed `available (paired)` again). Binary timestamp confirmed
-fresh (`ZenjiDeviceDev` mtime immediately after the build, ahead of every
-older DerivedData copy) — the misunderstood-log build now carries
-`app.zenji.ios` on the device. `devicectl device process launch` then hit the
-same documented, expected `FBSOpenApplicationErrorDomain error 7` ("Locked") as
-WP-16.2 — nothing to fix; the on-device check (submit an utterance the
-assistant can't ground, confirm it appears under "Det jeg ikke forsto", add a
-note, and use "Del rapport") is the manual step to confirm by hand once the
-device is unlocked.
-
-## Sømløs assistent (WP-16.4)
-
-The owner's brief: *"AI-assistent-opplevelsen skal være mer sømløs"* — the
-principle is **"assistenten ER grensesnittet"**, not a room behind a button.
-WP-16.4 dissolves the WP-16 `AssistantView` screen into the agenda flow, keeps
-**all** WP-16.x behaviour (grounding, lens, always-explain, «mente du», the
-misunderstood-log), and adds a question-answering arm.
-
-### The five moves
-
-1. **Kommandolinjen** (`Assistant/CommandLineView.swift`) — a fixed, quiet
-   prompt line pinned to the bottom of the agenda (`»_` sigil · text field ·
-   blinking amber `▌` `BlinkingCursor`, static under Reduce Motion). It's the
-   primary entry; the header `»_` glyph is now just a `@FocusState` shortcut to
-   it. The old screen split into this line + a flat result **ark**
-   (`Assistant/AssistantPanel.swift`) that fades in (≤150 ms) over the agenda,
-   with «Hva jeg følger» + «Det jeg ikke forsto» as quiet disclosures at its
-   foot (`MisunderstoodEntryRow` migrated here).
-2. **Intent-ruting** — `InterestAssistant.interpret(...)` now returns an
-   `AssistantTurn` = `.mutations([ProposedMutation])` (the WP-16 diff flow,
-   untouched) OR `.answer(AssistantAnswer)`. Questions are answered over LOCAL
-   data only (no PCC/cloud): `FeedQuery` (`Assistant/FeedQuery.swift`) reduces
-   the same relevance-filtered agenda to a queryable value (today/tonight/
-   next-matching/search); the FM assistant gains `searchEvents` + `getProfile`
-   tools over it (`GeneratedTurn` carries `intent`/`answer`/`referencedEventIds`).
-   `MockAnswerer` is the deterministic counterpart (`isQuestion` router +
-   answer generator) so CI drives both arms without Apple Intelligence.
-3. **Kontekst-handlinger** (`Agenda/EventDetailSheet.swift`) — «Følg <entitet>»
-   (a pre-filled add routed through the SAME grounded diff/confirm flow via
-   `AssistantViewModel.proposeFollow`) and «Hvorfor vises denne?»
-   (`FeedCompiler.whyShown`, a deterministic port of dashboard.js's `whyShown`,
-   self-contained so the widget target still builds). `AgendaEventRow` carries
-   precomputed `whyShown` + `followable`.
-4. **Umiddelbar konsekvens** — the assistant's local `InterestProfile` is folded
-   into the agenda's interests by `EffectiveInterests.merge`, and
-   `AssistantViewModel.onProfileChanged` (wired in `ContentView`) recompiles the
-   agenda the instant a mutation is confirmed. `AgendaViewModel` + the assistant
-   share ONE `ProfileStore`.
-5. **Tenke-tilstand** — while interpreting, the command line blinks the cursor
-   and shows a dimmed "tenker …" + "Avbryt" (`AssistantViewModel.run()`/
-   `cancel()`), never a spinner.
-
-### Tests + build
-
-`xcodebuild test … -scheme Zenji` passes **257 tests** (the 232 WP-10…16.3
-baseline + 25 new: intent routing, `FeedQuery`, the Q&A view-model path against
-the real fixtures, `EffectiveInterests` + immediate re-compilation, and the
-context actions incl. `whyShown`). Both schemes (`Zenji`,
-`ZenjiWidgetExtension`) build; `npm test` is untouched — this package touches
-only `ios/` + the DESIGN.md Assistant section + the PLAN.md WP-16.4 row.
-
-### Visual proof (WP-16.4)
-
-Eight screenshots in `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`
-— `iPhone 17` Simulator, installed + launched against **real, live** `zenji.app`
-data, each state driven by a **DEBUG-only** launch-env harness
-(`ZENJI_DEMO=idle|thinking|diff|answer`, read in `ContentView`/
-`AssistantViewModel.demoSeed`, never compiled into release) that backs the
-assistant with the deterministic mock so the diff/answer arks render without
-Apple Intelligence (unavailable in the Simulator). Both themes show: the command
-line with its blinking cursor (idle), the "tenker … Avbryt" thinking line, the
-green `+ Casper Ruud` diff ark, and the "SVAR" answer ark referencing
-`VM-semifinale 1 · 21:00 · TV 2` — all Tekst-TV, no chrome breaches.
-
-### Device build (WP-16.4)
-
-The `ZenjiDeviceDev` scheme was rebuilt for the physical iPhone
-(`-allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic
-DEVELOPMENT_TEAM=9LVCB72DT8`, **BUILD SUCCEEDED**, signed *Apple Development:
-chris.haerem@gmail.com*) and — unlike WP-16.1–16.3, when the device was
-`unavailable` — **installed successfully** this time:
-`xcrun devicectl device install app --device 00008140-001939D02EBB001C …` →
-*App installed: bundleID app.zenji.ios*. `devicectl device process launch` then
-hit the same documented, expected `FBSOpenApplicationErrorDomain error 7`
-("Locked") the earlier WPs recorded — the device was locked, nothing to fix. The
-on-device Apple Intelligence checks (type in the command line: a follow, a
-"Følg X" from an event's detail sheet, and a question like *"hva bør jeg se i
-kveld?"*/*"når går neste TdF-etappe?"*; confirm the answer references real rows)
-are the manual steps to run by hand once the device is unlocked.
-
-## Personlig minne (WP-30 — P350)
-
-The assistant should feel like an editor who **remembers you** between sessions.
-Foundation Models is stateless, so "memory" = persisted data + smart insertion
-into the session. The dossier's P350 split is the whole point: **personal
-context** (how you relate to what you follow — knowledge level, spoiler
-preference, notify tolerance; small, private, on-device) is kept apart from
-**world context** (form/storylines — large, shared, server-produced). **Our
-server never gathers personal context.**
-
-### Three memory layers, all local — riding WP-19's `ProfileSyncState`
-
-WP-19 already carried `episodic` + `counters` on the mergeable `ProfileSyncState`;
-WP-30 **extends** it with `facts` rather than standing up a competing store — so
-all of memory syncs through the user's own iCloud / a QR bridge for free (P360),
-never our server. `Zenji/Memory/`:
-
-- **Structured** (`MemoryFact`, `MemoryStore`) — relationship metadata per
-  entity/sport beyond the follow-rules: `knowledgeLevel` ("nybegynner i sjakk"),
-  `spoilerPolicy` ("ser F1 på opptak"), `notifyWindow` ("ikke før 08:00"),
-  `preference`, `note`. Editable + deletable ⇒ **LWW + tombstone**, exactly like
-  rules (`ProfileMerge.pickNewerFact`).
-- **Episodic** (`MemoryDistiller`, `DistilledNote` → `EpisodicNote`) — after a
-  conversation an FM distils ONE compact `@Generable` note (`{summary,
-  entityRefs, kind, expiresAt?}`) — **never a raw transcript**. Append-only union.
-  `MockMemoryDistiller` is the deterministic CI stand-in.
-- **Behaviour** (`Counter`) — opens / expansions / dismissals per entity/sport,
-  rolling. **Pure code, no AI**, grow-only.
-
-`MemoryState(from:)` is the live projection (tombstones dropped) the UI + digest
-read — the memory analogue of `ProfileSyncState.profile`.
-
-### Retrieval is pure Swift, injected into the session
-
-`MemoryDigest.build(...)` is deterministic (entity-match + freshness, **no AI in
-retrieval**): it selects the facts/notes relevant to what's in front of the user,
-ages out expired episodic notes, floats spoiler policies to the front, and caps
-at ~500 tokens. The digest is injected into the `LanguageModelSession`
-instructions in BOTH the answer/mutation call and a new local **`saveMemory`**
-tool the model calls to persist something it learns. So a Q&A answer now
-**reflects** the memory — e.g. a `knowledgeLevel` fact makes it offer to explain
-fagtermer (`MockAnswerer.reflectMemory`, unit-tested end-to-end).
-
-### Spoiler protection — a presentation layer (impossible server-side)
-
-`SpoilerShield(memory:)` derives the spoiler-scoped sports/entities from
-`spoilerPolicy` facts. It (a) tells the model — via the digest — to phrase answers
-without revealing outcomes, and (b) exposes a per-row **`spoilerSafe`** flag the
-agenda + detail sheet respect: the detail sheet's `RESULTAT` is **masked** behind
-a calm "Skjult — spoilervern på · Trykk for å vise", and the lens meta drops its
-verbatim status. Like the WP-18 lens, this is a pure rendering layer on top of the
-feed — `FeedCompiler`'s five predicates and the golden vectors are untouched.
-
-### "Hva jeg vet om deg" (`WhatIKnowView`)
-
-The P350 trust surface + the plain-language GDPR answer: a calm, DESIGN.md-true
-page listing everything remembered (structured / episodic / behaviour), each entry
-readable, the facts editable, everything deletable, plus **"Glem alt"** (which
-wipes memory but keeps the follow-profile). Reached from the assistant flow, the
-same foot as "Hva jeg følger" (`AssistantPanel.memoryEntry`). Mono, no emoji, tap
-targets ≥44pt; the intro states outright that memory lives only on the device.
-
-### Tests + build
-
-`xcodebuild test … -scheme Zenji` passes **356 tests** (the 317 WP-…19 baseline +
-39 new: `MemoryStoreTests`, `MemoryDigestTests`, `MemoryDistillerTests`,
-`SpoilerShieldTests`, `ProfileMergeFactsTests`, `MemoryAssistantTests`). Both
-schemes (`Zenji`, `ZenjiWidgetExtension`) build — the widget deliberately does not
-compile `Zenji/Memory` (no network/personal-context code in the widget). `npm
-test` is untouched (373/373).
-
-### Visual proof + device build (WP-30)
-
-Four screenshots in `docs/design-v2/memory-{page,spoiler}-{dark,light}.png` —
-`iPhone 17 Pro` Simulator, both appearances, each state driven by the DEBUG-only
-`ZENJI_DEMO=memory|spoiler` launch harness (`MemoryDemoSeed` + a full-screen demo
-overlay, since a `.sheet` raised during the launch `.task` is a SwiftUI no-op):
-the "Hva jeg vet om deg" page (structured facts + episodic + behaviour) and a
-spoiler-masked `Britisk Grand Prix` detail sheet (`RESULTAT · Skjult —
-spoilervern på`). The `ZenjiDeviceDev` scheme was rebuilt (**BUILD SUCCEEDED**,
-signed *Apple Development*) and **installed** on the connected iPhone 16 Pro
-(`xcrun devicectl device install` → *App installed: app.zenji.ios*); the
-on-device Apple Intelligence checks (say something durable → it saves via
-`saveMemory`; ask a chess question with a beginner fact set → it explains
-fagtermer; a spoiler-policy result stays masked in the detail sheet) are the
-manual steps once the device is unlocked.
-
-## Architecture (what plugs in next)
-
-WP-10 was the shell, WP-11 added the Codable models, WP-12 added sync + cache
-+ background refresh, WP-13 added the FeedCompiler, WP-14 added the real
-agenda UI + widget, WP-15 added the NotificationPlanner, WP-16 added the FM
-assistant. Still separate, later work packages — **not implemented here**:
-
-- **TestFlight (WP-17)** — a paid Apple Developer account, real signing, and
-  re-enabling the App Group + embedded widget on device.
+`npm test` (the repo-root JS suite) is unaffected by anything under `ios/`.
 
 ## Data contract
 
-The iOS client is a pure consumer of the same static JSON published to
-GitHub Pages for the web dashboard — no separate backend, per the zero-
-infrastructure constraint in `CLAUDE.md`.
+The iOS client is a pure consumer of the static JSON published to GitHub Pages for
+the web dashboard — no separate backend. Each file has a Swift mirror in `Models/`
+and is read via `DataStore`:
 
-- **Manifest:** `docs/data/manifest.json` (WP-03) — per-file `bytes` /
-  `sha256` / optional `sourceLastUpdated` for every published data file;
-  this is what `SyncClient` (WP-12) polls to decide what changed. Mirrored
-  by `Manifest.swift`.
-- **Events schema:** `scripts/config/events.schema.json` (repo root) — the
-  formal draft-07 schema for `events.json` (WP-01). `Event.swift` (+
-  `StreamingChannel`/`Participant`/`NorwegianPlayer`/`FeaturedGroup`) mirrors
-  this schema field-for-field; forward-compatible (unknown fields ignored).
-- **Events data:** `docs/data/events.json` on the published site — the same
-  file the web dashboard reads. Synced by `SyncClient`, read via
-  `DataStore.loadEvents()`.
-- **Entities:** `docs/data/entities.json` (WP-05) — the stable-id index
-  `Event`'s `entityId` fields point into. Mirrored by `Entity.swift`, synced
-  by `SyncClient`, read via `DataStore.loadEntities()`.
-- **Tracked config:** `scripts/config/tracked.json` — mirrored by
-  `TrackedConfig.swift`, synced by `SyncClient`, read via
-  `DataStore.loadTracked()`.
-- **Interests:** `docs/data/interests.json` — the user-owned source of truth
-  (`scripts/config/interests.json` on the server; `CLAUDE.md`: "the human
-  edits this, AI never writes here"). Mirrored by `Interests.swift` (WP-13),
-  synced by `SyncClient` and read via `DataStore.loadInterests()` (both
-  WP-15 additions) — this is what `FeedCompiler.compile`/`mustWatch`
-  (WP-13/14, the agenda + widget) and `NotificationPlanner` (WP-15) key off.
+- **`manifest.json`** (per-file `bytes`/`sha256`, what `SyncClient` polls) →
+  `Manifest.swift`; **`events.json`** (schema `events.schema.json`, draft-07) →
+  `Event.swift` + supporting models, field-for-field, forward-compatible.
+- **`entities.json`** (the stable-id index `Event.entityId` points into) →
+  `Entity.swift`; **`tracked.json`** → `TrackedConfig.swift`.
+- **`interests.json`** — the user-owned source of truth (CLAUDE.md: "the human edits
+  this, AI never writes here") → `Interests.swift`; what `FeedCompiler` and
+  `NotificationPlanner` key off.
 
-`Zenji/Sync/` (WP-12, above) is what actually fetches these now; before this
-package the app read nothing at all.
+## What plugs in next
+
+- **TestFlight (WP-17)** — a paid Apple Developer account, real signing, and
+  re-enabling the App Group + embedded widget on device.
