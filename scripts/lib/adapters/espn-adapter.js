@@ -1,6 +1,5 @@
 import { BaseFetcher } from "../base-fetcher.js";
 import { EventNormalizer } from "../event-normalizer.js";
-import { EventFilters } from "../filters.js";
 
 export class ESPNAdapter extends BaseFetcher {
 	async fetchFromSource(source) {
@@ -78,13 +77,6 @@ export class ESPNAdapter extends BaseFetcher {
 				failedLeagueNames,
 				coverageRatio
 			}
-		};
-
-		// Attach metadata to the returned array for backward compatibility
-		allEvents._leagueMeta = {
-			leaguesFetched: totalLeagues - failedLeagueCount,
-			leaguesFailed: failedLeagueCount,
-			failedLeagues: failedLeagueNames
 		};
 
 		return allEvents;
