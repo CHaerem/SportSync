@@ -9,6 +9,7 @@
 import https from "https";
 import http from "http";
 import path from "path";
+import { pathToFileURL } from "url";
 import { iso, rootDataPath, writeJsonPretty } from "./lib/helpers.js";
 
 const FEEDS = [
@@ -244,7 +245,7 @@ async function main() {
 }
 
 // Run if executed directly
-if (process.argv[1]?.includes("fetch-rss")) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main().catch((err) => {
 		console.error("Fatal error:", err);
 		process.exit(1);

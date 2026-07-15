@@ -9,6 +9,7 @@
  */
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 import { rootDataPath, readJsonIfExists, iso } from "./lib/helpers.js";
 
 const START = "<!-- STATUS:START -->";
@@ -67,7 +68,7 @@ export function replaceBetweenMarkers(text, start, end, replacement) {
 	return `${text.slice(0, s + start.length)}\n${replacement}\n${text.slice(e)}`;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	const readmePath = path.resolve(process.cwd(), "README.md");
 	const dataDir = rootDataPath();
 	const summary = readJsonIfExists(path.join(dataDir, "usage-summary.json"));

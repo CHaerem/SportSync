@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import https from "https";
+import { pathToFileURL } from "url";
 import { fetchJson, iso, normalizeToUTC } from "../lib/helpers.js";
 import { validateESPNScoreboard } from "../lib/response-validator.js";
 
@@ -737,7 +738,7 @@ export async function fetchGolfESPN() {
 export { playerNameMatches, parseTeeTimeToUTC, tournamentNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups, fetchPGATourPage, fetchPGATourTeeTimes };
 
 // Run if executed directly
-if (process.argv[1]?.includes('golf.js')) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	fetchGolfESPN().then(data => {
 		console.log(JSON.stringify(data, null, 2));
 	}).catch(err => {

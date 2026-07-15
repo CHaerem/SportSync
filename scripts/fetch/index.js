@@ -27,18 +27,8 @@ async function main() {
 		fetchers.map(({ fn }) => fn())
 	);
 
-	const mapping = [
-		"football.json",
-		"golf.json",
-		"tennis.json",
-		"f1.json",
-		"chess.json",
-		"esports.json",
-		"cycling.json",
-	];
-
-	for (let i = 0; i < mapping.length; i++) {
-		const file = mapping[i];
+	for (let i = 0; i < fetchers.length; i++) {
+		const file = `${fetchers[i].name}.json`;
 		const result = results[i];
 
 		if (result.status !== "fulfilled" || !result.value) {

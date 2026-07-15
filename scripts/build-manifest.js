@@ -19,6 +19,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { pathToFileURL } from "url";
 import { rootDataPath, iso } from "./lib/helpers.js";
 
 export const MANIFEST_NAME = "manifest.json";
@@ -85,6 +86,6 @@ function main() {
 	console.log(`manifest.json: ${Object.keys(manifest.files).length} file(s) covered.`);
 }
 
-if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 	main();
 }
