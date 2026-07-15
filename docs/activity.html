@@ -4,13 +4,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Hva automatikken bak Zenji har gjort — forbedringer, reparasjoner og research, med lenke til hver endring.">
-	<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
-	<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#0A0A0C" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#F5F1E6" media="(prefers-color-scheme: light)">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<title>Zenji · Aktivitet</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<!-- Apply the chosen theme before paint (no flash of wrong theme); js/theme.js owns the toggle. -->
+	<script>try { var t = localStorage.getItem('ss-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}</script>
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<style>
@@ -92,29 +91,13 @@
 		<a class="back-link" href="./">← oversikten</a>
 	</footer>
 
+	<script src="js/shared-constants.js"></script>
+	<script src="js/theme.js"></script>
 	<script>
-		// Theme — share the dashboard's key so the choice carries across pages.
-		(function () {
-			try {
-				const stored = localStorage.getItem('ss-theme');
-				if (stored) document.documentElement.setAttribute('data-theme', stored);
-			} catch { /* ignore */ }
-			document.getElementById('theme-toggle')?.addEventListener('click', () => {
-				const cur = document.documentElement.getAttribute('data-theme')
-					|| (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-				const next = cur === 'light' ? 'dark' : 'light';
-				document.documentElement.setAttribute('data-theme', next);
-				try { localStorage.setItem('ss-theme', next); } catch { /* ignore */ }
-			});
-		})();
+		// Repo slug (SS_REPO) and escapeHtml come from shared-constants.js; theme
+		// (glyph + system → dark → light cycle) lives in js/theme.js.
+		const REPO = SS_REPO;
 
-		const REPO = 'CHaerem/Zenji';
-
-		function escapeHtml(s) {
-			return String(s ?? '').replace(/[&<>"']/g, c => (
-				{ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
-			));
-		}
 		function timeAgo(iso) {
 			const t = Date.parse(iso);
 			if (!Number.isFinite(t)) return '';

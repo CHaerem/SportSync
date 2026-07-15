@@ -2,6 +2,10 @@
 // Canonical source of truth for values shared between client (dashboard.js) and server (helpers.js).
 // Loaded as the first <script> tag — all symbols are globals.
 
+// ── Repo ────────────────────────────────────────────────────────────────────
+// The ONE repo slug — used for issue/PR deep links on all pages.
+const SS_REPO = 'CHaerem/zenji';
+
 // ── Time constants ──────────────────────────────────────────────────────────
 const MS_PER_MINUTE = 60000;
 const MS_PER_HOUR = 3600000;
@@ -73,6 +77,14 @@ function ssContainsTerm(haystack, term) {
 	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${esc}(?:[^\\p{L}\\p{N}]|$)`, 'iu').test(ssNormalize(haystack));
 }
 
+/** Trim an agent reason to a one-line gist (drops the provenance prefix). */
+function ssShortReason(r, max = 130) {
+	if (!r) return '';
+	let s = String(r).replace(/^\s*(alwaysTrack\.\w+\.?|interests\.json#\S+)\s*/i, '').replace(/^[,.\s]+/, '').trim();
+	if (s.length > max) s = s.slice(0, max - 2).replace(/\s+\S*$/, '') + '…';
+	return s;
+}
+
 // ── Expose globals ──────────────────────────────────────────────────────────
 window.SS_CONSTANTS = Object.freeze({
 	MS_PER_MINUTE,
@@ -80,7 +92,9 @@ window.SS_CONSTANTS = Object.freeze({
 	MS_PER_DAY,
 });
 
+window.SS_REPO = SS_REPO;
 window.isEventInWindow = isEventInWindow;
+window.ssShortReason = ssShortReason;
 window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;
 window.ssTeamMatch = ssTeamMatch;
