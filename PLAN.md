@@ -75,7 +75,7 @@ mennesket, aldri av en agent.
 | WP-47 | Web: dashboard.js-splitt | 0D | WP-46 | ⬜ køet |
 | WP-48 | iOS: Profile/-modul + demo/mock-karantene | 0D | – | ✅ merget (#269) — 12 filer `git mv` → `Zenji/Profile/` + profil-sync-extension ut av AssistantViewModel; `Zenji/Demo/` (LensDemoSeed/MemoryDemoSeed) strukturelt utenfor widget/test-targets; Mock* i `#if DEBUG` (også MockMemoryDistiller — `endOfOsloDay` → ny `MemoryFreshness`, siden FM-distillasjonen bruker den); `nm`: 0 Mock*-symboler i Release (193 i Debug-kontroll); 376/376 iOS-tester (uendret antall), 373/373 JS, begge schemes + ZenjiDeviceDev bygger |
 | WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ✅ merget (#264) — 57 PNG-er slettet (docs-design/, ios/docs/variants/, enso-grids; alle ureferert), enso-icon.swift beholdt med header for valgt variant v3-grov-contig (hash-bevist = shippet ikon), regel 8 (bevis-policy) lagt til; sporede PNG-er 12 MB → 8,3 MB |
-| WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ⬜ køet |
+| WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | 🔬 PR åpnet — `ios/README.md` 1446 → 495 linjer, kronologisk bygglogg → delsystem-kart (én seksjon per `Zenji/`-katalog + targets/signering + testing); katalogoversikt regenerert mot treet, talldrift rettet (42 testfiler/376 tester, iOS 26.0, 4 targets/3 schemes), design-v2-skjermbilder (reset/onboarding/profil-deling m.fl.) referert fra riktig seksjon; signering/free-account + sync-arkitektur + fixture-policy bevart |
 | WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ✅ merget (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
 | WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ⬜ køet |
 
